@@ -49,7 +49,9 @@ services:
       KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081/
       KAFKA_REST_HOST_NAME: rest-proxy
       KAFKA_REST_BOOTSTRAP_SERVERS: PLAINTEXT://kafka:9092
+      KAFKA_REST_ACCESS_CONTROL_ALLOW_ORIGIN: "*"
+      KAFKA_REST_ACCESS_CONTROL_ALLOW_METHODS: "GET,POST,PUT,DELETE,OPTIONS,HEAD"
     depends_on:
       - zookeeper
       - kafka
-      - schema-registry    
+      - schema-registry
