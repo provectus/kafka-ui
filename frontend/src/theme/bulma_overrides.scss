@@ -1,0 +1,16 @@
+@import "../../node_modules/bulma/sass/utilities/_all.sass";
+
+$menu-item-color: $white;
+$menu-item-radius: 0;
+$menu-item-hover-color: $white;
+$menu-item-hover-background-color: transparent;
+$menu-item-active-color: $text-strong;
+$menu-item-active-background-color: $background;
+$menu-list-border-left: 1px solid $border-light;
+
+@import "../../node_modules/bulma/sass/base/_all.sass";
+@import "../../node_modules/bulma/sass/elements/_all.sass";
+@import "../../node_modules/bulma/sass/form/_all.sass";
+@import "../../node_modules/bulma/sass/components/_all.sass";
+@import "../../node_modules/bulma/sass/grid/_all.sass";
+@import "../../node_modules/bulma/sass/layout/_all.sass";
