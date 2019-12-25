@@ -6,20 +6,23 @@ import {
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import { ClusterId } from 'types';
 
 interface Props {
+  clusterId: string;
   isFetched: boolean;
-  fetchBrokers: () => void;
-  fetchTopicList: () => void;
+  fetchBrokers: (clusterId: ClusterId) => void;
+  fetchTopicList: (clusterId: ClusterId) => void;
 }
 
 const Topics: React.FC<Props> = ({
+  clusterId,
   isFetched,
   fetchBrokers,
   fetchTopicList,
 }) => {
-  React.useEffect(() => { fetchTopicList(); }, [fetchTopicList]);
-  React.useEffect(() => { fetchBrokers(); }, [fetchBrokers]);
+  React.useEffect(() => { fetchTopicList(clusterId); }, [fetchTopicList, clusterId]);
+  React.useEffect(() => { fetchBrokers(clusterId); }, [fetchBrokers, clusterId]);
 
   if (isFetched) {
     return (

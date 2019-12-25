@@ -11,9 +11,32 @@
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: repeating-linear-gradient(
+    145deg,
+    rgba(0,0,0,.003),
+    rgba(0,0,0,.005) 5px,
+    rgba(0,0,0,0) 5px,
+    rgba(0,0,0,0) 10px
+  ),
+  repeating-linear-gradient(
+    -145deg,
+    rgba(0,0,0,.003),
+    rgba(0,0,0,.005) 5px,
+    rgba(0,0,0,0) 5px,
+    rgba(0,0,0,0) 10px
+  );
+  background-color: $light;
+
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+.has-text-overflow-ellipsis {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

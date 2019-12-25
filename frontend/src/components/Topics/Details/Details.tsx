@@ -2,7 +2,6 @@ import React from 'react';
 import { Topic } from 'types';
 import ConfigRow from './ConfigRow';
 import Partition from './Partition';
-import { NavLink } from 'react-router-dom';
 
 const Details: React.FC<{ topic: Topic }> = ({
   topic: {

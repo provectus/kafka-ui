@@ -7,14 +7,14 @@ import {
   fetchTopicListAction,
   fetchBrokersAction,
 } from './actions';
-import { Topic, TopicName, PromiseThunk } from 'types';
+import { Topic, TopicName, PromiseThunk, ClusterId } from 'types';
 
 
-export const fetchTopicList = (): PromiseThunk<void> => async (dispatch, getState) => {
+export const fetchTopicList = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {
   dispatch(fetchTopicListAction.request());
 
   try {
-    const topics = await getTopics();
+    const topics = await getTopics(clusterId);
     const detailedList = await Promise.all(topics.map((topic: TopicName): Promise<Topic> => getTopic(topic)));
 
     dispatch(fetchTopicListAction.success(detailedList));
@@ -23,10 +23,10 @@ export const fetchTopicList = (): PromiseThunk<void> => async (dispatch, getStat
   }
 }
 
-export const fetchBrokers = (): PromiseThunk<void> => async (dispatch, getState) => {
+export const fetchBrokers = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {
   dispatch(fetchBrokersAction.request());
   try {
-    const { brokers } = await getBrokers();
+    const { brokers } = await getBrokers(clusterId);
     dispatch(fetchBrokersAction.success(brokers));
   } catch (e) {
     dispatch(fetchBrokersAction.failure());

@@ -5,15 +5,23 @@ import {
 } from 'redux/reducers/topics/thunks';
 import Topics from './Topics';
 import { getIsTopicListFetched } from 'redux/reducers/topics/selectors';
-import { RootState } from 'types';
+import { RootState, ClusterId } from 'types';
+import { RouteComponentProps } from 'react-router-dom';
 
-const mapStateToProps = (state: RootState) => ({
+interface RouteProps {
+  clusterId: string;
+}
+
+interface OwnProps extends RouteComponentProps<RouteProps> { }
+
+const mapStateToProps = (state: RootState, { match: { params: { clusterId } }}: OwnProps) => ({
   isFetched: getIsTopicListFetched(state),
+  clusterId,
 });
 
 const mapDispatchToProps = {
-  fetchTopicList,
-  fetchBrokers,
+  fetchTopicList: (clusterId: ClusterId) => fetchTopicList(clusterId),
+  fetchBrokers: (clusterId: ClusterId) => fetchBrokers(clusterId),
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Topics);
