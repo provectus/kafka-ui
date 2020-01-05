@@ -1,10 +1,17 @@
 'use strict'
 
-const path = require('path')
-const AutoLoad = require('fastify-autoload')
+const path = require('path');
+const AutoLoad = require('fastify-autoload');
+const CORS = require('fastify-cors');
 
 module.exports = function (fastify, opts, next) {
-  // Place here your custom code!
+  fastify.register(CORS, {
+    origin: 'http://localhost:3000',
+    preflight: true,
+    preflightContinue: true,
+    credentials: true,
+    methods: ['GET', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  })
 
   // Do not touch the following lines
 
