@@ -22,13 +22,13 @@ const Topics: React.FC<Props> = ({
   fetchTopicList,
 }) => {
   React.useEffect(() => { fetchTopicList(clusterId); }, [fetchTopicList, clusterId]);
-  React.useEffect(() => { fetchBrokers(clusterId); }, [fetchBrokers, clusterId]);
+  // React.useEffect(() => { fetchBrokers(clusterId); }, [fetchBrokers, clusterId]);
 
   if (isFetched) {
     return (
       <Switch>
-        <Route exact path="/topics/:topicName" component={DetailsContainer} />
-        <Route exact path="/topics" component={ListContainer} />
+        <Route exact path="/clusters/:clusterId/topics/:topicName" component={DetailsContainer} />
+        <Route exact path="/clusters/:clusterId/topics" component={ListContainer} />
       </Switch>
     );
   }

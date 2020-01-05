@@ -8,7 +8,7 @@ export interface TopicConfigs {
 export interface TopicReplica {
   broker: number;
   leader: boolean;
-  in_sync: true;
+  inSync: true;
 }
 
 export interface TopicPartition {
@@ -19,7 +19,7 @@ export interface TopicPartition {
 
 export interface Topic {
   name: TopicName;
-  configs: TopicConfigs;
+  internal: boolean;
   partitions: TopicPartition[];
 }
 
@@ -29,4 +29,7 @@ export interface TopicsState {
   brokers?: Broker[];
 }
 
-export type Broker = number;
+export interface Broker {
+  id: 1,
+  host: "broker",
+};

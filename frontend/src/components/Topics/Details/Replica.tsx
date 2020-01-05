@@ -7,7 +7,7 @@ interface Props extends TopicReplica {
 }
 
 const Replica: React.FC<Props> = ({
-  in_sync,
+  inSync,
   leader,
   broker,
   index,
@@ -22,8 +22,8 @@ const Replica: React.FC<Props> = ({
               LEADER
             </span>
           )}
-          <span className={cx('tag', in_sync ? 'is-success' : 'is-danger')}>
-            {in_sync ? 'IN SYNC' : 'OUT OF SYNC'}
+          <span className={cx('tag', inSync ? 'is-success' : 'is-danger')}>
+            {inSync ? 'IN SYNC' : 'OUT OF SYNC'}
           </span>
         </div>
       </div>

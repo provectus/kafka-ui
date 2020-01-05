@@ -1,15 +1,15 @@
 import React from 'react';
-import { Topic } from 'types';
+import { Topic, TopicConfigs } from 'types';
 import ConfigRow from './ConfigRow';
 import Partition from './Partition';
 
 const Details: React.FC<{ topic: Topic }> = ({
   topic: {
     name,
-    configs,
     partitions,
   }
 }) => {
+  const configs: TopicConfigs = {[ 'key-config']: '1' };
   const configKeys = Object.keys(configs);
 
   return (

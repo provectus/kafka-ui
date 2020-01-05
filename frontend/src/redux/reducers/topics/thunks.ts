@@ -15,9 +15,8 @@ export const fetchTopicList = (clusterId: ClusterId): PromiseThunk<void> => asyn
 
   try {
     const topics = await getTopics(clusterId);
-    const detailedList = await Promise.all(topics.map((topic: TopicName): Promise<Topic> => getTopic(topic)));
 
-    dispatch(fetchTopicListAction.success(detailedList));
+    dispatch(fetchTopicListAction.success(topics));
   } catch (e) {
     dispatch(fetchTopicListAction.failure());
   }

@@ -31,14 +31,12 @@ const App: React.FC<AppProps> = ({
       <main className="Layout__container">
         <NavConatiner className="Layout__navbar" />
         {isClusterListFetched ? (
-          <section className="section">
-            <Switch>
-              <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
-              <Route exact path="/">
-                Dashboard
-              </Route>
-            </Switch>
-          </section>
+          <Switch>
+            <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
+            <Route exact path="/">
+              Dashboard
+            </Route>
+          </Switch>
         ) : (
           <PageLoader />
         )}

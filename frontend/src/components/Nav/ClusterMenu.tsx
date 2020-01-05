@@ -31,7 +31,10 @@ const ClusterMenu: React.FC<Props> = ({
         {name}
       </NavLink>
       <ul>
-        <NavLink to={`/clusters/${id}/topics`} activeClassName="is-active" title="Dashboard">
+        <NavLink to={`/clusters/${id}/brokers`} activeClassName="is-active" title="Brokers">
+          Brokers
+        </NavLink>
+        <NavLink to={`/clusters/${id}/topics`} activeClassName="is-active" title="Topics">
           Topics
         </NavLink>
       </ul>
