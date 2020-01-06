@@ -1,8 +1,11 @@
 import { createSelector } from 'reselect';
 import { ClustersState, RootState, FetchStatus } from 'types';
+import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const clustersState = ({ clusters }: RootState): ClustersState => clusters;
 
-export const getIsClusterListFetched = createSelector(clustersState, ({ fetchStatus }) => fetchStatus === FetchStatus.fetched);
+const getClusterListFetchingStatus = createFetchingSelector('GET_CLUSTERS');
 
-export const getClusterList = createSelector(clustersState, ({ items }) => items);
+export const getIsClusterListFetched = createSelector(getClusterListFetchingStatus, (status) => status === FetchStatus.fetched);
+
+export const getClusterList = createSelector(clustersState, (items) => items);

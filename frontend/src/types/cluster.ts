@@ -1,5 +1,3 @@
-import { FetchStatus } from "types";
-
 export enum ClusterStatus {
   Online = 'online',
   Offline = 'offline',
@@ -17,7 +15,4 @@ export interface Cluster {
   topicCount: number;
 }
 
-export interface ClustersState {
-  fetchStatus: FetchStatus;
-  items: Cluster[];
-}
+export type ClustersState = Cluster[];

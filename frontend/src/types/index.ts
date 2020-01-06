@@ -5,9 +5,11 @@ import { ThunkAction } from 'redux-thunk';
 import { TopicsState } from './topic';
 import { AnyAction } from 'redux';
 import { ClustersState } from './cluster';
+import { LoaderState } from './loader';
 
 export * from './topic';
 export * from './cluster';
+export * from './loader';
 
 export enum FetchStatus {
   notFetched = 'notFetched',
@@ -19,6 +21,7 @@ export enum FetchStatus {
 export interface RootState {
   topics: TopicsState;
   clusters: ClustersState;
+  loader: LoaderState;
 }
 
 export type Action = ActionType<typeof topicsActions | typeof clustersActions>;

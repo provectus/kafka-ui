@@ -3,7 +3,7 @@ import ActionType from './actionType';
 import { Cluster } from 'types';
 
 export const fetchClusterListAction = createAsyncAction(
-  ActionType.CLUSTERS__FETCH_REQUEST,
-  ActionType.CLUSTERS__FETCH_SUCCESS,
-  ActionType.CLUSTERS__FETCH_FAILURE,
+  ActionType.GET_CLUSTERS__REQUEST,
+  ActionType.GET_CLUSTERS__SUCCESS,
+  ActionType.GET_CLUSTERS__FAILURE,
 )<undefined, Cluster[], undefined>();
