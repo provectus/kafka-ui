@@ -2,7 +2,7 @@ module.exports = {
   'wrYGf-csNgiGdK7B_ADF7Z': [
     {
       name: 'docker-connect-status',
-      internal: false,
+      internal: true,
       partitions: [
         {
           partition: 0,
