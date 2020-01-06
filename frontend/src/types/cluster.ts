@@ -14,5 +14,3 @@ export interface Cluster {
   onlinePartitionCount: number;
   topicCount: number;
 }
-
-export type ClustersState = Cluster[];

@@ -1,8 +1,6 @@
 import { connect } from 'react-redux';
-import {
-  fetchTopicList,
-  fetchBrokers,
-} from 'redux/reducers/topics/thunks';
+import { fetchTopicList } from 'redux/reducers/topics/thunks';
+import { fetchBrokers } from 'redux/reducers/brokers/thunks';
 import Topics from './Topics';
 import { getIsTopicListFetched } from 'redux/reducers/topics/selectors';
 import { RootState, ClusterId } from 'types';

@@ -1,15 +1,25 @@
 import { createSelector } from 'reselect';
-import { TopicsState, RootState, Topic, TopicName, FetchStatus } from 'types';
+import { RootState, Topic, TopicName, FetchStatus } from 'types';
+import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
-const topicsState = ({ topics }: RootState): TopicsState => topics;
+const topicsState = ({ topics }: RootState): Topic[] => topics;
 
-export const getIsTopicListFetched = createSelector(topicsState, ({ fetchStatus }) => fetchStatus === FetchStatus.fetched);
+const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
 
-export const getTopicList = createSelector(topicsState, ({ items }) => items);
+export const getIsTopicListFetched = createSelector(
+  getTopicListFetchingStatus,
+  (status) => status === FetchStatus.fetched,
+);
 
-export const getTotalBrokers = createSelector(
+export const getTopicList = createSelector(
+  getIsTopicListFetched,
   topicsState,
-  ({ brokers }) => (brokers !== undefined ? brokers.length : undefined),
+  (isFetched, topics) => isFetched ? topics : [],
+);
+
+export const getExternalTopicList = createSelector(
+  getTopicList,
+  (topics) => topics.filter(({ internal }) => !internal),
 );
 
 interface TopicMap {[key: string]: Topic};

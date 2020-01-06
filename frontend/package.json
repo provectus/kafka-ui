@@ -16,6 +16,7 @@
     "@types/redux": "^3.6.0",
     "@types/redux-thunk": "^2.1.0",
     "bulma": "^0.8.0",
+    "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
     "node-sass": "^4.13.0",
     "react": "^16.12.0",

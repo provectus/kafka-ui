@@ -4,14 +4,37 @@ import ListItem from './ListItem';
 
 interface Props {
   topics: Topic[];
+  externalTopics: Topic[];
 }
 
 const List: React.FC<Props> = ({
   topics,
+  externalTopics,
 }) => {
+  const [showInternal, setShowInternal] = React.useState<boolean>(true);
+
+  const handleSwitch = () => setShowInternal(!showInternal);
+
+  const items = showInternal ? topics : externalTopics;
+
   return (
     <>
       <div className="section">
+        <div className="box">
+          <div className="field">
+            <input
+              id="switchRoundedDefault"
+              type="checkbox"
+              name="switchRoundedDefault"
+              className="switch is-rounded"
+              checked={showInternal}
+              onChange={handleSwitch}
+            />
+            <label htmlFor="switchRoundedDefault">
+              Show Internal Topics
+            </label>
+          </div>
+        </div>
         <div className="box">
           <table className="table is-striped is-fullwidth">
             <thead>
@@ -22,7 +45,7 @@ const List: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
-              {topics.map((topic) => (
+              {items.map((topic) => (
                 <ListItem
                   key={topic.name}
                   {...topic}
