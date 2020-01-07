@@ -1,6 +1,7 @@
 import React from 'react';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ClusterId } from 'types';
+import useInterval from 'lib/hooks/useInterval';
 
 interface Props {
   clusterId: string;
@@ -15,8 +16,15 @@ const Topics: React.FC<Props> = ({
   fetchBrokers,
   fetchBrokerMetrics,
 }) => {
-  React.useEffect(() => { fetchBrokers(clusterId); }, [fetchBrokers, clusterId]);
-  React.useEffect(() => { fetchBrokerMetrics(clusterId); }, [fetchBrokerMetrics, clusterId]);
+  React.useEffect(
+    () => {
+      fetchBrokers(clusterId);
+      fetchBrokerMetrics(clusterId);
+    },
+    [fetchBrokers, fetchBrokerMetrics, clusterId],
+  );
+
+  useInterval(() => { fetchBrokerMetrics(clusterId); }, 5000);
 
   if (isFetched) {
     return (
