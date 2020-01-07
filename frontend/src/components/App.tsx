@@ -4,6 +4,7 @@ import {
   Route,
 } from 'react-router-dom';
 import './App.scss';
+import BrokersContainer from './Brokers/BrokersContainer';
 import TopicsContainer from './Topics/TopicsContainer';
 import NavConatiner from './Nav/NavConatiner';
 import PageLoader from './common/PageLoader/PageLoader';
@@ -33,6 +34,7 @@ const App: React.FC<AppProps> = ({
         {isClusterListFetched ? (
           <Switch>
             <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
+            <Route path="/clusters/:clusterId/brokers" component={BrokersContainer} />
             <Route exact path="/">
               Dashboard
             </Route>
