@@ -6,3 +6,29 @@
 @import "../../node_modules/bulma/sass/grid/_all.sass";
 @import "../../node_modules/bulma/sass/layout/_all.sass";
 @import "../../node_modules/bulma-switch/src/sass/index.sass";
+
+.has-text-overflow-ellipsis {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.breadcrumb li {
+  &.is-active > span {
+    padding: 0 0.75em;
+  }
+
+  &:first-child > span {
+    padding-left: 0;
+  }
+}
+
+.section {
+  animation: fadein .5s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

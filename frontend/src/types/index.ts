@@ -6,7 +6,7 @@ import * as topicsActions from 'redux/reducers/topics/actions';
 import * as clustersActions from 'redux/reducers/clusters/actions';
 import * as brokersActions from 'redux/reducers/brokers/actions';
 
-import { Topic } from './topic';
+import { TopicsState } from './topic';
 import { Cluster } from './cluster';
 import { BrokersState } from './broker';
 import { LoaderState } from './loader';
@@ -24,7 +24,7 @@ export enum FetchStatus {
 }
 
 export interface RootState {
-  topics: Topic[];
+  topics: TopicsState;
   clusters: Cluster[];
   brokers: BrokersState;
   loader: LoaderState;

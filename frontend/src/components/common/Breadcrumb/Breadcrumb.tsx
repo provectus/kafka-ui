@@ -24,7 +24,7 @@ const Breadcrumb: React.FC<Props> = ({
         ))}
 
         <li className="is-active">
-          <a href="#">{children}</a>
+          <span className="">{children}</span>
         </li>
       </ul>
     </nav>

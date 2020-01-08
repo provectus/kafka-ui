@@ -20,3 +20,8 @@ export interface Topic {
   internal: boolean;
   partitions: TopicPartition[];
 }
+
+export interface TopicsState {
+  byName: { [topicName: string]: Topic },
+  allNames: TopicName[],
+}
