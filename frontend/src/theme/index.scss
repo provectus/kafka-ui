@@ -38,3 +38,12 @@ code {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.section {
+  animation: fadein .5s;
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -1,4 +1,4 @@
-import { Action, BrokersState, ZooKeeperStatus } from 'types';
+import { Action, BrokersState, ZooKeeperStatus, BrokerMetrics } from 'types';
 import actionType from 'redux/reducers/actionType';
 
 export const initialState: BrokersState =  {
@@ -12,20 +12,35 @@ export const initialState: BrokersState =  {
   offlinePartitionCount: 0,
   underReplicatedPartitionCount: 0,
   diskUsageDistribution: undefined,
+  diskUsage: [],
+};
+
+const updateBrokerSegmentSize = (state: BrokersState, payload: BrokerMetrics) => {
+  const brokers = state.items;
+  const { diskUsage } = payload;
+
+  const items = brokers.map((broker) => {
+    const brokerMetrics = diskUsage.find(({ brokerId }) => brokerId === broker.brokerId);
+    if (brokerMetrics !== undefined) {
+      return { ...broker, ...brokerMetrics };
+    }
+    return broker;
+  });
+
+  return { ...state, items, ...payload };
 };
 
 const reducer = (state = initialState, action: Action): BrokersState => {
   switch (action.type) {
+    case actionType.GET_BROKERS__REQUEST:
+      return initialState;
     case actionType.GET_BROKERS__SUCCESS:
       return {
         ...state,
         items: action.payload,
       };
     case actionType.GET_BROKER_METRICS__SUCCESS:
-      return {
-        ...state,
-        ...action.payload,
-      };
+      return updateBrokerSegmentSize(state, action.payload);
     default:
       return state;
   }

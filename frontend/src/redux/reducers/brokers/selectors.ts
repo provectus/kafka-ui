@@ -25,10 +25,22 @@ export const getUnderReplicatedPartitionCount = createSelector(brokersState, ({ 
 
 export const getMinDiskUsage = createSelector(
   getBrokerList,
-  (brokers) => Math.min(...brokers.map(({ segmentSize }) => segmentSize)),
+  (brokers) => {
+    if (brokers.length === 0) {
+      return 0;
+    }
+
+    return Math.min(...brokers.map(({ segmentSize }) => segmentSize));
+  },
 );
 
 export const getMaxDiskUsage = createSelector(
   getBrokerList,
-  (brokers) => Math.max(...brokers.map(({ segmentSize }) => segmentSize)),
+  (brokers) => {
+    if (brokers.length === 0) {
+      return 0;
+    }
+
+    return Math.max(...brokers.map(({ segmentSize }) => segmentSize));
+  },
 );

@@ -25,6 +25,7 @@ export interface BrokerMetrics {
   offlinePartitionCount: number;
   underReplicatedPartitionCount: number;
   diskUsageDistribution?: string;
+  diskUsage: BrokerDiskUsage[];
 }
 
 export interface BrokersState extends BrokerMetrics {
