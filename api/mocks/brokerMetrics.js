@@ -5,9 +5,9 @@ const randomBrokerMetrics = () => ({
   zooKeeperStatus: 1,
   activeControllers: 1,
   uncleanLeaderElectionCount: 0,
-  networkPoolUsage: Math.random(),
-  requestPoolUsage: Math.random(),
-  onlinePartitionCount: Math.ceil(Math.random() * 1000),
+  networkPoolUsage: Math.random() * 0.01,
+  requestPoolUsage: Math.random() * 0.01,
+  onlinePartitionCount: Math.ceil(Math.random() * 100),
   underReplicatedPartitionCount: Math.ceil(Math.random() * 10),
   offlinePartitionCount: Math.ceil(Math.random() * 10),
   diskUsage: [
