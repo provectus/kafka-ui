@@ -3,6 +3,8 @@ import { ClusterId, BrokerMetrics, ZooKeeperStatus } from 'types';
 import useInterval from 'lib/hooks/useInterval';
 import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';
+import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
+import Indicator from 'components/common/Dashboard/Indicator';
 
 interface Props extends BrokerMetrics {
   clusterId: string;
@@ -43,126 +45,74 @@ const Topics: React.FC<Props> = ({
   const [minDiskUsageValue, minDiskUsageSize] = formatBytes(minDiskUsage);
   const [maxDiskUsageValue, maxDiskUsageSize] = formatBytes(maxDiskUsage);
 
+  const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
+
   return (
     <div className="section">
-      <div className="box">
-        <h5 className="title is-5">Uptime</h5>
-        <div className="level">
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Total Brokers</p>
-              <p className="title">{brokerCount}</p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Active Controllers</p>
-              <p className="title">{activeControllers}</p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Zookeeper Status</p>
-              <p className="title">
-                {zooKeeperStatus === ZooKeeperStatus.online ? (
-                  <span className="tag is-primary">Online</span>
-                ) : (
-                  <span className="tag is-danger">Offline</span>
-                )}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <h1 className="title is-5">Brokers overview</h1>
 
-      <div className="box">
-        <h5 className="title is-5">Partitions</h5>
-        <div className="level">
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Online</p>
-              <p>
-                <span className={cx('title', {'has-text-danger': offlinePartitionCount !== 0})}>
-                  {onlinePartitionCount}
-                </span>
-                <span className="subtitle"> of {onlinePartitionCount + offlinePartitionCount}</span>
-              </p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Under Replicated</p>
-              <p className="title">{underReplicatedPartitionCount}</p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">In Sync Replicas</p>
-              <p className="title has-text-grey-lighter">Soon</p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Out of Sync Replicas</p>
-              <p className="title has-text-grey-lighter">Soon</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MetricsWrapper title="Uptime">
+        <Indicator title="Total Brokers">
+          {brokerCount}
+        </Indicator>
+        <Indicator title="Active Controllers">
+          {activeControllers}
+        </Indicator>
+        <Indicator title="Zookeeper Status">
+          <span className={cx('tag', zkOnline ? 'is-primary' : 'is-danger')}>
+            {zkOnline ? 'Online' : 'Offline'}
+          </span>
+        </Indicator>
+      </MetricsWrapper>
 
-      <div className="box">
-        <h5 className="title is-5">Disk</h5>
-        <div className="level">
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Max usage</p>
-              <p>
-                <span className="title">{maxDiskUsageValue}</span>
-                <span className="subtitle"> {maxDiskUsageSize}</span>
-              </p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Min Usage</p>
-              <p>
-                <span className="title">{minDiskUsageValue}</span>
-                <span className="subtitle"> {minDiskUsageSize}</span>
-              </p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Distribution</p>
-              <p className="title is-capitalized">{diskUsageDistribution}</p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MetricsWrapper title="Partitions">
+        <Indicator title="Online">
+          <span className={cx({'has-text-danger': offlinePartitionCount !== 0})}>
+            {onlinePartitionCount}
+          </span>
+          <span className="subtitle has-text-weight-light"> of {onlinePartitionCount + offlinePartitionCount}</span>
+        </Indicator>
+        <Indicator title="Under Replicated">
+          {underReplicatedPartitionCount}
+        </Indicator>
+        <Indicator title="In Sync Replicas">
+          <span className="has-text-grey-lighter">
+            Soon
+          </span>
+        </Indicator>
+        <Indicator title="Out of Sync Replicas">
+          <span className="has-text-grey-lighter">
+            Soon
+          </span>
+        </Indicator>
+      </MetricsWrapper>
 
-      <div className="box">
-        <h5 className="title is-5">System</h5>
-        <div className="level">
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Network pool usage</p>
-              <p className="title">
-                {Math.round(networkPoolUsage * 10000) / 100}
-                <span className="subtitle">%</span>
-              </p>
-            </div>
-          </div>
-          <div className="level-item level-left">
-            <div>
-              <p className="heading">Request pool usage</p>
-              <p className="title">
-                {Math.round(requestPoolUsage * 10000) / 100}
-                <span className="subtitle">%</span>
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+      <MetricsWrapper title="Disk">
+        <Indicator title="Max usage">
+          {maxDiskUsageValue}
+          <span className="subtitle has-text-weight-light"> {maxDiskUsageSize}</span>
+        </Indicator>
+        <Indicator title="Min usage">
+          {minDiskUsageValue}
+          <span className="subtitle has-text-weight-light"> {minDiskUsageValue}</span>
+        </Indicator>
+        <Indicator title="Distribution">
+          <span className="is-capitalized">
+            {diskUsageDistribution}
+          </span>
+        </Indicator>
+      </MetricsWrapper>
+
+      <MetricsWrapper title="System">
+        <Indicator title="Network pool usage">
+          {Math.round(networkPoolUsage * 10000) / 100}
+          <span className="subtitle has-text-weight-light">%</span>
+        </Indicator>
+        <Indicator title="Request pool usage">
+          {Math.round(requestPoolUsage * 10000) / 100}
+          <span className="subtitle has-text-weight-light">%</span>
+        </Indicator>
+      </MetricsWrapper>
     </div>
   );
 }
