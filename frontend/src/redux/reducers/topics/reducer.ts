@@ -12,12 +12,15 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       return action.payload.reduce(
         (memo, topic) => {
           const { name } = topic;
-          memo.byName[name] = topic;
+          memo.byName[name] = {
+            ...memo.byName[name],
+            ...topic,
+          };
           memo.allNames.push(name);
 
           return memo;
         },
-        initialState,
+        state,
       );
     default:
       return state;

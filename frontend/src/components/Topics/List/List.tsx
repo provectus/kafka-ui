@@ -1,11 +1,11 @@
 import React from 'react';
-import { Topic } from 'types';
+import { Topic, TopicDetails } from 'types';
 import ListItem from './ListItem';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 interface Props {
-  topics: Topic[];
-  externalTopics: Topic[];
+  topics: (Topic & TopicDetails)[];
+  externalTopics: (Topic & TopicDetails)[];
 }
 
 const List: React.FC<Props> = ({

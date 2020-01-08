@@ -15,6 +15,16 @@ export interface TopicPartition {
   replicas: TopicReplica[];
 }
 
+export interface TopicDetails {
+  partitionCount?: number;
+  replicationFactor?: number;
+  replicas?: number;
+  segmentSize?: number;
+  inSyncReplicas?: number;
+  segmentCount?: number;
+  underReplicatedPartitions?: number;
+}
+
 export interface Topic {
   name: TopicName;
   internal: boolean;
@@ -22,6 +32,6 @@ export interface Topic {
 }
 
 export interface TopicsState {
-  byName: { [topicName: string]: Topic },
+  byName: { [topicName: string]: Topic & TopicDetails },
   allNames: TopicName[],
 }

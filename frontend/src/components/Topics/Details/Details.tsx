@@ -1,10 +1,10 @@
 import React from 'react';
-import { ClusterId, Topic } from 'types';
+import { ClusterId, Topic, TopicDetails } from 'types';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
-interface Props extends Topic {
+interface Props extends Topic, TopicDetails {
   clusterId: ClusterId;
 }
 
