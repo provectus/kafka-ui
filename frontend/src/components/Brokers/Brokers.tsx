@@ -5,6 +5,7 @@ import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 interface Props extends BrokerMetrics {
   clusterId: string;
@@ -49,7 +50,7 @@ const Topics: React.FC<Props> = ({
 
   return (
     <div className="section">
-      <h1 className="title is-5">Brokers overview</h1>
+      <Breadcrumb>Brokers overview</Breadcrumb>
 
       <MetricsWrapper title="Uptime">
         <Indicator title="Total Brokers">
@@ -94,7 +95,7 @@ const Topics: React.FC<Props> = ({
         </Indicator>
         <Indicator title="Min usage">
           {minDiskUsageValue}
-          <span className="subtitle has-text-weight-light"> {minDiskUsageValue}</span>
+          <span className="subtitle has-text-weight-light"> {minDiskUsageSize}</span>
         </Indicator>
         <Indicator title="Distribution">
           <span className="is-capitalized">

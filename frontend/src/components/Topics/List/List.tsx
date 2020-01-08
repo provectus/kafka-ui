@@ -1,6 +1,7 @@
 import React from 'react';
 import { Topic } from 'types';
 import ListItem from './ListItem';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 interface Props {
   topics: Topic[];
@@ -19,6 +20,8 @@ const List: React.FC<Props> = ({
 
   return (
     <div className="section">
+      <Breadcrumb>All Topics</Breadcrumb>
+
       <div className="box">
         <div className="field">
           <input
