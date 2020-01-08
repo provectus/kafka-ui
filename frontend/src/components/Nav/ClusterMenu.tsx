@@ -26,7 +26,7 @@ const ClusterMenu: React.FC<Props> = ({
 }) => (
   <ul className="menu-list">
     <li>
-      <NavLink exact to={`/clusters/${id}`} activeClassName="is-active" title={name} className="has-text-overflow-ellipsis">
+      <NavLink exact to={`/clusters/${id}/brokers`} title={name} className="has-text-overflow-ellipsis">
         {defaultCluster && <DefaultIcon />}
         {name}
       </NavLink>

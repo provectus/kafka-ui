@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Switch,
   Route,
+  Redirect,
 } from 'react-router-dom';
 import './App.scss';
 import BrokersContainer from './Brokers/BrokersContainer';
@@ -33,11 +34,13 @@ const App: React.FC<AppProps> = ({
         <NavConatiner className="Layout__navbar" />
         {isClusterListFetched ? (
           <Switch>
-            <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
-            <Route path="/clusters/:clusterId/brokers" component={BrokersContainer} />
             <Route exact path="/">
               Dashboard
             </Route>
+
+            <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
+            <Route path="/clusters/:clusterId/brokers" component={BrokersContainer} />
+            <Redirect from="/clusters/:clusterId" to="/clusters/:clusterId/brokers" />
           </Switch>
         ) : (
           <PageLoader />
