@@ -18,44 +18,42 @@ const List: React.FC<Props> = ({
   const items = showInternal ? topics : externalTopics;
 
   return (
-    <>
-      <div className="section">
-        <div className="box">
-          <div className="field">
-            <input
-              id="switchRoundedDefault"
-              type="checkbox"
-              name="switchRoundedDefault"
-              className="switch is-rounded"
-              checked={showInternal}
-              onChange={handleSwitch}
-            />
-            <label htmlFor="switchRoundedDefault">
-              Show Internal Topics
-            </label>
-          </div>
-        </div>
-        <div className="box">
-          <table className="table is-striped is-fullwidth">
-            <thead>
-              <tr>
-                <th>Topic Name</th>
-                <th>Total Partitions</th>
-                <th>Out of sync replicas</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((topic) => (
-                <ListItem
-                  key={topic.name}
-                  {...topic}
-                />
-              ))}
-            </tbody>
-          </table>
+    <div className="section">
+      <div className="box">
+        <div className="field">
+          <input
+            id="switchRoundedDefault"
+            type="checkbox"
+            name="switchRoundedDefault"
+            className="switch is-rounded"
+            checked={showInternal}
+            onChange={handleSwitch}
+          />
+          <label htmlFor="switchRoundedDefault">
+            Show Internal Topics
+          </label>
         </div>
       </div>
-    </>
+      <div className="box">
+        <table className="table is-striped is-fullwidth">
+          <thead>
+            <tr>
+              <th>Topic Name</th>
+              <th>Total Partitions</th>
+              <th>Out of sync replicas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((topic) => (
+              <ListItem
+                key={topic.name}
+                {...topic}
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   );
 }
 

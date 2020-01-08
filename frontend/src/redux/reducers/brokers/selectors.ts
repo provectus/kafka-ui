@@ -13,8 +13,22 @@ export const getIsBrokerListFetched = createSelector(
 
 const getBrokerList = createSelector(brokersState, ({ items }) => items);
 
-export const getTotalBrokers = createSelector(
-  getIsBrokerListFetched,
+export const getBrokerCount = createSelector(brokersState, ({ brokerCount }) => brokerCount);
+export const getZooKeeperStatus = createSelector(brokersState, ({ zooKeeperStatus }) => zooKeeperStatus);
+export const getActiveControllers = createSelector(brokersState, ({ activeControllers }) => activeControllers);
+export const getNetworkPoolUsage = createSelector(brokersState, ({ networkPoolUsage }) => networkPoolUsage);
+export const getRequestPoolUsage = createSelector(brokersState, ({ requestPoolUsage }) => requestPoolUsage);
+export const getOnlinePartitionCount = createSelector(brokersState, ({ onlinePartitionCount }) => onlinePartitionCount);
+export const getOfflinePartitionCount = createSelector(brokersState, ({ offlinePartitionCount }) => offlinePartitionCount);
+export const getDiskUsageDistribution = createSelector(brokersState, ({ diskUsageDistribution }) => diskUsageDistribution);
+export const getUnderReplicatedPartitionCount = createSelector(brokersState, ({ underReplicatedPartitionCount }) => underReplicatedPartitionCount);
+
+export const getMinDiskUsage = createSelector(
   getBrokerList,
-  (isFetched, brokers) => (isFetched && brokers !== undefined ? brokers.length : undefined),
+  (brokers) => Math.min(...brokers.map(({ segmentSize }) => segmentSize)),
+);
+
+export const getMaxDiskUsage = createSelector(
+  getBrokerList,
+  (brokers) => Math.max(...brokers.map(({ segmentSize }) => segmentSize)),
 );

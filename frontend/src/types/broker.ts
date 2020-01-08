@@ -8,7 +8,7 @@ export interface Broker {
   bytesOutPerSec: number;
 };
 
-export enum ZooKeeperStatus { online, offline };
+export enum ZooKeeperStatus { offline, online };
 
 export interface BrokerDiskUsage {
   brokerId: BrokerId;
@@ -22,8 +22,8 @@ export interface BrokerMetrics {
   networkPoolUsage: number;
   requestPoolUsage: number;
   onlinePartitionCount: number;
-  underReplicatedPartitionCount: number;
   offlinePartitionCount: number;
+  underReplicatedPartitionCount: number;
   diskUsageDistribution?: string;
 }
 

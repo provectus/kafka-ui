@@ -8,7 +8,7 @@ import {
   BASE_PARAMS,
 } from 'lib/constants';
 
-export const getBrokers = (clusterId: ClusterId): Promise<{ brokers: Broker[] }> =>
+export const getBrokers = (clusterId: ClusterId): Promise<Broker[]> =>
   fetch(`${BASE_URL}/clusters/${clusterId}/brokers`, { ...BASE_PARAMS })
     .then(res => res.json());
 

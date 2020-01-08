@@ -9,8 +9,8 @@ export const initialState: BrokersState =  {
   networkPoolUsage: 0,
   requestPoolUsage: 0,
   onlinePartitionCount: 0,
-  underReplicatedPartitionCount: 0,
   offlinePartitionCount: 0,
+  underReplicatedPartitionCount: 0,
   diskUsageDistribution: undefined,
 };
 

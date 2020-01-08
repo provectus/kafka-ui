@@ -9,8 +9,8 @@ import { PromiseThunk, ClusterId } from 'types';
 export const fetchBrokers = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {
   dispatch(fetchBrokersAction.request());
   try {
-    const { brokers } = await getBrokers(clusterId);
-    dispatch(fetchBrokersAction.success(brokers));
+    const payload = await getBrokers(clusterId);
+    dispatch(fetchBrokersAction.success(payload));
   } catch (e) {
     dispatch(fetchBrokersAction.failure());
   }
