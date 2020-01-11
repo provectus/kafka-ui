@@ -44,6 +44,7 @@ const List: React.FC<Props> = ({
               <th>Topic Name</th>
               <th>Total Partitions</th>
               <th>Out of sync replicas</th>
+              <th>Type</th>
             </tr>
           </thead>
           <tbody>

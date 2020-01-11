@@ -18,17 +18,15 @@ interface Props {
 const Topics: React.FC<Props> = ({
   clusterId,
   isFetched,
-  fetchBrokers,
   fetchTopicList,
 }) => {
   React.useEffect(() => { fetchTopicList(clusterId); }, [fetchTopicList, clusterId]);
-  // React.useEffect(() => { fetchBrokers(clusterId); }, [fetchBrokers, clusterId]);
 
   if (isFetched) {
     return (
       <Switch>
-        <Route exact path="/clusters/:clusterId/topics/:topicName" component={DetailsContainer} />
         <Route exact path="/clusters/:clusterId/topics" component={ListContainer} />
+        <Route path="/clusters/:clusterId/topics/:topicName" component={DetailsContainer} />
       </Switch>
     );
   }

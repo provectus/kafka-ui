@@ -8,8 +8,14 @@ const getAllNames = (state: RootState) => topicsState(state).allNames;
 const getTopicMap = (state: RootState) => topicsState(state).byName;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
+const getTopiDetailsFetchingStatus = createFetchingSelector('GET_TOPIC_DETAILS');
 
 export const getIsTopicListFetched = createSelector(
+  getTopicListFetchingStatus,
+  (status) => status === FetchStatus.fetched,
+);
+
+export const getIsTopicDetailsFetched = createSelector(
   getTopicListFetchingStatus,
   (status) => status === FetchStatus.fetched,
 );

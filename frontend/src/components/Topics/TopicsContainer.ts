@@ -1,6 +1,5 @@
 import { connect } from 'react-redux';
 import { fetchTopicList } from 'redux/reducers/topics/thunks';
-import { fetchBrokers } from 'redux/reducers/brokers/thunks';
 import Topics from './Topics';
 import { getIsTopicListFetched } from 'redux/reducers/topics/selectors';
 import { RootState, ClusterId } from 'types';
@@ -19,7 +18,6 @@ const mapStateToProps = (state: RootState, { match: { params: { clusterId } }}: 
 
 const mapDispatchToProps = {
   fetchTopicList: (clusterId: ClusterId) => fetchTopicList(clusterId),
-  fetchBrokers: (clusterId: ClusterId) => fetchBrokers(clusterId),
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Topics);

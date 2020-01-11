@@ -1,6 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { Cluster } from 'types';
 import { NavLink } from 'react-router-dom';
+import { clusterBrokersPath, clusterTopicsPath } from 'lib/paths';
 
 interface Props extends Cluster {}
 
@@ -26,15 +27,15 @@ const ClusterMenu: React.FC<Props> = ({
 }) => (
   <ul className="menu-list">
     <li>
-      <NavLink exact to={`/clusters/${id}/brokers`} title={name} className="has-text-overflow-ellipsis">
+      <NavLink exact to={clusterBrokersPath(id)} title={name} className="has-text-overflow-ellipsis">
         {defaultCluster && <DefaultIcon />}
         {name}
       </NavLink>
       <ul>
-        <NavLink to={`/clusters/${id}/brokers`} activeClassName="is-active" title="Brokers">
+        <NavLink to={clusterBrokersPath(id)} activeClassName="is-active" title="Brokers">
           Brokers
         </NavLink>
-        <NavLink to={`/clusters/${id}/topics`} activeClassName="is-active" title="Topics">
+        <NavLink to={clusterTopicsPath(id)} activeClassName="is-active" title="Topics">
           Topics
         </NavLink>
       </ul>

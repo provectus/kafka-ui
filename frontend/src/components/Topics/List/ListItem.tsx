@@ -1,9 +1,11 @@
 import React from 'react';
+import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
 import { Topic, TopicDetails } from 'types';
 
 const ListItem: React.FC<Topic & TopicDetails> = ({
   name,
+  internal,
   partitions,
 }) => {
   const outOfSyncReplicas = React.useMemo(() => {
@@ -26,6 +28,11 @@ const ListItem: React.FC<Topic & TopicDetails> = ({
       </td>
       <td>{partitions.length}</td>
       <td>{outOfSyncReplicas}</td>
+      <td>
+        <div className={cx('tag is-small', internal ? 'is-light' : 'is-success')}>
+          {internal ? 'Internal' : 'External'}
+        </div>
+      </td>
     </tr>
   );
 }
