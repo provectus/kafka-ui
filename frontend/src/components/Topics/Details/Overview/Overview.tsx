@@ -19,6 +19,7 @@ const Overview: React.FC<Props> = ({
   inSyncReplicas,
   replicas,
   partitionCount,
+  internal,
   replicationFactor,
   fetchTopicDetails,
 }) => {
@@ -34,18 +35,23 @@ const Overview: React.FC<Props> = ({
   return (
     <>
       <MetricsWrapper wrapperClassName="notification">
-        <Indicator title="Partitions">
+        <Indicator label="Partitions">
           {partitionCount}
         </Indicator>
-        <Indicator title="Replication Factor">
+        <Indicator label="Replication Factor">
           {replicationFactor}
         </Indicator>
-        <Indicator title="Under replicated partitions">
+        <Indicator label="URP" title="Under replicated partitions">
           {underReplicatedPartitions}
         </Indicator>
-        <Indicator title="In sync replicas">
+        <Indicator label="In sync replicas">
           {inSyncReplicas}
           <span className="subtitle has-text-weight-light"> of {replicas}</span>
+        </Indicator>
+        <Indicator label="Type">
+          <div className="tag is-primary">
+            {internal ? 'Internal' : 'External'}
+          </div>
         </Indicator>
       </MetricsWrapper>
 

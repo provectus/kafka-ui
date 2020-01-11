@@ -53,13 +53,13 @@ const Topics: React.FC<Props> = ({
       <Breadcrumb>Brokers overview</Breadcrumb>
 
       <MetricsWrapper title="Uptime">
-        <Indicator title="Total Brokers">
+        <Indicator label="Total Brokers">
           {brokerCount}
         </Indicator>
-        <Indicator title="Active Controllers">
+        <Indicator label="Active Controllers">
           {activeControllers}
         </Indicator>
-        <Indicator title="Zookeeper Status">
+        <Indicator label="Zookeeper Status">
           <span className={cx('tag', zkOnline ? 'is-primary' : 'is-danger')}>
             {zkOnline ? 'Online' : 'Offline'}
           </span>
@@ -67,21 +67,21 @@ const Topics: React.FC<Props> = ({
       </MetricsWrapper>
 
       <MetricsWrapper title="Partitions">
-        <Indicator title="Online">
+        <Indicator label="Online">
           <span className={cx({'has-text-danger': offlinePartitionCount !== 0})}>
             {onlinePartitionCount}
           </span>
           <span className="subtitle has-text-weight-light"> of {onlinePartitionCount + offlinePartitionCount}</span>
         </Indicator>
-        <Indicator title="Under Replicated">
+        <Indicator label="URP" title="Under replicated partitions">
           {underReplicatedPartitionCount}
         </Indicator>
-        <Indicator title="In Sync Replicas">
+        <Indicator label="In Sync Replicas">
           <span className="has-text-grey-lighter">
             Soon
           </span>
         </Indicator>
-        <Indicator title="Out of Sync Replicas">
+        <Indicator label="Out of Sync Replicas">
           <span className="has-text-grey-lighter">
             Soon
           </span>
@@ -89,15 +89,15 @@ const Topics: React.FC<Props> = ({
       </MetricsWrapper>
 
       <MetricsWrapper title="Disk">
-        <Indicator title="Max usage">
+        <Indicator label="Max usage">
           {maxDiskUsageValue}
           <span className="subtitle has-text-weight-light"> {maxDiskUsageSize}</span>
         </Indicator>
-        <Indicator title="Min usage">
+        <Indicator label="Min usage">
           {minDiskUsageValue}
           <span className="subtitle has-text-weight-light"> {minDiskUsageSize}</span>
         </Indicator>
-        <Indicator title="Distribution">
+        <Indicator label="Distribution">
           <span className="is-capitalized">
             {diskUsageDistribution}
           </span>
@@ -105,11 +105,11 @@ const Topics: React.FC<Props> = ({
       </MetricsWrapper>
 
       <MetricsWrapper title="System">
-        <Indicator title="Network pool usage">
+        <Indicator label="Network pool usage">
           {Math.round(networkPoolUsage * 10000) / 100}
           <span className="subtitle has-text-weight-light">%</span>
         </Indicator>
-        <Indicator title="Request pool usage">
+        <Indicator label="Request pool usage">
           {Math.round(requestPoolUsage * 10000) / 100}
           <span className="subtitle has-text-weight-light">%</span>
         </Indicator>

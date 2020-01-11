@@ -28,26 +28,36 @@ const Details: React.FC<Props> = ({
             {topicName}
           </Breadcrumb>
         </div>
-        <div className="level-item level-right">
-
-        </div>
       </div>
 
       <div className="box">
-        <div className="tabs">
-          <ul>
-            <li className="is-active">
-              <NavLink exact to={clusterTopicPath(clusterId, topicName)}>Overview</NavLink>
-            </li>
-            <li>
-              <NavLink exact to={clusterTopicMessagesPath(clusterId, topicName)}>Messages</NavLink>
-            </li>
-            <li>
-              <NavLink exact to={clusterTopicSettingsPath(clusterId, topicName)}>Settings</NavLink>
-            </li>
-          </ul>
-        </div>
-
+        <nav className="navbar" role="navigation">
+          <NavLink
+            exact
+            to={clusterTopicPath(clusterId, topicName)}
+            className="navbar-item is-tab"
+            activeClassName="is-active is-primary"
+          >
+            Overview
+          </NavLink>
+          <NavLink
+            exact
+            to={clusterTopicMessagesPath(clusterId, topicName)}
+            className="navbar-item is-tab"
+            activeClassName="is-active"
+          >
+            Messages
+          </NavLink>
+          <NavLink
+            exact
+            to={clusterTopicSettingsPath(clusterId, topicName)}
+            className="navbar-item is-tab"
+            activeClassName="is-active"
+          >
+            Settings
+          </NavLink>
+        </nav>
+        <br />
         <Switch>
           <Route exact path="/clusters/:clusterId/topics/:topicName/messages" component={MessagesContainer} />
           <Route exact path="/clusters/:clusterId/topics/:topicName/settings" component={SettingsContainer} />
