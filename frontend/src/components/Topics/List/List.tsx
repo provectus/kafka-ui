@@ -1,11 +1,11 @@
 import React from 'react';
-import { Topic, TopicDetails } from 'types';
+import { TopicWithDetailedInfo } from 'types';
 import ListItem from './ListItem';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 interface Props {
-  topics: (Topic & TopicDetails)[];
-  externalTopics: (Topic & TopicDetails)[];
+  topics: (TopicWithDetailedInfo)[];
+  externalTopics: (TopicWithDetailedInfo)[];
 }
 
 const List: React.FC<Props> = ({
@@ -48,9 +48,9 @@ const List: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {items.map((topic) => (
+            {items.map((topic, index) => (
               <ListItem
-                key={topic.name}
+                key={`topic-list-item-key-${index}`}
                 {...topic}
               />
             ))}

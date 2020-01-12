@@ -31,7 +31,7 @@ const Nav: React.FC<Props> = ({
     </p>
     {!isClusterListFetched && <div className="loader" />}
 
-    {isClusterListFetched && clusters.map((cluster) => <ClusterMenu {...cluster} key={cluster.id}/>)}
+    {isClusterListFetched && clusters.map((cluster, index) => <ClusterMenu {...cluster} key={`cluster-list-item-key-${index}`}/>)}
   </aside>
 );
 

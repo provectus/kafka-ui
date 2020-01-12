@@ -1,9 +1,9 @@
 import React from 'react';
 import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
-import { Topic, TopicDetails } from 'types';
+import { TopicWithDetailedInfo } from 'types';
 
-const ListItem: React.FC<Topic & TopicDetails> = ({
+const ListItem: React.FC<TopicWithDetailedInfo> = ({
   name,
   internal,
   partitions,

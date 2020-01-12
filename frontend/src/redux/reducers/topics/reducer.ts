@@ -42,6 +42,17 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           }
         }
       }
+    case actionType.GET_TOPIC_CONFIG__SUCCESS:
+      return {
+        ...state,
+        byName: {
+          ...state.byName,
+          [action.payload.topicName]: {
+            ...state.byName[action.payload.topicName],
+            config: action.payload.config,
+          }
+        }
+      }
     default:
       return state;
   }

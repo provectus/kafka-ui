@@ -17,8 +17,8 @@ const Breadcrumb: React.FC<Props> = ({
   return (
     <nav className="breadcrumb" aria-label="breadcrumbs">
       <ul>
-        {links && links.map(({ label, href }) => (
-          <li key={label}>
+        {links && links.map(({ label, href }, index) => (
+          <li key={`breadcrumb-item-key-${index}`}>
             <NavLink to={href}>{label}</NavLink>
           </li>
         ))}

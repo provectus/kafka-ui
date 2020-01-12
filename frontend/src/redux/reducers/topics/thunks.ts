@@ -1,10 +1,12 @@
 import {
   getTopics,
   getTopicDetails,
+  getTopicConfig,
 } from 'lib/api';
 import {
   fetchTopicListAction,
   fetchTopicDetailsAction,
+  fetchTopicConfigAction,
 } from './actions';
 import { PromiseThunk, ClusterId, TopicName } from 'types';
 
@@ -25,5 +27,15 @@ export const fetchTopicDetails = (clusterId: ClusterId, topicName: TopicName): P
     dispatch(fetchTopicDetailsAction.success({ topicName, details: topicDetails }));
   } catch (e) {
     dispatch(fetchTopicDetailsAction.failure());
+  }
+}
+
+export const fetchTopicConfig = (clusterId: ClusterId, topicName: TopicName): PromiseThunk<void> => async (dispatch) => {
+  dispatch(fetchTopicConfigAction.request());
+  try {
+    const config = await getTopicConfig(clusterId, topicName);
+    dispatch(fetchTopicConfigAction.success({ topicName, config }));
+  } catch (e) {
+    dispatch(fetchTopicConfigAction.failure());
   }
 }

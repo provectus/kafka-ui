@@ -34,7 +34,7 @@ const Overview: React.FC<Props> = ({
 
   return (
     <>
-      <MetricsWrapper wrapperClassName="notification">
+      <MetricsWrapper>
         <Indicator label="Partitions">
           {partitionCount}
         </Indicator>
@@ -49,28 +49,29 @@ const Overview: React.FC<Props> = ({
           <span className="subtitle has-text-weight-light"> of {replicas}</span>
         </Indicator>
         <Indicator label="Type">
-          <div className="tag is-primary">
+          <span className="tag is-primary">
             {internal ? 'Internal' : 'External'}
-          </div>
+          </span>
         </Indicator>
       </MetricsWrapper>
-
-      <table className="table is-striped is-fullwidth">
-        <thead>
-          <tr>
-            <th>Partition ID</th>
-            <th>Broker leader</th>
-          </tr>
-        </thead>
-        <tbody>
-          {partitions.map(({ partition, leader }) => (
+      <div className="box">
+        <table className="table is-striped is-fullwidth">
+          <thead>
             <tr>
-              <td>{partition}</td>
-              <td>{leader}</td>
+              <th>Partition ID</th>
+              <th>Broker leader</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {partitions.map(({ partition, leader }) => (
+              <tr key={`partition-list-item-key-${partition}`}>
+                <td>{partition}</td>
+                <td>{leader}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </>
   );
 }

@@ -8,7 +8,8 @@ const getAllNames = (state: RootState) => topicsState(state).allNames;
 const getTopicMap = (state: RootState) => topicsState(state).byName;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
-const getTopiDetailsFetchingStatus = createFetchingSelector('GET_TOPIC_DETAILS');
+const getTopicDetailsFetchingStatus = createFetchingSelector('GET_TOPIC_DETAILS');
+const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 
 export const getIsTopicListFetched = createSelector(
   getTopicListFetchingStatus,
@@ -16,7 +17,12 @@ export const getIsTopicListFetched = createSelector(
 );
 
 export const getIsTopicDetailsFetched = createSelector(
-  getTopicListFetchingStatus,
+  getTopicDetailsFetchingStatus,
+  (status) => status === FetchStatus.fetched,
+);
+
+export const getTopicConfigFetched = createSelector(
+  getTopicConfigFetchingStatus,
   (status) => status === FetchStatus.fetched,
 );
 
@@ -45,3 +51,5 @@ export const getTopicByName = createSelector(
   getTopicName,
   (topics, topicName) => topics[topicName],
 );
+
+export const getTopicConfig = createSelector(getTopicByName, ({ config }) => config);

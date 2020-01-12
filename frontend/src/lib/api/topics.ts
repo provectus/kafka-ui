@@ -3,14 +3,14 @@ import {
   Topic,
   ClusterId,
   TopicDetails,
-  TopicConfigs,
+  TopicConfig,
 } from 'types';
 import {
   BASE_URL,
   BASE_PARAMS,
 } from 'lib/constants';
 
-export const getTopicConfig = (clusterId: ClusterId, topicName: TopicName): Promise<TopicConfigs> =>
+export const getTopicConfig = (clusterId: ClusterId, topicName: TopicName): Promise<TopicConfig[]> =>
   fetch(`${BASE_URL}/clusters/${clusterId}/topics/${topicName}/config`, { ...BASE_PARAMS })
     .then(res => res.json());
 

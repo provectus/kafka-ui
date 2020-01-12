@@ -1,10 +1,15 @@
 import { connect } from 'react-redux';
+import { RootState, ClusterId, TopicName } from 'types';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
-  fetchTopicDetails,
+  fetchTopicConfig,
 } from 'redux/reducers/topics/thunks';
 import Settings from './Settings';
-import { RootState } from 'types';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
+import {
+  getTopicConfig,
+  getTopicConfigFetched,
+} from 'redux/reducers/topics/selectors';
+
 
 interface RouteProps {
   clusterId: string;
@@ -16,8 +21,14 @@ interface OwnProps extends RouteComponentProps<RouteProps> { }
 const mapStateToProps = (state: RootState, { match: { params: { topicName, clusterId } } }: OwnProps) => ({
   clusterId,
   topicName,
+  config: getTopicConfig(state, topicName),
+  isFetched: getTopicConfigFetched(state),
 });
 
+const mapDispatchToProps = {
+  fetchTopicConfig: (clusterId: ClusterId, topicName: TopicName) => fetchTopicConfig(clusterId, topicName),
+}
+
 export default withRouter(
-  connect(mapStateToProps)(Settings)
+  connect(mapStateToProps, mapDispatchToProps)(Settings)
 );

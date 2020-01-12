@@ -1,5 +1,4 @@
 import React from 'react';
-import cx from 'classnames';
 import { ClusterId, Topic, TopicDetails, TopicName } from 'types';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink, Switch, Route } from 'react-router-dom';
@@ -11,7 +10,6 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterId: ClusterId;
   topicName: TopicName;
-  fetchTopicDetails: (clusterId: ClusterId, topicName: TopicName) => void;
 }
 
 const Details: React.FC<Props> = ({

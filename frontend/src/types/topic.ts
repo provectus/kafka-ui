@@ -1,6 +1,8 @@
 export type TopicName = string;
-export interface TopicConfigs {
-  [key: string]: string;
+export interface TopicConfig {
+  name: string;
+  value: string;
+  defaultValue: string;
 }
 
 export interface TopicReplica {
@@ -31,7 +33,11 @@ export interface Topic {
   partitions: TopicPartition[];
 }
 
+export interface TopicWithDetailedInfo extends Topic, TopicDetails {
+  config?: TopicConfig[];
+}
+
 export interface TopicsState {
-  byName: { [topicName: string]: Topic & TopicDetails },
+  byName: { [topicName: string]: TopicWithDetailedInfo },
   allNames: TopicName[],
 }
