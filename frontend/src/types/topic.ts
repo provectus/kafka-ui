@@ -1,4 +1,10 @@
 export type TopicName = string;
+
+export enum CleanupPolicy {
+  Delete = 'delete',
+  Compact = 'compact',
+}
+
 export interface TopicConfig {
   name: string;
   value: string;
@@ -41,3 +47,14 @@ export interface TopicsState {
   byName: { [topicName: string]: TopicWithDetailedInfo },
   allNames: TopicName[],
 }
+
+export interface TopicFormData {
+  name: string;
+  partitions: number;
+  replicationFactor: number;
+  minInSyncReplicas: number;
+  cleanupPolicy: string;
+  retentionMs: number;
+  retentionBytes: number;
+  maxMessageBytes: number;
+};

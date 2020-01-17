@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'types';
-import { getTopicList, getExternalTopicList } from 'redux/reducers/topics/selectors';
-import List from './List';
+import New from './New';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {
@@ -12,10 +11,9 @@ interface OwnProps extends RouteComponentProps<RouteProps> { }
 
 const mapStateToProps = (state: RootState, { match: { params: { clusterId } } }: OwnProps) => ({
   clusterId,
-  topics: getTopicList(state),
-  externalTopics: getExternalTopicList(state),
 });
 
+
 export default withRouter(
-  connect(mapStateToProps)(List)
+  connect(mapStateToProps)(New)
 );

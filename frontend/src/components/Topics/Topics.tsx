@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClusterId } from 'types';
 import {
   Switch,
   Route,
@@ -6,7 +7,7 @@ import {
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { ClusterId } from 'types';
+import NewContainer from './New/NewContainer';
 
 interface Props {
   clusterId: string;
@@ -26,6 +27,7 @@ const Topics: React.FC<Props> = ({
     return (
       <Switch>
         <Route exact path="/clusters/:clusterId/topics" component={ListContainer} />
+        <Route exact path="/clusters/:clusterId/topics/new" component={NewContainer} />
         <Route path="/clusters/:clusterId/topics/:topicName" component={DetailsContainer} />
       </Switch>
     );

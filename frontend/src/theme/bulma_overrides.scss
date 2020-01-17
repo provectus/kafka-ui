@@ -28,6 +28,10 @@
   animation: fadein .5s;
 }
 
+.select.is-block select {
+  width: 100%;
+}
+
 @keyframes fadein {
   from { opacity: 0; }
   to   { opacity: 1; }
