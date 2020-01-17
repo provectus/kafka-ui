@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, CleanupPolicy, TopicFormData } from 'types';
+import { ClusterId, CleanupPolicy, TopicFormData, TopicName } from 'types';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterTopicsPath } from 'lib/paths';
 import { useForm, ErrorMessage } from 'react-hook-form';
@@ -11,16 +11,34 @@ import {
 
 interface Props {
   clusterId: ClusterId;
+  isTopicCreated: boolean;
+  createTopic: (clusterId: ClusterId, form: TopicFormData) => void;
+  redirectToTopicPath: (clusterId: ClusterId, topicName: TopicName) => void;
 }
 
 const New: React.FC<Props> = ({
   clusterId,
+  isTopicCreated,
+  createTopic,
+  redirectToTopicPath,
 }) => {
-  const { register, handleSubmit, errors } = useForm<TopicFormData>(); // initialise the hook
+  const { register, handleSubmit, errors, getValues } = useForm<TopicFormData>();
+  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
-  const onSubmit = (data: TopicFormData) => {
-    console.log(data);
-  };
+  React.useEffect(
+    () => {
+      if (isSubmitting && isTopicCreated) {
+        const { name } = getValues();
+        redirectToTopicPath(clusterId, name);
+      }
+    },
+    [isSubmitting, isTopicCreated, redirectToTopicPath, clusterId, getValues],
+  );
+
+  const onSubmit = async (data: TopicFormData) => {
+    setIsSubmitting(true);
+    createTopic(clusterId, data);
+  }
 
   return (
     <div className="section">
@@ -37,7 +55,6 @@ const New: React.FC<Props> = ({
       <div className="box">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="columns">
-
             <div className="column is-three-quarters">
               <label className="label">
                 Topic Name *
@@ -54,6 +71,7 @@ const New: React.FC<Props> = ({
                 })}
                 name="name"
                 autoComplete="off"
+                disabled={isSubmitting}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="name" />
@@ -71,6 +89,7 @@ const New: React.FC<Props> = ({
                 defaultValue="1"
                 ref={register({ required: 'Number of partitions is required.' })}
                 name="partitions"
+                disabled={isSubmitting}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="partitions" />
@@ -90,6 +109,7 @@ const New: React.FC<Props> = ({
                 defaultValue="1"
                 ref={register({ required: 'Replication Factor is required.' })}
                 name="replicationFactor"
+                disabled={isSubmitting}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="replicationFactor" />
@@ -107,6 +127,7 @@ const New: React.FC<Props> = ({
                 defaultValue="1"
                 ref={register({ required: 'Min In Sync Replicas is required.' })}
                 name="minInSyncReplicas"
+                disabled={isSubmitting}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="minInSyncReplicas" />
@@ -120,7 +141,12 @@ const New: React.FC<Props> = ({
                 Cleanup policy
               </label>
               <div className="select is-block">
-                <select defaultValue={CleanupPolicy.Delete} name="cleanupPolicy">
+                <select
+                  defaultValue={CleanupPolicy.Delete}
+                  name="cleanupPolicy"
+                  ref={register}
+                  disabled={isSubmitting}
+                >
                   <option value={CleanupPolicy.Delete}>
                     Delete
                   </option>
@@ -140,6 +166,7 @@ const New: React.FC<Props> = ({
                   defaultValue={MILLISECONDS_IN_DAY * 7}
                   name="retentionMs"
                   ref={register}
+                  disabled={isSubmitting}
                 >
                   <option value={MILLISECONDS_IN_DAY / 2 }>
                     12 hours
@@ -169,6 +196,7 @@ const New: React.FC<Props> = ({
                   defaultValue={-1}
                   name="retentionBytes"
                   ref={register}
+                  disabled={isSubmitting}
                 >
                   <option value={-1}>
                     Not Set
@@ -201,6 +229,7 @@ const New: React.FC<Props> = ({
                 defaultValue="1000012"
                 ref={register({ required: 'Maximum message size in bytes is required' })}
                 name="maxMessageBytes"
+                disabled={isSubmitting}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="maxMessageBytes" />
@@ -208,7 +237,7 @@ const New: React.FC<Props> = ({
             </div>
           </div>
 
-          <input type="submit" className="button is-primary"/>
+          <input type="submit" className="button is-primary" disabled={isSubmitting} />
         </form>
       </div>
     </div>

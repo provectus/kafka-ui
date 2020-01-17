@@ -4,6 +4,7 @@ import {
   ClusterId,
   TopicDetails,
   TopicConfig,
+  TopicFormData,
 } from 'types';
 import {
   BASE_URL,
@@ -21,3 +22,33 @@ export const getTopicDetails = (clusterId: ClusterId, topicName: TopicName): Pro
 export const getTopics = (clusterId: ClusterId): Promise<Topic[]> =>
   fetch(`${BASE_URL}/clusters/${clusterId}/topics`, { ...BASE_PARAMS })
     .then(res => res.json());
+
+export const postTopic = (clusterId: ClusterId, form: TopicFormData): Promise<Response> => {
+  const {
+    name,
+    partitions,
+    replicationFactor,
+    cleanupPolicy,
+    retentionBytes,
+    retentionMs,
+    maxMessageBytes,
+    minInSyncReplicas,
+  } = form;
+  const body = JSON.stringify({
+    name,
+    partitions,
+    replicationFactor,
+    configs: {
+      'cleanup.policy': cleanupPolicy,
+      'retention.ms': retentionMs,
+      'retention.bytes': retentionBytes,
+      'max.message.bytes': maxMessageBytes,
+      'min.insync.replicas': minInSyncReplicas,
+    }
+  });
+  return fetch(`${BASE_URL}/clusters/${clusterId}/topics`, {
+    ...BASE_PARAMS,
+    method: 'POST',
+    body,
+  });
+}

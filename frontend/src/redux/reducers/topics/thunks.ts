@@ -2,13 +2,15 @@ import {
   getTopics,
   getTopicDetails,
   getTopicConfig,
+  postTopic,
 } from 'lib/api';
 import {
   fetchTopicListAction,
   fetchTopicDetailsAction,
   fetchTopicConfigAction,
+  createTopicAction,
 } from './actions';
-import { PromiseThunk, ClusterId, TopicName } from 'types';
+import { PromiseThunk, ClusterId, TopicName, TopicFormData } from 'types';
 
 export const fetchTopicList = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {
   dispatch(fetchTopicListAction.request());
@@ -37,5 +39,16 @@ export const fetchTopicConfig = (clusterId: ClusterId, topicName: TopicName): Pr
     dispatch(fetchTopicConfigAction.success({ topicName, config }));
   } catch (e) {
     dispatch(fetchTopicConfigAction.failure());
+  }
+}
+
+export const createTopic = (clusterId: ClusterId, form: TopicFormData): PromiseThunk<void> => async (dispatch) => {
+  dispatch(createTopicAction.request());
+
+  try {
+    await postTopic(clusterId, form);
+    dispatch(createTopicAction.success());
+  } catch (e) {
+    dispatch(createTopicAction.failure());
   }
 }

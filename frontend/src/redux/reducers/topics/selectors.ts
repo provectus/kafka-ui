@@ -10,6 +10,7 @@ const getTopicMap = (state: RootState) => topicsState(state).byName;
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
 const getTopicDetailsFetchingStatus = createFetchingSelector('GET_TOPIC_DETAILS');
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
+const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 
 export const getIsTopicListFetched = createSelector(
   getTopicListFetchingStatus,
@@ -23,6 +24,11 @@ export const getIsTopicDetailsFetched = createSelector(
 
 export const getTopicConfigFetched = createSelector(
   getTopicConfigFetchingStatus,
+  (status) => status === FetchStatus.fetched,
+);
+
+export const getTopicCreated = createSelector(
+  getTopicCreationStatus,
   (status) => status === FetchStatus.fetched,
 );
 

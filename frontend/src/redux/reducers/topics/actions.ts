@@ -19,3 +19,9 @@ export const fetchTopicConfigAction = createAsyncAction(
   ActionType.GET_TOPIC_CONFIG__SUCCESS,
   ActionType.GET_TOPIC_CONFIG__FAILURE,
 )<undefined, { topicName: TopicName, config: TopicConfig[] }, undefined>();
+
+export const createTopicAction = createAsyncAction(
+  ActionType.POST_TOPIC__REQUEST,
+  ActionType.POST_TOPIC__SUCCESS,
+  ActionType.POST_TOPIC__FAILURE,
+)<undefined, undefined, undefined>();
