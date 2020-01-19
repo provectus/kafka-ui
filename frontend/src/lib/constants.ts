@@ -6,7 +6,7 @@ export const BASE_PARAMS: RequestInit = {
   },
 };
 
-export const BASE_URL = 'http://localhost:3004';
+export const BASE_URL = process.env.REACT_APP_API_URL;
 
 export const TOPIC_NAME_VALIDATION_PATTERN = RegExp(/^[.,A-Za-z0-9_-]+$/);
 export const MILLISECONDS_IN_DAY = 86_400_000;
