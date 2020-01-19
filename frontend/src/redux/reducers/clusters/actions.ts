@@ -1,6 +1,6 @@
 import { createAsyncAction} from 'typesafe-actions';
 import ActionType from './actionType';
-import { Cluster } from 'types';
+import { Cluster } from 'lib/interfaces';
 
 export const fetchClusterListAction = createAsyncAction(
   ActionType.GET_CLUSTERS__REQUEST,

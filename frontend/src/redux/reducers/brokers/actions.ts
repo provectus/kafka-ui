@@ -1,6 +1,6 @@
 import { createAsyncAction} from 'typesafe-actions';
 import ActionType from './actionType';
-import { Broker, BrokerMetrics } from 'types';
+import { Broker, BrokerMetrics } from 'lib/interfaces';
 
 export const fetchBrokersAction = createAsyncAction(
   ActionType.GET_BROKERS__REQUEST,

@@ -13,4 +13,6 @@ export interface Cluster {
   brokerCount: number;
   onlinePartitionCount: number;
   topicCount: number;
+  bytesInPerSec: number;
+  bytesOutPerSec: number;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, Topic, TopicDetails, TopicName } from 'types';
+import { ClusterId, Topic, TopicDetails, TopicName } from 'lib/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import { clusterTopicsPath, clusterTopicSettingsPath, clusterTopicPath, clusterTopicMessagesPath } from 'lib/paths';

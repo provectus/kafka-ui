@@ -1,4 +1,4 @@
-import { ClusterId, TopicName } from "types";
+import { ClusterId, TopicName } from 'lib/interfaces';
 
 const clusterPath = (clusterId: ClusterId) => `/clusters/${clusterId}`;
 

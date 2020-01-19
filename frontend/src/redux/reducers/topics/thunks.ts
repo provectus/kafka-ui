@@ -10,7 +10,7 @@ import {
   fetchTopicConfigAction,
   createTopicAction,
 } from './actions';
-import { PromiseThunk, ClusterId, TopicName, TopicFormData } from 'types';
+import { PromiseThunk, ClusterId, TopicName, TopicFormData } from 'lib/interfaces';
 
 export const fetchTopicList = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {
   dispatch(fetchTopicListAction.request());

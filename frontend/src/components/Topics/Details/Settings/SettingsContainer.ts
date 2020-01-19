@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState, ClusterId, TopicName } from 'types';
+import { RootState, ClusterId, TopicName } from 'lib/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   fetchTopicConfig,

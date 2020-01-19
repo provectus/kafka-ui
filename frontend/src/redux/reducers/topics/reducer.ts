@@ -1,4 +1,4 @@
-import { Action, TopicsState, Topic } from 'types';
+import { Action, TopicsState, Topic } from 'lib/interfaces';
 import actionType from 'redux/reducers/actionType';
 
 export const initialState: TopicsState = {

@@ -3,7 +3,7 @@ import {
   fetchTopicDetails,
 } from 'redux/reducers/topics/thunks';
 import Overview from './Overview';
-import { RootState, TopicName, ClusterId } from 'types';
+import { RootState, TopicName, ClusterId } from 'lib/interfaces';
 import { getTopicByName, getIsTopicDetailsFetched } from 'redux/reducers/topics/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 

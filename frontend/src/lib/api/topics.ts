@@ -5,7 +5,7 @@ import {
   TopicDetails,
   TopicConfig,
   TopicFormData,
-} from 'types';
+} from 'lib/interfaces';
 import {
   BASE_URL,
   BASE_PARAMS,

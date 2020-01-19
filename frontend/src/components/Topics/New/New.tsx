@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, CleanupPolicy, TopicFormData, TopicName } from 'types';
+import { ClusterId, CleanupPolicy, TopicFormData, TopicName } from 'lib/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterTopicsPath } from 'lib/paths';
 import { useForm, ErrorMessage } from 'react-hook-form';

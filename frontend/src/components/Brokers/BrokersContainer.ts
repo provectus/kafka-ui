@@ -5,7 +5,7 @@ import {
 } from 'redux/reducers/brokers/thunks';
 import Brokers from './Brokers';
 import * as brokerSelectors from 'redux/reducers/brokers/selectors';
-import { RootState, ClusterId } from 'types';
+import { RootState, ClusterId } from 'lib/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState, ClusterId, TopicFormData, TopicName, Action } from 'types';
+import { RootState, ClusterId, TopicFormData, TopicName, Action } from 'lib/interfaces';
 import New from './New';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { createTopic } from 'redux/reducers/topics/thunks';

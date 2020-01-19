@@ -2,7 +2,7 @@ import {
   Broker,
   ClusterId,
   BrokerMetrics,
-} from 'types';
+} from 'lib/interfaces';
 import {
   BASE_URL,
   BASE_PARAMS,

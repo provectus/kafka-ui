@@ -4,7 +4,7 @@ import {
 import {
   fetchClusterListAction,
 } from './actions';
-import { Cluster, PromiseThunk } from 'types';
+import { Cluster, PromiseThunk } from 'lib/interfaces';
 
 export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
   dispatch(fetchClusterListAction.request());

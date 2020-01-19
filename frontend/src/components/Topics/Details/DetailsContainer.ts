@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Details from './Details';
-import { RootState } from 'types';
+import { RootState } from 'lib/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {

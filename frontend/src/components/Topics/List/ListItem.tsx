@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
-import { TopicWithDetailedInfo } from 'types';
+import { TopicWithDetailedInfo } from 'lib/interfaces';
 
 const ListItem: React.FC<TopicWithDetailedInfo> = ({
   name,

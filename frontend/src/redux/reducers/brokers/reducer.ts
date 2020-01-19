@@ -1,4 +1,4 @@
-import { Action, BrokersState, ZooKeeperStatus, BrokerMetrics } from 'types';
+import { Action, BrokersState, ZooKeeperStatus, BrokerMetrics } from 'lib/interfaces';
 import actionType from 'redux/reducers/actionType';
 
 export const initialState: BrokersState =  {

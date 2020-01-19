@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, BrokerMetrics, ZooKeeperStatus } from 'types';
+import { ClusterId, BrokerMetrics, ZooKeeperStatus } from 'lib/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';

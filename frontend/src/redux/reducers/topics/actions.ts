@@ -1,6 +1,6 @@
 import { createAsyncAction} from 'typesafe-actions';
 import ActionType from './actionType';
-import { Topic, TopicDetails, TopicName, TopicConfig} from 'types';
+import { Topic, TopicDetails, TopicName, TopicConfig} from 'lib/interfaces';
 
 export const fetchTopicListAction = createAsyncAction(
   ActionType.GET_TOPICS__REQUEST,

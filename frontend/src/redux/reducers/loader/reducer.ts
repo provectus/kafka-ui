@@ -1,4 +1,4 @@
-import { FetchStatus, Action, LoaderState } from 'types';
+import { FetchStatus, Action, LoaderState } from 'lib/interfaces';
 
 export const initialState: LoaderState = {};
 

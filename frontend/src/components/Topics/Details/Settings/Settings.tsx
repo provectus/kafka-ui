@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, TopicName, TopicConfig } from 'types';
+import { ClusterId, TopicName, TopicConfig } from 'lib/interfaces';
 
 interface Props {
   clusterId: ClusterId;

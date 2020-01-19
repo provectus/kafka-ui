@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { fetchTopicList } from 'redux/reducers/topics/thunks';
 import Topics from './Topics';
 import { getIsTopicListFetched } from 'redux/reducers/topics/selectors';
-import { RootState, ClusterId } from 'types';
+import { RootState, ClusterId } from 'lib/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {

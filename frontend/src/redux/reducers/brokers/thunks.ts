@@ -3,7 +3,7 @@ import {
   fetchBrokersAction,
   fetchBrokerMetricsAction,
 } from './actions';
-import { PromiseThunk, ClusterId } from 'types';
+import { PromiseThunk, ClusterId } from 'lib/interfaces';
 
 
 export const fetchBrokers = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState, FetchStatus, BrokersState } from 'types';
+import { RootState, FetchStatus, BrokersState } from 'lib/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const brokersState = ({ brokers }: RootState): BrokersState => brokers;

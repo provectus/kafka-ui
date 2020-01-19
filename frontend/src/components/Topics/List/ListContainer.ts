@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState } from 'types';
+import { RootState } from 'lib/interfaces';
 import { getTopicList, getExternalTopicList } from 'redux/reducers/topics/selectors';
 import List from './List';
 import { withRouter, RouteComponentProps } from 'react-router-dom';

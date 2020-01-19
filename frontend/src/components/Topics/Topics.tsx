@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId } from 'types';
+import { ClusterId } from 'lib/interfaces';
 import {
   Switch,
   Route,

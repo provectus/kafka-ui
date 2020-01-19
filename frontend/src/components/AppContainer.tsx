@@ -4,7 +4,7 @@ import {
 } from 'redux/reducers/clusters/thunks';
 import App from './App';
 import { getIsClusterListFetched } from 'redux/reducers/clusters/selectors';
-import { RootState } from 'types';
+import { RootState } from 'lib/interfaces';
 
 const mapStateToProps = (state: RootState) => ({
   isClusterListFetched: getIsClusterListFetched(state),

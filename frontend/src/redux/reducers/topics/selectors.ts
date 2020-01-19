@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState, TopicName, FetchStatus, TopicsState } from 'types';
+import { RootState, TopicName, FetchStatus, TopicsState } from 'lib/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;

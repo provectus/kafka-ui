@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { Cluster } from 'types';
+import { Cluster } from 'lib/interfaces';
 import { NavLink } from 'react-router-dom';
 import { clusterBrokersPath, clusterTopicsPath } from 'lib/paths';
 
