@@ -9,6 +9,7 @@ import BrokersContainer from './Brokers/BrokersContainer';
 import TopicsContainer from './Topics/TopicsContainer';
 import NavConatiner from './Nav/NavConatiner';
 import PageLoader from './common/PageLoader/PageLoader';
+import Dashboard from './Dashboard/Dashboard';
 
 interface AppProps {
   isClusterListFetched: boolean;
@@ -34,10 +35,7 @@ const App: React.FC<AppProps> = ({
         <NavConatiner className="Layout__navbar" />
         {isClusterListFetched ? (
           <Switch>
-            <Route exact path="/">
-              Dashboard
-            </Route>
-
+            <Route exact path="/" component={Dashboard} />
             <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
             <Route path="/clusters/:clusterId/brokers" component={BrokersContainer} />
             <Redirect from="/clusters/:clusterId" to="/clusters/:clusterId/brokers" />
