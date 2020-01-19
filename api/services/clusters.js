@@ -11,6 +11,8 @@ module.exports = function (fastify, opts, next) {
         brokerCount: 1,
         onlinePartitionCount: 20,
         topicCount: 2,
+        bytesInPerSec: Math.ceil(Math.random() * 10_000),
+        bytesOutPerSec: Math.ceil(Math.random() * 10_000),
       },
       {
         id: 'dMMQx-WRh77BKYas_g2ZTz',
@@ -20,6 +22,8 @@ module.exports = function (fastify, opts, next) {
         brokerCount: 0,
         onlinePartitionCount: 0,
         topicCount: 0,
+        bytesInPerSec: Math.ceil(Math.random() * 10_000),
+        bytesOutPerSec: Math.ceil(Math.random() * 10_000),
       },
     ]);
   });

@@ -1,6 +1,6 @@
 const randomBroker = () => ({
-  bytesInPerSec: Math.ceil(Math.random() * 10000),
-  bytesOutPerSec: Math.ceil(Math.random() * 10000),
+  bytesInPerSec: Math.ceil(Math.random() * 10_000),
+  bytesOutPerSec: Math.ceil(Math.random() * 10_000),
   segmentSize: Math.ceil(Math.random() * 1_000_000_000),
   partitionReplicas: 134,
 });
