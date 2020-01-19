@@ -36,6 +36,7 @@ const App: React.FC<AppProps> = ({
         {isClusterListFetched ? (
           <Switch>
             <Route exact path="/" component={Dashboard} />
+            <Route exact path="/clusters" component={Dashboard} />
             <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
             <Route path="/clusters/:clusterId/brokers" component={BrokersContainer} />
             <Redirect from="/clusters/:clusterId" to="/clusters/:clusterId/brokers" />

@@ -1,0 +1,24 @@
+[
+  {
+    "id": "wrYGf-csNgiGdK7B_ADF7Z",
+    "name": "fake.cluster",
+    "defaultCluster": true,
+    "status": "online",
+    "brokerCount": 1,
+    "onlinePartitionCount": 20,
+    "topicCount": 2,
+    "bytesInPerSec": 3201,
+    "bytesOutPerSec": 4320
+  },
+  {
+    "id": "dMMQx-WRh77BKYas_g2ZTz",
+    "name": "kafka-ui.cluster",
+    "defaultCluster": false,
+    "status": "offline",
+    "brokerCount": 1,
+    "onlinePartitionCount": 20,
+    "topicCount": 2,
+    "bytesInPerSec": 8341,
+    "bytesOutPerSec": 10320
+  }
+]

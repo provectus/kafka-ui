@@ -1,0 +1,18 @@
+[
+  {
+    "brokerId": 1,
+    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "bytesInPerSec": 1234,
+    "bytesOutPerSec": 3567,
+    "segmentSize": 912360707,
+    "partitionReplicas": 20
+  },
+  {
+    "brokerId": 2,
+    "clusterId": "dMMQx-WRh77BKYas_g2ZTz",
+    "bytesInPerSec": 9194,
+    "bytesOutPerSec": 7924,
+    "segmentSize": 840060707,
+    "partitionReplicas": 50
+  }
+]
