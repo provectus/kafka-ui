@@ -1,0 +1,30 @@
+$header-height: 52px;
+$navbar-width: 250px;
+
+.Layout {
+  &__header {
+    box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03),
+      0 0.9375rem 1.40625rem rgba(4,9,20,0.03),
+      0 0.25rem 0.53125rem rgba(4,9,20,0.05),
+      0 0.125rem 0.1875rem rgba(4,9,20,0.03);
+    z-index: 31;
+  }
+
+  &__container {
+    margin-top: $header-height;
+    margin-left: $navbar-width;
+  }
+
+  &__navbar {
+    width: $navbar-width;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 7px 0 60px rgba(0,0,0,0.05);
+    position: fixed;
+    top: $header-height;
+    left: 0;
+    bottom: 0;
+    padding: 20px 20px;
+
+  }
+}

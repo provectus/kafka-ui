@@ -1,0 +1,70 @@
+@import "../../node_modules/bulma/sass/utilities/_all.sass";
+@import "../../node_modules/bulma/sass/base/_all.sass";
+@import "../../node_modules/bulma/sass/elements/_all.sass";
+@import "../../node_modules/bulma/sass/form/_all.sass";
+@import "../../node_modules/bulma/sass/components/_all.sass";
+@import "../../node_modules/bulma/sass/grid/_all.sass";
+@import "../../node_modules/bulma/sass/layout/_all.sass";
+@import "../../node_modules/bulma-switch/src/sass/index.sass";
+
+.has {
+  &-text-overflow-ellipsis {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &-margin {
+    &-right {
+      margin-right: 10px;
+    }
+  }
+}
+
+.breadcrumb li {
+  &.is-active > span {
+    padding: 0 0.75em;
+  }
+
+  &:first-child > span {
+    padding-left: 0;
+  }
+}
+
+.section {
+  animation: fadein .5s;
+}
+
+.select.is-block select {
+  width: 100%;
+}
+
+.notification {
+  &.is-light {
+    &.is-primary {
+      background-color: #ebfffc;
+      color: #00947e;
+    }
+
+    &.is-danger {
+      background-color: #feecf0;
+      color: #cc0f35;
+    }
+  }
+}
+
+.box {
+  &.is-hoverable {
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 0.5em 1em -0.125em rgba(10, 10, 10, 0.2), 0 0px 0 1px rgba(10, 10, 10, 0.02);
+    }
+  }
+}
+
+@keyframes fadein {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
