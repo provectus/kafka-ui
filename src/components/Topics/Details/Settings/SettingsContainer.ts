@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
-import { RootState, ClusterId, TopicName } from 'lib/interfaces';
+import { RootState, ClusterId, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   fetchTopicConfig,
-} from 'redux/reducers/topics/thunks';
+} from 'redux/actions';
 import Settings from './Settings';
 import {
   getTopicConfig,

@@ -1,6 +1,6 @@
 import {
   Cluster,
-} from 'lib/interfaces';
+} from 'redux/interfaces';
 import {
   BASE_URL,
   BASE_PARAMS,

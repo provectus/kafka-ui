@@ -1,10 +1,10 @@
 import { connect } from 'react-redux';
 import {
   fetchClustersList,
-} from 'redux/reducers/clusters/thunks';
+} from 'redux/actions';
 import App from './App';
 import { getIsClusterListFetched } from 'redux/reducers/clusters/selectors';
-import { RootState } from 'lib/interfaces';
+import { RootState } from 'redux/interfaces';
 
 const mapStateToProps = (state: RootState) => ({
   isClusterListFetched: getIsClusterListFetched(state),

@@ -1,6 +1,32 @@
 import { createAsyncAction} from 'typesafe-actions';
-import ActionType from './actionType';
-import { Topic, TopicDetails, TopicName, TopicConfig} from 'lib/interfaces';
+import { ActionType } from 'redux/actionType';
+import {
+  Broker,
+  BrokerMetrics,
+  Cluster,
+  Topic,
+  TopicConfig,
+  TopicDetails,
+  TopicName,
+} from 'redux/interfaces';
+
+export const fetchBrokersAction = createAsyncAction(
+  ActionType.GET_BROKERS__REQUEST,
+  ActionType.GET_BROKERS__SUCCESS,
+  ActionType.GET_BROKERS__FAILURE,
+)<undefined, Broker[], undefined>();
+
+export const fetchBrokerMetricsAction = createAsyncAction(
+  ActionType.GET_BROKER_METRICS__REQUEST,
+  ActionType.GET_BROKER_METRICS__SUCCESS,
+  ActionType.GET_BROKER_METRICS__FAILURE,
+)<undefined, BrokerMetrics, undefined>();
+
+export const fetchClusterListAction = createAsyncAction(
+  ActionType.GET_CLUSTERS__REQUEST,
+  ActionType.GET_CLUSTERS__SUCCESS,
+  ActionType.GET_CLUSTERS__FAILURE,
+)<undefined, Cluster[], undefined>();
 
 export const fetchTopicListAction = createAsyncAction(
   ActionType.GET_TOPICS__REQUEST,

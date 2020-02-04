@@ -5,7 +5,7 @@ import {
   TopicDetails,
   TopicConfig,
   TopicFormData,
-} from 'lib/interfaces';
+} from 'redux/interfaces';
 import {
   BASE_URL,
   BASE_PARAMS,

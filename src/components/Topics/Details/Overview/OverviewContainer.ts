@@ -1,9 +1,9 @@
 import { connect } from 'react-redux';
 import {
   fetchTopicDetails,
-} from 'redux/reducers/topics/thunks';
+} from 'redux/actions';
 import Overview from './Overview';
-import { RootState, TopicName, ClusterId } from 'lib/interfaces';
+import { RootState, TopicName, ClusterId } from 'redux/interfaces';
 import { getTopicByName, getIsTopicDetailsFetched } from 'redux/reducers/topics/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 

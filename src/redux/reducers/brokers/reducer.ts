@@ -1,5 +1,12 @@
-import { Action, BrokersState, ZooKeeperStatus, BrokerMetrics } from 'lib/interfaces';
-import actionType from 'redux/reducers/actionType';
+import {
+  Action,
+  BrokersState,
+  ZooKeeperStatus,
+  BrokerMetrics,
+} from 'redux/interfaces';
+import {
+  ActionType,
+} from 'redux/actionType';
 
 export const initialState: BrokersState =  {
   items: [],
@@ -32,14 +39,14 @@ const updateBrokerSegmentSize = (state: BrokersState, payload: BrokerMetrics) =>
 
 const reducer = (state = initialState, action: Action): BrokersState => {
   switch (action.type) {
-    case actionType.GET_BROKERS__REQUEST:
+    case ActionType.GET_BROKERS__REQUEST:
       return initialState;
-    case actionType.GET_BROKERS__SUCCESS:
+    case ActionType.GET_BROKERS__SUCCESS:
       return {
         ...state,
         items: action.payload,
       };
-    case actionType.GET_BROKER_METRICS__SUCCESS:
+    case ActionType.GET_BROKER_METRICS__SUCCESS:
       return updateBrokerSegmentSize(state, action.payload);
     default:
       return state;

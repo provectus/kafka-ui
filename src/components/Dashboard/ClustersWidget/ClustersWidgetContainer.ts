@@ -5,7 +5,7 @@ import {
   getOnlineClusters,
   getOfflineClusters,
 } from 'redux/reducers/clusters/selectors';
-import { RootState } from 'lib/interfaces';
+import { RootState } from 'redux/interfaces';
 
 const mapStateToProps = (state: RootState) => ({
   clusters: getClusterList(state),

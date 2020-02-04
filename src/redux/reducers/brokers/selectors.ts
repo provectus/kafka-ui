@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState, FetchStatus, BrokersState } from 'lib/interfaces';
+import { RootState, FetchStatus, BrokersState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const brokersState = ({ brokers }: RootState): BrokersState => brokers;
@@ -29,7 +29,6 @@ export const getMinDiskUsage = createSelector(
     if (brokers.length === 0) {
       return 0;
     }
-
     return Math.min(...brokers.map(({ segmentSize }) => segmentSize));
   },
 );
@@ -40,7 +39,6 @@ export const getMaxDiskUsage = createSelector(
     if (brokers.length === 0) {
       return 0;
     }
-
     return Math.max(...brokers.map(({ segmentSize }) => segmentSize));
   },
 );

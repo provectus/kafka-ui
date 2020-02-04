@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId } from 'lib/interfaces';
+import { ClusterId } from 'redux/interfaces';
 import {
   Switch,
   Route,

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import Messages from './Messages';
-import { RootState } from 'lib/interfaces';
+import { RootState } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {

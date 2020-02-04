@@ -1,5 +1,5 @@
 import React from 'react';
-import { Cluster } from 'lib/interfaces';
+import { Cluster } from 'redux/interfaces';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import ClusterMenu from './ClusterMenu';

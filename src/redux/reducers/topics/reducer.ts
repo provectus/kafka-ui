@@ -1,5 +1,5 @@
-import { Action, TopicsState, Topic } from 'lib/interfaces';
-import actionType from 'redux/reducers/actionType';
+import { Action, TopicsState, Topic } from 'redux/interfaces';
+import { ActionType } from 'redux/actionType';
 
 export const initialState: TopicsState = {
   byName: {},
@@ -29,9 +29,9 @@ const updateTopicList = (state: TopicsState, payload: Topic[]) => {
 
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
-    case actionType.GET_TOPICS__SUCCESS:
+    case ActionType.GET_TOPICS__SUCCESS:
       return updateTopicList(state, action.payload);
-    case actionType.GET_TOPIC_DETAILS__SUCCESS:
+    case ActionType.GET_TOPIC_DETAILS__SUCCESS:
       return {
         ...state,
         byName: {
@@ -42,7 +42,7 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           }
         }
       }
-    case actionType.GET_TOPIC_CONFIG__SUCCESS:
+    case ActionType.GET_TOPIC_CONFIG__SUCCESS:
       return {
         ...state,
         byName: {

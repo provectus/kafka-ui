@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, TopicName } from 'lib/interfaces';
+import { ClusterId, TopicName } from 'redux/interfaces';
 
 interface Props {
   clusterId: ClusterId;

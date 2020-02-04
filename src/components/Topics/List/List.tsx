@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopicWithDetailedInfo, ClusterId } from 'lib/interfaces';
+import { TopicWithDetailedInfo, ClusterId } from 'redux/interfaces';
 import ListItem from './ListItem';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, BrokerMetrics, ZooKeeperStatus } from 'lib/interfaces';
+import { ClusterId, BrokerMetrics, ZooKeeperStatus } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';

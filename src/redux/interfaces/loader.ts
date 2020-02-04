@@ -1,4 +1,4 @@
-import { FetchStatus } from 'lib/interfaces';
+import { FetchStatus } from 'redux/interfaces';
 
 export interface LoaderState {
   [key: string]: FetchStatus;

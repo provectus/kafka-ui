@@ -1,11 +1,11 @@
-import { Cluster, Action } from 'lib/interfaces';
-import actionType from 'redux/reducers/actionType';
+import { Cluster, Action } from 'redux/interfaces';
+import { ActionType } from 'redux/actionType';
 
 export const initialState: Cluster[] = [];
 
 const reducer = (state = initialState, action: Action): Cluster[] => {
   switch (action.type) {
-    case actionType.GET_CLUSTERS__SUCCESS:
+    case ActionType.GET_CLUSTERS__SUCCESS:
       return action.payload;
     default:
       return state;

@@ -2,7 +2,7 @@ import {
   Broker,
   ClusterId,
   BrokerMetrics,
-} from 'lib/interfaces';
+} from 'redux/interfaces';
 import {
   BASE_URL,
   BASE_PARAMS,

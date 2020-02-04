@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, Topic, TopicDetails, TopicName } from 'lib/interfaces';
+import { ClusterId, Topic, TopicDetails, TopicName } from 'redux/interfaces';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 

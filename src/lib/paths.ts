@@ -1,4 +1,7 @@
-import { ClusterId, TopicName } from 'lib/interfaces';
+import {
+  ClusterId,
+  TopicName,
+} from 'redux/interfaces';
 
 const clusterPath = (clusterId: ClusterId) => `/clusters/${clusterId}`;
 

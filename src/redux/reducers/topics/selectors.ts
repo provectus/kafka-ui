@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState, TopicName, FetchStatus, TopicsState } from 'lib/interfaces';
+import { RootState, TopicName, FetchStatus, TopicsState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
@@ -37,11 +37,10 @@ export const getTopicList = createSelector(
   getAllNames,
   getTopicMap,
   (isFetched, allNames, byName) => {
-    if (isFetched) {
-      return allNames.map((name) => byName[name])
+    if (!isFetched) {
+      return [];
     }
-
-    return [];
+    return allNames.map((name) => byName[name])
   },
 );
 

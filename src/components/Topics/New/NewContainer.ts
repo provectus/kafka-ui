@@ -1,8 +1,8 @@
 import { connect } from 'react-redux';
-import { RootState, ClusterId, TopicFormData, TopicName, Action } from 'lib/interfaces';
+import { RootState, ClusterId, TopicFormData, TopicName, Action } from 'redux/interfaces';
 import New from './New';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { createTopic } from 'redux/reducers/topics/thunks';
+import { createTopic } from 'redux/actions';
 import { getTopicCreated } from 'redux/reducers/topics/selectors';
 import { clusterTopicPath } from 'lib/paths';
 import { ThunkDispatch } from 'redux-thunk';

@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { Cluster, RootState, FetchStatus, ClusterStatus } from 'lib/interfaces';
+import { Cluster, RootState, FetchStatus, ClusterStatus } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const clustersState = ({ clusters }: RootState): Cluster[] => clusters;

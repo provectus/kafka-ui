@@ -1,6 +1,6 @@
 import React from 'react';
 import { chunk } from 'lodash';
-import { Cluster } from 'lib/interfaces';
+import { Cluster } from 'redux/interfaces';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import ClusterWidget from './ClusterWidget';

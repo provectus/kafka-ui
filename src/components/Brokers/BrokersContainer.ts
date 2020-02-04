@@ -2,10 +2,10 @@ import { connect } from 'react-redux';
 import {
   fetchBrokers,
   fetchBrokerMetrics,
-} from 'redux/reducers/brokers/thunks';
+} from 'redux/actions';
 import Brokers from './Brokers';
 import * as brokerSelectors from 'redux/reducers/brokers/selectors';
-import { RootState, ClusterId } from 'lib/interfaces';
+import { RootState, ClusterId } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {
