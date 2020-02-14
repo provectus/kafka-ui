@@ -21,6 +21,7 @@ docker-compose -f ./docker/kafka.yaml
 Application should be available at http://localhost:8080 .
 
 ##Run application without docker:
+
 ```
 cd kafka-ui-api
 ./mvnw spring-boot:run -Pprod
