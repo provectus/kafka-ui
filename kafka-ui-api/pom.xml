@@ -17,6 +17,7 @@
         <java.version>13</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <node.version>v12.13.1</node.version>
+        <git.revision>latest</git.revision>
     </properties>
 
     <dependencyManagement>
@@ -90,6 +91,14 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.2.4.RELEASE</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -169,11 +178,33 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>com.spotify</groupId>
+                        <artifactId>dockerfile-maven-plugin</artifactId>
+                        <version>1.4.10</version>
+                        <configuration>
+                            <skipPush>true</skipPush>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                                <configuration>
+                                    <tag>${git.revision}</tag>
+                                    <repository>${project.artifactId}</repository>
+                                    <buildArgs>
+                                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                                        <JAR_NAME>${project.artifactId}.jar</JAR_NAME>
+                                    </buildArgs>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
-            <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
-            </properties>
         </profile>
     </profiles>
 
