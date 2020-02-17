@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.rest;
 
 import com.provectus.kafka.ui.api.ClustersApi;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
+import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,11 +20,6 @@ public class MetricsRestController implements ClustersApi {
 
     @GetMapping("/{clusterId}/brokers")
     public void getBrokers(@PathVariable("clusterId") String clusterId) {
-
-    }
-
-    @GetMapping("/{clusterId}/metrics/broker")
-    public void getBrokerMetrics(@PathVariable("clusterId") String clusterId) {
 
     }
 
@@ -45,6 +41,12 @@ public class MetricsRestController implements ClustersApi {
     @PutMapping("/{clusterId}/topics/{topicId}")
     public void putTopic(@PathVariable("clusterId") String clusterId,
                          @PathVariable("topicId") String topicId) {
+    }
+
+    @Override
+    @GetMapping("/{clusterId}/metrics/broker")
+    public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(@PathVariable String clusterId, ServerWebExchange exchange) {
+        return clusterService.getBrokerMetrics(clusterId);
     }
 
     @Override

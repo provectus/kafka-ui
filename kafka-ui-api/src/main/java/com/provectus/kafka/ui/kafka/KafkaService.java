@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import java.util.Properties;
 import java.util.Set;
 
+import static com.provectus.kafka.ui.cluster.model.MetricsConstants.ZOOKEEPER_STATUS;
+
 @Service
 @RequiredArgsConstructor
 public class KafkaService {
@@ -43,7 +45,13 @@ public class KafkaService {
     public static void isZookeeperRunning(KafkaCluster kafkaCluster){
         //Because kafka connector waits for 2 minutes with retries before telling that there is no connection
         //ZKClient is used to not wait 2 minutes for response. If there is no connection, exception will be thrown
-        ZkClient zkClient = new ZkClient(kafkaCluster.getZookeeper(), 1000);
-        zkClient.close();
+        try {
+            ZkClient zkClient = new ZkClient(kafkaCluster.getZookeeper(), 1000);
+            kafkaCluster.putMetric(ZOOKEEPER_STATUS, "1");
+            zkClient.close();
+        } catch (Exception e) {
+            kafkaCluster.putMetric(ZOOKEEPER_STATUS, "0");
+            throw e;
+        }
     }
 }

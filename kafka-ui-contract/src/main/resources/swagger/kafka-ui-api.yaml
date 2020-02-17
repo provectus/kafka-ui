@@ -29,14 +29,30 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Cluster'
-        401:
-          description: Unauthorized
-        403:
-          description: Forbidden
+
+  /clusters/{clusterId}/metrics/broker:
+    get:
+      tags:
+        - /clusters
+      summary: getBrokersMetrics
+      operationId: getBrokersMetrics
+      parameters:
+        - name: clusterId
+          in: path
+          description: clusterId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrokerMetrics'
 
 components:
   schemas:
-
     Cluster:
       type: object
       properties:
@@ -68,3 +84,43 @@ components:
       enum:
         - online
         - offline
+
+    BrokerMetrics:
+      type: object
+      properties:
+        clusterId:
+          type: string
+        bytesInPerSec:
+          type: integer
+        brokerCount:
+          type: integer
+        zookeeperStatus:
+          type: integer
+        activeControllers:
+          type: integer
+        uncleanLeaderElectionCount:
+          type: integer
+        networkPoolUsage:
+          type: number
+        requestPoolUsage:
+          type: number
+        onlinePartitionCount:
+          type: integer
+        underReplicatedPartitionCount:
+          type: integer
+        offlinePartitionCount:
+          type: integer
+        diskUsage:
+          $ref: '#/components/schemas/DiskUsage'
+        diskUsageDistribution:
+          type: string
+      required:
+        - id
+
+    DiskUsage:
+      type: object
+      properties:
+        brokerId:
+          type: number
+        segmentSize:
+          type: number

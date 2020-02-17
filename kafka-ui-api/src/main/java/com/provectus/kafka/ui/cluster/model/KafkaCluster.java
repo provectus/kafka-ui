@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class KafkaCluster {
 
-    String id;
     String name;
     String jmxHost;
     String jmxPort;
