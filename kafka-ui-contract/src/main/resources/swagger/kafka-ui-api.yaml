@@ -51,6 +51,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/BrokerMetrics'
 
+  /clusters/{clusterId}/topics:
+    get:
+      tags:
+        - /clusters
+      summary: getTopics
+      operationId: getTopics
+      parameters:
+        - name: clusterId
+          in: path
+          description: clusterId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+
 components:
   schemas:
     Cluster:
@@ -121,6 +144,43 @@ components:
       type: object
       properties:
         brokerId:
-          type: number
+          type: int
         segmentSize:
-          type: number
+          type: int
+
+    Topic:
+      type: object
+      properties:
+        clusterId:
+          type: string
+        name:
+          type: string
+        internal:
+          type: boolean
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partition'
+
+    Partition:
+      type: object
+      properties:
+        partition:
+          type: int
+        leader:
+          type: int
+        replicas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Replica'
+
+    Replica:
+      type: object
+      properties:
+        broker:
+          type: int
+        leader:
+          type: boolean
+        inSync:
+          type: boolean
+

@@ -1,10 +1,13 @@
 package com.provectus.kafka.ui.cluster.model;
 
 import com.provectus.kafka.ui.model.ClusterStatus;
+import com.provectus.kafka.ui.model.Topic;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -21,6 +24,7 @@ public class KafkaCluster {
     ClusterStatus status = ClusterStatus.OFFLINE;
 
     Map<String, String> metricsMap = new ConcurrentHashMap<>();
+    List<Topic> topics = new ArrayList<>();
 
     public void putMetric(String metricKey, String metricValue) {
         metricsMap.put(metricKey, metricValue);

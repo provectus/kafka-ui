@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.model.MetricsConstants;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
+import com.provectus.kafka.ui.model.Topic;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
@@ -72,6 +73,15 @@ public class ClusterService {
         brokerMetrics.setUnderReplicatedPartitionCount(intValueOfOrNull(cluster.getMetric(MetricsConstants.UNDER_REPLICATED_PARTITIONS)));
 
         return Mono.just(ResponseEntity.ok(brokerMetrics));
+    }
+
+    public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId) {
+        KafkaCluster cluster = kafkaClusters.stream()
+                .filter(cltr -> cltr.getMetricsMap().get(CLUSTER_ID).equals(clusterId))
+                .findFirst()
+                .orElseThrow();
+
+        return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopics())));
     }
 
     public List<KafkaCluster> getKafkaClusters() {
