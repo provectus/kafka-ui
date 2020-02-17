@@ -1,0 +1,16 @@
+kafka:
+  clusters:
+    -
+      id: wrYGf-csNgiGdK7B_ADF7Z
+      name: local
+      bootstrapServers: localhost:29091
+      jmxHost: localhost
+      jmxPort: 9997
+      zookeeper: localhost:2181
+    -
+      id: dMMQx-WRh77BKYas_g2ZTz
+      name: secondLocal
+      bootstrapServers: localhost:29092
+      jmxHost: localhost
+      jmxPort: 9998
+      zookeeper: localhost:2182
