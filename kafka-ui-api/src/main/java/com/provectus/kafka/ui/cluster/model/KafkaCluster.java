@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.cluster.model;
 
 import com.provectus.kafka.ui.model.ClusterStatus;
 import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicDetails;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +26,7 @@ public class KafkaCluster {
 
     Map<String, String> metricsMap = new ConcurrentHashMap<>();
     List<Topic> topics = new ArrayList<>();
+    List<TopicDetails> topicDetails = new ArrayList<>();
 
     public void putMetric(String metricKey, String metricValue) {
         metricsMap.put(metricKey, metricValue);

@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +26,28 @@ public class MetricsRestController implements ClustersApi {
     }
 
     @Override
+    @GetMapping
+    public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
+        return clusterService.getClusters();
+    }
+
+    @Override
+    @GetMapping("/{clusterId}/metrics/broker")
+    public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(@PathVariable String clusterId, ServerWebExchange exchange) {
+        return clusterService.getBrokerMetrics(clusterId);
+    }
+
+    @Override
     @GetMapping("/{clusterId}/topics")
     public Mono<ResponseEntity<Flux<Topic>>> getTopics(@PathVariable String clusterId, ServerWebExchange exchange) {
         return clusterService.getTopics(clusterId);
     }
 
-    @GetMapping("/{clusterId}/topics/{topicId}")
-    public void getTopic(@PathVariable("clusterId") String clusterId,
-                         @PathVariable("topicId") String topicId) {
+    @Override
+    @GetMapping("/{clusterId}/topics/{topicName}")
+    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(@PathVariable("clusterId") String clusterId,
+                                                              @PathVariable("topicName") String topicName, ServerWebExchange exchange) {
+        return clusterService.getTopicDetails(clusterId, topicName);
     }
 
     @PostMapping("/{clusterId}/topics")
@@ -43,17 +58,5 @@ public class MetricsRestController implements ClustersApi {
     @PutMapping("/{clusterId}/topics/{topicId}")
     public void putTopic(@PathVariable("clusterId") String clusterId,
                          @PathVariable("topicId") String topicId) {
-    }
-
-    @Override
-    @GetMapping("/{clusterId}/metrics/broker")
-    public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(@PathVariable String clusterId, ServerWebExchange exchange) {
-        return clusterService.getBrokerMetrics(clusterId);
-    }
-
-    @Override
-    @GetMapping
-    public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
-        return clusterService.getClusters();
     }
 }

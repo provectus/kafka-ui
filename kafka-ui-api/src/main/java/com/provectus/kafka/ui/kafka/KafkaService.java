@@ -34,6 +34,11 @@ public class KafkaService {
 
         loadMetrics(kafkaCluster, adminClient);
         loadTopics(kafkaCluster, adminClient);
+        loadTopicsDetails(kafkaCluster, adminClient);
+    }
+
+    private void loadTopicsDetails(KafkaCluster kafkaCluster, AdminClient adminClient) {
+
     }
 
     @SneakyThrows
@@ -60,9 +65,9 @@ public class KafkaService {
                 partitionDto.setPartition(partition.partition());
                 List<Replica> replicas = new ArrayList<>();
                 for (Node replicaNode : partition.replicas()) {
-                    //TODO: brokerId
                     var replica = new Replica();
                     replica.setBroker(replicaNode.id());
+                    replica.setLeader(partition.leader() != null && partition.leader().id() == replicaNode.id());
                     replica.setInSync(partition.isr().contains(replicaNode));
                     replicas.add(replica);
                 }

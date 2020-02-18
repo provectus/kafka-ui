@@ -39,7 +39,6 @@ paths:
       parameters:
         - name: clusterId
           in: path
-          description: clusterId
           required: true
           schema:
             type: string
@@ -60,7 +59,6 @@ paths:
       parameters:
         - name: clusterId
           in: path
-          description: clusterId
           required: true
           schema:
             type: string
@@ -73,6 +71,31 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Topic'
+
+  /clusters/{clusterId}/topics/{topicName}:
+    get:
+      tags:
+        - /clusters
+      summary: getTopicDetails
+      operationId: getTopicDetails
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicDetails'
 
 components:
   schemas:
@@ -184,3 +207,22 @@ components:
         inSync:
           type: boolean
 
+    TopicDetails:
+      type: object
+      properties:
+        partitionCount:
+          type: int
+        replicationFactor:
+          type: int
+        replicas:
+          type: int
+        inSyncReplicas:
+          type: int
+        bytesInPerSec:
+          type: int
+        segmentSize:
+          type: int
+        segmentCount:
+          type: int
+        underReplicatedPartitions:
+          type: int

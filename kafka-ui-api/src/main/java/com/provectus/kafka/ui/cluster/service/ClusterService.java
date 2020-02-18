@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.cluster.model.MetricsConstants;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicDetails;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
 import org.springframework.http.ResponseEntity;
@@ -94,5 +95,9 @@ public class ClusterService {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName) {
+        return null;
     }
 }
