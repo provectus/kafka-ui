@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.kafka;
 
-import com.provectus.kafka.ui.cluster.model.MetricsConstants;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.model.MetricsConstants;
 import com.provectus.kafka.ui.model.Partition;
 import com.provectus.kafka.ui.model.Replica;
 import com.provectus.kafka.ui.model.Topic;
@@ -25,7 +25,7 @@ public class KafkaService {
 
     @SneakyThrows
     public void loadClusterMetrics(KafkaCluster kafkaCluster) {
-        isZookeeperRunning(kafkaCluster);
+        checkZookeperConnection(kafkaCluster);
 
         Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
@@ -97,15 +97,18 @@ public class KafkaService {
         kafkaCluster.putMetric(MetricsConstants.PARTITIONS_COUNT, String.valueOf(partitionsNum));
     }
 
-    public static void isZookeeperRunning(KafkaCluster kafkaCluster){
-        //Because kafka connector waits for 2 minutes with retries before telling that there is no connection
-        //ZKClient is used to not wait 2 minutes for response. If there is no connection, exception will be thrown
+    public static void checkZookeperConnection(KafkaCluster kafkaCluster){
         try {
-            ZkClient zkClient = new ZkClient(kafkaCluster.getZookeeper(), 1000);
+            if (kafkaCluster.getZkClient() == null) {
+
+            } else {
+            }
+            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), 1000));
             kafkaCluster.putMetric(ZOOKEEPER_STATUS, "1");
-            zkClient.close();
         } catch (Exception e) {
+            kafkaCluster.setZkClient(null);
             kafkaCluster.putMetric(ZOOKEEPER_STATUS, "0");
+            kafkaCluster.setZookeeperException(e);
             throw e;
         }
     }

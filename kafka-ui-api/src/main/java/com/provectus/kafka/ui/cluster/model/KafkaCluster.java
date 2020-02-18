@@ -6,7 +6,10 @@ import com.provectus.kafka.ui.model.TopicDetails;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import org.I0Itec.zkclient.ZkClient;
+import org.apache.kafka.clients.admin.AdminClient;
 
+import javax.management.MBeanServerConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +30,14 @@ public class KafkaCluster {
     Map<String, String> metricsMap = new ConcurrentHashMap<>();
     List<Topic> topics = new ArrayList<>();
     List<TopicDetails> topicDetails = new ArrayList<>();
+
+    MBeanServerConnection mBeanServerConnection;
+    ZkClient zkClient;
+    AdminClient adminClient;
+
+    Exception kafkaException;
+    Exception jmxException;
+    Exception zookeeperException;
 
     public void putMetric(String metricKey, String metricValue) {
         metricsMap.put(metricKey, metricValue);

@@ -19,7 +19,7 @@
 		<org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.10</org.projectlombok.version>
 		<git.revision>latest</git.revision>
-		<zkclient.version>0.2</zkclient.version>
+		<zkclient.version>0.11</zkclient.version>
 		<kafka-clients.version>2.4.0</kafka-clients.version>
 		<node.version>v12.13.1</node.version>
 		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>

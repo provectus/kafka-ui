@@ -20,15 +20,23 @@ public class JmxService {
 
     @SneakyThrows
     public void loadClusterMetrics(KafkaCluster kafkaCluster) {
-        String url = "service:jmx:rmi:///jndi/rmi://" + kafkaCluster.getJmxHost() + ":" + kafkaCluster.getJmxPort() + "/jmxrmi";
-        JMXServiceURL serviceUrl = new JMXServiceURL(url);
-        try (JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceUrl, null)) {
-            MBeanServerConnection connection = jmxConnector.getMBeanServerConnection();
+        // check before getting something
+        try {
+            if (kafkaCluster.getMBeanServerConnection() == null) {
+                String url = "service:jmx:rmi:///jndi/rmi://" + kafkaCluster.getJmxHost() + ":" + kafkaCluster.getJmxPort() + "/jmxrmi";
+                JMXServiceURL serviceUrl = new JMXServiceURL(url);
+                JMXConnector jmxConnector = JMXConnectorFactory.connect(serviceUrl, null);
+                kafkaCluster.setMBeanServerConnection(jmxConnector.getMBeanServerConnection());
+            }
             for (Map.Entry<MBeanInfo, String> mbeanToMetric : JmxConstants.mbeanToAttributeMap.entrySet()) {
                 MBeanInfo mBeanInfo = mbeanToMetric.getKey();
-                Object attributeValue = connection.getAttribute(new ObjectName(mBeanInfo.getName()), mBeanInfo.getAttribute());
+                Object attributeValue = kafkaCluster.getMBeanServerConnection().getAttribute(new ObjectName(mBeanInfo.getName()), mBeanInfo.getAttribute());
                 kafkaCluster.putMetric(mbeanToMetric.getValue(), attributeValue.toString());
             }
+        } catch (Exception e) {
+            log.error(e);
+            kafkaCluster.setMBeanServerConnection(null);
         }
+
     }
 }

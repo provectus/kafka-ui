@@ -11,17 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>kafka-ui-contract</artifactId>
 
-    <dependencies>
-        <!-- needed for running test in idea, without this fix, tests don't compile -->
-        <!-- https://mvnrepository.com/artifact/junit/junit -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13</version>
-            <scope>compile</scope>
-        </dependency>
-    </dependencies>
-
     <profiles>
         <!--        SPRING WebFlux API          -->
         <profile>
@@ -37,9 +26,9 @@
                     <version>${spring-boot.version}</version>
                 </dependency>
                 <dependency>
-                    <groupId>io.springfox</groupId>
-                    <artifactId>springfox-swagger2</artifactId>
-                    <version>${springfox-swagger2.version}</version>
+                    <groupId>io.swagger</groupId>
+                    <artifactId>swagger-annotations</artifactId>
+                    <version>1.6.0</version>
                 </dependency>
                 <dependency>
                     <groupId>org.openapitools</groupId>
@@ -89,29 +78,4 @@
             </build>
         </profile>
     </profiles>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>com.github.ngeor</groupId>
-                <artifactId>yak4j-json-yaml-converter-maven-plugin</artifactId>
-                <version>0.0.4</version>
-                <executions>
-                    <execution>
-                        <id>yaml2json</id>
-                        <goals>
-                            <goal>yaml2json</goal>
-                        </goals>
-                        <configuration>
-                            <sourceDirectory>src/main/resources/swagger</sourceDirectory>
-                            <includes>
-                                <include>*.yaml</include>
-                            </includes>
-                            <outputDirectory>target/generated-sources/swagger</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 </project>
