@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.cluster.service;
 
-import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
+import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.model.MetricsConstants;
 import com.provectus.kafka.ui.model.BrokerMetrics;
@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,21 +24,13 @@ import static com.provectus.kafka.ui.cluster.model.MetricsConstants.CLUSTER_ID;
 @RequiredArgsConstructor
 public class ClusterService {
 
-    private final List<KafkaCluster> kafkaClusters = new ArrayList<>();
-
-    private final ClustersProperties clusterProperties;
+    private final ClustersStorage clustersStorage;
 
     private final ClusterMapper clusterMapper = Mappers.getMapper(ClusterMapper.class);
 
-    @PostConstruct
-    public void init() {
-        for (ClustersProperties.Cluster clusterProperties : clusterProperties.getClusters()) {
-            kafkaClusters.add(clusterMapper.toKafkaCluster(clusterProperties));
-        }
-    }
 
     public Mono<ResponseEntity<Flux<Cluster>>> getClusters() {
-        List<Cluster> clusters = kafkaClusters
+        List<Cluster> clusters = clustersStorage.getKafkaClusters()
                 .stream()
                 .map(kafkaCluster -> {
                     Cluster cluster = clusterMapper.toOpenApiCluster(kafkaCluster);
@@ -58,7 +48,7 @@ public class ClusterService {
     }
 
     public Mono<ResponseEntity<BrokerMetrics>> getBrokerMetrics(String clusterId) {
-        KafkaCluster cluster = kafkaClusters.stream()
+        KafkaCluster cluster = clustersStorage.getKafkaClusters().stream()
                 .filter(cltr -> cltr.getMetricsMap().get(CLUSTER_ID).equals(clusterId))
                 .findFirst()
                 .orElseThrow();
@@ -67,7 +57,7 @@ public class ClusterService {
         brokerMetrics.setClusterId(cluster.getMetricsMap().get(CLUSTER_ID));
         brokerMetrics.setBrokerCount(intValueOfOrNull(cluster.getMetric(MetricsConstants.BROKERS_COUNT)));
         brokerMetrics.setBytesInPerSec(intValueOfOrNull(cluster.getMetric(MetricsConstants.BYTES_IN_PER_SEC)));
-        brokerMetrics.setZookeeperStatus(intValueOfOrNull(cluster.getMetric(MetricsConstants.ZOOKEEPER_STATUS)));
+        brokerMetrics.setZooKeeperStatus(intValueOfOrNull(cluster.getMetric(MetricsConstants.ZOOKEEPER_STATUS)));
         brokerMetrics.setActiveControllers(intValueOfOrNull(cluster.getMetric(MetricsConstants.ACTIVE_CONTROLLER_COUNT)));
         brokerMetrics.setOnlinePartitionCount(intValueOfOrNull(cluster.getMetric(MetricsConstants.ONLINE_PARTITION_COUNT)));
         brokerMetrics.setOfflinePartitionCount(intValueOfOrNull(cluster.getMetric(MetricsConstants.OFFLINE_PARTITION_COUNT)));
@@ -77,16 +67,12 @@ public class ClusterService {
     }
 
     public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId) {
-        KafkaCluster cluster = kafkaClusters.stream()
+        KafkaCluster cluster = clustersStorage.getKafkaClusters().stream()
                 .filter(cltr -> cltr.getMetricsMap().get(CLUSTER_ID).equals(clusterId))
                 .findFirst()
                 .orElseThrow();
 
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopics())));
-    }
-
-    public List<KafkaCluster> getKafkaClusters() {
-        return kafkaClusters;
     }
 
     private Integer intValueOfOrNull(String s) {

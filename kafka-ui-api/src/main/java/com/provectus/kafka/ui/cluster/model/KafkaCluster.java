@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.ClusterStatus;
+import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicDetails;
 import lombok.AccessLevel;
@@ -25,7 +25,6 @@ public class KafkaCluster {
     String jmxPort;
     String bootstrapServers;
     String zookeeper;
-    ClusterStatus status = ClusterStatus.OFFLINE;
 
     Map<String, String> metricsMap = new ConcurrentHashMap<>();
     List<Topic> topics = new ArrayList<>();
@@ -35,9 +34,13 @@ public class KafkaCluster {
     ZkClient zkClient;
     AdminClient adminClient;
 
-    Exception kafkaException;
-    Exception jmxException;
-    Exception zookeeperException;
+    ServerStatus status = ServerStatus.OFFLINE;
+    ServerStatus jmxStatus = ServerStatus.OFFLINE;
+    ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
+
+    Exception lastKafkaException;
+    Exception lastJmxException;
+    Exception lastZookeeperException;
 
     public void putMetric(String metricKey, String metricValue) {
         metricsMap.put(metricKey, metricValue);

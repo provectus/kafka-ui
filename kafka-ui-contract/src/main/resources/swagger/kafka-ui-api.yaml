@@ -109,7 +109,7 @@ components:
         defaultCluster:
           type: boolean
         status:
-          $ref: '#/components/schemas/ClusterStatus'
+          $ref: '#/components/schemas/ServerStatus'
         brokerCount:
           type: integer
         onlinePartitionCount:
@@ -125,7 +125,7 @@ components:
         - name
         - status
 
-    ClusterStatus:
+    ServerStatus:
       type: string
       enum:
         - online
@@ -140,7 +140,7 @@ components:
           type: integer
         brokerCount:
           type: integer
-        zookeeperStatus:
+        zooKeeperStatus:
           type: integer
         activeControllers:
           type: integer
