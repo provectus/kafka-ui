@@ -15,7 +15,6 @@
 
 		<spring-boot.version>2.2.4.RELEASE</spring-boot.version>
 		<jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
-		<springfox-swagger2.version>2.9.2</springfox-swagger2.version>
 		<org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
 		<org.projectlombok.version>1.18.10</org.projectlombok.version>
 		<git.revision>latest</git.revision>
@@ -25,6 +24,7 @@
 		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
 		<frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+		<openapi-generator-maven-plugin.version>4.2.2</openapi-generator-maven-plugin.version>
 	</properties>
 
 	<groupId>com.provectus</groupId>

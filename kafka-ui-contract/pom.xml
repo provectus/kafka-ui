@@ -28,7 +28,7 @@
                 <dependency>
                     <groupId>io.swagger</groupId>
                     <artifactId>swagger-annotations</artifactId>
-                    <version>1.6.0</version>
+                    <version>${swagger-annotations.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.openapitools</groupId>
@@ -42,7 +42,7 @@
                     <plugin>
                         <groupId>org.openapitools</groupId>
                         <artifactId>openapi-generator-maven-plugin</artifactId>
-                        <version>4.2.2</version>
+                        <version>${openapi-generator-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>generate-backend-api</id>
@@ -78,4 +78,7 @@
             </build>
         </profile>
     </profiles>
+    <properties>
+        <swagger-annotations.version>1.6.0</swagger-annotations.version>
+    </properties>
 </project>
