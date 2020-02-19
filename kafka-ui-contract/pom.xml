@@ -12,7 +12,6 @@
     <artifactId>kafka-ui-contract</artifactId>
 
     <profiles>
-        <!--        SPRING WebFlux API          -->
         <profile>
             <id>generate-spring-webflux-api</id>
             <activation>
@@ -54,7 +53,6 @@
                                     </inputSpec>
                                     <output>${project.build.directory}/generated-sources/api</output>
                                     <generatorName>spring</generatorName>
-                                    <!--<configHelp>true</configHelp>-->
 
                                     <configOptions>
                                         <modelPackage>com.provectus.kafka.ui.model</modelPackage>
@@ -78,7 +76,4 @@
             </build>
         </profile>
     </profiles>
-    <properties>
-        <swagger-annotations.version>1.6.0</swagger-annotations.version>
-    </properties>
 </project>
