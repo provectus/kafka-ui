@@ -33,8 +33,8 @@ services:
       - kafka0
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                 cub kafka-ready -b kafka0:29090 1 20 && \
-                kafka-topics --create --topic users --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181 && \
-                kafka-topics --create --topic messages --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181'"
+                kafka-topics --create --topic users --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181 && \
+                kafka-topics --create --topic messages --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181'"
     environment:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
@@ -72,8 +72,8 @@ services:
       - kafka1
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                 cub kafka-ready -b kafka1:29090 1 20 && \
-                kafka-topics --create --topic users --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
-                kafka-topics --create --topic messages --partitions 1 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181'"
+                kafka-topics --create --topic users --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
+                kafka-topics --create --topic messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181'"
     environment:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored

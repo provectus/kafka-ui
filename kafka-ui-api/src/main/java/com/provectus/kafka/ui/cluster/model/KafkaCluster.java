@@ -28,7 +28,7 @@ public class KafkaCluster {
 
     Map<String, String> metricsMap = new ConcurrentHashMap<>();
     List<Topic> topics = new ArrayList<>();
-    List<TopicDetails> topicDetails = new ArrayList<>();
+    private Map<String, TopicDetails> topicDetailsMap = new ConcurrentHashMap<>();
 
     MBeanServerConnection mBeanServerConnection;
     ZkClient zkClient;
@@ -54,5 +54,14 @@ public class KafkaCluster {
         return metricsMap.keySet().stream()
                 .map(key -> key + "=" + metricsMap.get(key))
                 .collect(Collectors.joining(", ", "{", "}"));
+    }
+
+    public TopicDetails getTopicDetails(String key) {
+        var topicDetails = topicDetailsMap.get(key);
+        if(topicDetails == null) {
+            topicDetailsMap.putIfAbsent(key, new TopicDetails());
+            topicDetails = topicDetailsMap.get(key);
+        }
+        return topicDetails;
     }
 }

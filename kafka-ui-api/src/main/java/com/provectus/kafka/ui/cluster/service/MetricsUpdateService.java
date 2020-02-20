@@ -22,7 +22,7 @@ public class MetricsUpdateService {
     public void updateMetrics(KafkaCluster kafkaCluster) {
         log.debug("Start getting metrics for kafkaCluster: " + kafkaCluster.getName());
         kafkaService.loadClusterMetrics(kafkaCluster);
-        jmxService.loadClusterMetrics(kafkaCluster);
+//        jmxService.loadClusterMetrics(kafkaCluster);
         zookeeperService.checkZookeeperStatus(kafkaCluster);
     }
 }

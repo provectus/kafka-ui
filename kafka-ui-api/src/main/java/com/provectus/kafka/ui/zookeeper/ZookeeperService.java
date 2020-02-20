@@ -29,6 +29,7 @@ public class ZookeeperService {
         if (!isConnected) {
             kafkaCluster.putMetric(ZOOKEEPER_STATUS, "0");
             kafkaCluster.setZookeeperStatus(ServerStatus.OFFLINE);
+
             return;
         }
 

@@ -48,10 +48,7 @@ public class ClusterService {
     }
 
     public Mono<ResponseEntity<BrokerMetrics>> getBrokerMetrics(String clusterId) {
-        KafkaCluster cluster = clustersStorage.getKafkaClusters().stream()
-                .filter(cltr -> cltr.getMetricsMap().get(CLUSTER_ID).equals(clusterId))
-                .findFirst()
-                .orElseThrow();
+        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
 
         BrokerMetrics brokerMetrics = new BrokerMetrics();
         brokerMetrics.setClusterId(cluster.getMetricsMap().get(CLUSTER_ID));
@@ -67,10 +64,7 @@ public class ClusterService {
     }
 
     public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId) {
-        KafkaCluster cluster = clustersStorage.getKafkaClusters().stream()
-                .filter(cltr -> cltr.getMetricsMap().get(CLUSTER_ID).equals(clusterId))
-                .findFirst()
-                .orElseThrow();
+        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
 
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopics())));
     }
@@ -84,6 +78,7 @@ public class ClusterService {
     }
 
     public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName) {
-        return null;
+        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+        return Mono.just(ResponseEntity.ok(cluster.getTopicDetails(topicName)));
     }
 }

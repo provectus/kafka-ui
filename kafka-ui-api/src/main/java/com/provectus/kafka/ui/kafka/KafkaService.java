@@ -2,10 +2,7 @@ package com.provectus.kafka.ui.kafka;
 
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.model.MetricsConstants;
-import com.provectus.kafka.ui.model.Partition;
-import com.provectus.kafka.ui.model.Replica;
-import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -46,7 +43,6 @@ public class KafkaService {
         kafkaCluster.setStatus(ServerStatus.ONLINE);
         loadMetrics(kafkaCluster);
         loadTopics(kafkaCluster);
-        loadTopicsDetails(kafkaCluster);
     }
 
     private boolean createAdminClient(KafkaCluster kafkaCluster) {
@@ -78,10 +74,6 @@ public class KafkaService {
         }
     }
 
-    private void loadTopicsDetails(KafkaCluster kafkaCluster) {
-
-    }
-
     @SneakyThrows
     private void loadTopics(KafkaCluster kafkaCluster) {
         AdminClient adminClient = kafkaCluster.getAdminClient();
@@ -98,34 +90,54 @@ public class KafkaService {
             var topicDescription = getTopicDescription(entry);
             if (topicDescription == null) continue;
 
-            var topic = new Topic();
-            topic.setClusterId(clusterId);
-            topic.setInternal(topicDescription.isInternal());
-            topic.setName(topicDescription.name());
-            List<Partition> partitions = new ArrayList<>();
+            Topic topic = collectTopicData(clusterId, topicDescription);
+            TopicDetails topicDetails = kafkaCluster.getTopicDetails(entry.getKey());
+            collectTopicDetailsData(topicDetails, topicDescription);
 
-            for (TopicPartitionInfo partition : topicDescription.partitions()) {
-                var partitionDto = new Partition();
-                partitionDto.setLeader(partition.leader().id());
-                partitionDto.setPartition(partition.partition());
-                List<Replica> replicas = new ArrayList<>();
-                for (Node replicaNode : partition.replicas()) {
-                    var replica = new Replica();
-                    replica.setBroker(replicaNode.id());
-                    replica.setLeader(partition.leader() != null && partition.leader().id() == replicaNode.id());
-                    replica.setInSync(partition.isr().contains(replicaNode));
-                    replicas.add(replica);
-                }
-                partitionDto.setReplicas(replicas);
-                partitions.add(partitionDto);
-            }
-
-            topic.setPartitions(partitions);
             foundTopics.add(topic);
         }
         kafkaCluster.setTopics(foundTopics);
+    }
 
+    private void collectTopicDetailsData(TopicDetails topicDetails, TopicDescription topicDescription) {
+        int inSyncReplicas = 0, replicas = 0;
+        for (TopicPartitionInfo partition : topicDescription.partitions()) {
+            inSyncReplicas += partition.isr().size();
+            replicas += partition.replicas().size();
+        }
 
+        topicDetails.setReplicas(replicas);
+        topicDetails.setPartitionCount(topicDescription.partitions().size());
+        topicDetails.setInSyncReplicas(inSyncReplicas);
+        topicDetails.setReplicationFactor(topicDescription.partitions().size() > 0
+                ? topicDescription.partitions().get(0).replicas().size()
+                : null);
+    }
+
+    private Topic collectTopicData(String clusterId, TopicDescription topicDescription) {
+        var topic = new Topic().clusterId(clusterId);
+        topic.setInternal(topicDescription.isInternal());
+        topic.setName(topicDescription.name());
+        List<Partition> partitions = new ArrayList<>();
+
+        for (TopicPartitionInfo partition : topicDescription.partitions()) {
+            var partitionDto = new Partition();
+            partitionDto.setLeader(partition.leader().id());
+            partitionDto.setPartition(partition.partition());
+            List<Replica> replicas = new ArrayList<>();
+            for (Node replicaNode : partition.replicas()) {
+                var replica = new Replica();
+                replica.setBroker(replicaNode.id());
+                replica.setLeader(partition.leader() != null && partition.leader().id() == replicaNode.id());
+                replica.setInSync(partition.isr().contains(replicaNode));
+                replicas.add(replica);
+            }
+            partitionDto.setReplicas(replicas);
+            partitions.add(partitionDto);
+        }
+        topic.setPartitions(partitions);
+
+        return topic;
     }
 
     private TopicDescription getTopicDescription(Map.Entry<String, KafkaFuture<TopicDescription>> entry) {
@@ -141,7 +153,6 @@ public class KafkaService {
     private void loadMetrics(KafkaCluster kafkaCluster) throws InterruptedException, java.util.concurrent.ExecutionException {
         AdminClient adminClient = kafkaCluster.getAdminClient();
         kafkaCluster.putMetric(MetricsConstants.BROKERS_COUNT, String.valueOf(adminClient.describeCluster().nodes().get().size()));
-
         ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
         listTopicsOptions.listInternal(false);
         Set<String> topicNames = adminClient.listTopics(listTopicsOptions).names().get();
