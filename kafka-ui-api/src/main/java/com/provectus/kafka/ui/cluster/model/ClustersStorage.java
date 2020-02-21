@@ -10,8 +10,6 @@ import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.provectus.kafka.ui.cluster.model.MetricsConstants.CLUSTER_ID;
-
 @Component
 @RequiredArgsConstructor
 public class ClustersStorage {
@@ -35,7 +33,7 @@ public class ClustersStorage {
 
     public KafkaCluster getClusterById(String clusterId) {
         return kafkaClusters.stream()
-                .filter(cltr -> cltr.getMetricsMap().get(CLUSTER_ID).equals(clusterId))
+                .filter(cluster -> cluster.getId().equals(clusterId))
                 .findFirst()
                 .orElseThrow();
     }

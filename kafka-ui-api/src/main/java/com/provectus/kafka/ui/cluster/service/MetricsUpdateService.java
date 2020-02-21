@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
-import com.provectus.kafka.ui.jmx.JmxService;
 import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Service;
 @Log4j2
 public class MetricsUpdateService {
 
-    private final JmxService jmxService;
     private final KafkaService kafkaService;
     private final ZookeeperService zookeeperService;
 
@@ -22,7 +20,6 @@ public class MetricsUpdateService {
     public void updateMetrics(KafkaCluster kafkaCluster) {
         log.debug("Start getting metrics for kafkaCluster: " + kafkaCluster.getName());
         kafkaService.loadClusterMetrics(kafkaCluster);
-//        jmxService.loadClusterMetrics(kafkaCluster);
         zookeeperService.checkZookeeperStatus(kafkaCluster);
     }
 }

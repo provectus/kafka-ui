@@ -1,14 +1,11 @@
 package com.provectus.kafka.ui.zookeeper;
 
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
-import com.provectus.kafka.ui.model.ServerStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-
-import static com.provectus.kafka.ui.cluster.model.MetricsConstants.ZOOKEEPER_STATUS;
 
 @Service
 @RequiredArgsConstructor
@@ -27,14 +24,12 @@ public class ZookeeperService {
         }
 
         if (!isConnected) {
-            kafkaCluster.putMetric(ZOOKEEPER_STATUS, "0");
-            kafkaCluster.setZookeeperStatus(ServerStatus.OFFLINE);
+            kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.OFFLINE);
 
             return;
         }
 
-        kafkaCluster.putMetric(ZOOKEEPER_STATUS, "1");
-        kafkaCluster.setZookeeperStatus(ServerStatus.ONLINE);
+        kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.ONLINE);
     }
 
     private boolean createZookeeperConnection(KafkaCluster kafkaCluster) {
