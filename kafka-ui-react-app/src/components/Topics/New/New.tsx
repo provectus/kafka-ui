@@ -18,19 +18,19 @@ interface Props {
 }
 
 const New: React.FC<Props> = ({
-  clusterId,
-  isTopicCreated,
-  createTopic,
-  redirectToTopicPath,
-  resetUploadedState
-}) => {
-  const { register, handleSubmit, errors, getValues } = useForm<TopicFormData>();
+                                clusterId,
+                                isTopicCreated,
+                                createTopic,
+                                redirectToTopicPath,
+                                resetUploadedState
+                              }) => {
+  const {register, handleSubmit, errors, getValues} = useForm<TopicFormData>();
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
   React.useEffect(
     () => {
       if (isSubmitting && isTopicCreated) {
-        const { name } = getValues();
+        const {name} = getValues();
         redirectToTopicPath(clusterId, name);
       }
     },
@@ -42,17 +42,16 @@ const New: React.FC<Props> = ({
     //loaded, and we will try to get entity immediately after pressing the button, and we will receive null
     //going to object page on the second creation. Resetting loaded state is workaround, need to tweak loader logic
     resetUploadedState();
-    isTopicCreated = false;
     setIsSubmitting(true);
     createTopic(clusterId, data);
-  }
+  };
 
   return (
     <div className="section">
       <div className="level">
         <div className="level-item level-left">
           <Breadcrumb links={[
-            { href: clusterTopicsPath(clusterId), label: 'All Topics' },
+            {href: clusterTopicsPath(clusterId), label: 'All Topics'},
           ]}>
             New Topic
           </Breadcrumb>
@@ -81,7 +80,7 @@ const New: React.FC<Props> = ({
                 disabled={isSubmitting}
               />
               <p className="help is-danger">
-                <ErrorMessage errors={errors} name="name" />
+                <ErrorMessage errors={errors} name="name"/>
               </p>
             </div>
 
@@ -94,12 +93,12 @@ const New: React.FC<Props> = ({
                 type="number"
                 placeholder="Number of partitions"
                 defaultValue="1"
-                ref={register({ required: 'Number of partitions is required.' })}
+                ref={register({required: 'Number of partitions is required.'})}
                 name="partitions"
                 disabled={isSubmitting}
               />
               <p className="help is-danger">
-                <ErrorMessage errors={errors} name="partitions" />
+                <ErrorMessage errors={errors} name="partitions"/>
               </p>
             </div>
           </div>
@@ -114,12 +113,12 @@ const New: React.FC<Props> = ({
                 type="number"
                 placeholder="Replication Factor"
                 defaultValue="1"
-                ref={register({ required: 'Replication Factor is required.' })}
+                ref={register({required: 'Replication Factor is required.'})}
                 name="replicationFactor"
                 disabled={isSubmitting}
               />
               <p className="help is-danger">
-                <ErrorMessage errors={errors} name="replicationFactor" />
+                <ErrorMessage errors={errors} name="replicationFactor"/>
               </p>
             </div>
 
@@ -132,12 +131,12 @@ const New: React.FC<Props> = ({
                 type="number"
                 placeholder="Replication Factor"
                 defaultValue="1"
-                ref={register({ required: 'Min In Sync Replicas is required.' })}
+                ref={register({required: 'Min In Sync Replicas is required.'})}
                 name="minInSyncReplicas"
                 disabled={isSubmitting}
               />
               <p className="help is-danger">
-                <ErrorMessage errors={errors} name="minInSyncReplicas" />
+                <ErrorMessage errors={errors} name="minInSyncReplicas"/>
               </p>
             </div>
           </div>
@@ -175,7 +174,7 @@ const New: React.FC<Props> = ({
                   ref={register}
                   disabled={isSubmitting}
                 >
-                  <option value={MILLISECONDS_IN_DAY / 2 }>
+                  <option value={MILLISECONDS_IN_DAY / 2}>
                     12 hours
                   </option>
                   <option value={MILLISECONDS_IN_DAY}>
@@ -234,21 +233,21 @@ const New: React.FC<Props> = ({
                 className="input"
                 type="number"
                 defaultValue="1000012"
-                ref={register({ required: 'Maximum message size in bytes is required' })}
+                ref={register({required: 'Maximum message size in bytes is required'})}
                 name="maxMessageBytes"
                 disabled={isSubmitting}
               />
               <p className="help is-danger">
-                <ErrorMessage errors={errors} name="maxMessageBytes" />
+                <ErrorMessage errors={errors} name="maxMessageBytes"/>
               </p>
             </div>
           </div>
 
-          <input type="submit" className="button is-primary" disabled={isSubmitting} />
+          <input type="submit" className="button is-primary" disabled={isSubmitting}/>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default New;
