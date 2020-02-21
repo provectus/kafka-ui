@@ -10,6 +10,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
+
 @RestController
 @RequiredArgsConstructor
 public class MetricsRestController implements ClustersApi {
@@ -40,4 +42,10 @@ public class MetricsRestController implements ClustersApi {
     public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterId, String topicName, ServerWebExchange exchange) {
         return clusterService.getTopicConfigs(clusterId, topicName);
     }
+
+    @Override
+    public Mono<ResponseEntity<Void>> createTopic(String clusterId, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
+        return clusterService.createTopic(clusterId, topicFormData);
+    }
+
 }

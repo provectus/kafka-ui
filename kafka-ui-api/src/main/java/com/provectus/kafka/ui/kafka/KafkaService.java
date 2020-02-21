@@ -8,8 +8,11 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.*;
 import org.apache.kafka.common.config.ConfigResource;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 
@@ -216,5 +219,38 @@ public class KafkaService {
         }
 
         kafkaCluster.getTopicConfigsMap().put(topicName, topicConfigs);
+    }
+
+    @SneakyThrows
+    public Mono<ResponseEntity<Void>> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
+        return topicFormData.flatMap(
+                topicData -> {
+                    AdminClient adminClient = cluster.getAdminClient();
+                    NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(), topicData.getReplicationFactor().shortValue());
+                    newTopic.configs(topicData.getConfigs());
+
+                    createTopic(adminClient, newTopic);
+
+                    DescribeTopicsResult topicDescriptionsWrapper = adminClient.describeTopics(Collections.singletonList(topicData.getName()));
+                    Map<String, KafkaFuture<TopicDescription>> topicDescriptionFuturesMap = topicDescriptionsWrapper.values();
+                    var entry = topicDescriptionFuturesMap.entrySet().iterator().next();
+                    var topicDescription = getTopicDescription(entry);
+                    if (topicDescription == null) return Mono.error(new RuntimeException("Can't find created topic"));
+
+                    Topic topic = collectTopicData(cluster, topicDescription);
+                    cluster.getTopics().add(topic);
+                    return Mono.just(new ResponseEntity<>(HttpStatus.CREATED));
+                }
+        );
+    }
+
+    @SneakyThrows
+    private void createTopic(AdminClient adminClient, NewTopic newTopic) {
+        adminClient.createTopics(Collections.singletonList(newTopic))
+                .values()
+                .values()
+                .iterator()
+                .next()
+                .get();
     }
 }

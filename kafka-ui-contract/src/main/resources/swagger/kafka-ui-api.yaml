@@ -71,6 +71,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Topic'
+    post:
+      tags:
+        - /clusters
+      summary: createTopic
+      operationId: createTopic
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicFormData'
+      responses:
+        201:
+          description: Created
 
   /clusters/{clusterId}/topics/{topicName}:
     get:
@@ -263,3 +282,17 @@ components:
           type: string
         defaultValue:
           type: string
+
+    TopicFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: integer
+        replicationFactor:
+          type: integer
+        configs:
+          type: object
+          additionalProperties:
+            type: string
