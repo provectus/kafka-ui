@@ -50,4 +50,4 @@ export const createTopicAction = createAsyncAction(
   ActionType.POST_TOPIC__REQUEST,
   ActionType.POST_TOPIC__SUCCESS,
   ActionType.POST_TOPIC__FAILURE,
-)<undefined, undefined, undefined>();
+)<undefined, Topic, undefined>();

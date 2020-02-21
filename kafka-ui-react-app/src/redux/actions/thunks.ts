@@ -5,7 +5,7 @@ import {
   Cluster,
   ClusterId,
   TopicFormData,
-  TopicName,
+  TopicName, Topic,
 } from 'redux/interfaces';
 
 export const fetchBrokers = (clusterId: ClusterId): PromiseThunk<void> => async (dispatch) => {
@@ -71,8 +71,8 @@ export const fetchTopicConfig = (clusterId: ClusterId, topicName: TopicName): Pr
 export const createTopic = (clusterId: ClusterId, form: TopicFormData): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.createTopicAction.request());
   try {
-    await api.postTopic(clusterId, form);
-    dispatch(actions.createTopicAction.success());
+    const topic: Topic = await api.postTopic(clusterId, form);
+    dispatch(actions.createTopicAction.success(topic));
   } catch (e) {
     dispatch(actions.createTopicAction.failure());
   }

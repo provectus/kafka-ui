@@ -63,7 +63,7 @@ const Overview: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {partitions.map(({ partition, leader }) => (
+            {partitions && partitions.map(({ partition, leader }) => (
               <tr key={`partition-list-item-key-${partition}`}>
                 <td>{partition}</td>
                 <td>{leader}</td>

@@ -9,15 +9,15 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0
 tags:
-  - name: /clusters
+  - name: /api/clusters
 servers:
   - url: /localhost
 
 paths:
-  /clusters:
+  /api/clusters:
     get:
       tags:
-        - /clusters
+        - /api/clusters
       summary: getClusters
       operationId: getClusters
       responses:
@@ -30,10 +30,32 @@ paths:
                 items:
                   $ref: '#/components/schemas/Cluster'
 
-  /clusters/{clusterId}/metrics/broker:
+  /api/clusters/{clusterId}/brokers:
     get:
       tags:
-        - /clusters
+        - /api/clusters
+      summary: getBrokers
+      operationId: getBrokers
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Broker'
+
+  /api/clusters/{clusterId}/metrics/broker:
+    get:
+      tags:
+        - /api/clusters
       summary: getBrokersMetrics
       operationId: getBrokersMetrics
       parameters:
@@ -50,10 +72,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/BrokersMetrics'
 
-  /clusters/{clusterId}/topics:
+  /api/clusters/{clusterId}/topics:
     get:
       tags:
-        - /clusters
+        - /api/clusters
       summary: getTopics
       operationId: getTopics
       parameters:
@@ -73,7 +95,7 @@ paths:
                   $ref: '#/components/schemas/Topic'
     post:
       tags:
-        - /clusters
+        - /api/clusters
       summary: createTopic
       operationId: createTopic
       parameters:
@@ -90,11 +112,15 @@ paths:
       responses:
         201:
           description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
 
-  /clusters/{clusterId}/topics/{topicName}:
+  /api/clusters/{clusterId}/topics/{topicName}:
     get:
       tags:
-        - /clusters
+        - /api/clusters
       summary: getTopicDetails
       operationId: getTopicDetails
       parameters:
@@ -116,10 +142,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
 
-  /clusters/{clusterId}/topics/{topicName}/config:
+  /api/clusters/{clusterId}/topics/{topicName}/config:
     get:
       tags:
-        - /clusters
+        - /api/clusters
       summary: getTopicConfigs
       operationId: getTopicConfigs
       parameters:
@@ -296,3 +322,9 @@ components:
           type: object
           additionalProperties:
             type: string
+
+    Broker:
+      type: object
+      properties:
+        id:
+          type: string

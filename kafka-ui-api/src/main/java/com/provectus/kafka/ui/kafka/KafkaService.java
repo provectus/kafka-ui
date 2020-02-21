@@ -199,7 +199,7 @@ public class KafkaService {
     private void loadTopicConfig(KafkaCluster kafkaCluster, String topicName) {
         AdminClient adminClient = kafkaCluster.getAdminClient();
 
-        Set<ConfigResource> resources = Collections.singleton(new ConfigResource(ConfigResource.Type.TOPIC, "messages"));
+        Set<ConfigResource> resources = Collections.singleton(new ConfigResource(ConfigResource.Type.TOPIC, topicName));
         final Map<ConfigResource, Config> configs = adminClient.describeConfigs(resources).all().get();
 
         if (configs.isEmpty()) return;
@@ -222,7 +222,7 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    public Mono<ResponseEntity<Void>> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
+    public Mono<ResponseEntity<Topic>> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
         return topicFormData.flatMap(
                 topicData -> {
                     AdminClient adminClient = cluster.getAdminClient();
@@ -239,7 +239,7 @@ public class KafkaService {
 
                     Topic topic = collectTopicData(cluster, topicDescription);
                     cluster.getTopics().add(topic);
-                    return Mono.just(new ResponseEntity<>(HttpStatus.CREATED));
+                    return Mono.just(new ResponseEntity<>(topic, HttpStatus.CREATED));
                 }
         );
     }

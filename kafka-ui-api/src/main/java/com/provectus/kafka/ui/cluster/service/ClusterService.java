@@ -49,7 +49,7 @@ public class ClusterService {
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopicConfigsMap().get(topicName))));
     }
 
-    public Mono<ResponseEntity<Void>> createTopic(String clusterId, Mono<TopicFormData> topicFormData) {
+    public Mono<ResponseEntity<Topic>> createTopic(String clusterId, Mono<TopicFormData> topicFormData) {
         KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
         return kafkaService.createTopic(cluster, topicFormData);
     }

@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.rest;
 
-import com.provectus.kafka.ui.api.ClustersApi;
+import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
@@ -11,10 +11,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 
 @RestController
 @RequiredArgsConstructor
-public class MetricsRestController implements ClustersApi {
+public class MetricsRestController implements ApiClustersApi {
 
     private final ClusterService clusterService;
 
@@ -44,8 +45,12 @@ public class MetricsRestController implements ClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> createTopic(String clusterId, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Topic>> createTopic(String clusterId, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
         return clusterService.createTopic(clusterId, topicFormData);
     }
 
+    @Override
+    public Mono<ResponseEntity<Flux<Broker>>> getBrokers(String clusterId, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(Flux.fromIterable(new ArrayList<>())));
+    }
 }

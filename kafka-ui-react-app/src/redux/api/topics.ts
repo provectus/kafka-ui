@@ -23,7 +23,7 @@ export const getTopics = (clusterId: ClusterId): Promise<Topic[]> =>
   fetch(`${BASE_URL}/clusters/${clusterId}/topics`, { ...BASE_PARAMS })
     .then(res => res.json());
 
-export const postTopic = (clusterId: ClusterId, form: TopicFormData): Promise<Response> => {
+export const postTopic = (clusterId: ClusterId, form: TopicFormData): Promise<Topic> => {
   const {
     name,
     partitions,
@@ -50,5 +50,5 @@ export const postTopic = (clusterId: ClusterId, form: TopicFormData): Promise<Re
     ...BASE_PARAMS,
     method: 'POST',
     body,
-  });
+  }).then(res => res.json());
 }
