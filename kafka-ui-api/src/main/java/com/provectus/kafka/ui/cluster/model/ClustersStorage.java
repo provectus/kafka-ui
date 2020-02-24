@@ -33,8 +33,8 @@ public class ClustersStorage {
 
     public KafkaCluster getClusterById(String clusterId) {
         return kafkaClusters.stream()
-                .filter(cluster -> cluster.getId().equals(clusterId))
+                .filter(cluster -> cluster.getId() != null && cluster.getId().equals(clusterId))
                 .findFirst()
-                .orElseThrow();
+                .orElse(null);
     }
 }

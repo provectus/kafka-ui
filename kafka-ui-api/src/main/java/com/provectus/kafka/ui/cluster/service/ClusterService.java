@@ -30,27 +30,32 @@ public class ClusterService {
     }
 
     public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterId) {
-        return Mono.just(ResponseEntity.ok(clustersStorage.getClusterById(clusterId).getBrokersMetrics()));
+        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+        if (cluster == null) return null;
+        return Mono.just(ResponseEntity.ok(cluster.getBrokersMetrics()));
     }
 
     public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId) {
         KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
-
+        if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopics())));
     }
 
     public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName) {
         KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+        if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(cluster.getTopicDetails(topicName)));
     }
 
     public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterId, String topicName) {
         KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+        if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopicConfigsMap().get(topicName))));
     }
 
     public Mono<ResponseEntity<Topic>> createTopic(String clusterId, Mono<TopicFormData> topicFormData) {
         KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+        if (cluster == null) return null;
         return kafkaService.createTopic(cluster, topicFormData);
     }
 }
