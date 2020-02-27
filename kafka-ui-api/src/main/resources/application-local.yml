@@ -3,12 +3,8 @@ kafka:
     -
       name: local
       bootstrapServers: localhost:29091
-      jmxHost: localhost
-      jmxPort: 9997
       zookeeper: localhost:2181
     -
       name: secondLocal
       bootstrapServers: localhost:29092
-      jmxHost: localhost
-      jmxPort: 9998
       zookeeper: localhost:2182

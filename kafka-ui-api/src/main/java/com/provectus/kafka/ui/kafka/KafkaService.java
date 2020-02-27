@@ -84,6 +84,7 @@ public class KafkaService {
             properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
             kafkaCluster.setAdminClient(AdminClient.create(properties));
             kafkaCluster.setId(getClusterId(kafkaCluster));
+            kafkaCluster.getCluster().setId(kafkaCluster.getId());
 
             return true;
         } catch (Exception e) {
