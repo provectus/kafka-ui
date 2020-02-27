@@ -1,0 +1,330 @@
+openapi: 3.0.0
+info:
+  description: Api Documentation
+  version: 0.1.0
+  title: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+tags:
+  - name: /api/clusters
+servers:
+  - url: /localhost
+
+paths:
+  /api/clusters:
+    get:
+      tags:
+        - /api/clusters
+      summary: getClusters
+      operationId: getClusters
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Cluster'
+
+  /api/clusters/{clusterId}/brokers:
+    get:
+      tags:
+        - /api/clusters
+      summary: getBrokers
+      operationId: getBrokers
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Broker'
+
+  /api/clusters/{clusterId}/metrics/broker:
+    get:
+      tags:
+        - /api/clusters
+      summary: getBrokersMetrics
+      operationId: getBrokersMetrics
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrokersMetrics'
+
+  /api/clusters/{clusterId}/topics:
+    get:
+      tags:
+        - /api/clusters
+      summary: getTopics
+      operationId: getTopics
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Topic'
+    post:
+      tags:
+        - /api/clusters
+      summary: createTopic
+      operationId: createTopic
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicFormData'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+
+  /api/clusters/{clusterId}/topics/{topicName}:
+    get:
+      tags:
+        - /api/clusters
+      summary: getTopicDetails
+      operationId: getTopicDetails
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicDetails'
+
+  /api/clusters/{clusterId}/topics/{topicName}/config:
+    get:
+      tags:
+        - /api/clusters
+      summary: getTopicConfigs
+      operationId: getTopicConfigs
+      parameters:
+        - name: clusterId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicConfig'
+
+components:
+  schemas:
+    Cluster:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        defaultCluster:
+          type: boolean
+        status:
+          $ref: '#/components/schemas/ServerStatus'
+        brokerCount:
+          type: integer
+        onlinePartitionCount:
+          type: integer
+        topicCount:
+          type: integer
+        bytesInPerSec:
+          type: integer
+        bytesOutPerSec:
+          type: integer
+      required:
+        - id
+        - name
+        - status
+
+    ServerStatus:
+      type: string
+      enum:
+        - online
+        - offline
+
+    BrokersMetrics:
+      type: object
+      properties:
+        clusterId:
+          type: string
+        bytesInPerSec:
+          type: integer
+        brokerCount:
+          type: integer
+        zooKeeperStatus:
+          type: integer
+        activeControllers:
+          type: integer
+        uncleanLeaderElectionCount:
+          type: integer
+        networkPoolUsage:
+          type: number
+        requestPoolUsage:
+          type: number
+        onlinePartitionCount:
+          type: integer
+        underReplicatedPartitionCount:
+          type: integer
+        offlinePartitionCount:
+          type: integer
+        diskUsage:
+          $ref: '#/components/schemas/DiskUsage'
+        diskUsageDistribution:
+          type: string
+      required:
+        - id
+
+    DiskUsage:
+      type: object
+      properties:
+        brokerId:
+          type: integer
+        segmentSize:
+          type: integer
+
+    Topic:
+      type: object
+      properties:
+        clusterId:
+          type: string
+        name:
+          type: string
+        internal:
+          type: boolean
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partition'
+
+    Partition:
+      type: object
+      properties:
+        partition:
+          type: integer
+        leader:
+          type: integer
+        replicas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Replica'
+
+    Replica:
+      type: object
+      properties:
+        broker:
+          type: integer
+        leader:
+          type: boolean
+        inSync:
+          type: boolean
+
+    TopicDetails:
+      type: object
+      properties:
+        partitionCount:
+          type: integer
+        replicationFactor:
+          type: integer
+        replicas:
+          type: integer
+        inSyncReplicas:
+          type: integer
+        bytesInPerSec:
+          type: integer
+        segmentSize:
+          type: integer
+        segmentCount:
+          type: integer
+        underReplicatedPartitions:
+          type: integer
+
+    TopicConfig:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        defaultValue:
+          type: string
+
+    TopicFormData:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: integer
+        replicationFactor:
+          type: integer
+        configs:
+          type: object
+          additionalProperties:
+            type: string
+
+    Broker:
+      type: object
+      properties:
+        id:
+          type: string

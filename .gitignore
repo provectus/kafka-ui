@@ -1,23 +1,32 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
 
-# dependencies
-node_modules
-.pnp
-.pnp.js
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
 
-# testing
-coverage
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
 
-# production
-build
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
 
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+### VS Code ###
+.vscode/
+/kafka-ui-api/app/node

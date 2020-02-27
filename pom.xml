@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+    <packaging>pom</packaging>
+    <modules>
+        <module>kafka-ui-contract</module>
+		<module>kafka-ui-api</module>
+	</modules>
+
+	<properties>
+		<maven.compiler.source>13</maven.compiler.source>
+		<maven.compiler.target>13</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<spring-boot.version>2.2.4.RELEASE</spring-boot.version>
+		<jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+		<org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
+		<org.projectlombok.version>1.18.10</org.projectlombok.version>
+		<git.revision>latest</git.revision>
+		<zkclient.version>0.11</zkclient.version>
+		<kafka-clients.version>2.4.0</kafka-clients.version>
+		<node.version>v12.13.1</node.version>
+		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
+		<frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
+		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+		<openapi-generator-maven-plugin.version>4.2.2</openapi-generator-maven-plugin.version>
+		<swagger-annotations.version>1.6.0</swagger-annotations.version>
+	</properties>
+
+	<groupId>com.provectus</groupId>
+	<artifactId>kafka-ui</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>kafka-ui</name>
+	<description>Kafka metrics for UI panel</description>
+</project>

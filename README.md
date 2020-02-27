@@ -1,39 +1,34 @@
 # Kafka-UI
-UI for Apache Kafka management
 
-## Table of contents
-- [Getting started](#getting-started)
-- [Links](#links)
+UI for Apache Kafka management
 
 ## Getting started
 
-Install packages
+Build application and docker container
 
 ```
-npm install
+./mvnw clean install -Pprod
 ```
 
-Set correct URL to your API server in `.env`.
+Start application with kafka clusters
 
 ```
-REACT_APP_API_URL=http://api.your-kafka-rest-api.com:3004
+docker-compose -f ./docker/kafka-ui.yaml
 ```
 
-Start JSON Server if you prefer to use default full fake REST API.
+Application should be available at http://localhost:8080 .
+
+To start only kafka-clusters:
 
 ```
-npm run mock
+docker-compose -f ./docker/kafka-clusters-only.yaml
 ```
 
-Start application
+Kafka-ui then should be started with **local** profile
+
+### Run application without docker:
 
 ```
-npm start
+cd kafka-ui-api
+./mvnw spring-boot:run -Pprod
 ```
-
-
-## Links
-
-* [JSON Server](https://github.com/typicode/json-server) - Fake REST API.
-* [Bulma](https://bulma.io/documentation/) - free, open source CSS framework based on Flexbox
-* [Create React App](https://github.com/facebook/create-react-app)
