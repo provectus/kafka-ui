@@ -7,14 +7,13 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
 public class ClustersStorage {
 
-    private final List<KafkaCluster> kafkaClusters = new ArrayList<>();
+    private final Map<String, KafkaCluster> kafkaClusters = new HashMap<>();
 
     private final ClustersProperties clusterProperties;
 
@@ -23,18 +22,18 @@ public class ClustersStorage {
     @PostConstruct
     public void init() {
         for (ClustersProperties.Cluster clusterProperties : clusterProperties.getClusters()) {
-            kafkaClusters.add(clusterMapper.toKafkaCluster(clusterProperties));
+            if (kafkaClusters.get(clusterProperties.getName()) != null) {
+                throw new IllegalStateException("Application config isn't correct. Two clusters can't have the same name");
+            }
+            kafkaClusters.put(clusterProperties.getName(), clusterMapper.toKafkaCluster(clusterProperties));
         }
     }
 
-    public List<KafkaCluster> getKafkaClusters() {
-        return kafkaClusters;
+    public Collection<KafkaCluster> getKafkaClusters() {
+        return kafkaClusters.values();
     }
 
-    public KafkaCluster getClusterById(String clusterId) {
-        return kafkaClusters.stream()
-                .filter(cluster -> cluster.getId() != null && cluster.getId().equals(clusterId))
-                .findFirst()
-                .orElse(null);
+    public KafkaCluster getClusterByName(String clusterName) {
+        return kafkaClusters.get(clusterName);
     }
 }

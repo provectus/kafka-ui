@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, CleanupPolicy, TopicFormData, TopicName } from 'redux/interfaces';
+import { ClusterName, CleanupPolicy, TopicFormData, TopicName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterTopicsPath } from 'lib/paths';
 import { useForm, ErrorMessage } from 'react-hook-form';
@@ -10,15 +10,15 @@ import {
 } from 'lib/constants';
 
 interface Props {
-  clusterId: ClusterId;
+  clusterName: ClusterName;
   isTopicCreated: boolean;
-  createTopic: (clusterId: ClusterId, form: TopicFormData) => void;
-  redirectToTopicPath: (clusterId: ClusterId, topicName: TopicName) => void;
+  createTopic: (clusterName: ClusterName, form: TopicFormData) => void;
+  redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => void;
   resetUploadedState: () => void;
 }
 
 const New: React.FC<Props> = ({
-                                clusterId,
+                                clusterName,
                                 isTopicCreated,
                                 createTopic,
                                 redirectToTopicPath,
@@ -31,10 +31,10 @@ const New: React.FC<Props> = ({
     () => {
       if (isSubmitting && isTopicCreated) {
         const {name} = getValues();
-        redirectToTopicPath(clusterId, name);
+        redirectToTopicPath(clusterName, name);
       }
     },
-    [isSubmitting, isTopicCreated, redirectToTopicPath, clusterId, getValues],
+    [isSubmitting, isTopicCreated, redirectToTopicPath, clusterName, getValues],
   );
 
   const onSubmit = async (data: TopicFormData) => {
@@ -43,7 +43,7 @@ const New: React.FC<Props> = ({
     //going to object page on the second creation. Resetting loaded state is workaround, need to tweak loader logic
     resetUploadedState();
     setIsSubmitting(true);
-    createTopic(clusterId, data);
+    createTopic(clusterName, data);
   };
 
   return (
@@ -51,7 +51,7 @@ const New: React.FC<Props> = ({
       <div className="level">
         <div className="level-item level-left">
           <Breadcrumb links={[
-            {href: clusterTopicsPath(clusterId), label: 'All Topics'},
+            {href: clusterTopicsPath(clusterName), label: 'All Topics'},
           ]}>
             New Topic
           </Breadcrumb>

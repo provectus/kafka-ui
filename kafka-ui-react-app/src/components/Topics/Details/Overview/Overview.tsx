@@ -1,18 +1,18 @@
 import React from 'react';
-import { ClusterId, Topic, TopicDetails, TopicName } from 'redux/interfaces';
+import { ClusterName, Topic, TopicDetails, TopicName } from 'redux/interfaces';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 
 interface Props extends Topic, TopicDetails {
   isFetched: boolean;
-  clusterId: ClusterId;
+  clusterName: ClusterName;
   topicName: TopicName;
-  fetchTopicDetails: (clusterId: ClusterId, topicName: TopicName) => void;
+  fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => void;
 }
 
 const Overview: React.FC<Props> = ({
   isFetched,
-  clusterId,
+  clusterName,
   topicName,
   partitions,
   underReplicatedPartitions,
@@ -24,8 +24,8 @@ const Overview: React.FC<Props> = ({
   fetchTopicDetails,
 }) => {
   React.useEffect(
-    () => { fetchTopicDetails(clusterId, topicName); },
-    [fetchTopicDetails, clusterId, topicName],
+    () => { fetchTopicDetails(clusterName, topicName); },
+    [fetchTopicDetails, clusterName, topicName],
   );
 
   if (!isFetched) {
@@ -74,6 +74,6 @@ const Overview: React.FC<Props> = ({
       </div>
     </>
   );
-}
+};
 
 export default Overview;

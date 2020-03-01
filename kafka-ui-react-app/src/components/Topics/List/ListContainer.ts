@@ -1,17 +1,17 @@
 import { connect } from 'react-redux';
-import { RootState } from 'redux/interfaces';
+import {ClusterName, RootState} from 'redux/interfaces';
 import { getTopicList, getExternalTopicList } from 'redux/reducers/topics/selectors';
 import List from './List';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 
 interface RouteProps {
-  clusterId: string;
+  clusterName: ClusterName;
 }
 
 interface OwnProps extends RouteComponentProps<RouteProps> { }
 
-const mapStateToProps = (state: RootState, { match: { params: { clusterId } } }: OwnProps) => ({
-  clusterId,
+const mapStateToProps = (state: RootState, { match: { params: { clusterName } } }: OwnProps) => ({
+  clusterName,
   topics: getTopicList(state),
   externalTopics: getExternalTopicList(state),
 });

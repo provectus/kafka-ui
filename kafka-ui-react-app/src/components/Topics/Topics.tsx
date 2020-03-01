@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId } from 'redux/interfaces';
+import { ClusterName } from 'redux/interfaces';
 import {
   Switch,
   Route,
@@ -10,30 +10,30 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import NewContainer from './New/NewContainer';
 
 interface Props {
-  clusterId: string;
+  clusterName: ClusterName;
   isFetched: boolean;
-  fetchBrokers: (clusterId: ClusterId) => void;
-  fetchTopicList: (clusterId: ClusterId) => void;
+  fetchBrokers: (clusterName: ClusterName) => void;
+  fetchTopicList: (clusterName: ClusterName) => void;
 }
 
 const Topics: React.FC<Props> = ({
-  clusterId,
+  clusterName,
   isFetched,
   fetchTopicList,
 }) => {
-  React.useEffect(() => { fetchTopicList(clusterId); }, [fetchTopicList, clusterId]);
+  React.useEffect(() => { fetchTopicList(clusterName); }, [fetchTopicList, clusterName]);
 
   if (isFetched) {
     return (
       <Switch>
-        <Route exact path="/clusters/:clusterId/topics" component={ListContainer} />
-        <Route exact path="/clusters/:clusterId/topics/new" component={NewContainer} />
-        <Route path="/clusters/:clusterId/topics/:topicName" component={DetailsContainer} />
+        <Route exact path="/clusters/:clusterName/topics" component={ListContainer} />
+        <Route exact path="/clusters/:clusterName/topics/new" component={NewContainer} />
+        <Route path="/clusters/:clusterName/topics/:topicName" component={DetailsContainer} />
       </Switch>
     );
   }
 
   return (<PageLoader />);
-}
+};
 
 export default Topics;

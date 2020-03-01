@@ -16,11 +16,8 @@ public class ClustersProperties {
 
     @Data
     public static class Cluster {
-        String id;
         String name;
         String bootstrapServers;
-        String jmxHost;
-        String jmxPort;
         String zookeeper;
     }
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, Topic, TopicDetails, TopicName } from 'redux/interfaces';
+import { ClusterName, Topic, TopicDetails, TopicName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import { clusterTopicsPath, clusterTopicSettingsPath, clusterTopicPath, clusterTopicMessagesPath } from 'lib/paths';
@@ -8,12 +8,12 @@ import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 
 interface Props extends Topic, TopicDetails {
-  clusterId: ClusterId;
+  clusterName: ClusterName;
   topicName: TopicName;
 }
 
 const Details: React.FC<Props> = ({
-  clusterId,
+  clusterName,
   topicName,
 }) => {
   return (
@@ -21,7 +21,7 @@ const Details: React.FC<Props> = ({
       <div className="level">
         <div className="level-item level-left">
           <Breadcrumb links={[
-            { href: clusterTopicsPath(clusterId), label: 'All Topics' },
+            { href: clusterTopicsPath(clusterName), label: 'All Topics' },
           ]}>
             {topicName}
           </Breadcrumb>
@@ -32,7 +32,7 @@ const Details: React.FC<Props> = ({
         <nav className="navbar" role="navigation">
           <NavLink
             exact
-            to={clusterTopicPath(clusterId, topicName)}
+            to={clusterTopicPath(clusterName, topicName)}
             className="navbar-item is-tab"
             activeClassName="is-active is-primary"
           >
@@ -40,7 +40,7 @@ const Details: React.FC<Props> = ({
           </NavLink>
           <NavLink
             exact
-            to={clusterTopicMessagesPath(clusterId, topicName)}
+            to={clusterTopicMessagesPath(clusterName, topicName)}
             className="navbar-item is-tab"
             activeClassName="is-active"
           >
@@ -48,7 +48,7 @@ const Details: React.FC<Props> = ({
           </NavLink>
           <NavLink
             exact
-            to={clusterTopicSettingsPath(clusterId, topicName)}
+            to={clusterTopicSettingsPath(clusterName, topicName)}
             className="navbar-item is-tab"
             activeClassName="is-active"
           >
@@ -57,13 +57,13 @@ const Details: React.FC<Props> = ({
         </nav>
         <br />
         <Switch>
-          <Route exact path="/clusters/:clusterId/topics/:topicName/messages" component={MessagesContainer} />
-          <Route exact path="/clusters/:clusterId/topics/:topicName/settings" component={SettingsContainer} />
-          <Route exact path="/clusters/:clusterId/topics/:topicName" component={OverviewContainer} />
+          <Route exact path="/clusters/:clusterName/topics/:topicName/messages" component={MessagesContainer} />
+          <Route exact path="/clusters/:clusterName/topics/:topicName/settings" component={SettingsContainer} />
+          <Route exact path="/clusters/:clusterName/topics/:topicName" component={OverviewContainer} />
         </Switch>
       </div>
     </div>
   );
-}
+};
 
 export default Details;

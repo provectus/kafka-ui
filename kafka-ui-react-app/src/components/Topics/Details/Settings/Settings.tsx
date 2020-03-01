@@ -1,12 +1,12 @@
 import React from 'react';
-import { ClusterId, TopicName, TopicConfig } from 'redux/interfaces';
+import { ClusterName, TopicName, TopicConfig } from 'redux/interfaces';
 
 interface Props {
-  clusterId: ClusterId;
+  clusterName: ClusterName;
   topicName: TopicName;
   config?: TopicConfig[];
   isFetched: boolean;
-  fetchTopicConfig: (clusterId: ClusterId, topicName: TopicName) => void;
+  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
 }
 
 const ConfigListItem: React.FC<TopicConfig> = ({
@@ -32,22 +32,22 @@ const ConfigListItem: React.FC<TopicConfig> = ({
       </td>
     </tr>
   )
-}
+};
 
 const Sertings: React.FC<Props> = ({
-  clusterId,
+  clusterName,
   topicName,
   isFetched,
   fetchTopicConfig,
   config,
 }) => {
   React.useEffect(
-    () => { fetchTopicConfig(clusterId, topicName); },
-    [fetchTopicConfig, clusterId, topicName],
+    () => { fetchTopicConfig(clusterName, topicName); },
+    [fetchTopicConfig, clusterName, topicName],
   );
 
   if (!isFetched || !config) {
-    return (null);
+    return null;
   }
 
   return (
@@ -66,6 +66,6 @@ const Sertings: React.FC<Props> = ({
       </table>
     </div>
   );
-}
+};
 
 export default Sertings;

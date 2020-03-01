@@ -1,18 +1,18 @@
 import React from 'react';
-import { TopicWithDetailedInfo, ClusterId } from 'redux/interfaces';
+import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
 import ListItem from './ListItem';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 
 interface Props {
-  clusterId: ClusterId;
+  clusterName: ClusterName;
   topics: (TopicWithDetailedInfo)[];
   externalTopics: (TopicWithDetailedInfo)[];
 }
 
 const List: React.FC<Props> = ({
-  clusterId,
+  clusterName,
   topics,
   externalTopics,
 }) => {
@@ -46,7 +46,7 @@ const List: React.FC<Props> = ({
           <div className="level-item level-right">
             <NavLink
               className="button is-primary"
-              to={clusterTopicNewPath(clusterId)}
+              to={clusterTopicNewPath(clusterName)}
             >
               Add a Topic
             </NavLink>
@@ -75,6 +75,6 @@ const List: React.FC<Props> = ({
       </div>
     </div>
   );
-}
+};
 
 export default List;

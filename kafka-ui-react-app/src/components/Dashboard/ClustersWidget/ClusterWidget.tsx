@@ -5,7 +5,6 @@ import { NavLink } from 'react-router-dom';
 import { clusterBrokersPath } from 'lib/paths';
 
 const ClusterWidget: React.FC<Cluster> = ({
-  id,
   name,
   status,
   topicCount,
@@ -14,7 +13,7 @@ const ClusterWidget: React.FC<Cluster> = ({
   bytesOutPerSec,
   onlinePartitionCount,
 }) => (
-  <NavLink to={clusterBrokersPath(id)} className="column is-full-modile is-6">
+  <NavLink to={clusterBrokersPath(name)} className="column is-full-modile is-6">
     <div className="box is-hoverable">
       <div
         className="title is-6 has-text-overflow-ellipsis"

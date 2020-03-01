@@ -1,6 +1,6 @@
 [
   {
-    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "clusterName": "fake.cluster",
     "bytesInPerSec": 8027,
     "brokerCount": 1,
     "zooKeeperStatus": 1,
@@ -20,7 +20,7 @@
     "diskUsageDistribution": "even"
   },
   {
-    "clusterId": "dMMQx-WRh77BKYas_g2ZTz",
+    "clusterName": "kafka-ui.cluster",
     "bytesInPerSec": 8194,
     "brokerCount": 1,
     "zooKeeperStatus": 1,

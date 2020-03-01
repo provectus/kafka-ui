@@ -37,9 +37,9 @@ const App: React.FC<AppProps> = ({
           <Switch>
             <Route exact path="/" component={Dashboard} />
             <Route exact path="/clusters" component={Dashboard} />
-            <Route path="/clusters/:clusterId/topics" component={TopicsContainer} />
-            <Route path="/clusters/:clusterId/brokers" component={BrokersContainer} />
-            <Redirect from="/clusters/:clusterId" to="/clusters/:clusterId/brokers" />
+            <Route path="/clusters/:clusterName/topics" component={TopicsContainer} />
+            <Route path="/clusters/:clusterName/brokers" component={BrokersContainer} />
+            <Redirect from="/clusters/:clusterName" to="/clusters/:clusterName/brokers" />
           </Switch>
         ) : (
           <PageLoader />
@@ -48,6 +48,6 @@ const App: React.FC<AppProps> = ({
       </main>
     </div>
   );
-}
+};
 
 export default App;

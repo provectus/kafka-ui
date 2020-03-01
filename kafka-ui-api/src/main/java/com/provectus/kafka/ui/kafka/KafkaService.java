@@ -139,7 +139,7 @@ public class KafkaService {
     }
 
     private Topic collectTopicData(KafkaCluster kafkaCluster, TopicDescription topicDescription) {
-        var topic = new Topic().clusterId(kafkaCluster.getId());
+        var topic = new Topic();
         topic.setInternal(topicDescription.isInternal());
         topic.setName(topicDescription.name());
 

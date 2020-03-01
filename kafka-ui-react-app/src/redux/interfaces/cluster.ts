@@ -3,11 +3,11 @@ export enum ClusterStatus {
   Offline = 'offline',
 }
 
-export type ClusterId = string;
+export type ClusterName = string;
 
 export interface Cluster {
-  id: ClusterId;
-  name: string;
+  id: string;
+  name: ClusterName;
   defaultCluster: boolean;
   status: ClusterStatus;
   brokerCount: number;

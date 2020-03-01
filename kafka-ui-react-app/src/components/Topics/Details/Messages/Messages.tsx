@@ -1,20 +1,20 @@
 import React from 'react';
-import { ClusterId, TopicName } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
 
 interface Props {
-  clusterId: ClusterId;
+  clusterName: ClusterName;
   topicName: TopicName;
 }
 
 const Messages: React.FC<Props> = ({
-  clusterId,
+  clusterName,
   topicName,
 }) => {
   return (
     <h1>
-      Messages from {clusterId}{topicName}
+      Messages from {clusterName}{topicName}
     </h1>
   );
-}
+};
 
 export default Messages;

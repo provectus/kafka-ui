@@ -1,6 +1,6 @@
 [
   {
-    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "clusterId": "fake.cluster",
     "name": "docker-connect-status",
     "internal": true,
     "partitions": [
@@ -62,7 +62,7 @@
     ]
   },
   {
-    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "clusterId": "fake.cluster",
     "name": "dsadsda",
     "internal": false,
     "partitions": [
@@ -80,7 +80,7 @@
     ]
   },
   {
-    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "clusterId": "fake.cluster",
     "name": "my-topic",
     "internal": false,
     "partitions": [
@@ -98,7 +98,7 @@
     ]
   },
   {
-    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "clusterId": "fake.cluster",
     "name": "docker-connect-offsets",
     "internal": false,
     "partitions": [
@@ -171,7 +171,7 @@
     ]
   },
   {
-    "clusterId": "dMMQx-WRh77BKYas_g2ZTz",
+    "clusterId": "kafka-ui.cluster",
     "name": "_schemas",
     "internal": false,
     "partitions": [
@@ -189,7 +189,7 @@
     ]
   },
   {
-    "clusterId": "dMMQx-WRh77BKYas_g2ZTz",
+    "clusterId": "kafka-ui.cluster",
     "name": "docker-connect-configs",
     "internal": false,
     "partitions": [
@@ -207,7 +207,7 @@
     ]
   },
   {
-    "clusterId": "dMMQx-WRh77BKYas_g2ZTz",
+    "clusterId": "kafka-ui.cluster",
     "name": "_kafka-ui-test-topic-monitoring-message-rekey-store",
     "internal": false,
     "partitions": [

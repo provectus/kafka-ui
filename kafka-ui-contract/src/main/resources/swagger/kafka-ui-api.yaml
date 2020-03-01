@@ -30,14 +30,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/Cluster'
 
-  /api/clusters/{clusterId}/brokers:
+  /api/clusters/{clusterName}/brokers:
     get:
       tags:
         - /api/clusters
       summary: getBrokers
       operationId: getBrokers
       parameters:
-        - name: clusterId
+        - name: clusterName
           in: path
           required: true
           schema:
@@ -52,14 +52,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/Broker'
 
-  /api/clusters/{clusterId}/metrics/broker:
+  /api/clusters/{clusterName}/metrics/broker:
     get:
       tags:
         - /api/clusters
       summary: getBrokersMetrics
       operationId: getBrokersMetrics
       parameters:
-        - name: clusterId
+        - name: clusterName
           in: path
           required: true
           schema:
@@ -72,14 +72,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/BrokersMetrics'
 
-  /api/clusters/{clusterId}/topics:
+  /api/clusters/{clusterName}/topics:
     get:
       tags:
         - /api/clusters
       summary: getTopics
       operationId: getTopics
       parameters:
-        - name: clusterId
+        - name: clusterName
           in: path
           required: true
           schema:
@@ -99,7 +99,7 @@ paths:
       summary: createTopic
       operationId: createTopic
       parameters:
-        - name: clusterId
+        - name: clusterName
           in: path
           required: true
           schema:
@@ -117,14 +117,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Topic'
 
-  /api/clusters/{clusterId}/topics/{topicName}:
+  /api/clusters/{clusterName}/topics/{topicName}:
     get:
       tags:
         - /api/clusters
       summary: getTopicDetails
       operationId: getTopicDetails
       parameters:
-        - name: clusterId
+        - name: clusterName
           in: path
           required: true
           schema:
@@ -142,14 +142,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
 
-  /api/clusters/{clusterId}/topics/{topicName}/config:
+  /api/clusters/{clusterName}/topics/{topicName}/config:
     get:
       tags:
         - /api/clusters
       summary: getTopicConfigs
       operationId: getTopicConfigs
       parameters:
-        - name: clusterId
+        - name: clusterName
           in: path
           required: true
           schema:
@@ -228,8 +228,6 @@ components:
     Topic:
       type: object
       properties:
-        clusterId:
-          type: string
         name:
           type: string
         internal:

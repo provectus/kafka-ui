@@ -1,7 +1,7 @@
 import {
   TopicName,
   Topic,
-  ClusterId,
+  ClusterName,
   TopicDetails,
   TopicConfig,
   TopicFormData,
@@ -11,19 +11,19 @@ import {
   BASE_PARAMS,
 } from 'lib/constants';
 
-export const getTopicConfig = (clusterId: ClusterId, topicName: TopicName): Promise<TopicConfig[]> =>
-  fetch(`${BASE_URL}/clusters/${clusterId}/topics/${topicName}/config`, { ...BASE_PARAMS })
+export const getTopicConfig = (clusterName: ClusterName, topicName: TopicName): Promise<TopicConfig[]> =>
+  fetch(`${BASE_URL}/clusters/${clusterName}/topics/${topicName}/config`, { ...BASE_PARAMS })
     .then(res => res.json());
 
-export const getTopicDetails = (clusterId: ClusterId, topicName: TopicName): Promise<TopicDetails> =>
-  fetch(`${BASE_URL}/clusters/${clusterId}/topics/${topicName}`, { ...BASE_PARAMS })
+export const getTopicDetails = (clusterName: ClusterName, topicName: TopicName): Promise<TopicDetails> =>
+  fetch(`${BASE_URL}/clusters/${clusterName}/topics/${topicName}`, { ...BASE_PARAMS })
     .then(res => res.json());
 
-export const getTopics = (clusterId: ClusterId): Promise<Topic[]> =>
-  fetch(`${BASE_URL}/clusters/${clusterId}/topics`, { ...BASE_PARAMS })
+export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
+  fetch(`${BASE_URL}/clusters/${clusterName}/topics`, { ...BASE_PARAMS })
     .then(res => res.json());
 
-export const postTopic = (clusterId: ClusterId, form: TopicFormData): Promise<Topic> => {
+export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promise<Topic> => {
   const {
     name,
     partitions,
@@ -46,9 +46,9 @@ export const postTopic = (clusterId: ClusterId, form: TopicFormData): Promise<To
       'min.insync.replicas': minInSyncReplicas,
     }
   });
-  return fetch(`${BASE_URL}/clusters/${clusterId}/topics`, {
+  return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
     ...BASE_PARAMS,
     method: 'POST',
     body,
   }).then(res => res.json());
-}
+};

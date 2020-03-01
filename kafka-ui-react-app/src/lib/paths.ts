@@ -1,15 +1,15 @@
 import {
-  ClusterId,
+  ClusterName,
   TopicName,
 } from 'redux/interfaces';
 
-const clusterPath = (clusterId: ClusterId) => `/clusters/${clusterId}`;
+const clusterPath = (clusterName: ClusterName) => `/clusters/${clusterName}`;
 
-export const clusterBrokersPath = (clusterId: ClusterId) => `${clusterPath(clusterId)}/brokers`;
+export const clusterBrokersPath = (clusterName: ClusterName) => `${clusterPath(clusterName)}/brokers`;
 
-export const clusterTopicsPath = (clusterId: ClusterId) => `${clusterPath(clusterId)}/topics`;
-export const clusterTopicNewPath = (clusterId: ClusterId) => `${clusterPath(clusterId)}/topics/new`;
+export const clusterTopicsPath = (clusterName: ClusterName) => `${clusterPath(clusterName)}/topics`;
+export const clusterTopicNewPath = (clusterName: ClusterName) => `${clusterPath(clusterName)}/topics/new`;
 
-export const clusterTopicPath = (clusterId: ClusterId, topicName: TopicName) => `${clusterTopicsPath(clusterId)}/${topicName}`;
-export const clusterTopicSettingsPath = (clusterId: ClusterId, topicName: TopicName) => `${clusterTopicsPath(clusterId)}/${topicName}/settings`;
-export const clusterTopicMessagesPath = (clusterId: ClusterId, topicName: TopicName) => `${clusterTopicsPath(clusterId)}/${topicName}/messages`;
+export const clusterTopicPath = (clusterName: ClusterName, topicName: TopicName) => `${clusterTopicsPath(clusterName)}/${topicName}`;
+export const clusterTopicSettingsPath = (clusterName: ClusterName, topicName: TopicName) => `${clusterTopicsPath(clusterName)}/${topicName}/settings`;
+export const clusterTopicMessagesPath = (clusterName: ClusterName, topicName: TopicName) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;

@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { RootState, ClusterId, TopicName } from 'redux/interfaces';
+import { RootState, ClusterName, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   fetchTopicConfig,
@@ -12,22 +12,22 @@ import {
 
 
 interface RouteProps {
-  clusterId: string;
-  topicName: string;
+  clusterName: ClusterName;
+  topicName: TopicName;
 }
 
 interface OwnProps extends RouteComponentProps<RouteProps> { }
 
-const mapStateToProps = (state: RootState, { match: { params: { topicName, clusterId } } }: OwnProps) => ({
-  clusterId,
+const mapStateToProps = (state: RootState, { match: { params: { topicName, clusterName } } }: OwnProps) => ({
+  clusterName,
   topicName,
   config: getTopicConfig(state, topicName),
   isFetched: getTopicConfigFetched(state),
 });
 
 const mapDispatchToProps = {
-  fetchTopicConfig: (clusterId: ClusterId, topicName: TopicName) => fetchTopicConfig(clusterId, topicName),
-}
+  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => fetchTopicConfig(clusterName, topicName),
+};
 
 export default withRouter(
   connect(mapStateToProps, mapDispatchToProps)(Settings)

@@ -1,6 +1,6 @@
 [
   {
-    "id": "wrYGf-csNgiGdK7B_ADF7Z",
+    "id": "fake.cluster",
     "name": "fake.cluster",
     "defaultCluster": true,
     "status": "online",
@@ -11,7 +11,7 @@
     "bytesOutPerSec": 4320
   },
   {
-    "id": "dMMQx-WRh77BKYas_g2ZTz",
+    "id": "kafka-ui.cluster",
     "name": "kafka-ui.cluster",
     "defaultCluster": false,
     "status": "offline",

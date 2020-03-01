@@ -1,7 +1,7 @@
 [
   {
     "brokerId": 1,
-    "clusterId": "wrYGf-csNgiGdK7B_ADF7Z",
+    "name": "fake.cluster",
     "bytesInPerSec": 1234,
     "bytesOutPerSec": 3567,
     "segmentSize": 912360707,
@@ -9,7 +9,7 @@
   },
   {
     "brokerId": 2,
-    "clusterId": "dMMQx-WRh77BKYas_g2ZTz",
+    "name": "kafka-ui.cluster",
     "bytesInPerSec": 9194,
     "bytesOutPerSec": 7924,
     "segmentSize": 840060707,

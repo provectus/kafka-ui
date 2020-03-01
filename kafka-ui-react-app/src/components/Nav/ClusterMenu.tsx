@@ -21,21 +21,20 @@ const DefaultIcon: React.FC = () => {
 };
 
 const ClusterMenu: React.FC<Props> = ({
-  id,
   name,
   defaultCluster,
 }) => (
   <ul className="menu-list">
     <li>
-      <NavLink exact to={clusterBrokersPath(id)} title={name} className="has-text-overflow-ellipsis">
+      <NavLink exact to={clusterBrokersPath(name)} title={name} className="has-text-overflow-ellipsis">
         {defaultCluster && <DefaultIcon />}
         {name}
       </NavLink>
       <ul>
-        <NavLink to={clusterBrokersPath(id)} activeClassName="is-active" title="Brokers">
+        <NavLink to={clusterBrokersPath(name)} activeClassName="is-active" title="Brokers">
           Brokers
         </NavLink>
-        <NavLink to={clusterTopicsPath(id)} activeClassName="is-active" title="Topics">
+        <NavLink to={clusterTopicsPath(name)} activeClassName="is-active" title="Topics">
           Topics
         </NavLink>
       </ul>

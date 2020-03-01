@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterId, BrokerMetrics, ZooKeeperStatus } from 'redux/interfaces';
+import { ClusterName, BrokerMetrics, ZooKeeperStatus } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';
@@ -8,16 +8,16 @@ import Indicator from 'components/common/Dashboard/Indicator';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 interface Props extends BrokerMetrics {
-  clusterId: string;
+  clusterName: ClusterName;
   isFetched: boolean;
   minDiskUsage: number;
   maxDiskUsage: number;
-  fetchBrokers: (clusterId: ClusterId) => void;
-  fetchBrokerMetrics: (clusterId: ClusterId) => void;
+  fetchBrokers: (clusterName: ClusterName) => void;
+  fetchBrokerMetrics: (clusterName: ClusterName) => void;
 }
 
 const Topics: React.FC<Props> = ({
-  clusterId,
+  clusterName,
   isFetched,
   brokerCount,
   activeControllers,
@@ -35,13 +35,13 @@ const Topics: React.FC<Props> = ({
 }) => {
   React.useEffect(
     () => {
-      fetchBrokers(clusterId);
-      fetchBrokerMetrics(clusterId);
+      fetchBrokers(clusterName);
+      fetchBrokerMetrics(clusterName);
     },
-    [fetchBrokers, fetchBrokerMetrics, clusterId],
+    [fetchBrokers, fetchBrokerMetrics, clusterName],
   );
 
-  useInterval(() => { fetchBrokerMetrics(clusterId); }, 5000);
+  useInterval(() => { fetchBrokerMetrics(clusterName); }, 5000);
 
   const [minDiskUsageValue, minDiskUsageSize] = formatBytes(minDiskUsage);
   const [maxDiskUsageValue, maxDiskUsageSize] = formatBytes(maxDiskUsage);
@@ -116,6 +116,6 @@ const Topics: React.FC<Props> = ({
       </MetricsWrapper>
     </div>
   );
-}
+};
 
 export default Topics;

@@ -29,32 +29,32 @@ public class ClusterService {
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(clusters)));
     }
 
-    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterId) {
-        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String name) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(cluster.getBrokersMetrics()));
     }
 
-    public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId) {
-        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+    public Mono<ResponseEntity<Flux<Topic>>> getTopics(String name) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopics())));
     }
 
-    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName) {
-        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String name, String topicName) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(cluster.getOrCreateTopicDetails(topicName)));
     }
 
-    public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterId, String topicName) {
-        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+    public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String name, String topicName) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopicConfigsMap().get(topicName))));
     }
 
-    public Mono<ResponseEntity<Topic>> createTopic(String clusterId, Mono<TopicFormData> topicFormData) {
-        KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
+    public Mono<ResponseEntity<Topic>> createTopic(String name, Mono<TopicFormData> topicFormData) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
         return kafkaService.createTopic(cluster, topicFormData);
     }
