@@ -8,10 +8,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 @EnableScheduling
 @EnableAsync
-public class KafkaMetricsApplication {
+public class KafkaUiApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(KafkaMetricsApplication.class, args);
+		SpringApplication.run(KafkaUiApplication.class, args);
 	}
-
 }
