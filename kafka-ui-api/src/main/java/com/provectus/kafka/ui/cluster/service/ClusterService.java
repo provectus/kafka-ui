@@ -44,7 +44,7 @@ public class ClusterService {
     public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName) {
         KafkaCluster cluster = clustersStorage.getClusterById(clusterId);
         if (cluster == null) return null;
-        return Mono.just(ResponseEntity.ok(cluster.getTopicDetails(topicName)));
+        return Mono.just(ResponseEntity.ok(cluster.getOrCreateTopicDetails(topicName)));
     }
 
     public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterId, String topicName) {

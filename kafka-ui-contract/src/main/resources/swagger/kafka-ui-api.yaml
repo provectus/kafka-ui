@@ -206,10 +206,6 @@ components:
     BrokersMetrics:
       type: object
       properties:
-        clusterId:
-          type: string
-        bytesInPerSec:
-          type: integer
         brokerCount:
           type: integer
         zooKeeperStatus:
@@ -218,29 +214,15 @@ components:
           type: integer
         uncleanLeaderElectionCount:
           type: integer
-        networkPoolUsage:
-          type: number
-        requestPoolUsage:
-          type: number
         onlinePartitionCount:
           type: integer
         underReplicatedPartitionCount:
           type: integer
         offlinePartitionCount:
           type: integer
-        diskUsage:
-          $ref: '#/components/schemas/DiskUsage'
-        diskUsageDistribution:
-          type: string
-      required:
-        - id
-
-    DiskUsage:
-      type: object
-      properties:
-        brokerId:
+        inSyncReplicasCount:
           type: integer
-        segmentSize:
+        outOfSyncReplicasCount:
           type: integer
 
     Topic:

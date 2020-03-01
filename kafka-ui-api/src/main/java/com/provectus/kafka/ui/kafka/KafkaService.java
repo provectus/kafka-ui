@@ -134,6 +134,8 @@ public class KafkaService {
         kafkaCluster.getBrokersMetrics().setOnlinePartitionCount(0);
         kafkaCluster.getBrokersMetrics().setOfflinePartitionCount(0);
         kafkaCluster.getBrokersMetrics().setUnderReplicatedPartitionCount(0);
+        kafkaCluster.getBrokersMetrics().setInSyncReplicasCount(0);
+        kafkaCluster.getBrokersMetrics().setOutOfSyncReplicasCount(0);
     }
 
     private Topic collectTopicData(KafkaCluster kafkaCluster, TopicDescription topicDescription) {
@@ -177,12 +179,17 @@ public class KafkaService {
                 kafkaCluster.getBrokersMetrics().setOfflinePartitionCount(kafkaCluster.getBrokersMetrics().getOfflinePartitionCount() + 1);
             }
         }
+
         kafkaCluster.getCluster().setOnlinePartitionCount(kafkaCluster.getBrokersMetrics().getOnlinePartitionCount());
         kafkaCluster.getBrokersMetrics().setUnderReplicatedPartitionCount(
                 kafkaCluster.getBrokersMetrics().getUnderReplicatedPartitionCount() + urpCount);
-        topic.setPartitions(partitions);
+        kafkaCluster.getBrokersMetrics().setInSyncReplicasCount(
+                kafkaCluster.getBrokersMetrics().getInSyncReplicasCount() + inSyncReplicasCount);
+        kafkaCluster.getBrokersMetrics().setOutOfSyncReplicasCount(
+                kafkaCluster.getBrokersMetrics().getOutOfSyncReplicasCount() + (replicasCount - inSyncReplicasCount));
 
-        TopicDetails topicDetails = kafkaCluster.getTopicDetails(topicDescription.name());
+        topic.setPartitions(partitions);
+        TopicDetails topicDetails = kafkaCluster.getOrCreateTopicDetails(topicDescription.name());
         topicDetails.setReplicas(replicasCount);
         topicDetails.setPartitionCount(topicDescription.partitions().size());
         topicDetails.setInSyncReplicas(inSyncReplicasCount);

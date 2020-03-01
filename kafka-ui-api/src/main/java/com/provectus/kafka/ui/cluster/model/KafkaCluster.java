@@ -38,7 +38,7 @@ public class KafkaCluster {
     Exception lastKafkaException;
     Exception lastZookeeperException;
 
-    public TopicDetails getTopicDetails(String key) {
+    public TopicDetails getOrCreateTopicDetails(String key) {
         var topicDetails = topicDetailsMap.get(key);
         if(topicDetails == null) {
             topicDetailsMap.putIfAbsent(key, new TopicDetails());
