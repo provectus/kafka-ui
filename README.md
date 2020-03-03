@@ -3,7 +3,7 @@
 UI for Apache Kafka management
 
 ## Getting started
-To work with application, install java13
+To work with application, install java13 and docker
 
 Build application and docker container
 
