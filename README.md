@@ -2,8 +2,22 @@
 
 UI for Apache Kafka management
 
+## Prerequisites
+
+Install Homebrew Cask
+```
+> brew update
+> brew tap caskroom/cask
+```
+
+Install JAVA 13 with Homebrew Cask
+```
+> brew tap caskroom/versions
+> brew cask install java13
+```
+
+
 ## Getting started
-To work with application, install java13 and docker
 
 Build application and docker container
 
