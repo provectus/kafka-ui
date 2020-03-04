@@ -24,6 +24,8 @@ const Topics: React.FC<Props> = ({
   zooKeeperStatus,
   onlinePartitionCount,
   offlinePartitionCount,
+  inSyncReplicasCount,
+  outOfSyncReplicasCount,
   underReplicatedPartitionCount,
   diskUsageDistribution,
   minDiskUsage,
@@ -77,14 +79,10 @@ const Topics: React.FC<Props> = ({
           {underReplicatedPartitionCount}
         </Indicator>
         <Indicator label="In Sync Replicas">
-          <span className="has-text-grey-lighter">
-            Soon
-          </span>
+          {inSyncReplicasCount}
         </Indicator>
         <Indicator label="Out of Sync Replicas">
-          <span className="has-text-grey-lighter">
-            Soon
-          </span>
+          {outOfSyncReplicasCount}
         </Indicator>
       </MetricsWrapper>
 
