@@ -24,6 +24,8 @@ const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}
   requestPoolUsage: brokerSelectors.getRequestPoolUsage(state),
   onlinePartitionCount: brokerSelectors.getOnlinePartitionCount(state),
   offlinePartitionCount: brokerSelectors.getOfflinePartitionCount(state),
+  inSyncReplicasCount: brokerSelectors.getInSyncReplicasCount(state),
+  outOfSyncReplicasCount: brokerSelectors.getOutOfSyncReplicasCount(state),
   underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(state),
   diskUsageDistribution: brokerSelectors.getDiskUsageDistribution(state),
   minDiskUsage: brokerSelectors.getMinDiskUsage(state),

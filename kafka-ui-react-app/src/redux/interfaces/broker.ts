@@ -23,6 +23,8 @@ export interface BrokerMetrics {
   requestPoolUsage: number;
   onlinePartitionCount: number;
   offlinePartitionCount: number;
+  inSyncReplicasCount: number,
+  outOfSyncReplicasCount: number,
   underReplicatedPartitionCount: number;
   diskUsageDistribution?: string;
   diskUsage: BrokerDiskUsage[];

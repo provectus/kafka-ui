@@ -20,6 +20,8 @@ export const getNetworkPoolUsage = createSelector(brokersState, ({ networkPoolUs
 export const getRequestPoolUsage = createSelector(brokersState, ({ requestPoolUsage }) => requestPoolUsage);
 export const getOnlinePartitionCount = createSelector(brokersState, ({ onlinePartitionCount }) => onlinePartitionCount);
 export const getOfflinePartitionCount = createSelector(brokersState, ({ offlinePartitionCount }) => offlinePartitionCount);
+export const getInSyncReplicasCount = createSelector(brokersState, ({ inSyncReplicasCount }) => inSyncReplicasCount);
+export const getOutOfSyncReplicasCount = createSelector(brokersState, ({ outOfSyncReplicasCount }) => outOfSyncReplicasCount);
 export const getDiskUsageDistribution = createSelector(brokersState, ({ diskUsageDistribution }) => diskUsageDistribution);
 export const getUnderReplicatedPartitionCount = createSelector(brokersState, ({ underReplicatedPartitionCount }) => underReplicatedPartitionCount);
 
