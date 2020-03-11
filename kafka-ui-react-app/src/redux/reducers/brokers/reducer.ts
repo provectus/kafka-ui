@@ -15,6 +15,8 @@ export const initialState: BrokersState =  {
   activeControllers: 0,
   onlinePartitionCount: 0,
   offlinePartitionCount: 0,
+  inSyncReplicasCount: 0,
+  outOfSyncReplicasCount: 0,
   underReplicatedPartitionCount: 0,
   diskUsage: [],
 };

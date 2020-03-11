@@ -1,7 +1,6 @@
 import React from 'react';
 import { ClusterName, BrokerMetrics, ZooKeeperStatus } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
-import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
@@ -22,6 +21,8 @@ const Topics: React.FC<Props> = ({
   zooKeeperStatus,
   onlinePartitionCount,
   offlinePartitionCount,
+  inSyncReplicasCount,
+  outOfSyncReplicasCount,
   underReplicatedPartitionCount,
   fetchBrokers,
   fetchBrokerMetrics,
@@ -67,14 +68,10 @@ const Topics: React.FC<Props> = ({
           {underReplicatedPartitionCount}
         </Indicator>
         <Indicator label="In Sync Replicas">
-          <span className="has-text-grey-lighter">
-            Soon
-          </span>
+          {inSyncReplicasCount}
         </Indicator>
         <Indicator label="Out of Sync Replicas">
-          <span className="has-text-grey-lighter">
-            Soon
-          </span>
+          {outOfSyncReplicasCount}
         </Indicator>
       </MetricsWrapper>
     </div>

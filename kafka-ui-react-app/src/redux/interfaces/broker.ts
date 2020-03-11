@@ -21,6 +21,8 @@ export interface BrokerMetrics {
   activeControllers: number;
   onlinePartitionCount: number;
   offlinePartitionCount: number;
+  inSyncReplicasCount: number,
+  outOfSyncReplicasCount: number,
   underReplicatedPartitionCount: number;
   diskUsage: BrokerDiskUsage[];
 }

@@ -22,6 +22,8 @@ const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}
   activeControllers: brokerSelectors.getActiveControllers(state),
   onlinePartitionCount: brokerSelectors.getOnlinePartitionCount(state),
   offlinePartitionCount: brokerSelectors.getOfflinePartitionCount(state),
+  inSyncReplicasCount: brokerSelectors.getInSyncReplicasCount(state),
+  outOfSyncReplicasCount: brokerSelectors.getOutOfSyncReplicasCount(state),
   underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(state)
 });
 

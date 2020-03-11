@@ -18,4 +18,6 @@ export const getZooKeeperStatus = createSelector(brokersState, ({ zooKeeperStatu
 export const getActiveControllers = createSelector(brokersState, ({ activeControllers }) => activeControllers);
 export const getOnlinePartitionCount = createSelector(brokersState, ({ onlinePartitionCount }) => onlinePartitionCount);
 export const getOfflinePartitionCount = createSelector(brokersState, ({ offlinePartitionCount }) => offlinePartitionCount);
+export const getInSyncReplicasCount = createSelector(brokersState, ({ inSyncReplicasCount }) => inSyncReplicasCount);
+export const getOutOfSyncReplicasCount = createSelector(brokersState, ({ outOfSyncReplicasCount }) => outOfSyncReplicasCount);
 export const getUnderReplicatedPartitionCount = createSelector(brokersState, ({ underReplicatedPartitionCount }) => underReplicatedPartitionCount);
