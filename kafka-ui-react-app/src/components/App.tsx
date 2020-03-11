@@ -10,6 +10,7 @@ import TopicsContainer from './Topics/TopicsContainer';
 import NavConatiner from './Nav/NavConatiner';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
+import ConsumersGroupsContainer from './ConsumerGroups/ConsumersGroupsContainer';
 
 interface AppProps {
   isClusterListFetched: boolean;
@@ -39,6 +40,7 @@ const App: React.FC<AppProps> = ({
             <Route exact path="/clusters" component={Dashboard} />
             <Route path="/clusters/:clusterName/topics" component={TopicsContainer} />
             <Route path="/clusters/:clusterName/brokers" component={BrokersContainer} />
+            <Route path="/clusters/:clusterName/consumer-groups" component={ConsumersGroupsContainer} />
             <Redirect from="/clusters/:clusterName" to="/clusters/:clusterName/brokers" />
           </Switch>
         ) : (
