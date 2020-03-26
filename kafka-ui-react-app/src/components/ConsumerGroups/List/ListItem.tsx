@@ -9,12 +9,11 @@ const ListItem: React.FC<ConsumerGroup> = ({
 }) => {
   return (
     <tr>
-      {/* <td>
+      <td>
         <NavLink exact to={`consumer-groups/${consumerGroupId}`} activeClassName="is-active" className="title is-6">
           {consumerGroupId}
         </NavLink>
-      </td> */}
-      <td>{consumerGroupId}</td>
+      </td>
       <td>{numConsumers}</td>
       <td>{numTopics}</td>
     </tr>

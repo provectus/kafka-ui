@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 import ListContainer from './List/ListContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import DetailsContainer from './Details/DetailsContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -24,6 +25,7 @@ const ConsumerGroups: React.FC<Props> = ({
     return (
       <Switch>
         <Route exact path="/clusters/:clusterName/consumer-groups" component={ListContainer} />
+        <Route path="/clusters/:clusterName/consumer-groups/:consumerGroupID" component={DetailsContainer} />
       </Switch>
     );
   }
