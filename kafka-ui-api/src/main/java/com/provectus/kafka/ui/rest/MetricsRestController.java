@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.admin.ListConsumerGroupsResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -52,5 +53,10 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<Flux<Broker>>> getBrokers(String clusterId, ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(new ArrayList<>())));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroup(String clusterName, ServerWebExchange exchange) {
+        return clusterService.getConsumerGroup(clusterName);
     }
 }
