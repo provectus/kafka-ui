@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,13 +68,8 @@ public class ClusterService {
             return ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
                     .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
                             .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
-                    .map(s -> {
-                            ArrayList<ConsumerGroup> result = new ArrayList<>();
-                            s.values().forEach(c -> {
-                            ConsumerGroup consumerGroup = ClusterUtil.convertToConsumerGroup(c, cluster);
-                            result.add(consumerGroup);
-                            });
-                            return result;
-                        }).map(s -> ResponseEntity.ok(Flux.fromIterable(s)));
+                    .map(s -> s.values().stream()
+                            .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList()))
+                    .map(s -> ResponseEntity.ok(Flux.fromIterable(s)));
     }
 }
