@@ -5,6 +5,11 @@ import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerGroupMetadata;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.zookeeper.ZooKeeper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -57,5 +62,20 @@ public class ClusterService {
         KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
         return kafkaService.createTopic(cluster, topicFormData);
+    }
+
+    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String topicId, String clusterName) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
+        var partition = cluster.getTopicDetailsMap().get(topicId).getPartitionCount();
+//        ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
+//                .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
+//                        .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
+        cluster.getAdminClient().describeConsumerGroups().all().get().get("").members()
+                .forEach(s -> {
+                    s.assignment().topicPartitions().forEach(t -> t.partition()); //partition
+                    s.assignment().topicPartitions().forEach(t -> t.topic());//topic
+                });
+        cluster.getAdminClient().describeTopics().all().get().get("").partitions().get(0).;
+        cluster.getAdminClient().listConsumerGroupOffsets("").partitionsToOffsetAndMetadata().get().get("").offset();
     }
 }

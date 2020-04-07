@@ -53,4 +53,9 @@ public class MetricsRestController implements ApiClustersApi {
     public Mono<ResponseEntity<Flux<Broker>>> getBrokers(String clusterId, ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(new ArrayList<>())));
     }
+
+    @Override
+    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String consumerGroupId, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(new ConsumerGroupDetails()));
+    }
 }

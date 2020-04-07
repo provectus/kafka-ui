@@ -169,6 +169,26 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicConfig'
 
+  /api/clusters/consumer-groups/{id}:
+    get:
+      tags:
+        - /api/clusters
+      summary: getConsumerGroupDetail
+      operationId: getConsumerGroupDetail
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerGroupDetails'
+
 components:
   schemas:
     Cluster:
@@ -308,3 +328,29 @@ components:
       properties:
         id:
           type: string
+
+    ConsumerDetail:
+      type: object
+      properties:
+        consumerId:
+          type: string
+        topic:
+          type: string
+        partition:
+          type: string
+        messagesBehind:
+          type: integer
+        currentOffset:
+          type: integer
+        endOffset:
+          type: integer
+
+    ConsumerGroupDetails:
+      type: object
+      properties:
+        consumerGroupId:
+          type: string
+        consumers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerDetail'
