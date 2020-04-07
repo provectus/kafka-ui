@@ -20,16 +20,11 @@ const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}
   brokerCount: brokerSelectors.getBrokerCount(state),
   zooKeeperStatus: brokerSelectors.getZooKeeperStatus(state),
   activeControllers: brokerSelectors.getActiveControllers(state),
-  networkPoolUsage: brokerSelectors.getNetworkPoolUsage(state),
-  requestPoolUsage: brokerSelectors.getRequestPoolUsage(state),
   onlinePartitionCount: brokerSelectors.getOnlinePartitionCount(state),
   offlinePartitionCount: brokerSelectors.getOfflinePartitionCount(state),
   inSyncReplicasCount: brokerSelectors.getInSyncReplicasCount(state),
   outOfSyncReplicasCount: brokerSelectors.getOutOfSyncReplicasCount(state),
-  underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(state),
-  diskUsageDistribution: brokerSelectors.getDiskUsageDistribution(state),
-  minDiskUsage: brokerSelectors.getMinDiskUsage(state),
-  maxDiskUsage: brokerSelectors.getMaxDiskUsage(state),
+  underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(state)
 });
 
 const mapDispatchToProps = {

@@ -19,14 +19,11 @@ export interface BrokerMetrics {
   brokerCount: number;
   zooKeeperStatus: ZooKeeperStatus;
   activeControllers: number;
-  networkPoolUsage: number;
-  requestPoolUsage: number;
   onlinePartitionCount: number;
   offlinePartitionCount: number;
   inSyncReplicasCount: number,
   outOfSyncReplicasCount: number,
   underReplicatedPartitionCount: number;
-  diskUsageDistribution?: string;
   diskUsage: BrokerDiskUsage[];
 }
 

@@ -1,7 +1,6 @@
 import React from 'react';
 import { ClusterName, BrokerMetrics, ZooKeeperStatus } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
-import formatBytes from 'lib/utils/formatBytes';
 import cx from 'classnames';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
@@ -10,8 +9,6 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 interface Props extends BrokerMetrics {
   clusterName: ClusterName;
   isFetched: boolean;
-  minDiskUsage: number;
-  maxDiskUsage: number;
   fetchBrokers: (clusterName: ClusterName) => void;
   fetchBrokerMetrics: (clusterName: ClusterName) => void;
 }
@@ -27,11 +24,6 @@ const Topics: React.FC<Props> = ({
   inSyncReplicasCount,
   outOfSyncReplicasCount,
   underReplicatedPartitionCount,
-  diskUsageDistribution,
-  minDiskUsage,
-  maxDiskUsage,
-  networkPoolUsage,
-  requestPoolUsage,
   fetchBrokers,
   fetchBrokerMetrics,
 }) => {
@@ -44,9 +36,6 @@ const Topics: React.FC<Props> = ({
   );
 
   useInterval(() => { fetchBrokerMetrics(clusterName); }, 5000);
-
-  const [minDiskUsageValue, minDiskUsageSize] = formatBytes(minDiskUsage);
-  const [maxDiskUsageValue, maxDiskUsageSize] = formatBytes(maxDiskUsage);
 
   const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
 
@@ -83,33 +72,6 @@ const Topics: React.FC<Props> = ({
         </Indicator>
         <Indicator label="Out of Sync Replicas">
           {outOfSyncReplicasCount}
-        </Indicator>
-      </MetricsWrapper>
-
-      <MetricsWrapper title="Disk">
-        <Indicator label="Max usage">
-          {maxDiskUsageValue}
-          <span className="subtitle has-text-weight-light"> {maxDiskUsageSize}</span>
-        </Indicator>
-        <Indicator label="Min usage">
-          {minDiskUsageValue}
-          <span className="subtitle has-text-weight-light"> {minDiskUsageSize}</span>
-        </Indicator>
-        <Indicator label="Distribution">
-          <span className="is-capitalized">
-            {diskUsageDistribution}
-          </span>
-        </Indicator>
-      </MetricsWrapper>
-
-      <MetricsWrapper title="System">
-        <Indicator label="Network pool usage">
-          {Math.round(networkPoolUsage * 10000) / 100}
-          <span className="subtitle has-text-weight-light">%</span>
-        </Indicator>
-        <Indicator label="Request pool usage">
-          {Math.round(requestPoolUsage * 10000) / 100}
-          <span className="subtitle has-text-weight-light">%</span>
         </Indicator>
       </MetricsWrapper>
     </div>
