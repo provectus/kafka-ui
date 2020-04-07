@@ -6,8 +6,6 @@
     "zooKeeperStatus": 1,
     "activeControllers": 1,
     "uncleanLeaderElectionCount": 0,
-    "networkPoolUsage": 0.001970896739179595,
-    "requestPoolUsage": 0.00730438980248805,
     "onlinePartitionCount": 19,
     "underReplicatedPartitionCount": 9,
     "offlinePartitionCount": 3,
@@ -18,8 +16,7 @@
         "brokerId": 1,
         "segmentSize": 479900675
       }
-    ],
-    "diskUsageDistribution": "even"
+    ]
   },
   {
     "clusterName": "kafka-ui.cluster",
@@ -28,8 +25,6 @@
     "zooKeeperStatus": 1,
     "activeControllers": 1,
     "uncleanLeaderElectionCount": 0,
-    "networkPoolUsage": 0.004401004145400575,
-    "requestPoolUsage": 0.004089519725388984,
     "onlinePartitionCount": 70,
     "underReplicatedPartitionCount": 1,
     "offlinePartitionCount": 2,
@@ -40,7 +35,6 @@
         "brokerId": 1,
         "segmentSize": 968226532
       }
-    ],
-    "diskUsageDistribution": "even"
+    ]
   }
 ]

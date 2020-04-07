@@ -189,6 +189,28 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
+  /api/clusters/{clusterName}/consumerGroups:
+    get:
+      tags:
+        - /api/clusters
+      summary: getConsumerGroup
+      operationId: getConsumerGroup
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumerGroup'
+
 components:
   schemas:
     Cluster:
@@ -338,6 +360,18 @@ components:
           type: string
         partition:
           type: string
+
+    ConsumerGroup:
+      type: object
+      properties:
+        clusterId:
+          type: string
+        consumerGroupId:
+            type: string
+        numConsumers:
+            type: integer
+        numTopics:
+            type: integer
         messagesBehind:
           type: integer
         currentOffset:
