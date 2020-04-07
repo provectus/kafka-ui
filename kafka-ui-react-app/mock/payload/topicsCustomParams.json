@@ -1,0 +1,32 @@
+[
+  {
+    "name": "topic.custom.param.name-1",
+    "value": "topic.custom.param.value-1",
+    "defaultValue": "topic.custom.param.defValue-1"
+  },
+  {
+    "name": "topic.custom.param.name-2",
+    "value": "topic.custom.param.value-2",
+    "defaultValue": "topic.custom.param.defValue-2"
+  },
+  {
+    "name": "topic.custom.param.name-3",
+    "value": "topic.custom.param.value-3",
+    "defaultValue": "topic.custom.param.defValue-3"
+  },
+  {
+    "name": "topic.custom.param.name-4",
+    "value": "topic.custom.param.value-4",
+    "defaultValue": "topic.custom.param.defValue-4"
+  },
+  {
+    "name": "topic.custom.param.name-5",
+    "value": "topic.custom.param.value-5",
+    "defaultValue": "topic.custom.param.defValue-5"
+  },
+  {
+    "name": "topic.custom.param.name-6",
+    "value": "topic.custom.param.value-6",
+    "defaultValue": "topic.custom.param.defValue-6"
+  }
+]

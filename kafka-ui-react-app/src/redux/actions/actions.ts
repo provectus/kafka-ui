@@ -1,4 +1,4 @@
-import { createAsyncAction} from 'typesafe-actions';
+import { createAsyncAction } from 'typesafe-actions';
 import { ActionType } from 'redux/actionType';
 import {
   Broker,
@@ -8,6 +8,7 @@ import {
   TopicConfig,
   TopicDetails,
   TopicName,
+  TopicCustomParam,
 } from 'redux/interfaces';
 
 export const fetchBrokersAction = createAsyncAction(
@@ -33,6 +34,12 @@ export const fetchTopicListAction = createAsyncAction(
   ActionType.GET_TOPICS__SUCCESS,
   ActionType.GET_TOPICS__FAILURE,
 )<undefined, Topic[], undefined>();
+
+export const fetchTopicsCustomParamsAction = createAsyncAction(
+  ActionType.GET_TOPICS_CUSTOM_PARAMS__REQUEST,
+  ActionType.GET_TOPICS_CUSTOM_PARAMS__SUCCESS,
+  ActionType.GET_TOPICS_CUSTOM_PARAMS__FAILURE,
+)<undefined, TopicCustomParam[], undefined>();
 
 export const fetchTopicDetailsAction = createAsyncAction(
   ActionType.GET_TOPIC_DETAILS__REQUEST,

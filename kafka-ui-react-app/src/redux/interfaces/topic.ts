@@ -23,6 +23,16 @@ export interface TopicPartition {
   replicas: TopicReplica[];
 }
 
+// extend from option
+export interface TopicCustomParam extends TopicCustomParamOption {
+  value: string;
+}
+
+export interface TopicCustomParamOption {
+  name: string;
+  defaultValue: string;
+}
+
 export interface TopicDetails {
   partitionCount?: number;
   replicationFactor?: number;
@@ -39,13 +49,28 @@ export interface Topic {
   partitions: TopicPartition[];
 }
 
+export interface TopicFormCustomParams {
+  byIndex: { [paramIndex: string]: TopicFormCustomParam };
+  allIndexes: string[];
+}
+
+export interface TopicFormCustomParam {
+  name: string,
+  value: string,
+}
+
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
   config?: TopicConfig[];
 }
 
+export type TopicCustomParamName = string;
+
 export interface TopicsState {
-  byName: { [topicName: string]: TopicWithDetailedInfo },
-  allNames: TopicName[],
+  byName: { [topicName: string]: TopicWithDetailedInfo };
+  allNames: TopicName[];
+  customParams: {
+    byName: { [paramName: string]: TopicCustomParam }
+  };
 }
 
 export interface TopicFormData {
@@ -57,4 +82,7 @@ export interface TopicFormData {
   retentionMs: number;
   retentionBytes: number;
   maxMessageBytes: number;
+  customParams: {
+    [index: string]: TopicFormCustomParam;
+  };
 };
