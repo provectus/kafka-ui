@@ -1,7 +1,7 @@
 import React, { CSSProperties } from 'react';
 import { Cluster } from 'redux/interfaces';
 import { NavLink } from 'react-router-dom';
-import { clusterBrokersPath, clusterTopicsPath } from 'lib/paths';
+import { clusterBrokersPath, clusterTopicsPath, clusterConsumerGroupsPath } from 'lib/paths';
 
 interface Props extends Cluster {}
 
@@ -36,6 +36,9 @@ const ClusterMenu: React.FC<Props> = ({
         </NavLink>
         <NavLink to={clusterTopicsPath(name)} activeClassName="is-active" title="Topics">
           Topics
+        </NavLink>
+        <NavLink to={clusterConsumerGroupsPath(name)} activeClassName="is-active" title="Consumers">
+          Consumers
         </NavLink>
       </ul>
     </li>

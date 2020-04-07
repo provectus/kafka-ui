@@ -8,10 +8,12 @@ import { TopicsState } from './topic';
 import { Cluster } from './cluster';
 import { BrokersState } from './broker';
 import { LoaderState } from './loader';
+import { ConsumerGroup } from './consumerGroup';
 
 export * from './topic';
 export * from './cluster';
 export * from './broker';
+export * from './consumerGroup';
 export * from './loader';
 
 export enum FetchStatus {
@@ -25,6 +27,7 @@ export interface RootState {
   topics: TopicsState;
   clusters: Cluster[];
   brokers: BrokersState;
+  consumerGroups: ConsumerGroup[];
   loader: LoaderState;
 }
 

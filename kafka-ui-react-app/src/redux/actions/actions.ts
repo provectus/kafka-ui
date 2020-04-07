@@ -1,5 +1,6 @@
 import { createAsyncAction} from 'typesafe-actions';
 import { ActionType } from 'redux/actionType';
+import { ConsumerGroup } from '../interfaces/consumerGroup';
 import {
   Broker,
   BrokerMetrics,
@@ -51,3 +52,9 @@ export const createTopicAction = createAsyncAction(
   ActionType.POST_TOPIC__SUCCESS,
   ActionType.POST_TOPIC__FAILURE,
 )<undefined, Topic, undefined>();
+
+export const fetchConsumerGroupsAction = createAsyncAction(
+  ActionType.GET_CONSUMER_GROUPS__REQUEST,
+  ActionType.GET_CONSUMER_GROUPS__SUCCESS,
+  ActionType.GET_CONSUMER_GROUPS__FAILURE,
+)<undefined, ConsumerGroup[], undefined>();
