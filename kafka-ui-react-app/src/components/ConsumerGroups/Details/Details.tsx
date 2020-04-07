@@ -3,7 +3,7 @@ import { ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterConsumerGroupsPath } from 'lib/paths';
 import { ConsumerGroupID, ConsumerGroup, ConsumerGroupDetails } from 'redux/interfaces/consumerGroup';
-import { Consumer } from '../../../redux/interfaces/consumerGroup';
+import { Consumer } from 'redux/interfaces/consumerGroup';
 import ListItem from './ListItem';
 
 interface Props extends ConsumerGroup, ConsumerGroupDetails {
@@ -55,7 +55,8 @@ const Details: React.FC<Props> = ({
               .map((consumer, index) => (
                 <ListItem
                   key={`consumers-list-item-key-${index}`}
-                  {...{clusterName, ...consumer}}
+                  clusterName={clusterName}
+                  {...consumer}
                 />
               ))}
           </tbody>

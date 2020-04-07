@@ -1,7 +1,7 @@
 import React from 'react';
 import { Consumer } from 'redux/interfaces/consumerGroup';
 import { NavLink } from 'react-router-dom';
-import { ClusterName } from '../../../redux/interfaces/cluster';
+import { ClusterName } from 'redux/interfaces/cluster';
 
 
 interface Props extends Consumer {
