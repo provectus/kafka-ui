@@ -1,13 +1,19 @@
 package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.model.ConsumerDetail;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.admin.MemberDescription;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClusterUtil {
 
@@ -30,5 +36,27 @@ public class ClusterUtil {
         c.members().forEach(s1 -> s1.assignment().topicPartitions().forEach(s2 -> topics.add(s2.topic())));
         consumerGroup.setNumTopics(topics.size());
         return consumerGroup;
+    }
+
+    public static ConsumerDetail partlyConvertToConsumerDetail(MemberDescription s1, String consumerGroupId, KafkaCluster cluster) {
+        ConsumerDetail partlyResult = new ConsumerDetail();
+        partlyResult.setConsumerId(s1.consumerId());
+        partlyResult.setPartition((s1.assignment().topicPartitions().stream().map(TopicPartition::partition).collect(Collectors.toList())));
+        partlyResult.setTopic((s1.assignment().topicPartitions().stream().map(TopicPartition::topic).collect(Collectors.toList())));
+        partlyResult.setEndOffset(new ArrayList(getEndOffsets(s1.assignment().topicPartitions(), consumerGroupId, cluster.getBootstrapServers()).values()));
+        return partlyResult;
+    }
+
+    private static Map<TopicPartition, Long> getEndOffsets(Set<TopicPartition> topicPartition, String groupId, String bootstrapServers) {
+        Map<TopicPartition, Long> result;
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+        try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
+            result = consumer.endOffsets(topicPartition);
+        }
+        return result;
     }
 }

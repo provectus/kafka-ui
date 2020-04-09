@@ -8,11 +8,13 @@ import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -62,19 +64,36 @@ public class ClusterService {
         return kafkaService.createTopic(cluster, topicFormData);
     }
 
-    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String topicId, String clusterName) {
+    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String clusterName, String consumerGroupId) {
         KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
-        var partition = cluster.getTopicDetailsMap().get(topicId).getPartitionCount();
-//        ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
-//                .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
-//                        .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
-        cluster.getAdminClient().describeConsumerGroups().all().get().get("").members()
-                .forEach(s -> {
-                    s.assignment().topicPartitions().forEach(t -> t.partition()); //partition
-                    s.assignment().topicPartitions().forEach(t -> t.topic());//topic
-                });
-        cluster.getAdminClient().describeTopics().all().get().get("").partitions().get(0).;
-        cluster.getAdminClient().listConsumerGroupOffsets("").partitionsToOffsetAndMetadata().get().get("").offset();
+        ConsumerGroupDetails result = new ConsumerGroupDetails();
+        result.setConsumerGroupId(consumerGroupId);
+        result.setConsumers(new ArrayList<>());
+        return ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
+                .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
+                        .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
+                .map(s -> {
+                        s.get(consumerGroupId).members().forEach(s1 -> {
+                            ConsumerDetail partlyResult = ClusterUtil.partlyConvertToConsumerDetail(s1, consumerGroupId, cluster);
+                            result.getConsumers().add(partlyResult);
+                    });
+                    return result;
+                })
+                .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
+                        .map(o -> {
+                            s.getConsumers().forEach(c -> {
+                                List<Long> currentOffsets = new ArrayList<>();
+                                List<Long> behindMessagesList = new ArrayList<>();
+                                for (int i = 0; i < c.getTopic().size(); i++) {
+                                    Long currentOffset = o.get(new TopicPartition(c.getTopic().get(i), c.getPartition().get(i))).offset();
+                                    currentOffsets.add(currentOffset);
+                                    behindMessagesList.add(c.getEndOffset().get(i) - currentOffset);
+                                }
+                                c.setCurrentOffset(currentOffsets);
+                                c.setMessagesBehind(behindMessagesList);
+                            });
+                            return ResponseEntity.ok(s);
+                        }));
     }
 
     @SneakyThrows
