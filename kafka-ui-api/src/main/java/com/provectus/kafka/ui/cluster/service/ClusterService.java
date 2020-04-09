@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -66,32 +68,22 @@ public class ClusterService {
 
     public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String clusterName, String consumerGroupId) {
         KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
-        ConsumerGroupDetails result = new ConsumerGroupDetails();
-        result.setConsumerGroupId(consumerGroupId);
-        result.setConsumers(new ArrayList<>());
         return ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
                 .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
                         .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
                 .map(s -> {
-                        s.get(consumerGroupId).members().forEach(s1 -> {
-                            ConsumerDetail partlyResult = ClusterUtil.partlyConvertToConsumerDetail(s1, consumerGroupId, cluster);
-                            result.getConsumers().add(partlyResult);
+                    ConsumerGroupDetails result = new ConsumerGroupDetails();
+                    result.setConsumerGroupId(consumerGroupId);
+                    result.setConsumers(new ArrayList<>());
+                    s.get(consumerGroupId).members().forEach(s1 -> {
+                        ConsumerDetail partlyResult = ClusterUtil.partlyConvertToConsumerDetail(s1, consumerGroupId, cluster);
+                        result.getConsumers().add(partlyResult);
                     });
                     return result;
                 })
                 .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
                         .map(o -> {
-                            s.getConsumers().forEach(c -> {
-                                List<Long> currentOffsets = new ArrayList<>();
-                                List<Long> behindMessagesList = new ArrayList<>();
-                                for (int i = 0; i < c.getTopic().size(); i++) {
-                                    Long currentOffset = o.get(new TopicPartition(c.getTopic().get(i), c.getPartition().get(i))).offset();
-                                    currentOffsets.add(currentOffset);
-                                    behindMessagesList.add(c.getEndOffset().get(i) - currentOffset);
-                                }
-                                c.setCurrentOffset(currentOffsets);
-                                c.setMessagesBehind(behindMessagesList);
-                            });
+                            s.getConsumers().forEach(c -> fillOffsetParams(c, o));
                             return ResponseEntity.ok(s);
                         }));
     }
@@ -105,5 +97,17 @@ public class ClusterService {
                     .map(s -> s.values().stream()
                             .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList()))
                     .map(s -> ResponseEntity.ok(Flux.fromIterable(s)));
+    }
+
+    private void fillOffsetParams(ConsumerDetail consumerDetail, Map<TopicPartition, OffsetAndMetadata> topicMetadata) {
+        List<Long> currentOffsets = new ArrayList<>();
+        List<Long> behindMessagesList = new ArrayList<>();
+        for (int i = 0; i < consumerDetail.getTopic().size(); i++) {
+            Long currentOffset = topicMetadata.get(new TopicPartition(consumerDetail.getTopic().get(i), consumerDetail.getPartition().get(i))).offset();
+            currentOffsets.add(currentOffset);
+            behindMessagesList.add(consumerDetail.getEndOffset().get(i) - currentOffset);
+        }
+        consumerDetail.setCurrentOffset(currentOffsets);
+        consumerDetail.setMessagesBehind(behindMessagesList);
     }
 }

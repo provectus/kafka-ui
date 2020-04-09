@@ -38,12 +38,12 @@ public class ClusterUtil {
         return consumerGroup;
     }
 
-    public static ConsumerDetail partlyConvertToConsumerDetail(MemberDescription s1, String consumerGroupId, KafkaCluster cluster) {
+    public static ConsumerDetail partlyConvertToConsumerDetail(MemberDescription consumer, String consumerGroupId, KafkaCluster cluster) {
         ConsumerDetail partlyResult = new ConsumerDetail();
-        partlyResult.setConsumerId(s1.consumerId());
-        partlyResult.setPartition((s1.assignment().topicPartitions().stream().map(TopicPartition::partition).collect(Collectors.toList())));
-        partlyResult.setTopic((s1.assignment().topicPartitions().stream().map(TopicPartition::topic).collect(Collectors.toList())));
-        partlyResult.setEndOffset(new ArrayList(getEndOffsets(s1.assignment().topicPartitions(), consumerGroupId, cluster.getBootstrapServers()).values()));
+        partlyResult.setConsumerId(consumer.consumerId());
+        partlyResult.setPartition((consumer.assignment().topicPartitions().stream().map(TopicPartition::partition).collect(Collectors.toList())));
+        partlyResult.setTopic((consumer.assignment().topicPartitions().stream().map(TopicPartition::topic).collect(Collectors.toList())));
+        partlyResult.setEndOffset(new ArrayList(getEndOffsets(consumer.assignment().topicPartitions(), consumerGroupId, cluster.getBootstrapServers()).values()));
         return partlyResult;
     }
 
