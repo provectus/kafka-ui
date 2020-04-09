@@ -39,8 +39,6 @@ const New: React.FC<Props> = ({
   );
 
   const onSubmit = async (data: TopicFormData) => {
-    console.log(data);
-
     //TODO: need to fix loader. After success loading the first time, we won't wait for creation any more, because state is
     //loaded, and we will try to get entity immediately after pressing the button, and we will receive null
     //going to object page on the second creation. Resetting loaded state is workaround, need to tweak loader logic

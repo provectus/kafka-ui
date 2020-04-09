@@ -20,9 +20,7 @@ const CustomParamSelect: React.FC<Props> = ({
   const optInputName = `${index}[name]`;
 
   React.useEffect(
-    () => {
-      if (isFirstParam(index)) { unregister(optInputName) }
-    },
+    () => { if (isFirstParam(index)) { unregister(optInputName) } },
   );
 
   const selectedMustBeUniq = (selected: string) => {

@@ -1,12 +1,9 @@
-import { Action, TopicsState, Topic, TopicCustomParam } from 'redux/interfaces';
+import { Action, TopicsState, Topic } from 'redux/interfaces';
 import { ActionType } from 'redux/actionType';
 
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
-  customParams: {
-    byName: {},
-  },
 };
 
 const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
@@ -23,25 +20,6 @@ const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
         ...topic,
       };
       memo.allNames.push(name);
-
-      return memo;
-    },
-    initialMemo,
-  );
-};
-
-const setTopicsCustomParams = (state: TopicsState, payload: TopicCustomParam[]): TopicsState => {
-  const initialMemo: TopicsState = {
-    ...state,
-    customParams: {
-      ...state.customParams,
-      byName: {},
-    }
-  };
-
-  return payload.reduce(
-    (memo: TopicsState, topicCustomParam) => {
-      memo.customParams.byName[topicCustomParam.name] = topicCustomParam;
 
       return memo;
     },
@@ -86,8 +64,6 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       };
     case ActionType.POST_TOPIC__SUCCESS:
       return addToTopicList(state, action.payload);
-    case ActionType.GET_TOPICS_CUSTOM_PARAMS__SUCCESS:
-      return setTopicsCustomParams(state, action.payload);
     default:
       return state;
   }

@@ -5,7 +5,6 @@ import {
   TopicDetails,
   TopicConfig,
   TopicFormData,
-  TopicCustomParam,
 } from 'redux/interfaces';
 import {
   BASE_URL,
@@ -22,11 +21,6 @@ export const getTopicDetails = (clusterName: ClusterName, topicName: TopicName):
 
 export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
   fetch(`${BASE_URL}/clusters/${clusterName}/topics`, { ...BASE_PARAMS })
-    .then(res => res.json());
-
-// TODO: the url needs to be reconsiled
-export const getTopicsCustomParams = (clusterName: ClusterName): Promise<TopicCustomParam[]> =>
-  fetch(`${BASE_URL}/clusters/${clusterName}/topics/custom_params`, { ...BASE_PARAMS })
     .then(res => res.json());
 
 export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promise<Topic> => {

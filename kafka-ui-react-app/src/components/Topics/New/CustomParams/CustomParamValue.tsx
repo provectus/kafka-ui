@@ -32,9 +32,7 @@ const CustomParamValue: React.FC<Props> = ({
   );
 
   React.useEffect(
-    () => {
-      if (isFirstParam(index)) { unregister(valInputName) }
-    },
+    () => { if (isFirstParam(index)) { unregister(valInputName) } },
   );
 
   return (

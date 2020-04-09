@@ -48,16 +48,6 @@ export const fetchTopicList = (clusterName: ClusterName): PromiseThunk<void> => 
   }
 };
 
-export const fetchTopicsCustomParams = (clusterName: ClusterName): PromiseThunk<void> => async (dispatch) => {
-  dispatch(actions.fetchTopicsCustomParamsAction.request());
-  try {
-    const customParams = await api.getTopicsCustomParams(clusterName);
-    dispatch(actions.fetchTopicsCustomParamsAction.success(customParams));
-  } catch (e) {
-    dispatch(actions.fetchTopicsCustomParamsAction.failure());
-  }
-};
-
 export const fetchTopicDetails = (clusterName: ClusterName, topicName: TopicName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicDetailsAction.request());
   try {
