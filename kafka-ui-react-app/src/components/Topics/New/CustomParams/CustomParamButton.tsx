@@ -1,19 +1,24 @@
 import React from 'react';
 
+export enum CustomParamButtonType {
+  plus = 'fa-plus',
+  minus = 'fa-minus',
+}
+
 interface Props {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void,
-  btnColor: string;
-  btnIcon: string;
+  className: string;
+  type: CustomParamButtonType;
 }
 
 const CustomParamButton: React.FC<Props> = ({
   onClick,
-  btnColor,
-  btnIcon,
+  className,
+  type,
 }) => (
-  <button className={`button ${btnColor} is-outlined`} onClick={onClick}>
+  <button className={`button ${className} is-outlined`} onClick={onClick}>
     <span className="icon">
-      <i className={`fas fa-lg ${btnIcon}`}></i>
+      <i className={`fas fa-lg ${type}`}></i>
     </span>
   </button>
 )

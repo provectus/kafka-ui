@@ -1,5 +1,5 @@
 import React from 'react';
-import CustomParamButton from './CustomParamButton';
+import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
 import { isFirstParam } from './CustomParams';
 
 interface Props {
@@ -17,8 +17,8 @@ const CustomParamAction: React.FC<Props> = ({
     <label className='label'>&nbsp;</label>
     {
       isFirstParam(index)
-        ? <CustomParamButton btnColor="is-success" btnIcon='fa-plus' onClick={onAdd} />
-        : <CustomParamButton btnColor="is-danger" btnIcon='fa-minus' onClick={() => onRemove(index)} />
+        ? <CustomParamButton className="is-success" type={CustomParamButtonType.plus} onClick={onAdd} />
+        : <CustomParamButton className="is-danger" type={CustomParamButtonType.minus} onClick={() => onRemove(index)} />
     }
   </>
 )

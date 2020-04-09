@@ -6,9 +6,9 @@ import CustomParamSelect from './CustomParamSelect';
 import CustomParamValue from './CustomParamValue';
 import CustomParamAction from './CustomParamAction';
 
-const DEF_INDEX = 'default';
+const DEFAULT_INDEX = 'default';
 export const INDEX_PREFIX = 'customParams';
-export const isFirstParam = (index: string) => (index === DEF_INDEX);
+export const isFirstParam = (index: string) => (index === DEFAULT_INDEX);
 
 interface Props {
   isSubmitting: boolean;
@@ -19,8 +19,8 @@ const CustomParams: React.FC<Props> = ({
 }) => {
 
   const [formCustomParams, setFormCustomParams] = React.useState<TopicFormCustomParams>({
-    byIndex: { [DEF_INDEX]: { name: '', value: '' } },
-    allIndexes: [DEF_INDEX],
+    byIndex: { [DEFAULT_INDEX]: { name: '', value: '' } },
+    allIndexes: [DEFAULT_INDEX],
   });
 
   const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {

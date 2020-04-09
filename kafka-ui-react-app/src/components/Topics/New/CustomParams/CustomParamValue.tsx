@@ -20,7 +20,7 @@ const CustomParamValue: React.FC<Props> = ({
   const { register, unregister, errors, watch, setValue } = useFormContext();
   const selectInputName: string = `${index}[name]`;
   const valInputName: string    = `${index}[value]`;
-  const selectedParamName: any  = watch(selectInputName, name);
+  const selectedParamName = watch(selectInputName, name);
 
   React.useEffect(
     () => {

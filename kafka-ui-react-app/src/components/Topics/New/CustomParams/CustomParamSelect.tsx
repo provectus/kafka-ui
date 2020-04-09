@@ -24,7 +24,7 @@ const CustomParamSelect: React.FC<Props> = ({
   );
 
   const selectedMustBeUniq = (selected: string) => {
-    const values: any = getValues({ nest: true });
+    const values = getValues({ nest: true });
     const customParamsValues: TopicFormCustomParam = values.customParams;
 
     let valid = true;
