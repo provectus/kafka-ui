@@ -13,3 +13,5 @@ export const clusterTopicNewPath = (clusterName: ClusterName) => `${clusterPath(
 export const clusterTopicPath = (clusterName: ClusterName, topicName: TopicName) => `${clusterTopicsPath(clusterName)}/${topicName}`;
 export const clusterTopicSettingsPath = (clusterName: ClusterName, topicName: TopicName) => `${clusterTopicsPath(clusterName)}/${topicName}/settings`;
 export const clusterTopicMessagesPath = (clusterName: ClusterName, topicName: TopicName) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;
+
+export const clusterConsumerGroupsPath = (clusterName: ClusterName) => `${clusterPath(clusterName)}/consumer-groups`;

@@ -1,14 +1,16 @@
 import React from 'react';
 import { ClusterName, CleanupPolicy, TopicFormData, TopicName } from 'redux/interfaces';
+import { useForm, FormContext, ErrorMessage } from 'react-hook-form';
+
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import CustomParamsContainer from "./CustomParams/CustomParamsContainer";
+import TimeToRetain from './TimeToRetain';
 import { clusterTopicsPath } from 'lib/paths';
-import { useForm, FormContext, ErrorMessage } from 'react-hook-form';
 import {
   TOPIC_NAME_VALIDATION_PATTERN,
-  MILLISECONDS_IN_DAY,
   BYTES_IN_GB,
 } from 'lib/constants';
+
 
 interface Props {
   clusterName: ClusterName;
@@ -166,33 +168,7 @@ const New: React.FC<Props> = ({
               </div>
 
               <div className="column is-one-third">
-                <label className="label">
-                  Time to retain data
-                </label>
-                <div className="select is-block">
-                  <select
-                    defaultValue={MILLISECONDS_IN_DAY * 7}
-                    name="retentionMs"
-                    ref={methods.register}
-                    disabled={isSubmitting}
-                  >
-                    <option value={MILLISECONDS_IN_DAY / 2}>
-                      12 hours
-                    </option>
-                    <option value={MILLISECONDS_IN_DAY}>
-                      1 day
-                    </option>
-                    <option value={MILLISECONDS_IN_DAY * 2}>
-                      2 days
-                    </option>
-                    <option value={MILLISECONDS_IN_DAY * 7}>
-                      1 week
-                    </option>
-                    <option value={MILLISECONDS_IN_DAY * 7 * 4}>
-                      4 weeks
-                    </option>
-                  </select>
-                </div>
+                <TimeToRetain isSubmitting={isSubmitting} />
               </div>
 
               <div className="column is-one-third">

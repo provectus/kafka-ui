@@ -77,3 +77,13 @@ export const createTopic = (clusterName: ClusterName, form: TopicFormData): Prom
     dispatch(actions.createTopicAction.failure());
   }
 };
+
+export const fetchConsumerGroupsList = (clusterName: ClusterName): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchConsumerGroupsAction.request());
+  try {
+    const consumerGroups = await api.getConsumerGroups(clusterName);
+    dispatch(actions.fetchConsumerGroupsAction.success(consumerGroups));
+  } catch (e) {
+    dispatch(actions.fetchConsumerGroupsAction.failure());
+  }
+};

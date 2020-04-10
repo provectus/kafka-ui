@@ -5,6 +5,7 @@ const brokerMetrics = require('./payload/brokerMetrics.json');
 const topics = require('./payload/topics.json');
 const topicDetails = require('./payload/topicDetails.json');
 const topicConfigs = require('./payload/topicConfigs.json');
+const consumerGroups = require('./payload/consumerGroups.json');
 
 const db = {
     clusters,
@@ -13,6 +14,7 @@ const db = {
     topics: topics.map((topic) => ({...topic, id: topic.name})),
     topicDetails,
     topicConfigs,
+    consumerGroups: consumerGroups.map((group) => ({...group, id: group.consumerGroupId}))
 };
 const server = jsonServer.create();
 const router = jsonServer.router(db);
