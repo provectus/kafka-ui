@@ -60,10 +60,4 @@ public class ClusterUtil {
                 }).collect(Collectors.toList());
     }
 
-    private static TopicPartitionDto toTopicPartitionDto(TopicPartition topicPartition) {
-        TopicPartitionDto result = new TopicPartitionDto();
-        result.setTopic(topicPartition.topic());
-        result.setPartition(topicPartition.partition());
-        return result;
-    }
 }
