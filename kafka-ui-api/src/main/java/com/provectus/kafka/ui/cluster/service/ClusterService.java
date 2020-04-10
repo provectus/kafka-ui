@@ -72,7 +72,8 @@ public class ClusterService {
                 .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
                         .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
                 .map(s -> {
-                    var consumerDetails = s.get(consumerGroupId).members().stream().map(s1 -> ClusterUtil.partlyConvertToConsumerDetail(s1, consumerGroupId, cluster)).collect(Collectors.toList());
+                    var consumerDetails = s.get(consumerGroupId).members().stream()
+                            .map(s1 -> ClusterUtil.partlyConvertToConsumerDetail(s1, consumerGroupId, cluster)).collect(Collectors.toList());
                     var result = new ConsumerGroupDetails();
                     result.setConsumers(consumerDetails);
                     result.setConsumerGroupId(consumerGroupId);
@@ -80,7 +81,7 @@ public class ClusterService {
                 })
                 .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
                         .map(o -> {
-                            s.getConsumers().forEach(c -> fillOffsetParams(c, o));
+                            s.getConsumers().forEach(с -> generateOffsetParams(с, o));
                             return ResponseEntity.ok(s);
                         }));
     }
@@ -96,14 +97,14 @@ public class ClusterService {
                     .map(s -> ResponseEntity.ok(Flux.fromIterable(s)));
     }
 
-    private void fillOffsetParams(ConsumerDetail consumerDetail, Map<TopicPartition, OffsetAndMetadata> topicMetadata) {
+    private void generateOffsetParams(ConsumerDetail consumerDetail, Map<TopicPartition, OffsetAndMetadata> topicMetadata) {
         List<Long> currentOffsets = new ArrayList<>();
         List<Long> behindMessagesList = new ArrayList<>();
         var endOffsets = consumerDetail.getEndOffset();
-        var topics = consumerDetail.getTopic();
-        var partitions = consumerDetail.getPartition();
-        for (int i = 0; i < consumerDetail.getTopic().size(); i++) {
-            Long currentOffset = topicMetadata.get(new TopicPartition(topics.get(i), partitions.get(i))).offset();
+        var topicPartitionList = consumerDetail.getTopicPartition();
+        for (int i = 0; i < consumerDetail.getTopicPartition().size(); i++) {
+            var topicPartition = new TopicPartition(topicPartitionList.get(i).getTopic(), topicPartitionList.get(i).getPartition());
+            Long currentOffset = topicMetadata.get(topicPartition).offset();
             currentOffsets.add(currentOffset);
             behindMessagesList.add(endOffsets.get(i) - currentOffset);
         }

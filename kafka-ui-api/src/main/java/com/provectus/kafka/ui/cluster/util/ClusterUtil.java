@@ -11,6 +11,7 @@ import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import reactor.core.publisher.Mono;
+import com.provectus.kafka.ui.model.TopicPartitionDto;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -41,8 +42,7 @@ public class ClusterUtil {
     public static ConsumerDetail partlyConvertToConsumerDetail(MemberDescription consumer, String consumerGroupId, KafkaCluster cluster) {
         ConsumerDetail partlyResult = new ConsumerDetail();
         partlyResult.setConsumerId(consumer.consumerId());
-        partlyResult.setPartition((consumer.assignment().topicPartitions().stream().map(TopicPartition::partition).collect(Collectors.toList())));
-        partlyResult.setTopic((consumer.assignment().topicPartitions().stream().map(TopicPartition::topic).collect(Collectors.toList())));
+        partlyResult.setTopicPartition(consumer.assignment().topicPartitions().stream().map(ClusterUtil::toTopicPartitionDto).collect(Collectors.toList()));
         partlyResult.setEndOffset(new ArrayList(getEndOffsets(consumer.assignment().topicPartitions(), consumerGroupId, cluster.getBootstrapServers()).values()));
         return partlyResult;
     }
@@ -57,6 +57,13 @@ public class ClusterUtil {
         try (KafkaConsumer<String, String> consumer = new KafkaConsumer<>(properties)) {
             result = consumer.endOffsets(topicPartition);
         }
+        return result;
+    }
+
+    private static TopicPartitionDto toTopicPartitionDto(TopicPartition topicPartition) {
+        TopicPartitionDto result = new TopicPartitionDto();
+        result.setTopic(topicPartition.topic());
+        result.setPartition(topicPartition.partition());
         return result;
     }
 }

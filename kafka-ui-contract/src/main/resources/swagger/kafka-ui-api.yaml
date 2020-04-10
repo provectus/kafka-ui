@@ -368,19 +368,26 @@ components:
         numTopics:
           type: integer
 
+    TopicPartitionDto:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+      required:
+        - topic
+        - partition
+
     ConsumerDetail:
       type: object
       properties:
         consumerId:
           type: string
-        topic:
+        topicPartition:
           type: array
           items:
-            type: string
-        partition:
-          type: array
-          items:
-            type: integer
+            $ref: '#/components/schemas/TopicPartitionDto'
         messagesBehind:
           type: array
           items:
