@@ -173,8 +173,8 @@ paths:
     get:
       tags:
         - /api/clusters
-      summary: getConsumerGroupDetail
-      operationId: getConsumerGroupDetail
+      summary: get Consumer Group By Id
+      operationId: getConsumerGroup
       parameters:
         - name: clusterName
           in: path
@@ -198,8 +198,8 @@ paths:
     get:
       tags:
         - /api/clusters
-      summary: getConsumerGroup
-      operationId: getConsumerGroup
+      summary: get all ConsumerGroups
+      operationId: getConsumerGroups
       parameters:
         - name: clusterName
           in: path
@@ -379,27 +379,21 @@ components:
         - topic
         - partition
 
-    ConsumerDetail:
+    ConsumerTopicPartitionDetail:
       type: object
       properties:
         consumerId:
           type: string
-        topicPartition:
-          type: array
-          items:
-            $ref: '#/components/schemas/TopicPartitionDto'
-        messagesBehind:
-          type: array
-          items:
-            type: long
+        topic:
+          type: string
+        partition:
+          type: integer
         currentOffset:
-          type: array
-          items:
-            type: long
+          type: long
         endOffset:
-          type: array
-          items:
-            type: long
+          type: long
+        messagesBehind:
+          type: long
 
     ConsumerGroupDetails:
       type: object
@@ -409,4 +403,4 @@ components:
         consumers:
           type: array
           items:
-            $ref: '#/components/schemas/ConsumerDetail'
+            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'

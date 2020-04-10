@@ -55,12 +55,12 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroup(String clusterName, ServerWebExchange exchange) {
-        return clusterService.getConsumerGroup(clusterName);
+    public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroups(String clusterName, ServerWebExchange exchange) {
+        return clusterService.getConsumerGroups(clusterName);
     }
 
     @Override
-    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String clusterName, String consumerGroupId, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroup(String clusterName, String consumerGroupId, ServerWebExchange exchange) {
         return clusterService.getConsumerGroupDetail(clusterName, consumerGroupId);
     }
 }
