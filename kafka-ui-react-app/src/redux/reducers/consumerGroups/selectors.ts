@@ -7,6 +7,7 @@ import { ConsumerGroupID, ConsumerGroupsState } from '../../interfaces/consumerG
 const consumerGroupsState = ({ consumerGroups }: RootState): ConsumerGroupsState => consumerGroups;
 
 const getConsumerGroupsMap = (state: RootState) => consumerGroupsState(state).byID;
+const getConsumerGroupsIDsList = (state: RootState) => consumerGroupsState(state).allIDs;
 
 const getConsumerGroupsListFetchingStatus = createFetchingSelector('GET_CONSUMER_GROUPS');
 const getConsumerGroupDetailsFetchingStatus = createFetchingSelector('GET_CONSUMER_GROUP_DETAILS');
@@ -24,11 +25,13 @@ export const getIsConsumerGroupDetailsFetched = createSelector(
 export const getConsumerGroupsList = createSelector(
   getIsConsumerGroupsListFetched,
   getConsumerGroupsMap,
-  (isFetched, byID) => {
+  getConsumerGroupsIDsList,
+  (isFetched, byID, ids) => {
     if (!isFetched) {
       return [];
     }
-    return Object.keys(byID).map( (key) => byID[key]);
+
+    return ids.map(key => byID[key]);
   },
 );
 
