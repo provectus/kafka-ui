@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.cluster.util;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ConsumerDetail;
 import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.TopicPartitionDto;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.MemberDescription;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -11,7 +12,6 @@ import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import reactor.core.publisher.Mono;
-import com.provectus.kafka.ui.model.TopicPartitionDto;
 
 import java.util.*;
 import java.util.stream.Collectors;
