@@ -8,6 +8,7 @@ import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import NewContainer from './New/NewContainer';
+import EditContainer from './Edit/EditContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -28,6 +29,7 @@ const Topics: React.FC<Props> = ({
       <Switch>
         <Route exact path="/clusters/:clusterName/topics" component={ListContainer} />
         <Route exact path="/clusters/:clusterName/topics/new" component={NewContainer} />
+        <Route path="/clusters/:clusterName/topics/:topicName/edit" component={EditContainer} />
         <Route path="/clusters/:clusterName/topics/:topicName" component={DetailsContainer} />
       </Switch>
     );

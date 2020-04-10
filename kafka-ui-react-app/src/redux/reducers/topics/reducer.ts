@@ -12,24 +12,32 @@ const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
     allNames: [],
   };
 
-  return payload.reduce(
-    (memo: TopicsState, topic) => {
-      const {name} = topic;
-      memo.byName[name] = {
-        ...memo.byName[name],
-        ...topic,
-      };
-      memo.allNames.push(name);
+  return payload.reduce((memo: TopicsState, topic) => {
+    const { name } = topic;
+    memo.byName[name] = {
+      ...memo.byName[name],
+      ...topic,
+    };
+    memo.allNames.push(name);
 
-      return memo;
-    },
-    initialMemo,
-  );
+    return memo;
+  }, initialMemo);
+};
+
+const updateTopic = (state: TopicsState, payload: Topic): TopicsState => {
+  const newState: TopicsState = { ...state };
+
+  // newState.byName[payload.name] = {
+  //   ...newState.byName[payload.name],
+  //   // payload,
+  // };
+
+  return newState;
 };
 
 const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
   const newState: TopicsState = {
-    ...state
+    ...state,
   };
   newState.allNames.push(payload.name);
   newState.byName[payload.name] = payload;
@@ -48,8 +56,8 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           [action.payload.topicName]: {
             ...state.byName[action.payload.topicName],
             ...action.payload.details,
-          }
-        }
+          },
+        },
       };
     case ActionType.GET_TOPIC_CONFIG__SUCCESS:
       return {
@@ -59,11 +67,13 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           [action.payload.topicName]: {
             ...state.byName[action.payload.topicName],
             config: action.payload.config,
-          }
-        }
+          },
+        },
       };
     case ActionType.POST_TOPIC__SUCCESS:
       return addToTopicList(state, action.payload);
+    case ActionType.PATCH_TOPIC__SUCCESS:
+      return updateTopic(state, action.payload);
     default:
       return state;
   }

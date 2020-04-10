@@ -11,6 +11,12 @@ export interface TopicConfig {
   defaultValue: string;
 }
 
+export interface TopicConfigByName {
+  byName: {
+    [paramName: string]: TopicConfig;
+  };
+}
+
 export interface TopicReplica {
   broker: number;
   leader: boolean;
@@ -49,6 +55,10 @@ export interface TopicFormCustomParam {
   value: string;
 }
 
+// export const TopicFormCustomParamsByIndex {
+//   []: TopicFormCustomParam;
+// }
+
 export interface TopicFormCustomParams {
   byIndex: { [paramIndex: string]: TopicFormCustomParam };
   allIndexes: string[];
@@ -75,4 +85,4 @@ export interface TopicFormData {
   customParams: {
     [index: string]: TopicFormCustomParam;
   };
-};
+}
