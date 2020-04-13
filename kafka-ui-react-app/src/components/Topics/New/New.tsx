@@ -1,14 +1,16 @@
 import React from 'react';
 import { ClusterName, CleanupPolicy, TopicFormData, TopicName } from 'redux/interfaces';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterTopicsPath } from 'lib/paths';
 import { useForm, FormContext, ErrorMessage } from 'react-hook-form';
 
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import CustomParamsContainer from "./CustomParams/CustomParamsContainer";
+import TimeToRetain from './TimeToRetain';
+import { clusterTopicsPath } from 'lib/paths';
 import {
   TOPIC_NAME_VALIDATION_PATTERN,
   BYTES_IN_GB,
 } from 'lib/constants';
-import TimeToRetain from './TimeToRetain';
+
 
 interface Props {
   clusterName: ClusterName;
@@ -218,6 +220,8 @@ const New: React.FC<Props> = ({
                 </p>
               </div>
             </div>
+
+            <CustomParamsContainer isSubmitting={isSubmitting} />
 
             <input type="submit" className="button is-primary" disabled={isSubmitting}/>
           </form>
