@@ -33,6 +33,7 @@ export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promis
     retentionMs,
     maxMessageBytes,
     minInSyncReplicas,
+    customParams,
   } = form;
   const body = JSON.stringify({
     name,
@@ -44,6 +45,7 @@ export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promis
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
+      customParams,
     }
   });
   return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
