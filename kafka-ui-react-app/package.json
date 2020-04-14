@@ -39,8 +39,7 @@
     "*.{js,ts,jsx,tsx}": [
       "eslint -c .eslintrc.json --fix",
       "git add"
-    ],
-    "*.js": "eslint --cache --fix"
+    ]
   },
   "scripts": {
     "start": "react-scripts start",
