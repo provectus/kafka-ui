@@ -59,7 +59,7 @@ public class ClusterService {
     public Mono<ResponseEntity<Topic>> createTopic(String name, Mono<TopicFormData> topicFormData) {
         KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
-        return kafkaService.createTopic(cluster, topicFormData);
+        return kafkaService.createTopic(cluster.getAdminClient(), cluster, topicFormData);
     }
 
     @SneakyThrows

@@ -4,32 +4,30 @@ import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.I0Itec.zkclient.ZkClient;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class ZookeeperService {
 
-    @Async
     public void checkZookeeperStatus(KafkaCluster kafkaCluster) {
-        log.debug("Start getting Zookeeper metrics for kafkaCluster: " + kafkaCluster.getName());
-        boolean isConnected = false;
-        if (kafkaCluster.getZkClient() != null) {
-            isConnected = isZkClientConnected(kafkaCluster);
-        }
-        if (kafkaCluster.getZkClient() == null || !isConnected) {
-            isConnected = createZookeeperConnection(kafkaCluster);
-        }
-
-        if (!isConnected) {
-            kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.OFFLINE);
-
-            return;
-        }
-
-        kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.ONLINE);
+        Mono.just(false)
+                .doOnNext(isConnected -> {
+                    log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
+                    if (kafkaCluster.getZkClient() != null) {
+                        isConnected = isZkClientConnected(kafkaCluster);
+                    }
+                    if (kafkaCluster.getZkClient() == null || !isConnected) {
+                        isConnected = createZookeeperConnection(kafkaCluster);
+                    }
+                    if (!isConnected) {
+                        kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.OFFLINE);
+                        return;
+                    }
+                    kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.ONLINE);
+                }).subscribe();
     }
 
     private boolean createZookeeperConnection(KafkaCluster kafkaCluster) {
