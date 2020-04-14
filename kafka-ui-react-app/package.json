@@ -35,12 +35,24 @@
     "typesafe-actions": "^5.1.0",
     "typescript": "~3.7.4"
   },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": [
+      "eslint -c .eslintrc.json --fix"
+    ]
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "lint": "esprint check",
+    "lint:fix": "esprint check --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "mock": "node ./mock/index.js"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn tsc --noEmit && lint-staged"
+    }
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -56,5 +68,21 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^2.27.0",
+    "@typescript-eslint/parser": "^2.27.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsx-a11y": "^6.2.3",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
+    "esprint": "^0.6.0",
+    "husky": "^4.2.5",
+    "lint-staged": ">=10",
+    "prettier": "^2.0.4"
   }
 }
