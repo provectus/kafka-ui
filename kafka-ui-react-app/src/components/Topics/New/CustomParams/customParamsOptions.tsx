@@ -1,96 +1,88 @@
-import { TopicCustomParamOption } from 'redux/interfaces';
+import { TopicCustomParamOptions } from '../../../../redux/interfaces/topic';
 
-interface CustomParamOption {
-  [optionName: string]: TopicCustomParamOption;
-}
-
-export const CUSTOM_PARAMS_OPTIONS: CustomParamOption = {
-  "compression.type": {
-    "name": "compression.type",
+export const CUSTOM_PARAMS_OPTIONS: TopicCustomParamOptions = {
+  "compressionType": {
+    "optName": "compression.type",
     "defaultValue": "producer"
   },
-  "leader.replication.throttled.replicas": {
-    "name": "leader.replication.throttled.replicas",
+  "leaderReplicationThrottledReplicas": {
+    "optName": "leader.replication.throttled.replicas",
     "defaultValue": ""
   },
-  "message.downconversion.enable": {
-    "name": "message.downconversion.enable",
+  "messageDownconversionEnable": {
+    "optName": "message.downconversion.enable",
     "defaultValue": "true"
   },
-  "segment.jitter.ms": {
-    "name": "segment.jitter.ms",
+  "segmentJitterMs": {
+    "optName": "segment.jitter.ms",
     "defaultValue": "0"
   },
-  "flush.ms": {
-    "name": "flush.ms",
+  "flushMs": {
+    "optName": "flush.ms",
     "defaultValue": "9223372036854775807"
   },
-  "follower.replication.throttled.replicas": {
-    "name": "follower.replication.throttled.replicas",
+  "followerReplicationThrottledReplicas": {
+    "optName": "follower.replication.throttled.replicas",
     "defaultValue": ""
   },
-  "segment.bytes": {
-    "name": "segment.bytes",
+  "segmentBytes": {
+    "optName": "segment.bytes",
     "defaultValue": "1073741824"
   },
-  "flush.messages": {
-    "name": "flush.messages",
+  "flushMessages": {
+    "optName": "flush.messages",
     "defaultValue": "9223372036854775807"
   },
-  "message.format.version": {
-    "name": "message.format.version",
+  "messageFormatVersion": {
+    "optName": "message.format.version",
     "defaultValue": "2.3-IV1"
   },
-  "file.delete.delay.ms": {
-    "name": "file.delete.delay.ms",
+  "fileDeleteDelayMs": {
+    "optName": "file.delete.delay.ms",
     "defaultValue": "60000"
   },
   "max.compaction.lag.ms": {
-    "name": "max.compaction.lag.ms",
+    "optName": "max.compaction.lag.ms",
     "defaultValue": "9223372036854775807"
   },
-  "min.compaction.lag.ms": {
-    "name": "min.compaction.lag.ms",
+  "minCompactionLagMs": {
+    "optName": "min.compaction.lag.ms",
     "defaultValue": "0"
   },
-  "message.timestamp.type": {
-    "name": "message.timestamp.type",
+  "messageTimestampType": {
+    "optName": "message.timestamp.type",
     "defaultValue": "CreateTime"
   },
   "preallocate": {
-    "name": "preallocate",
+    "optName": "preallocate",
     "defaultValue": "false"
   },
-  "min.cleanable.dirty.ratio": {
-    "name": "min.cleanable.dirty.ratio",
+  "minCleanableDirtyRatio": {
+    "optName": "min.cleanable.dirty.ratio",
     "defaultValue": "0.5"
   },
-  "index.interval.bytes": {
-    "name": "index.interval.bytes",
+  "indexIntervalBytes": {
+    "optName": "index.interval.bytes",
     "defaultValue": "4096"
   },
-  "unclean.leader.election.enable": {
-    "name": "unclean.leader.election.enable",
+  "uncleanLeaderElectionEnable": {
+    "optName": "unclean.leader.election.enable",
     "defaultValue": "true"
   },
-  "retention.bytes": {
-    "name": "retention.bytes",
-    "defaultValue": "-1"
-  },
-  "delete.retention.ms": {
-    "name": "delete.retention.ms",
+  "deleteRetentionMs": {
+    "optName": "delete.retention.ms",
     "defaultValue": "86400000"
   },
-  "segment.ms": {
-    "name": "segment.ms",
+  "segmentMs": {
+    "optName": "segment.ms",
     "defaultValue": "604800000"
   },
-  "message.timestamp.difference.max.ms": {
-    "name": "message.timestamp.difference.max.ms",
+  "messageTimestampDifferenceMaxMs": {
+    "optName": "message.timestamp.difference.max.ms",
     "defaultValue": "9223372036854775807"
   },
-  "segment.index.bytes": {
-    "name": "segment.index.bytes",
+  "segmentIndexBytes": {
+    "optName": "segment.index.bytes",
     "defaultValue": "10485760"
   }
 }

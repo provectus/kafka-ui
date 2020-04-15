@@ -23,9 +23,11 @@ export interface TopicPartition {
   replicas: TopicReplica[];
 }
 
-export interface TopicCustomParamOption {
-  name: string;
-  defaultValue: string;
+export interface TopicCustomParamOptions {
+  [optionName: string]: {
+    optName: string;
+    defaultValue: string;
+  };
 }
 
 export interface TopicDetails {

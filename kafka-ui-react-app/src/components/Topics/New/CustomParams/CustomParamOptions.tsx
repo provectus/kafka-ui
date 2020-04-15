@@ -1,16 +1,13 @@
 import React from 'react';
-import { TopicCustomParamOption } from 'redux/interfaces';
 import { CUSTOM_PARAMS_OPTIONS } from './customParamsOptions';
 
-interface Props {};
-
-const CustomParamOptions: React.FC<Props> = () => (
+const CustomParamOptions: React.FC<{}> = () => (
   <>
     <option value=''>Select</option>
     {
-      Object.values(CUSTOM_PARAMS_OPTIONS).map((opt: TopicCustomParamOption) => (
-        <option key={opt.name} value={opt.name}>
-          {opt.name}
+      Object.keys(CUSTOM_PARAMS_OPTIONS).map((key: string) => (
+        <option key={key} value={key}>
+          {CUSTOM_PARAMS_OPTIONS[key].optName}
         </option>
       ))
     }
