@@ -24,7 +24,7 @@ export interface TopicPartition {
 }
 
 export interface TopicCustomParamOptions {
-  [optionName: string]: {
+  [optName: string]: {
     optName: string;
     defaultValue: string;
   };
@@ -75,6 +75,6 @@ export interface TopicFormData {
   retentionBytes: number;
   maxMessageBytes: number;
   customParams: {
-    [index: string]: TopicFormCustomParam;
+    [ts: string]: TopicFormCustomParam;
   };
-};
+}
