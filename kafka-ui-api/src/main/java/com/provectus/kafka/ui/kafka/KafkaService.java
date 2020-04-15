@@ -188,10 +188,10 @@ public class KafkaService {
             topic.setPartitions(partitions);
             TopicDetails topicDetails = kafkaCluster.getOrCreateTopicDetails(td.name());
             topicDetails.setReplicas(replicasCount);
-            topicDetails.setPartitionCount(topicDescription.partitions().size());
+            topicDetails.setPartitionCount(td.partitions().size());
             topicDetails.setInSyncReplicas(inSyncReplicasCount);
-            topicDetails.setReplicationFactor(topicDescription.partitions().size() > 0
-                    ? topicDescription.partitions().get(0).replicas().size()
+            topicDetails.setReplicationFactor(td.partitions().size() > 0
+                    ? td.partitions().get(0).replicas().size()
                     : null);
             topicDetails.setUnderReplicatedPartitions(urpCount);
             return topic;
