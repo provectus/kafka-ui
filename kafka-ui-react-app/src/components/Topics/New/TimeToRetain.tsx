@@ -1,10 +1,8 @@
 import React from 'react';
 import prettyMilliseconds from 'pretty-ms';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
-import { MILLISECONDS_IN_WEEK } from 'lib/constants';
-
-const MILLISECONDS_IN_SECOND = 1000;
-const MILLISECONDS_IN_DAY = 86_400_000;
+import { MILLISECONDS_IN_WEEK, MILLISECONDS_IN_SECOND } from 'lib/constants';
+import TimeToRetainBtns from './TimeToRetainBtns';
 
 interface Props {
   isSubmitting: boolean;
@@ -23,9 +21,14 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
 
   return (
     <>
-      <label className="label">Time to retain data (in ms)</label>
+      <label
+        className="label is-flex"
+        style={{ justifyContent: 'space-between' }}
+      >
+        <div>Time to retain data (in ms)</div>
+        {valueHint && <span className="has-text-info">{valueHint}</span>}
+      </label>
       <input
-        list="list"
         className="input"
         id="timeToRetain"
         type="number"
@@ -34,20 +37,14 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
         ref={register({
           min: { value: -1, message: 'must be greater than or equal to -1' },
         })}
-        autoComplete="off"
         disabled={isSubmitting}
       />
-      <datalist id="list">
-        <option value={MILLISECONDS_IN_DAY / 2}>12 hours</option>
-        <option value={MILLISECONDS_IN_DAY}>1 day</option>
-        <option value={MILLISECONDS_IN_DAY * 2}>2 days</option>
-        <option value={MILLISECONDS_IN_DAY * 7}>1 week</option>
-        <option value={MILLISECONDS_IN_DAY * 7 * 4}>4 weeks</option>
-      </datalist>
+
       <p className="help is-danger">
         <ErrorMessage errors={errors} name={name} />
       </p>
-      {valueHint && <p className="help is-info">{valueHint}</p>}
+
+      <TimeToRetainBtns name={name} value={watchedValue} />
     </>
   );
 };
