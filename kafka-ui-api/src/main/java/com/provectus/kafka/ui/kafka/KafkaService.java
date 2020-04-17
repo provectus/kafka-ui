@@ -50,6 +50,7 @@ public class KafkaService {
             kafkaCluster1.getCluster().setBrokerCount(metrics.getBrokerCount());
             kafkaCluster1.getBrokersMetrics().setBrokerCount(metrics.getBrokerCount());
             kafkaCluster1.getBrokersMetrics().setActiveControllers(metrics.getActiveControllers());
+            clusterId.setKafkaCluster(kafkaCluster1);
             return clusterId;
         }).flatMap(this::updateTopicsData);
     }
