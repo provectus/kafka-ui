@@ -325,6 +325,16 @@ components:
           additionalProperties:
             type: string
 
+    Metrics:
+      type: object
+      properties:
+        bytesInPerSec:
+          type: integer
+        bytesOutPerSec:
+          type: integer
+        cluster:
+          $ref: '#/components/schemas/Cluster'
+
     Broker:
       type: object
       properties:

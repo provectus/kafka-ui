@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -59,7 +60,7 @@ public class ClusterService {
     public Mono<ResponseEntity<Topic>> createTopic(String name, Mono<TopicFormData> topicFormData) {
         KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
-        return kafkaService.createTopic(cluster.getAdminClient(), cluster, topicFormData);
+        return kafkaService.createTopic(cluster.getAdminClient(), cluster, topicFormData).map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
     }
 
     @SneakyThrows

@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.cluster;
 
+import com.provectus.kafka.ui.cluster.model.ClusterWithId;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.service.MetricsUpdateService;
 import lombok.RequiredArgsConstructor;
@@ -8,8 +9,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.ArrayList;
 
 @Component
 @RequiredArgsConstructor
@@ -22,9 +21,11 @@ public class ClustersMetricsScheduler {
 
     @Scheduled(fixedRate = 30000)
     public void updateMetrics() {
-        Flux.range(0, clustersStorage.getKafkaClusters().size())
+        Flux.fromIterable(clustersStorage.getKafkaClustersMap().entrySet())
                 .subscribeOn(Schedulers.parallel())
-                .doOnNext(s -> metricsUpdateService.updateMetrics(new ArrayList<>(clustersStorage.getKafkaClusters()).get(s)))
+                .map(s -> new ClusterWithId(s.getKey(), s.getValue()))
+                .flatMap(metricsUpdateService::updateMetrics)
+                .doOnNext(s -> clustersStorage.setKafkaCluster(s.getId(), s.getKafkaCluster()))
                 .subscribe();
     }
 }

@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.kafka;
 
+import com.provectus.kafka.ui.cluster.model.ClusterWithId;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.model.Metrics;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
@@ -9,8 +11,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.*;
 import org.apache.kafka.common.config.ConfigResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,7 +26,8 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 public class KafkaService {
 
     @SneakyThrows
-    public void loadClusterMetrics(KafkaCluster kafkaCluster) {
+    public Mono<ClusterWithId> updateClusterMetrics(ClusterWithId clusterWithId) {
+        var kafkaCluster = clusterWithId.getKafkaCluster();
         var isConnected = false;
         log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster.getName());
         if (kafkaCluster.getAdminClient() != null) {
@@ -37,17 +38,22 @@ public class KafkaService {
         }
         if (!isConnected) {
             kafkaCluster.getCluster().setStatus(ServerStatus.OFFLINE);
-            return;
+            return Mono.empty();
         }
         kafkaCluster.getCluster().setId(kafkaCluster.getId());
         kafkaCluster.getCluster().setStatus(ServerStatus.ONLINE);
-        loadMetrics(kafkaCluster);
-        loadTopicsData(kafkaCluster);
+        return loadMetrics(kafkaCluster).map(metrics -> {
+            var clusterId = new ClusterWithId(metrics.getKafkaCluster().getName(), metrics.getKafkaCluster());
+            var kafkaCluster1 = metrics.getKafkaCluster();
+            kafkaCluster1.getCluster().setBytesInPerSec(metrics.getBytesInPerSec());
+            kafkaCluster1.getCluster().setBytesOutPerSec(metrics.getBytesOutPerSec());
+            return clusterId;
+        }).flatMap(this::updateTopicsData);
     }
 
 
     @SneakyThrows
-    public Mono<ResponseEntity<Topic>> createTopic(AdminClient adminClient, KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
+    public Mono<Topic> createTopic(AdminClient adminClient, KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
         return topicFormData.flatMap(
                 topicData -> {
                     NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(), topicData.getReplicationFactor().shortValue());
@@ -65,7 +71,7 @@ public class KafkaService {
                     collectTopicData(cluster, td))
                 .map(topic -> {
                     cluster.getTopics().add(topic);
-                    return new ResponseEntity<>(topic, HttpStatus.CREATED);
+                    return topic;
                 });
     }
 
@@ -106,24 +112,26 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    private void loadTopicsData(KafkaCluster kafkaCluster) {
-        AdminClient adminClient = kafkaCluster.getAdminClient();
+    private Mono<ClusterWithId> updateTopicsData(ClusterWithId clusterWithId) {
+        AdminClient adminClient = clusterWithId.getKafkaCluster().getAdminClient();
         ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
         listTopicsOptions.listInternal(true);
-        ClusterUtil.toMono(adminClient.listTopics(listTopicsOptions).names())
+        return ClusterUtil.toMono(adminClient.listTopics(listTopicsOptions).names())
             .map(tl -> {
-                kafkaCluster.getCluster().setTopicCount(tl.size());
+                clusterWithId.getKafkaCluster().getCluster().setTopicCount(tl.size());
                 DescribeTopicsResult topicDescriptionsWrapper = adminClient.describeTopics(tl);
                 Map<String, KafkaFuture<TopicDescription>> topicDescriptionFuturesMap = topicDescriptionsWrapper.values();
-                resetMetrics(kafkaCluster);
+                resetMetrics(clusterWithId.getKafkaCluster());
                 return topicDescriptionFuturesMap.entrySet();
             })
             .flatMapMany(Flux::fromIterable)
             .flatMap(s -> ClusterUtil.toMono(s.getValue()))
-            .flatMap(e -> collectTopicData(kafkaCluster, e))
+            .flatMap(e -> collectTopicData(clusterWithId.getKafkaCluster(), e))
             .collectList()
-            .doOnNext(kafkaCluster::setTopics)
-            .subscribe();
+            .map(s -> {
+                clusterWithId.getKafkaCluster().setTopics(s);
+                return clusterWithId;
+            });
     }
 
     private void resetMetrics(KafkaCluster kafkaCluster) {
@@ -204,26 +212,29 @@ public class KafkaService {
                     });
     }
 
-    private void loadMetrics(KafkaCluster kafkaCluster) {
+    private Mono<Metrics> loadMetrics(KafkaCluster kafkaCluster) {
+        Metrics metrics = new Metrics();
         AdminClient adminClient = kafkaCluster.getAdminClient();
-        ClusterUtil.toMono(adminClient.describeCluster().nodes()).flatMap(brokers -> {
+        metrics.setKafkaCluster(kafkaCluster);
+        return ClusterUtil.toMono(adminClient.describeCluster().nodes()).flatMap(brokers -> {
             var brokerCount = brokers.size();
             kafkaCluster.getCluster().setBrokerCount(brokerCount);
             kafkaCluster.getBrokersMetrics().setBrokerCount(brokerCount);
             return ClusterUtil.toMono(adminClient.describeCluster().controller());
-        }).doOnNext(c -> {
+        }).map(c -> {
             kafkaCluster.getBrokersMetrics().setActiveControllers(c != null ? 1 : 0);
             for (Map.Entry<MetricName, ? extends Metric> metricNameEntry : adminClient.metrics().entrySet()) {
                 if (metricNameEntry.getKey().name().equals(IN_BYTE_PER_SEC_METRIC)
                         && metricNameEntry.getKey().description().equals(IN_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                    kafkaCluster.getCluster().setBytesInPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
+                    metrics.setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
                 }
                 if (metricNameEntry.getKey().name().equals(OUT_BYTE_PER_SEC_METRIC)
                         && metricNameEntry.getKey().description().equals(OUT_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                    kafkaCluster.getCluster().setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
+                    metrics.setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
                 }
             }
-        }).subscribe();
+            return metrics;
+        });
     }
 
     @SneakyThrows
@@ -255,11 +266,11 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    private void createTopic(AdminClient adminClient, NewTopic newTopic) {
-        ClusterUtil.toMono(adminClient.createTopics(Collections.singletonList(newTopic))
+    private Mono<Void> createTopic(AdminClient adminClient, NewTopic newTopic) {
+        return ClusterUtil.toMono(adminClient.createTopics(Collections.singletonList(newTopic))
                 .values()
                 .values()
                 .iterator()
-                .next()).subscribe();
+                .next());
     }
 }
