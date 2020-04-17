@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.cluster.model;
 
 import com.provectus.kafka.ui.model.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import org.I0Itec.zkclient.ZkClient;
@@ -13,30 +14,26 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 public class KafkaCluster {
 
-    String id = "";
-    String name;
-    String jmxHost;
-    String jmxPort;
-    String bootstrapServers;
-    String zookeeper;
+    private final String id = "";
+    private final String name;
+    private final String jmxHost;
+    private final String jmxPort;
+    private final String bootstrapServers;
+    private final String zookeeper;
 
-    Cluster cluster = new Cluster();
-    BrokersMetrics brokersMetrics = new BrokersMetrics();
+    private final Cluster cluster;
+    private final BrokersMetrics brokersMetrics;
 
-    List<Topic> topics = new ArrayList<>();
+    private final List<Topic> topics = new ArrayList<>();
     private Map<String, TopicDetails> topicDetailsMap = new ConcurrentHashMap<>();
     private Map<String, List<TopicConfig>> topicConfigsMap = new ConcurrentHashMap<>();
+    private final ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
 
-
-    ZkClient zkClient;
-    AdminClient adminClient;
-    ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
-
-    Exception lastKafkaException;
-    Exception lastZookeeperException;
+    private final Throwable lastKafkaException;
+    private final Throwable lastZookeeperException;
 
     public TopicDetails getOrCreateTopicDetails(String key) {
         var topicDetails = topicDetailsMap.get(key);
