@@ -1,4 +1,4 @@
-import { createAsyncAction} from 'typesafe-actions';
+import { createAsyncAction } from 'typesafe-actions';
 import { ActionType } from 'redux/actionType';
 import { ConsumerGroup } from '../interfaces/consumerGroup';
 import {
