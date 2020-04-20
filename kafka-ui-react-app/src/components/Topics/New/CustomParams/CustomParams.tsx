@@ -24,7 +24,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    const newIndex = `${INDEX_PREFIX}.${new Date().getTime()}`;
+    const newIndex = `${INDEX_PREFIX}.${new Date().getTime()}ts`;
 
     setFormCustomParams({
       ...formCustomParams,
