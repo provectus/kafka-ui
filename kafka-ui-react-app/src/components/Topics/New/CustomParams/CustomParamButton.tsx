@@ -6,21 +6,28 @@ export enum CustomParamButtonType {
 }
 
 interface Props {
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void,
+  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className: string;
   type: CustomParamButtonType;
+  btnText?: string;
 }
 
 const CustomParamButton: React.FC<Props> = ({
   onClick,
   className,
   type,
+  btnText,
 }) => (
-  <button className={`button ${className} is-outlined`} onClick={onClick}>
+  <button
+    type="button"
+    className={`button ${className} is-outlined`}
+    onClick={onClick}
+  >
+    {btnText && <span>{btnText}</span>}
     <span className="icon">
-      <i className={`fas fa-lg ${type}`}></i>
+      <i className={`fas fa-lg ${type}`} />
     </span>
   </button>
-)
+);
 
 export default CustomParamButton;

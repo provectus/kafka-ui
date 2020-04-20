@@ -1,8 +1,8 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
-import CustomParamOptions from './CustomParamOptions';
-import { isFirstParam, INDEX_PREFIX } from './CustomParams';
 import { TopicFormCustomParam } from 'redux/interfaces';
+import CustomParamOptions from './CustomParamOptions';
+import { INDEX_PREFIX } from './CustomParams';
 
 interface Props {
   isDisabled: boolean;
@@ -10,18 +10,9 @@ interface Props {
   name: string;
 }
 
-const CustomParamSelect: React.FC<Props> = ({
-  isDisabled,
-  index,
-  name,
-}) => {
-
-  const { register, unregister, errors, getValues, triggerValidation } = useFormContext();
+const CustomParamSelect: React.FC<Props> = ({ isDisabled, index, name }) => {
+  const { register, errors, getValues, triggerValidation } = useFormContext();
   const optInputName = `${index}[name]`;
-
-  React.useEffect(
-    () => { if (isFirstParam(index)) { unregister(optInputName) } },
-  );
 
   const selectedMustBeUniq = (selected: string) => {
     const values = getValues({ nest: true });
@@ -30,11 +21,12 @@ const CustomParamSelect: React.FC<Props> = ({
     let valid = true;
 
     for (const [key, customParam] of Object.entries(customParamsValues)) {
-      if (`${INDEX_PREFIX}.${key}` === index) { continue; }
-      if (selected === customParam.name) {
-        valid = false;
-        break;
-      };
+      if (`${INDEX_PREFIX}.${key}` !== index) {
+        if (selected === customParam.name) {
+          valid = false;
+          break;
+        }
+      }
     }
 
     return valid ? true : 'Custom Parameter must be unique';
@@ -48,7 +40,7 @@ const CustomParamSelect: React.FC<Props> = ({
           name={optInputName}
           ref={register({
             required: 'Custom Parameter is required.',
-            validate: { unique: selected => selectedMustBeUniq(selected) },
+            validate: { unique: (selected) => selectedMustBeUniq(selected) },
           })}
           onChange={() => triggerValidation(optInputName)}
           disabled={isDisabled}
@@ -57,7 +49,7 @@ const CustomParamSelect: React.FC<Props> = ({
           <CustomParamOptions />
         </select>
         <p className="help is-danger">
-          <ErrorMessage errors={errors} name={optInputName}/>
+          <ErrorMessage errors={errors} name={optInputName} />
         </p>
       </div>
     </>

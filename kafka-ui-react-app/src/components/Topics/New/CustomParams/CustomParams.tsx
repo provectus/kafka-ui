@@ -5,22 +5,20 @@ import { TopicFormCustomParams } from 'redux/interfaces';
 import CustomParamSelect from './CustomParamSelect';
 import CustomParamValue from './CustomParamValue';
 import CustomParamAction from './CustomParamAction';
+import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
 
-const DEFAULT_INDEX = 'default';
 export const INDEX_PREFIX = 'customParams';
-export const isFirstParam = (index: string) => (index === DEFAULT_INDEX);
 
 interface Props {
   isSubmitting: boolean;
 }
 
-const CustomParams: React.FC<Props> = ({
-  isSubmitting,
-}) => {
-
-  const [formCustomParams, setFormCustomParams] = React.useState<TopicFormCustomParams>({
-    byIndex: { [DEFAULT_INDEX]: { name: '', value: '' } },
-    allIndexes: [DEFAULT_INDEX],
+const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
+  const [formCustomParams, setFormCustomParams] = React.useState<
+    TopicFormCustomParams
+  >({
+    byIndex: {},
+    allIndexes: [],
   });
 
   const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,54 +32,54 @@ const CustomParams: React.FC<Props> = ({
         ...formCustomParams.byIndex,
         [newIndex]: { name: '', value: '' },
       },
-      allIndexes: [
-        formCustomParams.allIndexes[0],
-        newIndex,
-        ...formCustomParams.allIndexes.slice(1),
-      ],
+      allIndexes: [newIndex, ...formCustomParams.allIndexes],
     });
-  }
+  };
 
   const onRemove = (index: string) => {
     setFormCustomParams({
       ...formCustomParams,
       byIndex: omit(formCustomParams.byIndex, index),
-      allIndexes: reject(formCustomParams.allIndexes, (i) => (i === index)),
+      allIndexes: reject(formCustomParams.allIndexes, (i) => i === index),
     });
-  }
+  };
 
   return (
     <>
-      {
-        formCustomParams.allIndexes.map((index) => (
-          <div className="columns is-centered" key={index}>
-            <div className="column">
-              <CustomParamSelect
-                index={index}
-                isDisabled={isFirstParam(index) || isSubmitting}
-                name={formCustomParams.byIndex[index].name}
-              />
-            </div>
-
-            <div className="column">
-              <CustomParamValue
-                index={index}
-                isDisabled={isFirstParam(index) || isSubmitting}
-                name={formCustomParams.byIndex[index].name}
-                defaultValue={formCustomParams.byIndex[index].value}
-              />
-            </div>
-
-            <div className="column is-narrow">
-              <CustomParamAction
-                index={index}
-                onAdd={onAdd}
-                onRemove={onRemove}
-              />
-            </div>
+      <div className="columns">
+        <div className="column">
+          <CustomParamButton
+            className="is-success"
+            type={CustomParamButtonType.plus}
+            onClick={onAdd}
+            btnText="Add Custom Parameter"
+          />
+        </div>
+      </div>
+      {formCustomParams.allIndexes.map((index) => (
+        <div className="columns is-centered" key={index}>
+          <div className="column">
+            <CustomParamSelect
+              index={index}
+              isDisabled={isSubmitting}
+              name={formCustomParams.byIndex[index].name}
+            />
           </div>
-        ))
-      }
+
+          <div className="column">
+            <CustomParamValue
+              index={index}
+              isDisabled={isSubmitting}
+              name={formCustomParams.byIndex[index].name}
+              defaultValue={formCustomParams.byIndex[index].value}
+            />
+          </div>
+
+          <div className="column is-narrow">
+            <CustomParamAction index={index} onRemove={onRemove} />
+          </div>
+        </div>
+      ))}
     </>
   );
 };

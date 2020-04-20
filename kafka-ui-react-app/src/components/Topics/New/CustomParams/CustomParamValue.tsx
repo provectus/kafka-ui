@@ -1,7 +1,6 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
 import { CUSTOM_PARAMS_OPTIONS } from './customParamsOptions';
-import { isFirstParam } from './CustomParams';
 
 interface Props {
   isDisabled: boolean;
@@ -16,7 +15,7 @@ const CustomParamValue: React.FC<Props> = ({
   name,
   defaultValue,
 }) => {
-  const { register, unregister, errors, watch, setValue } = useFormContext();
+  const { register, errors, watch, setValue } = useFormContext();
   const selectInputName = `${index}[name]`;
   const valInputName = `${index}[value]`;
   const selectedParamName = watch(selectInputName, name);
@@ -30,12 +29,6 @@ const CustomParamValue: React.FC<Props> = ({
       );
     }
   }, [selectedParamName]);
-
-  React.useEffect(() => {
-    if (isFirstParam(index)) {
-      unregister(valInputName);
-    }
-  });
 
   return (
     <>
