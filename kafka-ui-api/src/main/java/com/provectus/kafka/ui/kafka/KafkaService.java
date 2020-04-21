@@ -44,6 +44,7 @@ public class KafkaService {
                                     BrokersMetrics brokersMetrics = kafkaCluster.getBrokersMetrics() == null ? new BrokersMetrics() : kafkaCluster.getBrokersMetrics();
                                     brokersMetrics.activeControllers(metrics.getActiveControllers());
                                     brokersMetrics.brokerCount(metrics.getBrokerCount());
+                                    cluster.setBrokerCount(metrics.getBrokerCount());
                                     var internalCluster = kafkaCluster.toBuilder().cluster(cluster).brokersMetrics(brokersMetrics).build();
                                     return getTopicsData(ac, internalCluster)
                                             .map(topics -> {
@@ -101,7 +102,7 @@ public class KafkaService {
                             for (Map.Entry<MetricName, ? extends Metric> metricNameEntry : client.metrics().entrySet()) {
                                 if (metricNameEntry.getKey().name().equals(IN_BYTE_PER_SEC_METRIC)
                                         && metricNameEntry.getKey().description().equals(IN_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                                    metrics.setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
+                                    metrics.setBytesInPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
                                 }
                                 if (metricNameEntry.getKey().name().equals(OUT_BYTE_PER_SEC_METRIC)
                                         && metricNameEntry.getKey().description().equals(OUT_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
