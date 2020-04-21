@@ -1,3 +1,4 @@
+import { reduce } from 'lodash';
 import {
   TopicName,
   Topic,
@@ -5,6 +6,7 @@ import {
   TopicDetails,
   TopicConfig,
   TopicFormData,
+  TopicFormCustomParam,
 } from 'redux/interfaces';
 import {
   BASE_URL,
@@ -23,6 +25,10 @@ export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
   fetch(`${BASE_URL}/clusters/${clusterName}/topics`, { ...BASE_PARAMS })
     .then(res => res.json());
 
+interface Result {
+  [index: string]: string,
+}
+
 export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promise<Topic> => {
   const {
     name,
@@ -33,8 +39,13 @@ export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promis
     retentionMs,
     maxMessageBytes,
     minInSyncReplicas,
-    customParams,
   } = form;
+
+  const customParams = reduce(Object.values(form.customParams), (result: Result, customParam: TopicFormCustomParam) => {
+    result[customParam.name] = customParam.value;
+    return result;
+  }, {});
+
   const body = JSON.stringify({
     name,
     partitions,
@@ -45,9 +56,10 @@ export const postTopic = (clusterName: ClusterName, form: TopicFormData): Promis
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      customParams,
+      ...customParams,
     }
   });
+
   return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
     ...BASE_PARAMS,
     method: 'POST',

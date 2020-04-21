@@ -1,7 +1,6 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
 import { CUSTOM_PARAMS_OPTIONS } from './customParamsOptions';
-import { isFirstParam } from './CustomParams';
 
 interface Props {
   isDisabled: boolean;
@@ -16,24 +15,20 @@ const CustomParamValue: React.FC<Props> = ({
   name,
   defaultValue,
 }) => {
-
-  const { register, unregister, errors, watch, setValue } = useFormContext();
-  const selectInputName: string = `${index}[name]`;
-  const valInputName: string    = `${index}[value]`;
+  const { register, errors, watch, setValue } = useFormContext();
+  const selectInputName = `${index}[name]`;
+  const valInputName = `${index}[value]`;
   const selectedParamName = watch(selectInputName, name);
 
-  React.useEffect(
-    () => {
-      if (selectedParamName) {
-        setValue(valInputName, CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue, true);
-      }
-    },
-    [selectedParamName],
-  );
-
-  React.useEffect(
-    () => { if (isFirstParam(index)) { unregister(valInputName) } },
-  );
+  React.useEffect(() => {
+    if (selectedParamName) {
+      setValue(
+        valInputName,
+        CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue,
+        true
+      );
+    }
+  }, [selectedParamName]);
 
   return (
     <>
@@ -50,7 +45,7 @@ const CustomParamValue: React.FC<Props> = ({
         disabled={isDisabled}
       />
       <p className="help is-danger">
-        <ErrorMessage errors={errors} name={valInputName}/>
+        <ErrorMessage errors={errors} name={valInputName} />
       </p>
     </>
   );
