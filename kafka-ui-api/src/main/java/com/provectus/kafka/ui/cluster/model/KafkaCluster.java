@@ -1,12 +1,8 @@
 package com.provectus.kafka.ui.cluster.model;
 
 import com.provectus.kafka.ui.model.*;
-import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
-import org.I0Itec.zkclient.ZkClient;
-import org.apache.kafka.clients.admin.AdminClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +23,8 @@ public class KafkaCluster {
     private final Cluster cluster;
     private final BrokersMetrics brokersMetrics;
 
-    private final List<Topic> topics = new ArrayList<>();
-    private Map<String, TopicDetails> topicDetailsMap = new ConcurrentHashMap<>();
+    private List<Topic> topics = new ArrayList<>();
+    private final Map<String, TopicDetails> topicDetailsMap = new ConcurrentHashMap<>();
     private Map<String, List<TopicConfig>> topicConfigsMap = new ConcurrentHashMap<>();
     private final ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
 

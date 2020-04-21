@@ -60,14 +60,16 @@ public class ClusterService {
     public Mono<ResponseEntity<Topic>> createTopic(String name, Mono<TopicFormData> topicFormData) {
         KafkaCluster cluster = clustersStorage.getClusterByName(name);
         if (cluster == null) return null;
-        return kafkaService.createTopic(cluster.getAdminClient(), cluster, topicFormData).map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
+        var adminClient = kafkaService.createAdminClient(cluster);
+        return kafkaService.createTopic(adminClient, cluster, topicFormData).map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
     }
 
     @SneakyThrows
     public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroup (String clusterName) {
             var cluster = clustersStorage.getClusterByName(clusterName);
-            return ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
-                    .flatMap(s -> ClusterUtil.toMono(cluster.getAdminClient()
+            var adminClient =  kafkaService.createAdminClient(cluster);
+            return ClusterUtil.toMono(adminClient.listConsumerGroups().all())
+                    .flatMap(s -> ClusterUtil.toMono(adminClient
                             .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
                     .map(s -> s.values().stream()
                             .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList()))

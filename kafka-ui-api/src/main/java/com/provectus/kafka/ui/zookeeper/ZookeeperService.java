@@ -1,24 +1,30 @@
 package com.provectus.kafka.ui.zookeeper;
 
+import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class ZookeeperService {
 
+    private final ClustersStorage clustersStorage;
+
+    private final Map<String, ZkClient> cachedZkClient = new HashMap<>();
+
     public void checkZookeeperStatus(KafkaCluster kafkaCluster) {
         var isConnected = false;
+        var zkClient = getOrCreateZkClient(kafkaCluster.getName());
         log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
-        if (kafkaCluster.getZkClient() != null) {
-            isConnected = isZkClientConnected(kafkaCluster);
-        }
-        if (kafkaCluster.getZkClient() == null || !isConnected) {
-            isConnected = createZookeeperConnection(kafkaCluster);
+        if (zkClient != null) {
+            isConnected = isZkClientConnected(zkClient);
         }
         if (!isConnected) {
             kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.OFFLINE);
@@ -27,29 +33,22 @@ public class ZookeeperService {
         kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.ONLINE);
     }
 
-    private boolean createZookeeperConnection(KafkaCluster kafkaCluster) {
+    private boolean isZkClientConnected(ZkClient zkClient) {
         try {
-            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), 1000));
-
+            zkClient.getChildren("/brokers/ids");
             return true;
         } catch (Exception e) {
             log.error(e);
-            kafkaCluster.setLastZookeeperException(e);
-
             return false;
         }
     }
 
-    private boolean isZkClientConnected(KafkaCluster kafkaCluster) {
+    private ZkClient getOrCreateZkClient (String clusterName) {
         try {
-            kafkaCluster.getZkClient().getChildren("/brokers/ids");
-
-            return true;
+            return cachedZkClient.getOrDefault(clusterName, new ZkClient(clustersStorage.getClusterByName(clusterName).getZookeeper(), 1000));
         } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastZookeeperException(e);
-
-            return false;
+            log.error("Error while creating zookeeper client for cluster {}", clusterName);
+            return null;
         }
     }
 }

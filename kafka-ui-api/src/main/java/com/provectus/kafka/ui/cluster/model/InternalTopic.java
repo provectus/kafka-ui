@@ -10,6 +10,6 @@ import java.util.List;
 public class InternalTopic {
     private final String name;
     private final boolean internal;
-    private final List<InternalPartition> partitions = null;
+    private final List<InternalPartition> partitions;
 
 }

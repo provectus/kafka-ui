@@ -11,5 +11,7 @@ public class InternalPartition {
     private final int partition;
     private final Integer leader;
     private final List<InternalReplica> replicas;
+    private final int inSyncReplicasCount;
+    private final int replicasCount;
 
 }
