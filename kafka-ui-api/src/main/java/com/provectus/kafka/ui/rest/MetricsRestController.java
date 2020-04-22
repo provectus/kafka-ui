@@ -4,7 +4,7 @@ import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.admin.ListConsumerGroupsResult;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -22,32 +22,32 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
-        return clusterService.getClusters();
+        return Mono.just(new ResponseEntity<>(clusterService.getClusters(), HttpStatus.OK));
     }
 
     @Override
     public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterId, ServerWebExchange exchange) {
-        return clusterService.getBrokersMetrics(clusterId);
+        return Mono.just(new ResponseEntity<>(clusterService.getBrokersMetrics(clusterId), HttpStatus.OK));
     }
 
     @Override
     public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId, ServerWebExchange exchange) {
-        return clusterService.getTopics(clusterId);
+        return Mono.just(new ResponseEntity<>(clusterService.getTopics(clusterId), HttpStatus.OK));
     }
 
     @Override
     public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName, ServerWebExchange exchange) {
-        return clusterService.getTopicDetails(clusterId, topicName);
+        return Mono.just(new ResponseEntity<>(clusterService.getTopicDetails(clusterId, topicName), HttpStatus.OK));
     }
 
     @Override
     public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterId, String topicName, ServerWebExchange exchange) {
-        return clusterService.getTopicConfigs(clusterId, topicName);
+        return Mono.just(new ResponseEntity<>(clusterService.getTopicConfigs(clusterId, topicName), HttpStatus.OK));
     }
 
     @Override
     public Mono<ResponseEntity<Topic>> createTopic(String clusterId, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
-        return clusterService.createTopic(clusterId, topicFormData);
+        return clusterService.createTopic(clusterId, topicFormData).map(s -> new ResponseEntity<>(s, HttpStatus.OK));
     }
 
     @Override
@@ -57,6 +57,6 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroup(String clusterName, ServerWebExchange exchange) {
-        return clusterService.getConsumerGroup(clusterName);
+        return Mono.just(new ResponseEntity<>(clusterService.getConsumerGroup(clusterName), HttpStatus.OK));
     }
 }

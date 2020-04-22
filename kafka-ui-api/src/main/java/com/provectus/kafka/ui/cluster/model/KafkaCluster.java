@@ -4,14 +4,13 @@ import com.provectus.kafka.ui.model.*;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@Builder(toBuilder = true)
-public class KafkaCluster {
+@Builder(toBuilder = true, builderClassName = "KafkaClusterBuilder")
+public class KafkaCluster implements Serializable {
 
     private final String id = "";
     private final String name;
@@ -23,10 +22,10 @@ public class KafkaCluster {
     private final Cluster cluster;
     private final BrokersMetrics brokersMetrics;
 
-    private List<Topic> topics = new ArrayList<>();
-    private final Map<String, TopicDetails> topicDetailsMap = new ConcurrentHashMap<>();
-    private Map<String, List<TopicConfig>> topicConfigsMap = new ConcurrentHashMap<>();
-    private final ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
+    private final List<Topic> topics;
+    private final Map<String, TopicDetails> topicDetailsMap;
+    private final Map<String, List<TopicConfig>> topicConfigsMap;
+    private final ServerStatus zookeeperStatus;
 
     private final Throwable lastKafkaException;
     private final Throwable lastZookeeperException;

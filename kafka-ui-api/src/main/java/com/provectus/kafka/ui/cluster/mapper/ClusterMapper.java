@@ -14,6 +14,6 @@ public abstract class ClusterMapper {
     @Mapping(target = "lastKafkaException", ignore = true)
     @Mapping(target = "lastZookeeperException", ignore = true)
     @Mapping(target = "topicConfigsMap", ignore = true)
-    @Mapping(target = "topics", ignore = true)
+//    @Mapping(target = "topics", ignore = true)
     public abstract KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 }
