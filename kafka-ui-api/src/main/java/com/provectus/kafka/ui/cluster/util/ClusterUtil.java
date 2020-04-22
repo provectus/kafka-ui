@@ -6,15 +6,10 @@ import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.Partition;
 import com.provectus.kafka.ui.model.Replica;
 import com.provectus.kafka.ui.model.Topic;
-import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.common.KafkaFuture;
 import reactor.core.publisher.Mono;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -65,18 +60,5 @@ public class ClusterUtil {
             return Stream.of(partition);
         }).collect(Collectors.toList()));
         return topic;
-    }
-
-    @SneakyThrows
-    public static <T> T clone(T subject) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ObjectOutputStream ous = new ObjectOutputStream(baos);
-        ous.writeObject(subject);
-        ous.close();
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        ObjectInputStream ois = new ObjectInputStream(bais);
-        return (T) ois.readObject();
-
-
     }
 }

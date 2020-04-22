@@ -19,18 +19,14 @@ public class ZookeeperService {
 
     private final Map<String, ZkClient> cachedZkClient = new HashMap<>();
 
-    public void checkZookeeperStatus(KafkaCluster kafkaCluster) {
+    public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
         var isConnected = false;
         var zkClient = getOrCreateZkClient(kafkaCluster.getName());
         log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
         if (zkClient != null) {
             isConnected = isZkClientConnected(zkClient);
         }
-        if (!isConnected) {
-            kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.OFFLINE);
-            return;
-        }
-        kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.ONLINE);
+        return isConnected;
     }
 
     private boolean isZkClientConnected(ZkClient zkClient) {

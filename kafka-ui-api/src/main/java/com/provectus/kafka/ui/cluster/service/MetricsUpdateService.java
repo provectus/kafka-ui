@@ -18,10 +18,6 @@ public class MetricsUpdateService {
 
     public Mono<ClusterWithId> updateMetrics(ClusterWithId clusterWithId) {
         log.debug("Start getting metrics for kafkaCluster: {}", clusterWithId.getKafkaCluster());
-        return kafkaService.getUpdatedCluster(clusterWithId)
-                .map(s -> {
-                    zookeeperService.checkZookeeperStatus(s.getKafkaCluster());
-                    return s;
-                });
+        return kafkaService.getUpdatedCluster(clusterWithId);
     }
 }
