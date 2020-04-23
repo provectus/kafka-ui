@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.kafka;
 
 import com.provectus.kafka.ui.cluster.mapper.BrokersMetricsMapper;
 import com.provectus.kafka.ui.cluster.mapper.ClusterDtoMapper;
-import com.provectus.kafka.ui.cluster.model.InternalMetrics;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.*;
