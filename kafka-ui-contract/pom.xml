@@ -58,7 +58,6 @@
                                         <modelPackage>com.provectus.kafka.ui.model</modelPackage>
                                         <apiPackage>com.provectus.kafka.ui.api</apiPackage>
                                         <sourceFolder>kafka-ui-contract</sourceFolder>
-                                        <serializableModel>true</serializableModel>
 
                                         <reactive>true</reactive>
 

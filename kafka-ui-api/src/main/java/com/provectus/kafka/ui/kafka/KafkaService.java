@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.kafka;
 
 import com.provectus.kafka.ui.cluster.mapper.BrokersMetricsMapper;
 import com.provectus.kafka.ui.cluster.mapper.ClusterDtoMapper;
-import com.provectus.kafka.ui.cluster.model.Metrics;
+import com.provectus.kafka.ui.cluster.model.InternalMetrics;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.*;
@@ -36,106 +36,107 @@ public class KafkaService {
 
     private Map<String, AdminClient> adminClientCache = new ConcurrentHashMap<>();
 
+    private final ClusterDtoMapper clusterDtoMapper;
+
+    private final BrokersMetricsMapper brokersMetricsMapper;
+
     @SneakyThrows
     public Mono<ClusterWithId> getUpdatedCluster(ClusterWithId clusterWithId) {
         var internalCluster = clusterWithId.getKafkaCluster();
-        var clusterBuilder = clusterWithId.getKafkaCluster().toBuilder();
         return getOrCreateAdminClient(clusterWithId).flatMap(
                     ac ->
                         getClusterMetrics(ac).flatMap(
-                            metrics -> {
-                                clusterBuilder.zookeeperStatus(zookeeperService.isZookeeperOnline(internalCluster) ? ServerStatus.ONLINE : ServerStatus.OFFLINE);
-                                ClusterDto cluster = ClusterDtoMapper.instance.toClusterDto(internalCluster.getCluster());
-                                cluster.setStatus(ServerStatus.ONLINE);
-                                cluster.setBytesInPerSec(metrics.getBytesInPerSec());
-                                cluster.setBytesOutPerSec(metrics.getBytesOutPerSec());
-                                BrokersMetricsDto brokersMetrics = internalCluster.getBrokersMetrics() != null
-                                        ? BrokersMetricsMapper.instance.toBrokersMetricsDto(internalCluster.getBrokersMetrics()) : new BrokersMetricsDto();
-                                brokersMetrics.setBrokerCount(metrics.getBrokerCount());
-                                brokersMetrics.setActiveControllers(metrics.getActiveControllers());
-                                brokersMetrics.setBrokerCount(metrics.getBrokerCount());
-                                resetPartitionMetrics(brokersMetrics);
-                                cluster.setBrokerCount(metrics.getBrokerCount());
-                                Map<String, TopicDetails> topicDetails;
-                                if (internalCluster.getTopicDetailsMap() == null) {
-                                    topicDetails = new HashMap<>();
-                                    clusterBuilder.topicDetailsMap(topicDetails);
-                                } else {
-                                    topicDetails = new HashMap<>(internalCluster.getTopicDetailsMap());
-                                }
-                                return getTopicsData(ac, cluster, brokersMetrics, topicDetails)
-                                        .map(topics -> {
-                                            clusterBuilder.topics(ClusterUtil.convertToExternalTopicList(topics));
-                                            cluster.setTopicCount(topics.size());
-                                            return topics;
-                                        })
+                                internalMetrics ->
+                                    getTopicsData(ac)
                                         .flatMap(topics ->
                                             loadTopicConfig(ac, topics.stream().map(InternalTopic::getName).collect(Collectors.toList())).collectList()
-                                                    .map(s -> s.stream().collect(HashMap<String, List<TopicConfig>>::new, HashMap::putAll, HashMap::putAll))
-                                                    .map(topicsConfig -> {
-                                                        clusterBuilder.topicConfigsMap(topicsConfig);
-                                                        return clusterBuilder;
-                                                    })
-                                        ).map(kc -> clusterWithId.toBuilder().kafkaCluster(
-                                                        kc
-                                                        .cluster(ClusterDtoMapper.instance.toCluster(cluster))
-                                                        .brokersMetrics(BrokersMetricsMapper.instance.toBrokersMetrics(brokersMetrics))
+                                                .map(s -> s.stream().collect(HashMap<String, List<TopicConfig>>::new, HashMap::putAll, HashMap::putAll))
+                                                .map(s -> s.entrySet().stream().map(t -> InternalTopic.builder()
+                                                            .name(t.getKey())
+                                                            .topicConfigs(t.getValue())
+                                                            .topicDetails(topics.stream().filter(to -> to.getName().equals(t.getKey())).findFirst().orElseThrow().getTopicDetails())
+                                                            .partitions(topics.stream().filter(to -> to.getName().equals(t.getKey())).findFirst().orElseThrow().getPartitions())
+                                                            .build()).collect(Collectors.toList()))
+                                        ).map(topics -> {
+
+                                            InternalBrokersMetrics brokersMetrics = internalCluster.getBrokersMetrics() != null
+                                                    ? brokersMetricsMapper.toBrokersMetricsDto(internalCluster.getBrokersMetrics()) : InternalBrokersMetrics.builder().build();
+                                            resetPartitionMetrics(brokersMetrics);
+                                            brokersMetrics.setActiveControllers(internalMetrics.getActiveControllers());
+                                            brokersMetrics.setZooKeeperStatus(zookeeperService.isZookeeperOnline(internalCluster) ? 1 : 0);
+                                            brokersMetrics.setBrokerCount(internalMetrics.getBrokerCount());
+                                            var internalBrokersMetrics = updateBrokersMetrics(brokersMetrics, topics);
+
+                                            InternalCluster cluster = clusterDtoMapper.toClusterDto(internalCluster.getCluster());
+                                            cluster.setStatus(ServerStatus.ONLINE);
+                                            cluster.setBytesInPerSec(internalMetrics.getBytesInPerSec());
+                                            cluster.setBytesOutPerSec(internalMetrics.getBytesOutPerSec());
+                                            cluster.setBrokerCount(internalMetrics.getBrokerCount());
+                                            cluster.setTopicCount(topcs.size());
+                                            cluster.setOnlinePartitionCount(internalBrokersMetrics.getOnlinePartitionCount());
+
+                                            return ClusterWithId.builder()
+                                                    .id(internalCluster.getName())
+                                                    .kafkaCluster(
+                                                        KafkaCluster.builder().topics(ClusterUtil.convertToExternalTopicList(topics))
+                                                        .name(cluster.getName())
+                                                        .zookeeperStatus(zookeeperService.isZookeeperOnline(internalCluster) ? ServerStatus.ONLINE : ServerStatus.OFFLINE)
+                                                        .cluster(clusterDtoMapper.toCluster(cluster))
+                                                        .brokersMetrics(brokersMetricsMapper.toBrokersMetrics(internalBrokersMetrics))
                                                         .build()
-                                        ).build());
-                            })
+                                                    ).build();
+                                            })
+                                )
             ).onErrorResume(
                     e -> {
-                        ClusterDto cluster = ClusterDtoMapper.instance.toClusterDto(internalCluster.getCluster());
+                        InternalCluster cluster = clusterDtoMapper.toClusterDto(internalCluster.getCluster());
                         cluster.setStatus(ServerStatus.OFFLINE);
                         return Mono.just(clusterWithId.toBuilder().kafkaCluster(
                                 internalCluster.toBuilder()
-                                        .lastKafkaException(e)
-                                        .cluster(ClusterDtoMapper.instance.toCluster(cluster))
-                                        .build()
+                                .lastKafkaException(e)
+                                .cluster(clusterDtoMapper.toCluster(cluster))
+                                .build()
                         ).build());
                     }
             );
     }
 
     @SneakyThrows
-    private Mono<List<InternalTopic>> getTopicsData(AdminClient adminClient, ClusterDto cluster,
-                                                    BrokersMetricsDto brokersMetrics, Map<String, TopicDetails> topicDetails) {
+    private Mono<List<InternalTopic>> getTopicsData(AdminClient adminClient) {
         ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
         listTopicsOptions.listInternal(true);
         return ClusterUtil.toMono(adminClient.listTopics(listTopicsOptions).names())
                     .map(tl -> {
-                        cluster.setTopicCount(tl.size());
                         DescribeTopicsResult topicDescriptionsWrapper = adminClient.describeTopics(tl);
                         Map<String, KafkaFuture<TopicDescription>> topicDescriptionFuturesMap = topicDescriptionsWrapper.values();
-                        topicDetails.putAll(tl.stream().collect(Collectors.toMap(String::new, v -> new TopicDetails())));
                         return topicDescriptionFuturesMap.entrySet();
                     })
                     .flatMapMany(Flux::fromIterable)
                     .flatMap(s -> ClusterUtil.toMono(s.getValue()))
-                    .map(e -> collectTopicData(e, cluster, brokersMetrics, topicDetails.get(e.name())))
+                    .map(this::collectTopicData)
                     .collectList();
     }
 
-    private Mono<Metrics> getClusterMetrics(AdminClient client) {
+    private Mono<InternalMetrics> getClusterMetrics(AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .map(Collection::size)
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
                         c -> {
-                            Metrics metrics = new Metrics();
-                            metrics.setBrokerCount(brokers);
-                            metrics.setActiveControllers(c != null ? 1 : 0);
+                            InternalMetrics internalMetrics = new InternalMetrics();
+                            internalMetrics.setBrokerCount(brokers);
+                            internalMetrics.setActiveControllers(c != null ? 1 : 0);
                             for (Map.Entry<MetricName, ? extends Metric> metricNameEntry : client.metrics().entrySet()) {
                                 if (metricNameEntry.getKey().name().equals(IN_BYTE_PER_SEC_METRIC)
                                         && metricNameEntry.getKey().description().equals(IN_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                                    metrics.setBytesInPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
+                                    internalMetrics.setBytesInPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
                                 }
                                 if (metricNameEntry.getKey().name().equals(OUT_BYTE_PER_SEC_METRIC)
                                         && metricNameEntry.getKey().description().equals(OUT_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                                    metrics.setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
+                                    internalMetrics.setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
                                 }
                             }
-                            return metrics;
+                            return internalMetrics;
                         }
                     )
                 );
@@ -152,9 +153,7 @@ public class KafkaService {
                     return topicFormData;
                 }).flatMap(topicData -> {
                     var tdw = adminClient.describeTopics(Collections.singletonList(topicData.getName()));
-                    Map<String, KafkaFuture<TopicDescription>> topicDescriptionFuturesMap = tdw.values();
-                    var entry = topicDescriptionFuturesMap.entrySet().iterator().next();
-                    return getTopicDescription(entry);
+                    return getTopicDescription(tdw.values().get(topicData.getName()), topicData.getName());
                 }).map(s -> {
                     if (s == null) {
                         throw new RuntimeException("Can't find created topic");
@@ -190,7 +189,7 @@ public class KafkaService {
         return getClusterId(adminClient).map( r -> adminClient);
     }
 
-    private void resetPartitionMetrics(BrokersMetricsDto brokersMetrics) {
+    private void resetPartitionMetrics(InternalBrokersMetrics brokersMetrics) {
         brokersMetrics.setOnlinePartitionCount(0);
         brokersMetrics.setOfflinePartitionCount(0);
         brokersMetrics.setUnderReplicatedPartitionCount(0);
@@ -198,15 +197,16 @@ public class KafkaService {
         brokersMetrics.setOutOfSyncReplicasCount(0);
     }
 
-    private InternalTopic collectTopicData(TopicDescription topicDescription, ClusterDto cluster, BrokersMetricsDto brokersMetrics,
-                                           TopicDetails topicDetails) {
+    private InternalTopic collectTopicData(TopicDescription topicDescription) {
+        TopicDetails topicDetails = new TopicDetails();
         var topic = InternalTopic.builder();
         topic.internal(topicDescription.isInternal());
         topic.name(topicDescription.name());
         List<InternalPartition> partitions = new ArrayList<>();
-        List<InternalReplica> replicas = new ArrayList<>();
+
         int inSyncReplicasCount;
         int replicasCount;
+
         partitions.addAll(topicDescription.partitions().stream().map(
                 partition -> {
                     var partitionDto = InternalPartition.builder();
@@ -214,13 +214,14 @@ public class KafkaService {
                     partitionDto.partition(partition.partition());
                     partitionDto.inSyncReplicasCount(partition.isr().size());
                     partitionDto.replicasCount(partition.replicas().size());
-                    replicas.addAll(partition.replicas().stream().map(
+                    List<InternalReplica> replicas = partition.replicas().stream().map(
                             r -> new InternalReplica(r.id(), partition.leader().id()!=r.id(), partition.isr().contains(r)))
-                            .collect(Collectors.toList()));
+                            .collect(Collectors.toList());
                     partitionDto.replicas(replicas);
                     return partitionDto.build();
                 })
                 .collect(Collectors.toList()));
+
         Integer urpCount = partitions.stream().flatMap(partition -> partition.getReplicas().stream()).filter(InternalReplica::isInSync).map(e -> 1).reduce(0, Integer::sum);
         inSyncReplicasCount = partitions.stream().flatMap(s -> Stream.of(s.getInSyncReplicasCount())).reduce(Integer::sum).orElseGet(() -> 0);
         replicasCount = partitions.stream().flatMap(s -> Stream.of(s.getReplicasCount())).reduce(Integer::sum).orElseGet(() -> 0);
@@ -234,23 +235,16 @@ public class KafkaService {
                 ? topicDescription.partitions().get(0).replicas().size()
                 : null);
         topicDetails.setUnderReplicatedPartitions(urpCount);
-        cluster.setOnlinePartitionCount(brokersMetrics.getOnlinePartitionCount());
-        brokersMetrics.setUnderReplicatedPartitionCount(
-                brokersMetrics.getUnderReplicatedPartitionCount() + urpCount);
-        brokersMetrics.setInSyncReplicasCount(
-                brokersMetrics.getInSyncReplicasCount() + inSyncReplicasCount);
-        brokersMetrics.setOutOfSyncReplicasCount(
-                brokersMetrics.getOutOfSyncReplicasCount() + (replicasCount - inSyncReplicasCount));
 
-        brokersMetrics.setOnlinePartitionCount(partitions.stream().filter(s -> s.getLeader() != null).map(e -> 1).reduce(0, Integer::sum));
-        brokersMetrics.setOfflinePartitionCount(partitions.stream().filter(s -> s.getLeader() == null).map(e -> 1).reduce(0, Integer::sum));
+        topic.topicDetails(topicDetails);
+
         return topic.build();
     }
 
-    private Mono<TopicDescription> getTopicDescription(Map.Entry<String, KafkaFuture<TopicDescription>> entry) {
-        return ClusterUtil.toMono(entry.getValue())
+    private Mono<TopicDescription> getTopicDescription(KafkaFuture<TopicDescription> entry, String topicName) {
+        return ClusterUtil.toMono(entry)
                     .onErrorResume(e -> {
-                        log.error("Can't get topic with name: " + entry.getKey());
+                        log.error("Can't get topic with name: " + topicName);
                         return Mono.empty();
                     });
     }
@@ -287,5 +281,22 @@ public class KafkaService {
                     .values()
                     .iterator()
                     .next());
+    }
+
+    private InternalBrokersMetrics updateBrokersMetrics(InternalBrokersMetrics brokersMetricsInput, List<InternalTopic> topics) {
+        var tempBrokersMetrics = InternalBrokersMetrics.builder().build();
+        var brokersMetrics = brokersMetricsInput.toBuilder();
+        for (InternalTopic topic : topics) {
+            tempBrokersMetrics.increaseUnderReplicatedPartitionCount(topic.getTopicDetails().getUnderReplicatedPartitions());
+            tempBrokersMetrics.increaseInSyncReplicasCount(topic.getTopicDetails().getInSyncReplicas());
+            tempBrokersMetrics.increaseOutOfSyncReplicasCount(topic.getTopicDetails().getReplicas() - topic.getTopicDetails().getInSyncReplicas());
+            tempBrokersMetrics.increaseOnlinePartitionCount(topic.getPartitions().stream().filter(s -> s.getLeader() != null).map(e -> 1).reduce(0, Integer::sum));
+            tempBrokersMetrics.increaseOfflinePartitionCount(topic.getPartitions().stream().filter(s -> s.getLeader() == null).map(e -> 1).reduce(0, Integer::sum));
+        }
+        return brokersMetrics.underReplicatedPartitionCount(tempBrokersMetrics.getUnderReplicatedPartitionCount())
+                .inSyncReplicasCount(tempBrokersMetrics.getInSyncReplicasCount())
+                .outOfSyncReplicasCount(tempBrokersMetrics.getOutOfSyncReplicasCount())
+                .onlinePartitionCount(tempBrokersMetrics.getOnlinePartitionCount())
+                .offlinePartitionCount(tempBrokersMetrics.getOfflinePartitionCount()).build();
     }
 }

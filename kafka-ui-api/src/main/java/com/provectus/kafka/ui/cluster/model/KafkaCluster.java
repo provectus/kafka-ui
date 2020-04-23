@@ -4,13 +4,12 @@ import com.provectus.kafka.ui.model.*;
 import lombok.Builder;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 @Data
 @Builder(toBuilder = true, builderClassName = "KafkaClusterBuilder")
-public class KafkaCluster implements Serializable {
+public class KafkaCluster {
 
     private final String id = "";
     private final String name;

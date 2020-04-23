@@ -4,7 +4,7 @@ import com.provectus.kafka.ui.model.ServerStatus;
 import lombok.Data;
 
 @Data
-public class ClusterDto {
+public class InternalCluster {
 
     private String name;
     private String id;
