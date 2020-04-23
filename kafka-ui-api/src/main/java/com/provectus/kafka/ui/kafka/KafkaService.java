@@ -72,7 +72,7 @@ public class KafkaService {
                                             cluster.setBytesInPerSec(internalMetrics.getBytesInPerSec());
                                             cluster.setBytesOutPerSec(internalMetrics.getBytesOutPerSec());
                                             cluster.setBrokerCount(internalMetrics.getBrokerCount());
-                                            cluster.setTopicCount(topcs.size());
+                                            cluster.setTopicCount(topics.size());
                                             cluster.setOnlinePartitionCount(internalBrokersMetrics.getOnlinePartitionCount());
 
                                             return ClusterWithId.builder()
