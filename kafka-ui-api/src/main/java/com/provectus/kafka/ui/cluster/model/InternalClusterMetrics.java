@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.ServerStatus;
 import lombok.Builder;
 import lombok.Data;
 

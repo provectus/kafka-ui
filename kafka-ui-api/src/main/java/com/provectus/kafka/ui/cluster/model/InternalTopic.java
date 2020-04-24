@@ -1,12 +1,9 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.TopicConfig;
-import com.provectus.kafka.ui.model.TopicDetails;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder(toBuilder = true)

@@ -15,8 +15,6 @@ import java.util.Map;
 @Log4j2
 public class ZookeeperService {
 
-    private final ClustersStorage clustersStorage;
-
     private final Map<String, ZkClient> cachedZkClient = new HashMap<>();
 
     public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {

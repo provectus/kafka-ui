@@ -14,7 +14,6 @@ import reactor.core.publisher.Mono;
 public class MetricsUpdateService {
 
     private final KafkaService kafkaService;
-    private final ZookeeperService zookeeperService;
 
     public Mono<KafkaCluster> updateMetrics(KafkaCluster kafkaCluster) {
         log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster);
