@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
@@ -35,8 +36,8 @@ public class ClustersStorage {
         return kafkaClusters.values();
     }
 
-    public KafkaCluster getClusterByName(String clusterName) {
-        return kafkaClusters.get(clusterName);
+    public Optional<KafkaCluster> getClusterByName(String clusterName) {
+        return Optional.ofNullable(kafkaClusters.get(clusterName));
     }
 
     public void setKafkaCluster(String key, KafkaCluster kafkaCluster) {

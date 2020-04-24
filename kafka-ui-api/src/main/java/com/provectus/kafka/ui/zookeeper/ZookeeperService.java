@@ -21,7 +21,7 @@ public class ZookeeperService {
 
     public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
         var isConnected = false;
-        var zkClient = getOrCreateZkClient(kafkaCluster.getName());
+        var zkClient = getOrCreateZkClient(kafkaCluster);
         log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
         if (zkClient != null) {
             isConnected = isZkClientConnected(zkClient);
@@ -30,20 +30,15 @@ public class ZookeeperService {
     }
 
     private boolean isZkClientConnected(ZkClient zkClient) {
-        try {
-            zkClient.getChildren("/brokers/ids");
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            return false;
-        }
+        zkClient.getChildren("/brokers/ids");
+        return true;
     }
 
-    private ZkClient getOrCreateZkClient (String clusterName) {
+    private ZkClient getOrCreateZkClient (KafkaCluster cluster) {
         try {
-            return cachedZkClient.getOrDefault(clusterName, new ZkClient(clustersStorage.getClusterByName(clusterName).getZookeeper(), 1000));
+            return cachedZkClient.getOrDefault(cluster.getName(), new ZkClient(cluster.getZookeeper(), 1000));
         } catch (Exception e) {
-            log.error("Error while creating zookeeper client for cluster {}", clusterName);
+            log.error("Error while creating zookeeper client for cluster {}", cluster.getName());
             return null;
         }
     }

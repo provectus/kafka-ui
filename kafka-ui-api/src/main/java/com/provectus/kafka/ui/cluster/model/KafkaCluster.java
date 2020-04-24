@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@Builder(toBuilder = true, builderClassName = "KafkaClusterBuilder")
+@Builder(toBuilder = true)
 public class KafkaCluster {
 
     private final String id = "";
@@ -17,24 +17,11 @@ public class KafkaCluster {
     private final String jmxPort;
     private final String bootstrapServers;
     private final String zookeeper;
-
-    private final Cluster cluster;
-    private final BrokersMetrics brokersMetrics;
-
-    private final List<Topic> topics;
-    private final Map<String, TopicDetails> topicDetailsMap;
-    private final Map<String, List<TopicConfig>> topicConfigsMap;
+    private final ServerStatus status;
     private final ServerStatus zookeeperStatus;
-
+    private final InternalClusterMetrics metrics;
+    private final Map<String, InternalTopic> topics;
     private final Throwable lastKafkaException;
     private final Throwable lastZookeeperException;
 
-    public TopicDetails getOrCreateTopicDetails(String key) {
-        var topicDetails = topicDetailsMap.get(key);
-        if(topicDetails == null) {
-            topicDetailsMap.putIfAbsent(key, new TopicDetails());
-            topicDetails = topicDetailsMap.get(key);
-        }
-        return topicDetails;
-    }
 }

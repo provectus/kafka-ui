@@ -1,20 +1,18 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.provectus.kafka.ui.cluster.model.InternalTopic;
-import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.Partition;
-import com.provectus.kafka.ui.model.Replica;
-import com.provectus.kafka.ui.model.Topic;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.KafkaFuture;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static com.provectus.kafka.ui.kafka.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
+import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
 public class ClusterUtil {
 
@@ -30,35 +28,72 @@ public class ClusterUtil {
 
     public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c, KafkaCluster cluster) {
         ConsumerGroup consumerGroup = new ConsumerGroup();
-        consumerGroup.setClusterId(cluster.getCluster().getId());
+        consumerGroup.setClusterId(cluster.getId());
         consumerGroup.setConsumerGroupId(c.groupId());
         consumerGroup.setNumConsumers(c.members().size());
-        Set<String> topics = new HashSet<>();
-        c.members().forEach(s1 -> s1.assignment().topicPartitions().forEach(s2 -> topics.add(s2.topic())));
-        consumerGroup.setNumTopics(topics.size());
+        int numTopics = c.members().stream().mapToInt( m -> m.assignment().topicPartitions().size()).sum();
+        consumerGroup.setNumTopics(numTopics);
         return consumerGroup;
     }
 
-    public static List<Topic> convertToExternalTopicList(List<InternalTopic> internalTopics) {
-        return internalTopics.stream().flatMap(s -> Stream.of(convertToExternalTopic(s))).collect(Collectors.toList());
+    public static InternalTopicConfig mapToInternalTopicConfig(ConfigEntry configEntry) {
+        InternalTopicConfig.InternalTopicConfigBuilder builder = InternalTopicConfig.builder()
+                .name(configEntry.name())
+                .value(configEntry.value());
+        if (configEntry.name().equals(MESSAGE_FORMAT_VERSION_CONFIG)) {
+            builder.defaultValue(configEntry.value());
+        } else {
+            builder.defaultValue(TOPIC_DEFAULT_CONFIGS.get(configEntry.name()));
+        }
+        return builder.build();
     }
 
-    public static Topic convertToExternalTopic(InternalTopic internalTopic) {
-        Topic topic = new Topic();
-        topic.setName(internalTopic.getName());
-        topic.setPartitions(internalTopic.getPartitions().stream().flatMap(s -> {
-            Partition partition = new Partition();
-            partition.setLeader(s.getLeader());
-            partition.setPartition(s.getPartition());
-            partition.setReplicas(s.getReplicas().stream().flatMap(r -> {
-                Replica replica = new Replica();
-                replica.setBroker(r.getBroker());
-                replica.setInSync(r.isInSync());
-                replica.setLeader(r.isLeader());
-                return Stream.of(replica);
-            }).collect(Collectors.toList()));
-            return Stream.of(partition);
-        }).collect(Collectors.toList()));
-        return topic;
+    public static InternalTopic mapToInternalTopic(TopicDescription topicDescription) {
+        var topic = InternalTopic.builder();
+        topic.internal(topicDescription.isInternal());
+        topic.name(topicDescription.name());
+
+        List<InternalPartition> partitions = topicDescription.partitions().stream().map(
+                partition -> {
+                    var partitionDto = InternalPartition.builder();
+                    partitionDto.leader(partition.leader().id());
+                    partitionDto.partition(partition.partition());
+                    partitionDto.inSyncReplicasCount(partition.isr().size());
+                    partitionDto.replicasCount(partition.replicas().size());
+                    List<InternalReplica> replicas = partition.replicas().stream().map(
+                            r -> new InternalReplica(r.id(), partition.leader().id()!=r.id(), partition.isr().contains(r)))
+                            .collect(Collectors.toList());
+                    partitionDto.replicas(replicas);
+                    return partitionDto.build();
+                })
+                .collect(Collectors.toList());
+
+        int urpCount = partitions.stream()
+                .flatMap(partition -> partition.getReplicas().stream())
+                .filter(InternalReplica::isInSync).mapToInt(e -> 1)
+                .sum();
+
+        int inSyncReplicasCount = partitions.stream()
+                .mapToInt(InternalPartition::getInSyncReplicasCount)
+                .sum();
+
+        int replicasCount = partitions.stream()
+                .mapToInt(InternalPartition::getReplicasCount)
+                .sum();
+
+        topic.partitions(partitions);
+        topic.replicas(replicasCount);
+        topic.partitionCount(topicDescription.partitions().size());
+        topic.inSyncReplicas(inSyncReplicasCount);
+
+        topic.replicationFactor(
+                topicDescription.partitions().size() > 0 ?
+                        topicDescription.partitions().get(0).replicas().size() : 0
+        );
+
+        topic.underReplicatedPartitions(urpCount);
+
+        return topic.build();
     }
+
 }

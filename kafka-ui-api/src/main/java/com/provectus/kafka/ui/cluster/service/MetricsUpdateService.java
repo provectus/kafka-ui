@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.cluster.service;
 
-import com.provectus.kafka.ui.cluster.model.ClusterWithId;
+import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +16,8 @@ public class MetricsUpdateService {
     private final KafkaService kafkaService;
     private final ZookeeperService zookeeperService;
 
-    public Mono<ClusterWithId> updateMetrics(ClusterWithId clusterWithId) {
-        log.debug("Start getting metrics for kafkaCluster: {}", clusterWithId.getKafkaCluster());
-        return kafkaService.getUpdatedCluster(clusterWithId);
+    public Mono<KafkaCluster> updateMetrics(KafkaCluster kafkaCluster) {
+        log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster);
+        return kafkaService.getUpdatedCluster(kafkaCluster);
     }
 }
