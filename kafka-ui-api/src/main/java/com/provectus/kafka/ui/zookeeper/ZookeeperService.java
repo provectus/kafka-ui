@@ -1,60 +1,43 @@
 package com.provectus.kafka.ui.zookeeper;
 
+import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.I0Itec.zkclient.ZkClient;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class ZookeeperService {
 
-    @Async
-    public void checkZookeeperStatus(KafkaCluster kafkaCluster) {
-        log.debug("Start getting Zookeeper metrics for kafkaCluster: " + kafkaCluster.getName());
-        boolean isConnected = false;
-        if (kafkaCluster.getZkClient() != null) {
-            isConnected = isZkClientConnected(kafkaCluster);
-        }
-        if (kafkaCluster.getZkClient() == null || !isConnected) {
-            isConnected = createZookeeperConnection(kafkaCluster);
-        }
+    private final Map<String, ZkClient> cachedZkClient = new HashMap<>();
 
-        if (!isConnected) {
-            kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.OFFLINE);
-
-            return;
+    public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
+        var isConnected = false;
+        var zkClient = getOrCreateZkClient(kafkaCluster);
+        log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
+        if (zkClient != null) {
+            isConnected = isZkClientConnected(zkClient);
         }
-
-        kafkaCluster.getBrokersMetrics().setZooKeeperStatus(ZooKeeperConstants.ONLINE);
+        return isConnected;
     }
 
-    private boolean createZookeeperConnection(KafkaCluster kafkaCluster) {
-        try {
-            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), 1000));
-
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastZookeeperException(e);
-
-            return false;
-        }
+    private boolean isZkClientConnected(ZkClient zkClient) {
+        zkClient.getChildren("/brokers/ids");
+        return true;
     }
 
-    private boolean isZkClientConnected(KafkaCluster kafkaCluster) {
+    private ZkClient getOrCreateZkClient (KafkaCluster cluster) {
         try {
-            kafkaCluster.getZkClient().getChildren("/brokers/ids");
-
-            return true;
+            return cachedZkClient.getOrDefault(cluster.getName(), new ZkClient(cluster.getZookeeper(), 1000));
         } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastZookeeperException(e);
-
-            return false;
+            log.error("Error while creating zookeeper client for cluster {}", cluster.getName());
+            return null;
         }
     }
 }

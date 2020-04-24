@@ -1,49 +1,26 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.*;
-import lombok.AccessLevel;
+import com.provectus.kafka.ui.model.ServerStatus;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
-import org.I0Itec.zkclient.ZkClient;
-import org.apache.kafka.clients.admin.AdminClient;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 public class KafkaCluster {
 
-    String id = "";
-    String name;
-    String jmxHost;
-    String jmxPort;
-    String bootstrapServers;
-    String zookeeper;
+    private final String id = "";
+    private final String name;
+    private final String jmxHost;
+    private final String jmxPort;
+    private final String bootstrapServers;
+    private final String zookeeper;
+    private final ServerStatus status;
+    private final ServerStatus zookeeperStatus;
+    private final InternalClusterMetrics metrics;
+    private final Map<String, InternalTopic> topics;
+    private final Throwable lastKafkaException;
+    private final Throwable lastZookeeperException;
 
-    Cluster cluster = new Cluster();
-    BrokersMetrics brokersMetrics = new BrokersMetrics();
-
-    List<Topic> topics = new ArrayList<>();
-    private Map<String, TopicDetails> topicDetailsMap = new ConcurrentHashMap<>();
-    private Map<String, List<TopicConfig>> topicConfigsMap = new ConcurrentHashMap<>();
-
-
-    ZkClient zkClient;
-    AdminClient adminClient;
-    ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
-
-    Exception lastKafkaException;
-    Exception lastZookeeperException;
-
-    public TopicDetails getOrCreateTopicDetails(String key) {
-        var topicDetails = topicDetailsMap.get(key);
-        if(topicDetails == null) {
-            topicDetailsMap.putIfAbsent(key, new TopicDetails());
-            topicDetails = topicDetailsMap.get(key);
-        }
-        return topicDetails;
-    }
 }

@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.cluster.service;
 
+import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
@@ -20,82 +21,83 @@ import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class ClusterService {
 
     private final ClustersStorage clustersStorage;
+    private final ClusterMapper clusterMapper;
     private final KafkaService kafkaService;
 
-    public Mono<ResponseEntity<Flux<Cluster>>> getClusters() {
-        List<Cluster> clusters = clustersStorage.getKafkaClusters()
+    public List<Cluster> getClusters() {
+        return clustersStorage.getKafkaClusters()
                 .stream()
-                .map(KafkaCluster::getCluster)
+                .map(clusterMapper::toCluster)
                 .collect(Collectors.toList());
-
-        return Mono.just(ResponseEntity.ok(Flux.fromIterable(clusters)));
     }
 
-    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String name) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(name);
-        if (cluster == null) return null;
-        return Mono.just(ResponseEntity.ok(cluster.getBrokersMetrics()));
+    public Optional<BrokersMetrics> getBrokersMetrics(String name) {
+        return clustersStorage.getClusterByName(name)
+                .map(KafkaCluster::getMetrics)
+                .map(clusterMapper::toBrokerMetrics);
     }
 
-    public Mono<ResponseEntity<Flux<Topic>>> getTopics(String name) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(name);
-        if (cluster == null) return null;
-        return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopics())));
+    public List<Topic> getTopics(String name) {
+        return clustersStorage.getClusterByName(name)
+                .map( c ->
+                        c.getTopics().values().stream()
+                                .map(clusterMapper::toTopic)
+                                .collect(Collectors.toList())
+                ).orElse(Collections.emptyList());
     }
 
-    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String name, String topicName) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(name);
-        if (cluster == null) return null;
-        return Mono.just(ResponseEntity.ok(cluster.getOrCreateTopicDetails(topicName)));
+    public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
+        return clustersStorage.getClusterByName(name).flatMap(
+                c -> Optional.ofNullable(c.getTopics().get(topicName))
+        ).map(clusterMapper::toTopicDetails);
     }
 
-    public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String name, String topicName) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(name);
-        if (cluster == null) return null;
-        return Mono.just(ResponseEntity.ok(Flux.fromIterable(cluster.getTopicConfigsMap().get(topicName))));
+    public Optional<List<TopicConfig>> getTopicConfigs(String name, String topicName) {
+        return clustersStorage.getClusterByName(name).flatMap(
+                c -> Optional.ofNullable(c.getTopics().get(topicName))
+        ).map( t -> t.getTopicConfigs().stream().map(clusterMapper::toTopicConfig).collect(Collectors.toList()));
     }
 
-    public Mono<ResponseEntity<Topic>> createTopic(String name, Mono<TopicFormData> topicFormData) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(name);
-        if (cluster == null) return null;
-        return kafkaService.createTopic(cluster, topicFormData);
+    public Mono<Topic> createTopic(String name, Mono<TopicFormData> topicFormData) {
+        return clustersStorage.getClusterByName(name).map(
+                cluster -> kafkaService.createTopic(cluster, topicFormData)
+        ).orElse(Mono.empty()).map(clusterMapper::toTopic);
     }
 
-    public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroupDetail(String clusterName, String consumerGroupId) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
+    @SneakyThrows
+    public Mono<ConsumerGroupDetails> getConsumerGroupDetail(String clusterName, String consumerGroupId) {
+        var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
 
-        return ClusterUtil.toMono(
-                        cluster.getAdminClient()
-                                .describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
-                ).flatMap(groups ->
-                        groupMetadata(cluster, consumerGroupId).map(
-                            offsets -> {
-                                Map<TopicPartition, Long> endOffsets = topicPartitionsEndOffsets(cluster, offsets.keySet());
-                                return groups.get(consumerGroupId).members().stream()
-                                        .flatMap(c -> ClusterUtil.convertToConsumerTopicPartitionDetails(c, offsets, endOffsets).stream())
-                                        .collect(Collectors.toList());
-                            }
-                        )
-                )
-                .map(c -> new ConsumerGroupDetails().consumers(c).consumerGroupId(consumerGroupId))
-                .map(ResponseEntity::ok);
+        return kafkaService.getOrCreateAdminClient(cluster).map(ac ->
+                                ac.describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
+            ).flatMap(groups ->
+                groupMetadata(cluster, consumerGroupId)
+                    .flatMap(offsets -> {
+                        Map<TopicPartition, Long> endOffsets = topicPartitionsEndOffsets(cluster, offsets.keySet());
+                            return ClusterUtil.toMono(groups).map(s -> s.get(consumerGroupId).members().stream()
+                                        .flatMap(c -> Stream.of(ClusterUtil.convertToConsumerTopicPartitionDetails(c, offsets, endOffsets)))
+                                    .collect(Collectors.toList()).stream().flatMap(t -> t.stream().flatMap(Stream::of)).collect(Collectors.toList()));
+                    })
+            )
+            .map(c -> new ConsumerGroupDetails().consumers(c).consumerGroupId(consumerGroupId));
 
     }
 
     public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster, String consumerGroupId) {
-        return ClusterUtil.toMono(
-                cluster.getAdminClient().listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata()
-        );
+        return
+                kafkaService.getOrCreateAdminClient(cluster)
+                        .map(ac -> ac.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
+                        .flatMap(ClusterUtil::toMono);
     }
 
     public Map<TopicPartition, Long> topicPartitionsEndOffsets(KafkaCluster cluster, Collection<TopicPartition> topicPartitions) {
-        Map<TopicPartition, Long> result;
         Properties properties = new Properties();
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
@@ -108,16 +110,18 @@ public class ClusterService {
     }
 
     @SneakyThrows
-    public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroups (String clusterName) {
-            var cluster = clustersStorage.getClusterByName(clusterName);
-            return ClusterUtil.toMono(cluster.getAdminClient().listConsumerGroups().all())
-                    .flatMap(s ->
-                            ClusterUtil.toMono(cluster.getAdminClient()
-                                .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList()))
-                                .all())
-                    )
-                    .map(s -> s.values().stream()
-                            .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList()))
-                    .map(s -> ResponseEntity.ok(Flux.fromIterable(s)));
+    public Mono<List<ConsumerGroup>> getConsumerGroups (String clusterName) {
+            return clustersStorage.getClusterByName(clusterName)
+                    .map(kafkaService::getConsumerGroups)
+                    .orElse(Mono.empty());
+
+//        var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
+//            return kafkaService.getOrCreateAdminClient(cluster).map(ac -> ac.listConsumerGroups().all())
+//                    .flatMap(s ->
+//                            kafkaService.getOrCreateAdminClient(cluster).flatMap(ac ->
+//                                ClusterUtil.toMono(s).map(s1 -> s1.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).map(ac::describeConsumerGroups)
+//                    ))
+//                    .flatMap(s -> ClusterUtil.toMono(s.all()).map(details -> details.values().stream()
+//                            .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList())));
     }
 }

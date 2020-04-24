@@ -5,8 +5,8 @@ import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -14,12 +14,9 @@ import org.springframework.stereotype.Service;
 public class MetricsUpdateService {
 
     private final KafkaService kafkaService;
-    private final ZookeeperService zookeeperService;
 
-    @Async
-    public void updateMetrics(KafkaCluster kafkaCluster) {
-        log.debug("Start getting metrics for kafkaCluster: " + kafkaCluster.getName());
-        kafkaService.loadClusterMetrics(kafkaCluster);
-        zookeeperService.checkZookeeperStatus(kafkaCluster);
+    public Mono<KafkaCluster> updateMetrics(KafkaCluster kafkaCluster) {
+        log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster);
+        return kafkaService.getUpdatedCluster(kafkaCluster);
     }
 }
