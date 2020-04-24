@@ -228,15 +228,11 @@ components:
     BrokersMetrics:
       type: object
       properties:
-        brokerCount:
-          type: integer
         zooKeeperStatus:
           type: integer
         activeControllers:
           type: integer
         uncleanLeaderElectionCount:
-          type: integer
-        onlinePartitionCount:
           type: integer
         underReplicatedPartitionCount:
           type: integer
