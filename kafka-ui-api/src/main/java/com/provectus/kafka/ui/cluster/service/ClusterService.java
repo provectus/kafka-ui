@@ -62,6 +62,12 @@ public class ClusterService {
         return kafkaService.createTopic(cluster, topicFormData);
     }
 
+    public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
+        KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
+        if (cluster == null) return null;
+        return topicFormData.flatMap(t -> kafkaService.updateTopic(cluster, topicName, t)).map(ResponseEntity::ok);
+    }
+
     @SneakyThrows
     public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroup (String clusterName) {
             var cluster = clustersStorage.getClusterByName(clusterName);

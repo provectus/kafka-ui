@@ -34,7 +34,7 @@ public class ZookeeperService {
 
     private boolean createZookeeperConnection(KafkaCluster kafkaCluster) {
         try {
-            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), 1000));
+            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), ZooKeeperConstants.CONNECTION_TIMEOUT_MS));
 
             return true;
         } catch (Exception e) {

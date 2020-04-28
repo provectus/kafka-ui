@@ -4,7 +4,6 @@ import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
-import org.apache.kafka.clients.admin.ListConsumerGroupsResult;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -38,6 +37,11 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName, ServerWebExchange exchange) {
         return clusterService.getTopicDetails(clusterId, topicName);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
+        return clusterService.updateTopic(clusterId, topicName, topicFormData);
     }
 
     @Override
