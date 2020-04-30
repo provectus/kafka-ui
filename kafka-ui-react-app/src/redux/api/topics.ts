@@ -8,7 +8,10 @@ import {
   TopicFormData,
   TopicFormCustomParam,
 } from 'redux/interfaces';
-import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+import {
+  BASE_URL,
+  BASE_PARAMS,
+} from 'lib/constants';
 
 export const getTopicConfig = (
   clusterName: ClusterName,
@@ -35,18 +38,6 @@ interface Result {
   [index: string]: string;
 }
 
-const parsedCustomParams = (params: {
-  [paramIndex: string]: TopicFormCustomParam;
-}) =>
-  reduce(
-    Object.values(params),
-    (result: Result, customParam: TopicFormCustomParam) => {
-      result[customParam.name] = customParam.value;
-      return result;
-    },
-    {}
-  );
-
 export const postTopic = (
   clusterName: ClusterName,
   form: TopicFormData
@@ -60,8 +51,19 @@ export const postTopic = (
     retentionMs,
     maxMessageBytes,
     minInSyncReplicas,
-    customParams,
   } = form;
+
+  const customParams =
+    (form.customParams &&
+      reduce(
+        Object.values(form.customParams),
+        (result: Result, customParam: TopicFormCustomParam) => {
+          result[customParam.name] = customParam.value;
+          return result;
+        },
+        {}
+      )) ||
+    {};
 
   const body = JSON.stringify({
     name,
@@ -73,15 +75,15 @@ export const postTopic = (
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...parsedCustomParams(customParams),
-    },
+      ...customParams,
+    }
   });
 
   return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
     ...BASE_PARAMS,
     method: 'POST',
     body,
-  }).then((res) => res.json());
+  }).then(res => res.json());
 };
 
 export const patchTopic = (
@@ -107,7 +109,7 @@ export const patchTopic = (
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...parsedCustomParams(customParams),
+      ...customParams,
     },
   });
 

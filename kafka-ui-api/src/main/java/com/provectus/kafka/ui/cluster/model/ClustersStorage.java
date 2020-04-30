@@ -7,13 +7,16 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @RequiredArgsConstructor
 public class ClustersStorage {
 
-    private final Map<String, KafkaCluster> kafkaClusters = new HashMap<>();
+    private final Map<String, KafkaCluster> kafkaClusters = new ConcurrentHashMap<>();
 
     private final ClustersProperties clusterProperties;
 
@@ -33,7 +36,15 @@ public class ClustersStorage {
         return kafkaClusters.values();
     }
 
-    public KafkaCluster getClusterByName(String clusterName) {
-        return kafkaClusters.get(clusterName);
+    public Optional<KafkaCluster> getClusterByName(String clusterName) {
+        return Optional.ofNullable(kafkaClusters.get(clusterName));
+    }
+
+    public void setKafkaCluster(String key, KafkaCluster kafkaCluster) {
+        this.kafkaClusters.put(key, kafkaCluster);
+    }
+
+    public Map<String, KafkaCluster> getKafkaClustersMap() {
+        return kafkaClusters;
     }
 }
