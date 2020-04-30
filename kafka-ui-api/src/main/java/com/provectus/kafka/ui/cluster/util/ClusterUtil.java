@@ -2,6 +2,9 @@ package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.Partition;
+import com.provectus.kafka.ui.model.Replica;
+import com.provectus.kafka.ui.model.Topic;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -17,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.provectus.kafka.ui.kafka.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
@@ -46,15 +50,15 @@ public class ClusterUtil {
         return consumerGroup;
     }
 
-    public static void setSupportedCommands(KafkaCluster cluster, Map<ConfigResource, Config> configs) {
+    public static ExtendedAdminClient.SupportedFeatures getSupportedUpdateFeature(KafkaCluster cluster, Map<ConfigResource, Config> configs) {
         String version = configs.values().stream()
                 .map(en -> en.entries().stream()
                         .filter(en1 -> en1.name().contains(CLUSTER_VERSION_PARAM_KEY))
                         .findFirst().orElseThrow())
                 .findFirst().orElseThrow().value();
         try {
-            cluster.getSupportedCommands().add(Float.parseFloat(version.split("-")[0]) <= 2.3f
-                    ? SupportedCommands.ALTER_CONFIGS : SupportedCommands.INCREMENTAL_ALTER_CONFIGS);
+            return Float.parseFloat(version.split("-")[0]) <= 2.3f
+                    ? ExtendedAdminClient.SupportedFeatures.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS;
         } catch (NoSuchElementException el) {
             log.error("Cluster version param not found {}", cluster.getName());
             throw el;
@@ -122,6 +126,24 @@ public class ClusterUtil {
         topic.underReplicatedPartitions(urpCount);
 
         return topic.build();
+    }
+
+    public static Topic convertToTopic (InternalTopic internalTopic) {
+        Topic topic = new Topic();
+        topic.setName(internalTopic.getName());
+        List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
+            Partition partition = new Partition();
+            partition.setPartition(s.getPartition());
+            partition.setLeader(s.getLeader());
+            partition.setReplicas(s.getReplicas().stream().flatMap(r -> {
+                Replica replica = new Replica();
+                replica.setBroker(r.getBroker());
+                return Stream.of(replica);
+            }).collect(Collectors.toList()));
+            return Stream.of(partition);
+        }).collect(Collectors.toList());
+        topic.setPartitions(partitions);
+        return topic;
     }
 
 }

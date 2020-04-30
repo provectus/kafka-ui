@@ -55,10 +55,7 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
-        var cluster = clustersStorage.getClusterByName(clusterId);
-        return ClusterUtil.toMono(cluster.getAdminClient().describeCluster().controller())
-                .map(Node::id)
-                .flatMap(id -> clusterService.updateTopic(clusterId, topicName, topicFormData, id));
+        return clusterService.updateTopic(clusterId, topicName, topicFormData);
     }
 
     @Override

@@ -20,16 +20,6 @@ public class ZookeeperService {
     @Value("${zookeeper.connection-timeout}")
     private Integer sessionTimeout;
 
-    @Async
-    public void checkZookeeperStatus(KafkaCluster kafkaCluster) {
-        log.debug("Start getting Zookeeper metrics for kafkaCluster: " + kafkaCluster.getName());
-        boolean isConnected = false;
-        if (kafkaCluster.getZkClient() != null) {
-            isConnected = isZkClientConnected(kafkaCluster);
-        }
-        if (kafkaCluster.getZkClient() == null || !isConnected) {
-            isConnected = createZookeeperConnection(kafkaCluster);
-        }
     private final Map<String, ZkClient> cachedZkClient = new HashMap<>();
 
     public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
@@ -49,7 +39,7 @@ public class ZookeeperService {
 
     private ZkClient getOrCreateZkClient (KafkaCluster cluster) {
         try {
-            return cachedZkClient.getOrDefault(cluster.getName(), new ZkClient(cluster.getZookeeper(), 1000));
+            return cachedZkClient.getOrDefault(cluster.getName(), new ZkClient(cluster.getZookeeper(), sessionTimeout));
         } catch (Exception e) {
             log.error("Error while creating zookeeper client for cluster {}", cluster.getName());
             return null;

@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -63,10 +64,11 @@ public class ClusterService {
         ).orElse(Mono.empty()).map(clusterMapper::toTopic);
     }
 
-    public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData, Integer id) {
-        KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
-        if (cluster == null) return Mono.error(new Throwable("Cluster " + clusterName + " not found"));
-        return topicFormData.flatMap(t -> kafkaService.updateTopic(cluster, topicName, t, id)).map(ResponseEntity::ok);
+    @SneakyThrows
+    public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
+        return clustersStorage.getClusterByName(clusterName).map(c ->
+                    topicFormData.flatMap(t -> kafkaService.updateTopic(c, topicName, t)).map(ResponseEntity::ok))
+                .orElse(Mono.empty());
     }
 
     @SneakyThrows
