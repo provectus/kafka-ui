@@ -6,17 +6,13 @@ import com.provectus.kafka.ui.model.Partition;
 import com.provectus.kafka.ui.model.Replica;
 import com.provectus.kafka.ui.model.Topic;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -48,7 +44,19 @@ public class ClusterUtil {
         return consumerGroup;
     }
 
-    public static ExtendedAdminClient.SupportedFeatures getSupportedUpdateFeature(KafkaCluster cluster, Map<ConfigResource, Config> configs) {
+    public static Mono<List<ExtendedAdminClient.SupportedFeatures>> getSupportedFeatures(AdminClient adminClient) {
+        List<ExtendedAdminClient.SupportedFeatures> supportedFeatures = new ArrayList<>();
+        return ClusterUtil.toMono(adminClient.describeCluster().controller())
+                .map(Node::id)
+                .map(id -> Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
+                .flatMap(brokerCR -> ClusterUtil.toMono(adminClient.describeConfigs(brokerCR).all())
+                        .map(s -> {
+                            supportedFeatures.add(getSupportedUpdateFeature(s));
+                            return supportedFeatures;
+                        }));
+    }
+
+    private static ExtendedAdminClient.SupportedFeatures getSupportedUpdateFeature(Map<ConfigResource, Config> configs) {
         String version = configs.values().stream()
                 .map(en -> en.entries().stream()
                         .filter(en1 -> en1.name().contains(CLUSTER_VERSION_PARAM_KEY))
@@ -57,9 +65,6 @@ public class ClusterUtil {
         try {
             return Float.parseFloat(version.split("-")[0]) <= 2.3f
                     ? ExtendedAdminClient.SupportedFeatures.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS;
-        } catch (NoSuchElementException el) {
-            log.error("Cluster version param not found {}", cluster.getName());
-            throw el;
         } catch (Exception e) {
             log.error("Conversion clusterVersion {} to float value failed", version);
             throw e;

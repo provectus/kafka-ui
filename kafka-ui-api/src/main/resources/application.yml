@@ -1,2 +1,4 @@
 zookeeper:
   connection-timeout: 1000
+kafka:
+  admin-client-timeout: 5000

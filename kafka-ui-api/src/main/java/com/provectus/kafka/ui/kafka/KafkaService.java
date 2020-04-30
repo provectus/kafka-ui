@@ -14,6 +14,7 @@ import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -31,6 +32,9 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Log4j2
 public class KafkaService {
+
+    @Value("${kafka.admin-client-timeout}")
+    private int clientTimeout;
 
     private static final ListTopicsOptions LIST_TOPICS_OPTIONS = new ListTopicsOptions().listInternal(true);
 
@@ -210,18 +214,9 @@ public class KafkaService {
     public Mono<ExtendedAdminClient> createAdminClient(KafkaCluster kafkaCluster) {
         Properties properties = new Properties();
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
-        properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
+        properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
         AdminClient adminClient = AdminClient.create(properties);
-        return ClusterUtil.toMono(adminClient.describeCluster().controller())
-                .map(Node::id)
-                .map(id -> Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
-                .flatMap(brokerCR -> ClusterUtil.toMono(adminClient.describeConfigs(brokerCR).all())
-                    .map(cfg -> ClusterUtil.getSupportedUpdateFeature(kafkaCluster, cfg))
-                    .map(u -> {
-                        List<ExtendedAdminClient.SupportedFeatures> supportedFeatures = Collections.singletonList(u);
-                        return new ExtendedAdminClient(adminClient, supportedFeatures);
-                    })
-                );
+        return ExtendedAdminClient.extendedAdminClient(adminClient);
     }
 
     private Mono<ExtendedAdminClient> isAdminClientConnected(ExtendedAdminClient adminClient) {
