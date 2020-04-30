@@ -1,0 +1,2 @@
+zookeeper:
+  connection-timeout: 1000

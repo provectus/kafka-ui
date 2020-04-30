@@ -141,7 +141,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
-    patch:
+    put:
       tags:
         - /api/clusters
       summary: updateTopic

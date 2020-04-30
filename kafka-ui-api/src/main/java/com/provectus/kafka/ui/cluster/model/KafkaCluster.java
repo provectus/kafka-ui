@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.cluster.model;
 
+import com.provectus.kafka.ui.cluster.util.SupportedCommands;
 import com.provectus.kafka.ui.model.*;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -33,6 +34,7 @@ public class KafkaCluster {
 
     ZkClient zkClient;
     AdminClient adminClient;
+    List<SupportedCommands> supportedCommands;
     ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
 
     Exception lastKafkaException;

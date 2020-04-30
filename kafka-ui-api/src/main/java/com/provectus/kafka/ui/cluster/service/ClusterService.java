@@ -8,7 +8,6 @@ import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.common.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -63,12 +62,10 @@ public class ClusterService {
         return kafkaService.createTopic(cluster, topicFormData);
     }
 
-    public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
+    public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData, Integer id) {
         KafkaCluster cluster = clustersStorage.getClusterByName(clusterName);
-        if (cluster == null) return null;
-        return ClusterUtil.toMono(cluster.getAdminClient().describeCluster().controller())
-                .map(Node::id)
-                .flatMap(id -> topicFormData.flatMap(t -> kafkaService.updateTopic(cluster, topicName, t, id)).map(ResponseEntity::ok));
+        if (cluster == null) return Mono.error(new Throwable("Cluster " + clusterName + " not found"));
+        return topicFormData.flatMap(t -> kafkaService.updateTopic(cluster, topicName, t, id)).map(ResponseEntity::ok);
     }
 
     @SneakyThrows

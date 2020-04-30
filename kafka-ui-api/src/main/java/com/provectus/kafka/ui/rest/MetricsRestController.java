@@ -1,9 +1,12 @@
 package com.provectus.kafka.ui.rest;
 
 import com.provectus.kafka.ui.api.ApiClustersApi;
+import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
+import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.kafka.common.Node;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -18,6 +21,8 @@ import java.util.ArrayList;
 public class MetricsRestController implements ApiClustersApi {
 
     private final ClusterService clusterService;
+
+    private final ClustersStorage clustersStorage;
 
     @Override
     public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
@@ -41,7 +46,10 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
-        return clusterService.updateTopic(clusterId, topicName, topicFormData);
+        var cluster = clustersStorage.getClusterByName(clusterId);
+        return ClusterUtil.toMono(cluster.getAdminClient().describeCluster().controller())
+                .map(Node::id)
+                .flatMap(id -> clusterService.updateTopic(clusterId, topicName, topicFormData, id));
     }
 
     @Override

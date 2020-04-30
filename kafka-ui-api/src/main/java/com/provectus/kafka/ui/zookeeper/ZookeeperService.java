@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.I0Itec.zkclient.ZkClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Log4j2
 public class ZookeeperService {
+
+    @Value("${zookeeper.connection-timeout}")
+    private Integer sessionTimeout;
 
     @Async
     public void checkZookeeperStatus(KafkaCluster kafkaCluster) {
@@ -34,7 +38,7 @@ public class ZookeeperService {
 
     private boolean createZookeeperConnection(KafkaCluster kafkaCluster) {
         try {
-            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), ZooKeeperConstants.CONNECTION_TIMEOUT_MS));
+            kafkaCluster.setZkClient(new ZkClient(kafkaCluster.getZookeeper(), sessionTimeout));
 
             return true;
         } catch (Exception e) {

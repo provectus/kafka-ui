@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.kafka;
 
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
+import com.provectus.kafka.ui.cluster.util.SupportedCommands;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,8 +27,6 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 @RequiredArgsConstructor
 @Log4j2
 public class KafkaService {
-
-    private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     @SneakyThrows
     @Async
@@ -82,57 +81,26 @@ public class KafkaService {
         List<ConfigResource> brokerCR = Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString()));
         return ClusterUtil.toMono(cluster.getAdminClient().describeConfigs(brokerCR).all())
                 .flatMap(c -> {
-                    if (oldClusterVersion(c, cluster)) {
+                    if (cluster.getSupportedCommands().isEmpty()) {
+                        ClusterUtil.setSupportedCommands(cluster, c);
+                    }
+                    if (cluster.getSupportedCommands().contains(SupportedCommands.INCREMENTAL_ALTER_CONFIGS)) {
+                        List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
+                                .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
+                        cluster.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp));
+                    } else {
                         List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
                                 .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
                         Config config = new Config(configEntries);
                         Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
                         cluster.getAdminClient().alterConfigs(map);
-                    } else {
-                        List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
-                                .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
-                        cluster.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp));
                     }
                     return ClusterUtil.toMono(cluster.getAdminClient().describeTopics(Collections.singletonList(topicName)).all())
                             .map(t -> collectTopicData(cluster, t.get(topicName)));
                 });
     }
 
-    @SneakyThrows
-    private String getClusterId(KafkaCluster kafkaCluster) {
-        return kafkaCluster.getAdminClient().describeCluster().clusterId().get();
-    }
 
-    private boolean createAdminClient(KafkaCluster kafkaCluster) {
-        try {
-            Properties properties = new Properties();
-            properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
-            properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
-            kafkaCluster.setAdminClient(AdminClient.create(properties));
-            kafkaCluster.setId(getClusterId(kafkaCluster));
-            kafkaCluster.getCluster().setId(kafkaCluster.getId());
-
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastKafkaException(e);
-
-            return false;
-        }
-    }
-
-    private boolean isAdminClientConnected(KafkaCluster kafkaCluster) {
-        try {
-            getClusterId(kafkaCluster);
-
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastKafkaException(e);
-
-            return false;
-        }
-    }
 
     @SneakyThrows
     private void loadTopicsData(KafkaCluster kafkaCluster) {
@@ -294,20 +262,39 @@ public class KafkaService {
                 .get();
     }
 
-    private boolean oldClusterVersion (Map<ConfigResource, Config> configs, KafkaCluster cluster) {
-        String clusterVersion = configs.values().stream()
-                .map(en -> en.entries().stream()
-                        .filter(en1 -> en1.name().contains(CLUSTER_VERSION_PARAM_KEY))
-                        .findFirst().orElseThrow())
-                .findFirst().orElseThrow().value();
+    private boolean createAdminClient(KafkaCluster kafkaCluster) {
         try {
-            return Float.parseFloat(clusterVersion.split("-")[0]) <= 2.3f;
-        } catch (NoSuchElementException el) {
-            log.error("Cluster version param not found {}", cluster.getName());
-            throw el;
+            Properties properties = new Properties();
+            properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
+            properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
+            kafkaCluster.setAdminClient(AdminClient.create(properties));
+            kafkaCluster.setId(getClusterId(kafkaCluster));
+            kafkaCluster.getCluster().setId(kafkaCluster.getId());
+
+            return true;
         } catch (Exception e) {
-            log.error("Conversion clusterVersion {} to float value failed", clusterVersion);
-            throw e;
+            log.error(e.getMessage());
+            kafkaCluster.setLastKafkaException(e);
+
+            return false;
+        }
+    }
+
+    @SneakyThrows
+    private String getClusterId(KafkaCluster kafkaCluster) {
+        return kafkaCluster.getAdminClient().describeCluster().clusterId().get();
+    }
+
+    private boolean isAdminClientConnected(KafkaCluster kafkaCluster) {
+        try {
+            getClusterId(kafkaCluster);
+
+            return true;
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            kafkaCluster.setLastKafkaException(e);
+
+            return false;
         }
     }
 }
