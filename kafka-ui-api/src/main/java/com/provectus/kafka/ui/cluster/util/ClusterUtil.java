@@ -14,11 +14,9 @@ import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.config.ConfigResource;
 import reactor.core.publisher.Mono;
 
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.Set;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
