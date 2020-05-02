@@ -178,16 +178,9 @@ public class KafkaService {
         return getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
                     if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS)) {
-                        List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
-                                .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
-                        ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp));
+                        incrementalAlterConfig(topicFormData, topicCR, ac);
                     } else {
-
-                        List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
-                                .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
-                        Config config = new Config(configEntries);
-                        Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
-                        ac.getAdminClient().alterConfigs(map);
+                        alterConfig(topicFormData, topicCR, ac);
                     }
 
                     return getTopicsData(ac.getAdminClient())
@@ -272,5 +265,19 @@ public class KafkaService {
                     .values()
                     .iterator()
                     .next());
+    }
+
+    private void incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+        List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
+                .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
+        ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp));
+    }
+
+    private void alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+        List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
+                .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
+        Config config = new Config(configEntries);
+        Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
+        ac.getAdminClient().alterConfigs(map);
     }
 }
