@@ -270,7 +270,7 @@ public class KafkaService {
     private void incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
         List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
                 .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
-        ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp));
+        ClusterUtil.toMono(ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp)).all()).subscribe();
     }
 
     private void alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
@@ -278,6 +278,6 @@ public class KafkaService {
                 .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
         Config config = new Config(configEntries);
         Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
-        ac.getAdminClient().alterConfigs(map);
+        ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all()).subscribe();
     }
 }
