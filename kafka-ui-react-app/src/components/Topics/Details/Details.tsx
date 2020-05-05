@@ -68,17 +68,17 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
         <Switch>
           <Route
             exact
-            path="/clusters/:clusterName/topics/:topicName/messages"
+            path="/ui/clusters/:clusterName/topics/:topicName/messages"
             component={MessagesContainer}
           />
           <Route
             exact
-            path="/clusters/:clusterName/topics/:topicName/settings"
+            path="/ui/clusters/:clusterName/topics/:topicName/settings"
             component={SettingsContainer}
           />
           <Route
             exact
-            path="/clusters/:clusterName/topics/:topicName"
+            path="/ui/clusters/:clusterName/topics/:topicName"
             component={OverviewContainer}
           />
         </Switch>
