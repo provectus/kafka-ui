@@ -85,7 +85,6 @@ public class UpdateTopicTest {
             clustersStorage.setKafkaCluster(CLUSTER_NAME, metricsUpdateService.updateMetrics(kafkaCluster).block());
             webTestClient.put().uri(urlUpdate).accept(MediaType.APPLICATION_JSON).body(topicFormDataMono, TopicFormData.class)
                     .exchange().returnResult(Topic.class).getResponseBody().blockLast();
-            clustersStorage.setKafkaCluster(CLUSTER_NAME, metricsUpdateService.updateMetrics(kafkaCluster).block());
             Assert.assertEquals(webTestClient.get().uri(urlSettings).accept(MediaType.APPLICATION_JSON).exchange().returnResult(TopicConfig.class)
                             .getResponseBody()
                             .filter(s4 -> s4.getName().equals(PARAM_TO_CHANGE_KEY)).blockLast().getValue(), PARAM_TO_CHANGE_VALUE);

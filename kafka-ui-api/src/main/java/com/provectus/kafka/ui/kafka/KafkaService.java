@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.kafka;
 
+import com.provectus.kafka.ui.cluster.ClustersMetricsScheduler;
 import com.provectus.kafka.ui.cluster.model.*;
+import com.provectus.kafka.ui.cluster.service.MetricsUpdateService;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ServerStatus;
@@ -40,6 +42,7 @@ public class KafkaService {
 
     private final ZookeeperService zookeeperService;
     private final Map<String, Mono<ExtendedAdminClient>> adminClientCache = new ConcurrentHashMap<>();
+    private final ClustersStorage clustersStorage;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
@@ -178,16 +181,21 @@ public class KafkaService {
         return getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
                     if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS)) {
-                        incrementalAlterConfig(topicFormData, topicCR, ac);
+                        return incrementalAlterConfig(topicFormData, topicCR, ac)
+                                .flatMap(c -> getUpdatedTopic(ac, topicName, cluster.getName()));
                     } else {
-                        alterConfig(topicFormData, topicCR, ac);
+                        return alterConfig(topicFormData, topicCR, ac)
+                                .flatMap(c -> getUpdatedTopic(ac, topicName, cluster.getName()));
                     }
-
-                    return getTopicsData(ac.getAdminClient())
-                            .map(s -> s.stream()
-                            .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
-                            .map(ClusterUtil::convertToTopic);
                 });
+    }
+
+    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName, String clusterName) {
+        getUpdatedCluster(clustersStorage.getClusterByName(clusterName).orElseThrow());
+        return getTopicsData(ac.getAdminClient())
+                .map(s -> s.stream()
+                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
+                .map(ClusterUtil::convertToTopic);
     }
 
 
@@ -267,17 +275,17 @@ public class KafkaService {
                     .next());
     }
 
-    private void incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+    private Mono<Void> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
         List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
                 .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
-        ClusterUtil.toMono(ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp)).all()).subscribe();
+        return ClusterUtil.toMono(ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp)).all());
     }
 
-    private void alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+    private Mono<Void> alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
         List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
                 .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
         Config config = new Config(configEntries);
         Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
-        ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all()).subscribe();
+        return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all());
     }
 }
