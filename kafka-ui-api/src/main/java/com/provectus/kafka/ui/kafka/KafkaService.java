@@ -199,7 +199,7 @@ public class KafkaService {
 
     public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
         return adminClientCache.computeIfAbsent(
-                cluster.getId(),
+                cluster.getName(),
                 (id) -> createAdminClient(cluster)
         ).flatMap(this::isAdminClientConnected);
     }
