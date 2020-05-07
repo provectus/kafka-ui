@@ -4,7 +4,6 @@ import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
-import com.provectus.kafka.ui.cluster.service.MetricsUpdateService;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicConfig;
 import com.provectus.kafka.ui.model.TopicFormData;
@@ -53,9 +52,6 @@ public class UpdateTopicTest {
 
     @Autowired
     private WebTestClient webTestClient;
-
-    @Autowired
-    private MetricsUpdateService metricsUpdateService;
 
     @SpyBean
     private ClustersStorage clustersStorage;
