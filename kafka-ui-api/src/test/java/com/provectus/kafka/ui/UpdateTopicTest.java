@@ -22,6 +22,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import reactor.core.publisher.Mono;
 
@@ -30,7 +31,7 @@ import java.util.Map;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@AutoConfigureWebTestClient
+@AutoConfigureWebTestClient(timeout = "10000000")
 public class UpdateTopicTest {
 
     TopicFormData topicFormData = new TopicFormData();
@@ -44,7 +45,7 @@ public class UpdateTopicTest {
     private String PARAM_TO_CHANGE_VALUE = "10485761";
 
     private final String CLUSTER_NAME = "local";
-    private final String TOPIC_NAME = "messages";
+    private final String TOPIC_NAME = "messages1";
 
     private String urlUpdate;
     private String urlSettings;
@@ -66,6 +67,9 @@ public class UpdateTopicTest {
     @ClassRule
     public static KafkaContainer kafka = new KafkaContainer();
 
+    @ClassRule
+    public static GenericContainer zk = new GenericContainer("confluentinc/cp-zookeeper:5.1.0");
+
     @Before
     public void prepareParams () {
         urlUpdate = String.format(URL_TEMPLATE_UPDATE, CLUSTER_NAME, TOPIC_NAME);
@@ -82,7 +86,6 @@ public class UpdateTopicTest {
         try {
             webTestClient.post().uri(urlCreate).accept(MediaType.APPLICATION_JSON).body(topicFormDataCreateMono, TopicFormData.class)
                     .exchange().returnResult(Topic.class).getResponseBody().blockLast();
-            clustersStorage.setKafkaCluster(CLUSTER_NAME, metricsUpdateService.updateMetrics(kafkaCluster).block());
             webTestClient.put().uri(urlUpdate).accept(MediaType.APPLICATION_JSON).body(topicFormDataMono, TopicFormData.class)
                     .exchange().returnResult(Topic.class).getResponseBody().blockLast();
             Assert.assertEquals(webTestClient.get().uri(urlSettings).accept(MediaType.APPLICATION_JSON).exchange().returnResult(TopicConfig.class)
@@ -107,6 +110,11 @@ public class UpdateTopicTest {
     }
 
     private void startTestEnvironment() {
+         zk
+                .withNetwork(kafka.getNetwork())
+                .withNetworkAliases("zookeeper")
+                .withEnv("ZOOKEEPER_CLIENT_PORT", "2181");
+         kafka.withExternalZookeeper("zookeeper:2181");
         kafka.start();
     }
 

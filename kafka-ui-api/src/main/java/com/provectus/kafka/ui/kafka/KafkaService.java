@@ -22,10 +22,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -191,7 +188,6 @@ public class KafkaService {
     }
 
     private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName, String clusterName) {
-        getUpdatedCluster(clustersStorage.getClusterByName(clusterName).orElseThrow());
         return getTopicsData(ac.getAdminClient())
                 .map(s -> s.stream()
                         .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
@@ -267,12 +263,8 @@ public class KafkaService {
 
 
     @SneakyThrows
-    private Mono<Void> createTopic(AdminClient adminClient, NewTopic newTopic) {
-        return ClusterUtil.toMono(adminClient.createTopics(Collections.singletonList(newTopic))
-                    .values()
-                    .values()
-                    .iterator()
-                    .next());
+    private Mono<KafkaFuture<Void>> createTopic(AdminClient adminClient, NewTopic newTopic) {
+        return Mono.just(adminClient.createTopics(Collections.singletonList(newTopic)).all());
     }
 
     private Mono<Void> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {

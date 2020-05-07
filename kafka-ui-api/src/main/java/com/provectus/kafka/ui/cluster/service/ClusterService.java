@@ -61,13 +61,25 @@ public class ClusterService {
     public Mono<Topic> createTopic(String name, Mono<TopicFormData> topicFormData) {
         return clustersStorage.getClusterByName(name).map(
                 cluster -> kafkaService.createTopic(cluster, topicFormData)
+                .flatMap(t -> kafkaService.getUpdatedCluster(cluster)
+                    .map(c -> {
+                        clustersStorage.setKafkaCluster(name, c);
+                        return t;
+                    })
+                )
         ).orElse(Mono.empty()).map(clusterMapper::toTopic);
     }
 
     @SneakyThrows
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
-        return clustersStorage.getClusterByName(clusterName).map(c ->
-                    topicFormData.flatMap(t -> kafkaService.updateTopic(c, topicName, t)).map(ResponseEntity::ok))
+        return clustersStorage.getClusterByName(clusterName).map(cl ->
+                    topicFormData.flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
+                            .flatMap(t -> kafkaService.getUpdatedCluster(cl)
+                                    .map(c -> {
+                                        clustersStorage.setKafkaCluster(clusterName, c);
+                                        return t;
+                                    })
+                    .map(ResponseEntity::ok)))
                 .orElse(Mono.empty());
     }
 
