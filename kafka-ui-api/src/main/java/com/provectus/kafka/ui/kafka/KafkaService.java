@@ -1,8 +1,6 @@
 package com.provectus.kafka.ui.kafka;
 
-import com.provectus.kafka.ui.cluster.ClustersMetricsScheduler;
 import com.provectus.kafka.ui.cluster.model.*;
-import com.provectus.kafka.ui.cluster.service.MetricsUpdateService;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ServerStatus;
@@ -22,7 +20,10 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
