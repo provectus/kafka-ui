@@ -3,11 +3,13 @@ package com.provectus.kafka.ui.cluster.service;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
@@ -68,5 +70,16 @@ public class ClusterService {
             return clustersStorage.getClusterByName(clusterName)
                     .map(kafkaService::getConsumerGroups)
                     .orElse(Mono.empty());
+    }
+
+    public Flux<Broker> getBrokers (String clusterName) {
+        return kafkaService.getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
+                .flatMap(client -> ClusterUtil.toMono(client.describeCluster().nodes())
+                    .map(n -> n.stream().map(node -> {
+                        Broker broker = new Broker();
+                        broker.setId(node.idString());
+                        return broker;
+                    }).collect(Collectors.toList())))
+                .flatMapMany(Flux::fromIterable);
     }
 }
