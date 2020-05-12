@@ -37,6 +37,16 @@ public class ClusterUtil {
         }));
     }
 
+    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName){
+        return Mono.create(sink -> future.whenComplete((res, ex)->{
+            if (ex!=null) {
+                sink.error(ex);
+            } else {
+                sink.success(topicName);
+            }
+        }));
+    }
+
     public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c, KafkaCluster cluster) {
         ConsumerGroup consumerGroup = new ConsumerGroup();
         consumerGroup.setClusterId(cluster.getId());

@@ -165,7 +165,6 @@ public class KafkaService {
                     var tdw = adminClient.describeTopics(Collections.singletonList(topicData.getName()));
                     return getTopicDescription(tdw.values().get(topicData.getName()), topicData.getName());
                 })
-                .switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic")))
                 .map(ClusterUtil::mapToInternalTopic)
                 .flatMap( t ->
                         loadTopicsConfig(adminClient, Collections.singletonList(t.getName()))
@@ -180,15 +179,15 @@ public class KafkaService {
                 .flatMap(ac -> {
                     if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS)) {
                         return incrementalAlterConfig(topicFormData, topicCR, ac)
-                                .flatMap(c -> getUpdatedTopic(ac, topicName, cluster.getName()));
+                                .flatMap(c -> getUpdatedTopic(ac, topicName));
                     } else {
                         return alterConfig(topicFormData, topicCR, ac)
-                                .flatMap(c -> getUpdatedTopic(ac, topicName, cluster.getName()));
+                                .flatMap(c -> getUpdatedTopic(ac, topicName));
                     }
                 });
     }
 
-    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName, String clusterName) {
+    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
         return getTopicsData(ac.getAdminClient())
                 .map(s -> s.stream()
                         .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
@@ -264,8 +263,8 @@ public class KafkaService {
 
 
     @SneakyThrows
-    private Mono<KafkaFuture<Void>> createTopic(AdminClient adminClient, NewTopic newTopic) {
-        return Mono.just(adminClient.createTopics(Collections.singletonList(newTopic)).values().get(newTopic.name()))
+    private Mono<String> createTopic(AdminClient adminClient, NewTopic newTopic) {
+        return ClusterUtil.toMono(adminClient.createTopics(Collections.singletonList(newTopic)).all(), newTopic.name())
                 .onErrorResume(e -> {
                     log.error(new Exception(e));
                     return Mono.empty();
