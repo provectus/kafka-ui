@@ -169,6 +169,47 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicConfig'
 
+  /api/clusters/{clusterName}/topics/{topicName}/messages:
+    get:
+      tags:
+        - /api/clusters
+      summary: getTopicMessages
+      operationId: getTopicMessages
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: partition
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicMessage'
+
   /api/clusters/{clusterName}/consumerGroups:
     get:
       tags:
@@ -336,3 +377,21 @@ components:
             type: integer
         numTopics:
             type: integer
+
+    TopicMessage:
+      type: object
+      properties:
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        content:
+          type: string
+      required:
+        - partition
+        - offset
+        - timestamp
