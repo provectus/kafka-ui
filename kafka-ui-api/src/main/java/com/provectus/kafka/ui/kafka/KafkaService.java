@@ -1,270 +1,287 @@
 package com.provectus.kafka.ui.kafka;
 
-import com.provectus.kafka.ui.cluster.model.KafkaCluster;
-import com.provectus.kafka.ui.model.*;
+import com.provectus.kafka.ui.cluster.model.*;
+import com.provectus.kafka.ui.cluster.util.ClusterUtil;
+import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.ServerStatus;
+import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.*;
-import org.apache.kafka.common.*;
+import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
-import java.util.*;
-
-import static com.provectus.kafka.ui.kafka.KafkaConstants.*;
-import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class KafkaService {
 
-    @SneakyThrows
-    @Async
-    public void loadClusterMetrics(KafkaCluster kafkaCluster) {
-        log.debug("Start getting Kafka metrics for cluster: " + kafkaCluster.getName());
-        boolean isConnected = false;
-        if (kafkaCluster.getAdminClient() != null) {
-            isConnected = isAdminClientConnected(kafkaCluster);
-        }
-        if (kafkaCluster.getAdminClient() == null || !isConnected) {
-            isConnected = createAdminClient(kafkaCluster);
-        }
+    @Value("${kafka.admin-client-timeout}")
+    private int clientTimeout;
 
-        if (!isConnected) {
-            kafkaCluster.getCluster().setStatus(ServerStatus.OFFLINE);
+    private static final ListTopicsOptions LIST_TOPICS_OPTIONS = new ListTopicsOptions().listInternal(true);
 
-            return;
-        }
-
-        kafkaCluster.getCluster().setId(kafkaCluster.getId());
-        kafkaCluster.getCluster().setStatus(ServerStatus.ONLINE);
-        loadMetrics(kafkaCluster);
-        loadTopicsData(kafkaCluster);
-    }
-
+    private final ZookeeperService zookeeperService;
+    private final Map<String, Mono<ExtendedAdminClient>> adminClientCache = new ConcurrentHashMap<>();
+    private final ClustersStorage clustersStorage;
 
     @SneakyThrows
-    public Mono<ResponseEntity<Topic>> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
-        return topicFormData.flatMap(
-                topicData -> {
-                    AdminClient adminClient = cluster.getAdminClient();
-                    NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(), topicData.getReplicationFactor().shortValue());
-                    newTopic.configs(topicData.getConfigs());
-
-                    createTopic(adminClient, newTopic);
-
-                    DescribeTopicsResult topicDescriptionsWrapper = adminClient.describeTopics(Collections.singletonList(topicData.getName()));
-                    Map<String, KafkaFuture<TopicDescription>> topicDescriptionFuturesMap = topicDescriptionsWrapper.values();
-                    var entry = topicDescriptionFuturesMap.entrySet().iterator().next();
-                    var topicDescription = getTopicDescription(entry);
-                    if (topicDescription == null) return Mono.error(new RuntimeException("Can't find created topic"));
-
-                    Topic topic = collectTopicData(cluster, topicDescription);
-                    cluster.getTopics().add(topic);
-                    return Mono.just(new ResponseEntity<>(topic, HttpStatus.CREATED));
-                }
+    public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
+        return getOrCreateAdminClient(cluster).flatMap(
+                ac -> getClusterMetrics(ac.getAdminClient()).flatMap( clusterMetrics ->
+                            getTopicsData(ac.getAdminClient()).flatMap( topics ->
+                                loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
+                                        .map( configs -> mergeWithConfigs(topics, configs) )
+                            ).map( topics -> buildFromData(cluster, clusterMetrics, topics))
+                        )
+        ).onErrorResume(
+                e -> Mono.just(cluster.toBuilder()
+                        .status(ServerStatus.OFFLINE)
+                        .lastKafkaException(e)
+                        .build())
         );
     }
 
-    @SneakyThrows
-    private String getClusterId(KafkaCluster kafkaCluster) {
-        return kafkaCluster.getAdminClient().describeCluster().clusterId().get();
-    }
+    private KafkaCluster buildFromData(KafkaCluster currentCluster, InternalClusterMetrics brokersMetrics, Map<String, InternalTopic> topics) {
 
-    private boolean createAdminClient(KafkaCluster kafkaCluster) {
+        InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = brokersMetrics.toBuilder();
+
+        InternalClusterMetrics topicsMetrics = collectTopicsMetrics(topics);
+
+        ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
+        Throwable zookeeperException = null;
         try {
-            Properties properties = new Properties();
-            properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
-            properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 5000);
-            kafkaCluster.setAdminClient(AdminClient.create(properties));
-            kafkaCluster.setId(getClusterId(kafkaCluster));
-            kafkaCluster.getCluster().setId(kafkaCluster.getId());
-
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastKafkaException(e);
-
-            return false;
+            zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster) ? ServerStatus.ONLINE : ServerStatus.OFFLINE;
+        } catch (Throwable e) {
+            zookeeperException = e;
         }
+
+        InternalClusterMetrics clusterMetrics = metricsBuilder
+                .activeControllers(brokersMetrics.getActiveControllers())
+                .brokerCount(brokersMetrics.getBrokerCount())
+                .underReplicatedPartitionCount(topicsMetrics.getUnderReplicatedPartitionCount())
+                .inSyncReplicasCount(topicsMetrics.getInSyncReplicasCount())
+                .outOfSyncReplicasCount(topicsMetrics.getOutOfSyncReplicasCount())
+                .onlinePartitionCount(topicsMetrics.getOnlinePartitionCount())
+                .offlinePartitionCount(topicsMetrics.getOfflinePartitionCount()).build();
+
+        return currentCluster.toBuilder()
+                .status(ServerStatus.ONLINE)
+                .zookeeperStatus(zookeeperStatus)
+                .lastZookeeperException(zookeeperException)
+                .lastKafkaException(null)
+                .metrics(clusterMetrics)
+                .topics(topics)
+                .build();
     }
 
-    private boolean isAdminClientConnected(KafkaCluster kafkaCluster) {
-        try {
-            getClusterId(kafkaCluster);
+    private InternalClusterMetrics collectTopicsMetrics(Map<String,InternalTopic> topics) {
 
-            return true;
-        } catch (Exception e) {
-            log.error(e);
-            kafkaCluster.setLastKafkaException(e);
+        int underReplicatedPartitions = 0;
+        int inSyncReplicasCount = 0;
+        int outOfSyncReplicasCount = 0;
+        int onlinePartitionCount = 0;
+        int offlinePartitionCount = 0;
 
-            return false;
+        for (InternalTopic topic : topics.values()) {
+            underReplicatedPartitions += topic.getUnderReplicatedPartitions();
+            inSyncReplicasCount += topic.getInSyncReplicas();
+            outOfSyncReplicasCount += (topic.getReplicas() - topic.getInSyncReplicas());
+            onlinePartitionCount += topic.getPartitions().stream().mapToInt(s -> s.getLeader() == null ? 0 : 1).sum();
+            offlinePartitionCount += topic.getPartitions().stream().mapToInt(s -> s.getLeader() != null ? 0 : 1).sum();
         }
+
+        return InternalClusterMetrics.builder()
+                .underReplicatedPartitionCount(underReplicatedPartitions)
+                .inSyncReplicasCount(inSyncReplicasCount)
+                .outOfSyncReplicasCount(outOfSyncReplicasCount)
+                .onlinePartitionCount(onlinePartitionCount)
+                .offlinePartitionCount(offlinePartitionCount)
+                .build();
+    }
+
+    private Map<String, InternalTopic> mergeWithConfigs(List<InternalTopic> topics, Map<String, List<InternalTopicConfig>> configs) {
+        return topics.stream().map(
+                t -> t.toBuilder().topicConfigs(configs.get(t.getName())).build()
+        ).collect(Collectors.toMap(
+                InternalTopic::getName,
+                e -> e
+        ));
     }
 
     @SneakyThrows
-    private void loadTopicsData(KafkaCluster kafkaCluster) {
-        AdminClient adminClient = kafkaCluster.getAdminClient();
-        ListTopicsOptions listTopicsOptions = new ListTopicsOptions();
-        listTopicsOptions.listInternal(true);
-        var topicListings = adminClient.listTopics(listTopicsOptions).names().get();
-        kafkaCluster.getCluster().setTopicCount(topicListings.size());
-
-        DescribeTopicsResult topicDescriptionsWrapper = adminClient.describeTopics(topicListings);
-        Map<String, KafkaFuture<TopicDescription>> topicDescriptionFuturesMap = topicDescriptionsWrapper.values();
-        List<Topic> foundTopics = new ArrayList<>();
-        resetMetrics(kafkaCluster);
-
-        for (var entry : topicDescriptionFuturesMap.entrySet()) {
-            var topicDescription = getTopicDescription(entry);
-            if (topicDescription == null) continue;
-            Topic topic = collectTopicData(kafkaCluster, topicDescription);
-            foundTopics.add(topic);
-        }
-        kafkaCluster.setTopics(foundTopics);
+    private Mono<List<InternalTopic>> getTopicsData(AdminClient adminClient) {
+        return ClusterUtil.toMono(adminClient.listTopics(LIST_TOPICS_OPTIONS).names())
+                    .flatMap(topics -> ClusterUtil.toMono(adminClient.describeTopics(topics).all()))
+                    .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
-    private void resetMetrics(KafkaCluster kafkaCluster) {
-        kafkaCluster.getBrokersMetrics().setOnlinePartitionCount(0);
-        kafkaCluster.getBrokersMetrics().setOfflinePartitionCount(0);
-        kafkaCluster.getBrokersMetrics().setUnderReplicatedPartitionCount(0);
-        kafkaCluster.getBrokersMetrics().setInSyncReplicasCount(0);
-        kafkaCluster.getBrokersMetrics().setOutOfSyncReplicasCount(0);
+    private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
+        return ClusterUtil.toMono(client.describeCluster().nodes())
+                .flatMap(brokers ->
+                    ClusterUtil.toMono(client.describeCluster().controller()).map(
+                        c -> {
+                            InternalClusterMetrics.InternalClusterMetricsBuilder builder = InternalClusterMetrics.builder();
+                            builder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
+                            // TODO: fill bytes in/out metrics
+                            List<Integer> brokerIds = brokers.stream().map(Node::id).collect(Collectors.toList());
+
+                            return builder.build();
+                        }
+                    )
+                );
     }
 
-    private Topic collectTopicData(KafkaCluster kafkaCluster, TopicDescription topicDescription) {
-        var topic = new Topic();
-        topic.setInternal(topicDescription.isInternal());
-        topic.setName(topicDescription.name());
 
-        int inSyncReplicasCount = 0, replicasCount = 0;
-        List<Partition> partitions = new ArrayList<>();
-
-        int urpCount = 0;
-        for (TopicPartitionInfo partition : topicDescription.partitions()) {
-            var partitionDto = new Partition();
-            partitionDto.setLeader(partition.leader().id());
-            partitionDto.setPartition(partition.partition());
-            List<Replica> replicas = new ArrayList<>();
-
-            boolean isUrp = false;
-            for (Node replicaNode : partition.replicas()) {
-                var replica = new Replica();
-                replica.setBroker(replicaNode.id());
-                replica.setLeader(partition.leader() != null && partition.leader().id() == replicaNode.id());
-                replica.setInSync(partition.isr().contains(replicaNode));
-                if (!replica.getInSync()) {
-                    isUrp = true;
-                }
-                replicas.add(replica);
-
-                inSyncReplicasCount += partition.isr().size();
-                replicasCount += partition.replicas().size();
-            }
-            if (isUrp) {
-                urpCount++;
-            }
-            partitionDto.setReplicas(replicas);
-            partitions.add(partitionDto);
-
-            if (partition.leader() != null) {
-                kafkaCluster.getBrokersMetrics().setOnlinePartitionCount(kafkaCluster.getBrokersMetrics().getOnlinePartitionCount() + 1);
-            } else {
-                kafkaCluster.getBrokersMetrics().setOfflinePartitionCount(kafkaCluster.getBrokersMetrics().getOfflinePartitionCount() + 1);
-            }
-        }
-
-        kafkaCluster.getCluster().setOnlinePartitionCount(kafkaCluster.getBrokersMetrics().getOnlinePartitionCount());
-        kafkaCluster.getBrokersMetrics().setUnderReplicatedPartitionCount(
-                kafkaCluster.getBrokersMetrics().getUnderReplicatedPartitionCount() + urpCount);
-        kafkaCluster.getBrokersMetrics().setInSyncReplicasCount(
-                kafkaCluster.getBrokersMetrics().getInSyncReplicasCount() + inSyncReplicasCount);
-        kafkaCluster.getBrokersMetrics().setOutOfSyncReplicasCount(
-                kafkaCluster.getBrokersMetrics().getOutOfSyncReplicasCount() + (replicasCount - inSyncReplicasCount));
-
-        topic.setPartitions(partitions);
-        TopicDetails topicDetails = kafkaCluster.getOrCreateTopicDetails(topicDescription.name());
-        topicDetails.setReplicas(replicasCount);
-        topicDetails.setPartitionCount(topicDescription.partitions().size());
-        topicDetails.setInSyncReplicas(inSyncReplicasCount);
-        topicDetails.setReplicationFactor(topicDescription.partitions().size() > 0
-                ? topicDescription.partitions().get(0).replicas().size()
-                : null);
-        topicDetails.setUnderReplicatedPartitions(urpCount);
-
-        loadTopicConfig(kafkaCluster, topicDescription.name());
-
-        return topic;
-    }
-
-    private TopicDescription getTopicDescription(Map.Entry<String, KafkaFuture<TopicDescription>> entry) {
-        try {
-            return entry.getValue().get();
-        } catch (Exception e) {
-            log.error("Can't get topic with name: " + entry.getKey(), e);
-
-            return null;
-        }
-    }
-
-    private void loadMetrics(KafkaCluster kafkaCluster) throws InterruptedException, java.util.concurrent.ExecutionException {
-        AdminClient adminClient = kafkaCluster.getAdminClient();
-        int brokerCount = adminClient.describeCluster().nodes().get().size();
-        kafkaCluster.getCluster().setBrokerCount(brokerCount);
-        kafkaCluster.getBrokersMetrics().setBrokerCount(brokerCount);
-        kafkaCluster.getBrokersMetrics().setActiveControllers(adminClient.describeCluster().controller().get() != null ? 1 : 0);
-
-        for (Map.Entry<MetricName, ? extends Metric> metricNameEntry : adminClient.metrics().entrySet()) {
-            if (metricNameEntry.getKey().name().equals(IN_BYTE_PER_SEC_METRIC)
-                    && metricNameEntry.getKey().description().equals(IN_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                kafkaCluster.getCluster().setBytesInPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
-            }
-            if (metricNameEntry.getKey().name().equals(OUT_BYTE_PER_SEC_METRIC)
-                    && metricNameEntry.getKey().description().equals(OUT_BYTE_PER_SEC_METRIC_DESCRIPTION)) {
-                kafkaCluster.getCluster().setBytesOutPerSec((int) Math.round((double) metricNameEntry.getValue().metricValue()));
-            }
-        }
+    public Mono<InternalTopic> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
+        return this.getOrCreateAdminClient(cluster).flatMap(t -> this.createTopic(t.getAdminClient(), topicFormData));
     }
 
     @SneakyThrows
-    private void loadTopicConfig(KafkaCluster kafkaCluster, String topicName) {
-        AdminClient adminClient = kafkaCluster.getAdminClient();
+    public Mono<InternalTopic> createTopic(AdminClient adminClient, Mono<TopicFormData> topicFormData) {
+        return topicFormData.flatMap(
+                topicData -> {
+                    NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(), topicData.getReplicationFactor().shortValue());
+                    newTopic.configs(topicData.getConfigs());
+                    return createTopic(adminClient, newTopic).map( v -> topicData);
+                }).flatMap(topicData -> {
+                    var tdw = adminClient.describeTopics(Collections.singletonList(topicData.getName()));
+                    return getTopicDescription(tdw.values().get(topicData.getName()), topicData.getName());
+                })
+                .map(ClusterUtil::mapToInternalTopic)
+                .flatMap( t ->
+                        loadTopicsConfig(adminClient, Collections.singletonList(t.getName()))
+                                .map( c -> mergeWithConfigs(Collections.singletonList(t), c))
+                                .map( m -> m.values().iterator().next())
+                );
+    }
 
-        Set<ConfigResource> resources = Collections.singleton(new ConfigResource(ConfigResource.Type.TOPIC, topicName));
-        final Map<ConfigResource, Config> configs = adminClient.describeConfigs(resources).all().get();
+    public Mono<Topic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
+        ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
+        return getOrCreateAdminClient(cluster)
+                .flatMap(ac -> {
+                    if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS)) {
+                        return incrementalAlterConfig(topicFormData, topicCR, ac)
+                                .flatMap(c -> getUpdatedTopic(ac, topicName));
+                    } else {
+                        return alterConfig(topicFormData, topicCR, ac)
+                                .flatMap(c -> getUpdatedTopic(ac, topicName));
+                    }
+                });
+    }
 
-        if (configs.isEmpty()) return;
+    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
+        return getTopicsData(ac.getAdminClient())
+                .map(s -> s.stream()
+                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
+                .map(ClusterUtil::convertToTopic);
+    }
 
-        Collection<ConfigEntry> entries = configs.values().iterator().next().entries();
-        List<TopicConfig> topicConfigs = new ArrayList<>();
-        for (ConfigEntry entry : entries) {
-            TopicConfig topicConfig = new TopicConfig();
-            topicConfig.setName(entry.name());
-            topicConfig.setValue(entry.value());
-            if (topicConfig.getName().equals(MESSAGE_FORMAT_VERSION_CONFIG)) {
-                topicConfig.setDefaultValue(topicConfig.getValue());
-            } else {
-                topicConfig.setDefaultValue(TOPIC_DEFAULT_CONFIGS.get(entry.name()));
-            }
-            topicConfigs.add(topicConfig);
-        }
 
-        kafkaCluster.getTopicConfigsMap().put(topicName, topicConfigs);
+    @SneakyThrows
+    private Mono<String> getClusterId(ExtendedAdminClient adminClient) {
+        return ClusterUtil.toMono(adminClient.getAdminClient().describeCluster().clusterId());
+    }
+
+
+    public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
+        return adminClientCache.computeIfAbsent(
+                cluster.getName(),
+                (id) -> createAdminClient(cluster)
+        ).flatMap(this::isAdminClientConnected);
+    }
+
+    public Mono<ExtendedAdminClient> createAdminClient(KafkaCluster kafkaCluster) {
+        Properties properties = new Properties();
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
+        properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
+        AdminClient adminClient = AdminClient.create(properties);
+        return ExtendedAdminClient.extendedAdminClient(adminClient);
+    }
+
+    private Mono<ExtendedAdminClient> isAdminClientConnected(ExtendedAdminClient adminClient) {
+        return getClusterId(adminClient).map( r -> adminClient);
+    }
+
+
+
+    private Mono<TopicDescription> getTopicDescription(KafkaFuture<TopicDescription> entry, String topicName) {
+        return ClusterUtil.toMono(entry)
+                    .onErrorResume(e -> {
+                        log.error("Can't get topic with name: " + topicName);
+                        return Mono.empty();
+                    });
     }
 
     @SneakyThrows
-    private void createTopic(AdminClient adminClient, NewTopic newTopic) {
-        adminClient.createTopics(Collections.singletonList(newTopic))
-                .values()
-                .values()
-                .iterator()
-                .next()
-                .get();
+    private Mono<Map<String, List<InternalTopicConfig>>> loadTopicsConfig(AdminClient adminClient, List<String> topicNames) {
+        List<ConfigResource> resources = topicNames.stream()
+                .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
+                .collect(Collectors.toList());
+
+        return ClusterUtil.toMono(adminClient.describeConfigs(resources).all())
+                .map(configs ->
+                        configs.entrySet().stream().map(
+                                c -> Tuples.of(
+                                        c.getKey().name(),
+                                        c.getValue().entries().stream().map(ClusterUtil::mapToInternalTopicConfig).collect(Collectors.toList())
+                                )
+                        ).collect(Collectors.toMap(
+                                Tuple2::getT1,
+                                Tuple2::getT2
+                        ))
+                );
+    }
+
+    public Mono<List<ConsumerGroup>> getConsumerGroups(KafkaCluster cluster) {
+        var extendedAdminClient =  this.createAdminClient(cluster);
+
+        return extendedAdminClient.flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all()))
+                .flatMap(s -> extendedAdminClient.map(ac -> ac.getAdminClient()
+                        .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
+                .flatMap(ClusterUtil::toMono)
+                .map(s -> s.values().stream()
+                        .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList()));
+    }
+
+
+    @SneakyThrows
+    private Mono<String> createTopic(AdminClient adminClient, NewTopic newTopic) {
+        return ClusterUtil.toMono(adminClient.createTopics(Collections.singletonList(newTopic)).all(), newTopic.name())
+                .onErrorResume(e -> {
+                    log.error(new Exception(e));
+                    return Mono.empty();
+        });
+    }
+
+    private Mono<Void> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+        List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
+                .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
+        return ClusterUtil.toMono(ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp)).all());
+    }
+
+    private Mono<Void> alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+        List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
+                .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
+        Config config = new Config(configEntries);
+        Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
+        return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all());
     }
 }

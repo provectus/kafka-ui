@@ -141,6 +141,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
+    put:
+      tags:
+        - /api/clusters
+      summary: updateTopic
+      operationId: updateTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicFormData'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
 
   /api/clusters/{clusterName}/topics/{topicName}/config:
     get:
@@ -228,15 +256,11 @@ components:
     BrokersMetrics:
       type: object
       properties:
-        brokerCount:
-          type: integer
         zooKeeperStatus:
           type: integer
         activeControllers:
           type: integer
         uncleanLeaderElectionCount:
-          type: integer
-        onlinePartitionCount:
           type: integer
         underReplicatedPartitionCount:
           type: integer

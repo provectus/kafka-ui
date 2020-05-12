@@ -22,20 +22,36 @@ const Topics: React.FC<Props> = ({
   isFetched,
   fetchTopicList,
 }) => {
-  React.useEffect(() => { fetchTopicList(clusterName); }, [fetchTopicList, clusterName]);
+  React.useEffect(() => {
+    fetchTopicList(clusterName);
+  }, [fetchTopicList, clusterName]);
 
   if (isFetched) {
     return (
       <Switch>
-        <Route exact path="/clusters/:clusterName/topics" component={ListContainer} />
-        <Route exact path="/clusters/:clusterName/topics/new" component={NewContainer} />
-        <Route path="/clusters/:clusterName/topics/:topicName/edit" component={EditContainer} />
-        <Route path="/clusters/:clusterName/topics/:topicName" component={DetailsContainer} />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics"
+          component={ListContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/new"
+          component={NewContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName/edit"
+          component={EditContainer} />
+        <Route
+          path="/ui/clusters/:clusterName/topics/:topicName"
+          component={DetailsContainer}
+        />
       </Switch>
     );
   }
 
-  return (<PageLoader />);
+  return <PageLoader />;
 };
 
 export default Topics;

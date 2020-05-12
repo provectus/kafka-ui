@@ -1,6 +1,6 @@
 import { ClusterName, TopicName } from 'redux/interfaces';
 
-const clusterPath = (clusterName: ClusterName) => `/clusters/${clusterName}`;
+const clusterPath = (clusterName: ClusterName) => `/ui/clusters/${clusterName}`;
 
 export const clusterBrokersPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/brokers`;
