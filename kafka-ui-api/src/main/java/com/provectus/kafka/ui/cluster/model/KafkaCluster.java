@@ -10,7 +10,6 @@ import java.util.Map;
 @Builder(toBuilder = true)
 public class KafkaCluster {
 
-    private final String id = "";
     private final String name;
     private final String jmxHost;
     private final String jmxPort;

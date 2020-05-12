@@ -12,7 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,32 +25,32 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterId, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterName, ServerWebExchange exchange) {
         return Mono.just(
-                clusterService.getBrokersMetrics(clusterId)
+                clusterService.getBrokersMetrics(clusterName)
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build())
         );
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterId, ServerWebExchange exchange) {
-        return Mono.just(ResponseEntity.ok(Flux.fromIterable(clusterService.getTopics(clusterId))));
+    public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterName, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(Flux.fromIterable(clusterService.getTopics(clusterName))));
     }
 
     @Override
-    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterId, String topicName, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<TopicDetails>> getTopicDetails(String clusterName, String topicName, ServerWebExchange exchange) {
         return Mono.just(
-                clusterService.getTopicDetails(clusterId, topicName)
+                clusterService.getTopicDetails(clusterName, topicName)
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build())
         );
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterId, String topicName, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(String clusterName, String topicName, ServerWebExchange exchange) {
         return Mono.just(
-                clusterService.getTopicConfigs(clusterId, topicName)
+                clusterService.getTopicConfigs(clusterName, topicName)
                         .map(Flux::fromIterable)
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build())
@@ -59,16 +58,15 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Topic>> createTopic(String clusterId, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
-        return clusterService.createTopic(clusterId, topicFormData)
+    public Mono<ResponseEntity<Topic>> createTopic(String clusterName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
+        return clusterService.createTopic(clusterName, topicFormData)
                 .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<Broker>>> getBrokers(String clusterId, ServerWebExchange exchange) {
-        //TODO: ????
-        return Mono.just(ResponseEntity.ok(Flux.fromIterable(new ArrayList<>())));
+    public Mono<ResponseEntity<Flux<Broker>>> getBrokers(String clusterName, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(clusterService.getBrokers(clusterName)));
     }
 
     @Override
