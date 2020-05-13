@@ -389,6 +389,18 @@ components:
         timestamp:
           type: string
           format: date-time
+        timestampType:
+          type: string
+          enum:
+            - NO_TIMESTAMP_TYPE
+            - CREATE_TIME
+            - LOG_APPEND_TIME
+        key:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
         content:
           type: string
       required:
