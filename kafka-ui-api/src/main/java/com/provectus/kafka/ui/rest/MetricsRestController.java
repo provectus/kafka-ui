@@ -11,6 +11,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.OffsetDateTime;
+
 import javax.validation.Valid;
 
 @RestController
@@ -55,6 +57,11 @@ public class MetricsRestController implements ApiClustersApi {
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build())
         );
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @Valid Integer partition, @Valid Long offset, @Valid OffsetDateTime timestamp, ServerWebExchange exchange) {
+        return Mono.error(new UnsupportedOperationException());
     }
 
     @Override
