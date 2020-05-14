@@ -20,6 +20,6 @@ public class InternalTopic {
     private final int replicationFactor;
     private final int underReplicatedPartitions;
     //TODO: find way to fill
-    private final int segmentSize;
+    private final long segmentSize;
     private final int segmentCount;
 }

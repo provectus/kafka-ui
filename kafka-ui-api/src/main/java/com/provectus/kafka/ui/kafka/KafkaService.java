@@ -1,9 +1,6 @@
 package com.provectus.kafka.ui.kafka;
 
-import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
-import com.provectus.kafka.ui.cluster.model.InternalTopic;
-import com.provectus.kafka.ui.cluster.model.InternalTopicConfig;
-import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ServerStatus;
@@ -27,6 +24,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -44,7 +42,8 @@ public class KafkaService {
                 ac -> getClusterMetrics(ac).flatMap( clusterMetrics ->
                             getTopicsData(ac).flatMap( topics ->
                                 loadTopicsConfig(ac, topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
-                                        .map( configs -> mergeWithConfigs(topics, configs) )
+                                        .map( configs -> mergeWithConfigs(topics, configs))
+                                    .flatMap(it -> updateSegmentSize(ac, clusterMetrics, it))
                             ).map( topics -> buildFromData(cluster, clusterMetrics, topics))
                         )
         ).onErrorResume(
@@ -137,7 +136,7 @@ public class KafkaService {
                             InternalClusterMetrics.InternalClusterMetricsBuilder builder = InternalClusterMetrics.builder();
                             builder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
                             // TODO: fill bytes in/out metrics
-                            List<Integer> brokerIds = brokers.stream().map(Node::id).collect(Collectors.toList());
+                            builder.brokersIds(brokers.stream().map(Node::id).collect(Collectors.toList()));
 
                             return builder.build();
                         }
@@ -179,7 +178,7 @@ public class KafkaService {
 
     public Mono<AdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
         AdminClient adminClient = adminClientCache.computeIfAbsent(
-                cluster.getId(),
+                cluster.getName(),
                 (id) -> createAdminClient(cluster)
         );
 
@@ -245,5 +244,22 @@ public class KafkaService {
                     .values()
                     .iterator()
                     .next());
+    }
+
+    private Mono<Map<String, InternalTopic>> updateSegmentSize(AdminClient ac, InternalClusterMetrics clusterMetrics, Map<String, InternalTopic> internalTopic) {
+                return ClusterUtil.toMono(ac.describeLogDirs(clusterMetrics.getBrokersIds()).all())
+                        .map(l -> {
+                            System.out.println(l);
+                            var topicsInfo = l.values().stream()
+                                .flatMap(v -> Stream.of(v.values()))
+                                .flatMap(v -> Stream.of(v.stream().map(s -> s.replicaInfos)))
+                                .findFirst().orElseThrow().collect(Collectors.toList());
+                            var internalSegments = topicsInfo.stream().flatMap(t -> t.entrySet().stream()
+                                    .flatMap(e -> Stream.of(new InternalSegmentSize(e.getKey().topic(), e.getValue().size)))).collect(Collectors.toList());
+                            return internalTopic.values().stream().flatMap(k ->
+                                    Stream.of(k.toBuilder().segmentSize(internalSegments.stream()
+                                            .filter(key -> key.getReplicaName().equals(k.getName())).mapToLong(InternalSegmentSize::getSegmentSize).sum()).build()))
+                                    .collect(Collectors.toMap(InternalTopic::getName, v -> v));
+                        });
     }
 }

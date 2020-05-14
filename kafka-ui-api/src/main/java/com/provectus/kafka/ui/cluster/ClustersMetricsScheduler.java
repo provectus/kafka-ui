@@ -26,7 +26,7 @@ public class ClustersMetricsScheduler {
                 .subscribeOn(Schedulers.parallel())
                 .map(Map.Entry::getValue)
                 .flatMap(metricsUpdateService::updateMetrics)
-                .doOnNext(s -> clustersStorage.setKafkaCluster(s.getId(), s))
+                .doOnNext(s -> clustersStorage.setKafkaCluster(s.getName(), s))
                 .subscribe();
     }
 }
