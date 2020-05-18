@@ -141,7 +141,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
-    put:
+    patch:
       tags:
         - /api/clusters
       summary: updateTopic
@@ -163,8 +163,8 @@ paths:
             schema:
               $ref: '#/components/schemas/TopicFormData'
       responses:
-        201:
-          description: Created
+        200:
+          description: Updated
           content:
             application/json:
               schema:
