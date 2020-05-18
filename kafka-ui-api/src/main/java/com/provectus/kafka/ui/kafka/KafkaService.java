@@ -43,7 +43,7 @@ public class KafkaService {
                             getTopicsData(ac).flatMap( topics ->
                                 loadTopicsConfig(ac, topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
                                         .map( configs -> mergeWithConfigs(topics, configs))
-                                    .flatMap(it -> updateSegmentSize(ac, clusterMetrics, it))
+                                    .flatMap(it -> updateTopicSegmentSize(ac, clusterMetrics, it))
                             ).map( topics -> buildFromData(cluster, clusterMetrics, topics))
                         )
         ).onErrorResume(
@@ -141,7 +141,7 @@ public class KafkaService {
                             return builder.build();
                         }
                     )
-                );
+                ).flatMap(c -> updateClusterSegmentSize(client, c));
     }
 
 
@@ -246,20 +246,38 @@ public class KafkaService {
                     .next());
     }
 
-    private Mono<Map<String, InternalTopic>> updateSegmentSize(AdminClient ac, InternalClusterMetrics clusterMetrics, Map<String, InternalTopic> internalTopic) {
+    private Mono<Map<String, InternalTopic>> updateTopicSegmentSize(AdminClient ac, InternalClusterMetrics clusterMetrics, Map<String, InternalTopic> internalTopic) {
                 return ClusterUtil.toMono(ac.describeLogDirs(clusterMetrics.getBrokersIds()).all())
                         .map(l -> {
-                            System.out.println(l);
                             var topicsInfo = l.values().stream()
                                 .flatMap(v -> Stream.of(v.values()))
                                 .flatMap(v -> Stream.of(v.stream().map(s -> s.replicaInfos)))
                                 .findFirst().orElseThrow().collect(Collectors.toList());
-                            var internalSegments = topicsInfo.stream().flatMap(t -> t.entrySet().stream()
-                                    .flatMap(e -> Stream.of(new InternalSegmentSize(e.getKey().topic(), e.getValue().size)))).collect(Collectors.toList());
+                            var internalSegments = topicsInfo.stream()
+                                    .flatMap(t -> t.entrySet().stream()
+                                        .flatMap(e -> Stream.of(new InternalSegmentSize(e.getKey().topic(), e.getValue().size))))
+                                    .collect(Collectors.toList());
                             return internalTopic.values().stream().flatMap(k ->
                                     Stream.of(k.toBuilder().segmentSize(internalSegments.stream()
-                                            .filter(key -> key.getReplicaName().equals(k.getName())).mapToLong(InternalSegmentSize::getSegmentSize).sum()).build()))
+                                            .filter(key -> key.getReplicaName().equals(k.getName()))
+                                            .mapToLong(InternalSegmentSize::getSegmentSize)
+                                            .sum()).build()))
                                     .collect(Collectors.toMap(InternalTopic::getName, v -> v));
                         });
+    }
+
+    private Mono<InternalClusterMetrics> updateClusterSegmentSize (AdminClient client, InternalClusterMetrics clusterMetrics) {
+        return ClusterUtil.toMono(client.describeLogDirs(clusterMetrics.getBrokersIds()).all())
+                .map(l -> {
+                    var replicasInfo = l.values().stream()
+                            .flatMap(v -> Stream.of(v.values()))
+                            .flatMap(v -> Stream.of(v.stream().map(s -> s.replicaInfos)))
+                            .findFirst().orElseThrow().collect(Collectors.toList());
+
+                    var internalSegments = replicasInfo.stream()
+                            .mapToLong(t -> t.entrySet().stream()
+                                    .mapToLong(e -> e.getValue().size).sum()).sum();
+                    return clusterMetrics.toBuilder().segmentSize(internalSegments).build();
+                });
     }
 }

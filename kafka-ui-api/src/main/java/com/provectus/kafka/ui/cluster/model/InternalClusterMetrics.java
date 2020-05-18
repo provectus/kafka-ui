@@ -22,7 +22,7 @@ public class InternalClusterMetrics {
     private final int bytesInPerSec;
     private final int bytesOutPerSec;
     //TODO: find way to fill
-    private final int segmentSize;
+    private final long segmentSize;
     private final int segmentCount;
     private final List<Integer> brokersIds;
 }
