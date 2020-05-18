@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -21,7 +22,8 @@ public class InternalClusterMetrics {
     //TODO: find way to fill
     private final int bytesInPerSec;
     private final int bytesOutPerSec;
+    private final int segmentCount;
     //TODO: find way to fill
     private final long segmentSize;
-    private final int segmentCount;
+    private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
 }
