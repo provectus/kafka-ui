@@ -24,5 +24,4 @@ public class InternalClusterMetrics {
     //TODO: find way to fill
     private final long segmentSize;
     private final int segmentCount;
-    private final List<Integer> brokersIds;
 }

@@ -39,12 +39,14 @@ public class KafkaService {
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
         return getOrCreateAdminClient(cluster).flatMap(
-                ac -> getClusterMetrics(ac).flatMap( clusterMetrics ->
+                ac -> getClusterState(ac)
+
+                        .flatMap( clusterState ->
                             getTopicsData(ac).flatMap( topics ->
                                 loadTopicsConfig(ac, topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
                                         .map( configs -> mergeWithConfigs(topics, configs))
-                                    .flatMap(it -> updateTopicSegmentSize(ac, clusterMetrics, it))
-                            ).map( topics -> buildFromData(cluster, clusterMetrics, topics))
+                                    .flatMap(it -> updateTopicSegmentSize(ac, clusterState, it))
+                            ).map( topics -> buildFromData(cluster, clusterState.getClusterMetrics(), topics))
                         )
         ).onErrorResume(
                 e -> Mono.just(cluster.toBuilder()
@@ -128,17 +130,20 @@ public class KafkaService {
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
-    private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
+    private Mono<InternalClusterState> getClusterState(AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
                         c -> {
-                            InternalClusterMetrics.InternalClusterMetricsBuilder builder = InternalClusterMetrics.builder();
-                            builder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
+                            InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
+                            InternalClusterState.InternalClusterStateBuilder stateBuilder = InternalClusterState.builder();
+                            metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
                             // TODO: fill bytes in/out metrics
-                            builder.brokersIds(brokers.stream().map(Node::id).collect(Collectors.toList()));
+                            stateBuilder
+                                    .brokersIds(brokers.stream().map(Node::id).collect(Collectors.toList()))
+                                    .clusterMetrics(metricsBuilder.build());
 
-                            return builder.build();
+                            return stateBuilder.build();
                         }
                     )
                 ).flatMap(c -> updateClusterSegmentSize(client, c));
@@ -246,8 +251,8 @@ public class KafkaService {
                     .next());
     }
 
-    private Mono<Map<String, InternalTopic>> updateTopicSegmentSize(AdminClient ac, InternalClusterMetrics clusterMetrics, Map<String, InternalTopic> internalTopic) {
-                return ClusterUtil.toMono(ac.describeLogDirs(clusterMetrics.getBrokersIds()).all())
+    private Mono<Map<String, InternalTopic>> updateTopicSegmentSize(AdminClient ac, InternalClusterState clusterState, Map<String, InternalTopic> internalTopic) {
+                return ClusterUtil.toMono(ac.describeLogDirs(clusterState.getBrokersIds()).all())
                         .map(l -> {
                             var topicsInfo = l.values().stream()
                                 .flatMap(v -> Stream.of(v.values()))
@@ -266,18 +271,21 @@ public class KafkaService {
                         });
     }
 
-    private Mono<InternalClusterMetrics> updateClusterSegmentSize (AdminClient client, InternalClusterMetrics clusterMetrics) {
-        return ClusterUtil.toMono(client.describeLogDirs(clusterMetrics.getBrokersIds()).all())
+    private Mono<InternalClusterState> updateClusterSegmentSize (AdminClient client, InternalClusterState clusterState) {
+        return ClusterUtil.toMono(client.describeLogDirs(clusterState.getBrokersIds()).all())
                 .map(l -> {
                     var replicasInfo = l.values().stream()
                             .flatMap(v -> Stream.of(v.values()))
                             .flatMap(v -> Stream.of(v.stream().map(s -> s.replicaInfos)))
                             .findFirst().orElseThrow().collect(Collectors.toList());
 
-                    var internalSegments = replicasInfo.stream()
-                            .mapToLong(t -> t.entrySet().stream()
-                                    .mapToLong(e -> e.getValue().size).sum()).sum();
-                    return clusterMetrics.toBuilder().segmentSize(internalSegments).build();
+                    var segmentSize = replicasInfo.stream()
+                            .mapToLong(t -> t.values().stream()
+                                    .mapToLong(e -> e.size).sum())
+                            .sum();
+
+                    var clusterMetrics = clusterState.getClusterMetrics().toBuilder().segmentSize(segmentSize).build();
+                    return clusterState.toBuilder().clusterMetrics(clusterMetrics).build();
                 });
     }
 }
