@@ -19,6 +19,7 @@ const getTopicDetailsFetchingStatus = createFetchingSelector(
 );
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
+const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
 
 export const getIsTopicListFetched = createSelector(
   getTopicListFetchingStatus,
@@ -37,6 +38,11 @@ export const getTopicConfigFetched = createSelector(
 
 export const getTopicCreated = createSelector(
   getTopicCreationStatus,
+  (status) => status === FetchStatus.fetched
+);
+
+export const getTopicUpdated = createSelector(
+  getTopicUpdateStatus,
   (status) => status === FetchStatus.fetched
 );
 
@@ -77,9 +83,9 @@ export const getTopicConfigByParamName = createSelector(
     };
 
     if (config) {
-      for (const param of config) {
+      config.forEach((param) => {
         byParamName.byName[param.name] = param;
-      }
+      });
     }
 
     return byParamName;

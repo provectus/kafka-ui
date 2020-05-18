@@ -11,6 +11,7 @@ import { updateTopic, fetchTopicConfig } from 'redux/actions';
 import {
   getTopicConfigFetched,
   getTopicConfigByParamName,
+  getTopicUpdated,
 } from 'redux/reducers/topics/selectors';
 import { clusterTopicPath } from 'lib/paths';
 import { ThunkDispatch } from 'redux-thunk';
@@ -35,7 +36,7 @@ const mapStateToProps = (
   topicName,
   config: getTopicConfigByParamName(state, topicName),
   isFetched: getTopicConfigFetched(state),
-  isTopicUpdated: false,
+  isTopicUpdated: getTopicUpdated(state),
 });
 
 const mapDispatchToProps = (

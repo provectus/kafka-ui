@@ -66,12 +66,13 @@ public class ClusterService {
     }
 
     @SneakyThrows
-    public Mono<ResponseEntity<Topic>> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
+    public Mono<Topic> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
         return clustersStorage.getClusterByName(clusterName).map(cl ->
-                    topicFormData.flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
-                            .flatMap(t -> updateCluster(t, clusterName, cl)
-                    .map(ResponseEntity::ok)))
-                .orElse(Mono.empty());
+            topicFormData
+                .flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
+                .flatMap(t -> updateCluster(t, clusterName, cl))
+        )
+        .orElse(Mono.empty());
     }
 
     @SneakyThrows

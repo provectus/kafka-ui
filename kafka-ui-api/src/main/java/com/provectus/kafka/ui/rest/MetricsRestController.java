@@ -55,7 +55,9 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
-        return clusterService.updateTopic(clusterId, topicName, topicFormData);
+        return clusterService.updateTopic(clusterId, topicName, topicFormData)
+                .map(topic -> new ResponseEntity<>(topic, HttpStatus.OK))
+                .switchIfEmpty(Mono.just(ResponseEntity.unprocessableEntity().build()));
     }
 
     @Override
@@ -71,7 +73,7 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<Topic>> createTopic(String clusterId, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
         return clusterService.createTopic(clusterId, topicFormData)
-                .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
+                .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED))
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
     }
 

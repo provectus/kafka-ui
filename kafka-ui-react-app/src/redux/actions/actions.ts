@@ -8,8 +8,8 @@ import {
   TopicConfig,
   TopicDetails,
   TopicName,
+  ConsumerGroup,
 } from 'redux/interfaces';
-import { ConsumerGroup } from '../interfaces/consumerGroup';
 
 export const fetchBrokersAction = createAsyncAction(
   ActionType.GET_BROKERS__REQUEST,

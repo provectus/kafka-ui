@@ -98,8 +98,6 @@ export const patchTopic = (
     customParams,
   } = form;
 
-  console.log(form);
-
   const body = JSON.stringify({
     configs: {
       'cleanup.policy': cleanupPolicy,

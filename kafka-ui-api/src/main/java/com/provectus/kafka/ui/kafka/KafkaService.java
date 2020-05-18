@@ -173,6 +173,7 @@ public class KafkaService {
                 );
     }
 
+    @SneakyThrows
     public Mono<Topic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
         ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
         return getOrCreateAdminClient(cluster)
