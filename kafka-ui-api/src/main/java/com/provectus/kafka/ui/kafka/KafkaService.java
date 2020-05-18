@@ -272,17 +272,17 @@ public class KafkaService {
         });
     }
 
-    private Mono<Void> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+    private Mono<String> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
         List<AlterConfigOp> listOp = topicFormData.getConfigs().entrySet().stream()
                 .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()), AlterConfigOp.OpType.SET))).collect(Collectors.toList());
-        return ClusterUtil.toMono(ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp)).all());
+        return ClusterUtil.toMono(ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCR, listOp)).all(), topicCR.name());
     }
 
-    private Mono<Void> alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
+    private Mono<String> alterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
         List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
                 .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue()))).collect(Collectors.toList());
         Config config = new Config(configEntries);
         Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
-        return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all());
+        return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all(), topicCR.name());
     }
 }
