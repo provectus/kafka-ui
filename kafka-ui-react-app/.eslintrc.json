@@ -47,6 +47,17 @@
       "rules": {
         "react/prop-types": "off"
       }
+    },
+    {
+      "files": ["**/*.ts"],
+      "rules": {
+        "no-param-reassign": [
+          "error", {
+            "props": true,
+            "ignorePropertyModificationsFor": ["draft"]
+          }
+        ]
+      }
     }
   ],
   "settings": {

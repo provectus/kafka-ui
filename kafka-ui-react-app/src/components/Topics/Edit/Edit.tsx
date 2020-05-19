@@ -44,13 +44,7 @@ const Edit: React.FC<Props> = ({
       const { name } = methods.getValues();
       redirectToTopicPath(clusterName, name);
     }
-  }, [
-    isSubmitting,
-    isTopicUpdated,
-    redirectToTopicPath,
-    clusterName,
-    methods.getValues,
-  ]);
+  }, [isSubmitting, isTopicUpdated, redirectToTopicPath, clusterName, methods]);
 
   if (!isFetched || !config) {
     return null;
