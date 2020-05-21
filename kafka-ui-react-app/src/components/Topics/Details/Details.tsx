@@ -2,7 +2,12 @@ import React from 'react';
 import { ClusterName, Topic, TopicDetails, TopicName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink, Switch, Route } from 'react-router-dom';
-import { clusterTopicsPath, clusterTopicSettingsPath, clusterTopicPath, clusterTopicMessagesPath } from 'lib/paths';
+import {
+  clusterTopicsPath,
+  clusterTopicSettingsPath,
+  clusterTopicPath,
+  clusterTopicMessagesPath,
+} from 'lib/paths';
 import OverviewContainer from './Overview/OverviewContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
@@ -12,17 +17,16 @@ interface Props extends Topic, TopicDetails {
   topicName: TopicName;
 }
 
-const Details: React.FC<Props> = ({
-  clusterName,
-  topicName,
-}) => {
+const Details: React.FC<Props> = ({ clusterName, topicName }) => {
   return (
     <div className="section">
       <div className="level">
         <div className="level-item level-left">
-          <Breadcrumb links={[
-            { href: clusterTopicsPath(clusterName), label: 'All Topics' },
-          ]}>
+          <Breadcrumb
+            links={[
+              { href: clusterTopicsPath(clusterName), label: 'All Topics' },
+            ]}
+          >
             {topicName}
           </Breadcrumb>
         </div>
@@ -57,9 +61,21 @@ const Details: React.FC<Props> = ({
         </nav>
         <br />
         <Switch>
-          <Route exact path="/clusters/:clusterName/topics/:topicName/messages" component={MessagesContainer} />
-          <Route exact path="/clusters/:clusterName/topics/:topicName/settings" component={SettingsContainer} />
-          <Route exact path="/clusters/:clusterName/topics/:topicName" component={OverviewContainer} />
+          <Route
+            exact
+            path="/ui/clusters/:clusterName/topics/:topicName/messages"
+            component={MessagesContainer}
+          />
+          <Route
+            exact
+            path="/ui/clusters/:clusterName/topics/:topicName/settings"
+            component={SettingsContainer}
+          />
+          <Route
+            exact
+            path="/ui/clusters/:clusterName/topics/:topicName"
+            component={OverviewContainer}
+          />
         </Switch>
       </div>
     </div>

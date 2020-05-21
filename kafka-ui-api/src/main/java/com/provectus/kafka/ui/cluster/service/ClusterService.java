@@ -124,4 +124,15 @@ public class ClusterService {
 //                    .flatMap(s -> ClusterUtil.toMono(s.all()).map(details -> details.values().stream()
 //                            .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList())));
     }
+
+    public Flux<Broker> getBrokers (String clusterName) {
+        return kafkaService.getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
+                .flatMap(client -> ClusterUtil.toMono(client.describeCluster().nodes())
+                    .map(n -> n.stream().map(node -> {
+                        Broker broker = new Broker();
+                        broker.setId(node.idString());
+                        return broker;
+                    }).collect(Collectors.toList())))
+                .flatMapMany(Flux::fromIterable);
+    }
 }

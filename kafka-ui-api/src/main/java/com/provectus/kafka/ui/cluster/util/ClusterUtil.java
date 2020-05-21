@@ -35,7 +35,6 @@ public class ClusterUtil {
 
     public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c, KafkaCluster cluster) {
         ConsumerGroup consumerGroup = new ConsumerGroup();
-        consumerGroup.setClusterId(cluster.getId());
         consumerGroup.setConsumerGroupId(c.groupId());
         consumerGroup.setNumConsumers(c.members().size());
         int numTopics = c.members().stream().flatMap(m -> m.assignment().topicPartitions().stream().flatMap(t -> Stream.of(t.topic()))).collect(Collectors.toSet()).size();

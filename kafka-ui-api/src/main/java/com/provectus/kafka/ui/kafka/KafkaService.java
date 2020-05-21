@@ -182,7 +182,7 @@ public class KafkaService {
 
     public Mono<AdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
         AdminClient adminClient = adminClientCache.computeIfAbsent(
-                cluster.getId(),
+                cluster.getName(),
                 (id) -> createAdminClient(cluster)
         );
 

@@ -169,37 +169,53 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicConfig'
 
-  /api/clusters/{clusterName}/consumer-groups/{id}:
+  /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
         - /api/clusters
-      summary: get Consumer Group By Id
-      operationId: getConsumerGroup
+      summary: getTopicMessages
+      operationId: getTopicMessages
       parameters:
         - name: clusterName
           in: path
           required: true
           schema:
             type: string
-        - name: id
+        - name: topicName
           in: path
           required: true
           schema:
             type: string
+        - name: partition
+          in: query
+          schema:
+            type: integer
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: timestamp
+          in: query
+          schema:
+            type: string
+            format: date-time
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ConsumerGroupDetails'
+                type: array
+                items:
+                  $ref: '#/components/schemas/TopicMessage'
 
   /api/clusters/{clusterName}/consumerGroups:
     get:
       tags:
         - /api/clusters
-      summary: get all ConsumerGroups
-      operationId: getConsumerGroups
+      summary: getConsumerGroup
+      operationId: getConsumerGroup
       parameters:
         - name: clusterName
           in: path
@@ -221,8 +237,6 @@ components:
     Cluster:
       type: object
       properties:
-        id:
-          type: string
         name:
           type: string
         defaultCluster:
@@ -358,45 +372,38 @@ components:
         clusterId:
           type: string
         consumerGroupId:
-          type: string
+            type: string
         numConsumers:
-          type: integer
+            type: integer
         numTopics:
-          type: integer
+            type: integer
 
-    TopicPartitionDto:
+    TopicMessage:
       type: object
       properties:
-        topic:
-          type: string
         partition:
           type: integer
+        offset:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        timestampType:
+          type: string
+          enum:
+            - NO_TIMESTAMP_TYPE
+            - CREATE_TIME
+            - LOG_APPEND_TIME
+        key:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        content:
+          type: string
       required:
-        - topic
         - partition
-
-    ConsumerTopicPartitionDetail:
-      type: object
-      properties:
-        consumerId:
-          type: string
-        topic:
-          type: string
-        partition:
-          type: integer
-        currentOffset:
-          type: long
-        endOffset:
-          type: long
-        messagesBehind:
-          type: long
-
-    ConsumerGroupDetails:
-      type: object
-      properties:
-        consumerGroupId:
-          type: string
-        consumers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
+        - offset
+        - timestamp
