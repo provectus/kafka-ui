@@ -61,7 +61,9 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @Valid Integer partition, @Valid Long offset, @Valid OffsetDateTime timestamp, ServerWebExchange exchange) {
-        return Mono.error(new UnsupportedOperationException());
+        return Mono.just(
+                ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, partition, offset, timestamp))
+        );
     }
 
     @Override
