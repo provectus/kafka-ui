@@ -20,42 +20,48 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
       <Breadcrumb>All Consumer Groups</Breadcrumb>
 
       <div className="box">
-        <div className="columns">
-          <div className="column is-half is-offset-half">
-            <input
-              id="searchText"
-              type="text"
-              name="searchText"
-              className="input"
-              placeholder="Search"
-              value={searchText}
-              onChange={handleInputChange}
-            />
-          </div>
-        </div>
-        <table className="table is-striped is-fullwidth is-hoverable">
-          <thead>
-            <tr>
-              <th>Consumer group ID</th>
-              <th>Num of consumers</th>
-              <th>Num of topics</th>
-            </tr>
-          </thead>
-          <tbody>
-            {consumerGroups
-              .filter(
-                (consumerGroup) =>
-                  !searchText ||
-                  consumerGroup?.consumerGroupId?.indexOf(searchText) >= 0
-              )
-              .map((consumerGroup) => (
-                <ListItem
-                  key={consumerGroup.consumerGroupId}
-                  consumerGroup={consumerGroup}
+        {consumerGroups.length > 0 ? (
+          <div>
+            <div className="columns">
+              <div className="column is-half is-offset-half">
+                <input
+                  id="searchText"
+                  type="text"
+                  name="searchText"
+                  className="input"
+                  placeholder="Search"
+                  value={searchText}
+                  onChange={handleInputChange}
                 />
-              ))}
-          </tbody>
-        </table>
+              </div>
+            </div>
+            <table className="table is-striped is-fullwidth is-hoverable">
+              <thead>
+                <tr>
+                  <th>Consumer group ID</th>
+                  <th>Num of consumers</th>
+                  <th>Num of topics</th>
+                </tr>
+              </thead>
+              <tbody>
+                {consumerGroups
+                  .filter(
+                    (consumerGroup) =>
+                      !searchText ||
+                      consumerGroup?.consumerGroupId?.indexOf(searchText) >= 0
+                  )
+                  .map((consumerGroup) => (
+                    <ListItem
+                      key={consumerGroup.consumerGroupId}
+                      consumerGroup={consumerGroup}
+                    />
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          'No active consumer groups'
+        )}
       </div>
     </div>
   );
