@@ -1,0 +1,29 @@
+{
+    "consumerGroupId": "_fake.cluster.consumer_1",
+    "consumers": [
+        {
+            "consumerId": "_fake.cluster.consumer_1-1-1",
+            "topic": "my-topic",
+            "partition": 0,
+            "messagesBehind": 1246,
+            "currentOffset": 2834,
+            "endOffset": 2835
+        },
+        {
+            "consumerId": "_fake.cluster.consumer_2-2-2",
+            "topic": "docker-connect-status",
+            "partition": 1,
+            "messagesBehind": 678,
+            "currentOffset": 234,
+            "endOffset": 246
+        },
+        {
+            "consumerId": "_fake.cluster.consumer_2-2-2",
+            "topic": "docker-connect-status",
+            "partition": 2,
+            "messagesBehind": 143,
+            "currentOffset": 123,
+            "endOffset": 134
+        }
+    ]
+}

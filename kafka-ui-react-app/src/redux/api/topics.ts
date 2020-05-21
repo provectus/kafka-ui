@@ -1,14 +1,14 @@
 import { reduce } from 'lodash';
 import {
-  TopicName,
-  Topic,
   ClusterName,
-  TopicDetails,
+  Topic,
   TopicConfig,
-  TopicFormData,
+  TopicDetails,
   TopicFormCustomParam,
+  TopicFormData,
+  TopicName,
 } from 'redux/interfaces';
-import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+import { BASE_PARAMS, BASE_URL } from 'lib/constants';
 
 export const getTopicConfig = (
   clusterName: ClusterName,

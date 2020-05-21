@@ -75,4 +75,4 @@ export interface TopicFormData {
   customParams: {
     [index: string]: TopicFormCustomParam;
   };
-};
+}
