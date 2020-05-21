@@ -37,12 +37,12 @@ const New: React.FC<Props> = ({
       redirectToTopicPath(clusterName, name);
     }
   }, [
-      isSubmitting,
-      isTopicCreated,
-      redirectToTopicPath,
-      clusterName,
-      methods.getValues,
-    ]);
+    isSubmitting,
+    isTopicCreated,
+    redirectToTopicPath,
+    clusterName,
+    methods.getValues,
+  ]);
 
   const onSubmit = async (data: TopicFormData) => {
     // TODO: need to fix loader. After success loading the first time, we won't wait for creation any more, because state is
@@ -68,6 +68,7 @@ const New: React.FC<Props> = ({
       </div>
 
       <div className="box">
+        {/* eslint-disable react/jsx-props-no-spreading */}
         <FormContext {...methods}>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div className="columns">
