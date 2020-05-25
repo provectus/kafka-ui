@@ -1,50 +1,72 @@
-import { Action, Topic, TopicsState } from 'redux/interfaces';
+import { Action, TopicsState, Topic } from 'redux/interfaces';
 import { ActionType } from 'redux/actionType';
-import produce from 'immer';
 
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
 };
 
-type AddTopicCurried = (topic: Topic) => void;
-
-function addTopic(draft: TopicsState): AddTopicCurried;
-function addTopic(draft: TopicsState, topic: Topic): void;
-function addTopic(draft: TopicsState, topic?: any) {
-  const operation = (t: Topic) => {
-    const { name } = t;
-    draft.allNames.push(name);
-    draft.byName[name] = t;
+const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
+  const initialMemo: TopicsState = {
+    ...state,
+    allNames: [],
   };
 
-  return topic ? operation(topic) : operation;
-}
+  return payload.reduce(
+    (memo: TopicsState, topic) => {
+      const {name} = topic;
+      memo.byName[name] = {
+        ...memo.byName[name],
+        ...topic,
+      };
+      memo.allNames.push(name);
 
-const reducer = produce((draft: TopicsState, action: Action) => {
+      return memo;
+    },
+    initialMemo,
+  );
+};
+
+const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
+  const newState: TopicsState = {
+    ...state
+  };
+  newState.allNames.push(payload.name);
+  newState.byName[payload.name] = payload;
+  return newState;
+};
+
+const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case ActionType.GET_TOPICS__SUCCESS:
-      draft.allNames = [];
-
-      action.payload.forEach(addTopic(draft));
-      break;
+      return updateTopicList(state, action.payload);
     case ActionType.GET_TOPIC_DETAILS__SUCCESS:
-      Object.assign(
-        draft.byName[action.payload.topicName],
-        action.payload.details
-      );
-      break;
+      return {
+        ...state,
+        byName: {
+          ...state.byName,
+          [action.payload.topicName]: {
+            ...state.byName[action.payload.topicName],
+            ...action.payload.details,
+          }
+        }
+      };
     case ActionType.GET_TOPIC_CONFIG__SUCCESS:
-      draft.byName[action.payload.topicName].config = action.payload.config;
-      break;
+      return {
+        ...state,
+        byName: {
+          ...state.byName,
+          [action.payload.topicName]: {
+            ...state.byName[action.payload.topicName],
+            config: action.payload.config,
+          }
+        }
+      };
     case ActionType.POST_TOPIC__SUCCESS:
-      addTopic(draft, action.payload);
-      break;
-    case ActionType.PATCH_TOPIC__SUCCESS:
-      Object.assign(draft.byName[action.payload.name], action.payload);
-      break;
+      return addToTopicList(state, action.payload);
     default:
+      return state;
   }
-}, initialState);
+};
 
 export default reducer;

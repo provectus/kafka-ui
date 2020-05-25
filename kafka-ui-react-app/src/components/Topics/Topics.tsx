@@ -1,14 +1,10 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import {
-  Switch,
-  Route,
-} from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import NewContainer from './New/NewContainer';
-import EditContainer from './Edit/EditContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -39,10 +35,6 @@ const Topics: React.FC<Props> = ({
           path="/ui/clusters/:clusterName/topics/new"
           component={NewContainer}
         />
-        <Route
-          exact
-          path="/ui/clusters/:clusterName/topics/:topicName/edit"
-          component={EditContainer} />
         <Route
           path="/ui/clusters/:clusterName/topics/:topicName"
           component={DetailsContainer}

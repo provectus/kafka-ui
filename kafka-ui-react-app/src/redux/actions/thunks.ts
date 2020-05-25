@@ -1,17 +1,15 @@
 import * as api from 'redux/api';
+import * as actions from './actions';
+import { ConsumerGroupID } from '../interfaces/consumerGroup';
 import {
   PromiseThunk,
   Cluster,
   ClusterName,
   TopicFormData,
-  TopicName,
-  Topic,
+  TopicName, Topic,
 } from 'redux/interfaces';
-import * as actions from './actions';
 
-export const fetchBrokers = (
-  clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+export const fetchBrokers = (clusterName: ClusterName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchBrokersAction.request());
   try {
     const payload = await api.getBrokers(clusterName);
@@ -21,9 +19,7 @@ export const fetchBrokers = (
   }
 };
 
-export const fetchBrokerMetrics = (
-  clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+export const fetchBrokerMetrics = (clusterName: ClusterName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchBrokerMetricsAction.request());
   try {
     const payload = await api.getBrokerMetrics(clusterName);
@@ -43,9 +39,7 @@ export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
   }
 };
 
-export const fetchTopicList = (
-  clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+export const fetchTopicList = (clusterName: ClusterName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicListAction.request());
   try {
     const topics = await api.getTopics(clusterName);
@@ -55,28 +49,17 @@ export const fetchTopicList = (
   }
 };
 
-export const fetchTopicDetails = (
-  clusterName: ClusterName,
-  topicName: TopicName
-): PromiseThunk<void> => async (dispatch) => {
+export const fetchTopicDetails = (clusterName: ClusterName, topicName: TopicName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicDetailsAction.request());
   try {
     const topicDetails = await api.getTopicDetails(clusterName, topicName);
-    dispatch(
-      actions.fetchTopicDetailsAction.success({
-        topicName,
-        details: topicDetails,
-      })
-    );
+    dispatch(actions.fetchTopicDetailsAction.success({ topicName, details: topicDetails }));
   } catch (e) {
     dispatch(actions.fetchTopicDetailsAction.failure());
   }
 };
 
-export const fetchTopicConfig = (
-  clusterName: ClusterName,
-  topicName: TopicName
-): PromiseThunk<void> => async (dispatch) => {
+export const fetchTopicConfig = (clusterName: ClusterName, topicName: TopicName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicConfigAction.request());
   try {
     const config = await api.getTopicConfig(clusterName, topicName);
@@ -86,10 +69,7 @@ export const fetchTopicConfig = (
   }
 };
 
-export const createTopic = (
-  clusterName: ClusterName,
-  form: TopicFormData
-): PromiseThunk<void> => async (dispatch) => {
+export const createTopic = (clusterName: ClusterName, form: TopicFormData): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.createTopicAction.request());
   try {
     const topic: Topic = await api.postTopic(clusterName, form);
@@ -99,27 +79,22 @@ export const createTopic = (
   }
 };
 
-export const updateTopic = (
-  clusterName: ClusterName,
-  form: TopicFormData
-): PromiseThunk<void> => async (dispatch) => {
-  dispatch(actions.updateTopicAction.request());
-  try {
-    const topic: Topic = await api.patchTopic(clusterName, form);
-    dispatch(actions.updateTopicAction.success(topic));
-  } catch (e) {
-    dispatch(actions.updateTopicAction.failure());
-  }
-};
-
-export const fetchConsumerGroupsList = (
-  clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+export const fetchConsumerGroupsList = (clusterName: ClusterName): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchConsumerGroupsAction.request());
   try {
     const consumerGroups = await api.getConsumerGroups(clusterName);
     dispatch(actions.fetchConsumerGroupsAction.success(consumerGroups));
   } catch (e) {
     dispatch(actions.fetchConsumerGroupsAction.failure());
+  }
+};
+
+export const fetchConsumerGroupDetails = (clusterName: ClusterName, consumerGroupID: ConsumerGroupID): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchConsumerGroupDetailsAction.request());
+  try {
+    const consumerGroupDetails = await api.getConsumerGroupDetails(clusterName, consumerGroupID);
+    dispatch(actions.fetchConsumerGroupDetailsAction.success({ consumerGroupID, details: consumerGroupDetails }));
+  } catch (e) {
+    dispatch(actions.fetchConsumerGroupDetailsAction.failure());
   }
 };

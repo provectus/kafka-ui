@@ -4,11 +4,12 @@ const clusterPath = (clusterName: ClusterName) => `/ui/clusters/${clusterName}`;
 
 export const clusterBrokersPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/brokers`;
-
 export const clusterTopicsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics`;
 export const clusterTopicNewPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics/new`;
+export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/consumer-groups`;
 
 export const clusterTopicPath = (
   clusterName: ClusterName,
@@ -22,11 +23,3 @@ export const clusterTopicMessagesPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;
-
-export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/consumer-groups`;
-
-export const clusterTopicsTopicEditPath = (
-  clusterName: ClusterName,
-  topicName: TopicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;

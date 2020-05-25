@@ -1,27 +1,14 @@
+import { reduce } from 'lodash';
 import {
-  TopicName,
-  Topic,
   ClusterName,
-  TopicDetails,
+  Topic,
   TopicConfig,
-  TopicFormData,
+  TopicDetails,
   TopicFormCustomParam,
+  TopicFormData,
+  TopicName,
 } from 'redux/interfaces';
-import { BASE_URL, BASE_PARAMS } from 'lib/constants';
-
-const flattenCustomParams = (customParams: {
-  [key: string]: TopicFormCustomParam;
-}): FlattenedCustomParams => {
-  return Object.values(customParams || {}).reduce(
-    (result: FlattenedCustomParams, customParam: TopicFormCustomParam) => {
-      return {
-        ...result,
-        [customParam.name]: customParam.value,
-      };
-    },
-    {} as FlattenedCustomParams
-  );
-};
+import { BASE_PARAMS, BASE_URL } from 'lib/constants';
 
 export const getTopicConfig = (
   clusterName: ClusterName,
@@ -44,7 +31,7 @@ export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
     ...BASE_PARAMS,
   }).then((res) => res.json());
 
-interface FlattenedCustomParams {
+interface Result {
   [index: string]: string;
 }
 
@@ -63,6 +50,18 @@ export const postTopic = (
     minInSyncReplicas,
   } = form;
 
+  const customParams =
+    (form.customParams &&
+      reduce(
+        Object.values(form.customParams),
+        (result: Result, customParam: TopicFormCustomParam) => {
+          result[customParam.name] = customParam.value;
+          return result;
+        },
+        {}
+      )) ||
+    {};
+
   const body = JSON.stringify({
     name,
     partitions,
@@ -73,45 +72,13 @@ export const postTopic = (
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...flattenCustomParams(form.customParams),
+      ...customParams,
     },
   });
 
   return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
     ...BASE_PARAMS,
     method: 'POST',
-    body,
-  }).then((res) => res.json());
-};
-
-export const patchTopic = (
-  clusterName: ClusterName,
-  form: TopicFormData
-): Promise<Topic> => {
-  const {
-    name,
-    cleanupPolicy,
-    retentionBytes,
-    retentionMs,
-    maxMessageBytes,
-    minInSyncReplicas,
-    customParams,
-  } = form;
-
-  const body = JSON.stringify({
-    configs: {
-      'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs,
-      'retention.bytes': retentionBytes,
-      'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInSyncReplicas,
-      ...flattenCustomParams(customParams),
-    },
-  });
-
-  return fetch(`${BASE_URL}/clusters/${clusterName}/topics/${name}`, {
-    ...BASE_PARAMS,
-    method: 'PATCH',
     body,
   }).then((res) => res.json());
 };

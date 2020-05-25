@@ -7,12 +7,10 @@ import {
   clusterTopicSettingsPath,
   clusterTopicPath,
   clusterTopicMessagesPath,
-  clusterTopicsTopicEditPath,
 } from 'lib/paths';
 import OverviewContainer from './Overview/OverviewContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
-import SettingsEditButton from './Settings/SettingsEditButton';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -32,9 +30,6 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
             {topicName}
           </Breadcrumb>
         </div>
-        <SettingsEditButton
-          to={clusterTopicsTopicEditPath(clusterName, topicName)}
-        />
       </div>
 
       <div className="box">

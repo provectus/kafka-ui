@@ -18,8 +18,6 @@ const CustomParamSelect: React.FC<Props> = ({ isDisabled, index, name }) => {
     const values = getValues({ nest: true });
     const customParamsValues: TopicFormCustomParam = values.customParams;
 
-    console.log('customParamsValues', customParamsValues);
-
     let valid = true;
 
     for (const [key, customParam] of Object.entries(customParamsValues)) {

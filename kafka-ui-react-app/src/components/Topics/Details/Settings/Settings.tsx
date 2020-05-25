@@ -18,25 +18,33 @@ const ConfigListItem: React.FC<TopicConfig> = ({
 
   return (
     <tr>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{name}</td>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{value}</td>
-      <td className="has-text-grey" title="Default Value">
+      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>
+        {name}
+      </td>
+      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>
+        {value}
+      </td>
+      <td
+        className="has-text-grey"
+        title="Default Value"
+      >
         {hasCustomValue && defaultValue}
       </td>
     </tr>
-  );
+  )
 };
 
-const Settings: React.FC<Props> = ({
+const Sertings: React.FC<Props> = ({
   clusterName,
   topicName,
   isFetched,
   fetchTopicConfig,
   config,
 }) => {
-  React.useEffect(() => {
-    fetchTopicConfig(clusterName, topicName);
-  }, [fetchTopicConfig, clusterName, topicName]);
+  React.useEffect(
+    () => { fetchTopicConfig(clusterName, topicName); },
+    [fetchTopicConfig, clusterName, topicName],
+  );
 
   if (!isFetched || !config) {
     return null;
@@ -53,18 +61,11 @@ const Settings: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {config.map((item) => (
-            <ConfigListItem
-              key={`config-list-item-key-${item.name}`}
-              name={item.name}
-              value={item.value}
-              defaultValue={item.defaultValue}
-            />
-          ))}
+          {config.map((item, index) => <ConfigListItem key={`config-list-item-key-${index}`} {...item} />)}
         </tbody>
       </table>
     </div>
   );
 };
 
-export default Settings;
+export default Sertings;

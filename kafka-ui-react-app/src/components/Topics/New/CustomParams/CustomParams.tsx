@@ -1,7 +1,7 @@
 import React from 'react';
-import { omit, reject, reduce } from 'lodash';
+import { omit, reject } from 'lodash';
 
-import { TopicFormCustomParams, TopicConfigByName } from 'redux/interfaces';
+import { TopicFormCustomParams } from 'redux/interfaces';
 import CustomParamSelect from './CustomParamSelect';
 import CustomParamValue from './CustomParamValue';
 import CustomParamAction from './CustomParamAction';
@@ -11,40 +11,15 @@ export const INDEX_PREFIX = 'customParams';
 
 interface Props {
   isSubmitting: boolean;
-  config?: TopicConfigByName;
 }
 
-interface Param {
-  [index: string]: {
-    name: string;
-    value: string;
-  };
-}
-
-const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
-  /* eslint-disable no-param-reassign */
-  const byIndex = config
-    ? reduce(
-        config.byName,
-        (result: Param, param, paramName) => {
-          result[`${INDEX_PREFIX}.${new Date().getTime()}ts`] = {
-            name: paramName,
-            value: param.value,
-          };
-          return result;
-        },
-        {}
-      )
-    : {};
-
+const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   const [formCustomParams, setFormCustomParams] = React.useState<
     TopicFormCustomParams
   >({
-    byIndex,
-    allIndexes: Object.keys(byIndex),
+    byIndex: {},
+    allIndexes: [],
   });
-
-  console.log(byIndex);
 
   const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
@@ -81,7 +56,6 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
           />
         </div>
       </div>
-
       {formCustomParams.allIndexes.map((index) => (
         <div className="columns is-centered" key={index}>
           <div className="column">
