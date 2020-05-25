@@ -1,18 +1,18 @@
 package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.*;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ConsumerTopicPartitionDetail;
-import com.provectus.kafka.ui.model.ServerStatus;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.MemberDescription;
-import org.apache.kafka.clients.admin.TopicDescription;
+import com.provectus.kafka.ui.model.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.ConfigResource;
 import reactor.core.publisher.Mono;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,7 +21,10 @@ import java.util.stream.Stream;
 import static com.provectus.kafka.ui.kafka.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
+@Slf4j
 public class ClusterUtil {
+
+    private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     public static <T> Mono<T> toMono(KafkaFuture<T> future){
         return Mono.create(sink -> future.whenComplete((res, ex)->{
@@ -29,6 +32,16 @@ public class ClusterUtil {
                 sink.error(ex);
             } else {
                 sink.success(res);
+            }
+        }));
+    }
+
+    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName){
+        return Mono.create(sink -> future.whenComplete((res, ex)->{
+            if (ex!=null) {
+                sink.error(ex);
+            } else {
+                sink.success(topicName);
             }
         }));
     }
@@ -125,6 +138,51 @@ public class ClusterUtil {
 
     public static int convertToIntServerStatus(ServerStatus serverStatus) {
         return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
+    }
+
+    public static Mono<List<ExtendedAdminClient.SupportedFeatures>> getSupportedFeatures(AdminClient adminClient) {
+        List<ExtendedAdminClient.SupportedFeatures> supportedFeatures = new ArrayList<>();
+        return ClusterUtil.toMono(adminClient.describeCluster().controller())
+                .map(Node::id)
+                .map(id -> Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
+                .flatMap(brokerCR -> ClusterUtil.toMono(adminClient.describeConfigs(brokerCR).all())
+                        .map(s -> {
+                            supportedFeatures.add(getSupportedUpdateFeature(s));
+                            return supportedFeatures;
+                        }));
+    }
+
+    private static ExtendedAdminClient.SupportedFeatures getSupportedUpdateFeature(Map<ConfigResource, Config> configs) {
+        String version = configs.values().stream()
+                .map(en -> en.entries().stream()
+                        .filter(en1 -> en1.name().contains(CLUSTER_VERSION_PARAM_KEY))
+                        .findFirst().orElseThrow())
+                .findFirst().orElseThrow().value();
+        try {
+            return Float.parseFloat(version.split("-")[0]) <= 2.3f
+                    ? ExtendedAdminClient.SupportedFeatures.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS;
+        } catch (Exception e) {
+            log.error("Conversion clusterVersion {} to float value failed", version);
+            throw e;
+        }
+    }
+
+    public static Topic convertToTopic (InternalTopic internalTopic) {
+        Topic topic = new Topic();
+        topic.setName(internalTopic.getName());
+        List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
+            Partition partition = new Partition();
+            partition.setPartition(s.getPartition());
+            partition.setLeader(s.getLeader());
+            partition.setReplicas(s.getReplicas().stream().flatMap(r -> {
+                Replica replica = new Replica();
+                replica.setBroker(r.getBroker());
+                return Stream.of(replica);
+            }).collect(Collectors.toList()));
+            return Stream.of(partition);
+        }).collect(Collectors.toList());
+        topic.setPartitions(partitions);
+        return topic;
     }
 
 }
