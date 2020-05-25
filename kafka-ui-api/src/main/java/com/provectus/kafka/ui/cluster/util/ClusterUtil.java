@@ -9,7 +9,9 @@ import org.apache.kafka.common.KafkaFuture;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.provectus.kafka.ui.kafka.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
@@ -94,6 +96,11 @@ public class ClusterUtil {
         topic.underReplicatedPartitions(urpCount);
 
         return topic.build();
+    }
+
+    public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {
+        return streamOfMaps.reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
     }
 
 }
