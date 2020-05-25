@@ -136,10 +136,8 @@ public class KafkaService {
                                         Map<TopicPartition, Integer> result = new HashMap<>();
                                         result.put(new TopicPartition(t.name(), t1.partition()), t1.leader().id());
                                         return Stream.of(result);
-                                    }))
-                            .reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
-                                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
-                        leadersCache.put(adminClient, leadersMap);
+                                    }));
+                        leadersCache.put(adminClient, ClusterUtil.toSingleMap(leadersMap));
                         return topic;
                     })
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
