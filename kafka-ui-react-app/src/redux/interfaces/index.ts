@@ -8,7 +8,7 @@ import { TopicsState } from './topic';
 import { Cluster } from './cluster';
 import { BrokersState } from './broker';
 import { LoaderState } from './loader';
-import { ConsumerGroup } from './consumerGroup';
+import { ConsumerGroupsState } from './consumerGroup';
 
 export * from './topic';
 export * from './cluster';
@@ -27,7 +27,7 @@ export interface RootState {
   topics: TopicsState;
   clusters: Cluster[];
   brokers: BrokersState;
-  consumerGroups: ConsumerGroup[];
+  consumerGroups: ConsumerGroupsState;
   loader: LoaderState;
 }
 

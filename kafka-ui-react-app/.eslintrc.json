@@ -39,7 +39,9 @@
     "react/jsx-filename-extension": [
       1,
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
-    ]
+    ],
+    "jsx-a11y/label-has-associated-control": "off",
+    "no-param-reassign": [2, { "props": false }]
   },
   "overrides": [
     {
@@ -52,7 +54,8 @@
   "settings": {
     "import/resolver": {
       "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+        "extensions": [".js", ".jsx", ".ts", ".tsx"],
+        "paths": ["src"]
       }
     }
   }

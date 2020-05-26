@@ -1,6 +1,6 @@
 import { createAsyncAction } from 'typesafe-actions';
 import { ActionType } from 'redux/actionType';
-import { ConsumerGroup } from '../interfaces/consumerGroup';
+import { ConsumerGroup, ConsumerGroupID, ConsumerGroupDetails } from '../interfaces/consumerGroup';
 import {
   Broker,
   BrokerMetrics,
@@ -58,3 +58,9 @@ export const fetchConsumerGroupsAction = createAsyncAction(
   ActionType.GET_CONSUMER_GROUPS__SUCCESS,
   ActionType.GET_CONSUMER_GROUPS__FAILURE,
 )<undefined, ConsumerGroup[], undefined>();
+
+export const fetchConsumerGroupDetailsAction = createAsyncAction(
+  ActionType.GET_CONSUMER_GROUP_DETAILS__REQUEST,
+  ActionType.GET_CONSUMER_GROUP_DETAILS__SUCCESS,
+  ActionType.GET_CONSUMER_GROUP_DETAILS__FAILURE,
+)<undefined, { consumerGroupID: ConsumerGroupID, details: ConsumerGroupDetails }, undefined>();

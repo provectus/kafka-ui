@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.ValueMapping;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {

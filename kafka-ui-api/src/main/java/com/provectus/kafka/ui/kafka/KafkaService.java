@@ -74,12 +74,15 @@ public class KafkaService {
 
         InternalClusterMetrics clusterMetrics = metricsBuilder
                 .activeControllers(brokersMetrics.getActiveControllers())
+                .topicCount(topicsMetrics.getTopicCount())
                 .brokerCount(brokersMetrics.getBrokerCount())
                 .underReplicatedPartitionCount(topicsMetrics.getUnderReplicatedPartitionCount())
                 .inSyncReplicasCount(topicsMetrics.getInSyncReplicasCount())
                 .outOfSyncReplicasCount(topicsMetrics.getOutOfSyncReplicasCount())
                 .onlinePartitionCount(topicsMetrics.getOnlinePartitionCount())
-                .offlinePartitionCount(topicsMetrics.getOfflinePartitionCount()).build();
+                .offlinePartitionCount(topicsMetrics.getOfflinePartitionCount())
+                .zooKeeperStatus(ClusterUtil.convertToIntServerStatus(zookeeperStatus))
+                .build();
 
         return currentCluster.toBuilder()
                 .status(ServerStatus.ONLINE)
@@ -113,6 +116,7 @@ public class KafkaService {
                 .outOfSyncReplicasCount(outOfSyncReplicasCount)
                 .onlinePartitionCount(onlinePartitionCount)
                 .offlinePartitionCount(offlinePartitionCount)
+                .topicCount(topics.size())
                 .build();
     }
 

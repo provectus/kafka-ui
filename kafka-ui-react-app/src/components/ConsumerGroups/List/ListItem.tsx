@@ -1,24 +1,23 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { ConsumerGroup } from 'redux/interfaces';
 
-const ListItem: React.FC<ConsumerGroup> = ({
-  consumerGroupId,
-  numConsumers,
-  numTopics,
+const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
+  consumerGroup,
 }) => {
+  const history = useHistory();
+
+  function goToConsumerGroupDetails() {
+    history.push(`consumer-groups/${consumerGroup.consumerGroupId}`);
+  }
+
   return (
-    <tr>
-      {/* <td>
-        <NavLink exact to={`consumer-groups/${consumerGroupId}`} activeClassName="is-active" className="title is-6">
-          {consumerGroupId}
-        </NavLink>
-      </td> */}
-      <td>{consumerGroupId}</td>
-      <td>{numConsumers}</td>
-      <td>{numTopics}</td>
+    <tr className="cursor-pointer" onClick={goToConsumerGroupDetails}>
+      <td>{consumerGroup.consumerGroupId}</td>
+      <td>{consumerGroup.numConsumers}</td>
+      <td>{consumerGroup.numTopics}</td>
     </tr>
   );
-}
+};
 
 export default ListItem;

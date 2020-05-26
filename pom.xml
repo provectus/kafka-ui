@@ -27,6 +27,7 @@
 		<openapi-generator-maven-plugin.version>4.2.2</openapi-generator-maven-plugin.version>
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
 		<springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
+		<kafka.version>2.4.1</kafka.version>
 	</properties>
 
 	<groupId>com.provectus</groupId>

@@ -2,7 +2,8 @@ import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import { Switch, Route } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import ListContainer from './List/ListContainer';
+import DetailsContainer from 'components/ConsumerGroups/Details/DetailsContainer';
+import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -26,6 +27,10 @@ const ConsumerGroups: React.FC<Props> = ({
           exact
           path="/ui/clusters/:clusterName/consumer-groups"
           component={ListContainer}
+        />
+        <Route
+          path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
+          component={DetailsContainer}
         />
       </Switch>
     );

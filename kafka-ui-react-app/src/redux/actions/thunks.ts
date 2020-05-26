@@ -1,5 +1,6 @@
 import * as api from 'redux/api';
 import * as actions from './actions';
+import { ConsumerGroupID } from '../interfaces/consumerGroup';
 import {
   PromiseThunk,
   Cluster,
@@ -85,5 +86,15 @@ export const fetchConsumerGroupsList = (clusterName: ClusterName): PromiseThunk<
     dispatch(actions.fetchConsumerGroupsAction.success(consumerGroups));
   } catch (e) {
     dispatch(actions.fetchConsumerGroupsAction.failure());
+  }
+};
+
+export const fetchConsumerGroupDetails = (clusterName: ClusterName, consumerGroupID: ConsumerGroupID): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchConsumerGroupDetailsAction.request());
+  try {
+    const consumerGroupDetails = await api.getConsumerGroupDetails(clusterName, consumerGroupID);
+    dispatch(actions.fetchConsumerGroupDetailsAction.success({ consumerGroupID, details: consumerGroupDetails }));
+  } catch (e) {
+    dispatch(actions.fetchConsumerGroupDetailsAction.failure());
   }
 };
