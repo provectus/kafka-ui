@@ -39,7 +39,7 @@ public class KafkaService {
     private static final ListTopicsOptions LIST_TOPICS_OPTIONS = new ListTopicsOptions().listInternal(true);
 
     private final ZookeeperService zookeeperService;
-    private final Map<String, Mono<ExtendedAdminClient>> adminClientCache = new ConcurrentHashMap<>();
+    private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
@@ -183,10 +183,9 @@ public class KafkaService {
 
 
     public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
-        return adminClientCache.computeIfAbsent(
-                cluster.getName(),
-                (id) -> createAdminClient(cluster)
-        ).flatMap(this::isAdminClientConnected);
+        return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
+                .switchIfEmpty(createAdminClient(cluster))
+                .map(e -> adminClientCache.computeIfAbsent(cluster.getName(), key -> e));
     }
 
     public Mono<ExtendedAdminClient> createAdminClient(KafkaCluster kafkaCluster) {
@@ -195,10 +194,6 @@ public class KafkaService {
         properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
         AdminClient adminClient = AdminClient.create(properties);
         return ExtendedAdminClient.extendedAdminClient(adminClient);
-    }
-
-    private Mono<ExtendedAdminClient> isAdminClientConnected(ExtendedAdminClient adminClient) {
-        return getClusterId(adminClient.getAdminClient()).map( r -> adminClient);
     }
 
 
@@ -250,7 +245,7 @@ public class KafkaService {
         ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
         return getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
-                    if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS)) {
+                    if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
                         return incrementalAlterConfig(topicFormData, topicCR, ac)
                                 .flatMap(c -> getUpdatedTopic(ac, topicName));
                     } else {

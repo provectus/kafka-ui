@@ -6,16 +6,16 @@ import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.admin.AdminClient;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @RequiredArgsConstructor
 public class ExtendedAdminClient {
 
     private final AdminClient adminClient;
-    private final List<SupportedFeatures> supportedFeatures;
+    private final Set<SupportedFeature> supportedFeatures;
 
-    public enum SupportedFeatures {
+    public enum SupportedFeature {
         INCREMENTAL_ALTER_CONFIGS,
         ALTER_CONFIGS
     }

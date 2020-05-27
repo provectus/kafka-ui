@@ -11,10 +11,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import reactor.core.publisher.Mono;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -140,27 +137,25 @@ public class ClusterUtil {
         return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
     }
 
-    public static Mono<List<ExtendedAdminClient.SupportedFeatures>> getSupportedFeatures(AdminClient adminClient) {
-        List<ExtendedAdminClient.SupportedFeatures> supportedFeatures = new ArrayList<>();
+    public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(AdminClient adminClient) {
         return ClusterUtil.toMono(adminClient.describeCluster().controller())
                 .map(Node::id)
                 .map(id -> Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
-                .flatMap(brokerCR -> ClusterUtil.toMono(adminClient.describeConfigs(brokerCR).all())
-                        .map(s -> {
-                            supportedFeatures.add(getSupportedUpdateFeature(s));
-                            return supportedFeatures;
-                        }));
+                .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
+                .flatMap(ClusterUtil::toMono)
+                .map(ClusterUtil::getSupportedUpdateFeature)
+                .map(Collections::singleton);
     }
 
-    private static ExtendedAdminClient.SupportedFeatures getSupportedUpdateFeature(Map<ConfigResource, Config> configs) {
+    private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(Map<ConfigResource, Config> configs) {
         String version = configs.values().stream()
-                .map(en -> en.entries().stream()
-                        .filter(en1 -> en1.name().contains(CLUSTER_VERSION_PARAM_KEY))
-                        .findFirst().orElseThrow())
+                .map(Config::entries)
+                .flatMap(Collection::stream)
+                .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
                 .findFirst().orElseThrow().value();
         try {
             return Float.parseFloat(version.split("-")[0]) <= 2.3f
-                    ? ExtendedAdminClient.SupportedFeatures.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeatures.INCREMENTAL_ALTER_CONFIGS;
+                    ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
         } catch (Exception e) {
             log.error("Conversion clusterVersion {} to float value failed", version);
             throw e;
