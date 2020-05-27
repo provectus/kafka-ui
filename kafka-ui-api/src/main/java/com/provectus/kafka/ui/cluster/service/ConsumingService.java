@@ -5,14 +5,17 @@ import lombok.extern.log4j.Log4j2;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 
+import com.provectus.kafka.ui.cluster.model.InternalTopic;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.kafka.KafkaService;
@@ -50,11 +53,11 @@ public class ConsumingService {
 		private final KafkaCluster cluster;
 		private final String topic;
 
-		public void emit(FluxSink<ConsumerRecord<String, String>> sink) {
-			try (KafkaConsumer<String, String> consumer = kafkaService.createConsumer(cluster)) {
+		public void emit(FluxSink<ConsumerRecord<Bytes, Bytes>> sink) {
+			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
 				assignPartitions(consumer, topic);
 				while (!sink.isCancelled()) {
-					ConsumerRecords<String, String> records = consumer.poll(POLL_TIMEOUT_MS);
+					ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
 					log.info("{} records polled", records.count());
 					records.iterator()
 							.forEachRemaining(sink::next);
@@ -65,9 +68,11 @@ public class ConsumingService {
 			}
 		}
 
-		private void assignPartitions(KafkaConsumer<String, String> consumer, String topic) {
-			List<TopicPartition> partitions = consumer.partitionsFor(topic).stream()
-					.map(partitionInfo -> new TopicPartition(topic, partitionInfo.partition()))
+		private void assignPartitions(KafkaConsumer<Bytes, Bytes> consumer, String topicName) {
+			List<TopicPartition> partitions =  Optional.ofNullable(cluster.getTopics().get(topicName))
+					.orElseThrow(() -> new IllegalArgumentException("Unknown topic: " + topicName))
+					.getPartitions().stream()
+					.map(partitionInfo -> new TopicPartition(topicName, partitionInfo.getPartition()))
 					.collect(Collectors.toList());
 
 			consumer.assign(partitions);

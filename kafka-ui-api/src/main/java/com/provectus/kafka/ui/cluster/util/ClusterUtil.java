@@ -15,6 +15,7 @@ import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.record.TimestampType;
+import org.apache.kafka.common.utils.Bytes;
 
 import reactor.core.publisher.Mono;
 
@@ -138,15 +139,12 @@ public class ClusterUtil {
         return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
     }
 
-    public static TopicMessage mapToTopicMessage(ConsumerRecord<String, String> consumerRecord) {
+    public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord) {
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(consumerRecord.timestamp()), UTC_ZONE_ID);
         TopicMessage.TimestampTypeEnum timestampType = mapToTimestampType(consumerRecord.timestampType());
         Map<String, String> headers = new HashMap<>();
         consumerRecord.headers().iterator()
-                .forEachRemaining(header -> {
-                    headers.put(header.key(), new String(header.value()));
-                });
-
+                .forEachRemaining(header -> headers.put(header.key(), new String(header.value())));
 
         TopicMessage topicMessage = new TopicMessage();
 
@@ -154,9 +152,11 @@ public class ClusterUtil {
         topicMessage.setOffset(consumerRecord.offset());
         topicMessage.setTimestamp(timestamp);
         topicMessage.setTimestampType(timestampType);
-        topicMessage.setKey(consumerRecord.key());
+        if (consumerRecord.key() != null) {
+            topicMessage.setKey(consumerRecord.key().toString());
+        }
         topicMessage.setHeaders(headers);
-        topicMessage.setContent(consumerRecord.value());
+        topicMessage.setContent(consumerRecord.value().toString());
 
         return topicMessage;
     }
