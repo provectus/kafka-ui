@@ -15,7 +15,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -81,7 +80,7 @@ public class ClusterService {
         var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
 
         return kafkaService.getOrCreateAdminClient(cluster).map(ac ->
-                                ac.describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
+                                ac.getAdminClient().describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
             ).flatMap(groups ->
                 groupMetadata(cluster, consumerGroupId)
                     .flatMap(offsets -> {
@@ -98,7 +97,7 @@ public class ClusterService {
     public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster, String consumerGroupId) {
         return
                 kafkaService.getOrCreateAdminClient(cluster)
-                        .map(ac -> ac.listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
+                        .map(ac -> ac.getAdminClient().listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
                         .flatMap(ClusterUtil::toMono);
     }
 
@@ -119,26 +118,35 @@ public class ClusterService {
             return clustersStorage.getClusterByName(clusterName)
                     .map(kafkaService::getConsumerGroups)
                     .orElse(Mono.empty());
-
-//        var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
-//            return kafkaService.getOrCreateAdminClient(cluster).map(ac -> ac.listConsumerGroups().all())
-//                    .flatMap(s ->
-//                            kafkaService.getOrCreateAdminClient(cluster).flatMap(ac ->
-//                                ClusterUtil.toMono(s).map(s1 -> s1.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).map(ac::describeConsumerGroups)
-//                    ))
-//                    .flatMap(s -> ClusterUtil.toMono(s.all()).map(details -> details.values().stream()
-//                            .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList())));
     }
 
     public Flux<Broker> getBrokers (String clusterName) {
         return kafkaService.getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
-                .flatMap(client -> ClusterUtil.toMono(client.describeCluster().nodes())
+                .flatMap(client -> ClusterUtil.toMono(client.getAdminClient().describeCluster().nodes())
                     .map(n -> n.stream().map(node -> {
                         Broker broker = new Broker();
                         broker.setId(node.idString());
                         return broker;
                     }).collect(Collectors.toList())))
                 .flatMapMany(Flux::fromIterable);
+    }
+
+    @SneakyThrows
+    public Mono<Topic> updateTopic(String clusterName, String topicName, Mono<TopicFormData> topicFormData) {
+        return clustersStorage.getClusterByName(clusterName).map(cl ->
+                topicFormData
+                        .flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
+                        .flatMap(t -> updateCluster(t, clusterName, cl))
+        )
+                .orElse(Mono.empty());
+    }
+
+    private <T> Mono<T> updateCluster(T topic, String clusterName, KafkaCluster cluster) {
+        return kafkaService.getUpdatedCluster(cluster)
+                .map(c -> {
+                    clustersStorage.setKafkaCluster(clusterName, c);
+                    return topic;
+                });
     }
 
     public Flux<TopicMessage> getMessages(String clusterName, String topicName, Integer partition, Long offset, OffsetDateTime timestamp) {

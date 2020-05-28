@@ -141,6 +141,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
+    patch:
+      tags:
+        - /api/clusters
+      summary: updateTopic
+      operationId: updateTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TopicFormData'
+      responses:
+        200:
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
 
   /api/clusters/{clusterName}/topics/{topicName}/config:
     get:
@@ -210,12 +238,37 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicMessage'
 
+  /api/clusters/{clusterName}/consumer-groups/{id}:
+    get:
+      tags:
+        - /api/clusters
+      summary: get Consumer Group By Id
+      operationId: getConsumerGroup
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerGroupDetails'
+
   /api/clusters/{clusterName}/consumerGroups:
     get:
       tags:
         - /api/clusters
-      summary: getConsumerGroup
-      operationId: getConsumerGroup
+      summary: get all ConsumerGroups
+      operationId: getConsumerGroups
       parameters:
         - name: clusterName
           in: path
@@ -409,3 +462,40 @@ components:
         - partition
         - offset
         - timestamp
+
+    TopicPartitionDto:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+      required:
+        - topic
+        - partition
+
+    ConsumerTopicPartitionDetail:
+      type: object
+      properties:
+        consumerId:
+          type: string
+        topic:
+          type: string
+        partition:
+          type: integer
+        currentOffset:
+          type: long
+        endOffset:
+          type: long
+        messagesBehind:
+          type: long
+
+    ConsumerGroupDetails:
+      type: object
+      properties:
+        consumerGroupId:
+          type: string
+        consumers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'

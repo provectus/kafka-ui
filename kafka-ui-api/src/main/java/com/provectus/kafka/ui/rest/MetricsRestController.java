@@ -11,9 +11,8 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.OffsetDateTime;
-
 import javax.validation.Valid;
+import java.time.OffsetDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -89,5 +88,10 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroup(String clusterName, String consumerGroupId, ServerWebExchange exchange) {
         return clusterService.getConsumerGroupDetail(clusterName, consumerGroupId).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
+        return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
     }
 }

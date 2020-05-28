@@ -8,3 +8,6 @@ kafka:
       name: secondLocal
       zookeeper: zookeeper1:2181
       bootstrapServers: kafka1:29092
+  admin-client-timeout: 5000
+zookeeper:
+  connection-timeout: 1000

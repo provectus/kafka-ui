@@ -1,19 +1,17 @@
 package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.*;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ConsumerTopicPartitionDetail;
-import com.provectus.kafka.ui.model.ServerStatus;
+import com.provectus.kafka.ui.model.*;
+import lombok.extern.slf4j.Slf4j;
 import com.provectus.kafka.ui.model.TopicMessage;
 
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.MemberDescription;
-import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaFuture;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 
@@ -23,15 +21,17 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.provectus.kafka.ui.kafka.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
+@Slf4j
 public class ClusterUtil {
+
+    private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
@@ -41,6 +41,16 @@ public class ClusterUtil {
                 sink.error(ex);
             } else {
                 sink.success(res);
+            }
+        }));
+    }
+
+    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName){
+        return Mono.create(sink -> future.whenComplete((res, ex)->{
+            if (ex!=null) {
+                sink.error(ex);
+            } else {
+                sink.success(topicName);
             }
         }));
     }
@@ -173,6 +183,49 @@ public class ClusterUtil {
                 throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
         }
     }
+    public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(AdminClient adminClient) {
+        return ClusterUtil.toMono(adminClient.describeCluster().controller())
+                .map(Node::id)
+                .map(id -> Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
+                .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
+                .flatMap(ClusterUtil::toMono)
+                .map(ClusterUtil::getSupportedUpdateFeature)
+                .map(Collections::singleton);
+    }
+
+    private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(Map<ConfigResource, Config> configs) {
+        String version = configs.values().stream()
+                .map(Config::entries)
+                .flatMap(Collection::stream)
+                .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
+                .findFirst().orElseThrow().value();
+        try {
+            return Float.parseFloat(version.split("-")[0]) <= 2.3f
+                    ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+        } catch (Exception e) {
+            log.error("Conversion clusterVersion {} to float value failed", version);
+            throw e;
+        }
+    }
+
+    public static Topic convertToTopic (InternalTopic internalTopic) {
+        Topic topic = new Topic();
+        topic.setName(internalTopic.getName());
+        List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
+            Partition partition = new Partition();
+            partition.setPartition(s.getPartition());
+            partition.setLeader(s.getLeader());
+            partition.setReplicas(s.getReplicas().stream().flatMap(r -> {
+                Replica replica = new Replica();
+                replica.setBroker(r.getBroker());
+                return Stream.of(replica);
+            }).collect(Collectors.toList()));
+            return Stream.of(partition);
+        }).collect(Collectors.toList());
+        topic.setPartitions(partitions);
+        return topic;
+    }
+
     public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {
         return streamOfMaps.reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
