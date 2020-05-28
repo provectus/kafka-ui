@@ -53,7 +53,7 @@ public class KafkaService {
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
                                         .map( configs -> mergeWithConfigs(topics, configs))
-                                    .flatMap(it -> updateSegmentMetrics(ac, clusterMetrics, it))
+                                    .flatMap(it -> updateSegmentMetrics(ac.getAdminClient(), clusterMetrics, it))
                             ).map( segmentSizeDto -> buildFromData(cluster, segmentSizeDto))
                         )
         ).onErrorResume(
