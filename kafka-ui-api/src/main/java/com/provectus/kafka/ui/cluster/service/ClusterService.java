@@ -8,6 +8,8 @@ import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+
+import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +31,7 @@ public class ClusterService {
     private final ClustersStorage clustersStorage;
     private final ClusterMapper clusterMapper;
     private final KafkaService kafkaService;
+    private final ConsumingService consumingService;
 
     public List<Cluster> getClusters() {
         return clustersStorage.getKafkaClusters()
@@ -52,15 +56,17 @@ public class ClusterService {
     }
 
     public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
-        return clustersStorage.getClusterByName(name).flatMap(
-                c -> Optional.ofNullable(c.getTopics().get(topicName))
-        ).map(clusterMapper::toTopicDetails);
+        return clustersStorage.getClusterByName(name)
+                .map(KafkaCluster::getTopics)
+                .map(t -> t.get(topicName))
+                .map(clusterMapper::toTopicDetails);
     }
 
     public Optional<List<TopicConfig>> getTopicConfigs(String name, String topicName) {
-        return clustersStorage.getClusterByName(name).flatMap(
-                c -> Optional.ofNullable(c.getTopics().get(topicName))
-        ).map( t -> t.getTopicConfigs().stream().map(clusterMapper::toTopicConfig).collect(Collectors.toList()));
+        return clustersStorage.getClusterByName(name)
+                .map(KafkaCluster::getTopics)
+                .map(t -> t.get(topicName))
+                .map(t -> t.getTopicConfigs().stream().map(clusterMapper::toTopicConfig).collect(Collectors.toList()));
     }
 
     public Mono<Topic> createTopic(String name, Mono<TopicFormData> topicFormData) {
@@ -141,5 +147,12 @@ public class ClusterService {
                     clustersStorage.setKafkaCluster(clusterName, c);
                     return topic;
                 });
+    }
+
+    public Flux<TopicMessage> getMessages(String clusterName, String topicName, Integer partition, Long offset, OffsetDateTime timestamp) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(c -> consumingService.loadMessages(c, topicName))
+                .orElse(Flux.empty());
+
     }
 }
