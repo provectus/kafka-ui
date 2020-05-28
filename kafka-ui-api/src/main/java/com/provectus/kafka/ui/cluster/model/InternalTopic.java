@@ -2,8 +2,10 @@ package com.provectus.kafka.ui.cluster.model;
 
 import lombok.Builder;
 import lombok.Data;
+import org.apache.kafka.common.TopicPartition;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder(toBuilder = true)
@@ -20,6 +22,7 @@ public class InternalTopic {
     private final int replicationFactor;
     private final int underReplicatedPartitions;
     //TODO: find way to fill
-    private final int segmentSize;
+    private final long segmentSize;
     private final int segmentCount;
+    private final Map<TopicPartition, Long> partitionSegmentSize;
 }

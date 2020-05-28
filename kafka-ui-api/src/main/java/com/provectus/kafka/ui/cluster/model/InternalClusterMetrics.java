@@ -1,8 +1,9 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.ServerStatus;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.Map;
 
 
 @Data
@@ -20,8 +21,9 @@ public class InternalClusterMetrics {
     //TODO: find way to fill
     private final int bytesInPerSec;
     private final int bytesOutPerSec;
-    //TODO: find way to fill
-    private final int segmentSize;
     private final int segmentCount;
+    //TODO: find way to fill
+    private final long segmentSize;
+    private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
     private final int zooKeeperStatus;
 }

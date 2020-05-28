@@ -5,10 +5,10 @@ services:
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.1.0
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: 2183
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-     - 2181:2181
+     - 2183:2183
 
   kafka0:
     image: confluentinc/cp-kafka:5.1.0
@@ -19,11 +19,28 @@ services:
       - 9997:9997
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29091,PLAINTEXT_HOST://localhost:9091,PLAIN://kafka0:29090
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2183
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka0:9092,PLAINTEXT_HOST://localhost:29091 #,PLAIN://kafka0:29090
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT #,PLAIN:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      JMX_PORT: 9997
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9997
+
+  kafka01:
+    image: confluentinc/cp-kafka:5.1.0
+    depends_on:
+      - zookeeper0
+    ports:
+      - 29093:29093
+      - 9999:9999
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2183
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka01:9092,PLAINTEXT_HOST://localhost:29093,PLAIN://kafka0:29090
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAIN:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       JMX_PORT: 9997
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9997
 
@@ -32,9 +49,9 @@ services:
     depends_on:
       - kafka0
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
-                cub kafka-ready -b kafka0:29090 1 20 && \
-                kafka-topics --create --topic users --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181 && \
-                kafka-topics --create --topic messages --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181'"
+                cub kafka-ready -b kafka0:9092 1 20 && \
+                kafka-topics --create --topic users --partitions 2 --replication-factor 2 --if-not-exists --zookeeper zookeeper0:2183 && \
+                kafka-topics --create --topic messages --partitions 3 --replication-factor 2 --if-not-exists --zookeeper zookeeper0:2183'"
     environment:
       KAFKA_BROKER_ID: ignored
       KAFKA_ZOOKEEPER_CONNECT: ignored
@@ -44,10 +61,10 @@ services:
   zookeeper1:
     image: confluentinc/cp-zookeeper:5.1.0
     environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_CLIENT_PORT: 2182
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 2182:2181
+      - 2182:2182
 
   kafka1:
     image: confluentinc/cp-kafka:5.1.0
@@ -58,24 +75,24 @@ services:
       - 9998:9998
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:29092,PLAINTEXT_HOST://localhost:9092,PLAIN://kafka1:29090
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2182
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092,PLAIN://localhost:29090
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAIN:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       JMX_PORT: 9998
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9998
 
   kafka-init-topics1:
     image: confluentinc/cp-kafka:5.1.0
     depends_on:
-      - kafka1
+     - kafka1
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
-                cub kafka-ready -b kafka1:29090 1 20 && \
-                kafka-topics --create --topic users --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
-                kafka-topics --create --topic messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181'"
+               cub kafka-ready -b kafka1:9092 20 && \
+               kafka-topics --create --topic secondUsers --partitions 3 --replication-factor 2 --if-not-exists --zookeeper zookeeper1:2182 && \
+               kafka-topics --create --topic secondMessages --partitions 2 --replication-factor 2 --if-not-exists --zookeeper zookeeper1:2182'"
     environment:
-      KAFKA_BROKER_ID: ignored
-      KAFKA_ZOOKEEPER_CONNECT: ignored
+     KAFKA_BROKER_ID: ignored
+     KAFKA_ZOOKEEPER_CONNECT: ignored
     networks:
-      - default
+     - default

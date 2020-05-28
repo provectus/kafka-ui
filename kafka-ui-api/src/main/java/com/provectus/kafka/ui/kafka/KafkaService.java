@@ -15,6 +15,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.beans.factory.annotation.Value;
 import org.apache.kafka.common.serialization.BytesDeserializer;
@@ -24,10 +25,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,15 +42,19 @@ public class KafkaService {
 
     private final ZookeeperService zookeeperService;
     private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
+    private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
         return getOrCreateAdminClient(cluster).flatMap(
-                ac -> getClusterMetrics(ac.getAdminClient()).flatMap( clusterMetrics ->
+                ac -> getClusterMetrics(ac.getAdminClient())
+
+                        .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
-                                        .map( configs -> mergeWithConfigs(topics, configs) )
-                            ).map( topics -> buildFromData(cluster, clusterMetrics, topics))
+                                        .map( configs -> mergeWithConfigs(topics, configs))
+                                    .flatMap(it -> updateSegmentMetrics(ac, clusterMetrics, it))
+                            ).map( segmentSizeDto -> buildFromData(cluster, segmentSizeDto))
                         )
         ).onErrorResume(
                 e -> Mono.just(cluster.toBuilder()
@@ -62,7 +64,10 @@ public class KafkaService {
         );
     }
 
-    private KafkaCluster buildFromData(KafkaCluster currentCluster, InternalClusterMetrics brokersMetrics, Map<String, InternalTopic> topics) {
+    private KafkaCluster buildFromData(KafkaCluster currentCluster, InternalSegmentSizeDto segmentSizeDto) {
+
+        var topics = segmentSizeDto.getInternalTopicWithSegmentSize();
+        var brokersMetrics = segmentSizeDto.getClusterMetricsWithSegmentSize();
 
         InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = brokersMetrics.toBuilder();
 
@@ -137,6 +142,17 @@ public class KafkaService {
     private Mono<List<InternalTopic>> getTopicsData(AdminClient adminClient) {
         return ClusterUtil.toMono(adminClient.listTopics(LIST_TOPICS_OPTIONS).names())
                     .flatMap(topics -> ClusterUtil.toMono(adminClient.describeTopics(topics).all()))
+                    .map(topic -> {
+                        var leadersMap = topic.values().stream()
+                            .flatMap(t -> t.partitions().stream()
+                                    .flatMap(t1 -> {
+                                        Map<TopicPartition, Integer> result = new HashMap<>();
+                                        result.put(new TopicPartition(t.name(), t1.partition()), t1.leader().id());
+                                        return Stream.of(result);
+                                    }));
+                        leadersCache.put(adminClient, ClusterUtil.toSingleMap(leadersMap));
+                        return topic;
+                    })
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
@@ -145,11 +161,13 @@ public class KafkaService {
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
                         c -> {
-                            InternalClusterMetrics.InternalClusterMetricsBuilder builder = InternalClusterMetrics.builder();
-                            builder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
+                            InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
+                            metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
                             // TODO: fill bytes in/out metrics
-                            List<Integer> brokerIds = brokers.stream().map(Node::id).collect(Collectors.toList());
-                            return builder.build();
+                            metricsBuilder
+                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))));
+
+                            return metricsBuilder.build();
                         }
                     )
                 );
@@ -291,5 +309,46 @@ public class KafkaService {
         Map<ConfigResource, Config> map = Collections.singletonMap(topicCR, config);
         return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all(), topicCR.name());
 
+    }
+
+    private Mono<InternalSegmentSizeDto> updateSegmentMetrics(AdminClient ac, InternalClusterMetrics clusterMetrics, Map<String, InternalTopic> internalTopic) {
+        return ClusterUtil.toMono(ac.describeTopics(internalTopic.keySet()).all()).flatMap(topic ->
+            ClusterUtil.toMono(ac.describeLogDirs(clusterMetrics.getInternalBrokerMetrics().keySet()).all())
+                .map(log -> {
+                    var partitionSegmentSizeStream = leadersCache.get(ac).entrySet().stream()
+                            .flatMap(l -> {
+                                Map<TopicPartition, Long> result = new HashMap<>();
+                                result.put(l.getKey(), log.get(l.getValue()).values().stream().mapToLong(e -> e.replicaInfos.get(l.getKey()).size).sum());
+                                return Stream.of(result);
+                            });
+                    var partitionSegmentSize = ClusterUtil.toSingleMap(partitionSegmentSizeStream);
+
+                    var resultTopicMetricsStream = internalTopic.keySet().stream().flatMap(k -> {
+                        Map<String, InternalTopic> result = new HashMap<>();
+                        result.put(k, internalTopic.get(k).toBuilder()
+                                .segmentSize(partitionSegmentSize.entrySet().stream().filter(e -> e.getKey().topic().equals(k)).mapToLong(Map.Entry::getValue).sum())
+                                .partitionSegmentSize(partitionSegmentSize.entrySet().stream().filter(e -> e.getKey().topic().equals(k)).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).build());
+                        return Stream.of(result);
+                    });
+
+                    var resultBrokerMetricsStream = clusterMetrics.getInternalBrokerMetrics().entrySet().stream().map(
+                            e -> {
+                                var brokerSegmentSize = log.get(e.getKey()).values().stream()
+                                        .mapToLong(v -> v.replicaInfos.values().stream()
+                                                .mapToLong(r -> r.size).sum()).sum();
+                                InternalBrokerMetrics tempBrokerMetrics = InternalBrokerMetrics.builder().segmentSize(brokerSegmentSize).build();
+                                return Collections.singletonMap(e.getKey(), tempBrokerMetrics);
+                            });
+
+                    var resultClusterMetrics = clusterMetrics.toBuilder()
+                            .internalBrokerMetrics(ClusterUtil.toSingleMap(resultBrokerMetricsStream))
+                            .segmentSize(partitionSegmentSize.values().stream().reduce(Long::sum).orElseThrow())
+                            .build();
+
+                    return InternalSegmentSizeDto.builder()
+                            .clusterMetricsWithSegmentSize(resultClusterMetrics)
+                            .internalTopicWithSegmentSize(ClusterUtil.toSingleMap(resultTopicMetricsStream)).build();
+                })
+            );
     }
 }
