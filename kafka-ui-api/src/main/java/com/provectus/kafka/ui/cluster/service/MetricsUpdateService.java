@@ -16,7 +16,7 @@ public class MetricsUpdateService {
     private final KafkaService kafkaService;
 
     public Mono<KafkaCluster> updateMetrics(KafkaCluster kafkaCluster) {
-        log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster);
+        log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster.getName());
         return kafkaService.getUpdatedCluster(kafkaCluster);
     }
 }

@@ -281,6 +281,8 @@ components:
           type: integer
         outOfSyncReplicasCount:
           type: integer
+        segmentZise:
+          type: integer
 
     Topic:
       type: object

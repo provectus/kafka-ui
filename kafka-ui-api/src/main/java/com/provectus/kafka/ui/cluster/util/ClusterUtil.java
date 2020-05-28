@@ -173,4 +173,9 @@ public class ClusterUtil {
                 throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
         }
     }
+    public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {
+        return streamOfMaps.reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
+    }
+
 }
