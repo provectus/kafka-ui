@@ -214,20 +214,18 @@ paths:
           required: true
           schema:
             type: string
-        - name: partition
+        - name: positionType
+          in: query
+          required: true
+          schema:
+            $ref: "#/components/schemas/PositionType"
+        - name: position
           in: query
           schema:
-            type: integer
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: timestamp
-          in: query
-          schema:
-            type: string
-            format: date-time
+            type: array
+            items:
+              type: string
+          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timstamp in millis] for specifying timestamps
       responses:
         200:
           description: OK
@@ -462,6 +460,13 @@ components:
         - partition
         - offset
         - timestamp
+
+    PositionType:
+      type: string
+      enum:
+        - LATEST
+        - OFFSET
+        - TIMESTAMP
 
     TopicPartitionDto:
       type: object

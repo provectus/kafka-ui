@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.rest;
 
 import com.provectus.kafka.ui.api.ApiClustersApi;
+import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
+import com.provectus.kafka.ui.cluster.model.PartitionPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +13,9 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import javax.validation.Valid;
-import java.time.OffsetDateTime;
+import javax.validation.constraints.NotNull;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,10 +62,9 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @Valid Integer partition, @Valid Long offset, @Valid OffsetDateTime timestamp, ServerWebExchange exchange) {
-        return Mono.just(
-                ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, partition, offset, timestamp))
-        );
+    public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @NotNull @Valid PositionType positionType, @Valid List<String> position, ServerWebExchange exchange) {
+        return parseConsumerPosition(positionType, position)
+                .map(consumerPosition -> ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, consumerPosition)));
     }
 
     @Override
@@ -93,5 +95,19 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
         return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
+    }
+    
+    private Mono<ConsumerPosition> parseConsumerPosition(PositionType positionType, List<String> positionParam) {
+        return Flux.fromIterable(positionParam)
+                .map(p -> {
+                    String[] splited = p.split("::");
+                    if (splited.length != 2) {
+                        throw new IllegalArgumentException("Wrong position argument format. See API docs for details");
+                    }
+
+                    return new PartitionPosition(Integer.parseInt(splited[0]), Long.parseLong(splited[1]));
+                })
+                .collectList()
+                .map(positions -> new ConsumerPosition(positionType, positions));
     }
 }
