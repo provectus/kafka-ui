@@ -214,18 +214,21 @@ paths:
           required: true
           schema:
             type: string
-        - name: positionType
+        - name: seekType
           in: query
-          required: true
           schema:
-            $ref: "#/components/schemas/PositionType"
-        - name: position
+            $ref: "#/components/schemas/SeekType"
+        - name: seekTo
           in: query
           schema:
             type: array
             items:
               type: string
           description: The format is [partition]::[offset] for specifying offsets or [partition]::[timstamp in millis] for specifying timestamps
+        - name: limit
+          in: query
+          schema:
+            type: integer
       responses:
         200:
           description: OK
@@ -461,10 +464,10 @@ components:
         - offset
         - timestamp
 
-    PositionType:
+    SeekType:
       type: string
       enum:
-        - LATEST
+        - BEGINNING
         - OFFSET
         - TIMESTAMP
 
