@@ -1,9 +1,12 @@
 package com.provectus.kafka.ui.rest;
 
 import com.provectus.kafka.ui.api.ApiClustersApi;
+import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,8 +14,11 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
+
 import javax.validation.Valid;
-import java.time.OffsetDateTime;
 
 @RestController
 @RequiredArgsConstructor
@@ -59,10 +65,9 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @Valid Integer partition, @Valid Long offset, @Valid OffsetDateTime timestamp, ServerWebExchange exchange) {
-        return Mono.just(
-                ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, partition, offset, timestamp))
-        );
+    public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo, @Valid Integer limit, ServerWebExchange exchange) {
+        return parseConsumerPosition(seekType, seekTo)
+                .map(consumerPosition -> ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, consumerPosition, limit)));
     }
 
     @Override
@@ -93,5 +98,21 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
         return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
+    }
+    
+    private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
+        return Mono.justOrEmpty(seekTo)
+                .defaultIfEmpty(Collections.emptyList())
+                .flatMapIterable(Function.identity())
+                .map(p -> {
+                    String[] splited = p.split("::");
+                    if (splited.length != 2) {
+                        throw new IllegalArgumentException("Wrong seekTo argument format. See API docs for details");
+                    }
+
+                    return Pair.of(Integer.parseInt(splited[0]), Long.parseLong(splited[1]));
+                })
+                .collectMap(Pair::getKey, Pair::getValue)
+                .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING, positions));
     }
 }

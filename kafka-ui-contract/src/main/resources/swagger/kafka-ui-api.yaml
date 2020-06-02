@@ -214,20 +214,21 @@ paths:
           required: true
           schema:
             type: string
-        - name: partition
+        - name: seekType
+          in: query
+          schema:
+            $ref: "#/components/schemas/SeekType"
+        - name: seekTo
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timstamp in millis] for specifying timestamps
+        - name: limit
           in: query
           schema:
             type: integer
-        - name: offset
-          in: query
-          schema:
-            type: integer
-            format: int64
-        - name: timestamp
-          in: query
-          schema:
-            type: string
-            format: date-time
       responses:
         200:
           description: OK
@@ -462,6 +463,13 @@ components:
         - partition
         - offset
         - timestamp
+
+    SeekType:
+      type: string
+      enum:
+        - BEGINNING
+        - OFFSET
+        - TIMESTAMP
 
     TopicPartitionDto:
       type: object
