@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
-import { CUSTOM_PARAMS_OPTIONS } from './customParamsOptions';
+import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
 interface Props {
   isDisabled: boolean;
@@ -28,7 +28,7 @@ const CustomParamValue: React.FC<Props> = ({
         true
       );
     }
-  }, [selectedParamName]);
+  }, [selectedParamName, setValue, valInputName]);
 
   return (
     <>

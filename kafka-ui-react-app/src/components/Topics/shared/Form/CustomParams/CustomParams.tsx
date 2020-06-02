@@ -22,7 +22,6 @@ interface Param {
 }
 
 const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
-  /* eslint-disable no-param-reassign */
   const byIndex = config
     ? reduce(
         config.byName,
@@ -43,8 +42,6 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
     byIndex,
     allIndexes: Object.keys(byIndex),
   });
-
-  console.log(byIndex);
 
   const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

@@ -1,10 +1,10 @@
 import { TopicCustomParamOption } from 'redux/interfaces';
 
-export interface CustomParamOption {
+interface CustomParamOption {
   [optionName: string]: TopicCustomParamOption;
 }
 
-export const CUSTOM_PARAMS_OPTIONS: CustomParamOption = {
+const CUSTOM_PARAMS_OPTIONS: CustomParamOption = {
   'compression.type': {
     name: 'compression.type',
     defaultValue: 'producer',
@@ -94,3 +94,5 @@ export const CUSTOM_PARAMS_OPTIONS: CustomParamOption = {
     defaultValue: '10485760',
   },
 };
+
+export default CUSTOM_PARAMS_OPTIONS;

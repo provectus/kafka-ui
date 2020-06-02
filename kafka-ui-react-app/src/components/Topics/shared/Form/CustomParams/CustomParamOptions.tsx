@@ -1,6 +1,6 @@
 import React from 'react';
 import { TopicCustomParamOption } from 'redux/interfaces';
-import { CUSTOM_PARAMS_OPTIONS } from './customParamsOptions';
+import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
 const CustomParamOptions = () => (
   <>

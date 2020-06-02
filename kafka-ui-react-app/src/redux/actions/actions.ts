@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { ActionType } from 'redux/actionType';
+import ActionType from 'redux/actionType';
 import {
   Broker,
   BrokerMetrics,

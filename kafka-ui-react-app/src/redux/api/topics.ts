@@ -15,7 +15,11 @@ interface TopicFormParams {
 
 const formatParams = (params: TopicFormData, omittedFields: string[] = []) => {
   return Object.keys(params).reduce((result, paramName) => {
-    if (omittedFields.includes(paramName)) {
+    if (
+      ['name', 'partitions', 'replicationFactor', ...omittedFields].includes(
+        paramName
+      )
+    ) {
       return result;
     }
     result[snakeCase(paramName).replace(/_/g, '.')] = params[
