@@ -30,7 +30,7 @@ interface Props {
 const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
-  minInsyncReplicas: 1,
+  minInSyncReplicas: 1,
   cleanupPolicy: CleanupPolicy.Delete,
   retentionBytes: -1,
   maxMessageBytes: 1000012,

@@ -89,7 +89,7 @@ const TopicForm: React.FC<Props> = ({
             placeholder="Min In Sync Replicas"
             defaultValue="1"
             ref={register({ required: 'Min In Sync Replicas is required.' })}
-            name="minInsyncReplicas"
+            name="minInSyncReplicas"
             disabled={isSubmitting}
           />
           <p className="help is-danger">

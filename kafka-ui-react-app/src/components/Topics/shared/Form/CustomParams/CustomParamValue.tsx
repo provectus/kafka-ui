@@ -1,5 +1,6 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
+import { camelCase } from 'lodash';
 import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
 interface Props {
@@ -21,7 +22,7 @@ const CustomParamValue: React.FC<Props> = ({
   const selectedParamName = watch(selectInputName, name);
 
   React.useEffect(() => {
-    if (selectedParamName) {
+    if (selectedParamName && !defaultValue) {
       setValue(
         valInputName,
         CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue,
@@ -39,7 +40,7 @@ const CustomParamValue: React.FC<Props> = ({
         ref={register({
           required: 'Value is required.',
         })}
-        name={name.replace(/\./g, '_')}
+        name={valInputName}
         defaultValue={defaultValue}
         autoComplete="off"
         disabled={isDisabled}

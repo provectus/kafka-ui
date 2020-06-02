@@ -69,14 +69,18 @@ export interface TopicsState {
   allNames: TopicName[];
 }
 
+export interface TopicFormFormattedParams {
+  [name: string]: string;
+}
+
 export interface TopicFormData {
   name: string;
   partitions: number;
   replicationFactor: number;
-  minInsyncReplicas: number;
+  minInSyncReplicas: number;
   cleanupPolicy: string;
   retentionMs: number;
   retentionBytes: number;
   maxMessageBytes: number;
-  [name: string]: string | number;
+  customParams: TopicFormCustomParams;
 }

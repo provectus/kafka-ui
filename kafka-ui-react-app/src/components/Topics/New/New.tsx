@@ -59,7 +59,6 @@ const New: React.FC<Props> = ({
         <FormContext {...methods}>
           <TopicForm
             isSubmitting={isSubmitting}
-            isEditing
             onSubmit={methods.handleSubmit(onSubmit)}
           />
         </FormContext>

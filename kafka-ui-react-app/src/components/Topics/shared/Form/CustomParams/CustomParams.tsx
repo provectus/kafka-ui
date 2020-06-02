@@ -2,10 +2,8 @@ import React from 'react';
 import { omit, reject, reduce, remove } from 'lodash';
 
 import { TopicFormCustomParams, TopicConfigByName } from 'redux/interfaces';
-import CustomParamSelect from './CustomParamSelect';
-import CustomParamValue from './CustomParamValue';
-import CustomParamAction from './CustomParamAction';
 import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
+import CustomParamField from './CustomParamField';
 
 export const INDEX_PREFIX = 'customParams';
 
@@ -89,30 +87,16 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
       </div>
 
       {formCustomParams.allIndexes.map((index) => (
-        <div className="columns is-centered" key={index}>
-          <div className="column">
-            <CustomParamSelect
-              index={index}
-              isDisabled={isSubmitting}
-              name={formCustomParams.byIndex[index].name}
-              existingFields={existingFields}
-              onNameChange={onFieldNameChange}
-            />
-          </div>
-
-          <div className="column">
-            <CustomParamValue
-              index={index}
-              isDisabled={isSubmitting}
-              name={formCustomParams.byIndex[index].name}
-              defaultValue={formCustomParams.byIndex[index].value}
-            />
-          </div>
-
-          <div className="column is-narrow">
-            <CustomParamAction index={index} onRemove={onRemove} />
-          </div>
-        </div>
+        <CustomParamField
+          key={index}
+          index={index}
+          isDisabled={isSubmitting}
+          name={formCustomParams.byIndex[index].name}
+          defaultValue={formCustomParams.byIndex[index].value}
+          existingFields={existingFields}
+          onNameChange={onFieldNameChange}
+          onRemove={onRemove}
+        />
       ))}
     </>
   );
