@@ -1,14 +1,29 @@
-import { reduce } from 'lodash';
 import {
-  ClusterName,
-  Topic,
-  TopicConfig,
-  TopicDetails,
-  TopicFormCustomParam,
-  TopicFormData,
   TopicName,
+  Topic,
+  ClusterName,
+  TopicDetails,
+  TopicConfig,
+  TopicFormData,
 } from 'redux/interfaces';
-import { BASE_PARAMS, BASE_URL } from 'lib/constants';
+import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+import { snakeCase } from 'lodash';
+
+interface TopicFormParams {
+  [name: string]: string;
+}
+
+const formatParams = (params: TopicFormData, omittedFields: string[] = []) => {
+  return Object.keys(params).reduce((result, paramName) => {
+    if (omittedFields.includes(paramName)) {
+      return result;
+    }
+    result[snakeCase(paramName).replace(/_/g, '.')] = params[
+      paramName
+    ] as string;
+    return result;
+  }, {} as TopicFormParams);
+};
 
 export const getTopicConfig = (
   clusterName: ClusterName,
@@ -31,54 +46,42 @@ export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
     ...BASE_PARAMS,
   }).then((res) => res.json());
 
-interface Result {
-  [index: string]: string;
-}
-
 export const postTopic = (
   clusterName: ClusterName,
   form: TopicFormData
 ): Promise<Topic> => {
-  const {
-    name,
-    partitions,
-    replicationFactor,
-    cleanupPolicy,
-    retentionBytes,
-    retentionMs,
-    maxMessageBytes,
-    minInSyncReplicas,
-  } = form;
-
-  const customParams =
-    (form.customParams &&
-      reduce(
-        Object.values(form.customParams),
-        (result: Result, customParam: TopicFormCustomParam) => {
-          result[customParam.name] = customParam.value;
-          return result;
-        },
-        {}
-      )) ||
-    {};
+  const { name, partitions, replicationFactor } = form;
 
   const body = JSON.stringify({
     name,
     partitions,
     replicationFactor,
-    configs: {
-      'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs,
-      'retention.bytes': retentionBytes,
-      'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInSyncReplicas,
-      ...customParams,
-    },
+    configs: formatParams(form, ['customParams']),
   });
 
   return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
     ...BASE_PARAMS,
     method: 'POST',
+    body,
+  }).then((res) => res.json());
+};
+
+export const patchTopic = (
+  clusterName: ClusterName,
+  form: TopicFormData
+): Promise<Topic> => {
+  const body = JSON.stringify({
+    configs: formatParams(form, [
+      'name',
+      'partitions',
+      'replicationFactor',
+      'customParams',
+    ]),
+  });
+
+  return fetch(`${BASE_URL}/clusters/${clusterName}/topics/${form.name}`, {
+    ...BASE_PARAMS,
+    method: 'PATCH',
     body,
   }).then((res) => res.json());
 };

@@ -11,6 +11,12 @@ export interface TopicConfig {
   defaultValue: string;
 }
 
+export interface TopicConfigByName {
+  byName: {
+    [paramName: string]: TopicConfig;
+  };
+}
+
 export interface TopicReplica {
   broker: number;
   leader: boolean;
@@ -67,12 +73,10 @@ export interface TopicFormData {
   name: string;
   partitions: number;
   replicationFactor: number;
-  minInSyncReplicas: number;
+  minInsyncReplicas: number;
   cleanupPolicy: string;
   retentionMs: number;
   retentionBytes: number;
   maxMessageBytes: number;
-  customParams: {
-    [index: string]: TopicFormCustomParam;
-  };
+  [name: string]: string | number;
 }
