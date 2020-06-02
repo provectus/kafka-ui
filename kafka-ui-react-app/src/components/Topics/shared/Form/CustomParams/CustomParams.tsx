@@ -1,5 +1,5 @@
 import React from 'react';
-import { omit, reject, reduce } from 'lodash';
+import { omit, reject, reduce, remove } from 'lodash';
 
 import { TopicFormCustomParams, TopicConfigByName } from 'redux/interfaces';
 import CustomParamSelect from './CustomParamSelect';
@@ -20,6 +20,8 @@ interface Param {
     value: string;
   };
 }
+
+const existingFields: string[] = [];
 
 const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
   const byIndex = config
@@ -59,11 +61,18 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
   };
 
   const onRemove = (index: string) => {
+    const fieldName = formCustomParams.byIndex[index].name;
+    remove(existingFields, (el) => el === fieldName);
     setFormCustomParams({
       ...formCustomParams,
       byIndex: omit(formCustomParams.byIndex, index),
       allIndexes: reject(formCustomParams.allIndexes, (i) => i === index),
     });
+  };
+
+  const onFieldNameChange = (index: string, name: string) => {
+    formCustomParams.byIndex[index].name = name;
+    existingFields.push(name);
   };
 
   return (
@@ -86,6 +95,8 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
               index={index}
               isDisabled={isSubmitting}
               name={formCustomParams.byIndex[index].name}
+              existingFields={existingFields}
+              onNameChange={onFieldNameChange}
             />
           </div>
 
