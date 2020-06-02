@@ -41,8 +41,7 @@
       { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
     ],
     "jsx-a11y/label-has-associated-control": "off",
-    "no-param-reassign": [2, { "props": false }],
-    "import/prefer-default-export": "off"
+    "no-param-reassign": [2, { "props": false }]
   },
   "overrides": [
     {
