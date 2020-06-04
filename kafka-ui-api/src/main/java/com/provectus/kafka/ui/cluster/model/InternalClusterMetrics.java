@@ -18,11 +18,9 @@ public class InternalClusterMetrics {
     private final int offlinePartitionCount;
     private final int inSyncReplicasCount;
     private final int outOfSyncReplicasCount;
-    //TODO: find way to fill
     private final Map<String, String> bytesInPerSec;
     private final Map<String, String> bytesOutPerSec;
     private final int segmentCount;
-    //TODO: find way to fill
     private final long segmentSize;
     private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
     private final int zooKeeperStatus;

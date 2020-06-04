@@ -188,7 +188,6 @@ public class KafkaService {
                             var jmxUrl = jmx.getUrl() + jmx.getHost() + ":" + jmx.getPort() + "/" + jmx.getServiceType();
                             bytesInPerSec = ClusterUtil.getJmxTrafficMetrics(jmxUrl, ClusterUtil.BYTES_IN_PER_SEC);
                             bytesOutPerSec = ClusterUtil.getJmxTrafficMetrics(jmxUrl, ClusterUtil.BYTES_OUT_PER_SEC);
-                            // TODO: fill bytes in/out metrics
                             metricsBuilder
                                     .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
                                     .bytesOutPerSec(bytesOutPerSec)
