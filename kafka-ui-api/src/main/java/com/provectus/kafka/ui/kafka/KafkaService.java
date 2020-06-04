@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.kafka;
 
+import com.provectus.kafka.ui.cluster.config.KafkaJmxProperties;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.model.ConsumerGroup;
@@ -11,20 +12,25 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.*;
+import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
-import org.springframework.beans.factory.annotation.Value;
 import org.apache.kafka.common.serialization.BytesDeserializer;
+import org.apache.kafka.common.serialization.LongDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.utils.Bytes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+import javax.management.MBeanServer;
+import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -43,6 +49,7 @@ public class KafkaService {
     private final ZookeeperService zookeeperService;
     private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
     private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
+    private final KafkaJmxProperties kafkaJmxDto;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
@@ -62,6 +69,18 @@ public class KafkaService {
                         .lastKafkaException(e)
                         .build())
         );
+    }
+
+    public static Consumer<Long, String> createConsumer() {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29091");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, "test");
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, LongDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
+        Consumer<Long, String> consumer = new KafkaConsumer<>(props);
+        consumer.subscribe(Collections.singletonList("users"));
+        return consumer;
     }
 
     private KafkaCluster buildFromData(KafkaCluster currentCluster, InternalSegmentSizeDto segmentSizeDto) {
@@ -163,9 +182,17 @@ public class KafkaService {
                         c -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
+                            Map<String, String> bytesInPerSec;
+                            Map<String, String> bytesOutPerSec;
+                            var jmx = kafkaJmxDto.getJmxParams().stream().filter(j -> j.getBrokerId() == c.id()).findFirst().orElseThrow();
+                            var jmxUrl = jmx.getUrl() + jmx.getHost() + ":" + jmx.getPort() + "/" + jmx.getServiceType();
+                            bytesInPerSec = ClusterUtil.getJmxTrafficMetrics(jmxUrl, ClusterUtil.BYTES_IN_PER_SEC);
+                            bytesOutPerSec = ClusterUtil.getJmxTrafficMetrics(jmxUrl, ClusterUtil.BYTES_OUT_PER_SEC);
                             // TODO: fill bytes in/out metrics
                             metricsBuilder
-                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))));
+                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
+                                    .bytesOutPerSec(bytesOutPerSec)
+                                    .bytesInPerSec(bytesInPerSec);
 
                             return metricsBuilder.build();
                         }
@@ -204,7 +231,11 @@ public class KafkaService {
     }
 
 
+    @SneakyThrows
     public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
+        Consumer<Long, String> kek = createConsumer();
+        MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+
         return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
                 .switchIfEmpty(createAdminClient(cluster))
                 .map(e -> adminClientCache.computeIfAbsent(cluster.getName(), key -> e));

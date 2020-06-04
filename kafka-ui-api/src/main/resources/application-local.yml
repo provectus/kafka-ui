@@ -1,4 +1,12 @@
 kafka:
+  jmxParams:
+    -
+      clusterName: local
+      brokerid: 1
+      port: 9997
+      host: localhost
+      url: service:jmx:rmi:///jndi/rmi://
+      serviceType: jmxrmi
   clusters:
     -
       name: local
@@ -15,3 +23,6 @@ kafka:
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000
+spring:
+  jmx:
+    enabled: true

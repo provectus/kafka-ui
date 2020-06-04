@@ -19,8 +19,8 @@ public class InternalClusterMetrics {
     private final int inSyncReplicasCount;
     private final int outOfSyncReplicasCount;
     //TODO: find way to fill
-    private final int bytesInPerSec;
-    private final int bytesOutPerSec;
+    private final Map<String, String> bytesInPerSec;
+    private final Map<String, String> bytesOutPerSec;
     private final int segmentCount;
     //TODO: find way to fill
     private final long segmentSize;

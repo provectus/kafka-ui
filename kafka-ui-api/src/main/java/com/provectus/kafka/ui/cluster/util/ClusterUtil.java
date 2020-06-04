@@ -3,8 +3,6 @@ package com.provectus.kafka.ui.cluster.util;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
 import lombok.extern.slf4j.Slf4j;
-import com.provectus.kafka.ui.model.TopicMessage;
-
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -14,13 +12,17 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
-
 import reactor.core.publisher.Mono;
 
+import javax.management.*;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -31,13 +33,20 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 @Slf4j
 public class ClusterUtil {
 
+    public static final String BYTES_IN_PER_SEC = "BytesInPerSec";
+    public static final String BYTES_OUT_PER_SEC = "BytesOutPerSec";
+    private static final String BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_IN_PER_SEC;
+    private static final String BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_OUT_PER_SEC;
+
+    private static final List<String> attrNames = Arrays.asList("OneMinuteRate", "FiveMinuteRate", "FifteenMinuteRate");
+
     private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
-    public static <T> Mono<T> toMono(KafkaFuture<T> future){
-        return Mono.create(sink -> future.whenComplete((res, ex)->{
-            if (ex!=null) {
+    public static <T> Mono<T> toMono(KafkaFuture<T> future) {
+        return Mono.create(sink -> future.whenComplete((res, ex) -> {
+            if (ex != null) {
                 sink.error(ex);
             } else {
                 sink.success(res);
@@ -45,9 +54,9 @@ public class ClusterUtil {
         }));
     }
 
-    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName){
-        return Mono.create(sink -> future.whenComplete((res, ex)->{
-            if (ex!=null) {
+    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName) {
+        return Mono.create(sink -> future.whenComplete((res, ex) -> {
+            if (ex != null) {
                 sink.error(ex);
             } else {
                 sink.success(topicName);
@@ -110,7 +119,7 @@ public class ClusterUtil {
                     partitionDto.inSyncReplicasCount(partition.isr().size());
                     partitionDto.replicasCount(partition.replicas().size());
                     List<InternalReplica> replicas = partition.replicas().stream().map(
-                            r -> new InternalReplica(r.id(), partition.leader().id()!=r.id(), partition.isr().contains(r)))
+                            r -> new InternalReplica(r.id(), partition.leader().id() != r.id(), partition.isr().contains(r)))
                             .collect(Collectors.toList());
                     partitionDto.replicas(replicas);
                     return partitionDto.build();
@@ -183,6 +192,7 @@ public class ClusterUtil {
                 throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
         }
     }
+
     public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(AdminClient adminClient) {
         return ClusterUtil.toMono(adminClient.describeCluster().controller())
                 .map(Node::id)
@@ -208,7 +218,7 @@ public class ClusterUtil {
         }
     }
 
-    public static Topic convertToTopic (InternalTopic internalTopic) {
+    public static Topic convertToTopic(InternalTopic internalTopic) {
         Topic topic = new Topic();
         topic.setName(internalTopic.getName());
         List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
@@ -224,6 +234,31 @@ public class ClusterUtil {
         }).collect(Collectors.toList());
         topic.setPartitions(partitions);
         return topic;
+    }
+
+    public static Map<String, String> getJmxTrafficMetrics(String jmxUrl, String metricName) {
+        Map<String, String> result = new HashMap<>();
+        try {
+            JMXServiceURL url = new JMXServiceURL(jmxUrl);
+            JMXConnector srv = JMXConnectorFactory.connect(url);
+            MBeanServerConnection msc = srv.getMBeanServerConnection();
+            ObjectName name = metricName.equals(BYTES_IN_PER_SEC) ? new ObjectName(BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME) :
+                    new ObjectName(BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME);
+            for (String attrName : attrNames) {
+                result.put(attrName, msc.getAttribute(name, attrName).toString());
+            }
+        } catch (MalformedURLException url) {
+            log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
+        } catch (IOException io) {
+            log.error("Cannot connect to KafkaJmxServer with url {}", jmxUrl);
+        } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException e) {
+            log.error("Cannot find attribute from");
+            log.error(e.getMessage());
+        } catch (MalformedObjectNameException objectNameE) {
+            log.error("Cannot create objectName");
+            log.error(objectNameE.getMessage());
+        }
+        return result;
     }
 
     public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {
