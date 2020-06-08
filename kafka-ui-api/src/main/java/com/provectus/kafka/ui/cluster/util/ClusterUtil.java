@@ -33,12 +33,9 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 @Slf4j
 public class ClusterUtil {
 
-    public static final String BYTES_IN_PER_SEC = "BytesInPerSec";
-    public static final String BYTES_OUT_PER_SEC = "BytesOutPerSec";
-    private static final String BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_IN_PER_SEC;
-    private static final String BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_OUT_PER_SEC;
 
-    private static final List<String> attrNames = Arrays.asList("OneMinuteRate", "FiveMinuteRate", "FifteenMinuteRate");
+
+
 
     private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
@@ -234,31 +231,6 @@ public class ClusterUtil {
         }).collect(Collectors.toList());
         topic.setPartitions(partitions);
         return topic;
-    }
-
-    public static Map<String, String> getJmxTrafficMetrics(String jmxUrl, String metricName) {
-        Map<String, String> result = new HashMap<>();
-        try {
-            JMXServiceURL url = new JMXServiceURL(jmxUrl);
-            JMXConnector srv = JMXConnectorFactory.connect(url);
-            MBeanServerConnection msc = srv.getMBeanServerConnection();
-            ObjectName name = metricName.equals(BYTES_IN_PER_SEC) ? new ObjectName(BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME) :
-                    new ObjectName(BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME);
-            for (String attrName : attrNames) {
-                result.put(attrName, msc.getAttribute(name, attrName).toString());
-            }
-        } catch (MalformedURLException url) {
-            log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
-        } catch (IOException io) {
-            log.error("Cannot connect to KafkaJmxServer with url {}", jmxUrl);
-        } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException e) {
-            log.error("Cannot find attribute from");
-            log.error(e.getMessage());
-        } catch (MalformedObjectNameException objectNameE) {
-            log.error("Cannot create objectName");
-            log.error(objectNameE.getMessage());
-        }
-        return result;
     }
 
     public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {

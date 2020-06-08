@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.kafka;
 import com.provectus.kafka.ui.cluster.config.KafkaJmxProperties;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
+import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.Topic;
@@ -54,7 +55,7 @@ public class KafkaService {
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
         return getOrCreateAdminClient(cluster).flatMap(
-                ac -> getClusterMetrics(ac.getAdminClient())
+                ac -> getClusterMetrics(cluster, ac.getAdminClient())
 
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
@@ -175,7 +176,7 @@ public class KafkaService {
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
-    private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
+    private Mono<InternalClusterMetrics> getClusterMetrics(KafkaCluster cluster, AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
@@ -184,10 +185,8 @@ public class KafkaService {
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
                             Map<String, String> bytesInPerSec;
                             Map<String, String> bytesOutPerSec;
-                            var jmx = kafkaJmxDto.getJmxParams().stream().filter(j -> j.getBrokerId() == c.id()).findFirst().orElseThrow();
-                            var jmxUrl = jmx.getUrl() + jmx.getHost() + ":" + jmx.getPort() + "/" + jmx.getServiceType();
-                            bytesInPerSec = ClusterUtil.getJmxTrafficMetrics(jmxUrl, ClusterUtil.BYTES_IN_PER_SEC);
-                            bytesOutPerSec = ClusterUtil.getJmxTrafficMetrics(jmxUrl, ClusterUtil.BYTES_OUT_PER_SEC);
+                            bytesInPerSec = JmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), cluster.getJmxHost(), JmxClusterUtil.BYTES_IN_PER_SEC);
+                            bytesOutPerSec = JmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), cluster.getJmxHost(), JmxClusterUtil.BYTES_OUT_PER_SEC);
                             metricsBuilder
                                     .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
                                     .bytesOutPerSec(bytesOutPerSec)
