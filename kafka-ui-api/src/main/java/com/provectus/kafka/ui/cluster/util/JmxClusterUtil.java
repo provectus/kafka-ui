@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
@@ -39,8 +40,9 @@ public class JmxClusterUtil {
     public static Map<String, String> getJmxTrafficMetrics(int jmxPort, String jmxHost, String metricName) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
         Map<String, String> result = new HashMap<>();
+        JMXConnector srv = null;
         try {
-            JMXConnector srv = (JMXConnector) pool.borrowObject(jmxUrl);
+            srv = (JMXConnector) pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
             ObjectName name = metricName.equals(BYTES_IN_PER_SEC) ? new ObjectName(BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME) :
                     new ObjectName(BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME);
@@ -59,6 +61,20 @@ public class JmxClusterUtil {
             log.error(objectNameE.getMessage());
         } catch (Exception e) {
             log.error("Error while retrieving connection {} from pool", jmxUrl);
+            try {
+                pool.invalidateObject(jmxUrl, srv);
+            } catch (Exception ie) {
+                log.error("Cannot invalidate object to pool, {}", jmxUrl);
+            }
+        }
+        finally {
+            if (srv != null) {
+                try {
+                    pool.returnObject(jmxUrl, srv);
+                } catch (Exception e) {
+                    log.error("Cannot returl object to poll, {}", jmxUrl);
+                }
+            }
         }
         return result;
     }
