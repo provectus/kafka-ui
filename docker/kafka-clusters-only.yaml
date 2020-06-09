@@ -96,3 +96,22 @@ services:
      KAFKA_ZOOKEEPER_CONNECT: ignored
     networks:
      - default
+
+  schemaregistry0:
+    image: confluentinc/cp-schema-registry:5.1.0
+    depends_on:
+      - zookeeper0
+      - kafka0
+      - kafka01
+    ports:
+      - 8085:8085
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka0:9092,PLAINTEXT://kafka01:9092
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper0:2183
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8085
+
+      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas

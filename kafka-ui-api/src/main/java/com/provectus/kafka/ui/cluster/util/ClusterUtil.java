@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.*;
+import com.provectus.kafka.ui.cluster.deserialization.RecordDeserializer;
 import com.provectus.kafka.ui.model.*;
 import lombok.extern.slf4j.Slf4j;
 import com.provectus.kafka.ui.model.TopicMessage;
@@ -149,7 +150,7 @@ public class ClusterUtil {
         return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
     }
 
-    public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord) {
+    public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord, RecordDeserializer recordDeserializer) {
         OffsetDateTime timestamp = OffsetDateTime.ofInstant(Instant.ofEpochMilli(consumerRecord.timestamp()), UTC_ZONE_ID);
         TopicMessage.TimestampTypeEnum timestampType = mapToTimestampType(consumerRecord.timestampType());
         Map<String, String> headers = new HashMap<>();
@@ -166,7 +167,8 @@ public class ClusterUtil {
             topicMessage.setKey(consumerRecord.key().toString());
         }
         topicMessage.setHeaders(headers);
-        topicMessage.setContent(consumerRecord.value().toString());
+        Object parsedValue = recordDeserializer.deserialize(consumerRecord);
+        topicMessage.setContent(parsedValue);
 
         return topicMessage;
     }

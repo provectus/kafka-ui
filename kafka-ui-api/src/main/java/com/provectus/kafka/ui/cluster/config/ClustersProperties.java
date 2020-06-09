@@ -19,5 +19,6 @@ public class ClustersProperties {
         String name;
         String bootstrapServers;
         String zookeeper;
+        String schemaRegistry;
     }
 }
