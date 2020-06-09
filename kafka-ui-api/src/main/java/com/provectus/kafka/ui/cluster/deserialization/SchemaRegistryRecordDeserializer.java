@@ -21,8 +21,6 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
-import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
-import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -43,7 +41,7 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 
 	public SchemaRegistryRecordDeserializer(String schemaRegistryUrl) {
 		List<String> endpoints = Collections.singletonList(schemaRegistryUrl);
-		List<SchemaProvider> providers = Arrays.asList(new AvroSchemaProvider(), new JsonSchemaProvider(), new ProtobufSchemaProvider());
+		List<SchemaProvider> providers = Collections.singletonList(new AvroSchemaProvider());
 		this. schemaRegistryClient = new CachedSchemaRegistryClient(endpoints, 100, providers, Collections.emptyMap());
 
 		this.avroDeserializer = new KafkaAvroDeserializer(schemaRegistryClient);
