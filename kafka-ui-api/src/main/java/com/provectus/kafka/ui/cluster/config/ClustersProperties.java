@@ -20,6 +20,5 @@ public class ClustersProperties {
         String bootstrapServers;
         String zookeeper;
         int jmxPort;
-        String jmxHost;
     }
 }

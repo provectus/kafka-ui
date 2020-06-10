@@ -11,7 +11,6 @@ import java.util.Map;
 public class KafkaCluster {
 
     private final String name;
-    private final String jmxHost;
     private final int jmxPort;
     private final String bootstrapServers;
     private final String zookeeper;

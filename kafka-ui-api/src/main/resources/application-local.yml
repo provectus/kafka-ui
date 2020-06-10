@@ -5,19 +5,16 @@ kafka:
       bootstrapServers: localhost:29091
       zookeeper: localhost:2183
       jmxPort: 9997
-      jmxHost: localhost
     -
       name: secondLocal
       bootstrapServers: localhost:29092
       zookeeper: localhost:2182
       jmxPort: 9998
-      jmxHost: localhost
     -
       name: localReplica
       bootstrapServers: localhost:29093
       zookeeper: localhost:2183
       jmxPort: 9997
-      jmxHost: localhost
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000

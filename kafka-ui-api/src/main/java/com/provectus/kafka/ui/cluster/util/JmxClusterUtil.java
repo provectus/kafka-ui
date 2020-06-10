@@ -1,17 +1,16 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.provectus.kafka.ui.cluster.model.ClustersStorage;
-import lombok.SneakyThrows;
+import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
-import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
+import org.apache.kafka.common.Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -23,7 +22,7 @@ import java.util.Map;
 public class JmxClusterUtil {
 
     @Autowired
-    private ClustersStorage clustersStorage;
+    private KeyedObjectPool pool;
 
     private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
     private static final String JMX_SERVICE_TYPE = "jmxrmi";
@@ -35,11 +34,9 @@ public class JmxClusterUtil {
 
     private static final List<String> attrNames = Arrays.asList("OneMinuteRate", "FiveMinuteRate", "FifteenMinuteRate");
 
-    private static KeyedObjectPool pool = new GenericKeyedObjectPool(new JmxPoolFactory());
-
-    public static Map<String, String> getJmxTrafficMetrics(int jmxPort, String jmxHost, String metricName) {
+    public Map<String, BigDecimal> getJmxTrafficMetrics(int jmxPort, String jmxHost, String metricName) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
-        Map<String, String> result = new HashMap<>();
+        Map<String, BigDecimal> result = new HashMap<>();
         JMXConnector srv = null;
         try {
             srv = (JMXConnector) pool.borrowObject(jmxUrl);
@@ -47,47 +44,56 @@ public class JmxClusterUtil {
             ObjectName name = metricName.equals(BYTES_IN_PER_SEC) ? new ObjectName(BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME) :
                     new ObjectName(BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME);
             for (String attrName : attrNames) {
-                result.put(attrName, msc.getAttribute(name, attrName).toString());
+                result.put(attrName, BigDecimal.valueOf((Double) msc.getAttribute(name, attrName)));
             }
         } catch (MalformedURLException url) {
             log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
+            closeConnectionExceptionally(jmxUrl, srv);
         } catch (IOException io) {
             log.error("Cannot connect to KafkaJmxServer with url {}", jmxUrl);
+            closeConnectionExceptionally(jmxUrl, srv);
         } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException e) {
             log.error("Cannot find attribute from");
             log.error(e.getMessage());
+            closeConnectionExceptionally(jmxUrl, srv);
         } catch (MalformedObjectNameException objectNameE) {
             log.error("Cannot create objectName");
             log.error(objectNameE.getMessage());
+            closeConnectionExceptionally(jmxUrl, srv);
         } catch (Exception e) {
             log.error("Error while retrieving connection {} from pool", jmxUrl);
-            try {
-                pool.invalidateObject(jmxUrl, srv);
-            } catch (Exception ie) {
-                log.error("Cannot invalidate object to pool, {}", jmxUrl);
-            }
+            closeConnectionExceptionally(jmxUrl, srv);
         }
         finally {
             if (srv != null) {
                 try {
                     pool.returnObject(jmxUrl, srv);
                 } catch (Exception e) {
-                    log.error("Cannot returl object to poll, {}", jmxUrl);
+                    log.error("Cannot return object to poll, {}", jmxUrl);
                 }
             }
         }
         return result;
     }
 
-    @PostConstruct
-    public void fillJmxPool() {
-        clustersStorage.getKafkaClusters().stream().forEach(c -> {
-            String jmxUrl = JMX_URL + c.getJmxHost() + ":" + c.getJmxPort() + "/" + JMX_SERVICE_TYPE;
-            try {
-                pool.addObject(jmxUrl);
-            } catch (Exception e) {
-                log.error("Cannot connect to {}", jmxUrl);
-            }
-        });
+    private void closeConnectionExceptionally(String url, JMXConnector srv) {
+        try {
+            pool.invalidateObject(url, srv);
+            srv.close();
+        } catch (IOException ioe) {
+            log.error("Cannot close connection with {}", url);
+        } catch (Exception e) {
+            log.error("Cannot invalidate object in pool, {}", url);
+        }
+    }
+
+
+    public void fillJmxPool(Node broker, KafkaCluster cluster) {
+        String jmxUrl = JMX_URL + broker.host() + ":" + cluster.getJmxPort() + "/" + JMX_SERVICE_TYPE;
+        try {
+            pool.addObject(jmxUrl);
+        } catch (Exception e) {
+            log.error("Cannot connect to {}", jmxUrl);
+        }
     }
 }

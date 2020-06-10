@@ -28,7 +28,7 @@
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
 		<springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
 		<kafka.version>2.4.1</kafka.version>
-		<apache.commons.version>2.7.0</apache.commons.version>
+		<apache.commons.version>2.2</apache.commons.version>
 	</properties>
 
 	<groupId>com.provectus</groupId>
