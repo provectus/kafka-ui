@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
+import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.kafka.KafkaService;
@@ -59,7 +60,7 @@ public class ClusterService {
                 .map(t -> t.get(topicName))
                 .map(clusterMapper::toTopicDetails);
     }
-
+                                                                           
     public Optional<List<TopicConfig>> getTopicConfigs(String name, String topicName) {
         return clustersStorage.getClusterByName(name)
                 .map(KafkaCluster::getTopics)
@@ -147,9 +148,9 @@ public class ClusterService {
                 });
     }
 
-    public Flux<TopicMessage> getMessages(String clusterName, String topicName, Integer partition, Long offset, OffsetDateTime timestamp) {
+    public Flux<TopicMessage> getMessages(String clusterName, String topicName, ConsumerPosition consumerPosition, Integer limit) {
         return clustersStorage.getClusterByName(clusterName)
-                .map(c -> consumingService.loadMessages(c, topicName))
+                .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, limit))
                 .orElse(Flux.empty());
 
     }
