@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +29,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequiredArgsConstructor
 public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 
+	private final static int CLIENT_IDENTITY_MAP_CAPACITY = 100;
 	private final static String AVRO_SCHEMA_TEMPLATE = "%s-value";
 
 	private SchemaRegistryClient schemaRegistryClient;
@@ -42,7 +42,7 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 	public SchemaRegistryRecordDeserializer(String schemaRegistryUrl) {
 		List<String> endpoints = Collections.singletonList(schemaRegistryUrl);
 		List<SchemaProvider> providers = Collections.singletonList(new AvroSchemaProvider());
-		this. schemaRegistryClient = new CachedSchemaRegistryClient(endpoints, 100, providers, Collections.emptyMap());
+		this. schemaRegistryClient = new CachedSchemaRegistryClient(endpoints, CLIENT_IDENTITY_MAP_CAPACITY, providers, Collections.emptyMap());
 
 		this.avroDeserializer = new KafkaAvroDeserializer(schemaRegistryClient);
 		this.objectMapper = new ObjectMapper();
