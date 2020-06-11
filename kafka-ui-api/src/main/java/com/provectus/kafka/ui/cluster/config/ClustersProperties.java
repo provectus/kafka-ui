@@ -20,5 +20,6 @@ public class ClustersProperties {
         String bootstrapServers;
         String zookeeper;
         String schemaRegistry;
+        String schemaNameTemplate = "%s-value";
     }
 }

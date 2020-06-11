@@ -33,7 +33,7 @@ public class DeserializationService {
 		if (StringUtils.isEmpty(cluster.getSchemaRegistry())) {
 			return new SimpleRecordDeserializer();
 		} else {
-			return new SchemaRegistryRecordDeserializer(cluster.getSchemaRegistry());
+			return new SchemaRegistryRecordDeserializer(cluster);
 		}
 	}
 
