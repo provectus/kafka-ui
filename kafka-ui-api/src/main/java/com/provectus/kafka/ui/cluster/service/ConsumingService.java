@@ -16,6 +16,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 
+import com.provectus.kafka.ui.cluster.deserialization.DeserializationService;
+import com.provectus.kafka.ui.cluster.deserialization.RecordDeserializer;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
@@ -37,15 +39,17 @@ public class ConsumingService {
 	private static final int MAX_POLLS_COUNT = 30;
 
 	private final KafkaService kafkaService;
+	private final DeserializationService deserializationService;
 
 	public Flux<TopicMessage> loadMessages(KafkaCluster cluster, String topic, ConsumerPosition consumerPosition, Integer limit) {
 		int recordsLimit = Optional.ofNullable(limit)
 				.map(s -> Math.min(s, MAX_RECORD_LIMIT))
 				.orElse(DEFAULT_RECORD_LIMIT);
 		RecordEmitter emitter = new RecordEmitter(kafkaService, cluster, topic, consumerPosition);
+		RecordDeserializer recordDeserializer = deserializationService.getRecordDeserializerForCluster(cluster);
 		return Flux.create(emitter::emit)
 				.subscribeOn(Schedulers.boundedElastic())
-				.map(ClusterUtil::mapToTopicMessage)
+				.map(r -> ClusterUtil.mapToTopicMessage(r, recordDeserializer))
 				.limitRequest(recordsLimit);
 	}
 

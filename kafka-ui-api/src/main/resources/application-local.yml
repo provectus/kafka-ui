@@ -4,6 +4,8 @@ kafka:
       name: local
       bootstrapServers: localhost:29091
       zookeeper: localhost:2183
+      schemaRegistry: http://localhost:8085
+#      schemaNameTemplate: "%s-value"
     -
       name: secondLocal
       bootstrapServers: localhost:29092

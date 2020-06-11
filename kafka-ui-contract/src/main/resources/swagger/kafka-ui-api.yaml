@@ -458,7 +458,7 @@ components:
           additionalProperties:
             type: string
         content:
-          type: string
+          type: object
       required:
         - partition
         - offset
