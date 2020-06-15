@@ -19,6 +19,7 @@
     "bulma": "^0.8.0",
     "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
+    "date-fns": "^2.14.0",
     "json-server": "^0.15.1",
     "lodash": "^4.17.15",
     "node-sass": "^4.13.1",

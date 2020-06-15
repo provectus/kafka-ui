@@ -44,6 +44,16 @@ export interface Topic {
   partitions: TopicPartition[];
 }
 
+export interface TopicMessage {
+  partition: number;
+  offset: number;
+  timestamp: number;
+  timestampType: string;
+  key: string;
+  headers: Record<string, string>;
+  content: string;
+}
+
 export interface TopicFormCustomParam {
   name: string;
   value: string;
@@ -61,6 +71,7 @@ export interface TopicWithDetailedInfo extends Topic, TopicDetails {
 export interface TopicsState {
   byName: { [topicName: string]: TopicWithDetailedInfo };
   allNames: TopicName[];
+  messages: TopicMessage[];
 }
 
 export interface TopicFormData {
