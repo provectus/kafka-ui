@@ -156,4 +156,8 @@ public class ClusterService {
                 .orElse(Flux.empty());
 
     }
+
+    public Flux<JmxMetrics> getJmxMetricsNames() {
+
+    }
 }

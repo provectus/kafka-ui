@@ -264,6 +264,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
+  /api/clusters/{clusterName}/brokers/{brokerId}:
+    get:
+      tags:
+        - /api/clusters
+      summary: get all JmxMetricsNames
+      operationId: getJmxMetricsNames
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: brokerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/JmxMetrics'
+
   /api/clusters/{clusterName}/consumerGroups:
     get:
       tags:
@@ -507,3 +534,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
+
+    JmxMetrics:
+      type: object
+      properties:
+        metricName:
+          type: array
+          items:
+            type: string

@@ -99,7 +99,12 @@ public class MetricsRestController implements ApiClustersApi {
     public Mono<ResponseEntity<Topic>> updateTopic(String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
         return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
     }
-    
+
+    @Override
+    public Mono<ResponseEntity<Flux<JmxMetrics>>> getJmxMetricsNames(String clusterName, String brokerId, ServerWebExchange exchange){
+        return clusterService;
+    }
+
     private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
         return Mono.justOrEmpty(seekTo)
                 .defaultIfEmpty(Collections.emptyList())
