@@ -57,6 +57,19 @@ export const fetchTopicList = (
   }
 };
 
+export const fetchTopicMessages = (
+  clusterName: ClusterName,
+  topicName: TopicName
+): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchTopicMessagesAction.request());
+  try {
+    const messages = await api.getTopicMessages(clusterName, topicName);
+    dispatch(actions.fetchTopicMessagesAction.success(messages));
+  } catch (e) {
+    dispatch(actions.fetchTopicMessagesAction.failure());
+  }
+};
+
 export const fetchTopicDetails = (
   clusterName: ClusterName,
   topicName: TopicName

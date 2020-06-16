@@ -4,6 +4,7 @@ import ActionType from 'redux/actionType';
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
+  messages: [],
 };
 
 const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
@@ -47,6 +48,11 @@ const reducer = (state = initialState, action: Action): TopicsState => {
             ...action.payload.details,
           },
         },
+      };
+    case ActionType.GET_TOPIC_MESSAGES__SUCCESS:
+      return {
+        ...state,
+        messages: action.payload,
       };
     case ActionType.GET_TOPIC_CONFIG__SUCCESS:
       return {

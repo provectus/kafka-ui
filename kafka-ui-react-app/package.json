@@ -7,6 +7,7 @@
     "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
     "immer": "^6.0.5",
+    "date-fns": "^2.14.0",
     "lodash": "^4.17.15",
     "pretty-ms": "^6.0.1",
     "react": "^16.12.0",

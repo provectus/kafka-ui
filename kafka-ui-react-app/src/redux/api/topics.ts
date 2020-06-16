@@ -1,5 +1,6 @@
 import {
   TopicName,
+  TopicMessage,
   Topic,
   ClusterName,
   TopicDetails,
@@ -43,6 +44,14 @@ export const getTopicDetails = (
 
 export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
   fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
+    ...BASE_PARAMS,
+  }).then((res) => res.json());
+
+export const getTopicMessages = (
+  clusterName: ClusterName,
+  topicName: TopicName
+): Promise<TopicMessage[]> =>
+  fetch(`${BASE_URL}/clusters/${clusterName}/topics/${topicName}/messages`, {
     ...BASE_PARAMS,
   }).then((res) => res.json());
 

@@ -7,6 +7,7 @@ import {
   Topic,
   TopicConfig,
   TopicDetails,
+  TopicMessage,
   TopicName,
   ConsumerGroup,
   ConsumerGroupDetails,
@@ -36,6 +37,12 @@ export const fetchTopicListAction = createAsyncAction(
   ActionType.GET_TOPICS__SUCCESS,
   ActionType.GET_TOPICS__FAILURE
 )<undefined, Topic[], undefined>();
+
+export const fetchTopicMessagesAction = createAsyncAction(
+  ActionType.GET_TOPIC_MESSAGES__REQUEST,
+  ActionType.GET_TOPIC_MESSAGES__SUCCESS,
+  ActionType.GET_TOPIC_MESSAGES__FAILURE
+)<undefined, TopicMessage[], undefined>();
 
 export const fetchTopicDetailsAction = createAsyncAction(
   ActionType.GET_TOPIC_DETAILS__REQUEST,
