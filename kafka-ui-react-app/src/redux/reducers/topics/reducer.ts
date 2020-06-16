@@ -1,5 +1,5 @@
 import { Action, TopicsState, Topic } from 'redux/interfaces';
-import { ActionType } from 'redux/actionType';
+import ActionType from 'redux/actionType';
 
 export const initialState: TopicsState = {
   byName: {},
@@ -12,24 +12,21 @@ const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
     allNames: [],
   };
 
-  return payload.reduce(
-    (memo: TopicsState, topic) => {
-      const {name} = topic;
-      memo.byName[name] = {
-        ...memo.byName[name],
-        ...topic,
-      };
-      memo.allNames.push(name);
+  return payload.reduce((memo: TopicsState, topic) => {
+    const { name } = topic;
+    memo.byName[name] = {
+      ...memo.byName[name],
+      ...topic,
+    };
+    memo.allNames.push(name);
 
-      return memo;
-    },
-    initialMemo,
-  );
+    return memo;
+  }, initialMemo);
 };
 
 const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
   const newState: TopicsState = {
-    ...state
+    ...state,
   };
   newState.allNames.push(payload.name);
   newState.byName[payload.name] = payload;
@@ -48,8 +45,8 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           [action.payload.topicName]: {
             ...state.byName[action.payload.topicName],
             ...action.payload.details,
-          }
-        }
+          },
+        },
       };
     case ActionType.GET_TOPIC_CONFIG__SUCCESS:
       return {
@@ -59,8 +56,8 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           [action.payload.topicName]: {
             ...state.byName[action.payload.topicName],
             config: action.payload.config,
-          }
-        }
+          },
+        },
       };
     case ActionType.POST_TOPIC__SUCCESS:
       return addToTopicList(state, action.payload);

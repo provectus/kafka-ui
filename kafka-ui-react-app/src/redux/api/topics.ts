@@ -1,14 +1,29 @@
-import { reduce } from 'lodash';
 import {
-  ClusterName,
-  Topic,
-  TopicConfig,
-  TopicDetails,
-  TopicFormCustomParam,
-  TopicFormData,
   TopicName,
+  Topic,
+  ClusterName,
+  TopicDetails,
+  TopicConfig,
+  TopicFormData,
+  TopicFormCustomParam,
+  TopicFormFormattedParams,
+  TopicFormCustomParams,
 } from 'redux/interfaces';
-import { BASE_PARAMS, BASE_URL } from 'lib/constants';
+import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+
+const formatCustomParams = (
+  customParams: TopicFormCustomParams
+): TopicFormFormattedParams => {
+  return Object.values(customParams || {}).reduce(
+    (result: TopicFormFormattedParams, customParam: TopicFormCustomParam) => {
+      return {
+        ...result,
+        [customParam.name]: customParam.value,
+      };
+    },
+    {} as TopicFormFormattedParams
+  );
+};
 
 export const getTopicConfig = (
   clusterName: ClusterName,
@@ -31,10 +46,6 @@ export const getTopics = (clusterName: ClusterName): Promise<Topic[]> =>
     ...BASE_PARAMS,
   }).then((res) => res.json());
 
-interface Result {
-  [index: string]: string;
-}
-
 export const postTopic = (
   clusterName: ClusterName,
   form: TopicFormData
@@ -50,18 +61,6 @@ export const postTopic = (
     minInSyncReplicas,
   } = form;
 
-  const customParams =
-    (form.customParams &&
-      reduce(
-        Object.values(form.customParams),
-        (result: Result, customParam: TopicFormCustomParam) => {
-          result[customParam.name] = customParam.value;
-          return result;
-        },
-        {}
-      )) ||
-    {};
-
   const body = JSON.stringify({
     name,
     partitions,
@@ -72,13 +71,43 @@ export const postTopic = (
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...customParams,
+      ...formatCustomParams(form.customParams),
     },
   });
 
   return fetch(`${BASE_URL}/clusters/${clusterName}/topics`, {
     ...BASE_PARAMS,
     method: 'POST',
+    body,
+  }).then((res) => res.json());
+};
+
+export const patchTopic = (
+  clusterName: ClusterName,
+  form: TopicFormData
+): Promise<Topic> => {
+  const {
+    cleanupPolicy,
+    retentionBytes,
+    retentionMs,
+    maxMessageBytes,
+    minInSyncReplicas,
+  } = form;
+
+  const body = JSON.stringify({
+    configs: {
+      'cleanup.policy': cleanupPolicy,
+      'retention.ms': retentionMs,
+      'retention.bytes': retentionBytes,
+      'max.message.bytes': maxMessageBytes,
+      'min.insync.replicas': minInSyncReplicas,
+      ...formatCustomParams(form.customParams),
+    },
+  });
+
+  return fetch(`${BASE_URL}/clusters/${clusterName}/topics/${form.name}`, {
+    ...BASE_PARAMS,
+    method: 'PATCH',
     body,
   }).then((res) => res.json());
 };
