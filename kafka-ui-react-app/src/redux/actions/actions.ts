@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { ActionType } from 'redux/actionType';
+import ActionType from 'redux/actionType';
 import {
   Broker,
   BrokerMetrics,
@@ -9,12 +9,10 @@ import {
   TopicDetails,
   TopicMessage,
   TopicName,
-} from 'redux/interfaces';
-import {
   ConsumerGroup,
-  ConsumerGroupID,
   ConsumerGroupDetails,
-} from '../interfaces/consumerGroup';
+  ConsumerGroupID,
+} from 'redux/interfaces';
 
 export const fetchBrokersAction = createAsyncAction(
   ActionType.GET_BROKERS__REQUEST,
@@ -62,6 +60,12 @@ export const createTopicAction = createAsyncAction(
   ActionType.POST_TOPIC__REQUEST,
   ActionType.POST_TOPIC__SUCCESS,
   ActionType.POST_TOPIC__FAILURE
+)<undefined, Topic, undefined>();
+
+export const updateTopicAction = createAsyncAction(
+  ActionType.PATCH_TOPIC__REQUEST,
+  ActionType.PATCH_TOPIC__SUCCESS,
+  ActionType.PATCH_TOPIC__FAILURE
 )<undefined, Topic, undefined>();
 
 export const fetchConsumerGroupsAction = createAsyncAction(

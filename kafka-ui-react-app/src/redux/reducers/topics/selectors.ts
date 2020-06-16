@@ -4,6 +4,7 @@ import {
   TopicName,
   FetchStatus,
   TopicsState,
+  TopicConfigByName,
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
@@ -23,6 +24,7 @@ const getTopicMessagesFetchingStatus = createFetchingSelector(
 );
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
+const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
 
 export const getIsTopicListFetched = createSelector(
   getTopicListFetchingStatus,
@@ -46,6 +48,11 @@ export const getTopicConfigFetched = createSelector(
 
 export const getTopicCreated = createSelector(
   getTopicCreationStatus,
+  (status) => status === FetchStatus.fetched
+);
+
+export const getTopicUpdated = createSelector(
+  getTopicUpdateStatus,
   (status) => status === FetchStatus.fetched
 );
 
@@ -73,7 +80,28 @@ export const getTopicByName = createSelector(
   (topics, topicName) => topics[topicName]
 );
 
+export const getFullTopic = createSelector(getTopicByName, (topic) =>
+  topic && topic.config && !!topic.partitionCount ? topic : undefined
+);
+
 export const getTopicConfig = createSelector(
   getTopicByName,
   ({ config }) => config
+);
+
+export const getTopicConfigByParamName = createSelector(
+  getTopicConfig,
+  (config) => {
+    const byParamName: TopicConfigByName = {
+      byName: {},
+    };
+
+    if (config) {
+      config.forEach((param) => {
+        byParamName.byName[param.name] = param;
+      });
+    }
+
+    return byParamName;
+  }
 );

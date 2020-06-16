@@ -1,5 +1,6 @@
 import * as api from 'redux/api';
 import {
+  ConsumerGroupID,
   PromiseThunk,
   Cluster,
   ClusterName,
@@ -7,8 +8,8 @@ import {
   TopicName,
   Topic,
 } from 'redux/interfaces';
+
 import * as actions from './actions';
-import { ConsumerGroupID } from '../interfaces/consumerGroup';
 
 export const fetchBrokers = (
   clusterName: ClusterName
@@ -110,6 +111,19 @@ export const createTopic = (
     dispatch(actions.createTopicAction.success(topic));
   } catch (e) {
     dispatch(actions.createTopicAction.failure());
+  }
+};
+
+export const updateTopic = (
+  clusterName: ClusterName,
+  form: TopicFormData
+): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.updateTopicAction.request());
+  try {
+    const topic: Topic = await api.patchTopic(clusterName, form);
+    dispatch(actions.updateTopicAction.success(topic));
+  } catch (e) {
+    dispatch(actions.updateTopicAction.failure());
   }
 };
 

@@ -1,5 +1,5 @@
 import { Action, TopicsState, Topic } from 'redux/interfaces';
-import { ActionType } from 'redux/actionType';
+import ActionType from 'redux/actionType';
 
 export const initialState: TopicsState = {
   byName: {},
