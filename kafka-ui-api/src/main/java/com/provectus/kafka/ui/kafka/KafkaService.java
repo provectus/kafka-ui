@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.kafka;
 
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
+import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.Topic;
@@ -17,14 +18,15 @@ import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
-import org.springframework.beans.factory.annotation.Value;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -43,11 +45,12 @@ public class KafkaService {
     private final ZookeeperService zookeeperService;
     private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
     private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
+    private final JmxClusterUtil jmxClusterUtil;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
         return getOrCreateAdminClient(cluster).flatMap(
-                ac -> getClusterMetrics(ac.getAdminClient())
+                ac -> getClusterMetrics(cluster, ac.getAdminClient())
 
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
@@ -156,17 +159,19 @@ public class KafkaService {
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
-    private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
+    private Mono<InternalClusterMetrics> getClusterMetrics(KafkaCluster cluster, AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
                         c -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
-                            // TODO: fill bytes in/out metrics
+                            Map<String, BigDecimal> bytesInPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_IN_PER_SEC);
+                            Map<String, BigDecimal> bytesOutPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_OUT_PER_SEC);
                             metricsBuilder
-                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))));
-
+                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
+                                    .bytesOutPerSec(bytesOutPerSec)
+                                    .bytesInPerSec(bytesInPerSec);
                             return metricsBuilder.build();
                         }
                     )
@@ -199,11 +204,6 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    private Mono<String> getClusterId(AdminClient adminClient) {
-        return ClusterUtil.toMono(adminClient.describeCluster().clusterId());
-    }
-
-
     public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
         return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
                 .switchIfEmpty(createAdminClient(cluster))

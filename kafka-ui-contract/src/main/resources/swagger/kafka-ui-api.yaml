@@ -304,9 +304,13 @@ components:
         topicCount:
           type: integer
         bytesInPerSec:
-          type: integer
+          type: object
+          additionalProperties:
+            type: number
         bytesOutPerSec:
-          type: integer
+          type: object
+          additionalProperties:
+            type: number
       required:
         - id
         - name

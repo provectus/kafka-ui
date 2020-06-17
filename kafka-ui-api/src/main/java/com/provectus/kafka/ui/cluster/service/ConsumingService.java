@@ -112,7 +112,7 @@ public class ConsumingService {
 							.collect(Collectors.toMap(
 									partitionPosition -> new TopicPartition(topic, partitionPosition.getKey()),
 									Map.Entry::getValue
-							));  
+							));
 					consumer.offsetsForTimes(timestampsToSearch)
 							.forEach((topicPartition, offsetAndTimestamp) ->
 									consumer.seek(topicPartition, offsetAndTimestamp.offset())
