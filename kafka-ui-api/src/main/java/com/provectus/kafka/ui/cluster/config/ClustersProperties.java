@@ -19,6 +19,8 @@ public class ClustersProperties {
         String name;
         String bootstrapServers;
         String zookeeper;
+        String schemaRegistry;
+        String schemaNameTemplate = "%s-value";
         int jmxPort;
     }
 }

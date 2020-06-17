@@ -30,3 +30,5 @@ build/
 ### VS Code ###
 .vscode/
 /kafka-ui-api/app/node
+
+.DS_Store

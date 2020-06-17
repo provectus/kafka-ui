@@ -2,6 +2,7 @@ import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import { Switch, Route } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import EditContainer from 'components/Topics/Edit/EditContainer';
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import NewContainer from './New/NewContainer';
@@ -34,6 +35,11 @@ const Topics: React.FC<Props> = ({
           exact
           path="/ui/clusters/:clusterName/topics/new"
           component={NewContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName/edit"
+          component={EditContainer}
         />
         <Route
           path="/ui/clusters/:clusterName/topics/:topicName"

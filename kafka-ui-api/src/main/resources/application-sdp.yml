@@ -4,6 +4,7 @@ kafka:
       name: local
       bootstrapServers: kafka0:29092
       zookeeper: zookeeper0:2181
+      schemaRegistry: http://schemaregistry0:8085
     -
       name: secondLocal
       zookeeper: zookeeper1:2181
