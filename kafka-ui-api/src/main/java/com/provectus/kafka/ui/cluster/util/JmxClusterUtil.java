@@ -44,11 +44,7 @@ public class JmxClusterUtil {
             for (String attrName : attrNames) {
                 result.put(attrName, BigDecimal.valueOf((Double) msc.getAttribute(name, attrName)));
             }
-            try {
-                    pool.returnObject(jmxUrl, srv);
-                } catch(Exception e){
-                    log.error("Cannot return object to poll, {}", jmxUrl);
-                }
+            pool.returnObject(jmxUrl, srv);
         } catch (MalformedURLException url) {
             log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
             closeConnectionExceptionally(jmxUrl, srv);
@@ -56,12 +52,10 @@ public class JmxClusterUtil {
             log.error("Cannot connect to KafkaJmxServer with url {}", jmxUrl);
             closeConnectionExceptionally(jmxUrl, srv);
         } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException e) {
-            log.error("Cannot find attribute from");
-            log.error(e.getMessage());
+            log.error("Cannot find attribute", e);
             closeConnectionExceptionally(jmxUrl, srv);
         } catch (MalformedObjectNameException objectNameE) {
-            log.error("Cannot create objectName");
-            log.error(objectNameE.getMessage());
+            log.error("Cannot create objectName", objectNameE);
             closeConnectionExceptionally(jmxUrl, srv);
         } catch (Exception e) {
             log.error("Error while retrieving connection {} from pool", jmxUrl);
