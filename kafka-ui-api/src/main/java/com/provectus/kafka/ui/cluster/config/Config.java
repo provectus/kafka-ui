@@ -8,12 +8,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.export.MBeanExporter;
 
+import javax.management.remote.JMXConnector;
+
 @Configuration
 public class Config {
 
     @Bean
-    public KeyedObjectPool pool() {
-        GenericKeyedObjectPool pool =  new GenericKeyedObjectPool(new JmxPoolFactory());
+    public KeyedObjectPool<String, JMXConnector> pool() {
+        GenericKeyedObjectPool<String, JMXConnector> pool =  new GenericKeyedObjectPool<>(new JmxPoolFactory());
         pool.setConfig(poolConfig());
         return pool;
     }
