@@ -75,9 +75,6 @@ public class JmxClusterUtil {
     private void closeConnectionExceptionally(String url, JMXConnector srv) {
         try {
             pool.invalidateObject(url, srv);
-            srv.close();
-        } catch (IOException ioe) {
-            log.error("Cannot close connection with {}", url);
         } catch (Exception e) {
             log.error("Cannot invalidate object in pool, {}", url);
         }
