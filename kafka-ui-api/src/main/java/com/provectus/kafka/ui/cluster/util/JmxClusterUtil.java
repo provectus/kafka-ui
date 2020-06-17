@@ -44,6 +44,11 @@ public class JmxClusterUtil {
             for (String attrName : attrNames) {
                 result.put(attrName, BigDecimal.valueOf((Double) msc.getAttribute(name, attrName)));
             }
+            try {
+                    pool.returnObject(jmxUrl, srv);
+                } catch(Exception e){
+                    log.error("Cannot return object to poll, {}", jmxUrl);
+                }
         } catch (MalformedURLException url) {
             log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
             closeConnectionExceptionally(jmxUrl, srv);
@@ -61,13 +66,6 @@ public class JmxClusterUtil {
         } catch (Exception e) {
             log.error("Error while retrieving connection {} from pool", jmxUrl);
             closeConnectionExceptionally(jmxUrl, srv);
-        }
-        if (srv != null) {
-            try {
-                pool.returnObject(jmxUrl, srv);
-            } catch(Exception e){
-                log.error("Cannot return object to poll, {}", jmxUrl);
-            }
         }
         return result;
     }
