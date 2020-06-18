@@ -69,11 +69,11 @@ public class ConsumingService {
 	}
 
 	private boolean treeContainsValue(JsonNode tree, String query) {
-		List<JsonNode> nodesForSearch = new LinkedList<>();
+		LinkedList<JsonNode> nodesForSearch = new LinkedList<>();
 		nodesForSearch.add(tree);
 
 		while (!nodesForSearch.isEmpty()) {
-			JsonNode node = nodesForSearch.remove(0);
+			JsonNode node = nodesForSearch.removeFirst();
 
 			if (node.isContainerNode()) {
 				node.elements().forEachRemaining(nodesForSearch::add);
