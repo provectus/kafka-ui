@@ -23,3 +23,8 @@ export const clusterTopicMessagesPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;
+
+export const clusterTopicsTopicEditPath = (
+  clusterName: ClusterName,
+  topicName: TopicName
+) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;

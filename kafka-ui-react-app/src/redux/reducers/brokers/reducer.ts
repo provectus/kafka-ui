@@ -4,11 +4,9 @@ import {
   ZooKeeperStatus,
   BrokerMetrics,
 } from 'redux/interfaces';
-import {
-  ActionType,
-} from 'redux/actionType';
+import ActionType from 'redux/actionType';
 
-export const initialState: BrokersState =  {
+export const initialState: BrokersState = {
   items: [],
   brokerCount: 0,
   zooKeeperStatus: ZooKeeperStatus.offline,
@@ -21,12 +19,17 @@ export const initialState: BrokersState =  {
   diskUsage: [],
 };
 
-const updateBrokerSegmentSize = (state: BrokersState, payload: BrokerMetrics) => {
+const updateBrokerSegmentSize = (
+  state: BrokersState,
+  payload: BrokerMetrics
+) => {
   const brokers = state.items;
   const { diskUsage } = payload;
 
   const items = brokers.map((broker) => {
-    const brokerMetrics = diskUsage.find(({ brokerId }) => brokerId === broker.brokerId);
+    const brokerMetrics = diskUsage.find(
+      ({ brokerId }) => brokerId === broker.brokerId
+    );
     if (brokerMetrics !== undefined) {
       return { ...broker, ...brokerMetrics };
     }

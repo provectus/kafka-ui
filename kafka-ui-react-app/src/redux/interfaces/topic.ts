@@ -11,6 +11,12 @@ export interface TopicConfig {
   defaultValue: string;
 }
 
+export interface TopicConfigByName {
+  byName: {
+    [paramName: string]: TopicConfig;
+  };
+}
+
 export interface TopicReplica {
   broker: number;
   leader: boolean;
@@ -44,6 +50,16 @@ export interface Topic {
   partitions: TopicPartition[];
 }
 
+export interface TopicMessage {
+  partition: number;
+  offset: number;
+  timestamp: number;
+  timestampType: string;
+  key: string;
+  headers: Record<string, string>;
+  content: string;
+}
+
 export interface TopicFormCustomParam {
   name: string;
   value: string;
@@ -61,6 +77,11 @@ export interface TopicWithDetailedInfo extends Topic, TopicDetails {
 export interface TopicsState {
   byName: { [topicName: string]: TopicWithDetailedInfo };
   allNames: TopicName[];
+  messages: TopicMessage[];
+}
+
+export interface TopicFormFormattedParams {
+  [name: string]: string;
 }
 
 export interface TopicFormData {
@@ -72,7 +93,5 @@ export interface TopicFormData {
   retentionMs: number;
   retentionBytes: number;
   maxMessageBytes: number;
-  customParams: {
-    [index: string]: TopicFormCustomParam;
-  };
+  customParams: TopicFormCustomParams;
 }

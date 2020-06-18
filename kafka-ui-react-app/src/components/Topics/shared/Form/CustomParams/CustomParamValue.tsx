@@ -1,6 +1,7 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
-import { CUSTOM_PARAMS_OPTIONS } from './customParamsOptions';
+import { camelCase } from 'lodash';
+import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
 interface Props {
   isDisabled: boolean;
@@ -21,14 +22,14 @@ const CustomParamValue: React.FC<Props> = ({
   const selectedParamName = watch(selectInputName, name);
 
   React.useEffect(() => {
-    if (selectedParamName) {
+    if (selectedParamName && !defaultValue) {
       setValue(
         valInputName,
         CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue,
         true
       );
     }
-  }, [selectedParamName]);
+  }, [selectedParamName, setValue, valInputName]);
 
   return (
     <>
@@ -45,7 +46,7 @@ const CustomParamValue: React.FC<Props> = ({
         disabled={isDisabled}
       />
       <p className="help is-danger">
-        <ErrorMessage errors={errors} name={valInputName} />
+        <ErrorMessage errors={errors} name={name} />
       </p>
     </>
   );
