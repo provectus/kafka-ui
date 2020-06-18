@@ -21,5 +21,6 @@ public class ClustersProperties {
         String zookeeper;
         String schemaRegistry;
         String schemaNameTemplate = "%s-value";
+        int jmxPort;
     }
 }

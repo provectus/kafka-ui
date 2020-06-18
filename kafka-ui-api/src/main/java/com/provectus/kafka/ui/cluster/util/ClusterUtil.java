@@ -4,8 +4,6 @@ import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.deserialization.RecordDeserializer;
 import com.provectus.kafka.ui.model.*;
 import lombok.extern.slf4j.Slf4j;
-import com.provectus.kafka.ui.model.TopicMessage;
-
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -15,13 +13,11 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
-
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
-import java.util.HashMap;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -32,13 +28,17 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 @Slf4j
 public class ClusterUtil {
 
+
+
+
+
     private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
-    public static <T> Mono<T> toMono(KafkaFuture<T> future){
-        return Mono.create(sink -> future.whenComplete((res, ex)->{
-            if (ex!=null) {
+    public static <T> Mono<T> toMono(KafkaFuture<T> future) {
+        return Mono.create(sink -> future.whenComplete((res, ex) -> {
+            if (ex != null) {
                 sink.error(ex);
             } else {
                 sink.success(res);
@@ -46,9 +46,9 @@ public class ClusterUtil {
         }));
     }
 
-    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName){
-        return Mono.create(sink -> future.whenComplete((res, ex)->{
-            if (ex!=null) {
+    public static Mono<String> toMono(KafkaFuture<Void> future, String topicName) {
+        return Mono.create(sink -> future.whenComplete((res, ex) -> {
+            if (ex != null) {
                 sink.error(ex);
             } else {
                 sink.success(topicName);
@@ -111,7 +111,7 @@ public class ClusterUtil {
                     partitionDto.inSyncReplicasCount(partition.isr().size());
                     partitionDto.replicasCount(partition.replicas().size());
                     List<InternalReplica> replicas = partition.replicas().stream().map(
-                            r -> new InternalReplica(r.id(), partition.leader().id()!=r.id(), partition.isr().contains(r)))
+                            r -> new InternalReplica(r.id(), partition.leader().id() != r.id(), partition.isr().contains(r)))
                             .collect(Collectors.toList());
                     partitionDto.replicas(replicas);
                     return partitionDto.build();
@@ -185,6 +185,7 @@ public class ClusterUtil {
                 throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
         }
     }
+
     public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(AdminClient adminClient) {
         return ClusterUtil.toMono(adminClient.describeCluster().controller())
                 .map(Node::id)
@@ -210,7 +211,7 @@ public class ClusterUtil {
         }
     }
 
-    public static Topic convertToTopic (InternalTopic internalTopic) {
+    public static Topic convertToTopic(InternalTopic internalTopic) {
         Topic topic = new Topic();
         topic.setName(internalTopic.getName());
         List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
