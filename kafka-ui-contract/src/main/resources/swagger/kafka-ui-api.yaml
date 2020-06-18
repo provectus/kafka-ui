@@ -229,6 +229,10 @@ paths:
           in: query
           schema:
             type: integer
+        - name: q
+          in: query
+          schema:
+            type: string
       responses:
         200:
           description: OK
