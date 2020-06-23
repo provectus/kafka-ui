@@ -147,9 +147,9 @@ public class ClusterService {
                 });
     }
 
-    public Flux<TopicMessage> getMessages(String clusterName, String topicName, ConsumerPosition consumerPosition, Integer limit) {
+    public Flux<TopicMessage> getMessages(String clusterName, String topicName, ConsumerPosition consumerPosition, String query, Integer limit) {
         return clustersStorage.getClusterByName(clusterName)
-                .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, limit))
+                .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
 
     }
