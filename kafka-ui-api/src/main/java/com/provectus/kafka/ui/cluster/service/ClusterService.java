@@ -124,6 +124,7 @@ public class ClusterService {
                     .map(n -> n.stream().map(node -> {
                         Broker broker = new Broker();
                         broker.setId(node.idString());
+                        broker.setHost(node.host());
                         return broker;
                     }).collect(Collectors.toList())))
                 .flatMapMany(Flux::fromIterable);
@@ -154,7 +155,11 @@ public class ClusterService {
 
     }
 
-    public Flux<JmxMetrics> getJmxMetricsNames() {
-
+    public Mono<JmxMetric> getJmxMetric(String clusterName, Integer nodeId, JmxMetric metric) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(c -> kafkaService.getOrCreateAdminClient(c)
+                        .flatMap(a -> ClusterUtil.toMono(a.getAdminClient().describeCluster().nodes())
+                                    .map(n -> n.stream().filter(s -> s.id() == nodeId).findFirst().orElseThrow().host()))
+                        .map(host -> kafkaService.getJmxMetric(c, c.getJmxPort(), host, metric))).orElseThrow();
     }
 }

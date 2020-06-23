@@ -264,12 +264,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
-  /api/clusters/{clusterName}/brokers/{brokerId}:
-    get:
+  /api/clusters/{clusterName}/metrics/brokers/{brokerId}:
+    post:
       tags:
         - /api/clusters
-      summary: get all JmxMetricsNames
-      operationId: getJmxMetricsNames
+      summary: get specific JmxMetric
+      operationId: getJmxMetric
       parameters:
         - name: clusterName
           in: path
@@ -280,16 +280,19 @@ paths:
           in: path
           required: true
           schema:
-            type: string
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JmxMetric'
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/JmxMetrics'
+                $ref: '#/components/schemas/JmxMetric'
 
   /api/clusters/{clusterName}/consumerGroups:
     get:
@@ -338,6 +341,10 @@ components:
           type: object
           additionalProperties:
             type: number
+        jmxMetricsNames:
+          type: array
+          items:
+            $ref: '#/components/schemas/JmxMetric'
       required:
         - id
         - name
@@ -452,6 +459,8 @@ components:
       properties:
         id:
           type: string
+        host:
+          type: string
 
     ConsumerGroup:
       type: object
@@ -539,10 +548,12 @@ components:
           items:
             $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
 
-    JmxMetrics:
+    JmxMetric:
       type: object
       properties:
-        metricName:
-          type: array
-          items:
-            type: string
+        canonicalName:
+          type: string
+        value:
+          type: object
+          additionalProperties:
+            type: object

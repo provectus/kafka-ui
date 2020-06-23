@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 
@@ -24,5 +25,6 @@ public class InternalClusterMetrics {
     private final int segmentCount;
     private final long segmentSize;
     private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
+    private final List<InternalJmxMetric> jmxMetricsNames;
     private final int zooKeeperStatus;
 }

@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.cluster.util;
 
+import com.provectus.kafka.ui.cluster.model.InternalJmxMetric;
+import com.provectus.kafka.ui.model.JmxMetric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
@@ -8,12 +10,12 @@ import org.springframework.stereotype.Component;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.net.MalformedURLException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -30,20 +32,46 @@ public class JmxClusterUtil {
     private static final String BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_IN_PER_SEC;
     private static final String BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_OUT_PER_SEC;
 
-    private static final List<String> attrNames = Arrays.asList("OneMinuteRate", "FiveMinuteRate", "FifteenMinuteRate");
-
-    public Map<String, BigDecimal> getJmxTrafficMetrics(int jmxPort, String jmxHost, String metricName) {
+    public List<InternalJmxMetric> getJmxMetricsNames(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
-        Map<String, BigDecimal> result = new HashMap<>();
+        List<InternalJmxMetric> result = new ArrayList<>();
         JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
-            ObjectName name = metricName.equals(BYTES_IN_PER_SEC) ? new ObjectName(BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME) :
-                    new ObjectName(BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME);
-            for (String attrName : attrNames) {
-                result.put(attrName, BigDecimal.valueOf((Double) msc.getAttribute(name, attrName)));
+            var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith("kafka.server")).collect(Collectors.toList());
+            jmxMetrics.forEach(j -> {
+                InternalJmxMetric.InternalJmxMetricBuilder internalMetric = InternalJmxMetric.builder();
+                internalMetric.name(j.getKeyPropertyList().computeIfAbsent("name", s -> null));
+                internalMetric.topic(j.getKeyPropertyList().computeIfAbsent("topic", s -> null));
+                internalMetric.type(j.getKeyPropertyList().computeIfAbsent("type", s -> null));
+                internalMetric.canonicalName(j.getCanonicalName());
+                result.add(internalMetric.build());
+            });
+        } catch (IOException ioe) {
+            log.error("Cannot get jmxMetricsNames, {}", jmxUrl, ioe);
+        } catch (Exception e) {
+            log.error("Cannot get JmxConnection from pool, {}", jmxUrl, e);
+        }
+        return result;
+    }
+
+    public JmxMetric getJmxMetric(int jmxPort, String jmxHost, String canonicalName) {
+        String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
+
+        var result = new JmxMetric();
+        JMXConnector srv = null;
+        try {
+            srv = pool.borrowObject(jmxUrl);
+            MBeanServerConnection msc = srv.getMBeanServerConnection();
+            Map<String, Object> resultAttr = new HashMap<>();
+            ObjectName name = new ObjectName(canonicalName);
+            var attrNames = msc.getMBeanInfo(name).getAttributes();
+            for (MBeanAttributeInfo attrName : attrNames) {
+                resultAttr.put(attrName.getName(), msc.getAttribute(name, attrName.getName()));
             }
+            result.setCanonicalName(canonicalName);
+            result.setValue(resultAttr);
             pool.returnObject(jmxUrl, srv);
         } catch (MalformedURLException url) {
             log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
@@ -70,5 +98,11 @@ public class JmxClusterUtil {
         } catch (Exception e) {
             log.error("Cannot invalidate object in pool, {}", url);
         }
+    }
+
+    public String getParamFromName(String param, String name) {
+        int paramValueBeginIndex = name.indexOf(param) + param.length() + 1;
+        int paramValueEndIndex = name.indexOf(',', paramValueBeginIndex);
+        return paramValueEndIndex != -1 ? name.substring(paramValueBeginIndex, paramValueEndIndex) : name.substring(paramValueBeginIndex);
     }
 }

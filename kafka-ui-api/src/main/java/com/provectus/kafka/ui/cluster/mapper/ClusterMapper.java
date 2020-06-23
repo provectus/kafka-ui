@@ -1,10 +1,7 @@
 package com.provectus.kafka.ui.cluster.mapper;
 
 import com.provectus.kafka.ui.cluster.config.ClustersProperties;
-import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
-import com.provectus.kafka.ui.cluster.model.InternalTopic;
-import com.provectus.kafka.ui.cluster.model.InternalTopicConfig;
-import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -26,4 +23,5 @@ public interface ClusterMapper {
     Topic toTopic(InternalTopic topic);
     TopicDetails toTopicDetails(InternalTopic topic);
     TopicConfig toTopicConfig(InternalTopicConfig topic);
+    JmxMetric toJmxMetric(InternalJmxMetric metric);
 }

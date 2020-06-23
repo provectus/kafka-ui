@@ -5,7 +5,6 @@ import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +13,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
-
-import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -101,8 +99,10 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<JmxMetrics>>> getJmxMetricsNames(String clusterName, String brokerId, ServerWebExchange exchange){
-        return clusterService;
+    public Mono<ResponseEntity<JmxMetric>> getJmxMetric(String clusterName, Integer host, Mono<JmxMetric> metric, ServerWebExchange exchange){
+        return metric
+                .flatMap(m -> clusterService.getJmxMetric(clusterName, host, m)
+                        .map(ResponseEntity::ok));
     }
 
     private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
