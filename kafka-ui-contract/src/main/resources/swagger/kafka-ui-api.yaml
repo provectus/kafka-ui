@@ -268,8 +268,8 @@ paths:
     post:
       tags:
         - /api/clusters
-      summary: get specific JmxMetric
-      operationId: getJmxMetric
+      summary: get specific JmxMetric for broker
+      operationId: getBrokerJmxMetric
       parameters:
         - name: clusterName
           in: path
@@ -281,6 +281,31 @@ paths:
           required: true
           schema:
             type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JmxMetric'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JmxMetric'
+
+  /api/clusters/{clusterName}/metrics:
+    post:
+      tags:
+        - /api/clusters
+      summary: get specific JmxMetric for cluster
+      operationId: getClusterJmxMetric
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
       requestBody:
         content:
           application/json:

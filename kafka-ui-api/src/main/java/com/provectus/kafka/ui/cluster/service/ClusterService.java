@@ -12,12 +12,14 @@ import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -161,5 +163,25 @@ public class ClusterService {
                         .flatMap(a -> ClusterUtil.toMono(a.getAdminClient().describeCluster().nodes())
                                     .map(n -> n.stream().filter(s -> s.id() == nodeId).findFirst().orElseThrow().host()))
                         .map(host -> kafkaService.getJmxMetric(c, c.getJmxPort(), host, metric))).orElseThrow();
+    }
+
+    public Mono<JmxMetric> getClusterJmxMetric(String clusterName, JmxMetric metric) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(c -> kafkaService.getOrCreateAdminClient(c)
+                    .flatMap(eac -> ClusterUtil.toMono(eac.getAdminClient().describeCluster().nodes()))
+                    .flatMapIterable(n -> n.stream().flatMap(node -> Stream.of(node.host())).collect(Collectors.toList()))
+                    .map(host -> kafkaService.getJmxMetric(c, c.getJmxPort(), host, metric))
+                    .collectList()
+                    .map(s -> s.stream().filter(metric1 -> metric1.getCanonicalName().equals(metric.getCanonicalName()))
+                            .collect(Collectors.toList())
+                            .stream().reduce((jmx, jmx1) -> {
+                                if (jmx.getCanonicalName().equals(jmx1.getCanonicalName())) {
+                                    jmx.getValue().keySet().forEach(k -> jmx1.getValue().compute(k, (k1, v1) ->
+                                        ((BigDecimal) v1).add(((BigDecimal) jmx1.getValue().get(k)))));
+                                }
+                            return jmx;
+                            })
+                            .orElseThrow())
+                ).orElseThrow();
     }
 }

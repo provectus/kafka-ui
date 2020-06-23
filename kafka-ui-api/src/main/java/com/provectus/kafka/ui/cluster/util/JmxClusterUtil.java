@@ -27,15 +27,10 @@ public class JmxClusterUtil {
     private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
     private static final String JMX_SERVICE_TYPE = "jmxrmi";
 
-    public static final String BYTES_IN_PER_SEC = "BytesInPerSec";
-    public static final String BYTES_OUT_PER_SEC = "BytesOutPerSec";
-    private static final String BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_IN_PER_SEC;
-    private static final String BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME = "kafka.server:type=BrokerTopicMetrics,name=" + BYTES_OUT_PER_SEC;
-
     public List<InternalJmxMetric> getJmxMetricsNames(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
         List<InternalJmxMetric> result = new ArrayList<>();
-        JMXConnector srv = null;
+        JMXConnector srv;
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
@@ -100,7 +95,7 @@ public class JmxClusterUtil {
         }
     }
 
-    public String getParamFromName(String param, String name) {
+    public static String getParamFromName(String param, String name) {
         int paramValueBeginIndex = name.indexOf(param) + param.length() + 1;
         int paramValueEndIndex = name.indexOf(',', paramValueBeginIndex);
         return paramValueEndIndex != -1 ? name.substring(paramValueBeginIndex, paramValueEndIndex) : name.substring(paramValueBeginIndex);

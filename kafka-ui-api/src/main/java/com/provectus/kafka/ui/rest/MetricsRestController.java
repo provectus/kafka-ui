@@ -99,9 +99,16 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<JmxMetric>> getJmxMetric(String clusterName, Integer host, Mono<JmxMetric> metric, ServerWebExchange exchange){
+    public Mono<ResponseEntity<JmxMetric>> getBrokerJmxMetric(String clusterName, Integer host, Mono<JmxMetric> metric, ServerWebExchange exchange){
         return metric
                 .flatMap(m -> clusterService.getJmxMetric(clusterName, host, m)
+                        .map(ResponseEntity::ok));
+    }
+
+    @Override
+    public Mono<ResponseEntity<JmxMetric>> getClusterJmxMetric(String clusterName, Mono<JmxMetric> metric, ServerWebExchange exchange){
+        return metric
+                .flatMap(m -> clusterService.getClusterJmxMetric(clusterName, m)
                         .map(ResponseEntity::ok));
     }
 

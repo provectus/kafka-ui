@@ -163,12 +163,8 @@ public class KafkaService {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
                             List<InternalJmxMetric> metrics = jmxClusterUtil.getJmxMetricsNames(cluster.getJmxPort(), c.host());
-
-//                            Map<String, BigDecimal> bytesOutPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_OUT_PER_SEC);
                             metricsBuilder
                                     .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
-//                                    .bytesOutPerSec(bytesOutPerSec)
-//                                    .bytesInPerSec(bytesInPerSec)
                                     .jmxMetricsNames(metrics);
                             return metricsBuilder.build();
                         }
@@ -353,10 +349,10 @@ public class KafkaService {
     public JmxMetric getJmxMetric (KafkaCluster cluster, int jmxPort, String host, JmxMetric metric) {
         var jmxMetric = cluster.getMetrics().getJmxMetricsNames().stream().filter(c -> {
             var foundTopic = false;
-            var found = jmxClusterUtil.getParamFromName("name", metric.getCanonicalName()).equals(c.getName())
-                        && jmxClusterUtil.getParamFromName("type", metric.getCanonicalName()).equals(c.getType());
+            var found = JmxClusterUtil.getParamFromName("name", metric.getCanonicalName()).equals(c.getName())
+                        && JmxClusterUtil.getParamFromName("type", metric.getCanonicalName()).equals(c.getType());
             if (found && c.getTopic() != null) {
-                foundTopic = c.getTopic().equals(jmxClusterUtil.getParamFromName("topic", metric.getCanonicalName()));
+                foundTopic = c.getTopic().equals(JmxClusterUtil.getParamFromName("topic", metric.getCanonicalName()));
             }
             return found && foundTopic;
         }).findFirst().orElseThrow();
