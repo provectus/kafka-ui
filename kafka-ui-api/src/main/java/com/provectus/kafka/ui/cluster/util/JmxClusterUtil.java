@@ -32,9 +32,9 @@ public class JmxClusterUtil {
 
     private static final List<String> attrNames = Arrays.asList("OneMinuteRate", "FiveMinuteRate", "FifteenMinuteRate");
 
-    public Map<String, BigDecimal> getJmxTrafficMetrics(int jmxPort, String jmxHost, String metricName) {
+    public Map<String, Number> getJmxTrafficMetrics(int jmxPort, String jmxHost, String metricName) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
-        Map<String, BigDecimal> result = new HashMap<>();
+        Map<String, Number> result = new HashMap<>();
         JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
@@ -42,7 +42,8 @@ public class JmxClusterUtil {
             ObjectName name = metricName.equals(BYTES_IN_PER_SEC) ? new ObjectName(BYTES_IN_PER_SEC_MBEAN_OBJECT_NAME) :
                     new ObjectName(BYTES_OUT_PER_SEC_MBEAN_OBJECT_NAME);
             for (String attrName : attrNames) {
-                result.put(attrName, BigDecimal.valueOf((Double) msc.getAttribute(name, attrName)));
+                Number value = (Number) msc.getAttribute(name, attrName);
+                result.put(attrName, value instanceof Double ? BigDecimal.valueOf((Double) value) : Integer.valueOf(value.toString()));
             }
             pool.returnObject(jmxUrl, srv);
         } catch (MalformedURLException url) {

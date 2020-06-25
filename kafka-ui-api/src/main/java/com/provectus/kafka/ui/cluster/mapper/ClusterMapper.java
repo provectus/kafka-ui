@@ -8,7 +8,8 @@ import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ValueMapping;
+
+import java.math.BigDecimal;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
@@ -21,6 +22,10 @@ public interface ClusterMapper {
     @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec")
     @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec")
     Cluster toCluster(KafkaCluster cluster);
+
+    default BigDecimal map (Number number) {
+        return new BigDecimal(number.toString());
+    }
 
     BrokersMetrics toBrokerMetrics(InternalClusterMetrics metrics);
     Topic toTopic(InternalTopic topic);

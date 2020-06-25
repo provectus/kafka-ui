@@ -19,8 +19,8 @@ public class InternalClusterMetrics {
     private final int offlinePartitionCount;
     private final int inSyncReplicasCount;
     private final int outOfSyncReplicasCount;
-    private final Map<String, BigDecimal> bytesInPerSec;
-    private final Map<String, BigDecimal> bytesOutPerSec;
+    private final Map<String, Number> bytesInPerSec;
+    private final Map<String, Number> bytesOutPerSec;
     private final int segmentCount;
     private final long segmentSize;
     private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
