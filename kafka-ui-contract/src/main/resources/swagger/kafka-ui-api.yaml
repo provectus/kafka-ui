@@ -310,11 +310,11 @@ components:
         bytesInPerSec:
           type: object
           additionalProperties:
-            type: object
+            type: number
         bytesOutPerSec:
           type: object
           additionalProperties:
-            type: object
+            type: number
       required:
         - id
         - name
