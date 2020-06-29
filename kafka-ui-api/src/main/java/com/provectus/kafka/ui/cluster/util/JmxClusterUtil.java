@@ -10,11 +10,9 @@ import org.springframework.stereotype.Component;
 import javax.management.*;
 import javax.management.remote.JMXConnector;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,7 +28,7 @@ public class JmxClusterUtil {
     public List<InternalJmxMetric> getJmxMetricsNames(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
         List<InternalJmxMetric> result = new ArrayList<>();
-        JMXConnector srv;
+        JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
@@ -43,10 +41,13 @@ public class JmxClusterUtil {
                 internalMetric.canonicalName(j.getCanonicalName());
                 result.add(internalMetric.build());
             });
+            pool.returnObject(jmxUrl, srv);
         } catch (IOException ioe) {
             log.error("Cannot get jmxMetricsNames, {}", jmxUrl, ioe);
+            closeConnectionExceptionally(jmxUrl, srv);
         } catch (Exception e) {
             log.error("Cannot get JmxConnection from pool, {}", jmxUrl, e);
+            closeConnectionExceptionally(jmxUrl, srv);
         }
         return result;
     }
@@ -96,8 +97,34 @@ public class JmxClusterUtil {
     }
 
     public static String getParamFromName(String param, String name) {
+        if (!name.contains(param)) {
+            return null;
+        }
         int paramValueBeginIndex = name.indexOf(param) + param.length() + 1;
         int paramValueEndIndex = name.indexOf(',', paramValueBeginIndex);
         return paramValueEndIndex != -1 ? name.substring(paramValueBeginIndex, paramValueEndIndex) : name.substring(paramValueBeginIndex);
+    }
+
+    public static boolean metricNamesEquals (String metric1Name, String metric2Name) {
+        boolean result = false;
+        try {
+            result = Objects.equals(getParamFromName("name", metric1Name), getParamFromName("name", metric2Name))
+                    &&
+                    Objects.equals(getParamFromName("type", metric1Name), getParamFromName("type", metric2Name))
+                    &&
+                    getParamFromName("topic", metric1Name) == null ||
+                            Objects.equals(getParamFromName("topic", metric1Name), getParamFromName("topic", metric2Name));
+        } catch (NullPointerException npe) {
+            log.error("Cannot compare {} with {}, npe caught", metric1Name, metric2Name);
+        }
+        return result;
+    }
+
+    public static Object metricValueReduce(Object value1, Object value2) {
+        if (value1 instanceof Number) {
+            return new BigDecimal(value1.toString()).add(new BigDecimal(value2.toString()));
+        } else {
+            return value1;
+        }
     }
 }

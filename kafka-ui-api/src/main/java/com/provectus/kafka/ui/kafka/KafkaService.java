@@ -346,13 +346,13 @@ public class KafkaService {
             );
     }
 
-    public JmxMetric getJmxMetric (KafkaCluster cluster, int jmxPort, String host, JmxMetric metric) {
+    public JmxMetric getJmxMetric (KafkaCluster cluster, int jmxPort, String host, String canonicalName) {
         var jmxMetric = cluster.getMetrics().getJmxMetricsNames().stream().filter(c -> {
             var foundTopic = false;
-            var found = JmxClusterUtil.getParamFromName("name", metric.getCanonicalName()).equals(c.getName())
-                        && JmxClusterUtil.getParamFromName("type", metric.getCanonicalName()).equals(c.getType());
+            var found = JmxClusterUtil.getParamFromName("name", canonicalName).equals(c.getName())
+                        && JmxClusterUtil.getParamFromName("type", canonicalName).equals(c.getType());
             if (found && c.getTopic() != null) {
-                foundTopic = c.getTopic().equals(JmxClusterUtil.getParamFromName("topic", metric.getCanonicalName()));
+                foundTopic = c.getTopic().equals(JmxClusterUtil.getParamFromName("topic", canonicalName));
             }
             return found && foundTopic;
         }).findFirst().orElseThrow();

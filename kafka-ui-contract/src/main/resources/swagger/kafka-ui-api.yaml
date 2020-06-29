@@ -264,8 +264,8 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
-  /api/clusters/{clusterName}/metrics/brokers/{brokerId}:
-    post:
+  /api/clusters/{clusterName}/brokers/{brokerId}/metrics/{canonicalName}:
+    get:
       tags:
         - /api/clusters
       summary: get specific JmxMetric for broker
@@ -281,11 +281,11 @@ paths:
           required: true
           schema:
             type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JmxMetric'
+        - name: canonicalName
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -295,7 +295,7 @@ paths:
                 $ref: '#/components/schemas/JmxMetric'
 
   /api/clusters/{clusterName}/metrics:
-    post:
+    get:
       tags:
         - /api/clusters
       summary: get specific JmxMetric for cluster
@@ -306,11 +306,11 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/JmxMetric'
+        - name: canonicalName
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
