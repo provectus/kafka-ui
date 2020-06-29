@@ -358,18 +358,10 @@ components:
           type: integer
         topicCount:
           type: integer
-        bytesInPerSec:
-          type: object
-          additionalProperties:
-            type: number
-        bytesOutPerSec:
-          type: object
-          additionalProperties:
-            type: number
         jmxMetricsNames:
           type: array
           items:
-            $ref: '#/components/schemas/JmxMetric'
+            $ref: '#/components/schemas/JmxMetricName'
       required:
         - id
         - name
@@ -582,3 +574,9 @@ components:
           type: object
           additionalProperties:
             type: object
+
+    JmxMetricName:
+      type: object
+      properties:
+        canonicalName:
+          type: string

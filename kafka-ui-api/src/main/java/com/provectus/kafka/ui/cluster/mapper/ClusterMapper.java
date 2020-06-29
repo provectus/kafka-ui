@@ -5,20 +5,17 @@ import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.ValueMapping;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
 
-    KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
-
     @Mapping(target = "brokerCount", source = "metrics.brokerCount")
     @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
     @Mapping(target = "topicCount", source = "metrics.topicCount")
-    @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec")
-    @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec")
+    @Mapping(target = "jmxMetricsNames", source = "metrics.jmxMetricsNames")
     Cluster toCluster(KafkaCluster cluster);
 
+    KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
     BrokersMetrics toBrokerMetrics(InternalClusterMetrics metrics);
     Topic toTopic(InternalTopic topic);
     TopicDetails toTopicDetails(InternalTopic topic);
