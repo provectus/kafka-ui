@@ -1,7 +1,10 @@
 package com.provectus.kafka.ui.cluster.mapper;
 
 import com.provectus.kafka.ui.cluster.config.ClustersProperties;
-import com.provectus.kafka.ui.cluster.model.*;
+import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
+import com.provectus.kafka.ui.cluster.model.InternalTopic;
+import com.provectus.kafka.ui.cluster.model.InternalTopicConfig;
+import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

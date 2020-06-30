@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.zookeeper;
 
-import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
