@@ -26,6 +26,7 @@ public class JmxClusterUtil {
 
     private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
     private static final String JMX_SERVICE_TYPE = "jmxrmi";
+    private static final String KAFKA_SERVER_PARAM = "kafka.server";
 
     public List<JmxMetric> getJmxMetrics(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
@@ -34,7 +35,7 @@ public class JmxClusterUtil {
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
-            var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith("kafka.server")).collect(Collectors.toList());
+            var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM)).collect(Collectors.toList());
             jmxMetrics.forEach(j -> {
                 JmxMetric metric = new JmxMetric();
                 metric.setCanonicalName(j.getCanonicalName());
