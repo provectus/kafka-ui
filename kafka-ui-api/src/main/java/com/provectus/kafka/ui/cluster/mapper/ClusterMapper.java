@@ -12,7 +12,7 @@ public interface ClusterMapper {
     @Mapping(target = "brokerCount", source = "metrics.brokerCount")
     @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
     @Mapping(target = "topicCount", source = "metrics.topicCount")
-    @Mapping(target = "jmxMetricsNames", source = "metrics.jmxMetricsNames")
+    @Mapping(target = "jmxMetrics", source = "metrics.jmxMetrics")
     Cluster toCluster(KafkaCluster cluster);
 
     KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
@@ -20,5 +20,4 @@ public interface ClusterMapper {
     Topic toTopic(InternalTopic topic);
     TopicDetails toTopicDetails(InternalTopic topic);
     TopicConfig toTopicConfig(InternalTopicConfig topic);
-    JmxMetric toJmxMetric(InternalJmxMetric metric);
 }

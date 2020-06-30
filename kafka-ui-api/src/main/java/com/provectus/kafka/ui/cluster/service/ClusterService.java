@@ -31,6 +31,7 @@ public class ClusterService {
     private final ClusterMapper clusterMapper;
     private final KafkaService kafkaService;
     private final ConsumingService consumingService;
+    private final JmxClusterUtil jmxClusterUtil;
 
     public List<Cluster> getClusters() {
         return clustersStorage.getKafkaClusters()
@@ -39,10 +40,12 @@ public class ClusterService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<BrokersMetrics> getBrokersMetrics(String name) {
+    public Mono<BrokersMetrics> getBrokersMetrics(String name, Integer id) {
         return clustersStorage.getClusterByName(name)
                 .map(KafkaCluster::getMetrics)
-                .map(clusterMapper::toBrokerMetrics);
+                .map(s -> kafkaService.getJmxMetric(name, id)
+                        .map(j -> s.toBuilder().jmxMetrics(j).build()))
+                .map(s -> s.map(clusterMapper::toBrokerMetrics)).orElseThrow();
     }
 
     public List<Topic> getTopics(String name) {
@@ -154,33 +157,5 @@ public class ClusterService {
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, limit))
                 .orElse(Flux.empty());
 
-    }
-
-    public Mono<JmxMetric> getJmxMetric(String clusterName, Integer nodeId, String canonicalName) {
-        return clustersStorage.getClusterByName(clusterName)
-                .map(c -> kafkaService.getOrCreateAdminClient(c)
-                        .flatMap(a -> ClusterUtil.toMono(a.getAdminClient().describeCluster().nodes())
-                                    .map(n -> n.stream().filter(s -> s.id() == nodeId).findFirst().orElseThrow().host()))
-                        .map(host -> kafkaService.getJmxMetric(c, c.getJmxPort(), host, canonicalName))).orElseThrow();
-    }
-
-    public Mono<JmxMetric> getClusterJmxMetric(String clusterName, String canonicalName) {
-        return clustersStorage.getClusterByName(clusterName)
-                .map(c -> kafkaService.getOrCreateAdminClient(c)
-                    .flatMap(eac -> ClusterUtil.toMono(eac.getAdminClient().describeCluster().nodes()))
-                    .flatMapIterable(n -> n.stream().flatMap(node -> Stream.of(node.host())).collect(Collectors.toList()))
-                    .map(host -> kafkaService.getJmxMetric(c, c.getJmxPort(), host, canonicalName))
-                    .collectList()
-                    .map(s -> s.stream().filter(metric1 -> JmxClusterUtil.metricNamesEquals(metric1.getCanonicalName(), canonicalName))
-                            .collect(Collectors.toList())
-                            .stream().reduce((jmx, jmx1) -> {
-                                if (jmx.getCanonicalName().equals(jmx1.getCanonicalName())) {
-                                    jmx.getValue().keySet().forEach(k -> jmx1.getValue().compute(k, (k1, v1) ->
-                                        JmxClusterUtil.metricValueReduce(v1, jmx1.getValue().get(k))));
-                                }
-                            return jmx;
-                            })
-                            .orElseThrow())
-                ).orElseThrow();
     }
 }

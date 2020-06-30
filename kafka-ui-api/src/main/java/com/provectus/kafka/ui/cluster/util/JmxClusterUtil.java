@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.provectus.kafka.ui.cluster.model.InternalJmxMetric;
 import com.provectus.kafka.ui.model.JmxMetric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,21 +24,19 @@ public class JmxClusterUtil {
     private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
     private static final String JMX_SERVICE_TYPE = "jmxrmi";
 
-    public List<InternalJmxMetric> getJmxMetricsNames(int jmxPort, String jmxHost) {
+    public List<JmxMetric> getJmxMetrics(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
-        List<InternalJmxMetric> result = new ArrayList<>();
+        List<JmxMetric> result = new ArrayList<>();
         JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
             var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith("kafka.server")).collect(Collectors.toList());
             jmxMetrics.forEach(j -> {
-                InternalJmxMetric.InternalJmxMetricBuilder internalMetric = InternalJmxMetric.builder();
-                internalMetric.name(j.getKeyPropertyList().computeIfAbsent("name", s -> null));
-                internalMetric.topic(j.getKeyPropertyList().computeIfAbsent("topic", s -> null));
-                internalMetric.type(j.getKeyPropertyList().computeIfAbsent("type", s -> null));
-                internalMetric.canonicalName(j.getCanonicalName());
-                result.add(internalMetric.build());
+                JmxMetric metric = new JmxMetric();
+                metric.setCanonicalName(j.getCanonicalName());
+                metric.setValue(getJmxMetric(jmxPort, jmxHost, j.getCanonicalName()));
+                result.add(metric);
             });
             pool.returnObject(jmxUrl, srv);
         } catch (IOException ioe) {
@@ -52,22 +49,20 @@ public class JmxClusterUtil {
         return result;
     }
 
-    public JmxMetric getJmxMetric(int jmxPort, String jmxHost, String canonicalName) {
+    private Map<String, Object> getJmxMetric(int jmxPort, String jmxHost, String canonicalName) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
 
-        var result = new JmxMetric();
+        Map<String, Object> resultAttr = new HashMap<>();
         JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
-            Map<String, Object> resultAttr = new HashMap<>();
+
             ObjectName name = new ObjectName(canonicalName);
             var attrNames = msc.getMBeanInfo(name).getAttributes();
             for (MBeanAttributeInfo attrName : attrNames) {
                 resultAttr.put(attrName.getName(), msc.getAttribute(name, attrName.getName()));
             }
-            result.setCanonicalName(canonicalName);
-            result.setValue(resultAttr);
             pool.returnObject(jmxUrl, srv);
         } catch (MalformedURLException url) {
             log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
@@ -85,7 +80,7 @@ public class JmxClusterUtil {
             log.error("Error while retrieving connection {} from pool", jmxUrl);
             closeConnectionExceptionally(jmxUrl, srv);
         }
-        return result;
+        return resultAttr;
     }
 
     private void closeConnectionExceptionally(String url, JMXConnector srv) {
@@ -94,30 +89,6 @@ public class JmxClusterUtil {
         } catch (Exception e) {
             log.error("Cannot invalidate object in pool, {}", url);
         }
-    }
-
-    public static String getParamFromName(String param, String name) {
-        if (!name.contains(param)) {
-            return null;
-        }
-        int paramValueBeginIndex = name.indexOf(param) + param.length() + 1;
-        int paramValueEndIndex = name.indexOf(',', paramValueBeginIndex);
-        return paramValueEndIndex != -1 ? name.substring(paramValueBeginIndex, paramValueEndIndex) : name.substring(paramValueBeginIndex);
-    }
-
-    public static boolean metricNamesEquals (String metric1Name, String metric2Name) {
-        boolean result = false;
-        try {
-            result = Objects.equals(getParamFromName("name", metric1Name), getParamFromName("name", metric2Name))
-                    &&
-                    Objects.equals(getParamFromName("type", metric1Name), getParamFromName("type", metric2Name))
-                    &&
-                    getParamFromName("topic", metric1Name) == null ||
-                            Objects.equals(getParamFromName("topic", metric1Name), getParamFromName("topic", metric2Name));
-        } catch (NullPointerException npe) {
-            log.error("Cannot compare {} with {}, npe caught", metric1Name, metric2Name);
-        }
-        return result;
     }
 
     public static Object metricValueReduce(Object value1, Object value2) {

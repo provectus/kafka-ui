@@ -52,7 +52,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Broker'
 
-  /api/clusters/{clusterName}/metrics/broker:
+  /api/clusters/{clusterName}/metrics/broker/{id}:
     get:
       tags:
         - /api/clusters
@@ -64,6 +64,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         200:
           description: OK
@@ -264,60 +269,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
-  /api/clusters/{clusterName}/brokers/{brokerId}/metrics/{canonicalName}:
-    get:
-      tags:
-        - /api/clusters
-      summary: get specific JmxMetric for broker
-      operationId: getBrokerJmxMetric
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: brokerId
-          in: path
-          required: true
-          schema:
-            type: integer
-        - name: canonicalName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JmxMetric'
+#  /api/clusters/{clusterName}/brokers/{brokerId}/metrics/{canonicalName}:
+#    get:
+#      tags:
+#        - /api/clusters
+#      summary: get specific JmxMetric for broker
+#      operationId: getBrokerJmxMetric
+#      parameters:
+#        - name: clusterName
+#          in: path
+#          required: true
+#          schema:
+#            type: string
+#        - name: brokerId
+#          in: path
+#          required: true
+#          schema:
+#            type: integer
+#        - name: canonicalName
+#          in: path
+#          required: true
+#          schema:
+#            type: string
+#      responses:
+#        200:
+#          description: OK
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/JmxMetric'
 
-  /api/clusters/{clusterName}/metrics:
-    get:
-      tags:
-        - /api/clusters
-      summary: get specific JmxMetric for cluster
-      operationId: getClusterJmxMetric
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: canonicalName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/JmxMetric'
+#  /api/clusters/{clusterName}/metrics:
+#    get:
+#      tags:
+#        - /api/clusters
+#      summary: get specific JmxMetric for cluster
+#      operationId: getClusterJmxMetric
+#      parameters:
+#        - name: clusterName
+#          in: path
+#          required: true
+#          schema:
+#            type: string
+#        - name: canonicalName
+#          in: path
+#          required: true
+#          schema:
+#            type: string
+#      responses:
+#        200:
+#          description: OK
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/JmxMetric'
 
   /api/clusters/{clusterName}/consumerGroups:
     get:
@@ -358,10 +363,10 @@ components:
           type: integer
         topicCount:
           type: integer
-        jmxMetricsNames:
+        jmxMetrics:
           type: array
           items:
-            $ref: '#/components/schemas/JmxMetricName'
+            $ref: '#/components/schemas/JmxMetric'
       required:
         - id
         - name
@@ -392,6 +397,10 @@ components:
           type: integer
         segmentZise:
           type: integer
+        jmxMetrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/JmxMetric'
 
     Topic:
       type: object
@@ -571,12 +580,6 @@ components:
         canonicalName:
           type: string
         value:
-          type: object
+          type: string
           additionalProperties:
             type: object
-
-    JmxMetricName:
-      type: object
-      properties:
-        canonicalName:
-          type: string

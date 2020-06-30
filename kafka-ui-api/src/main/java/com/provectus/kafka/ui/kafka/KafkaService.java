@@ -42,6 +42,7 @@ public class KafkaService {
     private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
     private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
     private final JmxClusterUtil jmxClusterUtil;
+    private final ClustersStorage clustersStorage;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
@@ -158,18 +159,18 @@ public class KafkaService {
     private Mono<InternalClusterMetrics> getClusterMetrics(KafkaCluster cluster, AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
-                    ClusterUtil.toMono(client.describeCluster().controller()).map(
-                        c -> {
+                    ClusterUtil.toMono(client.describeCluster().controller()).flatMap(
+                        c ->
+                            getClusterJmxMetric(cluster.getName()).map(jmxMetric -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
-                            List<InternalJmxMetric> metrics = jmxClusterUtil.getJmxMetricsNames(cluster.getJmxPort(), c.host());
                             metricsBuilder
                                     .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
-                                    .jmxMetricsNames(metrics);
+                                    .jmxMetrics(jmxMetric);
                             return metricsBuilder.build();
                         }
                     )
-                );
+                ));
     }
 
 
@@ -346,16 +347,31 @@ public class KafkaService {
             );
     }
 
-    public JmxMetric getJmxMetric (KafkaCluster cluster, int jmxPort, String host, String canonicalName) {
-        var jmxMetric = cluster.getMetrics().getJmxMetricsNames().stream().filter(c -> {
-            var foundTopic = false;
-            var found = JmxClusterUtil.getParamFromName("name", canonicalName).equals(c.getName())
-                        && JmxClusterUtil.getParamFromName("type", canonicalName).equals(c.getType());
-            if (found && c.getTopic() != null) {
-                foundTopic = c.getTopic().equals(JmxClusterUtil.getParamFromName("topic", canonicalName));
-            }
-            return found && foundTopic;
-        }).findFirst().orElseThrow();
-        return jmxClusterUtil.getJmxMetric(jmxPort, host, jmxMetric.getCanonicalName());
+    public Mono<List<JmxMetric>> getClusterJmxMetric(String clusterName) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(c -> getOrCreateAdminClient(c)
+                        .flatMap(eac -> ClusterUtil.toMono(eac.getAdminClient().describeCluster().nodes()))
+                        .flatMapIterable(n -> n.stream().flatMap(node -> Stream.of(node.host())).collect(Collectors.toList()))
+                        .map(host -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), host))
+                        .collectList()
+                        .map(s -> s.stream().reduce((s1, s2) -> {
+                            s1.forEach(j1 -> {
+                                s2.forEach(j2 -> {
+                                    if (j1.getCanonicalName().equals(j2.getCanonicalName())) {
+                                        j1.getValue().keySet().forEach(k -> j2.getValue().compute(k, (k1, v1) ->
+                                                JmxClusterUtil.metricValueReduce(j1, j2.getValue().get(k1))));
+                                    }
+                                });
+                            });
+                            return s1;
+                        }).orElseThrow())).orElseThrow();
+    }
+
+    public Mono<List<JmxMetric>> getJmxMetric(String clusterName, Integer nodeId) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(c -> getOrCreateAdminClient(c)
+                        .flatMap(a -> ClusterUtil.toMono(a.getAdminClient().describeCluster().nodes())
+                                .map(n -> n.stream().filter(s -> s.id() == nodeId).findFirst().orElseThrow().host()))
+                        .map(host ->  jmxClusterUtil.getJmxMetrics(c.getJmxPort(), host))).orElseThrow();
     }
 }

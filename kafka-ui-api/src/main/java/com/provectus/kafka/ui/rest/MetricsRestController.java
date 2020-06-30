@@ -30,12 +30,10 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterName, ServerWebExchange exchange) {
-        return Mono.just(
-                clusterService.getBrokersMetrics(clusterName)
+    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterName, Integer id, ServerWebExchange exchange) {
+        return clusterService.getBrokersMetrics(clusterName, id)
                         .map(ResponseEntity::ok)
-                        .orElse(ResponseEntity.notFound().build())
-        );
+                        .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -98,18 +96,6 @@ public class MetricsRestController implements ApiClustersApi {
         return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
     }
 
-    @Override
-    public Mono<ResponseEntity<JmxMetric>> getBrokerJmxMetric(String clusterName, Integer host, String canonicalName, ServerWebExchange exchange){
-        return
-               clusterService.getJmxMetric(clusterName, host, canonicalName)
-                        .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<JmxMetric>> getClusterJmxMetric(String clusterName, String canonicalName, ServerWebExchange exchange){
-        return clusterService.getClusterJmxMetric(clusterName, canonicalName)
-                        .map(ResponseEntity::ok);
-    }
 
     private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
         return Mono.justOrEmpty(seekTo)
