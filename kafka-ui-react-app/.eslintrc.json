@@ -24,6 +24,7 @@
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
+    "@typescript-eslint/ban-ts-ignore": "off",
     "import/extensions": [
       "error",
       "ignorePackages",
