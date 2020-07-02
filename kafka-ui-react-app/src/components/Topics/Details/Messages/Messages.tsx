@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   ClusterName,
   SeekTypes,
@@ -14,6 +14,8 @@ import 'react-datepicker/dist/react-datepicker.css';
 import CustomParamButton, {
   CustomParamButtonType,
 } from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
+
+import { debounce } from 'lodash';
 
 interface Props {
   clusterName: ClusterName;
@@ -58,7 +60,7 @@ const Messages: React.FC<Props> = ({
 
   const prevSearchTimestamp = usePrevious(searchTimestamp);
 
-  const getUniqueDataForEachPartition = () => {
+  const getUniqueDataForEachPartition: FilterProps[] = React.useMemo(() => {
     const map = messages.map((message) => [
       message.partition,
       {
@@ -68,7 +70,7 @@ const Messages: React.FC<Props> = ({
     ]);
     // @ts-ignore
     return [...new Map(map).values()];
-  };
+  }, [messages]);
 
   React.useEffect(() => {
     fetchTopicMessages(clusterName, topicName, queryParams);
@@ -78,11 +80,18 @@ const Messages: React.FC<Props> = ({
     setFilterProps(getUniqueDataForEachPartition);
   }, [messages]);
 
+  const handleDelayedQuery = useCallback(
+    debounce(
+      (query: string) => setQueryParams({ ...queryParams, q: query }),
+      1000
+    ),
+    []
+  );
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
 
     setSearchQuery(query);
-    setQueryParams({ ...queryParams, q: query });
+    handleDelayedQuery(query);
   };
 
   const handleDateTimeChange = () => {
@@ -108,7 +117,7 @@ const Messages: React.FC<Props> = ({
     return format(new Date(timestamp * 1000), 'MM.dd.yyyy HH:mm:ss');
   };
 
-  const getMessageContentHeaders = () => {
+  const getMessageContentHeaders = React.useMemo(() => {
     const message = messages[0];
     const headers: JSX.Element[] = [];
     try {
@@ -117,19 +126,21 @@ const Messages: React.FC<Props> = ({
           ? JSON.parse(message.content)
           : message.content;
       Object.keys(content).forEach((k) =>
-        headers.push(<th>{`content.${k}`}</th>)
+        headers.push(<th key={Math.random()}>{`content.${k}`}</th>)
       );
     } catch (e) {
       headers.push(<th>Content</th>);
     }
     return headers;
-  };
+  }, [messages]);
 
   const getMessageContentBody = (content: any) => {
     const columns: JSX.Element[] = [];
     try {
       const c = typeof content !== 'object' ? JSON.parse(content) : content;
-      Object.values(c).map((v) => columns.push(<td>{JSON.stringify(v)}</td>));
+      Object.values(c).map((v) =>
+        columns.push(<td key={Math.random()}>{JSON.stringify(v)}</td>)
+      );
     } catch (e) {
       columns.push(<td>{content}</td>);
     }
@@ -158,12 +169,12 @@ const Messages: React.FC<Props> = ({
               <th>Timestamp</th>
               <th>Offset</th>
               <th>Partition</th>
-              {getMessageContentHeaders()}
+              {getMessageContentHeaders}
             </tr>
           </thead>
           <tbody>
             {messages.map((message) => (
-              <tr key={message.timestamp}>
+              <tr key={`${message.timestamp}${Math.random()}`}>
                 <td>{getTimestampDate(message.timestamp)}</td>
                 <td>{message.offset}</td>
                 <td>{message.partition}</td>
