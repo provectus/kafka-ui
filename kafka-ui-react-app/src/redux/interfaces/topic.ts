@@ -57,7 +57,21 @@ export interface TopicMessage {
   timestampType: string;
   key: string;
   headers: Record<string, string>;
-  content: string;
+  content: any;
+}
+
+export enum SeekTypes {
+  OFFSET = 'OFFSET',
+  TIMESTAMP = 'TIMESTAMP',
+}
+
+export type SeekType = keyof typeof SeekTypes;
+
+export interface TopicMessageQueryParams {
+  q: string;
+  limit: number;
+  seekType: SeekType;
+  seekTo: string[];
 }
 
 export interface TopicFormCustomParam {
