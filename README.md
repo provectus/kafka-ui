@@ -79,48 +79,29 @@ Then start Kafka UI with a **local** profile.
 .cd kafka-ui-api
 ./mvnw spring-boot:run -Pprod
 ``` 
-
-
-## Running Locally from JAR
-To be discussed
-
+ 
 ## Running in Kubernetes (using a Helm Chart)
-To be discussed
+To be done
 
-## Building
-
-## Docker Compose
-To be discussed
-
-# APIs
-To be discussed
-## JSON endpoints
-
-## Swagger
-## CORS Headers
 ## Topic Configuration
 ## Actuator
 
 # Guides
 
-To be discussed
+To be done
 
 ## Connecting to a Secure Broker
+To be done
 
 ### Using Docker
+
 #### Environment Variables
 ##### Basic configuration
 ##### Advanced configuration
-
-### Using Helm
-
-## Updating the Bootstrap theme
-
-## Securing the Kafdrop UI
+ 
 ### Requirements
 
 ### Setup
 
-# Contributing Guidelines
-All contributions are more than welcomed. Contributions may close an issue, fix a bug (reported or not reported), add new design blocks, improve the existing code, add new feature, and so on. In the interest of fostering an open and welcoming environment, we as contributors and maintainers pledge to making participation in our project and our community a harassment-free experience for everyone.
+
 
