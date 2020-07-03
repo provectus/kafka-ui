@@ -1,6 +1,6 @@
 ![Kafka UI logo](images/kafdrop-logo-2.png) Kafka UI – Free Web UI for Kafka &nbsp; 
 ------------------
-===
+
 ![Kafka UI Price Free](images/free-open-source.svg)
 
 <em>Kafka UI is a free open-source web UI for monitoring and management of Apache Kafka clusters. </em> 
@@ -9,7 +9,7 @@ Kafka UI is a simple tool that makes your data flows observable, helps find and 
 
 Set up Kafka UI with just a couple of easy commands to visualaze your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
 
-![Kafka UI interface dashboard screenshot](kafka-ui-interface-dashboard.png)
+![Kafka UI interface dashboard screenshot](images/kafka-ui-interface-dashboard.png)
 
 
 # Features
