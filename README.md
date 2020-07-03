@@ -7,7 +7,7 @@
 
 Kafka UI is a simple tool that makes your data flows observable, helps find and troubleshoot issues faster and deliver optimal performance. Its lightweight dashboard makes it easy to track key metrics of your Kafka clusters - Brokers, Topics, Partitions, Production, and Consumption. 
 
-Set up Kafka UI with just a couple of easy commands to visualaze your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
+Set up Kafka UI with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
 
 ![Kafka UI interface dashboard screenshot](images/kafka-ui-interface-dashboard.png)
 
