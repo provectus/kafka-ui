@@ -1,4 +1,4 @@
-![Kafka UI logo](images/kafdrop-logo-2.png) Kafka UI – Free Web UI for Kafka &nbsp; 
+![Kafka UI logo](images/kafka-ui-logo.png) Kafka UI – Free Web UI for Kafka &nbsp; 
 ------------------
 
 ![Kafka UI Price Free](images/free-open-source.svg)
