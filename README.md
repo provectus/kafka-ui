@@ -22,8 +22,9 @@ Set up Kafka UI with just a couple of easy commands to visualize your Kafka data
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable authentification** — secure your installation with optional Github/Gitlub/Google OAuth 2.0
  
+# Building
 
-# Prerequisites
+## Prerequisites
 
 * Java 13 or newer
 
