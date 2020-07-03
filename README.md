@@ -80,10 +80,10 @@ Then start Kafka UI with a **local** profile.
 ``` 
 
 
-## Running Kafka UI Locally from JAR
+## Running Locally from JAR
 To be discussed
 
-## Running Kafka UI in Kubernetes (using a Helm Chart)
+## Running in Kubernetes (using a Helm Chart)
 To be discussed
 
 ## Building
