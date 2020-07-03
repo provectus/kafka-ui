@@ -14,13 +14,13 @@ Set up Kafka UI with just a couple of easy commands to visualize your Kafka data
 
 # Features
 * **Multi-Cluster Management** — monitor and manage all your clusters in one place
-* **Performance Monitoring** —  track key Kafka metrics with a lightweight dashboard
+* **Performance Monitoring with Metrics Dashboard** —  track key Kafka metrics with a lightweight dashboard
 * **View Kafka brokers** — topic and partition assignments, controller status
 * **View Kafka topics** — partition count, replication status, and custom configuration
 * **View consumer groups** — per-partition parked offsets, combined and per-partition lag
 * **Browse messages** — JSON, plain text and Avro encoding
-* **Configure topics dynamically** — create and configure new topics with dynamic configuration
-* **Configure authentication** — secure your installation with your Github/Gitlub/Google account OAuth 2.0
+* **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
+* **Configurable authentification** — secure your installation with your Github/Gitlub/Google account OAuth 2.0
  
 
 # Prerequisites
