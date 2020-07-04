@@ -45,7 +45,7 @@ Optional:
 ``` 
 
 # Getting Started
-You can run the Kafka Ui locally via Docker or directly from JAR.
+You can build Kafka UI locally or run a Docker image. 
 
 ## Running Kafka UI Locally with Docker
 
