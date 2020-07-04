@@ -80,7 +80,7 @@ Then start Kafka UI with a **local** profile.
 ./mvnw spring-boot:run -Pprod
 ``` 
 ## Running Kafka UI From Docker Image
-The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafkaui](https://hub.docker.com/r/provectus/kafkaui).
+The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafka-ui](https://hub.docker.com/r/provectus/kafka-ui).
 
 Launch Docker container in the background:
 ```sh
