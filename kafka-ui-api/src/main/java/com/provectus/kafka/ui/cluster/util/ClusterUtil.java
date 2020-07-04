@@ -52,7 +52,7 @@ public class ClusterUtil {
         }));
     }
 
-    public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c, KafkaCluster cluster) {
+    public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c) {
         ConsumerGroup consumerGroup = new ConsumerGroup();
         consumerGroup.setConsumerGroupId(c.groupId());
         consumerGroup.setNumConsumers(c.members().size());

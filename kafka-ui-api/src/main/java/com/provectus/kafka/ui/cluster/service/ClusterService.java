@@ -51,7 +51,7 @@ public class ClusterService {
 
     public List<Topic> getTopics(String name) {
         return clustersStorage.getClusterByName(name)
-                .map( c ->
+                .map(c ->
                         c.getTopics().values().stream()
                                 .map(clusterMapper::toTopic)
                                 .collect(Collectors.toList())
@@ -157,6 +157,5 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName)
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
-
     }
 }
