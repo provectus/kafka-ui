@@ -100,7 +100,13 @@ To be done
 To be done
 
 ## Connecting to a Secure Broker
-To be done
+
+Kafka UI supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
+
+* `kafka.truststore.jks`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `kafka.keystore.jks`: specifying the private key to authenticate the client to the broker, if mutual TLS authentication is required.
+* `kafka.properties`: specifying the necessary configuration, including key/truststore passwords, cipher suites, enabled TLS protocol versions, username/password pairs, etc. When supplying the truststore and/or keystore files, the `ssl.truststore.location` and `ssl.keystore.location` properties will be assigned automatically.
+
 
 ### Using Docker
 
