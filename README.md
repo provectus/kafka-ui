@@ -79,12 +79,11 @@ Then start Kafka UI with a **local** profile.
 .cd kafka-ui-api
 ./mvnw spring-boot:run -Pprod
 ``` 
- 
+## Running Kafka UI With Docker
+
+
 ## Running in Kubernetes (using a Helm Chart)
 To be done
-
-## Topic Configuration
-## Actuator
 
 # Guides
 
@@ -98,10 +97,6 @@ To be done
 #### Environment Variables
 ##### Basic configuration
 ##### Advanced configuration
- 
-### Requirements
-
-### Setup
 
 
 
