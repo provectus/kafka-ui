@@ -84,6 +84,7 @@ The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provect
 
 Launch Docker container in the background:
 ```sh
+
 docker run -d {}/kafka-ui-api:latest 
 	-e KAFKA_CLUSTERS_0_NAME=local 
 	-e KAFKA_CLUSTERS_0__BOOTSTRAPSERVERS=kafka0:29092
@@ -109,8 +110,34 @@ To be continued
 ### Using Docker
 
 #### Environment Variables
-##### Basic configuration
-##### Advanced configuration
+##### Configuration
+Example of how to configure the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) file:
 
+
+```sh
+kafka:
+  clusters:
+    -
+      name: local
+      bootstrapServers: localhost:29091
+      zookeeper: localhost:2183
+      schemaRegistry: http://localhost:8085
+#     schemaNameTemplate: "%s-value"
+      jmxPort: 9997
+    -
+```    
+
+* `name`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `bootstrapServers`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `zookeeper`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `schemaRegistrys`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `schemaNameTemplate`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `jmxPort`: specifying the certificate for authenticating brokers, if TLS is enabled.
+
+Alternatively, each config of the file can be set with an environment variable. 
+For example:
+If you want to use an environment variable to set the `name` parameter, you can do it like this: 
+
+`KAFKA_CLUSTERS_2_NAME`
 
 
