@@ -79,7 +79,29 @@ Then start Kafka UI with a **local** profile.
 .cd kafka-ui-api
 ./mvnw spring-boot:run -Pprod
 ``` 
-## Running Kafka UI With Docker
+## Running Kafka UI From Docker Image
+The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafkaui](https://hub.docker.com/r/provectus/kafkaui).
+
+Launch Docker container in the background:
+```sh
+docker run -d --rm -p 9000:9000 \
+	-e KAFKA_BROKERCONNECT=<host:port,host:port> \
+	-e JVM_OPTS="-Xms32M -Xmx64M" \
+	-e SERVER_SERVLET_CONTEXTPATH="/" \
+	provectus/kafka-ui
+```
+
+Launch container in background with protobuff definitions:
+```sh
+docker run -d --rm -v <path_to_protobuff_descriptor_files>:/var/protobuf_desc -p 9000:9000 \
+	-e KAFKA_BROKERCONNECT=<host:port,host:port> \
+	-e JVM_OPTS="-Xms32M -Xmx64M" \
+	-e SERVER_SERVLET_CONTEXTPATH="/" \
+	-e CMD_ARGS="--message.format=PROTOBUF --protobufdesc.directory=/var/protobuf_desc" \
+	provectus/kafka-ui
+```
+
+Then access the web UI at [http://localhost:9000](http://localhost:9000).
 
 
 ## Running in Kubernetes (using a Helm Chart)
