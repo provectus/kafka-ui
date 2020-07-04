@@ -31,7 +31,6 @@ public class ClusterService {
     private final ClusterMapper clusterMapper;
     private final KafkaService kafkaService;
     private final ConsumingService consumingService;
-    private final JmxClusterUtil jmxClusterUtil;
 
     public List<Cluster> getClusters() {
         return clustersStorage.getKafkaClusters()
@@ -41,11 +40,14 @@ public class ClusterService {
     }
 
     public Mono<BrokersMetrics> getBrokersMetrics(String name, Integer id) {
-        return clustersStorage.getClusterByName(name)
+        return Mono.just(clustersStorage.getClusterByName(name)
                 .map(KafkaCluster::getMetrics)
-                .map(s -> kafkaService.getJmxMetric(name, id)
-                        .map(j -> s.toBuilder().jmxMetrics(j).build()))
-                .map(s -> s.map(clusterMapper::toBrokerMetrics)).orElseThrow();
+                .map(s -> {
+                    var brokerMetrics = clusterMapper.toBrokerMetrics(s);
+                    brokerMetrics.setJmxMetrics(s.getInternalBrokerMetrics().get(id).getJmxMetrics());
+                    brokerMetrics.setSegmentZise(Long.valueOf(s.getSegmentSize()).intValue());
+                    return brokerMetrics;
+                }).orElseThrow());
     }
 
     public List<Topic> getTopics(String name) {

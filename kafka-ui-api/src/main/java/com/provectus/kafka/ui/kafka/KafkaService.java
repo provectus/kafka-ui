@@ -19,6 +19,7 @@ import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -46,9 +47,10 @@ public class KafkaService {
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
-        return getOrCreateAdminClient(cluster).flatMap(
+        return getOrCreateAdminClient(cluster)
+                .flatMap(
                 ac -> getClusterMetrics(cluster, ac.getAdminClient())
-
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName()))
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
@@ -159,18 +161,16 @@ public class KafkaService {
     private Mono<InternalClusterMetrics> getClusterMetrics(KafkaCluster cluster, AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
-                    ClusterUtil.toMono(client.describeCluster().controller()).flatMap(
-                        c ->
-                            getClusterJmxMetric(cluster.getName()).map(jmxMetric -> {
+                    ClusterUtil.toMono(client.describeCluster().controller()).map(
+                        c -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
                             metricsBuilder
-                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
-                                    .jmxMetrics(jmxMetric);
+                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))));
                             return metricsBuilder.build();
                         }
                     )
-                ));
+                );
     }
 
 
@@ -331,7 +331,7 @@ public class KafkaService {
                                 var brokerSegmentSize = log.get(e.getKey()).values().stream()
                                         .mapToLong(v -> v.replicaInfos.values().stream()
                                                 .mapToLong(r -> r.size).sum()).sum();
-                                InternalBrokerMetrics tempBrokerMetrics = InternalBrokerMetrics.builder().segmentSize(brokerSegmentSize).build();
+                                InternalBrokerMetrics tempBrokerMetrics = e.getValue().toBuilder().segmentSize(brokerSegmentSize).build();
                                 return Collections.singletonMap(e.getKey(), tempBrokerMetrics);
                             });
 
@@ -373,5 +373,35 @@ public class KafkaService {
                         .flatMap(a -> ClusterUtil.toMono(a.getAdminClient().describeCluster().nodes())
                                 .map(n -> n.stream().filter(s -> s.id() == nodeId).findFirst().orElseThrow().host()))
                         .map(host ->  jmxClusterUtil.getJmxMetrics(c.getJmxPort(), host))).orElseThrow();
+    }
+
+    private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName) {
+        return Flux.fromIterable(internalClusterMetrics.getInternalBrokerMetrics().keySet())
+                .flatMap(id -> getJmxMetric(clusterName, id)
+                    .map(jmx -> {
+                        var jmxMetric = internalClusterMetrics.getInternalBrokerMetrics().get(id).toBuilder().jmxMetrics(jmx).build();
+                        var tempBrokerMetrics = internalClusterMetrics.getInternalBrokerMetrics();
+                        tempBrokerMetrics.put(id, jmxMetric);
+                        return internalClusterMetrics.toBuilder().internalBrokerMetrics(tempBrokerMetrics).build();
+                    })).collectList()
+                .map(s -> s.stream().reduce((s1, s2) -> {
+                    s1.getInternalBrokerMetrics().putAll(s2.getInternalBrokerMetrics().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+                    return s1;
+                }).orElseThrow())
+                .map(i -> {
+                    var tempMetrics = new HashMap<>(i.getInternalBrokerMetrics());
+                    tempMetrics.values().stream().flatMap(s -> Stream.of(s.getJmxMetrics())).reduce((s1, s2) -> {
+                        s1.forEach(j1 -> {
+                            s2.forEach(j2 -> {
+                                if (j1.getCanonicalName().equals(j2.getCanonicalName())) {
+                                    j1.getValue().keySet().forEach(k -> j2.getValue().compute(k, (k1, v1) ->
+                                            JmxClusterUtil.metricValueReduce(j1, j2.getValue().get(k1))));
+                                }
+                            });
+                        });
+                        return s1;
+                    });
+                    return i.toBuilder().jmxMetrics(tempMetrics.values().stream().findFirst().orElseThrow().getJmxMetrics()).build();
+                });
     }
 }

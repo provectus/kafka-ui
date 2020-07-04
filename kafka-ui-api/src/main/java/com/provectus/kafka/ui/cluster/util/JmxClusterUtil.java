@@ -65,7 +65,10 @@ public class JmxClusterUtil {
             ObjectName name = new ObjectName(canonicalName);
             var attrNames = msc.getMBeanInfo(name).getAttributes();
             for (MBeanAttributeInfo attrName : attrNames) {
-                resultAttr.put(attrName.getName(), msc.getAttribute(name, attrName.getName()));
+                var value = msc.getAttribute(name, attrName.getName());
+                if (value instanceof Number) {
+                    resultAttr.put(attrName.getName(), value);
+                }
             }
             pool.returnObject(jmxUrl, srv);
         } catch (MalformedURLException url) {
