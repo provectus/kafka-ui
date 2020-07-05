@@ -22,6 +22,9 @@ Set up Kafka UI with just a couple of easy commands to visualize your Kafka data
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable authentification** — secure your installation with optional Github/Gitlub/Google OAuth 2.0
  
+
+
+
 # Building
 
 ## Prerequisites
@@ -43,9 +46,23 @@ Optional:
 > brew tap homebrew/cask-versions
 > brew cask install java (or java13 if 13th version is not the latest one)
 ``` 
-
 # Getting Started
+
 You can build Kafka UI locally or run using Docker image. 
+
+## Running Kafka UI From Docker Image
+The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafka-ui](https://hub.docker.com/r/provectus/kafka-ui).
+
+Launch Docker container in the background:
+```sh
+
+docker run -d {}/kafka-ui-api:latest 
+	-e KAFKA_CLUSTERS_0_NAME=local 
+	-e KAFKA_CLUSTERS_0__BOOTSTRAPSERVERS=kafka0:29092
+
+```
+Then access the web UI at [http://localhost:9000](http://localhost:9000).
+ 
 
 ## Running Kafka UI Locally with Docker
 
@@ -79,18 +96,7 @@ Then start Kafka UI with a **local** profile.
 .cd kafka-ui-api
 ./mvnw spring-boot:run -Pprod
 ``` 
-## Running Kafka UI From Docker Image
-The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafka-ui](https://hub.docker.com/r/provectus/kafka-ui).
 
-Launch Docker container in the background:
-```sh
-
-docker run -d {}/kafka-ui-api:latest 
-	-e KAFKA_CLUSTERS_0_NAME=local 
-	-e KAFKA_CLUSTERS_0__BOOTSTRAPSERVERS=kafka0:29092
-
-```
-Then access the web UI at [http://localhost:9000](http://localhost:9000).
 
 
 ## Running in Kubernetes (using a Helm Chart)
