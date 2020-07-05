@@ -63,7 +63,7 @@ To build a Docker container with Kafka UI (step 3):
 ``` 
 To start Kafka UI with your Kafka clusters (step 4): 
 ```sh
-./mvnw clean install -Pprod
+docker-compose -f ./docker/kafka-ui.yaml up
 ``` 
 To see Kafka UI, navigate to http://localhost:8080 (step 5).
 
