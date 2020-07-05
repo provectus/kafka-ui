@@ -111,7 +111,7 @@ To be continued
 
 #### Environment Variables
 ##### Configuration
-Example of how to configure the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) file:
+Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
 
 ```sh
