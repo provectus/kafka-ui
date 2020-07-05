@@ -127,16 +127,15 @@ kafka:
     -
 ```    
 
-* `name`: specifying the certificate for authenticating brokers, if TLS is enabled.
-* `bootstrapServers`: specifying the certificate for authenticating brokers, if TLS is enabled.
-* `zookeeper`: specifying the certificate for authenticating brokers, if TLS is enabled.
-* `schemaRegistrys`: specifying the certificate for authenticating brokers, if TLS is enabled.
-* `schemaNameTemplate`: specifying the certificate for authenticating brokers, if TLS is enabled.
-* `jmxPort`: specifying the certificate for authenticating brokers, if TLS is enabled.
+* `name`: cluster name
+* `bootstrapServers`: where to connect
+* `zookeeper`: zookeeper service address
+* `schemaRegistrys`: schemaRegistrys address
+* `schemaNameTemplate`: how keys are saved to schemaRegistry
+* `jmxPort`: open jmxPosrts of a broker
 
-Alternatively, each config of the file can be set with an environment variable. 
-For example:
-If you want to use an environment variable to set the `name` parameter, you can do it like this: 
+Alternatively, each variable of of the .yml file can be set with an environment variable. 
+For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: 
 
 `KAFKA_CLUSTERS_2_NAME`
 
