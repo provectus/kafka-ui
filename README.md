@@ -127,6 +127,8 @@ kafka:
     -
 ```    
 
+
+
 * `name`: cluster name
 * `bootstrapServers`: where to connect
 * `zookeeper`: zookeeper service address
@@ -134,9 +136,12 @@ kafka:
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
 * `jmxPort`: open jmxPosrts of a broker
 
+Configure as many clusters as you need adding their configs below.
+
 Alternatively, each variable of of the .yml file can be set with an environment variable. 
 For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: 
 
 `KAFKA_CLUSTERS_2_NAME`
 
+ 
 
