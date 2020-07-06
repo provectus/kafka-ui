@@ -90,7 +90,6 @@ Then start Kafka UI with a **local** profile.
 ## Running Locally Without Docker
 
 ```sh
-.cd kafka-ui-api
 ./mvnw spring-boot:run -Pprod
 ``` 
 
