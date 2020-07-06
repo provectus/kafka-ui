@@ -139,9 +139,7 @@ Configure as many clusters as you need by adding their configs below separated w
 ## Environment Variables
 
 Alternatively, each variable of of the .yml file can be set with an environment variable. 
-For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: 
-
-`KAFKA_CLUSTERS_2_NAME`
+For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: `KAFKA_CLUSTERS_2_NAME`
 
 |Name               	|Description
 |-----------------------|-------------------------------
