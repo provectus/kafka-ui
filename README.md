@@ -20,7 +20,7 @@ Set up Kafka UI with just a couple of easy commands to visualize your Kafka data
 * **View Consumer Groups** — view per-partition parked offsets, combined and per-partition lag
 * **Browse Messages** — browse messages with JSON, plain text and Avro encoding
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
-* **Configurable Authentification** — secure your installation with optional Github/Gitlub/Google OAuth 2.0
+* **Configurable Authentification** — secure your installation with optional Github/Gitlab/Google OAuth 2.0
  
 
 # Getting Started
