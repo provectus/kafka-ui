@@ -143,12 +143,16 @@ For example, if you want to use an environment variable to set the `name` parame
 
 `KAFKA_CLUSTERS_2_NAME`
 
-* `KAFKA_CLUSTERS_2_NAME`
-* `KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS`
-* `KAFKA_CLUSTERS_2_ZOOKEEPER`
-* `KAFKA_CLUSTERS_2_SCHEMAREGISTRY`
-* `KAFKA_CLUSTERS_2_SCHEMANAMETEMPLATE`
-* `KAFKA_CLUSTERS_2_JMXPORT`
+|Name               	|Description
+|-----------------------|-------------------------------
+|`KAFKA_CLUSTERS_2_NAME` | Cluster name
+|`KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS` 	|Address where to connect 
+|`KAFKA_CLUSTERS_2_ZOOKEEPER` 	| Zookeper service address 
+|`KAFKA_CLUSTERS_2_SCHEMAREGISTRY`   	|SchemaRegistry's address
+|`KAFKA_CLUSTERS_2_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
+|`KAFKA_CLUSTERS_2_JMXPORT`        	|Open jmxPosrts of a broker
+
+ 
 
  
 
