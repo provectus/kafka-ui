@@ -67,13 +67,15 @@ To build Kafka UI locally with Docker, you need the following steps:
 > brew tap homebrew/cask-versions
 > brew cask install java (or java13 if 13th version is not the latest one)
 ``` 
+### Building
 
 Once you installed the prerequisites and cline the repository, run the following commands in your project directory: 
-To build a Docker container with Kafka UI: 
+
+Build a Docker container with Kafka UI: 
 ```sh
 ./mvnw clean install -Pprod
 ``` 
-To start Kafka UI with your Kafka clusters: 
+Start Kafka UI with your Kafka clusters: 
 ```sh
 docker-compose -f ./docker/kafka-ui.yaml up
 ``` 
