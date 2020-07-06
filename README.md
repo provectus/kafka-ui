@@ -23,34 +23,11 @@ Set up Kafka UI with just a couple of easy commands to visualize your Kafka data
 * **Configurable authentification** — secure your installation with optional Github/Gitlub/Google OAuth 2.0
  
 
-
-
-# Building
-
-## Prerequisites
-
-* Java 13 or newer
-
-Optional:
-
-* Docker 
-
-## Installing Prerequisites on Mac
-1. Install Homebrew Cask:
-```sh
-> brew update
-> brew cask
-``` 
-2. Install JAVA 13 with Homebrew Cask:
-```sh
-> brew tap homebrew/cask-versions
-> brew cask install java (or java13 if 13th version is not the latest one)
-``` 
 # Getting Started
 
-You can build Kafka UI locally or run using Docker image. 
+To run Kafka UI, you can use a pre-built Docker image or build it locally.  
 
-## Running Kafka UI From Docker Image
+## Running From Docker Image
 The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafka-ui](https://hub.docker.com/r/provectus/kafka-ui).
 
 Launch Docker container in the background:
@@ -64,25 +41,46 @@ docker run -d {}/kafka-ui-api:latest
 Then access the web UI at [http://localhost:9000](http://localhost:9000).
  
 
-## Running Kafka UI Locally with Docker
+## Building With Docker
 
-Building Kafka UI locally with Docker is super easy and takes just a couple of commands to run the UI. The whole workflow step-by-step: 
+To build Kafka UI locally with Docker, you need the following steps:  
 
-1. Install Java, Docker and Docker Engine
+1. Install Java and Docker
 2. Clone this repository and open a terminal in the directory of the project
 3. Build a Docker container with Kafka UI
 4. Start Kafka UI with your Kafka clusters
 5. Navigate to Kafka UI 
 
-To build a Docker container with Kafka UI (step 3): 
+### Prerequisites
+
+* Java 13 or newer
+
+Optional:
+
+* Docker 
+
+### Installing Prerequisites on Mac
+1. Install Homebrew Cask:
+```sh
+> brew update
+> brew cask
+``` 
+2. Install JAVA 13 with Homebrew Cask:
+```sh
+> brew tap homebrew/cask-versions
+> brew cask install java (or java13 if 13th version is not the latest one)
+``` 
+
+Once you installed the prerequisites and cline the repository, run the following commands in your project directory: 
+To build a Docker container with Kafka UI: 
 ```sh
 ./mvnw clean install -Pprod
 ``` 
-To start Kafka UI with your Kafka clusters (step 4): 
+To start Kafka UI with your Kafka clusters: 
 ```sh
 docker-compose -f ./docker/kafka-ui.yaml up
 ``` 
-To see Kafka UI, navigate to http://localhost:8080 (step 5).
+To see Kafka UI, navigate to http://localhost:8080.
 
 If you want to start only kafka-clusters: 
 ```sh
@@ -90,7 +88,7 @@ docker-compose -f ./docker/kafka-clusters-only.yaml up
 ``` 
 Then start Kafka UI with a **local** profile. 
 
-## Running Kafka UI Locally Without Docker
+## Running Locally Without Docker
 
 ```sh
 .cd kafka-ui-api
@@ -98,8 +96,7 @@ Then start Kafka UI with a **local** profile.
 ``` 
 
 
-
-## Running in Kubernetes (using a Helm Chart)
+## Running in Kubernetes
 To be done
 
 # Guides
