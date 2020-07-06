@@ -109,9 +109,9 @@ Kafka UI supports TLS (SSL) and SASL connections for [encryption and authenticat
 To be continued
 
 
-## Using Docker
+## Configuration
 
-### Configuration
+### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
 
@@ -128,16 +128,14 @@ kafka:
     -
 ```    
 
-
-
 * `name`: cluster name
 * `bootstrapServers`: where to connect
 * `zookeeper`: zookeeper service address
-* `schemaRegistrys`: schemaRegistrys address
+* `schemaRegistry`: schemaRegistry's address
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
 * `jmxPort`: open jmxPosrts of a broker
 
-Configure as many clusters as you need adding their configs below.
+Configure as many clusters as you need by adding their configs below separated with `-`.
 
 ### Environment Variables
 
@@ -149,7 +147,7 @@ For example, if you want to use an environment variable to set the `name` parame
 * `KAFKA_CLUSTERS_2_NAME`
 * `KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS`
 * `KAFKA_CLUSTERS_2_ZOOKEEPER`
-* `KAFKA_CLUSTERS_2_SCHEMAREGISTRYS`
+* `KAFKA_CLUSTERS_2_SCHEMAREGISTRY`
 * `KAFKA_CLUSTERS_2_SCHEMANAMETEMPLATE`
 * `KAFKA_CLUSTERS_2_JMXPORT`
 
