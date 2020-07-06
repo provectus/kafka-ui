@@ -69,7 +69,7 @@ Steps to build Kafka UI locally with Docker:
 ``` 
 ### Building
 
-Once you installed the prerequisites and cline the repository, run the following commands in your project directory: 
+Once you installed the prerequisites and cloned the repository, run the following commands in your project directory: 
 
 Build a Docker container with Kafka UI: 
 ```sh
@@ -109,10 +109,9 @@ Kafka UI supports TLS (SSL) and SASL connections for [encryption and authenticat
 To be continued
 
 
-### Using Docker
+## Using Docker
 
-#### Environment Variables
-##### Configuration
+### Configuration
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
 
@@ -139,6 +138,8 @@ kafka:
 * `jmxPort`: open jmxPosrts of a broker
 
 Configure as many clusters as you need adding their configs below.
+
+### Environment Variables
 
 Alternatively, each variable of of the .yml file can be set with an environment variable. 
 For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: 
