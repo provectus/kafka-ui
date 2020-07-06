@@ -109,9 +109,9 @@ Kafka UI supports TLS (SSL) and SASL connections for [encryption and authenticat
 To be continued
 
 
-## Configuration
+# Configuration
 
-### Configuration File
+## Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
 
@@ -137,7 +137,7 @@ kafka:
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
 
-### Environment Variables
+## Environment Variables
 
 Alternatively, each variable of of the .yml file can be set with an environment variable. 
 For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: 
