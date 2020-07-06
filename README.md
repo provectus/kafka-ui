@@ -43,7 +43,7 @@ Then access the web UI at [http://localhost:9000](http://localhost:9000).
 
 ## Building With Docker
 
-To build Kafka UI locally with Docker, you need the following steps:  
+Steps to build Kafka UI locally with Docker:  
 
 1. Install prerequisites: Java and Docker
 2. Clone this repository and open a terminal in the directory of the project
