@@ -67,7 +67,10 @@ const Messages: React.FC<Props> = ({
   );
   const [searchOffset, setSearchOffset] = React.useState<string>('0');
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
-    []
+    partitions.map((p) => ({
+      value: p.partition,
+      label: p.partition.toString(),
+    }))
   );
   const [queryParams, setQueryParams] = React.useState<
     Partial<TopicMessageQueryParams>
