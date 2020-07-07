@@ -1,10 +1,12 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   ClusterName,
+  SeekType,
   SeekTypes,
   TopicMessage,
   TopicMessageQueryParams,
   TopicName,
+  TopicPartition,
 } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { format } from 'date-fns';
@@ -15,7 +17,11 @@ import CustomParamButton, {
   CustomParamButtonType,
 } from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
 
-import { debounce } from 'lodash';
+import MultiSelect from 'react-multi-select-component';
+
+import * as _ from 'lodash';
+import { useDebouncedCallback } from 'use-debounce';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 
 interface Props {
   clusterName: ClusterName;
@@ -27,6 +33,7 @@ interface Props {
     queryParams: Partial<TopicMessageQueryParams>
   ) => void;
   messages: TopicMessage[];
+  partitions: TopicPartition[];
 }
 
 interface FilterProps {
@@ -47,6 +54,7 @@ const Messages: React.FC<Props> = ({
   clusterName,
   topicName,
   messages,
+  partitions,
   fetchTopicMessages,
 }) => {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
@@ -54,23 +62,51 @@ const Messages: React.FC<Props> = ({
     null
   );
   const [filterProps, setFilterProps] = React.useState<FilterProps[]>([]);
+  const [selectedSeekType, setSelectedSeekType] = React.useState<SeekType>(
+    SeekTypes.OFFSET
+  );
+  const [searchOffset, setSearchOffset] = React.useState<string>('0');
+  const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
+    []
+  );
   const [queryParams, setQueryParams] = React.useState<
     Partial<TopicMessageQueryParams>
   >({ limit: 100 });
+  const [debouncedCallback] = useDebouncedCallback(
+    (query: any) => setQueryParams({ ...queryParams, ...query }),
+    1000
+  );
 
   const prevSearchTimestamp = usePrevious(searchTimestamp);
 
   const getUniqueDataForEachPartition: FilterProps[] = React.useMemo(() => {
-    const map = messages.map((message) => [
-      message.partition,
-      {
-        partition: message.partition,
-        offset: message.offset,
-      },
-    ]);
-    // @ts-ignore
-    return [...new Map(map).values()];
-  }, [messages]);
+    const partitionUniqs: FilterProps[] = partitions.map((p) => ({
+      offset: 0,
+      partition: p.partition,
+    }));
+    const messageUniqs: FilterProps[] = _.map(
+      _.groupBy(messages, 'partition'),
+      (v) => _.maxBy(v, 'offset')
+    ).map((v) => ({
+      offset: v ? v.offset : 0,
+      partition: v ? v.partition : 0,
+    }));
+
+    return _.map(
+      _.groupBy(_.concat(partitionUniqs, messageUniqs), 'partition'),
+      (v) => _.maxBy(v, 'offset') as FilterProps
+    );
+  }, [messages, partitions]);
+
+  const getSeekToValuesForPartitions = (partition: any) => {
+    const foundedValues = filterProps.find(
+      (prop) => prop.partition === partition.value
+    );
+    if (selectedSeekType === SeekTypes.OFFSET) {
+      return foundedValues ? foundedValues.offset : 0;
+    }
+    return searchTimestamp ? searchTimestamp.getTime() : null;
+  };
 
   React.useEffect(() => {
     fetchTopicMessages(clusterName, topicName, queryParams);
@@ -78,20 +114,13 @@ const Messages: React.FC<Props> = ({
 
   React.useEffect(() => {
     setFilterProps(getUniqueDataForEachPartition);
-  }, [messages]);
+  }, [messages, partitions]);
 
-  const handleDelayedQuery = useCallback(
-    debounce(
-      (query: string) => setQueryParams({ ...queryParams, q: query }),
-      1000
-    ),
-    []
-  );
   const handleQueryChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
 
     setSearchQuery(query);
-    handleDelayedQuery(query);
+    debouncedCallback({ q: query });
   };
 
   const handleDateTimeChange = () => {
@@ -103,7 +132,7 @@ const Messages: React.FC<Props> = ({
         setQueryParams({
           ...queryParams,
           seekType: SeekTypes.TIMESTAMP,
-          seekTo: filterProps.map((p) => `${p.partition}::${timestamp}`),
+          seekTo: selectedPartitions.map((p) => `${p.value}::${timestamp}`),
         });
       } else {
         setSearchTimestamp(null);
@@ -111,6 +140,33 @@ const Messages: React.FC<Props> = ({
         setQueryParams(queryParamsWithoutSeek);
       }
     }
+  };
+
+  const handleSeekTypeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    setSelectedSeekType(event.target.value as SeekType);
+  };
+
+  const handleOffsetChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const offset = event.target.value || '0';
+    setSearchOffset(offset);
+    debouncedCallback({
+      seekType: SeekTypes.OFFSET,
+      seekTo: selectedPartitions.map((p) => `${p.value}::${offset}`),
+    });
+  };
+
+  const handlePartitionsChange = (options: Option[]) => {
+    setSelectedPartitions(options);
+
+    debouncedCallback({
+      seekType: options.length > 0 ? selectedSeekType : undefined,
+      seekTo:
+        options.length > 0
+          ? options.map((p) => `${p.value}::${getSeekToValuesForPartitions(p)}`)
+          : undefined,
+    });
   };
 
   const getTimestampDate = (timestamp: number) => {
@@ -150,14 +206,27 @@ const Messages: React.FC<Props> = ({
   const onNext = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    const seekTo: string[] = filterProps.map(
-      (p) => `${p.partition}::${p.offset}`
-    );
+    const seekTo: string[] = filterProps
+      .filter(
+        (value) =>
+          selectedPartitions.findIndex((p) => p.value === value.partition) > -1
+      )
+      .map((p) => `${p.partition}::${p.offset}`);
+
     setQueryParams({
       ...queryParams,
       seekType: SeekTypes.OFFSET,
       seekTo,
     });
+  };
+
+  const filterOptions = (options: Option[], filter: any) => {
+    if (!filter) {
+      return options;
+    }
+    return options.filter(
+      ({ value }) => value.toString() && value.toString() === filter
+    );
   };
 
   const getTopicMessagesTable = () => {
@@ -199,23 +268,70 @@ const Messages: React.FC<Props> = ({
     );
   };
 
-  return isFetched ? (
+  if (!isFetched) {
+    return <PageLoader isFullHeight={false} />;
+  }
+
+  return (
     <div>
       <div className="columns">
-        <div className="column is-one-quarter">
-          <label className="label">Timestamp</label>
-          <DatePicker
-            selected={searchTimestamp}
-            onChange={(date) => setSearchTimestamp(date)}
-            onCalendarClose={handleDateTimeChange}
-            isClearable
-            showTimeInput
-            timeInputLabel="Time:"
-            dateFormat="MMMM d, yyyy h:mm aa"
-            className="input"
+        <div className="column is-one-fifth">
+          <label className="label">Partitions</label>
+          <MultiSelect
+            options={partitions.map((p) => ({
+              label: `Partition #${p.partition.toString()}`,
+              value: p.partition,
+            }))}
+            filterOptions={filterOptions}
+            value={selectedPartitions}
+            onChange={handlePartitionsChange}
+            labelledBy="Select partitions"
           />
         </div>
-        <div className="column is-two-quarters is-offset-one-quarter">
+        <div className="column is-one-fifth">
+          <label className="label">Seek Type</label>
+          <div className="select is-block">
+            <select
+              id="selectSeekType"
+              name="selectSeekType"
+              onChange={handleSeekTypeChange}
+              defaultValue={SeekTypes.OFFSET}
+              value={selectedSeekType}
+            >
+              <option value={SeekTypes.OFFSET}>Offset</option>
+              <option value={SeekTypes.TIMESTAMP}>Timestamp</option>
+            </select>
+          </div>
+        </div>
+        <div className="column is-one-fifth">
+          {selectedSeekType === SeekTypes.OFFSET ? (
+            <>
+              <label className="label">Offset</label>
+              <input
+                id="searchOffset"
+                name="searchOffset"
+                type="text"
+                className="input"
+                value={searchOffset}
+                onChange={handleOffsetChange}
+              />
+            </>
+          ) : (
+            <>
+              <label className="label">Timestamp</label>
+              <DatePicker
+                selected={searchTimestamp}
+                onChange={(date) => setSearchTimestamp(date)}
+                onCalendarClose={handleDateTimeChange}
+                showTimeInput
+                timeInputLabel="Time:"
+                dateFormat="MMMM d, yyyy h:mm aa"
+                className="input"
+              />
+            </>
+          )}
+        </div>
+        <div className="column is-two-fifths">
           <label className="label">Search</label>
           <input
             id="searchText"
@@ -228,10 +344,8 @@ const Messages: React.FC<Props> = ({
           />
         </div>
       </div>
-      <div>{getTopicMessagesTable()}</div>
+      {getTopicMessagesTable()}
     </div>
-  ) : (
-    <PageLoader isFullHeight={false} />
   );
 };
 

@@ -9,6 +9,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { fetchTopicMessages } from 'redux/actions';
 import {
   getIsTopicMessagesFetched,
+  getPartitionsByTopicName,
   getTopicMessages,
 } from 'redux/reducers/topics/selectors';
 
@@ -33,6 +34,7 @@ const mapStateToProps = (
   topicName,
   isFetched: getIsTopicMessagesFetched(state),
   messages: getTopicMessages(state),
+  partitions: getPartitionsByTopicName(state, topicName),
 });
 
 const mapDispatchToProps = {

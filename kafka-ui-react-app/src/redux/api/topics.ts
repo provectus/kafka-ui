@@ -59,7 +59,9 @@ export const getTopicMessages = (
     const value = entry[1];
     if (value) {
       if (Array.isArray(value)) {
-        searchParams += value.map((v) => `${key}=${v}&`);
+        value.forEach((v) => {
+          searchParams += `${key}=${v}&`;
+        });
       } else {
         searchParams += `${key}=${value}&`;
       }
