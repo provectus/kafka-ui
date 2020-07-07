@@ -19,7 +19,6 @@ import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
@@ -49,7 +48,7 @@ public class KafkaService {
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
         return getOrCreateAdminClient(cluster)
                 .flatMap(
-                ac -> getClusterMetrics(cluster, ac.getAdminClient())
+                ac -> getClusterMetrics(ac.getAdminClient())
                         .flatMap(i -> fillJmxMetrics(i, cluster.getName()))
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
@@ -353,17 +352,18 @@ public class KafkaService {
     }
 
     private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName) {
-        return Flux.fromIterable(internalClusterMetrics.getInternalBrokerMetrics().keySet())
-                .flatMap(id -> getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
+        return getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
+                .flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().describeCluster().nodes()))
+                .flatMapIterable(nodes -> nodes)
+                .flatMap(broker -> getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
                             .flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().describeCluster().nodes()))
-                    .map(node -> getJmxMetric(clusterName, node.stream().filter(n -> n.id() == id).findFirst().orElseThrow()))
+                    .map(node -> getJmxMetric(clusterName, node.stream().filter(n -> n.id() == broker.id()).findFirst().orElseThrow()))
                     .map(jmx -> {
-                        var jmxMetric = internalClusterMetrics.getInternalBrokerMetrics().get(id).toBuilder().jmxMetrics(jmx).build();
+                        var jmxMetric = internalClusterMetrics.getInternalBrokerMetrics().get(broker.id()).toBuilder().jmxMetrics(jmx).build();
                         var tempBrokerMetrics = internalClusterMetrics.getInternalBrokerMetrics();
-                        tempBrokerMetrics.put(id, jmxMetric);
+                        tempBrokerMetrics.put(broker.id(), jmxMetric);
                         return internalClusterMetrics.toBuilder().internalBrokerMetrics(tempBrokerMetrics).build();
-                    })
-                ).collectList()
+                    })).collectList()
                 .map(s -> s.stream().reduce((s1, s2) -> {
                     s1.getInternalBrokerMetrics().putAll(s2.getInternalBrokerMetrics().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
                     return s1;
