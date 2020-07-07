@@ -80,6 +80,12 @@ export const getTopicByName = createSelector(
   (topics, topicName) => topics[topicName]
 );
 
+export const getPartitionsByTopicName = createSelector(
+  getTopicMap,
+  getTopicName,
+  (topics, topicName) => topics[topicName].partitions
+);
+
 export const getFullTopic = createSelector(getTopicByName, (topic) =>
   topic && topic.config && !!topic.partitionCount ? topic : undefined
 );
