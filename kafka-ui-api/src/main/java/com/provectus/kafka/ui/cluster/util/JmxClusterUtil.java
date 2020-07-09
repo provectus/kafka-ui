@@ -100,7 +100,7 @@ public class JmxClusterUtil {
         }
     }
 
-    public static BigDecimal metricValueReduce(Number value1, Number value2) {
+    public static BigDecimal metricValueSum(Number value1, Number value2) {
         if (value1 instanceof Integer) {
             return new BigDecimal(value1.toString()).add(new BigDecimal(value2.toString()));
         } else {
