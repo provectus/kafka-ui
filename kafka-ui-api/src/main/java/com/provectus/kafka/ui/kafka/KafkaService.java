@@ -357,11 +357,8 @@ public class KafkaService {
         return getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
                 .flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().describeCluster().nodes()))
                 .flatMapIterable(nodes -> nodes)
-                .map(broker -> {
-                    var jmx = getJmxMetric(clusterName, broker);
-                    return Map.of(broker.id(), InternalBrokerMetrics.builder().
-                            jmxMetrics(jmx).build());
-                })
+                .map(broker -> Map.of(broker.id(), InternalBrokerMetrics.builder().
+                            jmxMetrics(getJmxMetric(clusterName, broker)).build()))
                 .collectList()
                 .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
     }
