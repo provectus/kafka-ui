@@ -53,10 +53,10 @@ public class JmxClusterUtil {
         return result;
     }
 
-    private Map<String, Object> getJmxMetric(int jmxPort, String jmxHost, String canonicalName) {
+    private Map<String, BigDecimal> getJmxMetric(int jmxPort, String jmxHost, String canonicalName) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
 
-        Map<String, Object> resultAttr = new HashMap<>();
+        Map<String, BigDecimal> resultAttr = new HashMap<>();
         JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
@@ -66,8 +66,10 @@ public class JmxClusterUtil {
             var attrNames = msc.getMBeanInfo(name).getAttributes();
             for (MBeanAttributeInfo attrName : attrNames) {
                 var value = msc.getAttribute(name, attrName.getName());
-                if (value instanceof Number) {
-                    resultAttr.put(attrName.getName(), value);
+                if (value instanceof BigDecimal) {
+                    resultAttr.put(attrName.getName(), (BigDecimal) value);
+                } else if (value instanceof Integer) {
+                    resultAttr.put(attrName.getName(), new BigDecimal((Integer) value));
                 }
             }
             pool.returnObject(jmxUrl, srv);
@@ -98,11 +100,11 @@ public class JmxClusterUtil {
         }
     }
 
-    public static Object metricValueReduce(Object value1, Object value2) {
-        if (value1 instanceof Number) {
+    public static BigDecimal metricValueReduce(Number value1, Number value2) {
+        if (value1 instanceof Integer) {
             return new BigDecimal(value1.toString()).add(new BigDecimal(value2.toString()));
         } else {
-            return value1;
+            return new BigDecimal(value1.longValue()).add(new BigDecimal(value2.longValue()));
         }
     }
 }

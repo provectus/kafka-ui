@@ -531,4 +531,4 @@ components:
         value:
           type: string
           additionalProperties:
-            type: object
+            type: number
