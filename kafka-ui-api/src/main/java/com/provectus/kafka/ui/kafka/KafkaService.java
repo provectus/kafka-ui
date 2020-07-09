@@ -164,8 +164,6 @@ public class KafkaService {
                         c -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
-                            metricsBuilder
-                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))));
                             return metricsBuilder.build();
                         }
                     )
@@ -361,13 +359,10 @@ public class KafkaService {
                 .flatMapIterable(nodes -> nodes)
                 .map(broker -> {
                     var jmx = getJmxMetric(clusterName, broker);
-                    Map<Integer, InternalBrokerMetrics> result = new HashMap<>();
-                    result.put(broker.id(), internalClusterMetrics.getInternalBrokerMetrics().get(broker.id()).toBuilder().jmxMetrics(jmx).build());
-                    return result;
+                    return Map.of(broker.id(), InternalBrokerMetrics.builder().
+                            jmxMetrics(jmx).build());
                 })
                 .collectList()
-                .map(s -> { var brokerMetrics = ClusterUtil.toSingleMap(s.stream());
-                    return internalClusterMetrics.toBuilder().internalBrokerMetrics(brokerMetrics).build();
-                });
+                .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
     }
 }
