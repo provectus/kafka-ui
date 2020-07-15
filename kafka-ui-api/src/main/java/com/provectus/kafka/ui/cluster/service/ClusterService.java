@@ -39,14 +39,14 @@ public class ClusterService {
     }
 
     public Mono<BrokersMetrics> getBrokersMetrics(String name, Integer id) {
-        return Mono.just(clustersStorage.getClusterByName(name)
+        return Mono.justOrEmpty(clustersStorage.getClusterByName(name)
                 .map(KafkaCluster::getMetrics)
                 .map(s -> {
                     var brokerMetrics = clusterMapper.toBrokerMetrics(s);
                     brokerMetrics.setJmxMetrics(s.getInternalBrokerMetrics().get(id).getJmxMetrics());
                     brokerMetrics.setSegmentZise(Long.valueOf(s.getSegmentSize()).intValue());
                     return brokerMetrics;
-                }).orElseThrow());
+                }));
     }
 
     public List<Topic> getTopics(String name) {

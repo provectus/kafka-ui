@@ -1,8 +1,11 @@
 package com.provectus.kafka.ui.cluster.util;
 
+import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.JmxMetric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.springframework.stereotype.Component;
 
@@ -36,12 +39,12 @@ public class JmxClusterUtil {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
             var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM)).collect(Collectors.toList());
-            jmxMetrics.forEach(j -> {
+            for (ObjectName jmxMetric : jmxMetrics) {
                 JmxMetric metric = new JmxMetric();
-                metric.setCanonicalName(j.getCanonicalName());
-                metric.setValue(getJmxMetric(jmxPort, jmxHost, j.getCanonicalName()));
+                metric.setCanonicalName(jmxMetric.getCanonicalName());
+                metric.setValue(getJmxMetric(jmxMetric.getCanonicalName(), msc, srv, jmxUrl));
                 result.add(metric);
-            });
+            };
             pool.returnObject(jmxUrl, srv);
         } catch (IOException ioe) {
             log.error("Cannot get jmxMetricsNames, {}", jmxUrl, ioe);
@@ -53,26 +56,17 @@ public class JmxClusterUtil {
         return result;
     }
 
-    private Map<String, BigDecimal> getJmxMetric(int jmxPort, String jmxHost, String canonicalName) {
-        String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
-
+    private Map<String, BigDecimal> getJmxMetric(String canonicalName, MBeanServerConnection msc, JMXConnector srv, String jmxUrl) {
         Map<String, BigDecimal> resultAttr = new HashMap<>();
-        JMXConnector srv = null;
         try {
-            srv = pool.borrowObject(jmxUrl);
-            MBeanServerConnection msc = srv.getMBeanServerConnection();
-
             ObjectName name = new ObjectName(canonicalName);
             var attrNames = msc.getMBeanInfo(name).getAttributes();
             for (MBeanAttributeInfo attrName : attrNames) {
                 var value = msc.getAttribute(name, attrName.getName());
-                if (value instanceof BigDecimal) {
-                    resultAttr.put(attrName.getName(), (BigDecimal) value);
-                } else if (value instanceof Integer) {
-                    resultAttr.put(attrName.getName(), new BigDecimal((Integer) value));
+                if (value instanceof Number) {
+                    resultAttr.put(attrName.getName(), new BigDecimal(value.toString()));
                 }
             }
-            pool.returnObject(jmxUrl, srv);
         } catch (MalformedURLException url) {
             log.error("Cannot create JmxServiceUrl from {}", jmxUrl);
             closeConnectionExceptionally(jmxUrl, srv);
@@ -100,11 +94,39 @@ public class JmxClusterUtil {
         }
     }
 
-    public static BigDecimal metricValueSum(Number value1, Number value2) {
-        if (value1 instanceof Integer) {
-            return new BigDecimal(value1.toString()).add(new BigDecimal(value2.toString()));
-        } else {
-            return new BigDecimal(value1.longValue()).add(new BigDecimal(value2.longValue()));
-        }
+    private static Pair<String, String> getCanonicalAndMetricName(String value) {
+        return Pair.of(value.substring(0, value.indexOf("+")), value.substring(value.indexOf("+") + 1));
+    }
+
+    public static List<Pair<String, Pair<String, BigDecimal>>> squashIntoNameMetricPair(InternalClusterMetrics internalClusterMetrics) {
+        return internalClusterMetrics.getInternalBrokerMetrics().values().stream()
+                .map(c ->
+                        c.getJmxMetrics().stream()
+                                .filter(j -> StringUtils.containsIgnoreCase(j.getCanonicalName(), "num") || StringUtils.containsIgnoreCase(j.getCanonicalName(), "persec"))
+                                .map(j -> j.getValue().entrySet().stream()
+                                        .map(e -> Pair.of(j.getCanonicalName() + "+" + e.getKey(), e.getValue()))
+                                        .collect(Collectors.toList()))
+                                .collect(Collectors.toList())
+                )
+                .collect(Collectors.toList())
+                .stream().flatMap(List::stream).collect(Collectors.toList())
+                .stream().flatMap(List::stream).collect(Collectors.toList())
+                .stream().map(c -> {
+            var pairNames = JmxClusterUtil.getCanonicalAndMetricName(c.getKey());
+            return Pair.of(pairNames.getKey(), Pair.of(pairNames.getValue(), c.getValue()));
+        }).collect(Collectors.toList());
+    }
+
+    public static JmxMetric reduceJmxMetrics (List<JmxMetric> metrics) {
+        var result = List.copyOf(metrics);
+        return result.stream().reduce((j1, j2) -> {
+            var temp1 = new HashMap<>(j1.getValue());
+            var temp2 = new HashMap<>(j2.getValue());
+            temp2.forEach((k, v) -> temp1.merge(k, v, BigDecimal::add));
+            var mergedMetric = new JmxMetric();
+            mergedMetric.setCanonicalName(j1.getCanonicalName());
+            mergedMetric.setValue(temp1);
+            return mergedMetric;
+        }).orElse(null);
     }
 }

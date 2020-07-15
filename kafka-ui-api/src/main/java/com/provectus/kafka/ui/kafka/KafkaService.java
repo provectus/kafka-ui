@@ -49,7 +49,7 @@ public class KafkaService {
         return getOrCreateAdminClient(cluster)
                 .flatMap(
                 ac -> getClusterMetrics(ac.getAdminClient())
-                        .flatMap(i -> fillJmxMetrics(i, cluster.getName()))
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
@@ -346,20 +346,33 @@ public class KafkaService {
 
     public List<JmxMetric> getJmxMetric(String clusterName, Node node) {
         return clustersStorage.getClusterByName(clusterName)
-                        .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElseThrow();
+                        .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElse(Collections.emptyList());
     }
 
-    private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName) {
-        return fillBrokerMetrics(internalClusterMetrics, clusterName);
+    private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+        return fillBrokerMetrics(internalClusterMetrics, clusterName, ac).map(this::calculateClusterMetrics);
     }
 
-    private Mono<InternalClusterMetrics> fillBrokerMetrics(InternalClusterMetrics internalClusterMetrics, String clusterName) {
-        return getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
-                .flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().describeCluster().nodes()))
+    private Mono<InternalClusterMetrics> fillBrokerMetrics(InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+        return ClusterUtil.toMono(ac.describeCluster().nodes())
                 .flatMapIterable(nodes -> nodes)
                 .map(broker -> Map.of(broker.id(), InternalBrokerMetrics.builder().
                             jmxMetrics(getJmxMetric(clusterName, broker)).build()))
                 .collectList()
                 .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
+    }
+
+    private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
+        return internalClusterMetrics.toBuilder().jmxMetrics(
+                    JmxClusterUtil.squashIntoNameMetricPair(internalClusterMetrics)
+                            .stream().map(c -> {
+                        JmxMetric jmx = new JmxMetric();
+                        jmx.setCanonicalName(c.getKey());
+                        jmx.setValue(Map.of(c.getValue().getKey(), c.getValue().getValue()));
+                        return jmx;
+                    }).collect(Collectors.groupingBy(JmxMetric::getCanonicalName, Collectors.toList()))
+                    .values().stream().map(JmxClusterUtil::reduceJmxMetrics)
+                    .filter(Objects::nonNull)
+                    .collect(Collectors.toList())).build();
     }
 }
