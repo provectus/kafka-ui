@@ -351,4 +351,40 @@ public class KafkaService {
                 })
             );
     }
+
+    public Mono<Map<String, BigDecimal>> getOffsets (AdminClient ac, KafkaCluster c) {
+        return getTopicPartitionList(ac)
+                .map(s -> {
+                    var tps = s.stream()
+                            .map(tp ->
+                                    tp.entrySet().stream()
+                                            .map(tp1 -> tp1.getValue().stream()
+                                                    .map(tt -> new TopicPartition(tp1.getKey(), tt))
+                                                    .collect(Collectors.toList()))
+                                            .collect(Collectors.toList()))
+                            .collect(Collectors.toList())
+                            .stream().flatMap(List::stream).collect(Collectors.toList())
+                            .stream().flatMap(List::stream).collect(Collectors.toList());
+                    return getTopicPartitionOffset(c, tps);
+                });
+    }
+
+    private Mono<List<Map<String, List<Integer>>>> getTopicPartitionList(AdminClient ac) {
+        return ClusterUtil.toMono(ac.listTopics().names())
+                .flatMap(l -> ClusterUtil.toMono(ac.describeTopics(l).all()))
+                .map(t -> t.entrySet().stream()
+                        .map(e -> Map.of(e.getKey(), e.getValue().partitions().stream()
+                                .flatMap(tp -> Stream.of(tp.partition()))
+                                .collect(Collectors.toList())))
+                        .collect(Collectors.toList()));
+    }
+
+    private Map<String, BigDecimal> getTopicPartitionOffset(KafkaCluster c, List<TopicPartition> topicPartitions )  {
+            var offset = ClusterUtil.toSingleMap(createConsumer(c).beginningOffsets(topicPartitions).entrySet().stream()
+                    .map(e -> Map.of(e.getKey().topic() + '-' + e.getKey().partition() + '-' + "min", new BigDecimal(e.getValue()))));
+            offset.putAll(ClusterUtil.toSingleMap(createConsumer(c).endOffsets(topicPartitions).entrySet().stream()
+                    .map(e -> Map.of(e.getKey().topic() + '-' + e.getKey().partition() + '-' + "min", new BigDecimal(e.getValue())))));
+            return offset;
+
+    }
 }

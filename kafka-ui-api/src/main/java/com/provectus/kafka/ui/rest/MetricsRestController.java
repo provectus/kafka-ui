@@ -14,8 +14,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 import javax.validation.Valid;
@@ -38,6 +40,11 @@ public class MetricsRestController implements ApiClustersApi {
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build())
         );
+    }
+
+    @Override
+    public Mono<ResponseEntity<Map<String, BigDecimal>>> getOffsets(String clusterName, ServerWebExchange exchange) {
+        return clusterService.getOffsets(clusterName).map(ResponseEntity::ok);
     }
 
     @Override

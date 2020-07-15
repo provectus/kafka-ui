@@ -290,6 +290,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
+  /api/clusters/offsets/{clusterName}:
+    get:
+      tags:
+        - /api/clusters
+      summary: get offsets
+      operationId: getOffsets
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: number
+
 components:
   schemas:
     Cluster:
