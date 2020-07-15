@@ -159,7 +159,6 @@ public class ClusterService {
 
     public Mono<Map<String, BigDecimal>> getOffsets(String clusterName) {
         return clustersStorage.getClusterByName(clusterName)
-                .map(c -> kafkaService.getOrCreateAdminClient(c)
-                        .flatMap(a -> kafkaService.getOffsets(a.getAdminClient(), c))).orElseThrow();
+                .map(c -> kafkaService.getOffsets( c))).orElseThrow();
     }
 }
