@@ -5,7 +5,6 @@ import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,13 +13,10 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
-
-import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,11 +36,6 @@ public class MetricsRestController implements ApiClustersApi {
                         .map(ResponseEntity::ok)
                         .orElse(ResponseEntity.notFound().build())
         );
-    }
-
-    @Override
-    public Mono<ResponseEntity<Map<String, BigDecimal>>> getOffsets(String clusterName, ServerWebExchange exchange) {
-        return clusterService.getOffsets(clusterName).map(ResponseEntity::ok);
     }
 
     @Override

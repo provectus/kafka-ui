@@ -3,10 +3,7 @@ package com.provectus.kafka.ui.kafka;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.Topic;
-import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.*;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,7 +23,6 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -352,43 +348,29 @@ public class KafkaService {
             );
     }
 
-    public Mono<Map<String, BigDecimal>> getOffsets (KafkaCluster c) {
-        return getOrCreateAdminClient(c).flatMap(ac ->
-                getTopicPartitionList(ac.getAdminClient())
-                .map(s -> {
-                    var tps = s.stream()
-                            .map(tp ->
-                                    tp.entrySet().stream()
-                                            .map(tp1 -> tp1.getValue().stream()
-                                                    .map(tt -> new TopicPartition(tp1.getKey(), tt))
-                                                    .collect(Collectors.toList()))
-                                            .collect(Collectors.toList()))
-                            .collect(Collectors.toList())
-                            .stream().flatMap(List::stream).collect(Collectors.toList())
-                            .stream().flatMap(List::stream).collect(Collectors.toList());
-                    return getTopicPartitionOffset(c, tps);
-                }));
+    public InternalTopic fillOffsets (InternalTopic topic, KafkaCluster cluster) {
+        var topicPartitions = topic.getPartitions().stream().map(t -> new TopicPartition(topic.getName(), t.getPartition())).collect(Collectors.toList());
+        return topic.toBuilder().offsets(getTopicPartitionOffset(cluster, topicPartitions)).build();
     }
 
-    private Mono<List<Map<String, List<Integer>>>> getTopicPartitionList(AdminClient ac) {
-        return ClusterUtil.toMono(ac.listTopics().names())
-                .flatMap(l -> ClusterUtil.toMono(ac.describeTopics(l).all()))
-                .map(t -> t.entrySet().stream()
-                        .map(e -> Map.of(e.getKey(), e.getValue().partitions().stream()
-                                .flatMap(tp -> Stream.of(tp.partition()))
-                                .collect(Collectors.toList())))
-                        .collect(Collectors.toList()));
-    }
-
-    private Map<String, BigDecimal> getTopicPartitionOffset(KafkaCluster c, List<TopicPartition> topicPartitions )  {
+    private List<TopicPartitionDto> getTopicPartitionOffset(KafkaCluster c, List<TopicPartition> topicPartitions )  {
         try (var consumer = createConsumer(c)) {
-            var offset = ClusterUtil.toSingleMap(consumer.beginningOffsets(topicPartitions).entrySet().stream()
-                    .map(e -> Map.of(e.getKey().topic() + '-' + e.getKey().partition() + '-' + "min", new BigDecimal(e.getValue()))));
-            offset.putAll(ClusterUtil.toSingleMap(consumer.endOffsets(topicPartitions).entrySet().stream()
-                    .map(e -> Map.of(e.getKey().topic() + '-' + e.getKey().partition() + '-' + "min", new BigDecimal(e.getValue())))));
+            var offset = consumer.beginningOffsets(topicPartitions).entrySet().stream()
+                    .map(e -> {
+                        var tempResult = new TopicPartitionDto();
+                        tempResult.setTopic(e.getKey().topic());
+                        tempResult.setPartition(e.getKey().partition());
+                        tempResult.setOffsetMin(e.getValue().intValue());
+                        return tempResult;
+                    }).map(o -> consumer.endOffsets(topicPartitions).entrySet()
+                            .stream().filter(max -> o.getTopic().equals(max.getKey().topic()))
+                            .map(max -> {
+                                o.setOffsetMax(max.getValue().intValue());
+                                return o;
+                            }).findFirst().orElse(o)).collect(Collectors.toList());
             return offset;
         } catch (Exception e) {
-            return Collections.emptyMap();
+            return Collections.emptyList();
         }
     }
 }

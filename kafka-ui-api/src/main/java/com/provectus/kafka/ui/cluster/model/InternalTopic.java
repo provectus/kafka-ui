@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.cluster.model;
 
+import com.provectus.kafka.ui.model.TopicPartitionDto;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.common.TopicPartition;
@@ -25,4 +26,5 @@ public class InternalTopic {
     private final long segmentSize;
     private final int segmentCount;
     private final Map<TopicPartition, Long> partitionSegmentSize;
+    private final List<TopicPartitionDto> offsets;
 }
