@@ -26,5 +26,4 @@ public class InternalTopic {
     private final long segmentSize;
     private final int segmentCount;
     private final Map<TopicPartition, Long> partitionSegmentSize;
-    private final List<TopicPartitionDto> offsets;
 }

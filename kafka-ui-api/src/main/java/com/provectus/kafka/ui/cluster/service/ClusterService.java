@@ -53,12 +53,13 @@ public class ClusterService {
                 ).orElse(Collections.emptyList());
     }
 
-    public Optional<TopicDetails> getTopicDetails(String name, String topicName) { ;
+    public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
         return clustersStorage.getClusterByName(name)
                 .map(c -> {
-                 var topic = c.getTopics().get(topicName);
-                 var internalTopic = kafkaService.fillOffsets(topic, c);
-                 return clusterMapper.toTopicDetails(internalTopic);
+                     var topic = c.getTopics().get(topicName);
+                     return clusterMapper
+                             .toTopicDetails(topic)
+                             .partitions(kafkaService.partitionDtoList(topic, c));
                 });
     }
                                                                            

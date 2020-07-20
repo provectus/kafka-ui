@@ -383,7 +383,7 @@ components:
     TopicDetails:
       type: object
       properties:
-        offsets:
+        partitions:
           type: array
           items:
             $ref: "#/components/schemas/TopicPartitionDto"
@@ -492,8 +492,10 @@ components:
           type: integer
         offsetMax:
           type: integer
+          format: int64
         offsetMin:
           type: integer
+          format: int64
       required:
         - topic
         - partition
