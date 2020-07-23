@@ -1,4 +1,4 @@
-def TAG
+def VERSION
 
 pipeline {
     options {
@@ -53,22 +53,20 @@ spec:
         }
     }
     stages {
-        stage('Create release branch') {
+        stage('Checkout release branch') {
             steps {
-                git 'https://github.com/provectus/kafka-ui.git'
                 sh 'git checkout -b release'
-                sh 'git merge master'
             }
         }
-        stage('Build artifact') {
+        stage('Merge to release branch') {
+            steps {
+                sh 'git merge origin/ci-cd'
+            }
+        }
+        stage('Remove SNAPSHOT from version') {
             steps {
                 container('docker-client') {
-                    sh "docker run -v ${WORKSPACE}:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 /bin/sh -c 'mvn versions:set -DremoveSnapshot && mvn clean install'"
-                }
-            }
-            post {
-                success {
-                    archiveArtifacts(artifacts: '**/target/*.jar', allowEmptyArchive: true)
+                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn versions:set -DremoveSnapshot'"
                 }
             }
         }
@@ -76,9 +74,15 @@ spec:
             steps {
                 script {
                     pom = readMavenPom file: 'pom.xml'
-                    TAG = pom.version
-//                     sh 'git log $(git describe --tags --abbrev=0)..HEAD --oneline'
-                    sh "git tag -f ${TAG}"
+                    VERSION = pom.version
+                    sh "git tag -f v$VERSION"
+                }
+            }
+        }
+        stage('Build artifact') {
+            steps {
+                container('docker-client') {
+                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn clean install'"
                 }
             }
         }
@@ -87,7 +91,7 @@ spec:
                 container('docker-client') {
                     dir(path: './kafka-ui-api') {
                         script {
-                            dockerImage = docker.build( registry + ":$TAG", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
+                            dockerImage = docker.build( registry + ":VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
                         }
                     }
                 }
@@ -108,14 +112,41 @@ spec:
         stage('Remove unused docker image') {
             steps{
                 container('docker-client') {
-                    sh "docker rmi $registry:$TAG"
+                    sh "docker rmi $registry:VERSION"
                 }
             }
         }
-        stage('Tag release') {
+        stage('Create github release with text from commits') {
             steps {
                 script {
-                    sh "git push -f --tags"
+                    withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+                        sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
+                        sh "bash release_json.sh v$VERSION"
+                        sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
+                    }
+                }
+            }
+        }
+        stage('Checkout master') {
+            steps {
+                sh 'git checkout origin/ci-cd'
+            }
+        }
+        stage('Increase version in master') {
+            steps {
+                container('docker-client') {
+                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit'"
+                }
+            }
+        }
+        stage('Push to master') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+                        sh "git add ."
+                        sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version\""
+                        sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:ci-cd"
+                    }
                 }
             }
         }
