@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.google.common.collect.ImmutableList;
 import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.cluster.model.MetricDto;
 import com.provectus.kafka.ui.model.JmxMetric;
@@ -27,20 +26,12 @@ import java.util.stream.Collectors;
 public class JmxClusterUtil {
 
     private final KeyedObjectPool<String, JMXConnector> pool;
+    private final List<String> jmxMetricsNames;
 
     private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
     private static final String JMX_SERVICE_TYPE = "jmxrmi";
     private static final String KAFKA_SERVER_PARAM = "kafka.server";
-
-
-    private static final ImmutableList<String> metricsNames = ImmutableList.of(
-        "MessagesInPerSec", "BytesInPerSec", "ReplicationBytesInPerSec", "RequestsPerSec", "ErrorsPerSec", "MessageConversionsPerSec", "BytesOutPerSec", "ReplicationBytesOutPerSec", "NoKeyCompactedTopicRecordsPerSec",
-        "InvalidMagicNumberRecordsPerSec", "InvalidMessageCrcRecordsPerSec", "InvalidOffsetOrSequenceRecordsPerSec",
-        "UncleanLeaderElectionsPerSec", "IsrShrinksPerSec", "IsrExpandsPerSec", "ReassignmentBytesOutPerSec", "ReassignmentBytesInPerSec",
-        "ProduceMessageConversionsPerSec", "FailedFetchRequestsPerSec", "ZooKeeperSyncConnectsPerSec", "BytesRejectedPerSec",
-        "IsrShrinksPerSec", "ReplicationBytesOutPerSec", "ZooKeeperAuthFailuresPerSec", "TotalFetchRequestsPerSec", "FailedIsrUpdatesPerSec",
-        "IncrementalFetchSessionEvictionsPerSec", "FetchMessageConversionsPerSec", "TotalFetchRequestsPerSec", "FailedProduceRequestsPerSec"
-    );
+    private static final String NAME_METRIC_FIELD = "name=";
 
     public List<JmxMetric> getJmxMetrics(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
@@ -106,7 +97,7 @@ public class JmxClusterUtil {
         }
     }
 
-    public static List<MetricDto> squashIntoNameMetricPair(InternalClusterMetrics internalClusterMetrics) {
+    public List<MetricDto> squashIntoNameMetricPair(InternalClusterMetrics internalClusterMetrics) {
         return internalClusterMetrics.getInternalBrokerMetrics().values().stream()
                 .map(c ->
                         c.getJmxMetrics().stream()
@@ -116,7 +107,7 @@ public class JmxClusterUtil {
                 .flatMap(Function.identity()).flatMap(Function.identity()).collect(Collectors.toList());
     }
 
-    public static JmxMetric reduceJmxMetrics (JmxMetric metric1, JmxMetric metric2) {
+    public JmxMetric reduceJmxMetrics (JmxMetric metric1, JmxMetric metric2) {
         var result = new JmxMetric();
         Map<String, BigDecimal> jmx1 = new HashMap<>(metric1.getValue());
         Map<String, BigDecimal> jmx2 = new HashMap<>(metric2.getValue());
@@ -126,12 +117,12 @@ public class JmxClusterUtil {
         return result;
     }
 
-    private static boolean isSameMetric (String metric) {
-        if (metric.contains("name=")) {
-            int beginIndex = metric.indexOf("name=");
+    private boolean isSameMetric (String metric) {
+        if (metric.contains(NAME_METRIC_FIELD)) {
+            int beginIndex = metric.indexOf(NAME_METRIC_FIELD);
             int endIndex = metric.indexOf(',', beginIndex);
             endIndex = endIndex < 0 ? metric.length() - 1 : endIndex;
-            return metricsNames.contains(metric.substring(beginIndex + 5, endIndex));
+            return jmxMetricsNames.contains(metric.substring(beginIndex + 5, endIndex));
         } else {
             return false;
         }

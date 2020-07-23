@@ -364,13 +364,13 @@ public class KafkaService {
 
     private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
         return internalClusterMetrics.toBuilder().jmxMetrics(
-                    JmxClusterUtil.squashIntoNameMetricPair(internalClusterMetrics)
+                    jmxClusterUtil.squashIntoNameMetricPair(internalClusterMetrics)
                             .stream().map(c -> {
                         JmxMetric jmx = new JmxMetric();
                         jmx.setCanonicalName(c.getCanonicalName());
                         jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
                         return jmx;
-                    }).collect(Collectors.groupingBy(JmxMetric::getCanonicalName, Collectors.reducing(JmxClusterUtil::reduceJmxMetrics)))
+                    }).collect(Collectors.groupingBy(JmxMetric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
                     .values().stream()
                     .filter(Optional::isPresent)
                     .map(Optional::get)
