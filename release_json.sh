@@ -10,4 +10,4 @@ fi
 
 commits_list=$(git --no-pager log $last_tag --oneline --pretty=format:"- %s\\n" | tr -d '\n' | sed 's/\"/\\"/g')
 
-echo '{"tag_name":"'$1'","body":"'$commits_list'"}' > /tmp/release_json
+echo '{"tag_name":"'$1'","body":"'$commits_list'"}' > /tmp/release.json
