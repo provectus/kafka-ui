@@ -97,7 +97,7 @@ public class JmxClusterUtil {
         }
     }
 
-    public List<MetricDto> squashIntoNameMetricPair(InternalClusterMetrics internalClusterMetrics) {
+    public List<MetricDto> convertToMetricDto(InternalClusterMetrics internalClusterMetrics) {
         return internalClusterMetrics.getInternalBrokerMetrics().values().stream()
                 .map(c ->
                         c.getJmxMetrics().stream()

@@ -364,7 +364,7 @@ public class KafkaService {
 
     private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
         return internalClusterMetrics.toBuilder().jmxMetrics(
-                    jmxClusterUtil.squashIntoNameMetricPair(internalClusterMetrics)
+                    jmxClusterUtil.convertToMetricDto(internalClusterMetrics)
                             .stream().map(c -> {
                         JmxMetric jmx = new JmxMetric();
                         jmx.setCanonicalName(c.getCanonicalName());

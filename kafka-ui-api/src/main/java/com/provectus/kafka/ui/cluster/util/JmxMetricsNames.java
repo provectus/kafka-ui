@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.google.common.collect.ImmutableList;
-
 public enum JmxMetricsNames {
     MessagesInPerSec,
     BytesInPerSec,
