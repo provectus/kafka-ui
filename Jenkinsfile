@@ -55,7 +55,6 @@ spec:
     stages {
         stage('Checkout release branch') {
             steps {
-                git credentialsId: 'github-jenkins-internal-provectus', url: 'https://github.com/provectus/kafka-ui.git'
                 sh 'git checkout -b release'
             }
         }
@@ -145,7 +144,7 @@ spec:
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
                         sh "git add ."
-                        sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version\""
+                        sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version in pom.xml\""
                         sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:master"
                     }
                 }
