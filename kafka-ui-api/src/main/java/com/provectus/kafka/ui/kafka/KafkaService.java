@@ -367,12 +367,13 @@ public class KafkaService {
                     JmxClusterUtil.squashIntoNameMetricPair(internalClusterMetrics)
                             .stream().map(c -> {
                         JmxMetric jmx = new JmxMetric();
-                        jmx.setCanonicalName(c.getKey());
-                        jmx.setValue(Map.of(c.getValue().getKey(), c.getValue().getValue()));
+                        jmx.setCanonicalName(c.getCanonicalName());
+                        jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
                         return jmx;
-                    }).collect(Collectors.groupingBy(JmxMetric::getCanonicalName, Collectors.toList()))
-                    .values().stream().map(JmxClusterUtil::reduceJmxMetrics)
-                    .filter(Objects::nonNull)
+                    }).collect(Collectors.groupingBy(JmxMetric::getCanonicalName, Collectors.reducing(JmxClusterUtil::reduceJmxMetrics)))
+                    .values().stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
                     .collect(Collectors.toList())).build();
     }
 }
