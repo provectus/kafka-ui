@@ -112,7 +112,7 @@ spec:
         stage('Remove unused docker image') {
             steps{
                 container('docker-client') {
-                    sh "docker rmi $registry:VERSION"
+                    sh "docker rmi $registry:$VERSION"
                 }
             }
         }
