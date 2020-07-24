@@ -383,6 +383,10 @@ components:
     TopicDetails:
       type: object
       properties:
+        partitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/TopicPartitionDto"
         partitionCount:
           type: integer
         replicationFactor:
@@ -486,9 +490,17 @@ components:
           type: string
         partition:
           type: integer
+        offsetMax:
+          type: integer
+          format: int64
+        offsetMin:
+          type: integer
+          format: int64
       required:
         - topic
         - partition
+        - offsetMax
+        - offsetMin
 
     ConsumerTopicPartitionDetail:
       type: object

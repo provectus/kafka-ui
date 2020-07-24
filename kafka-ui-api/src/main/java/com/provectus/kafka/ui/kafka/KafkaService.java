@@ -3,10 +3,7 @@ package com.provectus.kafka.ui.kafka;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.Topic;
-import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.*;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,7 +23,6 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -350,5 +346,27 @@ public class KafkaService {
                             .internalTopicWithSegmentSize(ClusterUtil.toSingleMap(resultTopicMetricsStream)).build();
                 })
             );
+    }
+
+    public List<TopicPartitionDto> partitionDtoList (InternalTopic topic, KafkaCluster cluster) {
+        var topicPartitions = topic.getPartitions().stream().map(t -> new TopicPartition(topic.getName(), t.getPartition())).collect(Collectors.toList());
+        return getTopicPartitionOffset(cluster, topicPartitions);
+    }
+
+    private List<TopicPartitionDto> getTopicPartitionOffset(KafkaCluster c, List<TopicPartition> topicPartitions )  {
+        try (var consumer = createConsumer(c)) {
+            final Map<TopicPartition, Long> earliest = consumer.beginningOffsets(topicPartitions);
+            final Map<TopicPartition, Long> latest = consumer.endOffsets(topicPartitions);
+
+            return topicPartitions.stream()
+                    .map( tp -> new TopicPartitionDto()
+                            .topic(tp.topic())
+                            .partition(tp.partition())
+                            .offsetMin(Optional.ofNullable(earliest.get(tp)).orElse(0L))
+                            .offsetMax(Optional.ofNullable(latest.get(tp)).orElse(0L))
+                    ).collect(Collectors.toList());
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 }
