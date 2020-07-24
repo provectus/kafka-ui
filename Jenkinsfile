@@ -91,7 +91,7 @@ spec:
                 container('docker-client') {
                     dir(path: './kafka-ui-api') {
                         script {
-                            dockerImage = docker.build( registry + ":VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
+                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
                         }
                     }
                 }
