@@ -59,6 +59,7 @@ spec:
 //             }
             steps {
                 sh "echo ${env.BRANCH_NAME}"
+                sh "echo test"
             }
         }
 //         stage('Checkout release branch') {
