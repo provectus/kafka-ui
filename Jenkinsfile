@@ -55,7 +55,7 @@ spec:
     stages {
         stage('Checkout release branch') {
             when {
-                expression { return env.BRANCH_NAME == 'master'; }
+                expression { return env.BRANCH_NAME == 'ci-cd'; }
             }
             steps {
                 sh "echo ${env.BRANCH_NAME}"
