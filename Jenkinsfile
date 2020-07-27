@@ -54,11 +54,11 @@ spec:
     }
     stages {
         stage('Checkout release branch') {
-            when {
-                expression { return env.BRANCH_NAME == 'ci-cd'; }
-            }
+//             when {
+//                 expression { return env.GIT_BRANCH == 'ci-cd'; }
+//             }
             steps {
-                sh "echo ${env.BRANCH_NAME}"
+                sh "echo ${env.GIT_BRANCH}"
 //                 git 'https://github.com/provectus/kafka-ui.git'
 //                 sh 'git checkout -b release'
             }
