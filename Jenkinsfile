@@ -53,20 +53,16 @@ spec:
         }
     }
     stages {
-        stage('test') {
-//             when {
-//                 expression { return env.BRANCH_NAME != 'master'; }
-//             }
+        stage('Checkout release branch') {
+            when {
+                expression { return env.BRANCH_NAME == 'master'; }
+            }
             steps {
                 sh "echo ${env.BRANCH_NAME}"
-            }
-        }
-//         stage('Checkout release branch') {
-//             steps {
 //                 git 'https://github.com/provectus/kafka-ui.git'
 //                 sh 'git checkout -b release'
-//             }
-//         }
+            }
+        }
 //         stage('Merge to release branch') {
 //             steps {
 //                 sh 'git merge origin/master'
@@ -79,16 +75,34 @@ spec:
 //                 }
 //             }
 //         }
-// //         stage('Tag release branch') {
-// //             steps {
-// //                 script {
-// //                     pom = readMavenPom file: 'pom.xml'
-// //                     VERSION = pom.version
-// //                     sh "git tag -f v$VERSION"
-// //                 }
-// //             }
-// //         }
+//         stage('Tag release branch') {
+//             steps {
+//                 script {
+//                     pom = readMavenPom file: 'pom.xml'
+//                     VERSION = pom.version
+//                     sh "git tag -f v$VERSION"
+//                 }
+//             }
+//         }
 //         stage('Build artifact') {
+//             steps {
+//                 container('docker-client') {
+//                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn clean install'"
+//                 }
+//             }
+//         }
+//         stage('Build docker image') {
+//             steps {
+//                 container('docker-client') {
+//                     dir(path: './kafka-ui-api') {
+//                         script {
+//                             dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
+//                         }
+//                     }
+//                 }
+//             }
+//         }
+//         stage('Publish docker image') {
 //             steps {
 //                 container('docker-client') {
 //                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn clean install'"
