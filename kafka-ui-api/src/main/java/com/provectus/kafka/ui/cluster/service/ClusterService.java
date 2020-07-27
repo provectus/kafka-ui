@@ -55,9 +55,12 @@ public class ClusterService {
 
     public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
         return clustersStorage.getClusterByName(name)
-                .map(KafkaCluster::getTopics)
-                .map(t -> t.get(topicName))
-                .map(clusterMapper::toTopicDetails);
+                .map(c -> {
+                     var topic = c.getTopics().get(topicName);
+                     return clusterMapper
+                             .toTopicDetails(topic)
+                             .partitions(kafkaService.partitionDtoList(topic, c));
+                });
     }
                                                                            
     public Optional<List<TopicConfig>> getTopicConfigs(String name, String topicName) {
