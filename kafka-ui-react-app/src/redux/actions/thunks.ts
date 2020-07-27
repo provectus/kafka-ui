@@ -7,6 +7,7 @@ import {
   TopicFormData,
   TopicName,
   Topic,
+  TopicMessageQueryParams,
 } from 'redux/interfaces';
 
 import * as actions from './actions';
@@ -59,11 +60,16 @@ export const fetchTopicList = (
 
 export const fetchTopicMessages = (
   clusterName: ClusterName,
-  topicName: TopicName
+  topicName: TopicName,
+  queryParams: Partial<TopicMessageQueryParams>
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicMessagesAction.request());
   try {
-    const messages = await api.getTopicMessages(clusterName, topicName);
+    const messages = await api.getTopicMessages(
+      clusterName,
+      topicName,
+      queryParams
+    );
     dispatch(actions.fetchTopicMessagesAction.success(messages));
   } catch (e) {
     dispatch(actions.fetchTopicMessagesAction.failure());

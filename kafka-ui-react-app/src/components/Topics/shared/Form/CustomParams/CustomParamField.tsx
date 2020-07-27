@@ -1,11 +1,7 @@
 import React from 'react';
-import { useFormContext, ErrorMessage } from 'react-hook-form';
-import { TopicFormCustomParam } from 'redux/interfaces';
 import CustomParamSelect from 'components/Topics/shared/Form/CustomParams/CustomParamSelect';
 import CustomParamValue from 'components/Topics/shared/Form/CustomParams/CustomParamValue';
 import CustomParamAction from 'components/Topics/shared/Form/CustomParams/CustomParamAction';
-import { INDEX_PREFIX } from './CustomParams';
-import CustomParamOptions from './CustomParamOptions';
 
 interface Props {
   isDisabled: boolean;

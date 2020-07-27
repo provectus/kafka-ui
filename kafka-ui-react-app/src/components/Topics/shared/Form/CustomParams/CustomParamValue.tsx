@@ -1,6 +1,5 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
-import { camelCase } from 'lodash';
 import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
 interface Props {

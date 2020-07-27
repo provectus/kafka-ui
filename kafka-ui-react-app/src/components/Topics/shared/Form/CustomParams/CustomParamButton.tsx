@@ -3,6 +3,7 @@ import React from 'react';
 export enum CustomParamButtonType {
   plus = 'fa-plus',
   minus = 'fa-minus',
+  chevronRight = 'fa-chevron-right',
 }
 
 interface Props {
