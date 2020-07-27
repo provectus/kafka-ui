@@ -54,9 +54,9 @@ spec:
     }
     stages {
         stage('Checkout release branch') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'ci-cd'; }
-//             }
+            when {
+                expression { return env.GIT_BRANCH == 'origin/ci-cd'; }
+            }
             steps {
                 sh "echo ${env.GIT_BRANCH}"
 //                 git 'https://github.com/provectus/kafka-ui.git'
@@ -120,18 +120,18 @@ spec:
 //                 }
 //             }
 //         }
-// //         stage('Publish docker image') {
-// //             steps {
-// //                 container('docker-client') {
-// //                     script {
-// //                         docker.withRegistry( '', registryCredential ) {
-// //                             dockerImage.push()
-// //                             dockerImage.push('latest')
-// //                         }
-// //                     }
-// //                 }
-// //             }
-// //         }
+//         stage('Publish docker image') {
+//             steps {
+//                 container('docker-client') {
+//                     script {
+//                         docker.withRegistry( '', registryCredential ) {
+//                             dockerImage.push()
+//                             dockerImage.push('latest')
+//                         }
+//                     }
+//                 }
+//             }
+//         }
 //         stage('Remove unused docker image') {
 //             steps{
 //                 container('docker-client') {
@@ -139,40 +139,40 @@ spec:
 //                 }
 //             }
 //         }
-// //         stage('Create github release with text from commits') {
-// //             steps {
-// //                 script {
-// //                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-// //                         sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
-// //                         sh "bash release_json.sh v$VERSION"
-// //                         sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
-// //                     }
-// //                 }
-// //             }
-// //         }
-// //         stage('Checkout master') {
-// //             steps {
-// //                 sh 'git checkout origin/master'
-// //             }
-// //         }
-// //         stage('Increase version in master') {
-// //             steps {
-// //                 container('docker-client') {
-// //                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit'"
-// //                 }
-// //             }
-// //         }
-// //         stage('Push to master') {
-// //             steps {
-// //                 script {
-// //                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-// //                         sh "git add ."
-// //                         sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version in pom.xml\""
-// //                         sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:master"
-// //                     }
-// //                 }
-// //             }
-// //         }
+//         stage('Create github release with text from commits') {
+//             steps {
+//                 script {
+//                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+//                         sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
+//                         sh "bash release_json.sh v$VERSION"
+//                         sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
+//                     }
+//                 }
+//             }
+//         }
+//         stage('Checkout master') {
+//             steps {
+//                 sh 'git checkout origin/master'
+//             }
+//         }
+//         stage('Increase version in master') {
+//             steps {
+//                 container('docker-client') {
+//                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit'"
+//                 }
+//             }
+//         }
+//         stage('Push to master') {
+//             steps {
+//                 script {
+//                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+//                         sh "git add ."
+//                         sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version in pom.xml\""
+//                         sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:master"
+//                     }
+//                 }
+//             }
+//         }
     }
     post {
         always {
