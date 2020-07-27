@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.cluster.util;
 
 import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.cluster.model.MetricDto;
-import com.provectus.kafka.ui.model.JmxMetric;
+import com.provectus.kafka.ui.model.Metric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
@@ -33,16 +33,16 @@ public class JmxClusterUtil {
     private static final String KAFKA_SERVER_PARAM = "kafka.server";
     private static final String NAME_METRIC_FIELD = "name=";
 
-    public List<JmxMetric> getJmxMetrics(int jmxPort, String jmxHost) {
+    public List<Metric> getJmxMetrics(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
-        List<JmxMetric> result = new ArrayList<>();
+        List<Metric> result = new ArrayList<>();
         JMXConnector srv = null;
         try {
             srv = pool.borrowObject(jmxUrl);
             MBeanServerConnection msc = srv.getMBeanServerConnection();
             var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM)).collect(Collectors.toList());
             for (ObjectName jmxMetric : jmxMetrics) {
-                JmxMetric metric = new JmxMetric();
+                Metric metric = new Metric();
                 metric.setCanonicalName(jmxMetric.getCanonicalName());
                 metric.setValue(getJmxMetric(jmxMetric.getCanonicalName(), msc, srv, jmxUrl));
                 result.add(metric);
@@ -107,8 +107,8 @@ public class JmxClusterUtil {
                 .flatMap(Function.identity()).flatMap(Function.identity()).collect(Collectors.toList());
     }
 
-    public JmxMetric reduceJmxMetrics (JmxMetric metric1, JmxMetric metric2) {
-        var result = new JmxMetric();
+    public Metric reduceJmxMetrics (Metric metric1, Metric metric2) {
+        var result = new Metric();
         Map<String, BigDecimal> jmx1 = new HashMap<>(metric1.getValue());
         Map<String, BigDecimal> jmx2 = new HashMap<>(metric2.getValue());
         jmx1.forEach((k, v) -> jmx2.merge(k, v, BigDecimal::add));

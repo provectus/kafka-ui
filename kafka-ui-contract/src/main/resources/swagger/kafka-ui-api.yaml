@@ -312,10 +312,10 @@ components:
           type: integer
         topicCount:
           type: integer
-        jmxMetrics:
+        metrics:
           type: array
           items:
-            $ref: '#/components/schemas/JmxMetric'
+            $ref: '#/components/schemas/Metric'
       required:
         - id
         - name
@@ -346,10 +346,10 @@ components:
           type: integer
         segmentZise:
           type: integer
-        jmxMetrics:
+        metrics:
           type: array
           items:
-            $ref: '#/components/schemas/JmxMetric'
+            $ref: '#/components/schemas/Metric'
 
     Topic:
       type: object
@@ -523,7 +523,7 @@ components:
           items:
             $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
 
-    JmxMetric:
+    Metric:
       type: object
       properties:
         canonicalName:

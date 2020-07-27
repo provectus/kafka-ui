@@ -43,7 +43,7 @@ public class ClusterService {
                 .map(KafkaCluster::getMetrics)
                 .map(s -> {
                     var brokerMetrics = clusterMapper.toBrokerMetrics(s);
-                    brokerMetrics.setJmxMetrics(s.getInternalBrokerMetrics().get(id).getJmxMetrics());
+                    brokerMetrics.setMetrics(s.getInternalBrokerMetrics().get(id).getJmxMetrics());
                     brokerMetrics.setSegmentZise(Long.valueOf(s.getSegmentSize()).intValue());
                     return brokerMetrics;
                 }));

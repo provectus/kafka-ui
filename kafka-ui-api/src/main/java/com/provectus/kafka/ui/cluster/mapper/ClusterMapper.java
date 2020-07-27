@@ -15,7 +15,7 @@ public interface ClusterMapper {
     @Mapping(target = "brokerCount", source = "metrics.brokerCount")
     @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
     @Mapping(target = "topicCount", source = "metrics.topicCount")
-    @Mapping(target = "jmxMetrics", source = "metrics.jmxMetrics")
+    @Mapping(target = "metrics", source = "metrics.metrics")
     Cluster toCluster(KafkaCluster cluster);
 
     KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);

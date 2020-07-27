@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.JmxMetric;
+import com.provectus.kafka.ui.model.Metric;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,5 +10,5 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class InternalBrokerMetrics {
     private final Long segmentSize;
-    private final List<JmxMetric> jmxMetrics;
+    private final List<Metric> jmxMetrics;
 }

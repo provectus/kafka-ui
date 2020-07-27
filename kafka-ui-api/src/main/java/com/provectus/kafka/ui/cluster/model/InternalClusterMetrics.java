@@ -1,10 +1,9 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.JmxMetric;
+import com.provectus.kafka.ui.model.Metric;
 import lombok.Builder;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,6 @@ public class InternalClusterMetrics {
     private final int segmentCount;
     private final long segmentSize;
     private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
-    private final List<JmxMetric> jmxMetrics;
+    private final List<Metric> metrics;
     private final int zooKeeperStatus;
 }

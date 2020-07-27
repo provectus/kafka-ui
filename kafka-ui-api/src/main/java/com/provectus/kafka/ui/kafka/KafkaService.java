@@ -344,7 +344,7 @@ public class KafkaService {
             );
     }
 
-    public List<JmxMetric> getJmxMetric(String clusterName, Node node) {
+    public List<Metric> getJmxMetric(String clusterName, Node node) {
         return clustersStorage.getClusterByName(clusterName)
                         .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElse(Collections.emptyList());
     }
@@ -363,14 +363,14 @@ public class KafkaService {
     }
 
     private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
-        return internalClusterMetrics.toBuilder().jmxMetrics(
+        return internalClusterMetrics.toBuilder().metrics(
                     jmxClusterUtil.convertToMetricDto(internalClusterMetrics)
                             .stream().map(c -> {
-                        JmxMetric jmx = new JmxMetric();
+                        Metric jmx = new Metric();
                         jmx.setCanonicalName(c.getCanonicalName());
                         jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
                         return jmx;
-                    }).collect(Collectors.groupingBy(JmxMetric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
+                    }).collect(Collectors.groupingBy(Metric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
                     .values().stream()
                     .filter(Optional::isPresent)
                     .map(Optional::get)
