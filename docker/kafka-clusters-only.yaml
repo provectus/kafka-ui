@@ -115,3 +115,12 @@ services:
       SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+
+  kafkacat:
+    image: confluentinc/cp-kafkacat
+    volumes:
+      - ./my_msgs.txt:/data/my_msgs.txt
+    command: "kafkacat -b kafka1:9092 \
+                                  -t secondUsers \
+                                  -P -l /data/my_msgs.txt"
+    restart: on-failure
