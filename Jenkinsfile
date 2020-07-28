@@ -54,48 +54,43 @@ spec:
     }
     stages {
         stage('Checkout release branch') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
             steps {
-                sh "echo ${env.GIT_BRANCH}"
+                sh 'git checkout -b release'
             }
         }
-//         stage('Checkout release branch') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 sh 'git checkout -b release'
-//             }
-//         }
-//         stage('Merge to release branch') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 sh 'git merge origin/master'
-//             }
-//         }
-//         stage('Remove SNAPSHOT from version') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 container('docker-client') {
-//                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn versions:set -DremoveSnapshot'"
-//                 }
-//             }
-//         }
-//         stage('Tag release branch') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 script {
-//                     pom = readMavenPom file: 'pom.xml'
-//                     VERSION = pom.version
-//                     sh "git tag -f v$VERSION"
-//                 }
-//             }
-//         }
+        stage('Merge to release branch') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                sh 'git merge origin/master'
+            }
+        }
+        stage('Remove SNAPSHOT from version') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                container('docker-client') {
+                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn versions:set -DremoveSnapshot'"
+                }
+            }
+        }
+        stage('Tag release branch') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                script {
+                    pom = readMavenPom file: 'pom.xml'
+                    VERSION = pom.version
+                    sh "git tag -f v$VERSION"
+                }
+            }
+        }
 //         stage('Build artifact') {
 //             steps {
 //                 container('docker-client') {
