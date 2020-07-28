@@ -70,9 +70,6 @@ spec:
             }
         }
         stage('Remove SNAPSHOT from version') {
-            when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
-            }
             steps {
                 container('docker-client') {
                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn versions:set -DremoveSnapshot'"
@@ -131,52 +128,52 @@ spec:
                 }
             }
         }
-//         stage('Create github release with text from commits') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 script {
-//                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-//                         sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
-//                         sh "bash release_json.sh v$VERSION"
-//                         sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
-//                     }
-//                 }
-//             }
-//         }
-//         stage('Checkout master') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 sh 'git checkout origin/master'
-//             }
-//         }
-//         stage('Increase version in master') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 container('docker-client') {
-//                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit'"
-//                 }
-//             }
-//         }
-//         stage('Push to master') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 script {
-//                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
-//                         sh "git add ."
-//                         sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version in pom.xml\""
-//                         sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:master"
-//                     }
-//                 }
-//             }
-//         }
+        stage('Create github release with text from commits') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+                        sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
+                        sh "bash release_json.sh v$VERSION"
+                        sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
+                    }
+                }
+            }
+        }
+        stage('Checkout master') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                sh 'git checkout origin/master'
+            }
+        }
+        stage('Increase version in master') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                container('docker-client') {
+                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn build-helper:parse-version versions:set -DnewVersion=\\\${parsedVersion.majorVersion}.\\\${parsedVersion.minorVersion}.\\\${parsedVersion.nextIncrementalVersion}-SNAPSHOT versions:commit'"
+                }
+            }
+        }
+        stage('Push to master') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+                        sh "git add ."
+                        sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version in pom.xml\""
+                        sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:master"
+                    }
+                }
+            }
+        }
     }
     post {
         always {
