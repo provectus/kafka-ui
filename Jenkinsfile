@@ -91,46 +91,46 @@ spec:
                 }
             }
         }
-//         stage('Build artifact') {
-//             steps {
-//                 container('docker-client') {
-//                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn clean install'"
-//                 }
-//             }
-//         }
-//         stage('Build docker image') {
-//             steps {
-//                 container('docker-client') {
-//                     dir(path: './kafka-ui-api') {
-//                         script {
-//                             dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         stage('Publish docker image') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 container('docker-client') {
-//                     script {
-//                         docker.withRegistry( '', registryCredential ) {
-//                             dockerImage.push()
-//                             dockerImage.push('latest')
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         stage('Remove unused docker image') {
-//             steps{
-//                 container('docker-client') {
-//                     sh "docker rmi $registry:$VERSION"
-//                 }
-//             }
-//         }
+        stage('Build artifact') {
+            steps {
+                container('docker-client') {
+                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn clean install'"
+                }
+            }
+        }
+        stage('Build docker image') {
+            steps {
+                container('docker-client') {
+                    dir(path: './kafka-ui-api') {
+                        script {
+                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
+                        }
+                    }
+                }
+            }
+        }
+        stage('Publish docker image') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                container('docker-client') {
+                    script {
+                        docker.withRegistry( '', registryCredential ) {
+                            dockerImage.push()
+                            dockerImage.push('latest')
+                        }
+                    }
+                }
+            }
+        }
+        stage('Remove unused docker image') {
+            steps{
+                container('docker-client') {
+                    sh "docker rmi $registry:$VERSION"
+                }
+            }
+        }
 //         stage('Create github release with text from commits') {
 //             when {
 //                 expression { return env.GIT_BRANCH == 'origin/master'; }
