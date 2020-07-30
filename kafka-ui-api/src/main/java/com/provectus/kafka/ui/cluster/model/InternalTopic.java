@@ -22,7 +22,6 @@ public class InternalTopic {
     private final int inSyncReplicas;
     private final int replicationFactor;
     private final int underReplicatedPartitions;
-    //TODO: find way to fill
     private final long segmentSize;
     private final int segmentCount;
     private final Map<TopicPartition, Long> partitionSegmentSize;

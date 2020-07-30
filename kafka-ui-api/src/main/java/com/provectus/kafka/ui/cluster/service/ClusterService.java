@@ -38,15 +38,20 @@ public class ClusterService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<BrokersMetrics> getBrokersMetrics(String name) {
-        return clustersStorage.getClusterByName(name)
+    public Mono<BrokersMetrics> getBrokersMetrics(String name, Integer id) {
+        return Mono.justOrEmpty(clustersStorage.getClusterByName(name)
                 .map(KafkaCluster::getMetrics)
-                .map(clusterMapper::toBrokerMetrics);
+                .map(s -> {
+                    var brokerMetrics = clusterMapper.toBrokerMetrics(s);
+                    brokerMetrics.setMetrics(s.getInternalBrokerMetrics().get(id).getJmxMetrics());
+                    brokerMetrics.setSegmentZise(Long.valueOf(s.getSegmentSize()).intValue());
+                    return brokerMetrics;
+                }));
     }
 
     public List<Topic> getTopics(String name) {
         return clustersStorage.getClusterByName(name)
-                .map( c ->
+                .map(c ->
                         c.getTopics().values().stream()
                                 .map(clusterMapper::toTopic)
                                 .collect(Collectors.toList())
@@ -127,6 +132,7 @@ public class ClusterService {
                     .map(n -> n.stream().map(node -> {
                         Broker broker = new Broker();
                         broker.setId(node.idString());
+                        broker.setHost(node.host());
                         return broker;
                     }).collect(Collectors.toList())))
                 .flatMapMany(Flux::fromIterable);
@@ -154,6 +160,5 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName)
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
-
     }
 }

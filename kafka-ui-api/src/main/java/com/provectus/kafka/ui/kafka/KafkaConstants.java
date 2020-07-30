@@ -10,11 +10,6 @@ public final class KafkaConstants {
     private KafkaConstants() {
     }
 
-    public static String IN_BYTE_PER_SEC_METRIC = "incoming-byte-rate";
-    public static String IN_BYTE_PER_SEC_METRIC_DESCRIPTION = "The number of bytes read off all sockets per second";
-    public static String OUT_BYTE_PER_SEC_METRIC = "outgoing-byte-rate";
-    public static String OUT_BYTE_PER_SEC_METRIC_DESCRIPTION = "The number of outgoing bytes sent to all servers per second";
-
     public static Map<String, String> TOPIC_DEFAULT_CONFIGS = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(CLEANUP_POLICY_CONFIG, CLEANUP_POLICY_DELETE),
             new AbstractMap.SimpleEntry<>(COMPRESSION_TYPE_CONFIG, "producer"),

@@ -52,7 +52,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Broker'
 
-  /api/clusters/{clusterName}/metrics/broker:
+  /api/clusters/{clusterName}/metrics/broker/{id}:
     get:
       tags:
         - /api/clusters
@@ -64,6 +64,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         200:
           description: OK
@@ -307,14 +312,10 @@ components:
           type: integer
         topicCount:
           type: integer
-        bytesInPerSec:
-          type: object
-          additionalProperties:
-            type: number
-        bytesOutPerSec:
-          type: object
-          additionalProperties:
-            type: number
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
       required:
         - id
         - name
@@ -345,6 +346,10 @@ components:
           type: integer
         segmentZise:
           type: integer
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
 
     Topic:
       type: object
@@ -432,6 +437,8 @@ components:
       type: object
       properties:
         id:
+          type: string
+        host:
           type: string
 
     ConsumerGroup:
@@ -527,3 +534,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
+
+    Metric:
+      type: object
+      properties:
+        canonicalName:
+          type: string
+        value:
+          type: string
+          additionalProperties:
+            type: number

@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.deserialization.RecordDeserializer;
+import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
@@ -28,10 +28,6 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 @Slf4j
 public class ClusterUtil {
 
-
-
-
-
     private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
@@ -56,7 +52,7 @@ public class ClusterUtil {
         }));
     }
 
-    public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c, KafkaCluster cluster) {
+    public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c) {
         ConsumerGroup consumerGroup = new ConsumerGroup();
         consumerGroup.setConsumerGroupId(c.groupId());
         consumerGroup.setNumConsumers(c.members().size());
