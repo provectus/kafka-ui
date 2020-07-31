@@ -135,8 +135,8 @@ spec:
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+                        sh "bash -x release_json.sh v$VERSION"
                         sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
-                        sh "bash release_json.sh v$VERSION"
                         sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
                     }
                 }
