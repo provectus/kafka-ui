@@ -42,12 +42,14 @@ public class KafkaService {
     private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
     private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
     private final JmxClusterUtil jmxClusterUtil;
+    private final ClustersStorage clustersStorage;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
-        return getOrCreateAdminClient(cluster).flatMap(
-                ac -> getClusterMetrics(cluster, ac.getAdminClient())
-
+        return getOrCreateAdminClient(cluster)
+                .flatMap(
+                ac -> getClusterMetrics(ac.getAdminClient())
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
@@ -155,19 +157,13 @@ public class KafkaService {
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
-    private Mono<InternalClusterMetrics> getClusterMetrics(KafkaCluster cluster, AdminClient client) {
+    private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
                         c -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
-                            Map<String, Number> bytesInPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_IN_PER_SEC);
-                            Map<String, Number> bytesOutPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_OUT_PER_SEC);
-                            metricsBuilder
-                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
-                                    .bytesOutPerSec(bytesOutPerSec)
-                                    .bytesInPerSec(bytesInPerSec);
                             return metricsBuilder.build();
                         }
                     )
@@ -249,7 +245,7 @@ public class KafkaService {
                 .flatMap(s -> ClusterUtil.toMono(ac.getAdminClient()
                         .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
                 .map(s -> s.values().stream()
-                        .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList())));
+                        .map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList())));
     }
 
     public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster) {
@@ -332,7 +328,7 @@ public class KafkaService {
                                 var brokerSegmentSize = log.get(e.getKey()).values().stream()
                                         .mapToLong(v -> v.replicaInfos.values().stream()
                                                 .mapToLong(r -> r.size).sum()).sum();
-                                InternalBrokerMetrics tempBrokerMetrics = InternalBrokerMetrics.builder().segmentSize(brokerSegmentSize).build();
+                                InternalBrokerMetrics tempBrokerMetrics = e.getValue().toBuilder().segmentSize(brokerSegmentSize).build();
                                 return Collections.singletonMap(e.getKey(), tempBrokerMetrics);
                             });
 
@@ -346,6 +342,39 @@ public class KafkaService {
                             .internalTopicWithSegmentSize(ClusterUtil.toSingleMap(resultTopicMetricsStream)).build();
                 })
             );
+    }
+
+    public List<Metric> getJmxMetric(String clusterName, Node node) {
+        return clustersStorage.getClusterByName(clusterName)
+                        .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElse(Collections.emptyList());
+    }
+
+    private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+        return fillBrokerMetrics(internalClusterMetrics, clusterName, ac).map(this::calculateClusterMetrics);
+    }
+
+    private Mono<InternalClusterMetrics> fillBrokerMetrics(InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+        return ClusterUtil.toMono(ac.describeCluster().nodes())
+                .flatMapIterable(nodes -> nodes)
+                .map(broker -> Map.of(broker.id(), InternalBrokerMetrics.builder().
+                            jmxMetrics(getJmxMetric(clusterName, broker)).build()))
+                .collectList()
+                .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
+    }
+
+    private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
+        return internalClusterMetrics.toBuilder().metrics(
+                    jmxClusterUtil.convertToMetricDto(internalClusterMetrics)
+                            .stream().map(c -> {
+                        Metric jmx = new Metric();
+                        jmx.setCanonicalName(c.getCanonicalName());
+                        jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
+                        return jmx;
+                    }).collect(Collectors.groupingBy(Metric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
+                    .values().stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList())).build();
     }
 
     public List<TopicPartitionDto> partitionDtoList (InternalTopic topic, KafkaCluster cluster) {
