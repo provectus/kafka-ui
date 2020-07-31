@@ -76,7 +76,7 @@ spec:
                 }
             }
         }
-        stage('Tag release branch') {
+        stage('Get version from pom.xml') {
             when {
                 expression { return env.GIT_BRANCH == 'origin/master'; }
             }
@@ -84,7 +84,6 @@ spec:
                 script {
                     pom = readMavenPom file: 'pom.xml'
                     VERSION = pom.version
-                    sh "git tag -f v$VERSION"
                 }
             }
         }
@@ -136,6 +135,7 @@ spec:
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
                         sh "bash -x release_json.sh v$VERSION"
+                        sh "git tag -f v$VERSION"
                         sh "git push -f --tags https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git"
                         sh "curl -XPOST -u $GIT_USER:$GIT_PASSWORD --data @/tmp/release.json https://api.github.com/repos/provectus/kafka-ui/releases"
                     }
