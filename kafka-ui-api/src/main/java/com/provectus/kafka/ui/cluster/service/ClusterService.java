@@ -151,6 +151,7 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName).map(cl ->
                 topicFormData
                         .flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
+                        .map(clusterMapper::toTopic)
                         .flatMap(t -> updateCluster(t, clusterName, cl))
         )
                 .orElse(Mono.empty());

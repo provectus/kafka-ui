@@ -213,24 +213,6 @@ public class ClusterUtil {
         }
     }
 
-    public static Topic convertToTopic(InternalTopic internalTopic) {
-        Topic topic = new Topic();
-        topic.setName(internalTopic.getName());
-//        List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
-//            Partition partition = new Partition();
-//            partition.setPartition(s.getPartition());
-//            partition.setLeader(s.getLeader());
-//            partition.setReplicas(s.getReplicas().stream().flatMap(r -> {
-//                Replica replica = new Replica();
-//                replica.setBroker(r.getBroker());
-//                return Stream.of(replica);
-//            }).collect(Collectors.toList()));
-//            return Stream.of(partition);
-//        }).collect(Collectors.toList());
-//        topic.setPartitions(partitions);
-        return topic;
-    }
-
     public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {
         return streamOfMaps.reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();

@@ -265,7 +265,7 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    public Mono<Topic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
+    public Mono<InternalTopic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
         ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
         return getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
@@ -281,11 +281,10 @@ public class KafkaService {
 
 
 
-    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
+    private Mono<InternalTopic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
         return getTopicsData(ac.getAdminClient())
                 .map(s -> s.stream()
-                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
-                .map(ClusterUtil::convertToTopic);
+                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow());
     }
 
     private Mono<String> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
