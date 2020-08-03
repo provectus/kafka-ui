@@ -237,7 +237,7 @@
                                 </goals>
                                 <configuration>
                                     <tag>${git.revision}</tag>
-                                    <repository>${project.artifactId}</repository>
+                                    <repository>kafka-ui</repository>
                                     <buildArgs>
                                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                                         <JAR_NAME>${project.artifactId}.jar</JAR_NAME>

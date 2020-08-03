@@ -1,0 +1,9 @@
+kafka:
+  admin-client-timeout: 5000
+zookeeper:
+  connection-timeout: 1000
+spring:
+  jmx:
+    enabled: true
+auth:
+  enabled: false

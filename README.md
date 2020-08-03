@@ -28,14 +28,14 @@ Set up Kafka UI with just a couple of easy commands to visualize your Kafka data
 To run Kafka UI, you can use a pre-built Docker image or build it locally.  
 
 ## Running From Docker Image
-The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectus/kafka-ui](https://hub.docker.com/r/provectus/kafka-ui).
+The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provectuslabs/kafka-ui](https://hub.docker.com/r/provectuslabs/kafka-ui).
 
 Launch Docker container in the background:
 ```sh
 
-docker run -d {}/kafka-ui-api:latest 
-	-e KAFKA_CLUSTERS_0_NAME=local 
-	-e KAFKA_CLUSTERS_0__BOOTSTRAPSERVERS=kafka0:29092
+docker run -d provectuslabs/kafka-ui:latest 
+	-e KAFKA_CLUSTERS_0_NAME=local
+	-e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
 
 ```
 Then access the web UI at [http://localhost:9000](http://localhost:9000).
@@ -143,12 +143,12 @@ For example, if you want to use an environment variable to set the `name` parame
 
 |Name               	|Description
 |-----------------------|-------------------------------
-|`KAFKA_CLUSTERS_2_NAME` | Cluster name
-|`KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS` 	|Address where to connect 
-|`KAFKA_CLUSTERS_2_ZOOKEEPER` 	| Zookeper service address 
-|`KAFKA_CLUSTERS_2_SCHEMAREGISTRY`   	|SchemaRegistry's address
-|`KAFKA_CLUSTERS_2_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
-|`KAFKA_CLUSTERS_2_JMXPORT`        	|Open jmxPosrts of a broker
+|`KAFKA_CLUSTERS_0_NAME` | Cluster name
+|`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
+|`KAFKA_CLUSTERS_0_ZOOKEEPER` 	| Zookeper service address 
+|`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
+|`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
+|`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
 
  
 

@@ -3,8 +3,8 @@ version: '2'
 services:
 
   kafka-ui:
-    container_name: kafka-ui-api
-    image: kafka-ui-api:latest
+    container_name: kafka-ui
+    image: kafka-ui:latest
     ports:
       - 8080:8080
     depends_on:
