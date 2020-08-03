@@ -10,6 +10,10 @@ public class SimpleRecordDeserializer implements RecordDeserializer {
 
 	@Override
 	public Object deserialize(ConsumerRecord<Bytes, Bytes> record) {
-		return stringDeserializer.deserialize(record.topic(), record.value().get());
+		if (record.value()!=null) {
+			return stringDeserializer.deserialize(record.topic(), record.value().get());
+		} else {
+			return "empty";
+		}
 	}
 }

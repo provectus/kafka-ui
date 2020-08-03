@@ -10,5 +10,5 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class InternalBrokerMetrics {
     private final Long segmentSize;
-    private final List<Metric> jmxMetrics;
+    private final List<Metric> metrics;
 }

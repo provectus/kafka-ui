@@ -172,8 +172,8 @@ const Messages: React.FC<Props> = ({
     });
   };
 
-  const getTimestampDate = (timestamp: number) => {
-    return format(new Date(timestamp * 1000), 'MM.dd.yyyy HH:mm:ss');
+  const getTimestampDate = (timestamp: string) => {
+    return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
   };
 
   const getMessageContentHeaders = React.useMemo(() => {

@@ -30,10 +30,17 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<BrokersMetrics>> getBrokersMetrics(String clusterName, Integer id, ServerWebExchange exchange) {
-        return clusterService.getBrokersMetrics(clusterName, id)
+    public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(String clusterName, Integer id, ServerWebExchange exchange) {
+        return clusterService.getBrokerMetrics(clusterName, id)
                         .map(ResponseEntity::ok)
                         .onErrorReturn(ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<ClusterMetrics>> getClusterMetrics(String clusterName, ServerWebExchange exchange) {
+        return clusterService.getClusterMetrics(clusterName)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override

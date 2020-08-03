@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.cluster.model;
 
-import com.provectus.kafka.ui.model.TopicPartitionDto;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.common.TopicPartition;
