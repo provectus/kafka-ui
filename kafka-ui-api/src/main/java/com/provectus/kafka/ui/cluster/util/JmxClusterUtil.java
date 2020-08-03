@@ -100,7 +100,7 @@ public class JmxClusterUtil {
     public List<MetricDto> convertToMetricDto(InternalClusterMetrics internalClusterMetrics) {
         return internalClusterMetrics.getInternalBrokerMetrics().values().stream()
                 .map(c ->
-                        c.getJmxMetrics().stream()
+                        c.getMetrics().stream()
                                 .filter(j -> isSameMetric(j.getCanonicalName()))
                                 .map(j -> j.getValue().entrySet().stream()
                                         .map(e -> new MetricDto(j.getCanonicalName(), e.getKey(), e.getValue()))))

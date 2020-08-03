@@ -26,6 +26,8 @@ export interface TopicReplica {
 export interface TopicPartition {
   partition: number;
   leader: number;
+  offsetMin: number;
+  offsetMax: number;
   replicas: TopicReplica[];
 }
 
@@ -35,25 +37,26 @@ export interface TopicCustomParamOption {
 }
 
 export interface TopicDetails {
-  partitionCount?: number;
-  replicationFactor?: number;
-  replicas?: number;
-  segmentSize?: number;
-  inSyncReplicas?: number;
-  segmentCount?: number;
-  underReplicatedPartitions?: number;
+  partitions: TopicPartition[];
 }
 
 export interface Topic {
   name: TopicName;
   internal: boolean;
+  partitionCount?: number;
+  replicationFactor?: number;
+  replicas?: number;
+  inSyncReplicas?: number;
+  segmentSize?: number;
+  segmentCount?: number;
+  underReplicatedPartitions?: number;
   partitions: TopicPartition[];
 }
 
 export interface TopicMessage {
   partition: number;
   offset: number;
-  timestamp: number;
+  timestamp: string;
   timestampType: string;
   key: string;
   headers: Record<string, string>;

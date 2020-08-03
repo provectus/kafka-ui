@@ -52,6 +52,26 @@ paths:
                 items:
                   $ref: '#/components/schemas/Broker'
 
+  /api/clusters/{clusterName}/metrics:
+    get:
+      tags:
+        - /api/clusters
+      summary: getClusterMetrics
+      operationId: getClusterMetrics
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterMetrics'
+
   /api/clusters/{clusterName}/metrics/broker/{id}:
     get:
       tags:
@@ -75,7 +95,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/BrokersMetrics'
+                $ref: '#/components/schemas/BrokerMetrics'
 
   /api/clusters/{clusterName}/topics:
     get:
@@ -327,16 +347,16 @@ components:
         - online
         - offline
 
-    BrokersMetrics:
+    ClusterMetrics:
       type: object
       properties:
+        brokerCount:
+          type: integer
         zooKeeperStatus:
           type: integer
         activeControllers:
           type: integer
-        uncleanLeaderElectionCount:
-          type: integer
-        underReplicatedPartitionCount:
+        onlinePartitionCount:
           type: integer
         offlinePartitionCount:
           type: integer
@@ -344,6 +364,25 @@ components:
           type: integer
         outOfSyncReplicasCount:
           type: integer
+        underReplicatedPartitionCount:
+          type: integer
+        diskUsage:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerDiskUsage'
+
+    BrokerDiskUsage:
+      type: object
+      properties:
+        brokerId:
+          type: integer
+        segmentSize:
+          type: integer
+          format: int64
+
+    BrokerMetrics:
+      type: object
+      properties:
         segmentZise:
           type: integer
         metrics:
@@ -358,22 +397,24 @@ components:
           type: string
         internal:
           type: boolean
+        partitionCount:
+          type: integer
+        replicationFactor:
+          type: integer
+        replicas:
+          type: integer
+        inSyncReplicas:
+          type: integer
+        segmentSize:
+          type: integer
+        segmentCount:
+          type: integer
+        underReplicatedPartitions:
+          type: integer
         partitions:
           type: array
           items:
-            $ref: '#/components/schemas/Partition'
-
-    Partition:
-      type: object
-      properties:
-        partition:
-          type: integer
-        leader:
-          type: integer
-        replicas:
-          type: array
-          items:
-            $ref: '#/components/schemas/Replica'
+            $ref: "#/components/schemas/Partition"
 
     Replica:
       type: object
@@ -388,10 +429,14 @@ components:
     TopicDetails:
       type: object
       properties:
+        name:
+          type: string
+        internal:
+          type: boolean
         partitions:
           type: array
           items:
-            $ref: "#/components/schemas/TopicPartitionDto"
+            $ref: "#/components/schemas/Partition"
         partitionCount:
           type: integer
         replicationFactor:
@@ -490,13 +535,17 @@ components:
         - OFFSET
         - TIMESTAMP
 
-    TopicPartitionDto:
+    Partition:
       type: object
       properties:
-        topic:
-          type: string
         partition:
           type: integer
+        leader:
+          type: integer
+        replicas:
+          type: array
+          items:
+            $ref: '#/components/schemas/Replica'
         offsetMax:
           type: integer
           format: int64
@@ -515,6 +564,8 @@ components:
         consumerId:
           type: string
         topic:
+          type: string
+        host:
           type: string
         partition:
           type: integer

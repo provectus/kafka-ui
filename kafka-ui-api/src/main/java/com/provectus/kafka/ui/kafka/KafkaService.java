@@ -265,7 +265,7 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    public Mono<Topic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
+    public Mono<InternalTopic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
         ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
         return getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
@@ -281,11 +281,10 @@ public class KafkaService {
 
 
 
-    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
+    private Mono<InternalTopic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
         return getTopicsData(ac.getAdminClient())
                 .map(s -> s.stream()
-                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
-                .map(ClusterUtil::convertToTopic);
+                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow());
     }
 
     private Mono<String> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
@@ -346,6 +345,8 @@ public class KafkaService {
 
     public List<Metric> getJmxMetric(String clusterName, Node node) {
         return clustersStorage.getClusterByName(clusterName)
+                        .filter( c -> c.getJmxPort() != null)
+                        .filter( c -> c.getJmxPort() > 0)
                         .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElse(Collections.emptyList());
     }
 
@@ -357,7 +358,7 @@ public class KafkaService {
         return ClusterUtil.toMono(ac.describeCluster().nodes())
                 .flatMapIterable(nodes -> nodes)
                 .map(broker -> Map.of(broker.id(), InternalBrokerMetrics.builder().
-                            jmxMetrics(getJmxMetric(clusterName, broker)).build()))
+                        metrics(getJmxMetric(clusterName, broker)).build()))
                 .collectList()
                 .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
     }
@@ -377,22 +378,25 @@ public class KafkaService {
                     .collect(Collectors.toList())).build();
     }
 
-    public List<TopicPartitionDto> partitionDtoList (InternalTopic topic, KafkaCluster cluster) {
-        var topicPartitions = topic.getPartitions().stream().map(t -> new TopicPartition(topic.getName(), t.getPartition())).collect(Collectors.toList());
-        return getTopicPartitionOffset(cluster, topicPartitions);
-    }
+    public List<InternalPartition> getTopicPartitions(KafkaCluster c, InternalTopic topic )  {
+        var tps = topic.getPartitions().stream()
+                .map(t -> new TopicPartition(topic.getName(), t.getPartition()))
+                .collect(Collectors.toList());
+        Map<Integer, InternalPartition> partitions =
+                topic.getPartitions().stream().collect(Collectors.toMap(
+                        InternalPartition::getPartition,
+                        tp -> tp
+                ));
 
-    private List<TopicPartitionDto> getTopicPartitionOffset(KafkaCluster c, List<TopicPartition> topicPartitions )  {
         try (var consumer = createConsumer(c)) {
-            final Map<TopicPartition, Long> earliest = consumer.beginningOffsets(topicPartitions);
-            final Map<TopicPartition, Long> latest = consumer.endOffsets(topicPartitions);
+            final Map<TopicPartition, Long> earliest = consumer.beginningOffsets(tps);
+            final Map<TopicPartition, Long> latest = consumer.endOffsets(tps);
 
-            return topicPartitions.stream()
-                    .map( tp -> new TopicPartitionDto()
-                            .topic(tp.topic())
-                            .partition(tp.partition())
+            return tps.stream()
+                    .map( tp -> partitions.get(tp.partition()).toBuilder()
                             .offsetMin(Optional.ofNullable(earliest.get(tp)).orElse(0L))
                             .offsetMax(Optional.ofNullable(latest.get(tp)).orElse(0L))
+                            .build()
                     ).collect(Collectors.toList());
         } catch (Exception e) {
             return Collections.emptyList();

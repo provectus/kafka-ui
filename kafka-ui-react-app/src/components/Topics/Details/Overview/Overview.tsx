@@ -23,10 +23,9 @@ const Overview: React.FC<Props> = ({
   replicationFactor,
   fetchTopicDetails,
 }) => {
-  React.useEffect(
-    () => { fetchTopicDetails(clusterName, topicName); },
-    [fetchTopicDetails, clusterName, topicName],
-  );
+  React.useEffect(() => {
+    fetchTopicDetails(clusterName, topicName);
+  }, [fetchTopicDetails, clusterName, topicName]);
 
   if (!isFetched) {
     return null;
@@ -35,18 +34,18 @@ const Overview: React.FC<Props> = ({
   return (
     <>
       <MetricsWrapper>
-        <Indicator label="Partitions">
-          {partitionCount}
-        </Indicator>
-        <Indicator label="Replication Factor">
-          {replicationFactor}
-        </Indicator>
+        <Indicator label="Partitions">{partitionCount}</Indicator>
+        <Indicator label="Replication Factor">{replicationFactor}</Indicator>
         <Indicator label="URP" title="Under replicated partitions">
           {underReplicatedPartitions}
         </Indicator>
         <Indicator label="In sync replicas">
           {inSyncReplicas}
-          <span className="subtitle has-text-weight-light"> of {replicas}</span>
+          <span className="subtitle has-text-weight-light">
+            {' '}
+            of
+            {replicas}
+          </span>
         </Indicator>
         <Indicator label="Type">
           <span className="tag is-primary">
@@ -60,15 +59,20 @@ const Overview: React.FC<Props> = ({
             <tr>
               <th>Partition ID</th>
               <th>Broker leader</th>
+              <th>Min offset</th>
+              <th>Max offset</th>
             </tr>
           </thead>
           <tbody>
-            {partitions && partitions.map(({ partition, leader }) => (
-              <tr key={`partition-list-item-key-${partition}`}>
-                <td>{partition}</td>
-                <td>{leader}</td>
-              </tr>
-            ))}
+            {partitions &&
+              partitions.map(({ partition, leader, offsetMin, offsetMax }) => (
+                <tr key={`partition-list-item-key-${partition}`}>
+                  <td>{partition}</td>
+                  <td>{leader}</td>
+                  <td>{offsetMin}</td>
+                  <td>{offsetMax}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>
