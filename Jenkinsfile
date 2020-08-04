@@ -77,9 +77,6 @@ spec:
             }
         }
         stage('Get version from pom.xml') {
-            when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
-            }
             steps {
                 script {
                     pom = readMavenPom file: 'pom.xml'
@@ -90,16 +87,19 @@ spec:
         stage('Build artifact') {
             steps {
                 container('docker-client') {
-                    sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c './mvnw clean package -Pprod'"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven provectuslabs/openjdk:13 bash -c 'chown -R \$(whoami):\$(whoami) kafka-ui-react-app && ./mvnw clean package -Pprod'"
                 }
             }
         }
         stage('Build docker image') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
             steps {
                 container('docker-client') {
                     dir(path: './kafka-ui-api') {
                         script {
-                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
+                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=kafka-ui-api-$VERSION.jar -f Dockerfile ." )
                         }
                     }
                 }
