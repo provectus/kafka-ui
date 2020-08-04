@@ -58,6 +58,7 @@ spec:
                 sh 'echo test'
             }
         }
+
 //         stage('Checkout release branch') {
 //             when {
 //                 expression { return env.GIT_BRANCH == 'origin/master'; }
