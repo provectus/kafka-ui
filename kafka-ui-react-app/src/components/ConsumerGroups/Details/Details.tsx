@@ -58,6 +58,7 @@ const Details: React.FC<Props> = ({
             <thead>
               <tr>
                 <th>Consumer ID</th>
+                <th>Host</th>
                 <th>Topic</th>
                 <th>Partition</th>
                 <th>Messages behind</th>

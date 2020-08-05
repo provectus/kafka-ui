@@ -5,7 +5,7 @@
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.5-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -237,7 +237,7 @@
                                 </goals>
                                 <configuration>
                                     <tag>${git.revision}</tag>
-                                    <repository>${project.artifactId}</repository>
+                                    <repository>kafka-ui</repository>
                                     <buildArgs>
                                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                                         <JAR_NAME>${project.artifactId}.jar</JAR_NAME>

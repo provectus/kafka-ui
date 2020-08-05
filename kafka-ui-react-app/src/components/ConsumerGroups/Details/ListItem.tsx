@@ -12,6 +12,7 @@ const ListItem: React.FC<Props> = ({ clusterName, consumer }) => {
   return (
     <tr>
       <td>{consumer.consumerId}</td>
+      <td>{consumer.host}</td>
       <td>
         <NavLink
           exact

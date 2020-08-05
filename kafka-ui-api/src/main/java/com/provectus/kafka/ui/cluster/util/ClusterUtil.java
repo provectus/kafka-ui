@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.deserialization.RecordDeserializer;
+import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
@@ -28,10 +28,6 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 @Slf4j
 public class ClusterUtil {
 
-
-
-
-
     private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
@@ -56,7 +52,7 @@ public class ClusterUtil {
         }));
     }
 
-    public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c, KafkaCluster cluster) {
+    public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c) {
         ConsumerGroup consumerGroup = new ConsumerGroup();
         consumerGroup.setConsumerGroupId(c.groupId());
         consumerGroup.setNumConsumers(c.members().size());
@@ -72,10 +68,12 @@ public class ClusterUtil {
     ) {
         return consumer.assignment().topicPartitions().stream()
                 .map(tp -> {
-                    Long currentOffset = groupOffsets.get(tp).offset();
-                    Long endOffset = endOffsets.get(tp);
+                    Long currentOffset = Optional.ofNullable(
+                            groupOffsets.get(tp)).map(o -> o.offset()).orElse(0L);
+                    Long endOffset = Optional.ofNullable(endOffsets.get(tp)).orElse(0L);
                     ConsumerTopicPartitionDetail cd = new ConsumerTopicPartitionDetail();
                     cd.setConsumerId(consumer.consumerId());
+                    cd.setHost(consumer.host());
                     cd.setTopic(tp.topic());
                     cd.setPartition(tp.partition());
                     cd.setCurrentOffset(currentOffset);
@@ -120,7 +118,7 @@ public class ClusterUtil {
 
         int urpCount = partitions.stream()
                 .flatMap(partition -> partition.getReplicas().stream())
-                .filter(InternalReplica::isInSync).mapToInt(e -> 1)
+                .filter(p -> !p.isInSync()).mapToInt(e -> 1)
                 .sum();
 
         int inSyncReplicasCount = partitions.stream()
@@ -203,30 +201,16 @@ public class ClusterUtil {
                 .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
                 .findFirst().orElseThrow().value();
         try {
+            final String[] parts = version.split("\\.");
+            if (parts.length>2) {
+              version = parts[0] + "." + parts[1];
+            }        
             return Float.parseFloat(version.split("-")[0]) <= 2.3f
                     ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
         } catch (Exception e) {
             log.error("Conversion clusterVersion {} to float value failed", version);
             throw e;
         }
-    }
-
-    public static Topic convertToTopic(InternalTopic internalTopic) {
-        Topic topic = new Topic();
-        topic.setName(internalTopic.getName());
-        List<Partition> partitions = internalTopic.getPartitions().stream().flatMap(s -> {
-            Partition partition = new Partition();
-            partition.setPartition(s.getPartition());
-            partition.setLeader(s.getLeader());
-            partition.setReplicas(s.getReplicas().stream().flatMap(r -> {
-                Replica replica = new Replica();
-                replica.setBroker(r.getBroker());
-                return Stream.of(replica);
-            }).collect(Collectors.toList()));
-            return Stream.of(partition);
-        }).collect(Collectors.toList());
-        topic.setPartitions(partitions);
-        return topic;
     }
 
     public static <T, R> Map<T, R> toSingleMap (Stream<Map<T, R>> streamOfMaps) {

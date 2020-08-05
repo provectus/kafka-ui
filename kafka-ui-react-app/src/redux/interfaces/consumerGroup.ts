@@ -16,16 +16,18 @@ export interface ConsumerGroupDetails {
 export interface Consumer {
   consumerId: string;
   topic: string;
+  host: string;
   partition: number;
   messagesBehind: number;
   currentOffset: number;
   endOffset: number;
 }
 
-export interface ConsumerGroupDetailedInfo extends ConsumerGroup, ConsumerGroupDetails {
-}
+export interface ConsumerGroupDetailedInfo
+  extends ConsumerGroup,
+    ConsumerGroupDetails {}
 
 export interface ConsumerGroupsState {
-  byID: { [consumerGroupID: string]: ConsumerGroupDetailedInfo },
-  allIDs: string[]
+  byID: { [consumerGroupID: string]: ConsumerGroupDetailedInfo };
+  allIDs: string[];
 }

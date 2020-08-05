@@ -3,10 +3,7 @@ package com.provectus.kafka.ui.kafka;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.Topic;
-import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.*;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -26,7 +23,6 @@ import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -46,12 +42,14 @@ public class KafkaService {
     private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
     private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
     private final JmxClusterUtil jmxClusterUtil;
+    private final ClustersStorage clustersStorage;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
-        return getOrCreateAdminClient(cluster).flatMap(
-                ac -> getClusterMetrics(cluster, ac.getAdminClient())
-
+        return getOrCreateAdminClient(cluster)
+                .flatMap(
+                ac -> getClusterMetrics(ac.getAdminClient())
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
@@ -159,19 +157,13 @@ public class KafkaService {
                     .map( m -> m.values().stream().map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()));
     }
 
-    private Mono<InternalClusterMetrics> getClusterMetrics(KafkaCluster cluster, AdminClient client) {
+    private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
         return ClusterUtil.toMono(client.describeCluster().nodes())
                 .flatMap(brokers ->
                     ClusterUtil.toMono(client.describeCluster().controller()).map(
                         c -> {
                             InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder = InternalClusterMetrics.builder();
                             metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
-                            Map<String, Number> bytesInPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_IN_PER_SEC);
-                            Map<String, Number> bytesOutPerSec = jmxClusterUtil.getJmxTrafficMetrics(cluster.getJmxPort(), c.host(), JmxClusterUtil.BYTES_OUT_PER_SEC);
-                            metricsBuilder
-                                    .internalBrokerMetrics((brokers.stream().map(Node::id).collect(Collectors.toMap(k -> k, v -> InternalBrokerMetrics.builder().build()))))
-                                    .bytesOutPerSec(bytesOutPerSec)
-                                    .bytesInPerSec(bytesInPerSec);
                             return metricsBuilder.build();
                         }
                     )
@@ -253,7 +245,7 @@ public class KafkaService {
                 .flatMap(s -> ClusterUtil.toMono(ac.getAdminClient()
                         .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
                 .map(s -> s.values().stream()
-                        .map(c -> ClusterUtil.convertToConsumerGroup(c, cluster)).collect(Collectors.toList())));
+                        .map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList())));
     }
 
     public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster) {
@@ -273,7 +265,7 @@ public class KafkaService {
     }
 
     @SneakyThrows
-    public Mono<Topic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
+    public Mono<InternalTopic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
         ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
         return getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
@@ -289,11 +281,10 @@ public class KafkaService {
 
 
 
-    private Mono<Topic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
+    private Mono<InternalTopic> getUpdatedTopic (ExtendedAdminClient ac, String topicName) {
         return getTopicsData(ac.getAdminClient())
                 .map(s -> s.stream()
-                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow())
-                .map(ClusterUtil::convertToTopic);
+                        .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow());
     }
 
     private Mono<String> incrementalAlterConfig(TopicFormData topicFormData, ConfigResource topicCR, ExtendedAdminClient ac) {
@@ -336,7 +327,7 @@ public class KafkaService {
                                 var brokerSegmentSize = log.get(e.getKey()).values().stream()
                                         .mapToLong(v -> v.replicaInfos.values().stream()
                                                 .mapToLong(r -> r.size).sum()).sum();
-                                InternalBrokerMetrics tempBrokerMetrics = InternalBrokerMetrics.builder().segmentSize(brokerSegmentSize).build();
+                                InternalBrokerMetrics tempBrokerMetrics = e.getValue().toBuilder().segmentSize(brokerSegmentSize).build();
                                 return Collections.singletonMap(e.getKey(), tempBrokerMetrics);
                             });
 
@@ -350,5 +341,65 @@ public class KafkaService {
                             .internalTopicWithSegmentSize(ClusterUtil.toSingleMap(resultTopicMetricsStream)).build();
                 })
             );
+    }
+
+    public List<Metric> getJmxMetric(String clusterName, Node node) {
+        return clustersStorage.getClusterByName(clusterName)
+                        .filter( c -> c.getJmxPort() != null)
+                        .filter( c -> c.getJmxPort() > 0)
+                        .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElse(Collections.emptyList());
+    }
+
+    private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+        return fillBrokerMetrics(internalClusterMetrics, clusterName, ac).map(this::calculateClusterMetrics);
+    }
+
+    private Mono<InternalClusterMetrics> fillBrokerMetrics(InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+        return ClusterUtil.toMono(ac.describeCluster().nodes())
+                .flatMapIterable(nodes -> nodes)
+                .map(broker -> Map.of(broker.id(), InternalBrokerMetrics.builder().
+                        metrics(getJmxMetric(clusterName, broker)).build()))
+                .collectList()
+                .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
+    }
+
+    private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
+        return internalClusterMetrics.toBuilder().metrics(
+                    jmxClusterUtil.convertToMetricDto(internalClusterMetrics)
+                            .stream().map(c -> {
+                        Metric jmx = new Metric();
+                        jmx.setCanonicalName(c.getCanonicalName());
+                        jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
+                        return jmx;
+                    }).collect(Collectors.groupingBy(Metric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
+                    .values().stream()
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toList())).build();
+    }
+
+    public List<InternalPartition> getTopicPartitions(KafkaCluster c, InternalTopic topic )  {
+        var tps = topic.getPartitions().stream()
+                .map(t -> new TopicPartition(topic.getName(), t.getPartition()))
+                .collect(Collectors.toList());
+        Map<Integer, InternalPartition> partitions =
+                topic.getPartitions().stream().collect(Collectors.toMap(
+                        InternalPartition::getPartition,
+                        tp -> tp
+                ));
+
+        try (var consumer = createConsumer(c)) {
+            final Map<TopicPartition, Long> earliest = consumer.beginningOffsets(tps);
+            final Map<TopicPartition, Long> latest = consumer.endOffsets(tps);
+
+            return tps.stream()
+                    .map( tp -> partitions.get(tp.partition()).toBuilder()
+                            .offsetMin(Optional.ofNullable(earliest.get(tp)).orElse(0L))
+                            .offsetMax(Optional.ofNullable(latest.get(tp)).orElse(0L))
+                            .build()
+                    ).collect(Collectors.toList());
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 }

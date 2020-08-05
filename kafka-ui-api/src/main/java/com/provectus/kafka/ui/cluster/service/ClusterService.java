@@ -38,15 +38,25 @@ public class ClusterService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<BrokersMetrics> getBrokersMetrics(String name) {
-        return clustersStorage.getClusterByName(name)
-                .map(KafkaCluster::getMetrics)
-                .map(clusterMapper::toBrokerMetrics);
+    public Mono<BrokerMetrics> getBrokerMetrics(String name, Integer id) {
+        return Mono.justOrEmpty(clustersStorage.getClusterByName(name)
+                .map( c -> c.getMetrics().getInternalBrokerMetrics())
+                .map( m -> m.get(id))
+                .map(clusterMapper::toBrokerMetrics));
     }
+
+    public Mono<ClusterMetrics> getClusterMetrics(String name) {
+        return Mono.justOrEmpty(
+                clustersStorage.getClusterByName(name)
+                        .map(KafkaCluster::getMetrics)
+                        .map(clusterMapper::toClusterMetrics)
+        );
+    }
+
 
     public List<Topic> getTopics(String name) {
         return clustersStorage.getClusterByName(name)
-                .map( c ->
+                .map(c ->
                         c.getTopics().values().stream()
                                 .map(clusterMapper::toTopic)
                                 .collect(Collectors.toList())
@@ -55,9 +65,15 @@ public class ClusterService {
 
     public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
         return clustersStorage.getClusterByName(name)
-                .map(KafkaCluster::getTopics)
-                .map(t -> t.get(topicName))
-                .map(clusterMapper::toTopicDetails);
+                .flatMap( c ->
+                        Optional.ofNullable(
+                          c.getTopics().get(topicName)
+                        ).map(
+                          t -> t.toBuilder().partitions(
+                                  kafkaService.getTopicPartitions(c, t)
+                          ).build()
+                        ).map(clusterMapper::toTopicDetails)
+                );
     }
                                                                            
     public Optional<List<TopicConfig>> getTopicConfigs(String name, String topicName) {
@@ -124,6 +140,7 @@ public class ClusterService {
                     .map(n -> n.stream().map(node -> {
                         Broker broker = new Broker();
                         broker.setId(node.idString());
+                        broker.setHost(node.host());
                         return broker;
                     }).collect(Collectors.toList())))
                 .flatMapMany(Flux::fromIterable);
@@ -134,6 +151,7 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName).map(cl ->
                 topicFormData
                         .flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
+                        .map(clusterMapper::toTopic)
                         .flatMap(t -> updateCluster(t, clusterName, cl))
         )
                 .orElse(Mono.empty());
@@ -151,6 +169,6 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName)
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
-
     }
+
 }
