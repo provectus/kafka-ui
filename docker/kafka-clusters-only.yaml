@@ -102,12 +102,12 @@ services:
      depends_on:
        - kafka1
      volumes:
-       - ./my_msgs.txt:/data/my_msgs.txt
+       - ./message.txt:/data/message.txt
      command: "bash -c 'echo Waiting for Kafka to be ready... && \
                   cub kafka-ready -b kafka1:9092 1 20 && \
                   kafka-console-producer --broker-list kafka1:9092 \
                                         -topic users \
-                                        < /data/my_msgs.txt'"
+                                        < /data/message.txt'"
 
      environment:
        KAFKA_BROKER_ID: ignored
