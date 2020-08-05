@@ -97,7 +97,7 @@ services:
     networks:
      - default
 
-  kafkacat:
+  kafka-send-message:
      image: confluentinc/cp-kafka:5.1.0
      depends_on:
        - kafka1
