@@ -98,7 +98,7 @@ spec:
                         script {
                             sh "ls -la"
                             sh "ls -la target/"
-                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=kafka-ui-api-$VERSION.jar -f Dockerfile ." )
+                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=kafka-ui-api-0.0.4.jar -f Dockerfile ." )
                         }
                     }
                 }
