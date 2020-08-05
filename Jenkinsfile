@@ -91,40 +91,40 @@ spec:
                 }
             }
         }
-//         stage('Build docker image') {
-//             steps {
-//                 container('docker-client') {
-//                     dir(path: './kafka-ui-api') {
-//                         script {
-//                             sh "cp target/kafka-ui-api-$VERSION.jar /tmp/"
-//                             dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=/tmp/*.jar -f Dockerfile ." )
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         stage('Publish docker image') {
-//             when {
-//                 expression { return env.GIT_BRANCH == 'origin/master'; }
-//             }
-//             steps {
-//                 container('docker-client') {
-//                     script {
-//                         docker.withRegistry( '', registryCredential ) {
-//                             dockerImage.push()
-//                             dockerImage.push('latest')
-//                         }
-//                     }
-//                 }
-//             }
-//         }
-//         stage('Remove unused docker image') {
-//             steps{
-//                 container('docker-client') {
-//                     sh "docker rmi $registry:$VERSION"
-//                 }
-//             }
-//         }
+        stage('Build docker image') {
+            steps {
+                container('docker-client') {
+                    dir(path: './kafka-ui-api') {
+                        script {
+                            sh "rm -f *docker-info.jar"
+                            dockerImage = docker.build( registry + ":$VERSION", "--build-arg JAR_FILE=*.jar -f Dockerfile ." )
+                        }
+                    }
+                }
+            }
+        }
+        stage('Publish docker image') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
+            steps {
+                container('docker-client') {
+                    script {
+                        docker.withRegistry( '', registryCredential ) {
+                            dockerImage.push()
+                            dockerImage.push('latest')
+                        }
+                    }
+                }
+            }
+        }
+        stage('Remove unused docker image') {
+            steps{
+                container('docker-client') {
+                    sh "docker rmi $registry:$VERSION"
+                }
+            }
+        }
         stage('Create github release with text from commits') {
             when {
                 expression { return env.GIT_BRANCH == 'origin/master'; }
