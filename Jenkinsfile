@@ -77,6 +77,9 @@ spec:
             }
         }
         stage('Get version from pom.xml') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
             steps {
                 script {
                     pom = readMavenPom file: 'pom.xml'
@@ -92,6 +95,9 @@ spec:
             }
         }
         stage('Build docker image') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
             steps {
                 container('docker-client') {
                     dir(path: './kafka-ui-api') {
@@ -118,6 +124,9 @@ spec:
             }
         }
         stage('Remove unused docker image') {
+            when {
+                expression { return env.GIT_BRANCH == 'origin/master'; }
+            }
             steps{
                 container('docker-client') {
                     sh "docker rmi $registry:$VERSION"
