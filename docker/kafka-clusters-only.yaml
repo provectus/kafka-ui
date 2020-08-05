@@ -79,14 +79,14 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092,PLAIN://localhost:29090
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT,PLAIN:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       JMX_PORT: 9998
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9998
 
   kafka-init-topics1:
     image: confluentinc/cp-kafka:5.1.0
     depends_on:
-     - kafka1
+      - kafka1
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
                cub kafka-ready -b kafka1:9092 20 && \
                kafka-topics --create --topic secondUsers --partitions 3 --replication-factor 2 --if-not-exists --zookeeper zookeeper1:2182 && \
@@ -96,6 +96,24 @@ services:
      KAFKA_ZOOKEEPER_CONNECT: ignored
     networks:
      - default
+
+  kafkacat:
+     image: confluentinc/cp-kafka:5.1.0
+     depends_on:
+       - kafka1
+     volumes:
+       - ./my_msgs.txt:/data/my_msgs.txt
+     command: "bash -c 'echo Waiting for Kafka to be ready... && \
+                  cub kafka-ready -b kafka1:9092 1 20 && \
+                  kafka-console-producer --broker-list kafka1:9092 \
+                                        -topic users \
+                                        < /data/my_msgs.txt'"
+
+     environment:
+       KAFKA_BROKER_ID: ignored
+       KAFKA_ZOOKEEPER_CONNECT: ignored
+     networks:
+       - default
 
   schemaregistry0:
     image: confluentinc/cp-schema-registry:5.1.0
@@ -115,12 +133,3 @@ services:
       SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
-
-  kafkacat:
-    image: confluentinc/cp-kafkacat
-    volumes:
-      - ./my_msgs.txt:/data/my_msgs.txt
-    command: "kafkacat -b kafka1:9092 \
-                                  -t secondUsers \
-                                  -P -l /data/my_msgs.txt"
-    restart: on-failure
