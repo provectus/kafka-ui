@@ -92,9 +92,6 @@ spec:
             }
         }
         stage('Build docker image') {
-            when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
-            }
             steps {
                 container('docker-client') {
                     dir(path: './kafka-ui-api') {
