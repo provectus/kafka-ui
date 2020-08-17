@@ -2,21 +2,21 @@ kafka:
   clusters:
     -
       name: local
-      bootstrapServers: localhost:29091
-      zookeeper: localhost:2183
+      bootstrapServers: localhost:9092
+      zookeeper: localhost:2181
       schemaRegistry: http://localhost:8085
 #      schemaNameTemplate: "%s-value"
       jmxPort: 9997
     -
       name: secondLocal
-      bootstrapServers: localhost:29092
+      bootstrapServers: localhost:9093
       zookeeper: localhost:2182
       jmxPort: 9998
     -
       name: localReplica
-      bootstrapServers: localhost:29093
-      zookeeper: localhost:2183
-      jmxPort: 9997
+      bootstrapServers: localhost:9094
+      zookeeper: localhost:2181
+      jmxPort: 9999
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000
