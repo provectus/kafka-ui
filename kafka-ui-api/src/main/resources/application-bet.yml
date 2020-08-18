@@ -1,11 +1,10 @@
 kafka:
   clusters:
-    - name: local
+    -
+      name: local
       bootstrapServers: b-1.sandbox.kbqc5i.c3.kafka.eu-central-1.amazonaws.com:9092
-      zookeeper: z-2.sandbox.kbqc5i.c3.kafka.eu-central-1.amazonaws.com:2181
+#      zookeeper: z-2.sandbox.kbqc5i.c3.kafka.eu-central-1.amazonaws.com:2181
       schemaRegistry: http://localhost:8081
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000
-auth:
-  enabled: false
