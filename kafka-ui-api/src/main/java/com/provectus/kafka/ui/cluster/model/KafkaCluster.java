@@ -1,9 +1,11 @@
 package com.provectus.kafka.ui.cluster.model;
 
+import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.model.ServerStatus;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -22,4 +24,6 @@ public class KafkaCluster {
     private final Map<String, InternalTopic> topics;
     private final Throwable lastKafkaException;
     private final Throwable lastZookeeperException;
+    private final Integer prometheusPort;
+    private final List<ClustersProperties.PrometheusExporterConfig> prometheusExporters;
 }

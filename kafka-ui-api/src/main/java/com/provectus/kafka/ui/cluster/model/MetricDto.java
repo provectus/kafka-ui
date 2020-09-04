@@ -8,7 +8,8 @@ import java.math.BigDecimal;
 @Getter
 @AllArgsConstructor
 public class MetricDto {
-    private String canonicalName;
-    private String metricName;
+    private String name;
+    private String type;
+    private String valueType;
     private BigDecimal value;
 }

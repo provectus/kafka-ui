@@ -2,12 +2,15 @@ package com.provectus.kafka.ui.kafka;
 
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
-import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
+import com.provectus.kafka.ui.metrics.MetricsService;
+import com.provectus.kafka.ui.metrics.jmx.JmxMetricsProvider;
 import com.provectus.kafka.ui.model.*;
 import com.provectus.kafka.ui.zookeeper.ZookeeperService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -17,7 +20,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -25,6 +27,7 @@ import reactor.util.function.Tuples;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -33,23 +36,21 @@ import java.util.stream.Stream;
 @Log4j2
 public class KafkaService {
 
-    @Value("${kafka.admin-client-timeout}")
-    private int clientTimeout;
-
     private static final ListTopicsOptions LIST_TOPICS_OPTIONS = new ListTopicsOptions().listInternal(true);
 
-    private final ZookeeperService zookeeperService;
-    private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
     private final Map<AdminClient, Map<TopicPartition, Integer>> leadersCache = new ConcurrentHashMap<>();
-    private final JmxClusterUtil jmxClusterUtil;
-    private final ClustersStorage clustersStorage;
+
+    private final ZookeeperService zookeeperService;
+    private final JmxMetricsProvider jmxMetricsProvider;
+    private final KafkaAdminClientStore adminClientStore;
+    private final MetricsService metricsService;
 
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
-        return getOrCreateAdminClient(cluster)
+        return adminClientStore.getOrCreateAdminClient(cluster)
                 .flatMap(
                 ac -> getClusterMetrics(ac.getAdminClient())
-                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
+                        .flatMap(i -> fillMetrics(i, cluster, ac.getAdminClient()))
                         .flatMap( clusterMetrics ->
                             getTopicsData(ac.getAdminClient()).flatMap( topics ->
                                 loadTopicsConfig(ac.getAdminClient(), topics.stream().map(InternalTopic::getName).collect(Collectors.toList()))
@@ -172,7 +173,7 @@ public class KafkaService {
 
 
     public Mono<InternalTopic> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
-        return getOrCreateAdminClient(cluster).flatMap(ac -> createTopic(ac.getAdminClient(), topicFormData));
+        return adminClientStore.getOrCreateAdminClient(cluster).flatMap(ac -> createTopic(ac.getAdminClient(), topicFormData));
     }
 
     @SneakyThrows
@@ -194,23 +195,6 @@ public class KafkaService {
                                 .map( m -> m.values().iterator().next())
                 );
     }
-
-    @SneakyThrows
-    public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
-        return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
-                .switchIfEmpty(createAdminClient(cluster))
-                .map(e -> adminClientCache.computeIfAbsent(cluster.getName(), key -> e));
-    }
-
-    public Mono<ExtendedAdminClient> createAdminClient(KafkaCluster kafkaCluster) {
-        Properties properties = new Properties();
-        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
-        properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
-        AdminClient adminClient = AdminClient.create(properties);
-        return ExtendedAdminClient.extendedAdminClient(adminClient);
-    }
-
-
 
     private Mono<TopicDescription> getTopicDescription(KafkaFuture<TopicDescription> entry, String topicName) {
         return ClusterUtil.toMono(entry)
@@ -241,7 +225,7 @@ public class KafkaService {
     }
 
     public Mono<List<ConsumerGroup>> getConsumerGroups(KafkaCluster cluster) {
-        return getOrCreateAdminClient(cluster).flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all())
+        return adminClientStore.getOrCreateAdminClient(cluster).flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all())
                 .flatMap(s -> ClusterUtil.toMono(ac.getAdminClient()
                         .describeConsumerGroups(s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())).all()))
                 .map(s -> s.values().stream()
@@ -267,7 +251,7 @@ public class KafkaService {
     @SneakyThrows
     public Mono<InternalTopic> updateTopic(KafkaCluster cluster, String topicName, TopicFormData topicFormData) {
         ConfigResource topicCR = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
-        return getOrCreateAdminClient(cluster)
+        return adminClientStore.getOrCreateAdminClient(cluster)
                 .flatMap(ac -> {
                     if (ac.getSupportedFeatures().contains(ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
                         return incrementalAlterConfig(topicFormData, topicCR, ac)
@@ -343,39 +327,37 @@ public class KafkaService {
             );
     }
 
-    public List<Metric> getJmxMetric(String clusterName, Node node) {
-        return clustersStorage.getClusterByName(clusterName)
-                        .filter( c -> c.getJmxPort() != null)
-                        .filter( c -> c.getJmxPort() > 0)
-                        .map(c -> jmxClusterUtil.getJmxMetrics(c.getJmxPort(), node.host())).orElse(Collections.emptyList());
+    private Mono<InternalClusterMetrics> fillMetrics(InternalClusterMetrics internalClusterMetrics, KafkaCluster cluster, AdminClient ac) {
+        return fillBrokerMetrics(internalClusterMetrics, cluster, ac).map(this::calculateClusterMetrics);
     }
 
-    private Mono<InternalClusterMetrics> fillJmxMetrics (InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
-        return fillBrokerMetrics(internalClusterMetrics, clusterName, ac).map(this::calculateClusterMetrics);
-    }
-
-    private Mono<InternalClusterMetrics> fillBrokerMetrics(InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
+    private Mono<InternalClusterMetrics> fillBrokerMetrics(InternalClusterMetrics internalClusterMetrics, KafkaCluster cluster, AdminClient ac) {
         return ClusterUtil.toMono(ac.describeCluster().nodes())
-                .flatMapIterable(nodes -> nodes)
-                .map(broker -> Map.of(broker.id(), InternalBrokerMetrics.builder().
-                        metrics(getJmxMetric(clusterName, broker)).build()))
-                .collectList()
-                .map(s -> internalClusterMetrics.toBuilder().internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
+                .flatMapIterable(Function.identity())
+                .collectMap(
+                        Node::id,
+                        b -> InternalBrokerMetrics.builder()
+                                .metrics(metricsService.getMetrics(cluster, b))
+                                .build()
+                )
+                .map(m -> internalClusterMetrics.toBuilder().internalBrokerMetrics(m).build());
     }
 
     private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
-        return internalClusterMetrics.toBuilder().metrics(
-                    jmxClusterUtil.convertToMetricDto(internalClusterMetrics)
-                            .stream().map(c -> {
-                        Metric jmx = new Metric();
-                        jmx.setCanonicalName(c.getCanonicalName());
-                        jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
-                        return jmx;
-                    }).collect(Collectors.groupingBy(Metric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
-                    .values().stream()
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList())).build();
+        // TODO WTF? double conversion metric -> metricDto -> metric
+        List<Metric> clusterMetrics = jmxMetricsProvider.convertToMetricDto(internalClusterMetrics)
+                .stream()
+                .map(jmxMetricsProvider::convertMetricDtoToMetric)
+                .collect(Collectors.groupingBy(
+                        m -> Pair.of(m.getName(), m.getType()),
+                        Collectors.reducing(metricsService::reduceMetrics)
+                ))
+                .values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        
+        return internalClusterMetrics.toBuilder().metrics(clusterMetrics).build();
     }
 
     public List<InternalPartition> getTopicPartitions(KafkaCluster c, InternalTopic topic )  {

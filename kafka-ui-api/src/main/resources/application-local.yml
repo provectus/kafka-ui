@@ -6,7 +6,14 @@ kafka:
       zookeeper: localhost:2181
       schemaRegistry: http://localhost:8085
 #      schemaNameTemplate: "%s-value"
-      jmxPort: 9997
+#      jmxPort: 9997
+      prometheusPort: 5556
+      prometheusExporters:
+        -
+          brokerId: 1
+          host: localhost
+          port: 5556
+          context: /metrics
     -
       name: secondLocal
       bootstrapServers: localhost:9093
@@ -16,7 +23,8 @@ kafka:
       name: localReplica
       bootstrapServers: localhost:9094
       zookeeper: localhost:2181
-      jmxPort: 9999
+#      jmxPort: 9999
+      prometheusPort: 5557
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000

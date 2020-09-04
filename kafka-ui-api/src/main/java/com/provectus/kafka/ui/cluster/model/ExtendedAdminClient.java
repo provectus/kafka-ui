@@ -19,9 +19,4 @@ public class ExtendedAdminClient {
         INCREMENTAL_ALTER_CONFIGS,
         ALTER_CONFIGS
     }
-
-    public static Mono<ExtendedAdminClient> extendedAdminClient(AdminClient adminClient) {
-        return ClusterUtil.getSupportedFeatures(adminClient)
-                .map(s -> new ExtendedAdminClient(adminClient, s));
-    }
 }

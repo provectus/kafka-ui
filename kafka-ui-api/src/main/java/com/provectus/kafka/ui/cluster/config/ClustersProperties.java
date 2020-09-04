@@ -21,6 +21,16 @@ public class ClustersProperties {
         String zookeeper;
         String schemaRegistry;
         String schemaNameTemplate = "%s-value";
-        int jmxPort;
+        Integer jmxPort;
+        Integer prometheusPort;
+        List<PrometheusExporterConfig> prometheusExporters;
+    }
+
+    @Data
+    public static class PrometheusExporterConfig {
+        private String brokerId;
+        private String host;
+        private int port;
+        private String context;
     }
 }

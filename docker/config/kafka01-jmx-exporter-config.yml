@@ -1,0 +1,2 @@
+hostPort: kafka01:9997
+lowercaseOutputName: true

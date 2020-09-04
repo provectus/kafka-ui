@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
+import com.provectus.kafka.ui.kafka.KafkaAdminClientStore;
 import com.provectus.kafka.ui.kafka.KafkaService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,7 @@ public class ClusterService {
     private final ClusterMapper clusterMapper;
     private final KafkaService kafkaService;
     private final ConsumingService consumingService;
+    private final KafkaAdminClientStore adminClientStore;
 
     public List<Cluster> getClusters() {
         return clustersStorage.getKafkaClusters()
@@ -93,7 +95,7 @@ public class ClusterService {
     public Mono<ConsumerGroupDetails> getConsumerGroupDetail(String clusterName, String consumerGroupId) {
         var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
 
-        return kafkaService.getOrCreateAdminClient(cluster).map(ac ->
+        return adminClientStore.getOrCreateAdminClient(cluster).map(ac ->
                                 ac.getAdminClient().describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
             ).flatMap(groups ->
                 groupMetadata(cluster, consumerGroupId)
@@ -110,7 +112,7 @@ public class ClusterService {
 
     public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster, String consumerGroupId) {
         return
-                kafkaService.getOrCreateAdminClient(cluster)
+                adminClientStore.getOrCreateAdminClient(cluster)
                         .map(ac -> ac.getAdminClient().listConsumerGroupOffsets(consumerGroupId).partitionsToOffsetAndMetadata())
                         .flatMap(ClusterUtil::toMono);
     }
@@ -135,7 +137,7 @@ public class ClusterService {
     }
 
     public Flux<Broker> getBrokers (String clusterName) {
-        return kafkaService.getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
+        return adminClientStore.getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
                 .flatMap(client -> ClusterUtil.toMono(client.getAdminClient().describeCluster().nodes())
                     .map(n -> n.stream().map(node -> {
                         Broker broker = new Broker();
