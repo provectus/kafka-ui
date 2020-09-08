@@ -90,7 +90,8 @@
     "node-sass": "^4.13.1",
     "prettier": "^2.0.4",
     "react-scripts": "3.4.0",
-    "typescript": "~3.7.4"
+    "typescript": "~3.7.4",
+    "dotenv": "^8.2.0"
   },
   "proxy": "http://localhost:8080"
 }
