@@ -6,7 +6,7 @@ services:
     container_name: kafka-ui
     image: kafka-ui:latest
     ports:
-      - 8080:8080
+      - 8081:8080
     depends_on:
       - zookeeper0
       - zookeeper1
