@@ -14,7 +14,7 @@ services:
       - kafka1
       - schemaregistry0
     environment:
-      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_NAME: localhost
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry0:8085
