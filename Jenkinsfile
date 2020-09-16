@@ -55,7 +55,7 @@ spec:
     stages {
         stage('Checkout release branch') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 sh 'git checkout -b release'
@@ -63,10 +63,10 @@ spec:
         }
         stage('Merge to release branch') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
-                sh 'git merge origin/master'
+                sh 'git merge master'
             }
         }
         stage('Remove SNAPSHOT from version') {
@@ -78,7 +78,7 @@ spec:
         }
         stage('Get version from pom.xml') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 script {
@@ -96,7 +96,7 @@ spec:
         }
         stage('Build docker image') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 container('docker-client') {
@@ -110,7 +110,7 @@ spec:
         }
         stage('Publish docker image') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 container('docker-client') {
@@ -125,7 +125,7 @@ spec:
         }
         stage('Remove unused docker image') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps{
                 container('docker-client') {
@@ -135,7 +135,7 @@ spec:
         }
         stage('Create github release with text from commits') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 script {
@@ -150,15 +150,15 @@ spec:
         }
         stage('Checkout master') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
-                sh 'git checkout origin/master'
+                sh 'git checkout master'
             }
         }
         stage('Increase version in master') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 container('docker-client') {
@@ -168,7 +168,7 @@ spec:
         }
         stage('Push to master') {
             when {
-                expression { return env.GIT_BRANCH == 'origin/master'; }
+                expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
                 script {
