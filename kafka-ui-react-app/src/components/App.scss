@@ -32,3 +32,7 @@ $navbar-width: 250px;
 .react-datepicker-wrapper {
   display: flex !important;
 }
+
+.react-datepicker-popper {
+  z-index: 30 !important;
+}
