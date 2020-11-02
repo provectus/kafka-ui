@@ -66,7 +66,7 @@ spec:
                 expression { return env.GIT_BRANCH == 'master'; }
             }
             steps {
-                sh 'git merge master'
+                sh 'git merge origin/master'
             }
         }
         stage('Remove SNAPSHOT from version') {
