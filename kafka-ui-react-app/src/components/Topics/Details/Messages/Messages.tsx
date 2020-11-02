@@ -183,26 +183,29 @@ const Messages: React.FC<Props> = ({
       const contentObj =
         typeof content !== 'object' ? JSON.parse(content) : content;
       return (
-        <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
-          <JSONTree
-            data={contentObj}
-            hideRoot
-            invertTheme={false}
-            theme={{
-              tree: ({ style }) => ({
-                style: { ...style, backgroundColor: undefined, marginLeft: 0 },
-              }),
-              value: ({ style }) => ({
-                style: { ...style, marginLeft: 0 },
-              }),
-              base0D: '#3273dc',
-              base0B: '#363636',
-            }}
-          />
-        </td>
+        <JSONTree
+          data={contentObj}
+          hideRoot
+          invertTheme={false}
+          theme={{
+            tree: ({ style }) => ({
+              style: {
+                ...style,
+                backgroundColor: undefined,
+                marginLeft: 0,
+                marginTop: 0,
+              },
+            }),
+            value: ({ style }) => ({
+              style: { ...style, marginLeft: 0 },
+            }),
+            base0D: '#3273dc',
+            base0B: '#363636',
+          }}
+        />
       );
     } catch (e) {
-      return <td style={{ wordBreak: 'break-word' }}>{content}</td>;
+      return content;
     }
   };
 
@@ -252,7 +255,9 @@ const Messages: React.FC<Props> = ({
                 </td>
                 <td style={{ width: 150 }}>{message.offset}</td>
                 <td style={{ width: 100 }}>{message.partition}</td>
-                {getMessageContentBody(message.content)}
+                <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
+                  {getMessageContentBody(message.content)}
+                </td>
               </tr>
             ))}
           </tbody>
