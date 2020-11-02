@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { Cluster } from 'redux/interfaces';
+import { Cluster, ClusterStatus } from 'redux/interfaces';
 import { NavLink } from 'react-router-dom';
 import {
   clusterBrokersPath,
@@ -30,6 +30,26 @@ const DefaultIcon: React.FC = () => {
   );
 };
 
+const StatusIcon: React.FC<Props> = ({ cluster }) => {
+  const style: CSSProperties = {
+    width: '10px',
+    height: '10px',
+    borderRadius: '5px',
+    marginLeft: '7px',
+    padding: 0,
+  };
+
+  return (
+    <span
+      className={`tag ${
+        cluster.status === ClusterStatus.Online ? 'is-primary' : 'is-danger'
+      }`}
+      title={cluster.status}
+      style={style}
+    />
+  );
+};
+
 const ClusterMenu: React.FC<Props> = ({ cluster }) => (
   <ul className="menu-list">
     <li>
@@ -41,6 +61,7 @@ const ClusterMenu: React.FC<Props> = ({ cluster }) => (
       >
         {cluster.defaultCluster && <DefaultIcon />}
         {cluster.name}
+        <StatusIcon cluster={cluster} />
       </NavLink>
       <ul>
         <NavLink
