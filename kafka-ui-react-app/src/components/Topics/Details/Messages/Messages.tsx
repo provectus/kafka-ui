@@ -11,7 +11,7 @@ import {
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
-
+import JSONTree from 'react-json-tree';
 import 'react-datepicker/dist/react-datepicker.css';
 import CustomParamButton, {
   CustomParamButtonType,
@@ -173,37 +173,37 @@ const Messages: React.FC<Props> = ({
   };
 
   const getTimestampDate = (timestamp: string) => {
-    return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
+    return Date.parse(timestamp)
+      ? format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss')
+      : null;
   };
 
-  const getMessageContentHeaders = React.useMemo(() => {
-    const message = messages[0];
-    const headers: JSX.Element[] = [];
-    try {
-      const content =
-        typeof message.content !== 'object'
-          ? JSON.parse(message.content)
-          : message.content;
-      Object.keys(content).forEach((k) =>
-        headers.push(<th key={Math.random()}>{`content.${k}`}</th>)
-      );
-    } catch (e) {
-      headers.push(<th>Content</th>);
-    }
-    return headers;
-  }, [messages]);
-
   const getMessageContentBody = (content: any) => {
-    const columns: JSX.Element[] = [];
     try {
-      const c = typeof content !== 'object' ? JSON.parse(content) : content;
-      Object.values(c).map((v) =>
-        columns.push(<td key={Math.random()}>{JSON.stringify(v)}</td>)
+      const contentObj =
+        typeof content !== 'object' ? JSON.parse(content) : content;
+      return (
+        <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
+          <JSONTree
+            data={contentObj}
+            hideRoot
+            invertTheme={false}
+            theme={{
+              tree: ({ style }) => ({
+                style: { ...style, backgroundColor: undefined, marginLeft: 0 },
+              }),
+              value: ({ style }) => ({
+                style: { ...style, marginLeft: 0 },
+              }),
+              base0D: '#3273dc',
+              base0B: '#363636',
+            }}
+          />
+        </td>
       );
     } catch (e) {
-      columns.push(<td>{content}</td>);
+      return <td style={{ wordBreak: 'break-word' }}>{content}</td>;
     }
-    return columns;
   };
 
   const onNext = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -235,21 +235,23 @@ const Messages: React.FC<Props> = ({
   const getTopicMessagesTable = () => {
     return messages.length > 0 ? (
       <div>
-        <table className="table is-striped is-fullwidth">
+        <table className="table is-striped is-fullwidth is-narrow">
           <thead>
             <tr>
               <th>Timestamp</th>
               <th>Offset</th>
               <th>Partition</th>
-              {getMessageContentHeaders}
+              <th>Content</th>
             </tr>
           </thead>
           <tbody>
             {messages.map((message) => (
               <tr key={`${message.timestamp}${Math.random()}`}>
-                <td>{getTimestampDate(message.timestamp)}</td>
-                <td>{message.offset}</td>
-                <td>{message.partition}</td>
+                <td style={{ width: 200 }}>
+                  {getTimestampDate(message.timestamp)}
+                </td>
+                <td style={{ width: 150 }}>{message.offset}</td>
+                <td style={{ width: 100 }}>{message.partition}</td>
                 {getMessageContentBody(message.content)}
               </tr>
             ))}
