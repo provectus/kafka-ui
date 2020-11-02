@@ -173,9 +173,7 @@ const Messages: React.FC<Props> = ({
   };
 
   const getTimestampDate = (timestamp: string) => {
-    return Date.parse(timestamp)
-      ? format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss')
-      : null;
+    return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
   };
 
   const getMessageContentBody = (content: any) => {
@@ -238,7 +236,7 @@ const Messages: React.FC<Props> = ({
   const getTopicMessagesTable = () => {
     return messages.length > 0 ? (
       <div>
-        <table className="table is-striped is-fullwidth is-narrow">
+        <table className="table is-striped is-fullwidth">
           <thead>
             <tr>
               <th>Timestamp</th>
