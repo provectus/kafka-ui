@@ -13,22 +13,18 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-@RequiredArgsConstructor
 public class ClustersStorage {
 
     private final Map<String, KafkaCluster> kafkaClusters = new ConcurrentHashMap<>();
 
-    private final ClustersProperties clusterProperties;
+    public ClustersStorage(ClustersProperties clusterProperties) {
+        ClusterMapper clusterMapper = Mappers.getMapper(ClusterMapper.class);
 
-    private final ClusterMapper clusterMapper = Mappers.getMapper(ClusterMapper.class);
-
-    @PostConstruct
-    public void init() {
-        for (ClustersProperties.Cluster clusterProperties : clusterProperties.getClusters()) {
-            if (kafkaClusters.get(clusterProperties.getName()) != null) {
+        for (ClustersProperties.Cluster cluster : clusterProperties.getClusters()) {
+            if (kafkaClusters.get(cluster.getName()) != null) {
                 throw new IllegalStateException("Application config isn't correct. Two clusters can't have the same name");
             }
-            kafkaClusters.put(clusterProperties.getName(), clusterMapper.toKafkaCluster(clusterProperties));
+            kafkaClusters.put(cluster.getName(), clusterMapper.toKafkaCluster(cluster));
         }
     }
 

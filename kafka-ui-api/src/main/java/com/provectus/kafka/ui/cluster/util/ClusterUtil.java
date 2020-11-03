@@ -8,9 +8,7 @@ import org.apache.kafka.clients.admin.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.Mono;
@@ -27,8 +25,6 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 
 @Slf4j
 public class ClusterUtil {
-
-    private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
 
     private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
@@ -69,7 +65,7 @@ public class ClusterUtil {
         return consumer.assignment().topicPartitions().stream()
                 .map(tp -> {
                     Long currentOffset = Optional.ofNullable(
-                            groupOffsets.get(tp)).map(o -> o.offset()).orElse(0L);
+                            groupOffsets.get(tp)).map(OffsetAndMetadata::offset).orElse(0L);
                     Long endOffset = Optional.ofNullable(endOffsets.get(tp)).orElse(0L);
                     ConsumerTopicPartitionDetail cd = new ConsumerTopicPartitionDetail();
                     cd.setConsumerId(consumer.consumerId());
@@ -181,35 +177,6 @@ public class ClusterUtil {
                 return TopicMessage.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
-        }
-    }
-
-    public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(AdminClient adminClient) {
-        return ClusterUtil.toMono(adminClient.describeCluster().controller())
-                .map(Node::id)
-                .map(id -> Collections.singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
-                .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
-                .flatMap(ClusterUtil::toMono)
-                .map(ClusterUtil::getSupportedUpdateFeature)
-                .map(Collections::singleton);
-    }
-
-    private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(Map<ConfigResource, Config> configs) {
-        String version = configs.values().stream()
-                .map(Config::entries)
-                .flatMap(Collection::stream)
-                .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
-                .findFirst().orElseThrow().value();
-        try {
-            final String[] parts = version.split("\\.");
-            if (parts.length>2) {
-              version = parts[0] + "." + parts[1];
-            }        
-            return Float.parseFloat(version.split("-")[0]) <= 2.3f
-                    ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS : ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
-        } catch (Exception e) {
-            log.error("Conversion clusterVersion {} to float value failed", version);
-            throw e;
         }
     }
 
