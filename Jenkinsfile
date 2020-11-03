@@ -88,6 +88,12 @@ spec:
             }
         }
         stage('Build artifact') {
+            when {
+                anyOf {
+                    changeRequest ()
+                    expression { return env.GIT_BRANCH ==~ /.*master$/; }
+                }
+            }
             steps {
                 container('docker-client') {
                     sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven provectuslabs/openjdk:13 bash -c 'chown -R \$(whoami):\$(whoami) kafka-ui-react-app && ./mvnw clean package -Pprod'"
@@ -96,7 +102,7 @@ spec:
         }
         stage('Build docker image') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 container('docker-client') {
@@ -110,7 +116,7 @@ spec:
         }
         stage('Publish docker image') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 container('docker-client') {
@@ -125,7 +131,7 @@ spec:
         }
         stage('Remove unused docker image') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps{
                 container('docker-client') {
@@ -135,7 +141,7 @@ spec:
         }
         stage('Create github release with text from commits') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 script {
@@ -150,7 +156,7 @@ spec:
         }
         stage('Checkout master') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 sh 'git checkout master'
@@ -158,7 +164,7 @@ spec:
         }
         stage('Increase version in master') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 container('docker-client') {
@@ -168,7 +174,7 @@ spec:
         }
         stage('Push to master') {
             when {
-                expression { return env.GIT_BRANCH == 'master'; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 script {
