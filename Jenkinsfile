@@ -70,6 +70,9 @@ spec:
             }
         }
         stage('Remove SNAPSHOT from version') {
+            when {
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
+            }
             steps {
                 container('docker-client') {
                     sh "docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven maven:3.6.3-jdk-13 bash -c 'mvn versions:set -DremoveSnapshot'"
