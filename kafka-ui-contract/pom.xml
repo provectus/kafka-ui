@@ -70,6 +70,27 @@
                                     </configOptions>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>generate-frontend-api</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/kafka-ui-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/frontend/</output>
+                                    <generatorName>typescript-fetch</generatorName>
+
+                                    <configOptions>
+                                        <modelPackage>com.provectus.kafka.ui.model</modelPackage>
+                                        <apiPackage>com.provectus.kafka.ui.api</apiPackage>
+                                        <apiPackage>com.provectus.kafka.ui.invoker</apiPackage>
+                                        <sourceFolder>kafka-ui-contract</sourceFolder>
+
+
+                                    </configOptions>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                 </plugins>
