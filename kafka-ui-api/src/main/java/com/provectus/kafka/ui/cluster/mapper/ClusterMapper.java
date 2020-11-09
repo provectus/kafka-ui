@@ -7,6 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -20,7 +21,7 @@ public interface ClusterMapper {
     @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec", qualifiedByName = "sumMetrics")
     @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec", qualifiedByName = "sumMetrics")
     Cluster toCluster(KafkaCluster cluster);
-
+    @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName="resolvePath")
     KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
     @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage", qualifiedByName="mapDiskUsage")
     ClusterStats toClusterStats(InternalClusterMetrics metrics);
@@ -62,6 +63,10 @@ public interface ClusterMapper {
 
      default BigDecimal sumMetrics(Map<String, BigDecimal> metrics) {
          return metrics.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+     }
+
+     default Path resolvePath(String path) {
+        return Path.of(path);
      }
 
 }

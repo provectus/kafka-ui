@@ -29,7 +29,15 @@ public class DeserializationService {
 	}
 
 	private RecordDeserializer createRecordDeserializerForCluster(KafkaCluster cluster) {
-		return new SchemaRegistryRecordDeserializer(cluster, objectMapper);
+		try {
+			if (cluster.getProtobufFile()!=null) {
+				return new ProtobufFileRecordDeserializer(cluster.getProtobufFile(), cluster.getProtobufMessageName(), objectMapper);
+			} else {
+				return new SchemaRegistryRecordDeserializer(cluster, objectMapper);
+			}
+		} catch (Throwable e) {
+			throw new RuntimeException("Can't init deserializer", e);
+		}
 	}
 
 	public RecordDeserializer getRecordDeserializerForCluster(KafkaCluster cluster) {
