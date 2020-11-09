@@ -10,7 +10,7 @@ public final class KafkaConstants {
     private KafkaConstants() {
     }
 
-    public static Map<String, String> TOPIC_DEFAULT_CONFIGS = Map.ofEntries(
+    public static final Map<String, String> TOPIC_DEFAULT_CONFIGS = Map.ofEntries(
             new AbstractMap.SimpleEntry<>(CLEANUP_POLICY_CONFIG, CLEANUP_POLICY_DELETE),
             new AbstractMap.SimpleEntry<>(COMPRESSION_TYPE_CONFIG, "producer"),
             new AbstractMap.SimpleEntry<>(DELETE_RETENTION_MS_CONFIG, "86400000"),
