@@ -6,6 +6,9 @@ import com.provectus.kafka.ui.model.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
 
@@ -19,7 +22,13 @@ public interface ClusterMapper {
     ClusterMetrics toClusterMetrics(InternalClusterMetrics metrics);
     BrokerMetrics toBrokerMetrics(InternalBrokerMetrics metrics);
     Topic toTopic(InternalTopic topic);
+    Partition toPartition(InternalPartition topic);
     TopicDetails toTopicDetails(InternalTopic topic);
     TopicConfig toTopicConfig(InternalTopicConfig topic);
     Replica toReplica(InternalReplica replica);
+
+     default java.util.List<Partition> map(Map<Integer, InternalPartition> map) {
+         return map.values().stream().map(this::toPartition).collect(Collectors.toList());
+     }
+
 }

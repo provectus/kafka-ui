@@ -13,7 +13,7 @@ public class InternalTopic {
 
     private final String name;
     private final boolean internal;
-    private final List<InternalPartition> partitions;
+    private final Map<Integer,InternalPartition> partitions;
     private final List<InternalTopicConfig> topicConfigs;
 
     private final int replicas;
@@ -22,6 +22,6 @@ public class InternalTopic {
     private final int replicationFactor;
     private final int underReplicatedPartitions;
     private final long segmentSize;
-    private final int segmentCount;
-    private final Map<TopicPartition, Long> partitionSegmentSize;
+    private final long segmentCount;
+//    private final Map<TopicPartition, Long> partitionSegmentSize;
 }
