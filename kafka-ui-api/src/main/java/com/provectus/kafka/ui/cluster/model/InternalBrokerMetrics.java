@@ -9,6 +9,5 @@ import java.util.List;
 @Data
 @Builder(toBuilder = true)
 public class InternalBrokerMetrics {
-    private final Long segmentSize;
     private final List<Metric> metrics;
 }

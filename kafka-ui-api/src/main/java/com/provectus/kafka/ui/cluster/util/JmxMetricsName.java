@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.cluster.util;
 
-public enum JmxMetricsNames {
+public enum JmxMetricsName {
     MessagesInPerSec,
     BytesInPerSec,
     ReplicationBytesInPerSec,

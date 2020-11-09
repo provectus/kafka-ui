@@ -46,6 +46,14 @@ public class ClusterService {
                 .map(clusterMapper::toBrokerMetrics));
     }
 
+    public Mono<ClusterStats> getClusterStats(String name) {
+        return Mono.justOrEmpty(
+                clustersStorage.getClusterByName(name)
+                        .map(KafkaCluster::getMetrics)
+                        .map(clusterMapper::toClusterStats)
+        );
+    }
+
     public Mono<ClusterMetrics> getClusterMetrics(String name) {
         return Mono.justOrEmpty(
                 clustersStorage.getClusterByName(name)
@@ -73,7 +81,7 @@ public class ClusterService {
                           t -> t.toBuilder().partitions(
                                   kafkaService.getTopicPartitions(c, t)
                           ).build()
-                        ).map(clusterMapper::toTopicDetails)
+                        ).map(t -> clusterMapper.toTopicDetails(t, c.getMetrics()))
                 );
     }
                                                                            
