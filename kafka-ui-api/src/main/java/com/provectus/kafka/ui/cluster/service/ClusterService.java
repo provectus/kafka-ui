@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.cluster.service;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
+import com.provectus.kafka.ui.cluster.model.InternalTopic;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.kafka.KafkaService;
@@ -83,10 +84,12 @@ public class ClusterService {
                 .map(t -> t.getTopicConfigs().stream().map(clusterMapper::toTopicConfig).collect(Collectors.toList()));
     }
 
-    public Mono<Topic> createTopic(String name, Mono<TopicFormData> topicFormData) {
-        return clustersStorage.getClusterByName(name).map(
-                cluster -> kafkaService.createTopic(cluster, topicFormData)
-        ).orElse(Mono.empty()).map(clusterMapper::toTopic);
+    public Mono<Topic> createTopic(String clusterName, Mono<TopicFormData> topicFormData) {
+        return clustersStorage.getClusterByName(clusterName).map(cluster ->
+                kafkaService.createTopic(cluster, topicFormData)
+                        .doOnNext(t -> updateCluster(t, clusterName, cluster))
+                        .map(clusterMapper::toTopic)
+        ).orElse(Mono.empty());
     }
 
     @SneakyThrows
@@ -151,18 +154,15 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName).map(cl ->
                 topicFormData
                         .flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
+                        .doOnNext(t -> updateCluster(t, clusterName, cl))
                         .map(clusterMapper::toTopic)
-                        .flatMap(t -> updateCluster(t, clusterName, cl))
-        )
-                .orElse(Mono.empty());
+        ).orElse(Mono.empty());
     }
 
-    private <T> Mono<T> updateCluster(T topic, String clusterName, KafkaCluster cluster) {
-        return kafkaService.getUpdatedCluster(cluster)
-                .map(c -> {
-                    clustersStorage.setKafkaCluster(clusterName, c);
-                    return topic;
-                });
+    private KafkaCluster updateCluster(InternalTopic topic, String clusterName, KafkaCluster cluster) {
+        final KafkaCluster updatedCluster = kafkaService.getUpdatedCluster(cluster, topic);
+        clustersStorage.setKafkaCluster(clusterName, updatedCluster);
+        return updatedCluster;
     }
 
     public Flux<TopicMessage> getMessages(String clusterName, String topicName, ConsumerPosition consumerPosition, String query, Integer limit) {

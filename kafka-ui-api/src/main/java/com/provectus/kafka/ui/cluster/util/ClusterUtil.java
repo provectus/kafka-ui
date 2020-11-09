@@ -129,7 +129,10 @@ public class ClusterUtil {
                 .mapToInt(InternalPartition::getReplicasCount)
                 .sum();
 
-        topic.partitions(partitions);
+        topic.partitions(partitions.stream().collect(Collectors.toMap(
+                InternalPartition::getPartition,
+                t -> t
+        )));
         topic.replicas(replicasCount);
         topic.partitionCount(topicDescription.partitions().size());
         topic.inSyncReplicas(inSyncReplicasCount);

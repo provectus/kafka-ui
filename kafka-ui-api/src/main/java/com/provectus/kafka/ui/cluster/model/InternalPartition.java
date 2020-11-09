@@ -15,4 +15,6 @@ public class InternalPartition {
     private final int replicasCount;
     private final long offsetMin;
     private final long offsetMax;
+    private final long segmentSize;
+    private final long segmentCount;
 }
