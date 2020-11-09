@@ -72,7 +72,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ClusterMetrics'
 
-  /api/clusters/{clusterName}/metrics/broker/{id}:
+  /api/clusters/{clusterName}/stats:
+    get:
+      tags:
+        - /api/clusters
+      summary: getClusterStats
+      operationId: getClusterStats
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClusterStats'
+
+  /api/clusters/{clusterName}/brokers/{id}/metrics:
     get:
       tags:
         - /api/clusters
@@ -332,10 +352,10 @@ components:
           type: integer
         topicCount:
           type: integer
-        metrics:
-          type: array
-          items:
-            $ref: '#/components/schemas/Metric'
+        bytesInPerSec:
+          type: number
+        bytesOutPerSec:
+          type: number
       required:
         - id
         - name
@@ -348,6 +368,14 @@ components:
         - offline
 
     ClusterMetrics:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
+
+    ClusterStats:
       type: object
       properties:
         brokerCount:
@@ -379,11 +407,16 @@ components:
         segmentSize:
           type: integer
           format: int64
+        segmentCount:
+          type: integer
 
     BrokerMetrics:
       type: object
       properties:
-        segmentZise:
+        segmentSize:
+          type: integer
+          format: int64
+        segmentCount:
           type: integer
         metrics:
           type: array
@@ -446,7 +479,9 @@ components:
         inSyncReplicas:
           type: integer
         bytesInPerSec:
-          type: integer
+          type: number
+        bytesOutPerSec:
+          type: number
         segmentSize:
           type: integer
         segmentCount:
@@ -589,8 +624,14 @@ components:
     Metric:
       type: object
       properties:
+        name:
+          type: string
         canonicalName:
           type: string
+        params:
+          type: string
+          additionalProperties:
+            type: string
         value:
           type: string
           additionalProperties:

@@ -44,6 +44,13 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<ClusterStats>> getClusterStats(String clusterName, ServerWebExchange exchange) {
+        return clusterService.getClusterStats(clusterName)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
+    }
+
+    @Override
     public Mono<ResponseEntity<Flux<Topic>>> getTopics(String clusterName, ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(Flux.fromIterable(clusterService.getTopics(clusterName))));
     }

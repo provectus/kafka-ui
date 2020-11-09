@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.cluster.util;
 
-import com.provectus.kafka.ui.cluster.model.InternalClusterMetrics;
-import com.provectus.kafka.ui.cluster.model.MetricDto;
 import com.provectus.kafka.ui.model.Metric;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +11,9 @@ import javax.management.remote.JMXConnector;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -26,12 +21,11 @@ import java.util.stream.Collectors;
 public class JmxClusterUtil {
 
     private final KeyedObjectPool<String, JMXConnector> pool;
-    private final List<String> jmxMetricsNames;
 
     private static final String JMX_URL = "service:jmx:rmi:///jndi/rmi://";
     private static final String JMX_SERVICE_TYPE = "jmxrmi";
     private static final String KAFKA_SERVER_PARAM = "kafka.server";
-    private static final String NAME_METRIC_FIELD = "name=";
+    private static final String NAME_METRIC_FIELD = "name";
 
     public List<Metric> getJmxMetrics(int jmxPort, String jmxHost) {
         String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
@@ -42,11 +36,14 @@ public class JmxClusterUtil {
             MBeanServerConnection msc = srv.getMBeanServerConnection();
             var jmxMetrics = msc.queryNames(null, null).stream().filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM)).collect(Collectors.toList());
             for (ObjectName jmxMetric : jmxMetrics) {
+                final Hashtable<String, String> params = jmxMetric.getKeyPropertyList();
                 Metric metric = new Metric();
+                metric.setName(params.get(NAME_METRIC_FIELD));
                 metric.setCanonicalName(jmxMetric.getCanonicalName());
+                metric.setParams(params);
                 metric.setValue(getJmxMetric(jmxMetric.getCanonicalName(), msc, srv, jmxUrl));
                 result.add(metric);
-            };
+            }
             pool.returnObject(jmxUrl, srv);
         } catch (IOException ioe) {
             log.error("Cannot get jmxMetricsNames, {}", jmxUrl, ioe);
@@ -57,6 +54,8 @@ public class JmxClusterUtil {
         }
         return result;
     }
+
+
 
     private Map<String, BigDecimal> getJmxMetric(String canonicalName, MBeanServerConnection msc, JMXConnector srv, String jmxUrl) {
         Map<String, BigDecimal> resultAttr = new HashMap<>();
@@ -97,34 +96,27 @@ public class JmxClusterUtil {
         }
     }
 
-    public List<MetricDto> convertToMetricDto(InternalClusterMetrics internalClusterMetrics) {
-        return internalClusterMetrics.getInternalBrokerMetrics().values().stream()
-                .map(c ->
-                        c.getMetrics().stream()
-                                .filter(j -> isSameMetric(j.getCanonicalName()))
-                                .map(j -> j.getValue().entrySet().stream()
-                                        .map(e -> new MetricDto(j.getCanonicalName(), e.getKey(), e.getValue()))))
-                .flatMap(Function.identity()).flatMap(Function.identity()).collect(Collectors.toList());
-    }
-
     public Metric reduceJmxMetrics (Metric metric1, Metric metric2) {
         var result = new Metric();
-        Map<String, BigDecimal> jmx1 = new HashMap<>(metric1.getValue());
-        Map<String, BigDecimal> jmx2 = new HashMap<>(metric2.getValue());
-        jmx1.forEach((k, v) -> jmx2.merge(k, v, BigDecimal::add));
+        Map<String, BigDecimal> value = Stream.concat(
+                metric1.getValue().entrySet().stream(),
+                metric2.getValue().entrySet().stream()
+        ).collect(Collectors.groupingBy(
+                Map.Entry::getKey,
+                Collectors.reducing(BigDecimal.ZERO, Map.Entry::getValue, BigDecimal::add)
+        ));
+        result.setName(metric1.getName());
         result.setCanonicalName(metric1.getCanonicalName());
-        result.setValue(jmx2);
+        result.setParams(metric1.getParams());
+        result.setValue(value);
         return result;
     }
 
-    private boolean isSameMetric (String metric) {
-        if (metric.contains(NAME_METRIC_FIELD)) {
-            int beginIndex = metric.indexOf(NAME_METRIC_FIELD);
-            int endIndex = metric.indexOf(',', beginIndex);
-            endIndex = endIndex < 0 ? metric.length() - 1 : endIndex;
-            return jmxMetricsNames.contains(metric.substring(beginIndex + 5, endIndex));
-        } else {
-            return false;
-        }
+    private boolean isWellKnownMetric(Metric metric) {
+        final Optional<String> param = Optional.ofNullable(metric.getParams().get(NAME_METRIC_FIELD)).filter(p ->
+                Arrays.stream(JmxMetricsName.values()).map(Enum::name)
+                        .anyMatch(n -> n.equals(p))
+        );
+        return metric.getCanonicalName().contains(KAFKA_SERVER_PARAM) && param.isPresent();
     }
 }

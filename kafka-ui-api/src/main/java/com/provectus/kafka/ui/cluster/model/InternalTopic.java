@@ -23,5 +23,4 @@ public class InternalTopic {
     private final int underReplicatedPartitions;
     private final long segmentSize;
     private final long segmentCount;
-//    private final Map<TopicPartition, Long> partitionSegmentSize;
 }

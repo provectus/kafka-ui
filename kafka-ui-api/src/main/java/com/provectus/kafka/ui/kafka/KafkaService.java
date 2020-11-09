@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.kafka;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.cluster.util.ClusterUtil;
 import com.provectus.kafka.ui.cluster.util.JmxClusterUtil;
+import com.provectus.kafka.ui.cluster.util.JmxMetricsName;
+import com.provectus.kafka.ui.cluster.util.JmxMetricsValueName;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.Metric;
 import com.provectus.kafka.ui.model.ServerStatus;
@@ -27,6 +29,7 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -319,50 +322,71 @@ public class KafkaService {
     private Mono<InternalSegmentSizeDto> updateSegmentMetrics(AdminClient ac, InternalClusterMetrics clusterMetrics, List<InternalTopic> internalTopics) {
         List<String> names = internalTopics.stream().map(InternalTopic::getName).collect(Collectors.toList());
         return ClusterUtil.toMono(ac.describeTopics(names).all()).flatMap(topic ->
-            ClusterUtil.toMono(ac.describeLogDirs(clusterMetrics.getInternalBrokerMetrics().keySet()).all())
-                .map(log -> {
+            ClusterUtil.toMono(ac.describeCluster().nodes()).flatMap( nodes ->
+                    ClusterUtil.toMono(ac.describeLogDirs(nodes.stream().map(Node::id).collect(Collectors.toList())).all())
+                            .map(log -> {
+                                final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
+                                        log.entrySet().stream().flatMap(b ->
+                                                b.getValue().entrySet().stream().flatMap(topicMap ->
+                                                        topicMap.getValue().replicaInfos.entrySet().stream()
+                                                                .map(e -> Tuples.of(b.getKey(), e.getKey(), e.getValue().size))
+                                                )
+                                        ).collect(Collectors.toList());
 
-                    final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
-                            log.entrySet().stream().flatMap(b ->
-                                    b.getValue().entrySet().stream().flatMap(topicMap ->
-                                            topicMap.getValue().replicaInfos.entrySet().stream()
-                                                    .map(e -> Tuples.of(b.getKey(), e.getKey(), e.getValue().size))
-                                    )
-                    ).collect(Collectors.toList());
+                                final Map<TopicPartition, LongSummaryStatistics> partitionStats = topicPartitions.stream().collect(
+                                        Collectors.groupingBy(
+                                                Tuple2::getT2,
+                                                Collectors.summarizingLong(Tuple3::getT3)
+                                        )
+                                );
 
-                    final Map<TopicPartition, LongSummaryStatistics> partitionStats = topicPartitions.stream().collect(
-                            Collectors.groupingBy(
-                                    Tuple2::getT2,
-                                    Collectors.summarizingLong(Tuple3::getT3)
-                            )
-                    );
+                                final Map<String, LongSummaryStatistics> topicStats = topicPartitions.stream().collect(
+                                        Collectors.groupingBy(
+                                                t -> t.getT2().topic(),
+                                                Collectors.summarizingLong(Tuple3::getT3)
+                                        )
+                                );
 
-                    final Map<String, LongSummaryStatistics> topicStats = topicPartitions.stream().collect(
-                            Collectors.groupingBy(
-                                    t -> t.getT2().topic(),
-                                    Collectors.summarizingLong(Tuple3::getT3)
-                            )
-                    );
-
-                    final LongSummaryStatistics summary = topicPartitions.stream().collect(Collectors.summarizingLong(Tuple3::getT3));
+                                final Map<Integer, LongSummaryStatistics> brokerStats = topicPartitions.stream().collect(
+                                        Collectors.groupingBy(
+                                                t -> t.getT1(),
+                                                Collectors.summarizingLong(Tuple3::getT3)
+                                        )
+                                );
 
 
-                    final Map<String, InternalTopic> resultTopics = internalTopics.stream().map(e ->
-                            Tuples.of(e.getName(), mergeWithStats(e, topicStats, partitionStats))
-                    ).collect(Collectors.toMap(
-                            Tuple2::getT1,
-                            Tuple2::getT2
-                    ));
+                                final LongSummaryStatistics summary = topicPartitions.stream().collect(Collectors.summarizingLong(Tuple3::getT3));
 
-                    return InternalSegmentSizeDto.builder()
-                            .clusterMetricsWithSegmentSize(
-                                    clusterMetrics.toBuilder()
-                                            .segmentSize(summary.getSum())
-                                            .segmentCount(summary.getCount())
-                                            .build()
-                            )
-                            .internalTopicWithSegmentSize(resultTopics).build();
-                })
+
+                                final Map<String, InternalTopic> resultTopics = internalTopics.stream().map(e ->
+                                        Tuples.of(e.getName(), mergeWithStats(e, topicStats, partitionStats))
+                                ).collect(Collectors.toMap(
+                                        Tuple2::getT1,
+                                        Tuple2::getT2
+                                ));
+
+                                final Map<Integer, InternalBrokerDiskUsage> resultBrokers = brokerStats.entrySet().stream().map(e ->
+                                        Tuples.of(e.getKey(), InternalBrokerDiskUsage.builder()
+                                                .segmentSize(e.getValue().getSum())
+                                                .segmentCount(e.getValue().getCount())
+                                                .build()
+                                        )
+                                ).collect(Collectors.toMap(
+                                        Tuple2::getT1,
+                                        Tuple2::getT2
+                                ));
+
+                                return InternalSegmentSizeDto.builder()
+                                        .clusterMetricsWithSegmentSize(
+                                                clusterMetrics.toBuilder()
+                                                        .segmentSize(summary.getSum())
+                                                        .segmentCount(summary.getCount())
+                                                        .internalBrokerDiskUsage(resultBrokers)
+                                                        .build()
+                                        )
+                                        .internalTopicWithSegmentSize(resultTopics).build();
+                            })
+            )
         );
     }
 
@@ -387,18 +411,39 @@ public class KafkaService {
     }
 
     private InternalClusterMetrics calculateClusterMetrics(InternalClusterMetrics internalClusterMetrics) {
-        return internalClusterMetrics.toBuilder().metrics(
-                    jmxClusterUtil.convertToMetricDto(internalClusterMetrics)
-                            .stream().map(c -> {
-                        Metric jmx = new Metric();
-                        jmx.setCanonicalName(c.getCanonicalName());
-                        jmx.setValue(Map.of(c.getMetricName(), c.getValue()));
-                        return jmx;
-                    }).collect(Collectors.groupingBy(Metric::getCanonicalName, Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)))
-                    .values().stream()
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toList())).build();
+        final List<Metric> metrics = internalClusterMetrics.getInternalBrokerMetrics().values().stream()
+                .flatMap(b -> b.getMetrics().stream())
+                .collect(
+                        Collectors.groupingBy(
+                                Metric::getCanonicalName,
+                                Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)
+                        )
+                ).values().stream()
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+        final InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder =
+                internalClusterMetrics.toBuilder().metrics(metrics);
+        metricsBuilder.bytesInPerSec(findTopicMetrics(
+                metrics, JmxMetricsName.BytesInPerSec, JmxMetricsValueName.FiveMinuteRate
+        ));
+        metricsBuilder.bytesOutPerSec(findTopicMetrics(
+                metrics, JmxMetricsName.BytesOutPerSec, JmxMetricsValueName.FiveMinuteRate
+        ));
+        return metricsBuilder.build();
+    }
+
+    private Map<String, BigDecimal> findTopicMetrics(List<Metric> metrics, JmxMetricsName metricsName, JmxMetricsValueName valueName) {
+        return metrics.stream().filter(m -> metricsName.name().equals(m.getName()))
+                .filter(m -> m.getParams().containsKey("topic"))
+                .filter(m -> m.getValue().containsKey(valueName.name()))
+                .map(m -> Tuples.of(
+                        m.getParams().get("topic"),
+                        m.getValue().get(valueName.name())
+                )).collect(Collectors.groupingBy(
+                    Tuple2::getT1,
+                    Collectors.reducing(BigDecimal.ZERO, Tuple2::getT2, BigDecimal::add)
+                ));
     }
 
     public Map<Integer, InternalPartition> getTopicPartitions(KafkaCluster c, InternalTopic topic )  {
