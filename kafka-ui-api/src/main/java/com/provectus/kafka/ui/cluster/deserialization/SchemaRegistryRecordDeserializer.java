@@ -2,13 +2,16 @@ package com.provectus.kafka.ui.cluster.deserialization;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.Message;
 import com.provectus.kafka.ui.cluster.model.KafkaCluster;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaUtils;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
+import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -30,6 +33,7 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 	private final KafkaCluster cluster;
 	private final SchemaRegistryClient schemaRegistryClient;
 	private final KafkaAvroDeserializer avroDeserializer;
+	private final KafkaProtobufDeserializer<?> protobufDeserializer;
 	private final ObjectMapper objectMapper;
 	private final StringDeserializer stringDeserializer;
 
@@ -51,6 +55,9 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 		this.avroDeserializer = Optional.ofNullable(this.schemaRegistryClient)
 				.map(KafkaAvroDeserializer::new)
 				.orElse(null);
+		this.protobufDeserializer = Optional.ofNullable(this.schemaRegistryClient)
+				.map(KafkaProtobufDeserializer::new)
+				.orElse(null);
 		this.stringDeserializer = new StringDeserializer();
 	}
 
@@ -63,6 +70,8 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 				case AVRO:
 					parsedValue = parseAvroRecord(record);
 					break;
+				case PROTOBUF:
+					parsedValue = parseProtobufRecord(record);
 				case JSON:
 					parsedValue = parseJsonRecord(record);
 					break;
@@ -115,6 +124,18 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 		}
 	}
 
+	private Object parseProtobufRecord(ConsumerRecord<Bytes, Bytes> record) throws IOException {
+		String topic = record.topic();
+		if (record.value()!=null && protobufDeserializer !=null) {
+			byte[] valueBytes = record.value().get();
+			final Message message = protobufDeserializer.deserialize(topic, valueBytes);
+			byte[] bytes = ProtobufSchemaUtils.toJson(message);
+			return parseJson(bytes);
+		} else {
+			return new HashMap<String,Object>();
+		}
+	}
+
 	private Object parseJsonRecord(ConsumerRecord<Bytes, Bytes> record) throws IOException {
 		byte[] valueBytes = record.value().get();
 		return parseJson(valueBytes);
@@ -134,6 +155,7 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 	public enum MessageFormat {
 		AVRO,
 		JSON,
-		STRING
+		STRING,
+		PROTOBUF
 	}
 }
