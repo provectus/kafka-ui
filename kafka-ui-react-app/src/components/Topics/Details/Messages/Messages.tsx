@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   ClusterName,
   SeekType,
@@ -113,7 +113,7 @@ const Messages: React.FC<Props> = ({
 
   React.useEffect(() => {
     fetchTopicMessages(clusterName, topicName, queryParams);
-  }, [fetchTopicMessages, clusterName, topicName, queryParams]);
+  }, []);
 
   React.useEffect(() => {
     setFilterProps(getUniqueDataForEachPartition);
@@ -172,7 +172,12 @@ const Messages: React.FC<Props> = ({
     });
   };
 
+  const handleFiltersSubmit = useCallback(() => {
+    fetchTopicMessages(clusterName, topicName, queryParams);
+  }, [clusterName, topicName, queryParams]);
+
   const getTimestampDate = (timestamp: string) => {
+    if (!Date.parse(timestamp)) return;
     return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
   };
 
@@ -222,6 +227,7 @@ const Messages: React.FC<Props> = ({
       seekType: SeekTypes.OFFSET,
       seekTo,
     });
+    fetchTopicMessages(clusterName, topicName, queryParams);
   };
 
   const filterOptions = (options: Option[], filter: any) => {
@@ -349,6 +355,15 @@ const Messages: React.FC<Props> = ({
             placeholder="Search"
             value={searchQuery}
             onChange={handleQueryChange}
+          />
+        </div>
+      </div>
+      <div className="columns">
+        <div className="column is-full" style={{textAlign: "right"}}>
+          <input
+            type="submit"
+            className="button is-primary"
+            onClick={handleFiltersSubmit}
           />
         </div>
       </div>
