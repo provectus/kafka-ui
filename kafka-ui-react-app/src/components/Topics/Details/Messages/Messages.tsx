@@ -11,7 +11,7 @@ import {
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
-
+import JSONTree from 'react-json-tree';
 import 'react-datepicker/dist/react-datepicker.css';
 import CustomParamButton, {
   CustomParamButtonType,
@@ -176,34 +176,35 @@ const Messages: React.FC<Props> = ({
     return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
   };
 
-  const getMessageContentHeaders = React.useMemo(() => {
-    const message = messages[0];
-    const headers: JSX.Element[] = [];
-    try {
-      const content =
-        typeof message.content !== 'object'
-          ? JSON.parse(message.content)
-          : message.content;
-      Object.keys(content).forEach((k) =>
-        headers.push(<th key={Math.random()}>{`content.${k}`}</th>)
-      );
-    } catch (e) {
-      headers.push(<th>Content</th>);
-    }
-    return headers;
-  }, [messages]);
-
   const getMessageContentBody = (content: any) => {
-    const columns: JSX.Element[] = [];
     try {
-      const c = typeof content !== 'object' ? JSON.parse(content) : content;
-      Object.values(c).map((v) =>
-        columns.push(<td key={Math.random()}>{JSON.stringify(v)}</td>)
+      const contentObj =
+        typeof content !== 'object' ? JSON.parse(content) : content;
+      return (
+        <JSONTree
+          data={contentObj}
+          hideRoot
+          invertTheme={false}
+          theme={{
+            tree: ({ style }) => ({
+              style: {
+                ...style,
+                backgroundColor: undefined,
+                marginLeft: 0,
+                marginTop: 0,
+              },
+            }),
+            value: ({ style }) => ({
+              style: { ...style, marginLeft: 0 },
+            }),
+            base0D: '#3273dc',
+            base0B: '#363636',
+          }}
+        />
       );
     } catch (e) {
-      columns.push(<td>{content}</td>);
+      return content;
     }
-    return columns;
   };
 
   const onNext = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -241,16 +242,20 @@ const Messages: React.FC<Props> = ({
               <th>Timestamp</th>
               <th>Offset</th>
               <th>Partition</th>
-              {getMessageContentHeaders}
+              <th>Content</th>
             </tr>
           </thead>
           <tbody>
             {messages.map((message) => (
               <tr key={`${message.timestamp}${Math.random()}`}>
-                <td>{getTimestampDate(message.timestamp)}</td>
-                <td>{message.offset}</td>
-                <td>{message.partition}</td>
-                {getMessageContentBody(message.content)}
+                <td style={{ width: 200 }}>
+                  {getTimestampDate(message.timestamp)}
+                </td>
+                <td style={{ width: 150 }}>{message.offset}</td>
+                <td style={{ width: 100 }}>{message.partition}</td>
+                <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
+                  {getMessageContentBody(message.content)}
+                </td>
               </tr>
             ))}
           </tbody>
