@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   ClusterName,
   SeekType,
@@ -172,9 +172,9 @@ const Messages: React.FC<Props> = ({
     });
   };
 
-  const handleFiltersSubmit = () => {
+  const handleFiltersSubmit = useCallback(() => {
     fetchTopicMessages(clusterName, topicName, queryParams);
-  }
+  }, [clusterName, topicName, queryParams]);
 
   const getTimestampDate = (timestamp: string) => {
     if (!Date.parse(timestamp)) return;
