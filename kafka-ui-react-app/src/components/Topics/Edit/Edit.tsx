@@ -110,8 +110,8 @@ const Edit: React.FC<Props> = ({
   });
 
   const onSubmit = async (data: TopicFormData) => {
-    setIsSubmitting(true);
     updateTopic(clusterName, data);
+    setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
   };
 
   return (
