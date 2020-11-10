@@ -72,6 +72,8 @@ services:
 
   schemaregistry0:
     image: confluentinc/cp-schema-registry:5.1.0
+    ports:
+      - 8085:8085
     depends_on:
       - zookeeper0
       - kafka0

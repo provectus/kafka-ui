@@ -4,12 +4,12 @@ import com.provectus.kafka.ui.model.ServerStatus;
 import lombok.Builder;
 import lombok.Data;
 
+import java.nio.file.Path;
 import java.util.Map;
 
 @Data
 @Builder(toBuilder = true)
 public class KafkaCluster {
-
     private final String name;
     private final Integer jmxPort;
     private final String bootstrapServers;
@@ -22,4 +22,6 @@ public class KafkaCluster {
     private final Map<String, InternalTopic> topics;
     private final Throwable lastKafkaException;
     private final Throwable lastZookeeperException;
+    private final Path protobufFile;
+    private final String protobufMessageName;
 }
