@@ -1,8 +1,4 @@
-import {
-  FetchStatus,
-  Action,
-  LoaderState,
-} from 'redux/interfaces';
+import { FetchStatus, Action, LoaderState } from 'redux/interfaces';
 
 export const initialState: LoaderState = {};
 

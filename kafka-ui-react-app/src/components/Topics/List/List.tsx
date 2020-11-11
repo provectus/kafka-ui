@@ -1,21 +1,18 @@
 import React from 'react';
+import { v4 } from 'uuid';
 import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
-import ListItem from './ListItem';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
+import ListItem from './ListItem';
 
 interface Props {
   clusterName: ClusterName;
-  topics: (TopicWithDetailedInfo)[];
-  externalTopics: (TopicWithDetailedInfo)[];
+  topics: TopicWithDetailedInfo[];
+  externalTopics: TopicWithDetailedInfo[];
 }
 
-const List: React.FC<Props> = ({
-  clusterName,
-  topics,
-  externalTopics,
-}) => {
+const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
 
   const handleSwitch = () => setShowInternal(!showInternal);
@@ -38,9 +35,7 @@ const List: React.FC<Props> = ({
                 checked={showInternal}
                 onChange={handleSwitch}
               />
-              <label htmlFor="switchRoundedDefault">
-                Show Internal Topics
-              </label>
+              <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
             </div>
           </div>
           <div className="level-item level-right">
@@ -64,11 +59,8 @@ const List: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {items.map((topic, index) => (
-              <ListItem
-                key={`topic-list-item-key-${index}`}
-                {...topic}
-              />
+            {items.map((topic) => (
+              <ListItem key={v4()} topic={topic} />
             ))}
           </tbody>
         </table>

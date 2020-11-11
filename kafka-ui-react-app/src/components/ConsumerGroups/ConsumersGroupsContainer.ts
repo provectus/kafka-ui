@@ -5,20 +5,27 @@ import { RouteComponentProps } from 'react-router-dom';
 import ConsumerGroups from './ConsumerGroups';
 import { getIsConsumerGroupsListFetched } from '../../redux/reducers/consumerGroups/selectors';
 
-
 interface RouteProps {
   clusterName: ClusterName;
 }
 
-interface OwnProps extends RouteComponentProps<RouteProps> { }
+type OwnProps = RouteComponentProps<RouteProps>;
 
-const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}: OwnProps) => ({
+const mapStateToProps = (
+  state: RootState,
+  {
+    match: {
+      params: { clusterName },
+    },
+  }: OwnProps
+) => ({
   isFetched: getIsConsumerGroupsListFetched(state),
   clusterName,
 });
 
 const mapDispatchToProps = {
-  fetchConsumerGroupsList: (clusterName: ClusterName) => fetchConsumerGroupsList(clusterName),
+  fetchConsumerGroupsList: (clusterName: ClusterName) =>
+    fetchConsumerGroupsList(clusterName),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConsumerGroups);

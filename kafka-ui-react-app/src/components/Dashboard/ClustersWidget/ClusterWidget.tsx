@@ -4,23 +4,28 @@ import formatBytes from 'lib/utils/formatBytes';
 import { NavLink } from 'react-router-dom';
 import { clusterBrokersPath } from 'lib/paths';
 
-const ClusterWidget: React.FC<Cluster> = ({
-  name,
-  status,
-  topicCount,
-  brokerCount,
-  bytesInPerSec,
-  bytesOutPerSec,
-  onlinePartitionCount,
+interface ClusterWidgetProps {
+  cluster: Cluster;
+}
+
+const ClusterWidget: React.FC<ClusterWidgetProps> = ({
+  cluster: {
+    name,
+    status,
+    topicCount,
+    brokerCount,
+    bytesInPerSec,
+    bytesOutPerSec,
+    onlinePartitionCount,
+  },
 }) => (
   <NavLink to={clusterBrokersPath(name)} className="column is-full-modile is-6">
     <div className="box is-hoverable">
-      <div
-        className="title is-6 has-text-overflow-ellipsis"
-        title={name}
-      >
+      <div className="title is-6 has-text-overflow-ellipsis" title={name}>
         <div
-          className={`tag has-margin-right ${status === ClusterStatus.Online ? 'is-primary' : 'is-danger'}`}
+          className={`tag has-margin-right ${
+            status === ClusterStatus.Online ? 'is-primary' : 'is-danger'
+          }`}
         >
           {status}
         </div>

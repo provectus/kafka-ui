@@ -5,13 +5,12 @@ import rootReducer from '../../reducers';
 export default () => {
   const middlewares = [thunk];
 
-  const composeEnhancers = (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+  const composeEnhancers =
+    (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-  const enhancer = composeEnhancers(
-    applyMiddleware(...middlewares),
-  );
+  const enhancer = composeEnhancers(applyMiddleware(...middlewares));
 
   const store = createStore(rootReducer, undefined, enhancer);
 
-  return store
+  return store;
 };

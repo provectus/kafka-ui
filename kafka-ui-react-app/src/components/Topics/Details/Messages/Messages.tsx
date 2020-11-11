@@ -177,7 +177,7 @@ const Messages: React.FC<Props> = ({
   }, [clusterName, topicName, queryParams]);
 
   const getTimestampDate = (timestamp: string) => {
-    if (!Date.parse(timestamp)) return;
+    if (!Date.parse(timestamp)) return null;
     return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
   };
 
@@ -359,7 +359,7 @@ const Messages: React.FC<Props> = ({
         </div>
       </div>
       <div className="columns">
-        <div className="column is-full" style={{textAlign: "right"}}>
+        <div className="column is-full" style={{ textAlign: 'right' }}>
           <input
             type="submit"
             className="button is-primary"

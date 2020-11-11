@@ -1,4 +1,5 @@
 import React from 'react';
+import { v4 } from 'uuid';
 import { ClusterName, TopicName, TopicConfig } from 'redux/interfaces';
 
 interface Props {
@@ -9,29 +10,24 @@ interface Props {
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
 }
 
-const ConfigListItem: React.FC<TopicConfig> = ({
-  name,
-  value,
-  defaultValue,
+interface ListItemProps {
+  config: TopicConfig;
+}
+
+const ConfigListItem: React.FC<ListItemProps> = ({
+  config: { name, value, defaultValue },
 }) => {
   const hasCustomValue = value !== defaultValue;
 
   return (
     <tr>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>
-        {name}
-      </td>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>
-        {value}
-      </td>
-      <td
-        className="has-text-grey"
-        title="Default Value"
-      >
+      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{name}</td>
+      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{value}</td>
+      <td className="has-text-grey" title="Default Value">
         {hasCustomValue && defaultValue}
       </td>
     </tr>
-  )
+  );
 };
 
 const Sertings: React.FC<Props> = ({
@@ -41,10 +37,9 @@ const Sertings: React.FC<Props> = ({
   fetchTopicConfig,
   config,
 }) => {
-  React.useEffect(
-    () => { fetchTopicConfig(clusterName, topicName); },
-    [fetchTopicConfig, clusterName, topicName],
-  );
+  React.useEffect(() => {
+    fetchTopicConfig(clusterName, topicName);
+  }, [fetchTopicConfig, clusterName, topicName]);
 
   if (!isFetched || !config) {
     return null;
@@ -61,7 +56,9 @@ const Sertings: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {config.map((item, index) => <ConfigListItem key={`config-list-item-key-${index}`} {...item} />)}
+          {config.map((item) => (
+            <ConfigListItem key={v4()} config={item} />
+          ))}
         </tbody>
       </table>
     </div>

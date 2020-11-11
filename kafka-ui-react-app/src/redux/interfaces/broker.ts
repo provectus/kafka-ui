@@ -6,9 +6,12 @@ export interface Broker {
   segmentSize: number;
   partitionReplicas: number;
   bytesOutPerSec: number;
-};
+}
 
-export enum ZooKeeperStatus { offline, online };
+export enum ZooKeeperStatus {
+  offline,
+  online,
+}
 
 export interface BrokerDiskUsage {
   brokerId: BrokerId;
@@ -21,8 +24,8 @@ export interface BrokerMetrics {
   activeControllers: number;
   onlinePartitionCount: number;
   offlinePartitionCount: number;
-  inSyncReplicasCount: number,
-  outOfSyncReplicasCount: number,
+  inSyncReplicasCount: number;
+  outOfSyncReplicasCount: number;
   underReplicatedPartitionCount: number;
   diskUsage: BrokerDiskUsage[];
 }
