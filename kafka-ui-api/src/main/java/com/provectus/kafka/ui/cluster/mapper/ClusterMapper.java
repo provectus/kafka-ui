@@ -66,7 +66,11 @@ public interface ClusterMapper {
      }
 
      default Path resolvePath(String path) {
-        return Path.of(path);
+        if (path != null) {
+            return Path.of(path);
+        } else {
+            return null;
+        }
      }
 
 }
