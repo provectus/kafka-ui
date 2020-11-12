@@ -5,10 +5,14 @@ export enum CleanupPolicy {
   Compact = 'compact',
 }
 
-export interface TopicConfig {
+export interface InputTopicConfig {
   name: string;
   value: string;
   defaultValue: string;
+}
+
+export interface TopicConfig extends InputTopicConfig {
+  id: string;
 }
 
 export interface TopicConfigByName {
@@ -89,6 +93,7 @@ export interface TopicFormCustomParams {
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
   config?: TopicConfig[];
+  id: string;
 }
 
 export interface TopicsState {

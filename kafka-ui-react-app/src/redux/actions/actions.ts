@@ -5,7 +5,7 @@ import {
   BrokerMetrics,
   Cluster,
   Topic,
-  TopicConfig,
+  InputTopicConfig,
   TopicDetails,
   TopicMessage,
   TopicName,
@@ -54,7 +54,7 @@ export const fetchTopicConfigAction = createAsyncAction(
   ActionType.GET_TOPIC_CONFIG__REQUEST,
   ActionType.GET_TOPIC_CONFIG__SUCCESS,
   ActionType.GET_TOPIC_CONFIG__FAILURE
-)<undefined, { topicName: TopicName; config: TopicConfig[] }, undefined>();
+)<undefined, { topicName: TopicName; config: InputTopicConfig[] }, undefined>();
 
 export const createTopicAction = createAsyncAction(
   ActionType.POST_TOPIC__REQUEST,

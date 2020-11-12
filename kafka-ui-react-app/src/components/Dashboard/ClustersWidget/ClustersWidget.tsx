@@ -12,6 +12,11 @@ interface Props {
   offlineClusters: Cluster[];
 }
 
+interface ChunkItem {
+  id: string;
+  data: Cluster[];
+}
+
 const ClustersWidget: React.FC<Props> = ({
   clusters,
   onlineClusters,
@@ -19,14 +24,17 @@ const ClustersWidget: React.FC<Props> = ({
 }) => {
   const [showOfflineOnly, setShowOfflineOnly] = React.useState<boolean>(false);
 
-  const clusterList: Array<Cluster[]> = React.useMemo(() => {
+  const clusterList: ChunkItem[] = React.useMemo(() => {
     let list = clusters;
 
     if (showOfflineOnly) {
       list = offlineClusters;
     }
 
-    return chunk(list, 2);
+    return chunk(list, 2).map((data) => ({
+      id: v4(),
+      data,
+    }));
   }, [clusters, offlineClusters, showOfflineOnly]);
 
   const handleSwitch = () => setShowOfflineOnly(!showOfflineOnly);
@@ -56,8 +64,8 @@ const ClustersWidget: React.FC<Props> = ({
       </MetricsWrapper>
 
       {clusterList.map((chunkItem) => (
-        <div className="columns" key={v4()}>
-          {chunkItem.map((cluster) => (
+        <div className="columns" key={chunkItem.id}>
+          {chunkItem.data.map((cluster) => (
             <ClusterWidget cluster={cluster} key={cluster.id} />
           ))}
         </div>

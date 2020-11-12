@@ -1,6 +1,5 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { v4 } from 'uuid';
 
 interface Link {
   label: string;
@@ -17,7 +16,7 @@ const Breadcrumb: React.FC<Props> = ({ links, children }) => {
       <ul>
         {links &&
           links.map(({ label, href }) => (
-            <li key={v4()}>
+            <li key={href}>
               <NavLink to={href}>{label}</NavLink>
             </li>
           ))}

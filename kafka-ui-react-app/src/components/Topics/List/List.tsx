@@ -1,5 +1,4 @@
 import React from 'react';
-import { v4 } from 'uuid';
 import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';
@@ -60,7 +59,7 @@ const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
           </thead>
           <tbody>
             {items.map((topic) => (
-              <ListItem key={v4()} topic={topic} />
+              <ListItem key={topic.id} topic={topic} />
             ))}
           </tbody>
         </table>

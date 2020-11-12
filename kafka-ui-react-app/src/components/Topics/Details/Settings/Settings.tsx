@@ -1,5 +1,4 @@
 import React from 'react';
-import { v4 } from 'uuid';
 import { ClusterName, TopicName, TopicConfig } from 'redux/interfaces';
 
 interface Props {
@@ -57,7 +56,7 @@ const Sertings: React.FC<Props> = ({
         </thead>
         <tbody>
           {config.map((item) => (
-            <ConfigListItem key={v4()} config={item} />
+            <ConfigListItem key={item.id} config={item} />
           ))}
         </tbody>
       </table>

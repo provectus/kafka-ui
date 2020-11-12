@@ -4,7 +4,7 @@ import {
   Topic,
   ClusterName,
   TopicDetails,
-  TopicConfig,
+  InputTopicConfig,
   TopicFormData,
   TopicFormCustomParam,
   TopicFormFormattedParams,
@@ -30,7 +30,7 @@ const formatCustomParams = (
 export const getTopicConfig = (
   clusterName: ClusterName,
   topicName: TopicName
-): Promise<TopicConfig[]> =>
+): Promise<InputTopicConfig[]> =>
   fetch(`${BASE_URL}/clusters/${clusterName}/topics/${topicName}/config`, {
     ...BASE_PARAMS,
   }).then((res) => res.json());
