@@ -32,8 +32,9 @@
     ]
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
+    "copy-openapi-client": "rm -rf ./src/generated-sources && cp -R ../kafka-ui-contract/target/generated-sources/frontend ./src/generated-sources",
+    "start": "npm run copy-openapi-client && react-scripts start",
+    "build": "npm run copy-openapi-client && react-scripts build",
     "lint": "esprint check",
     "lint:fix": "esprint check --fix",
     "test": "react-scripts test",

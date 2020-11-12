@@ -5,9 +5,9 @@ import {
   SeekTypes,
   TopicMessage,
   TopicMessageQueryParams,
-  TopicName,
-  TopicPartition,
+  TopicName
 } from 'redux/interfaces';
+import { Partition } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
@@ -33,7 +33,7 @@ interface Props {
     queryParams: Partial<TopicMessageQueryParams>
   ) => void;
   messages: TopicMessage[];
-  partitions: TopicPartition[];
+  partitions: Partition[];
 }
 
 interface FilterProps {
@@ -177,7 +177,7 @@ const Messages: React.FC<Props> = ({
   }, [clusterName, topicName, queryParams]);
 
   const getTimestampDate = (timestamp: string) => {
-    if (!Date.parse(timestamp)) return;
+    if (!Date.parse(timestamp)) return null;
     return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
   };
 
@@ -335,7 +335,7 @@ const Messages: React.FC<Props> = ({
               <label className="label">Timestamp</label>
               <DatePicker
                 selected={searchTimestamp}
-                onChange={(date) => setSearchTimestamp(date)}
+                onChange={(date: Date | null) => setSearchTimestamp(date)}
                 onCalendarClose={handleDateTimeChange}
                 showTimeInput
                 timeInputLabel="Time:"

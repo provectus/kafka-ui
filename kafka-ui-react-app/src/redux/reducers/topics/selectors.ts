@@ -7,6 +7,7 @@ import {
   TopicConfigByName,
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { Partition } from 'generated-sources';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
 
@@ -64,7 +65,7 @@ export const getTopicList = createSelector(
     if (!isFetched) {
       return [];
     }
-    return allNames.map((name) => byName[name]);
+    return allNames.map((name) => byName[name || '']);
   }
 );
 
@@ -77,13 +78,13 @@ const getTopicName = (_: RootState, topicName: TopicName) => topicName;
 export const getTopicByName = createSelector(
   getTopicMap,
   getTopicName,
-  (topics, topicName) => topics[topicName]
+  (topics, topicName) => topics[topicName || '']
 );
 
 export const getPartitionsByTopicName = createSelector(
   getTopicMap,
   getTopicName,
-  (topics, topicName) => topics[topicName].partitions
+  (topics, topicName) => (topics[topicName || ''].partitions) as Partition[]
 );
 
 export const getFullTopic = createSelector(getTopicByName, (topic) =>

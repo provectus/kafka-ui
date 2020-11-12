@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
-import { Cluster, ClusterStatus } from 'redux/interfaces';
 import { NavLink } from 'react-router-dom';
 import {
   clusterBrokersPath,
   clusterTopicsPath,
   clusterConsumerGroupsPath,
 } from 'lib/paths';
+import { Cluster, ServerStatus } from 'generated-sources';
 
 interface Props {
   cluster: Cluster;
@@ -42,7 +42,7 @@ const StatusIcon: React.FC<Props> = ({ cluster }) => {
   return (
     <span
       className={`tag ${
-        cluster.status === ClusterStatus.Online ? 'is-primary' : 'is-danger'
+        cluster.status === ServerStatus.Online ? 'is-primary' : 'is-danger'
       }`}
       title={cluster.status}
       style={style}

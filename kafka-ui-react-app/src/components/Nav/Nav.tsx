@@ -1,8 +1,8 @@
 import React from 'react';
-import { Cluster } from 'redux/interfaces';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import ClusterMenu from './ClusterMenu';
+import { Cluster } from 'generated-sources';
 
 interface Props {
   isClusterListFetched: boolean;
@@ -29,7 +29,7 @@ const Nav: React.FC<Props> = ({
 
     {isClusterListFetched &&
       clusters.map((cluster) => (
-        <ClusterMenu cluster={cluster} key={cluster.id} />
+        <ClusterMenu cluster={cluster} key={cluster.name} />
       ))}
   </aside>
 );

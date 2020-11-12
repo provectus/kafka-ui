@@ -1,9 +1,9 @@
 import {
   TopicName,
   TopicMessage,
-  Topic,
+  // Topic,
   ClusterName,
-  TopicDetails,
+  // TopicDetails,
   TopicConfig,
   TopicFormData,
   TopicFormCustomParam,
@@ -11,6 +11,7 @@ import {
   TopicFormCustomParams,
   TopicMessageQueryParams,
 } from 'redux/interfaces';
+import { Topic, TopicDetails } from 'generated-sources';
 import { BASE_URL, BASE_PARAMS } from 'lib/constants';
 
 const formatCustomParams = (

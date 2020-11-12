@@ -1,4 +1,6 @@
-export type TopicName = string;
+import { Topic, Partition, TopicDetails } from 'generated-sources';
+
+export type TopicName = Topic["name"];
 
 export enum CleanupPolicy {
   Delete = 'delete',
@@ -23,35 +25,35 @@ export interface TopicReplica {
   inSync: true;
 }
 
-export interface TopicPartition {
-  partition: number;
-  leader: number;
-  offsetMin: number;
-  offsetMax: number;
-  replicas: TopicReplica[];
-}
+// export interface TopicPartition {
+//   partition: number;
+//   leader: number;
+//   offsetMin: number;
+//   offsetMax: number;
+//   replicas: TopicReplica[];
+// }
 
 export interface TopicCustomParamOption {
   name: string;
   defaultValue: string;
 }
 
-export interface TopicDetails {
-  partitions: TopicPartition[];
-}
+// export interface TopicDetails {
+//   partitions: Partition[];
+// }
 
-export interface Topic {
-  name: TopicName;
-  internal: boolean;
-  partitionCount?: number;
-  replicationFactor?: number;
-  replicas?: number;
-  inSyncReplicas?: number;
-  segmentSize?: number;
-  segmentCount?: number;
-  underReplicatedPartitions?: number;
-  partitions: TopicPartition[];
-}
+// export interface Topic {
+//   name: TopicName;
+//   internal: boolean;
+//   partitionCount?: number;
+//   replicationFactor?: number;
+//   replicas?: number;
+//   inSyncReplicas?: number;
+//   segmentSize?: number;
+//   segmentCount?: number;
+//   underReplicatedPartitions?: number;
+//   partitions: TopicPartition[];
+// }
 
 export interface TopicMessage {
   partition: number;

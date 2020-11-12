@@ -1,5 +1,6 @@
 import React from 'react';
-import { ClusterName, Topic, TopicDetails, TopicName } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
+import { Topic, TopicDetails } from 'generated-sources';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink, Switch, Route } from 'react-router-dom';
 import {

@@ -1,12 +1,14 @@
+import { Broker } from 'generated-sources';
+
 export type BrokerId = string;
 
-export interface Broker {
-  brokerId: BrokerId;
-  bytesInPerSec: number;
-  segmentSize: number;
-  partitionReplicas: number;
-  bytesOutPerSec: number;
-};
+// export interface Broker {
+//   brokerId: BrokerId;
+//   bytesInPerSec: number;
+//   segmentSize: number;
+//   partitionReplicas: number;
+//   bytesOutPerSec: number;
+// };
 
 export enum ZooKeeperStatus { offline, online };
 

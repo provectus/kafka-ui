@@ -80,14 +80,14 @@
                                     </inputSpec>
                                     <output>${project.build.directory}/generated-sources/frontend/</output>
                                     <generatorName>typescript-fetch</generatorName>
-
                                     <configOptions>
                                         <modelPackage>com.provectus.kafka.ui.model</modelPackage>
                                         <apiPackage>com.provectus.kafka.ui.api</apiPackage>
                                         <apiPackage>com.provectus.kafka.ui.invoker</apiPackage>
                                         <sourceFolder>kafka-ui-contract</sourceFolder>
-
-
+                                        <typescriptThreePlus>true</typescriptThreePlus>
+                                        <supportsES6>true</supportsES6>
+                                        <nullSafeAdditionalProps>false</nullSafeAdditionalProps>
                                     </configOptions>
                                 </configuration>
                             </execution>

@@ -1,4 +1,5 @@
-import { Cluster, Action } from 'redux/interfaces';
+import { Action } from 'redux/interfaces';
+import { Cluster } from 'generated-sources';
 import ActionType from 'redux/actionType';
 
 export const initialState: Cluster[] = [];

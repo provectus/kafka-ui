@@ -1,6 +1,4 @@
-import {
-  Cluster,
-} from 'redux/interfaces';
+import { Cluster } from 'generated-sources';
 import {
   BASE_URL,
   BASE_PARAMS,

@@ -1,5 +1,6 @@
-import { Broker, ClusterName, BrokerMetrics } from 'redux/interfaces';
+import { ClusterName, BrokerMetrics } from 'redux/interfaces';
 import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+import { Broker } from 'generated-sources';
 
 export const getBrokers = (clusterName: ClusterName): Promise<Broker[]> =>
   fetch(`${BASE_URL}/clusters/${clusterName}/brokers`, {

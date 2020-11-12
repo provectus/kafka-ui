@@ -28,7 +28,7 @@ const updateBrokerSegmentSize = (
 
   const items = brokers.map((broker) => {
     const brokerMetrics = diskUsage.find(
-      ({ brokerId }) => brokerId === broker.brokerId
+      ({ brokerId }) => brokerId === broker.id
     );
     if (brokerMetrics !== undefined) {
       return { ...broker, ...brokerMetrics };

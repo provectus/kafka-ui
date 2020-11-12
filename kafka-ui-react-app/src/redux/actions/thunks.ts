@@ -1,26 +1,41 @@
 import * as api from 'redux/api';
+import { ApiClustersApi, Configuration, Cluster, Topic } from 'generated-sources';
 import {
   ConsumerGroupID,
   PromiseThunk,
-  Cluster,
   ClusterName,
   TopicFormData,
   TopicName,
-  Topic,
+  // Topic,
   TopicMessageQueryParams,
 } from 'redux/interfaces';
 
 import * as actions from './actions';
+
+const openApiConf = new Configuration({ basePath: process.env.REACT_APP_API_HOST || '' });
+const openApiClient = new ApiClustersApi(openApiConf);
 
 export const fetchBrokers = (
   clusterName: ClusterName
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchBrokersAction.request());
   try {
-    const payload = await api.getBrokers(clusterName);
+    const payload = await openApiClient.getBrokers({clusterName});
     dispatch(actions.fetchBrokersAction.success(payload));
   } catch (e) {
     dispatch(actions.fetchBrokersAction.failure());
+  }
+};
+
+export const fetchClusterMetrics = (
+  clusterName: ClusterName
+): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchClusterMetricsAction.request());
+  try {
+    const payload = await openApiClient.getClusterMetrics({ clusterName });
+    dispatch(actions.fetchClusterMetricsAction.success(payload));
+  } catch (e) {
+    dispatch(actions.fetchClusterMetricsAction.failure());
   }
 };
 
@@ -39,7 +54,7 @@ export const fetchBrokerMetrics = (
 export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchClusterListAction.request());
   try {
-    const clusters: Cluster[] = await api.getClusters();
+    const clusters: Cluster[] = await openApiClient.getClusters();
     dispatch(actions.fetchClusterListAction.success(clusters));
   } catch (e) {
     dispatch(actions.fetchClusterListAction.failure());
@@ -51,7 +66,7 @@ export const fetchTopicList = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicListAction.request());
   try {
-    const topics = await api.getTopics(clusterName);
+    const topics = await openApiClient.getTopics({ clusterName })//api.getTopics(clusterName);
     dispatch(actions.fetchTopicListAction.success(topics));
   } catch (e) {
     dispatch(actions.fetchTopicListAction.failure());
