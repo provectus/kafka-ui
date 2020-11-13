@@ -36,6 +36,10 @@ spec:
         mountPath: /tmp/repository
   - name: docker-daemon
     image: docker:19.03.1-dind
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "1000m"
     securityContext:
       privileged: true
     env:
