@@ -2,16 +2,11 @@ import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterConsumerGroupsPath } from 'lib/paths';
-import {
-  ConsumerGroupID,
-  // ConsumerGroup,
-  // ConsumerGroupDetails,
-  // Consumer,
-} from 'redux/interfaces/consumerGroup';
+import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import {
   ConsumerGroup,
   ConsumerGroupDetails,
-  ConsumerTopicPartitionDetail
+  ConsumerTopicPartitionDetail,
 } from 'generated-sources';
 
 import PageLoader from 'components/common/PageLoader/PageLoader';

@@ -1,17 +1,6 @@
 import { createAsyncAction } from 'typesafe-actions';
 import ActionType from 'redux/actionType';
-import {
-  // Broker,
-  // BrokerMetrics,
-  // Topic,
-  // TopicConfig,
-  // TopicDetails,
-  // TopicMessage,
-  TopicName,
-  // ConsumerGroup,
-  //ConsumerGroupDetails,
-  ConsumerGroupID,
-} from 'redux/interfaces';
+import { TopicName, ConsumerGroupID } from 'redux/interfaces';
 
 import {
   Cluster,
@@ -24,7 +13,7 @@ import {
   TopicConfig,
   TopicMessage,
   ConsumerGroup,
-  ConsumerGroupDetails
+  ConsumerGroupDetails,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
