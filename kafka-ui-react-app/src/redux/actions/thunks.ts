@@ -4,7 +4,7 @@ import {
   Cluster,
   Topic,
   TopicFormData,
-  TopicConfig
+  TopicConfig,
 } from 'generated-sources';
 import {
   ConsumerGroupID,
@@ -17,8 +17,8 @@ import {
   TopicFormDataRaw,
 } from 'redux/interfaces';
 
-import * as actions from './actions';
 import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+import * as actions from './actions';
 
 const apiClientConf = new Configuration({ basePath: BASE_URL });
 const apiClient = new ApiClustersApi(apiClientConf);
@@ -62,7 +62,7 @@ export const fetchBrokers = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchBrokersAction.request());
   try {
-    const payload = await apiClient.getBrokers({clusterName});
+    const payload = await apiClient.getBrokers({ clusterName });
     dispatch(actions.fetchBrokersAction.success(payload));
   } catch (e) {
     dispatch(actions.fetchBrokersAction.failure());
@@ -75,7 +75,10 @@ export const fetchBrokerMetrics = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchBrokerMetricsAction.request());
   try {
-    const payload = await apiClient.getBrokersMetrics({ clusterName, id: brokerId });
+    const payload = await apiClient.getBrokersMetrics({
+      clusterName,
+      id: brokerId,
+    });
     dispatch(actions.fetchBrokerMetricsAction.success(payload));
   } catch (e) {
     dispatch(actions.fetchBrokerMetricsAction.failure());
@@ -104,7 +107,7 @@ export const fetchTopicMessages = (
     const messages = await apiClient.getTopicMessages({
       clusterName,
       topicName,
-      ...queryParams
+      ...queryParams,
     });
     dispatch(actions.fetchTopicMessagesAction.success(messages));
   } catch (e) {
@@ -118,7 +121,10 @@ export const fetchTopicDetails = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicDetailsAction.request());
   try {
-    const topicDetails = await apiClient.getTopicDetails({ clusterName, topicName });
+    const topicDetails = await apiClient.getTopicDetails({
+      clusterName,
+      topicName,
+    });
     dispatch(
       actions.fetchTopicDetailsAction.success({
         topicName,
@@ -143,13 +149,52 @@ export const fetchTopicConfig = (
   }
 };
 
+const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
+  const {
+    name,
+    partitions,
+    replicationFactor,
+    cleanupPolicy,
+    retentionBytes,
+    retentionMs,
+    maxMessageBytes,
+    minInSyncReplicas,
+    customParams,
+  } = form;
+
+  return {
+    name,
+    partitions,
+    replicationFactor,
+    configs: {
+      'cleanup.policy': cleanupPolicy,
+      'retention.ms': retentionMs,
+      'retention.bytes': retentionBytes,
+      'max.message.bytes': maxMessageBytes,
+      'min.insync.replicas': minInSyncReplicas,
+      ...Object.values(customParams || {}).reduce(
+        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
+          return {
+            ...result,
+            [customParam.name]: customParam.value,
+          };
+        },
+        {}
+      ),
+    },
+  };
+};
+
 export const createTopic = (
   clusterName: ClusterName,
   form: TopicFormDataRaw
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.createTopicAction.request());
   try {
-    const topic: Topic = await apiClient.createTopic({ clusterName, topicFormData: formatTopicFormData(form) });
+    const topic: Topic = await apiClient.createTopic({
+      clusterName,
+      topicFormData: formatTopicFormData(form),
+    });
     dispatch(actions.createTopicAction.success(topic));
   } catch (e) {
     dispatch(actions.createTopicAction.failure());
@@ -158,11 +203,15 @@ export const createTopic = (
 
 export const updateTopic = (
   clusterName: ClusterName,
-  form: TopicFormData
+  form: TopicFormDataRaw
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.updateTopicAction.request());
   try {
-    const topic: Topic = await apiClient.updateTopic({ clusterName, topicName: form.name, topicFormData: form });
+    const topic: Topic = await apiClient.updateTopic({
+      clusterName,
+      topicName: form.name,
+      topicFormData: formatTopicFormData(form),
+    });
     dispatch(actions.updateTopicAction.success(topic));
   } catch (e) {
     dispatch(actions.updateTopicAction.failure());
@@ -189,7 +238,7 @@ export const fetchConsumerGroupDetails = (
   try {
     const consumerGroupDetails = await apiClient.getConsumerGroup({
       clusterName,
-      id: consumerGroupID
+      id: consumerGroupID,
     });
     dispatch(
       actions.fetchConsumerGroupDetailsAction.success({
@@ -201,38 +250,3 @@ export const fetchConsumerGroupDetails = (
     dispatch(actions.fetchConsumerGroupDetailsAction.failure());
   }
 };
-
-const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
-  const {
-    name,
-    partitions,
-    replicationFactor,
-    cleanupPolicy,
-    retentionBytes,
-    retentionMs,
-    maxMessageBytes,
-    minInSyncReplicas,
-    customParams
-  } = form;
-
-  return {
-    name,
-    partitions,
-    replicationFactor,
-    configs: {
-      'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs,
-      'retention.bytes': retentionBytes,
-      'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(
-        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
-          return {
-            ...result,
-            [customParam.name]: customParam.value,
-          };
-        },
-        {})
-    }
-  };
-}
