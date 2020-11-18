@@ -1,12 +1,13 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
 import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
+import { TopicConfig } from 'generated-sources';
 
 interface Props {
   isDisabled: boolean;
   index: string;
-  name: string;
-  defaultValue: string;
+  name: TopicConfig['name'];
+  defaultValue: TopicConfig['defaultValue'];
 }
 
 const CustomParamValue: React.FC<Props> = ({

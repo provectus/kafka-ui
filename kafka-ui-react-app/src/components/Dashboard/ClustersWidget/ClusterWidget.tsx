@@ -1,5 +1,4 @@
 import React from 'react';
-import { ClusterStatus } from 'redux/interfaces';
 import formatBytes from 'lib/utils/formatBytes';
 import { NavLink } from 'react-router-dom';
 import { clusterBrokersPath } from 'lib/paths';

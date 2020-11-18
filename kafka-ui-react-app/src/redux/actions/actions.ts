@@ -2,30 +2,48 @@ import { createAsyncAction } from 'typesafe-actions';
 import ActionType from 'redux/actionType';
 import {
   // Broker,
-  BrokerMetrics,
+  // BrokerMetrics,
   // Topic,
-  TopicConfig,
+  // TopicConfig,
   // TopicDetails,
-  TopicMessage,
+  // TopicMessage,
   TopicName,
-  ConsumerGroup,
-  ConsumerGroupDetails,
+  // ConsumerGroup,
+  //ConsumerGroupDetails,
   ConsumerGroupID,
 } from 'redux/interfaces';
 
-import { Cluster, Broker, Topic, TopicDetails, ClusterMetrics } from 'generated-sources';
+import {
+  Cluster,
+  ClusterStats,
+  ClusterMetrics,
+  Broker,
+  BrokerMetrics,
+  Topic,
+  TopicDetails,
+  TopicConfig,
+  TopicMessage,
+  ConsumerGroup,
+  ConsumerGroupDetails
+} from 'generated-sources';
 
-export const fetchBrokersAction = createAsyncAction(
-  ActionType.GET_BROKERS__REQUEST,
-  ActionType.GET_BROKERS__SUCCESS,
-  ActionType.GET_BROKERS__FAILURE
-)<undefined, Broker[], undefined>();
+export const fetchClusterStatsAction = createAsyncAction(
+  ActionType.GET_CLUSTER_STATS__REQUEST,
+  ActionType.GET_CLUSTER_STATS__SUCCESS,
+  ActionType.GET_CLUSTER_STATS__FAILURE
+)<undefined, ClusterStats, undefined>();
 
 export const fetchClusterMetricsAction = createAsyncAction(
   ActionType.GET_CLUSTER_METRICS__REQUEST,
   ActionType.GET_CLUSTER_METRICS__SUCCESS,
   ActionType.GET_CLUSTER_METRICS__FAILURE
 )<undefined, ClusterMetrics, undefined>();
+
+export const fetchBrokersAction = createAsyncAction(
+  ActionType.GET_BROKERS__REQUEST,
+  ActionType.GET_BROKERS__SUCCESS,
+  ActionType.GET_BROKERS__FAILURE
+)<undefined, Broker[], undefined>();
 
 export const fetchBrokerMetricsAction = createAsyncAction(
   ActionType.GET_BROKER_METRICS__REQUEST,
@@ -39,7 +57,7 @@ export const fetchClusterListAction = createAsyncAction(
   ActionType.GET_CLUSTERS__FAILURE
 )<undefined, Cluster[], undefined>();
 
-export const fetchTopicListAction = createAsyncAction(
+export const fetchTopicsListAction = createAsyncAction(
   ActionType.GET_TOPICS__REQUEST,
   ActionType.GET_TOPICS__SUCCESS,
   ActionType.GET_TOPICS__FAILURE

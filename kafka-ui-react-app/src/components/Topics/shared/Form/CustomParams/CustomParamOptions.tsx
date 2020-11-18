@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopicCustomParamOption } from 'redux/interfaces';
+import { TopicConfigOption } from 'redux/interfaces';
 import { omitBy } from 'lodash';
 import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
@@ -15,7 +15,7 @@ const CustomParamOptions: React.FC<Props> = ({ existingFields }) => {
   return (
     <>
       <option value="">Select</option>
-      {Object.values(fields).map((opt: TopicCustomParamOption) => (
+      {Object.values(fields).map((opt: TopicConfigOption) => (
         <option key={opt.name} value={opt.name}>
           {opt.name}
         </option>

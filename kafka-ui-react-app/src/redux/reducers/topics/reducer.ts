@@ -16,11 +16,11 @@ const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
 
   return payload.reduce((memo: TopicsState, topic) => {
     const { name } = topic;
-    memo.byName[name || ''] = {
-      ...memo.byName[name || ''],
+    memo.byName[name] = {
+      ...memo.byName[name],
       ...topic,
     };
-    memo.allNames.push(name || '');
+    memo.allNames.push(name);
 
     return memo;
   }, initialMemo);
@@ -30,8 +30,8 @@ const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
   const newState: TopicsState = {
     ...state,
   };
-  newState.allNames.push(payload.name || '');
-  newState.byName[payload.name || ''] = payload;
+  newState.allNames.push(payload.name);
+  newState.byName[payload.name] = payload;
   return newState;
 };
 
@@ -44,8 +44,8 @@ const reducer = (state = initialState, action: Action): TopicsState => {
         ...state,
         byName: {
           ...state.byName,
-          [action.payload.topicName || '']: {
-            ...state.byName[action.payload.topicName || ''],
+          [action.payload.topicName]: {
+            ...state.byName[action.payload.topicName],
             ...action.payload.details,
           },
         },
@@ -60,8 +60,8 @@ const reducer = (state = initialState, action: Action): TopicsState => {
         ...state,
         byName: {
           ...state.byName,
-          [action.payload.topicName || '']: {
-            ...state.byName[action.payload.topicName || ''],
+          [action.payload.topicName]: {
+            ...state.byName[action.payload.topicName],
             config: action.payload.config,
           },
         },

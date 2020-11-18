@@ -2,13 +2,14 @@ import React from 'react';
 import CustomParamSelect from 'components/Topics/shared/Form/CustomParams/CustomParamSelect';
 import CustomParamValue from 'components/Topics/shared/Form/CustomParams/CustomParamValue';
 import CustomParamAction from 'components/Topics/shared/Form/CustomParams/CustomParamAction';
+import { TopicConfig } from 'generated-sources';
 
 interface Props {
   isDisabled: boolean;
   index: string;
-  name: string;
+  name: TopicConfig['name'];
   existingFields: string[];
-  defaultValue: string;
+  defaultValue: TopicConfig['defaultValue'];
   onNameChange: (inputName: string, name: string) => void;
   onRemove: (index: string) => void;
 }

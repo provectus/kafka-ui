@@ -1,21 +1,21 @@
 import React from 'react';
-import { ClusterName, BrokerMetrics, ZooKeeperStatus } from 'redux/interfaces';
+import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
+import { ClusterStats } from 'generated-sources';
 import useInterval from 'lib/hooks/useInterval';
 import cx from 'classnames';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
-interface Props extends BrokerMetrics {
+interface Props extends ClusterStats {
   clusterName: ClusterName;
   isFetched: boolean;
+  fetchClusterStats: (clusterName: ClusterName) => void;
   fetchBrokers: (clusterName: ClusterName) => void;
-  fetchBrokerMetrics: (clusterName: ClusterName) => void;
 }
 
 const Topics: React.FC<Props> = ({
   clusterName,
-  isFetched,
   brokerCount,
   activeControllers,
   zooKeeperStatus,
@@ -24,18 +24,18 @@ const Topics: React.FC<Props> = ({
   inSyncReplicasCount,
   outOfSyncReplicasCount,
   underReplicatedPartitionCount,
+  fetchClusterStats,
   fetchBrokers,
-  fetchBrokerMetrics,
 }) => {
   React.useEffect(
     () => {
+      fetchClusterStats(clusterName);
       fetchBrokers(clusterName);
-      fetchBrokerMetrics(clusterName);
     },
-    [fetchBrokers, fetchBrokerMetrics, clusterName],
+    [fetchClusterStats, fetchBrokers, clusterName],
   );
 
-  useInterval(() => { fetchBrokerMetrics(clusterName); }, 5000);
+  useInterval(() => { fetchClusterStats(clusterName); }, 5000);
 
   const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
 
@@ -62,7 +62,7 @@ const Topics: React.FC<Props> = ({
           <span className={cx({'has-text-danger': offlinePartitionCount !== 0})}>
             {onlinePartitionCount}
           </span>
-          <span className="subtitle has-text-weight-light"> of {onlinePartitionCount + offlinePartitionCount}</span>
+          <span className="subtitle has-text-weight-light"> of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}</span>
         </Indicator>
         <Indicator label="URP" title="Under replicated partitions">
           {underReplicatedPartitionCount}

@@ -8,7 +8,7 @@ import { fetchConsumerGroupDetails } from 'redux/actions/thunks';
 
 interface RouteProps {
   clusterName: ClusterName;
-  consumerGroupID: string;
+  consumerGroupID: ConsumerGroupID;
 }
 
 interface OwnProps extends RouteComponentProps<RouteProps> { }

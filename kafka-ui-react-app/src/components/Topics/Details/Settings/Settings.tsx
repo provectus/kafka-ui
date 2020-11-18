@@ -1,5 +1,6 @@
 import React from 'react';
-import { ClusterName, TopicName, TopicConfig } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
+import { TopicConfig } from 'generated-sources';
 
 interface Props {
   clusterName: ClusterName;

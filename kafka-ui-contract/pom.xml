@@ -87,7 +87,8 @@
                                         <sourceFolder>kafka-ui-contract</sourceFolder>
                                         <typescriptThreePlus>true</typescriptThreePlus>
                                         <supportsES6>true</supportsES6>
-                                        <nullSafeAdditionalProps>false</nullSafeAdditionalProps>
+                                        <nullSafeAdditionalProps>true</nullSafeAdditionalProps>
+                                        <withInterfaces>true</withInterfaces>
                                     </configOptions>
                                 </configuration>
                             </execution>

@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import {
   RootState,
   ClusterName,
-  TopicFormData,
   TopicName,
   Action,
 } from 'redux/interfaces';
@@ -21,6 +20,7 @@ import {
 import { clusterTopicPath } from 'lib/paths';
 import { ThunkDispatch } from 'redux-thunk';
 import Edit from './Edit';
+import { TopicFormDataRaw } from 'redux/interfaces';
 
 interface RouteProps {
   clusterName: ClusterName;
@@ -53,7 +53,7 @@ const mapDispatchToProps = (
     dispatch(fetchTopicDetails(clusterName, topicName)),
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) =>
     dispatch(fetchTopicConfig(clusterName, topicName)),
-  updateTopic: (clusterName: ClusterName, form: TopicFormData) =>
+  updateTopic: (clusterName: ClusterName, form: TopicFormDataRaw) =>
     dispatch(updateTopic(clusterName, form)),
   redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => {
     history.push(clusterTopicPath(clusterName, topicName));

@@ -4,10 +4,15 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterConsumerGroupsPath } from 'lib/paths';
 import {
   ConsumerGroupID,
+  // ConsumerGroup,
+  // ConsumerGroupDetails,
+  // Consumer,
+} from 'redux/interfaces/consumerGroup';
+import {
   ConsumerGroup,
   ConsumerGroupDetails,
-  Consumer,
-} from 'redux/interfaces/consumerGroup';
+  ConsumerTopicPartitionDetail
+} from 'generated-sources';
 
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListItem from './ListItem';
@@ -15,7 +20,7 @@ import ListItem from './ListItem';
 interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
   consumerGroupID: ConsumerGroupID;
-  consumers: Consumer[];
+  consumers?: ConsumerTopicPartitionDetail[];
   isFetched: boolean;
   fetchConsumerGroupDetails: (
     clusterName: ClusterName,

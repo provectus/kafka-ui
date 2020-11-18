@@ -1,29 +1,47 @@
-import * as api from 'redux/api';
-import { ApiClustersApi, Configuration, Cluster, Topic } from 'generated-sources';
+import {
+  ApiClustersApi,
+  Configuration,
+  Cluster,
+  Topic,
+  TopicFormData,
+  TopicConfig
+} from 'generated-sources';
 import {
   ConsumerGroupID,
   PromiseThunk,
   ClusterName,
-  TopicFormData,
+  BrokerId,
   TopicName,
-  // Topic,
   TopicMessageQueryParams,
+  TopicFormFormattedParams,
+  TopicFormDataRaw,
 } from 'redux/interfaces';
 
 import * as actions from './actions';
+import { BASE_URL, BASE_PARAMS } from 'lib/constants';
 
-const openApiConf = new Configuration({ basePath: process.env.REACT_APP_API_HOST || '' });
-const openApiClient = new ApiClustersApi(openApiConf);
+const apiClientConf = new Configuration({ basePath: BASE_URL });
+const apiClient = new ApiClustersApi(apiClientConf);
 
-export const fetchBrokers = (
+export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchClusterListAction.request());
+  try {
+    const clusters: Cluster[] = await apiClient.getClusters();
+    dispatch(actions.fetchClusterListAction.success(clusters));
+  } catch (e) {
+    dispatch(actions.fetchClusterListAction.failure());
+  }
+};
+
+export const fetchClusterStats = (
   clusterName: ClusterName
 ): PromiseThunk<void> => async (dispatch) => {
-  dispatch(actions.fetchBrokersAction.request());
+  dispatch(actions.fetchClusterStatsAction.request());
   try {
-    const payload = await openApiClient.getBrokers({clusterName});
-    dispatch(actions.fetchBrokersAction.success(payload));
+    const payload = await apiClient.getClusterStats({ clusterName });
+    dispatch(actions.fetchClusterStatsAction.success(payload));
   } catch (e) {
-    dispatch(actions.fetchBrokersAction.failure());
+    dispatch(actions.fetchClusterStatsAction.failure());
   }
 };
 
@@ -32,44 +50,47 @@ export const fetchClusterMetrics = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchClusterMetricsAction.request());
   try {
-    const payload = await openApiClient.getClusterMetrics({ clusterName });
+    const payload = await apiClient.getClusterMetrics({ clusterName });
     dispatch(actions.fetchClusterMetricsAction.success(payload));
   } catch (e) {
     dispatch(actions.fetchClusterMetricsAction.failure());
   }
 };
 
-export const fetchBrokerMetrics = (
+export const fetchBrokers = (
   clusterName: ClusterName
+): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchBrokersAction.request());
+  try {
+    const payload = await apiClient.getBrokers({clusterName});
+    dispatch(actions.fetchBrokersAction.success(payload));
+  } catch (e) {
+    dispatch(actions.fetchBrokersAction.failure());
+  }
+};
+
+export const fetchBrokerMetrics = (
+  clusterName: ClusterName,
+  brokerId: BrokerId
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchBrokerMetricsAction.request());
   try {
-    const payload = await api.getBrokerMetrics(clusterName);
+    const payload = await apiClient.getBrokersMetrics({ clusterName, id: brokerId });
     dispatch(actions.fetchBrokerMetricsAction.success(payload));
   } catch (e) {
     dispatch(actions.fetchBrokerMetricsAction.failure());
   }
 };
 
-export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
-  dispatch(actions.fetchClusterListAction.request());
-  try {
-    const clusters: Cluster[] = await openApiClient.getClusters();
-    dispatch(actions.fetchClusterListAction.success(clusters));
-  } catch (e) {
-    dispatch(actions.fetchClusterListAction.failure());
-  }
-};
-
-export const fetchTopicList = (
+export const fetchTopicsList = (
   clusterName: ClusterName
 ): PromiseThunk<void> => async (dispatch) => {
-  dispatch(actions.fetchTopicListAction.request());
+  dispatch(actions.fetchTopicsListAction.request());
   try {
-    const topics = await openApiClient.getTopics({ clusterName })//api.getTopics(clusterName);
-    dispatch(actions.fetchTopicListAction.success(topics));
+    const topics = await apiClient.getTopics({ clusterName });
+    dispatch(actions.fetchTopicsListAction.success(topics));
   } catch (e) {
-    dispatch(actions.fetchTopicListAction.failure());
+    dispatch(actions.fetchTopicsListAction.failure());
   }
 };
 
@@ -80,11 +101,11 @@ export const fetchTopicMessages = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicMessagesAction.request());
   try {
-    const messages = await api.getTopicMessages(
+    const messages = await apiClient.getTopicMessages({
       clusterName,
       topicName,
-      queryParams
-    );
+      ...queryParams
+    });
     dispatch(actions.fetchTopicMessagesAction.success(messages));
   } catch (e) {
     dispatch(actions.fetchTopicMessagesAction.failure());
@@ -97,7 +118,7 @@ export const fetchTopicDetails = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicDetailsAction.request());
   try {
-    const topicDetails = await api.getTopicDetails(clusterName, topicName);
+    const topicDetails = await apiClient.getTopicDetails({ clusterName, topicName });
     dispatch(
       actions.fetchTopicDetailsAction.success({
         topicName,
@@ -115,7 +136,7 @@ export const fetchTopicConfig = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchTopicConfigAction.request());
   try {
-    const config = await api.getTopicConfig(clusterName, topicName);
+    const config = await apiClient.getTopicConfigs({ clusterName, topicName });
     dispatch(actions.fetchTopicConfigAction.success({ topicName, config }));
   } catch (e) {
     dispatch(actions.fetchTopicConfigAction.failure());
@@ -124,11 +145,11 @@ export const fetchTopicConfig = (
 
 export const createTopic = (
   clusterName: ClusterName,
-  form: TopicFormData
+  form: TopicFormDataRaw
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.createTopicAction.request());
   try {
-    const topic: Topic = await api.postTopic(clusterName, form);
+    const topic: Topic = await apiClient.createTopic({ clusterName, topicFormData: formatTopicFormData(form) });
     dispatch(actions.createTopicAction.success(topic));
   } catch (e) {
     dispatch(actions.createTopicAction.failure());
@@ -141,7 +162,7 @@ export const updateTopic = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.updateTopicAction.request());
   try {
-    const topic: Topic = await api.patchTopic(clusterName, form);
+    const topic: Topic = await apiClient.updateTopic({ clusterName, topicName: form.name, topicFormData: form });
     dispatch(actions.updateTopicAction.success(topic));
   } catch (e) {
     dispatch(actions.updateTopicAction.failure());
@@ -153,7 +174,7 @@ export const fetchConsumerGroupsList = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchConsumerGroupsAction.request());
   try {
-    const consumerGroups = await api.getConsumerGroups(clusterName);
+    const consumerGroups = await apiClient.getConsumerGroups({ clusterName });
     dispatch(actions.fetchConsumerGroupsAction.success(consumerGroups));
   } catch (e) {
     dispatch(actions.fetchConsumerGroupsAction.failure());
@@ -166,10 +187,10 @@ export const fetchConsumerGroupDetails = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchConsumerGroupDetailsAction.request());
   try {
-    const consumerGroupDetails = await api.getConsumerGroupDetails(
+    const consumerGroupDetails = await apiClient.getConsumerGroup({
       clusterName,
-      consumerGroupID
-    );
+      id: consumerGroupID
+    });
     dispatch(
       actions.fetchConsumerGroupDetailsAction.success({
         consumerGroupID,
@@ -180,3 +201,38 @@ export const fetchConsumerGroupDetails = (
     dispatch(actions.fetchConsumerGroupDetailsAction.failure());
   }
 };
+
+const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
+  const {
+    name,
+    partitions,
+    replicationFactor,
+    cleanupPolicy,
+    retentionBytes,
+    retentionMs,
+    maxMessageBytes,
+    minInSyncReplicas,
+    customParams
+  } = form;
+
+  return {
+    name,
+    partitions,
+    replicationFactor,
+    configs: {
+      'cleanup.policy': cleanupPolicy,
+      'retention.ms': retentionMs,
+      'retention.bytes': retentionBytes,
+      'max.message.bytes': maxMessageBytes,
+      'min.insync.replicas': minInSyncReplicas,
+      ...Object.values(customParams || {}).reduce(
+        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
+          return {
+            ...result,
+            [customParam.name]: customParam.value,
+          };
+        },
+        {})
+    }
+  };
+}

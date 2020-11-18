@@ -11,17 +11,17 @@ interface Props {
   clusterName: ClusterName;
   isFetched: boolean;
   fetchBrokers: (clusterName: ClusterName) => void;
-  fetchTopicList: (clusterName: ClusterName) => void;
+  fetchTopicsList: (clusterName: ClusterName) => void;
 }
 
 const Topics: React.FC<Props> = ({
   clusterName,
   isFetched,
-  fetchTopicList,
+  fetchTopicsList,
 }) => {
   React.useEffect(() => {
-    fetchTopicList(clusterName);
-  }, [fetchTopicList, clusterName]);
+    fetchTopicsList(clusterName);
+  }, [fetchTopicsList, clusterName]);
 
   if (isFetched) {
     return (
