@@ -17,10 +17,10 @@ import {
   TopicFormDataRaw,
 } from 'redux/interfaces';
 
-import { BASE_URL, BASE_PARAMS } from 'lib/constants';
+import { BASE_PARAMS } from 'lib/constants';
 import * as actions from './actions';
 
-const apiClientConf = new Configuration({ basePath: BASE_URL });
+const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new ApiClustersApi(apiClientConf);
 
 export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
