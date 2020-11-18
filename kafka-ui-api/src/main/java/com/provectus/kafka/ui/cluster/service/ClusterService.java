@@ -150,7 +150,7 @@ public class ClusterService {
                 .flatMap(client -> ClusterUtil.toMono(client.getAdminClient().describeCluster().nodes())
                     .map(n -> n.stream().map(node -> {
                         Broker broker = new Broker();
-                        broker.setId(node.idString());
+                        broker.setId(node.id());
                         broker.setHost(node.host());
                         return broker;
                     }).collect(Collectors.toList())))
