@@ -1,9 +1,6 @@
-import {
-  ConsumerGroup,
-  ConsumerGroupDetails
-} from 'generated-sources';
+import { ConsumerGroup, ConsumerGroupDetails } from 'generated-sources';
 
-export type ConsumerGroupID = ConsumerGroup["consumerGroupId"];
+export type ConsumerGroupID = ConsumerGroup['consumerGroupId'];
 
 export interface ConsumerGroupDetailedInfo
   extends ConsumerGroup,

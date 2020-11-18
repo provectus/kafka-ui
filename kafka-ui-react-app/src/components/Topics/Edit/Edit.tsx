@@ -5,12 +5,9 @@ import {
   TopicName,
   TopicConfigByName,
   TopicWithDetailedInfo,
-  CleanupPolicy
+  CleanupPolicy,
 } from 'redux/interfaces';
-import {
-  TopicConfig
-} from 'generated-sources';
-import {  } from "module";
+import { TopicConfig } from 'generated-sources';
 import { useForm, FormContext } from 'react-hook-form';
 import { camelCase } from 'lodash';
 
@@ -48,7 +45,7 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
   const { name, replicationFactor } = topic;
 
   const configs = topic.config?.reduce(
-    (result: { [key: string]: TopicConfig["value"] }, param) => {
+    (result: { [key: string]: TopicConfig['value'] }, param) => {
       result[camelCase(param.name)] = param.value || param.defaultValue;
       return result;
     },

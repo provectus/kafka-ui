@@ -4,7 +4,7 @@ import {
   TopicMessage,
   TopicConfig,
   TopicFormData,
-  GetTopicMessagesRequest
+  GetTopicMessagesRequest,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -15,7 +15,7 @@ export enum CleanupPolicy {
 }
 
 export interface TopicConfigByName {
-  byName: TopicConfigParams
+  byName: TopicConfigParams;
 }
 
 export interface TopicConfigParams {
@@ -23,13 +23,13 @@ export interface TopicConfigParams {
 }
 
 export interface TopicConfigOption {
-  name: TopicConfig['name'],
-  defaultValue: TopicConfig['defaultValue']
+  name: TopicConfig['name'];
+  defaultValue: TopicConfig['defaultValue'];
 }
 
 export interface TopicConfigValue {
-  name: TopicConfig['name'],
-  value: TopicConfig['value']
+  name: TopicConfig['name'];
+  value: TopicConfig['value'];
 }
 
 export interface TopicMessageQueryParams {
@@ -41,7 +41,7 @@ export interface TopicMessageQueryParams {
 
 export interface TopicFormCustomParams {
   byIndex: TopicConfigParams;
-  allIndexes: string[];
+  allIndexes: TopicName[];
 }
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
@@ -54,7 +54,7 @@ export interface TopicsState {
   messages: TopicMessage[];
 }
 
-export type TopicFormFormattedParams = TopicFormData["configs"];
+export type TopicFormFormattedParams = TopicFormData['configs'];
 
 export interface TopicFormDataRaw {
   name: string;
