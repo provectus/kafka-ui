@@ -111,7 +111,7 @@
                                         <resource>
                                             <directory>${project.build.directory}/generated-sources/frontend/</directory>
                                             <includes>
-                                                <include>*.*</include>
+                                                <include>**/*.ts</include>
                                             </includes>
                                         </resource>
                                     </resources>
