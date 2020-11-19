@@ -620,14 +620,17 @@ components:
         partition:
           type: integer
         currentOffset:
-          type: long
+          type: integer
+          format: int64
         endOffset:
-          type: long
+          type: integer
+          format: int64
         messagesBehind:
-          type: long
+          type: integer
+          format: int64
       required:
         - consumerId
-
+        
     ConsumerGroupDetails:
       type: object
       properties:
