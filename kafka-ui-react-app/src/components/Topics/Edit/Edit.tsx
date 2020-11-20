@@ -1,12 +1,13 @@
 import React from 'react';
 import {
   ClusterName,
-  TopicFormData,
+  TopicFormDataRaw,
   TopicName,
   TopicConfigByName,
   TopicWithDetailedInfo,
   CleanupPolicy,
 } from 'redux/interfaces';
+import { TopicConfig } from 'generated-sources';
 import { useForm, FormContext } from 'react-hook-form';
 import { camelCase } from 'lodash';
 
@@ -22,7 +23,7 @@ interface Props {
   isTopicUpdated: boolean;
   fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => void;
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
-  updateTopic: (clusterName: ClusterName, form: TopicFormData) => void;
+  updateTopic: (clusterName: ClusterName, form: TopicFormDataRaw) => void;
   redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => void;
   resetUploadedState: () => void;
 }
@@ -44,7 +45,7 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
   const { name, replicationFactor } = topic;
 
   const configs = topic.config?.reduce(
-    (result: { [name: string]: string }, param) => {
+    (result: { [key: string]: TopicConfig['value'] }, param) => {
       result[camelCase(param.name)] = param.value || param.defaultValue;
       return result;
     },
@@ -76,7 +77,7 @@ const Edit: React.FC<Props> = ({
 }) => {
   const defaultValues = topicParams(topic);
 
-  const methods = useForm<TopicFormData>({ defaultValues });
+  const methods = useForm<TopicFormDataRaw>({ defaultValues });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
 
@@ -109,7 +110,7 @@ const Edit: React.FC<Props> = ({
     config.byName[param.name] = param;
   });
 
-  const onSubmit = async (data: TopicFormData) => {
+  const onSubmit = async (data: TopicFormDataRaw) => {
     updateTopic(clusterName, data);
     setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
   };

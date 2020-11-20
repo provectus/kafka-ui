@@ -1,8 +1,8 @@
 import React from 'react';
-import { Cluster, ClusterStatus } from 'redux/interfaces';
 import formatBytes from 'lib/utils/formatBytes';
 import { NavLink } from 'react-router-dom';
 import { clusterBrokersPath } from 'lib/paths';
+import { Cluster, ServerStatus } from 'generated-sources';
 
 const ClusterWidget: React.FC<Cluster> = ({
   name,
@@ -20,7 +20,7 @@ const ClusterWidget: React.FC<Cluster> = ({
         title={name}
       >
         <div
-          className={`tag has-margin-right ${status === ClusterStatus.Online ? 'is-primary' : 'is-danger'}`}
+          className={`tag has-margin-right ${status === ServerStatus.Online ? 'is-primary' : 'is-danger'}`}
         >
           {status}
         </div>
@@ -43,11 +43,11 @@ const ClusterWidget: React.FC<Cluster> = ({
           </tr>
           <tr>
             <th>Production</th>
-            <td>{formatBytes(bytesInPerSec)}</td>
+            <td>{formatBytes(bytesInPerSec || 0)}</td>
           </tr>
           <tr>
             <th>Consumption</th>
-            <td>{formatBytes(bytesOutPerSec)}</td>
+            <td>{formatBytes(bytesOutPerSec || 0)}</td>
           </tr>
         </tbody>
       </table>

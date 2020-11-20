@@ -1,4 +1,5 @@
-import { Action, TopicsState, Topic } from 'redux/interfaces';
+import { Action, TopicsState } from 'redux/interfaces';
+import { Topic } from 'generated-sources';
 import ActionType from 'redux/actionType';
 
 export const initialState: TopicsState = {

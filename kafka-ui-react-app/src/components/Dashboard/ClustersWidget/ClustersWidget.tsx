@@ -1,9 +1,10 @@
 import React from 'react';
 import { chunk } from 'lodash';
-import { Cluster } from 'redux/interfaces';
+
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import ClusterWidget from './ClusterWidget';
+import { Cluster } from 'generated-sources';
 
 interface Props {
   clusters: Cluster[];

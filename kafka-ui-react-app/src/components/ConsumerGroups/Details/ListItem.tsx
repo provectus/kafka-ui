@@ -1,11 +1,11 @@
 import React from 'react';
-import { Consumer } from 'redux/interfaces/consumerGroup';
+import { ConsumerTopicPartitionDetail } from 'generated-sources';
 import { NavLink } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces/cluster';
 
 interface Props {
   clusterName: ClusterName;
-  consumer: Consumer;
+  consumer: ConsumerTopicPartitionDetail;
 }
 
 const ListItem: React.FC<Props> = ({ clusterName, consumer }) => {

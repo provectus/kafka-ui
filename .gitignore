@@ -32,3 +32,4 @@ build/
 /kafka-ui-api/app/node
 
 .DS_Store
+*.code-workspace

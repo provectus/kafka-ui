@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import {
   ClusterName,
-  SeekType,
-  SeekTypes,
-  TopicMessage,
   TopicMessageQueryParams,
-  TopicName,
-  TopicPartition,
+  TopicName
 } from 'redux/interfaces';
+import {
+  TopicMessage,
+  Partition,
+  SeekType
+} from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
@@ -33,12 +34,12 @@ interface Props {
     queryParams: Partial<TopicMessageQueryParams>
   ) => void;
   messages: TopicMessage[];
-  partitions: TopicPartition[];
+  partitions: Partition[];
 }
 
 interface FilterProps {
-  offset: number;
-  partition: number;
+  offset: TopicMessage['offset'];
+  partition: TopicMessage['partition'];
 }
 
 function usePrevious(value: any) {
@@ -63,7 +64,7 @@ const Messages: React.FC<Props> = ({
   );
   const [filterProps, setFilterProps] = React.useState<FilterProps[]>([]);
   const [selectedSeekType, setSelectedSeekType] = React.useState<SeekType>(
-    SeekTypes.OFFSET
+    SeekType.OFFSET
   );
   const [searchOffset, setSearchOffset] = React.useState<string>('0');
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
@@ -105,7 +106,7 @@ const Messages: React.FC<Props> = ({
     const foundedValues = filterProps.find(
       (prop) => prop.partition === partition.value
     );
-    if (selectedSeekType === SeekTypes.OFFSET) {
+    if (selectedSeekType === SeekType.OFFSET) {
       return foundedValues ? foundedValues.offset : 0;
     }
     return searchTimestamp ? searchTimestamp.getTime() : null;
@@ -134,7 +135,7 @@ const Messages: React.FC<Props> = ({
         setSearchTimestamp(searchTimestamp);
         setQueryParams({
           ...queryParams,
-          seekType: SeekTypes.TIMESTAMP,
+          seekType: SeekType.TIMESTAMP,
           seekTo: selectedPartitions.map((p) => `${p.value}::${timestamp}`),
         });
       } else {
@@ -155,7 +156,7 @@ const Messages: React.FC<Props> = ({
     const offset = event.target.value || '0';
     setSearchOffset(offset);
     debouncedCallback({
-      seekType: SeekTypes.OFFSET,
+      seekType: SeekType.OFFSET,
       seekTo: selectedPartitions.map((p) => `${p.value}::${offset}`),
     });
   };
@@ -176,9 +177,9 @@ const Messages: React.FC<Props> = ({
     fetchTopicMessages(clusterName, topicName, queryParams);
   }, [clusterName, topicName, queryParams]);
 
-  const getTimestampDate = (timestamp: string) => {
-    if (!Date.parse(timestamp)) return;
-    return format(Date.parse(timestamp), 'yyyy-MM-dd HH:mm:ss');
+  const getFormattedDate = (date: Date) => {
+    if (!date) return null;
+    return format(date, 'yyyy-MM-dd HH:mm:ss');
   };
 
   const getMessageContentBody = (content: any) => {
@@ -224,7 +225,7 @@ const Messages: React.FC<Props> = ({
 
     setQueryParams({
       ...queryParams,
-      seekType: SeekTypes.OFFSET,
+      seekType: SeekType.OFFSET,
       seekTo,
     });
     fetchTopicMessages(clusterName, topicName, queryParams);
@@ -255,7 +256,7 @@ const Messages: React.FC<Props> = ({
             {messages.map((message) => (
               <tr key={`${message.timestamp}${Math.random()}`}>
                 <td style={{ width: 200 }}>
-                  {getTimestampDate(message.timestamp)}
+                  {getFormattedDate(message.timestamp)}
                 </td>
                 <td style={{ width: 150 }}>{message.offset}</td>
                 <td style={{ width: 100 }}>{message.partition}</td>
@@ -309,16 +310,16 @@ const Messages: React.FC<Props> = ({
               id="selectSeekType"
               name="selectSeekType"
               onChange={handleSeekTypeChange}
-              defaultValue={SeekTypes.OFFSET}
+              defaultValue={SeekType.OFFSET}
               value={selectedSeekType}
             >
-              <option value={SeekTypes.OFFSET}>Offset</option>
-              <option value={SeekTypes.TIMESTAMP}>Timestamp</option>
+              <option value={SeekType.OFFSET}>Offset</option>
+              <option value={SeekType.TIMESTAMP}>Timestamp</option>
             </select>
           </div>
         </div>
         <div className="column is-one-fifth">
-          {selectedSeekType === SeekTypes.OFFSET ? (
+          {selectedSeekType === SeekType.OFFSET ? (
             <>
               <label className="label">Offset</label>
               <input
@@ -335,7 +336,7 @@ const Messages: React.FC<Props> = ({
               <label className="label">Timestamp</label>
               <DatePicker
                 selected={searchTimestamp}
-                onChange={(date) => setSearchTimestamp(date)}
+                onChange={(date: Date | null) => setSearchTimestamp(date)}
                 onCalendarClose={handleDateTimeChange}
                 showTimeInput
                 timeInputLabel="Time:"

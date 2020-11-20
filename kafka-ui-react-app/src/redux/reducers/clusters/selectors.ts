@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
-import { Cluster, RootState, FetchStatus, ClusterStatus } from 'redux/interfaces';
+import { RootState, FetchStatus } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { Cluster, ServerStatus } from 'generated-sources';
 
 const clustersState = ({ clusters }: RootState): Cluster[] => clusters;
 
@@ -16,13 +17,13 @@ export const getClusterList = createSelector(clustersState, (clusters) => cluste
 export const getOnlineClusters = createSelector(
   getClusterList,
   (clusters) => clusters.filter(
-    ({ status }) => status === ClusterStatus.Online,
+    ({ status }) => status === ServerStatus.Online,
   ),
 );
 
 export const getOfflineClusters = createSelector(
   getClusterList,
   (clusters) => clusters.filter(
-    ({ status }) => status === ClusterStatus.Offline,
+    ({ status }) => status === ServerStatus.Offline,
   ),
 );

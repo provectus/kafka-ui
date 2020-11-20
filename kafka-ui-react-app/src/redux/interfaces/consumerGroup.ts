@@ -1,27 +1,6 @@
-export type ConsumerGroupID = string;
+import { ConsumerGroup, ConsumerGroupDetails } from 'generated-sources';
 
-export interface ConsumerGroup {
-  consumerGroupId: ConsumerGroupID;
-  numConsumers: number;
-  numTopics: number;
-}
-
-export interface ConsumerGroupDetails {
-  consumerGroupId: ConsumerGroupID;
-  numConsumers: number;
-  numTopics: number;
-  consumers: Consumer[];
-}
-
-export interface Consumer {
-  consumerId: string;
-  topic: string;
-  host: string;
-  partition: number;
-  messagesBehind: number;
-  currentOffset: number;
-  endOffset: number;
-}
+export type ConsumerGroupID = ConsumerGroup['consumerGroupId'];
 
 export interface ConsumerGroupDetailedInfo
   extends ConsumerGroup,
@@ -29,5 +8,5 @@ export interface ConsumerGroupDetailedInfo
 
 export interface ConsumerGroupsState {
   byID: { [consumerGroupID: string]: ConsumerGroupDetailedInfo };
-  allIDs: string[];
+  allIDs: ConsumerGroupID[];
 }

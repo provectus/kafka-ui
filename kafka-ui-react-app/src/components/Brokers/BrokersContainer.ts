@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import {
+  fetchClusterStats,
   fetchBrokers,
-  fetchBrokerMetrics,
 } from 'redux/actions';
 import Brokers from './Brokers';
 import * as brokerSelectors from 'redux/reducers/brokers/selectors';
@@ -28,8 +28,8 @@ const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}
 });
 
 const mapDispatchToProps = {
+  fetchClusterStats: (clusterName: ClusterName) => fetchClusterStats(clusterName),
   fetchBrokers: (clusterName: ClusterName) => fetchBrokers(clusterName),
-  fetchBrokerMetrics: (clusterName: ClusterName) => fetchBrokerMetrics(clusterName),
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Brokers);

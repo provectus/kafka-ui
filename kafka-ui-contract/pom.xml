@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
@@ -70,7 +69,56 @@
                                     </configOptions>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>generate-frontend-api</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/kafka-ui-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/frontend/</output>
+                                    <generatorName>typescript-fetch</generatorName>
+                                    <configOptions>
+                                        <modelPackage>com.provectus.kafka.ui.model</modelPackage>
+                                        <apiPackage>com.provectus.kafka.ui.api</apiPackage>
+                                        <apiPackage>com.provectus.kafka.ui.invoker</apiPackage>
+                                        <sourceFolder>kafka-ui-contract</sourceFolder>
+                                        <typescriptThreePlus>true</typescriptThreePlus>
+                                        <supportsES6>true</supportsES6>
+                                        <nullSafeAdditionalProps>true</nullSafeAdditionalProps>
+                                        <withInterfaces>true</withInterfaces>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
                         </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.1.0</version>
+                        <executions>
+                            <execution>
+                                <id>copy-resource-one</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+
+                                <configuration>
+                                    <outputDirectory>${basedir}/..//kafka-ui-react-app/src/generated-sources</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}/generated-sources/frontend/</directory>
+                                            <includes>
+                                                <include>**/*.ts</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+
                     </plugin>
                 </plugins>
             </build>

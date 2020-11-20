@@ -1,9 +1,5 @@
-import {
-  Action,
-  BrokersState,
-  ZooKeeperStatus,
-  BrokerMetrics,
-} from 'redux/interfaces';
+import { Action, BrokersState, ZooKeeperStatus } from 'redux/interfaces';
+import { ClusterStats } from 'generated-sources';
 import ActionType from 'redux/actionType';
 
 export const initialState: BrokersState = {
@@ -21,15 +17,14 @@ export const initialState: BrokersState = {
 
 const updateBrokerSegmentSize = (
   state: BrokersState,
-  payload: BrokerMetrics
+  payload: ClusterStats
 ) => {
   const brokers = state.items;
   const { diskUsage } = payload;
 
   const items = brokers.map((broker) => {
-    const brokerMetrics = diskUsage.find(
-      ({ brokerId }) => brokerId === broker.brokerId
-    );
+    const brokerMetrics =
+      diskUsage && diskUsage.find(({ brokerId }) => brokerId === broker.id);
     if (brokerMetrics !== undefined) {
       return { ...broker, ...brokerMetrics };
     }
@@ -48,7 +43,7 @@ const reducer = (state = initialState, action: Action): BrokersState => {
         ...state,
         items: action.payload,
       };
-    case ActionType.GET_BROKER_METRICS__SUCCESS:
+    case ActionType.GET_CLUSTER_STATS__SUCCESS:
       return updateBrokerSegmentSize(state, action.payload);
     default:
       return state;

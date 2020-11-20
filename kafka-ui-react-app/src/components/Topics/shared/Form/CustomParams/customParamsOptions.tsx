@@ -1,10 +1,10 @@
-import { TopicCustomParamOption } from 'redux/interfaces';
+import { TopicConfigOption } from 'redux/interfaces';
 
-interface CustomParamOption {
-  [optionName: string]: TopicCustomParamOption;
+interface TopicConfigOptions {
+  [optionName: string]: TopicConfigOption;
 }
 
-const CUSTOM_PARAMS_OPTIONS: CustomParamOption = {
+const CUSTOM_PARAMS_OPTIONS: TopicConfigOptions = {
   'compression.type': {
     name: 'compression.type',
     defaultValue: 'producer',

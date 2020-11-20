@@ -1,7 +1,11 @@
 import React from 'react';
 import { omit, reject, reduce, remove } from 'lodash';
 
-import { TopicFormCustomParams, TopicConfigByName } from 'redux/interfaces';
+import {
+  TopicFormCustomParams,
+  TopicConfigByName,
+  TopicConfigParams
+} from 'redux/interfaces';
 import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
 import CustomParamField from './CustomParamField';
 
@@ -12,20 +16,13 @@ interface Props {
   config?: TopicConfigByName;
 }
 
-interface Param {
-  [index: string]: {
-    name: string;
-    value: string;
-  };
-}
-
 const existingFields: string[] = [];
 
 const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
   const byIndex = config
     ? reduce(
         config.byName,
-        (result: Param, param, paramName) => {
+        (result: TopicConfigParams, param, paramName) => {
           result[`${INDEX_PREFIX}.${new Date().getTime()}ts`] = {
             name: paramName,
             value: param.value,

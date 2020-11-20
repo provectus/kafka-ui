@@ -24,3 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea
+
+# generated sources
+src/generated-sources

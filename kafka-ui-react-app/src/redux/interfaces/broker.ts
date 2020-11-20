@@ -1,32 +1,9 @@
-export type BrokerId = string;
+import { ClusterStats, Broker } from 'generated-sources';
 
-export interface Broker {
-  brokerId: BrokerId;
-  bytesInPerSec: number;
-  segmentSize: number;
-  partitionReplicas: number;
-  bytesOutPerSec: number;
-};
+export type BrokerId = Broker['id'];
 
 export enum ZooKeeperStatus { offline, online };
 
-export interface BrokerDiskUsage {
-  brokerId: BrokerId;
-  segmentSize: number;
-}
-
-export interface BrokerMetrics {
-  brokerCount: number;
-  zooKeeperStatus: ZooKeeperStatus;
-  activeControllers: number;
-  onlinePartitionCount: number;
-  offlinePartitionCount: number;
-  inSyncReplicasCount: number,
-  outOfSyncReplicasCount: number,
-  underReplicatedPartitionCount: number;
-  diskUsage: BrokerDiskUsage[];
-}
-
-export interface BrokersState extends BrokerMetrics {
+export interface BrokersState extends ClusterStats {
   items: Broker[];
 }
