@@ -11,7 +11,7 @@ import Details from './Details';
 
 interface RouteProps {
   clusterName: ClusterName;
-  consumerGroupID: string;
+  consumerGroupID: ConsumerGroupID;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;

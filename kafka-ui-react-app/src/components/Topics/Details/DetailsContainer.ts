@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState } from 'redux/interfaces';
+import { ClusterName, RootState, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import Details from './Details';
 
 interface RouteProps {
   clusterName: ClusterName;
-  topicName: string;
+  topicName: TopicName;
 }
 
 type OwnProps = RouteComponentProps<RouteProps>;

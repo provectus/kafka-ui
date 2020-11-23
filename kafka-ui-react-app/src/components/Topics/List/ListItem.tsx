@@ -16,8 +16,8 @@ const ListItem: React.FC<ListItemProps> = ({
     }
 
     return partitions.reduce((memo: number, { replicas }) => {
-      const outOfSync = replicas.filter(({ inSync }) => !inSync);
-      return memo + outOfSync.length;
+      const outOfSync = replicas?.filter(({ inSync }) => !inSync);
+      return memo + (outOfSync?.length || 0);
     }, 0);
   }, [partitions]);
 
@@ -33,7 +33,7 @@ const ListItem: React.FC<ListItemProps> = ({
           {name}
         </NavLink>
       </td>
-      <td>{partitions.length}</td>
+      <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
       <td>
         <div

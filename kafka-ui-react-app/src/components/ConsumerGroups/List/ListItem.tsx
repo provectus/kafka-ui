@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { ConsumerGroup } from 'redux/interfaces';
+import { ConsumerGroup } from 'generated-sources';
 
 const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   consumerGroup,

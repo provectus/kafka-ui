@@ -1,4 +1,5 @@
-import { Action, ConsumerGroup, ConsumerGroupsState } from 'redux/interfaces';
+import { Action, ConsumerGroupsState } from 'redux/interfaces';
+import { ConsumerGroup } from 'generated-sources';
 import ActionType from 'redux/actionType';
 
 export const initialState: ConsumerGroupsState = {

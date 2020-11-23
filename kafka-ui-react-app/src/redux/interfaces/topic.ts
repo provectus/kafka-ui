@@ -1,14 +1,17 @@
-export type TopicName = string;
+import {
+  Topic,
+  TopicDetails,
+  TopicMessage,
+  TopicConfig as InputTopicConfig,
+  TopicFormData,
+  GetTopicMessagesRequest,
+} from 'generated-sources';
+
+export type TopicName = Topic['name'];
 
 export enum CleanupPolicy {
   Delete = 'delete',
   Compact = 'compact',
-}
-
-export interface InputTopicConfig {
-  name: string;
-  value: string;
-  defaultValue: string;
 }
 
 export interface TopicConfig extends InputTopicConfig {
@@ -16,79 +19,33 @@ export interface TopicConfig extends InputTopicConfig {
 }
 
 export interface TopicConfigByName {
-  byName: {
-    [paramName: string]: TopicConfig;
-  };
+  byName: TopicConfigParams;
 }
 
-export interface TopicReplica {
-  broker: number;
-  leader: boolean;
-  inSync: true;
+export interface TopicConfigParams {
+  [paramName: string]: TopicConfig;
 }
 
-export interface TopicPartition {
-  partition: number;
-  leader: number;
-  offsetMin: number;
-  offsetMax: number;
-  replicas: TopicReplica[];
+export interface TopicConfigOption {
+  name: TopicConfig['name'];
+  defaultValue: TopicConfig['defaultValue'];
 }
 
-export interface TopicCustomParamOption {
-  name: string;
-  defaultValue: string;
+export interface TopicConfigValue {
+  name: TopicConfig['name'];
+  value: TopicConfig['value'];
 }
-
-export interface TopicDetails {
-  partitions: TopicPartition[];
-}
-
-export interface Topic {
-  name: TopicName;
-  internal: boolean;
-  partitionCount?: number;
-  replicationFactor?: number;
-  replicas?: number;
-  inSyncReplicas?: number;
-  segmentSize?: number;
-  segmentCount?: number;
-  underReplicatedPartitions?: number;
-  partitions: TopicPartition[];
-}
-
-export interface TopicMessage {
-  partition: number;
-  offset: number;
-  timestamp: string;
-  timestampType: string;
-  key: string;
-  headers: Record<string, string>;
-  content: any;
-}
-
-export enum SeekTypes {
-  OFFSET = 'OFFSET',
-  TIMESTAMP = 'TIMESTAMP',
-}
-
-export type SeekType = keyof typeof SeekTypes;
 
 export interface TopicMessageQueryParams {
-  q: string;
-  limit: number;
-  seekType: SeekType;
-  seekTo: string[];
-}
-
-export interface TopicFormCustomParam {
-  name: string;
-  value: string;
+  q: GetTopicMessagesRequest['q'];
+  limit: GetTopicMessagesRequest['limit'];
+  seekType: GetTopicMessagesRequest['seekType'];
+  seekTo: GetTopicMessagesRequest['seekTo'];
 }
 
 export interface TopicFormCustomParams {
-  byIndex: { [paramIndex: string]: TopicFormCustomParam };
-  allIndexes: string[];
+  byIndex: TopicConfigParams;
+  allIndexes: TopicName[];
 }
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
@@ -102,11 +59,9 @@ export interface TopicsState {
   messages: TopicMessage[];
 }
 
-export interface TopicFormFormattedParams {
-  [name: string]: string;
-}
+export type TopicFormFormattedParams = TopicFormData['configs'];
 
-export interface TopicFormData {
+export interface TopicFormDataRaw {
   name: string;
   partitions: number;
   replicationFactor: number;

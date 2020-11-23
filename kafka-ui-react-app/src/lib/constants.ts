@@ -1,12 +1,12 @@
-export const BASE_PARAMS: RequestInit = {
+import { ConfigurationParameters } from 'generated-sources';
+
+export const BASE_PARAMS: ConfigurationParameters = {
+  basePath: process.env.REACT_APP_API_URL,
   credentials: 'include',
-  mode: 'cors',
   headers: {
     'Content-Type': 'application/json',
   },
 };
-
-export const BASE_URL = process.env.REACT_APP_API_URL;
 
 export const TOPIC_NAME_VALIDATION_PATTERN = RegExp(/^[.,A-Za-z0-9_-]+$/);
 

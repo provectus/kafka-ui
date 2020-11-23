@@ -1,18 +1,9 @@
-export enum ClusterStatus {
-  Online = 'online',
-  Offline = 'offline',
-}
+import { Cluster as InputCLuster } from 'generated-sources';
 
-export type ClusterName = string;
-
-export interface Cluster {
+export interface Cluster extends InputCLuster {
   id: string;
-  name: ClusterName;
-  defaultCluster: boolean;
-  status: ClusterStatus;
-  brokerCount: number;
-  onlinePartitionCount: number;
-  topicCount: number;
-  bytesInPerSec: number;
-  bytesOutPerSec: number;
 }
+
+export type ClusterName = Cluster['name'];
+
+export type ClusterState = Cluster[];

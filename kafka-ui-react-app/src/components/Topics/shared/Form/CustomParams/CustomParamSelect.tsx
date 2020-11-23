@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext, ErrorMessage } from 'react-hook-form';
-import { TopicFormCustomParam } from 'redux/interfaces';
+import { TopicConfigValue } from 'redux/interfaces';
 import CustomParamOptions from './CustomParamOptions';
 import { INDEX_PREFIX } from './CustomParams';
 
@@ -24,7 +24,7 @@ const CustomParamSelect: React.FC<Props> = ({
 
   const selectedMustBeUniq = (selected: string) => {
     const values = getValues({ nest: true });
-    const customParamsValues: TopicFormCustomParam = values.customParams;
+    const customParamsValues: TopicConfigValue = values.customParams;
 
     const valid = !Object.entries(customParamsValues).some(
       ([key, customParam]) => {
