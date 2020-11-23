@@ -4,7 +4,7 @@ import { v4 } from 'uuid';
 
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
-import { Cluster } from 'redux/interfaces';
+import { Cluster } from 'generated-sources';
 import ClusterWidget from './ClusterWidget';
 
 interface Props {
@@ -67,7 +67,7 @@ const ClustersWidget: React.FC<Props> = ({
       {clusterList.map((chunkItem) => (
         <div className="columns" key={chunkItem.id}>
           {chunkItem.data.map((cluster) => (
-            <ClusterWidget cluster={cluster} key={cluster.id} />
+            <ClusterWidget cluster={cluster} key={cluster.name} />
           ))}
         </div>
       ))}

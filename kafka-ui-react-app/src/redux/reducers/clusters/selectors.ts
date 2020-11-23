@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
-import { RootState, FetchStatus, Cluster } from 'redux/interfaces';
+import { RootState, FetchStatus } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-import { ServerStatus } from 'generated-sources';
+import { Cluster, ServerStatus } from 'generated-sources';
 
 const clustersState = ({ clusters }: RootState): Cluster[] => clusters;
 

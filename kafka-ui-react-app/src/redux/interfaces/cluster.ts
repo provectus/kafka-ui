@@ -1,8 +1,4 @@
-import { Cluster as InputCLuster } from 'generated-sources';
-
-export interface Cluster extends InputCLuster {
-  id: string;
-}
+import { Cluster } from 'generated-sources';
 
 export type ClusterName = Cluster['name'];
 
