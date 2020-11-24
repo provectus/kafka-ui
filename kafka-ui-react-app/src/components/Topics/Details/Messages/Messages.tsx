@@ -2,13 +2,9 @@ import React, { useCallback, useEffect, useRef } from 'react';
 import {
   ClusterName,
   TopicMessageQueryParams,
-  TopicName
+  TopicName,
 } from 'redux/interfaces';
-import {
-  TopicMessage,
-  Partition,
-  SeekType
-} from 'generated-sources';
+import { TopicMessage, Partition, SeekType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
@@ -360,7 +356,7 @@ const Messages: React.FC<Props> = ({
         </div>
       </div>
       <div className="columns">
-        <div className="column is-full" style={{textAlign: "right"}}>
+        <div className="column is-full" style={{ textAlign: 'right' }}>
           <input
             type="submit"
             className="button is-primary"

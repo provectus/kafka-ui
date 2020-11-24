@@ -1,24 +1,28 @@
 import { connect } from 'react-redux';
 import { RootState, ClusterName, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import {
-  fetchTopicConfig,
-} from 'redux/actions';
-import Settings from './Settings';
+import { fetchTopicConfig } from 'redux/actions';
 import {
   getTopicConfig,
   getTopicConfigFetched,
 } from 'redux/reducers/topics/selectors';
-
+import Settings from './Settings';
 
 interface RouteProps {
   clusterName: ClusterName;
   topicName: TopicName;
 }
 
-interface OwnProps extends RouteComponentProps<RouteProps> { }
+type OwnProps = RouteComponentProps<RouteProps>;
 
-const mapStateToProps = (state: RootState, { match: { params: { topicName, clusterName } } }: OwnProps) => ({
+const mapStateToProps = (
+  state: RootState,
+  {
+    match: {
+      params: { topicName, clusterName },
+    },
+  }: OwnProps
+) => ({
   clusterName,
   topicName,
   config: getTopicConfig(state, topicName),
@@ -26,7 +30,8 @@ const mapStateToProps = (state: RootState, { match: { params: { topicName, clust
 });
 
 const mapDispatchToProps = {
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => fetchTopicConfig(clusterName, topicName),
+  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) =>
+    fetchTopicConfig(clusterName, topicName),
 };
 
 export default withRouter(

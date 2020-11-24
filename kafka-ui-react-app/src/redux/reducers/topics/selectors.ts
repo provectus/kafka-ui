@@ -84,7 +84,7 @@ export const getTopicByName = createSelector(
 export const getPartitionsByTopicName = createSelector(
   getTopicMap,
   getTopicName,
-  (topics, topicName) => (topics[topicName].partitions) as Partition[]
+  (topics, topicName) => topics[topicName].partitions as Partition[]
 );
 
 export const getFullTopic = createSelector(getTopicByName, (topic) =>

@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-  ClusterName
-} from 'redux/interfaces';
-import {
-  ConsumerGroup
-} from 'generated-sources';
+import { ClusterName } from 'redux/interfaces';
+import { ConsumerGroup } from 'generated-sources';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ListItem from './ListItem';
 

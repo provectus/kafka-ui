@@ -1,11 +1,10 @@
 import React from 'react';
-import { ClusterName, TopicName } from 'redux/interfaces';
+import { ClusterName, TopicName, TopicFormDataRaw } from 'redux/interfaces';
 import { useForm, FormContext } from 'react-hook-form';
 
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterTopicsPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
-import { TopicFormDataRaw } from 'redux/interfaces';
 
 interface Props {
   clusterName: ClusterName;

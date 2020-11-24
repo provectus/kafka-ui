@@ -5,19 +5,15 @@ interface Props {
   title?: string;
 }
 
-const Indicator: React.FC<Props> = ({
-  label,
-  title,
-  children,
-}) => {
+const Indicator: React.FC<Props> = ({ label, title, children }) => {
   return (
     <div className="level-item level-left">
-      <div title={title ? title : label}>
+      <div title={title || label}>
         <p className="heading">{label}</p>
         <p className="title">{children}</p>
       </div>
     </div>
   );
-}
+};
 
 export default Indicator;

@@ -1,8 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
-import ClusterMenu from './ClusterMenu';
 import { Cluster } from 'generated-sources';
+import ClusterMenu from './ClusterMenu';
 
 interface Props {
   isClusterListFetched: boolean;

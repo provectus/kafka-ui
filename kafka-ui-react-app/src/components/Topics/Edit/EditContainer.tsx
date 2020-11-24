@@ -4,6 +4,7 @@ import {
   ClusterName,
   TopicName,
   Action,
+  TopicFormDataRaw,
 } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
@@ -19,8 +20,8 @@ import {
 } from 'redux/reducers/topics/selectors';
 import { clusterTopicPath } from 'lib/paths';
 import { ThunkDispatch } from 'redux-thunk';
+
 import Edit from './Edit';
-import { TopicFormDataRaw } from 'redux/interfaces';
 
 interface RouteProps {
   clusterName: ClusterName;

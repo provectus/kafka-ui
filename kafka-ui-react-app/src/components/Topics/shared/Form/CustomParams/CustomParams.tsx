@@ -1,10 +1,11 @@
 import React from 'react';
 import { omit, reject, reduce, remove } from 'lodash';
+import { v4 } from 'uuid';
 
 import {
   TopicFormCustomParams,
   TopicConfigByName,
-  TopicConfigParams
+  TopicConfigParams,
 } from 'redux/interfaces';
 import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
 import CustomParamField from './CustomParamField';
@@ -26,6 +27,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
           result[`${INDEX_PREFIX}.${new Date().getTime()}ts`] = {
             name: paramName,
             value: param.value,
+            id: v4(),
           };
           return result;
         },
@@ -49,7 +51,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
       ...formCustomParams,
       byIndex: {
         ...formCustomParams.byIndex,
-        [newIndex]: { name: '', value: '' },
+        [newIndex]: { name: '', value: '', id: v4() },
       },
       allIndexes: [newIndex, ...formCustomParams.allIndexes],
     });

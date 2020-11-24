@@ -2,7 +2,7 @@ import {
   Topic,
   TopicDetails,
   TopicMessage,
-  TopicConfig,
+  TopicConfig as InputTopicConfig,
   TopicFormData,
   GetTopicMessagesRequest,
 } from 'generated-sources';
@@ -12,6 +12,10 @@ export type TopicName = Topic['name'];
 export enum CleanupPolicy {
   Delete = 'delete',
   Compact = 'compact',
+}
+
+export interface TopicConfig extends InputTopicConfig {
+  id: string;
 }
 
 export interface TopicConfigByName {
@@ -46,6 +50,7 @@ export interface TopicFormCustomParams {
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
   config?: TopicConfig[];
+  id: string;
 }
 
 export interface TopicsState {

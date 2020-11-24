@@ -1,27 +1,40 @@
 import { connect } from 'react-redux';
-import Details from './Details';
-import {ClusterName, RootState} from 'redux/interfaces';
+import { ClusterName, RootState } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { getIsConsumerGroupDetailsFetched, getConsumerGroupByID } from 'redux/reducers/consumerGroups/selectors';
+import {
+  getIsConsumerGroupDetailsFetched,
+  getConsumerGroupByID,
+} from 'redux/reducers/consumerGroups/selectors';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import { fetchConsumerGroupDetails } from 'redux/actions/thunks';
+import Details from './Details';
 
 interface RouteProps {
   clusterName: ClusterName;
   consumerGroupID: ConsumerGroupID;
 }
 
-interface OwnProps extends RouteComponentProps<RouteProps> { }
+type OwnProps = RouteComponentProps<RouteProps>;
 
-const mapStateToProps = (state: RootState, { match: { params: { consumerGroupID, clusterName } } }: OwnProps) => ({
+const mapStateToProps = (
+  state: RootState,
+  {
+    match: {
+      params: { consumerGroupID, clusterName },
+    },
+  }: OwnProps
+) => ({
   clusterName,
   consumerGroupID,
   isFetched: getIsConsumerGroupDetailsFetched(state),
-  ...getConsumerGroupByID(state, consumerGroupID)
+  ...getConsumerGroupByID(state, consumerGroupID),
 });
 
 const mapDispatchToProps = {
-  fetchConsumerGroupDetails: (clusterName: ClusterName, consumerGroupID: ConsumerGroupID) => fetchConsumerGroupDetails(clusterName, consumerGroupID),
+  fetchConsumerGroupDetails: (
+    clusterName: ClusterName,
+    consumerGroupID: ConsumerGroupID
+  ) => fetchConsumerGroupDetails(clusterName, consumerGroupID),
 };
 
 export default withRouter(

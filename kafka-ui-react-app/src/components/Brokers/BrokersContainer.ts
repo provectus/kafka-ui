@@ -1,20 +1,24 @@
 import { connect } from 'react-redux';
-import {
-  fetchClusterStats,
-  fetchBrokers,
-} from 'redux/actions';
-import Brokers from './Brokers';
+import { fetchClusterStats, fetchBrokers } from 'redux/actions';
 import * as brokerSelectors from 'redux/reducers/brokers/selectors';
 import { RootState, ClusterName } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
+import Brokers from './Brokers';
 
 interface RouteProps {
   clusterName: ClusterName;
 }
 
-interface OwnProps extends RouteComponentProps<RouteProps> { }
+type OwnProps = RouteComponentProps<RouteProps>;
 
-const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}: OwnProps) => ({
+const mapStateToProps = (
+  state: RootState,
+  {
+    match: {
+      params: { clusterName },
+    },
+  }: OwnProps
+) => ({
   isFetched: brokerSelectors.getIsBrokerListFetched(state),
   clusterName,
   brokerCount: brokerSelectors.getBrokerCount(state),
@@ -24,11 +28,14 @@ const mapStateToProps = (state: RootState, { match: { params: { clusterName } }}
   offlinePartitionCount: brokerSelectors.getOfflinePartitionCount(state),
   inSyncReplicasCount: brokerSelectors.getInSyncReplicasCount(state),
   outOfSyncReplicasCount: brokerSelectors.getOutOfSyncReplicasCount(state),
-  underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(state)
+  underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(
+    state
+  ),
 });
 
 const mapDispatchToProps = {
-  fetchClusterStats: (clusterName: ClusterName) => fetchClusterStats(clusterName),
+  fetchClusterStats: (clusterName: ClusterName) =>
+    fetchClusterStats(clusterName),
   fetchBrokers: (clusterName: ClusterName) => fetchBrokers(clusterName),
 };
 

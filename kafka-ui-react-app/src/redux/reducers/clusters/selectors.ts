@@ -9,21 +9,18 @@ const getClusterListFetchingStatus = createFetchingSelector('GET_CLUSTERS');
 
 export const getIsClusterListFetched = createSelector(
   getClusterListFetchingStatus,
-  (status) => status === FetchStatus.fetched,
+  (status) => status === FetchStatus.fetched
 );
 
-export const getClusterList = createSelector(clustersState, (clusters) => clusters);
-
-export const getOnlineClusters = createSelector(
-  getClusterList,
-  (clusters) => clusters.filter(
-    ({ status }) => status === ServerStatus.Online,
-  ),
+export const getClusterList = createSelector(
+  clustersState,
+  (clusters) => clusters
 );
 
-export const getOfflineClusters = createSelector(
-  getClusterList,
-  (clusters) => clusters.filter(
-    ({ status }) => status === ServerStatus.Offline,
-  ),
+export const getOnlineClusters = createSelector(getClusterList, (clusters) =>
+  clusters.filter(({ status }) => status === ServerStatus.Online)
+);
+
+export const getOfflineClusters = createSelector(getClusterList, (clusters) =>
+  clusters.filter(({ status }) => status === ServerStatus.Offline)
 );

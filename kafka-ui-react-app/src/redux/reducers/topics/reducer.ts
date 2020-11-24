@@ -1,5 +1,6 @@
-import { Action, TopicsState } from 'redux/interfaces';
+import { v4 } from 'uuid';
 import { Topic } from 'generated-sources';
+import { Action, TopicsState } from 'redux/interfaces';
 import ActionType from 'redux/actionType';
 
 export const initialState: TopicsState = {
@@ -19,6 +20,7 @@ const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
     memo.byName[name] = {
       ...memo.byName[name],
       ...topic,
+      id: v4(),
     };
     memo.allNames.push(name);
 
@@ -31,7 +33,7 @@ const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
     ...state,
   };
   newState.allNames.push(payload.name);
-  newState.byName[payload.name] = payload;
+  newState.byName[payload.name] = { ...payload, id: v4() };
   return newState;
 };
 
@@ -62,7 +64,10 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           ...state.byName,
           [action.payload.topicName]: {
             ...state.byName[action.payload.topicName],
-            config: action.payload.config,
+            config: action.payload.config.map((inputConfig) => ({
+              ...inputConfig,
+              id: v4(),
+            })),
           },
         },
       };

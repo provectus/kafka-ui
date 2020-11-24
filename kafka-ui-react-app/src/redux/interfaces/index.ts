@@ -33,4 +33,9 @@ export interface RootState {
 
 export type Action = ActionType<typeof actions>;
 
-export type PromiseThunk<T> = ThunkAction<Promise<T>, RootState, undefined, AnyAction>;
+export type PromiseThunk<T> = ThunkAction<
+  Promise<T>,
+  RootState,
+  undefined,
+  AnyAction
+>;

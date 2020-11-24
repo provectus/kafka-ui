@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
-import Nav from './Nav';
-import { getIsClusterListFetched, getClusterList } from 'redux/reducers/clusters/selectors';
+import {
+  getIsClusterListFetched,
+  getClusterList,
+} from 'redux/reducers/clusters/selectors';
 import { RootState } from 'redux/interfaces';
+import Nav from './Nav';
 
 const mapStateToProps = (state: RootState) => ({
   isClusterListFetched: getIsClusterListFetched(state),

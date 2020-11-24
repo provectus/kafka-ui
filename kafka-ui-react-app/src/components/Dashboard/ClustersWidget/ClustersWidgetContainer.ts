@@ -1,11 +1,11 @@
 import { connect } from 'react-redux';
-import ClustersWidget from './ClustersWidget';
 import {
   getClusterList,
   getOnlineClusters,
   getOfflineClusters,
 } from 'redux/reducers/clusters/selectors';
 import { RootState } from 'redux/interfaces';
+import ClustersWidget from './ClustersWidget';
 
 const mapStateToProps = (state: RootState) => ({
   clusters: getClusterList(state),

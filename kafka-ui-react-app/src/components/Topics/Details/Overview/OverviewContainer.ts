@@ -1,20 +1,28 @@
 import { connect } from 'react-redux';
-import {
-  fetchTopicDetails,
-} from 'redux/actions';
-import Overview from './Overview';
+import { fetchTopicDetails } from 'redux/actions';
 import { RootState, TopicName, ClusterName } from 'redux/interfaces';
-import { getTopicByName, getIsTopicDetailsFetched } from 'redux/reducers/topics/selectors';
+import {
+  getTopicByName,
+  getIsTopicDetailsFetched,
+} from 'redux/reducers/topics/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import Overview from './Overview';
 
 interface RouteProps {
   clusterName: ClusterName;
   topicName: TopicName;
 }
 
-interface OwnProps extends RouteComponentProps<RouteProps> { }
+type OwnProps = RouteComponentProps<RouteProps>;
 
-const mapStateToProps = (state: RootState, { match: { params: { topicName, clusterName } } }: OwnProps) => ({
+const mapStateToProps = (
+  state: RootState,
+  {
+    match: {
+      params: { topicName, clusterName },
+    },
+  }: OwnProps
+) => ({
   clusterName,
   topicName,
   isFetched: getIsTopicDetailsFetched(state),
@@ -22,7 +30,8 @@ const mapStateToProps = (state: RootState, { match: { params: { topicName, clust
 });
 
 const mapDispatchToProps = {
-  fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => fetchTopicDetails(clusterName, topicName),
+  fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) =>
+    fetchTopicDetails(clusterName, topicName),
 };
 
 export default withRouter(
