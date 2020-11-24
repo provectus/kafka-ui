@@ -19,7 +19,6 @@ const New: React.FC<Props> = ({
   isTopicCreated,
   createTopic,
   redirectToTopicPath,
-  resetUploadedState,
 }) => {
   const methods = useForm<TopicFormDataRaw>();
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);

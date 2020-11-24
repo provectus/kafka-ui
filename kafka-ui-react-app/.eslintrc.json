@@ -13,36 +13,21 @@
       "jsx": true
     },
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
-  "plugins": ["react", "@typescript-eslint", "prettier"],
+  "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
-    "plugin:react/recommended",
-    "airbnb",
-    "plugin:prettier/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended"
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/react",
+    "prettier/@typescript-eslint"
   ],
   "rules": {
-    "@typescript-eslint/ban-ts-ignore": "off",
-    "import/extensions": [
-      "error",
-      "ignorePackages",
-      {
-        "js": "never",
-        "jsx": "never",
-        "ts": "never",
-        "tsx": "never"
-      }
-    ],
     "prettier/prettier": "error",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "react/jsx-filename-extension": [
-      1,
-      { "extensions": [".js", ".jsx", ".ts", ".tsx"] }
-    ],
+    "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
-    "no-param-reassign": [2, { "props": false }],
     "import/prefer-default-export": "off"
   },
   "overrides": [
@@ -52,14 +37,5 @@
         "react/prop-types": "off"
       }
     }
-  ],
-  "settings": {
-    "import/resolver": {
-      "node": {
-        "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "paths": ["src"]
-      },
-      "typescript": {}
-    }
-  }
+  ]
 }

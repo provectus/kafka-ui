@@ -23,14 +23,14 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
   const byIndex = config
     ? reduce(
         config.byName,
-        (result: TopicConfigParams, param, paramName) => {
-          result[`${INDEX_PREFIX}.${new Date().getTime()}ts`] = {
+        (result: TopicConfigParams, param, paramName) => ({
+          ...result,
+          [`${INDEX_PREFIX}.${new Date().getTime()}ts`]: {
             name: paramName,
             value: param.value,
             id: v4(),
-          };
-          return result;
-        },
+          },
+        }),
         {}
       )
     : {};

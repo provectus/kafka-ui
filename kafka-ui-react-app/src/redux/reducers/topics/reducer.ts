@@ -15,17 +15,21 @@ const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
     allNames: [],
   };
 
-  return payload.reduce((memo: TopicsState, topic) => {
-    const { name } = topic;
-    memo.byName[name] = {
-      ...memo.byName[name],
-      ...topic,
-      id: v4(),
-    };
-    memo.allNames.push(name);
-
-    return memo;
-  }, initialMemo);
+  return payload.reduce(
+    (memo: TopicsState, topic) => ({
+      ...memo,
+      byName: {
+        ...memo.byName,
+        [topic.name]: {
+          ...memo.byName[topic.name],
+          ...topic,
+          id: v4(),
+        },
+      },
+      allNames: [...memo.allNames, topic.name],
+    }),
+    initialMemo
+  );
 };
 
 const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
