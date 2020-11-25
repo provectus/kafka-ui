@@ -31,6 +31,7 @@ const mapStateToProps = (
   underReplicatedPartitionCount: brokerSelectors.getUnderReplicatedPartitionCount(
     state
   ),
+  diskUsage: brokerSelectors.getDiskUsage(state),
 });
 
 const mapDispatchToProps = {
