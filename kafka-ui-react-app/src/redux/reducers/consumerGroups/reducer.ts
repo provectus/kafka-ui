@@ -16,16 +16,20 @@ const updateConsumerGroupsList = (
     allIDs: [],
   };
 
-  return payload.reduce((memo: ConsumerGroupsState, consumerGroup) => {
-    const { consumerGroupId } = consumerGroup;
-    memo.byID[consumerGroupId] = {
-      ...memo.byID[consumerGroupId],
-      ...consumerGroup,
-    };
-    memo.allIDs.push(consumerGroupId);
-
-    return memo;
-  }, initialMemo);
+  return payload.reduce(
+    (memo: ConsumerGroupsState, consumerGroup) => ({
+      ...memo,
+      byId: {
+        ...memo.byID,
+        [consumerGroup.consumerGroupId]: {
+          ...memo.byID[consumerGroup.consumerGroupId],
+          ...consumerGroup,
+        },
+      },
+      allIDs: [...memo.allIDs, consumerGroup.consumerGroupId],
+    }),
+    initialMemo
+  );
 };
 
 const reducer = (state = initialState, action: Action): ConsumerGroupsState => {

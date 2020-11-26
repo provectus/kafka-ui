@@ -45,10 +45,10 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
   const { name, replicationFactor } = topic;
 
   const configs = topic.config?.reduce(
-    (result: { [key: string]: TopicConfig['value'] }, param) => {
-      result[camelCase(param.name)] = param.value || param.defaultValue;
-      return result;
-    },
+    (result: { [key: string]: TopicConfig['value'] }, param) => ({
+      ...result,
+      [camelCase(param.name)]: param.value || param.defaultValue,
+    }),
     {}
   );
 
