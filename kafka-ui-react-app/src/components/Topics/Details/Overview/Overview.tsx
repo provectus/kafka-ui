@@ -3,6 +3,7 @@ import { ClusterName, TopicName } from 'redux/interfaces';
 import { Topic, TopicDetails } from 'generated-sources';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 interface Props extends Topic, TopicDetails {
   isFetched: boolean;
@@ -22,6 +23,8 @@ const Overview: React.FC<Props> = ({
   partitionCount,
   internal,
   replicationFactor,
+  segmentSize,
+  segmentCount,
   fetchTopicDetails,
 }) => {
   React.useEffect(() => {
@@ -53,6 +56,10 @@ const Overview: React.FC<Props> = ({
             {internal ? 'Internal' : 'External'}
           </span>
         </Indicator>
+        <Indicator label="Segment Size" title="">
+          <BytesFormatted value={segmentSize} />
+        </Indicator>
+        <Indicator label="Segment count">{segmentCount}</Indicator>
       </MetricsWrapper>
       <div className="box">
         <table className="table is-striped is-fullwidth">
