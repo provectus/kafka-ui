@@ -76,14 +76,16 @@ const Brokers: React.FC<Props> = ({
         </Indicator>
       </MetricsWrapper>
 
-      <MetricsWrapper title="Disk Usage">
+      <MetricsWrapper levelClassName="level-multiline" title="Disk Usage">
         {diskUsage?.map((brokerDiskUsage) => (
           <React.Fragment key={brokerDiskUsage.brokerId}>
-            <Indicator label="Broker">{brokerDiskUsage.brokerId}</Indicator>
-            <Indicator label="Segment Size" title="">
+            <Indicator className="is-one-third" label="Broker">
+              {brokerDiskUsage.brokerId}
+            </Indicator>
+            <Indicator className="is-one-third" label="Segment Size" title="">
               <BytesFormatted value={brokerDiskUsage.segmentSize} />
             </Indicator>
-            <Indicator label="Segment count">
+            <Indicator className="is-one-third" label="Segment count">
               {brokerDiskUsage.segmentCount}
             </Indicator>
           </React.Fragment>
