@@ -76,7 +76,7 @@ const Brokers: React.FC<Props> = ({
         </Indicator>
       </MetricsWrapper>
 
-      <MetricsWrapper levelClassName="level-multiline" title="Disk Usage">
+      <MetricsWrapper multiline title="Disk Usage">
         {diskUsage?.map((brokerDiskUsage) => (
           <React.Fragment key={brokerDiskUsage.brokerId}>
             <Indicator className="is-one-third" label="Broker">
