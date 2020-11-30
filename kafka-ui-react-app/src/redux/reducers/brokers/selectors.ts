@@ -43,3 +43,8 @@ export const getUnderReplicatedPartitionCount = createSelector(
   brokersState,
   ({ underReplicatedPartitionCount }) => underReplicatedPartitionCount
 );
+
+export const getDiskUsage = createSelector(
+  brokersState,
+  ({ diskUsage }) => diskUsage
+);

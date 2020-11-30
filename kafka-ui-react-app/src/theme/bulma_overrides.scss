@@ -68,3 +68,13 @@
   from { opacity: 0; }
   to   { opacity: 1; }
 }
+
+.level.level-multiline {
+  flex-wrap: wrap;
+  .level-item.is-one-third {
+    flex-basis: 26%;
+  }
+  .level-item.is-one-third:nth-child(n+4) {
+    margin-top: 10px;
+  }
+}
