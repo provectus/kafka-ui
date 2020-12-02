@@ -209,6 +209,7 @@ public class KafkaService {
 
     public Mono<ExtendedAdminClient> createAdminClient(KafkaCluster kafkaCluster) {
         Properties properties = new Properties();
+        properties.putAll(kafkaCluster.getProperties());
         properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaCluster.getBootstrapServers());
         properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
         AdminClient adminClient = AdminClient.create(properties);
@@ -245,10 +246,12 @@ public class KafkaService {
 
     public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster) {
         Properties props = new Properties();
+        props.putAll(cluster.getProperties());
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui");
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
         return new KafkaConsumer<>(props);
     }

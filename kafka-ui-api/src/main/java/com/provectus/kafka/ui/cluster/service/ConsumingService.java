@@ -88,7 +88,7 @@ public class ConsumingService {
 
 	@RequiredArgsConstructor
 	private static class RecordEmitter {
-		private static final int MAX_POLLS_COUNT = 30;
+		private static final int MAX_EMPTY_POLLS_COUNT = 3;
 		private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
 		private final KafkaService kafkaService;
@@ -98,15 +98,16 @@ public class ConsumingService {
 
 		public void emit(FluxSink<ConsumerRecord<Bytes, Bytes>> sink) {
 			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
-//				assignPartitions(consumer);
-//				seekOffsets(consumer);
 				assignAndSeek(consumer);
-				int pollsCount = 0;
-				while (!sink.isCancelled() && ++pollsCount < MAX_POLLS_COUNT) {
+				int emptyPollsCount = 0;
+				log.info("assignment: {}", consumer.assignment());
+				while (!sink.isCancelled()) {
 					ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
 					log.info("{} records polled", records.count());
-					if (records.count() == 0) {
+					if (records.count() == 0 && emptyPollsCount < MAX_EMPTY_POLLS_COUNT) {
 						break;
+					} else {
+						emptyPollsCount++;
 					}
 					records.iterator()
 							.forEachRemaining(sink::next);

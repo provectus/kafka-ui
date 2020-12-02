@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.cluster.config;
 
+import java.util.Properties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -24,5 +25,6 @@ public class ClustersProperties {
         String protobufFile;
         String protobufMessageName;
         int jmxPort;
+        Properties properties;
     }
 }

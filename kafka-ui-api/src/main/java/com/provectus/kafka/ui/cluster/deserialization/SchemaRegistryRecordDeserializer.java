@@ -97,7 +97,8 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 				final List<Integer> versions = schemaRegistryClient.getAllVersions(schemaName);
 				if (!versions.isEmpty()) {
 					final Integer version = versions.iterator().next();
-					final Schema schema = schemaRegistryClient.getByVersion(record.topic(), version, false);
+					final String subjectName = String.format(cluster.getSchemaNameTemplate(), record.topic());
+					final Schema schema = schemaRegistryClient.getByVersion(subjectName, version, false);
 					if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
 						try {
 							protobufDeserializer.deserialize(record.topic(), record.value().get());

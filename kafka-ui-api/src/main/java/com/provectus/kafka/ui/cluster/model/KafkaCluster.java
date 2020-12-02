@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.cluster.model;
 
 import com.provectus.kafka.ui.model.ServerStatus;
+import java.util.Properties;
 import lombok.Builder;
 import lombok.Data;
 
@@ -24,4 +25,5 @@ public class KafkaCluster {
     private final Throwable lastZookeeperException;
     private final Path protobufFile;
     private final String protobufMessageName;
+    private final Properties properties;
 }
