@@ -24,7 +24,7 @@
 		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
 		<frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
-		<openapi-generator-maven-plugin.version>4.2.2</openapi-generator-maven-plugin.version>
+		<openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
 		<springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
 		<kafka.version>2.4.1</kafka.version>
