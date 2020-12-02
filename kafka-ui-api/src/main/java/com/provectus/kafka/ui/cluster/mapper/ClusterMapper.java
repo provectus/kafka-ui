@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.cluster.mapper;
 import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
+import java.util.Properties;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -22,6 +23,7 @@ public interface ClusterMapper {
     @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec", qualifiedByName = "sumMetrics")
     Cluster toCluster(KafkaCluster cluster);
     @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName="resolvePath")
+    @Mapping(target = "properties", source = "properties", qualifiedByName="setProperties")
     KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
     @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage", qualifiedByName="mapDiskUsage")
     ClusterStats toClusterStats(InternalClusterMetrics metrics);
@@ -71,6 +73,14 @@ public interface ClusterMapper {
         } else {
             return null;
         }
+     }
+
+     default Properties setProperties(Properties properties) {
+       Properties copy = new Properties();
+       if (properties!=null) {
+         copy.putAll(properties);
+       }
+       return copy;
      }
 
 }
