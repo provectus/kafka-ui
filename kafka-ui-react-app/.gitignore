@@ -24,6 +24,9 @@ yarn-debug.log*
 yarn-error.log*
 
 .idea
+.nvmrc
 
 # generated sources
 src/generated-sources
+
+.eslintcache

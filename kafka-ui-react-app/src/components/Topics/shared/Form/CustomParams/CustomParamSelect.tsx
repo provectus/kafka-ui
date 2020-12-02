@@ -37,7 +37,9 @@ const CustomParamSelect: React.FC<Props> = ({
     return valid || 'Custom Parameter must be unique';
   };
 
-  const onChange = (inputName: string) => (event: any) => {
+  const onChange = (inputName: string) => (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     triggerValidation(inputName);
     onNameChange(index, event.target.value);
   };

@@ -35,9 +35,10 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
       )
     : {};
 
-  const [formCustomParams, setFormCustomParams] = React.useState<
-    TopicFormCustomParams
-  >({
+  const [
+    formCustomParams,
+    setFormCustomParams,
+  ] = React.useState<TopicFormCustomParams>({
     byIndex,
     allIndexes: Object.keys(byIndex),
   });

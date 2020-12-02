@@ -1,6 +1,6 @@
 import React from 'react';
 
-type Callback = () => any;
+type Callback = () => void;
 
 const useInterval = (callback: Callback, delay: number) => {
   const savedCallback = React.useRef<Callback>();
