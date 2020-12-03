@@ -269,11 +269,12 @@ paths:
             type: array
             items:
               type: string
-          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timstamp in millis] for specifying timestamps
+              description: The format is [partition]::[maximum offset] for specifying offsets or [partition]::[maximum timestamp in milliseconds] for specifying timestamps
         - name: limit
           in: query
           schema:
             type: integer
+          description: Maximum amount of messages for each partition
         - name: q
           in: query
           schema:
@@ -287,6 +288,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TopicMessage'
+                description: Array of topic messages sorted in descending order by offset or timestamp
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
