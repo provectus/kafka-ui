@@ -59,7 +59,7 @@ spec:
     stages {
         stage('Checkout release branch') {
             when {
-                expression { return env.GIT_BRANCH == /.*master$/; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 sh 'git checkout -b release'
@@ -67,7 +67,7 @@ spec:
         }
         stage('Merge to release branch') {
             when {
-                expression { return env.GIT_BRANCH == /.*master$/; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 sh 'git merge origin/master'
@@ -85,7 +85,7 @@ spec:
         }
         stage('Get version from pom.xml') {
             when {
-                expression { return env.GIT_BRANCH == /.*master$/; }
+                expression { return env.GIT_BRANCH ==~ /.*master$/; }
             }
             steps {
                 script {
