@@ -35,6 +35,10 @@ spec:
       - name: cache
         mountPath: /tmp/repository
   - name: docker-daemon
+    resources:
+      limits:
+        memory: 512Mi
+        cpu: "500m"
     image: docker:19.03.1-dind
     securityContext:
       privileged: true
