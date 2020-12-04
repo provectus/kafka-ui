@@ -86,7 +86,7 @@ const Messages: React.FC<Props> = ({
     }));
     const messageUniqs: FilterProps[] = _.map(
       _.groupBy(messages, 'partition'),
-      (v) => _.maxBy(v, 'offset')
+      (v) => _.minBy(v, 'offset')
     ).map((v) => ({
       offset: v ? v.offset : 0,
       partition: v ? v.partition : 0,
@@ -94,7 +94,7 @@ const Messages: React.FC<Props> = ({
 
     return _.map(
       _.groupBy(_.concat(partitionUniqs, messageUniqs), 'partition'),
-      (v) => _.maxBy(v, 'offset') as FilterProps
+      (v) => _.minBy(v, 'offset') as FilterProps
     );
   }, [messages, partitions]);
 
