@@ -38,7 +38,10 @@ spec:
     resources:
       limits:
         memory: 1024Mi
-        cpu: "500m"
+        cpu: "1000m"
+      request:
+        memory: 1024Mi
+        cpu: "1000m"
     image: docker:19.03.1-dind
     securityContext:
       privileged: true
