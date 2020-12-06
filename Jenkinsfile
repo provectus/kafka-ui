@@ -36,9 +36,6 @@ spec:
         mountPath: /tmp/repository
   - name: docker-daemon
     resources:
-      limits:
-        memory: 2048Mi
-        cpu: "1000m"
       requests:
         memory: 1024Mi
         cpu: "1000m"
