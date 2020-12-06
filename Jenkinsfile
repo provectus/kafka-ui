@@ -37,7 +37,7 @@ spec:
   - name: docker-daemon
     resources:
       limits:
-        memory: 512Mi
+        memory: 1024Mi
         cpu: "500m"
     image: docker:19.03.1-dind
     securityContext:
@@ -103,7 +103,7 @@ spec:
             }
             steps {
                 container('docker-client') {
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven provectuslabs/openjdk:13 bash -c 'chown -R \$(whoami):\$(whoami) kafka-ui-react-app && ./mvnw clean package -X -e -Pprod'"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven provectuslabs/openjdk:13 bash -c 'chown -R \$(whoami):\$(whoami) kafka-ui-react-app && ./mvnw clean package -X -e-Pprod'"
                 }
             }
         }
