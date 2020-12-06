@@ -39,7 +39,7 @@ spec:
       limits:
         memory: 2048Mi
         cpu: "1000m"
-      request:
+      requests:
         memory: 1024Mi
         cpu: "1000m"
     image: docker:19.03.1-dind
