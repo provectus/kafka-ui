@@ -106,7 +106,7 @@ spec:
             }
             steps {
                 container('docker-client') {
-                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven provectuslabs/openjdk:13 bash -c 'chown -R \$(whoami):\$(whoami) kafka-ui-react-app && ./mvnw clean package -Pprod'"
+                    sh "docker run -v /var/run/docker.sock:/var/run/docker.sock -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven provectuslabs/openjdk:13 bash -c 'chown -R \$(whoami):\$(whoami) kafka-ui-react-app && ./mvnw clean package -X -e -Pprod'"
                 }
             }
         }
