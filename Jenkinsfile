@@ -37,7 +37,7 @@ spec:
   - name: docker-daemon
     resources:
       limits:
-        memory: 1024Mi
+        memory: 2048Mi
         cpu: "1000m"
       request:
         memory: 1024Mi
