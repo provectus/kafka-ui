@@ -317,7 +317,7 @@ const Messages: React.FC<Props> = ({
         <div className="column is-one-fifth">
           {selectedSeekType === SeekType.OFFSET ? (
             <>
-              <label className="label">Offset</label>
+              <label className="label">Max Offset</label>
               <input
                 id="searchOffset"
                 name="searchOffset"
@@ -329,7 +329,7 @@ const Messages: React.FC<Props> = ({
             </>
           ) : (
             <>
-              <label className="label">Timestamp</label>
+              <label className="label">Max Timestamp</label>
               <DatePicker
                 selected={searchTimestamp}
                 onChange={(date: Date | null) => setSearchTimestamp(date)}
