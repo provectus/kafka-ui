@@ -208,6 +208,15 @@
                                 </configuration>
                             </execution>
                             <execution>
+                                <id>npm cache verify</id>
+                                <goals>
+                                    <goal>npm</goal>
+                                </goals>
+                                <configuration>
+                                    <arguments>cache verify</arguments>
+                                </configuration>
+                            </execution>
+                            <execution>
                                 <id>npm install</id>
                                 <goals>
                                     <goal>npm</goal>
