@@ -37,10 +37,10 @@ spec:
   - name: docker-daemon
     resources:
       limits:
-        memory: 1536Mi
+        memory: "2048Mi"
         cpu: "1000m"
       requests:
-        memory: 1024Mi
+        memory: "1024Mi"
         cpu: "500m"
     image: docker:19.03.1-dind
     securityContext:
