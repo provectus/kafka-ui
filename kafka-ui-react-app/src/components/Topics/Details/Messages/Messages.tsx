@@ -62,7 +62,7 @@ const Messages: React.FC<Props> = ({
   const [selectedSeekType, setSelectedSeekType] = React.useState<SeekType>(
     SeekType.OFFSET
   );
-  const [searchOffset, setSearchOffset] = React.useState<string>('0');
+  const [searchOffset, setSearchOffset] = React.useState<string>();
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
     partitions.map((p) => ({
       value: p.partition,
@@ -219,12 +219,11 @@ const Messages: React.FC<Props> = ({
       )
       .map((p) => `${p.partition}::${p.offset}`);
 
-    setQueryParams({
+    fetchTopicMessages(clusterName, topicName, {
       ...queryParams,
       seekType: SeekType.OFFSET,
       seekTo,
     });
-    fetchTopicMessages(clusterName, topicName, queryParams);
   };
 
   const filterOptions = (options: Option[], filter: any) => {
