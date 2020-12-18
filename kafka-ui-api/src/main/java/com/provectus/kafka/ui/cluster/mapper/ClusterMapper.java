@@ -3,7 +3,9 @@ package com.provectus.kafka.ui.cluster.mapper;
 import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.cluster.model.*;
 import com.provectus.kafka.ui.model.*;
+import java.util.Base64;
 import java.util.Properties;
+import org.apache.kafka.common.security.token.delegation.TokenInformation;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -81,6 +83,26 @@ public interface ClusterMapper {
          copy.putAll(properties);
        }
        return copy;
+     }
+
+     default DelegationToken mapToken(
+         org.apache.kafka.common.security.token.delegation.DelegationToken t) {
+       final byte[] encoded = Base64.getEncoder().encode(t.hmac());
+       final TokenInformation ti = t.tokenInfo();
+       return new DelegationToken()
+          .expiryTimestamp(ti.expiryTimestamp())
+          .issueTimestamp(ti.issueTimestamp())
+          .maxTimestamp(ti.maxTimestamp())
+          .tokenId(ti.tokenId())
+          .token(new String(encoded))
+          .principal(mapPricipal(ti.owner()))
+          .renewers(ti.renewers().stream().map(this::mapPricipal).collect(Collectors.toList()));
+     }
+
+     default KafkaPrincipal mapPricipal(org.apache.kafka.common.security.auth.KafkaPrincipal principal) {
+      return new KafkaPrincipal()
+          .name(principal.getName())
+          .type(principal.getPrincipalType());
      }
 
 }
