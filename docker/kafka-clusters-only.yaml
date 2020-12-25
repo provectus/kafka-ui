@@ -96,4 +96,5 @@ services:
                cub kafka-ready -b kafka1:29092 1 30 && \
                kafka-topics --create --topic second.users --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
                kafka-topics --create --topic second.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
-               kafka-console-producer --broker-list kafka1:29092 -topic second.users < /data/message.json'"
+               kafka-console-producer --broker-list kafka1:29092 -topic second.users < /data/message.json & \
+               kafka-console-consumer --bootstrap-server kafka1:29092 --topic second.messages --from-beginning'"
