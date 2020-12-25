@@ -19,7 +19,7 @@ const updateConsumerGroupsList = (
   return payload.reduce(
     (memo: ConsumerGroupsState, consumerGroup) => ({
       ...memo,
-      byId: {
+      byID: {
         ...memo.byID,
         [consumerGroup.consumerGroupId]: {
           ...memo.byID[consumerGroup.consumerGroupId],
