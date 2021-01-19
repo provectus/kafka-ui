@@ -42,7 +42,6 @@
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "mock": "node ./mock/index.js",
     "tsc": "tsc"
   },
   "husky": {

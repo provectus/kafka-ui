@@ -24,10 +24,6 @@ If you plan to use full fake REST API you have to update `.env`.
 ```
 REACT_APP_API_URL=http://localhost:3004
 ```
-Start JSON Server if you prefer to use default full fake REST API.
-```
-npm run mock
-```
 Start application
 ```
 npm start
