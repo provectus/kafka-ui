@@ -190,7 +190,7 @@ spec:
                 script {
                     withCredentials([usernamePassword(credentialsId: 'github-jenkins-internal-provectus', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
                         sh "git add ."
-                        sh "git -c user.name=\"$GIT_USER\" -c user.email=\"\" commit -m \"Increased version in pom.xml\""
+                        sh "git -c user.name=\"$GIT_USER\" -c user.email=\"no-reply@jenkins.provectus.com\" commit -m \"Increased version in pom.xml\""
                         sh "git push https://$GIT_USER:$GIT_PASSWORD@github.com/provectus/kafka-ui.git HEAD:master"
                     }
                 }
