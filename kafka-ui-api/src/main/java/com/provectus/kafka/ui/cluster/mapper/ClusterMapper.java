@@ -64,7 +64,11 @@ public interface ClusterMapper {
      }
 
      default BigDecimal sumMetrics(Map<String, BigDecimal> metrics) {
-         return metrics.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+         if (metrics == null) {
+           return metrics.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+         } else {
+           return BigDecimal.ZERO;
+         }
      }
 
      default Path resolvePath(String path) {
