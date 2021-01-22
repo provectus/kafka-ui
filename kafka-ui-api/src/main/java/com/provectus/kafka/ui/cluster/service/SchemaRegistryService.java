@@ -23,4 +23,14 @@ public class SchemaRegistryService {
                 .retrieve()
                 .bodyToFlux(String.class);
     }
+
+    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String subjectName) {
+        KafkaCluster kafkaCluster = clustersStorage.getClusterByName(clusterName).orElseThrow();
+        WebClient webClient = WebClient.create(kafkaCluster.getSchemaRegistry());
+        String url = "%s/%s/versions".formatted(URL_SUBJECTS, subjectName);
+        return webClient.get()
+                .uri(url)
+                .retrieve()
+                .bodyToFlux(Integer.class);
+    }
 }

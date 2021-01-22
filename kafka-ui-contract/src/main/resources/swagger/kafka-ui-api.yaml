@@ -357,6 +357,33 @@ paths:
                 items:
                   type: string
 
+  /api/clusters/{clusterName}/schema/subjects/{subjectName}/versions:
+    get:
+      tags:
+        - /api/clusters
+      summary: get subject versions from schema registry
+      operationId: getSchemaSubjectVersions
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: subjectName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+
 components:
   schemas:
     Cluster:
