@@ -2,9 +2,9 @@ kafka:
   clusters:
     -
       name: local
-      bootstrapServers: localhost:9092
+      bootstrapServers: localhost:9093
       zookeeper: localhost:2181
-      schemaRegistry: http://localhost:8085
+      schemaRegistry: http://localhost:8081
 #      schemaNameTemplate: "%s-value"
       jmxPort: 9997
     -

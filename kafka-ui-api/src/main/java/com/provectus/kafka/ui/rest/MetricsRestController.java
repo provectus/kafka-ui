@@ -32,8 +32,8 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(String clusterName, Integer id, ServerWebExchange exchange) {
         return clusterService.getBrokerMetrics(clusterName, id)
-                        .map(ResponseEntity::ok)
-                        .onErrorReturn(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -98,6 +98,12 @@ public class MetricsRestController implements ApiClustersApi {
                 .map(Flux::fromIterable)
                 .map(ResponseEntity::ok)
                 .switchIfEmpty(Mono.just(ResponseEntity.notFound().build())); // TODO: check behaviour on cluster not found and empty groups list
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<String>>> getSchemaSubjects(String clusterName, ServerWebExchange exchange) {
+        Flux<String> subjects = clusterService.getSchemaSubjects(clusterName);
+        return Mono.just(ResponseEntity.ok(subjects));
     }
 
     @Override

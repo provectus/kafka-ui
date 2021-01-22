@@ -335,6 +335,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
+  /api/clusters/{clusterName}/schema/subjects:
+    get:
+      tags:
+        - /api/clusters
+      summary: get all subjects from schema registry
+      operationId: getSchemaSubjects
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
 components:
   schemas:
     Cluster:
