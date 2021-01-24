@@ -6,9 +6,7 @@ import {
 } from 'redux/interfaces';
 import { TopicMessage, Partition, SeekType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { format } from 'date-fns';
 import DatePicker from 'react-datepicker';
-import JSONTree from 'react-json-tree';
 import 'react-datepicker/dist/react-datepicker.css';
 import CustomParamButton, {
   CustomParamButtonType,
@@ -19,6 +17,7 @@ import MultiSelect from 'react-multi-select-component';
 import * as _ from 'lodash';
 import { useDebouncedCallback } from 'use-debounce';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import MessagesTable from './MessagesTable';
 
 export interface Props {
   clusterName: ClusterName;
@@ -174,42 +173,6 @@ const Messages: React.FC<Props> = ({
     fetchTopicMessages(clusterName, topicName, queryParams);
   }, [clusterName, topicName, queryParams]);
 
-  const getFormattedDate = (date: Date) => {
-    if (!date) return null;
-    return format(date, 'yyyy-MM-dd HH:mm:ss');
-  };
-
-  const getMessageContentBody = (content: Record<string, unknown>) => {
-    try {
-      const contentObj =
-        typeof content !== 'object' ? JSON.parse(content) : content;
-      return (
-        <JSONTree
-          data={contentObj}
-          hideRoot
-          invertTheme={false}
-          theme={{
-            tree: ({ style }) => ({
-              style: {
-                ...style,
-                backgroundColor: undefined,
-                marginLeft: 0,
-                marginTop: 0,
-              },
-            }),
-            value: ({ style }) => ({
-              style: { ...style, marginLeft: 0 },
-            }),
-            base0D: '#3273dc',
-            base0B: '#363636',
-          }}
-        />
-      );
-    } catch (e) {
-      return content;
-    }
-  };
-
   const onNext = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
@@ -239,33 +202,7 @@ const Messages: React.FC<Props> = ({
   const getTopicMessagesTable = () => {
     return messages.length > 0 ? (
       <div>
-        <table className="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Offset</th>
-              <th>Partition</th>
-              <th>Content</th>
-            </tr>
-          </thead>
-          <tbody>
-            {messages.map((message) => (
-              <tr key={`${message.timestamp}${Math.random()}`}>
-                <td style={{ width: 200 }}>
-                  {getFormattedDate(message.timestamp)}
-                </td>
-                <td style={{ width: 150 }}>{message.offset}</td>
-                <td style={{ width: 100 }}>{message.partition}</td>
-                <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
-                  {message.content &&
-                    getMessageContentBody(
-                      message.content as Record<string, unknown>
-                    )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <MessagesTable messages={messages} />
         <div className="columns">
           <div className="column is-full">
             <CustomParamButton
