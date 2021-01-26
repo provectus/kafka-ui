@@ -188,4 +188,8 @@ public class ClusterService {
     public Flux<Integer> getSchemaSubjectVersions(String clusterName, String subjectName) {
         return schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName);
     }
+
+    public Flux<SubjectSchema> getSchemaSubjectByVersion(String clusterName, String subjectName, Integer version) {
+        return schemaRegistryService.getSchemaSubjectByVersion(clusterName, subjectName, version);
+    }
 }

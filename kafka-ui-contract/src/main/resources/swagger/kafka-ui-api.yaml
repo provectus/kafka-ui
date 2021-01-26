@@ -384,6 +384,38 @@ paths:
                 items:
                   type: integer
 
+  /api/clusters/{clusterName}/schema/subjects/{subjectName}/versions/{version}:
+    get:
+      tags:
+        - /api/clusters
+      summary: get schema of subject by version from schema registry
+      operationId: getSchemaSubjectByVersion
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: subjectName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SubjectSchema'
+
 components:
   schemas:
     Cluster:
@@ -707,3 +739,20 @@ components:
           type: string
           additionalProperties:
             type: number
+
+    SubjectSchema:
+      type: object
+      properties:
+        subject:
+          type: string
+        version:
+          type: string
+        id:
+          type: integer
+        schema:
+          type: string
+      required:
+        - subject
+        - version
+        - id
+        - schema
