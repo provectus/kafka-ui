@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/enzyme": "^3.10.8",
+    "@types/jest": "^26.0.20",
     "@types/react-datepicker": "^3.1.1",
     "@types/uuid": "^8.3.0",
     "bulma": "^0.8.2",
@@ -25,6 +27,7 @@
     "redux": "^4.0.5",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "ts-jest": "^26.4.4",
     "typesafe-actions": "^5.1.0",
     "use-debounce": "^3.4.3",
     "uuid": "^8.3.1"
@@ -65,11 +68,9 @@
     ]
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.11",
-    "@types/jest": "^24.9.1",
     "@types/lodash": "^4.14.165",
     "@types/node": "^12.19.8",
     "@types/react": "^17.0.0",
@@ -80,7 +81,9 @@
     "@types/redux-thunk": "^2.1.0",
     "@typescript-eslint/eslint-plugin": "^4.9.0",
     "@typescript-eslint/parser": "^4.9.0",
+    "@wojtekmaj/enzyme-adapter-react-17": "^0.4.1",
     "dotenv": "^8.2.0",
+    "enzyme": "^3.11.0",
     "eslint": "^7.14.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.0.0",
