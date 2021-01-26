@@ -17,7 +17,6 @@ describe('Messages', () => {
         fetchTopicMessages={jest.fn()}
         messages={[]}
         partitions={[]}
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
         {...props}
       />
     );

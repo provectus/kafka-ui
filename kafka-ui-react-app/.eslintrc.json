@@ -15,7 +15,7 @@
     },
     "ecmaVersion": 2018,
     "sourceType": "module",
-    "project": "./tsconfig.json"
+    "project": ["./tsconfig.json", "./src/setupTests.js"]
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
@@ -30,7 +30,8 @@
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
-    "@typescript-eslint/no-explicit-any": "error"
+    "@typescript-eslint/no-explicit-any": "error",
+    "react/jsx-props-no-spreading": 0
   },
   "overrides": [
     {
