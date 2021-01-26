@@ -38,8 +38,8 @@ interface FilterProps {
   partition: TopicMessage['partition'];
 }
 
-function usePrevious(value: any) {
-  const ref = useRef();
+function usePrevious(value: Date | null) {
+  const ref = useRef<Date | null>();
   useEffect(() => {
     ref.current = value;
   });
@@ -73,7 +73,8 @@ const Messages: React.FC<Props> = ({
     Partial<TopicMessageQueryParams>
   >({ limit: 100 });
   const [debouncedCallback] = useDebouncedCallback(
-    (query: any) => setQueryParams({ ...queryParams, ...query }),
+    (query: Partial<TopicMessageQueryParams>) =>
+      setQueryParams({ ...queryParams, ...query }),
     1000
   );
 
@@ -98,7 +99,7 @@ const Messages: React.FC<Props> = ({
     );
   }, [messages, partitions]);
 
-  const getSeekToValuesForPartitions = (partition: any) => {
+  const getSeekToValuesForPartitions = (partition: Option) => {
     const foundedValues = filterProps.find(
       (prop) => prop.partition === partition.value
     );
@@ -178,7 +179,7 @@ const Messages: React.FC<Props> = ({
     return format(date, 'yyyy-MM-dd HH:mm:ss');
   };
 
-  const getMessageContentBody = (content: any) => {
+  const getMessageContentBody = (content: Record<string, unknown>) => {
     try {
       const contentObj =
         typeof content !== 'object' ? JSON.parse(content) : content;
@@ -226,7 +227,7 @@ const Messages: React.FC<Props> = ({
     });
   };
 
-  const filterOptions = (options: Option[], filter: any) => {
+  const filterOptions = (options: Option[], filter: string) => {
     if (!filter) {
       return options;
     }
@@ -256,7 +257,10 @@ const Messages: React.FC<Props> = ({
                 <td style={{ width: 150 }}>{message.offset}</td>
                 <td style={{ width: 100 }}>{message.partition}</td>
                 <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
-                  {getMessageContentBody(message.content)}
+                  {message.content &&
+                    getMessageContentBody(
+                      message.content as Record<string, unknown>
+                    )}
                 </td>
               </tr>
             ))}

@@ -28,7 +28,8 @@
     "prettier/prettier": "error",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
-    "import/prefer-default-export": "off"
+    "import/prefer-default-export": "off",
+    "@typescript-eslint/no-explicit-any": "error"
   },
   "overrides": [
     {
