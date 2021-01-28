@@ -31,7 +31,6 @@ public class ClusterService {
     private final ClusterMapper clusterMapper;
     private final KafkaService kafkaService;
     private final ConsumingService consumingService;
-    private final SchemaRegistryService schemaRegistryService;
 
     public List<Cluster> getClusters() {
         return clustersStorage.getKafkaClusters()
@@ -179,17 +178,5 @@ public class ClusterService {
         return clustersStorage.getClusterByName(clusterName)
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
-    }
-
-    public Flux<String> getSchemaSubjects(String clusterName) {
-        return schemaRegistryService.getAllSchemaSubjects(clusterName);
-    }
-
-    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String subjectName) {
-        return schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName);
-    }
-
-    public Flux<SubjectSchema> getSchemaSubjectByVersion(String clusterName, String subjectName, Integer version) {
-        return schemaRegistryService.getSchemaSubjectByVersion(clusterName, subjectName, version);
     }
 }

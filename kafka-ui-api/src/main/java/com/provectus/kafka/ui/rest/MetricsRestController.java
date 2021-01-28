@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.rest;
 import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
+import com.provectus.kafka.ui.cluster.service.SchemaRegistryService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
@@ -23,6 +24,7 @@ import java.util.function.Function;
 public class MetricsRestController implements ApiClustersApi {
 
     private final ClusterService clusterService;
+    private final SchemaRegistryService schemaRegistryService;
 
     @Override
     public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
@@ -102,19 +104,34 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Flux<SubjectSchema>>> getSchemaSubjectByVersion(String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
-        Flux<SubjectSchema> flux = clusterService.getSchemaSubjectByVersion(clusterName, subjectName, version);
+        Flux<SubjectSchema> flux = schemaRegistryService.getSchemaSubjectByVersion(clusterName, subjectName, version);
         return Mono.just(ResponseEntity.ok(flux));
     }
 
     @Override
     public Mono<ResponseEntity<Flux<String>>> getSchemaSubjects(String clusterName, ServerWebExchange exchange) {
-        Flux<String> subjects = clusterService.getSchemaSubjects(clusterName);
+        Flux<String> subjects = schemaRegistryService.getAllSchemaSubjects(clusterName);
         return Mono.just(ResponseEntity.ok(subjects));
     }
 
     @Override
     public Mono<ResponseEntity<Flux<Integer>>> getSchemaSubjectVersions(String clusterName, String subjectName, ServerWebExchange exchange) {
-        return Mono.just(ResponseEntity.ok(clusterService.getSchemaSubjectVersions(clusterName, subjectName)));
+        return Mono.just(ResponseEntity.ok(schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Object>> deleteSchemaByVersion(String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(schemaRegistryService.deleteSchemaSubjectByVersion(clusterName, subjectName, version)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Object>> deleteSchemaSubject(String clusterName, String subjectName, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(schemaRegistryService.deleteSchemaSubject(clusterName, subjectName)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<SubjectSchema>> createNewSubjectSchema(String clusterName, String subjectName, @Valid Mono<NewSchemaSubject> newSchemaSubject, ServerWebExchange exchange) {
+        return schemaRegistryService.createNewSubject(clusterName, subjectName, newSchemaSubject);
     }
 
     @Override

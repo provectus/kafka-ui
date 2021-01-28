@@ -357,6 +357,31 @@ paths:
                 items:
                   type: string
 
+  /api/clusters/{clusterName}/schema/subjects/{subjectName}:
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete subject from schema registry
+      operationId: deleteSchemaSubject
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: subjectName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
   /api/clusters/{clusterName}/schema/subjects/{subjectName}/versions:
     get:
       tags:
@@ -383,6 +408,34 @@ paths:
                 type: array
                 items:
                   type: integer
+    post:
+      tags:
+        - /api/clusters
+      summary: create a new subject schema
+      operationId: createNewSubjectSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: subjectName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSchemaSubject'
+      responses:
+        200:
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubjectSchema'
 
   /api/clusters/{clusterName}/schema/subjects/{subjectName}/versions/{version}:
     get:
@@ -415,6 +468,40 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/SubjectSchema'
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete schema by version from schema registry
+      operationId: deleteSchemaByVersion
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: subjectName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        204:
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
 
 components:
   schemas:
@@ -752,7 +839,12 @@ components:
         schema:
           type: string
       required:
-        - subject
-        - version
         - id
+
+    NewSchemaSubject:
+      type: object
+      properties:
+        schema:
+          type: string
+      required:
         - schema
