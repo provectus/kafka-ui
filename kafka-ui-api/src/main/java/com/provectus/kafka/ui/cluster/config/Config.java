@@ -7,6 +7,7 @@ import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.management.remote.JMXConnector;
 
@@ -15,7 +16,7 @@ public class Config {
 
     @Bean
     public KeyedObjectPool<String, JMXConnector> pool() {
-        GenericKeyedObjectPool<String, JMXConnector> pool =  new GenericKeyedObjectPool<>(new JmxPoolFactory());
+        GenericKeyedObjectPool<String, JMXConnector> pool = new GenericKeyedObjectPool<>(new JmxPoolFactory());
         pool.setConfig(poolConfig());
         return pool;
     }
@@ -28,11 +29,15 @@ public class Config {
     }
 
     @Bean
-    public MBeanExporter exporter()
-    {
+    public MBeanExporter exporter() {
         final MBeanExporter exporter = new MBeanExporter();
         exporter.setAutodetect(true);
         exporter.setExcludedBeans("pool");
         return exporter;
+    }
+
+    @Bean
+    public WebClient webClient() {
+        return WebClient.create();
     }
 }
