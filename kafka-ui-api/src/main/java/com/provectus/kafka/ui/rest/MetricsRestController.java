@@ -137,7 +137,7 @@ public class MetricsRestController implements ApiClustersApi {
                                                                @Valid Mono<NewSchemaSubject> newSchemaSubject,
                                                                ServerWebExchange exchange) {
         return schemaRegistryService.createNewSubject(clusterName, schemaName, newSchemaSubject)
-                .onErrorReturn(ResponseEntity.notFound().build());
+                .onErrorReturn(ResponseEntity.badRequest().build());
     }
 
     @Override

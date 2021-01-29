@@ -434,6 +434,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SchemaSubject'
+        400:
+          description: Bad request
 
   /api/clusters/{clusterName}/schemas/{schemaName}/versions/{version}:
     get:
