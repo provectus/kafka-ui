@@ -33,9 +33,10 @@ The official Docker image for Kafka UI is hosted here: [hub.docker.com/r/provect
 Launch Docker container in the background:
 ```sh
 
-docker run -d provectuslabs/kafka-ui:latest 
+docker run -p 8080:8080
 	-e KAFKA_CLUSTERS_0_NAME=local
 	-e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
+	-d provectuslabs/kafka-ui:latest 
 
 ```
 Then access the web UI at [http://localhost:9000](http://localhost:9000).
