@@ -103,35 +103,41 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<SubjectSchema>>> getSchemaSubjectByVersion(String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
-        Flux<SubjectSchema> flux = schemaRegistryService.getSchemaSubjectByVersion(clusterName, subjectName, version);
-        return Mono.just(ResponseEntity.ok(flux));
+    public Mono<ResponseEntity<Flux<SchemaSubject>>> getSchemaByVersion(String clusterName, String schemaName, Integer version, ServerWebExchange exchange) {
+        Flux<SchemaSubject> flux = schemaRegistryService.getSchemaSubjectByVersion(clusterName, schemaName, version);
+        return Mono.just(ResponseEntity.ok(flux)).onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<String>>> getSchemaSubjects(String clusterName, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Flux<String>>> getSchemas(String clusterName, ServerWebExchange exchange) {
         Flux<String> subjects = schemaRegistryService.getAllSchemaSubjects(clusterName);
         return Mono.just(ResponseEntity.ok(subjects));
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<Integer>>> getSchemaSubjectVersions(String clusterName, String subjectName, ServerWebExchange exchange) {
-        return Mono.just(ResponseEntity.ok(schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName)));
+    public Mono<ResponseEntity<Flux<Integer>>> getSchemaVersions(String clusterName, String subjectName, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName)))
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
-    public Mono<ResponseEntity<Object>> deleteSchemaByVersion(String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
-        return Mono.just(ResponseEntity.ok(schemaRegistryService.deleteSchemaSubjectByVersion(clusterName, subjectName, version)));
+    public Mono<ResponseEntity<Void>> deleteSchemaByVersion(String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteSchemaSubjectByVersion(clusterName, subjectName, version)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
-    public Mono<ResponseEntity<Object>> deleteSchemaSubject(String clusterName, String subjectName, ServerWebExchange exchange) {
-        return Mono.just(ResponseEntity.ok(schemaRegistryService.deleteSchemaSubject(clusterName, subjectName)));
+    public Mono<ResponseEntity<Void>> deleteSchema(String clusterName, String subjectName, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteSchemaSubject(clusterName, subjectName)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
-    public Mono<ResponseEntity<SubjectSchema>> createNewSubjectSchema(String clusterName, String subjectName, @Valid Mono<NewSchemaSubject> newSchemaSubject, ServerWebExchange exchange) {
-        return schemaRegistryService.createNewSubject(clusterName, subjectName, newSchemaSubject);
+    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName, String schemaName,
+                                                               @Valid Mono<NewSchemaSubject> newSchemaSubject,
+                                                               ServerWebExchange exchange) {
+        return schemaRegistryService.createNewSubject(clusterName, schemaName, newSchemaSubject)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override

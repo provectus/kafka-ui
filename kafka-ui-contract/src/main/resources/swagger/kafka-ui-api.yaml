@@ -335,12 +335,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
-  /api/clusters/{clusterName}/schema/subjects:
+  /api/clusters/{clusterName}/schemas:
     get:
       tags:
         - /api/clusters
-      summary: get all subjects from schema registry
-      operationId: getSchemaSubjects
+      summary: get all schemas from Schema Registry service
+      operationId: getSchemas
       parameters:
         - name: clusterName
           in: path
@@ -357,19 +357,19 @@ paths:
                 items:
                   type: string
 
-  /api/clusters/{clusterName}/schema/subjects/{subjectName}:
+  /api/clusters/{clusterName}/schemas/{schemaName}:
     delete:
       tags:
         - /api/clusters
-      summary: delete subject from schema registry
-      operationId: deleteSchemaSubject
+      summary: delete schema from Schema Registry service
+      operationId: deleteSchema
       parameters:
         - name: clusterName
           in: path
           required: true
           schema:
             type: string
-        - name: subjectName
+        - name: schemaName
           in: path
           required: true
           schema:
@@ -377,24 +377,22 @@ paths:
       responses:
         200:
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
+        404:
+          description: Not found
 
-  /api/clusters/{clusterName}/schema/subjects/{subjectName}/versions:
+  /api/clusters/{clusterName}/schemas/{schemaName}/versions:
     get:
       tags:
         - /api/clusters
-      summary: get subject versions from schema registry
-      operationId: getSchemaSubjectVersions
+      summary: get all version of schema from Schema Registry service
+      operationId: getSchemaVersions
       parameters:
         - name: clusterName
           in: path
           required: true
           schema:
             type: string
-        - name: subjectName
+        - name: schemaName
           in: path
           required: true
           schema:
@@ -412,14 +410,14 @@ paths:
       tags:
         - /api/clusters
       summary: create a new subject schema
-      operationId: createNewSubjectSchema
+      operationId: createNewSchema
       parameters:
         - name: clusterName
           in: path
           required: true
           schema:
             type: string
-        - name: subjectName
+        - name: schemaName
           in: path
           required: true
           schema:
@@ -435,21 +433,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SubjectSchema'
+                $ref: '#/components/schemas/SchemaSubject'
 
-  /api/clusters/{clusterName}/schema/subjects/{subjectName}/versions/{version}:
+  /api/clusters/{clusterName}/schemas/{schemaName}/versions/{version}:
     get:
       tags:
         - /api/clusters
-      summary: get schema of subject by version from schema registry
-      operationId: getSchemaSubjectByVersion
+      summary: get schema by version from Schema Registry service
+      operationId: getSchemaByVersion
       parameters:
         - name: clusterName
           in: path
           required: true
           schema:
             type: string
-        - name: subjectName
+        - name: schemaName
           in: path
           required: true
           schema:
@@ -467,7 +465,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SubjectSchema'
+                  $ref: '#/components/schemas/SchemaSubject'
     delete:
       tags:
         - /api/clusters
@@ -479,7 +477,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: subjectName
+        - name: schemaName
           in: path
           required: true
           schema:
@@ -490,18 +488,10 @@ paths:
           schema:
             type: integer
       responses:
-        204:
-          description: Deleted
-          content:
-            application/json:
-              schema:
-                type: object
+        200:
+          description: OK
         404:
           description: Not found
-          content:
-            application/json:
-              schema:
-                type: object
 
 components:
   schemas:
@@ -827,7 +817,7 @@ components:
           additionalProperties:
             type: number
 
-    SubjectSchema:
+    SchemaSubject:
       type: object
       properties:
         subject:
