@@ -39,7 +39,7 @@ docker run -p 8080:8080
 	-d provectuslabs/kafka-ui:latest 
 
 ```
-Then access the web UI at [http://localhost:9000](http://localhost:9000).
+Then access the web UI at [http://localhost:8080](http://localhost:8080).
  
 
 ## Building With Docker
