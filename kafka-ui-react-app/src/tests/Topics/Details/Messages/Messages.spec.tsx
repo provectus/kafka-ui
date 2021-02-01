@@ -2,6 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import JSONTree from 'react-json-tree';
 import * as useDebounce from 'use-debounce';
+import DatePicker from 'react-datepicker';
 import Messages, {
   Props,
 } from '../../../../components/Topics/Details/Messages/Messages';
@@ -74,9 +75,25 @@ describe('Messages component', () => {
   });
 
   describe('Offset field', () => {
-    const wrapper = shallow(setupWrapper());
+    describe('Seek Type dependency', () => {
+      const wrapper = mount(setupWrapper());
+
+      it('renders DatePicker', () => {
+        wrapper
+          .find('[id="selectSeekType"]')
+          .simulate('change', { target: { value: 'TIMESTAMP' } });
+
+        expect(
+          wrapper.find('[id="selectSeekType"]').first().props().value
+        ).toEqual('TIMESTAMP');
+
+        expect(wrapper.find(DatePicker)).toBeTruthy();
+      });
+    });
 
     describe('With defined offset value', () => {
+      const wrapper = mount(setupWrapper());
+
       it('shows offset value in input', () => {
         const offset = '10';
 
@@ -90,6 +107,8 @@ describe('Messages component', () => {
       });
     });
     describe('With invalid offset value', () => {
+      const wrapper = mount(setupWrapper());
+
       it('shows 0 in input', () => {
         const offset = null;
 
@@ -118,6 +137,18 @@ describe('Messages component', () => {
 
       expect(wrapper.find('#searchText').first().props().value).toEqual(query);
       expect(mockedUseDebouncedCallback).toHaveBeenCalledWith({ q: query });
+    });
+  });
+
+  describe('Submit button', () => {
+    it('fetches topic messages', () => {
+      const mockedfetchTopicMessages = jest.fn();
+      const wrapper = mount(
+        setupWrapper({ fetchTopicMessages: mockedfetchTopicMessages })
+      );
+
+      wrapper.find('[type="submit"]').simulate('click');
+      expect(mockedfetchTopicMessages).toHaveBeenCalled();
     });
   });
 });

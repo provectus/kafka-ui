@@ -43,14 +43,15 @@
     "build": "react-scripts build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
-    "test": "react-scripts test",
+    "test": "cross-env CI=true react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "tsc": "tsc",
     "test:coverage": "jest --coverage"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run tsc --noEmit && lint-staged"
+      "pre-commit": "npm run tsc --noEmit && lint-staged && npm test",
+      "pre-push": "npm test"
     }
   },
   "eslintConfig": {
