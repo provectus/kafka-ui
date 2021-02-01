@@ -2,46 +2,40 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import JSONTree from 'react-json-tree';
 import * as useDebounce from 'use-debounce';
-import DatePicker from 'react-datepicker';
 import Messages, {
   Props,
 } from '../../../../components/Topics/Details/Messages/Messages';
 import PageLoader from '../../../../components/common/PageLoader/PageLoader';
 
-describe('Messages', () => {
+describe('Messages component', () => {
   beforeEach(() => {
     jest.restoreAllMocks();
   });
 
-  const createMessageComponent = (props: Partial<Props> = {}) =>
-    shallow(
-      <Messages
-        clusterName="Test cluster"
-        topicName="Cluster topic"
-        isFetched
-        fetchTopicMessages={jest.fn()}
-        messages={[]}
-        partitions={[]}
-        {...props}
-      />
-    );
+  const setupWrapper = (props: Partial<Props> = {}) => (
+    <Messages
+      clusterName="Test cluster"
+      topicName="Cluster topic"
+      isFetched
+      fetchTopicMessages={jest.fn()}
+      messages={[]}
+      partitions={[]}
+      {...props}
+    />
+  );
 
-  it('Messages component should render PageLoader', () => {
-    expect(
-      createMessageComponent({ isFetched: false }).find(PageLoader)
-    ).toBeTruthy();
+  describe('Initial state', () => {
+    it('renders PageLoader', () => {
+      expect(
+        shallow(setupWrapper({ isFetched: false })).find(PageLoader)
+      ).toBeTruthy();
+    });
   });
 
-  describe('Messages component with messages', () => {
-    it('should render string', () => {
-      const wrapper = createMessageComponent();
-
-      expect(wrapper.text()).toContain('No messages at selected topic');
-    });
-
-    it('should render JSONTree', () => {
-      expect(
-        createMessageComponent({
+  describe('Messages table', () => {
+    describe('With messages', () => {
+      const messagesWrapper = shallow(
+        setupWrapper({
           messages: [
             {
               partition: 1,
@@ -50,64 +44,80 @@ describe('Messages', () => {
               content: [1, 2, 3],
             },
           ],
-        }).find(JSONTree)
-      ).toBeTruthy();
-    });
-
-    it('JSON.parse should work correctly', () => {
-      const messages = [
-        {
-          partition: 1,
-          offset: 2,
-          timestamp: new Date('05-05-1994'),
-          content: [1, 2, 3],
-        },
-      ];
-      const content = JSON.stringify(messages[0].content);
-      expect(JSON.parse(content)).toEqual(messages[0].content);
-    });
-  });
-
-  it('input of Search field renders properly', () => {
-    const query = 20;
-    const mockedUseDebouncedCallback = jest.fn();
-    jest
-      .spyOn(useDebounce, 'useDebouncedCallback')
-      .mockImplementationOnce(() => [mockedUseDebouncedCallback]);
-
-    const wrapper = createMessageComponent();
-
-    wrapper
-      .find('#searchText')
-      .simulate('change', { target: { value: query } });
-
-    expect(wrapper.find('#searchText').first().props().value).toEqual(query);
-    expect(mockedUseDebouncedCallback).toHaveBeenCalledWith({ q: query });
-  });
-
-  describe('input of Offset field renders properly', () => {
-    const wrapper = createMessageComponent();
-
-    it('with defined value', () => {
-      const offset = '10';
-
-      console.log(wrapper.find(DatePicker));
-      wrapper
-        .find('#searchOffset')
-        .simulate('change', { target: { value: offset } });
-
-      expect(wrapper.find('#searchOffset').first().props().value).toEqual(
-        offset
+        })
       );
+      it('renders table', () => {
+        expect(messagesWrapper.find('TimeStamp')).toBeTruthy();
+      });
+      it('renders JSONTree', () => {
+        expect(messagesWrapper.find(JSONTree)).toBeTruthy();
+      });
+      it('parses message content correctly', () => {
+        const messages = [
+          {
+            partition: 1,
+            offset: 2,
+            timestamp: new Date('05-05-1994'),
+            content: [1, 2, 3],
+          },
+        ];
+        const content = JSON.stringify(messages[0].content);
+        expect(JSON.parse(content)).toEqual(messages[0].content);
+      });
     });
-    it('with invalid value', () => {
-      const offset = null;
+    describe('Without messages', () => {
+      it('renders string', () => {
+        const wrapper = shallow(setupWrapper());
+        expect(wrapper.text()).toContain('No messages at selected topic');
+      });
+    });
+  });
+
+  describe('Offset field', () => {
+    const wrapper = shallow(setupWrapper());
+
+    describe('With defined offset value', () => {
+      it('shows offset value in input', () => {
+        const offset = '10';
+
+        wrapper
+          .find('#searchOffset')
+          .simulate('change', { target: { value: offset } });
+
+        expect(wrapper.find('#searchOffset').first().props().value).toEqual(
+          offset
+        );
+      });
+    });
+    describe('With invalid offset value', () => {
+      it('shows 0 in input', () => {
+        const offset = null;
+
+        wrapper
+          .find('#searchOffset')
+          .simulate('change', { target: { value: offset } });
+
+        expect(wrapper.find('#searchOffset').first().props().value).toBe('0');
+      });
+    });
+  });
+
+  describe('Search field', () => {
+    it('renders input correctly', () => {
+      const query = 20;
+      const mockedUseDebouncedCallback = jest.fn();
+      jest
+        .spyOn(useDebounce, 'useDebouncedCallback')
+        .mockImplementationOnce(() => [mockedUseDebouncedCallback]);
+
+      const wrapper = shallow(setupWrapper());
 
       wrapper
-        .find('#searchOffset')
-        .simulate('change', { target: { value: offset } });
+        .find('#searchText')
+        .simulate('change', { target: { value: query } });
 
-      expect(wrapper.find('#searchOffset').first().props().value).toBe('0');
+      expect(wrapper.find('#searchText').first().props().value).toEqual(query);
+      expect(mockedUseDebouncedCallback).toHaveBeenCalledWith({ q: query });
     });
   });
 });
