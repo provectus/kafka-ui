@@ -45,7 +45,8 @@
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "test:coverage": "jest --coverage"
   },
   "husky": {
     "hooks": {
