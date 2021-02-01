@@ -31,6 +31,7 @@
 		<avro.version>1.9.2</avro.version>
 		<confluent.version>5.5.1</confluent.version>
 		<apache.commons.version>2.2</apache.commons.version>
+		<test.containers.version>1.15.1</test.containers.version>
 	</properties>
 
 	<repositories>
