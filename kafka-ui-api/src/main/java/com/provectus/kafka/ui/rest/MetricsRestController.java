@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.cluster.service.ClusterService;
 import com.provectus.kafka.ui.cluster.service.SchemaRegistryService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,7 @@ import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 public class MetricsRestController implements ApiClustersApi {
 
     private final ClusterService clusterService;
@@ -150,6 +152,35 @@ public class MetricsRestController implements ApiClustersApi {
         return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
     }
 
+    @Override
+    public Mono<ResponseEntity<CompatibilityLevelResponse>> getGlobalSchemaCompatibilityLevel(String clusterName, ServerWebExchange exchange) {
+        return schemaRegistryService.getSchemaCompatibilityLevel(clusterName, null)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.badRequest().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<CompatibilityLevelResponse>> getSchemaCompatibilityLevel(String clusterName, String schemaName, ServerWebExchange exchange) {
+        return schemaRegistryService.getSchemaCompatibilityLevel(clusterName, schemaName)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.badRequest().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> updateGlobalSchemaCompatibilityLevel(String clusterName, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
+        log.info("Updating schema compatibility globally");
+        return schemaRegistryService.updateSchemaCompatibility(clusterName, compatibilityLevel)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(String clusterName, String schemaName, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
+        log.info("Updating schema compatibility for schema: {}", schemaName);
+        return schemaRegistryService.updateSchemaCompatibility(clusterName, schemaName, compatibilityLevel)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
+    }
 
     private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
         return Mono.justOrEmpty(seekTo)

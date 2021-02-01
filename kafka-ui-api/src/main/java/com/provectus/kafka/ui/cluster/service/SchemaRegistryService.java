@@ -2,6 +2,8 @@ package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
+import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.CompatibilityLevelResponse;
 import com.provectus.kafka.ui.model.NewSchemaSubject;
 import com.provectus.kafka.ui.model.SchemaSubject;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Objects;
 
 @Service
 @Log4j2
@@ -90,5 +94,39 @@ public class SchemaRegistryService {
                             .toEntity(SchemaSubject.class);
                 })
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    /**
+     * Updates a compatibility level for a <code>schemaName</code>
+     *
+     * @param schemaName is a schema subject name
+     * @see com.provectus.kafka.ui.model.CompatibilityLevel.CompatibilityEnum
+     */
+    public Mono<Void> updateSchemaCompatibility(String clusterName, String schemaName, Mono<CompatibilityLevel> compatibilityLevel) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> {
+                    String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
+                    return webClient.put()
+                            .uri(cluster.getSchemaRegistry() + configEndpoint, schemaName)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevel.class))
+                            .retrieve()
+                            .bodyToMono(Void.class);
+                }).orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    public Mono<Void> updateSchemaCompatibility(String clusterName, Mono<CompatibilityLevel> compatibilityLevel) {
+        return updateSchemaCompatibility(clusterName, null, compatibilityLevel);
+    }
+
+    public Mono<CompatibilityLevelResponse> getSchemaCompatibilityLevel(String clusterName, String schemaName) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> {
+                    String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
+                    return webClient.get()
+                            .uri(cluster.getSchemaRegistry() + configEndpoint, schemaName)
+                            .retrieve()
+                            .bodyToMono(CompatibilityLevelResponse.class);
+                }).orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 }

@@ -495,6 +495,98 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/schemas/compatibility:
+    get:
+      tags:
+        - /api/clusters
+      summary: Get schema compatibility level globally
+      operationId: getGlobalSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompatibilityLevelResponse'
+    put:
+      tags:
+        - /api/clusters
+      summary: Update compatibility level globally
+      operationId: updateGlobalSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompatibilityLevel'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+
+  /api/clusters/{clusterName}/schemas/compatibility/{schemaName}:
+    get:
+      tags:
+        - /api/clusters
+      summary: Get schema compatibility level of specific schema
+      operationId: getSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompatibilityLevelResponse'
+    put:
+      tags:
+        - /api/clusters
+      summary: Update compatibility level for specific schema.
+      operationId: updateSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompatibilityLevel'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+
 components:
   schemas:
     Cluster:
@@ -840,3 +932,27 @@ components:
           type: string
       required:
         - schema
+
+    CompatibilityLevel:
+      type: object
+      properties:
+        compatibility:
+          type: string
+          enum:
+            - BACKWARD
+            - BACKWARD_TRANSITIVE
+            - FORWARD
+            - FORWARD_TRANSITIVE
+            - FULL
+            - FULL_TRANSITIVE
+            - NONE
+      required:
+        - compatibility
+
+    CompatibilityLevelResponse:
+      type: object
+      properties:
+        compatibilityLevel:
+          type: string
+      required:
+        - compatibilityLevel
