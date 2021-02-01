@@ -41,6 +41,10 @@ docker run -p 8080:8080
 ```
 Then access the web UI at [http://localhost:8080](http://localhost:8080).
  
+### Docker Compose
+
+If you prefer to use `docker-compose` please refer to the [documentation](docker-compose.md).
+
 
 ## Building With Docker
 
