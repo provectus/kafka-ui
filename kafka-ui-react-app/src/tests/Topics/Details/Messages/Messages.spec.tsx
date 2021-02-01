@@ -28,7 +28,7 @@ describe('Messages component', () => {
   describe('Initial state', () => {
     it('renders PageLoader', () => {
       expect(
-        shallow(setupWrapper({ isFetched: false })).find(PageLoader)
+        shallow(setupWrapper({ isFetched: false })).exists(PageLoader)
       ).toBeTruthy();
     });
   });
@@ -48,10 +48,12 @@ describe('Messages component', () => {
         })
       );
       it('renders table', () => {
-        expect(messagesWrapper.find('TimeStamp')).toBeTruthy();
+        expect(
+          messagesWrapper.exists('[className="table is-striped is-fullwidth"]')
+        ).toBeTruthy();
       });
       it('renders JSONTree', () => {
-        expect(messagesWrapper.find(JSONTree)).toBeTruthy();
+        expect(messagesWrapper.find(JSONTree).length).toEqual(1);
       });
       it('parses message content correctly', () => {
         const messages = [
@@ -87,7 +89,7 @@ describe('Messages component', () => {
           wrapper.find('[id="selectSeekType"]').first().props().value
         ).toEqual('TIMESTAMP');
 
-        expect(wrapper.find(DatePicker)).toBeTruthy();
+        expect(wrapper.exists(DatePicker)).toBeTruthy();
       });
     });
 
