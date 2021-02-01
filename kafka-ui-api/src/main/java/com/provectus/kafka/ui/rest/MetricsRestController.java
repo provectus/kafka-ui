@@ -105,6 +105,12 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<Flux<SchemaSubject>>> getLatestSchemaByVersion(String clusterName, String schemaName, ServerWebExchange exchange) {
+        Flux<SchemaSubject> flux = schemaRegistryService.getLatestSchemaSubject(clusterName, schemaName);
+        return Mono.just(ResponseEntity.ok(flux)).onErrorReturn(ResponseEntity.notFound().build());
+    }
+
+    @Override
     public Mono<ResponseEntity<Flux<SchemaSubject>>> getSchemaByVersion(String clusterName, String schemaName, Integer version, ServerWebExchange exchange) {
         Flux<SchemaSubject> flux = schemaRegistryService.getSchemaSubjectByVersion(clusterName, schemaName, version);
         return Mono.just(ResponseEntity.ok(flux)).onErrorReturn(ResponseEntity.notFound().build());
@@ -119,6 +125,12 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<Flux<Integer>>> getSchemaVersions(String clusterName, String subjectName, ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName)))
+                .onErrorReturn(ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteLatestSchemaSubject(clusterName, schemaName)
                 .onErrorReturn(ResponseEntity.notFound().build());
     }
 

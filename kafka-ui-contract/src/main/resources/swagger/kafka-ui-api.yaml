@@ -437,6 +437,55 @@ paths:
         400:
           description: Bad request
 
+  /api/clusters/{clusterName}/schemas/{schemaName}/latest:
+    get:
+      tags:
+        - /api/clusters
+      summary: get the latest schema from Schema Registry service
+      operationId: getLatestSchemaByVersion
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SchemaSubject'
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete the latest schema from schema registry
+      operationId: deleteLatestSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/schemas/{schemaName}/versions/{version}:
     get:
       tags:
