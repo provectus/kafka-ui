@@ -129,7 +129,11 @@ describe('Messages component', () => {
       const mockedUseDebouncedCallback = jest.fn();
       jest
         .spyOn(useDebounce, 'useDebouncedCallback')
-        .mockImplementationOnce(() => [mockedUseDebouncedCallback]);
+        .mockImplementationOnce(() => [
+          mockedUseDebouncedCallback,
+          jest.fn(),
+          jest.fn(),
+        ]);
 
       const wrapper = shallow(setupWrapper());
 

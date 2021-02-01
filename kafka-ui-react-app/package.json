@@ -10,6 +10,7 @@
     "bulma": "^0.8.2",
     "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
+    "cross-env": "^7.0.3",
     "date-fns": "^2.16.1",
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-import-resolver-typescript": "^2.3.0",
