@@ -35,7 +35,7 @@ describe('Messages component', () => {
 
   describe('Messages table', () => {
     describe('With messages', () => {
-      const messagesWrapper = shallow(
+      const messagesWrapper = mount(
         setupWrapper({
           messages: [
             {
