@@ -3,8 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/enzyme": "^3.10.8",
-    "@types/jest": "^26.0.20",
     "@types/react-datepicker": "^3.1.1",
     "@types/uuid": "^8.3.0",
     "bulma": "^0.8.2",
@@ -46,8 +44,7 @@
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "tsc": "tsc",
-    "test:coverage": "jest --coverage"
+    "tsc": "tsc"
   },
   "husky": {
     "hooks": {
@@ -73,6 +70,8 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.11",
+    "@types/enzyme": "^3.10.8",
+    "@types/jest": "^26.0.20",
     "@types/lodash": "^4.14.165",
     "@types/node": "^12.19.8",
     "@types/react": "^17.0.0",
