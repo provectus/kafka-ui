@@ -7,17 +7,14 @@ import org.testcontainers.containers.Network;
 public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryContainer> {
     private static final int SCHEMA_PORT = 8081;
 
-    public SchemaRegistryContainer() {
-        this("5.2.1");
-    }
-
     public SchemaRegistryContainer(String version) {
         super("confluentinc/cp-schema-registry:" + version);
         withExposedPorts(8081);
     }
 
     public SchemaRegistryContainer withKafka(KafkaContainer kafka) {
-        return withKafka(kafka.getNetwork(), kafka.getNetworkAliases().get(0) + ":9092");
+        String bootstrapServers = kafka.getNetworkAliases().get(0) + ":9092";
+        return withKafka(kafka.getNetwork(), bootstrapServers);
     }
 
     public SchemaRegistryContainer withKafka(Network network, String bootstrapServers) {
@@ -29,6 +26,6 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
     }
 
     public String getTarget() {
-        return "http://" + getContainerIpAddress() + ":" + getMappedPort(8081);
+        return "http://" + getContainerIpAddress() + ":" + getMappedPort(SCHEMA_PORT);
     }
 }
