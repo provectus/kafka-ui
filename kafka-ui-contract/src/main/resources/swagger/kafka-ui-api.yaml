@@ -636,6 +636,38 @@ paths:
         404:
           description: Not Found
 
+  /api/clusters/{clusterName}/schemas/compatibility/{schemaName}/check:
+    post:
+      tags:
+        - /api/clusters
+      summary: Check compatibility of the schema.
+      operationId: checkSchemaCompatibility
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSchemaSubject'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompatibilityCheckResponse'
+        404:
+          description: Not Found
+
 components:
   schemas:
     Cluster:
@@ -1005,3 +1037,11 @@ components:
           type: string
       required:
         - compatibilityLevel
+
+    CompatibilityCheckResponse:
+      type: object
+      properties:
+        isCompatible:
+          type: boolean
+      required:
+        - isCompatible

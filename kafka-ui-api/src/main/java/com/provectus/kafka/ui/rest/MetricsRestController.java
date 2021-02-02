@@ -187,6 +187,15 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<CompatibilityCheckResponse>> checkSchemaCompatibility(String clusterName, String schemaName,
+                                                               @Valid Mono<NewSchemaSubject> newSchemaSubject,
+                                                               ServerWebExchange exchange) {
+        return schemaRegistryService.checksSchemaCompatibility(clusterName, schemaName, newSchemaSubject)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.badRequest().build());
+    }
+
+    @Override
     public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(String clusterName, String schemaName, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
         log.info("Updating schema compatibility for schema: {}", schemaName);
         return schemaRegistryService.updateSchemaCompatibility(clusterName, schemaName, compatibilityLevel)

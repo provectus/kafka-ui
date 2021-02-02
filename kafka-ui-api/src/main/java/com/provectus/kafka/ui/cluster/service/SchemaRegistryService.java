@@ -1,11 +1,10 @@
 package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
+import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
-import com.provectus.kafka.ui.model.CompatibilityLevel;
-import com.provectus.kafka.ui.model.CompatibilityLevelResponse;
-import com.provectus.kafka.ui.model.NewSchemaSubject;
-import com.provectus.kafka.ui.model.SchemaSubject;
+import com.provectus.kafka.ui.cluster.model.InternalCompatibilityCheck;
+import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -31,6 +30,7 @@ public class SchemaRegistryService {
     private static final String LATEST = "latest";
 
     private final ClustersStorage clustersStorage;
+    private final ClusterMapper mapper;
     private final WebClient webClient;
 
     public Flux<String> getAllSchemaSubjects(String clusterName) {
@@ -145,5 +145,18 @@ public class SchemaRegistryService {
                             .retrieve()
                             .bodyToMono(CompatibilityLevelResponse.class);
                 }).orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    public Mono<CompatibilityCheckResponse> checksSchemaCompatibility(String clusterName, String schemaName, Mono<NewSchemaSubject> newSchemaSubject) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.post()
+                        .uri(cluster.getSchemaRegistry() + "/compatibility/subjects/{subjectName}/versions/latest", schemaName)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
+                        .retrieve()
+                        .bodyToMono(InternalCompatibilityCheck.class)
+                        .map(mapper::toCompatibilityCheckResponse)
+                        .log()
+                ).orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 }
