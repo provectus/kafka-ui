@@ -8,9 +8,6 @@ import { TopicMessage, Partition, SeekType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import CustomParamButton, {
-  CustomParamButtonType,
-} from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
 
 import MultiSelect from 'react-multi-select-component';
 
@@ -199,26 +196,6 @@ const Messages: React.FC<Props> = ({
     );
   };
 
-  const getTopicMessagesTable = () => {
-    return messages.length > 0 ? (
-      <div>
-        <MessagesTable messages={messages} />
-        <div className="columns">
-          <div className="column is-full">
-            <CustomParamButton
-              className="is-link is-pulled-right"
-              type={CustomParamButtonType.chevronRight}
-              onClick={onNext}
-              btnText="Next"
-            />
-          </div>
-        </div>
-      </div>
-    ) : (
-      <div>No messages at selected topic</div>
-    );
-  };
-
   if (!isFetched) {
     return <PageLoader isFullHeight={false} />;
   }
@@ -303,7 +280,7 @@ const Messages: React.FC<Props> = ({
           />
         </div>
       </div>
-      {getTopicMessagesTable()}
+      <MessagesTable messages={messages} onNext={onNext} />
     </div>
   );
 };
