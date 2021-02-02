@@ -44,7 +44,7 @@
     "build": "react-scripts build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
-    "test": "cross-env CI=true react-scripts test --env=jsdom",
+    "test": "react-scripts test",
     "eject": "react-scripts eject",
     "tsc": "tsc",
     "test:coverage": "jest --coverage"
