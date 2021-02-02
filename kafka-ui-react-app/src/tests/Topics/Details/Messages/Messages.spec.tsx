@@ -3,10 +3,8 @@ import { mount, shallow } from 'enzyme';
 import JSONTree from 'react-json-tree';
 import * as useDebounce from 'use-debounce';
 import DatePicker from 'react-datepicker';
-import Messages, {
-  Props,
-} from '../../../../components/Topics/Details/Messages/Messages';
-import PageLoader from '../../../../components/common/PageLoader/PageLoader';
+import Messages, { Props } from 'components/Topics/Details/Messages/Messages';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 describe('Messages component', () => {
   beforeEach(() => {

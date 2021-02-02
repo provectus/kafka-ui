@@ -31,7 +31,7 @@
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-explicit-any": "error",
-    "react/jsx-props-no-spreading": 0
+    "react/jsx-props-no-spreading": "off"
   },
   "overrides": [
     {
