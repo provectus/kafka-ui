@@ -18,7 +18,7 @@ services:
 ```
    
   
-* Start OpenVPN server process
+* Start Kafka UI process
 
 ```bash
 docker-compose up -d kafka-ui
