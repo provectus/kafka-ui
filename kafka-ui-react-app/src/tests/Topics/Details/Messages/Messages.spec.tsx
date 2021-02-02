@@ -68,7 +68,7 @@ describe('Messages component', () => {
     });
     describe('Without messages', () => {
       it('renders string', () => {
-        const wrapper = shallow(setupWrapper());
+        const wrapper = mount(setupWrapper());
         expect(wrapper.text()).toContain('No messages at selected topic');
       });
     });
