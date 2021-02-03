@@ -1,7 +1,9 @@
 package com.provectus.kafka.ui;
 
+import com.provectus.kafka.ui.model.CompatibilityLevelResponse;
 import com.provectus.kafka.ui.model.SchemaSubject;
 import com.provectus.kafka.ui.rest.MetricsRestController;
+import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -20,6 +22,41 @@ import java.util.UUID;
 class SchemaRegistryServiceTests extends AbstractBaseTest {
     @Autowired
     MetricsRestController metricsRestController;
+
+    @Test
+    public void should404WhenGetAllSchemasForUnknownCluster() {
+        WebTestClient.bindToController(metricsRestController)
+                .build()
+                .get()
+                .uri("http://localhost:8080/api/clusters/unknown-cluster/schemas")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void shouldReturn404WhenGetLatestSchemaByNonExistingSchemaName() {
+        String unknownSchema = "unknown-schema";
+        WebTestClient.bindToController(metricsRestController).build()
+                .get()
+                .uri("http://localhost:8080/api/clusters/local/schemas/{schemaName}/latest", unknownSchema)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
+        WebTestClient.bindToController(metricsRestController).build()
+                .get()
+                .uri("http://localhost:8080/api/clusters/local/schemas/compatibility")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CompatibilityLevelResponse.class)
+                .consumeWith(result -> {
+                    CompatibilityLevelResponse responseBody = result.getResponseBody();
+                    Assertions.assertNotNull(responseBody);
+                    Assertions.assertEquals(CompatibilityLevel.BACKWARD.name, responseBody.getCompatibilityLevel());
+                });
+    }
 
     @Test
     public void shouldReturnNotNullResponseWhenGetAllSchemas() {
