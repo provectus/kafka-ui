@@ -21,15 +21,15 @@ const MessageItem: React.FC<MessageItemProp> = ({
     return format(date, 'yyyy-MM-dd HH:mm:ss');
   };
 
-  return (
-    <tr key={`${timestamp}${Math.random()}`}>
-      <td style={{ width: 200 }}>{getFormattedDate(timestamp)}</td>
-      <td style={{ width: 150 }}>{offset}</td>
-      <td style={{ width: 100 }}>{partition}</td>
-      <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
-        content ?
+  const getMessageContentBody = (messageContent: Record<string, unknown>) => {
+    try {
+      const contentObj =
+        typeof messageContent !== 'object'
+          ? JSON.parse(messageContent)
+          : messageContent;
+      return (
         <JSONTree
-          data={typeof content !== 'object' ? JSON.parse(content) : content}
+          data={contentObj}
           hideRoot
           invertTheme={false}
           theme={{
@@ -48,7 +48,19 @@ const MessageItem: React.FC<MessageItemProp> = ({
             base0B: '#363636',
           }}
         />
-        : content
+      );
+    } catch (e) {
+      return messageContent;
+    }
+  };
+
+  return (
+    <tr key={`${timestamp}${Math.random()}`}>
+      <td style={{ width: 200 }}>{getFormattedDate(timestamp)}</td>
+      <td style={{ width: 150 }}>{offset}</td>
+      <td style={{ width: 100 }}>{partition}</td>
+      <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
+        {content && getMessageContentBody(content as Record<string, unknown>)}
       </td>
     </tr>
   );
