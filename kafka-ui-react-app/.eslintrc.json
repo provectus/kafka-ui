@@ -15,7 +15,7 @@
     },
     "ecmaVersion": 2018,
     "sourceType": "module",
-    "project": ["./tsconfig.json", "./src/setupTests.js"]
+    "project": ["./tsconfig.json", "./src/setupTests.ts"]
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "extends": [

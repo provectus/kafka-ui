@@ -66,6 +66,7 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.11",
