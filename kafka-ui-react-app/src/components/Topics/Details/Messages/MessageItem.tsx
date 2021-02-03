@@ -16,11 +16,6 @@ const MessageItem: React.FC<MessageItemProp> = ({
   timestamp,
   content,
 }) => {
-  const getFormattedDate = (date: Date) => {
-    if (!date) return null;
-    return format(date, 'yyyy-MM-dd HH:mm:ss');
-  };
-
   const getMessageContentBody = (messageContent: Record<string, unknown>) => {
     try {
       const contentObj =
@@ -55,11 +50,13 @@ const MessageItem: React.FC<MessageItemProp> = ({
   };
 
   return (
-    <tr key={`${timestamp}${Math.random()}`}>
-      <td style={{ width: 200 }}>{getFormattedDate(timestamp)}</td>
+    <tr key="{timestamp}">
+      <td style={{ width: 200 }}>
+        {timestamp ? format(timestamp, 'yyyy-MM-dd HH:mm:ss') : null}
+      </td>
       <td style={{ width: 150 }}>{offset}</td>
       <td style={{ width: 100 }}>{partition}</td>
-      <td key={Math.random()} style={{ wordBreak: 'break-word' }}>
+      <td key="{content}" style={{ wordBreak: 'break-word' }}>
         {content && getMessageContentBody(content as Record<string, unknown>)}
       </td>
     </tr>
