@@ -358,6 +358,36 @@ paths:
                   type: string
 
   /api/clusters/{clusterName}/schemas/{schemaName}:
+    post:
+      tags:
+        - /api/clusters
+      summary: create a new subject schema
+      operationId: createNewSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSchemaSubject'
+      responses:
+        200:
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaSubject'
+        400:
+          description: Bad request
     delete:
       tags:
         - /api/clusters
@@ -406,36 +436,6 @@ paths:
                 type: array
                 items:
                   type: integer
-    post:
-      tags:
-        - /api/clusters
-      summary: create a new subject schema
-      operationId: createNewSchema
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: schemaName
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewSchemaSubject'
-      responses:
-        200:
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SchemaSubject'
-        400:
-          description: Bad request
 
   /api/clusters/{clusterName}/schemas/{schemaName}/latest:
     get:

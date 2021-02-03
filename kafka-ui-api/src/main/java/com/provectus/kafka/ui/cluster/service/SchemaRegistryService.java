@@ -109,7 +109,7 @@ public class SchemaRegistryService {
                         .retrieve()
                         .onStatus(HttpStatus::isError, ClientResponse::createException)
                         .toEntity(SchemaSubject.class)
-                        .doOnError(log::error))
+                        .log())
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
