@@ -442,7 +442,7 @@ paths:
       tags:
         - /api/clusters
       summary: get the latest schema from Schema Registry service
-      operationId: getLatestSchemaByVersion
+      operationId: getLatestSchema
       parameters:
         - name: clusterName
           in: path

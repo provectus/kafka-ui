@@ -105,7 +105,7 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<SchemaSubject>>> getLatestSchemaByVersion(String clusterName, String schemaName, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Flux<SchemaSubject>>> getLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
         Flux<SchemaSubject> flux = schemaRegistryService.getLatestSchemaSubject(clusterName, schemaName);
         return Mono.just(ResponseEntity.ok(flux)).onErrorReturn(ResponseEntity.notFound().build());
     }
