@@ -92,7 +92,7 @@ describe('Messages component', () => {
     });
 
     describe('With defined offset value', () => {
-      const wrapper = mount(setupWrapper());
+      const wrapper = shallow(setupWrapper());
 
       it('shows offset value in input', () => {
         const offset = '10';
@@ -107,14 +107,12 @@ describe('Messages component', () => {
       });
     });
     describe('With invalid offset value', () => {
-      const wrapper = mount(setupWrapper());
+      const wrapper = shallow(setupWrapper());
 
       it('shows 0 in input', () => {
-        const offset = null;
-
         wrapper
           .find('#searchOffset')
-          .simulate('change', { target: { value: offset } });
+          .simulate('change', { target: { value: null } });
 
         expect(wrapper.find('#searchOffset').first().props().value).toBe('0');
       });
