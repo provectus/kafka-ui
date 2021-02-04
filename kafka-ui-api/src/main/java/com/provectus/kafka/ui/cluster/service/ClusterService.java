@@ -68,6 +68,7 @@ public class ClusterService {
                 .map(c ->
                         c.getTopics().values().stream()
                                 .map(clusterMapper::toTopic)
+                                .sorted(Comparator.comparing(Topic::getName))
                                 .collect(Collectors.toList())
                 ).orElse(Collections.emptyList());
     }

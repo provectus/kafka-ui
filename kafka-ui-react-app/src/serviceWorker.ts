@@ -9,6 +9,7 @@
 
 // To learn more about the benefits of this model and instructions on how to
 // opt-in, read https://bit.ly/CRA-PWA
+/* eslint-disable no-console */
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
