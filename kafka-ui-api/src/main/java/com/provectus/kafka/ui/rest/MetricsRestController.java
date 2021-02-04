@@ -105,15 +105,17 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<SchemaSubject>>> getLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
-        Flux<SchemaSubject> flux = schemaRegistryService.getLatestSchemaSubject(clusterName, schemaName);
-        return Mono.just(ResponseEntity.ok(flux)).onErrorReturn(ResponseEntity.notFound().build());
+    public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
+        return schemaRegistryService.getLatestSchemaSubject(clusterName, schemaName)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<SchemaSubject>>> getSchemaByVersion(String clusterName, String schemaName, Integer version, ServerWebExchange exchange) {
-        Flux<SchemaSubject> flux = schemaRegistryService.getSchemaSubjectByVersion(clusterName, schemaName, version);
-        return Mono.just(ResponseEntity.ok(flux)).onErrorReturn(ResponseEntity.notFound().build());
+    public Mono<ResponseEntity<SchemaSubject>> getSchemaByVersion(String clusterName, String schemaName, Integer version, ServerWebExchange exchange) {
+        return schemaRegistryService.getSchemaSubjectByVersion(clusterName, schemaName, version)
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -165,17 +167,10 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<CompatibilityLevelResponse>> getGlobalSchemaCompatibilityLevel(String clusterName, ServerWebExchange exchange) {
-        return schemaRegistryService.getSchemaCompatibilityLevel(clusterName, null)
+    public Mono<ResponseEntity<CompatibilityLevel>> getGlobalSchemaCompatibilityLevel(String clusterName, ServerWebExchange exchange) {
+        return schemaRegistryService.getGlobalSchemaCompatibilityLevel(clusterName)
                 .map(ResponseEntity::ok)
-                .onErrorReturn(ResponseEntity.badRequest().build());
-    }
-
-    @Override
-    public Mono<ResponseEntity<CompatibilityLevelResponse>> getSchemaCompatibilityLevel(String clusterName, String schemaName, ServerWebExchange exchange) {
-        return schemaRegistryService.getSchemaCompatibilityLevel(clusterName, schemaName)
-                .map(ResponseEntity::ok)
-                .onErrorReturn(ResponseEntity.badRequest().build());
+                .defaultIfEmpty(ResponseEntity.badRequest().build());
     }
 
     @Override

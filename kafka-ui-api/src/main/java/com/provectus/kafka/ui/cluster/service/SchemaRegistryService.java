@@ -4,7 +4,11 @@ import com.provectus.kafka.ui.cluster.exception.NotFoundException;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.InternalCompatibilityCheck;
-import com.provectus.kafka.ui.model.*;
+import com.provectus.kafka.ui.cluster.model.InternalCompatibilityLevel;
+import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
+import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.NewSchemaSubject;
+import com.provectus.kafka.ui.model.SchemaSubject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -24,9 +28,9 @@ import java.util.Objects;
 @RequiredArgsConstructor
 public class SchemaRegistryService {
     private static final String URL_SUBJECTS = "/subjects";
-    private static final String URL_SUBJECT = "/subjects/{subjectName}";
-    private static final String URL_SUBJECT_VERSIONS = "/subjects/{subjectName}/versions";
-    private static final String URL_SUBJECT_BY_VERSION = "/subjects/{subjectName}/versions/{version}";
+    private static final String URL_SUBJECT = "/subjects/{schemaName}";
+    private static final String URL_SUBJECT_VERSIONS = "/subjects/{schemaName}/versions";
+    private static final String URL_SUBJECT_BY_VERSION = "/subjects/{schemaName}/versions/{version}";
     private static final String LATEST = "latest";
 
     private final ClustersStorage clustersStorage;
@@ -44,56 +48,64 @@ public class SchemaRegistryService {
                 .orElse(Flux.error(new NotFoundException("No such cluster")));
     }
 
-    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String subjectName) {
+    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String schemaName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
-                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, subjectName)
+                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals, resp -> Mono.error(new NotFoundException("No such subject")))
                         .bodyToFlux(Integer.class))
                 .orElse(Flux.error(new NotFoundException("No such cluster")));
     }
 
-    public Flux<SchemaSubject> getSchemaSubjectByVersion(String clusterName, String subjectName, Integer version) {
-        return this.getSchemaSubject(clusterName, subjectName, String.valueOf(version));
+    public Mono<SchemaSubject> getSchemaSubjectByVersion(String clusterName, String schemaName, Integer version) {
+        return this.getSchemaSubject(clusterName, schemaName, String.valueOf(version));
     }
 
-    public Flux<SchemaSubject> getLatestSchemaSubject(String clusterName, String subjectName) {
-        return this.getSchemaSubject(clusterName, subjectName, LATEST);
+    public Mono<SchemaSubject> getLatestSchemaSubject(String clusterName, String schemaName) {
+        return this.getSchemaSubject(clusterName, schemaName, LATEST);
     }
 
-    private Flux<SchemaSubject> getSchemaSubject(String clusterName, String subjectName, String version) {
+    private Mono<SchemaSubject> getSchemaSubject(String clusterName, String schemaName, String version) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
-                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, subjectName, version)
+                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, schemaName, version)
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals, resp -> Mono.error(new NotFoundException("No such subject or version")))
-                        .bodyToFlux(SchemaSubject.class))
-                .orElse(Flux.error(new NotFoundException()));
+                        .bodyToMono(SchemaSubject.class)
+                        .zipWith(getSchemaCompatibilityInfoOrGlobal(clusterName, schemaName))
+                        .map(tuple -> {
+                            SchemaSubject schema = tuple.getT1();
+                            String compatibilityLevel = tuple.getT2().getCompatibility().getValue();
+                            schema.setCompatibilityLevel(compatibilityLevel);
+                            return schema;
+                        })
+                )
+                .orElse(Mono.error(new NotFoundException()));
     }
 
-    public Mono<ResponseEntity<Void>> deleteSchemaSubjectByVersion(String clusterName, String subjectName, Integer version) {
-        return this.deleteSchemaSubject(clusterName, subjectName, String.valueOf(version));
+    public Mono<ResponseEntity<Void>> deleteSchemaSubjectByVersion(String clusterName, String schemaName, Integer version) {
+        return this.deleteSchemaSubject(clusterName, schemaName, String.valueOf(version));
     }
 
-    public Mono<ResponseEntity<Void>> deleteLatestSchemaSubject(String clusterName, String subjectName) {
-        return this.deleteSchemaSubject(clusterName, subjectName, LATEST);
+    public Mono<ResponseEntity<Void>> deleteLatestSchemaSubject(String clusterName, String schemaName) {
+        return this.deleteSchemaSubject(clusterName, schemaName, LATEST);
     }
 
-    private Mono<ResponseEntity<Void>> deleteSchemaSubject(String clusterName, String subjectName, String version) {
+    private Mono<ResponseEntity<Void>> deleteSchemaSubject(String clusterName, String schemaName, String version) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.delete()
-                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, subjectName, version)
+                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, schemaName, version)
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals, resp -> Mono.error(new NotFoundException("No such subject or version")))
                         .toBodilessEntity())
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
-    public Mono<ResponseEntity<Void>> deleteSchemaSubject(String clusterName, String subjectName) {
+    public Mono<ResponseEntity<Void>> deleteSchemaSubject(String clusterName, String schemaName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.delete()
-                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT, subjectName)
+                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT, schemaName)
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals, resp -> Mono.error(new NotFoundException("No such subject or version")))
                         .toBodilessEntity())
@@ -136,21 +148,32 @@ public class SchemaRegistryService {
         return updateSchemaCompatibility(clusterName, null, compatibilityLevel);
     }
 
-    public Mono<CompatibilityLevelResponse> getSchemaCompatibilityLevel(String clusterName, String schemaName) {
+    public Mono<CompatibilityLevel> getSchemaCompatibilityLevel(String clusterName, String schemaName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> {
                     String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
                     return webClient.get()
                             .uri(cluster.getSchemaRegistry() + configEndpoint, schemaName)
                             .retrieve()
-                            .bodyToMono(CompatibilityLevelResponse.class);
-                }).orElse(Mono.error(new NotFoundException("No such cluster")));
+                            .bodyToMono(InternalCompatibilityLevel.class)
+                            .map(mapper::toCompatibilityLevel)
+                            .onErrorResume(error -> Mono.empty());
+                }).orElse(Mono.empty());
+    }
+
+    public Mono<CompatibilityLevel> getGlobalSchemaCompatibilityLevel(String clusterName) {
+        return this.getSchemaCompatibilityLevel(clusterName, null);
+    }
+
+    private Mono<CompatibilityLevel> getSchemaCompatibilityInfoOrGlobal(String clusterName, String schemaName) {
+        return this.getSchemaCompatibilityLevel(clusterName, schemaName)
+                .switchIfEmpty(this.getGlobalSchemaCompatibilityLevel(clusterName));
     }
 
     public Mono<CompatibilityCheckResponse> checksSchemaCompatibility(String clusterName, String schemaName, Mono<NewSchemaSubject> newSchemaSubject) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.post()
-                        .uri(cluster.getSchemaRegistry() + "/compatibility/subjects/{subjectName}/versions/latest", schemaName)
+                        .uri(cluster.getSchemaRegistry() + "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
                         .retrieve()

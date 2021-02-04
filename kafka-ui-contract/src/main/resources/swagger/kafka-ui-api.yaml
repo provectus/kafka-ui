@@ -460,9 +460,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaSubject'
+                $ref: '#/components/schemas/SchemaSubject'
     delete:
       tags:
         - /api/clusters
@@ -514,9 +512,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaSubject'
+                $ref: '#/components/schemas/SchemaSubject'
     delete:
       tags:
         - /api/clusters
@@ -548,7 +544,7 @@ paths:
     get:
       tags:
         - /api/clusters
-      summary: Get schema compatibility level globally
+      summary: Get global schema compatibility level
       operationId: getGlobalSchemaCompatibilityLevel
       parameters:
         - name: clusterName
@@ -562,7 +558,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CompatibilityLevelResponse'
+                $ref: '#/components/schemas/CompatibilityLevel'
     put:
       tags:
         - /api/clusters
@@ -585,30 +581,7 @@ paths:
         404:
           description: Not Found
 
-  /api/clusters/{clusterName}/schemas/compatibility/{schemaName}:
-    get:
-      tags:
-        - /api/clusters
-      summary: Get schema compatibility level of specific schema
-      operationId: getSchemaCompatibilityLevel
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: schemaName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CompatibilityLevelResponse'
+  /api/clusters/{clusterName}/schemas/{schemaName}/compatibility:
     put:
       tags:
         - /api/clusters
@@ -636,7 +609,7 @@ paths:
         404:
           description: Not Found
 
-  /api/clusters/{clusterName}/schemas/compatibility/{schemaName}/check:
+  /api/clusters/{clusterName}/schemas/{schemaName}/check:
     post:
       tags:
         - /api/clusters
@@ -1003,6 +976,8 @@ components:
           type: integer
         schema:
           type: string
+        compatibilityLevel:
+          type: string
       required:
         - id
 
@@ -1030,13 +1005,13 @@ components:
       required:
         - compatibility
 
-    CompatibilityLevelResponse:
-      type: object
-      properties:
-        compatibilityLevel:
-          type: string
-      required:
-        - compatibilityLevel
+#    CompatibilityLevelResponse:
+#      type: object
+#      properties:
+#        compatibilityLevel:
+#          type: string
+#      required:
+#        - compatibilityLevel
 
     CompatibilityCheckResponse:
       type: object
