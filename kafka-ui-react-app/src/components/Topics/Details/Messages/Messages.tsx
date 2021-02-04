@@ -20,7 +20,7 @@ import * as _ from 'lodash';
 import { useDebouncedCallback } from 'use-debounce';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 
-interface Props {
+export interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
   isFetched: boolean;
@@ -309,7 +309,6 @@ const Messages: React.FC<Props> = ({
               id="selectSeekType"
               name="selectSeekType"
               onChange={handleSeekTypeChange}
-              defaultValue={SeekType.OFFSET}
               value={selectedSeekType}
             >
               <option value={SeekType.OFFSET}>Offset</option>

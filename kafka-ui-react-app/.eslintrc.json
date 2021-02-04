@@ -1,7 +1,8 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "jest": true
   },
   "globals": {
     "Atomics": "readonly",
@@ -14,7 +15,7 @@
     },
     "ecmaVersion": 2018,
     "sourceType": "module",
-    "project": "./tsconfig.json"
+    "project": ["./tsconfig.json", "./src/setupTests.ts"]
   },
   "plugins": ["@typescript-eslint", "prettier"],
   "extends": [
@@ -36,6 +37,12 @@
       "files": ["**/*.tsx"],
       "rules": {
         "react/prop-types": "off"
+      }
+    },
+    {
+      "files": ["*.spec.tsx"],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
       }
     }
   ]
