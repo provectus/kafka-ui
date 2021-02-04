@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.model.CompatibilityLevel;
 import com.provectus.kafka.ui.model.SchemaSubject;
 import com.provectus.kafka.ui.rest.MetricsRestController;
 import lombok.extern.log4j.Log4j2;
+import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +43,20 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .expectStatus().isNotFound();
     }
 
-//    @Test
-//    void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
-//        WebTestClient.bindToController(metricsRestController).build()
-//                .get()
-//                .uri("http://localhost:8080/api/clusters/local/schemas/compatibility")
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBody(CompatibilityLevel.class)
-//                .consumeWith(result -> {
-//                    CompatibilityLevel responseBody = result.getResponseBody();
-//                    Assertions.assertNotNull(responseBody);
-//                    Assertions.assertEquals(CompatibilityLevel.BACKWARD.name, responseBody());
-//                });
-//    }
+    @Test
+    void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
+        WebTestClient.bindToController(metricsRestController).build()
+                .get()
+                .uri("http://localhost:8080/api/clusters/local/schemas/compatibility")
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(CompatibilityLevel.class)
+                .consumeWith(result -> {
+                    CompatibilityLevel responseBody = result.getResponseBody();
+                    Assertions.assertNotNull(responseBody);
+                    Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.BACKWARD, responseBody.getCompatibility());
+                });
+    }
 
     @Test
     public void shouldReturnNotNullResponseWhenGetAllSchemas() {
@@ -74,10 +75,11 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     }
 
     @Test
-    public void shouldReturnSuccessAndSchemaIdWhenCreateNewSchema() {
+    public void shouldOkWhenCreateNewSchemaThenGetAndUpdateItsCompatibilityLevel() {
         WebTestClient webTestClient = WebTestClient.bindToController(metricsRestController).build();
 
         String schemaName = UUID.randomUUID().toString();
+        // Create a new schema
         webTestClient
                 .post()
                 .uri("http://localhost:8080/api/clusters/local/schemas/{schemaName}", schemaName)
@@ -88,16 +90,40 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .expectBody(SchemaSubject.class)
                 .consumeWith(this::assertResponseBodyWhenCreateNewSchema);
 
+        //Get the created schema and check its items
         webTestClient
                 .get()
                 .uri("http://localhost:8080/api/clusters/local/schemas/{schemaName}/latest", schemaName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(SchemaSubject.class)
-                .consumeWith(listEntityExchangeResult -> assertSchemaWhenGetLatest(schemaName, listEntityExchangeResult));
+                .consumeWith(listEntityExchangeResult -> {
+                    val expectedCompatibility = CompatibilityLevel.CompatibilityEnum.BACKWARD;
+                    assertSchemaWhenGetLatest(schemaName, listEntityExchangeResult, expectedCompatibility);
+                });
+
+        //Now let's change compatibility level of this schema to FULL whereas the global level should be BACKWARD
+        webTestClient.put()
+                .uri("http://localhost:8080/api/clusters/local/schemas/{schemaName}/compatibility", schemaName)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue("{\"compatibility\":\"FULL\"}"))
+                .exchange()
+                .expectStatus().isOk();
+
+        //Get one more time to check the schema compatibility level is changed to FULL
+        webTestClient
+                .get()
+                .uri("http://localhost:8080/api/clusters/local/schemas/{schemaName}/latest", schemaName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBodyList(SchemaSubject.class)
+                .consumeWith(listEntityExchangeResult -> {
+                    val expectedCompatibility = CompatibilityLevel.CompatibilityEnum.FULL;
+                    assertSchemaWhenGetLatest(schemaName, listEntityExchangeResult, expectedCompatibility);
+                });
     }
 
-    private void assertSchemaWhenGetLatest(String schemaName, EntityExchangeResult<List<SchemaSubject>> listEntityExchangeResult) {
+    private void assertSchemaWhenGetLatest(String schemaName, EntityExchangeResult<List<SchemaSubject>> listEntityExchangeResult, CompatibilityLevel.CompatibilityEnum expectedCompatibility) {
         List<SchemaSubject> responseBody = listEntityExchangeResult.getResponseBody();
         Assertions.assertNotNull(responseBody);
         Assertions.assertEquals(1, responseBody.size());
@@ -107,7 +133,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         Assertions.assertEquals("\"string\"", actualSchema.getSchema());
 
         Assertions.assertNotNull(actualSchema.getCompatibilityLevel());
-        Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.BACKWARD.name(), actualSchema.getCompatibilityLevel());
+        Assertions.assertEquals(expectedCompatibility.name(), actualSchema.getCompatibilityLevel());
     }
 
     private void assertResponseBodyWhenCreateNewSchema(EntityExchangeResult<SchemaSubject> exchangeResult) {
