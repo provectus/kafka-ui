@@ -23,6 +23,7 @@ services:
       KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka1:29092
       KAFKA_CLUSTERS_1_ZOOKEEPER: zookeeper1:2181
       KAFKA_CLUSTERS_1_JMXPORT: 9998
+      KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schemaregistry0:8085
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.1.0
