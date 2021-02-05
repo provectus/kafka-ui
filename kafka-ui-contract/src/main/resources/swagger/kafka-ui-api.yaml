@@ -92,6 +92,65 @@ paths:
               schema:
                 $ref: '#/components/schemas/ClusterStats'
 
+  /api/clusters/{clusterName}/tokens:
+    get:
+      tags:
+        - api/clusters
+      operationId: getTokens
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DelegationTokens'
+    parameters:
+      - name: clusterName
+        in: path
+        required: true
+        schema:
+          type: string
+
+
+  /api/clusters/{clusterName}/tokens/{id}:
+    patch:
+      tags:
+        - api/clusters
+      operationId: renewToken
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+    delete:
+      tags:
+        - api/clusters
+      operationId: expireToken
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: integer
+                format: int64
+    parameters:
+      - name: clusterName
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+
+
+
   /api/clusters/{clusterName}/brokers/{id}/metrics:
     get:
       tags:
@@ -658,3 +717,51 @@ components:
           type: string
           additionalProperties:
             type: number
+
+    KafkaPrincipal:
+      type: object
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+
+    CreateDelegationToken:
+      type: object
+      properties:
+        maxLifeTime:
+          type: integer
+          format: int64
+        renewers:
+          type: array
+          items:
+            $ref: "#/components/schemas/KafkaPrincipal"
+
+    DelegationToken:
+      type: object
+      properties:
+        token:
+          type: string
+          description: base64 encoded token
+        principal:
+          $ref: "#/components/schemas/KafkaPrincipal"
+        renewers:
+          type: array
+          items:
+            $ref: "#/components/schemas/KafkaPrincipal"
+        issueTimestamp:
+          type: integer
+          format: int64
+        maxTimestamp:
+          type: integer
+          format: int64
+        expiryTimestamp:
+          type: integer
+          format: int64
+        tokenId:
+          type: string
+
+    DelegationTokens:
+      type: array
+      items:
+        $ref: '#/components/schemas/DelegationToken'

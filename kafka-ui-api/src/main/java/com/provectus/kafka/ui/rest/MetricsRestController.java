@@ -126,4 +126,21 @@ public class MetricsRestController implements ApiClustersApi {
                 .collectMap(Pair::getKey, Pair::getValue)
                 .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING, positions));
     }
+
+    @Override
+    public Mono<ResponseEntity<Long>> expireToken(String clusterName, String id, ServerWebExchange exchange) {
+        return clusterService.expireToken(clusterName, id).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<DelegationToken>>> getTokens(String clusterName,
+                                                                 ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(clusterService.getTokens(clusterName)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Long>> renewToken(String clusterName, String id,
+                                                 ServerWebExchange exchange) {
+        return clusterService.renewToken(clusterName, id).map(ResponseEntity::ok);
+    }
 }
