@@ -2,12 +2,12 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.model.CompatibilityLevel;
 import com.provectus.kafka.ui.model.SchemaSubject;
-import com.provectus.kafka.ui.rest.MetricsRestController;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -19,14 +19,14 @@ import java.util.UUID;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 @Log4j2
+@AutoConfigureWebTestClient(timeout = "10000")
 class SchemaRegistryServiceTests extends AbstractBaseTest {
     @Autowired
-    MetricsRestController metricsRestController;
+    WebTestClient webTestClient;
 
     @Test
     public void should404WhenGetAllSchemasForUnknownCluster() {
-        WebTestClient.bindToController(metricsRestController)
-                .build()
+        webTestClient
                 .get()
                 .uri("http://localhost:8080/api/clusters/unknown-cluster/schemas")
                 .exchange()
@@ -36,7 +36,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     @Test
     void shouldReturn404WhenGetLatestSchemaByNonExistingSchemaName() {
         String unknownSchema = "unknown-schema";
-        WebTestClient.bindToController(metricsRestController).build()
+        webTestClient
                 .get()
                 .uri("http://localhost:8080/api/clusters/local/schemas/{schemaName}/latest", unknownSchema)
                 .exchange()
@@ -45,7 +45,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
 
     @Test
     void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
-        WebTestClient.bindToController(metricsRestController).build()
+        webTestClient
                 .get()
                 .uri("http://localhost:8080/api/clusters/local/schemas/compatibility")
                 .exchange()
@@ -60,8 +60,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
 
     @Test
     public void shouldReturnNotNullResponseWhenGetAllSchemas() {
-        WebTestClient.bindToController(metricsRestController)
-                .build()
+        webTestClient
                 .get()
                 .uri("http://localhost:8080/api/clusters/local/schemas")
                 .exchange()
@@ -76,8 +75,6 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
 
     @Test
     public void shouldOkWhenCreateNewSchemaThenGetAndUpdateItsCompatibilityLevel() {
-        WebTestClient webTestClient = WebTestClient.bindToController(metricsRestController).build();
-
         String schemaName = UUID.randomUUID().toString();
         // Create a new schema
         webTestClient
