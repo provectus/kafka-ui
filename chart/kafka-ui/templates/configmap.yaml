@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kafka-ui.fullname" . }}
+  labels:
+    {{- include "kafka-ui.labels" . | nindent 4 }}
+data:
+  {{- toYaml .Values.envs.config | nindent 2 }}
