@@ -33,3 +33,8 @@ build/
 
 .DS_Store
 *.code-workspace
+
+
+*.tar.gz
+*.tgz
+**/charts/
