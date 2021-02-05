@@ -1,5 +1,5 @@
 import { v4 } from 'uuid';
-import { Topic } from 'generated-sources';
+import { Topic, TopicMessage } from 'generated-sources';
 import { Action, TopicsState } from 'redux/interfaces';
 import ActionType from 'redux/actionType';
 
@@ -41,6 +41,31 @@ const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
   return newState;
 };
 
+const transformTopicMessages = (
+  state: TopicsState,
+  messages: TopicMessage[]
+): TopicsState => ({
+  ...state,
+  messages: messages.map((mes) => {
+    const { content } = mes;
+    let parsedContent = content;
+
+    if (content) {
+      try {
+        parsedContent =
+          typeof content !== 'object' ? JSON.parse(content) : content;
+      } catch (_) {
+        // do nothing
+      }
+    }
+
+    return {
+      ...mes,
+      content: parsedContent,
+    };
+  }),
+});
+
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case ActionType.GET_TOPICS__SUCCESS:
@@ -57,10 +82,7 @@ const reducer = (state = initialState, action: Action): TopicsState => {
         },
       };
     case ActionType.GET_TOPIC_MESSAGES__SUCCESS:
-      return {
-        ...state,
-        messages: action.payload,
-      };
+      return transformTopicMessages(state, action.payload);
     case ActionType.GET_TOPIC_CONFIG__SUCCESS:
       return {
         ...state,

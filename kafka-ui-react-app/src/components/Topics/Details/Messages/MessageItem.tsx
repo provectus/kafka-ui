@@ -7,7 +7,7 @@ interface MessageItemProp {
   partition: TopicMessage['partition'];
   offset: TopicMessage['offset'];
   timestamp: TopicMessage['timestamp'];
-  content: Record<string, unknown>;
+  content: TopicMessage['content'];
 }
 
 const MessageItem: React.FC<MessageItemProp> = ({
@@ -15,16 +15,17 @@ const MessageItem: React.FC<MessageItemProp> = ({
   offset,
   timestamp,
   content,
-}) => {
-  const getMessageContentBody = (messageContent: Record<string, unknown>) => {
-    try {
-      const contentObj =
-        typeof messageContent !== 'object'
-          ? JSON.parse(messageContent)
-          : messageContent;
-      return (
+}) => (
+  <tr key="{timestamp}">
+    <td style={{ width: 200 }}>
+      {timestamp ? format(timestamp, 'yyyy-MM-dd HH:mm:ss') : null}
+    </td>
+    <td style={{ width: 150 }}>{offset}</td>
+    <td style={{ width: 100 }}>{partition}</td>
+    <td key="{content}" style={{ wordBreak: 'break-word' }}>
+      {content && (
         <JSONTree
-          data={contentObj}
+          data={content}
           hideRoot
           invertTheme={false}
           theme={{
@@ -43,24 +44,9 @@ const MessageItem: React.FC<MessageItemProp> = ({
             base0B: '#363636',
           }}
         />
-      );
-    } catch (e) {
-      return messageContent;
-    }
-  };
-
-  return (
-    <tr key="{timestamp}">
-      <td style={{ width: 200 }}>
-        {timestamp ? format(timestamp, 'yyyy-MM-dd HH:mm:ss') : null}
-      </td>
-      <td style={{ width: 150 }}>{offset}</td>
-      <td style={{ width: 100 }}>{partition}</td>
-      <td key="{content}" style={{ wordBreak: 'break-word' }}>
-        {content && getMessageContentBody(content as Record<string, unknown>)}
-      </td>
-    </tr>
-  );
-};
+      )}
+    </td>
+  </tr>
+);
 
 export default MessageItem;
