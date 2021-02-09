@@ -24,6 +24,7 @@ public class ClustersProperties {
         String schemaNameTemplate = "%s-value";
         String protobufFile;
         String protobufMessageName;
+        String kafkaConnect;
         int jmxPort;
         Properties properties;
     }
