@@ -22,6 +22,17 @@ apiVersion: v1
 kind: Pod
 spec:
   containers:
+  - name: node
+    image: node:14
+    command:
+    - sleep
+    args:
+    - 99d
+    env:
+      - name: NODE_ENV
+        value: dev
+      - name: CI
+        value: true
   - name: docker-client
     image: docker:19.03.1
     command:
@@ -74,6 +85,65 @@ spec:
             }
             steps {
                 sh 'git merge origin/master'
+            }
+        }
+        stage('Preparations for testing') {
+            when {
+                anyOf {
+                    changeRequest ()
+                    expression { return env.GIT_BRANCH ==~ /.*master$/; }
+                }
+            }
+            parallel {
+                stage('Contracts generation') {
+                    steps {
+                        container('docker-client') {
+                            sh '''
+                            docker run -v $WORKSPACE:/usr/src/mymaven -v /tmp/repository:/root/.m2/repository -w /usr/src/mymaven/kafka-ui-contract maven:3.6.3-jdk-13 bash -c 'mvn -q package'
+                            '''
+                        }
+                    }
+                }
+                stage('NPM initialization') {
+                    steps {
+                        container('node') {
+                            sh '''
+                            cd kafka-ui-react-app
+                            npm install
+                            '''
+                        }
+                    }
+                }
+            }
+        }
+        stage('UI testing') {
+            when {
+                anyOf {
+                    changeRequest ()
+                    expression { return env.GIT_BRANCH ==~ /.*master$/; }
+                }
+            }
+            parallel {
+                stage('Tests') {
+                    steps {
+                        container('node') {
+                            sh '''
+                            cd kafka-ui-react-app
+                            npm run test
+                            '''
+                        }
+                    }
+                }
+                stage('Linter') {
+                    steps {
+                        container('node') {
+                            sh '''
+                            cd kafka-ui-react-app
+                            npm run lint
+                            '''
+                        }
+                    }
+                }
             }
         }
         stage('Remove SNAPSHOT from version') {
