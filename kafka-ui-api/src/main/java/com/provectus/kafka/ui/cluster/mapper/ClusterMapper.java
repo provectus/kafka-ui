@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.cluster.mapper;
 
 import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.cluster.model.*;
+import com.provectus.kafka.ui.cluster.model.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.*;
 import java.util.Properties;
 import org.mapstruct.Mapper;
@@ -35,6 +36,12 @@ public interface ClusterMapper {
     TopicDetails toTopicDetails(InternalTopic topic);
     TopicConfig toTopicConfig(InternalTopicConfig topic);
     Replica toReplica(InternalReplica replica);
+
+    @Mapping(target = "isCompatible", source = "compatible")
+    CompatibilityCheckResponse toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
+
+    @Mapping(target = "compatibility", source = "compatibilityLevel")
+    CompatibilityLevel toCompatibilityLevel(InternalCompatibilityLevel dto);
 
     default TopicDetails toTopicDetails(InternalTopic topic, InternalClusterMetrics metrics) {
         final TopicDetails result = toTopicDetails(topic);

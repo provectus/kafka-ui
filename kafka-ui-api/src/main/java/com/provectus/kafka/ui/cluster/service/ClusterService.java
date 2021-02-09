@@ -41,8 +41,8 @@ public class ClusterService {
 
     public Mono<BrokerMetrics> getBrokerMetrics(String name, Integer id) {
         return Mono.justOrEmpty(clustersStorage.getClusterByName(name)
-                .map( c -> c.getMetrics().getInternalBrokerMetrics())
-                .map( m -> m.get(id))
+                .map(c -> c.getMetrics().getInternalBrokerMetrics())
+                .map(m -> m.get(id))
                 .map(clusterMapper::toBrokerMetrics));
     }
 
@@ -75,17 +75,17 @@ public class ClusterService {
 
     public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
         return clustersStorage.getClusterByName(name)
-                .flatMap( c ->
+                .flatMap(c ->
                         Optional.ofNullable(
-                          c.getTopics().get(topicName)
+                                c.getTopics().get(topicName)
                         ).map(
-                          t -> t.toBuilder().partitions(
-                                  kafkaService.getTopicPartitions(c, t)
-                          ).build()
+                                t -> t.toBuilder().partitions(
+                                        kafkaService.getTopicPartitions(c, t)
+                                ).build()
                         ).map(t -> clusterMapper.toTopicDetails(t, c.getMetrics()))
                 );
     }
-                                                                           
+
     public Optional<List<TopicConfig>> getTopicConfigs(String name, String topicName) {
         return clustersStorage.getClusterByName(name)
                 .map(KafkaCluster::getTopics)
@@ -106,17 +106,17 @@ public class ClusterService {
         var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
 
         return kafkaService.getOrCreateAdminClient(cluster).map(ac ->
-                                ac.getAdminClient().describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
-            ).flatMap(groups ->
+                ac.getAdminClient().describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
+        ).flatMap(groups ->
                 groupMetadata(cluster, consumerGroupId)
-                    .flatMap(offsets -> {
-                        Map<TopicPartition, Long> endOffsets = topicPartitionsEndOffsets(cluster, offsets.keySet());
+                        .flatMap(offsets -> {
+                            Map<TopicPartition, Long> endOffsets = topicPartitionsEndOffsets(cluster, offsets.keySet());
                             return ClusterUtil.toMono(groups).map(s -> s.get(consumerGroupId).members().stream()
-                                        .flatMap(c -> Stream.of(ClusterUtil.convertToConsumerTopicPartitionDetails(c, offsets, endOffsets)))
+                                    .flatMap(c -> Stream.of(ClusterUtil.convertToConsumerTopicPartitionDetails(c, offsets, endOffsets)))
                                     .collect(Collectors.toList()).stream().flatMap(t -> t.stream().flatMap(Stream::of)).collect(Collectors.toList()));
-                    })
-            )
-            .map(c -> new ConsumerGroupDetails().consumers(c).consumerGroupId(consumerGroupId));
+                        })
+        )
+                .map(c -> new ConsumerGroupDetails().consumers(c).consumerGroupId(consumerGroupId));
 
     }
 
@@ -141,21 +141,21 @@ public class ClusterService {
     }
 
     @SneakyThrows
-    public Mono<List<ConsumerGroup>> getConsumerGroups (String clusterName) {
-            return clustersStorage.getClusterByName(clusterName)
-                    .map(kafkaService::getConsumerGroups)
-                    .orElse(Mono.empty());
+    public Mono<List<ConsumerGroup>> getConsumerGroups(String clusterName) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(kafkaService::getConsumerGroups)
+                .orElse(Mono.empty());
     }
 
-    public Flux<Broker> getBrokers (String clusterName) {
+    public Flux<Broker> getBrokers(String clusterName) {
         return kafkaService.getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
                 .flatMap(client -> ClusterUtil.toMono(client.getAdminClient().describeCluster().nodes())
-                    .map(n -> n.stream().map(node -> {
-                        Broker broker = new Broker();
-                        broker.setId(node.id());
-                        broker.setHost(node.host());
-                        return broker;
-                    }).collect(Collectors.toList())))
+                        .map(n -> n.stream().map(node -> {
+                            Broker broker = new Broker();
+                            broker.setId(node.id());
+                            broker.setHost(node.host());
+                            return broker;
+                        }).collect(Collectors.toList())))
                 .flatMapMany(Flux::fromIterable);
     }
 
@@ -180,5 +180,4 @@ public class ClusterService {
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
     }
-
 }

@@ -335,6 +335,312 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
+  /api/clusters/{clusterName}/schemas:
+    get:
+      tags:
+        - /api/clusters
+      summary: get all schemas from Schema Registry service
+      operationId: getSchemas
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /api/clusters/{clusterName}/schemas/{schemaName}:
+    post:
+      tags:
+        - /api/clusters
+      summary: create a new subject schema
+      operationId: createNewSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSchemaSubject'
+      responses:
+        200:
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaSubject'
+        400:
+          description: Bad request
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete schema from Schema Registry service
+      operationId: deleteSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/schemas/{schemaName}/versions:
+    get:
+      tags:
+        - /api/clusters
+      summary: get all version of schema from Schema Registry service
+      operationId: getSchemaVersions
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: integer
+
+  /api/clusters/{clusterName}/schemas/{schemaName}/latest:
+    get:
+      tags:
+        - /api/clusters
+      summary: get the latest schema from Schema Registry service
+      operationId: getLatestSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaSubject'
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete the latest schema from schema registry
+      operationId: deleteLatestSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+
+
+  /api/clusters/{clusterName}/schemas/{schemaName}/versions/{version}:
+    get:
+      tags:
+        - /api/clusters
+      summary: get schema by version from Schema Registry service
+      operationId: getSchemaByVersion
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaSubject'
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete schema by version from schema registry
+      operationId: deleteSchemaByVersion
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: version
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/schemas/compatibility:
+    get:
+      tags:
+        - /api/clusters
+      summary: Get global schema compatibility level
+      operationId: getGlobalSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompatibilityLevel'
+    put:
+      tags:
+        - /api/clusters
+      summary: Update compatibility level globally
+      operationId: updateGlobalSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompatibilityLevel'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+
+  /api/clusters/{clusterName}/schemas/{schemaName}/compatibility:
+    put:
+      tags:
+        - /api/clusters
+      summary: Update compatibility level for specific schema.
+      operationId: updateSchemaCompatibilityLevel
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CompatibilityLevel'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not Found
+
+  /api/clusters/{clusterName}/schemas/{schemaName}/check:
+    post:
+      tags:
+        - /api/clusters
+      summary: Check compatibility of the schema.
+      operationId: checkSchemaCompatibility
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: schemaName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSchemaSubject'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CompatibilityCheckResponse'
+        404:
+          description: Not Found
+
 components:
   schemas:
     Cluster:
@@ -658,3 +964,59 @@ components:
           type: string
           additionalProperties:
             type: number
+
+    SchemaSubject:
+      type: object
+      properties:
+        subject:
+          type: string
+        version:
+          type: string
+        id:
+          type: integer
+        schema:
+          type: string
+        compatibilityLevel:
+          type: string
+      required:
+        - id
+
+    NewSchemaSubject:
+      type: object
+      properties:
+        schema:
+          type: string
+      required:
+        - schema
+
+    CompatibilityLevel:
+      type: object
+      properties:
+        compatibility:
+          type: string
+          enum:
+            - BACKWARD
+            - BACKWARD_TRANSITIVE
+            - FORWARD
+            - FORWARD_TRANSITIVE
+            - FULL
+            - FULL_TRANSITIVE
+            - NONE
+      required:
+        - compatibility
+
+#    CompatibilityLevelResponse:
+#      type: object
+#      properties:
+#        compatibilityLevel:
+#          type: string
+#      required:
+#        - compatibilityLevel
+
+    CompatibilityCheckResponse:
+      type: object
+      properties:
+        isCompatible:
+          type: boolean
+      required:
+        - isCompatible

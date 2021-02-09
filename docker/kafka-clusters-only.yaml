@@ -85,6 +85,8 @@ services:
       SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
       SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+    ports:
+    - 8081:8081
 
   kafka-init-topics:
     image: confluentinc/cp-kafka:5.1.0

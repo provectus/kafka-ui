@@ -3,8 +3,10 @@ package com.provectus.kafka.ui.rest;
 import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
+import com.provectus.kafka.ui.cluster.service.SchemaRegistryService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,11 @@ import java.util.function.Function;
 
 @RestController
 @RequiredArgsConstructor
+@Log4j2
 public class MetricsRestController implements ApiClustersApi {
 
     private final ClusterService clusterService;
+    private final SchemaRegistryService schemaRegistryService;
 
     @Override
     public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
@@ -32,8 +36,8 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(String clusterName, Integer id, ServerWebExchange exchange) {
         return clusterService.getBrokerMetrics(clusterName, id)
-                        .map(ResponseEntity::ok)
-                        .onErrorReturn(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .onErrorReturn(ResponseEntity.notFound().build());
     }
 
     @Override
@@ -101,6 +105,49 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
+        return schemaRegistryService.getLatestSchemaSubject(clusterName, schemaName).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<SchemaSubject>> getSchemaByVersion(String clusterName, String schemaName, Integer version, ServerWebExchange exchange) {
+        return schemaRegistryService.getSchemaSubjectByVersion(clusterName, schemaName, version).map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<String>>> getSchemas(String clusterName, ServerWebExchange exchange) {
+        Flux<String> subjects = schemaRegistryService.getAllSchemaSubjects(clusterName);
+        return Mono.just(ResponseEntity.ok(subjects));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<Integer>>> getSchemaVersions(String clusterName, String subjectName, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(schemaRegistryService.getSchemaSubjectVersions(clusterName, subjectName)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteLatestSchemaSubject(clusterName, schemaName);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteSchemaByVersion(String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteSchemaSubjectByVersion(clusterName, subjectName, version);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteSchema(String clusterName, String subjectName, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteSchemaSubject(clusterName, subjectName);
+    }
+
+    @Override
+    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName, String schemaName,
+                                                               @Valid Mono<NewSchemaSubject> newSchemaSubject,
+                                                               ServerWebExchange exchange) {
+        return schemaRegistryService.createNewSubject(clusterName, schemaName, newSchemaSubject);
+    }
+
+    @Override
     public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroup(String clusterName, String consumerGroupId, ServerWebExchange exchange) {
         return clusterService.getConsumerGroupDetail(clusterName, consumerGroupId).map(ResponseEntity::ok);
     }
@@ -110,6 +157,34 @@ public class MetricsRestController implements ApiClustersApi {
         return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
     }
 
+    @Override
+    public Mono<ResponseEntity<CompatibilityLevel>> getGlobalSchemaCompatibilityLevel(String clusterName, ServerWebExchange exchange) {
+        return schemaRegistryService.getGlobalSchemaCompatibilityLevel(clusterName)
+                .map(ResponseEntity::ok)
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> updateGlobalSchemaCompatibilityLevel(String clusterName, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
+        log.info("Updating schema compatibility globally");
+        return schemaRegistryService.updateSchemaCompatibility(clusterName, compatibilityLevel)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<CompatibilityCheckResponse>> checkSchemaCompatibility(String clusterName, String schemaName,
+                                                                                     @Valid Mono<NewSchemaSubject> newSchemaSubject,
+                                                                                     ServerWebExchange exchange) {
+        return schemaRegistryService.checksSchemaCompatibility(clusterName, schemaName, newSchemaSubject)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(String clusterName, String schemaName, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
+        log.info("Updating schema compatibility for schema: {}", schemaName);
+        return schemaRegistryService.updateSchemaCompatibility(clusterName, schemaName, compatibilityLevel)
+                .map(ResponseEntity::ok);
+    }
 
     private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
         return Mono.justOrEmpty(seekTo)
