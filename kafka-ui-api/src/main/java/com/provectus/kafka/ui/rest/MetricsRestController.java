@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.rest;
 import com.provectus.kafka.ui.api.ApiClustersApi;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
 import com.provectus.kafka.ui.cluster.service.ClusterService;
+import com.provectus.kafka.ui.cluster.service.KafkaConnectService;
 import com.provectus.kafka.ui.cluster.service.SchemaRegistryService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ public class MetricsRestController implements ApiClustersApi {
 
     private final ClusterService clusterService;
     private final SchemaRegistryService schemaRegistryService;
+    private final KafkaConnectService kafkaConnectService;
 
     @Override
     public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
@@ -184,6 +186,18 @@ public class MetricsRestController implements ApiClustersApi {
     public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(String clusterName, String subject, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
         log.info("Updating schema compatibility for subject: {}", subject);
         return schemaRegistryService.updateSchemaCompatibility(clusterName, subject, compatibilityLevel)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<String>>> getConnectors(String clusterName, ServerWebExchange exchange) {
+        Flux<String> connectors = kafkaConnectService.getConnectors(clusterName);
+        return Mono.just(ResponseEntity.ok(connectors));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Connector>> getConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return kafkaConnectService.getConnector(clusterName, connectorName)
                 .map(ResponseEntity::ok);
     }
 

@@ -641,6 +641,54 @@ paths:
         404:
           description: Not Found
 
+  /api/clusters/{clusterName}/connectors:
+    get:
+      tags:
+        - /api/clusters
+      summary: get all connectors from Kafka Connect service
+      operationId: getConnectors
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+
+  /api/clusters/{clusterName}/connectors/{connectorName}:
+    get:
+      tags:
+        - /api/clusters
+      summary: get information about the connector
+      operationId: getConnector
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+
+
 components:
   schemas:
     Cluster:
@@ -1020,3 +1068,106 @@ components:
           type: boolean
       required:
         - isCompatible
+
+    BaseConnectorConfig:
+      type: object
+      properties:
+        name:
+          type: string
+        connector.class:
+          type: string
+        tasks.max:
+          type: integer
+        key.converter:
+          type: string
+        value.converter:
+          type: string
+        header.converter:
+          type: string
+        config.action.reload:
+          type: string
+          enum:
+            - none
+            - restart
+        transforms:
+          type: array
+          items:
+            type: string
+        predicates:
+          type: array
+          items:
+            type: string
+        errors.retry.limit:
+          type: number
+        errors.retry.delay.max.ms:
+          type: number
+        errors.tolerance:
+          type: string
+          enum:
+            - none
+            - all
+        errors.log.enable:
+          type: boolean
+        errors.log.include.messages:
+          type: boolean
+
+    BaseSourceConnectorConfig:
+      allOf:
+        - $ref: '#/components/schemas/BaseConnectorConfig'
+        - type: object
+          properties:
+            topic.creation.groups:
+              type: array
+              items:
+                type: string
+            # todo remove
+            topic:
+              type: string
+
+    BaseSinkConnectorConfig:
+      allOf:
+        - $ref: '#/components/schemas/BaseConnectorConfig'
+        - type: object
+          properties:
+            topics:
+              type: array
+              items:
+                type: string
+            topics.regex:
+              type: string
+            errors.deadletterqueue.topic.name:
+              type: string
+            errors.deadletterqueue.topic.replication.factor:
+              type: integer
+            errors.deadletterqueue.context.headers.enable:
+              type: boolean
+
+    ConnectorConfig:
+      oneOf:
+        - $ref: '#/components/schemas/BaseSourceConnectorConfig'
+        - $ref: '#/components/schemas/BaseSinkConnectorConfig'
+
+    Task:
+      type: object
+      properties:
+        connector:
+          type: string
+        task:
+          type: integer
+
+    Connector:
+      type: object
+      properties:
+        name:
+          type: string
+        config:
+          $ref: '#/components/schemas/ConnectorConfig'
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Task'
+        type:
+          type: string
+          enum:
+            - source
+            - sink
