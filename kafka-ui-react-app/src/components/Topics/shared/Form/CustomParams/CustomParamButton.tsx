@@ -1,15 +1,9 @@
 import React from 'react';
 
-export enum CustomParamButtonType {
-  plus = 'fa-plus',
-  minus = 'fa-minus',
-  chevronRight = 'fa-chevron-right',
-}
-
 interface Props {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
   className: string;
-  type: CustomParamButtonType;
+  type: 'fa-plus' | 'fa-minus' | 'fa-chevron-right';
   btnText?: string;
 }
 
