@@ -1,15 +1,15 @@
 package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
-import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.model.Connector;
 import com.provectus.kafka.ui.model.ConnectorConfig;
 import com.provectus.kafka.ui.model.ConnectorStatus;
+import com.provectus.kafka.ui.model.NewConnector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class KafkaConnectService {
     private final ClustersStorage clustersStorage;
-    private final ClusterMapper mapper;
     private final WebClient webClient;
 
     public Flux<String> getConnectors(String clusterName) {
@@ -30,6 +29,17 @@ public class KafkaConnectService {
                         .bodyToFlux(String.class)
                         .doOnError(log::error))
                 .orElse(Flux.error(new NotFoundException("No such cluster")));
+    }
+
+    public Mono<Connector> createConnector(String clusterName, Mono<NewConnector> connector) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.post()
+                        .uri(cluster.getKafkaConnect() + "/connectors/")
+                        .body(BodyInserters.fromPublisher(connector, NewConnector.class))
+                        .retrieve()
+                        .bodyToMono(Connector.class)
+                        .doOnError(log::error))
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
     public Mono<Connector> getConnector(String clusterName, String connectorName) {
@@ -78,6 +88,7 @@ public class KafkaConnectService {
                         .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/restart")
                         .retrieve()
                         .bodyToMono(Void.class)
+                        // todo onstatus 409
                         .doOnError(log::error))
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }

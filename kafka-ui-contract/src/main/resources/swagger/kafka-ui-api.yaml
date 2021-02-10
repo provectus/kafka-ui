@@ -662,6 +662,31 @@ paths:
                 type: array
                 items:
                   type: string
+    post:
+      tags:
+        - /api/clusters
+      summary: create new connector
+      operationId: createConnector
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewConnector'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+        409:
+          description: rebalance is in progress
 
   /api/clusters/{clusterName}/connectors/{connectorName}:
     get:
@@ -1308,22 +1333,32 @@ components:
         task:
           type: integer
 
-    Connector:
+
+    NewConnector:
       type: object
       properties:
         name:
           type: string
         config:
           $ref: '#/components/schemas/ConnectorConfig'
-        tasks:
-          type: array
-          items:
-            $ref: '#/components/schemas/Task'
-        type:
-          type: string
-          enum:
-            - source
-            - sink
+
+    Connector:
+      allOf:
+        - $ref: '#/components/schemas/NewConnector'
+        - type: object
+          properties:
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+            type:
+              type: string
+              enum:
+                - source
+                - sink
+          required:
+            - name
+            - config
 
     TaskStatus:
       type: object

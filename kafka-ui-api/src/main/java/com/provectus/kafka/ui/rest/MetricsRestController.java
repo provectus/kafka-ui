@@ -196,6 +196,12 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<Connector>> createConnector(String clusterName, @Valid Mono<NewConnector> connector, ServerWebExchange exchange) {
+        return kafkaConnectService.createConnector(clusterName, connector)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<Connector>> getConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
         return kafkaConnectService.getConnector(clusterName, connectorName)
                 .map(ResponseEntity::ok);
