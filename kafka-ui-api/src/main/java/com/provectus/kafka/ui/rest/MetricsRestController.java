@@ -201,6 +201,43 @@ public class MetricsRestController implements ApiClustersApi {
                 .map(ResponseEntity::ok);
     }
 
+    @Override
+    public Mono<ResponseEntity<Void>> deleteConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
+        // todo return 409
+        return kafkaConnectService.deleteConnector(clusterName, connectorName)
+                .map(v -> ResponseEntity.noContent().build());
+    }
+
+    @Override
+    public Mono<ResponseEntity<ConnectorConfig>> getConnectorConfig(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return kafkaConnectService.getConnectorConfig(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<ConnectorStatus>> getConnectorStatus(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return kafkaConnectService.getConnectorStatus(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> restartConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return kafkaConnectService.restartConnector(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> pauseConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return kafkaConnectService.pauseConnector(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> resumeConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return kafkaConnectService.resumeConnector(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
     private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
         return Mono.justOrEmpty(seekTo)
                 .defaultIfEmpty(Collections.emptyList())

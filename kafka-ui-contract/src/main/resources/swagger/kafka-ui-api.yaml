@@ -687,7 +687,143 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Connector'
+    delete:
+      tags:
+        - /api/clusters
+      summary: delete connector
+      operationId: deleteConnector
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        204:
+          description: No content
+        409:
+          description: rebalance is in progress
 
+  /api/clusters/{clusterName}/connectors/{connectorName}/config:
+    get:
+      tags:
+        - /api/clusters
+      summary: get connector configuration
+      operationId: getConnectorConfig
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorConfig'
+#    put:
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/status:
+    get:
+      tags:
+        - /api/clusters
+      summary: get connector status
+      operationId: getConnectorStatus
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorStatus'
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/restart:
+    post:
+      tags:
+        - /api/clusters
+      summary: restart the connector
+      operationId: restartConnector
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        409:
+          description: rebalance is in progress
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/pause:
+    put:
+      tags:
+        - /api/clusters
+      summary: pause the connector
+      operationId: pauseConnector
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: Accepted
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/resume:
+    put:
+      tags:
+        - /api/clusters
+      summary: resume the connector
+      operationId: resumeConnector
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: Accepted
 
 components:
   schemas:
@@ -1120,7 +1256,14 @@ components:
               type: array
               items:
                 type: string
-            # todo remove
+
+    FileStreamSourceConfig:
+      allOf:
+        - $ref: '#/components/schemas/BaseSourceConnectorConfig'
+        - type: object
+          properties:
+            file:
+              type: string
             topic:
               type: string
 
@@ -1142,10 +1285,20 @@ components:
             errors.deadletterqueue.context.headers.enable:
               type: boolean
 
+    FileStreamSinkConfig:
+      allOf:
+        - $ref: '#/components/schemas/BaseSinkConnectorConfig'
+        - type: object
+          properties:
+            file:
+              type: string
+
     ConnectorConfig:
       oneOf:
-        - $ref: '#/components/schemas/BaseSourceConnectorConfig'
-        - $ref: '#/components/schemas/BaseSinkConnectorConfig'
+#        - $ref: '#/components/schemas/BaseSourceConnectorConfig'
+        - $ref: '#/components/schemas/FileStreamSourceConfig'
+#        - $ref: '#/components/schemas/BaseSinkConnectorConfig'
+        - $ref: '#/components/schemas/FileStreamSinkConfig'
 
     Task:
       type: object
@@ -1171,3 +1324,38 @@ components:
           enum:
             - source
             - sink
+
+    TaskStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+        state:
+          type: string
+          enum:
+            - RUNNING
+            - FAILED
+            - PAUSED
+        worker_id:
+          type: string
+
+    ConnectorStatus:
+      type: object
+      properties:
+        name:
+          type: string
+        connector:
+          type: object
+          properties:
+            state:
+              type: string
+              enum:
+                - RUNNING
+                - FAILED
+                - PAUSED
+            worker_id:
+              type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatus'
