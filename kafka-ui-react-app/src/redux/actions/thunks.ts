@@ -15,13 +15,14 @@ import {
   TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
+  Schema,
 } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from './actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new ApiClustersApi(apiClientConf);
+export const apiClient = new ApiClustersApi(apiClientConf);
 
 export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchClusterListAction.request());
@@ -248,5 +249,19 @@ export const fetchConsumerGroupDetails = (
     );
   } catch (e) {
     dispatch(actions.fetchConsumerGroupDetailsAction.failure());
+  }
+};
+
+export const fetchSchemasByClusterName = (
+  clusterName: ClusterName
+): PromiseThunk<void> => async (dispatch) => {
+  dispatch(actions.fetchSchemasByClusterNameAction.request());
+  try {
+    const schemaNames = await apiClient.getSchemas({ clusterName });
+    const schemas: Schema[] = schemaNames.map((name) => ({ name }));
+
+    dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
+  } catch (e) {
+    dispatch(actions.fetchSchemasByClusterNameAction.failure());
   }
 };

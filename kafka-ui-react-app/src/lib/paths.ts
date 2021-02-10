@@ -10,6 +10,8 @@ export const clusterTopicNewPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics/new`;
 export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/consumer-groups`;
+export const clusterSchemasPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/schemas`;
 
 export const clusterTopicPath = (
   clusterName: ClusterName,

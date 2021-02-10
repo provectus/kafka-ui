@@ -9,11 +9,13 @@ import { ClusterState } from './cluster';
 import { BrokersState } from './broker';
 import { LoaderState } from './loader';
 import { ConsumerGroupsState } from './consumerGroup';
+import { SchemasState } from './schema';
 
 export * from './topic';
 export * from './cluster';
 export * from './broker';
 export * from './consumerGroup';
+export * from './schema';
 export * from './loader';
 
 export enum FetchStatus {
@@ -28,6 +30,7 @@ export interface RootState {
   clusters: ClusterState;
   brokers: BrokersState;
   consumerGroups: ConsumerGroupsState;
+  schemas: SchemasState;
   loader: LoaderState;
 }
 

@@ -1,6 +1,6 @@
 import { createAsyncAction } from 'typesafe-actions';
 import ActionType from 'redux/actionType';
-import { TopicName, ConsumerGroupID } from 'redux/interfaces';
+import { TopicName, ConsumerGroupID, Schema } from 'redux/interfaces';
 
 import {
   Cluster,
@@ -97,3 +97,9 @@ export const fetchConsumerGroupDetailsAction = createAsyncAction(
   { consumerGroupID: ConsumerGroupID; details: ConsumerGroupDetails },
   undefined
 >();
+
+export const fetchSchemasByClusterNameAction = createAsyncAction(
+  ActionType.GET_CLUSTER_SCHEMAS__REQUEST,
+  ActionType.GET_CLUSTER_SCHEMAS__SUCCESS,
+  ActionType.GET_CLUSTER_SCHEMAS__FAILURE
+)<undefined, Schema[], undefined>();
