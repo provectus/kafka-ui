@@ -1,13 +1,13 @@
 import React from 'react';
 
 interface ListItemProps {
-  schemaName: string;
+  subject?: string;
 }
 
-const ListItem: React.FC<ListItemProps> = ({ schemaName }) => {
+const ListItem: React.FC<ListItemProps> = ({ subject }) => {
   return (
     <tr>
-      <td>{schemaName}</td>
+      <td>{subject}</td>
     </tr>
   );
 };

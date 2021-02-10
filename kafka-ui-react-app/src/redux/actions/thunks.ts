@@ -1,3 +1,4 @@
+import { flatten } from 'lodash';
 import {
   ApiClustersApi,
   Configuration,
@@ -5,6 +6,7 @@ import {
   Topic,
   TopicFormData,
   TopicConfig,
+  SchemaSubject,
 } from 'generated-sources';
 import {
   ConsumerGroupID,
@@ -15,7 +17,6 @@ import {
   TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
-  Schema,
 } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
@@ -258,9 +259,15 @@ export const fetchSchemasByClusterName = (
   dispatch(actions.fetchSchemasByClusterNameAction.request());
   try {
     const schemaNames = await apiClient.getSchemas({ clusterName });
-    const schemas: Schema[] = schemaNames.map((name) => ({ name }));
 
-    dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
+    // TODO: Remove me after API refactoring
+    const schemas: SchemaSubject[][] = await Promise.all(
+      schemaNames.map((schemaName) =>
+        apiClient.getLatestSchema({ clusterName, schemaName })
+      )
+    );
+
+    dispatch(actions.fetchSchemasByClusterNameAction.success(flatten(schemas)));
   } catch (e) {
     dispatch(actions.fetchSchemasByClusterNameAction.failure());
   }

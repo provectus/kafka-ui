@@ -24,6 +24,6 @@ export const getSchemaList = createSelector(
     if (!isFetched) {
       return [];
     }
-    return allNames.map((schemaName) => byName[schemaName]);
+    return allNames.map((subject) => byName[subject]);
   }
 );

@@ -1,10 +1,10 @@
+import { SchemaSubject } from 'generated-sources';
 import React from 'react';
-import { Schema } from 'redux/interfaces';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import ListItem from './ListItem';
 
 interface ListProps {
-  schemas: Schema[];
+  schemas: SchemaSubject[];
 }
 
 const List: React.FC<ListProps> = ({ schemas }) => {
@@ -19,8 +19,8 @@ const List: React.FC<ListProps> = ({ schemas }) => {
             </tr>
           </thead>
           <tbody>
-            {schemas.map(({ name }) => (
-              <ListItem schemaName={name} />
+            {schemas.map(({ subject }) => (
+              <ListItem subject={subject} />
             ))}
           </tbody>
         </table>

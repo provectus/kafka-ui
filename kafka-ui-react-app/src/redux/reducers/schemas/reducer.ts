@@ -1,5 +1,6 @@
+import { SchemaSubject } from 'generated-sources';
 import ActionType from 'redux/actionType';
-import { Action, Schema, SchemasState } from 'redux/interfaces';
+import { Action, SchemasState } from 'redux/interfaces';
 
 export const initialState: SchemasState = {
   byName: {},
@@ -8,27 +9,27 @@ export const initialState: SchemasState = {
 
 const updateSchemaList = (
   state: SchemasState,
-  payload: Schema[]
+  payload: SchemaSubject[]
 ): SchemasState => {
   const initialMemo: SchemasState = {
     ...state,
     allNames: [],
   };
 
-  return payload.reduce(
-    (memo: SchemasState, schema) => ({
+  return payload.reduce((memo: SchemasState, schema) => {
+    if (!schema.subject) return memo;
+    return {
       ...memo,
       byName: {
         ...memo.byName,
-        [schema.name]: {
-          ...memo.byName[schema.name],
-          name: schema.name,
+        [schema.subject]: {
+          ...memo.byName[schema.subject],
+          ...schema,
         },
       },
-      allNames: [...memo.allNames, schema.name],
-    }),
-    initialMemo
-  );
+      allNames: [...memo.allNames, schema.subject],
+    };
+  }, initialMemo);
 };
 
 const reducer = (state = initialState, action: Action): SchemasState => {
