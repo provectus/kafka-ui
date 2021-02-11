@@ -339,7 +339,7 @@ paths:
     get:
       tags:
         - /api/clusters
-      summary: get all schemas from Schema Registry service
+      summary: get all schemas of latest version from Schema Registry service
       operationId: getSchemas
       parameters:
         - name: clusterName
@@ -355,7 +355,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/SchemaSubject'
 
   /api/clusters/{clusterName}/schemas/{subject}:
     post:
