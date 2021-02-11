@@ -38,7 +38,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     private Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
         Map<String, Object> errorAttributes = getErrorAttributes(request, false);
         HttpStatus statusCode = Optional.ofNullable(errorAttributes.get(GlobalErrorAttributes.STATUS))
-                .map(code -> (HttpStatus) code)
+                .map(code -> code instanceof Integer ? HttpStatus.valueOf((Integer) code) : (HttpStatus) code)
                 .orElse(HttpStatus.BAD_REQUEST);
         return ServerResponse
                 .status(statusCode)
