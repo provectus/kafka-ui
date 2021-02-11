@@ -3,7 +3,7 @@
 * Add a new service in docker-compose.yml
 
 ```yaml
-version: '2'
+version: '3.3'
 services:
   kafka-ui:
     image: provectuslabs/kafka-ui
@@ -12,9 +12,9 @@ services:
       - "9000:8080"
     restart: always
     environment:
-      -e KAFKA_CLUSTERS_0_NAME=local
-      -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka:9092
-      -e KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: localhost:2181
 ```
    
   
