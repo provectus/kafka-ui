@@ -1,7 +1,6 @@
 import { v4 } from 'uuid';
 import { Topic, TopicMessage } from 'generated-sources';
 import { Action, TopicsState } from 'redux/interfaces';
-import ActionType from 'redux/actionType';
 
 export const initialState: TopicsState = {
   byName: {},
@@ -68,9 +67,9 @@ const transformTopicMessages = (
 
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
-    case ActionType.GET_TOPICS__SUCCESS:
+    case 'GET_TOPICS__SUCCESS':
       return updateTopicList(state, action.payload);
-    case ActionType.GET_TOPIC_DETAILS__SUCCESS:
+    case 'GET_TOPIC_DETAILS__SUCCESS':
       return {
         ...state,
         byName: {
@@ -81,9 +80,9 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           },
         },
       };
-    case ActionType.GET_TOPIC_MESSAGES__SUCCESS:
+    case 'GET_TOPIC_MESSAGES__SUCCESS':
       return transformTopicMessages(state, action.payload);
-    case ActionType.GET_TOPIC_CONFIG__SUCCESS:
+    case 'GET_TOPIC_CONFIG__SUCCESS':
       return {
         ...state,
         byName: {
@@ -97,7 +96,7 @@ const reducer = (state = initialState, action: Action): TopicsState => {
           },
         },
       };
-    case ActionType.POST_TOPIC__SUCCESS:
+    case 'POST_TOPIC__SUCCESS':
       return addToTopicList(state, action.payload);
     default:
       return state;

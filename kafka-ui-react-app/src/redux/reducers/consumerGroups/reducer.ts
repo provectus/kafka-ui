@@ -1,6 +1,5 @@
 import { Action, ConsumerGroupsState } from 'redux/interfaces';
 import { ConsumerGroup } from 'generated-sources';
-import ActionType from 'redux/actionType';
 
 export const initialState: ConsumerGroupsState = {
   byID: {},
@@ -34,9 +33,9 @@ const updateConsumerGroupsList = (
 
 const reducer = (state = initialState, action: Action): ConsumerGroupsState => {
   switch (action.type) {
-    case ActionType.GET_CONSUMER_GROUPS__SUCCESS:
+    case 'GET_CONSUMER_GROUPS__SUCCESS':
       return updateConsumerGroupsList(state, action.payload);
-    case ActionType.GET_CONSUMER_GROUP_DETAILS__SUCCESS:
+    case 'GET_CONSUMER_GROUP_DETAILS__SUCCESS':
       return {
         ...state,
         byID: {

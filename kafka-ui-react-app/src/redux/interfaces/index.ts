@@ -16,13 +16,6 @@ export * from './broker';
 export * from './consumerGroup';
 export * from './loader';
 
-export enum FetchStatus {
-  notFetched = 'notFetched',
-  fetching = 'fetching',
-  fetched = 'fetched',
-  errorFetching = 'errorFetching',
-}
-
 export interface RootState {
   topics: TopicsState;
   clusters: ClusterState;
