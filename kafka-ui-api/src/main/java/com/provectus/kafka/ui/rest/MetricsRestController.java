@@ -105,13 +105,13 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
-        return schemaRegistryService.getLatestSchemaSubject(clusterName, schemaName).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String subject, ServerWebExchange exchange) {
+        return schemaRegistryService.getLatestSchemaSubject(clusterName, subject).map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<SchemaSubject>> getSchemaByVersion(String clusterName, String schemaName, Integer version, ServerWebExchange exchange) {
-        return schemaRegistryService.getSchemaSubjectByVersion(clusterName, schemaName, version).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<SchemaSubject>> getSchemaByVersion(String clusterName, String subject, Integer version, ServerWebExchange exchange) {
+        return schemaRegistryService.getSchemaSubjectByVersion(clusterName, subject, version).map(ResponseEntity::ok);
     }
 
     @Override
@@ -126,8 +126,8 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteLatestSchema(String clusterName, String schemaName, ServerWebExchange exchange) {
-        return schemaRegistryService.deleteLatestSchemaSubject(clusterName, schemaName);
+    public Mono<ResponseEntity<Void>> deleteLatestSchema(String clusterName, String subject, ServerWebExchange exchange) {
+        return schemaRegistryService.deleteLatestSchemaSubject(clusterName, subject);
     }
 
     @Override
@@ -141,10 +141,10 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName, String schemaName,
+    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName, String subject,
                                                                @Valid Mono<NewSchemaSubject> newSchemaSubject,
                                                                ServerWebExchange exchange) {
-        return schemaRegistryService.createNewSubject(clusterName, schemaName, newSchemaSubject);
+        return schemaRegistryService.createNewSubject(clusterName, subject, newSchemaSubject);
     }
 
     @Override
@@ -172,17 +172,17 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<CompatibilityCheckResponse>> checkSchemaCompatibility(String clusterName, String schemaName,
+    public Mono<ResponseEntity<CompatibilityCheckResponse>> checkSchemaCompatibility(String clusterName, String subject,
                                                                                      @Valid Mono<NewSchemaSubject> newSchemaSubject,
                                                                                      ServerWebExchange exchange) {
-        return schemaRegistryService.checksSchemaCompatibility(clusterName, schemaName, newSchemaSubject)
+        return schemaRegistryService.checksSchemaCompatibility(clusterName, subject, newSchemaSubject)
                 .map(ResponseEntity::ok);
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(String clusterName, String schemaName, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
-        log.info("Updating schema compatibility for schema: {}", schemaName);
-        return schemaRegistryService.updateSchemaCompatibility(clusterName, schemaName, compatibilityLevel)
+    public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(String clusterName, String subject, @Valid Mono<CompatibilityLevel> compatibilityLevel, ServerWebExchange exchange) {
+        log.info("Updating schema compatibility for subject: {}", subject);
+        return schemaRegistryService.updateSchemaCompatibility(clusterName, subject, compatibilityLevel)
                 .map(ResponseEntity::ok);
     }
 
