@@ -1,5 +1,10 @@
 import { createSelector } from 'reselect';
-import { FetchStatus, RootState, SchemasState } from 'redux/interfaces';
+import {
+  FetchStatus,
+  RootState,
+  SchemasState,
+  TopicName,
+} from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const schemasState = ({ schemas }: RootState): SchemasState => schemas;
@@ -26,4 +31,12 @@ export const getSchemaList = createSelector(
     }
     return allNames.map((subject) => byName[subject]);
   }
+);
+
+const getSchemaName = (_: RootState, subject: string) => subject;
+
+export const getSchema = createSelector(
+  getSchemaMap,
+  getSchemaName,
+  (schemas, subject) => schemas[subject]
 );

@@ -1,6 +1,6 @@
 import { SchemaSubject } from 'generated-sources';
 
 export interface SchemasState {
-  byName: { [name: string]: SchemaSubject };
+  byName: { [subject: string]: SchemaSubject };
   allNames: string[];
 }
