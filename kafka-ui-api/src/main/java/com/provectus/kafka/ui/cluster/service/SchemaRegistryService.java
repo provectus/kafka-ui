@@ -58,7 +58,12 @@ public class SchemaRegistryService {
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
-    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String schemaName) {
+    public Flux<SchemaSubject> getAllVersionsBySubject(String clusterName, String subject) {
+        Flux<Integer> versions = getSubjectVersions(clusterName, subject);
+        return versions.flatMap(version -> getSchemaSubjectByVersion(clusterName, subject, version));
+    }
+
+    private Flux<Integer> getSubjectVersions(String clusterName, String schemaName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)

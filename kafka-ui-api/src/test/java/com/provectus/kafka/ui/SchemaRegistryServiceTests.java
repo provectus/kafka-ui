@@ -89,7 +89,6 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                     Assertions.assertNotNull(actualSchemaSubject.getVersion());
                     Assertions.assertNotNull(actualSchemaSubject.getCompatibilityLevel());
                     Assertions.assertEquals("\"string\"", actualSchemaSubject.getSchema());
-
                 });
     }
 

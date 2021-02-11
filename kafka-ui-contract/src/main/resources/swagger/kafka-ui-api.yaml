@@ -414,8 +414,8 @@ paths:
     get:
       tags:
         - /api/clusters
-      summary: get all version of schema from Schema Registry service
-      operationId: getSchemaVersions
+      summary: get all version of subject from Schema Registry service
+      operationId: getAllVersionsBySubject
       parameters:
         - name: clusterName
           in: path
@@ -435,7 +435,7 @@ paths:
               schema:
                 type: array
                 items:
-                  type: integer
+                  $ref: '#/components/schemas/SchemaSubject'
 
   /api/clusters/{clusterName}/schemas/{subject}/latest:
     get:
