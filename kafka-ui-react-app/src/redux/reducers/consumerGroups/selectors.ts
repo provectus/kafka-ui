@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState, FetchStatus } from 'redux/interfaces';
+import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import {
   ConsumerGroupID,
@@ -24,12 +24,12 @@ const getConsumerGroupDetailsFetchingStatus = createFetchingSelector(
 
 export const getIsConsumerGroupsListFetched = createSelector(
   getConsumerGroupsListFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getIsConsumerGroupDetailsFetched = createSelector(
   getConsumerGroupDetailsFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getConsumerGroupsList = createSelector(
