@@ -99,7 +99,7 @@ export const fetchConsumerGroupDetailsAction = createAsyncAction(
 >();
 
 export const fetchSchemasByClusterNameAction = createAsyncAction(
-  ActionType.GET_CLUSTER_SCHEMAS__REQUEST,
-  ActionType.GET_CLUSTER_SCHEMAS__SUCCESS,
-  ActionType.GET_CLUSTER_SCHEMAS__FAILURE
+  'GET_CLUSTER_SCHEMAS__REQUEST',
+  'GET_CLUSTER_SCHEMAS__SUCCESS',
+  'GET_CLUSTER_SCHEMAS__FAILURE'
 )<undefined, SchemaSubject[], undefined>();
