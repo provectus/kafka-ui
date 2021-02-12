@@ -33,6 +33,7 @@
 		<apache.commons.version>2.2</apache.commons.version>
 		<test.containers.version>1.15.1</test.containers.version>
 		<junit-jupiter-engine.version>5.4.0</junit-jupiter-engine.version>
+		<assertj.version>3.19.0</assertj.version>
 	</properties>
 
 	<repositories>

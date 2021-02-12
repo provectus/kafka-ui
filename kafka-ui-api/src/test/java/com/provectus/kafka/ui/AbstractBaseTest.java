@@ -25,11 +25,16 @@ public abstract class AbstractBaseTest {
             .withKafka(kafka)
             .dependsOn(kafka);
 
+    public static KafkaConnectContainer kafkaConnect = new KafkaConnectContainer("5.2.1")
+            .withKafka(kafka)
+            .dependsOn(kafka);
+
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(ConfigurableApplicationContext context) {
             System.setProperty("kafka.clusters.0.name", "local");
             System.setProperty("kafka.clusters.0.schemaRegistry", schemaRegistry.getTarget());
+            System.setProperty("kafka.clusters.0.kafkaConnect", kafkaConnect.getTarget());
         }
     }
 }
