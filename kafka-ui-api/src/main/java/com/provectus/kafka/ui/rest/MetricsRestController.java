@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
 @RestController
@@ -215,8 +216,14 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<ConnectorConfig>> getConnectorConfig(String clusterName, String connectorName, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Map<String, Object>>> getConnectorConfig(String clusterName, String connectorName, ServerWebExchange exchange) {
         return kafkaConnectService.getConnectorConfig(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Connector>> setConnectorConfig(String clusterName, String connectorName, @Valid Mono<Object> requestBody, ServerWebExchange exchange) {
+        return kafkaConnectService.setConnectorConfig(clusterName, connectorName, requestBody)
                 .map(ResponseEntity::ok);
     }
 
@@ -241,6 +248,35 @@ public class MetricsRestController implements ApiClustersApi {
     @Override
     public Mono<ResponseEntity<Void>> resumeConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
         return kafkaConnectService.resumeConnector(clusterName, connectorName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<ConnectorTask>>> getConnectorTasks(String clusterName, String connectorName, ServerWebExchange exchange) {
+        return Mono.just(ResponseEntity.ok(kafkaConnectService.getConnectorTasks(clusterName, connectorName)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<TaskStatus>> getConnectorTaskStatus(String clusterName, String connectorName, Integer taskId, ServerWebExchange exchange) {
+        return kafkaConnectService.getConnectorTaskStatus(clusterName, connectorName, taskId)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> restartConnectorTask(String clusterName, String connectorName, Integer taskId, ServerWebExchange exchange) {
+        return kafkaConnectService.restartConnectorTask(clusterName, connectorName, taskId)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<Flux<ConnectorPlugin>>> getConnectorPlugins(String clusterName, ServerWebExchange exchange) {
+        return kafkaConnectService.getConnectorPlugins(clusterName)
+                .map(ResponseEntity::ok);
+    }
+
+    @Override
+    public Mono<ResponseEntity<ConnectorPluginConfigValidationResponse>> validateConnectorPluginConfig(String clusterName, String pluginName, @Valid Mono<Object> requestBody, ServerWebExchange exchange) {
+        return kafkaConnectService.validateConnectorPluginConfig(clusterName, pluginName, requestBody)
                 .map(ResponseEntity::ok);
     }
 

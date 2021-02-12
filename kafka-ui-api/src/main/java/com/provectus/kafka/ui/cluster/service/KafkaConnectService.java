@@ -2,17 +2,17 @@ package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
-import com.provectus.kafka.ui.model.Connector;
-import com.provectus.kafka.ui.model.ConnectorConfig;
-import com.provectus.kafka.ui.model.ConnectorStatus;
-import com.provectus.kafka.ui.model.NewConnector;
+import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @Service
 @Log4j2
@@ -52,12 +52,25 @@ public class KafkaConnectService {
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
-    public Mono<ConnectorConfig> getConnectorConfig(String clusterName, String connectorName) {
+    public Mono<Map<String, Object>> getConnectorConfig(String clusterName, String connectorName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
                         .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/config")
                         .retrieve()
-                        .bodyToMono(ConnectorConfig.class)
+                        .bodyToMono(Map.class)
+                        .map(e -> (Map<String, Object>) e)
+                        .doOnError(log::error))
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    // todo 201
+    public Mono<Connector> setConnectorConfig(String clusterName, String connectorName, Mono<Object> requestBody) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.put()
+                        .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/config")
+                        .body(BodyInserters.fromPublisher(requestBody, Object.class))
+                        .retrieve()
+                        .bodyToMono(Connector.class)
                         .doOnError(log::error))
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
@@ -109,6 +122,57 @@ public class KafkaConnectService {
                         .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/resume")
                         .retrieve()
                         .bodyToMono(Void.class)
+                        .doOnError(log::error))
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    public Flux<ConnectorTask> getConnectorTasks(String clusterName, String connectorName) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.get()
+                        .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/tasks")
+                        .retrieve()
+                        .bodyToFlux(ConnectorTask.class)
+                        .doOnError(log::error))
+                .orElse(Flux.error(new NotFoundException("No such cluster")));
+    }
+
+    public Mono<TaskStatus> getConnectorTaskStatus(String clusterName, String connectorName, Integer taskId) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.get()
+                        .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/tasks/" + taskId + "/status")
+                        .retrieve()
+                        .bodyToMono(TaskStatus.class)
+                        .doOnError(log::error))
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    public Mono<Void> restartConnectorTask(String clusterName, String connectorName, Integer taskId) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.post()
+                        .uri(cluster.getKafkaConnect() + "/connectors/" + connectorName + "/tasks/" + taskId + "/restart")
+                        .retrieve()
+                        .bodyToMono(Void.class)
+                        .doOnError(log::error))
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    public Mono<Flux<ConnectorPlugin>> getConnectorPlugins(String clusterName) {
+        return Mono.just(clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.get()
+                        .uri(cluster.getKafkaConnect() + "/connector-plugins")
+                        .retrieve()
+                        .bodyToFlux(ConnectorPlugin.class)
+                        .doOnError(log::error))
+                .orElse(Flux.error(new NotFoundException("No such cluster"))));
+    }
+
+    public Mono<ConnectorPluginConfigValidationResponse> validateConnectorPluginConfig(String clusterName, String pluginName, Mono<Object> requestBody) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(cluster -> webClient.put()
+                        .uri(cluster.getKafkaConnect() + "/connector-plugins/" + pluginName + "/config/validate")
+                        .body(BodyInserters.fromPublisher(requestBody, Object.class))
+                        .retrieve()
+                        .bodyToMono(ConnectorPluginConfigValidationResponse.class)
                         .doOnError(log::error))
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }

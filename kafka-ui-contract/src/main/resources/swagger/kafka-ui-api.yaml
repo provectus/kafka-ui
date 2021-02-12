@@ -758,7 +758,43 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ConnectorConfig'
-#    put:
+    put:
+      tags:
+        - /api/clusters
+      summary: update or create connector with provided config
+      operationId: setConnectorConfig
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorConfig'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+        409:
+          description: rebalance is in progress
+
 
   /api/clusters/{clusterName}/connectors/{connectorName}/status:
     get:
@@ -849,6 +885,141 @@ paths:
       responses:
         202:
           description: Accepted
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/tasks:
+    get:
+      tags:
+        - /api/clusters
+      summary: get connector tasks
+      operationId: getConnectorTasks
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectorTask'
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/status:
+    get:
+      tags:
+        - /api/clusters
+      summary: get connector task status
+      operationId: getConnectorTaskStatus
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatus'
+
+  /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/restart:
+    post:
+      tags:
+        - /api/clusters
+      summary: restart connector task
+      operationId: restartConnectorTask
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/connector-plugins:
+    get:
+      tags:
+        - /api/clusters
+      summary: get connector plugins
+      operationId: getConnectorPlugins
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectorPlugin'
+
+  /api/clusters/{clusterName}/connector-plugins/{pluginName}/config/validate:
+    put:
+      tags:
+        - /api/clusters
+      summary: validate connector plugin configuration
+      operationId: validateConnectorPluginConfig
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pluginName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorConfig'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorPluginConfigValidationResponse'
 
 components:
   schemas:
@@ -1230,100 +1401,10 @@ components:
       required:
         - isCompatible
 
-    BaseConnectorConfig:
-      type: object
-      properties:
-        name:
-          type: string
-        connector.class:
-          type: string
-        tasks.max:
-          type: integer
-        key.converter:
-          type: string
-        value.converter:
-          type: string
-        header.converter:
-          type: string
-        config.action.reload:
-          type: string
-          enum:
-            - none
-            - restart
-        transforms:
-          type: array
-          items:
-            type: string
-        predicates:
-          type: array
-          items:
-            type: string
-        errors.retry.limit:
-          type: number
-        errors.retry.delay.max.ms:
-          type: number
-        errors.tolerance:
-          type: string
-          enum:
-            - none
-            - all
-        errors.log.enable:
-          type: boolean
-        errors.log.include.messages:
-          type: boolean
-
-    BaseSourceConnectorConfig:
-      allOf:
-        - $ref: '#/components/schemas/BaseConnectorConfig'
-        - type: object
-          properties:
-            topic.creation.groups:
-              type: array
-              items:
-                type: string
-
-    FileStreamSourceConfig:
-      allOf:
-        - $ref: '#/components/schemas/BaseSourceConnectorConfig'
-        - type: object
-          properties:
-            file:
-              type: string
-            topic:
-              type: string
-
-    BaseSinkConnectorConfig:
-      allOf:
-        - $ref: '#/components/schemas/BaseConnectorConfig'
-        - type: object
-          properties:
-            topics:
-              type: array
-              items:
-                type: string
-            topics.regex:
-              type: string
-            errors.deadletterqueue.topic.name:
-              type: string
-            errors.deadletterqueue.topic.replication.factor:
-              type: integer
-            errors.deadletterqueue.context.headers.enable:
-              type: boolean
-
-    FileStreamSinkConfig:
-      allOf:
-        - $ref: '#/components/schemas/BaseSinkConnectorConfig'
-        - type: object
-          properties:
-            file:
-              type: string
-
     ConnectorConfig:
-      oneOf:
-#        - $ref: '#/components/schemas/BaseSourceConnectorConfig'
-        - $ref: '#/components/schemas/FileStreamSourceConfig'
-#        - $ref: '#/components/schemas/BaseSinkConnectorConfig'
-        - $ref: '#/components/schemas/FileStreamSinkConfig'
+      type: object
+      additionalProperties:
+        type: object
 
     Task:
       type: object
@@ -1333,6 +1414,13 @@ components:
         task:
           type: integer
 
+    ConnectorTask:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Task'
+        config:
+          $ref: '#/components/schemas/ConnectorConfig'
 
     NewConnector:
       type: object
@@ -1394,3 +1482,98 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/TaskStatus'
+
+    ConnectorPlugin:
+      type: object
+      properties:
+        class:
+          type: string
+
+    ConnectorPluginConfigDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - BOOLEAN
+            - CLASS
+            - DOUBLE
+            - INT
+            - LIST
+            - LONG
+            - PASSWORD
+            - SHORT
+            - STRING
+        required:
+          type: boolean
+        default_value:
+          type: string
+        importance:
+          type: string
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+        documentation:
+          type: string
+        group:
+          type: string
+        width:
+          type: string
+          enum:
+            - SHORT
+            - MEDIUM
+            - LONG
+            - NONE
+        display_name:
+          type: string
+        dependents:
+          type: array
+          items:
+            type: string
+        order:
+          type: integer
+
+    ConnectorPluginConfigValue:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        recommended_values:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            type: string
+        visible:
+          type: boolean
+
+    ConnectorPluginConfig:
+      type: object
+      properties:
+        definition:
+          $ref: '#/components/schemas/ConnectorPluginConfigDefinition'
+        value:
+          $ref: '#/components/schemas/ConnectorPluginConfigValue'
+
+    ConnectorPluginConfigValidationResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        error_count:
+          type: integer
+        groups:
+          type: array
+          items:
+            type: string
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorPluginConfig'
