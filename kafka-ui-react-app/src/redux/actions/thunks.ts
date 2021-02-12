@@ -1,4 +1,3 @@
-import { flatten } from 'lodash';
 import {
   ApiClustersApi,
   Configuration,
@@ -261,13 +260,13 @@ export const fetchSchemasByClusterName = (
     const schemaNames = await apiClient.getSchemas({ clusterName });
 
     // TODO: Remove me after API refactoring
-    const schemas: SchemaSubject[][] = await Promise.all(
+    const schemas: SchemaSubject[] = await Promise.all(
       schemaNames.map((schemaName) =>
         apiClient.getLatestSchema({ clusterName, schemaName })
       )
     );
 
-    dispatch(actions.fetchSchemasByClusterNameAction.success(flatten(schemas)));
+    dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
   } catch (e) {
     dispatch(actions.fetchSchemasByClusterNameAction.failure());
   }

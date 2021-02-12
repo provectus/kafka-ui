@@ -1,5 +1,4 @@
 import { SchemaSubject } from 'generated-sources';
-import ActionType from 'redux/actionType';
 import { Action, SchemasState } from 'redux/interfaces';
 
 export const initialState: SchemasState = {
@@ -34,7 +33,7 @@ const updateSchemaList = (
 
 const reducer = (state = initialState, action: Action): SchemasState => {
   switch (action.type) {
-    case ActionType.GET_CLUSTER_SCHEMAS__SUCCESS:
+    case 'GET_CLUSTER_SCHEMAS__SUCCESS':
       return updateSchemaList(state, action.payload);
     default:
       return state;

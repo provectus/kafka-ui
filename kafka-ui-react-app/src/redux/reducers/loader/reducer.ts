@@ -1,4 +1,4 @@
-import { FetchStatus, Action, LoaderState } from 'redux/interfaces';
+import { Action, LoaderState } from 'redux/interfaces';
 
 export const initialState: LoaderState = {};
 
@@ -15,17 +15,17 @@ const reducer = (state = initialState, action: Action): LoaderState => {
     case 'REQUEST':
       return {
         ...state,
-        [requestName]: FetchStatus.fetching,
+        [requestName]: 'fetching',
       };
     case 'SUCCESS':
       return {
         ...state,
-        [requestName]: FetchStatus.fetched,
+        [requestName]: 'fetched',
       };
     case 'FAILURE':
       return {
         ...state,
-        [requestName]: FetchStatus.errorFetching,
+        [requestName]: 'errorFetching',
       };
     default:
       return state;

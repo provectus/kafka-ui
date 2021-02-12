@@ -2,7 +2,6 @@ import { createSelector } from 'reselect';
 import {
   RootState,
   TopicName,
-  FetchStatus,
   TopicsState,
   TopicConfigByName,
 } from 'redux/interfaces';
@@ -29,32 +28,32 @@ const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
 
 export const getIsTopicListFetched = createSelector(
   getTopicListFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getIsTopicDetailsFetched = createSelector(
   getTopicDetailsFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getIsTopicMessagesFetched = createSelector(
   getTopicMessagesFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getTopicConfigFetched = createSelector(
   getTopicConfigFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getTopicCreated = createSelector(
   getTopicCreationStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getTopicUpdated = createSelector(
   getTopicUpdateStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getTopicList = createSelector(

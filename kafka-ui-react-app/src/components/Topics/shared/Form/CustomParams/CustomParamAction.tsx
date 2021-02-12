@@ -1,5 +1,5 @@
 import React from 'react';
-import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
+import CustomParamButton from './CustomParamButton';
 
 interface Props {
   index: string;
@@ -11,7 +11,7 @@ const CustomParamAction: React.FC<Props> = ({ index, onRemove }) => (
     <label className="label">&nbsp;</label>
     <CustomParamButton
       className="is-danger"
-      type={CustomParamButtonType.minus}
+      type="fa-minus"
       onClick={() => onRemove(index)}
     />
   </>

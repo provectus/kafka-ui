@@ -1,8 +1,6 @@
 import React from 'react';
 import { TopicMessage } from 'generated-sources';
-import CustomParamButton, {
-  CustomParamButtonType,
-} from '../../shared/Form/CustomParams/CustomParamButton';
+import CustomParamButton from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
 import MessageItem from './MessageItem';
 
 interface MessagesTableProp {
@@ -44,7 +42,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
         <div className="column is-full">
           <CustomParamButton
             className="is-link is-pulled-right"
-            type={CustomParamButtonType.chevronRight}
+            type="fa-chevron-right"
             onClick={onNext}
             btnText="Next"
           />
