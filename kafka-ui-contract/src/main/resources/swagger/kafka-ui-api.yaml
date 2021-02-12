@@ -644,7 +644,7 @@ paths:
   /api/clusters/{clusterName}/connectors:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get all connectors from Kafka Connect service
       operationId: getConnectors
       parameters:
@@ -664,7 +664,7 @@ paths:
                   type: string
     post:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: create new connector
       operationId: createConnector
       parameters:
@@ -691,7 +691,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get information about the connector
       operationId: getConnector
       parameters:
@@ -714,7 +714,7 @@ paths:
                 $ref: '#/components/schemas/Connector'
     delete:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: delete connector
       operationId: deleteConnector
       parameters:
@@ -737,7 +737,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/config:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get connector configuration
       operationId: getConnectorConfig
       parameters:
@@ -760,7 +760,7 @@ paths:
                 $ref: '#/components/schemas/ConnectorConfig'
     put:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: update or create connector with provided config
       operationId: setConnectorConfig
       parameters:
@@ -799,7 +799,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/status:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get connector status
       operationId: getConnectorStatus
       parameters:
@@ -824,7 +824,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/restart:
     post:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: restart the connector
       operationId: restartConnector
       parameters:
@@ -847,7 +847,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/pause:
     put:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: pause the connector
       operationId: pauseConnector
       parameters:
@@ -868,7 +868,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/resume:
     put:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: resume the connector
       operationId: resumeConnector
       parameters:
@@ -889,7 +889,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get connector tasks
       operationId: getConnectorTasks
       parameters:
@@ -916,7 +916,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/status:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get connector task status
       operationId: getConnectorTaskStatus
       parameters:
@@ -946,7 +946,7 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/restart:
     post:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: restart connector task
       operationId: restartConnectorTask
       parameters:
@@ -972,7 +972,7 @@ paths:
   /api/clusters/{clusterName}/connector-plugins:
     get:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: get connector plugins
       operationId: getConnectorPlugins
       parameters:
@@ -994,7 +994,7 @@ paths:
   /api/clusters/{clusterName}/connector-plugins/{pluginName}/config/validate:
     put:
       tags:
-        - /api/clusters
+        - /api/clusters/connectors
       summary: validate connector plugin configuration
       operationId: validateConnectorPluginConfig
       parameters:
