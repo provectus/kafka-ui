@@ -3,6 +3,10 @@ import { shallow } from 'enzyme';
 import MessageItem from 'components/Topics/Details/Messages/MessageItem';
 import { messages } from './fixtures';
 
+jest.mock('date-fns', () => ({
+  format: () => `mocked date`,
+}));
+
 describe('MessageItem', () => {
   describe('when content is defined', () => {
     it('renders table row with JSONTree', () => {

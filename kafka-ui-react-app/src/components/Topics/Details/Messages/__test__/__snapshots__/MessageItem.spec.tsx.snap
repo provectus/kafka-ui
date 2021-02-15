@@ -9,7 +9,7 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     }
   >
-    1995-05-05 00:00:00
+    mocked date
   </td>
   <td
     style={
@@ -79,7 +79,7 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
       }
     }
   >
-    2020-05-07 00:00:00
+    mocked date
   </td>
   <td
     style={

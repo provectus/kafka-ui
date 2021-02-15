@@ -5,6 +5,10 @@ import MessagesTable, {
 } from 'components/Topics/Details/Messages/MessagesTable';
 import { messages } from './fixtures';
 
+jest.mock('date-fns', () => ({
+  format: () => `mocked date`,
+}));
+
 describe('MessagesTable', () => {
   const setupWrapper = (props: Partial<MessagesTableProp> = {}) => (
     <MessagesTable messages={[]} onNext={jest.fn()} {...props} />
