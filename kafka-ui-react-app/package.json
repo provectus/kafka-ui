@@ -30,8 +30,7 @@
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [
       "eslint -c .eslintrc.json --fix",
-      "git add",
-      "jest --bail --findRelatedTests"
+      "git add"
     ]
   },
   "scripts": {
@@ -40,12 +39,13 @@
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
     "test": "react-scripts test",
+    "test:CI": "CI=true npm test --watchAll=false",
     "eject": "react-scripts eject",
     "tsc": "tsc"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run tsc --noEmit && lint-staged"
+      "pre-commit": "npm run tsc --noEmit && lint-staged && npm run test:CI"
     }
   },
   "eslintConfig": {
