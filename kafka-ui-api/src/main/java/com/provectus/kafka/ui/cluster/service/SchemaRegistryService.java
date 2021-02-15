@@ -12,6 +12,8 @@ import com.provectus.kafka.ui.model.SchemaSubject;
 import java.util.Formatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -37,17 +41,30 @@ public class SchemaRegistryService {
     private final ClusterMapper mapper;
     private final WebClient webClient;
 
-    public Flux<String> getAllSchemaSubjects(String clusterName) {
+    public Flux<SchemaSubject> getAllLatestVersionSchemas(String clusterName) {
+        var allSubjectNames = getAllSubjectNames(clusterName);
+        return allSubjectNames
+                .flatMapMany(Flux::fromArray)
+                .flatMap(subject -> getLatestSchemaSubject(clusterName, subject));
+    }
+
+    public Mono<String[]> getAllSubjectNames(String clusterName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECTS)
                         .retrieve()
-                        .bodyToFlux(String.class)
-                        .doOnError(log::error))
-                .orElse(Flux.error(new NotFoundException("No such cluster")));
+                        .bodyToMono(String[].class)
+                        .doOnError(log::error)
+                )
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
-    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String schemaName) {
+    public Flux<SchemaSubject> getAllVersionsBySubject(String clusterName, String subject) {
+        Flux<Integer> versions = getSubjectVersions(clusterName, subject);
+        return versions.flatMap(version -> getSchemaSubjectByVersion(clusterName, subject, version));
+    }
+
+    private Flux<Integer> getSubjectVersions(String clusterName, String schemaName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)

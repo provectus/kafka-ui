@@ -339,7 +339,7 @@ paths:
     get:
       tags:
         - /api/clusters
-      summary: get all schemas from Schema Registry service
+      summary: get all schemas of latest version from Schema Registry service
       operationId: getSchemas
       parameters:
         - name: clusterName
@@ -355,9 +355,9 @@ paths:
               schema:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/SchemaSubject'
 
-  /api/clusters/{clusterName}/schemas/{schemaName}:
+  /api/clusters/{clusterName}/schemas/{subject}:
     post:
       tags:
         - /api/clusters
@@ -369,7 +369,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -399,7 +399,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -410,19 +410,19 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/schemas/{schemaName}/versions:
+  /api/clusters/{clusterName}/schemas/{subject}/versions:
     get:
       tags:
         - /api/clusters
-      summary: get all version of schema from Schema Registry service
-      operationId: getSchemaVersions
+      summary: get all version of subject from Schema Registry service
+      operationId: getAllVersionsBySubject
       parameters:
         - name: clusterName
           in: path
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -435,9 +435,9 @@ paths:
               schema:
                 type: array
                 items:
-                  type: integer
+                  $ref: '#/components/schemas/SchemaSubject'
 
-  /api/clusters/{clusterName}/schemas/{schemaName}/latest:
+  /api/clusters/{clusterName}/schemas/{subject}/latest:
     get:
       tags:
         - /api/clusters
@@ -449,7 +449,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -472,7 +472,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -484,7 +484,7 @@ paths:
           description: Not found
 
 
-  /api/clusters/{clusterName}/schemas/{schemaName}/versions/{version}:
+  /api/clusters/{clusterName}/schemas/{subject}/versions/{version}:
     get:
       tags:
         - /api/clusters
@@ -496,7 +496,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -524,7 +524,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -581,7 +581,7 @@ paths:
         404:
           description: Not Found
 
-  /api/clusters/{clusterName}/schemas/{schemaName}/compatibility:
+  /api/clusters/{clusterName}/schemas/{subject}/compatibility:
     put:
       tags:
         - /api/clusters
@@ -593,7 +593,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
@@ -609,7 +609,7 @@ paths:
         404:
           description: Not Found
 
-  /api/clusters/{clusterName}/schemas/{schemaName}/check:
+  /api/clusters/{clusterName}/schemas/{subject}/check:
     post:
       tags:
         - /api/clusters
@@ -621,7 +621,7 @@ paths:
           required: true
           schema:
             type: string
-        - name: schemaName
+        - name: subject
           in: path
           required: true
           schema:
