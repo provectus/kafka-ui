@@ -28,7 +28,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
           {messages.map(
             ({ partition, offset, timestamp, content }: TopicMessage) => (
               <MessageItem
-                key={timestamp.toString()}
+                key={`message-${timestamp.getTime()}`}
                 partition={partition}
                 offset={offset}
                 timestamp={timestamp}

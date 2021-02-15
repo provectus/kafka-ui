@@ -29,13 +29,13 @@ exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
             "key": "val",
           }
         }
-        key="Fri May 05 1995 00:00:00 GMT+0400 (Moscow Summer Time)"
+        key="message-799617600000"
         offset={2}
         partition={1}
         timestamp={1995-05-04T20:00:00.000Z}
       />
       <MessageItem
-        key="Thu May 07 2020 00:00:00 GMT+0300 (Moscow Standard Time)"
+        key="message-1588798800000"
         offset={20}
         partition={2}
         timestamp={2020-05-06T21:00:00.000Z}
