@@ -1,10 +1,8 @@
 package com.provectus.kafka.ui;
 
-import lombok.NonNull;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.utility.DockerImageName;
 
 public class KafkaConnectContainer extends GenericContainer<KafkaConnectContainer> {
     private static final int CONNECT_PORT = 8083;
