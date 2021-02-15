@@ -19,6 +19,7 @@ import {
 } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
+import { flatten } from 'lodash';
 import * as actions from './actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -260,14 +261,43 @@ export const fetchSchemasByClusterName = (
     const schemaNames = await apiClient.getSchemas({ clusterName });
 
     // TODO: Remove me after API refactoring
-    const schemas: SchemaSubject[] = await Promise.all(
+    const schemas: SchemaSubject[][] = await Promise.all(
       schemaNames.map((schemaName) =>
         apiClient.getLatestSchema({ clusterName, schemaName })
       )
     );
 
-    dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
+    dispatch(actions.fetchSchemasByClusterNameAction.success(flatten(schemas)));
   } catch (e) {
     dispatch(actions.fetchSchemasByClusterNameAction.failure());
+  }
+};
+
+export const fetchSchemaVersions = (
+  clusterName: ClusterName,
+  schemaName: SchemaSubject['subject']
+  // eslint-disable-next-line consistent-return
+): PromiseThunk<void> => async (dispatch) => {
+  if (!schemaName) return Promise.resolve();
+  dispatch(actions.fetchSchemaVersionsAction.request());
+  try {
+    const versionIds = await apiClient.getSchemaVersions({
+      clusterName,
+      schemaName,
+    });
+
+    console.log(versionIds);
+
+    const versions: SchemaSubject[][] = await Promise.all(
+      versionIds.map((version) =>
+        apiClient.getSchemaByVersion({ clusterName, schemaName, version })
+      )
+    );
+
+    console.log(versions);
+
+    dispatch(actions.fetchSchemaVersionsAction.success(flatten(versions)));
+  } catch (e) {
+    dispatch(actions.fetchSchemaVersionsAction.failure());
   }
 };

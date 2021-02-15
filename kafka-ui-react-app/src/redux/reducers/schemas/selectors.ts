@@ -6,6 +6,7 @@ const schemasState = ({ schemas }: RootState): SchemasState => schemas;
 
 const getAllNames = (state: RootState) => schemasState(state).allNames;
 const getSchemaMap = (state: RootState) => schemasState(state).byName;
+// const getSchemaVersion = (state: RootState) => schemasState(state).versions;
 
 const getSchemaListFetchingStatus = createFetchingSelector(
   'GET_CLUSTER_SCHEMAS'
@@ -35,3 +36,11 @@ export const getSchema = createSelector(
   getSchemaName,
   (schemas, subject) => schemas[subject]
 );
+
+// export const getSchemasVersions = createSelector(
+//   getSchemaVersion,
+//   getSchema,
+//   (versions, subject) => {
+//     return versions.map((version) => subject['version'])
+//   }
+// );

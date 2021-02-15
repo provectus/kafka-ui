@@ -103,3 +103,9 @@ export const fetchSchemasByClusterNameAction = createAsyncAction(
   'GET_CLUSTER_SCHEMAS__SUCCESS',
   'GET_CLUSTER_SCHEMAS__FAILURE'
 )<undefined, SchemaSubject[], undefined>();
+
+export const fetchSchemaVersionsAction = createAsyncAction(
+  'GET_SCHEMA_VERSIONS__REQUEST',
+  'GET_SCHEMA_VERSIONS__SUCCESS',
+  'GET_SCHEMA_VERSIONS__FAILURE'
+)<undefined, SchemaSubject[], undefined>();
