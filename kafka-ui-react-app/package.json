@@ -64,6 +64,7 @@
     ]
   },
   "devDependencies": {
+    "@jest/types": "^26.6.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
@@ -108,5 +109,8 @@
   "engines": {
     "node": ">=14.15.4"
   },
-  "proxy": "http://localhost:8080"
+  "proxy": "http://localhost:8080",
+  "jest": {
+    "snapshotSerializers": ["enzyme-to-json/serializer"]
+  }
 }
