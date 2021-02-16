@@ -12,7 +12,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.Map;
 
 @RestController
@@ -30,9 +29,7 @@ public class KafkaConnectRestController implements ApiClustersConnectorsApi {
     @Override
     public Mono<ResponseEntity<Connector>> createConnector(String clusterName, @Valid Mono<NewConnector> connector, ServerWebExchange exchange) {
         return kafkaConnectService.createConnector(clusterName, connector)
-                .map(response -> ResponseEntity.created(
-                        URI.create(response.getT2())
-                ).body(response.getT1()));
+                .map(ResponseEntity::ok);
     }
 
     @Override
@@ -43,9 +40,8 @@ public class KafkaConnectRestController implements ApiClustersConnectorsApi {
 
     @Override
     public Mono<ResponseEntity<Void>> deleteConnector(String clusterName, String connectorName, ServerWebExchange exchange) {
-        // todo return 409
         return kafkaConnectService.deleteConnector(clusterName, connectorName)
-                .map(v -> ResponseEntity.noContent().build());
+                .map(ResponseEntity::ok);
     }
 
     @Override

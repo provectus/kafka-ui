@@ -729,8 +729,8 @@ paths:
           schema:
             type: string
       responses:
-        204:
-          description: No content
+        200:
+          description: OK
         409:
           description: rebalance is in progress
 
@@ -782,12 +782,6 @@ paths:
       responses:
         200:
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Connector'
-        201:
-          description: Created
           content:
             application/json:
               schema:
