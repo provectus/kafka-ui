@@ -88,7 +88,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
 
       {formCustomParams.allIndexes.map((index) => (
         <CustomParamField
-          key={index}
+          key={formCustomParams.byIndex[index].name}
           index={index}
           isDisabled={isSubmitting}
           name={formCustomParams.byIndex[index].name}
