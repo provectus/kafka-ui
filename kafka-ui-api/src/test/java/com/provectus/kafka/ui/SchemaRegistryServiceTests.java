@@ -41,7 +41,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     }
 
     @Test
-    void shouldReturn404WhenGetLatestSchemaByNonExistingSubject() {
+    public void shouldReturn404WhenGetLatestSchemaByNonExistingSubject() {
         String unknownSchema = "unknown-schema";
         webTestClient
                 .get()
@@ -51,7 +51,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     }
 
     @Test
-    void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
+    public void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
         webTestClient
                 .get()
                 .uri("http://localhost:8080/api/clusters/local/schemas/compatibility")
