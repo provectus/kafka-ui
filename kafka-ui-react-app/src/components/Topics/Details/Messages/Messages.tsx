@@ -1,4 +1,9 @@
+import 'react-datepicker/dist/react-datepicker.css';
 import React, { useCallback, useEffect, useRef } from 'react';
+import { groupBy, map, concat, maxBy } from 'lodash';
+import MultiSelect from 'react-multi-select-component';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { useDebouncedCallback } from 'use-debounce';
 import {
   ClusterName,
   TopicMessageQueryParams,
@@ -7,13 +12,6 @@ import {
 import { TopicMessage, Partition, SeekType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-
-import MultiSelect from 'react-multi-select-component';
-
-import * as _ from 'lodash';
-import { useDebouncedCallback } from 'use-debounce';
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import MessagesTable from './MessagesTable';
 
 export interface Props {
@@ -81,17 +79,17 @@ const Messages: React.FC<Props> = ({
       offset: 0,
       partition: p.partition,
     }));
-    const messageUniqs: FilterProps[] = _.map(
-      _.groupBy(messages, 'partition'),
-      (v) => _.maxBy(v, 'offset')
+    const messageUniqs: FilterProps[] = map(
+      groupBy(messages, 'partition'),
+      (v) => maxBy(v, 'offset')
     ).map((v) => ({
       offset: v ? v.offset : 0,
       partition: v ? v.partition : 0,
     }));
 
-    return _.map(
-      _.groupBy(_.concat(partitionUniqs, messageUniqs), 'partition'),
-      (v) => _.maxBy(v, 'offset') as FilterProps
+    return map(
+      groupBy(concat(partitionUniqs, messageUniqs), 'partition'),
+      (v) => maxBy(v, 'offset') as FilterProps
     );
   }, [messages, partitions]);
 
