@@ -16,11 +16,13 @@ const List: React.FC<ListProps> = ({ schemas }) => {
           <thead>
             <tr>
               <th>Schema Name</th>
+              <th>Version</th>
+              <th>Compatibility</th>
             </tr>
           </thead>
           <tbody>
-            {schemas.map(({ subject }) => (
-              <ListItem subject={subject} />
+            {schemas.map((subject) => (
+              <ListItem key={subject.id} subject={subject} />
             ))}
           </tbody>
         </table>

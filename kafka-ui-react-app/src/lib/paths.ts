@@ -1,5 +1,4 @@
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { SchemaSubject } from '../generated-sources';
 
 const clusterPath = (clusterName: ClusterName) => `/ui/clusters/${clusterName}`;
 
@@ -13,10 +12,6 @@ export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/consumer-groups`;
 export const clusterSchemasPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/schemas`;
-// export const clusterSchemaPath = (
-//   clusterName: ClusterName,
-//   schemaName: string
-// ) => `${clusterSchemaPath(clusterName)}/${schemaName}/latest`;
 
 export const clusterTopicPath = (
   clusterName: ClusterName,

@@ -1,12 +1,9 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState, TopicName } from 'redux/interfaces';
+import { ClusterName, RootState } from 'redux/interfaces';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { getSchema, getSchemaList } from 'redux/reducers/schemas/selectors';
+import { getSchema, getSchemaVersions } from 'redux/reducers/schemas/selectors';
 import Details from './Details';
-import {
-  fetchSchemasByClusterName,
-  fetchSchemaVersions,
-} from '../../../redux/actions';
+import { fetchSchemaVersions } from '../../../redux/actions';
 
 interface RouteProps {
   clusterName: ClusterName;
@@ -24,7 +21,7 @@ const mapStateToProps = (
   }: OwnProps
 ) => ({
   schema: getSchema(state, subject),
-  // versions: getSchemasVersions(state, subject),
+  versions: getSchemaVersions(state),
   clusterName,
   subject,
 });

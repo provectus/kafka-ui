@@ -1,11 +1,14 @@
+import { SchemaSubject } from 'generated-sources';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 interface ListItemProps {
-  subject?: string;
+  subject: SchemaSubject;
 }
 
-const ListItem: React.FC<ListItemProps> = ({ subject }) => {
+const ListItem: React.FC<ListItemProps> = ({
+  subject: { subject, version, compatibilityLevel },
+}) => {
   return (
     <tr>
       <td>
@@ -17,6 +20,10 @@ const ListItem: React.FC<ListItemProps> = ({ subject }) => {
         >
           {subject}
         </NavLink>
+      </td>
+      <td>{version}</td>
+      <td>
+        <span className="tag is-link">{compatibilityLevel}</span>
       </td>
     </tr>
   );

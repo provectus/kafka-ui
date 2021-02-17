@@ -5,7 +5,6 @@ import {
   Topic,
   TopicFormData,
   TopicConfig,
-  SchemaSubject,
 } from 'generated-sources';
 import {
   ConsumerGroupID,
@@ -16,10 +15,10 @@ import {
   TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
+  SchemaName,
 } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
-import { flatten } from 'lodash';
 import * as actions from './actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -258,16 +257,8 @@ export const fetchSchemasByClusterName = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchSchemasByClusterNameAction.request());
   try {
-    const schemaNames = await apiClient.getSchemas({ clusterName });
-
-    // TODO: Remove me after API refactoring
-    const schemas: SchemaSubject[][] = await Promise.all(
-      schemaNames.map((schemaName) =>
-        apiClient.getLatestSchema({ clusterName, schemaName })
-      )
-    );
-
-    dispatch(actions.fetchSchemasByClusterNameAction.success(flatten(schemas)));
+    const schemas = await apiClient.getSchemas({ clusterName });
+    dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
   } catch (e) {
     dispatch(actions.fetchSchemasByClusterNameAction.failure());
   }
@@ -275,28 +266,17 @@ export const fetchSchemasByClusterName = (
 
 export const fetchSchemaVersions = (
   clusterName: ClusterName,
-  schemaName: SchemaSubject['subject']
+  subject: SchemaName
   // eslint-disable-next-line consistent-return
 ): PromiseThunk<void> => async (dispatch) => {
-  if (!schemaName) return Promise.resolve();
+  if (!subject) return Promise.resolve();
   dispatch(actions.fetchSchemaVersionsAction.request());
   try {
-    const versionIds = await apiClient.getSchemaVersions({
+    const versions = await apiClient.getAllVersionsBySubject({
       clusterName,
-      schemaName,
+      subject,
     });
-
-    console.log(versionIds);
-
-    const versions: SchemaSubject[][] = await Promise.all(
-      versionIds.map((version) =>
-        apiClient.getSchemaByVersion({ clusterName, schemaName, version })
-      )
-    );
-
-    console.log(versions);
-
-    dispatch(actions.fetchSchemaVersionsAction.success(flatten(versions)));
+    dispatch(actions.fetchSchemaVersionsAction.success(versions));
   } catch (e) {
     dispatch(actions.fetchSchemaVersionsAction.failure());
   }
