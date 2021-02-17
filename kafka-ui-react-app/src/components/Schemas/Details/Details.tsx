@@ -45,39 +45,43 @@ const Details: React.FC<DetailsProps> = ({
         </div>
       </div>
       <div className="box">
-        <div className="level-left">
-          <div className="level-item">
-            <div className="mr-1">
-              <b>Latest Version</b>
-            </div>
-            <div className="tag is-info is-light" title="Version">
-              #{schema.version}
+        <div className="level">
+          <div className="level-left">
+            <div className="level-item">
+              <div className="mr-1">
+                <b>Latest Version</b>
+              </div>
+              <div className="tag is-info is-light" title="Version">
+                #{schema.version}
+              </div>
             </div>
           </div>
-          <button
-            className="button is-info is-small level-item"
-            type="button"
-            title="work in progress"
-            disabled
-          >
-            Create Schema
-          </button>
-          <button
-            className="button is-warning is-small level-item"
-            type="button"
-            title="work in progress"
-            disabled
-          >
-            Update Schema
-          </button>
-          <button
-            className="button is-danger is-small level-item"
-            type="button"
-            title="work in progress"
-            disabled
-          >
-            Delete
-          </button>
+          <div className="level-right">
+            <button
+              className="button is-primary is-small level-item"
+              type="button"
+              title="work in progress"
+              disabled
+            >
+              Create Schema
+            </button>
+            <button
+              className="button is-warning is-small level-item"
+              type="button"
+              title="work in progress"
+              disabled
+            >
+              Update Schema
+            </button>
+            <button
+              className="button is-danger is-small level-item"
+              type="button"
+              title="work in progress"
+              disabled
+            >
+              Delete
+            </button>
+          </div>
         </div>
         <div className="tile is-ancestor mt-1">
           <div className="tile is-4 is-parent">
@@ -109,7 +113,7 @@ const Details: React.FC<DetailsProps> = ({
         </div>
       </div>
       <div className="box">
-        <table className="table is-fullwidth">
+        <table className="table is-striped is-fullwidth">
           <thead>
             <tr>
               <th>Version</th>

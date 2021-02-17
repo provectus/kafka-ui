@@ -267,9 +267,8 @@ export const fetchSchemasByClusterName = (
 export const fetchSchemaVersions = (
   clusterName: ClusterName,
   subject: SchemaName
-  // eslint-disable-next-line consistent-return
 ): PromiseThunk<void> => async (dispatch) => {
-  if (!subject) return Promise.resolve();
+  if (!subject) return;
   dispatch(actions.fetchSchemaVersionsAction.request());
   try {
     const versions = await apiClient.getAllVersionsBySubject({
