@@ -1,8 +1,8 @@
 import React from 'react';
-import formatBytes from 'lib/utils/formatBytes';
 import { NavLink } from 'react-router-dom';
-import { clusterBrokersPath } from 'lib/paths';
+import { clusterBrokersPath, clusterTopicsPath } from 'lib/paths';
 import { Cluster, ServerStatus } from 'generated-sources';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 interface ClusterWidgetProps {
   cluster: Cluster;
@@ -47,16 +47,20 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
           <tr>
             <th>Topics</th>
             <td>
-              <NavLink to={clusterBrokersPath(name)}>{topicCount}</NavLink>
+              <NavLink to={clusterTopicsPath(name)}>{topicCount}</NavLink>
             </td>
           </tr>
           <tr>
             <th>Production</th>
-            <td>{formatBytes(bytesInPerSec || 0)}</td>
+            <td>
+              <BytesFormatted value={bytesInPerSec} />
+            </td>
           </tr>
           <tr>
             <th>Consumption</th>
-            <td>{formatBytes(bytesOutPerSec || 0)}</td>
+            <td>
+              <BytesFormatted value={bytesOutPerSec} />
+            </td>
           </tr>
         </tbody>
       </table>
