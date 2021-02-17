@@ -3,11 +3,11 @@ import { format } from 'date-fns';
 import JSONTree from 'react-json-tree';
 import { TopicMessage } from 'generated-sources';
 
-interface MessageItemProp {
+export interface MessageItemProp {
   partition: TopicMessage['partition'];
   offset: TopicMessage['offset'];
   timestamp: TopicMessage['timestamp'];
-  content: TopicMessage['content'];
+  content?: TopicMessage['content'];
 }
 
 const MessageItem: React.FC<MessageItemProp> = ({
@@ -16,13 +16,11 @@ const MessageItem: React.FC<MessageItemProp> = ({
   timestamp,
   content,
 }) => (
-  <tr key="{timestamp}">
-    <td style={{ width: 200 }}>
-      {timestamp ? format(timestamp, 'yyyy-MM-dd HH:mm:ss') : null}
-    </td>
+  <tr>
+    <td style={{ width: 200 }}>{format(timestamp, 'yyyy-MM-dd HH:mm:ss')}</td>
     <td style={{ width: 150 }}>{offset}</td>
     <td style={{ width: 100 }}>{partition}</td>
-    <td key="{content}" style={{ wordBreak: 'break-word' }}>
+    <td style={{ wordBreak: 'break-word' }}>
       {content && (
         <JSONTree
           data={content}
