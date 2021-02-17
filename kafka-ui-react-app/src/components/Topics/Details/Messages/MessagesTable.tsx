@@ -3,7 +3,7 @@ import { TopicMessage } from 'generated-sources';
 import CustomParamButton from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
 import MessageItem from './MessageItem';
 
-interface MessagesTableProp {
+export interface MessagesTableProp {
   messages: TopicMessage[];
   onNext(event: React.MouseEvent<HTMLButtonElement>): void;
 }
@@ -14,7 +14,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
   }
 
   return (
-    <div>
+    <>
       <table className="table is-striped is-fullwidth">
         <thead>
           <tr>
@@ -28,7 +28,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
           {messages.map(
             ({ partition, offset, timestamp, content }: TopicMessage) => (
               <MessageItem
-                key={timestamp.toString()}
+                key={`message-${timestamp.getTime()}`}
                 partition={partition}
                 offset={offset}
                 timestamp={timestamp}
@@ -48,7 +48,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
           />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

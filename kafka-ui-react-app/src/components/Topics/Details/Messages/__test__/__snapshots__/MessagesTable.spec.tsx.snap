@@ -1,0 +1,66 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
+<Fragment>
+  <table
+    className="table is-striped is-fullwidth"
+  >
+    <thead>
+      <tr>
+        <th>
+          Timestamp
+        </th>
+        <th>
+          Offset
+        </th>
+        <th>
+          Partition
+        </th>
+        <th>
+          Content
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <MessageItem
+        content={
+          Object {
+            "foo": "bar",
+            "key": "val",
+          }
+        }
+        key="message-802310400000"
+        offset={2}
+        partition={1}
+        timestamp={1995-06-05T00:00:00.000Z}
+      />
+      <MessageItem
+        key="message-1596585600000"
+        offset={20}
+        partition={2}
+        timestamp={2020-08-05T00:00:00.000Z}
+      />
+    </tbody>
+  </table>
+  <div
+    className="columns"
+  >
+    <div
+      className="column is-full"
+    >
+      <CustomParamButton
+        btnText="Next"
+        className="is-link is-pulled-right"
+        onClick={[MockFunction]}
+        type="fa-chevron-right"
+      />
+    </div>
+  </div>
+</Fragment>
+`;
+
+exports[`MessagesTable when topic is empty matches snapshot 1`] = `
+<div>
+  No messages at selected topic
+</div>
+`;

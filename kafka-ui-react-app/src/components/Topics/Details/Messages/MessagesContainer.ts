@@ -1,10 +1,5 @@
 import { connect } from 'react-redux';
-import {
-  ClusterName,
-  RootState,
-  TopicMessageQueryParams,
-  TopicName,
-} from 'redux/interfaces';
+import { ClusterName, RootState, TopicName } from 'redux/interfaces';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { fetchTopicMessages } from 'redux/actions';
 import {
@@ -38,11 +33,7 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  fetchTopicMessages: (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    queryParams: Partial<TopicMessageQueryParams>
-  ) => fetchTopicMessages(clusterName, topicName, queryParams),
+  fetchTopicMessages,
 };
 
 export default withRouter(
