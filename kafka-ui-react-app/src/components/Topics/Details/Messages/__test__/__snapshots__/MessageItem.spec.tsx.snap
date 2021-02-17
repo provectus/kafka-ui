@@ -36,35 +36,13 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     }
   >
-    <JSONTree
-      collectionLimit={50}
+    <JSONViewer
       data={
         Object {
           "foo": "bar",
           "key": "val",
         }
       }
-      getItemString={[Function]}
-      hideRoot={true}
-      invertTheme={false}
-      isCustomNode={[Function]}
-      keyPath={
-        Array [
-          "root",
-        ]
-      }
-      labelRenderer={[Function]}
-      postprocessValue={[Function]}
-      shouldExpandNode={[Function]}
-      theme={
-        Object {
-          "base0B": "#363636",
-          "base0D": "#3273dc",
-          "tree": [Function],
-          "value": [Function],
-        }
-      }
-      valueRenderer={[Function]}
     />
   </td>
 </tr>
