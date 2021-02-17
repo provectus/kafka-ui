@@ -2,8 +2,8 @@ import { connect } from 'react-redux';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import { getSchema, getSchemaVersions } from 'redux/reducers/schemas/selectors';
+import { fetchSchemaVersions } from 'redux/actions';
 import Details from './Details';
-import { fetchSchemaVersions } from '../../../redux/actions';
 
 interface RouteProps {
   clusterName: ClusterName;

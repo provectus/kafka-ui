@@ -1,5 +1,5 @@
-import { SchemaSubject } from 'generated-sources';
 import React from 'react';
+import { SchemaSubject } from 'generated-sources';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import ListItem from './ListItem';
 

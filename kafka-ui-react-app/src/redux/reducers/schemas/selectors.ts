@@ -1,6 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState, SchemasState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { SchemaSubject } from 'generated-sources';
 
 const schemasState = ({ schemas }: RootState): SchemasState => schemas;
 
@@ -38,5 +39,8 @@ export const getSchema = createSelector(
 
 export const getSchemaVersions = createSelector(
   schemasState,
-  ({ currentSchemaVersions }) => currentSchemaVersions
+  ({ currentSchemaVersions }) =>
+    currentSchemaVersions.sort(
+      (a: SchemaSubject, b: SchemaSubject) => a.id - b.id
+    )
 );
