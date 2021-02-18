@@ -4,7 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   getIsSchemaVersionFetched,
   getSchema,
-  getSchemaVersions,
+  getSortedSchemaVersions,
 } from 'redux/reducers/schemas/selectors';
 import { fetchSchemaVersions } from 'redux/actions';
 import Details from './Details';
@@ -25,7 +25,7 @@ const mapStateToProps = (
   }: OwnProps
 ) => ({
   schema: getSchema(state, subject),
-  versions: getSchemaVersions(state),
+  versions: getSortedSchemaVersions(state),
   isFetched: getIsSchemaVersionFetched(state),
   clusterName,
 });

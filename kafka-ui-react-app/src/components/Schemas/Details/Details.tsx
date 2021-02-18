@@ -26,7 +26,7 @@ const Details: React.FC<DetailsProps> = ({
   isFetched,
 }) => {
   React.useEffect(() => {
-    fetchSchemaVersions(clusterName, schema.subject);
+    fetchSchemaVersions(clusterName, schema.subject as SchemaName);
   }, [fetchSchemaVersions, clusterName]);
   return (
     <div className="section">
