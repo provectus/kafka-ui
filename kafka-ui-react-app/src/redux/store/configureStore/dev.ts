@@ -2,7 +2,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import thunk, { ThunkMiddleware } from 'redux-thunk';
 import { RootState } from 'redux/interfaces';
 import { Action } from 'typesafe-actions';
-import rootReducer from '../../reducers';
+import rootReducer from 'redux/reducers';
 
 declare global {
   interface Window {

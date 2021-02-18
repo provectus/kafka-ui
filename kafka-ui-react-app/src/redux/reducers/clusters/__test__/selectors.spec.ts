@@ -1,0 +1,58 @@
+import { fetchClusterListAction } from 'redux/actions';
+import configureStore from 'redux/store/configureStore';
+import * as selectors from '../selectors';
+import {
+  clustersPayload,
+  offlineClusterPayload,
+  onlineClusterPayload,
+} from './fixtures';
+
+const store = configureStore();
+
+describe('Clusters selectors', () => {
+  describe('Initial State', () => {
+    it('returns fetch status', () => {
+      expect(selectors.getIsClusterListFetched(store.getState())).toBeFalsy();
+    });
+
+    it('returns cluster list', () => {
+      expect(selectors.getClusterList(store.getState())).toEqual([]);
+    });
+
+    it('returns online cluster list', () => {
+      expect(selectors.getOnlineClusters(store.getState())).toEqual([]);
+    });
+
+    it('returns offline cluster list', () => {
+      expect(selectors.getOfflineClusters(store.getState())).toEqual([]);
+    });
+  });
+
+  describe('state', () => {
+    beforeAll(() => {
+      store.dispatch(fetchClusterListAction.success(clustersPayload));
+    });
+
+    it('returns fetch status', () => {
+      expect(selectors.getIsClusterListFetched(store.getState())).toBeTruthy();
+    });
+
+    it('returns cluster list', () => {
+      expect(selectors.getClusterList(store.getState())).toEqual(
+        clustersPayload
+      );
+    });
+
+    it('returns online cluster list', () => {
+      expect(selectors.getOnlineClusters(store.getState())).toEqual([
+        onlineClusterPayload,
+      ]);
+    });
+
+    it('returns offline cluster list', () => {
+      expect(selectors.getOfflineClusters(store.getState())).toEqual([
+        offlineClusterPayload,
+      ]);
+    });
+  });
+});
