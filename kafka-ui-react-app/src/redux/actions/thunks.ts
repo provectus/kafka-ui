@@ -8,7 +8,7 @@ import {
 } from 'generated-sources';
 import {
   ConsumerGroupID,
-  PromiseThunk,
+  PromiseThunkResult,
   ClusterName,
   BrokerId,
   TopicName,
@@ -23,7 +23,7 @@ import * as actions from './actions';
 const apiClientConf = new Configuration(BASE_PARAMS);
 const apiClient = new ApiClustersApi(apiClientConf);
 
-export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
+export const fetchClustersList = (): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchClusterListAction.request());
   try {
     const clusters: Cluster[] = await apiClient.getClusters();
@@ -35,7 +35,7 @@ export const fetchClustersList = (): PromiseThunk<void> => async (dispatch) => {
 
 export const fetchClusterStats = (
   clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchClusterStatsAction.request());
   try {
     const payload = await apiClient.getClusterStats({ clusterName });
@@ -47,7 +47,7 @@ export const fetchClusterStats = (
 
 export const fetchClusterMetrics = (
   clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchClusterMetricsAction.request());
   try {
     const payload = await apiClient.getClusterMetrics({ clusterName });
@@ -59,7 +59,7 @@ export const fetchClusterMetrics = (
 
 export const fetchBrokers = (
   clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchBrokersAction.request());
   try {
     const payload = await apiClient.getBrokers({ clusterName });
@@ -72,7 +72,7 @@ export const fetchBrokers = (
 export const fetchBrokerMetrics = (
   clusterName: ClusterName,
   brokerId: BrokerId
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchBrokerMetricsAction.request());
   try {
     const payload = await apiClient.getBrokersMetrics({
@@ -87,7 +87,7 @@ export const fetchBrokerMetrics = (
 
 export const fetchTopicsList = (
   clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchTopicsListAction.request());
   try {
     const topics = await apiClient.getTopics({ clusterName });
@@ -101,7 +101,7 @@ export const fetchTopicMessages = (
   clusterName: ClusterName,
   topicName: TopicName,
   queryParams: Partial<TopicMessageQueryParams>
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchTopicMessagesAction.request());
   try {
     const messages = await apiClient.getTopicMessages({
@@ -118,7 +118,7 @@ export const fetchTopicMessages = (
 export const fetchTopicDetails = (
   clusterName: ClusterName,
   topicName: TopicName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchTopicDetailsAction.request());
   try {
     const topicDetails = await apiClient.getTopicDetails({
@@ -139,7 +139,7 @@ export const fetchTopicDetails = (
 export const fetchTopicConfig = (
   clusterName: ClusterName,
   topicName: TopicName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchTopicConfigAction.request());
   try {
     const config = await apiClient.getTopicConfigs({ clusterName, topicName });
@@ -188,7 +188,7 @@ const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
 export const createTopic = (
   clusterName: ClusterName,
   form: TopicFormDataRaw
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.createTopicAction.request());
   try {
     const topic: Topic = await apiClient.createTopic({
@@ -204,7 +204,7 @@ export const createTopic = (
 export const updateTopic = (
   clusterName: ClusterName,
   form: TopicFormDataRaw
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.updateTopicAction.request());
   try {
     const topic: Topic = await apiClient.updateTopic({
@@ -220,7 +220,7 @@ export const updateTopic = (
 
 export const fetchConsumerGroupsList = (
   clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchConsumerGroupsAction.request());
   try {
     const consumerGroups = await apiClient.getConsumerGroups({ clusterName });
@@ -233,7 +233,7 @@ export const fetchConsumerGroupsList = (
 export const fetchConsumerGroupDetails = (
   clusterName: ClusterName,
   consumerGroupID: ConsumerGroupID
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchConsumerGroupDetailsAction.request());
   try {
     const consumerGroupDetails = await apiClient.getConsumerGroup({
