@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClusterName, TopicName, TopicFormDataRaw } from 'redux/interfaces';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterTopicsPath } from 'lib/paths';
@@ -54,12 +54,12 @@ const New: React.FC<Props> = ({
 
       <div className="box">
         {/* eslint-disable react/jsx-props-no-spreading */}
-        <FormContext {...methods}>
+        <FormProvider {...methods}>
           <TopicForm
             isSubmitting={isSubmitting}
             onSubmit={methods.handleSubmit(onSubmit)}
           />
-        </FormContext>
+        </FormProvider>
       </div>
     </div>
   );

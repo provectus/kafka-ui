@@ -8,7 +8,7 @@ import {
   CleanupPolicy,
 } from 'redux/interfaces';
 import { TopicConfig } from 'generated-sources';
-import { useForm, FormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { camelCase } from 'lodash';
 
 import TopicForm from '../shared/Form/TopicForm';
@@ -127,7 +127,7 @@ const Edit: React.FC<Props> = ({
 
       <div className="box">
         {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <FormContext {...methods}>
+        <FormProvider {...methods}>
           <TopicForm
             topicName={topicName}
             config={config}
@@ -135,7 +135,7 @@ const Edit: React.FC<Props> = ({
             isEditing
             onSubmit={methods.handleSubmit(onSubmit)}
           />
-        </FormContext>
+        </FormProvider>
       </div>
     </div>
   );
