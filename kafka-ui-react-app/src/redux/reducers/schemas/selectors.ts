@@ -12,8 +12,17 @@ const getSchemaListFetchingStatus = createFetchingSelector(
   'GET_CLUSTER_SCHEMAS'
 );
 
+const getSchemaVersionsFetchingStatus = createFetchingSelector(
+  'GET_SCHEMA_VERSIONS'
+);
+
 export const getIsSchemaListFetched = createSelector(
   getSchemaListFetchingStatus,
+  (status) => status === 'fetched'
+);
+
+export const getIsSchemaVersionFetched = createSelector(
+  getSchemaVersionsFetchingStatus,
   (status) => status === 'fetched'
 );
 

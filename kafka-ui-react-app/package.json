@@ -10,7 +10,6 @@
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-import-resolver-typescript": "^2.3.0",
     "immer": "^8.0.1",
-    "json-formatter-js": "^2.3.4",
     "lodash": "^4.17.20",
     "pretty-ms": "^6.0.1",
     "react": "^17.0.1",

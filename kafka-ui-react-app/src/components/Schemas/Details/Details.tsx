@@ -5,12 +5,13 @@ import { clusterSchemasPath } from 'lib/paths';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
+import PageLoader from '../../common/PageLoader/PageLoader';
 
 interface DetailsProps {
   schema: SchemaSubject;
   clusterName: ClusterName;
-  subject: SchemaName;
   versions: SchemaSubject[];
+  isFetched: boolean;
   fetchSchemaVersions: (
     clusterName: ClusterName,
     schemaName: SchemaName
@@ -21,13 +22,12 @@ const Details: React.FC<DetailsProps> = ({
   schema,
   clusterName,
   fetchSchemaVersions,
-  subject,
   versions,
+  isFetched,
 }) => {
   React.useEffect(() => {
-    fetchSchemaVersions(clusterName, subject);
+    fetchSchemaVersions(clusterName, schema.subject);
   }, [fetchSchemaVersions, clusterName]);
-
   return (
     <div className="section">
       <div className="level">
@@ -58,7 +58,7 @@ const Details: React.FC<DetailsProps> = ({
             <button
               className="button is-primary is-small level-item"
               type="button"
-              title="work in progress"
+              title="in development"
               disabled
             >
               Create Schema
@@ -66,7 +66,7 @@ const Details: React.FC<DetailsProps> = ({
             <button
               className="button is-warning is-small level-item"
               type="button"
-              title="work in progress"
+              title="in development"
               disabled
             >
               Update Schema
@@ -74,7 +74,7 @@ const Details: React.FC<DetailsProps> = ({
             <button
               className="button is-danger is-small level-item"
               type="button"
-              title="work in progress"
+              title="in development"
               disabled
             >
               Delete
@@ -83,22 +83,26 @@ const Details: React.FC<DetailsProps> = ({
         </div>
         <LatestVersionItem schema={schema} />
       </div>
-      <div className="box">
-        <table className="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Version</th>
-              <th>ID</th>
-              <th>Schema</th>
-            </tr>
-          </thead>
-          <tbody>
-            {versions.map((version) => (
-              <SchemaVersion key={version.id} version={version} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {isFetched ? (
+        <div className="box">
+          <table className="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Version</th>
+                <th>ID</th>
+                <th>Schema</th>
+              </tr>
+            </thead>
+            <tbody>
+              {versions.map((version) => (
+                <SchemaVersion key={version.id} version={version} />
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <PageLoader />
+      )}
     </div>
   );
 };
