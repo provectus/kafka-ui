@@ -3,6 +3,7 @@ import { ClusterName } from 'redux/interfaces';
 import { Switch, Route, useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListContainer from './List/ListContainer';
+import DetailsContainer from './Details/DetailsContainer';
 
 interface SchemasProps {
   isFetched: boolean;
@@ -30,6 +31,11 @@ const Schemas: React.FC<SchemasProps> = ({
           exact
           path="/ui/clusters/:clusterName/schemas"
           component={ListContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/schemas/:subject/latest"
+          component={DetailsContainer}
         />
       </Switch>
     );

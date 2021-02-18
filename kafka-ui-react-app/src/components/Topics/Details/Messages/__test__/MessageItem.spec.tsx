@@ -14,7 +14,7 @@ describe('MessageItem', () => {
 
       expect(wrapper.find('tr').length).toEqual(1);
       expect(wrapper.find('td').length).toEqual(4);
-      expect(wrapper.find('JSONTree').length).toEqual(1);
+      expect(wrapper.find('JSONViewer').length).toEqual(1);
     });
 
     it('matches snapshot', () => {
@@ -28,7 +28,7 @@ describe('MessageItem', () => {
 
       expect(wrapper.find('tr').length).toEqual(1);
       expect(wrapper.find('td').length).toEqual(4);
-      expect(wrapper.find('JSONTree').length).toEqual(0);
+      expect(wrapper.find('JSONViewer').length).toEqual(0);
     });
 
     it('matches snapshot', () => {

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "bulma": "^0.8.2",
+    "bulma": "^0.9.2",
     "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
     "date-fns": "^2.16.1",
@@ -112,6 +112,8 @@
   },
   "proxy": "http://localhost:8080",
   "jest": {
-    "snapshotSerializers": ["enzyme-to-json/serializer"]
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   }
 }

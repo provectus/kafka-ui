@@ -5,7 +5,6 @@ import {
   Topic,
   TopicFormData,
   TopicConfig,
-  SchemaSubject,
 } from 'generated-sources';
 import {
   ConsumerGroupID,
@@ -16,6 +15,7 @@ import {
   TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
+  SchemaName,
 } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
@@ -257,17 +257,26 @@ export const fetchSchemasByClusterName = (
 ): PromiseThunk<void> => async (dispatch) => {
   dispatch(actions.fetchSchemasByClusterNameAction.request());
   try {
-    const schemaNames = await apiClient.getSchemas({ clusterName });
-
-    // TODO: Remove me after API refactoring
-    const schemas: SchemaSubject[] = await Promise.all(
-      schemaNames.map((schemaName) =>
-        apiClient.getLatestSchema({ clusterName, schemaName })
-      )
-    );
-
+    const schemas = await apiClient.getSchemas({ clusterName });
     dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
   } catch (e) {
     dispatch(actions.fetchSchemasByClusterNameAction.failure());
+  }
+};
+
+export const fetchSchemaVersions = (
+  clusterName: ClusterName,
+  subject: SchemaName
+): PromiseThunk<void> => async (dispatch) => {
+  if (!subject) return;
+  dispatch(actions.fetchSchemaVersionsAction.request());
+  try {
+    const versions = await apiClient.getAllVersionsBySubject({
+      clusterName,
+      subject,
+    });
+    dispatch(actions.fetchSchemaVersionsAction.success(versions));
+  } catch (e) {
+    dispatch(actions.fetchSchemaVersionsAction.failure());
   }
 };
