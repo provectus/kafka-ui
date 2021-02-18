@@ -14,7 +14,7 @@ public class KafkaConnectClient extends ConnectApi {
 
     private static final Map<String, KafkaConnectClient> CACHE = new ConcurrentHashMap<>();
 
-    public static KafkaConnectClient createClient(String basePath) {
+    public static KafkaConnectClient withBaseUrl(String basePath) {
         return CACHE.computeIfAbsent(basePath, path -> new KafkaConnectClient(new ApiClient().setBasePath(path)));
     }
 }

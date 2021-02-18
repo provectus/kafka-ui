@@ -31,135 +31,6 @@ public class KafkaConnectService {
     private final ClusterMapper clusterMapper;
     private final KafkaConnectMapper kafkaConnectMapper;
 
-
-    public Flux<String> getConnectors(String clusterName, String connectName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMapMany(connect -> withRetryOnConflict(
-                        KafkaConnectClient.createClient(connect).getConnectors()
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Connector> createConnector(String clusterName, String connectName, Mono<NewConnector> connector) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect -> withRetryOnConflict(
-                        connector.cache()
-                                .map(kafkaConnectMapper::toClientNewConnector)
-                                .flatMap(c -> KafkaConnectClient.createClient(connect).createConnector(c))
-                                .map(kafkaConnectMapper::fromClientConnector)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Connector> getConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect -> withRetryOnConflict(
-                        KafkaConnectClient.createClient(connect).getConnector(connectorName)
-                                .map(kafkaConnectMapper::fromClientConnector)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Map<String, Object>> getConnectorConfig(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).getConnectorConfig(connectorName)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Connector> setConnectorConfig(String clusterName, String connectName, String connectorName, Mono<Object> requestBody) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        requestBody.flatMap(body ->
-                                withRetryOnConflict(
-                                        KafkaConnectClient.createClient(connect).setConnectorConfig(connectorName, (Map<String, Object>) body)
-                                ))
-                                .map(kafkaConnectMapper::fromClientConnector)
-                                .doOnError(log::error)
-                );
-    }
-
-    public Mono<Void> deleteConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).deleteConnector(connectorName)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Void> restartConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).restartConnector(connectorName)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Void> pauseConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).pauseConnector(connectorName)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Void> resumeConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).resumeConnector(connectorName)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Flux<ConnectorTask> getConnectorTasks(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMapMany(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).getConnectorTasks(connectorName)
-                        )
-                                .map(kafkaConnectMapper::fromClientConnectorTask)
-                                .doOnError(log::error)
-                );
-    }
-
-    public Mono<Void> restartConnectorTask(String clusterName, String connectName, String connectorName, Integer taskId) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).restartConnectorTask(connectorName, taskId)
-                        ).doOnError(log::error)
-                );
-    }
-
-    public Mono<Flux<ConnectorPlugin>> getConnectorPlugins(String clusterName, String connectName) {
-        return Mono.just(getConnectAddress(clusterName, connectName)
-                .flatMapMany(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.createClient(connect).getConnectorPlugins()
-                        )
-                                .map(kafkaConnectMapper::fromClientConnectorPlugin)
-                                .doOnError(log::error)
-                ));
-    }
-
-    public Mono<ConnectorPluginConfigValidationResponse> validateConnectorPluginConfig(String clusterName, String connectName, String pluginName, Mono<Object> requestBody) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        requestBody.flatMap(body ->
-                                withRetryOnConflict(
-                                        KafkaConnectClient.createClient(connect).validateConnectorPluginConfig(pluginName, (Map<String, Object>) body)
-                                ))
-                                .map(kafkaConnectMapper::fromClient)
-                                .doOnError(log::error)
-                );
-    }
-
     public Mono<Flux<Connect>> getConnects(String clusterName) {
         return Mono.just(
                 Flux.fromIterable(clustersStorage.getClusterByName(clusterName)
@@ -169,6 +40,156 @@ public class KafkaConnectService {
                         .collect(Collectors.toList())
                 )
         );
+    }
+
+
+    public Flux<String> getConnectors(String clusterName, String connectName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMapMany(connect -> withRetryOnConflict(
+                        KafkaConnectClient.withBaseUrl(connect).getConnectors()
+                        ).doOnError(log::error)
+                );
+    }
+
+    public Mono<Connector> createConnector(String clusterName, String connectName, Mono<NewConnector> connector) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        connector.cache()
+                                .map(kafkaConnectMapper::toClient)
+                                .flatMap(c -> withRetryOnConflict(KafkaConnectClient.withBaseUrl(connect).createConnector(c)))
+                                .map(kafkaConnectMapper::fromClient)
+                                .flatMap(c ->
+                                        withRetryOnConflict(KafkaConnectClient.withBaseUrl(connect).getConnectorStatus(c.getName()))
+                                                .map(connectorStatus -> {
+                                                    var status = connectorStatus.getConnector();
+                                                    return c.status(kafkaConnectMapper.fromClient(status));
+                                                })
+                                )
+                                .flatMap(c -> getConnectorTasks(clusterName, connectName, c.getName())
+                                        .collectList()
+                                        .map(c::tasks)
+                                )
+                );
+    }
+
+    public Mono<Connector> getConnector(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect -> withRetryOnConflict(KafkaConnectClient.withBaseUrl(connect).getConnector(connectorName))
+                        .map(kafkaConnectMapper::fromClient)
+                        .flatMap(c ->
+                               withRetryOnConflict(KafkaConnectClient.withBaseUrl(connect).getConnectorStatus(c.getName()))
+                                        .map(connectorStatus -> {
+                                            var status = connectorStatus.getConnector();
+                                            return c.status(kafkaConnectMapper.fromClient(status));
+                                        })
+                        )
+                        .flatMap(c -> getConnectorTasks(clusterName, connectName, c.getName())
+                                .collectList()
+                                .map(c::tasks)
+                        )
+
+                );
+    }
+
+    public Mono<Map<String, Object>> getConnectorConfig(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).getConnectorConfig(connectorName)
+                        )
+                );
+    }
+
+    public Mono<Connector> setConnectorConfig(String clusterName, String connectName, String connectorName, Mono<Object> requestBody) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        requestBody.flatMap(body ->
+                                withRetryOnConflict(
+                                        KafkaConnectClient.withBaseUrl(connect).setConnectorConfig(connectorName, (Map<String, Object>) body)
+                                ))
+                                .map(kafkaConnectMapper::fromClient)
+                );
+    }
+
+    public Mono<Void> deleteConnector(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).deleteConnector(connectorName)
+                        )
+                );
+    }
+
+    public Mono<Void> restartConnector(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).restartConnector(connectorName)
+                        )
+                );
+    }
+
+    public Mono<Void> pauseConnector(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).pauseConnector(connectorName)
+                        )
+                );
+    }
+
+    public Mono<Void> resumeConnector(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).resumeConnector(connectorName)
+                        )
+                );
+    }
+
+    public Flux<Task> getConnectorTasks(String clusterName, String connectName, String connectorName) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMapMany(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).getConnectorTasks(connectorName)
+                        )
+                                .map(kafkaConnectMapper::fromClient)
+                                .flatMap(task ->
+                                       withRetryOnConflict(KafkaConnectClient.withBaseUrl(connect).getConnectorTaskStatus(connectorName, task.getId().getTask()))
+                                                .map(kafkaConnectMapper::fromClient)
+                                                .map(task::status)
+                                )
+                );
+    }
+
+    public Mono<Void> restartConnectorTask(String clusterName, String connectName, String connectorName, Integer taskId) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).restartConnectorTask(connectorName, taskId)
+                        )
+                );
+    }
+
+    public Mono<Flux<ConnectorPlugin>> getConnectorPlugins(String clusterName, String connectName) {
+        return Mono.just(getConnectAddress(clusterName, connectName)
+                .flatMapMany(connect ->
+                        withRetryOnConflict(
+                                KafkaConnectClient.withBaseUrl(connect).getConnectorPlugins()
+                        )
+                                .map(kafkaConnectMapper::fromClient)
+                ));
+    }
+
+    public Mono<ConnectorPluginConfigValidationResponse> validateConnectorPluginConfig(String clusterName, String connectName, String pluginName, Mono<Object> requestBody) {
+        return getConnectAddress(clusterName, connectName)
+                .flatMap(connect ->
+                        requestBody.flatMap(body ->
+                                withRetryOnConflict(
+                                        KafkaConnectClient.withBaseUrl(connect).validateConnectorPluginConfig(pluginName, (Map<String, Object>) body)
+                                ))
+                                .map(kafkaConnectMapper::fromClient)
+                );
     }
 
     private Mono<KafkaCluster> getCluster(String clusterName) {
@@ -189,17 +210,17 @@ public class KafkaConnectService {
                 .map(Optional::get);
     }
 
-    private  <T> Mono<T> withRetryOnConflict(Mono<T> publisher) {
+    private <T> Mono<T> withRetryOnConflict(Mono<T> publisher) {
         return publisher.retryWhen(
                 Retry.onlyIf(e -> e.exception() instanceof WebClientResponseException.Conflict)
                         .retryMax(MAX_RETRIES)
-        );
+        ).doOnError(log::error);
     }
 
-    private  <T> Flux<T> withRetryOnConflict(Flux<T> publisher) {
+    private <T> Flux<T> withRetryOnConflict(Flux<T> publisher) {
         return publisher.retryWhen(
                 Retry.onlyIf(e -> e.exception() instanceof WebClientResponseException.Conflict)
                         .retryMax(MAX_RETRIES)
-        );
+        ).doOnError(log::error);
     }
 }

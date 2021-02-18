@@ -80,7 +80,7 @@ public class KafkaConnectRestController implements ApiClustersConnectApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Flux<ConnectorTask>>> getConnectorTasks(String clusterName, String connectName, String connectorName, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Flux<Task>>> getConnectorTasks(String clusterName, String connectName, String connectorName, ServerWebExchange exchange) {
         return Mono.just(ResponseEntity.ok(kafkaConnectService.getConnectorTasks(clusterName, connectName, connectorName)));
     }
 

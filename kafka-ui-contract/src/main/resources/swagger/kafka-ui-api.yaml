@@ -953,7 +953,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ConnectorTask'
+                  $ref: '#/components/schemas/Task'
 
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/restart:
     post:
@@ -1441,7 +1441,7 @@ components:
       additionalProperties:
         type: object
 
-    Task:
+    TaskId:
       type: object
       properties:
         connector:
@@ -1449,11 +1449,13 @@ components:
         task:
           type: integer
 
-    ConnectorTask:
+    Task:
       type: object
       properties:
         id:
-          $ref: '#/components/schemas/Task'
+          $ref: '#/components/schemas/TaskId'
+        status:
+          $ref: '#/components/schemas/TaskStatus'
         config:
           $ref: '#/components/schemas/ConnectorConfig'
 
@@ -1482,6 +1484,9 @@ components:
               enum:
                 - source
                 - sink
+            status:
+              $ref: '#/components/schemas/ConnectorStatus'
+
 
     TaskStatus:
       type: object
@@ -1496,27 +1501,20 @@ components:
             - PAUSED
         worker_id:
           type: string
+        trace:
+          type: string
 
     ConnectorStatus:
       type: object
       properties:
-        name:
+        state:
           type: string
-        connector:
-          type: object
-          properties:
-            state:
-              type: string
-              enum:
-                - RUNNING
-                - FAILED
-                - PAUSED
-            worker_id:
-              type: string
-        tasks:
-          type: array
-          items:
-            $ref: '#/components/schemas/TaskStatus'
+          enum:
+            - RUNNING
+            - FAILED
+            - PAUSED
+        worker_id:
+          type: string
 
     ConnectorPlugin:
       type: object
