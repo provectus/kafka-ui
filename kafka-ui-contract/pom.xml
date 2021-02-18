@@ -33,6 +33,11 @@
                     <artifactId>jackson-databind-nullable</artifactId>
                     <version>${jackson-databind-nullable.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>com.google.code.findbugs</groupId>
+                    <artifactId>jsr305</artifactId>
+                    <version>3.0.2</version>
+                </dependency>
             </dependencies>
 
             <build>
@@ -88,6 +93,32 @@
                                         <supportsES6>true</supportsES6>
                                         <nullSafeAdditionalProps>true</nullSafeAdditionalProps>
                                         <withInterfaces>true</withInterfaces>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>generate-connect-client</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/kafka-connect-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/kafka-connect-client</output>
+                                    <generatorName>java</generatorName>
+                                    <generateApiTests>false</generateApiTests>
+                                    <generateModelTests>false</generateModelTests>
+
+                                    <configOptions>
+                                        <modelPackage>com.provectus.kafka.ui.connect.model</modelPackage>
+                                        <apiPackage>com.provectus.kafka.ui.connect.api</apiPackage>
+                                        <sourceFolder>kafka-connect-client</sourceFolder>
+
+                                        <asyncNative>true</asyncNative>
+                                        <library>webclient</library>
+
+                                        <useBeanValidation>true</useBeanValidation>
+                                        <dateLibrary>java8</dateLibrary>
                                     </configOptions>
                                 </configuration>
                             </execution>

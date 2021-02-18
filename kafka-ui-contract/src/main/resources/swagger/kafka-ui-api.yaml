@@ -10,6 +10,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0
 tags:
   - name: /api/clusters
+  - name: /api/clusters/connect
 servers:
   - url: /localhost
 
@@ -641,14 +642,41 @@ paths:
         404:
           description: Not Found
 
-  /api/clusters/{clusterName}/connectors:
+  /api/clusters/{clusterName}/connect:
     get:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
+      summary: get all kafka connect instances
+      operationId: getConnects
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connect'
+
+  /api/clusters/{clusterName}/connect/{connectName}/connectors:
+    get:
+      tags:
+        - /api/clusters/connect
       summary: get all connectors from Kafka Connect service
       operationId: getConnectors
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -664,11 +692,16 @@ paths:
                   type: string
     post:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: create new connector
       operationId: createConnector
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -688,14 +721,19 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connectors/{connectorName}:
+  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}:
     get:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: get information about the connector
       operationId: getConnector
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -714,11 +752,16 @@ paths:
                 $ref: '#/components/schemas/Connector'
     delete:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: delete connector
       operationId: deleteConnector
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -734,14 +777,19 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connectors/{connectorName}/config:
+  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config:
     get:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: get connector configuration
       operationId: getConnectorConfig
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -760,11 +808,16 @@ paths:
                 $ref: '#/components/schemas/ConnectorConfig'
     put:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: update or create connector with provided config
       operationId: setConnectorConfig
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -790,39 +843,19 @@ paths:
           description: rebalance is in progress
 
 
-  /api/clusters/{clusterName}/connectors/{connectorName}/status:
-    get:
-      tags:
-        - /api/clusters/connectors
-      summary: get connector status
-      operationId: getConnectorStatus
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectorName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectorStatus'
-
   /api/clusters/{clusterName}/connectors/{connectorName}/restart:
     post:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: restart the connector
       operationId: restartConnector
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -841,11 +874,16 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/pause:
     put:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: pause the connector
       operationId: pauseConnector
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -862,11 +900,16 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/resume:
     put:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: resume the connector
       operationId: resumeConnector
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -883,11 +926,16 @@ paths:
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks:
     get:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: get connector tasks
       operationId: getConnectorTasks
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -907,40 +955,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConnectorTask'
 
-  /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/status:
-    get:
-      tags:
-        - /api/clusters/connectors
-      summary: get connector task status
-      operationId: getConnectorTaskStatus
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectorName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: taskId
-          in: path
-          required: true
-          schema:
-            type: integer
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TaskStatus'
-
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/restart:
     post:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: restart connector task
       operationId: restartConnectorTask
       parameters:
@@ -949,6 +967,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: connectName
+          in: path
+          required: true
+          schema:
+            type: string
         - name: connectorName
           in: path
           required: true
@@ -963,14 +986,19 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/connector-plugins:
+  /api/clusters/{clusterName}/connect/{connectName}/plugins:
     get:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: get connector plugins
       operationId: getConnectorPlugins
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -985,14 +1013,19 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConnectorPlugin'
 
-  /api/clusters/{clusterName}/connector-plugins/{pluginName}/config/validate:
+  /api/clusters/{clusterName}/connect/{connectName}/plugins/{pluginName}/config/validate:
     put:
       tags:
-        - /api/clusters/connectors
+        - /api/clusters/connect
       summary: validate connector plugin configuration
       operationId: validateConnectorPluginConfig
       parameters:
         - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
           in: path
           required: true
           schema:
@@ -1395,6 +1428,14 @@ components:
       required:
         - isCompatible
 
+    Connect:
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+
     ConnectorConfig:
       type: object
       additionalProperties:
@@ -1423,6 +1464,9 @@ components:
           type: string
         config:
           $ref: '#/components/schemas/ConnectorConfig'
+      required:
+        - name
+        - config
 
     Connector:
       allOf:
@@ -1438,9 +1482,6 @@ components:
               enum:
                 - source
                 - sink
-          required:
-            - name
-            - config
 
     TaskStatus:
       type: object

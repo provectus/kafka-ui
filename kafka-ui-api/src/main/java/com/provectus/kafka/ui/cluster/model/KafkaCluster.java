@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.cluster.model;
 
 import com.provectus.kafka.ui.model.ServerStatus;
+
+import java.util.List;
 import java.util.Properties;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +18,7 @@ public class KafkaCluster {
     private final String bootstrapServers;
     private final String zookeeper;
     private final String schemaRegistry;
-    private final String kafkaConnect;
+    private final List<KafkaConnectCluster> kafkaConnect;
     private final String schemaNameTemplate;
     private final ServerStatus status;
     private final ServerStatus zookeeperStatus;

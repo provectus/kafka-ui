@@ -1,0 +1,491 @@
+openapi: 3.0.0
+info:
+  description: Api Documentation
+  version: 0.1.0
+  title: Api Documentation
+  termsOfService: urn:tos
+  contact: {}
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0
+tags:
+  - name: /connect
+servers:
+  - url: /localhost
+
+paths:
+  /connectors:
+    get:
+      tags:
+        - /connect
+      summary: get all connectors from Kafka Connect service
+      operationId: getConnectors
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+    post:
+      tags:
+        - /connect
+      summary: create new connector
+      operationId: createConnector
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewConnector'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+        409:
+          description: rebalance is in progress
+
+  /connectors/{connectorName}:
+    get:
+      tags:
+        - /connect
+      summary: get information about the connector
+      operationId: getConnector
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+    delete:
+      tags:
+        - /connect
+      summary: delete connector
+      operationId: deleteConnector
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        409:
+          description: rebalance is in progress
+
+  /connectors/{connectorName}/config:
+    get:
+      tags:
+        - /connect
+      summary: get connector configuration
+      operationId: getConnectorConfig
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorConfig'
+    put:
+      tags:
+        - /connect
+      summary: update or create connector with provided config
+      operationId: setConnectorConfig
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorConfig'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Connector'
+        409:
+          description: rebalance is in progress
+
+
+  /connectors/{connectorName}/status:
+    get:
+      tags:
+        - /connect
+      summary: get connector status
+      operationId: getConnectorStatus
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorStatus'
+
+  /connectors/{connectorName}/restart:
+    post:
+      tags:
+        - /connect
+      summary: restart the connector
+      operationId: restartConnector
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        409:
+          description: rebalance is in progress
+
+  /connectors/{connectorName}/pause:
+    put:
+      tags:
+        - /connect
+      summary: pause the connector
+      operationId: pauseConnector
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: Accepted
+
+  /connectors/{connectorName}/resume:
+    put:
+      tags:
+        - /connect
+      summary: resume the connector
+      operationId: resumeConnector
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        202:
+          description: Accepted
+
+  /connectors/{connectorName}/tasks:
+    get:
+      tags:
+        - /connect
+      summary: get connector tasks
+      operationId: getConnectorTasks
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectorTask'
+
+  /connectors/{connectorName}/tasks/{taskId}/status:
+    get:
+      tags:
+        - /connect
+      summary: get connector task status
+      operationId: getConnectorTaskStatus
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaskStatus'
+
+  /connectors/{connectorName}/tasks/{taskId}/restart:
+    post:
+      tags:
+        - /connect
+      summary: restart connector task
+      operationId: restartConnectorTask
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+
+  /connector-plugins:
+    get:
+      tags:
+        - /connect
+      summary: get connector plugins
+      operationId: getConnectorPlugins
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConnectorPlugin'
+
+  /connector-plugins/{pluginName}/config/validate:
+    put:
+      tags:
+        - /connect
+      summary: validate connector plugin configuration
+      operationId: validateConnectorPluginConfig
+      parameters:
+        - name: pluginName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectorConfig'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectorPluginConfigValidationResponse'
+
+components:
+  schemas:
+    ConnectorConfig:
+      type: object
+      additionalProperties:
+        type: object
+
+    Task:
+      type: object
+      properties:
+        connector:
+          type: string
+        task:
+          type: integer
+
+    ConnectorTask:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/Task'
+        config:
+          $ref: '#/components/schemas/ConnectorConfig'
+
+    NewConnector:
+      type: object
+      properties:
+        name:
+          type: string
+        config:
+          $ref: '#/components/schemas/ConnectorConfig'
+      required:
+        - name
+        - config
+
+    Connector:
+      allOf:
+        - $ref: '#/components/schemas/NewConnector'
+        - type: object
+          properties:
+            tasks:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+            type:
+              type: string
+              enum:
+                - source
+                - sink
+
+    TaskStatus:
+      type: object
+      properties:
+        id:
+          type: integer
+        state:
+          type: string
+          enum:
+            - RUNNING
+            - FAILED
+            - PAUSED
+        worker_id:
+          type: string
+
+    ConnectorStatus:
+      type: object
+      properties:
+        name:
+          type: string
+        connector:
+          type: object
+          properties:
+            state:
+              type: string
+              enum:
+                - RUNNING
+                - FAILED
+                - PAUSED
+            worker_id:
+              type: string
+        tasks:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaskStatus'
+
+    ConnectorPlugin:
+      type: object
+      properties:
+        class:
+          type: string
+
+    ConnectorPluginConfigDefinition:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - BOOLEAN
+            - CLASS
+            - DOUBLE
+            - INT
+            - LIST
+            - LONG
+            - PASSWORD
+            - SHORT
+            - STRING
+        required:
+          type: boolean
+        default_value:
+          type: string
+        importance:
+          type: string
+          enum:
+            - LOW
+            - MEDIUM
+            - HIGH
+        documentation:
+          type: string
+        group:
+          type: string
+        width:
+          type: string
+          enum:
+            - SHORT
+            - MEDIUM
+            - LONG
+            - NONE
+        display_name:
+          type: string
+        dependents:
+          type: array
+          items:
+            type: string
+        order:
+          type: integer
+
+    ConnectorPluginConfigValue:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        recommended_values:
+          type: array
+          items:
+            type: string
+        errors:
+          type: array
+          items:
+            type: string
+        visible:
+          type: boolean
+
+    ConnectorPluginConfig:
+      type: object
+      properties:
+        definition:
+          $ref: '#/components/schemas/ConnectorPluginConfigDefinition'
+        value:
+          $ref: '#/components/schemas/ConnectorPluginConfigValue'
+
+    ConnectorPluginConfigValidationResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        error_count:
+          type: integer
+        groups:
+          type: array
+          items:
+            type: string
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConnectorPluginConfig'
+

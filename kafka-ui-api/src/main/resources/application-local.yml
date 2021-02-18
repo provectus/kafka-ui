@@ -5,8 +5,10 @@ kafka:
       bootstrapServers: localhost:9093
       zookeeper: localhost:2181
       schemaRegistry: http://localhost:8081
-      kafkaConnect: http://localhost:8083
-#      schemaNameTemplate: "%s-value"
+      kafkaConnect:
+        - name: first
+          address: http://localhost:8083
+      #      schemaNameTemplate: "%s-value"
       jmxPort: 9997
     -
       name: secondLocal

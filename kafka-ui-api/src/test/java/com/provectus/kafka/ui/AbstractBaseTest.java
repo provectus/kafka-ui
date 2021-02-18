@@ -50,7 +50,8 @@ public abstract class AbstractBaseTest {
             System.setProperty("kafka.clusters.0.name", "local");
             System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
             System.setProperty("kafka.clusters.0.schemaRegistry", schemaRegistry.getTarget());
-            System.setProperty("kafka.clusters.0.kafkaConnect", kafkaConnect.getTarget());
+            System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "local-connect");
+            System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
         }
     }
 }

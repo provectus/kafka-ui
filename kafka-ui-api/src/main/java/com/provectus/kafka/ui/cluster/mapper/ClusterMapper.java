@@ -36,6 +36,7 @@ public interface ClusterMapper {
     TopicDetails toTopicDetails(InternalTopic topic);
     TopicConfig toTopicConfig(InternalTopicConfig topic);
     Replica toReplica(InternalReplica replica);
+    Connect toKafkaConnect(KafkaConnectCluster connect);
 
     @Mapping(target = "isCompatible", source = "compatible")
     CompatibilityCheckResponse toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
