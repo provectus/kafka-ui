@@ -9,8 +9,11 @@ import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
 import com.provectus.kafka.ui.model.CompatibilityLevel;
 import com.provectus.kafka.ui.model.NewSchemaSubject;
 import com.provectus.kafka.ui.model.SchemaSubject;
+import java.util.Formatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -36,24 +41,40 @@ public class SchemaRegistryService {
     private final ClusterMapper mapper;
     private final WebClient webClient;
 
-    public Flux<String> getAllSchemaSubjects(String clusterName) {
+    public Flux<SchemaSubject> getAllLatestVersionSchemas(String clusterName) {
+        var allSubjectNames = getAllSubjectNames(clusterName);
+        return allSubjectNames
+                .flatMapMany(Flux::fromArray)
+                .flatMap(subject -> getLatestSchemaSubject(clusterName, subject));
+    }
+
+    public Mono<String[]> getAllSubjectNames(String clusterName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECTS)
                         .retrieve()
-                        .bodyToFlux(String.class)
-                        .doOnError(log::error))
-                .orElse(Flux.error(new NotFoundException("No such cluster")));
+                        .bodyToMono(String[].class)
+                        .doOnError(log::error)
+                )
+                .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
-    public Flux<Integer> getSchemaSubjectVersions(String clusterName, String schemaName) {
+    public Flux<SchemaSubject> getAllVersionsBySubject(String clusterName, String subject) {
+        Flux<Integer> versions = getSubjectVersions(clusterName, subject);
+        return versions.flatMap(version -> getSchemaSubjectByVersion(clusterName, subject, version));
+    }
+
+    private Flux<Integer> getSubjectVersions(String clusterName, String schemaName) {
         return clustersStorage.getClusterByName(clusterName)
                 .map(cluster -> webClient.get()
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)
                         .retrieve()
-                        .onStatus(HttpStatus.NOT_FOUND::equals, resp -> Mono.error(new NotFoundException("No such schema %s".formatted(schemaName))))
-                        .bodyToFlux(Integer.class))
-                .orElse(Flux.error(new NotFoundException("No such cluster")));
+                        .onStatus(HttpStatus.NOT_FOUND::equals,
+                            resp -> Mono.error(
+                                new NotFoundException(formatted("No such schema %s"))
+                            )
+                        ).bodyToFlux(Integer.class)
+                ).orElse(Flux.error(new NotFoundException("No such cluster")));
     }
 
     public Mono<SchemaSubject> getSchemaSubjectByVersion(String clusterName, String schemaName, Integer version) {
@@ -70,8 +91,12 @@ public class SchemaRegistryService {
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, schemaName, version)
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals,
-                                resp -> Mono.error(new NotFoundException("No such schema %s with version %s".formatted(schemaName, version))))
-                        .bodyToMono(SchemaSubject.class)
+                                resp -> Mono.error(
+                                    new NotFoundException(
+                                        formatted("No such schema %s with version %s", schemaName, version)
+                                    )
+                                )
+                        ).bodyToMono(SchemaSubject.class)
                         .zipWith(getSchemaCompatibilityInfoOrGlobal(clusterName, schemaName))
                         .map(tuple -> {
                             SchemaSubject schema = tuple.getT1();
@@ -97,9 +122,13 @@ public class SchemaRegistryService {
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, schemaName, version)
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals,
-                                resp -> Mono.error(new NotFoundException("No such schema %s with version %s".formatted(schemaName, version))))
-                        .toBodilessEntity())
-                .orElse(Mono.error(new NotFoundException("No such cluster")));
+                                resp -> Mono.error(
+                                    new NotFoundException(
+                                        formatted("No such schema %s with version %s", schemaName, version)
+                                    )
+                                )
+                        ).toBodilessEntity()
+                ).orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
     public Mono<ResponseEntity<Void>> deleteSchemaSubject(String clusterName, String schemaName) {
@@ -107,7 +136,13 @@ public class SchemaRegistryService {
                 .map(cluster -> webClient.delete()
                         .uri(cluster.getSchemaRegistry() + URL_SUBJECT, schemaName)
                         .retrieve()
-                        .onStatus(HttpStatus.NOT_FOUND::equals, resp -> Mono.error(new NotFoundException("No such schema %s".formatted(schemaName))))
+                        .onStatus(HttpStatus.NOT_FOUND::equals,
+                            resp -> Mono.error(
+                                new NotFoundException(
+                                    formatted("No such schema %s", schemaName)
+                                )
+                            )
+                        )
                         .toBodilessEntity())
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
@@ -120,7 +155,9 @@ public class SchemaRegistryService {
                         .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals,
-                                resp -> Mono.error(new NotFoundException("No such schema %s".formatted(schemaName))))
+                                resp -> Mono.error(
+                                    new NotFoundException(formatted("No such schema %s", schemaName)))
+                        )
                         .toEntity(SchemaSubject.class)
                         .log())
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
@@ -142,7 +179,7 @@ public class SchemaRegistryService {
                             .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevel.class))
                             .retrieve()
                             .onStatus(HttpStatus.NOT_FOUND::equals,
-                                    resp -> Mono.error(new NotFoundException("No such schema %s".formatted(schemaName))))
+                                    resp -> Mono.error(new NotFoundException(formatted("No such schema %s", schemaName))))
                             .bodyToMono(Void.class);
                 }).orElse(Mono.error(new NotFoundException("No such cluster")));
     }
@@ -181,10 +218,14 @@ public class SchemaRegistryService {
                         .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
                         .retrieve()
                         .onStatus(HttpStatus.NOT_FOUND::equals,
-                                resp -> Mono.error(new NotFoundException("No such schema %s".formatted(schemaName))))
+                                resp -> Mono.error(new NotFoundException(formatted("No such schema %s", schemaName))))
                         .bodyToMono(InternalCompatibilityCheck.class)
                         .map(mapper::toCompatibilityCheckResponse)
                         .log()
                 ).orElse(Mono.error(new NotFoundException("No such cluster")));
+    }
+
+    public String formatted(String str, Object... args) {
+        return new Formatter().format(str, args).toString();
     }
 }

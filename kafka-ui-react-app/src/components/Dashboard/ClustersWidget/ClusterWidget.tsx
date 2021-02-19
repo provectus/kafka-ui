@@ -1,8 +1,8 @@
 import React from 'react';
-import formatBytes from 'lib/utils/formatBytes';
 import { NavLink } from 'react-router-dom';
-import { clusterBrokersPath } from 'lib/paths';
+import { clusterBrokersPath, clusterTopicsPath } from 'lib/paths';
 import { Cluster, ServerStatus } from 'generated-sources';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 interface ClusterWidgetProps {
   cluster: Cluster;
@@ -19,9 +19,9 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
     onlinePartitionCount,
   },
 }) => (
-  <NavLink to={clusterBrokersPath(name)} className="column is-full-modile is-6">
-    <div className="box is-hoverable">
-      <div className="title is-6 has-text-overflow-ellipsis" title={name}>
+  <div className="column is-full-modile is-6">
+    <div className="box">
+      <div className="title is-6 has-text-overflow-ellipsis">
         <div
           className={`tag has-margin-right ${
             status === ServerStatus.Online ? 'is-primary' : 'is-danger'
@@ -36,7 +36,9 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
         <tbody>
           <tr>
             <th>Brokers</th>
-            <td>{brokerCount}</td>
+            <td>
+              <NavLink to={clusterBrokersPath(name)}>{brokerCount}</NavLink>
+            </td>
           </tr>
           <tr>
             <th>Partitions</th>
@@ -44,20 +46,26 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
           </tr>
           <tr>
             <th>Topics</th>
-            <td>{topicCount}</td>
+            <td>
+              <NavLink to={clusterTopicsPath(name)}>{topicCount}</NavLink>
+            </td>
           </tr>
           <tr>
             <th>Production</th>
-            <td>{formatBytes(bytesInPerSec || 0)}</td>
+            <td>
+              <BytesFormatted value={bytesInPerSec} />
+            </td>
           </tr>
           <tr>
             <th>Consumption</th>
-            <td>{formatBytes(bytesOutPerSec || 0)}</td>
+            <td>
+              <BytesFormatted value={bytesOutPerSec} />
+            </td>
           </tr>
         </tbody>
       </table>
     </div>
-  </NavLink>
+  </div>
 );
 
 export default ClusterWidget;

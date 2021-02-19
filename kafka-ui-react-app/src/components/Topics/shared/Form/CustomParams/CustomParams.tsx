@@ -7,7 +7,7 @@ import {
   TopicConfigByName,
   TopicConfigParams,
 } from 'redux/interfaces';
-import CustomParamButton, { CustomParamButtonType } from './CustomParamButton';
+import CustomParamButton from './CustomParamButton';
 import CustomParamField from './CustomParamField';
 
 export const INDEX_PREFIX = 'customParams';
@@ -79,7 +79,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
         <div className="column">
           <CustomParamButton
             className="is-success"
-            type={CustomParamButtonType.plus}
+            type="fa-plus"
             onClick={onAdd}
             btnText="Add Custom Parameter"
           />
@@ -88,7 +88,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
 
       {formCustomParams.allIndexes.map((index) => (
         <CustomParamField
-          key={index}
+          key={formCustomParams.byIndex[index].name}
           index={index}
           isDisabled={isSubmitting}
           name={formCustomParams.byIndex[index].name}

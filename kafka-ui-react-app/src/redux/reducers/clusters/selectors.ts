@@ -1,5 +1,5 @@
 import { createSelector } from 'reselect';
-import { RootState, FetchStatus } from 'redux/interfaces';
+import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import { Cluster, ServerStatus } from 'generated-sources';
 
@@ -9,7 +9,7 @@ const getClusterListFetchingStatus = createFetchingSelector('GET_CLUSTERS');
 
 export const getIsClusterListFetched = createSelector(
   getClusterListFetchingStatus,
-  (status) => status === FetchStatus.fetched
+  (status) => status === 'fetched'
 );
 
 export const getClusterList = createSelector(
