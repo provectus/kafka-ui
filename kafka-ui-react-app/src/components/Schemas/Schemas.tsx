@@ -1,25 +1,21 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import { Switch, Route, useParams } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 
-interface SchemasProps {
+export interface SchemasProps {
   isFetched: boolean;
+  clusterName: ClusterName;
   fetchSchemasByClusterName: (clusterName: ClusterName) => void;
-}
-
-interface ParamTypes {
-  clusterName: string;
 }
 
 const Schemas: React.FC<SchemasProps> = ({
   isFetched,
   fetchSchemasByClusterName,
+  clusterName,
 }) => {
-  const { clusterName } = useParams<ParamTypes>();
-
   React.useEffect(() => {
     fetchSchemasByClusterName(clusterName);
   }, [fetchSchemasByClusterName, clusterName]);

@@ -1,0 +1,115 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Clusters reducer reacts on GET_CLUSTER_SCHEMAS__SUCCESS and returns payload 1`] = `
+Object {
+  "allNames": Array [
+    "test2",
+    "test3",
+    "test",
+  ],
+  "byName": Object {
+    "test": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 2,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "2",
+    },
+    "test2": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 4,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord4\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test2",
+      "version": "3",
+    },
+    "test3": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 5,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test3",
+      "version": "1",
+    },
+  },
+  "currentSchemaVersions": Array [],
+}
+`;
+
+exports[`Clusters reducer reacts on GET_SCHEMA_VERSIONS__SUCCESS and returns payload 1`] = `
+Object {
+  "allNames": Array [],
+  "byName": Object {},
+  "currentSchemaVersions": Array [
+    Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 1,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "1",
+    },
+    Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 2,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "2",
+    },
+  ],
+}
+`;
+
+exports[`Schemas reducer reacts on GET_CLUSTER_SCHEMAS__SUCCESS and returns payload 1`] = `
+Object {
+  "allNames": Array [
+    "test2",
+    "test3",
+    "test",
+  ],
+  "byName": Object {
+    "test": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 2,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "2",
+    },
+    "test2": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 4,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord4\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test2",
+      "version": "3",
+    },
+    "test3": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 5,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test3",
+      "version": "1",
+    },
+  },
+  "currentSchemaVersions": Array [],
+}
+`;
+
+exports[`Schemas reducer reacts on GET_SCHEMA_VERSIONS__SUCCESS and returns payload 1`] = `
+Object {
+  "allNames": Array [],
+  "byName": Object {},
+  "currentSchemaVersions": Array [
+    Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 1,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "1",
+    },
+    Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 2,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "2",
+    },
+  ],
+}
+`;

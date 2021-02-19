@@ -3,7 +3,7 @@ import { SchemaSubject } from 'generated-sources';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import ListItem from './ListItem';
 
-interface ListProps {
+export interface ListProps {
   schemas: SchemaSubject[];
 }
 

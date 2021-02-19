@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListItem matches snapshot 1`] = `
+<BrowserRouter>
+  <Router
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+  >
+    <ListItem
+      subject={
+        Object {
+          "compatibilityLevel": "BACKWARD",
+          "id": 1,
+          "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+          "subject": "test",
+          "version": "1",
+        }
+      }
+    >
+      <tr>
+        <td>
+          <NavLink
+            activeClassName="is-active"
+            className="title is-6"
+            exact={true}
+            to="schemas/test/latest"
+          >
+            <Link
+              aria-current={null}
+              className="title is-6"
+              to={
+                Object {
+                  "hash": "",
+                  "pathname": "/schemas/test/latest",
+                  "search": "",
+                  "state": null,
+                }
+              }
+            >
+              <LinkAnchor
+                aria-current={null}
+                className="title is-6"
+                href="/schemas/test/latest"
+                navigate={[Function]}
+              >
+                <a
+                  aria-current={null}
+                  className="title is-6"
+                  href="/schemas/test/latest"
+                  onClick={[Function]}
+                >
+                  test
+                </a>
+              </LinkAnchor>
+            </Link>
+          </NavLink>
+        </td>
+        <td>
+          1
+        </td>
+        <td>
+          <span
+            className="tag is-link"
+          >
+            BACKWARD
+          </span>
+        </td>
+      </tr>
+    </ListItem>
+  </Router>
+</BrowserRouter>
+`;

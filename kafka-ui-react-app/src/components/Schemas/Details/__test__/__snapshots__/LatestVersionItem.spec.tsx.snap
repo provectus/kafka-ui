@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LatestVersionItem matches snapshot 1`] = `
+<div
+  className="tile is-ancestor mt-1"
+>
+  <div
+    className="tile is-4 is-parent"
+  >
+    <div
+      className="tile is-child"
+    >
+      <table
+        className="table is-fullwidth"
+      >
+        <tbody>
+          <tr>
+            <td>
+              ID
+            </td>
+            <td>
+              1
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Subject
+            </td>
+            <td>
+              test
+            </td>
+          </tr>
+          <tr>
+            <td>
+              Compatibility
+            </td>
+            <td>
+              BACKWARD
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div
+    className="tile is-parent"
+  >
+    <div
+      className="tile is-child box py-1"
+    >
+      <JSONViewer
+        data={
+          Object {
+            "fields": Array [
+              Object {
+                "name": "id",
+                "type": "long",
+              },
+            ],
+            "name": "MyRecord1",
+            "namespace": "com.mycompany",
+            "type": "record",
+          }
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
