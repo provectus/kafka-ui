@@ -126,8 +126,20 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <version>${maven-clean-plugin.version}</version>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${basedir}/${frontend-generated-sources-directory}</directory>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resource-one</id>
@@ -137,7 +149,7 @@
                                 </goals>
 
                                 <configuration>
-                                    <outputDirectory>${basedir}/..//kafka-ui-react-app/src/generated-sources</outputDirectory>
+                                    <outputDirectory>${basedir}/${frontend-generated-sources-directory}</outputDirectory>
                                     <resources>
                                         <resource>
                                             <directory>${project.build.directory}/generated-sources/frontend/</directory>
