@@ -19,6 +19,7 @@ import reactor.retry.Retry;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -120,31 +121,23 @@ public class KafkaConnectService {
                 );
     }
 
-    public Mono<Void> restartConnector(String clusterName, String connectName, String connectorName) {
+    public Mono<Void> updateConnectorState(String clusterName, String connectName, String connectorName, ConnectorAction action) {
+        Function<String, Mono<Void>> kafkaClientCall;
+        switch (action) {
+            case RESTART:
+                kafkaClientCall = connect -> KafkaConnectClient.withBaseUrl(connect).restartConnector(connectorName);
+                break;
+            case PAUSE:
+                kafkaClientCall = connect -> KafkaConnectClient.withBaseUrl(connect).pauseConnector(connectorName);
+                break;
+            case RESUME:
+                kafkaClientCall = connect -> KafkaConnectClient.withBaseUrl(connect).resumeConnector(connectorName);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + action);
+        }
         return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.withBaseUrl(connect).restartConnector(connectorName)
-                        )
-                );
-    }
-
-    public Mono<Void> pauseConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.withBaseUrl(connect).pauseConnector(connectorName)
-                        )
-                );
-    }
-
-    public Mono<Void> resumeConnector(String clusterName, String connectName, String connectorName) {
-        return getConnectAddress(clusterName, connectName)
-                .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClient.withBaseUrl(connect).resumeConnector(connectorName)
-                        )
-                );
+                .flatMap(kafkaClientCall.andThen(this::withRetryOnConflict));
     }
 
     public Flux<Task> getConnectorTasks(String clusterName, String connectName, String connectorName) {

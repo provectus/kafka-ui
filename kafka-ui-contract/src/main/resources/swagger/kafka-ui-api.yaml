@@ -777,6 +777,39 @@ paths:
         409:
           description: rebalance is in progress
 
+  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/action/{action}:
+    post:
+      tags:
+        - /api/clusters/connect
+      summary: update connector state (restart, pause or resume)
+      operationId: updateConnectorState
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: action
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/ConnectorAction'
+      responses:
+        200:
+          description: OK
+        409:
+          description: rebalance is in progress
+
   /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config:
     get:
       tags:
@@ -842,87 +875,6 @@ paths:
         409:
           description: rebalance is in progress
 
-
-  /api/clusters/{clusterName}/connectors/{connectorName}/restart:
-    post:
-      tags:
-        - /api/clusters/connect
-      summary: restart the connector
-      operationId: restartConnector
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectorName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-        409:
-          description: rebalance is in progress
-
-  /api/clusters/{clusterName}/connectors/{connectorName}/pause:
-    put:
-      tags:
-        - /api/clusters/connect
-      summary: pause the connector
-      operationId: pauseConnector
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectorName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        202:
-          description: Accepted
-
-  /api/clusters/{clusterName}/connectors/{connectorName}/resume:
-    put:
-      tags:
-        - /api/clusters/connect
-      summary: resume the connector
-      operationId: resumeConnector
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: connectorName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        202:
-          description: Accepted
-
   /api/clusters/{clusterName}/connectors/{connectorName}/tasks:
     get:
       tags:
@@ -955,7 +907,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
 
-  /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/restart:
+  /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/action/restart:
     post:
       tags:
         - /api/clusters/connect
@@ -1515,6 +1467,18 @@ components:
             - PAUSED
         worker_id:
           type: string
+
+    ConnectorAction:
+      type: string
+      enum:
+        - restart
+        - pause
+        - resume
+
+    TaskAction:
+      type: string
+      enum:
+        - restart
 
     ConnectorPlugin:
       type: object

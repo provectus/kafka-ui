@@ -12,6 +12,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 @RestController
@@ -62,20 +63,8 @@ public class KafkaConnectRestController implements ApiClustersConnectApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> restartConnector(String clusterName, String connectName, String connectorName, ServerWebExchange exchange) {
-        return kafkaConnectService.restartConnector(clusterName, connectName, connectorName)
-                .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<Void>> pauseConnector(String clusterName, String connectName, String connectorName, ServerWebExchange exchange) {
-        return kafkaConnectService.pauseConnector(clusterName, connectName, connectorName)
-                .map(ResponseEntity::ok);
-    }
-
-    @Override
-    public Mono<ResponseEntity<Void>> resumeConnector(String clusterName, String connectName, String connectorName, ServerWebExchange exchange) {
-        return kafkaConnectService.resumeConnector(clusterName, connectName, connectorName)
+    public Mono<ResponseEntity<Void>> updateConnectorState(String clusterName, String connectName, String connectorName, @NotNull @Valid ConnectorAction action, ServerWebExchange exchange) {
+        return kafkaConnectService.updateConnectorState(clusterName, connectName, connectorName, action)
                 .map(ResponseEntity::ok);
     }
 
