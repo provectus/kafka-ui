@@ -48,8 +48,9 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-maven-contract-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
+          ${{ runner.os }}-maven-contract-
           ${{ runner.os }}-maven-
     - uses: actions/checkout@v2
     - name: Set up JDK 1.13
