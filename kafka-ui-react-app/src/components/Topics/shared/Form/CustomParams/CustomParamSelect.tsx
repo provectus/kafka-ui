@@ -1,6 +1,7 @@
 import React from 'react';
-import { useFormContext, ErrorMessage } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { TopicConfigValue } from 'redux/interfaces';
+import { ErrorMessage } from '@hookform/error-message';
 import CustomParamOptions from './CustomParamOptions';
 import { INDEX_PREFIX } from './CustomParams';
 
@@ -19,11 +20,11 @@ const CustomParamSelect: React.FC<Props> = ({
   existingFields,
   onNameChange,
 }) => {
-  const { register, errors, getValues, triggerValidation } = useFormContext();
+  const { register, errors, getValues, trigger } = useFormContext();
   const optInputName = `${index}[name]`;
 
   const selectedMustBeUniq = (selected: string) => {
-    const values = getValues({ nest: true });
+    const values = getValues();
     const customParamsValues: TopicConfigValue = values.customParams;
 
     const valid = !Object.entries(customParamsValues).some(
@@ -40,7 +41,7 @@ const CustomParamSelect: React.FC<Props> = ({
   const onChange = (inputName: string) => (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
-    triggerValidation(inputName);
+    trigger(inputName);
     onNameChange(index, event.target.value);
   };
 

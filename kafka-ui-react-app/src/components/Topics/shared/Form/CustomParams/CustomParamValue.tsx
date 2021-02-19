@@ -1,6 +1,7 @@
 import React from 'react';
-import { useFormContext, ErrorMessage } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { TopicConfig } from 'generated-sources';
+import { ErrorMessage } from '@hookform/error-message';
 import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
 
 interface Props {
@@ -25,8 +26,7 @@ const CustomParamValue: React.FC<Props> = ({
     if (selectedParamName && !defaultValue) {
       setValue(
         valInputName,
-        CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue,
-        true
+        CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue
       );
     }
   }, [selectedParamName, setValue, valInputName]);
