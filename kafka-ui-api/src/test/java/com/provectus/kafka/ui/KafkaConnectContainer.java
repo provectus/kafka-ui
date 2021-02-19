@@ -19,10 +19,8 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
 
     public KafkaConnectContainer withKafka(Network network, String bootstrapServers) {
         withNetwork(network);
-//        withEnv("SCHEMA_REGISTRY_HOST_NAME", "schema-registry");
-//        withEnv("SCHEMA_REGISTRY_LISTENERS", "http://0.0.0.0:" + CONNECT_PORT);
         withEnv("CONNECT_BOOTSTRAP_SERVERS", "PLAINTEXT://" + bootstrapServers);
-        withEnv("CONNECT_GROUP_ID", "compose-connect-group");
+        withEnv("CONNECT_GROUP_ID", "connect-group");
         withEnv("CONNECT_CONFIG_STORAGE_TOPIC", "_connect_configs");
         withEnv("CONNECT_CONFIG_STORAGE_REPLICATION_FACTOR", "1");
         withEnv("CONNECT_OFFSET_STORAGE_TOPIC", "_connect_offset");
@@ -35,6 +33,12 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
         withEnv("CONNECT_INTERNAL_VALUE_CONVERTER", "org.apache.kafka.connect.json.JsonConverter");
         withEnv("CONNECT_REST_ADVERTISED_HOST_NAME", "kafka-connect");
         withEnv("CONNECT_PLUGIN_PATH", "/usr/share/java,/usr/share/confluent-hub-components");
+        return self();
+    }
+
+    public KafkaConnectContainer withSchemaRegistry(SchemaRegistryContainer schemaRegistry) {
+        withEnv("SCHEMA_REGISTRY_HOST_NAME", SchemaRegistryContainer.HOST_NAME);
+        withEnv("SCHEMA_REGISTRY_LISTENERS", schemaRegistry.getTarget());
         return self();
     }
 
