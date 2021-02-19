@@ -1430,7 +1430,7 @@ components:
             tasks:
               type: array
               items:
-                $ref: '#/components/schemas/Task'
+                $ref: '#/components/schemas/TaskId'
             type:
               type: string
               enum:

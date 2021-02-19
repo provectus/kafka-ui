@@ -94,19 +94,9 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .status(new ConnectorStatus()
                         .state(ConnectorStatus.StateEnum.RUNNING)
                         .workerId("kafka-connect0:8083"))
-                .tasks(List.of(new Task()
-                        .id(new TaskId()
+                .tasks(List.of(new TaskId()
                                 .connector(connectorName)
-                                .task(0))
-                        .status(new TaskStatus()
-                                .id(0)
-                                .state(TaskStatus.StateEnum.RUNNING)
-                                .workerId("kafka-connect0:8083"))
-                        .config(Map.of(
-                                "file", "/tmp/test",
-                                "task.class", "org.apache.kafka.connect.file.FileStreamSinkTask",
-                                "topics", "output-topic"
-                                ))))
+                                .task(0)))
                 .type(Connector.TypeEnum.SINK)
                 .name(connectorName)
                 .config(config);
