@@ -11,6 +11,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -23,6 +24,13 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     private final String clusterName = "local";
     private final String connectName = "local-connect";
     private final String connectorName = UUID.randomUUID().toString();
+    private final Map<String, Object> config = Map.of(
+            "name", connectorName,
+            "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "tasks.max", "1",
+            "topics", "output-topic",
+            "file", "/tmp/test"
+    );
 
     @Autowired
     private WebTestClient webTestClient;
@@ -64,16 +72,51 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .exists();
     }
 
-//    @Test
-//    public void shouldRetrieveConnectorStatus() {
-//        webTestClient.get()
-//                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}", clusterName, connectName, connectorName)
-//                .exchange()
-//                .expectStatus().isOk()
-//                .expectBody()
-//                .jsonPath("$.connector.state")
-//                .value(connectorState -> assertEquals(ConnectorStatusConnector.StateEnum.RUNNING.getValue(), connectorState));
-//    }
+    @Test
+    public void shouldReturnNotFoundForNonExistingCluster() {
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors", "nonExistingCluster", connectName)
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    public void shouldReturnNotFoundForNonExistingConnectName() {
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors", clusterName, "nonExistingConnect")
+                .exchange()
+                .expectStatus().isNotFound();
+    }
+
+    @Test
+    public void shouldRetrieveConnector() {
+        Connector expected = (Connector) new Connector()
+                .status(new ConnectorStatus()
+                        .state(ConnectorStatus.StateEnum.RUNNING)
+                        .workerId("kafka-connect0:8083"))
+                .tasks(List.of(new Task()
+                        .id(new TaskId()
+                                .connector(connectorName)
+                                .task(0))
+                        .status(new TaskStatus()
+                                .id(0)
+                                .state(TaskStatus.StateEnum.RUNNING)
+                                .workerId("kafka-connect0:8083"))
+                        .config(Map.of(
+                                "file", "/tmp/test",
+                                "task.class", "org.apache.kafka.connect.file.FileStreamSinkTask",
+                                "topics", "output-topic"
+                                ))))
+                .type(Connector.TypeEnum.SINK)
+                .name(connectorName)
+                .config(config);
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}", clusterName, connectName, connectorName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(Connector.class)
+                .value(connector -> assertEquals(expected, connector));
+    }
 
     @Test
     public void shouldUpdateConfig() {

@@ -875,7 +875,7 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connectors/{connectorName}/tasks:
+  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/tasks:
     get:
       tags:
         - /api/clusters/connect
@@ -907,7 +907,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
 
-  /api/clusters/{clusterName}/connectors/{connectorName}/tasks/{taskId}/action/restart:
+  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/tasks/{taskId}/action/restart:
     post:
       tags:
         - /api/clusters/connect
