@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static java.util.function.Predicate.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureWebTestClient(timeout = "60000")
 public class KafkaConnectServiceTests extends AbstractBaseTest {
     private final String clusterName = "local";
-    private final String connectName = "local-connect";
+    private final String connectName = "kafka-connect";
     private final String connectorName = UUID.randomUUID().toString();
     private final Map<String, Object> config = Map.of(
             "name", connectorName,
@@ -93,10 +94,10 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
         Connector expected = (Connector) new Connector()
                 .status(new ConnectorStatus()
                         .state(ConnectorStatus.StateEnum.RUNNING)
-                        .workerId("kafka-connect0:8083"))
+                        .workerId("kafka-connect:8083"))
                 .tasks(List.of(new TaskId()
-                                .connector(connectorName)
-                                .task(0)))
+                        .connector(connectorName)
+                        .task(0)))
                 .type(Connector.TypeEnum.SINK)
                 .name(connectorName)
                 .config(config);
@@ -138,6 +139,111 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     }
 
     @Test
+    public void shouldReturn400WhenConnectReturns400ForInvalidConfigCreate() {
+        var connectorName = UUID.randomUUID().toString();
+        webTestClient.post()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors", clusterName, connectName)
+                .bodyValue(Map.of(
+                        "name", connectorName,
+                        "config", Map.of(
+                                "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                                "tasks.max", "invalid number",
+                                "topics", "another-topic",
+                                "file", "/tmp/test"
+                        ))
+                )
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors", clusterName, connectName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath(String.format("$[?(@ == '%s')]", connectorName))
+                .doesNotExist();
+    }
+
+    @Test
+    public void shouldReturn400WhenConnectReturns500ForInvalidConfigCreate() {
+        var connectorName = UUID.randomUUID().toString();
+        webTestClient.post()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors", clusterName, connectName)
+                .bodyValue(Map.of(
+                        "name", connectorName,
+                        "config", Map.of(
+                                "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector"
+                        ))
+                )
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors", clusterName, connectName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody()
+                .jsonPath(String.format("$[?(@ == '%s')]", connectorName))
+                .doesNotExist();
+    }
+
+
+    @Test
+    public void shouldReturn400WhenConnectReturns400ForInvalidConfigUpdate() {
+        webTestClient.put()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .bodyValue(Map.of(
+                        "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                        "tasks.max", "invalid number",
+                        "topics", "another-topic",
+                        "file", "/tmp/test"
+                        )
+                )
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
+                .isEqualTo(Map.of(
+                        "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                        "tasks.max", "1",
+                        "topics", "output-topic",
+                        "file", "/tmp/test",
+                        "name", connectorName
+                ));
+    }
+
+    @Test
+    public void shouldReturn400WhenConnectReturns500ForInvalidConfigUpdate() {
+        webTestClient.put()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .bodyValue(Map.of(
+                        "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector"
+                        )
+                )
+                .exchange()
+                .expectStatus().isBadRequest();
+
+        webTestClient.get()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
+                })
+                .isEqualTo(Map.of(
+                        "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                        "tasks.max", "1",
+                        "topics", "output-topic",
+                        "file", "/tmp/test",
+                        "name", connectorName
+                ));
+    }
+
+    @Test
     public void shouldRetrieveConnectorPlugins() {
         webTestClient.get()
                 .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/plugins", clusterName, connectName)
@@ -166,4 +272,33 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .value(response -> assertEquals(0, response.getErrorCount()));
     }
 
+    @Test
+    public void shouldValidateAndReturnErrorsOfConnectorPluginConfiguration() {
+        var pluginName = "FileStreamSinkConnector";
+        webTestClient.put()
+                .uri("http://localhost:8080/api/clusters/{clusterName}/connect/{connectName}/plugins/{pluginName}/config/validate", clusterName, connectName, pluginName)
+                .bodyValue(Map.of(
+                        "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                        "tasks.max", "0",
+                        "topics", "output-topic",
+                        "file", "/tmp/test",
+                        "name", connectorName
+                        )
+                )
+                .exchange()
+                .expectStatus().isOk()
+                .expectBody(ConnectorPluginConfigValidationResponse.class)
+                .value(response -> {
+                    assertEquals(1, response.getErrorCount());
+                    var error = response.getConfigs().stream()
+                            .map(ConnectorPluginConfig::getValue)
+                            .map(ConnectorPluginConfigValue::getErrors)
+                            .filter(not(List::isEmpty))
+                            .findFirst().get();
+                    assertEquals(
+                            "Invalid value 0 for configuration tasks.max: Value must be at least 1",
+                            error.get(0)
+                    );
+                });
+    }
 }

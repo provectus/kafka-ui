@@ -220,6 +220,8 @@ public class KafkaConnectService {
         return publisher
                 .onErrorResume(WebClientResponseException.BadRequest.class, e ->
                         Mono.error(new ValidationException("Invalid configuration")))
+                .onErrorResume(WebClientResponseException.InternalServerError.class, e ->
+                        Mono.error(new ValidationException("Invalid configuration")))
                 .doOnError(log::error);
     }
 }

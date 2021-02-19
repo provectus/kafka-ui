@@ -1451,6 +1451,7 @@ components:
             - RUNNING
             - FAILED
             - PAUSED
+            - UNASSIGNED
         worker_id:
           type: string
         trace:
@@ -1465,6 +1466,7 @@ components:
             - RUNNING
             - FAILED
             - PAUSED
+            - UNASSIGNED
         worker_id:
           type: string
 
