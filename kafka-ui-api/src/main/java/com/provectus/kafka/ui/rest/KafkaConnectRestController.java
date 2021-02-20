@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.rest;
 
-import com.provectus.kafka.ui.api.ApiClustersConnectApi;
+import com.provectus.kafka.ui.api.ApiClustersConnectsApi;
 import com.provectus.kafka.ui.cluster.service.KafkaConnectService;
 import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-public class KafkaConnectRestController implements ApiClustersConnectApi {
+public class KafkaConnectRestController implements ApiClustersConnectsApi {
     private final KafkaConnectService kafkaConnectService;
 
     @Override

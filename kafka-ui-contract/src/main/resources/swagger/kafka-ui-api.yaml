@@ -10,7 +10,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0
 tags:
   - name: /api/clusters
-  - name: /api/clusters/connect
+  - name: /api/clusters/connects
 servers:
   - url: /localhost
 
@@ -642,10 +642,10 @@ paths:
         404:
           description: Not Found
 
-  /api/clusters/{clusterName}/connect:
+  /api/clusters/{clusterName}/connects:
     get:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: get all kafka connect instances
       operationId: getConnects
       parameters:
@@ -664,10 +664,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Connect'
 
-  /api/clusters/{clusterName}/connect/{connectName}/connectors:
+  /api/clusters/{clusterName}/connects/{connectName}/connectors:
     get:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: get all connectors from Kafka Connect service
       operationId: getConnectors
       parameters:
@@ -692,7 +692,7 @@ paths:
                   type: string
     post:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: create new connector
       operationId: createConnector
       parameters:
@@ -721,10 +721,10 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}:
+  /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}:
     get:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: get information about the connector
       operationId: getConnector
       parameters:
@@ -752,7 +752,7 @@ paths:
                 $ref: '#/components/schemas/Connector'
     delete:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: delete connector
       operationId: deleteConnector
       parameters:
@@ -777,10 +777,10 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/action/{action}:
+  /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/action/{action}:
     post:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: update connector state (restart, pause or resume)
       operationId: updateConnectorState
       parameters:
@@ -810,10 +810,10 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/config:
+  /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config:
     get:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: get connector configuration
       operationId: getConnectorConfig
       parameters:
@@ -841,7 +841,7 @@ paths:
                 $ref: '#/components/schemas/ConnectorConfig'
     put:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: update or create connector with provided config
       operationId: setConnectorConfig
       parameters:
@@ -875,10 +875,10 @@ paths:
         409:
           description: rebalance is in progress
 
-  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/tasks:
+  /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/tasks:
     get:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: get connector tasks
       operationId: getConnectorTasks
       parameters:
@@ -907,10 +907,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
 
-  /api/clusters/{clusterName}/connect/{connectName}/connectors/{connectorName}/tasks/{taskId}/action/restart:
+  /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/tasks/{taskId}/action/restart:
     post:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: restart connector task
       operationId: restartConnectorTask
       parameters:
@@ -938,10 +938,10 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/connect/{connectName}/plugins:
+  /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: get connector plugins
       operationId: getConnectorPlugins
       parameters:
@@ -965,10 +965,10 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConnectorPlugin'
 
-  /api/clusters/{clusterName}/connect/{connectName}/plugins/{pluginName}/config/validate:
+  /api/clusters/{clusterName}/connects/{connectName}/plugins/{pluginName}/config/validate:
     put:
       tags:
-        - /api/clusters/connect
+        - /api/clusters/connects
       summary: validate connector plugin configuration
       operationId: validateConnectorPluginConfig
       parameters:
