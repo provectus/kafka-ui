@@ -2,8 +2,6 @@ package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.client.KafkaConnectClients;
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
-import com.provectus.kafka.ui.cluster.exception.RebalanceInProgressException;
-import com.provectus.kafka.ui.cluster.exception.ValidationException;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.mapper.KafkaConnectMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
@@ -13,10 +11,8 @@ import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.retry.Retry;
 
 import java.util.Collection;
 import java.util.Map;
@@ -27,8 +23,6 @@ import java.util.stream.Collectors;
 @Log4j2
 @RequiredArgsConstructor
 public class KafkaConnectService {
-    private static final int MAX_RETRIES = 5;
-
     private final ClustersStorage clustersStorage;
     private final ClusterMapper clusterMapper;
     private final KafkaConnectMapper kafkaConnectMapper;
@@ -47,9 +41,9 @@ public class KafkaConnectService {
 
     public Flux<String> getConnectors(String clusterName, String connectName) {
         return getConnectAddress(clusterName, connectName)
-                .flatMapMany(connect -> withRetryOnConflict(
+                .flatMapMany(connect ->
                         KafkaConnectClients.withBaseUrl(connect).getConnectors()
-                        ).doOnError(log::error)
+                                .doOnError(log::error)
                 );
     }
 
@@ -59,11 +53,7 @@ public class KafkaConnectService {
                         connector.cache()
                                 .map(kafkaConnectMapper::toClient)
                                 .flatMap(c ->
-                                        withBadRequestErrorHandling(
-                                                withRetryOnConflict(
-                                                        KafkaConnectClients.withBaseUrl(connect).createConnector(c)
-                                                )
-                                        )
+                                        KafkaConnectClients.withBaseUrl(connect).createConnector(c)
                                 )
                                 .flatMap(c -> getConnector(clusterName, connectName, c.getName()))
                 );
@@ -71,24 +61,29 @@ public class KafkaConnectService {
 
     public Mono<Connector> getConnector(String clusterName, String connectName, String connectorName) {
         return getConnectAddress(clusterName, connectName)
-                .flatMap(connect -> withRetryOnConflict(KafkaConnectClients.withBaseUrl(connect).getConnector(connectorName))
-                        .map(kafkaConnectMapper::fromClient)
-                        .flatMap(connector ->
-                                withRetryOnConflict(KafkaConnectClients.withBaseUrl(connect).getConnectorStatus(connector.getName()))
-                                        .map(connectorStatus -> {
-                                            var status = connectorStatus.getConnector();
-                                            return connector.status(kafkaConnectMapper.fromClient(status));
-                                        })
-                        )
+                .flatMap(connect ->
+                        KafkaConnectClients.withBaseUrl(connect).getConnector(connectorName)
+                                .map(kafkaConnectMapper::fromClient)
+                                .flatMap(connector ->
+                                        KafkaConnectClients.withBaseUrl(connect).getConnectorStatus(connector.getName())
+                                                .map(connectorStatus -> {
+                                                    var status = connectorStatus.getConnector();
+                                                    connector.status(kafkaConnectMapper.fromClient(status));
+                                                    return (Connector) new Connector()
+                                                            .status(kafkaConnectMapper.fromClient(status))
+                                                            .type(connector.getType())
+                                                            .tasks(connector.getTasks())
+                                                            .name(connector.getName())
+                                                            .config(connector.getConfig());
+                                                })
+                                )
                 );
     }
 
     public Mono<Map<String, Object>> getConnectorConfig(String clusterName, String connectName, String connectorName) {
         return getConnectAddress(clusterName, connectName)
                 .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClients.withBaseUrl(connect).getConnectorConfig(connectorName)
-                        )
+                        KafkaConnectClients.withBaseUrl(connect).getConnectorConfig(connectorName)
                 );
     }
 
@@ -96,11 +91,8 @@ public class KafkaConnectService {
         return getConnectAddress(clusterName, connectName)
                 .flatMap(connect ->
                         requestBody.flatMap(body ->
-                                withBadRequestErrorHandling(
-                                        withRetryOnConflict(
-                                                KafkaConnectClients.withBaseUrl(connect).setConnectorConfig(connectorName, (Map<String, Object>) body)
-                                        )
-                                ))
+                                KafkaConnectClients.withBaseUrl(connect).setConnectorConfig(connectorName, (Map<String, Object>) body)
+                        )
                                 .map(kafkaConnectMapper::fromClient)
                 );
     }
@@ -108,9 +100,7 @@ public class KafkaConnectService {
     public Mono<Void> deleteConnector(String clusterName, String connectName, String connectorName) {
         return getConnectAddress(clusterName, connectName)
                 .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClients.withBaseUrl(connect).deleteConnector(connectorName)
-                        )
+                        KafkaConnectClients.withBaseUrl(connect).deleteConnector(connectorName)
                 );
     }
 
@@ -130,18 +120,16 @@ public class KafkaConnectService {
                 throw new IllegalStateException("Unexpected value: " + action);
         }
         return getConnectAddress(clusterName, connectName)
-                .flatMap(kafkaClientCall.andThen(this::withRetryOnConflict));
+                .flatMap(kafkaClientCall);
     }
 
     public Flux<Task> getConnectorTasks(String clusterName, String connectName, String connectorName) {
         return getConnectAddress(clusterName, connectName)
                 .flatMapMany(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClients.withBaseUrl(connect).getConnectorTasks(connectorName)
-                        )
+                        KafkaConnectClients.withBaseUrl(connect).getConnectorTasks(connectorName)
                                 .map(kafkaConnectMapper::fromClient)
                                 .flatMap(task ->
-                                        withRetryOnConflict(KafkaConnectClients.withBaseUrl(connect).getConnectorTaskStatus(connectorName, task.getId().getTask()))
+                                        KafkaConnectClients.withBaseUrl(connect).getConnectorTaskStatus(connectorName, task.getId().getTask())
                                                 .map(kafkaConnectMapper::fromClient)
                                                 .map(task::status)
                                 )
@@ -151,18 +139,14 @@ public class KafkaConnectService {
     public Mono<Void> restartConnectorTask(String clusterName, String connectName, String connectorName, Integer taskId) {
         return getConnectAddress(clusterName, connectName)
                 .flatMap(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClients.withBaseUrl(connect).restartConnectorTask(connectorName, taskId)
-                        )
+                        KafkaConnectClients.withBaseUrl(connect).restartConnectorTask(connectorName, taskId)
                 );
     }
 
     public Mono<Flux<ConnectorPlugin>> getConnectorPlugins(String clusterName, String connectName) {
         return Mono.just(getConnectAddress(clusterName, connectName)
                 .flatMapMany(connect ->
-                        withRetryOnConflict(
-                                KafkaConnectClients.withBaseUrl(connect).getConnectorPlugins()
-                        )
+                        KafkaConnectClients.withBaseUrl(connect).getConnectorPlugins()
                                 .map(kafkaConnectMapper::fromClient)
                 ));
     }
@@ -171,9 +155,8 @@ public class KafkaConnectService {
         return getConnectAddress(clusterName, connectName)
                 .flatMap(connect ->
                         requestBody.flatMap(body ->
-                                withRetryOnConflict(
-                                        KafkaConnectClients.withBaseUrl(connect).validateConnectorPluginConfig(pluginName, (Map<String, Object>) body)
-                                ))
+                                KafkaConnectClients.withBaseUrl(connect).validateConnectorPluginConfig(pluginName, (Map<String, Object>) body)
+                        )
                                 .map(kafkaConnectMapper::fromClient)
                 );
     }
@@ -196,32 +179,5 @@ public class KafkaConnectService {
                         .map(Mono::just)
                         .orElse(Mono.error(new NotFoundException("No such connect cluster")))
                 );
-    }
-
-    private <T> Mono<T> withRetryOnConflict(Mono<T> publisher) {
-        return publisher.retryWhen(
-                Retry.onlyIf(e -> e.exception() instanceof WebClientResponseException.Conflict)
-                        .retryMax(MAX_RETRIES)
-        )
-                .onErrorResume(WebClientResponseException.Conflict.class, e -> Mono.error(new RebalanceInProgressException()))
-                .doOnError(log::error);
-    }
-
-    private <T> Flux<T> withRetryOnConflict(Flux<T> publisher) {
-        return publisher.retryWhen(
-                Retry.onlyIf(e -> e.exception() instanceof WebClientResponseException.Conflict)
-                        .retryMax(MAX_RETRIES)
-        )
-                .onErrorResume(WebClientResponseException.Conflict.class, e -> Mono.error(new RebalanceInProgressException()))
-                .doOnError(log::error);
-    }
-
-    private <T> Mono<T> withBadRequestErrorHandling(Mono<T> publisher) {
-        return publisher
-                .onErrorResume(WebClientResponseException.BadRequest.class, e ->
-                        Mono.error(new ValidationException("Invalid configuration")))
-                .onErrorResume(WebClientResponseException.InternalServerError.class, e ->
-                        Mono.error(new ValidationException("Invalid configuration")))
-                .doOnError(log::error);
     }
 }

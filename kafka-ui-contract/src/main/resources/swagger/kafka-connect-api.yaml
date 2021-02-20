@@ -50,6 +50,8 @@ paths:
           description: Bad request
         409:
           description: rebalance is in progress
+        500:
+          description: Internal server error
 
   /connectors/{connectorName}:
     get:
@@ -133,6 +135,8 @@ paths:
           description: Bad request
         409:
           description: rebalance is in progress
+        500:
+          description: Internal server error
 
 
   /connectors/{connectorName}/status:
