@@ -2,25 +2,14 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { shallow } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
-import { BrowserRouter } from 'react-router-dom';
-import { createMemoryHistory, createLocation } from 'history';
+import { StaticRouter } from 'react-router-dom';
 import { match } from 'react-router';
 import { ClusterName } from 'redux/interfaces';
 import Schemas, { SchemasProps } from '../Schemas';
 import SchemasContainer from '../SchemasContainer';
 
 describe('Schemas', () => {
-  const history = createMemoryHistory();
-  const path = `/ui/clusters/:clusterName/schemas`;
-
-  const matchProp: match<{ clusterName: ClusterName }> = {
-    isExact: false,
-    path,
-    url: path.replace(':clusterName', 'local'),
-    params: { clusterName: 'local' },
-  };
-
-  const location = createLocation(matchProp.url);
+  const pathname = `/ui/clusters/clusterName/schemas`;
 
   describe('Container', () => {
     const store = configureStore();
@@ -28,13 +17,9 @@ describe('Schemas', () => {
     it('renders view', () => {
       const component = shallow(
         <Provider store={store}>
-          <BrowserRouter>
-            <SchemasContainer
-              history={history}
-              location={location}
-              match={matchProp}
-            />
-          </BrowserRouter>
+          <StaticRouter location={{ pathname }} context={{}}>
+            <SchemasContainer />
+          </StaticRouter>
         </Provider>
       );
 

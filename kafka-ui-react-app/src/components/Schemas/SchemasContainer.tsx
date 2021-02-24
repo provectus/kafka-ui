@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { fetchSchemasByClusterName } from 'redux/actions';
 import { getIsSchemaListFetched } from 'redux/reducers/schemas/selectors';
-import { RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import Schemas from './Schemas';
 
 interface RouteProps {
@@ -27,4 +27,6 @@ const mapDispatchToProps = {
   fetchSchemasByClusterName,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Schemas);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Schemas)
+);

@@ -254,7 +254,7 @@ export const fetchConsumerGroupDetails = (
 
 export const fetchSchemasByClusterName = (
   clusterName: ClusterName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult<void> => async (dispatch) => {
   dispatch(actions.fetchSchemasByClusterNameAction.request());
   try {
     const schemas = await apiClient.getSchemas({ clusterName });
@@ -267,7 +267,7 @@ export const fetchSchemasByClusterName = (
 export const fetchSchemaVersions = (
   clusterName: ClusterName,
   subject: SchemaName
-): PromiseThunk<void> => async (dispatch) => {
+): PromiseThunkResult<void> => async (dispatch) => {
   if (!subject) return;
   dispatch(actions.fetchSchemaVersionsAction.request());
   try {
