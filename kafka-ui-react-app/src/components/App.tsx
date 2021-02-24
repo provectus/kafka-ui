@@ -3,10 +3,11 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import './App.scss';
 import BrokersContainer from './Brokers/BrokersContainer';
 import TopicsContainer from './Topics/TopicsContainer';
-import NavConatiner from './Nav/NavConatiner';
+import NavContainer from './Nav/NavContainer';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
 import ConsumersGroupsContainer from './ConsumerGroups/ConsumersGroupsContainer';
+import SchemasContainer from './Schemas/SchemasContainer';
 
 interface AppProps {
   isClusterListFetched: boolean;
@@ -35,7 +36,7 @@ const App: React.FC<AppProps> = ({
         </div>
       </nav>
       <main className="Layout__container">
-        <NavConatiner className="Layout__navbar" />
+        <NavContainer className="Layout__navbar" />
         {isClusterListFetched ? (
           <Switch>
             <Route
@@ -54,6 +55,10 @@ const App: React.FC<AppProps> = ({
             <Route
               path="/ui/clusters/:clusterName/consumer-groups"
               component={ConsumersGroupsContainer}
+            />
+            <Route
+              path="/ui/clusters/:clusterName/schemas"
+              component={SchemasContainer}
             />
             <Redirect
               from="/ui/clusters/:clusterName"

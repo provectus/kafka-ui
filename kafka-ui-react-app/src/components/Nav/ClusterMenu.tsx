@@ -4,6 +4,7 @@ import {
   clusterBrokersPath,
   clusterTopicsPath,
   clusterConsumerGroupsPath,
+  clusterSchemasPath,
 } from 'lib/paths';
 import { Cluster, ServerStatus } from 'generated-sources';
 
@@ -84,6 +85,13 @@ const ClusterMenu: React.FC<Props> = ({ cluster }) => (
           title="Consumers"
         >
           Consumers
+        </NavLink>
+        <NavLink
+          to={clusterSchemasPath(cluster.name)}
+          activeClassName="is-active"
+          title="Schema Registry"
+        >
+          Schema Registry
         </NavLink>
       </ul>
     </li>

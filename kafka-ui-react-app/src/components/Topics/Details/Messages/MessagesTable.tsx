@@ -32,7 +32,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
                 partition={partition}
                 offset={offset}
                 timestamp={timestamp}
-                content={content as Record<string, unknown>}
+                content={content as { [key: string]: string }}
               />
             )
           )}

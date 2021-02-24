@@ -15,13 +15,14 @@ import {
   TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
+  SchemaName,
 } from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from './actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-const apiClient = new ApiClustersApi(apiClientConf);
+export const apiClient = new ApiClustersApi(apiClientConf);
 
 export const fetchClustersList = (): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchClusterListAction.request());
@@ -248,5 +249,34 @@ export const fetchConsumerGroupDetails = (
     );
   } catch (e) {
     dispatch(actions.fetchConsumerGroupDetailsAction.failure());
+  }
+};
+
+export const fetchSchemasByClusterName = (
+  clusterName: ClusterName
+): PromiseThunkResult<void> => async (dispatch) => {
+  dispatch(actions.fetchSchemasByClusterNameAction.request());
+  try {
+    const schemas = await apiClient.getSchemas({ clusterName });
+    dispatch(actions.fetchSchemasByClusterNameAction.success(schemas));
+  } catch (e) {
+    dispatch(actions.fetchSchemasByClusterNameAction.failure());
+  }
+};
+
+export const fetchSchemaVersions = (
+  clusterName: ClusterName,
+  subject: SchemaName
+): PromiseThunkResult<void> => async (dispatch) => {
+  if (!subject) return;
+  dispatch(actions.fetchSchemaVersionsAction.request());
+  try {
+    const versions = await apiClient.getAllVersionsBySubject({
+      clusterName,
+      subject,
+    });
+    dispatch(actions.fetchSchemaVersionsAction.success(versions));
+  } catch (e) {
+    dispatch(actions.fetchSchemaVersionsAction.failure());
   }
 };

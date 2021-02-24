@@ -8,6 +8,7 @@ import { Middleware } from 'redux';
 import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
+import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
 import * as fixtures from './fixtures';
 
 const middlewares: Array<Middleware> = [thunk];
@@ -21,6 +22,7 @@ const mockStoreCreator: MockStoreCreator<
 const store: MockStoreEnhanced<RootState, DispatchExts> = mockStoreCreator();
 
 const clusterName = 'local';
+const subject = 'test';
 
 describe('Thunks', () => {
   afterEach(() => {
@@ -46,6 +48,60 @@ describe('Thunks', () => {
       expect(store.getActions()).toEqual([
         actions.fetchClusterStatsAction.request(),
         actions.fetchClusterStatsAction.failure(),
+      ]);
+    });
+  });
+
+  describe('fetchSchemasByClusterName', () => {
+    it('creates GET_CLUSTER_SCHEMAS__SUCCESS when fetching cluster schemas', async () => {
+      fetchMock.getOnce(`/api/clusters/${clusterName}/schemas`, {
+        body: schemaFixtures.clusterSchemasPayload,
+      });
+      await store.dispatch(thunks.fetchSchemasByClusterName(clusterName));
+      expect(store.getActions()).toEqual([
+        actions.fetchSchemasByClusterNameAction.request(),
+        actions.fetchSchemasByClusterNameAction.success(
+          schemaFixtures.clusterSchemasPayload
+        ),
+      ]);
+    });
+
+    it('creates GET_CLUSTER_SCHEMAS__FAILURE when fetching cluster schemas', async () => {
+      fetchMock.getOnce(`/api/clusters/${clusterName}/schemas`, 404);
+      await store.dispatch(thunks.fetchSchemasByClusterName(clusterName));
+      expect(store.getActions()).toEqual([
+        actions.fetchSchemasByClusterNameAction.request(),
+        actions.fetchSchemasByClusterNameAction.failure(),
+      ]);
+    });
+  });
+
+  describe('fetchSchemaVersions', () => {
+    it('creates GET_SCHEMA_VERSIONS__SUCCESS when fetching schema versions', async () => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}/versions`,
+        {
+          body: schemaFixtures.schemaVersionsPayload,
+        }
+      );
+      await store.dispatch(thunks.fetchSchemaVersions(clusterName, subject));
+      expect(store.getActions()).toEqual([
+        actions.fetchSchemaVersionsAction.request(),
+        actions.fetchSchemaVersionsAction.success(
+          schemaFixtures.schemaVersionsPayload
+        ),
+      ]);
+    });
+
+    it('creates GET_SCHEMA_VERSIONS__FAILURE when fetching schema versions', async () => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}/versions`,
+        404
+      );
+      await store.dispatch(thunks.fetchSchemaVersions(clusterName, subject));
+      expect(store.getActions()).toEqual([
+        actions.fetchSchemaVersionsAction.request(),
+        actions.fetchSchemaVersionsAction.failure(),
       ]);
     });
   });
