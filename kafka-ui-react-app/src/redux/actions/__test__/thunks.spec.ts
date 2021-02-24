@@ -8,7 +8,8 @@ import { Middleware } from 'redux';
 import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
-import * as fixtures from 'redux/reducers/schemas/__test__/fixtures';
+import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
+import * as fixtures from './fixtures';
 
 const middlewares: Array<Middleware> = [thunk];
 type DispatchExts = ThunkDispatch<RootState, undefined, Action>;
@@ -29,16 +30,38 @@ describe('Thunks', () => {
     store.clearActions();
   });
 
+  describe('fetchClusterStats', () => {
+    it('creates GET_CLUSTER_STATUS__SUCCESS when fetching cluster stats', async () => {
+      fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, {
+        body: fixtures.clusterStats,
+      });
+      await store.dispatch(thunks.fetchClusterStats(clusterName));
+      expect(store.getActions()).toEqual([
+        actions.fetchClusterStatsAction.request(),
+        actions.fetchClusterStatsAction.success(fixtures.clusterStats),
+      ]);
+    });
+
+    it('creates GET_CLUSTER_STATUS__FAILURE when fetching cluster stats', async () => {
+      fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, 404);
+      await store.dispatch(thunks.fetchClusterStats(clusterName));
+      expect(store.getActions()).toEqual([
+        actions.fetchClusterStatsAction.request(),
+        actions.fetchClusterStatsAction.failure(),
+      ]);
+    });
+  });
+
   describe('fetchSchemasByClusterName', () => {
     it('creates GET_CLUSTER_SCHEMAS__SUCCESS when fetching cluster schemas', async () => {
       fetchMock.getOnce(`/api/clusters/${clusterName}/schemas`, {
-        body: fixtures.clusterSchemasPayload,
+        body: schemaFixtures.clusterSchemasPayload,
       });
       await store.dispatch(thunks.fetchSchemasByClusterName(clusterName));
       expect(store.getActions()).toEqual([
         actions.fetchSchemasByClusterNameAction.request(),
         actions.fetchSchemasByClusterNameAction.success(
-          fixtures.clusterSchemasPayload
+          schemaFixtures.clusterSchemasPayload
         ),
       ]);
     });
@@ -58,14 +81,14 @@ describe('Thunks', () => {
       fetchMock.getOnce(
         `/api/clusters/${clusterName}/schemas/${subject}/versions`,
         {
-          body: fixtures.schemaVersionsPayload,
+          body: schemaFixtures.schemaVersionsPayload,
         }
       );
       await store.dispatch(thunks.fetchSchemaVersions(clusterName, subject));
       expect(store.getActions()).toEqual([
         actions.fetchSchemaVersionsAction.request(),
         actions.fetchSchemaVersionsAction.success(
-          fixtures.schemaVersionsPayload
+          schemaFixtures.schemaVersionsPayload
         ),
       ]);
     });

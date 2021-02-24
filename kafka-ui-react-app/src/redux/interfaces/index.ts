@@ -28,9 +28,13 @@ export interface RootState {
 
 export type Action = ActionType<typeof actions>;
 
-export type PromiseThunk<T> = ThunkAction<
-  Promise<T>,
+export type ThunkResult<ReturnType = void> = ThunkAction<
+  ReturnType,
   RootState,
   undefined,
   Action
+>;
+
+export type PromiseThunkResult<ReturnType = void> = ThunkResult<
+  Promise<ReturnType>
 >;
