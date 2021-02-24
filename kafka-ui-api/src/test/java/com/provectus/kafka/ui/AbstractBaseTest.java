@@ -10,6 +10,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import java.time.Duration;
@@ -17,32 +19,27 @@ import java.time.Duration;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @ActiveProfiles("test")
+@Testcontainers
 public abstract class AbstractBaseTest {
 
-    public static final KafkaContainer kafka;
-    public static final SchemaRegistryContainer schemaRegistry;
-    public static final KafkaConnectContainer kafkaConnect;
+    @Container
+    public static final KafkaContainer kafka= new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.2.1"))
+            .withNetwork(Network.SHARED);
 
-    static {
-        kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka:5.2.1"))
-                .withNetwork(Network.SHARED);
-        kafka.start();
+    @Container
+    public static final SchemaRegistryContainer schemaRegistry = new SchemaRegistryContainer("5.2.1")
+            .withKafka(kafka)
+            .dependsOn(kafka);
 
-        schemaRegistry = new SchemaRegistryContainer("5.2.1")
-                .withKafka(kafka)
-                .dependsOn(kafka);
-        schemaRegistry.start();
-
-        kafkaConnect = new KafkaConnectContainer("5.2.1")
-                .withKafka(kafka)
-                .waitingFor(
-                        Wait.forLogMessage(".*Finished starting connectors and tasks.*", 1)
-                )
-                .dependsOn(kafka)
-                .dependsOn(schemaRegistry)
-                .withStartupTimeout(Duration.ofMinutes(15));
-        kafkaConnect.start();
-    }
+    @Container
+    public static final KafkaConnectContainer kafkaConnect = new KafkaConnectContainer("5.2.1")
+            .withKafka(kafka)
+            .waitingFor(
+                    Wait.forLogMessage(".*Finished starting connectors and tasks.*", 1)
+            )
+            .dependsOn(kafka)
+            .dependsOn(schemaRegistry)
+            .withStartupTimeout(Duration.ofMinutes(15));
 
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
