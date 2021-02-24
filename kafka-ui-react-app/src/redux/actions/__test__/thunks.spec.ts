@@ -75,10 +75,10 @@ describe('Thunks', () => {
         `/api/clusters/${clusterName}/schemas/${subject}/versions`,
         404
       );
-      await store.dispatch(thunks.fetchSchemasByClusterName(clusterName));
+      await store.dispatch(thunks.fetchSchemaVersions(clusterName, subject));
       expect(store.getActions()).toEqual([
-        actions.fetchSchemasByClusterNameAction.request(),
-        actions.fetchSchemasByClusterNameAction.failure(),
+        actions.fetchSchemaVersionsAction.request(),
+        actions.fetchSchemaVersionsAction.failure(),
       ]);
     });
   });

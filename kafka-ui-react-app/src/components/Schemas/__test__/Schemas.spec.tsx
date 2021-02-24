@@ -1,18 +1,40 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Provider } from 'react-redux';
 import { shallow } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
-import SchemasContainer from '../SchemasContainer';
+import { BrowserRouter } from 'react-router-dom';
+import { createMemoryHistory, createLocation } from 'history';
+import { match } from 'react-router';
+import { ClusterName } from 'redux/interfaces';
 import Schemas, { SchemasProps } from '../Schemas';
+import SchemasContainer from '../SchemasContainer';
 
 describe('Schemas', () => {
+  const history = createMemoryHistory();
+  const path = `/ui/clusters/:clusterName/schemas`;
+
+  const matchProp: match<{ clusterName: ClusterName }> = {
+    isExact: false,
+    path,
+    url: path.replace(':clusterName', 'local'),
+    params: { clusterName: 'local' },
+  };
+
+  const location = createLocation(matchProp.url);
+
   describe('Container', () => {
     const store = configureStore();
 
     it('renders view', () => {
       const component = shallow(
         <Provider store={store}>
-          <SchemasContainer />
+          <BrowserRouter>
+            <SchemasContainer
+              history={history}
+              location={location}
+              match={matchProp}
+            />
+          </BrowserRouter>
         </Provider>
       );
 
@@ -29,7 +51,13 @@ describe('Schemas', () => {
         />
       );
       describe('Initial state', () => {
-        let useEffect;
+        let useEffect: jest.SpyInstance<
+          void,
+          [
+            effect: React.EffectCallback,
+            deps?: React.DependencyList | undefined
+          ]
+        >;
         let wrapper;
         const mockedFn = jest.fn();
 

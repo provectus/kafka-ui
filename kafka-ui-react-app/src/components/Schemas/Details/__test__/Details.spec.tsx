@@ -33,7 +33,10 @@ describe('Details', () => {
       />
     );
     describe('Initial state', () => {
-      let useEffect;
+      let useEffect: jest.SpyInstance<
+        void,
+        [effect: React.EffectCallback, deps?: React.DependencyList | undefined]
+      >;
       let wrapper;
       const mockedFn = jest.fn();
 

@@ -24,67 +24,71 @@ exports[`ListItem matches snapshot 1`] = `
       }
     }
   >
-    <ListItem
-      subject={
-        Object {
-          "compatibilityLevel": "BACKWARD",
-          "id": 1,
-          "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
-          "subject": "test",
-          "version": "1",
-        }
-      }
-    >
-      <tr>
-        <td>
-          <NavLink
-            activeClassName="is-active"
-            className="title is-6"
-            exact={true}
-            to="schemas/test/latest"
-          >
-            <Link
-              aria-current={null}
-              className="title is-6"
-              to={
-                Object {
-                  "hash": "",
-                  "pathname": "/schemas/test/latest",
-                  "search": "",
-                  "state": null,
-                }
-              }
-            >
-              <LinkAnchor
-                aria-current={null}
+    <table>
+      <tbody>
+        <ListItem
+          subject={
+            Object {
+              "compatibilityLevel": "BACKWARD",
+              "id": 1,
+              "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+              "subject": "test",
+              "version": "1",
+            }
+          }
+        >
+          <tr>
+            <td>
+              <NavLink
+                activeClassName="is-active"
                 className="title is-6"
-                href="/schemas/test/latest"
-                navigate={[Function]}
+                exact={true}
+                to="schemas/test/latest"
               >
-                <a
+                <Link
                   aria-current={null}
                   className="title is-6"
-                  href="/schemas/test/latest"
-                  onClick={[Function]}
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/schemas/test/latest",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
                 >
-                  test
-                </a>
-              </LinkAnchor>
-            </Link>
-          </NavLink>
-        </td>
-        <td>
-          1
-        </td>
-        <td>
-          <span
-            className="tag is-link"
-          >
-            BACKWARD
-          </span>
-        </td>
-      </tr>
-    </ListItem>
+                  <LinkAnchor
+                    aria-current={null}
+                    className="title is-6"
+                    href="/schemas/test/latest"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="title is-6"
+                      href="/schemas/test/latest"
+                      onClick={[Function]}
+                    >
+                      test
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+            </td>
+            <td>
+              1
+            </td>
+            <td>
+              <span
+                className="tag is-link"
+              >
+                BACKWARD
+              </span>
+            </td>
+          </tr>
+        </ListItem>
+      </tbody>
+    </table>
   </Router>
 </BrowserRouter>
 `;

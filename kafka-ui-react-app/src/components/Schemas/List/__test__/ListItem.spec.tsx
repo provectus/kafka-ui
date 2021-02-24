@@ -5,24 +5,22 @@ import { schemas } from './fixtures';
 import ListItem from '../ListItem';
 
 describe('ListItem', () => {
-  it('renders schemas', () => {
-    const wrapper = mount(
-      <Router>
-        <ListItem subject={schemas[0]} />
-      </Router>
-    );
+  const wrapper = mount(
+    <Router>
+      <table>
+        <tbody>
+          <ListItem subject={schemas[0]} />
+        </tbody>
+      </table>
+    </Router>
+  );
 
+  it('renders schemas', () => {
     expect(wrapper.find('NavLink').length).toEqual(1);
     expect(wrapper.find('td').length).toEqual(3);
   });
 
   it('matches snapshot', () => {
-    expect(
-      mount(
-        <Router>
-          <ListItem subject={schemas[0]} />
-        </Router>
-      )
-    ).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
   });
 });
