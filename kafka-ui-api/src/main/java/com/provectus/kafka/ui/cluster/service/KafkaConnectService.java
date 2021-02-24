@@ -50,7 +50,7 @@ public class KafkaConnectService {
     public Mono<Connector> createConnector(String clusterName, String connectName, Mono<NewConnector> connector) {
         return getConnectAddress(clusterName, connectName)
                 .flatMap(connect ->
-                        connector.cache()
+                        connector
                                 .map(kafkaConnectMapper::toClient)
                                 .flatMap(c ->
                                         KafkaConnectClients.withBaseUrl(connect).createConnector(c)
