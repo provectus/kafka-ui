@@ -7,7 +7,7 @@ import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
 import PageLoader from '../../common/PageLoader/PageLoader';
 
-interface DetailsProps {
+export interface DetailsProps {
   schema: SchemaSubject;
   clusterName: ClusterName;
   versions: SchemaSubject[];

@@ -1,4 +1,3 @@
-import { AnyAction } from 'redux';
 import { ActionType } from 'typesafe-actions';
 import { ThunkAction } from 'redux-thunk';
 
@@ -33,5 +32,5 @@ export type PromiseThunk<T> = ThunkAction<
   Promise<T>,
   RootState,
   undefined,
-  AnyAction
+  Action
 >;

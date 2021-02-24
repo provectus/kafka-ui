@@ -2,7 +2,7 @@ import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { NavLink } from 'react-router-dom';
 
-interface ListItemProps {
+export interface ListItemProps {
   subject: SchemaSubject;
 }
 

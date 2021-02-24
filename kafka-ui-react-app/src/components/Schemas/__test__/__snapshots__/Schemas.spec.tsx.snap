@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Schemas Container View Initial state matches snapshot 1`] = `
+<Switch>
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/ui/clusters/:clusterName/schemas"
+  />
+  <Route
+    component={[Function]}
+    exact={true}
+    path="/ui/clusters/:clusterName/schemas/:subject/latest"
+  />
+</Switch>
+`;
+
+exports[`Schemas Container View when page is loading matches snapshot 1`] = `<PageLoader />`;
