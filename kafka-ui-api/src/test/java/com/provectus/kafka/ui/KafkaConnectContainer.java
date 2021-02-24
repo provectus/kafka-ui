@@ -36,12 +36,6 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
         return self();
     }
 
-    public KafkaConnectContainer withSchemaRegistry(SchemaRegistryContainer schemaRegistry) {
-        withEnv("SCHEMA_REGISTRY_HOST_NAME", SchemaRegistryContainer.HOST_NAME);
-        withEnv("SCHEMA_REGISTRY_LISTENERS", schemaRegistry.getTarget());
-        return self();
-    }
-
     public String getTarget() {
         return "http://" + getContainerIpAddress() + ":" + getMappedPort(CONNECT_PORT);
     }
