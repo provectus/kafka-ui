@@ -1,16 +1,28 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
+import { NavLink } from 'react-router-dom';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import ListItem from './ListItem';
+import { clusterSchemaNewPath, clusterTopicNewPath } from '../../../lib/paths';
+import { ClusterName } from '../../../redux/interfaces';
 
 export interface ListProps {
+  clusterName: ClusterName;
   schemas: SchemaSubject[];
 }
 
-const List: React.FC<ListProps> = ({ schemas }) => {
+const List: React.FC<ListProps> = ({ clusterName, schemas }) => {
   return (
     <div className="section">
       <Breadcrumb>Schema Registry</Breadcrumb>
+      <div className="level-item level-right">
+        <NavLink
+          className="button is-primary"
+          to={clusterSchemaNewPath(clusterName)}
+        >
+          Create Schema
+        </NavLink>
+      </div>
       <div className="box">
         <table className="table is-striped is-fullwidth">
           <thead>

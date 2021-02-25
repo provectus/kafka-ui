@@ -1,7 +1,8 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import { clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaNewPath, clusterSchemasPath } from 'lib/paths';
+import { NavLink } from 'react-router-dom';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
@@ -55,14 +56,6 @@ const Details: React.FC<DetailsProps> = ({
             </div>
           </div>
           <div className="level-right">
-            <button
-              className="button is-primary is-small level-item"
-              type="button"
-              title="in development"
-              disabled
-            >
-              Create Schema
-            </button>
             <button
               className="button is-warning is-small level-item"
               type="button"

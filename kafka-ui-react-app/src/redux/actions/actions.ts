@@ -109,3 +109,9 @@ export const fetchSchemaVersionsAction = createAsyncAction(
   'GET_SCHEMA_VERSIONS__SUCCESS',
   'GET_SCHEMA_VERSIONS__FAILURE'
 )<undefined, SchemaSubject[], undefined>();
+
+export const createSchemaAction = createAsyncAction(
+  'POST_SCHEMA__REQUEST',
+  'POST_SCHEMA__SUCCESS',
+  'POST_SCHEMA__FAILURE'
+)<undefined, SchemaSubject, undefined>();

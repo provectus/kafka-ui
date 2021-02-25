@@ -15,6 +15,8 @@ const getSchemaVersionsFetchingStatus = createFetchingSelector(
   'GET_SCHEMA_VERSIONS'
 );
 
+const getSchemaCreationStatus = createFetchingSelector('POST_SCHEMA');
+
 export const getIsSchemaListFetched = createSelector(
   getSchemaListFetchingStatus,
   (status) => status === 'fetched'
@@ -22,6 +24,11 @@ export const getIsSchemaListFetched = createSelector(
 
 export const getIsSchemaVersionFetched = createSelector(
   getSchemaVersionsFetchingStatus,
+  (status) => status === 'fetched'
+);
+
+export const getSchemaCreated = createSelector(
+  getSchemaCreationStatus,
   (status) => status === 'fetched'
 );
 

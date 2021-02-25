@@ -1,5 +1,6 @@
-import { SchemaSubject } from 'generated-sources';
-import { Action, SchemasState } from 'redux/interfaces';
+import { SchemaSubject, Topic } from 'generated-sources';
+import { Action, SchemasState, TopicsState } from 'redux/interfaces';
+import { v4 } from 'uuid';
 
 export const initialState: SchemasState = {
   byName: {},
@@ -32,12 +33,26 @@ const updateSchemaList = (
   }, initialMemo);
 };
 
+const addToSchemaList = (
+  state: SchemasState,
+  payload: SchemaSubject
+): SchemasState => {
+  const newState: SchemasState = {
+    ...state,
+  };
+  newState.allNames.push(payload.subject as string);
+  newState.byName[payload.subject as string] = { ...payload };
+  return newState;
+};
+
 const reducer = (state = initialState, action: Action): SchemasState => {
   switch (action.type) {
     case 'GET_CLUSTER_SCHEMAS__SUCCESS':
       return updateSchemaList(state, action.payload);
     case 'GET_SCHEMA_VERSIONS__SUCCESS':
       return { ...state, currentSchemaVersions: action.payload };
+    case 'POST_SCHEMA__SUCCESS':
+      return addToSchemaList(state, action.payload);
     default:
       return state;
   }
