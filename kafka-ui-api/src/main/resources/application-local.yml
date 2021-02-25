@@ -8,14 +8,15 @@ kafka:
       kafkaConnect:
         - name: first
           address: http://localhost:8083
-      #      schemaNameTemplate: "%s-value"
       jmxPort: 9997
     -
       name: secondLocal
       bootstrapServers: localhost:9093
       zookeeper: localhost:2182
       schemaRegistry: http://localhost:8081
-      kafkaConnect: http://localhost:8083
+      kafkaConnect:
+        - name: first
+          address: http://localhost:8083
       jmxPort: 9998
   admin-client-timeout: 5000
 zookeeper:
