@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.cluster.service;
 
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
+import com.provectus.kafka.ui.cluster.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.InternalCompatibilityCheck;
@@ -27,6 +28,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 @Service
 @Log4j2
@@ -140,7 +142,7 @@ public class SchemaRegistryService {
                         .contentType(MediaType.APPLICATION_JSON)
                         .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
                         .retrieve()
-                        .onStatus(NOT_FOUND::equals, throwIfNotFoundStatus(formatted("No such schema %s", schemaName)))
+                        .onStatus(UNPROCESSABLE_ENTITY::equals, r -> Mono.error(new UnprocessableEntityException("Invalid params")))
                         .bodyToMono(SubjectIdResponse.class)
                         .log())
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
