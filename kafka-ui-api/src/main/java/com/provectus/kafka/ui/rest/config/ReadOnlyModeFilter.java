@@ -19,13 +19,18 @@ import java.util.regex.Pattern;
 @Component
 @RequiredArgsConstructor
 public class ReadOnlyModeFilter implements WebFilter {
+    private static final Pattern CLUSTER_NAME_REGEX = Pattern.compile("/api/clusters/(?<clusterName>[^/]++)");
 
     private final ClustersStorage clustersStorage;
-    private static final Pattern CLUSTER_NAME_REGEX = Pattern.compile("/api/clusters/(?<clusterName>[^/]++)");
 
     @NotNull
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, @NotNull WebFilterChain chain) {
+        var isSafeMethod = exchange.getRequest().getMethod() == HttpMethod.GET;
+        if (isSafeMethod) {
+            return chain.filter(exchange);
+        }
+
         var path = exchange.getRequest().getURI().getPath();
         var matcher = CLUSTER_NAME_REGEX.matcher(path);
         if (!matcher.find()) {
@@ -39,11 +44,6 @@ public class ReadOnlyModeFilter implements WebFilter {
             return chain.filter(exchange);
         }
 
-        var isSafeMethod = exchange.getRequest().getMethod() == HttpMethod.GET;
-        if (!isSafeMethod) {
-            return Mono.error(ReadOnlyException::new);
-        } else {
-            return chain.filter(exchange);
-        }
+        return Mono.error(ReadOnlyException::new);
     }
 }
