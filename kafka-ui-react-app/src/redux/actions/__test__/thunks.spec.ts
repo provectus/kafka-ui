@@ -9,6 +9,7 @@ import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
+import { NewSchemaSubjectToJSON } from 'generated-sources';
 import * as fixtures from './fixtures';
 
 const middlewares: Array<Middleware> = [thunk];
@@ -104,5 +105,37 @@ describe('Thunks', () => {
         actions.fetchSchemaVersionsAction.failure(),
       ]);
     });
+  });
+
+  describe('createSchema', () => {
+    it('creates POST_SCHEMA__SUCCESS when posting new schema', async () => {
+      fetchMock.postOnce(`/api/clusters/${clusterName}/schemas/${subject}`, {
+        body: schemaFixtures.schemaVersionsPayload[0],
+      });
+      await store.dispatch(
+        thunks.createSchema(clusterName, subject, fixtures.schemaPayload)
+      );
+      expect(store.getActions()).toEqual([
+        actions.createSchemaAction.request(),
+        actions.createSchemaAction.success(
+          schemaFixtures.schemaVersionsPayload[0]
+        ),
+      ]);
+    });
+
+    // it('creates POST_SCHEMA__FAILURE when posting new schema', async () => {
+    //   fetchMock.postOnce(
+    //     `/api/clusters/${clusterName}/schemas/${subject}`,
+    //     404
+    //   );
+    //   await store.dispatch(
+    //     thunks.createSchema(clusterName, subject, fixtures.schemaPayload)
+    //   );
+    //   expect(store.getActions()).toEqual([
+    //     actions.createSchemaAction.request(),
+    //     actions.createSchemaAction.failure(),
+    //   ]);
+    //   expect(store.getActions()).toThrow();
+    // });
   });
 });

@@ -1,6 +1,5 @@
-import { SchemaSubject, Topic } from 'generated-sources';
-import { Action, SchemasState, TopicsState } from 'redux/interfaces';
-import { v4 } from 'uuid';
+import { SchemaSubject } from 'generated-sources';
+import { Action, SchemasState } from 'redux/interfaces';
 
 export const initialState: SchemasState = {
   byName: {},

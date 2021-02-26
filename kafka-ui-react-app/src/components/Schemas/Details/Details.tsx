@@ -1,8 +1,7 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import { clusterSchemaNewPath, clusterSchemasPath } from 'lib/paths';
-import { NavLink } from 'react-router-dom';
+import { clusterSchemasPath } from 'lib/paths';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';

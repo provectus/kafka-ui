@@ -8,7 +8,7 @@ import { NewSchemaSubject } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useHistory, useParams } from 'react-router';
 
-interface Props {
+export interface NewProps {
   createSchema: (
     clusterName: ClusterName,
     subject: SchemaName,
@@ -16,7 +16,7 @@ interface Props {
   ) => void;
 }
 
-const New: React.FC<Props> = ({ createSchema }) => {
+const New: React.FC<NewProps> = ({ createSchema }) => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const history = useHistory();
   const {
