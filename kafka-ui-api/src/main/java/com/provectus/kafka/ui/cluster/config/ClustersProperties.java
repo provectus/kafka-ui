@@ -24,7 +24,14 @@ public class ClustersProperties {
         String schemaNameTemplate = "%s-value";
         String protobufFile;
         String protobufMessageName;
+        List<ConnectCluster> kafkaConnect;
         int jmxPort;
         Properties properties;
+    }
+
+    @Data
+    public static class ConnectCluster {
+        String name;
+        String address;
     }
 }
