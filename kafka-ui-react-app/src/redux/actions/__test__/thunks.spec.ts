@@ -9,7 +9,6 @@ import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
-import { NewSchemaSubjectToJSON } from 'generated-sources';
 import * as fixtures from './fixtures';
 
 const middlewares: Array<Middleware> = [thunk];
