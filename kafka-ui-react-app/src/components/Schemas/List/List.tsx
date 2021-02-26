@@ -1,28 +1,33 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import { NavLink } from 'react-router-dom';
-import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
+import { NavLink, useParams } from 'react-router-dom';
+import { clusterSchemaNewPath } from 'lib/paths';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ListItem from './ListItem';
-import { clusterSchemaNewPath, clusterTopicNewPath } from '../../../lib/paths';
-import { ClusterName } from '../../../redux/interfaces';
 
 export interface ListProps {
-  clusterName: ClusterName;
   schemas: SchemaSubject[];
 }
 
-const List: React.FC<ListProps> = ({ clusterName, schemas }) => {
+const List: React.FC<ListProps> = ({ schemas }) => {
+  const { clusterName } = useParams<{ clusterName: string }>();
+
   return (
     <div className="section">
       <Breadcrumb>Schema Registry</Breadcrumb>
-      <div className="level-item level-right">
-        <NavLink
-          className="button is-primary"
-          to={clusterSchemaNewPath(clusterName)}
-        >
-          Create Schema
-        </NavLink>
+      <div className="box">
+        <div className="level">
+          <div className="level-item level-right">
+            <NavLink
+              className="button is-primary"
+              to={clusterSchemaNewPath(clusterName)}
+            >
+              Create Schema
+            </NavLink>
+          </div>
+        </div>
       </div>
+
       <div className="box">
         <table className="table is-striped is-fullwidth">
           <thead>
@@ -33,9 +38,15 @@ const List: React.FC<ListProps> = ({ clusterName, schemas }) => {
             </tr>
           </thead>
           <tbody>
-            {schemas.map((subject) => (
-              <ListItem key={subject.id} subject={subject} />
-            ))}
+            {schemas.length > 0 ? (
+              schemas.map((subject) => (
+                <ListItem key={subject.id} subject={subject} />
+              ))
+            ) : (
+              <tr>
+                <td colSpan={10}>No schemas found</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

@@ -1,25 +1,10 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState } from 'redux/interfaces';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { RootState } from 'redux/interfaces';
 import { getSchemaList } from 'redux/reducers/schemas/selectors';
 import List from './List';
 
-interface RouteProps {
-  clusterName: ClusterName;
-}
-
-type OwnProps = RouteComponentProps<RouteProps>;
-
-const mapStateToProps = (
-  state: RootState,
-  {
-    match: {
-      params: { clusterName },
-    },
-  }: OwnProps
-) => ({
-  clusterName,
+const mapStateToProps = (state: RootState) => ({
   schemas: getSchemaList(state),
 });
 
-export default withRouter(connect(mapStateToProps)(List));
+export default connect(mapStateToProps)(List);

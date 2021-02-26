@@ -22,6 +22,11 @@ export const getIsSchemaListFetched = createSelector(
   (status) => status === 'fetched'
 );
 
+export const getIsSchemaListFetching = createSelector(
+  getSchemaListFetchingStatus,
+  (status) => status === 'fetching' || status === 'notFetched'
+);
+
 export const getIsSchemaVersionFetched = createSelector(
   getSchemaVersionsFetchingStatus,
   (status) => status === 'fetched'

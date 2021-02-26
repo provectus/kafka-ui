@@ -8,7 +8,6 @@ export interface SchemasState {
   currentSchemaVersions: SchemaSubject[];
 }
 
-export interface NewSchemaSubjectRaw {
+export interface NewSchemaSubjectRaw extends NewSchemaSubject {
   subject: string;
-  schema: NewSchemaSubject;
 }
