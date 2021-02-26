@@ -980,6 +980,10 @@ components:
           type: string
       required:
         - id
+        - subject
+        - version
+        - schema
+        - compatibilityLevel
 
     NewSchemaSubject:
       type: object
@@ -1004,14 +1008,6 @@ components:
             - NONE
       required:
         - compatibility
-
-#    CompatibilityLevelResponse:
-#      type: object
-#      properties:
-#        compatibilityLevel:
-#          type: string
-#      required:
-#        - compatibilityLevel
 
     CompatibilityCheckResponse:
       type: object
