@@ -1,4 +1,4 @@
-import { ClusterName, TopicName } from 'redux/interfaces';
+import { ClusterName, SchemaName, TopicName } from 'redux/interfaces';
 
 const clusterPath = (clusterName: ClusterName) => `/ui/clusters/${clusterName}`;
 
@@ -12,6 +12,8 @@ export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/consumer-groups`;
 export const clusterSchemasPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/schemas`;
+export const clusterSchemaNewPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/schemas/new`;
 
 export const clusterTopicPath = (
   clusterName: ClusterName,
@@ -30,3 +32,8 @@ export const clusterTopicsTopicEditPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;
+
+export const clusterSchemaPath = (
+  clusterName: ClusterName,
+  subject: SchemaName
+) => `${clusterSchemasPath(clusterName)}/${subject}/latest`;

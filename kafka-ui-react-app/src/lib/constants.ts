@@ -9,6 +9,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 };
 
 export const TOPIC_NAME_VALIDATION_PATTERN = RegExp(/^[.,A-Za-z0-9_-]+$/);
+export const SCHEMA_NAME_VALIDATION_PATTERN = RegExp(/^[.,A-Za-z0-9_-]+$/);
 
 export const MILLISECONDS_IN_WEEK = 604_800_000;
 export const MILLISECONDS_IN_DAY = 86_400_000;

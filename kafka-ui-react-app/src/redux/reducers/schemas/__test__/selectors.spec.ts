@@ -1,10 +1,16 @@
 import {
+  createSchemaAction,
   fetchSchemasByClusterNameAction,
   fetchSchemaVersionsAction,
 } from 'redux/actions';
 import configureStore from 'redux/store/configureStore';
 import * as selectors from '../selectors';
-import { clusterSchemasPayload, schemaVersionsPayload } from './fixtures';
+import {
+  clusterSchemasPayload,
+  clusterSchemasPayloadWithNewSchema,
+  newSchemaPayload,
+  schemaVersionsPayload,
+} from './fixtures';
 
 const store = configureStore();
 
@@ -13,6 +19,7 @@ describe('Schemas selectors', () => {
     it('returns fetch status', () => {
       expect(selectors.getIsSchemaListFetched(store.getState())).toBeFalsy();
       expect(selectors.getIsSchemaVersionFetched(store.getState())).toBeFalsy();
+      expect(selectors.getSchemaCreated(store.getState())).toBeFalsy();
     });
 
     it('returns schema list', () => {
@@ -34,6 +41,7 @@ describe('Schemas selectors', () => {
         fetchSchemasByClusterNameAction.success(clusterSchemasPayload)
       );
       store.dispatch(fetchSchemaVersionsAction.success(schemaVersionsPayload));
+      store.dispatch(createSchemaAction.success(newSchemaPayload));
     });
 
     it('returns fetch status', () => {
@@ -41,11 +49,12 @@ describe('Schemas selectors', () => {
       expect(
         selectors.getIsSchemaVersionFetched(store.getState())
       ).toBeTruthy();
+      expect(selectors.getSchemaCreated(store.getState())).toBeTruthy();
     });
 
     it('returns schema list', () => {
       expect(selectors.getSchemaList(store.getState())).toEqual(
-        clusterSchemasPayload
+        clusterSchemasPayloadWithNewSchema
       );
     });
 

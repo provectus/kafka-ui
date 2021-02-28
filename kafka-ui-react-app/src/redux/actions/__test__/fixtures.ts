@@ -1,4 +1,4 @@
-import { ClusterStats } from 'generated-sources';
+import { ClusterStats, NewSchemaSubject } from 'generated-sources';
 
 export const clusterStats: ClusterStats = {
   brokerCount: 1,
@@ -10,4 +10,9 @@ export const clusterStats: ClusterStats = {
   outOfSyncReplicasCount: 0,
   underReplicatedPartitionCount: 0,
   diskUsage: [{ brokerId: 1, segmentSize: 6538, segmentCount: 6 }],
+};
+
+export const schemaPayload: NewSchemaSubject = {
+  schema:
+    '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
 };
