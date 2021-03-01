@@ -27,7 +27,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     String subject;
 
     @BeforeEach
-    void setUpBefore() {
+    public void setUpBefore() {
         this.subject = UUID.randomUUID().toString();
     }
 
@@ -35,7 +35,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     public void should404WhenGetAllSchemasForUnknownCluster() {
         webTestClient
                 .get()
-                .uri("http://localhost:8080/api/clusters/unknown-cluster/schemas")
+                .uri("/api/clusters/unknown-cluster/schemas")
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -45,7 +45,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         String unknownSchema = "unknown-schema";
         webTestClient
                 .get()
-                .uri("http://localhost:8080/api/clusters/local/schemas/{subject}/latest", unknownSchema)
+                .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, unknownSchema)
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -54,7 +54,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     public void shouldReturnBackwardAsGlobalCompatibilityLevelByDefault() {
         webTestClient
                 .get()
-                .uri("http://localhost:8080/api/clusters/local/schemas/compatibility")
+                .uri("/api/clusters/{clusterName}/schemas/compatibility", LOCAL)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(CompatibilityLevel.class)
@@ -71,7 +71,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
 
         webTestClient
                 .get()
-                .uri("http://localhost:8080/api/clusters/local/schemas")
+                .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(SchemaSubject.class)
@@ -99,7 +99,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         //Get the created schema and check its items
         webTestClient
                 .get()
-                .uri("http://localhost:8080/api/clusters/local/schemas/{subject}/latest", subject)
+                .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, subject)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(SchemaSubject.class)
@@ -110,7 +110,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
 
         //Now let's change compatibility level of this schema to FULL whereas the global level should be BACKWARD
         webTestClient.put()
-                .uri("http://localhost:8080/api/clusters/local/schemas/{subject}/compatibility", subject)
+                .uri("/api/clusters/{clusterName}/schemas/{subject}/compatibility", LOCAL, subject)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue("{\"compatibility\":\"FULL\"}"))
                 .exchange()
@@ -119,7 +119,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         //Get one more time to check the schema compatibility level is changed to FULL
         webTestClient
                 .get()
-                .uri("http://localhost:8080/api/clusters/local/schemas/{subject}/latest", subject)
+                .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, subject)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(SchemaSubject.class)
@@ -132,7 +132,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     private void createNewSubjectAndAssert(String subject) {
         webTestClient
                 .post()
-                .uri("http://localhost:8080/api/clusters/local/schemas/{subject}", subject)
+                .uri("/api/clusters/{clusterName}/schemas/{subject}", LOCAL, subject)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue("{\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}"))
                 .exchange()

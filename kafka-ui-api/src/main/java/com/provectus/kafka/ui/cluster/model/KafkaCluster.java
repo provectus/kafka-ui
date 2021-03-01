@@ -29,4 +29,5 @@ public class KafkaCluster {
     private final Path protobufFile;
     private final String protobufMessageName;
     private final Properties properties;
+    private final Boolean readOnly;
 }

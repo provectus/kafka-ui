@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Log4j2
 @AutoConfigureWebTestClient(timeout = "60000")
 public class KafkaConnectServiceTests extends AbstractBaseTest {
-    private final String clusterName = "local";
     private final String connectName = "kafka-connect";
     private final String connectorName = UUID.randomUUID().toString();
     private final Map<String, Object> config = Map.of(
@@ -40,7 +39,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @BeforeEach
     public void setUp() {
         webTestClient.post()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
                 .bodyValue(new NewConnector()
                         .name(connectorName)
                         .config(Map.of(
@@ -57,7 +56,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @AfterEach
     public void tearDown() {
         webTestClient.delete()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}", LOCAL, connectName, connectorName)
                 .exchange()
                 .expectStatus().isOk();
     }
@@ -65,7 +64,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldListConnectors() {
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -76,7 +75,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldReturnNotFoundForNonExistingCluster() {
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", "nonExistingCluster", connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", "nonExistingCluster", connectName)
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -84,7 +83,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldReturnNotFoundForNonExistingConnectName() {
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, "nonExistingConnect")
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, "nonExistingConnect")
                 .exchange()
                 .expectStatus().isNotFound();
     }
@@ -102,7 +101,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .name(connectorName)
                 .config(config);
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}", LOCAL, connectName, connectorName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(Connector.class)
@@ -112,7 +111,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldUpdateConfig() {
         webTestClient.put()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", LOCAL, connectName, connectorName)
                 .bodyValue(Map.of(
                         "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
                         "tasks.max", "1",
@@ -124,7 +123,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .expectStatus().isOk();
 
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", LOCAL, connectName, connectorName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
@@ -142,7 +141,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     public void shouldReturn400WhenConnectReturns400ForInvalidConfigCreate() {
         var connectorName = UUID.randomUUID().toString();
         webTestClient.post()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
                 .bodyValue(Map.of(
                         "name", connectorName,
                         "config", Map.of(
@@ -156,7 +155,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .expectStatus().isBadRequest();
 
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -168,7 +167,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     public void shouldReturn400WhenConnectReturns500ForInvalidConfigCreate() {
         var connectorName = UUID.randomUUID().toString();
         webTestClient.post()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
                 .bodyValue(Map.of(
                         "name", connectorName,
                         "config", Map.of(
@@ -179,7 +178,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .expectStatus().isBadRequest();
 
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody()
@@ -191,7 +190,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldReturn400WhenConnectReturns400ForInvalidConfigUpdate() {
         webTestClient.put()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", LOCAL, connectName, connectorName)
                 .bodyValue(Map.of(
                         "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
                         "tasks.max", "invalid number",
@@ -203,7 +202,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .expectStatus().isBadRequest();
 
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", LOCAL, connectName, connectorName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
@@ -220,7 +219,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldReturn400WhenConnectReturns500ForInvalidConfigUpdate() {
         webTestClient.put()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", LOCAL, connectName, connectorName)
                 .bodyValue(Map.of(
                         "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector"
                         )
@@ -229,7 +228,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .expectStatus().isBadRequest();
 
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", clusterName, connectName, connectorName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config", LOCAL, connectName, connectorName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(new ParameterizedTypeReference<Map<String, Object>>() {
@@ -246,7 +245,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     @Test
     public void shouldRetrieveConnectorPlugins() {
         webTestClient.get()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/plugins", clusterName, connectName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/plugins", LOCAL, connectName)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(ConnectorPlugin.class)
@@ -257,7 +256,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     public void shouldSuccessfullyValidateConnectorPluginConfiguration() {
         var pluginName = "FileStreamSinkConnector";
         webTestClient.put()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/plugins/{pluginName}/config/validate", clusterName, connectName, pluginName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/plugins/{pluginName}/config/validate", LOCAL, connectName, pluginName)
                 .bodyValue(Map.of(
                         "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
                         "tasks.max", "1",
@@ -276,7 +275,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     public void shouldValidateAndReturnErrorsOfConnectorPluginConfiguration() {
         var pluginName = "FileStreamSinkConnector";
         webTestClient.put()
-                .uri("http://localhost:8080/api/clusters/{clusterName}/connects/{connectName}/plugins/{pluginName}/config/validate", clusterName, connectName, pluginName)
+                .uri("/api/clusters/{clusterName}/connects/{connectName}/plugins/{pluginName}/config/validate", LOCAL, connectName, pluginName)
                 .bodyValue(Map.of(
                         "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
                         "tasks.max", "0",
