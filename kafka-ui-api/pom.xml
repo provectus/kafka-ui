@@ -280,7 +280,7 @@
                                 </goals>
                                 <configuration>
                                     <tag>${git.revision}</tag>
-                                    <repository>kafka-ui</repository>
+									                  <repository>provectuslabs/kafka-ui</repository>
                                     <buildArgs>
                                         <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
                                         <JAR_NAME>${project.artifactId}.jar</JAR_NAME>
