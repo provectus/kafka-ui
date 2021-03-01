@@ -18,6 +18,9 @@ import java.time.Duration;
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class AbstractBaseTest {
+    public static String LOCAL = "local";
+    public static String SECOND_LOCAL = "secondLocal";
+
     private static final String CONFLUENT_PLATFORM_VERSION = "5.2.1";
 
     public static final KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION))
@@ -43,11 +46,18 @@ public abstract class AbstractBaseTest {
     public static class Initializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @Override
         public void initialize(@NotNull ConfigurableApplicationContext context) {
-            System.setProperty("kafka.clusters.0.name", "local");
+            System.setProperty("kafka.clusters.0.name", LOCAL);
             System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
             System.setProperty("kafka.clusters.0.schemaRegistry", schemaRegistry.getTarget());
             System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
             System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
+
+            System.setProperty("kafka.clusters.1.name", SECOND_LOCAL);
+            System.setProperty("kafka.clusters.1.readOnly", "true");
+            System.setProperty("kafka.clusters.1.bootstrapServers", kafka.getBootstrapServers());
+            System.setProperty("kafka.clusters.1.schemaRegistry", schemaRegistry.getTarget());
+            System.setProperty("kafka.clusters.1.kafkaConnect.0.name", "kafka-connect");
+            System.setProperty("kafka.clusters.1.kafkaConnect.0.address", kafkaConnect.getTarget());
         }
     }
 }

@@ -27,6 +27,7 @@ public class ClustersProperties {
         List<ConnectCluster> kafkaConnect;
         int jmxPort;
         Properties properties;
+        boolean readOnly = false;
     }
 
     @Data

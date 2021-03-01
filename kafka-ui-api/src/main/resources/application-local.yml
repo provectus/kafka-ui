@@ -18,6 +18,7 @@ kafka:
         - name: first
           address: http://localhost:8083
       jmxPort: 9998
+      read-only: true
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000
