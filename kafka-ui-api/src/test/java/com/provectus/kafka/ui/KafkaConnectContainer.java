@@ -9,6 +9,7 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
 
     public KafkaConnectContainer(String version) {
         super("confluentinc/cp-kafka-connect:" + version);
+        addExposedPort(CONNECT_PORT);
     }
 
 
