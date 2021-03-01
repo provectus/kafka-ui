@@ -94,6 +94,7 @@
                                         <supportsES6>true</supportsES6>
                                         <nullSafeAdditionalProps>true</nullSafeAdditionalProps>
                                         <withInterfaces>true</withInterfaces>
+                                        <enumPropertyNaming>UPPERCASE</enumPropertyNaming>
                                     </configOptions>
                                 </configuration>
                             </execution>
