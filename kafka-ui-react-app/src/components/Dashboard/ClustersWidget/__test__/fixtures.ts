@@ -3,7 +3,7 @@ import { Cluster, ServerStatus } from 'generated-sources';
 export const onlineCluster: Cluster = {
   name: 'secondLocal',
   defaultCluster: false,
-  status: ServerStatus.Online,
+  status: ServerStatus.ONLINE,
   brokerCount: 1,
   onlinePartitionCount: 6,
   topicCount: 3,
@@ -14,7 +14,7 @@ export const onlineCluster: Cluster = {
 export const offlineCluster: Cluster = {
   name: 'local',
   defaultCluster: true,
-  status: ServerStatus.Offline,
+  status: ServerStatus.OFFLINE,
   brokerCount: 1,
   onlinePartitionCount: 2,
   topicCount: 2,

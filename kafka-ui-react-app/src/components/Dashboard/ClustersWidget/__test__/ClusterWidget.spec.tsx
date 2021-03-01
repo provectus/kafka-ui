@@ -12,7 +12,7 @@ describe('ClusterWidget', () => {
         '.tag'
       );
       expect(tag.hasClass('is-primary')).toBeTruthy();
-      expect(tag.text()).toEqual(ServerStatus.Online);
+      expect(tag.text()).toEqual(ServerStatus.ONLINE);
     });
 
     it('renders table', () => {
@@ -45,7 +45,7 @@ describe('ClusterWidget', () => {
       );
 
       expect(tag.hasClass('is-danger')).toBeTruthy();
-      expect(tag.text()).toEqual(ServerStatus.Offline);
+      expect(tag.text()).toEqual(ServerStatus.OFFLINE);
     });
 
     it('renders table', () => {
