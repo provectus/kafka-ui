@@ -37,7 +37,6 @@ describe('Details', () => {
         void,
         [effect: React.EffectCallback, deps?: React.DependencyList | undefined]
       >;
-      let wrapper;
       const mockedFn = jest.fn();
 
       const mockedUseEffect = () => {
@@ -47,8 +46,7 @@ describe('Details', () => {
       beforeEach(() => {
         useEffect = jest.spyOn(React, 'useEffect');
         mockedUseEffect();
-
-        wrapper = shallow(setupWrapper({ fetchSchemaVersions: mockedFn }));
+        shallow(setupWrapper({ fetchSchemaVersions: mockedFn }));
       });
 
       it('should call fetchSchemaVersions every render', () => {
