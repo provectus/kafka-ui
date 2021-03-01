@@ -142,11 +142,11 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName, String subject,
+    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName,
                                                                @Valid Mono<NewSchemaSubject> newSchemaSubject,
                                                                ServerWebExchange exchange) {
         return schemaRegistryService
-                .createNewSchema(clusterName, subject, newSchemaSubject)
+                .registerNewSchema(clusterName, newSchemaSubject)
                 .map(ResponseEntity::ok);
     }
 

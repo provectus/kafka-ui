@@ -2,7 +2,8 @@ package com.provectus.kafka.ui.cluster.mapper;
 
 import com.provectus.kafka.ui.cluster.config.ClustersProperties;
 import com.provectus.kafka.ui.cluster.model.*;
-import com.provectus.kafka.ui.cluster.model.InternalCompatibilityCheck;
+import com.provectus.kafka.ui.cluster.model.schemaregistry.InternalCompatibilityCheck;
+import com.provectus.kafka.ui.cluster.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.*;
 import java.util.Properties;
 import org.mapstruct.Mapper;

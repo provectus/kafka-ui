@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.cluster.model;
+package com.provectus.kafka.ui.cluster.model.schemaregistry;
 
 import lombok.Data;
 

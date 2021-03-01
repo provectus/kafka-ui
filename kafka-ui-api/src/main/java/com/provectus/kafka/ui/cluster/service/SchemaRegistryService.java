@@ -1,29 +1,36 @@
 package com.provectus.kafka.ui.cluster.service;
 
+import com.provectus.kafka.ui.cluster.exception.DuplicateEntityException;
 import com.provectus.kafka.ui.cluster.exception.NotFoundException;
 import com.provectus.kafka.ui.cluster.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
-import com.provectus.kafka.ui.cluster.model.InternalCompatibilityCheck;
-import com.provectus.kafka.ui.cluster.model.InternalCompatibilityLevel;
+import com.provectus.kafka.ui.cluster.model.KafkaCluster;
+import com.provectus.kafka.ui.cluster.model.schemaregistry.InternalCompatibilityCheck;
+import com.provectus.kafka.ui.cluster.model.schemaregistry.InternalCompatibilityLevel;
+import com.provectus.kafka.ui.cluster.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.cluster.model.schemaregistry.SubjectIdResponse;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
 import com.provectus.kafka.ui.model.CompatibilityLevel;
 import com.provectus.kafka.ui.model.NewSchemaSubject;
 import com.provectus.kafka.ui.model.SchemaSubject;
-import java.util.Formatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Formatter;
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -135,18 +142,47 @@ public class SchemaRegistryService {
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
     }
 
-    public Mono<SchemaSubject> createNewSchema(String clusterName, String schemaName, Mono<NewSchemaSubject> newSchemaSubject) {
-        var response = clustersStorage.getClusterByName(clusterName)
-                .map(cluster -> webClient.post()
-                        .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
-                        .retrieve()
-                        .onStatus(UNPROCESSABLE_ENTITY::equals, r -> Mono.error(new UnprocessableEntityException("Invalid params")))
-                        .bodyToMono(SubjectIdResponse.class)
-                        .log())
+    public Mono<SchemaSubject> registerNewSchema(String clusterName, Mono<NewSchemaSubject> newSchemaSubject) {
+        return newSchemaSubject
+                .flatMap(schema -> {
+                    Mono<InternalNewSchema> newSchema = Mono.just(new InternalNewSchema(schema.getSchema()));
+                    String subject = schema.getSubject();
+                    return createNewSchema(clusterName, subject, newSchema);
+                });
+    }
+
+    private Mono<SchemaSubject> createNewSchema(String clusterName, String subject, Mono<InternalNewSchema> newSchemaSubject) {
+        return clustersStorage.getClusterByName(clusterName)
+                .map(KafkaCluster::getSchemaRegistry)
+                .map(schemaRegistry -> {
+                            Mono<SchemaSubject> checking = webClient.post()
+                                    .uri(schemaRegistry + URL_SUBJECT, subject)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
+                                    .retrieve()
+                                    .onStatus(NOT_FOUND::equals, res -> Mono.empty())
+                                    .bodyToMono(SchemaSubject.class)
+                                    .handle((schema, handler) -> {
+                                        if(Objects.isNull(schema) && Objects.isNull(schema.getId())) {
+                                            handler.complete();
+                                        } else {
+                                            handler.error(new DuplicateEntityException("Such schema already exists"));
+                                        }
+                                    });
+//                    webClient.post()
+//                            .uri(schemaRegistry + URL_SUBJECT_VERSIONS, subject)
+//                            .contentType(MediaType.APPLICATION_JSON)
+//                            .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
+//                            .retrieve()
+//                            .onStatus(UNPROCESSABLE_ENTITY::equals, r -> Mono.error(new UnprocessableEntityException("Invalid params")))
+//                            .bodyToMono(SubjectIdResponse.class)
+
+                            checking.subscribe(System.out::println);
+                            return checking;
+                        }
+                )
+//                .map(resp -> getLatestSchemaSubject(clusterName, subject))
                 .orElse(Mono.error(new NotFoundException("No such cluster")));
-        return response.then(getLatestSchemaSubject(clusterName, schemaName));
     }
 
     @NotNull
@@ -217,5 +253,13 @@ public class SchemaRegistryService {
 
     public String formatted(String str, Object... args) {
         return new Formatter().format(str, args).toString();
+    }
+
+    public static String extractRecordType(String schema) {
+        if (schema.contains("record")) {
+            return "AVRO";
+        } else if (schema.contains("proto")) {
+            return "PROTO";
+        } else return schema;
     }
 }
