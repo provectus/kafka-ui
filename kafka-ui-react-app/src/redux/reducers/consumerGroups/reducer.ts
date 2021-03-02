@@ -1,5 +1,7 @@
 import { Action, ConsumerGroupsState } from 'redux/interfaces';
 import { ConsumerGroup } from 'generated-sources';
+import { getType } from 'typesafe-actions';
+import * as actions from 'redux/actions';
 
 export const initialState: ConsumerGroupsState = {
   byID: {},
@@ -33,9 +35,9 @@ const updateConsumerGroupsList = (
 
 const reducer = (state = initialState, action: Action): ConsumerGroupsState => {
   switch (action.type) {
-    case 'GET_CONSUMER_GROUPS__SUCCESS':
+    case getType(actions.fetchConsumerGroupsAction.success):
       return updateConsumerGroupsList(state, action.payload);
-    case 'GET_CONSUMER_GROUP_DETAILS__SUCCESS':
+    case getType(actions.fetchConsumerGroupDetailsAction.success):
       return {
         ...state,
         byID: {

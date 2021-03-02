@@ -1,6 +1,7 @@
 import React from 'react';
+import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { StaticRouter } from 'react-router';
 import configureStore from 'redux/store/configureStore';
 import ListContainer from '../ListContainer';
 import List, { ListProps } from '../List';
@@ -22,34 +23,30 @@ describe('List', () => {
   });
 
   describe('View', () => {
+    const pathname = `/ui/clusters/clusterName/schemas`;
+
     const setupWrapper = (props: Partial<ListProps> = {}) => (
-      <List schemas={[]} {...props} />
+      <StaticRouter location={{ pathname }} context={{}}>
+        <List schemas={[]} {...props} />
+      </StaticRouter>
     );
 
     describe('without schemas', () => {
       it('renders table heading without ListItem', () => {
-        const wrapper = shallow(setupWrapper());
+        const wrapper = mount(setupWrapper());
         expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.exists('ListItem')).toBeFalsy();
       });
-
-      it('matches snapshot', () => {
-        expect(shallow(setupWrapper())).toMatchSnapshot();
-      });
     });
 
     describe('with schemas', () => {
-      const wrapper = shallow(setupWrapper({ schemas }));
+      const wrapper = mount(setupWrapper({ schemas }));
 
       it('renders table heading with ListItem', () => {
         expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.find('ListItem').length).toEqual(3);
-      });
-
-      it('matches snapshot', () => {
-        expect(shallow(setupWrapper({ schemas }))).toMatchSnapshot();
       });
     });
   });

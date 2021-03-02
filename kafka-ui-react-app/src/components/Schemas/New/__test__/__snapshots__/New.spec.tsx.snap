@@ -1,0 +1,189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`New View matches snapshot 1`] = `
+<StaticRouter
+  context={Object {}}
+  location={
+    Object {
+      "pathname": "/ui/clusters/clusterName/schemas/new",
+    }
+  }
+>
+  <Router
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/ui/clusters/clusterName/schemas/new",
+          "search": "",
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    staticContext={Object {}}
+  >
+    <New
+      createSchema={[MockFunction]}
+    >
+      <div
+        className="section"
+      >
+        <div
+          className="level"
+        >
+          <div
+            className="level-item level-left"
+          >
+            <Breadcrumb
+              links={
+                Array [
+                  Object {
+                    "href": "/ui/clusters/undefined/schemas",
+                    "label": "Schema Registry",
+                  },
+                ]
+              }
+            >
+              <nav
+                aria-label="breadcrumbs"
+                className="breadcrumb"
+              >
+                <ul>
+                  <li
+                    key="/ui/clusters/undefined/schemas"
+                  >
+                    <NavLink
+                      to="/ui/clusters/undefined/schemas"
+                    >
+                      <Link
+                        aria-current={null}
+                        to={
+                          Object {
+                            "hash": "",
+                            "pathname": "/ui/clusters/undefined/schemas",
+                            "search": "",
+                            "state": null,
+                          }
+                        }
+                      >
+                        <LinkAnchor
+                          aria-current={null}
+                          href="/ui/clusters/undefined/schemas"
+                          navigate={[Function]}
+                        >
+                          <a
+                            aria-current={null}
+                            href="/ui/clusters/undefined/schemas"
+                            onClick={[Function]}
+                          >
+                            Schema Registry
+                          </a>
+                        </LinkAnchor>
+                      </Link>
+                    </NavLink>
+                  </li>
+                  <li
+                    className="is-active"
+                  >
+                    <span
+                      className=""
+                    >
+                      New Schema
+                    </span>
+                  </li>
+                </ul>
+              </nav>
+            </Breadcrumb>
+          </div>
+        </div>
+        <div
+          className="box"
+        >
+          <form
+            onSubmit={[Function]}
+          >
+            <div>
+              <div
+                className="field"
+              >
+                <label
+                  className="label"
+                >
+                  Subject *
+                </label>
+                <div
+                  className="control"
+                >
+                  <input
+                    autoComplete="off"
+                    className="input"
+                    disabled={false}
+                    name="subject"
+                    placeholder="Schema Name"
+                  />
+                </div>
+                <p
+                  className="help is-danger"
+                >
+                  <Component
+                    errors={Object {}}
+                    name="subject"
+                  />
+                </p>
+              </div>
+              <div
+                className="field"
+              >
+                <label
+                  className="label"
+                >
+                  Schema *
+                </label>
+                <div
+                  className="control"
+                >
+                  <textarea
+                    className="textarea"
+                    disabled={false}
+                    name="schema"
+                  />
+                </div>
+                <p
+                  className="help is-danger"
+                >
+                  <Component
+                    errors={Object {}}
+                    name="schema"
+                  />
+                </p>
+              </div>
+            </div>
+            <br />
+            <div
+              className="field"
+            >
+              <div
+                className="control"
+              >
+                <input
+                  className="button is-primary"
+                  disabled={true}
+                  type="submit"
+                />
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </New>
+  </Router>
+</StaticRouter>
+`;

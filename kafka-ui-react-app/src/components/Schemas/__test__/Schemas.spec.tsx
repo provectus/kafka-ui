@@ -1,10 +1,8 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
 import { StaticRouter } from 'react-router-dom';
-import { match } from 'react-router';
-import { ClusterName } from 'redux/interfaces';
 import Schemas, { SchemasProps } from '../Schemas';
 import SchemasContainer from '../SchemasContainer';
 
@@ -15,7 +13,7 @@ describe('Schemas', () => {
     const store = configureStore();
 
     it('renders view', () => {
-      const component = shallow(
+      const component = mount(
         <Provider store={store}>
           <StaticRouter location={{ pathname }} context={{}}>
             <SchemasContainer />
@@ -28,12 +26,13 @@ describe('Schemas', () => {
 
     describe('View', () => {
       const setupWrapper = (props: Partial<SchemasProps> = {}) => (
-        <Schemas
-          isFetched
-          clusterName="Test"
-          fetchSchemasByClusterName={jest.fn()}
-          {...props}
-        />
+        <StaticRouter location={{ pathname }} context={{}}>
+          <Schemas
+            isFetching
+            fetchSchemasByClusterName={jest.fn()}
+            {...props}
+          />
+        </StaticRouter>
       );
       describe('Initial state', () => {
         let useEffect: jest.SpyInstance<
@@ -43,7 +42,6 @@ describe('Schemas', () => {
             deps?: React.DependencyList | undefined
           ]
         >;
-        let wrapper;
         const mockedFn = jest.fn();
 
         const mockedUseEffect = () => {
@@ -53,32 +51,19 @@ describe('Schemas', () => {
         beforeEach(() => {
           useEffect = jest.spyOn(React, 'useEffect');
           mockedUseEffect();
-
-          wrapper = shallow(
-            setupWrapper({ fetchSchemasByClusterName: mockedFn })
-          );
         });
 
         it('should call fetchSchemasByClusterName every render', () => {
+          mount(setupWrapper({ fetchSchemasByClusterName: mockedFn }));
           expect(mockedFn).toHaveBeenCalled();
-        });
-
-        it('matches snapshot', () => {
-          expect(
-            shallow(setupWrapper({ fetchSchemasByClusterName: mockedFn }))
-          ).toMatchSnapshot();
         });
       });
 
       describe('when page is loading', () => {
-        const wrapper = shallow(setupWrapper({ isFetched: false }));
+        const wrapper = mount(setupWrapper({ isFetching: true }));
 
         it('renders PageLoader', () => {
           expect(wrapper.exists('PageLoader')).toBeTruthy();
-        });
-
-        it('matches snapshot', () => {
-          expect(shallow(setupWrapper({ isFetched: false }))).toMatchSnapshot();
         });
       });
     });

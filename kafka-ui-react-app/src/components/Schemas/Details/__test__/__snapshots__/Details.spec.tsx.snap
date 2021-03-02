@@ -52,14 +52,6 @@ exports[`Details View Initial state matches snapshot 1`] = `
         className="level-right"
       >
         <button
-          className="button is-primary is-small level-item"
-          disabled={true}
-          title="in development"
-          type="button"
-        >
-          Create Schema
-        </button>
-        <button
           className="button is-warning is-small level-item"
           disabled={true}
           title="in development"
@@ -166,14 +158,6 @@ exports[`Details View when page with schema versions is loading matches snapshot
         className="level-right"
       >
         <button
-          className="button is-primary is-small level-item"
-          disabled={true}
-          title="in development"
-          type="button"
-        >
-          Create Schema
-        </button>
-        <button
           className="button is-warning is-small level-item"
           disabled={true}
           title="in development"
@@ -258,14 +242,6 @@ exports[`Details View when page with schema versions loaded when schema has vers
       <div
         className="level-right"
       >
-        <button
-          className="button is-primary is-small level-item"
-          disabled={true}
-          title="in development"
-          type="button"
-        >
-          Create Schema
-        </button>
         <button
           className="button is-warning is-small level-item"
           disabled={true}
@@ -397,14 +373,6 @@ exports[`Details View when page with schema versions loaded when versions are em
       <div
         className="level-right"
       >
-        <button
-          className="button is-primary is-small level-item"
-          disabled={true}
-          title="in development"
-          type="button"
-        >
-          Create Schema
-        </button>
         <button
           className="button is-warning is-small level-item"
           disabled={true}

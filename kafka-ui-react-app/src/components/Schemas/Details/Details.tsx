@@ -56,14 +56,6 @@ const Details: React.FC<DetailsProps> = ({
           </div>
           <div className="level-right">
             <button
-              className="button is-primary is-small level-item"
-              type="button"
-              title="in development"
-              disabled
-            >
-              Create Schema
-            </button>
-            <button
               className="button is-warning is-small level-item"
               type="button"
               title="in development"

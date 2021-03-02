@@ -1,5 +1,7 @@
 import { Action, BrokersState, ZooKeeperStatus } from 'redux/interfaces';
 import { ClusterStats } from 'generated-sources';
+import { getType } from 'typesafe-actions';
+import * as actions from 'redux/actions';
 
 export const initialState: BrokersState = {
   items: [],
@@ -35,14 +37,14 @@ const updateBrokerSegmentSize = (
 
 const reducer = (state = initialState, action: Action): BrokersState => {
   switch (action.type) {
-    case 'GET_BROKERS__REQUEST':
+    case getType(actions.fetchBrokersAction.request):
       return initialState;
-    case 'GET_BROKERS__SUCCESS':
+    case getType(actions.fetchBrokersAction.success):
       return {
         ...state,
         items: action.payload,
       };
-    case 'GET_CLUSTER_STATUS__SUCCESS':
+    case getType(actions.fetchClusterStatsAction.success):
       return updateBrokerSegmentSize(state, action.payload);
     default:
       return state;

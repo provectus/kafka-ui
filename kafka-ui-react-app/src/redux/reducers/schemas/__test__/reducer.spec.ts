@@ -1,4 +1,5 @@
 import {
+  createSchemaAction,
   fetchSchemasByClusterNameAction,
   fetchSchemaVersionsAction,
 } from 'redux/actions';
@@ -15,6 +16,9 @@ describe('Schemas reducer', () => {
       reducer(undefined, fetchSchemasByClusterNameAction.request())
     ).toEqual(initialState);
     expect(reducer(undefined, fetchSchemaVersionsAction.request())).toEqual(
+      initialState
+    );
+    expect(reducer(undefined, createSchemaAction.request())).toEqual(
       initialState
     );
   });
@@ -34,6 +38,12 @@ describe('Schemas reducer', () => {
         undefined,
         fetchSchemaVersionsAction.success(schemaVersionsPayload)
       )
+    ).toMatchSnapshot();
+  });
+
+  it('reacts on POST_SCHEMA__SUCCESS and returns payload', () => {
+    expect(
+      reducer(undefined, createSchemaAction.success(schemaVersionsPayload[0]))
     ).toMatchSnapshot();
   });
 });

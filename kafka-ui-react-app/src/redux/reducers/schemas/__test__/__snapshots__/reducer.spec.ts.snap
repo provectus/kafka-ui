@@ -56,3 +56,21 @@ Object {
   ],
 }
 `;
+
+exports[`Schemas reducer reacts on POST_SCHEMA__SUCCESS and returns payload 1`] = `
+Object {
+  "allNames": Array [
+    "test",
+  ],
+  "byName": Object {
+    "test": Object {
+      "compatibilityLevel": "BACKWARD",
+      "id": 1,
+      "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+      "subject": "test",
+      "version": "1",
+    },
+  },
+  "currentSchemaVersions": Array [],
+}
+`;

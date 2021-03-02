@@ -1,32 +1,15 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState } from 'redux/interfaces';
+import { RootState } from 'redux/interfaces';
 import { fetchSchemasByClusterName } from 'redux/actions';
-import { getIsSchemaListFetched } from 'redux/reducers/schemas/selectors';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
+import { getIsSchemaListFetching } from 'redux/reducers/schemas/selectors';
 import Schemas from './Schemas';
 
-interface RouteProps {
-  clusterName: ClusterName;
-}
-
-type OwnProps = RouteComponentProps<RouteProps>;
-
-const mapStateToProps = (
-  state: RootState,
-  {
-    match: {
-      params: { clusterName },
-    },
-  }: OwnProps
-) => ({
-  isFetched: getIsSchemaListFetched(state),
-  clusterName,
+const mapStateToProps = (state: RootState) => ({
+  isFetching: getIsSchemaListFetching(state),
 });
 
 const mapDispatchToProps = {
   fetchSchemasByClusterName,
 };
 
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(Schemas)
-);
+export default connect(mapStateToProps, mapDispatchToProps)(Schemas);

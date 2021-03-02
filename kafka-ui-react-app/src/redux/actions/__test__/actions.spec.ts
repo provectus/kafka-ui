@@ -6,13 +6,13 @@ import * as actions from '../actions';
 
 describe('Actions', () => {
   describe('fetchClusterStatsAction', () => {
-    it('creates an REQUEST action', () => {
+    it('creates a REQUEST action', () => {
       expect(actions.fetchClusterStatsAction.request()).toEqual({
         type: 'GET_CLUSTER_STATUS__REQUEST',
       });
     });
 
-    it('creates an SUCCESS action', () => {
+    it('creates a SUCCESS action', () => {
       expect(
         actions.fetchClusterStatsAction.success({ brokerCount: 1 })
       ).toEqual({
@@ -23,7 +23,7 @@ describe('Actions', () => {
       });
     });
 
-    it('creates an FAILURE action', () => {
+    it('creates a FAILURE action', () => {
       expect(actions.fetchClusterStatsAction.failure()).toEqual({
         type: 'GET_CLUSTER_STATUS__FAILURE',
       });
@@ -72,6 +72,29 @@ describe('Actions', () => {
     it('creates a FAILURE action', () => {
       expect(actions.fetchSchemaVersionsAction.failure()).toEqual({
         type: 'GET_SCHEMA_VERSIONS__FAILURE',
+      });
+    });
+  });
+
+  describe('createSchemaAction', () => {
+    it('creates a REQUEST action', () => {
+      expect(actions.createSchemaAction.request()).toEqual({
+        type: 'POST_SCHEMA__REQUEST',
+      });
+    });
+
+    it('creates a SUCCESS action', () => {
+      expect(
+        actions.createSchemaAction.success(schemaVersionsPayload[0])
+      ).toEqual({
+        type: 'POST_SCHEMA__SUCCESS',
+        payload: schemaVersionsPayload[0],
+      });
+    });
+
+    it('creates a FAILURE action', () => {
+      expect(actions.createSchemaAction.failure()).toEqual({
+        type: 'POST_SCHEMA__FAILURE',
       });
     });
   });

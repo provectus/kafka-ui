@@ -24,6 +24,9 @@
 		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
 		<frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+		<maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
+		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+		<maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
 		<openapi-generator-maven-plugin.version>4.3.0</openapi-generator-maven-plugin.version>
 		<swagger-annotations.version>1.6.0</swagger-annotations.version>
 		<springdoc-openapi-webflux-ui.version>1.2.32</springdoc-openapi-webflux-ui.version>
@@ -33,6 +36,8 @@
 		<apache.commons.version>2.2</apache.commons.version>
 		<test.containers.version>1.15.1</test.containers.version>
 		<junit-jupiter-engine.version>5.4.0</junit-jupiter-engine.version>
+
+		<frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources</frontend-generated-sources-directory>
 	</properties>
 
 	<repositories>
