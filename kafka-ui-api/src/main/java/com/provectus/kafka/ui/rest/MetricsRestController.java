@@ -106,7 +106,7 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String subject, ServerWebExchange exchange) {
-        return schemaRegistryService.getLatestSchemaSubject(clusterName, subject).map(ResponseEntity::ok);
+        return schemaRegistryService.getLatestSchemaVersionBySubject(clusterName, subject).map(ResponseEntity::ok);
     }
 
     @Override
