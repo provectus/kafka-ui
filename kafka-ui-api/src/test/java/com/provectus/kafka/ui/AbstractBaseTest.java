@@ -9,10 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
-
-import java.time.Duration;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -32,10 +29,8 @@ public abstract class AbstractBaseTest {
 
     public static final KafkaConnectContainer kafkaConnect = new KafkaConnectContainer(CONFLUENT_PLATFORM_VERSION)
             .withKafka(kafka)
-            .waitingFor(Wait.forHttp("/"))
             .dependsOn(kafka)
-            .dependsOn(schemaRegistry)
-            .withStartupTimeout(Duration.ofMinutes(15));
+            .dependsOn(schemaRegistry);
 
     static {
         kafka.start();
