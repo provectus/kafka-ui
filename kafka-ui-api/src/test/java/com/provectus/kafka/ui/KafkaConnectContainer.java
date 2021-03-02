@@ -14,7 +14,7 @@ public class KafkaConnectContainer extends GenericContainer<KafkaConnectContaine
         super("confluentinc/cp-kafka-connect:" + version);
         addExposedPort(CONNECT_PORT);
         waitStrategy = Wait.forHttp("/")
-                .withStartupTimeout(Duration.ofMinutes(10));
+                .withStartupTimeout(Duration.ofMinutes(5));
     }
 
 
