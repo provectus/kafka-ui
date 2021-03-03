@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-interface Link {
+export interface Link {
   label: string;
   href: string;
 }
@@ -22,7 +22,9 @@ const Breadcrumb: React.FC<Props> = ({ links, children }) => {
           ))}
 
         <li className="is-active">
-          <span className="">{children}</span>
+          <span className="" data-testid="breadcrumb-children-wrapper">
+            {children}
+          </span>
         </li>
       </ul>
     </nav>
