@@ -18,9 +18,9 @@ export const getClusterList = createSelector(
 );
 
 export const getOnlineClusters = createSelector(getClusterList, (clusters) =>
-  clusters.filter(({ status }) => status === ServerStatus.Online)
+  clusters.filter(({ status }) => status === ServerStatus.ONLINE)
 );
 
 export const getOfflineClusters = createSelector(getClusterList, (clusters) =>
-  clusters.filter(({ status }) => status === ServerStatus.Offline)
+  clusters.filter(({ status }) => status === ServerStatus.OFFLINE)
 );

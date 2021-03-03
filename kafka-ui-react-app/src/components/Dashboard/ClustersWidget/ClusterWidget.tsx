@@ -24,7 +24,7 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
       <div className="title is-6 has-text-overflow-ellipsis">
         <div
           className={`tag has-margin-right ${
-            status === ServerStatus.Online ? 'is-primary' : 'is-danger'
+            status === ServerStatus.ONLINE ? 'is-primary' : 'is-danger'
           }`}
         >
           {status}
