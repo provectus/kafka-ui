@@ -150,7 +150,7 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 			byte[] bytes = AvroSchemaUtils.toJson(avroRecord);
 			return parseJson(bytes);
 		} else {
-			return new HashMap<String,Object>();
+			return Map.of();
 		}
 	}
 
@@ -162,14 +162,14 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 			byte[] bytes = ProtobufSchemaUtils.toJson(message);
 			return parseJson(bytes);
 		} else {
-			return new HashMap<String,Object>();
+			return Map.of();
 		}
 	}
 
 	private Object parseJsonRecord(ConsumerRecord<Bytes, Bytes> record) throws IOException {
 		var value = record.value();
 		if (value == null) {
-			return new HashMap<String, Object>();
+			return Map.of();
 		}
 		byte[] valueBytes = value.get();
 		return parseJson(valueBytes);
@@ -183,7 +183,7 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
 	private Object parseStringRecord(ConsumerRecord<Bytes, Bytes> record) {
 		String topic = record.topic();
 		if (record.value() == null) {
-			return new HashMap<String, Object>();
+			return Map.of();
 		}
 		byte[] valueBytes = record.value().get();
 		return stringDeserializer.deserialize(topic, valueBytes);
