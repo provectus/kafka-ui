@@ -56,6 +56,12 @@ public class KafkaService {
         return cluster.toBuilder().topics(topics).build();
     }
 
+    public KafkaCluster getUpdatedCluster(KafkaCluster cluster, String topicToDelete) {
+        final Map<String, InternalTopic> topics = new HashMap<>(cluster.getTopics());
+        topics.remove(topicToDelete);
+        return cluster.toBuilder().topics(topics).build();
+    }
+
     @SneakyThrows
     public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
         return getOrCreateAdminClient(cluster)
@@ -182,6 +188,13 @@ public class KafkaService {
 
     public Mono<InternalTopic> createTopic(KafkaCluster cluster, Mono<TopicFormData> topicFormData) {
         return getOrCreateAdminClient(cluster).flatMap(ac -> createTopic(ac.getAdminClient(), topicFormData));
+    }
+
+    public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
+        return getOrCreateAdminClient(cluster)
+                .map(ExtendedAdminClient::getAdminClient)
+                .map(adminClient -> adminClient.deleteTopics(List.of(topicName)))
+                .then();
     }
 
     @SneakyThrows

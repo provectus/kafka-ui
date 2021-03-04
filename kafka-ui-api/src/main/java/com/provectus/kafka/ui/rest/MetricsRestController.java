@@ -159,6 +159,11 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<Void>> deleteTopic(String clusterName, String topicName, ServerWebExchange exchange) {
+        return clusterService.deleteTopic(clusterName, topicName).map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<CompatibilityLevel>> getGlobalSchemaCompatibilityLevel(String clusterName, ServerWebExchange exchange) {
         return schemaRegistryService.getGlobalSchemaCompatibilityLevel(clusterName)
                 .map(ResponseEntity::ok)
