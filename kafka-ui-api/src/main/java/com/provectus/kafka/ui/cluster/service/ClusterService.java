@@ -169,8 +169,21 @@ public class ClusterService {
         ).orElse(Mono.empty());
     }
 
+    public Mono<Void> deleteTopic(String clusterName, String topicName) {
+        return clustersStorage.getClusterByName(clusterName).map(cluster ->
+                kafkaService.deleteTopic(cluster, topicName)
+                        .doOnNext(t -> updateCluster(topicName, clusterName, cluster))
+        ).orElse(Mono.empty());
+    }
+
     private KafkaCluster updateCluster(InternalTopic topic, String clusterName, KafkaCluster cluster) {
         final KafkaCluster updatedCluster = kafkaService.getUpdatedCluster(cluster, topic);
+        clustersStorage.setKafkaCluster(clusterName, updatedCluster);
+        return updatedCluster;
+    }
+
+    private KafkaCluster updateCluster(String topicToDelete, String clusterName, KafkaCluster cluster) {
+        final KafkaCluster updatedCluster = kafkaService.getUpdatedCluster(cluster, topicToDelete);
         clustersStorage.setKafkaCluster(clusterName, updatedCluster);
         return updatedCluster;
     }
