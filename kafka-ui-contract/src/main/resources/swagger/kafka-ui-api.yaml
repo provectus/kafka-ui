@@ -1338,12 +1338,15 @@ components:
           type: string
         compatibilityLevel:
           type: string
+        schemaType:
+          $ref: '#/components/schemas/SchemaType'
       required:
         - id
         - subject
         - version
         - schema
         - compatibilityLevel
+        - schemaType
 
     NewSchemaSubject:
       type: object
@@ -1352,9 +1355,12 @@ components:
           type: string
         schema:
           type: string
+        schemaType:
+          $ref: '#/components/schemas/SchemaType'
       required:
         - subject
         - schema
+        - schemaType
 
     CompatibilityLevel:
       type: object
@@ -1371,6 +1377,13 @@ components:
             - NONE
       required:
         - compatibility
+
+    SchemaType:
+      type: string
+      enum:
+        - AVRO
+        - JSON
+        - PROTOBUF
 
     CompatibilityCheckResponse:
       type: object
