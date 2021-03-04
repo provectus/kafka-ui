@@ -3,12 +3,18 @@ package com.provectus.kafka.ui;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
+import org.testcontainers.containers.wait.strategy.Wait;
+
+import java.time.Duration;
 
 public class KafkaConnectContainer extends GenericContainer<KafkaConnectContainer> {
     private static final int CONNECT_PORT = 8083;
 
     public KafkaConnectContainer(String version) {
         super("confluentinc/cp-kafka-connect:" + version);
+        addExposedPort(CONNECT_PORT);
+        waitStrategy = Wait.forHttp("/")
+                .withStartupTimeout(Duration.ofMinutes(5));
     }
 
 
