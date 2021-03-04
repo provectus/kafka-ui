@@ -234,6 +234,8 @@ paths:
       responses:
         200:
           description: OK
+        404:
+          description: Not found
 
   /api/clusters/{clusterName}/topics/{topicName}/config:
     get:

@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.cluster.service;
 
+import com.provectus.kafka.ui.cluster.exception.NotFoundException;
 import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
 import com.provectus.kafka.ui.cluster.model.ClustersStorage;
 import com.provectus.kafka.ui.cluster.model.ConsumerPosition;
@@ -170,10 +171,12 @@ public class ClusterService {
     }
 
     public Mono<Void> deleteTopic(String clusterName, String topicName) {
-        return clustersStorage.getClusterByName(clusterName).map(cluster ->
-                kafkaService.deleteTopic(cluster, topicName)
-                        .doOnNext(t -> updateCluster(topicName, clusterName, cluster))
-        ).orElse(Mono.empty());
+        var cluster = clustersStorage.getClusterByName(clusterName)
+                .orElseThrow(() -> new NotFoundException("No such cluster"));
+        getTopicDetails(clusterName, topicName)
+                .orElseThrow(() -> new NotFoundException("No such topic"));
+        return kafkaService.deleteTopic(cluster, topicName)
+                .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
     }
 
     private KafkaCluster updateCluster(InternalTopic topic, String clusterName, KafkaCluster cluster) {
