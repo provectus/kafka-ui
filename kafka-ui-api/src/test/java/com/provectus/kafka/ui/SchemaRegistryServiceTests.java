@@ -2,6 +2,7 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.model.CompatibilityLevel;
 import com.provectus.kafka.ui.model.SchemaSubject;
+import com.provectus.kafka.ui.model.SchemaType;
 import lombok.extern.log4j.Log4j2;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
@@ -132,9 +133,9 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     private void createNewSubjectAndAssert(String subject) {
         webTestClient
                 .post()
-                .uri("/api/clusters/{clusterName}/schemas/{subject}", LOCAL, subject)
+                .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue("{\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}"))
+                .body(BodyInserters.fromValue("{\"subject\":\"%s\",\"schemaType\":\"JSON\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}".formatted(subject)))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(SchemaSubject.class)
@@ -151,6 +152,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         Assertions.assertEquals("\"string\"", actualSchema.getSchema());
 
         Assertions.assertNotNull(actualSchema.getCompatibilityLevel());
+        Assertions.assertEquals(SchemaType.AVRO, actualSchema.getSchemaType());
         Assertions.assertEquals(expectedCompatibility.name(), actualSchema.getCompatibilityLevel());
     }
 
@@ -159,8 +161,8 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         Assertions.assertNotNull(responseBody);
         Assertions.assertEquals(1, responseBody.getId(), "The schema ID should be non-null in the response");
         String message = "It should be null";
-        Assertions.assertNull(responseBody.getSchema(), message);
-        Assertions.assertNull(responseBody.getSubject(), message);
-        Assertions.assertNull(responseBody.getVersion(), message);
+        Assertions.assertNotNull(responseBody.getSchema(), message);
+        Assertions.assertNotNull(responseBody.getSubject(), message);
+        Assertions.assertNotNull(responseBody.getVersion(), message);
     }
 }
