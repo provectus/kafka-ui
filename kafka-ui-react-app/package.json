@@ -39,6 +39,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "gen:sources": "rm -rf src/generated-sources && openapi-generator-cli generate",
     "build": "react-scripts build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
@@ -69,6 +70,7 @@
   },
   "devDependencies": {
     "@jest/types": "^26.6.2",
+    "@openapitools/openapi-generator-cli": "^2.1.26",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
