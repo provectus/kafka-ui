@@ -108,11 +108,11 @@ describe('Thunks', () => {
 
   describe('createSchema', () => {
     it('creates POST_SCHEMA__SUCCESS when posting new schema', async () => {
-      fetchMock.postOnce(`/api/clusters/${clusterName}/schemas/${subject}`, {
+      fetchMock.postOnce(`/api/clusters/${clusterName}/schemas`, {
         body: schemaFixtures.schemaVersionsPayload[0],
       });
       await store.dispatch(
-        thunks.createSchema(clusterName, subject, fixtures.schemaPayload)
+        thunks.createSchema(clusterName, fixtures.schemaPayload)
       );
       expect(store.getActions()).toEqual([
         actions.createSchemaAction.request(),
@@ -122,19 +122,15 @@ describe('Thunks', () => {
       ]);
     });
 
-    // it('creates POST_SCHEMA__FAILURE when posting new schema', async () => {
-    //   fetchMock.postOnce(
-    //     `/api/clusters/${clusterName}/schemas/${subject}`,
-    //     404
-    //   );
-    //   await store.dispatch(
-    //     thunks.createSchema(clusterName, subject, fixtures.schemaPayload)
-    //   );
-    //   expect(store.getActions()).toEqual([
-    //     actions.createSchemaAction.request(),
-    //     actions.createSchemaAction.failure(),
-    //   ]);
-    //   expect(store.getActions()).toThrow();
-    // });
+    it('creates POST_SCHEMA__FAILURE when posting new schema', async () => {
+      fetchMock.postOnce(`/api/clusters/${clusterName}/schemas`, 404);
+      await store.dispatch(
+        thunks.createSchema(clusterName, fixtures.schemaPayload)
+      );
+      expect(store.getActions()).toEqual([
+        actions.createSchemaAction.request(),
+        actions.createSchemaAction.failure(),
+      ]);
+    });
   });
 });
