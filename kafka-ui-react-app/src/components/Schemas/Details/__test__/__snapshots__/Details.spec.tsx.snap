@@ -75,6 +75,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
           "compatibilityLevel": "BACKWARD",
           "id": 1,
           "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+          "schemaType": "JSON",
           "subject": "test",
           "version": "1",
         }
@@ -181,6 +182,7 @@ exports[`Details View when page with schema versions is loading matches snapshot
           "compatibilityLevel": "BACKWARD",
           "id": 1,
           "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+          "schemaType": "JSON",
           "subject": "test",
           "version": "1",
         }
@@ -266,6 +268,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
           "compatibilityLevel": "BACKWARD",
           "id": 1,
           "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+          "schemaType": "JSON",
           "subject": "test",
           "version": "1",
         }
@@ -299,6 +302,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
               "compatibilityLevel": "BACKWARD",
               "id": 1,
               "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+              "schemaType": "JSON",
               "subject": "test",
               "version": "1",
             }
@@ -311,6 +315,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
               "compatibilityLevel": "BACKWARD",
               "id": 2,
               "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+              "schemaType": "JSON",
               "subject": "test",
               "version": "2",
             }
@@ -397,6 +402,7 @@ exports[`Details View when page with schema versions loaded when versions are em
           "compatibilityLevel": "BACKWARD",
           "id": 1,
           "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+          "schemaType": "JSON",
           "subject": "test",
           "version": "1",
         }

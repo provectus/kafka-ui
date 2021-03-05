@@ -1,5 +1,5 @@
 import { SchemasState } from 'redux/interfaces';
-import { SchemaSubject } from 'generated-sources';
+import { SchemaSubject, SchemaType } from 'generated-sources';
 
 export const initialState: SchemasState = {
   byName: {},
@@ -15,6 +15,7 @@ export const clusterSchemasPayload: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test3',
@@ -23,6 +24,7 @@ export const clusterSchemasPayload: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test',
@@ -31,6 +33,7 @@ export const clusterSchemasPayload: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
 ];
 
@@ -42,6 +45,7 @@ export const schemaVersionsPayload: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test',
@@ -50,6 +54,7 @@ export const schemaVersionsPayload: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
 ];
 
@@ -60,6 +65,7 @@ export const newSchemaPayload: SchemaSubject = {
   schema:
     '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
   compatibilityLevel: 'BACKWARD',
+  schemaType: SchemaType.JSON,
 };
 
 export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
@@ -70,6 +76,7 @@ export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test3',
@@ -78,6 +85,7 @@ export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test',
@@ -86,6 +94,7 @@ export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test4',
@@ -94,5 +103,6 @@ export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
 ];
