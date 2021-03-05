@@ -11,8 +11,12 @@ const Indicator: React.FC<Props> = ({ label, title, className, children }) => {
   return (
     <div className={cx('level-item', 'level-left', className)}>
       <div title={title || label}>
-        <p className="heading">{label}</p>
-        <p className="title">{children}</p>
+        <p data-testid="indicator-heading" className="heading">
+          {label}
+        </p>
+        <p data-testid="indicator-childer-wrapper" className="title">
+          {children}
+        </p>
       </div>
     </div>
   );
