@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import Breadcrumb, { Link } from '../Breadcrumb';
@@ -38,6 +38,11 @@ describe('Breadcrumb component', () => {
     expect(list.last().containsMatchingElement(child)).toBeTruthy();
   });
   it('matches the snapshot', () => {
-    expect(component).toMatchSnapshot();
+    const shallowComponent = shallow(
+      <StaticRouter>
+        <Breadcrumb links={links}>{child}</Breadcrumb>
+      </StaticRouter>
+    );
+    expect(shallowComponent).toMatchSnapshot();
   });
 });

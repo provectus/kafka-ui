@@ -4,40 +4,35 @@ import BytesFormatted, { sizes } from '../BytesFormatted';
 
 describe('BytesFormatted', () => {
   it('renders Bytes correctly', () => {
-    const component = shallow(
-      <BytesFormatted value={Math.floor(Math.random() * 900 + 100)} />
-    );
-    expect(component.props().children.slice(3)).toEqual('Bytes');
+    const component = shallow(<BytesFormatted value={666} />);
+    expect(component.text()).toEqual('666Bytes');
   });
 
   it('renders correct units', () => {
     let value = 1;
     sizes.forEach((unit) => {
       const component = shallow(<BytesFormatted value={value} />);
-      expect(component.props().children.slice(1)).toEqual(`${unit}`);
+      expect(component.text()).toEqual(`1${unit}`);
       value *= 1024;
     });
   });
 
   it('renders correct precision', () => {
-    for (let i = 1; i <= 9; i += 1) {
-      const component = shallow(
-        <BytesFormatted
-          value={Math.round(Math.random() * 100000)}
-          precision={i}
-        />
-      );
-      const splitted = component.props().children.slice(0, -2).split('.');
-      if (splitted.length > 1) {
-        expect(
-          component.props().children.slice(0, -2).split('.')[1].length
-        ).toBeLessThanOrEqual(i);
-      }
-    }
+    let component = shallow(<BytesFormatted value={2000} precision={100} />);
+    expect(component.text()).toEqual(`1.953125${sizes[1]}`);
+
+    component = shallow(<BytesFormatted value={10000} precision={5} />);
+    expect(component.text()).toEqual(`9.76563${sizes[1]}`);
   });
 
   it('correctly handles invalid props', () => {
-    const component = shallow(<BytesFormatted value={10000} precision={-1} />);
-    expect(component.props().children.slice(0, -2)).toEqual('10');
+    let component = shallow(<BytesFormatted value={10000} precision={-1} />);
+    expect(component.text()).toEqual(`10${sizes[1]}`);
+
+    component = shallow(<BytesFormatted value="some string" />);
+    expect(component.text()).toEqual(`-${sizes[0]}`);
+
+    component = shallow(<BytesFormatted value={undefined} />);
+    expect(component.text()).toEqual(`0${sizes[0]}`);
   });
 });

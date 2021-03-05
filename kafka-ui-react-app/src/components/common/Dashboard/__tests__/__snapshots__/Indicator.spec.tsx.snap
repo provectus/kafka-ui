@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Indicator matches the snapshot 1`] = `
+<Indicator
+  label="label"
+  title="title"
+>
+  <div
+    className="level-item level-left"
+  >
+    <div
+      title="title"
+    >
+      <p
+        className="heading"
+      >
+        label
+      </p>
+      <p
+        className="title"
+      >
+        Child
+      </p>
+    </div>
+  </div>
+</Indicator>
+`;

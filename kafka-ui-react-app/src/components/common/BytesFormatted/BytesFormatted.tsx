@@ -9,9 +9,9 @@ export const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
 const BytesFormatted: React.FC<Props> = ({ value, precision = 0 }) => {
   const formatedValue = React.useMemo((): string => {
-    const bytes = typeof value === 'string' ? parseInt(value, 10) : value;
-
     try {
+      const bytes = typeof value === 'string' ? parseInt(value, 10) : value;
+      if (Number.isNaN(bytes)) return `-Bytes`;
       if (!bytes || bytes < 1024) return `${Math.ceil(bytes || 0)}${sizes[0]}`;
       const pow = Math.floor(Math.log2(bytes) / 10);
       const multiplier = 10 ** (precision < 0 ? 0 : precision);
@@ -19,7 +19,7 @@ const BytesFormatted: React.FC<Props> = ({ value, precision = 0 }) => {
         Math.round((bytes * multiplier) / 1024 ** pow) / multiplier + sizes[pow]
       );
     } catch (e) {
-      return `Error: ${e}`;
+      return `-Bytes`;
     }
   }, [value]);
 
