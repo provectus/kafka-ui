@@ -1,12 +1,18 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import BytesFormatted from '../BytesFormatted';
+import BytesFormatted, { sizes } from '../BytesFormatted';
 
 describe('BytesFormatted', () => {
+  it('renders Bytes correctly', () => {
+    const component = shallow(
+      <BytesFormatted value={Math.floor(Math.random() * 900 + 100)} />
+    );
+    expect(component.props().children.slice(3)).toEqual('Bytes');
+  });
+
   it('renders correct units', () => {
-    const units = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let value = 1;
-    units.forEach((unit) => {
+    sizes.forEach((unit) => {
       const component = shallow(<BytesFormatted value={value} />);
       expect(component.props().children.slice(1)).toEqual(`${unit}`);
       value *= 1024;
@@ -28,5 +34,10 @@ describe('BytesFormatted', () => {
         ).toBeLessThanOrEqual(i);
       }
     }
+  });
+
+  it('correctly handles invalid props', () => {
+    const component = shallow(<BytesFormatted value={10000} precision={-1} />);
+    expect(component.props().children.slice(0, -2)).toEqual('10');
   });
 });

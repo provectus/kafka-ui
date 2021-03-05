@@ -95,7 +95,6 @@ exports[`New View matches snapshot 1`] = `
                   >
                     <span
                       className=""
-                      data-testid="breadcrumb-children-wrapper"
                     >
                       New Schema
                     </span>

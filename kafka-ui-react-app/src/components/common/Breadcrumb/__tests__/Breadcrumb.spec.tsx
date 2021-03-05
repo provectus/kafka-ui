@@ -34,10 +34,10 @@ describe('Breadcrumb component', () => {
     });
   });
   it('renders the children', () => {
-    expect(
-      component
-        .find('[data-testid="breadcrumb-children-wrapper"]')
-        .contains(child)
-    ).toBeTruthy();
+    const list = component.find('ul').children();
+    expect(list.last().containsMatchingElement(child)).toBeTruthy();
+  });
+  it('matches the snapshot', () => {
+    expect(component).toMatchSnapshot();
   });
 });

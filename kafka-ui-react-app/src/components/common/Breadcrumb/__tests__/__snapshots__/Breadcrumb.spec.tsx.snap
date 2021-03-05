@@ -1,0 +1,165 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Breadcrumb component matches the snapshot 1`] = `
+<StaticRouter>
+  <Router
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    staticContext={Object {}}
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "link1href",
+            "label": "link1",
+          },
+          Object {
+            "href": "link2href",
+            "label": "link2",
+          },
+          Object {
+            "href": "link3href",
+            "label": "link3",
+          },
+        ]
+      }
+    >
+      <nav
+        aria-label="breadcrumbs"
+        className="breadcrumb"
+      >
+        <ul>
+          <li
+            key="link1href"
+          >
+            <NavLink
+              to="link1href"
+            >
+              <Link
+                aria-current={null}
+                to={
+                  Object {
+                    "hash": "",
+                    "pathname": "/link1href",
+                    "search": "",
+                    "state": null,
+                  }
+                }
+              >
+                <LinkAnchor
+                  aria-current={null}
+                  href="/link1href"
+                  navigate={[Function]}
+                >
+                  <a
+                    aria-current={null}
+                    href="/link1href"
+                    onClick={[Function]}
+                  >
+                    link1
+                  </a>
+                </LinkAnchor>
+              </Link>
+            </NavLink>
+          </li>
+          <li
+            key="link2href"
+          >
+            <NavLink
+              to="link2href"
+            >
+              <Link
+                aria-current={null}
+                to={
+                  Object {
+                    "hash": "",
+                    "pathname": "/link2href",
+                    "search": "",
+                    "state": null,
+                  }
+                }
+              >
+                <LinkAnchor
+                  aria-current={null}
+                  href="/link2href"
+                  navigate={[Function]}
+                >
+                  <a
+                    aria-current={null}
+                    href="/link2href"
+                    onClick={[Function]}
+                  >
+                    link2
+                  </a>
+                </LinkAnchor>
+              </Link>
+            </NavLink>
+          </li>
+          <li
+            key="link3href"
+          >
+            <NavLink
+              to="link3href"
+            >
+              <Link
+                aria-current={null}
+                to={
+                  Object {
+                    "hash": "",
+                    "pathname": "/link3href",
+                    "search": "",
+                    "state": null,
+                  }
+                }
+              >
+                <LinkAnchor
+                  aria-current={null}
+                  href="/link3href"
+                  navigate={[Function]}
+                >
+                  <a
+                    aria-current={null}
+                    href="/link3href"
+                    onClick={[Function]}
+                  >
+                    link3
+                  </a>
+                </LinkAnchor>
+              </Link>
+            </NavLink>
+          </li>
+          <li
+            className="is-active"
+          >
+            <span
+              className=""
+            >
+              <div
+                className="child"
+              />
+            </span>
+          </li>
+        </ul>
+      </nav>
+    </Breadcrumb>
+  </Router>
+</StaticRouter>
+`;
