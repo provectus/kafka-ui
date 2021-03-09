@@ -49,5 +49,12 @@ describe('List', () => {
         expect(wrapper.find('ListItem').length).toEqual(3);
       });
     });
+
+    describe('with readonly cluster', () => {
+      const wrapper = shallow(setupWrapper({ schemas, isReadOnly: true }));
+      it('does not render Create Schema button', () => {
+        expect(wrapper.exists('NavLink')).toBeFalsy();
+      });
+    });
   });
 });

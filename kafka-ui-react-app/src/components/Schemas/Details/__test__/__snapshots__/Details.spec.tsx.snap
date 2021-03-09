@@ -322,6 +322,92 @@ exports[`Details View when page with schema versions loaded when schema has vers
 </div>
 `;
 
+exports[`Details View when page with schema versions loaded when the readonly flag is set mathces the snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/Test cluster/schemas",
+            "label": "Schema Registry",
+          },
+        ]
+      }
+    >
+      test
+    </Breadcrumb>
+  </div>
+  <div
+    className="box"
+  >
+    <div
+      className="level"
+    >
+      <div
+        className="level-left"
+      >
+        <div
+          className="level-item"
+        >
+          <div
+            className="mr-1"
+          >
+            <b>
+              Latest Version
+            </b>
+          </div>
+          <div
+            className="tag is-info is-light"
+            title="Version"
+          >
+            #
+            1
+          </div>
+        </div>
+      </div>
+    </div>
+    <LatestVersionItem
+      schema={
+        Object {
+          "compatibilityLevel": "BACKWARD",
+          "id": 1,
+          "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+          "subject": "test",
+          "version": "1",
+        }
+      }
+    />
+  </div>
+  <div
+    className="box"
+  >
+    <table
+      className="table is-striped is-fullwidth"
+    >
+      <thead>
+        <tr>
+          <th>
+            Version
+          </th>
+          <th>
+            ID
+          </th>
+          <th>
+            Schema
+          </th>
+        </tr>
+      </thead>
+      <tbody />
+    </table>
+  </div>
+</div>
+`;
+
 exports[`Details View when page with schema versions loaded when versions are empty matches snapshot 1`] = `
 <div
   className="section"

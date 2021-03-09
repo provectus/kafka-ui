@@ -101,6 +101,12 @@ describe('Details', () => {
           expect(shallow(setupWrapper({ versions }))).toMatchSnapshot();
         });
       });
+
+      describe('when the readonly flag is set', () => {
+        it('mathces the snapshot', () => {
+          expect(shallow(setupWrapper({ isReadOnly: true }))).toMatchSnapshot();
+        });
+      });
     });
   });
 });
