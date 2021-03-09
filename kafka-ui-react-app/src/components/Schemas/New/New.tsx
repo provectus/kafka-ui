@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterName, SchemaName, NewSchemaSubjectRaw } from 'redux/interfaces';
+import { ClusterName, NewSchemaSubjectRaw } from 'redux/interfaces';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
