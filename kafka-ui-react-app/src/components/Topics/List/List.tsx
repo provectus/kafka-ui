@@ -9,9 +9,15 @@ interface Props {
   clusterName: ClusterName;
   topics: TopicWithDetailedInfo[];
   externalTopics: TopicWithDetailedInfo[];
+  isReadOnly?: boolean | undefined;
 }
 
-const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
+const List: React.FC<Props> = ({
+  clusterName,
+  topics,
+  externalTopics,
+  isReadOnly,
+}) => {
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
 
   const handleSwitch = () => setShowInternal(!showInternal);
@@ -38,12 +44,14 @@ const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
             </div>
           </div>
           <div className="level-item level-right">
-            <NavLink
-              className="button is-primary"
-              to={clusterTopicNewPath(clusterName)}
-            >
-              Add a Topic
-            </NavLink>
+            {!isReadOnly && (
+              <NavLink
+                className="button is-primary"
+                to={clusterTopicNewPath(clusterName)}
+              >
+                Add a Topic
+              </NavLink>
+            )}
           </div>
         </div>
       </div>

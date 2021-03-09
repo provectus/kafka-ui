@@ -18,9 +18,10 @@ import SettingsEditButton from './Settings/SettingsEditButton';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
+  isReadOnly: boolean | undefined;
 }
 
-const Details: React.FC<Props> = ({ clusterName, topicName }) => {
+const Details: React.FC<Props> = ({ clusterName, topicName, isReadOnly }) => {
   return (
     <div className="section">
       <div className="level">
@@ -33,9 +34,11 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
             {topicName}
           </Breadcrumb>
         </div>
-        <SettingsEditButton
-          to={clusterTopicsTopicEditPath(clusterName, topicName)}
-        />
+        {!isReadOnly && (
+          <SettingsEditButton
+            to={clusterTopicsTopicEditPath(clusterName, topicName)}
+          />
+        )}
       </div>
 
       <div className="box">

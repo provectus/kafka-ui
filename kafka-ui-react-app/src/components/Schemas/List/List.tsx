@@ -7,9 +7,10 @@ import ListItem from './ListItem';
 
 export interface ListProps {
   schemas: SchemaSubject[];
+  isReadOnly?: boolean | undefined;
 }
 
-const List: React.FC<ListProps> = ({ schemas }) => {
+const List: React.FC<ListProps> = ({ schemas, isReadOnly }) => {
   const { clusterName } = useParams<{ clusterName: string }>();
 
   return (
@@ -17,14 +18,16 @@ const List: React.FC<ListProps> = ({ schemas }) => {
       <Breadcrumb>Schema Registry</Breadcrumb>
       <div className="box">
         <div className="level">
-          <div className="level-item level-right">
-            <NavLink
-              className="button is-primary"
-              to={clusterSchemaNewPath(clusterName)}
-            >
-              Create Schema
-            </NavLink>
-          </div>
+          {!isReadOnly && (
+            <div className="level-item level-right">
+              <NavLink
+                className="button is-primary"
+                to={clusterSchemaNewPath(clusterName)}
+              >
+                Create Schema
+              </NavLink>
+            </div>
+          )}
         </div>
       </div>
 

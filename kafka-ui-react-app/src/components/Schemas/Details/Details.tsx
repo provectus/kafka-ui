@@ -12,6 +12,7 @@ export interface DetailsProps {
   clusterName: ClusterName;
   versions: SchemaSubject[];
   isFetched: boolean;
+  isReadOnly?: boolean | undefined;
   fetchSchemaVersions: (
     clusterName: ClusterName,
     schemaName: SchemaName
@@ -24,6 +25,7 @@ const Details: React.FC<DetailsProps> = ({
   fetchSchemaVersions,
   versions,
   isFetched,
+  isReadOnly,
 }) => {
   React.useEffect(() => {
     fetchSchemaVersions(clusterName, schema.subject as SchemaName);
@@ -54,24 +56,26 @@ const Details: React.FC<DetailsProps> = ({
               </div>
             </div>
           </div>
-          <div className="level-right">
-            <button
-              className="button is-warning is-small level-item"
-              type="button"
-              title="in development"
-              disabled
-            >
-              Update Schema
-            </button>
-            <button
-              className="button is-danger is-small level-item"
-              type="button"
-              title="in development"
-              disabled
-            >
-              Delete
-            </button>
-          </div>
+          {!isReadOnly && (
+            <div className="level-right">
+              <button
+                className="button is-warning is-small level-item"
+                type="button"
+                title="in development"
+                disabled
+              >
+                Update Schema
+              </button>
+              <button
+                className="button is-danger is-small level-item"
+                type="button"
+                title="in development"
+                disabled
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
         <LatestVersionItem schema={schema} />
       </div>

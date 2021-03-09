@@ -24,3 +24,9 @@ export const getOnlineClusters = createSelector(getClusterList, (clusters) =>
 export const getOfflineClusters = createSelector(getClusterList, (clusters) =>
   clusters.filter(({ status }) => status === ServerStatus.OFFLINE)
 );
+
+export const getClustersReadonlyStatus = (clusterName: string) =>
+  createSelector(
+    getClusterList,
+    (clusters) => clusters.find(({ name }) => name === clusterName)?.readOnly
+  );
