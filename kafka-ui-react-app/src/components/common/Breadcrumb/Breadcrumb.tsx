@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
-interface Link {
+export interface Link {
   label: string;
   href: string;
 }
