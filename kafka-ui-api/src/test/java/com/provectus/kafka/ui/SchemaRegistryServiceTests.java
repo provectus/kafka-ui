@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.NewSchemaSubject;
 import com.provectus.kafka.ui.model.SchemaSubject;
 import com.provectus.kafka.ui.model.SchemaType;
 import lombok.extern.log4j.Log4j2;
@@ -10,11 +11,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.UUID;
@@ -49,6 +52,53 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, unknownSchema)
                 .exchange()
                 .expectStatus().isNotFound();
+    }
+
+    @Test
+    void shouldReturn409WhenSchemaDuplicatesThePreviousVersion() {
+        String schema = "{\"subject\":\"%s\",\"schemaType\":\"AVRO\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}";
+
+        webTestClient
+                .post()
+                .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(schema.formatted(subject)))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.OK);
+
+        webTestClient
+                .post()
+                .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromValue(schema.formatted(subject)))
+                .exchange()
+                .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    void shouldCreateNewProtobufSchema() {
+        String schema = "syntax = \"proto3\";\n\nmessage MyRecord {\n  int32 id = 1;\n  string name = 2;\n}\n";
+        NewSchemaSubject requestBody = new NewSchemaSubject()
+                .schemaType(SchemaType.PROTOBUF)
+                .subject(subject)
+                .schema(schema);
+        SchemaSubject actual = webTestClient
+                .post()
+                .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(BodyInserters.fromPublisher(Mono.just(requestBody), NewSchemaSubject.class))
+                .exchange()
+                .expectStatus()
+                .isOk()
+                .expectBody(SchemaSubject.class)
+                .returnResult()
+                .getResponseBody();
+
+        Assertions.assertNotNull(actual);
+        Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.BACKWARD.name(), actual.getCompatibilityLevel());
+        Assertions.assertEquals("1", actual.getVersion());
+        Assertions.assertEquals(SchemaType.PROTOBUF, actual.getSchemaType());
+        Assertions.assertEquals(schema, actual.getSchema());
     }
 
     @Test
@@ -135,7 +185,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .post()
                 .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue("{\"subject\":\"%s\",\"schemaType\":\"JSON\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}".formatted(subject)))
+                .body(BodyInserters.fromValue("{\"subject\":\"%s\",\"schemaType\":\"AVRO\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}".formatted(subject)))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(SchemaSubject.class)
@@ -159,10 +209,10 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
     private void assertResponseBodyWhenCreateNewSchema(EntityExchangeResult<SchemaSubject> exchangeResult) {
         SchemaSubject responseBody = exchangeResult.getResponseBody();
         Assertions.assertNotNull(responseBody);
-        Assertions.assertEquals(1, responseBody.getId(), "The schema ID should be non-null in the response");
-        String message = "It should be null";
-        Assertions.assertNotNull(responseBody.getSchema(), message);
-        Assertions.assertNotNull(responseBody.getSubject(), message);
-        Assertions.assertNotNull(responseBody.getVersion(), message);
+        Assertions.assertEquals("1", responseBody.getVersion());
+        Assertions.assertNotNull(responseBody.getSchema());
+        Assertions.assertNotNull(responseBody.getSubject());
+        Assertions.assertNotNull(responseBody.getCompatibilityLevel());
+        Assertions.assertEquals(SchemaType.AVRO, responseBody.getSchemaType());
     }
 }
