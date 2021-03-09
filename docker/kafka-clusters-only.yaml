@@ -3,7 +3,7 @@ version: '2'
 services:
 
   zookeeper0:
-    image: confluentinc/cp-zookeeper:5.1.0
+    image: confluentinc/cp-zookeeper:5.2.4
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -11,7 +11,7 @@ services:
     - 2181:2181
 
   kafka0:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     depends_on:
       - zookeeper0
     environment:
@@ -28,7 +28,7 @@ services:
       - 9997:9997
 
   kafka01:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     depends_on:
       - zookeeper0
     environment:
@@ -45,7 +45,7 @@ services:
       - 9999:9999
 
   zookeeper1:
-    image: confluentinc/cp-zookeeper:5.1.0
+    image: confluentinc/cp-zookeeper:5.2.4
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -53,7 +53,7 @@ services:
       - 2182:2181
 
   kafka1:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     depends_on:
       - zookeeper1
     environment:
@@ -70,7 +70,7 @@ services:
       - 9998:9998 
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:5.1.0
+    image: confluentinc/cp-schema-registry:5.2.4
     depends_on:
       - zookeeper0
       - kafka0
@@ -89,7 +89,7 @@ services:
     - 8081:8081
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:5.1.0
+    image: confluentinc/cp-kafka-connect:5.2.4
     ports:
       - 8083:8083
     depends_on:
@@ -115,7 +115,7 @@ services:
 
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     volumes:
        - ./message.json:/data/message.json
     depends_on:
