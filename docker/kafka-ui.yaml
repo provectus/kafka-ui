@@ -31,7 +31,7 @@ services:
       KAFKA_CLUSTERS_1_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
 
   zookeeper0:
-    image: confluentinc/cp-zookeeper:5.1.0
+    image: confluentinc/cp-zookeeper:5.2.4
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -39,7 +39,7 @@ services:
       - 2181:2181
 
   kafka0:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     depends_on:
       - zookeeper0
     ports:
@@ -56,13 +56,13 @@ services:
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9997
 
   zookeeper1:
-    image: confluentinc/cp-zookeeper:5.1.0
+    image: confluentinc/cp-zookeeper:5.2.4
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka1:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     depends_on:
       - zookeeper1
     ports:
@@ -79,7 +79,7 @@ services:
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka1 -Dcom.sun.management.jmxremote.rmi.port=9998
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:5.1.0
+    image: confluentinc/cp-schema-registry:5.2.4
     ports:
       - 8085:8085
     depends_on:
@@ -97,7 +97,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:5.1.0
+    image: confluentinc/cp-kafka-connect:5.2.4
     ports:
       - 8083:8083
     depends_on:
@@ -122,7 +122,7 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.1.0
+    image: confluentinc/cp-kafka:5.2.4
     volumes:
        - ./message.json:/data/message.json
     depends_on:

@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Breadcrumb component matches the snapshot 1`] = `
+<Router
+  history={
+    Object {
+      "action": "POP",
+      "block": [Function],
+      "createHref": [Function],
+      "go": [Function],
+      "goBack": [Function],
+      "goForward": [Function],
+      "listen": [Function],
+      "location": Object {
+        "hash": "",
+        "pathname": "/",
+        "search": "",
+        "state": undefined,
+      },
+      "push": [Function],
+      "replace": [Function],
+    }
+  }
+  staticContext={Object {}}
+>
+  <Breadcrumb
+    links={
+      Array [
+        Object {
+          "href": "link1href",
+          "label": "link1",
+        },
+        Object {
+          "href": "link2href",
+          "label": "link2",
+        },
+        Object {
+          "href": "link3href",
+          "label": "link3",
+        },
+      ]
+    }
+  >
+    <div
+      className="child"
+    />
+  </Breadcrumb>
+</Router>
+`;

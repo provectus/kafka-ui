@@ -215,6 +215,27 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Topic'
+    delete:
+      tags:
+        - /api/clusters
+      summary: deleteTopic
+      operationId: deleteTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
 
   /api/clusters/{clusterName}/topics/{topicName}/config:
     get:

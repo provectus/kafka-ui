@@ -5,20 +5,22 @@ interface Props {
   precision?: number;
 }
 
+export const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+
 const BytesFormatted: React.FC<Props> = ({ value, precision = 0 }) => {
-  const formatedValue = React.useMemo(() => {
-    const bytes = typeof value === 'string' ? parseInt(value, 10) : value;
-
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-    if (!bytes || bytes === 0) return [0, sizes[0]];
-
-    if (bytes < 1024) return [Math.ceil(bytes), sizes[0]];
-
-    const pow = Math.floor(Math.log2(bytes) / 10);
-    const multiplier = 10 ** (precision || 2);
-    return (
-      Math.round((bytes * multiplier) / 1024 ** pow) / multiplier + sizes[pow]
-    );
+  const formatedValue = React.useMemo((): string => {
+    try {
+      const bytes = typeof value === 'string' ? parseInt(value, 10) : value;
+      if (Number.isNaN(bytes)) return `-Bytes`;
+      if (!bytes || bytes < 1024) return `${Math.ceil(bytes || 0)}${sizes[0]}`;
+      const pow = Math.floor(Math.log2(bytes) / 10);
+      const multiplier = 10 ** (precision < 0 ? 0 : precision);
+      return (
+        Math.round((bytes * multiplier) / 1024 ** pow) / multiplier + sizes[pow]
+      );
+    } catch (e) {
+      return `-Bytes`;
+    }
   }, [value]);
 
   return <span>{formatedValue}</span>;
