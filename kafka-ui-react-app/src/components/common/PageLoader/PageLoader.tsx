@@ -2,14 +2,14 @@ import React from 'react';
 import cx from 'classnames';
 
 interface Props {
-  isFullHeight: boolean;
+  fullHeight: boolean;
 }
 
-const PageLoader: React.FC<Partial<Props>> = ({ isFullHeight = true }) => (
+const PageLoader: React.FC<Partial<Props>> = ({ fullHeight }) => (
   <section
     className={cx(
       'hero',
-      isFullHeight ? 'is-fullheight-with-navbar' : 'is-halfheight'
+      fullHeight ? 'is-fullheight-with-navbar' : 'is-halfheight'
     )}
   >
     <div
