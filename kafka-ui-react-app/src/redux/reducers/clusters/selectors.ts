@@ -28,5 +28,6 @@ export const getOfflineClusters = createSelector(getClusterList, (clusters) =>
 export const getClustersReadonlyStatus = (clusterName: string) =>
   createSelector(
     getClusterList,
-    (clusters) => clusters.find(({ name }) => name === clusterName)?.readOnly
+    (clusters): boolean =>
+      clusters.find(({ name }) => name === clusterName)?.readOnly || false
   );

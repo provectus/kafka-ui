@@ -6,14 +6,14 @@ import EditContainer from 'components/Topics/Edit/EditContainer';
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import NewContainer from './New/NewContainer';
-import ReadOnlyContext from '../contexts/ReadOnlyContext';
+import ClusterContext from '../contexts/ClusterContext';
 
 interface Props {
   clusterName: ClusterName;
   isFetched: boolean;
   fetchBrokers: (clusterName: ClusterName) => void;
   fetchTopicsList: (clusterName: ClusterName) => void;
-  isReadOnly?: boolean | undefined;
+  isReadOnly: boolean;
 }
 
 const Topics: React.FC<Props> = ({
@@ -28,7 +28,7 @@ const Topics: React.FC<Props> = ({
 
   if (isFetched) {
     return (
-      <ReadOnlyContext.Provider value={{ isReadOnly }}>
+      <ClusterContext.Provider value={{ isReadOnly }}>
         <Switch>
           <Route
             exact
@@ -50,7 +50,7 @@ const Topics: React.FC<Props> = ({
             component={DetailsContainer}
           />
         </Switch>
-      </ReadOnlyContext.Provider>
+      </ClusterContext.Provider>
     );
   }
 

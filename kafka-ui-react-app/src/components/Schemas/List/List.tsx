@@ -3,15 +3,15 @@ import { SchemaSubject } from 'generated-sources';
 import { NavLink, useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import ClusterContext from 'components/contexts/ClusterContext';
 import ListItem from './ListItem';
-import _ReadOnlyContext from '../../contexts/ReadOnlyContext';
 
 export interface ListProps {
   schemas: SchemaSubject[];
 }
 
 const List: React.FC<ListProps> = ({ schemas }) => {
-  const ReadOnlyContext = React.useContext(_ReadOnlyContext);
+  const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
 
   return (
@@ -19,7 +19,7 @@ const List: React.FC<ListProps> = ({ schemas }) => {
       <Breadcrumb>Schema Registry</Breadcrumb>
       <div className="box">
         <div className="level">
-          {!ReadOnlyContext.isReadOnly && (
+          {!isReadOnly && (
             <div className="level-item level-right">
               <NavLink
                 className="button is-primary"

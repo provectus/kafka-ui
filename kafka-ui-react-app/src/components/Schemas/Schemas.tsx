@@ -5,12 +5,12 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import NewContainer from './New/NewContainer';
-import ReadOnlyContext from '../contexts/ReadOnlyContext';
+import ClusterContext from '../contexts/ClusterContext';
 
 export interface SchemasProps {
   isFetching: boolean;
   fetchSchemasByClusterName: (clusterName: ClusterName) => void;
-  isReadOnly?: boolean | undefined;
+  isReadOnly: boolean;
 }
 
 const Schemas: React.FC<SchemasProps> = ({
@@ -29,7 +29,7 @@ const Schemas: React.FC<SchemasProps> = ({
   }
 
   return (
-    <ReadOnlyContext.Provider value={{ isReadOnly }}>
+    <ClusterContext.Provider value={{ isReadOnly }}>
       <Switch>
         <Route
           exact
@@ -47,7 +47,7 @@ const Schemas: React.FC<SchemasProps> = ({
           component={DetailsContainer}
         />
       </Switch>
-    </ReadOnlyContext.Provider>
+    </ClusterContext.Provider>
   );
 };
 

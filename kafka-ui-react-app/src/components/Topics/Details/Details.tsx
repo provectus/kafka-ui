@@ -10,11 +10,11 @@ import {
   clusterTopicMessagesPath,
   clusterTopicsTopicEditPath,
 } from 'lib/paths';
+import ClusterContext from 'components/contexts/ClusterContext';
 import OverviewContainer from './Overview/OverviewContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import SettingsEditButton from './Settings/SettingsEditButton';
-import _ReadOnlyContext from '../../contexts/ReadOnlyContext';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -22,7 +22,7 @@ interface Props extends Topic, TopicDetails {
 }
 
 const Details: React.FC<Props> = ({ clusterName, topicName }) => {
-  const ReadOnlyContext = React.useContext(_ReadOnlyContext);
+  const { isReadOnly } = React.useContext(ClusterContext);
   return (
     <div className="section">
       <div className="level">
@@ -35,7 +35,7 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
             {topicName}
           </Breadcrumb>
         </div>
-        {!ReadOnlyContext.isReadOnly && (
+        {!isReadOnly && (
           <SettingsEditButton
             to={clusterTopicsTopicEditPath(clusterName, topicName)}
           />

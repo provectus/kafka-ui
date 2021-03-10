@@ -3,10 +3,10 @@ import { Provider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
 import { StaticRouter } from 'react-router';
+import ClusterContext from 'components/contexts/ClusterContext';
 import DetailsContainer from '../DetailsContainer';
 import Details, { DetailsProps } from '../Details';
 import { schema, versions } from './fixtures';
-import ReadOnlyContext from '../../../contexts/ReadOnlyContext';
 
 describe('Details', () => {
   describe('Container', () => {
@@ -109,9 +109,9 @@ describe('Details', () => {
           expect(
             mount(
               <StaticRouter>
-                <ReadOnlyContext.Provider value={{ isReadOnly: true }}>
+                <ClusterContext.Provider value={{ isReadOnly: true }}>
                   {setupWrapper({ versions })}
-                </ReadOnlyContext.Provider>
+                </ClusterContext.Provider>
               </StaticRouter>
             ).exists('.level-right')
           ).toBeFalsy();

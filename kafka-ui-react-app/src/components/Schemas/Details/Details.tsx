@@ -2,11 +2,11 @@ import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemasPath } from 'lib/paths';
+import ClusterContext from 'components/contexts/ClusterContext';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
 import PageLoader from '../../common/PageLoader/PageLoader';
-import _ReadOnlyContext from '../../contexts/ReadOnlyContext';
 
 export interface DetailsProps {
   schema: SchemaSubject;
@@ -26,7 +26,7 @@ const Details: React.FC<DetailsProps> = ({
   versions,
   isFetched,
 }) => {
-  const ReadOnlyContext = React.useContext(_ReadOnlyContext);
+  const { isReadOnly } = React.useContext(ClusterContext);
   React.useEffect(() => {
     fetchSchemaVersions(clusterName, schema.subject as SchemaName);
   }, [fetchSchemaVersions, clusterName]);
@@ -56,7 +56,7 @@ const Details: React.FC<DetailsProps> = ({
               </div>
             </div>
           </div>
-          {!ReadOnlyContext.isReadOnly && (
+          {!isReadOnly && (
             <div className="level-right">
               <button
                 className="button is-warning is-small level-item"

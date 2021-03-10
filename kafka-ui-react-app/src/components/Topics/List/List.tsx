@@ -3,8 +3,8 @@ import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
+import ClusterContext from 'components/contexts/ClusterContext';
 import ListItem from './ListItem';
-import _ReadOnlyContext from '../../contexts/ReadOnlyContext';
 
 interface Props {
   clusterName: ClusterName;
@@ -16,7 +16,7 @@ const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
 
   const handleSwitch = () => setShowInternal(!showInternal);
-  const ReadOnlyContext = React.useContext(_ReadOnlyContext);
+  const { isReadOnly } = React.useContext(ClusterContext);
   const items = showInternal ? topics : externalTopics;
 
   return (
@@ -39,7 +39,7 @@ const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
             </div>
           </div>
           <div className="level-item level-right">
-            {!ReadOnlyContext.isReadOnly && (
+            {!isReadOnly && (
               <NavLink
                 className="button is-primary"
                 to={clusterTopicNewPath(clusterName)}

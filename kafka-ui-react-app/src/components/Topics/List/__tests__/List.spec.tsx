@@ -1,7 +1,7 @@
 import { mount } from 'enzyme';
 import React from 'react';
+import ClusterContext from 'components/contexts/ClusterContext';
 import List from '../List';
-import ReadOnlyContext from '../../../contexts/ReadOnlyContext';
 
 describe('List', () => {
   describe('when it has readonly flag', () => {
@@ -12,9 +12,9 @@ describe('List', () => {
         externalTopics: [],
       };
       const component = mount(
-        <ReadOnlyContext.Provider value={{ isReadOnly: true }}>
+        <ClusterContext.Provider value={{ isReadOnly: true }}>
           <List {...props} />
-        </ReadOnlyContext.Provider>
+        </ClusterContext.Provider>
       );
       expect(component.exists('NavLink')).toBeFalsy();
     });

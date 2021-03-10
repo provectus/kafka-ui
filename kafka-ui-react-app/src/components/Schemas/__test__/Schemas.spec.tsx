@@ -30,6 +30,7 @@ describe('Schemas', () => {
           <Schemas
             isFetching
             fetchSchemasByClusterName={jest.fn()}
+            isReadOnly={false}
             {...props}
           />
         </StaticRouter>
