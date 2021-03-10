@@ -18,6 +18,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionInfo;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
@@ -32,6 +33,7 @@ import reactor.util.function.Tuples;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -489,5 +491,11 @@ public class KafkaService {
         } catch (Exception e) {
             return Collections.emptyMap();
         }
+    }
+
+    public Mono<Void> deleteTopicMessages(KafkaCluster cluster, String topicName, Map<TopicPartition, Long> offsets) {
+        var records = offsets.entrySet().stream().map(entry -> Map.entry(entry.getKey(), RecordsToDelete.beforeOffset(entry.getValue()))).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getOrCreateAdminClient(cluster).map(ExtendedAdminClient::getAdminClient)
+                .map(ac -> ac.deleteRecords(records)).then();
     }
 }

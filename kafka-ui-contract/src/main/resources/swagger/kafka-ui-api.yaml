@@ -309,6 +309,25 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/TopicMessage'
+    delete:
+      tags:
+        - /api/clusters
+      summary: deleteTopicMessages
+      operationId: deleteTopicMessages
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:

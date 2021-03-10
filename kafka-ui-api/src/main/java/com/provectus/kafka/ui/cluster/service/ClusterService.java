@@ -196,4 +196,17 @@ public class ClusterService {
                 .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
                 .orElse(Flux.empty());
     }
+
+    public Mono<Void> deleteTopicMessages(String clusterName, String topicName) {
+        var cluster = clustersStorage.getClusterByName(clusterName)
+                .orElseThrow(() -> new NotFoundException("No such cluster"));
+        var partitions = getTopicDetails(clusterName, topicName)
+                .orElseThrow(() -> new NotFoundException("No such topcic"))
+                .getPartitions().stream()
+                .map(Partition::getPartition)
+                .map(partition -> new TopicPartition(topicName, partition))
+                .collect(Collectors.toList());
+        return consumingService.loadOffsets(cluster, partitions)
+                .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, topicName, offsets)).next();
+    }
 }

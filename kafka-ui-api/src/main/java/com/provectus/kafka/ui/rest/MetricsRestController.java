@@ -85,6 +85,11 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
+    public Mono<ResponseEntity<Void>> deleteTopicMessages(String clusterName, String topicName, ServerWebExchange exchange) {
+        return clusterService.deleteTopicMessages(clusterName, topicName).map(ResponseEntity::ok);
+    }
+
+    @Override
     public Mono<ResponseEntity<Topic>> createTopic(String clusterName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
         return clusterService.createTopic(clusterName, topicFormData)
                 .map(s -> new ResponseEntity<>(s, HttpStatus.OK))

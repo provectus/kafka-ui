@@ -55,6 +55,12 @@ public class ConsumingService {
 				.limitRequest(recordsLimit);
 	}
 
+	public Flux<Map<TopicPartition, Long>> loadOffsets(KafkaCluster cluster, List<TopicPartition> partitions) {
+		OffsetEmitter emitter = new OffsetEmitter(kafkaService, cluster, partitions);
+		return Flux.create(emitter::emit)
+				.subscribeOn(Schedulers.boundedElastic());
+	}
+
 	private boolean filterTopicMessage(TopicMessage message, String query) {
 		if (StringUtils.isEmpty(query)) {
 			return true;
@@ -180,5 +186,23 @@ public class ConsumingService {
 			consumer.assign(partitions);
 			consumer.seekToBeginning(partitions);
 		}
+	}
+
+	@RequiredArgsConstructor
+	private static class OffsetEmitter {
+		private final KafkaService kafkaService;
+		private final KafkaCluster cluster;
+		private final List<TopicPartition> partitions;
+
+		public void emit(FluxSink<Map<TopicPartition, Long>> sink) {
+			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
+				Map<TopicPartition, Long> offsets = consumer.endOffsets(partitions);
+				sink.next(offsets);
+			} catch (Exception e) {
+				log.error("Error occurred while consuming records", e);
+				throw new RuntimeException(e);
+			}
+		}
+
 	}
 }
