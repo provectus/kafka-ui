@@ -1381,6 +1381,7 @@ components:
       required:
         - subject
         - schema
+        - schemaType
 
     CompatibilityLevel:
       type: object

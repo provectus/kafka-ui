@@ -161,7 +161,8 @@ public class SchemaRegistryService {
     public Mono<SchemaSubject> registerNewSchema(String clusterName, Mono<NewSchemaSubject> newSchemaSubject) {
         return newSchemaSubject
                 .flatMap(schema -> {
-                    Mono<InternalNewSchema> newSchema = Mono.just(new InternalNewSchema(schema));
+                    SchemaType schemaType = SchemaType.AVRO == schema.getSchemaType() ? null : schema.getSchemaType();
+                    Mono<InternalNewSchema> newSchema = Mono.just(new InternalNewSchema(schema.getSchema(), schemaType));
                     String subject = schema.getSubject();
                     return clustersStorage.getClusterByName(clusterName)
                             .map(KafkaCluster::getSchemaRegistry)
