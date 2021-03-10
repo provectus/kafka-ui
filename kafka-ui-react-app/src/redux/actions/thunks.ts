@@ -296,5 +296,6 @@ export const createSchema = (
     dispatch(actions.createSchemaAction.success(schema));
   } catch (e) {
     dispatch(actions.createSchemaAction.failure());
+    throw e;
   }
 };
