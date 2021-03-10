@@ -13,7 +13,7 @@ kafka:
       name: secondLocal
       bootstrapServers: localhost:9093
       zookeeper: localhost:2182
-      schemaRegistry: http://localhost:8081
+      schemaRegistry: http://localhost:18085
       kafkaConnect:
         - name: first
           address: http://localhost:8083

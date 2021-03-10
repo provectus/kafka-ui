@@ -358,6 +358,35 @@ paths:
                   $ref: '#/components/schemas/ConsumerGroup'
 
   /api/clusters/{clusterName}/schemas:
+    post:
+      tags:
+        - /api/clusters
+      summary: create a new subject schema
+      operationId: createNewSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewSchemaSubject'
+      responses:
+        200:
+          description: Ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SchemaSubject'
+        400:
+          description: Bad request
+        409:
+          description: Duplicate schema
+        422:
+          description: Invalid parameters
     get:
       tags:
         - /api/clusters
@@ -380,36 +409,6 @@ paths:
                   $ref: '#/components/schemas/SchemaSubject'
 
   /api/clusters/{clusterName}/schemas/{subject}:
-    post:
-      tags:
-        - /api/clusters
-      summary: create a new subject schema
-      operationId: createNewSchema
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: subject
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/NewSchemaSubject'
-      responses:
-        200:
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SchemaSubject'
-        400:
-          description: Bad request
     delete:
       tags:
         - /api/clusters
@@ -1360,16 +1359,29 @@ components:
           type: string
         compatibilityLevel:
           type: string
+        schemaType:
+          $ref: '#/components/schemas/SchemaType'
       required:
         - id
+        - subject
+        - version
+        - schema
+        - compatibilityLevel
+        - schemaType
 
     NewSchemaSubject:
       type: object
       properties:
+        subject:
+          type: string
         schema:
           type: string
+        schemaType:
+          $ref: '#/components/schemas/SchemaType'
       required:
+        - subject
         - schema
+        - schemaType
 
     CompatibilityLevel:
       type: object
@@ -1387,13 +1399,12 @@ components:
       required:
         - compatibility
 
-#    CompatibilityLevelResponse:
-#      type: object
-#      properties:
-#        compatibilityLevel:
-#          type: string
-#      required:
-#        - compatibilityLevel
+    SchemaType:
+      type: string
+      enum:
+        - AVRO
+        - JSON
+        - PROTOBUF
 
     CompatibilityCheckResponse:
       type: object

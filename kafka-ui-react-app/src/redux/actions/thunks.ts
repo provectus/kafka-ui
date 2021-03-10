@@ -285,19 +285,16 @@ export const fetchSchemaVersions = (
 
 export const createSchema = (
   clusterName: ClusterName,
-  subject: SchemaName,
   newSchemaSubject: NewSchemaSubject
 ): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.createSchemaAction.request());
   try {
     const schema: SchemaSubject = await apiClient.createNewSchema({
       clusterName,
-      subject,
       newSchemaSubject,
     });
     dispatch(actions.createSchemaAction.success(schema));
   } catch (e) {
     dispatch(actions.createSchemaAction.failure());
-    throw e;
   }
 };

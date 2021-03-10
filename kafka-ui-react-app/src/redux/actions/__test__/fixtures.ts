@@ -1,4 +1,4 @@
-import { ClusterStats, NewSchemaSubject } from 'generated-sources';
+import { ClusterStats, NewSchemaSubject, SchemaType } from 'generated-sources';
 
 export const clusterStats: ClusterStats = {
   brokerCount: 1,
@@ -13,6 +13,8 @@ export const clusterStats: ClusterStats = {
 };
 
 export const schemaPayload: NewSchemaSubject = {
+  subject: 'NewSchema',
   schema:
     '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
+  schemaType: SchemaType.JSON,
 };

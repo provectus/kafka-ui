@@ -249,7 +249,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(ConnectorPlugin.class)
-                .value(plugins -> assertEquals(13, plugins.size()));
+                .value(plugins -> assertEquals(14, plugins.size()));
     }
 
     @Test

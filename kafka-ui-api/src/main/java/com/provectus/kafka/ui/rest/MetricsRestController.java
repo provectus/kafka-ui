@@ -106,7 +106,7 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String subject, ServerWebExchange exchange) {
-        return schemaRegistryService.getLatestSchemaSubject(clusterName, subject).map(ResponseEntity::ok);
+        return schemaRegistryService.getLatestSchemaVersionBySubject(clusterName, subject).map(ResponseEntity::ok);
     }
 
     @Override
@@ -138,14 +138,16 @@ public class MetricsRestController implements ApiClustersApi {
 
     @Override
     public Mono<ResponseEntity<Void>> deleteSchema(String clusterName, String subjectName, ServerWebExchange exchange) {
-        return schemaRegistryService.deleteSchemaSubject(clusterName, subjectName);
+        return schemaRegistryService.deleteSchemaSubjectEntirely(clusterName, subjectName);
     }
 
     @Override
-    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName, String subject,
+    public Mono<ResponseEntity<SchemaSubject>> createNewSchema(String clusterName,
                                                                @Valid Mono<NewSchemaSubject> newSchemaSubject,
                                                                ServerWebExchange exchange) {
-        return schemaRegistryService.createNewSubject(clusterName, subject, newSchemaSubject);
+        return schemaRegistryService
+                .registerNewSchema(clusterName, newSchemaSubject)
+                .map(ResponseEntity::ok);
     }
 
     @Override
