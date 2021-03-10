@@ -58,20 +58,16 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
      * It should create a new schema w/o submitting a schemaType field to Schema Registry
      */
     @Test
-    void shouldCreateNewSchemaWhenSchemaTypeNotPresents() {
+    void shouldBeBadRequestIfNoSchemaType() {
         String schema = "{\"subject\":\"%s\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}";
 
-        SchemaSubject actualResponse = webTestClient
+        webTestClient
                 .post()
                 .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(BodyInserters.fromValue(schema.formatted(subject)))
                 .exchange()
-                .expectStatus().isEqualTo(HttpStatus.OK)
-                .expectBody(SchemaSubject.class).returnResult().getResponseBody();
-
-        Assertions.assertNotNull(actualResponse);
-        Assertions.assertEquals(SchemaType.AVRO, actualResponse.getSchemaType());
+                .expectStatus().isBadRequest();
     }
 
     @Test
