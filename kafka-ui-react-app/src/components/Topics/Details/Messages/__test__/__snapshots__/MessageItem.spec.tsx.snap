@@ -36,14 +36,56 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     }
   >
-    <JSONViewer
-      data={
-        Object {
-          "foo": "bar",
-          "key": "val",
+    <div>
+      <div
+        style={
+          Object {
+            "display": "flex",
+            "justifyContent": "center",
+          }
         }
-      }
-    />
+      >
+        <button
+          className="button is-link is-outlined topic-message-button"
+          data-title="Copy the message to the clipboard"
+          onClick={[Function]}
+          style={
+            Object {
+              "height": "30px",
+              "marginRight": "5px",
+            }
+          }
+          type="button"
+        >
+          <i
+            className="far fa-clipboard"
+          />
+        </button>
+        <button
+          className="button is-link is-outlined topic-message-button"
+          data-title="Download the message as a .json/.txt file"
+          onClick={[Function]}
+          style={
+            Object {
+              "height": "30px",
+            }
+          }
+          type="button"
+        >
+          <i
+            className="fas fa-file-download"
+          />
+        </button>
+      </div>
+      <JSONViewer
+        data={
+          Object {
+            "foo": "bar",
+            "key": "val",
+          }
+        }
+      />
+    </div>
   </td>
 </tr>
 `;
