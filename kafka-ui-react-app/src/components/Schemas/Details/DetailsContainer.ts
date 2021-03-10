@@ -6,7 +6,6 @@ import {
   getSchema,
   getSortedSchemaVersions,
 } from 'redux/reducers/schemas/selectors';
-import { getClustersReadonlyStatus } from 'redux/reducers/clusters/selectors';
 import { fetchSchemaVersions } from 'redux/actions';
 import Details from './Details';
 
@@ -29,7 +28,6 @@ const mapStateToProps = (
   versions: getSortedSchemaVersions(state),
   isFetched: getIsSchemaVersionFetched(state),
   clusterName,
-  isReadOnly: getClustersReadonlyStatus(clusterName)(state),
 });
 
 const mapDispatchToProps = {

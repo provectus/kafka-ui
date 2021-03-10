@@ -1,10 +1,12 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
+import { StaticRouter } from 'react-router';
 import DetailsContainer from '../DetailsContainer';
 import Details, { DetailsProps } from '../Details';
 import { schema, versions } from './fixtures';
+import ReadOnlyContext from '../../../contexts/ReadOnlyContext';
 
 describe('Details', () => {
   describe('Container', () => {
@@ -103,8 +105,16 @@ describe('Details', () => {
       });
 
       describe('when the readonly flag is set', () => {
-        it('mathces the snapshot', () => {
-          expect(shallow(setupWrapper({ isReadOnly: true }))).toMatchSnapshot();
+        it('does not render update & delete buttons', () => {
+          expect(
+            mount(
+              <StaticRouter>
+                <ReadOnlyContext.Provider value={{ isReadOnly: true }}>
+                  {setupWrapper({ versions })}
+                </ReadOnlyContext.Provider>
+              </StaticRouter>
+            ).exists('.level-right')
+          ).toBeFalsy();
         });
       });
     });

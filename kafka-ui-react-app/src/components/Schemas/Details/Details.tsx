@@ -6,13 +6,13 @@ import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
 import PageLoader from '../../common/PageLoader/PageLoader';
+import _ReadOnlyContext from '../../contexts/ReadOnlyContext';
 
 export interface DetailsProps {
   schema: SchemaSubject;
   clusterName: ClusterName;
   versions: SchemaSubject[];
   isFetched: boolean;
-  isReadOnly?: boolean | undefined;
   fetchSchemaVersions: (
     clusterName: ClusterName,
     schemaName: SchemaName
@@ -25,8 +25,8 @@ const Details: React.FC<DetailsProps> = ({
   fetchSchemaVersions,
   versions,
   isFetched,
-  isReadOnly,
 }) => {
+  const ReadOnlyContext = React.useContext(_ReadOnlyContext);
   React.useEffect(() => {
     fetchSchemaVersions(clusterName, schema.subject as SchemaName);
   }, [fetchSchemaVersions, clusterName]);
@@ -56,7 +56,7 @@ const Details: React.FC<DetailsProps> = ({
               </div>
             </div>
           </div>
-          {!isReadOnly && (
+          {!ReadOnlyContext.isReadOnly && (
             <div className="level-right">
               <button
                 className="button is-warning is-small level-item"

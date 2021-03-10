@@ -4,24 +4,19 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import ListItem from './ListItem';
+import _ReadOnlyContext from '../../contexts/ReadOnlyContext';
 
 interface Props {
   clusterName: ClusterName;
   topics: TopicWithDetailedInfo[];
   externalTopics: TopicWithDetailedInfo[];
-  isReadOnly?: boolean | undefined;
 }
 
-const List: React.FC<Props> = ({
-  clusterName,
-  topics,
-  externalTopics,
-  isReadOnly,
-}) => {
+const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
 
   const handleSwitch = () => setShowInternal(!showInternal);
-
+  const ReadOnlyContext = React.useContext(_ReadOnlyContext);
   const items = showInternal ? topics : externalTopics;
 
   return (
@@ -44,7 +39,7 @@ const List: React.FC<Props> = ({
             </div>
           </div>
           <div className="level-item level-right">
-            {!isReadOnly && (
+            {!ReadOnlyContext.isReadOnly && (
               <NavLink
                 className="button is-primary"
                 to={clusterTopicNewPath(clusterName)}

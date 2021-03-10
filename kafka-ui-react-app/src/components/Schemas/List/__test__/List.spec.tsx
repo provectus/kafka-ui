@@ -3,6 +3,7 @@ import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
 import configureStore from 'redux/store/configureStore';
+import ReadOnlyContext from 'components/contexts/ReadOnlyContext';
 import ListContainer from '../ListContainer';
 import List, { ListProps } from '../List';
 import { schemas } from './fixtures';
@@ -51,7 +52,13 @@ describe('List', () => {
     });
 
     describe('with readonly cluster', () => {
-      const wrapper = shallow(setupWrapper({ schemas, isReadOnly: true }));
+      const wrapper = mount(
+        <StaticRouter>
+          <ReadOnlyContext.Provider value={{ isReadOnly: true }}>
+            {setupWrapper({ schemas: [] })}
+          </ReadOnlyContext.Provider>
+        </StaticRouter>
+      );
       it('does not render Create Schema button', () => {
         expect(wrapper.exists('NavLink')).toBeFalsy();
       });

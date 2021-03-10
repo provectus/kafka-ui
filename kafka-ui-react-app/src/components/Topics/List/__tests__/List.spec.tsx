@@ -1,6 +1,7 @@
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import React from 'react';
 import List from '../List';
+import ReadOnlyContext from '../../../contexts/ReadOnlyContext';
 
 describe('List', () => {
   describe('when it has readonly flag', () => {
@@ -9,9 +10,12 @@ describe('List', () => {
         clusterName: 'Cluster',
         topics: [],
         externalTopics: [],
-        isReadOnly: true,
       };
-      const component = shallow(<List {...props} />);
+      const component = mount(
+        <ReadOnlyContext.Provider value={{ isReadOnly: true }}>
+          <List {...props} />
+        </ReadOnlyContext.Provider>
+      );
       expect(component.exists('NavLink')).toBeFalsy();
     });
   });
