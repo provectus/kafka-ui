@@ -16,7 +16,9 @@ exports[`Details View Initial state matches snapshot 1`] = `
           },
         ]
       }
-    />
+    >
+      test
+    </Breadcrumb>
   </div>
   <div
     className="box"
@@ -121,7 +123,9 @@ exports[`Details View when page with schema versions is loading matches snapshot
           },
         ]
       }
-    />
+    >
+      test
+    </Breadcrumb>
   </div>
   <PageLoader />
 </div>
@@ -143,7 +147,9 @@ exports[`Details View when page with schema versions loaded when schema has vers
           },
         ]
       }
-    />
+    >
+      test
+    </Breadcrumb>
   </div>
   <div
     className="box"
@@ -275,7 +281,9 @@ exports[`Details View when page with schema versions loaded when versions are em
           },
         ]
       }
-    />
+    >
+      test
+    </Breadcrumb>
   </div>
   <div
     className="box"
