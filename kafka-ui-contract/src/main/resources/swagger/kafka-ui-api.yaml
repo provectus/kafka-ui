@@ -328,6 +328,8 @@ paths:
       responses:
         200:
           description: OK
+        404:
+          description: Not found
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:

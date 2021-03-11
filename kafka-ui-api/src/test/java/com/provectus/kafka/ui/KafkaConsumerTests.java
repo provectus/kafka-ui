@@ -65,4 +65,15 @@ public class KafkaConsumerTests extends AbstractBaseTest {
                 .expectBodyList(TopicMessage.class)
                 .hasSize(0);
     }
+
+    @Test
+    public void shouldReturn404ForNonExistingTopic() {
+        var topicName = UUID.randomUUID().toString();
+
+        webTestClient.delete()
+                .uri("/api/clusters/{clusterName}/topics/{topicName}/messages", LOCAL, topicName)
+                .exchange()
+                .expectStatus()
+                .isNotFound();
+    }
 }
