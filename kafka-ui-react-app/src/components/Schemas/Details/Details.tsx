@@ -2,6 +2,7 @@ import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemasPath } from 'lib/paths';
+import ClusterContext from 'components/contexts/ClusterContext';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
@@ -25,6 +26,7 @@ const Details: React.FC<DetailsProps> = ({
   versions,
   isFetched,
 }) => {
+  const { isReadOnly } = React.useContext(ClusterContext);
   React.useEffect(() => {
     fetchSchemaVersions(clusterName, schema.subject as SchemaName);
   }, [fetchSchemaVersions, clusterName]);
@@ -54,24 +56,26 @@ const Details: React.FC<DetailsProps> = ({
               </div>
             </div>
           </div>
-          <div className="level-right">
-            <button
-              className="button is-warning is-small level-item"
-              type="button"
-              title="in development"
-              disabled
-            >
-              Update Schema
-            </button>
-            <button
-              className="button is-danger is-small level-item"
-              type="button"
-              title="in development"
-              disabled
-            >
-              Delete
-            </button>
-          </div>
+          {!isReadOnly && (
+            <div className="level-right">
+              <button
+                className="button is-warning is-small level-item"
+                type="button"
+                title="in development"
+                disabled
+              >
+                Update Schema
+              </button>
+              <button
+                className="button is-danger is-small level-item"
+                type="button"
+                title="in development"
+                disabled
+              >
+                Delete
+              </button>
+            </div>
+          )}
         </div>
         <LatestVersionItem schema={schema} />
       </div>

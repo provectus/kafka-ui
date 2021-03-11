@@ -3,6 +3,7 @@ import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
 import configureStore from 'redux/store/configureStore';
+import ClusterContext from 'components/contexts/ClusterContext';
 import ListContainer from '../ListContainer';
 import List, { ListProps } from '../List';
 import { schemas } from './fixtures';
@@ -47,6 +48,19 @@ describe('List', () => {
         expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.find('ListItem').length).toEqual(3);
+      });
+    });
+
+    describe('with readonly cluster', () => {
+      const wrapper = mount(
+        <StaticRouter>
+          <ClusterContext.Provider value={{ isReadOnly: true }}>
+            {setupWrapper({ schemas: [] })}
+          </ClusterContext.Provider>
+        </StaticRouter>
+      );
+      it('does not render Create Schema button', () => {
+        expect(wrapper.exists('NavLink')).toBeFalsy();
       });
     });
   });

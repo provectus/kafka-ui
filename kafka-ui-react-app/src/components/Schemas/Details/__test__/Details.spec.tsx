@@ -1,7 +1,9 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { shallow } from 'enzyme';
+import { shallow, mount } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
+import { StaticRouter } from 'react-router';
+import ClusterContext from 'components/contexts/ClusterContext';
 import DetailsContainer from '../DetailsContainer';
 import Details, { DetailsProps } from '../Details';
 import { schema, versions } from './fixtures';
@@ -99,6 +101,20 @@ describe('Details', () => {
 
         it('matches snapshot', () => {
           expect(shallow(setupWrapper({ versions }))).toMatchSnapshot();
+        });
+      });
+
+      describe('when the readonly flag is set', () => {
+        it('does not render update & delete buttons', () => {
+          expect(
+            mount(
+              <StaticRouter>
+                <ClusterContext.Provider value={{ isReadOnly: true }}>
+                  {setupWrapper({ versions })}
+                </ClusterContext.Provider>
+              </StaticRouter>
+            ).exists('.level-right')
+          ).toBeFalsy();
         });
       });
     });
