@@ -124,13 +124,17 @@ describe('Thunks', () => {
 
     it('creates POST_SCHEMA__FAILURE when posting new schema', async () => {
       fetchMock.postOnce(`/api/clusters/${clusterName}/schemas`, 404);
-      await store.dispatch(
-        thunks.createSchema(clusterName, fixtures.schemaPayload)
-      );
-      expect(store.getActions()).toEqual([
-        actions.createSchemaAction.request(),
-        actions.createSchemaAction.failure(),
-      ]);
+      try {
+        await store.dispatch(
+          thunks.createSchema(clusterName, fixtures.schemaPayload)
+        );
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.createSchemaAction.request(),
+          actions.createSchemaAction.failure(),
+        ]);
+      }
     });
   });
 });

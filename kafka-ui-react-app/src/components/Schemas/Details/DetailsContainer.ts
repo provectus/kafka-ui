@@ -24,6 +24,7 @@ const mapStateToProps = (
     },
   }: OwnProps
 ) => ({
+  subject,
   schema: getSchema(state, subject),
   versions: getSortedSchemaVersions(state),
   isFetched: getIsSchemaVersionFetched(state),

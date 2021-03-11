@@ -127,68 +127,6 @@ exports[`Details View when page with schema versions is loading matches snapshot
       test
     </Breadcrumb>
   </div>
-  <div
-    className="box"
-  >
-    <div
-      className="level"
-    >
-      <div
-        className="level-left"
-      >
-        <div
-          className="level-item"
-        >
-          <div
-            className="mr-1"
-          >
-            <b>
-              Latest Version
-            </b>
-          </div>
-          <div
-            className="tag is-info is-light"
-            title="Version"
-          >
-            #
-            1
-          </div>
-        </div>
-      </div>
-      <div
-        className="level-right"
-      >
-        <button
-          className="button is-warning is-small level-item"
-          disabled={true}
-          title="in development"
-          type="button"
-        >
-          Update Schema
-        </button>
-        <button
-          className="button is-danger is-small level-item"
-          disabled={true}
-          title="in development"
-          type="button"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-    <LatestVersionItem
-      schema={
-        Object {
-          "compatibilityLevel": "BACKWARD",
-          "id": 1,
-          "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
-          "schemaType": "JSON",
-          "subject": "test",
-          "version": "1",
-        }
-      }
-    />
-  </div>
   <PageLoader />
 </div>
 `;

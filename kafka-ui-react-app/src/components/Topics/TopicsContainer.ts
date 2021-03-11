@@ -3,7 +3,6 @@ import { fetchTopicsList } from 'redux/actions';
 import { getIsTopicListFetched } from 'redux/reducers/topics/selectors';
 import { RootState, ClusterName } from 'redux/interfaces';
 import { RouteComponentProps } from 'react-router-dom';
-import { getClustersReadonlyStatus } from 'redux/reducers/clusters/selectors';
 import Topics from './Topics';
 
 interface RouteProps {
@@ -22,7 +21,6 @@ const mapStateToProps = (
 ) => ({
   isFetched: getIsTopicListFetched(state),
   clusterName,
-  isReadOnly: getClustersReadonlyStatus(clusterName)(state),
 });
 
 const mapDispatchToProps = {

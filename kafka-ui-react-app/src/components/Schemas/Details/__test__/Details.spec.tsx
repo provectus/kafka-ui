@@ -26,6 +26,7 @@ describe('Details', () => {
   describe('View', () => {
     const setupWrapper = (props: Partial<DetailsProps> = {}) => (
       <Details
+        subject={schema.subject}
         schema={schema}
         clusterName="Test cluster"
         fetchSchemaVersions={jest.fn()}

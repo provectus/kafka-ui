@@ -195,7 +195,7 @@ const Messages: React.FC<Props> = ({
   };
 
   if (!isFetched) {
-    return <PageLoader isFullHeight={false} />;
+    return <PageLoader />;
   }
 
   return (
