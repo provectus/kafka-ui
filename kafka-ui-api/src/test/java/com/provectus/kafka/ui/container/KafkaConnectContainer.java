@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui;
+package com.provectus.kafka.ui.container;
 
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;

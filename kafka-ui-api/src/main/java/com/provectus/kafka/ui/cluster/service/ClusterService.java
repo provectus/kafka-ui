@@ -207,6 +207,6 @@ public class ClusterService {
                 .map(partition -> new TopicPartition(topicName, partition))
                 .collect(Collectors.toList());
         return consumingService.loadOffsets(cluster, partitions)
-                .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, topicName, offsets)).next();
+                .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, topicName, offsets));
     }
 }

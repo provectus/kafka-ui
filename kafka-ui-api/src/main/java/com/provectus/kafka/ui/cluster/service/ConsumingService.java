@@ -21,6 +21,8 @@ import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.Mono;
+import reactor.core.publisher.MonoSink;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
@@ -55,9 +57,9 @@ public class ConsumingService {
 				.limitRequest(recordsLimit);
 	}
 
-	public Flux<Map<TopicPartition, Long>> loadOffsets(KafkaCluster cluster, List<TopicPartition> partitions) {
+	public Mono<Map<TopicPartition, Long>> loadOffsets(KafkaCluster cluster, List<TopicPartition> partitions) {
 		OffsetEmitter emitter = new OffsetEmitter(kafkaService, cluster, partitions);
-		return Flux.create(emitter::emit)
+		return Mono.create(emitter::emit)
 				.subscribeOn(Schedulers.boundedElastic());
 	}
 
@@ -194,10 +196,10 @@ public class ConsumingService {
 		private final KafkaCluster cluster;
 		private final List<TopicPartition> partitions;
 
-		public void emit(FluxSink<Map<TopicPartition, Long>> sink) {
+		public void emit(MonoSink<Map<TopicPartition, Long>> sink) {
 			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
 				Map<TopicPartition, Long> offsets = consumer.endOffsets(partitions);
-				sink.next(offsets);
+				sink.success(offsets);
 			} catch (Exception e) {
 				log.error("Error occurred while consuming records", e);
 				throw new RuntimeException(e);

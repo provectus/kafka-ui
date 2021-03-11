@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui;
 
+import com.provectus.kafka.ui.container.KafkaConnectContainer;
+import com.provectus.kafka.ui.container.SchemaRegistryContainer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
