@@ -201,7 +201,7 @@ public class ClusterService {
         var cluster = clustersStorage.getClusterByName(clusterName)
                 .orElseThrow(() -> new NotFoundException("No such cluster"));
         var partitions = getTopicDetails(clusterName, topicName)
-                .orElseThrow(() -> new NotFoundException("No such topcic"))
+                .orElseThrow(() -> new NotFoundException("No such topic"))
                 .getPartitions().stream()
                 .map(Partition::getPartition)
                 .map(partition -> new TopicPartition(topicName, partition))
