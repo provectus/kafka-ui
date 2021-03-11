@@ -132,7 +132,7 @@ describe('Thunks', () => {
         expect(error.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.createSchemaAction.request(),
-          actions.createSchemaAction.failure(),
+          actions.createSchemaAction.failure({}),
         ]);
       }
     });

@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App matches snapshot with initial props 1`] = `
+<div
+  className="Layout"
+>
+  <nav
+    aria-label="main navigation"
+    className="navbar is-fixed-top is-white Layout__header"
+    role="navigation"
+  >
+    <div
+      className="navbar-brand"
+    >
+      <a
+        className="navbar-item title is-5 is-marginless"
+        href="/ui"
+      >
+        Kafka UI
+      </a>
+    </div>
+  </nav>
+  <main
+    className="Layout__container"
+  >
+    <Connect(Nav)
+      className="Layout__navbar"
+    />
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path={
+          Array [
+            "/",
+            "/ui",
+            "/ui/clusters",
+          ]
+        }
+      />
+      <Route
+        component={[Function]}
+        path="/ui/clusters/:clusterName"
+      />
+    </Switch>
+  </main>
+  <div
+    className="Layout__alerts"
+  />
+</div>
+`;
