@@ -5,6 +5,7 @@ import { clusterSchemaNewPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import ClusterContext from 'components/contexts/ClusterContext';
 import ListItem from './ListItem';
 
 export interface ListProps {
@@ -18,6 +19,7 @@ const List: React.FC<ListProps> = ({
   isFetching,
   fetchSchemasByClusterName,
 }) => {
+  const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
 
   React.useEffect(() => {
@@ -29,14 +31,16 @@ const List: React.FC<ListProps> = ({
       <Breadcrumb>Schema Registry</Breadcrumb>
       <div className="box">
         <div className="level">
-          <div className="level-item level-right">
-            <NavLink
-              className="button is-primary"
-              to={clusterSchemaNewPath(clusterName)}
-            >
-              Create Schema
-            </NavLink>
-          </div>
+          {!isReadOnly && (
+            <div className="level-item level-right">
+              <NavLink
+                className="button is-primary"
+                to={clusterSchemaNewPath(clusterName)}
+              >
+                Create Schema
+              </NavLink>
+            </div>
+          )}
         </div>
       </div>
 

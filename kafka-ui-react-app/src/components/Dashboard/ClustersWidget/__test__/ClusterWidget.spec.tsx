@@ -70,4 +70,17 @@ describe('ClusterWidget', () => {
       ).toMatchSnapshot();
     });
   });
+
+  describe('when cluster is read-only', () => {
+    it('renders the tag', () => {
+      expect(
+        shallow(
+          <ClusterWidget cluster={{ ...onlineCluster, readOnly: true }} />
+        )
+          .find('.title')
+          .childAt(1)
+          .text()
+      ).toEqual('readonly');
+    });
+  });
 });

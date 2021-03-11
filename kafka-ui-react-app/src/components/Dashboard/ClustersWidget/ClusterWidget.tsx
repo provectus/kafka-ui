@@ -17,6 +17,7 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
     bytesInPerSec,
     bytesOutPerSec,
     onlinePartitionCount,
+    readOnly,
   },
 }) => (
   <div className="column is-full-modile is-6">
@@ -29,6 +30,9 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
         >
           {status}
         </div>
+        {readOnly && (
+          <div className="tag has-margin-right is-info is-light">readonly</div>
+        )}
         {name}
       </div>
 
