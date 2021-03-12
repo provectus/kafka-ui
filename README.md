@@ -39,7 +39,8 @@ docker run -p 8080:8080 \
 	-d provectuslabs/kafka-ui:latest 
 
 ```
-Then access the web UI at [http://localhost:8080](http://localhost:8080).
+Then access the web UI at [http://localhost:8080](http://localhost:8080).  
+Further configuration with environment variables - [see environment variables](#env_variables)  
  
 ### Docker Compose
 
@@ -138,10 +139,11 @@ kafka:
 * `schemaRegistry`: schemaRegistry's address
 * `schemaNameTemplate`: how keys are saved to schemaRegistry
 * `jmxPort`: open jmxPosrts of a broker
+* `readOnly`: enable read only mode
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
 
-## Environment Variables
+## <a name="env_variables"></a> Environment Variables
 
 Alternatively, each variable of of the .yml file can be set with an environment variable. 
 For example, if you want to use an environment variable to set the `name` parameter, you can write it like this: `KAFKA_CLUSTERS_2_NAME`
@@ -154,6 +156,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
+|`KAFKA_CLUSTERS_0_READONLY`        	|Enable read only mode. Default: false
 
  
 
