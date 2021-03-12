@@ -24,6 +24,7 @@ jobs:
         id: build
         run: |
           export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "::set-output name=version::${VERSION}"
           mvn clean package -Pprod -DskipTests
 #################
 #               #
