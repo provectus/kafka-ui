@@ -325,6 +325,11 @@ paths:
           required: true
           schema:
             type: string
+        - name: partition
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: OK

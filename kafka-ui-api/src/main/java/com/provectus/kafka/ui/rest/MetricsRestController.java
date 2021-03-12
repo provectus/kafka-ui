@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @RestController
@@ -85,8 +86,8 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteTopicMessages(String clusterName, String topicName, ServerWebExchange exchange) {
-        return clusterService.deleteTopicMessages(clusterName, topicName).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Void>> deleteTopicMessages(String clusterName, String topicName, @Valid Integer partition, ServerWebExchange exchange) {
+        return clusterService.deleteTopicMessages(clusterName, topicName, Optional.ofNullable(partition)).map(ResponseEntity::ok);
     }
 
     @Override
