@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
-import reactor.core.publisher.MonoSink;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
@@ -57,10 +56,23 @@ public class ConsumingService {
 				.limitRequest(recordsLimit);
 	}
 
-	public Mono<Map<TopicPartition, Long>> loadOffsets(KafkaCluster cluster, List<TopicPartition> partitions) {
-		OffsetEmitter emitter = new OffsetEmitter(kafkaService, cluster, partitions);
-		return Mono.create(emitter::emit)
-				.subscribeOn(Schedulers.boundedElastic());
+	public Mono<Map<TopicPartition, Long>> loadOffsets(KafkaCluster cluster, String topicName, List<Integer> partitionsToInclude) {
+		return Mono.fromSupplier(() -> {
+			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
+				var partitions = consumer.partitionsFor(topicName).stream()
+                        .filter(p -> partitionsToInclude.isEmpty() || partitionsToInclude.contains(p.partition()))
+						.map(p -> new TopicPartition(topicName, p.partition()))
+						.collect(Collectors.toList());
+				var beginningOffsets = consumer.beginningOffsets(partitions);
+				var endOffsets = consumer.endOffsets(partitions);
+				return endOffsets.entrySet().stream()
+						.filter(entry -> !beginningOffsets.get(entry.getKey()).equals(entry.getValue()))
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			} catch (Exception e) {
+				log.error("Error occurred while consuming records", e);
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	private boolean filterTopicMessage(TopicMessage message, String query) {
@@ -188,23 +200,5 @@ public class ConsumingService {
 			consumer.assign(partitions);
 			consumer.seekToBeginning(partitions);
 		}
-	}
-
-	@RequiredArgsConstructor
-	private static class OffsetEmitter {
-		private final KafkaService kafkaService;
-		private final KafkaCluster cluster;
-		private final List<TopicPartition> partitions;
-
-		public void emit(MonoSink<Map<TopicPartition, Long>> sink) {
-			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
-				Map<TopicPartition, Long> offsets = consumer.endOffsets(partitions);
-				sink.success(offsets);
-			} catch (Exception e) {
-				log.error("Error occurred while consuming records", e);
-				throw new RuntimeException(e);
-			}
-		}
-
 	}
 }

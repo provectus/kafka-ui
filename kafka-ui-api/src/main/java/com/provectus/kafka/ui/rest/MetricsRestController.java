@@ -86,8 +86,9 @@ public class MetricsRestController implements ApiClustersApi {
     }
 
     @Override
-    public Mono<ResponseEntity<Void>> deleteTopicMessages(String clusterName, String topicName, @Valid Integer partition, ServerWebExchange exchange) {
-        return clusterService.deleteTopicMessages(clusterName, topicName, Optional.ofNullable(partition)).map(ResponseEntity::ok);
+    public Mono<ResponseEntity<Void>> deleteTopicMessages(String clusterName, String topicName, @Valid List<Integer> partitions, ServerWebExchange exchange) {
+        return clusterService.deleteTopicMessages(clusterName, topicName, Optional.ofNullable(partitions).orElse(List.of()))
+                .map(ResponseEntity::ok);
     }
 
     @Override
