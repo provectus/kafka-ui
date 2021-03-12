@@ -1,9 +1,9 @@
 name: frontend
 on:
   push:
-    branches: [ '*' ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - "**"
+      - "!master"
 jobs:
   npm-test:
     needs: [mvn-contract-build]
