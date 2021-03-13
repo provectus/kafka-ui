@@ -10,7 +10,6 @@ import NewContainer from './New/NewContainer';
 interface Props {
   clusterName: ClusterName;
   isFetched: boolean;
-  fetchBrokers: (clusterName: ClusterName) => void;
   fetchTopicsList: (clusterName: ClusterName) => void;
 }
 

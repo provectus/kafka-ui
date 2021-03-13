@@ -3,7 +3,7 @@
 exports[`PageLoader matches the snapshot 1`] = `
 <PageLoader>
   <section
-    className="hero is-fullheight-with-navbar"
+    className="hero is-halfheight"
   >
     <div
       className="hero-body has-text-centered"

@@ -1,13 +1,10 @@
 import React from 'react';
-import { Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import './App.scss';
-import BrokersContainer from './Brokers/BrokersContainer';
-import TopicsContainer from './Topics/TopicsContainer';
 import NavContainer from './Nav/NavContainer';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
-import ConsumersGroupsContainer from './ConsumerGroups/ConsumersGroupsContainer';
-import SchemasContainer from './Schemas/SchemasContainer';
+import Cluster from './Cluster/Cluster';
 
 interface AppProps {
   isClusterListFetched: boolean;
@@ -44,29 +41,10 @@ const App: React.FC<AppProps> = ({
               path={['/', '/ui', '/ui/clusters']}
               component={Dashboard}
             />
-            <Route
-              path="/ui/clusters/:clusterName/brokers"
-              component={BrokersContainer}
-            />
-            <Route
-              path="/ui/clusters/:clusterName/topics"
-              component={TopicsContainer}
-            />
-            <Route
-              path="/ui/clusters/:clusterName/consumer-groups"
-              component={ConsumersGroupsContainer}
-            />
-            <Route
-              path="/ui/clusters/:clusterName/schemas"
-              component={SchemasContainer}
-            />
-            <Redirect
-              from="/ui/clusters/:clusterName"
-              to="/ui/clusters/:clusterName/brokers"
-            />
+            <Route path="/ui/clusters/:clusterName" component={Cluster} />
           </Switch>
         ) : (
-          <PageLoader />
+          <PageLoader fullHeight />
         )}
       </main>
     </div>

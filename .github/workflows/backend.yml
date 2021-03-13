@@ -1,20 +1,19 @@
 name: backend
 on:
   push:
-    branches: [ '*' ]
-  pull_request:
-    branches: [ master ]
+    branches:
+      - "**"
+      - "!master"
 jobs:
-  mvn-all-build:
+  build:
     runs-on: ubuntu-latest
     steps:
     - name: Cache local Maven repository
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-all-${{ hashFiles('**/pom.xml') }}
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
         restore-keys: |
-          ${{ runner.os }}-maven-all-
           ${{ runner.os }}-maven-
     - uses: actions/checkout@v2
     - name: Set up JDK 1.13

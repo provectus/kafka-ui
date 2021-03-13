@@ -32,6 +32,7 @@ exports[`ListItem matches snapshot 1`] = `
               "compatibilityLevel": "BACKWARD",
               "id": 1,
               "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+              "schemaType": "JSON",
               "subject": "test",
               "version": "1",
             }

@@ -18,7 +18,7 @@ public abstract class AbstractBaseTest {
     public static String LOCAL = "local";
     public static String SECOND_LOCAL = "secondLocal";
 
-    private static final String CONFLUENT_PLATFORM_VERSION = "5.2.1";
+    private static final String CONFLUENT_PLATFORM_VERSION = "5.5.0";
 
     public static final KafkaContainer kafka = new KafkaContainer(DockerImageName.parse("confluentinc/cp-kafka").withTag(CONFLUENT_PLATFORM_VERSION))
             .withNetwork(Network.SHARED);

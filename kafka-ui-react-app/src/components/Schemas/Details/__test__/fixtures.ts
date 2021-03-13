@@ -1,4 +1,4 @@
-import { SchemaSubject } from 'generated-sources';
+import { SchemaSubject, SchemaType } from 'generated-sources';
 
 export const schema: SchemaSubject = {
   subject: 'test',
@@ -7,6 +7,7 @@ export const schema: SchemaSubject = {
   schema:
     '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
   compatibilityLevel: 'BACKWARD',
+  schemaType: SchemaType.JSON,
 };
 
 export const versions: SchemaSubject[] = [
@@ -17,6 +18,7 @@ export const versions: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
   {
     subject: 'test',
@@ -25,5 +27,6 @@ export const versions: SchemaSubject[] = [
     schema:
       '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.JSON,
   },
 ];
