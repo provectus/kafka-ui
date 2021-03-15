@@ -94,8 +94,7 @@ export const fetchTopicsList = (
   dispatch(actions.fetchTopicsListAction.request());
   try {
     const topics = await apiClient.getTopics({ clusterName });
-    // todo: fix needed from FE person
-    // dispatch(actions.fetchTopicsListAction.success(topics));
+    dispatch(actions.fetchTopicsListAction.success(topics.topics || []));
   } catch (e) {
     dispatch(actions.fetchTopicsListAction.failure());
   }
