@@ -36,26 +36,3 @@ $navbar-width: 250px;
 .react-datepicker-popper {
   z-index: 30 !important;
 }
-
-.topic-message-button {
-  &::after {
-    content: attr(data-title);
-    position: absolute;
-    top: -140%;
-    z-index: 1;
-    background: #F5F5F5;
-    color: rgb(89, 89, 89);
-    border-radius: 5px;
-    font-size: 15px;
-    padding: 5px 10px;
-    opacity: 0;
-    pointer-events: none;
-    transition: .2s opacity;
-    transition-delay: 0s;
-  }
-
-  &:hover::after {
-    opacity: 1;
-    transition-delay: .5s;
-   }
-}

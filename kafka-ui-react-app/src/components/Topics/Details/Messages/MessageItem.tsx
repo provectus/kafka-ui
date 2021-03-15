@@ -15,72 +15,19 @@ const MessageItem: React.FC<MessageItemProp> = ({
   offset,
   timestamp,
   content,
-}) => {
-  const copyData = () => {
-    if (navigator.clipboard)
-      navigator.clipboard.writeText(JSON.stringify(content || {}));
-  };
-  const saveFile = () => {
-    let extension = 'json';
-    if (typeof content === 'string') {
-      try {
-        JSON.parse(content);
-      } catch (e) {
-        extension = 'txt';
-      }
-    }
-    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(content || {})
-    )}`;
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute('href', dataStr);
-    downloadAnchorNode.setAttribute(
-      'download',
-      `topic-message[${timestamp}].${extension}`
-    );
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  };
-
-  const buttonStyle = {
-    height: '30px',
-  };
-  const buttonClasses = 'button is-link is-outlined topic-message-button';
-  return (
-    <tr>
-      <td style={{ width: 200 }}>{format(timestamp, 'yyyy-MM-dd HH:mm:ss')}</td>
-      <td style={{ width: 150 }}>{offset}</td>
-      <td style={{ width: 100 }}>{partition}</td>
-      <td style={{ wordBreak: 'break-word' }}>
-        {content && (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'center' }}>
-              <button
-                className={buttonClasses}
-                data-title="Copy the message to the clipboard"
-                type="button"
-                style={{ ...buttonStyle, marginRight: '5px' }}
-                onClick={copyData}
-              >
-                <i className="far fa-clipboard" />
-              </button>
-              <button
-                className={buttonClasses}
-                data-title="Download the message as a .json/.txt file"
-                type="button"
-                style={buttonStyle}
-                onClick={saveFile}
-              >
-                <i className="fas fa-file-download" />
-              </button>
-            </div>
-            <JSONViewer data={content as { [key: string]: string }} />
-          </div>
-        )}
-      </td>
-    </tr>
-  );
-};
+}) => (
+  <tr>
+    <td style={{ width: 200 }}>{format(timestamp, 'yyyy-MM-dd HH:mm:ss')}</td>
+    <td style={{ width: 150 }}>{offset}</td>
+    <td style={{ width: 100 }}>{partition}</td>
+    <td style={{ wordBreak: 'break-word' }}>
+      {content && (
+        <div>
+          <JSONViewer data={content as { [key: string]: string }} />
+        </div>
+      )}
+    </td>
+  </tr>
+);
 
 export default MessageItem;
