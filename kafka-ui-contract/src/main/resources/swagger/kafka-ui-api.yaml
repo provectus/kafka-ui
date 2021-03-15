@@ -130,15 +130,23 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Topic'
+                $ref: '#/components/schemas/TopicsResponse'
     post:
       tags:
         - Topics
@@ -1139,6 +1147,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Metric'
+
+    TopicsResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Topic'
 
     Topic:
       type: object

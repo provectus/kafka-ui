@@ -104,7 +104,7 @@ export const fetchTopicsList = (
   dispatch(actions.fetchTopicsListAction.request());
   try {
     const topics = await topicsApiClient.getTopics({ clusterName });
-    dispatch(actions.fetchTopicsListAction.success(topics));
+    dispatch(actions.fetchTopicsListAction.success(topics.topics || []));
   } catch (e) {
     dispatch(actions.fetchTopicsListAction.failure());
   }
