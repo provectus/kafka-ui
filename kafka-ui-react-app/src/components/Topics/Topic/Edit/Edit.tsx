@@ -10,22 +10,18 @@ import {
 import { TopicConfig } from 'generated-sources';
 import { useForm, FormProvider } from 'react-hook-form';
 import { camelCase } from 'lodash';
-
-import TopicForm from '../shared/Form/TopicForm';
-import FormBreadcrumbs from '../shared/Form/FormBreadcrumbs';
+import TopicForm from 'components/Topics/shared/Form/TopicForm';
+import { clusterTopicPath } from 'lib/paths';
+import { useHistory } from 'react-router';
 
 interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
   topic?: TopicWithDetailedInfo;
   isFetched: boolean;
-  isTopicDetailsFetched: boolean;
   isTopicUpdated: boolean;
-  fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => void;
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
   updateTopic: (clusterName: ClusterName, form: TopicFormDataRaw) => void;
-  redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => void;
-  resetUploadedState: () => void;
 }
 
 const DEFAULTS = {
@@ -68,32 +64,29 @@ const Edit: React.FC<Props> = ({
   topicName,
   topic,
   isFetched,
-  isTopicDetailsFetched,
   isTopicUpdated,
-  fetchTopicDetails,
   fetchTopicConfig,
   updateTopic,
-  redirectToTopicPath,
 }) => {
   const defaultValues = topicParams(topic);
 
   const methods = useForm<TopicFormDataRaw>({ defaultValues });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
+  const history = useHistory();
 
   React.useEffect(() => {
     fetchTopicConfig(clusterName, topicName);
-    fetchTopicDetails(clusterName, topicName);
-  }, [fetchTopicConfig, fetchTopicDetails, clusterName, topicName]);
+  }, [fetchTopicConfig, clusterName, topicName]);
 
   React.useEffect(() => {
     if (isSubmitting && isTopicUpdated) {
       const { name } = methods.getValues();
-      redirectToTopicPath(clusterName, name);
+      history.push(clusterTopicPath(clusterName, name));
     }
-  }, [isSubmitting, isTopicUpdated, redirectToTopicPath, clusterName, methods]);
+  }, [isSubmitting, isTopicUpdated, clusterTopicPath, clusterName, methods]);
 
-  if (!isFetched || !isTopicDetailsFetched || !topic || !topic.config) {
+  if (!isFetched || !topic || !topic.config) {
     return null;
   }
 
@@ -116,27 +109,17 @@ const Edit: React.FC<Props> = ({
   };
 
   return (
-    <div className="section">
-      <div className="level">
-        <FormBreadcrumbs
-          clusterName={clusterName}
+    <div className="box">
+      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
+      <FormProvider {...methods}>
+        <TopicForm
           topicName={topicName}
-          current="Edit Topic"
+          config={config}
+          isSubmitting={isSubmitting}
+          isEditing
+          onSubmit={methods.handleSubmit(onSubmit)}
         />
-      </div>
-
-      <div className="box">
-        {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-        <FormProvider {...methods}>
-          <TopicForm
-            topicName={topicName}
-            config={config}
-            isSubmitting={isSubmitting}
-            isEditing
-            onSubmit={methods.handleSubmit(onSubmit)}
-          />
-        </FormProvider>
-      </div>
+      </FormProvider>
     </div>
   );
 };

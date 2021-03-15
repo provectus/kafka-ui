@@ -52,7 +52,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
       ...formCustomParams,
       byIndex: {
         ...formCustomParams.byIndex,
-        [newIndex]: { name: '', value: '', id: v4() },
+        [newIndex]: { name: '', value: '' },
       },
       allIndexes: [newIndex, ...formCustomParams.allIndexes],
     });

@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import { Topic, TopicMessage } from 'generated-sources';
 import { Action, TopicsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
@@ -16,7 +15,7 @@ const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
     ...state,
   };
   newState.allNames.push(payload.name);
-  newState.byName[payload.name] = { ...payload, id: v4() };
+  newState.byName[payload.name] = { ...payload };
   return newState;
 };
 
@@ -71,7 +70,6 @@ const reducer = (state = initialState, action: Action): TopicsState => {
             ...state.byName[action.payload.topicName],
             config: action.payload.config.map((inputConfig) => ({
               ...inputConfig,
-              id: v4(),
             })),
           },
         },

@@ -3,8 +3,10 @@ import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
 import * as useDebounce from 'use-debounce';
 import DatePicker from 'react-datepicker';
-import Messages, { Props } from 'components/Topics/Details/Messages/Messages';
-import MessagesContainer from 'components/Topics/Details/Messages/MessagesContainer';
+import Messages, {
+  Props,
+} from 'components/Topics/Topic/Details/Messages/Messages';
+import MessagesContainer from 'components/Topics/Topic/Details/Messages/MessagesContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import configureStore from 'redux/store/configureStore';
 

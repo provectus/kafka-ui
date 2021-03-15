@@ -30,26 +30,13 @@ export interface FetchTopicsListParams {
   perPage?: number;
 }
 
-export const fetchTopicsList = ({
-  clusterName,
-  page,
-  perPage,
-}: FetchTopicsListParams): PromiseThunkResult => async (dispatch, getState) => {
+export const fetchTopicsList = (
+  params: FetchTopicsListParams
+): PromiseThunkResult => async (dispatch, getState) => {
   dispatch(actions.fetchTopicsListAction.request());
   try {
-    const { topics, pageCount } = await topicsApiClient.getTopics({
-      clusterName,
-      page,
-      perPage,
-    });
-
-    const initialMemo: TopicsState = {
-      ...getState().topics,
-      allNames: [],
-      totalPages: pageCount || 1,
-    };
-
-    const state = (topics || []).reduce(
+    const { topics, pageCount } = await topicsApiClient.getTopics(params);
+    const newState = (topics || []).reduce(
       (memo: TopicsState, topic) => ({
         ...memo,
         byName: {
@@ -62,10 +49,13 @@ export const fetchTopicsList = ({
         },
         allNames: [...memo.allNames, topic.name],
       }),
-      initialMemo
+      {
+        ...getState().topics,
+        allNames: [],
+        totalPages: pageCount || 1,
+      }
     );
-
-    dispatch(actions.fetchTopicsListAction.success(state));
+    dispatch(actions.fetchTopicsListAction.success(newState));
   } catch (e) {
     dispatch(actions.fetchTopicsListAction.failure());
   }

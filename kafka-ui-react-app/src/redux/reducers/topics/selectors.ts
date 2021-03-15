@@ -26,9 +26,19 @@ const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
 
-export const getIsTopicListFetched = createSelector(
+export const getAreTopicsFetching = createSelector(
+  getTopicListFetchingStatus,
+  (status) => status === 'fetching' || status === 'notFetched'
+);
+
+export const getAreTopicsFetched = createSelector(
   getTopicListFetchingStatus,
   (status) => status === 'fetched'
+);
+
+export const getIsTopicDetailsFetching = createSelector(
+  getTopicDetailsFetchingStatus,
+  (status) => status === 'notFetched' || status === 'fetching'
 );
 
 export const getIsTopicDetailsFetched = createSelector(
@@ -57,7 +67,7 @@ export const getTopicUpdated = createSelector(
 );
 
 export const getTopicList = createSelector(
-  getIsTopicListFetched,
+  getAreTopicsFetched,
   getAllNames,
   getTopicMap,
   (isFetched, allNames, byName) => {
