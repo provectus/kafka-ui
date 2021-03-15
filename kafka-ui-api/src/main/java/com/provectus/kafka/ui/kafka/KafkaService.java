@@ -490,4 +490,12 @@ public class KafkaService {
             return Collections.emptyMap();
         }
     }
+
+    public Mono<Void> deleteTopicMessages(KafkaCluster cluster, Map<TopicPartition, Long> offsets) {
+        var records = offsets.entrySet().stream()
+                .map(entry -> Map.entry(entry.getKey(), RecordsToDelete.beforeOffset(entry.getValue())))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        return getOrCreateAdminClient(cluster).map(ExtendedAdminClient::getAdminClient)
+                .map(ac -> ac.deleteRecords(records)).then();
+    }
 }

@@ -21,6 +21,7 @@ import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
+import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
@@ -53,6 +54,25 @@ public class ConsumingService {
 				.map(r -> ClusterUtil.mapToTopicMessage(r, recordDeserializer))
 				.filter(m -> filterTopicMessage(m, query))
 				.limitRequest(recordsLimit);
+	}
+
+	public Mono<Map<TopicPartition, Long>> loadOffsets(KafkaCluster cluster, String topicName, List<Integer> partitionsToInclude) {
+		return Mono.fromSupplier(() -> {
+			try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
+				var partitions = consumer.partitionsFor(topicName).stream()
+                        .filter(p -> partitionsToInclude.isEmpty() || partitionsToInclude.contains(p.partition()))
+						.map(p -> new TopicPartition(topicName, p.partition()))
+						.collect(Collectors.toList());
+				var beginningOffsets = consumer.beginningOffsets(partitions);
+				var endOffsets = consumer.endOffsets(partitions);
+				return endOffsets.entrySet().stream()
+						.filter(entry -> !beginningOffsets.get(entry.getKey()).equals(entry.getValue()))
+						.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+			} catch (Exception e) {
+				log.error("Error occurred while consuming records", e);
+				throw new RuntimeException(e);
+			}
+		});
 	}
 
 	private boolean filterTopicMessage(TopicMessage message, String query) {

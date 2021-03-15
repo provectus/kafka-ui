@@ -18,6 +18,7 @@ import reactor.core.publisher.Mono;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @RestController
@@ -82,6 +83,12 @@ public class MetricsRestController implements ApiClustersApi {
     public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo, @Valid Integer limit, @Valid String q, ServerWebExchange exchange) {
         return parseConsumerPosition(seekType, seekTo)
                 .map(consumerPosition -> ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
+    }
+
+    @Override
+    public Mono<ResponseEntity<Void>> deleteTopicMessages(String clusterName, String topicName, @Valid List<Integer> partitions, ServerWebExchange exchange) {
+        return clusterService.deleteTopicMessages(clusterName, topicName, Optional.ofNullable(partitions).orElse(List.of()))
+                .map(ResponseEntity::ok);
     }
 
     @Override
