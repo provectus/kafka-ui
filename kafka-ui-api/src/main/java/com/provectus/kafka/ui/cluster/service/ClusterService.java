@@ -21,12 +21,14 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 public class ClusterService {
+    private static final Integer DEFAULT_PAGE_SIZE = 20;
 
     private final ClustersStorage clustersStorage;
     private final ClusterMapper clusterMapper;
@@ -64,14 +66,22 @@ public class ClusterService {
     }
 
 
-    public List<Topic> getTopics(String name) {
-        return clustersStorage.getClusterByName(name)
-                .map(c ->
-                        c.getTopics().values().stream()
+    public TopicsResponse getTopics(String name, Optional<Integer> page, Optional<Integer> nullablePageSize) {
+        Predicate<Integer> positiveInt = i -> i > 0;
+        int pageSize = nullablePageSize.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
+        var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * pageSize;
+        var cluster = clustersStorage.getClusterByName(name).orElseThrow(() -> new NotFoundException("No such cluster"));
+        var totalPages = (cluster.getTopics().size() / pageSize) + (cluster.getTopics().size() % pageSize == 0 ? 0 : 1);
+        return new TopicsResponse()
+                .pageCount(totalPages)
+                .topics(
+                        cluster.getTopics().values().stream()
+                                .sorted(Comparator.comparing(InternalTopic::getName))
+                                .skip(topicsToSkip)
+                                .limit(pageSize)
                                 .map(clusterMapper::toTopic)
-                                .sorted(Comparator.comparing(Topic::getName))
                                 .collect(Collectors.toList())
-                ).orElse(Collections.emptyList());
+                );
     }
 
     public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
