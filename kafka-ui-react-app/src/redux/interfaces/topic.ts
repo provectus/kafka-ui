@@ -56,6 +56,7 @@ export interface TopicWithDetailedInfo extends Topic, TopicDetails {
 export interface TopicsState {
   byName: { [topicName: string]: TopicWithDetailedInfo };
   allNames: TopicName[];
+  totalPages: number;
   messages: TopicMessage[];
 }
 

@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { TopicName, ConsumerGroupID } from 'redux/interfaces';
+import { TopicName, ConsumerGroupID, TopicsState } from 'redux/interfaces';
 
 import {
   Cluster,
@@ -50,7 +50,7 @@ export const fetchTopicsListAction = createAsyncAction(
   'GET_TOPICS__REQUEST',
   'GET_TOPICS__SUCCESS',
   'GET_TOPICS__FAILURE'
-)<undefined, Topic[], undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const fetchTopicMessagesAction = createAsyncAction(
   'GET_TOPIC_MESSAGES__REQUEST',

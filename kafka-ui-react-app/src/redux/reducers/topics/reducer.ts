@@ -7,30 +7,8 @@ import * as actions from 'redux/actions';
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
+  totalPages: 1,
   messages: [],
-};
-
-const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
-  const initialMemo: TopicsState = {
-    ...state,
-    allNames: [],
-  };
-
-  return payload.reduce(
-    (memo: TopicsState, topic) => ({
-      ...memo,
-      byName: {
-        ...memo.byName,
-        [topic.name]: {
-          ...memo.byName[topic.name],
-          ...topic,
-          id: v4(),
-        },
-      },
-      allNames: [...memo.allNames, topic.name],
-    }),
-    initialMemo
-  );
 };
 
 const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
@@ -70,7 +48,7 @@ const transformTopicMessages = (
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case getType(actions.fetchTopicsListAction.success):
-      return updateTopicList(state, action.payload);
+      return action.payload;
     case getType(actions.fetchTopicDetailsAction.success):
       return {
         ...state,
