@@ -1,10 +1,8 @@
-package com.provectus.kafka.ui.cluster.service;
+package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.cluster.mapper.ClusterMapper;
-import com.provectus.kafka.ui.cluster.model.ClustersStorage;
-import com.provectus.kafka.ui.cluster.model.InternalTopic;
-import com.provectus.kafka.ui.cluster.model.KafkaCluster;
-import com.provectus.kafka.ui.kafka.KafkaService;
+import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.InternalTopic;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,10 +32,6 @@ class ClusterServiceTest {
     private ClustersStorage clustersStorage;
     @Spy
     private final ClusterMapper clusterMapper = Mappers.getMapper(ClusterMapper.class);
-    @Mock
-    private KafkaService kafkaService;
-    @Mock
-    private ConsumingService consumingService;
 
     @Test
     public void shouldListFirst20Topics() {

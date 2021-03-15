@@ -135,7 +135,7 @@ paths:
           required: false
           schema:
             type: integer
-        - name: pageSize
+        - name: perPage
           in: query
           required: false
           schema:

@@ -64,19 +64,19 @@ public class ClusterService {
     }
 
 
-    public TopicsResponse getTopics(String name, Optional<Integer> page, Optional<Integer> nullablePageSize) {
+    public TopicsResponse getTopics(String name, Optional<Integer> page, Optional<Integer> nullablePerPage) {
         Predicate<Integer> positiveInt = i -> i > 0;
-        int pageSize = nullablePageSize.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
-        var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * pageSize;
+        int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
+        var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
         var cluster = clustersStorage.getClusterByName(name).orElseThrow(() -> new NotFoundException("No such cluster"));
-        var totalPages = (cluster.getTopics().size() / pageSize) + (cluster.getTopics().size() % pageSize == 0 ? 0 : 1);
+        var totalPages = (cluster.getTopics().size() / perPage) + (cluster.getTopics().size() % perPage == 0 ? 0 : 1);
         return new TopicsResponse()
                 .pageCount(totalPages)
                 .topics(
                         cluster.getTopics().values().stream()
                                 .sorted(Comparator.comparing(InternalTopic::getName))
                                 .skip(topicsToSkip)
-                                .limit(pageSize)
+                                .limit(perPage)
                                 .map(clusterMapper::toTopic)
                                 .collect(Collectors.toList())
                 );
