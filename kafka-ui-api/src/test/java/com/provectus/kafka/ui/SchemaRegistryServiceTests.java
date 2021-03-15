@@ -65,7 +65,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .post()
                 .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(schema.formatted(subject)))
+                .body(BodyInserters.fromValue(String.format(schema, subject)))
                 .exchange()
                 .expectStatus().isBadRequest();
     }
@@ -78,7 +78,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .post()
                 .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(schema.formatted(subject)))
+                .body(BodyInserters.fromValue(String.format(schema, subject)))
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.OK);
 
@@ -86,7 +86,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .post()
                 .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue(schema.formatted(subject)))
+                .body(BodyInserters.fromValue(String.format(schema, subject)))
                 .exchange()
                 .expectStatus().isEqualTo(HttpStatus.CONFLICT);
     }
@@ -201,7 +201,12 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
                 .post()
                 .uri("/api/clusters/{clusterName}/schemas", LOCAL)
                 .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromValue("{\"subject\":\"%s\",\"schemaType\":\"AVRO\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}".formatted(subject)))
+                .body(BodyInserters.fromValue(
+                    String.format(
+                        "{\"subject\":\"%s\",\"schemaType\":\"AVRO\",\"schema\":\"{\\\"type\\\": \\\"string\\\"}\"}",
+                        subject
+                    )
+                ))
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(SchemaSubject.class)

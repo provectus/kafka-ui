@@ -18,7 +18,7 @@ paths:
   /api/clusters:
     get:
       tags:
-        - /api/clusters
+        - Clusters
       summary: getClusters
       operationId: getClusters
       responses:
@@ -34,7 +34,7 @@ paths:
   /api/clusters/{clusterName}/brokers:
     get:
       tags:
-        - /api/clusters
+        - Brokers
       summary: getBrokers
       operationId: getBrokers
       parameters:
@@ -56,7 +56,7 @@ paths:
   /api/clusters/{clusterName}/metrics:
     get:
       tags:
-        - /api/clusters
+        - Clusters
       summary: getClusterMetrics
       operationId: getClusterMetrics
       parameters:
@@ -76,7 +76,7 @@ paths:
   /api/clusters/{clusterName}/stats:
     get:
       tags:
-        - /api/clusters
+        - Clusters
       summary: getClusterStats
       operationId: getClusterStats
       parameters:
@@ -96,7 +96,7 @@ paths:
   /api/clusters/{clusterName}/brokers/{id}/metrics:
     get:
       tags:
-        - /api/clusters
+        - Brokers
       summary: getBrokersMetrics
       operationId: getBrokersMetrics
       parameters:
@@ -121,7 +121,7 @@ paths:
   /api/clusters/{clusterName}/topics:
     get:
       tags:
-        - /api/clusters
+        - Topics
       summary: getTopics
       operationId: getTopics
       parameters:
@@ -141,7 +141,7 @@ paths:
                   $ref: '#/components/schemas/Topic'
     post:
       tags:
-        - /api/clusters
+        - Topics
       summary: createTopic
       operationId: createTopic
       parameters:
@@ -166,7 +166,7 @@ paths:
   /api/clusters/{clusterName}/topics/{topicName}:
     get:
       tags:
-        - /api/clusters
+        - Topics
       summary: getTopicDetails
       operationId: getTopicDetails
       parameters:
@@ -189,7 +189,7 @@ paths:
                 $ref: '#/components/schemas/TopicDetails'
     patch:
       tags:
-        - /api/clusters
+        - Topics
       summary: updateTopic
       operationId: updateTopic
       parameters:
@@ -217,7 +217,7 @@ paths:
                 $ref: '#/components/schemas/Topic'
     delete:
       tags:
-        - /api/clusters
+        - Topics
       summary: deleteTopic
       operationId: deleteTopic
       parameters:
@@ -240,7 +240,7 @@ paths:
   /api/clusters/{clusterName}/topics/{topicName}/config:
     get:
       tags:
-        - /api/clusters
+        - Topics
       summary: getTopicConfigs
       operationId: getTopicConfigs
       parameters:
@@ -267,7 +267,7 @@ paths:
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
-        - /api/clusters
+        - Messages
       summary: getTopicMessages
       operationId: getTopicMessages
       parameters:
@@ -311,7 +311,7 @@ paths:
                   $ref: '#/components/schemas/TopicMessage'
     delete:
       tags:
-        - /api/clusters
+        - Messages
       summary: deleteTopicMessages
       operationId: deleteTopicMessages
       parameters:
@@ -341,7 +341,7 @@ paths:
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
       tags:
-        - /api/clusters
+        - Consumer Groups
       summary: get Consumer Group By Id
       operationId: getConsumerGroup
       parameters:
@@ -366,7 +366,7 @@ paths:
   /api/clusters/{clusterName}/consumerGroups:
     get:
       tags:
-        - /api/clusters
+        - Consumer Groups
       summary: get all ConsumerGroups
       operationId: getConsumerGroups
       parameters:
@@ -388,7 +388,7 @@ paths:
   /api/clusters/{clusterName}/schemas:
     post:
       tags:
-        - /api/clusters
+        - Schemas
       summary: create a new subject schema
       operationId: createNewSchema
       parameters:
@@ -417,7 +417,7 @@ paths:
           description: Invalid parameters
     get:
       tags:
-        - /api/clusters
+        - Schemas
       summary: get all schemas of latest version from Schema Registry service
       operationId: getSchemas
       parameters:
@@ -439,7 +439,7 @@ paths:
   /api/clusters/{clusterName}/schemas/{subject}:
     delete:
       tags:
-        - /api/clusters
+        - Schemas
       summary: delete schema from Schema Registry service
       operationId: deleteSchema
       parameters:
@@ -462,7 +462,7 @@ paths:
   /api/clusters/{clusterName}/schemas/{subject}/versions:
     get:
       tags:
-        - /api/clusters
+        - Schemas
       summary: get all version of subject from Schema Registry service
       operationId: getAllVersionsBySubject
       parameters:
@@ -489,7 +489,7 @@ paths:
   /api/clusters/{clusterName}/schemas/{subject}/latest:
     get:
       tags:
-        - /api/clusters
+        - Schemas
       summary: get the latest schema from Schema Registry service
       operationId: getLatestSchema
       parameters:
@@ -512,7 +512,7 @@ paths:
                 $ref: '#/components/schemas/SchemaSubject'
     delete:
       tags:
-        - /api/clusters
+        - Schemas
       summary: delete the latest schema from schema registry
       operationId: deleteLatestSchema
       parameters:
@@ -536,7 +536,7 @@ paths:
   /api/clusters/{clusterName}/schemas/{subject}/versions/{version}:
     get:
       tags:
-        - /api/clusters
+        - Schemas
       summary: get schema by version from Schema Registry service
       operationId: getSchemaByVersion
       parameters:
@@ -564,7 +564,7 @@ paths:
                 $ref: '#/components/schemas/SchemaSubject'
     delete:
       tags:
-        - /api/clusters
+        - Schemas
       summary: delete schema by version from schema registry
       operationId: deleteSchemaByVersion
       parameters:
@@ -592,7 +592,7 @@ paths:
   /api/clusters/{clusterName}/schemas/compatibility:
     get:
       tags:
-        - /api/clusters
+        - Schemas
       summary: Get global schema compatibility level
       operationId: getGlobalSchemaCompatibilityLevel
       parameters:
@@ -610,7 +610,7 @@ paths:
                 $ref: '#/components/schemas/CompatibilityLevel'
     put:
       tags:
-        - /api/clusters
+        - Schemas
       summary: Update compatibility level globally
       operationId: updateGlobalSchemaCompatibilityLevel
       parameters:
@@ -633,7 +633,7 @@ paths:
   /api/clusters/{clusterName}/schemas/{subject}/compatibility:
     put:
       tags:
-        - /api/clusters
+        - Schemas
       summary: Update compatibility level for specific schema.
       operationId: updateSchemaCompatibilityLevel
       parameters:
@@ -661,7 +661,7 @@ paths:
   /api/clusters/{clusterName}/schemas/{subject}/check:
     post:
       tags:
-        - /api/clusters
+        - Schemas
       summary: Check compatibility of the schema.
       operationId: checkSchemaCompatibility
       parameters:
@@ -693,7 +693,7 @@ paths:
   /api/clusters/{clusterName}/connects:
     get:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: get all kafka connect instances
       operationId: getConnects
       parameters:
@@ -715,7 +715,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/connectors:
     get:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: get all connectors from Kafka Connect service
       operationId: getConnectors
       parameters:
@@ -740,7 +740,7 @@ paths:
                   type: string
     post:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: create new connector
       operationId: createConnector
       parameters:
@@ -772,7 +772,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}:
     get:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: get information about the connector
       operationId: getConnector
       parameters:
@@ -800,7 +800,7 @@ paths:
                 $ref: '#/components/schemas/Connector'
     delete:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: delete connector
       operationId: deleteConnector
       parameters:
@@ -828,7 +828,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/action/{action}:
     post:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: update connector state (restart, pause or resume)
       operationId: updateConnectorState
       parameters:
@@ -861,7 +861,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/config:
     get:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: get connector configuration
       operationId: getConnectorConfig
       parameters:
@@ -889,7 +889,7 @@ paths:
                 $ref: '#/components/schemas/ConnectorConfig'
     put:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: update or create connector with provided config
       operationId: setConnectorConfig
       parameters:
@@ -926,7 +926,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/tasks:
     get:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: get connector tasks
       operationId: getConnectorTasks
       parameters:
@@ -958,7 +958,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/connectors/{connectorName}/tasks/{taskId}/action/restart:
     post:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: restart connector task
       operationId: restartConnectorTask
       parameters:
@@ -989,7 +989,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: get connector plugins
       operationId: getConnectorPlugins
       parameters:
@@ -1016,7 +1016,7 @@ paths:
   /api/clusters/{clusterName}/connects/{connectName}/plugins/{pluginName}/config/validate:
     put:
       tags:
-        - /api/clusters/connects
+        - Kafka Connect
       summary: validate connector plugin configuration
       operationId: validateConnectorPluginConfig
       parameters:
