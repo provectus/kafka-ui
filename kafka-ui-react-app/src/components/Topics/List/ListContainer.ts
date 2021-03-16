@@ -1,29 +1,21 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState } from 'redux/interfaces';
+import { RootState } from 'redux/interfaces';
+import { fetchTopicsList } from 'redux/actions';
 import {
   getTopicList,
   getExternalTopicList,
+  getAreTopicsFetching,
 } from 'redux/reducers/topics/selectors';
-import { withRouter, RouteComponentProps } from 'react-router-dom';
 import List from './List';
 
-interface RouteProps {
-  clusterName: ClusterName;
-}
-
-type OwnProps = RouteComponentProps<RouteProps>;
-
-const mapStateToProps = (
-  state: RootState,
-  {
-    match: {
-      params: { clusterName },
-    },
-  }: OwnProps
-) => ({
-  clusterName,
+const mapStateToProps = (state: RootState) => ({
+  areTopicsFetching: getAreTopicsFetching(state),
   topics: getTopicList(state),
   externalTopics: getExternalTopicList(state),
 });
 
-export default withRouter(connect(mapStateToProps)(List));
+const mapDispatchToProps = {
+  fetchTopicsList,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(List);

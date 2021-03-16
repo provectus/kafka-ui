@@ -1,4 +1,3 @@
-import { v4 } from 'uuid';
 import { Topic, TopicMessage } from 'generated-sources';
 import { Action, TopicsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
@@ -7,30 +6,8 @@ import * as actions from 'redux/actions';
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
+  totalPages: 1,
   messages: [],
-};
-
-const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
-  const initialMemo: TopicsState = {
-    ...state,
-    allNames: [],
-  };
-
-  return payload.reduce(
-    (memo: TopicsState, topic) => ({
-      ...memo,
-      byName: {
-        ...memo.byName,
-        [topic.name]: {
-          ...memo.byName[topic.name],
-          ...topic,
-          id: v4(),
-        },
-      },
-      allNames: [...memo.allNames, topic.name],
-    }),
-    initialMemo
-  );
 };
 
 const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
@@ -38,7 +15,7 @@ const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
     ...state,
   };
   newState.allNames.push(payload.name);
-  newState.byName[payload.name] = { ...payload, id: v4() };
+  newState.byName[payload.name] = { ...payload };
   return newState;
 };
 
@@ -70,7 +47,7 @@ const transformTopicMessages = (
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case getType(actions.fetchTopicsListAction.success):
-      return updateTopicList(state, action.payload);
+      return action.payload;
     case getType(actions.fetchTopicDetailsAction.success):
       return {
         ...state,
@@ -93,7 +70,6 @@ const reducer = (state = initialState, action: Action): TopicsState => {
             ...state.byName[action.payload.topicName],
             config: action.payload.config.map((inputConfig) => ({
               ...inputConfig,
-              id: v4(),
             })),
           },
         },
