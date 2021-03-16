@@ -1,18 +1,20 @@
 import React from 'react';
 import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { NavLink, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import { FetchTopicsListParams } from 'redux/actions';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import Pagination from 'components/common/Pagination/Pagination';
 import ListItem from './ListItem';
 
 interface Props {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
   externalTopics: TopicWithDetailedInfo[];
+  totalPages: number;
   fetchTopicsList(props: FetchTopicsListParams): void;
 }
 
@@ -20,6 +22,7 @@ const List: React.FC<Props> = ({
   areTopicsFetching,
   topics,
   externalTopics,
+  totalPages,
   fetchTopicsList,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
@@ -58,12 +61,12 @@ const List: React.FC<Props> = ({
           </div>
           <div className="level-item level-right">
             {!isReadOnly && (
-              <NavLink
+              <Link
                 className="button is-primary"
                 to={clusterTopicNewPath(clusterName)}
               >
                 Add a Topic
-              </NavLink>
+              </Link>
             )}
           </div>
         </div>
@@ -93,6 +96,7 @@ const List: React.FC<Props> = ({
               )}
             </tbody>
           </table>
+          <Pagination totalPages={totalPages} />
         </div>
       )}
     </div>

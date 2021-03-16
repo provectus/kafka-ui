@@ -16,7 +16,6 @@ import {
   TopicFormDataRaw,
   TopicsState,
 } from 'redux/interfaces';
-
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from '../actions';
 
@@ -82,19 +81,25 @@ export const fetchTopicMessages = (
 export const fetchTopicDetails = (
   clusterName: ClusterName,
   topicName: TopicName
-): PromiseThunkResult => async (dispatch) => {
+): PromiseThunkResult => async (dispatch, getState) => {
   dispatch(actions.fetchTopicDetailsAction.request());
   try {
     const topicDetails = await topicsApiClient.getTopicDetails({
       clusterName,
       topicName,
     });
-    dispatch(
-      actions.fetchTopicDetailsAction.success({
-        topicName,
-        details: topicDetails,
-      })
-    );
+    const state = getState().topics;
+    const newState = {
+      ...state,
+      byName: {
+        ...state.byName,
+        [topicName]: {
+          ...state.byName[topicName],
+          ...topicDetails,
+        },
+      },
+    };
+    dispatch(actions.fetchTopicDetailsAction.success(newState));
   } catch (e) {
     dispatch(actions.fetchTopicDetailsAction.failure());
   }
@@ -103,14 +108,29 @@ export const fetchTopicDetails = (
 export const fetchTopicConfig = (
   clusterName: ClusterName,
   topicName: TopicName
-): PromiseThunkResult => async (dispatch) => {
+): PromiseThunkResult => async (dispatch, getState) => {
   dispatch(actions.fetchTopicConfigAction.request());
   try {
     const config = await topicsApiClient.getTopicConfigs({
       clusterName,
       topicName,
     });
-    dispatch(actions.fetchTopicConfigAction.success({ topicName, config }));
+
+    const state = getState().topics;
+    const newState = {
+      ...state,
+      byName: {
+        ...state.byName,
+        [topicName]: {
+          ...state.byName[topicName],
+          config: config.map((inputConfig) => ({
+            ...inputConfig,
+          })),
+        },
+      },
+    };
+
+    dispatch(actions.fetchTopicConfigAction.success(newState));
   } catch (e) {
     dispatch(actions.fetchTopicConfigAction.failure());
   }
@@ -155,14 +175,27 @@ const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
 export const createTopic = (
   clusterName: ClusterName,
   form: TopicFormDataRaw
-): PromiseThunkResult => async (dispatch) => {
+): PromiseThunkResult => async (dispatch, getState) => {
   dispatch(actions.createTopicAction.request());
   try {
     const topic: Topic = await topicsApiClient.createTopic({
       clusterName,
       topicFormData: formatTopicFormData(form),
     });
-    dispatch(actions.createTopicAction.success(topic));
+
+    const state = getState().topics;
+    const newState = {
+      ...state,
+      byName: {
+        ...state.byName,
+        [topic.name]: {
+          ...topic,
+        },
+      },
+      allNames: [...state.allNames, topic.name],
+    };
+
+    dispatch(actions.createTopicAction.success(newState));
   } catch (e) {
     dispatch(actions.createTopicAction.failure());
   }
@@ -171,7 +204,7 @@ export const createTopic = (
 export const updateTopic = (
   clusterName: ClusterName,
   form: TopicFormDataRaw
-): PromiseThunkResult => async (dispatch) => {
+): PromiseThunkResult => async (dispatch, getState) => {
   dispatch(actions.updateTopicAction.request());
   try {
     const topic: Topic = await topicsApiClient.updateTopic({
@@ -179,7 +212,20 @@ export const updateTopic = (
       topicName: form.name,
       topicFormData: formatTopicFormData(form),
     });
-    dispatch(actions.updateTopicAction.success(topic));
+
+    const state = getState().topics;
+    const newState = {
+      ...state,
+      byName: {
+        ...state.byName,
+        [topic.name]: {
+          ...state.byName[topic.name],
+          ...topic,
+        },
+      },
+    };
+
+    dispatch(actions.updateTopicAction.success(newState));
   } catch (e) {
     dispatch(actions.updateTopicAction.failure());
   }

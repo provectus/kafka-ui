@@ -62,25 +62,25 @@ export const fetchTopicDetailsAction = createAsyncAction(
   'GET_TOPIC_DETAILS__REQUEST',
   'GET_TOPIC_DETAILS__SUCCESS',
   'GET_TOPIC_DETAILS__FAILURE'
-)<undefined, { topicName: TopicName; details: TopicDetails }, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const fetchTopicConfigAction = createAsyncAction(
   'GET_TOPIC_CONFIG__REQUEST',
   'GET_TOPIC_CONFIG__SUCCESS',
   'GET_TOPIC_CONFIG__FAILURE'
-)<undefined, { topicName: TopicName; config: TopicConfig[] }, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const createTopicAction = createAsyncAction(
   'POST_TOPIC__REQUEST',
   'POST_TOPIC__SUCCESS',
   'POST_TOPIC__FAILURE'
-)<undefined, Topic, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const updateTopicAction = createAsyncAction(
   'PATCH_TOPIC__REQUEST',
   'PATCH_TOPIC__SUCCESS',
   'PATCH_TOPIC__FAILURE'
-)<undefined, Topic, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const fetchConsumerGroupsAction = createAsyncAction(
   'GET_CONSUMER_GROUPS__REQUEST',
