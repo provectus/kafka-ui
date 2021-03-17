@@ -12,7 +12,7 @@ export interface NewProps {
   createSchema: (
     clusterName: ClusterName,
     newSchemaSubject: NewSchemaSubject
-  ) => void;
+  ) => Promise<void>;
 }
 
 const New: React.FC<NewProps> = ({ createSchema }) => {

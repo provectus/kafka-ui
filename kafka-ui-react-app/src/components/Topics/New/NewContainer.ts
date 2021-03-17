@@ -7,11 +7,10 @@ import {
   TopicFormDataRaw,
 } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
-import { createTopic } from 'redux/actions';
+import { createTopic, createTopicAction } from 'redux/actions';
 import { getTopicCreated } from 'redux/reducers/topics/selectors';
 import { clusterTopicPath } from 'lib/paths';
 import { ThunkDispatch } from 'redux-thunk';
-import * as actions from 'redux/actions';
 import New from './New';
 
 interface RouteProps {
@@ -42,7 +41,7 @@ const mapDispatchToProps = (
   redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => {
     history.push(clusterTopicPath(clusterName, topicName));
   },
-  resetUploadedState: () => dispatch(actions.createTopicAction.failure()),
+  resetUploadedState: () => dispatch(createTopicAction.failure()),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(New));
