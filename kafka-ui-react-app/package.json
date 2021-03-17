@@ -10,7 +10,7 @@
     "date-fns": "^2.19.0",
     "eslint-import-resolver-node": "^0.3.4",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "immer": "^8.0.1",
+    "immer": "^8.0.2",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "pretty-ms": "^7.0.1",
