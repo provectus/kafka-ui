@@ -234,6 +234,22 @@ export const updateTopic = (
   }
 };
 
+export const deleteTopic = (
+  clusterName: ClusterName,
+  topicName: TopicName
+): PromiseThunkResult => async (dispatch) => {
+  dispatch(actions.deleteTopicAction.request());
+  try {
+    await topicsApiClient.deleteTopic({
+      clusterName,
+      topicName,
+    });
+    dispatch(actions.deleteTopicAction.success(topicName));
+  } catch (e) {
+    dispatch(actions.deleteTopicAction.failure());
+  }
+};
+
 export const fetchConsumerGroupsList = (
   clusterName: ClusterName
 ): PromiseThunkResult => async (dispatch) => {

@@ -4,7 +4,7 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ListItem from './ListItem';
+import ListItemContainer from './ListItemContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -58,11 +58,12 @@ const List: React.FC<Props> = ({ clusterName, topics, externalTopics }) => {
               <th>Total Partitions</th>
               <th>Out of sync replicas</th>
               <th>Type</th>
+              <th> </th>
             </tr>
           </thead>
           <tbody>
             {items.map((topic) => (
-              <ListItem key={topic.id} topic={topic} />
+              <ListItemContainer key={topic.id} topic={topic} />
             ))}
           </tbody>
         </table>

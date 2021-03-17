@@ -100,6 +100,15 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       };
     case getType(actions.createTopicAction.success):
       return addToTopicList(state, action.payload);
+    case getType(actions.deleteTopicAction.success): {
+      const newState: TopicsState = { ...state };
+      delete newState.byName[action.payload];
+      newState.allNames = newState.allNames.filter(
+        (name) => name !== action.payload
+      );
+      return newState;
+    }
+
     default:
       return state;
   }
