@@ -1,6 +1,6 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import { NavLink, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -33,12 +33,12 @@ const List: React.FC<ListProps> = ({
         <div className="level">
           {!isReadOnly && (
             <div className="level-item level-right">
-              <NavLink
+              <Link
                 className="button is-primary"
                 to={clusterSchemaNewPath(clusterName)}
               >
                 Create Schema
-              </NavLink>
+              </Link>
             </div>
           )}
         </div>

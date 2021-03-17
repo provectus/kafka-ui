@@ -17,7 +17,7 @@ paths:
   /connectors:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get all connectors from Kafka Connect service
       operationId: getConnectors
       responses:
@@ -31,7 +31,7 @@ paths:
                   type: string
     post:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: create new connector
       operationId: createConnector
       requestBody:
@@ -56,7 +56,7 @@ paths:
   /connectors/{connectorName}:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get information about the connector
       operationId: getConnector
       parameters:
@@ -74,7 +74,7 @@ paths:
                 $ref: '#/components/schemas/Connector'
     delete:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: delete connector
       operationId: deleteConnector
       parameters:
@@ -92,7 +92,7 @@ paths:
   /connectors/{connectorName}/config:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get connector configuration
       operationId: getConnectorConfig
       parameters:
@@ -110,7 +110,7 @@ paths:
                 $ref: '#/components/schemas/ConnectorConfig'
     put:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: update or create connector with provided config
       operationId: setConnectorConfig
       parameters:
@@ -142,7 +142,7 @@ paths:
   /connectors/{connectorName}/status:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get connector status
       operationId: getConnectorStatus
       parameters:
@@ -162,7 +162,7 @@ paths:
   /connectors/{connectorName}/restart:
     post:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: restart the connector
       operationId: restartConnector
       parameters:
@@ -180,7 +180,7 @@ paths:
   /connectors/{connectorName}/pause:
     put:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: pause the connector
       operationId: pauseConnector
       parameters:
@@ -196,7 +196,7 @@ paths:
   /connectors/{connectorName}/resume:
     put:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: resume the connector
       operationId: resumeConnector
       parameters:
@@ -212,7 +212,7 @@ paths:
   /connectors/{connectorName}/tasks:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get connector tasks
       operationId: getConnectorTasks
       parameters:
@@ -234,7 +234,7 @@ paths:
   /connectors/{connectorName}/tasks/{taskId}/status:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get connector task status
       operationId: getConnectorTaskStatus
       parameters:
@@ -259,7 +259,7 @@ paths:
   /connectors/{connectorName}/tasks/{taskId}/restart:
     post:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: restart connector task
       operationId: restartConnectorTask
       parameters:
@@ -280,7 +280,7 @@ paths:
   /connector-plugins:
     get:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: get connector plugins
       operationId: getConnectorPlugins
       responses:
@@ -296,7 +296,7 @@ paths:
   /connector-plugins/{pluginName}/config/validate:
     put:
       tags:
-        - /connect
+        - KafkaConnectClient
       summary: validate connector plugin configuration
       operationId: validateConnectorPluginConfig
       parameters:
