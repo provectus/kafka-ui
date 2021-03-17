@@ -3,10 +3,14 @@ on:
   pull_request:
     branches:
       - "master"
+    paths-ignore:
+      - 'kafka-ui-react-app/**'
   push:
     branches:
       - "**"
       - "!master"
+    paths-ignore:
+      - 'kafka-ui-react-app/**'
 jobs:
   build:
     runs-on: ubuntu-latest

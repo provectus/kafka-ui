@@ -3,10 +3,16 @@ on:
   pull_request:
     branches:
       - "master"
+    paths:
+      - kafka-ui-contract/**
+      - kafka-ui-react-app/**
   push:
     branches:
       - "**"
       - "!master"
+    paths:
+      - kafka-ui-contract/**
+      - kafka-ui-react-app/**
 jobs:
   npm-test:
     env:
