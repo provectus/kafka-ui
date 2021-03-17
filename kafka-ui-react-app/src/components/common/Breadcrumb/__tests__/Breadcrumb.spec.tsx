@@ -1,10 +1,10 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
-import Breadcrumb, { Link } from '../Breadcrumb';
+import Breadcrumb, { BreadcrumbItem } from '../Breadcrumb';
 
 describe('Breadcrumb component', () => {
-  const links: Link[] = [
+  const links: BreadcrumbItem[] = [
     {
       label: 'link1',
       href: 'link1href',
@@ -28,7 +28,7 @@ describe('Breadcrumb component', () => {
   );
 
   it('renders the list of links', () => {
-    component.find(`NavLink`).forEach((link, idx) => {
+    component.find(`Link`).forEach((link, idx) => {
       expect(link.prop('to')).toEqual(links[idx].href);
       expect(link.contains(links[idx].label)).toBeTruthy();
     });

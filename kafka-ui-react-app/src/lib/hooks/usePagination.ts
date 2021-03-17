@@ -1,7 +1,8 @@
 import { useLocation } from 'react-router';
 
 const usePagination = () => {
-  const params = new URLSearchParams(useLocation().search);
+  const { search, pathname } = useLocation();
+  const params = new URLSearchParams(search);
 
   const page = params.get('page');
   const perPage = params.get('perPage');
@@ -9,6 +10,7 @@ const usePagination = () => {
   return {
     page: page ? Number(page) : undefined,
     perPage: perPage ? Number(perPage) : undefined,
+    pathname,
   };
 };
 

@@ -1,5 +1,5 @@
-import { mount } from 'enzyme';
 import React from 'react';
+import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router-dom';
 import ClusterContext from 'components/contexts/ClusterContext';
 import List from '../List';
@@ -14,12 +14,13 @@ describe('List', () => {
               areTopicsFetching={false}
               topics={[]}
               externalTopics={[]}
+              totalPages={1}
               fetchTopicsList={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>
       );
-      expect(component.exists('NavLink')).toBeFalsy();
+      expect(component.exists('Link')).toBeFalsy();
     });
   });
 
@@ -32,12 +33,13 @@ describe('List', () => {
               areTopicsFetching={false}
               topics={[]}
               externalTopics={[]}
+              totalPages={1}
               fetchTopicsList={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>
       );
-      expect(component.exists('NavLink')).toBeTruthy();
+      expect(component.exists('Link')).toBeTruthy();
     });
   });
 });

@@ -14,6 +14,8 @@ const getAllNames = (state: RootState) => topicsState(state).allNames;
 const getTopicMap = (state: RootState) => topicsState(state).byName;
 export const getTopicMessages = (state: RootState) =>
   topicsState(state).messages;
+export const getTopicListTotalPages = (state: RootState) =>
+  topicsState(state).totalPages;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
 const getTopicDetailsFetchingStatus = createFetchingSelector(
