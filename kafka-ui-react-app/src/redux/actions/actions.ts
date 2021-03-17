@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { TopicName, ConsumerGroupID, TopicsState } from 'redux/interfaces';
+import { ConsumerGroupID, TopicsState } from 'redux/interfaces';
 
 import {
   Cluster,
@@ -7,9 +7,6 @@ import {
   ClusterMetrics,
   Broker,
   BrokerMetrics,
-  Topic,
-  TopicDetails,
-  TopicConfig,
   TopicMessage,
   ConsumerGroup,
   ConsumerGroupDetails,
