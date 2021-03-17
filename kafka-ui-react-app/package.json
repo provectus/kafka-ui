@@ -70,7 +70,7 @@
   },
   "devDependencies": {
     "@jest/types": "^26.6.2",
-    "@openapitools/openapi-generator-cli": "^2.1.26",
+    "@openapitools/openapi-generator-cli": "^2.2.2",
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.1.2",
