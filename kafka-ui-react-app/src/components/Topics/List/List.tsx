@@ -85,15 +85,14 @@ const List: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
-              {items.length > 0 ? (
-                items.map((topic) => (
-                  <ListItem key={topic.name} topic={topic} />
-                ))
-              ) : (
+              {items.length === 0 && (
                 <tr>
                   <td colSpan={10}>No topics found</td>
                 </tr>
               )}
+              {items.map((topic) => (
+                <ListItem key={topic.name} topic={topic} />
+              ))}
             </tbody>
           </table>
           <Pagination totalPages={totalPages} />
