@@ -81,7 +81,7 @@
     "@types/node": "^12.20.6",
     "@types/node-fetch": "^2.5.8",
     "@types/react": "^17.0.3",
-    "@types/react-datepicker": "^3.1.7",
+    "@types/react-datepicker": "^3.1.8",
     "@types/react-dom": "^17.0.2",
     "@types/react-redux": "^7.1.11",
     "@types/react-router-dom": "^5.1.6",
