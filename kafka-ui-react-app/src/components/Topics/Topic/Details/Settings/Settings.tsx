@@ -1,5 +1,6 @@
+import { TopicConfig } from 'generated-sources';
 import React from 'react';
-import { ClusterName, TopicName, TopicConfig } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
 
 interface Props {
   clusterName: ClusterName;
@@ -56,7 +57,7 @@ const Sertings: React.FC<Props> = ({
         </thead>
         <tbody>
           {config.map((item) => (
-            <ConfigListItem key={item.id} config={item} />
+            <ConfigListItem key={item.name} config={item} />
           ))}
         </tbody>
       </table>

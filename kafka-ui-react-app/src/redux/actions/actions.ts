@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { TopicName, ConsumerGroupID } from 'redux/interfaces';
+import { ConsumerGroupID, TopicsState } from 'redux/interfaces';
 
 import {
   Cluster,
@@ -7,9 +7,6 @@ import {
   ClusterMetrics,
   Broker,
   BrokerMetrics,
-  Topic,
-  TopicDetails,
-  TopicConfig,
   TopicMessage,
   ConsumerGroup,
   ConsumerGroupDetails,
@@ -50,7 +47,7 @@ export const fetchTopicsListAction = createAsyncAction(
   'GET_TOPICS__REQUEST',
   'GET_TOPICS__SUCCESS',
   'GET_TOPICS__FAILURE'
-)<undefined, Topic[], undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const fetchTopicMessagesAction = createAsyncAction(
   'GET_TOPIC_MESSAGES__REQUEST',
@@ -62,25 +59,25 @@ export const fetchTopicDetailsAction = createAsyncAction(
   'GET_TOPIC_DETAILS__REQUEST',
   'GET_TOPIC_DETAILS__SUCCESS',
   'GET_TOPIC_DETAILS__FAILURE'
-)<undefined, { topicName: TopicName; details: TopicDetails }, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const fetchTopicConfigAction = createAsyncAction(
   'GET_TOPIC_CONFIG__REQUEST',
   'GET_TOPIC_CONFIG__SUCCESS',
   'GET_TOPIC_CONFIG__FAILURE'
-)<undefined, { topicName: TopicName; config: TopicConfig[] }, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const createTopicAction = createAsyncAction(
   'POST_TOPIC__REQUEST',
   'POST_TOPIC__SUCCESS',
   'POST_TOPIC__FAILURE'
-)<undefined, Topic, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const updateTopicAction = createAsyncAction(
   'PATCH_TOPIC__REQUEST',
   'PATCH_TOPIC__SUCCESS',
   'PATCH_TOPIC__FAILURE'
-)<undefined, Topic, undefined>();
+)<undefined, TopicsState, undefined>();
 
 export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__REQUEST',

@@ -1,5 +1,4 @@
-import { v4 } from 'uuid';
-import { Topic, TopicMessage } from 'generated-sources';
+import { TopicMessage } from 'generated-sources';
 import { Action, TopicsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
@@ -7,39 +6,8 @@ import * as actions from 'redux/actions';
 export const initialState: TopicsState = {
   byName: {},
   allNames: [],
+  totalPages: 1,
   messages: [],
-};
-
-const updateTopicList = (state: TopicsState, payload: Topic[]): TopicsState => {
-  const initialMemo: TopicsState = {
-    ...state,
-    allNames: [],
-  };
-
-  return payload.reduce(
-    (memo: TopicsState, topic) => ({
-      ...memo,
-      byName: {
-        ...memo.byName,
-        [topic.name]: {
-          ...memo.byName[topic.name],
-          ...topic,
-          id: v4(),
-        },
-      },
-      allNames: [...memo.allNames, topic.name],
-    }),
-    initialMemo
-  );
-};
-
-const addToTopicList = (state: TopicsState, payload: Topic): TopicsState => {
-  const newState: TopicsState = {
-    ...state,
-  };
-  newState.allNames.push(payload.name);
-  newState.byName[payload.name] = { ...payload, id: v4() };
-  return newState;
 };
 
 const transformTopicMessages = (
@@ -70,36 +38,13 @@ const transformTopicMessages = (
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case getType(actions.fetchTopicsListAction.success):
-      return updateTopicList(state, action.payload);
     case getType(actions.fetchTopicDetailsAction.success):
-      return {
-        ...state,
-        byName: {
-          ...state.byName,
-          [action.payload.topicName]: {
-            ...state.byName[action.payload.topicName],
-            ...action.payload.details,
-          },
-        },
-      };
+    case getType(actions.fetchTopicConfigAction.success):
+    case getType(actions.createTopicAction.success):
+    case getType(actions.updateTopicAction.success):
+      return action.payload;
     case getType(actions.fetchTopicMessagesAction.success):
       return transformTopicMessages(state, action.payload);
-    case getType(actions.fetchTopicConfigAction.success):
-      return {
-        ...state,
-        byName: {
-          ...state.byName,
-          [action.payload.topicName]: {
-            ...state.byName[action.payload.topicName],
-            config: action.payload.config.map((inputConfig) => ({
-              ...inputConfig,
-              id: v4(),
-            })),
-          },
-        },
-      };
-    case getType(actions.createTopicAction.success):
-      return addToTopicList(state, action.payload);
     case getType(actions.deleteTopicAction.success): {
       const newState: TopicsState = { ...state };
       delete newState.byName[action.payload];
@@ -108,7 +53,6 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       );
       return newState;
     }
-
     default:
       return state;
   }

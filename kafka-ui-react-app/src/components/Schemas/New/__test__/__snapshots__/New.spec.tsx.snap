@@ -60,35 +60,21 @@ exports[`New View matches snapshot 1`] = `
                   <li
                     key="/ui/clusters/undefined/schemas"
                   >
-                    <NavLink
+                    <Link
                       to="/ui/clusters/undefined/schemas"
                     >
-                      <Link
-                        aria-current={null}
-                        to={
-                          Object {
-                            "hash": "",
-                            "pathname": "/ui/clusters/undefined/schemas",
-                            "search": "",
-                            "state": null,
-                          }
-                        }
+                      <LinkAnchor
+                        href="/ui/clusters/undefined/schemas"
+                        navigate={[Function]}
                       >
-                        <LinkAnchor
-                          aria-current={null}
+                        <a
                           href="/ui/clusters/undefined/schemas"
-                          navigate={[Function]}
+                          onClick={[Function]}
                         >
-                          <a
-                            aria-current={null}
-                            href="/ui/clusters/undefined/schemas"
-                            onClick={[Function]}
-                          >
-                            Schema Registry
-                          </a>
-                        </LinkAnchor>
-                      </Link>
-                    </NavLink>
+                          Schema Registry
+                        </a>
+                      </LinkAnchor>
+                    </Link>
                   </li>
                   <li
                     className="is-active"

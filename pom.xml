@@ -40,6 +40,8 @@
 		<assertj.version>3.19.0</assertj.version>
 
 		<frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources</frontend-generated-sources-directory>
+		<sonar.organization>provectus</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<repositories>
