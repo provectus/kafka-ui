@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { ConsumerGroupID, TopicsState } from 'redux/interfaces';
+import { ConsumerGroupID, TopicName, TopicsState } from 'redux/interfaces';
 
 import {
   Cluster,

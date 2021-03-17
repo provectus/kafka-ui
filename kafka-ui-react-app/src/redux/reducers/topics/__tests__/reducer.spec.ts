@@ -15,6 +15,7 @@ describe('topics reducer', () => {
           },
           allNames: [topic.name],
           messages: [],
+          totalPages: 1,
         },
         deleteTopicAction.success(topic.name)
       )
@@ -22,6 +23,7 @@ describe('topics reducer', () => {
       byName: {},
       allNames: [],
       messages: [],
+      totalPages: 1,
     });
   });
 });

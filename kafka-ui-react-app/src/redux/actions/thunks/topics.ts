@@ -230,3 +230,19 @@ export const updateTopic = (
     dispatch(actions.updateTopicAction.failure());
   }
 };
+
+export const deleteTopic = (
+  clusterName: ClusterName,
+  topicName: TopicName
+): PromiseThunkResult => async (dispatch) => {
+  dispatch(actions.deleteTopicAction.request());
+  try {
+    await topicsApiClient.deleteTopic({
+      clusterName,
+      topicName,
+    });
+    dispatch(actions.deleteTopicAction.success(topicName));
+  } catch (e) {
+    dispatch(actions.deleteTopicAction.failure());
+  }
+};
