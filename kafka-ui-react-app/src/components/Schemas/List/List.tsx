@@ -57,15 +57,14 @@ const List: React.FC<ListProps> = ({
               </tr>
             </thead>
             <tbody>
-              {schemas.length > 0 ? (
-                schemas.map((subject) => (
-                  <ListItem key={subject.id} subject={subject} />
-                ))
-              ) : (
+              {schemas.length === 0 && (
                 <tr>
                   <td colSpan={10}>No schemas found</td>
                 </tr>
               )}
+              {schemas.map((subject) => (
+                <ListItem key={subject.id} subject={subject} />
+              ))}
             </tbody>
           </table>
         </div>

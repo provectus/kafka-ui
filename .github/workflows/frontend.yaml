@@ -1,29 +1,24 @@
 name: frontend
 on:
   pull_request:
-    branches:
-      - "master"
-  push:
-    branches:
-      - "**"
-      - "!master"
+    paths:
+      - './kafka-ui-contract/**'
+      - './kafka-ui-react-app/**'
 jobs:
   npm-test:
-    needs: [mvn-contract-build]
     env:
       CI: true
       NODE_ENV: dev
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        # Disabling shallow clone is recommended for improving relevancy of reporting
+        fetch-depth: 0
     - name: Use Node.js
       uses: actions/setup-node@v1
       with:
         node-version: "14"
-    - uses: actions/download-artifact@v2
-      with:
-        name: generated-sources
-        path: kafka-ui-react-app/src/generated-sources
     - name: Cache node dependency
       uses: actions/cache@v1
       with:
@@ -35,6 +30,10 @@ jobs:
       run: |
         cd kafka-ui-react-app/
         npm install
+    - name: Generate sources
+      run: |
+        cd kafka-ui-react-app/
+        npm run gen:sources
     - name: Linter
       run: |
         cd kafka-ui-react-app/
@@ -43,28 +42,10 @@ jobs:
       run: |
         cd kafka-ui-react-app/
         npm run test
-
-  mvn-contract-build:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Cache local Maven repository
-      uses: actions/cache@v1
+    - name: SonarCloud Scan
+      uses: workshur/sonarcloud-github-action@improved_basedir
       with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-contract-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-contract-
-          ${{ runner.os }}-maven-
-    - uses: actions/checkout@v2
-    - name: Set up JDK 1.13
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.13
-    - name: Build with Maven
-      run: |
-        cd kafka-ui-contract
-        mvn clean package
-    - uses: actions/upload-artifact@v2
-      with:
-        name: generated-sources
-        path: kafka-ui-contract/target/generated-sources/frontend
+        projectBaseDir: ./kafka-ui-react-app
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
