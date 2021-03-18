@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PageControl matches snapshot 1`] = `
+<li>
+  <Link
+    aria-label="Goto page 138"
+    className="pagination-link is-current"
+    to="/test"
+  >
+    138
+  </Link>
+</li>
+`;

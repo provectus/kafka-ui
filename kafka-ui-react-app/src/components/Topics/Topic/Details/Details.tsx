@@ -1,10 +1,8 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { Topic, TopicDetails } from 'generated-sources';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { NavLink, Switch, Route } from 'react-router-dom';
+import { NavLink, Switch, Route, Link } from 'react-router-dom';
 import {
-  clusterTopicsPath,
   clusterTopicSettingsPath,
   clusterTopicPath,
   clusterTopicMessagesPath,
@@ -14,7 +12,6 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import OverviewContainer from './Overview/OverviewContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
-import SettingsEditButton from './Settings/SettingsEditButton';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -23,27 +20,11 @@ interface Props extends Topic, TopicDetails {
 
 const Details: React.FC<Props> = ({ clusterName, topicName }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
-  return (
-    <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              { href: clusterTopicsPath(clusterName), label: 'All Topics' },
-            ]}
-          >
-            {topicName}
-          </Breadcrumb>
-        </div>
-        {!isReadOnly && (
-          <SettingsEditButton
-            to={clusterTopicsTopicEditPath(clusterName, topicName)}
-          />
-        )}
-      </div>
 
-      <div className="box">
-        <nav className="navbar" role="navigation">
+  return (
+    <div className="box">
+      <nav className="navbar" role="navigation">
+        <div className="navbar-start">
           <NavLink
             exact
             to={clusterTopicPath(clusterName, topicName)}
@@ -68,26 +49,36 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
           >
             Settings
           </NavLink>
-        </nav>
-        <br />
-        <Switch>
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName/messages"
-            component={MessagesContainer}
-          />
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName/settings"
-            component={SettingsContainer}
-          />
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName"
-            component={OverviewContainer}
-          />
-        </Switch>
-      </div>
+        </div>
+        <div className="navbar-end">
+          {!isReadOnly && (
+            <Link
+              to={clusterTopicsTopicEditPath(clusterName, topicName)}
+              className="button"
+            >
+              Edit settings
+            </Link>
+          )}
+        </div>
+      </nav>
+      <br />
+      <Switch>
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName/messages"
+          component={MessagesContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName/settings"
+          component={SettingsContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName"
+          component={OverviewContainer}
+        />
+      </Switch>
     </div>
   );
 };

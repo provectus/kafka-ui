@@ -1,10 +1,11 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount, shallow } from 'enzyme';
-import * as useDebounce from 'use-debounce';
 import DatePicker from 'react-datepicker';
-import Messages, { Props } from 'components/Topics/Details/Messages/Messages';
-import MessagesContainer from 'components/Topics/Details/Messages/MessagesContainer';
+import Messages, {
+  Props,
+} from 'components/Topics/Topic/Details/Messages/Messages';
+import MessagesContainer from 'components/Topics/Topic/Details/Messages/MessagesContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import configureStore from 'redux/store/configureStore';
 
@@ -18,7 +19,6 @@ describe('Messages', () => {
           <MessagesContainer />
         </Provider>
       );
-
       expect(component.exists()).toBeTruthy();
     });
   });
@@ -96,30 +96,24 @@ describe('Messages', () => {
     describe('Offset field', () => {
       describe('Seek Type dependency', () => {
         const wrapper = mount(setupWrapper());
-
         it('renders DatePicker', () => {
           wrapper
             .find('[id="selectSeekType"]')
             .simulate('change', { target: { value: 'TIMESTAMP' } });
-
           expect(
             wrapper.find('[id="selectSeekType"]').first().props().value
           ).toEqual('TIMESTAMP');
-
           expect(wrapper.exists(DatePicker)).toBeTruthy();
         });
       });
 
       describe('With defined offset value', () => {
         const wrapper = shallow(setupWrapper());
-
         it('shows offset value in input', () => {
           const offset = '10';
-
           wrapper
             .find('#searchOffset')
             .simulate('change', { target: { value: offset } });
-
           expect(wrapper.find('#searchOffset').first().props().value).toEqual(
             offset
           );
@@ -127,12 +121,10 @@ describe('Messages', () => {
       });
       describe('With invalid offset value', () => {
         const wrapper = shallow(setupWrapper());
-
         it('shows 0 in input', () => {
           wrapper
             .find('#searchOffset')
             .simulate('change', { target: { value: null } });
-
           expect(wrapper.find('#searchOffset').first().props().value).toBe('0');
         });
       });
@@ -141,25 +133,12 @@ describe('Messages', () => {
     describe('Search field', () => {
       it('renders input correctly', () => {
         const query = 20;
-        const mockedUseDebouncedCallback = jest.fn();
-        jest
-          .spyOn(useDebounce, 'useDebouncedCallback')
-          .mockImplementationOnce(() => [
-            mockedUseDebouncedCallback,
-            jest.fn(),
-            jest.fn(),
-          ]);
-
         const wrapper = shallow(setupWrapper());
-
+        expect(wrapper.exists('#searchText')).toBeTruthy();
         wrapper
           .find('#searchText')
           .simulate('change', { target: { value: query } });
-
-        expect(wrapper.find('#searchText').first().props().value).toEqual(
-          query
-        );
-        expect(mockedUseDebouncedCallback).toHaveBeenCalledWith({ q: query });
+        expect(wrapper.find('#searchText').at(0).props().value).toEqual(query);
       });
     });
 

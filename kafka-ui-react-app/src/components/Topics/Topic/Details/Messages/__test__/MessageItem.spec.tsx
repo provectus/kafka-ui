@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import MessageItem from 'components/Topics/Details/Messages/MessageItem';
+import MessageItem from 'components/Topics/Topic/Details/Messages/MessageItem';
 import { messages } from './fixtures';
 
 jest.mock('date-fns', () => ({

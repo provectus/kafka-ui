@@ -1,13 +1,13 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-export interface Link {
+export interface BreadcrumbItem {
   label: string;
   href: string;
 }
 
 interface Props {
-  links?: Link[];
+  links?: BreadcrumbItem[];
 }
 
 const Breadcrumb: React.FC<Props> = ({ links, children }) => {
@@ -17,7 +17,7 @@ const Breadcrumb: React.FC<Props> = ({ links, children }) => {
         {links &&
           links.map(({ label, href }) => (
             <li key={href}>
-              <NavLink to={href}>{label}</NavLink>
+              <Link to={href}>{label}</Link>
             </li>
           ))}
 
