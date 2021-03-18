@@ -1,12 +1,11 @@
 package com.provectus.kafka.ui.producer;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.testcontainers.containers.KafkaContainer;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 
 public class KafkaTestProducer<KeyT, ValueT> implements AutoCloseable {
     private final KafkaProducer<KeyT, ValueT> producer;
@@ -20,13 +19,18 @@ public class KafkaTestProducer<KeyT, ValueT> implements AutoCloseable {
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers(),
                 ProducerConfig.CLIENT_ID_CONFIG, "KafkaTestProducer",
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+				ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class
         )));
     }
 
-    public void send(String topic, ValueT value) {
-        producer.send(new ProducerRecord<>(topic, value));
+    public Future<RecordMetadata> send(String topic, ValueT value) {
+        return producer.send(new ProducerRecord<>(topic, value));
     }
+
+	public Future<RecordMetadata> send(ProducerRecord<KeyT, ValueT> record) {
+		return producer.send(record);
+	}
 
     @Override
     public void close() {

@@ -2,8 +2,12 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.container.KafkaConnectContainer;
 import com.provectus.kafka.ui.container.SchemaRegistryContainer;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.function.ThrowingConsumer;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -12,6 +16,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
+
+import java.util.List;
+import java.util.Properties;
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -57,4 +65,24 @@ public abstract class AbstractBaseTest {
             System.setProperty("kafka.clusters.1.kafkaConnect.0.address", kafkaConnect.getTarget());
         }
     }
+
+    public static void createTopic(NewTopic topic){
+        withAdminClient(client -> client.createTopics(List.of(topic)).all().get());
+    }
+
+	public static void deleteTopic(String topic){
+		withAdminClient(client -> client.deleteTopics(List.of(topic)).all().get());
+	}
+
+	private static void withAdminClient(ThrowingConsumer<AdminClient> consumer){
+		Properties properties = new Properties();
+		properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
+		try (var client =  AdminClient.create(properties)){
+			try {
+				consumer.accept(client);
+			} catch (Throwable throwable) {
+				throw new RuntimeException(throwable);
+			}
+		}
+	}
 }
