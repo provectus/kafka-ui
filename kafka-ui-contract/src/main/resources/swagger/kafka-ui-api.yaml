@@ -1079,6 +1079,13 @@ components:
           type: number
         readOnly:
           type: boolean
+        features:
+          type: array
+          items:
+            type: string
+            enum:
+              - SCHEMA_REGISTRY
+              - KAFKA_CONNECT
       required:
         - id
         - name
