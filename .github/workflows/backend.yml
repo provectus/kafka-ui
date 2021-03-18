@@ -1,6 +1,7 @@
 name: backend
 on:
-  push:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
     - '!kafka-ui-react-app/**'
 jobs:
