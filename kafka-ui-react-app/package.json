@@ -72,7 +72,7 @@
     "@jest/types": "^26.6.2",
     "@openapitools/openapi-generator-cli": "^2.2.2",
     "@testing-library/jest-dom": "^5.11.9",
-    "@testing-library/react": "^9.5.0",
+    "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.8",
