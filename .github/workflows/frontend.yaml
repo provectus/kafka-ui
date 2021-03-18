@@ -1,9 +1,9 @@
 name: frontend
 on:
-  pull_request:
+  push:
     paths:
-      - './kafka-ui-contract/**'
-      - './kafka-ui-react-app/**'
+    - 'kafka-ui-contract/**'
+    - 'kafka-ui-react-app/**'
 jobs:
   npm-test:
     env:
