@@ -1,8 +1,8 @@
 name: backend
 on:
-  pull_request:
-    paths-ignore:
-      - 'kafka-ui-react-app/**'
+  push:
+    paths:
+    - '!kafka-ui-react-app/**'
 jobs:
   build:
     runs-on: ubuntu-latest
