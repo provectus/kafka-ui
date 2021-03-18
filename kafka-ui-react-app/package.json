@@ -27,7 +27,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "typesafe-actions": "^5.1.0",
-    "use-debounce": "^3.4.3",
+    "use-debounce": "^6.0.0",
     "uuid": "^8.3.1"
   },
   "lint-staged": {
@@ -46,12 +46,9 @@
     "test": "react-scripts test",
     "test:CI": "CI=true npm test --watchAll=false",
     "eject": "react-scripts eject",
-    "tsc": "tsc"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run tsc --noEmit && lint-staged"
-    }
+    "tsc": "tsc",
+    "prepare": "cd .. && husky install kafka-ui-react-app/.husky",
+    "pre-commit": "npm run tsc --noEmit && lint-staged"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -72,7 +69,7 @@
     "@jest/types": "^26.6.2",
     "@openapitools/openapi-generator-cli": "^2.2.2",
     "@testing-library/jest-dom": "^5.11.9",
-    "@testing-library/react": "^9.5.0",
+    "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^7.1.2",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.8",
@@ -98,7 +95,7 @@
     "eslint": "^7.22.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-config-prettier": "^6.15.0",
+    "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.1.4",
@@ -106,11 +103,11 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "esprint": "^2.0.0",
     "fetch-mock-jest": "^1.5.1",
-    "husky": "^4.3.0",
+    "husky": "^5.1.3",
     "lint-staged": "^10.5.4",
     "node-sass": "^5.0.0",
     "prettier": "^2.2.1",
-    "react-scripts": "4.0.2",
+    "react-scripts": "4.0.3",
     "redux-mock-store": "^1.5.4",
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
