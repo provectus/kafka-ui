@@ -110,7 +110,7 @@
     "lint-staged": "^10.5.4",
     "node-sass": "^5.0.0",
     "prettier": "^2.2.1",
-    "react-scripts": "4.0.2",
+    "react-scripts": "4.0.3",
     "redux-mock-store": "^1.5.4",
     "ts-jest": "^26.5.4",
     "ts-node": "^9.1.1",
