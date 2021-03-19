@@ -18,17 +18,17 @@ const JSONViewer: React.FC<JSONViewerProps> = ({ data }) => {
   const buttonClasses = 'button is-link is-outlined is-small is-centered';
   return (
     <div>
-      <div
-        className="field has-addons"
-        style={{
-          justifyContent: 'flex-end',
-        }}
-      >
+      <JSONTree
+        data={data}
+        theme={theme}
+        shouldExpandNode={() => true}
+        hideRoot
+      />
+      <div className="field has-addons is-justify-content-flex-end">
         <DynamicButton
           callback={copyButtonHandler}
-          classes={buttonClasses}
+          classes={`${buttonClasses} mr-1`}
           title="Copy the message to the clipboard"
-          style={{ marginRight: '5px' }}
           text={{ default: 'Copy', dynamic: 'Copied!' }}
         >
           <span className="icon">
@@ -47,12 +47,6 @@ const JSONViewer: React.FC<JSONViewerProps> = ({ data }) => {
           <span>Save</span>
         </button>
       </div>
-      <JSONTree
-        data={data}
-        theme={theme}
-        shouldExpandNode={() => true}
-        hideRoot
-      />
     </div>
   );
 };

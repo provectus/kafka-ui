@@ -23,7 +23,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
     <td style={{ wordBreak: 'break-word' }}>
       {content && (
         <div>
-          <JSONViewer data={content as { [key: string]: string }} />
+          <JSONViewer data={content as Record<string, string>} />
         </div>
       )}
     </td>
