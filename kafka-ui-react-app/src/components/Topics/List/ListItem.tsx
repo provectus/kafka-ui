@@ -29,9 +29,9 @@ const ListItem: React.FC<ListItemProps> = ({
     }, 0);
   }, [partitions]);
 
-  const deleteTopicHandler = () => {
+  const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, name);
-  };
+  }, [clusterName, name]);
 
   return (
     <tr>

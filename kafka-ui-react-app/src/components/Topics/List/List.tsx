@@ -1,5 +1,9 @@
 import React from 'react';
-import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
+import {
+  TopicWithDetailedInfo,
+  ClusterName,
+  TopicName,
+} from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { Link, useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
@@ -8,7 +12,7 @@ import { FetchTopicsListParams } from 'redux/actions';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
-import ListItemContainer from './ListItemContainer';
+import ListItem from './ListItem';
 
 interface Props {
   areTopicsFetching: boolean;
@@ -16,6 +20,7 @@ interface Props {
   externalTopics: TopicWithDetailedInfo[];
   totalPages: number;
   fetchTopicsList(props: FetchTopicsListParams): void;
+  deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
 }
 
 const List: React.FC<Props> = ({
@@ -24,6 +29,7 @@ const List: React.FC<Props> = ({
   externalTopics,
   totalPages,
   fetchTopicsList,
+  deleteTopic,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
@@ -82,12 +88,18 @@ const List: React.FC<Props> = ({
                 <th>Total Partitions</th>
                 <th>Out of sync replicas</th>
                 <th>Type</th>
+                <th> </th>
               </tr>
             </thead>
             <tbody>
               {items.length > 0 ? (
                 items.map((topic) => (
-                  <ListItemContainer key={topic.name} topic={topic} />
+                  <ListItem
+                    clusterName={clusterName}
+                    key={topic.name}
+                    topic={topic}
+                    deleteTopic={deleteTopic}
+                  />
                 ))
               ) : (
                 <tr>
