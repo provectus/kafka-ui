@@ -19,8 +19,7 @@ public class KafkaTestProducer<KeyT, ValueT> implements AutoCloseable {
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaContainer.getBootstrapServers(),
                 ProducerConfig.CLIENT_ID_CONFIG, "KafkaTestProducer",
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
-                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
-				ProducerConfig.PARTITIONER_CLASS_CONFIG, RoundRobinPartitioner.class
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class
         )));
     }
 
