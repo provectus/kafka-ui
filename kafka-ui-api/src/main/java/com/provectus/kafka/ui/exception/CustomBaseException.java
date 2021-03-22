@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.exception;
 
-import org.springframework.http.HttpStatus;
 
 public abstract class CustomBaseException extends RuntimeException {
     public CustomBaseException() {
@@ -22,5 +21,5 @@ public abstract class CustomBaseException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public abstract HttpStatus getResponseStatusCode();
+    public abstract ErrorCode getErrorCode();
 }
