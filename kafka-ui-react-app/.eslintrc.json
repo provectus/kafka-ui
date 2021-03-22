@@ -24,12 +24,11 @@
   "extends": [
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
-    "prettier",
-    "prettier/react",
-    "prettier/@typescript-eslint"
+    "plugin:prettier/recommended",
+    "prettier"
   ],
   "rules": {
-    "prettier/prettier": "error",
+    "prettier/prettier": "warn",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",

@@ -43,7 +43,6 @@ const Brokers: React.FC<Props> = ({
   return (
     <div className="section">
       <Breadcrumb>Brokers overview</Breadcrumb>
-
       <MetricsWrapper title="Uptime">
         <Indicator label="Total Brokers">{brokerCount}</Indicator>
         <Indicator label="Active Controllers">{activeControllers}</Indicator>
@@ -53,7 +52,6 @@ const Brokers: React.FC<Props> = ({
           </span>
         </Indicator>
       </MetricsWrapper>
-
       <MetricsWrapper title="Partitions">
         <Indicator label="Online">
           <span
@@ -75,7 +73,6 @@ const Brokers: React.FC<Props> = ({
           {outOfSyncReplicasCount}
         </Indicator>
       </MetricsWrapper>
-
       <MetricsWrapper multiline title="Disk Usage">
         {diskUsage?.map((brokerDiskUsage) => (
           <React.Fragment key={brokerDiskUsage.brokerId}>

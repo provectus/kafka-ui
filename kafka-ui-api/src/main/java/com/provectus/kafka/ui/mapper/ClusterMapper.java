@@ -37,6 +37,7 @@ public interface ClusterMapper {
     TopicConfig toTopicConfig(InternalTopicConfig topic);
     Replica toReplica(InternalReplica replica);
     Connect toKafkaConnect(KafkaConnectCluster connect);
+    List<Cluster.FeaturesEnum> toFeaturesEnum(List<Feature> features);
 
     @Mapping(target = "isCompatible", source = "compatible")
     CompatibilityCheckResponse toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
