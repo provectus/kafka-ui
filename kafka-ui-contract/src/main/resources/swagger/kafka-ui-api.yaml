@@ -1182,6 +1182,7 @@ components:
           type: integer
         segmentSize:
           type: integer
+          format: int64
         segmentCount:
           type: integer
         underReplicatedPartitions:
