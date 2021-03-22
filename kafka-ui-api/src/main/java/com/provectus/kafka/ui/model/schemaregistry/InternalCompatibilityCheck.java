@@ -5,6 +5,6 @@ import lombok.Data;
 
 @Data
 public class InternalCompatibilityCheck {
-    @JsonProperty("is_compatible")
-    private boolean isCompatible;
+  @JsonProperty("is_compatible")
+  private boolean isCompatible;
 }

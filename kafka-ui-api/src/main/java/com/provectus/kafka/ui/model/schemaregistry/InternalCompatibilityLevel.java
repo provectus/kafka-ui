@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class InternalCompatibilityLevel {
-    private String compatibilityLevel;
+  private String compatibilityLevel;
 }

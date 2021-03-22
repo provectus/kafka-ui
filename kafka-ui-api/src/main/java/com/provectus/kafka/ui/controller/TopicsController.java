@@ -1,8 +1,14 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.TopicsApi;
-import com.provectus.kafka.ui.model.*;
+import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicConfig;
+import com.provectus.kafka.ui.model.TopicDetails;
+import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.TopicsResponse;
 import com.provectus.kafka.ui.service.ClusterService;
+import java.util.Optional;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -11,9 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -58,13 +61,17 @@ public class TopicsController implements TopicsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<TopicsResponse>> getTopics(String clusterName, @Valid Integer page, @Valid Integer perPage, ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(clusterService.getTopics(clusterName, Optional.ofNullable(page), Optional.ofNullable(perPage))));
+  public Mono<ResponseEntity<TopicsResponse>> getTopics(String clusterName, @Valid Integer page,
+                                                        @Valid Integer perPage,
+                                                        ServerWebExchange exchange) {
+    return Mono.just(ResponseEntity.ok(clusterService
+        .getTopics(clusterName, Optional.ofNullable(page), Optional.ofNullable(perPage))));
   }
 
   @Override
   public Mono<ResponseEntity<Topic>> updateTopic(
-      String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
+      String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData,
+      ServerWebExchange exchange) {
     return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
   }
 }

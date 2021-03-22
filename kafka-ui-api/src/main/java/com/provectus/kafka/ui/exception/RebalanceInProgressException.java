@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 
 public class RebalanceInProgressException extends CustomBaseException {
 
-    public RebalanceInProgressException() {
-        super("Rebalance is in progress.");
-    }
+  public RebalanceInProgressException() {
+    super("Rebalance is in progress.");
+  }
 
-    @Override
-    public HttpStatus getResponseStatusCode() {
-        return HttpStatus.CONFLICT;
-    }
+  @Override
+  public HttpStatus getResponseStatusCode() {
+    return HttpStatus.CONFLICT;
+  }
 }
