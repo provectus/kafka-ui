@@ -3,7 +3,7 @@ on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
-    - '!kafka-ui-react-app/**'
+    - 'kafka-ui-api/**'
 jobs:
   build:
     runs-on: ubuntu-latest
