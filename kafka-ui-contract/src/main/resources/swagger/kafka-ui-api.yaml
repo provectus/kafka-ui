@@ -1074,7 +1074,7 @@ components:
         requestId:
           type: string
           description: Unique server-defined request id for convenient debugging
-        fieldErrors:
+        fieldsErrors:
           type: array
           items:
             $ref: '#/components/schemas/FieldError'
