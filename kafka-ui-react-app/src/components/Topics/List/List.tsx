@@ -92,16 +92,15 @@ const List: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
-              {items.length > 0 ? (
-                items.map((topic) => (
-                  <ListItem
-                    clusterName={clusterName}
-                    key={topic.name}
-                    topic={topic}
-                    deleteTopic={deleteTopic}
-                  />
-                ))
-              ) : (
+              {items.map((topic) => (
+                <ListItem
+                  clusterName={clusterName}
+                  key={topic.name}
+                  topic={topic}
+                  deleteTopic={deleteTopic}
+                />
+              ))}
+              {items.length === 0 && (
                 <tr>
                   <td colSpan={10}>No topics found</td>
                 </tr>
