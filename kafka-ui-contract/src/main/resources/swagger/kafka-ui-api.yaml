@@ -1086,7 +1086,7 @@ components:
           type: string
           description: Name of field that violated format
         restrictions:
-          description: Field format violations description (ex. "must not be null")
+          description: Field format violations description (ex. ["size must be between 0 and 20", "must be a well-formed email address"])
           type: array
           items:
             type: string
