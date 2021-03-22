@@ -36,16 +36,14 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     }
   >
-    <div>
-      <JSONViewer
-        data={
-          Object {
-            "foo": "bar",
-            "key": "val",
-          }
+    <JSONViewer
+      data={
+        Object {
+          "foo": "bar",
+          "key": "val",
         }
-      />
-    </div>
+      }
+    />
   </td>
 </tr>
 `;
