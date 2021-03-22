@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -29,7 +30,13 @@ public class ClustersStorage {
             if (kafkaClusters.get(clusterProperties.getName()) != null) {
                 throw new IllegalStateException("Application config isn't correct. Two clusters can't have the same name");
             }
-            kafkaClusters.put(clusterProperties.getName(), clusterMapper.toKafkaCluster(clusterProperties));
+            KafkaCluster cluster = clusterMapper.toKafkaCluster(clusterProperties);
+            kafkaClusters.put(
+                    clusterProperties.getName(),
+                    cluster.toBuilder()
+                            .features(Feature.getEnabledFeatures(cluster))
+                            .build()
+            );
         }
     }
 

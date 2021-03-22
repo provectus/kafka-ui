@@ -1,12 +1,9 @@
 name: backend
 on:
   pull_request:
-    branches:
-      - "master"
-  push:
-    branches:
-      - "**"
-      - "!master"
+    types: ['opened', 'edited', 'reopened', 'synchronize']
+    paths:
+    - '!kafka-ui-react-app/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -33,4 +30,4 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar    
+      run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar

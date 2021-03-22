@@ -66,7 +66,7 @@ const Messages: React.FC<Props> = ({
   const [queryParams, setQueryParams] = React.useState<
     Partial<TopicMessageQueryParams>
   >({ limit: 100 });
-  const [debouncedCallback] = useDebouncedCallback(
+  const debouncedCallback = useDebouncedCallback(
     (query: Partial<TopicMessageQueryParams>) =>
       setQueryParams({ ...queryParams, ...query }),
     1000

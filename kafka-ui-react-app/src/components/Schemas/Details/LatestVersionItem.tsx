@@ -33,7 +33,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
       </div>
       <div className="tile is-parent">
         <div className="tile is-child box py-1">
-          <JSONViewer data={JSON.parse(schema as string)} />
+          <JSONViewer data={JSON.parse(schema)} />
         </div>
       </div>
     </div>

@@ -14,7 +14,7 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
       <td>{version}</td>
       <td>{id}</td>
       <td className="py-0">
-        <JSONViewer data={JSON.parse(schema as string)} />
+        <JSONViewer data={JSON.parse(schema)} />
       </td>
     </tr>
   );
