@@ -1085,9 +1085,11 @@ components:
         fieldName:
           type: string
           description: Name of field that violated format
-        restriction:
-          type: string
-          description: Field format violation description (ex. "must not be null")
+        restrictions:
+          description: Field format violations description (ex. "must not be null")
+          type: array
+          items:
+            type: string
 
     Cluster:
       type: object
