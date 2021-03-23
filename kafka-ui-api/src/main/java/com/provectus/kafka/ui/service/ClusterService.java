@@ -212,9 +212,9 @@ public class ClusterService {
   public Mono<Void> deleteTopic(String clusterName, String topicName) {
     var cluster = clustersStorage.getClusterByName(clusterName)
         .orElseThrow(ClusterNotFoundException::new);
-    getTopicDetails(clusterName, topicName)
+    var topic = getTopicDetails(clusterName, topicName)
         .orElseThrow(TopicNotFoundException::new);
-    return kafkaService.deleteTopic(cluster, topicName)
+    return kafkaService.deleteTopic(cluster, topic.getName())
         .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
   }
 
