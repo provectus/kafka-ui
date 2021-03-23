@@ -122,12 +122,7 @@ public class SchemaRegistryService {
    */
   @NotNull
   private SchemaSubject withSchemaType(SchemaSubject s) {
-    return new SchemaSubject()
-        .schema(s.getSchema())
-        .subject(s.getSubject())
-        .version(s.getVersion())
-        .id(s.getId())
-        .schemaType(Optional.ofNullable(s.getSchemaType()).orElse(SchemaType.AVRO));
+    return s.schemaType(Optional.ofNullable(s.getSchemaType()).orElse(SchemaType.AVRO));
   }
 
   public Mono<ResponseEntity<Void>> deleteSchemaSubjectByVersion(String clusterName,
