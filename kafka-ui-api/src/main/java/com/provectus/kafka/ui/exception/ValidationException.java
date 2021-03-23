@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.exception;
 
-import org.springframework.http.HttpStatus;
 
 public class ValidationException extends CustomBaseException {
   public ValidationException(String message) {
@@ -8,7 +7,7 @@ public class ValidationException extends CustomBaseException {
   }
 
   @Override
-  public HttpStatus getResponseStatusCode() {
-    return HttpStatus.BAD_REQUEST;
+  public ErrorCode getErrorCode() {
+    return ErrorCode.VALIDATION_FAIL;
   }
 }

@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.exception;
 
-import org.springframework.http.HttpStatus;
 
 public class NotFoundException extends CustomBaseException {
 
@@ -9,7 +8,7 @@ public class NotFoundException extends CustomBaseException {
   }
 
   @Override
-  public HttpStatus getResponseStatusCode() {
-    return HttpStatus.NOT_FOUND;
+  public ErrorCode getErrorCode() {
+    return ErrorCode.ENTITY_NOT_FOUND;
   }
 }

@@ -1058,6 +1058,39 @@ paths:
 
 components:
   schemas:
+    ErrorResponse:
+      description: Error object that will be returned with 4XX and 5XX HTTP statuses
+      type: object
+      properties:
+        code:
+          type: integer
+          description: Internal error code (can be used for message formatting & localization on UI)
+        message:
+          type: string
+          description: Error message
+        timestamp:
+          type: number
+          description: Response unix timestamp in ms
+        requestId:
+          type: string
+          description: Unique server-defined request id for convenient debugging
+        fieldsErrors:
+          type: array
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    FieldError:
+      type: object
+      properties:
+        fieldName:
+          type: string
+          description: Name of field that violated format
+        restrictions:
+          description: Field format violations description (ex. ["size must be between 0 and 20", "must be a well-formed email address"])
+          type: array
+          items:
+            type: string
+
     Cluster:
       type: object
       properties:

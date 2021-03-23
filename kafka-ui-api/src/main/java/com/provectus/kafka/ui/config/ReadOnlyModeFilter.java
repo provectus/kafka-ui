@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.config;
 
 import com.provectus.kafka.ui.exception.NotFoundException;
-import com.provectus.kafka.ui.exception.ReadOnlyException;
+import com.provectus.kafka.ui.exception.ReadOnlyModeException;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +45,6 @@ public class ReadOnlyModeFilter implements WebFilter {
       return chain.filter(exchange);
     }
 
-    return Mono.error(ReadOnlyException::new);
+    return Mono.error(ReadOnlyModeException::new);
   }
 }

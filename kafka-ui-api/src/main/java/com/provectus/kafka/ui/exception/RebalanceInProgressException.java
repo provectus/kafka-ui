@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.exception;
 
-import org.springframework.http.HttpStatus;
 
 public class RebalanceInProgressException extends CustomBaseException {
 
@@ -9,7 +8,7 @@ public class RebalanceInProgressException extends CustomBaseException {
   }
 
   @Override
-  public HttpStatus getResponseStatusCode() {
-    return HttpStatus.CONFLICT;
+  public ErrorCode getErrorCode() {
+    return ErrorCode.REBALANCE_IN_PROGRESS;
   }
 }

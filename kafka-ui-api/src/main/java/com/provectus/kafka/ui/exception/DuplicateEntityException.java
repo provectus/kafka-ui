@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.exception;
 
-import org.springframework.http.HttpStatus;
-
 public class DuplicateEntityException extends CustomBaseException {
 
   public DuplicateEntityException(String message) {
@@ -9,7 +7,7 @@ public class DuplicateEntityException extends CustomBaseException {
   }
 
   @Override
-  public HttpStatus getResponseStatusCode() {
-    return HttpStatus.CONFLICT;
+  public ErrorCode getErrorCode() {
+    return ErrorCode.DUPLICATED_ENTITY;
   }
 }
