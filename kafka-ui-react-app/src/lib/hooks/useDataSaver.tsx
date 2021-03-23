@@ -1,21 +1,31 @@
-const useDataSaver = () => {
-  const copyToClipboard = (content: string) => {
-    if (navigator.clipboard) navigator.clipboard.writeText(content);
+const useDataSaver = (
+  subject: string,
+  data: Record<string, string> | string
+) => {
+  const copyToClipboard = () => {
+    if (navigator.clipboard) {
+      const str = JSON.stringify(data);
+      navigator.clipboard.writeText(str);
+    }
   };
 
-  const saveFile = (content: string, fileName: string) => {
+  const saveFile = () => {
     let extension = 'json';
+    const str = JSON.stringify(data);
+
     try {
-      JSON.parse(content);
+      JSON.parse(str);
     } catch (e) {
       extension = 'txt';
     }
-    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      content
-    )}`;
+
+    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(str)}`;
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute('href', dataStr);
-    downloadAnchorNode.setAttribute('download', `${fileName}.${extension}`);
+    downloadAnchorNode.setAttribute(
+      'download',
+      `${subject}_${new Date().getTime()}.${extension}`
+    );
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
