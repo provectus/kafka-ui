@@ -1,7 +1,8 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.client.KafkaConnectClients;
-import com.provectus.kafka.ui.exception.NotFoundException;
+import com.provectus.kafka.ui.exception.ClusterNotFoundException;
+import com.provectus.kafka.ui.exception.ConnectNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.KafkaConnectMapper;
 import com.provectus.kafka.ui.model.Connect;
@@ -181,7 +182,7 @@ public class KafkaConnectService {
   private Mono<KafkaCluster> getCluster(String clusterName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(Mono::just)
-        .orElse(Mono.error(new NotFoundException("No such cluster")));
+        .orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   private Mono<String> getConnectAddress(String clusterName, String connectName) {
@@ -194,7 +195,7 @@ public class KafkaConnectService {
         )
         .flatMap(connect -> connect
             .map(Mono::just)
-            .orElse(Mono.error(new NotFoundException("No such connect cluster")))
+            .orElse(Mono.error(ConnectNotFoundException::new))
         );
   }
 }

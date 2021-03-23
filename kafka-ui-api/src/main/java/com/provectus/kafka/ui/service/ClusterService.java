@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.exception.NotFoundException;
+import com.provectus.kafka.ui.exception.ClusterNotFoundException;
+import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerMetrics;
@@ -88,7 +89,7 @@ public class ClusterService {
     int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
     var cluster = clustersStorage.getClusterByName(name)
-        .orElseThrow(() -> new NotFoundException("No such cluster"));
+        .orElseThrow(ClusterNotFoundException::new);
     var totalPages = (cluster.getTopics().size() / perPage)
         + (cluster.getTopics().size() % perPage == 0 ? 0 : 1);
     return new TopicsResponse()
@@ -178,11 +179,10 @@ public class ClusterService {
     }
   }
 
-  @SneakyThrows
   public Mono<List<ConsumerGroup>> getConsumerGroups(String clusterName) {
-    return clustersStorage.getClusterByName(clusterName)
-        .map(kafkaService::getConsumerGroups)
-        .orElse(Mono.empty());
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+        .flatMap(kafkaService::getConsumerGroups);
   }
 
   public Flux<Broker> getBrokers(String clusterName) {
@@ -211,10 +211,10 @@ public class ClusterService {
 
   public Mono<Void> deleteTopic(String clusterName, String topicName) {
     var cluster = clustersStorage.getClusterByName(clusterName)
-        .orElseThrow(() -> new NotFoundException("No such cluster"));
-    getTopicDetails(clusterName, topicName)
-        .orElseThrow(() -> new NotFoundException("No such topic"));
-    return kafkaService.deleteTopic(cluster, topicName)
+        .orElseThrow(ClusterNotFoundException::new);
+    var topic = getTopicDetails(clusterName, topicName)
+        .orElseThrow(TopicNotFoundException::new);
+    return kafkaService.deleteTopic(cluster, topic.getName())
         .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
   }
 
@@ -243,9 +243,9 @@ public class ClusterService {
   public Mono<Void> deleteTopicMessages(String clusterName, String topicName,
                                         List<Integer> partitions) {
     var cluster = clustersStorage.getClusterByName(clusterName)
-        .orElseThrow(() -> new NotFoundException("No such cluster"));
+        .orElseThrow(ClusterNotFoundException::new);
     if (!cluster.getTopics().containsKey(topicName)) {
-      throw new NotFoundException("No such topic");
+      throw new TopicNotFoundException();
     }
     return consumingService.offsetsForDeletion(cluster, topicName, partitions)
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));

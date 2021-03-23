@@ -3,8 +3,9 @@ package com.provectus.kafka.ui.service;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
+import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.DuplicateEntityException;
-import com.provectus.kafka.ui.exception.NotFoundException;
+import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
@@ -39,7 +40,6 @@ import reactor.core.publisher.Mono;
 public class SchemaRegistryService {
   public static final String NO_SUCH_SCHEMA_VERSION = "No such schema %s with version %s";
   public static final String NO_SUCH_SCHEMA = "No such schema %s";
-  public static final String NO_SUCH_CLUSTER = "No such cluster";
 
   private static final String URL_SUBJECTS = "/subjects";
   private static final String URL_SUBJECT = "/subjects/{schemaName}";
@@ -66,7 +66,7 @@ public class SchemaRegistryService {
             .bodyToMono(String[].class)
             .doOnError(log::error)
         )
-        .orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        .orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   public Flux<SchemaSubject> getAllVersionsBySubject(String clusterName, String subject) {
@@ -82,7 +82,7 @@ public class SchemaRegistryService {
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA))
             ).bodyToFlux(Integer.class)
-        ).orElse(Flux.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        ).orElse(Flux.error(ClusterNotFoundException::new));
   }
 
   public Mono<SchemaSubject> getSchemaSubjectByVersion(String clusterName, String schemaName,
@@ -113,7 +113,7 @@ public class SchemaRegistryService {
               return schema;
             })
         )
-        .orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        .orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   /**
@@ -145,7 +145,7 @@ public class SchemaRegistryService {
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
             ).toBodilessEntity()
-        ).orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        ).orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   public Mono<ResponseEntity<Void>> deleteSchemaSubjectEntirely(String clusterName,
@@ -158,7 +158,7 @@ public class SchemaRegistryService {
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName))
             )
             .toBodilessEntity())
-        .orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        .orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   /**
@@ -181,7 +181,7 @@ public class SchemaRegistryService {
                       .flatMap(s -> submitNewSchema(subject, newSchema, schemaRegistryUrl))
                       .flatMap(resp -> getLatestSchemaVersionBySubject(clusterName, subject))
               )
-              .orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+              .orElse(Mono.error(ClusterNotFoundException::new));
         });
   }
 
@@ -219,7 +219,7 @@ public class SchemaRegistryService {
   @NotNull
   private Function<ClientResponse, Mono<? extends Throwable>> throwIfNotFoundStatus(
       String formatted) {
-    return resp -> Mono.error(new NotFoundException(formatted));
+    return resp -> Mono.error(new SchemaNotFoundException(formatted));
   }
 
   /**
@@ -241,7 +241,7 @@ public class SchemaRegistryService {
               .onStatus(NOT_FOUND::equals,
                   throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
               .bodyToMono(Void.class);
-        }).orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        }).orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   public Mono<Void> updateSchemaCompatibility(String clusterName,
@@ -287,7 +287,7 @@ public class SchemaRegistryService {
             .bodyToMono(InternalCompatibilityCheck.class)
             .map(mapper::toCompatibilityCheckResponse)
             .log()
-        ).orElse(Mono.error(new NotFoundException(NO_SUCH_CLUSTER)));
+        ).orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   public String formatted(String str, Object... args) {

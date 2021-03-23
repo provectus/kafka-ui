@@ -2,22 +2,23 @@ package com.provectus.kafka.ui.exception;
 
 
 public abstract class CustomBaseException extends RuntimeException {
-  public CustomBaseException() {
+  protected CustomBaseException() {
+    super();
   }
 
-  public CustomBaseException(String message) {
+  protected CustomBaseException(String message) {
     super(message);
   }
 
-  public CustomBaseException(String message, Throwable cause) {
+  protected CustomBaseException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public CustomBaseException(Throwable cause) {
+  protected CustomBaseException(Throwable cause) {
     super(cause);
   }
 
-  public CustomBaseException(String message, Throwable cause, boolean enableSuppression,
+  protected CustomBaseException(String message, Throwable cause, boolean enableSuppression,
                              boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }

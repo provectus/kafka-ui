@@ -77,10 +77,9 @@ public class JmxClusterUtil {
       var attrNames = msc.getMBeanInfo(name).getAttributes();
       for (MBeanAttributeInfo attrName : attrNames) {
         var value = msc.getAttribute(name, attrName.getName());
-        if (value instanceof Number) {
-          if (!(value instanceof Double) || !((Double) value).isInfinite()) {
-            resultAttr.put(attrName.getName(), new BigDecimal(value.toString()));
-          }
+        if ((value instanceof Number)
+            && (!(value instanceof Double) || !((Double) value).isInfinite())) {
+          resultAttr.put(attrName.getName(), new BigDecimal(value.toString()));
         }
       }
     } catch (MalformedURLException url) {
