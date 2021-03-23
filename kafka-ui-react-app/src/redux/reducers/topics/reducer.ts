@@ -45,6 +45,14 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       return action.payload;
     case getType(actions.fetchTopicMessagesAction.success):
       return transformTopicMessages(state, action.payload);
+    case getType(actions.deleteTopicAction.success): {
+      const newState: TopicsState = { ...state };
+      delete newState.byName[action.payload];
+      newState.allNames = newState.allNames.filter(
+        (name) => name !== action.payload
+      );
+      return newState;
+    }
     default:
       return state;
   }

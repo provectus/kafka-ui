@@ -1,5 +1,5 @@
 import { createAsyncAction } from 'typesafe-actions';
-import { ConsumerGroupID, TopicsState } from 'redux/interfaces';
+import { ConsumerGroupID, TopicName, TopicsState } from 'redux/interfaces';
 
 import {
   Cluster,
@@ -78,6 +78,12 @@ export const updateTopicAction = createAsyncAction(
   'PATCH_TOPIC__SUCCESS',
   'PATCH_TOPIC__FAILURE'
 )<undefined, TopicsState, undefined>();
+
+export const deleteTopicAction = createAsyncAction(
+  'DELETE_TOPIC__REQUEST',
+  'DELETE_TOPIC__SUCCESS',
+  'DELETE_TOPIC__FAILURE'
+)<undefined, TopicName, undefined>();
 
 export const fetchConsumerGroupsAction = createAsyncAction(
   'GET_CONSUMER_GROUPS__REQUEST',

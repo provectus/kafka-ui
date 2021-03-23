@@ -1,14 +1,22 @@
 import React from 'react';
 import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
-import { TopicWithDetailedInfo } from 'redux/interfaces';
+import {
+  ClusterName,
+  TopicName,
+  TopicWithDetailedInfo,
+} from 'redux/interfaces';
 
 interface ListItemProps {
   topic: TopicWithDetailedInfo;
+  deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  clusterName: ClusterName;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
   topic: { name, internal, partitions },
+  deleteTopic,
+  clusterName,
 }) => {
   const outOfSyncReplicas = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
@@ -20,6 +28,10 @@ const ListItem: React.FC<ListItemProps> = ({
       return memo + (outOfSync?.length || 0);
     }, 0);
   }, [partitions]);
+
+  const deleteTopicHandler = React.useCallback(() => {
+    deleteTopic(clusterName, name);
+  }, [clusterName, name]);
 
   return (
     <tr>
@@ -41,6 +53,17 @@ const ListItem: React.FC<ListItemProps> = ({
         >
           {internal ? 'Internal' : 'External'}
         </div>
+      </td>
+      <td>
+        <button
+          type="button"
+          className="is-small button is-danger"
+          onClick={deleteTopicHandler}
+        >
+          <span className="icon is-small">
+            <i className="far fa-trash-alt" />
+          </span>
+        </button>
       </td>
     </tr>
   );

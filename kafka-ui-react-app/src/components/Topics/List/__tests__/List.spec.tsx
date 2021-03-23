@@ -16,6 +16,7 @@ describe('List', () => {
               externalTopics={[]}
               totalPages={1}
               fetchTopicsList={jest.fn()}
+              deleteTopic={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>
@@ -35,6 +36,7 @@ describe('List', () => {
               externalTopics={[]}
               totalPages={1}
               fetchTopicsList={jest.fn()}
+              deleteTopic={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { fetchTopicsList } from 'redux/actions';
+import { fetchTopicsList, deleteTopic } from 'redux/actions';
 import {
   getTopicList,
   getExternalTopicList,
@@ -18,6 +18,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchTopicsList,
+  deleteTopic,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

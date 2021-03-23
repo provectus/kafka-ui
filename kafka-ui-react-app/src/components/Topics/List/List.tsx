@@ -1,5 +1,9 @@
 import React from 'react';
-import { TopicWithDetailedInfo, ClusterName } from 'redux/interfaces';
+import {
+  TopicWithDetailedInfo,
+  ClusterName,
+  TopicName,
+} from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { Link, useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
@@ -16,6 +20,7 @@ interface Props {
   externalTopics: TopicWithDetailedInfo[];
   totalPages: number;
   fetchTopicsList(props: FetchTopicsListParams): void;
+  deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
 }
 
 const List: React.FC<Props> = ({
@@ -24,6 +29,7 @@ const List: React.FC<Props> = ({
   externalTopics,
   totalPages,
   fetchTopicsList,
+  deleteTopic,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
@@ -82,17 +88,23 @@ const List: React.FC<Props> = ({
                 <th>Total Partitions</th>
                 <th>Out of sync replicas</th>
                 <th>Type</th>
+                <th> </th>
               </tr>
             </thead>
             <tbody>
+              {items.map((topic) => (
+                <ListItem
+                  clusterName={clusterName}
+                  key={topic.name}
+                  topic={topic}
+                  deleteTopic={deleteTopic}
+                />
+              ))}
               {items.length === 0 && (
                 <tr>
                   <td colSpan={10}>No topics found</td>
                 </tr>
               )}
-              {items.map((topic) => (
-                <ListItem key={topic.name} topic={topic} />
-              ))}
             </tbody>
           </table>
           <Pagination totalPages={totalPages} />
