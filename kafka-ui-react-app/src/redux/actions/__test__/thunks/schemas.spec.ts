@@ -22,7 +22,6 @@ const mockStoreCreator: MockStoreCreator<
 const store: MockStoreEnhanced<RootState, DispatchExts> = mockStoreCreator();
 
 const clusterName = 'local';
-const topicName = 'localTopic';
 const subject = 'test';
 
 describe('Thunks', () => {
