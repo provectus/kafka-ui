@@ -63,11 +63,11 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 	}
 
 	private Mono<ServerResponse> renderDefault(Throwable throwable, ServerRequest request){
-		var response = new ErrorResponse();
-		response.setCode(ErrorCode.UNEXPECTED.code());
-		response.setMessage(throwable.getMessage());
-		response.setRequestId(requestId(request));
-		response.setTimestamp(currentTimestamp());
+		var response = new ErrorResponse()
+				.code(ErrorCode.UNEXPECTED.code())
+				.message(throwable.getMessage())
+				.requestId(requestId(request))
+				.timestamp(currentTimestamp());
 		return ServerResponse
 				.status(ErrorCode.UNEXPECTED.httpStatus())
 				.contentType(MediaType.APPLICATION_JSON)
@@ -76,11 +76,11 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
 	private Mono<ServerResponse> render(CustomBaseException baseException, ServerRequest request) {
 		ErrorCode errorCode = baseException.getErrorCode();
-		var response = new ErrorResponse();
-		response.setCode(errorCode.code());
-		response.setMessage(baseException.getMessage());
-		response.setRequestId(requestId(request));
-		response.setTimestamp(currentTimestamp());
+		var response = new ErrorResponse()
+				.code(errorCode.code())
+				.message(baseException.getMessage())
+				.requestId(requestId(request))
+				.timestamp(currentTimestamp());
 		return ServerResponse
 				.status(errorCode.httpStatus())
 				.contentType(MediaType.APPLICATION_JSON)
@@ -103,12 +103,12 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 				? exception.getMessage()
 				: "Fields validation failure";
 
-		var response = new ErrorResponse();
-		response.setCode(ErrorCode.BINDING_FAIL.code());
-		response.setMessage(message);
-		response.setRequestId(requestId(request));
-		response.setTimestamp(currentTimestamp());
-		response.setFieldsErrors(fieldsErrors);
+		var response = new ErrorResponse()
+				.code(ErrorCode.BINDING_FAIL.code())
+				.message(message)
+				.requestId(requestId(request))
+				.timestamp(currentTimestamp())
+				.fieldsErrors(fieldsErrors);
 		return ServerResponse
 				.status(HttpStatus.BAD_REQUEST)
 				.contentType(MediaType.APPLICATION_JSON)
@@ -117,11 +117,11 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
 	private Mono<ServerResponse> render(ResponseStatusException exception, ServerRequest request) {
 		String msg = coalesce(exception.getReason(), exception.getMessage(), "Server error");
-		var response = new ErrorResponse();
-		response.setCode(ErrorCode.UNEXPECTED.code());
-		response.setMessage(msg);
-		response.setRequestId(requestId(request));
-		response.setTimestamp(currentTimestamp());
+		var response = new ErrorResponse()
+				.code(ErrorCode.UNEXPECTED.code())
+				.message(msg)
+				.requestId(requestId(request))
+				.timestamp(currentTimestamp());
 		return ServerResponse
 				.status(exception.getStatus())
 				.contentType(MediaType.APPLICATION_JSON)
