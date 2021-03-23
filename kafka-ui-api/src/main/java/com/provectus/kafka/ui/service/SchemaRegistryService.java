@@ -5,7 +5,7 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.DuplicateEntityException;
-import com.provectus.kafka.ui.exception.NotFoundException;
+import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
@@ -219,7 +219,7 @@ public class SchemaRegistryService {
   @NotNull
   private Function<ClientResponse, Mono<? extends Throwable>> throwIfNotFoundStatus(
       String formatted) {
-    return resp -> Mono.error(new NotFoundException(formatted));
+    return resp -> Mono.error(new SchemaNotFoundException(formatted));
   }
 
   /**

@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.exception;
 
-public class ClusterNotFoundException extends NotFoundException {
+public class ClusterNotFoundException extends CustomBaseException {
 
   public ClusterNotFoundException() {
     super("Cluster not found");

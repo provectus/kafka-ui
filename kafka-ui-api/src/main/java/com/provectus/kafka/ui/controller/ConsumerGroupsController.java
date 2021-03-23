@@ -32,7 +32,6 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
     return clusterService.getConsumerGroups(clusterName)
         .map(Flux::fromIterable)
         .map(ResponseEntity::ok)
-        .switchIfEmpty(Mono.just(ResponseEntity.notFound()
-            .build())); // TODO: check behaviour on cluster not found and empty groups list
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
 }
