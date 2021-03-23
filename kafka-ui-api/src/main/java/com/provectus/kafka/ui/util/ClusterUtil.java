@@ -158,9 +158,9 @@ public class ClusterUtil {
     topic.inSyncReplicas(inSyncReplicasCount);
 
     topic.replicationFactor(
-        topicDescription.partitions().size() > 0
-            ? topicDescription.partitions().get(0).replicas().size()
-            : 0
+        topicDescription.partitions().isEmpty()
+            ? 0
+            : topicDescription.partitions().get(0).replicas().size()
     );
 
     topic.underReplicatedPartitions(urpCount);

@@ -57,7 +57,7 @@ class OffsetsSeekTest {
         new ConsumerPosition(SeekType.BEGINNING, Map.of(0, 0L, 1, 0L)));
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1);
-    assertThat(consumer.position(tp0)).isEqualTo(0L);
+    assertThat(consumer.position(tp0)).isZero();
     assertThat(consumer.position(tp1)).isEqualTo(10L);
   }
 
@@ -68,9 +68,9 @@ class OffsetsSeekTest {
         new ConsumerPosition(SeekType.BEGINNING, Map.of()));
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2, tp3);
-    assertThat(consumer.position(tp0)).isEqualTo(0L);
+    assertThat(consumer.position(tp0)).isZero();
     assertThat(consumer.position(tp1)).isEqualTo(10L);
-    assertThat(consumer.position(tp2)).isEqualTo(0L);
+    assertThat(consumer.position(tp2)).isZero();
     assertThat(consumer.position(tp3)).isEqualTo(25L);
   }
 
@@ -81,7 +81,7 @@ class OffsetsSeekTest {
         new ConsumerPosition(SeekType.OFFSET, Map.of(0, 0L, 1, 1L, 2, 2L)));
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2);
-    assertThat(consumer.position(tp0)).isEqualTo(0L);
+    assertThat(consumer.position(tp0)).isZero();
     assertThat(consumer.position(tp1)).isEqualTo(1L);
     assertThat(consumer.position(tp2)).isEqualTo(2L);
   }

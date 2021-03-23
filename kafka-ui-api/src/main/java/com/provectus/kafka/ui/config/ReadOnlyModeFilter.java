@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.config;
 
-import com.provectus.kafka.ui.exception.NotFoundException;
+import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ReadOnlyModeException;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import java.util.regex.Pattern;
@@ -39,7 +39,8 @@ public class ReadOnlyModeFilter implements WebFilter {
     var clusterName = matcher.group("clusterName");
     var kafkaCluster = clustersStorage.getClusterByName(clusterName)
         .orElseThrow(
-            () -> new NotFoundException(String.format("No cluster for name '%s'", clusterName)));
+            () -> new ClusterNotFoundException(
+                String.format("No cluster for name '%s'", clusterName)));
 
     if (!kafkaCluster.getReadOnly()) {
       return chain.filter(exchange);

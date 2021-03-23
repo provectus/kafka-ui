@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
@@ -88,7 +89,7 @@ public class ClusterService {
     int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
     var cluster = clustersStorage.getClusterByName(name)
-        .orElseThrow(() -> new NotFoundException("No such cluster"));
+        .orElseThrow(ClusterNotFoundException::new);
     var totalPages = (cluster.getTopics().size() / perPage)
         + (cluster.getTopics().size() % perPage == 0 ? 0 : 1);
     return new TopicsResponse()
@@ -211,7 +212,7 @@ public class ClusterService {
 
   public Mono<Void> deleteTopic(String clusterName, String topicName) {
     var cluster = clustersStorage.getClusterByName(clusterName)
-        .orElseThrow(() -> new NotFoundException("No such cluster"));
+        .orElseThrow(ClusterNotFoundException::new);
     getTopicDetails(clusterName, topicName)
         .orElseThrow(() -> new NotFoundException("No such topic"));
     return kafkaService.deleteTopic(cluster, topicName)
@@ -243,7 +244,7 @@ public class ClusterService {
   public Mono<Void> deleteTopicMessages(String clusterName, String topicName,
                                         List<Integer> partitions) {
     var cluster = clustersStorage.getClusterByName(clusterName)
-        .orElseThrow(() -> new NotFoundException("No such cluster"));
+        .orElseThrow(ClusterNotFoundException::new);
     if (!cluster.getTopics().containsKey(topicName)) {
       throw new NotFoundException("No such topic");
     }

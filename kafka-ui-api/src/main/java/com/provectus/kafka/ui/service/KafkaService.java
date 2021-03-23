@@ -351,6 +351,7 @@ public class KafkaService {
             .all(), topicCr.name());
   }
 
+  @SuppressWarnings("deprecation")
   private Mono<String> alterConfig(TopicFormData topicFormData, ConfigResource topicCr,
                                    ExtendedAdminClient ac) {
     List<ConfigEntry> configEntries = topicFormData.getConfigs().entrySet().stream()
@@ -359,7 +360,6 @@ public class KafkaService {
     Config config = new Config(configEntries);
     Map<ConfigResource, Config> map = Collections.singletonMap(topicCr, config);
     return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all(), topicCr.name());
-
   }
 
   private InternalTopic mergeWithStats(InternalTopic topic,
