@@ -247,7 +247,7 @@ public class ClusterService {
     if (!cluster.getTopics().containsKey(topicName)) {
       throw new NotFoundException("No such topic");
     }
-    return consumingService.loadOffsets(cluster, topicName, partitions)
+    return consumingService.offsetsForDeletion(cluster, topicName, partitions)
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));
   }
 }

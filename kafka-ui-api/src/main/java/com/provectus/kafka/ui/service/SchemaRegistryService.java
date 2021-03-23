@@ -19,6 +19,7 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
 import java.util.Formatter;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -121,14 +122,7 @@ public class SchemaRegistryService {
    */
   @NotNull
   private SchemaSubject withSchemaType(SchemaSubject s) {
-    SchemaType schemaType =
-        Objects.nonNull(s.getSchemaType()) ? s.getSchemaType() : SchemaType.AVRO;
-    return new SchemaSubject()
-        .schema(s.getSchema())
-        .subject(s.getSubject())
-        .version(s.getVersion())
-        .id(s.getId())
-        .schemaType(schemaType);
+    return s.schemaType(Optional.ofNullable(s.getSchemaType()).orElse(SchemaType.AVRO));
   }
 
   public Mono<ResponseEntity<Void>> deleteSchemaSubjectByVersion(String clusterName,

@@ -1,9 +1,11 @@
 package com.provectus.kafka.ui.producer;
 
 import java.util.Map;
+import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.testcontainers.containers.KafkaContainer;
 
@@ -23,8 +25,12 @@ public class KafkaTestProducer<KeyT, ValueT> implements AutoCloseable {
     )));
   }
 
-  public void send(String topic, ValueT value) {
-    producer.send(new ProducerRecord<>(topic, value));
+  public Future<RecordMetadata> send(String topic, ValueT value) {
+    return producer.send(new ProducerRecord<>(topic, value));
+  }
+
+  public Future<RecordMetadata> send(ProducerRecord<KeyT, ValueT> record) {
+    return producer.send(record);
   }
 
   @Override
