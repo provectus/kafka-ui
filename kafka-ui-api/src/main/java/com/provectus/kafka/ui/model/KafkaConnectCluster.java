@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class KafkaConnectCluster {
-    private final String name;
-    private final String address;
+  private final String name;
+  private final String address;
 }

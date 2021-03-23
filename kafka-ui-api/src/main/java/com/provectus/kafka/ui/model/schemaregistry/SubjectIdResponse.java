@@ -4,5 +4,5 @@ import lombok.Data;
 
 @Data
 public class SubjectIdResponse {
-    private Integer id;
+  private Integer id;
 }

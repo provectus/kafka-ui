@@ -6,12 +6,12 @@ import lombok.Data;
 
 @Data
 public class InternalNewSchema {
-    private String schema;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private SchemaType schemaType;
+  private String schema;
+  @JsonInclude(JsonInclude.Include.NON_NULL)
+  private SchemaType schemaType;
 
-    public InternalNewSchema(String schema, SchemaType schemaType) {
-        this.schema = schema;
-        this.schemaType = schemaType;
-    }
+  public InternalNewSchema(String schema, SchemaType schemaType) {
+    this.schema = schema;
+    this.schemaType = schemaType;
+  }
 }
