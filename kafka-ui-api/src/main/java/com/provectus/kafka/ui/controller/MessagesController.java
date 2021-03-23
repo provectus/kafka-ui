@@ -2,9 +2,9 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.service.ClusterService;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.service.ClusterService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +27,8 @@ public class MessagesController implements MessagesApi {
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
-      String clusterName, String topicName, @Valid List<Integer> partitions, ServerWebExchange exchange) {
+      String clusterName, String topicName, @Valid List<Integer> partitions,
+      ServerWebExchange exchange) {
     return clusterService.deleteTopicMessages(
         clusterName,
         topicName,
@@ -41,7 +42,8 @@ public class MessagesController implements MessagesApi {
       String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo,
       @Valid Integer limit, @Valid String q, ServerWebExchange exchange) {
     return parseConsumerPosition(seekType, seekTo)
-        .map(consumerPosition -> ResponseEntity.ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
+        .map(consumerPosition -> ResponseEntity
+            .ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
   }
 
   private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
@@ -51,13 +53,15 @@ public class MessagesController implements MessagesApi {
         .map(p -> {
           String[] splited = p.split("::");
           if (splited.length != 2) {
-            throw new IllegalArgumentException("Wrong seekTo argument format. See API docs for details");
+            throw new IllegalArgumentException(
+                "Wrong seekTo argument format. See API docs for details");
           }
 
           return Pair.of(Integer.parseInt(splited[0]), Long.parseLong(splited[1]));
         })
         .collectMap(Pair::getKey, Pair::getValue)
-        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING, positions));
+        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING,
+            positions));
   }
 
 }

@@ -1,6 +1,7 @@
 name: frontend
 on:
-  push:
+  pull_request:
+    types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
     - 'kafka-ui-contract/**'
     - 'kafka-ui-react-app/**'

@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 public class InternalTopicConfig {
-    private final String name;
-    private final String value;
-    private final String defaultValue;
+  private final String name;
+  private final String value;
+  private final String defaultValue;
 }

@@ -1,14 +1,13 @@
 package com.provectus.kafka.ui.model;
 
+import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.Map;
 
 @Data
 @Builder(toBuilder = true)
 public class InternalSegmentSizeDto {
 
-    private final Map<String, InternalTopic> internalTopicWithSegmentSize;
-    private final InternalClusterMetrics clusterMetricsWithSegmentSize;
+  private final Map<String, InternalTopic> internalTopicWithSegmentSize;
+  private final InternalClusterMetrics clusterMetricsWithSegmentSize;
 }

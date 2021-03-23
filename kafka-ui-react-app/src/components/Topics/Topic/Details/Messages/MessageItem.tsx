@@ -21,7 +21,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
     <td style={{ width: 150 }}>{offset}</td>
     <td style={{ width: 100 }}>{partition}</td>
     <td style={{ wordBreak: 'break-word' }}>
-      {content && <JSONViewer data={content as { [key: string]: string }} />}
+      {content && <JSONViewer data={content as Record<string, string>} />}
     </td>
   </tr>
 );

@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class InternalBrokerDiskUsage {
-    private final long segmentCount;
-    private final long segmentSize;
+  private final long segmentCount;
+  private final long segmentSize;
 }
