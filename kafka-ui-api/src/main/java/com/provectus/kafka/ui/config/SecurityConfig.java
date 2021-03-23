@@ -12,13 +12,13 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @ConditionalOnProperty(value = "auth.enabled", havingValue = "false")
 public class SecurityConfig {
 
-	@Bean
-	public SecurityWebFilterChain configure(ServerHttpSecurity http) {
-		return http.authorizeExchange()
-				.anyExchange().permitAll()
-				.and()
-				.csrf().disable()
-				.build();
-	}
+  @Bean
+  public SecurityWebFilterChain configure(ServerHttpSecurity http) {
+    return http.authorizeExchange()
+        .anyExchange().permitAll()
+        .and()
+        .csrf().disable()
+        .build();
+  }
 
 }

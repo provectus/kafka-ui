@@ -11,10 +11,10 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class MetricsUpdateService {
 
-    private final KafkaService kafkaService;
+  private final KafkaService kafkaService;
 
-    public Mono<KafkaCluster> updateMetrics(KafkaCluster kafkaCluster) {
-        log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster.getName());
-        return kafkaService.getUpdatedCluster(kafkaCluster);
-    }
+  public Mono<KafkaCluster> updateMetrics(KafkaCluster kafkaCluster) {
+    log.debug("Start getting metrics for kafkaCluster: {}", kafkaCluster.getName());
+    return kafkaService.getUpdatedCluster(kafkaCluster);
+  }
 }

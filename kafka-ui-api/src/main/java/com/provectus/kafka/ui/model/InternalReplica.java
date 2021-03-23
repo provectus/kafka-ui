@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 @Builder
 @RequiredArgsConstructor
 public class InternalReplica {
-    private final int broker;
-    private final boolean leader;
-    private final boolean inSync;
+  private final int broker;
+  private final boolean leader;
+  private final boolean inSync;
 }

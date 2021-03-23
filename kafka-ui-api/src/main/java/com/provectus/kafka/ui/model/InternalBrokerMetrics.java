@@ -1,12 +1,11 @@
 package com.provectus.kafka.ui.model;
 
+import java.util.List;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Builder(toBuilder = true)
 public class InternalBrokerMetrics {
-    private final List<Metric> metrics;
+  private final List<Metric> metrics;
 }
