@@ -4,27 +4,59 @@ describe('useDataSaver hook', () => {
   const content = {
     title: 'title',
   };
-  it('downloads the file', () => {
-    const link: HTMLAnchorElement = document.createElement('a');
-    link.click = jest.fn();
+  describe('Save as file', () => {
+    beforeAll(() => {
+      jest.useFakeTimers('modern');
+      jest.setSystemTime(new Date(2021, 3, 22));
+    });
 
-    const mockDate = new Date(1466424490000);
-    jest.spyOn(global, 'Date').mockImplementation(() => mockDate);
+    afterAll(() => jest.useRealTimers());
 
-    const mockCreate = jest
-      .spyOn(document, 'createElement')
-      .mockImplementation(() => link);
-    const { saveFile } = useDataSaver('message', content);
-    saveFile();
+    it('downloads json file', () => {
+      const link: HTMLAnchorElement = document.createElement('a');
+      link.click = jest.fn();
 
-    expect(mockCreate).toHaveBeenCalledTimes(1);
-    expect(link.download).toEqual('message_1466424490000.json');
-    expect(link.href).toEqual(
-      `data:text/json;charset=utf-8,${encodeURIComponent(
-        JSON.stringify(content)
-      )}`
-    );
-    expect(link.click).toHaveBeenCalledTimes(1);
+      const mockCreate = jest
+        .spyOn(document, 'createElement')
+        .mockImplementation(() => link);
+
+      const { saveFile } = useDataSaver('message', content);
+      saveFile();
+
+      expect(mockCreate).toHaveBeenCalledTimes(1);
+      expect(link.download).toEqual('message_1619038800000.json');
+      expect(link.href).toEqual(
+        `data:text/json;charset=utf-8,${encodeURIComponent(
+          JSON.stringify(content)
+        )}`
+      );
+      expect(link.click).toHaveBeenCalledTimes(1);
+
+      mockCreate.mockRestore();
+    });
+
+    it('downloads txt file', () => {
+      const link: HTMLAnchorElement = document.createElement('a');
+      link.click = jest.fn();
+
+      const mockCreate = jest
+        .spyOn(document, 'createElement')
+        .mockImplementation(() => link);
+
+      const { saveFile } = useDataSaver('message', 'content');
+      saveFile();
+
+      expect(mockCreate).toHaveBeenCalledTimes(1);
+      expect(link.download).toEqual('message_1619038800000.txt');
+      expect(link.href).toEqual(
+        `data:text/json;charset=utf-8,${encodeURIComponent(
+          JSON.stringify('content')
+        )}`
+      );
+      expect(link.click).toHaveBeenCalledTimes(1);
+
+      mockCreate.mockRestore();
+    });
   });
 
   it('copies the data to the clipboard', () => {

@@ -45,6 +45,23 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     />
   </td>
+  <td>
+    <Dropdown
+      label="…"
+      right={true}
+    >
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Copy to clipboard
+      </DropdownItem>
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Save as a file
+      </DropdownItem>
+    </Dropdown>
+  </td>
 </tr>
 `;
 
@@ -84,5 +101,22 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
       }
     }
   />
+  <td>
+    <Dropdown
+      label="…"
+      right={true}
+    >
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Copy to clipboard
+      </DropdownItem>
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Save as a file
+      </DropdownItem>
+    </Dropdown>
+  </td>
 </tr>
 `;

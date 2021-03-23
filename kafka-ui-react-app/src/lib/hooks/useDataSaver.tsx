@@ -1,3 +1,5 @@
+import { isObject } from 'lodash';
+
 const useDataSaver = (
   subject: string,
   data: Record<string, string> | string
@@ -10,16 +12,10 @@ const useDataSaver = (
   };
 
   const saveFile = () => {
-    let extension = 'json';
-    const str = JSON.stringify(data);
-
-    try {
-      JSON.parse(str);
-    } catch (e) {
-      extension = 'txt';
-    }
-
-    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(str)}`;
+    const extension = isObject(data) ? 'json' : 'txt';
+    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
+      JSON.stringify(data)
+    )}`;
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute('href', dataStr);
     downloadAnchorNode.setAttribute(
