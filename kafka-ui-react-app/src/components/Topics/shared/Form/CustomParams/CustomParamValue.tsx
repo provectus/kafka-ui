@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TopicConfig } from 'generated-sources';
 import { ErrorMessage } from '@hookform/error-message';
-import CUSTOM_PARAMS_OPTIONS from './customParamsOptions';
+import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 
 interface Props {
   isDisabled: boolean;
@@ -24,10 +24,7 @@ const CustomParamValue: React.FC<Props> = ({
 
   React.useEffect(() => {
     if (selectedParamName && !defaultValue) {
-      setValue(
-        valInputName,
-        CUSTOM_PARAMS_OPTIONS[selectedParamName].defaultValue
-      );
+      setValue(valInputName, TOPIC_CUSTOM_PARAMS[selectedParamName]);
     }
   }, [selectedParamName, setValue, valInputName]);
 
