@@ -49,20 +49,16 @@ jobs:
           echo ${CHANGELOG}
           echo "::set-output name=changelog::${CHANGELOG}"
           echo "::set-output name=version::${VERSION}"
-      - id: create_release
-        uses: actions/github-script@v3
-        env:
-          CHANGELOG: ${{steps.generate.outputs.changelog}}
-          VERSION:  ${{steps.generate.outputs.version}}
+      - name: Download release JAR
+        uses: actions/download-artifact@v2
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.repos.createRelease({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              tag_name: context.ref,
-              name: "Release "+process.env.VERSION,
-              body: process.env.CHANGELOG,
-              draft: false,
-              prerelease: false
-            });
+          name: kafka-ui-${{ steps.generate.outputs.version }}
+          path: kafka-ui-${{ steps.generate.outputs.version }}.jar
+      - id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{steps.generate.outputs.version}}
+          draft: false
+          prerelease: false
+          file: kafka-ui-${{ steps.generate.outputs.version }}.jar
+          body: ${{steps.generate.outputs.changelog}}

@@ -41,50 +41,55 @@ jobs:
           echo ::set-output name=version::${VERSION}
       - name: Build with Maven
         run: mvn clean package -Pprod
+      - name: Archive JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: kafka-ui-${{ steps.prep.outputs.version }}
+          path: kafka-ui-api/target/kafka-ui-api-${{ steps.prep.outputs.version }}.jar
 #################
 #               #
 # Docker images #
 #               #
 #################
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Cache Docker layers
-        uses: actions/cache@v2
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-      - name: Login to DockerHub
-        if: github.ref == 'refs/heads/master'
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build
-        if: github.ref != 'refs/heads/master'
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: kafka-ui-api
-          push: false
-          build-args: |
-            JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
-      - name: Build and push
-        if: github.ref == 'refs/heads/master'
-        id: docker_build_and_push
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: kafka-ui-api
-          push: true
-          tags: provectuslabs/kafka-ui:${{ steps.prep.outputs.version }}
-          build-args: |
-            JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+      # - name: Set up QEMU
+      #   uses: docker/setup-qemu-action@v1
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v1
+      # - name: Cache Docker layers
+      #   uses: actions/cache@v2
+      #   with:
+      #     path: /tmp/.buildx-cache
+      #     key: ${{ runner.os }}-buildx-${{ github.sha }}
+      #     restore-keys: |
+      #       ${{ runner.os }}-buildx-
+      # - name: Login to DockerHub
+      #   if: github.ref == 'refs/heads/master'
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+      # - name: Build
+      #   if: github.ref != 'refs/heads/master'
+      #   id: docker_build
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     builder: ${{ steps.buildx.outputs.name }}
+      #     context: kafka-ui-api
+      #     push: false
+      #     build-args: |
+      #       JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache
+      # - name: Build and push
+      #   if: github.ref == 'refs/heads/master'
+      #   id: docker_build_and_push
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     builder: ${{ steps.buildx.outputs.name }}
+      #     context: kafka-ui-api
+      #     push: true
+      #     tags: provectuslabs/kafka-ui:${{ steps.prep.outputs.version }}
+      #     build-args: |
+      #       JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
+      #     cache-from: type=local,src=/tmp/.buildx-cache
+      #     cache-to: type=local,dest=/tmp/.buildx-cache
