@@ -2,10 +2,10 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TopicConfigValue } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
-import CustomParamOptions from './CustomParamOptions';
+import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { INDEX_PREFIX } from './CustomParams';
 
-interface Props {
+export interface CustomParamSelectProps {
   isDisabled: boolean;
   index: string;
   name: string;
@@ -13,7 +13,7 @@ interface Props {
   onNameChange: (inputName: string, name: string) => void;
 }
 
-const CustomParamSelect: React.FC<Props> = ({
+const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
   isDisabled,
   index,
   name,
@@ -59,7 +59,16 @@ const CustomParamSelect: React.FC<Props> = ({
           disabled={isDisabled}
           defaultValue={name}
         >
-          <CustomParamOptions existingFields={existingFields} />
+          <option value="">Select</option>
+          {Object.keys(TOPIC_CUSTOM_PARAMS).map((opt) => (
+            <option
+              key={opt}
+              value={opt}
+              disabled={existingFields.includes(opt)}
+            >
+              {opt}
+            </option>
+          ))}
         </select>
         <p className="help is-danger">
           <ErrorMessage errors={errors} name={optInputName} />

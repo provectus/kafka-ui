@@ -22,11 +22,6 @@ export interface TopicConfigParams {
   [paramName: string]: TopicConfig;
 }
 
-export interface TopicConfigOption {
-  name: TopicConfig['name'];
-  defaultValue: TopicConfig['defaultValue'];
-}
-
 export interface TopicConfigValue {
   name: TopicConfig['name'];
   value: TopicConfig['value'];
