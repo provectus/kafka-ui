@@ -14,7 +14,7 @@ describe('ListItem', () => {
         clusterName={clustterName}
       />
     );
-    component.find('button').simulate('click');
+    component.find('DropdownItem').simulate('click');
     expect(mockDelete).toBeCalledTimes(1);
     expect(mockDelete).toBeCalledWith(clustterName, topic.name);
   });

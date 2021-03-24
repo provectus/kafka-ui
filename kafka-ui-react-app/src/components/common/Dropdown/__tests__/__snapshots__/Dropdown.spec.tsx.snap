@@ -15,7 +15,7 @@ exports[`Dropdown matches snapshot 1`] = `
       <button
         aria-controls="dropdown-menu"
         aria-haspopup="true"
-        className="button"
+        className="button is-small"
         onClick={[Function]}
         type="button"
       >
@@ -28,7 +28,7 @@ exports[`Dropdown matches snapshot 1`] = `
       role="menu"
     >
       <div
-        className="dropdown-content"
+        className="dropdown-content has-text-left"
       >
         <DropdownItem
           onClick={[MockFunction]}

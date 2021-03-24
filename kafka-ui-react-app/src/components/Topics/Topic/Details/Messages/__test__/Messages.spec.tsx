@@ -63,11 +63,7 @@ describe('Messages', () => {
           })
         );
         it('renders table', () => {
-          expect(
-            messagesWrapper.exists(
-              '[className="table is-striped is-fullwidth"]'
-            )
-          ).toBeTruthy();
+          expect(messagesWrapper.exists('.table.is-fullwidth')).toBeTruthy();
         });
         it('renders JSONTree', () => {
           expect(messagesWrapper.find('JSONTree').length).toEqual(1);

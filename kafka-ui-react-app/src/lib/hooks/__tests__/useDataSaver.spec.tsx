@@ -7,7 +7,7 @@ describe('useDataSaver hook', () => {
   describe('Save as file', () => {
     beforeAll(() => {
       jest.useFakeTimers('modern');
-      jest.setSystemTime(new Date(2021, 3, 22));
+      jest.setSystemTime(new Date('Wed Mar 24 2021 03:19:56 GMT-0700'));
     });
 
     afterAll(() => jest.useRealTimers());
@@ -24,7 +24,7 @@ describe('useDataSaver hook', () => {
       saveFile();
 
       expect(mockCreate).toHaveBeenCalledTimes(1);
-      expect(link.download).toEqual('message_1619038800000.json');
+      expect(link.download).toEqual('message_1616581196000.json');
       expect(link.href).toEqual(
         `data:text/json;charset=utf-8,${encodeURIComponent(
           JSON.stringify(content)
@@ -47,7 +47,7 @@ describe('useDataSaver hook', () => {
       saveFile();
 
       expect(mockCreate).toHaveBeenCalledTimes(1);
-      expect(link.download).toEqual('message_1619038800000.txt');
+      expect(link.download).toEqual('message_1616581196000.txt');
       expect(link.href).toEqual(
         `data:text/json;charset=utf-8,${encodeURIComponent(
           JSON.stringify('content')

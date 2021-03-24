@@ -45,9 +45,19 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     />
   </td>
-  <td>
+  <td
+    className="has-text-right"
+  >
     <Dropdown
-      label="…"
+      label={
+        <span
+          className="icon"
+        >
+          <i
+            className="fas fa-cog"
+          />
+        </span>
+      }
       right={true}
     >
       <DropdownItem
@@ -101,9 +111,19 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
       }
     }
   />
-  <td>
+  <td
+    className="has-text-right"
+  >
     <Dropdown
-      label="…"
+      label={
+        <span
+          className="icon"
+        >
+          <i
+            className="fas fa-cog"
+          />
+        </span>
+      }
       right={true}
     >
       <DropdownItem

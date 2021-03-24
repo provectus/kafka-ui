@@ -27,7 +27,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
       <div className="dropdown-trigger">
         <button
           type="button"
-          className="button"
+          className="button is-small"
           aria-haspopup="true"
           aria-controls="dropdown-menu"
           onClick={onClick}
@@ -36,7 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
         </button>
       </div>
       <div className="dropdown-menu" id="dropdown-menu" role="menu">
-        <div className="dropdown-content">{children}</div>
+        <div className="dropdown-content has-text-left">{children}</div>
       </div>
     </div>
   );

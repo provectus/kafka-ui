@@ -37,8 +37,15 @@ const MessageItem: React.FC<MessageItemProp> = ({
           content
         )}
       </td>
-      <td>
-        <Dropdown label="&hellip;" right>
+      <td className="has-text-right">
+        <Dropdown
+          label={
+            <span className="icon">
+              <i className="fas fa-cog" />
+            </span>
+          }
+          right
+        >
           <DropdownItem onClick={copyToClipboard}>
             Copy to clipboard
           </DropdownItem>
