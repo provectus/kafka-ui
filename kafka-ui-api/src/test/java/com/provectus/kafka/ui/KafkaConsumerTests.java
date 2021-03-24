@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class KafkaConsumerTests extends AbstractBaseTest {
     var topicName = UUID.randomUUID().toString();
     webTestClient.post()
         .uri("/api/clusters/{clusterName}/topics", LOCAL)
-        .bodyValue(new TopicFormData()
+        .bodyValue(new TopicCreation()
             .name(topicName)
             .partitions(1)
             .replicationFactor(1)

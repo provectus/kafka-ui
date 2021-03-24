@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.TopicCreation;
+import com.provectus.kafka.ui.model.TopicUpdate;
 import java.util.Map;
 import java.util.UUID;
 import lombok.extern.log4j.Log4j2;
@@ -24,7 +25,7 @@ public class ReadOnlyModeTests extends AbstractBaseTest {
     var topicName = UUID.randomUUID().toString();
     webTestClient.post()
         .uri("/api/clusters/{clusterName}/topics", LOCAL)
-        .bodyValue(new TopicFormData()
+        .bodyValue(new TopicCreation()
             .name(topicName)
             .partitions(1)
             .replicationFactor(1)
@@ -40,7 +41,7 @@ public class ReadOnlyModeTests extends AbstractBaseTest {
     var topicName = UUID.randomUUID().toString();
     webTestClient.post()
         .uri("/api/clusters/{clusterName}/topics", SECOND_LOCAL)
-        .bodyValue(new TopicFormData()
+        .bodyValue(new TopicCreation()
             .name(topicName)
             .partitions(1)
             .replicationFactor(1)
@@ -56,7 +57,7 @@ public class ReadOnlyModeTests extends AbstractBaseTest {
     var topicName = UUID.randomUUID().toString();
     webTestClient.post()
         .uri("/api/clusters/{clusterName}/topics", LOCAL)
-        .bodyValue(new TopicFormData()
+        .bodyValue(new TopicCreation()
             .name(topicName)
             .partitions(1)
             .replicationFactor(1)
@@ -67,10 +68,7 @@ public class ReadOnlyModeTests extends AbstractBaseTest {
         .isOk();
     webTestClient.patch()
         .uri("/api/clusters/{clusterName}/topics/{topicName}", LOCAL, topicName)
-        .bodyValue(new TopicFormData()
-            .name(topicName)
-            .partitions(2)
-            .replicationFactor(1)
+        .bodyValue(new TopicUpdate()
             .configs(Map.of())
         )
         .exchange()
@@ -83,10 +81,7 @@ public class ReadOnlyModeTests extends AbstractBaseTest {
     var topicName = UUID.randomUUID().toString();
     webTestClient.patch()
         .uri("/api/clusters/{clusterName}/topics/{topicName}", SECOND_LOCAL, topicName)
-        .bodyValue(new TopicFormData()
-            .name(topicName)
-            .partitions(1)
-            .replicationFactor(1)
+        .bodyValue(new TopicUpdate()
             .configs(Map.of())
         )
         .exchange()
