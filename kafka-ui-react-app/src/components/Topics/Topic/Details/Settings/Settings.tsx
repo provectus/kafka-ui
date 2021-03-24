@@ -30,7 +30,7 @@ const ConfigListItem: React.FC<ListItemProps> = ({
   );
 };
 
-const Sertings: React.FC<Props> = ({
+const Settings: React.FC<Props> = ({
   clusterName,
   topicName,
   isFetched,
@@ -65,4 +65,4 @@ const Sertings: React.FC<Props> = ({
   );
 };
 
-export default Sertings;
+export default Settings;

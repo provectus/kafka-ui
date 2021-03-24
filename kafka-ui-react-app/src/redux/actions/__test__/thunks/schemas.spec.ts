@@ -9,7 +9,7 @@ import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
-import * as fixtures from './fixtures';
+import * as fixtures from '../fixtures';
 
 const middlewares: Array<Middleware> = [thunk];
 type DispatchExts = ThunkDispatch<RootState, undefined, Action>;
@@ -22,7 +22,6 @@ const mockStoreCreator: MockStoreCreator<
 const store: MockStoreEnhanced<RootState, DispatchExts> = mockStoreCreator();
 
 const clusterName = 'local';
-const topicName = 'localTopic';
 const subject = 'test';
 
 describe('Thunks', () => {
@@ -134,36 +133,6 @@ describe('Thunks', () => {
         expect(store.getActions()).toEqual([
           actions.createSchemaAction.request(),
           actions.createSchemaAction.failure(),
-        ]);
-      }
-    });
-  });
-
-  describe('deleteTopis', () => {
-    it('creates DELETE_TOPIC__SUCCESS when deleting existing topic', async () => {
-      fetchMock.deleteOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}`,
-        200
-      );
-      await store.dispatch(thunks.deleteTopic(clusterName, topicName));
-      expect(store.getActions()).toEqual([
-        actions.deleteTopicAction.request(),
-        actions.deleteTopicAction.success(topicName),
-      ]);
-    });
-
-    it('creates DELETE_TOPIC__FAILURE when deleting existing topic', async () => {
-      fetchMock.postOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}`,
-        404
-      );
-      try {
-        await store.dispatch(thunks.deleteTopic(clusterName, topicName));
-      } catch (error) {
-        expect(error.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.deleteTopicAction.request(),
-          actions.deleteTopicAction.failure(),
         ]);
       }
     });

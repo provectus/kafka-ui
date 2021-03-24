@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Dropdown matches snapshot 1`] = `
+<Dropdown
+  label="My Test Label"
+  right={true}
+  up={true}
+>
+  <div
+    className="dropdown is-right is-up"
+  >
+    <div
+      className="dropdown-trigger"
+    >
+      <button
+        aria-controls="dropdown-menu"
+        aria-haspopup="true"
+        className="button is-small"
+        onClick={[Function]}
+        type="button"
+      >
+        My Test Label
+      </button>
+    </div>
+    <div
+      className="dropdown-menu"
+      id="dropdown-menu"
+      role="menu"
+    >
+      <div
+        className="dropdown-content has-text-left"
+      >
+        <DropdownItem
+          onClick={[MockFunction]}
+        >
+          <a
+            className="dropdown-item is-link"
+            href="#end"
+            onClick={[Function]}
+            role="menuitem"
+            type="button"
+          >
+            Child 1
+          </a>
+        </DropdownItem>
+        <DropdownItem
+          onClick={[MockFunction]}
+        >
+          <a
+            className="dropdown-item is-link"
+            href="#end"
+            onClick={[Function]}
+            role="menuitem"
+            type="button"
+          >
+            Child 2
+          </a>
+        </DropdownItem>
+        <DropdownDivider>
+          <hr
+            className="dropdown-divider"
+          />
+        </DropdownDivider>
+        <DropdownItem
+          onClick={[MockFunction]}
+        >
+          <a
+            className="dropdown-item is-link"
+            href="#end"
+            onClick={[Function]}
+            role="menuitem"
+            type="button"
+          >
+            Child 3
+          </a>
+        </DropdownItem>
+      </div>
+    </div>
+  </div>
+</Dropdown>
+`;

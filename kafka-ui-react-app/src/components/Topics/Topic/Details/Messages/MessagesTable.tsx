@@ -15,24 +15,25 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
 
   return (
     <>
-      <table className="table is-striped is-fullwidth">
+      <table className="table is-fullwidth">
         <thead>
           <tr>
             <th>Timestamp</th>
             <th>Offset</th>
             <th>Partition</th>
             <th>Content</th>
+            <th> </th>
           </tr>
         </thead>
         <tbody>
           {messages.map(
             ({ partition, offset, timestamp, content }: TopicMessage) => (
               <MessageItem
-                key={`message-${timestamp.getTime()}`}
+                key={`message-${timestamp.getTime()}-${offset}`}
                 partition={partition}
                 offset={offset}
                 timestamp={timestamp}
-                content={content as { [key: string]: string }}
+                content={content}
               />
             )
           )}

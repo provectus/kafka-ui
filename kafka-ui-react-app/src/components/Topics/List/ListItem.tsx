@@ -6,6 +6,8 @@ import {
   TopicName,
   TopicWithDetailedInfo,
 } from 'redux/interfaces';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import Dropdown from 'components/common/Dropdown/Dropdown';
 
 interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -54,16 +56,19 @@ const ListItem: React.FC<ListItemProps> = ({
           {internal ? 'Internal' : 'External'}
         </div>
       </td>
-      <td>
-        <button
-          type="button"
-          className="is-small button is-danger"
-          onClick={deleteTopicHandler}
+      <td className="has-text-right">
+        <Dropdown
+          label={
+            <span className="icon">
+              <i className="fas fa-cog" />
+            </span>
+          }
+          right
         >
-          <span className="icon is-small">
-            <i className="far fa-trash-alt" />
-          </span>
-        </button>
+          <DropdownItem onClick={deleteTopicHandler}>
+            <span className="has-text-danger">Delete Topic</span>
+          </DropdownItem>
+        </Dropdown>
       </td>
     </tr>
   );

@@ -45,6 +45,33 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     />
   </td>
+  <td
+    className="has-text-right"
+  >
+    <Dropdown
+      label={
+        <span
+          className="icon"
+        >
+          <i
+            className="fas fa-cog"
+          />
+        </span>
+      }
+      right={true}
+    >
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Copy to clipboard
+      </DropdownItem>
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Save as a file
+      </DropdownItem>
+    </Dropdown>
+  </td>
 </tr>
 `;
 
@@ -84,5 +111,32 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
       }
     }
   />
+  <td
+    className="has-text-right"
+  >
+    <Dropdown
+      label={
+        <span
+          className="icon"
+        >
+          <i
+            className="fas fa-cog"
+          />
+        </span>
+      }
+      right={true}
+    >
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Copy to clipboard
+      </DropdownItem>
+      <DropdownItem
+        onClick={[Function]}
+      >
+        Save as a file
+      </DropdownItem>
+    </Dropdown>
+  </td>
 </tr>
 `;

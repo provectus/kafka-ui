@@ -42,7 +42,7 @@ jobs:
     - name: Tests
       run: |
         cd kafka-ui-react-app/
-        npm run test
+        npm run test:CI
     - name: SonarCloud Scan
       uses: workshur/sonarcloud-github-action@improved_basedir
       with:

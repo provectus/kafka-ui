@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DropdownItem matches snapshot 1`] = `
+<DropdownItem
+  onClick={[MockFunction]}
+>
+  <a
+    className="dropdown-item is-link"
+    href="#end"
+    onClick={[Function]}
+    role="menuitem"
+    type="button"
+  >
+    Item 1
+  </a>
+</DropdownItem>
+`;

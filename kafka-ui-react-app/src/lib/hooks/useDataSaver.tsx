@@ -1,21 +1,27 @@
-const useDataSaver = () => {
-  const copyToClipboard = (content: string) => {
-    if (navigator.clipboard) navigator.clipboard.writeText(content);
+import { isObject } from 'lodash';
+
+const useDataSaver = (
+  subject: string,
+  data: Record<string, string> | string
+) => {
+  const copyToClipboard = () => {
+    if (navigator.clipboard) {
+      const str = JSON.stringify(data);
+      navigator.clipboard.writeText(str);
+    }
   };
 
-  const saveFile = (content: string, fileName: string) => {
-    let extension = 'json';
-    try {
-      JSON.parse(content);
-    } catch (e) {
-      extension = 'txt';
-    }
+  const saveFile = () => {
+    const extension = isObject(data) ? 'json' : 'txt';
     const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      content
+      JSON.stringify(data)
     )}`;
     const downloadAnchorNode = document.createElement('a');
     downloadAnchorNode.setAttribute('href', dataStr);
-    downloadAnchorNode.setAttribute('download', `${fileName}.${extension}`);
+    downloadAnchorNode.setAttribute(
+      'download',
+      `${subject}_${new Date().getTime()}.${extension}`
+    );
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();

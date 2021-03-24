@@ -81,7 +81,7 @@ const List: React.FC<Props> = ({
         <PageLoader />
       ) : (
         <div className="box">
-          <table className="table is-striped is-fullwidth">
+          <table className="table is-fullwidth">
             <thead>
               <tr>
                 <th>Topic Name</th>

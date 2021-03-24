@@ -13,7 +13,7 @@ describe('MessageItem', () => {
       const wrapper = shallow(<MessageItem {...messages[0]} />);
 
       expect(wrapper.find('tr').length).toEqual(1);
-      expect(wrapper.find('td').length).toEqual(4);
+      expect(wrapper.find('td').length).toEqual(5);
       expect(wrapper.find('JSONViewer').length).toEqual(1);
     });
 
@@ -27,7 +27,7 @@ describe('MessageItem', () => {
       const wrapper = shallow(<MessageItem {...messages[1]} />);
 
       expect(wrapper.find('tr').length).toEqual(1);
-      expect(wrapper.find('td').length).toEqual(4);
+      expect(wrapper.find('td').length).toEqual(5);
       expect(wrapper.find('JSONViewer').length).toEqual(0);
     });
 
