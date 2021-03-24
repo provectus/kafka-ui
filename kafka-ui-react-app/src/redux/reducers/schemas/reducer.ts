@@ -39,8 +39,8 @@ const addToSchemaList = (
   const newState: SchemasState = {
     ...state,
   };
-  newState.allNames.push(payload.subject as string);
-  newState.byName[payload.subject as string] = { ...payload };
+  newState.allNames.push(payload.subject);
+  newState.byName[payload.subject] = { ...payload };
   return newState;
 };
 
