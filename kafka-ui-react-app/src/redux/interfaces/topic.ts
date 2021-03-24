@@ -3,7 +3,7 @@ import {
   TopicDetails,
   TopicMessage,
   TopicConfig,
-  TopicFormData,
+  TopicCreation,
   GetTopicMessagesRequest,
 } from 'generated-sources';
 
@@ -55,7 +55,7 @@ export interface TopicsState {
   messages: TopicMessage[];
 }
 
-export type TopicFormFormattedParams = TopicFormData['configs'];
+export type TopicFormFormattedParams = TopicCreation['configs'];
 
 export interface TopicFormDataRaw {
   name: string;
