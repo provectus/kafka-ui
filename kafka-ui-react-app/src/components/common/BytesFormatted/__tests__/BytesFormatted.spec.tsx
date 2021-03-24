@@ -32,6 +32,9 @@ describe('BytesFormatted', () => {
     component = shallow(<BytesFormatted value="some string" />);
     expect(component.text()).toEqual(`-${sizes[0]}`);
 
+    component = shallow(<BytesFormatted value={-100000} />);
+    expect(component.text()).toEqual(`-${sizes[0]}`);
+
     component = shallow(<BytesFormatted value={undefined} />);
     expect(component.text()).toEqual(`0${sizes[0]}`);
   });
