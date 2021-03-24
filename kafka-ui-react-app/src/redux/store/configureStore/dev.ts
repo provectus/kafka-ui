@@ -12,13 +12,8 @@ declare global {
 
 export default () => {
   const middlewares = [thunk as ThunkMiddleware<RootState, Action>];
-
   const composeEnhancers =
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
   const enhancer = composeEnhancers(applyMiddleware(...middlewares));
-
-  const store = createStore(rootReducer, undefined, enhancer);
-
-  return store;
+  return createStore(rootReducer, undefined, enhancer);
 };

@@ -4,10 +4,6 @@ import rootReducer from 'redux/reducers';
 
 export default () => {
   const middlewares = [thunk];
-
   const enhancer = applyMiddleware(...middlewares);
-
-  const store = createStore(rootReducer, undefined, enhancer);
-
-  return store;
+  return createStore(rootReducer, undefined, enhancer);
 };
