@@ -153,7 +153,7 @@ describe('Thunks', () => {
     });
 
     it('creates DELETE_TOPIC__FAILURE when deleting existing topic', async () => {
-      fetchMock.postOnce(
+      fetchMock.deleteOnce(
         `/api/clusters/${clusterName}/topics/${topicName}`,
         404
       );
