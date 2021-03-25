@@ -162,7 +162,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TopicFormData'
+              $ref: '#/components/schemas/TopicCreation'
       responses:
         201:
           description: Created
@@ -215,7 +215,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/TopicFormData'
+              $ref: '#/components/schemas/TopicUpdate'
       responses:
         200:
           description: Updated
@@ -1281,7 +1281,7 @@ components:
       required:
         - name
 
-    TopicFormData:
+    TopicCreation:
       type: object
       properties:
         name:
@@ -1296,6 +1296,18 @@ components:
             type: string
       required:
         - name
+        - partitions
+        - replicationFactor
+
+    TopicUpdate:
+      type: object
+      properties:
+        configs:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - configs
 
     Broker:
       type: object

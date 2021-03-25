@@ -3,8 +3,9 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.TopicsApi;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicConfig;
+import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
-import com.provectus.kafka.ui.model.TopicFormData;
+import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.Optional;
@@ -26,8 +27,8 @@ public class TopicsController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<Topic>> createTopic(
-      String clusterName, @Valid Mono<TopicFormData> topicFormData, ServerWebExchange exchange) {
-    return clusterService.createTopic(clusterName, topicFormData)
+      String clusterName, @Valid Mono<TopicCreation> topicCreation, ServerWebExchange exchange) {
+    return clusterService.createTopic(clusterName, topicCreation)
         .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
@@ -70,8 +71,8 @@ public class TopicsController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<Topic>> updateTopic(
-      String clusterId, String topicName, @Valid Mono<TopicFormData> topicFormData,
+      String clusterId, String topicName, @Valid Mono<TopicUpdate> topicUpdate,
       ServerWebExchange exchange) {
-    return clusterService.updateTopic(clusterId, topicName, topicFormData).map(ResponseEntity::ok);
+    return clusterService.updateTopic(clusterId, topicName, topicUpdate).map(ResponseEntity::ok);
   }
 }

@@ -4,7 +4,8 @@ import {
   MessagesApi,
   Configuration,
   Topic,
-  TopicFormData,
+  TopicCreation,
+  TopicUpdate,
   TopicConfig,
 } from 'generated-sources';
 import {
@@ -136,7 +137,7 @@ export const fetchTopicConfig = (
   }
 };
 
-const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
+const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
   const {
     name,
     partitions,
@@ -172,6 +173,36 @@ const formatTopicFormData = (form: TopicFormDataRaw): TopicFormData => {
   };
 };
 
+const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
+  const {
+    cleanupPolicy,
+    retentionBytes,
+    retentionMs,
+    maxMessageBytes,
+    minInSyncReplicas,
+    customParams,
+  } = form;
+
+  return {
+    configs: {
+      'cleanup.policy': cleanupPolicy,
+      'retention.ms': retentionMs,
+      'retention.bytes': retentionBytes,
+      'max.message.bytes': maxMessageBytes,
+      'min.insync.replicas': minInSyncReplicas,
+      ...Object.values(customParams || {}).reduce(
+        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
+          return {
+            ...result,
+            [customParam.name]: customParam.value,
+          };
+        },
+        {}
+      ),
+    },
+  };
+};
+
 export const createTopic = (
   clusterName: ClusterName,
   form: TopicFormDataRaw
@@ -180,7 +211,7 @@ export const createTopic = (
   try {
     const topic: Topic = await topicsApiClient.createTopic({
       clusterName,
-      topicFormData: formatTopicFormData(form),
+      topicCreation: formatTopicCreation(form),
     });
 
     const state = getState().topics;
@@ -210,7 +241,7 @@ export const updateTopic = (
     const topic: Topic = await topicsApiClient.updateTopic({
       clusterName,
       topicName: form.name,
-      topicFormData: formatTopicFormData(form),
+      topicUpdate: formatTopicUpdate(form),
     });
 
     const state = getState().topics;

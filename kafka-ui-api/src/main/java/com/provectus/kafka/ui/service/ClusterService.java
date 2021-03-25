@@ -15,9 +15,10 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicConfig;
+import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
-import com.provectus.kafka.ui.model.TopicFormData;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import java.util.Collection;
@@ -125,9 +126,9 @@ public class ClusterService {
             .collect(Collectors.toList()));
   }
 
-  public Mono<Topic> createTopic(String clusterName, Mono<TopicFormData> topicFormData) {
+  public Mono<Topic> createTopic(String clusterName, Mono<TopicCreation> topicCreation) {
     return clustersStorage.getClusterByName(clusterName).map(cluster ->
-        kafkaService.createTopic(cluster, topicFormData)
+        kafkaService.createTopic(cluster, topicCreation)
             .doOnNext(t -> updateCluster(t, clusterName, cluster))
             .map(clusterMapper::toTopic)
     ).orElse(Mono.empty());
@@ -200,9 +201,9 @@ public class ClusterService {
 
   @SneakyThrows
   public Mono<Topic> updateTopic(String clusterName, String topicName,
-                                 Mono<TopicFormData> topicFormData) {
+                                 Mono<TopicUpdate> topicUpdate) {
     return clustersStorage.getClusterByName(clusterName).map(cl ->
-        topicFormData
+        topicUpdate
             .flatMap(t -> kafkaService.updateTopic(cl, topicName, t))
             .doOnNext(t -> updateCluster(t, clusterName, cl))
             .map(clusterMapper::toTopic)

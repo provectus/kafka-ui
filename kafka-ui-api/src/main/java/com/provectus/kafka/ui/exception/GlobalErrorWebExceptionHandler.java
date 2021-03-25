@@ -71,7 +71,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
   private Mono<ServerResponse> renderDefault(Throwable throwable, ServerRequest request) {
     var response = new ErrorResponse()
         .code(ErrorCode.UNEXPECTED.code())
-        .message(throwable.getMessage())
+        .message(coalesce(throwable.getMessage(), "Unexpected internal error"))
         .requestId(requestId(request))
         .timestamp(currentTimestamp());
     return ServerResponse
@@ -84,7 +84,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
     ErrorCode errorCode = baseException.getErrorCode();
     var response = new ErrorResponse()
         .code(errorCode.code())
-        .message(baseException.getMessage())
+        .message(coalesce(baseException.getMessage(), "Internal error"))
         .requestId(requestId(request))
         .timestamp(currentTimestamp());
     return ServerResponse
