@@ -80,7 +80,7 @@ public class SchemaRegistryService {
             .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)
             .retrieve()
             .onStatus(NOT_FOUND::equals,
-                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA))
+                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName))
             ).bodyToFlux(Integer.class)
         ).orElse(Flux.error(ClusterNotFoundException::new));
   }
