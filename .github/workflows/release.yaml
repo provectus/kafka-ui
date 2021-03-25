@@ -5,6 +5,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{steps.prep.outputs.version}}
     steps:
       - uses: actions/checkout@v2
       - run: |
@@ -41,6 +43,11 @@ jobs:
           echo ::set-output name=version::${VERSION}
       - name: Build with Maven
         run: mvn clean package -Pprod
+      - name: Archive JAR
+        uses: actions/upload-artifact@v2
+        with:
+          name: kafka-ui-${{ steps.prep.outputs.version }}
+          path: kafka-ui-api/target/kafka-ui-api-${{ steps.prep.outputs.version }}.jar
 #################
 #               #
 # Docker images #
@@ -88,3 +95,65 @@ jobs:
             JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+  charts:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - uses: azure/setup-helm@v1
+      - name: update appVersion
+        run: |
+          export version=${{needs.release.outputs.version}}
+          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
+      - name:
+        run: |
+          export VERSION=${{needs.release.outputs.version}}
+          MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
+          git fetch origin
+          git stash
+          git checkout -b gh-pages origin/gh-pages
+          helm repo index .
+          git add -f ${MSG##*/} index.yaml
+          git commit -m "release ${VERSION}"
+          git push
+  gh-release:
+    runs-on: ubuntu-latest
+    needs: release
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - id: generate
+        shell: /usr/bin/bash -x -e {0}
+        run: |
+          VERSION=${{needs.release.outputs.version}}
+          CHANGELOG=$(git --no-pager log --oneline --pretty=format:"- %s" `git tag --sort=-creatordate | grep '^v.*' | head -n2 | tail -n1`.. | uniq | grep -v '^- Merge\|^- skip')
+          CHANGELOG="${CHANGELOG//'%'/'%25'}"
+          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
+          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
+          echo ${CHANGELOG}
+          echo "::set-output name=changelog::${CHANGELOG}"
+      - name: Download release JAR
+        uses: actions/download-artifact@v2
+        with:
+          name: kafka-ui-${{needs.release.outputs.version}}
+          path: .
+      - id: create_release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          name: ${{needs.release.outputs.version}}
+          draft: false
+          tag_name: "v${{needs.release.outputs.version}}"
+          prerelease: false
+          files: kafka-ui-api-${{needs.release.outputs.version}}.jar
+          body: ${{steps.generate.outputs.changelog}}
