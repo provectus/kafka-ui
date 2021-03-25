@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
-import { NewSchemaSubject, SchemaType } from 'generated-sources';
+import { NewSchemaSubject } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useHistory, useParams } from 'react-router';
 
@@ -26,12 +26,12 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
   } = useForm<NewSchemaSubjectRaw>();
 
   const onSubmit = React.useCallback(
-    async ({ subject, schema }: NewSchemaSubjectRaw) => {
+    async ({ subject, schema, schemaType }: NewSchemaSubjectRaw) => {
       try {
         await createSchema(clusterName, {
           subject,
           schema,
-          schemaType: SchemaType.AVRO,
+          schemaType,
         });
         history.push(clusterSchemaPath(clusterName, subject));
       } catch (e) {
@@ -68,7 +68,7 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
                   className="input"
                   placeholder="Schema Name"
                   ref={register({
-                    required: 'Topic Name is required.',
+                    required: 'Schema Name is required.',
                     pattern: {
                       value: SCHEMA_NAME_VALIDATION_PATTERN,
                       message: 'Only alphanumeric, _, -, and . allowed',
@@ -89,13 +89,36 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
               <div className="control">
                 <textarea
                   className="textarea"
-                  ref={register}
+                  ref={register({
+                    required: 'Schema is required.',
+                  })}
                   name="schema"
                   disabled={isSubmitting}
                 />
               </div>
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="schema" />
+              </p>
+            </div>
+
+            <div className="field">
+              <label className="label">Schema Type *</label>
+              <div className="control">
+                <select
+                  className="input"
+                  ref={register({
+                    required: 'Schema Type is required.',
+                  })}
+                  name="schemaType"
+                  disabled={isSubmitting}
+                >
+                  <option value="AVRO">AVRO</option>
+                  <option value="JSON">JSON</option>
+                  <option value="PROTOBUF">PROTOBUF</option>
+                </select>
+              </div>
+              <p className="help is-danger">
+                <ErrorMessage errors={errors} name="schemaType" />
               </p>
             </div>
           </div>
