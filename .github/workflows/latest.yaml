@@ -59,3 +59,18 @@ jobs:
             JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+#################
+#               #
+#   ECS update  #
+#               #
+#################
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+
+      - name: Restart service with the AWS CLI
+        run: |
+          aws --region eu-west-1 ecs update-service --cluster kad-ecs --service kad-ecs-kafka-ui --force-new-deployment
