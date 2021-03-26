@@ -24,6 +24,7 @@ import javax.management.ReflectionException;
 import javax.management.remote.JMXConnector;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.springframework.stereotype.Component;
 
@@ -77,8 +78,7 @@ public class JmxClusterUtil {
       var attrNames = msc.getMBeanInfo(name).getAttributes();
       for (MBeanAttributeInfo attrName : attrNames) {
         var value = msc.getAttribute(name, attrName.getName());
-        if ((value instanceof Number)
-            && (!(value instanceof Double) || !((Double) value).isInfinite())) {
+        if (value != null && NumberUtils.isCreatable(value.toString())) {
           resultAttr.put(attrName.getName(), new BigDecimal(value.toString()));
         }
       }
