@@ -1,8 +1,10 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import { clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaSchemaEditPath, clusterSchemasPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
+import { Link } from 'react-router-dom';
+
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
@@ -13,11 +15,13 @@ export interface DetailsProps {
   schema: SchemaSubject;
   clusterName: ClusterName;
   versions: SchemaSubject[];
-  isFetched: boolean;
+  versionsAreFetched: boolean;
+  schemasAreFetched: boolean;
   fetchSchemaVersions: (
     clusterName: ClusterName,
     schemaName: SchemaName
   ) => void;
+  fetchSchemasByClusterName: (clusterName: ClusterName) => void;
 }
 
 const Details: React.FC<DetailsProps> = ({
@@ -25,13 +29,15 @@ const Details: React.FC<DetailsProps> = ({
   schema,
   clusterName,
   fetchSchemaVersions,
+  fetchSchemasByClusterName,
   versions,
-  isFetched,
+  versionsAreFetched,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   React.useEffect(() => {
+    fetchSchemasByClusterName(clusterName);
     fetchSchemaVersions(clusterName, subject);
-  }, [fetchSchemaVersions, clusterName]);
+  }, [fetchSchemaVersions, fetchSchemasByClusterName, clusterName]);
 
   return (
     <div className="section">
@@ -47,7 +53,7 @@ const Details: React.FC<DetailsProps> = ({
           {subject}
         </Breadcrumb>
       </div>
-      {isFetched ? (
+      {versionsAreFetched ? (
         <>
           <div className="box">
             <div className="level">
@@ -63,14 +69,14 @@ const Details: React.FC<DetailsProps> = ({
               </div>
               {!isReadOnly && (
                 <div className="level-right">
-                  <button
+                  <Link
                     className="button is-warning is-small level-item"
                     type="button"
                     title="in development"
-                    disabled
+                    to={clusterSchemaSchemaEditPath(clusterName, subject)}
                   >
                     Update Schema
-                  </button>
+                  </Link>
                   <button
                     className="button is-danger is-small level-item"
                     type="button"

@@ -30,7 +30,9 @@ describe('Details', () => {
         schema={schema}
         clusterName="Test cluster"
         fetchSchemaVersions={jest.fn()}
-        isFetched
+        fetchSchemasByClusterName={jest.fn()}
+        schemasAreFetched
+        versionsAreFetched
         versions={[]}
         {...props}
       />
@@ -64,14 +66,16 @@ describe('Details', () => {
     });
 
     describe('when page with schema versions is loading', () => {
-      const wrapper = shallow(setupWrapper({ isFetched: false }));
+      const wrapper = shallow(setupWrapper({ versionsAreFetched: false }));
 
       it('renders PageLoader', () => {
         expect(wrapper.exists('PageLoader')).toBeTruthy();
       });
 
       it('matches snapshot', () => {
-        expect(shallow(setupWrapper({ isFetched: false }))).toMatchSnapshot();
+        expect(
+          shallow(setupWrapper({ versionsAreFetched: false }))
+        ).toMatchSnapshot();
       });
     });
 

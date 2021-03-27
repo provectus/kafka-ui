@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Edit Component matches the snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <div
+      className="level-item level-left"
+    >
+      <Breadcrumb
+        links={
+          Array [
+            Object {
+              "href": "/ui/clusters/ClusterName/schemas",
+              "label": "Schema Registry",
+            },
+            Object {
+              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
+              "label": "Subject",
+            },
+          ]
+        }
+      >
+        Edit
+      </Breadcrumb>
+    </div>
+  </div>
+  <div
+    className="box"
+  >
+    <div
+      className="is-flex is-justify-content-space-evenly"
+    >
+      <div>
+        <h4
+          className="title is-5 mb-2"
+        >
+          Latest Schema
+        </h4>
+        <JSONEditor
+          name="latestSchema"
+          readonly={true}
+          value="{
+	\\"schema\\": \\"schema\\"
+}"
+        />
+      </div>
+      <div>
+        <h4
+          className="title is-5 mb-2"
+        >
+          New Schema
+        </h4>
+        <JSONEditor
+          name="newSchema"
+          onChange={[Function]}
+          value="{
+	\\"schema\\": \\"schema\\"
+}"
+        />
+      </div>
+    </div>
+    <div
+      className="is-flex is-justify-content-center is-align-items-center"
+    >
+      <button
+        className="button is-primary mt-3"
+        onClick={[Function]}
+        type="submit"
+      >
+        Submit
+      </button>
+    </div>
+  </div>
+</div>
+`;

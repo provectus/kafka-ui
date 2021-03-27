@@ -103,9 +103,8 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
 
             <div className="field">
               <label className="label">Schema Type *</label>
-              <div className="control">
+              <div className="control select is-rounded">
                 <select
-                  className="input"
                   ref={register({
                     required: 'Schema Type is required.',
                   })}

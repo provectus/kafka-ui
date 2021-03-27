@@ -160,10 +160,9 @@ exports[`New View matches snapshot 1`] = `
                   Schema Type *
                 </label>
                 <div
-                  className="control"
+                  className="control select is-rounded"
                 >
                   <select
-                    className="input"
                     disabled={false}
                     name="schemaType"
                   >
