@@ -65,7 +65,7 @@ describe('Details', () => {
       });
     });
 
-    describe('when page with schema versions are loading', () => {
+    describe('when page with schema versions is loading', () => {
       const wrapper = shallow(setupWrapper({ versionsAreFetched: false }));
 
       it('renders PageLoader', () => {

@@ -107,7 +107,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
 </div>
 `;
 
-exports[`Details View when page with schema versions are loading matches snapshot 1`] = `
+exports[`Details View when page with schema versions is loading matches snapshot 1`] = `
 <div
   className="section"
 >

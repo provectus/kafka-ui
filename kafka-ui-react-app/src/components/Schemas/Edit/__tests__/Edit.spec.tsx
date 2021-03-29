@@ -12,21 +12,8 @@ describe('Edit Component', () => {
     compatibilityLevel: 'BACKWARD',
     schemaType: SchemaType.AVRO,
   };
-  it('matches the snapshot', () => {
-    const component = shallow(
-      <Edit
-        subject="Subject"
-        clusterName="ClusterName"
-        schemasAreFetched
-        fetchSchemasByClusterName={jest.fn()}
-        createSchema={jest.fn()}
-        schema={mockSchema}
-      />
-    );
-    expect(component).toMatchSnapshot();
-  });
 
-  it('shows loader when schemas are not fetched', () => {
+  describe('when schemas are not fetched', () => {
     const component = shallow(
       <Edit
         subject="Subject"
@@ -37,26 +24,50 @@ describe('Edit Component', () => {
         schema={mockSchema}
       />
     );
-    expect(component.find('PageLoader').exists()).toBeTruthy();
+    it('matches the snapshot', () => {
+      expect(component).toMatchSnapshot();
+    });
+    it('shows loader', () => {
+      expect(component.find('PageLoader').exists()).toBeTruthy();
+    });
   });
 
-  it('calls createSchema on button click', () => {
-    const mockCreateSchema = jest.fn();
+  describe('when schemas are fetched', () => {
     const component = shallow(
       <Edit
         subject="Subject"
         clusterName="ClusterName"
         schemasAreFetched
         fetchSchemasByClusterName={jest.fn()}
-        createSchema={mockCreateSchema}
+        createSchema={jest.fn()}
         schema={mockSchema}
       />
     );
-    component.find('button').simulate('click');
-    expect(mockCreateSchema).toHaveBeenCalledWith('ClusterName', {
-      ...mockSchema,
-      schema: '',
+    it('matches the snapshot', () => {
+      expect(component).toMatchSnapshot();
     });
-    expect(mockCreateSchema).toHaveBeenCalledTimes(1);
+    it('shows editor', () => {
+      expect(component.find('JSONEditor').length).toEqual(2);
+      expect(component.find('button').exists()).toBeTruthy();
+    });
+    it('calls createSchema on button click', () => {
+      const mockCreateSchema = jest.fn();
+      const componentWithMockFn = shallow(
+        <Edit
+          subject="Subject"
+          clusterName="ClusterName"
+          schemasAreFetched
+          fetchSchemasByClusterName={jest.fn()}
+          createSchema={mockCreateSchema}
+          schema={mockSchema}
+        />
+      );
+      componentWithMockFn.find('button').simulate('click');
+      expect(mockCreateSchema).toHaveBeenCalledWith('ClusterName', {
+        ...mockSchema,
+        schema: '',
+      });
+      expect(mockCreateSchema).toHaveBeenCalledTimes(1);
+    });
   });
 });
