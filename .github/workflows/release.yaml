@@ -90,7 +90,9 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api
           push: true
-          tags: provectuslabs/kafka-ui:${{ steps.prep.outputs.version }}
+          tags: |
+            provectuslabs/kafka-ui:${{ steps.prep.outputs.version }}
+            provectuslabs/kafka-ui:latest
           build-args: |
             JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
