@@ -57,9 +57,7 @@ exports[`Edit Component matches the snapshot 1`] = `
         <JSONEditor
           name="newSchema"
           onChange={[Function]}
-          value="{
-	\\"schema\\": \\"schema\\"
-}"
+          value=""
         />
       </div>
     </div>

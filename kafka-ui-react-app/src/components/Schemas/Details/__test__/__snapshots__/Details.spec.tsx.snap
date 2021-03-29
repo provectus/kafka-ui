@@ -107,7 +107,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
 </div>
 `;
 
-exports[`Details View when page with schema versions is loading matches snapshot 1`] = `
+exports[`Details View when page with schema versions are loading matches snapshot 1`] = `
 <div
   className="section"
 >
@@ -369,5 +369,29 @@ exports[`Details View when page with schema versions loaded when versions are em
       <tbody />
     </table>
   </div>
+</div>
+`;
+
+exports[`Details View when page with schemas are loading matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/Test cluster/schemas",
+            "label": "Schema Registry",
+          },
+        ]
+      }
+    >
+      test
+    </Breadcrumb>
+  </div>
+  <PageLoader />
 </div>
 `;

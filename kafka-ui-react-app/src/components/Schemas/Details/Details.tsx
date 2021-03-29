@@ -32,6 +32,7 @@ const Details: React.FC<DetailsProps> = ({
   fetchSchemasByClusterName,
   versions,
   versionsAreFetched,
+  schemasAreFetched,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   React.useEffect(() => {
@@ -53,7 +54,7 @@ const Details: React.FC<DetailsProps> = ({
           {subject}
         </Breadcrumb>
       </div>
-      {versionsAreFetched ? (
+      {versionsAreFetched && schemasAreFetched ? (
         <>
           <div className="box">
             <div className="level">

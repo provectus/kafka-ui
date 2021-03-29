@@ -27,10 +27,7 @@ export default function Edit({
   createSchema,
   fetchSchemasByClusterName,
 }: EditProps) {
-  let newSchema: string;
-  React.useCallback(() => {
-    newSchema = schema.schema;
-  }, [schemasAreFetched]);
+  let newSchema = '';
 
   React.useEffect(() => {
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
@@ -87,7 +84,7 @@ export default function Edit({
             <div>
               <h4 className="title is-5 mb-2">New Schema</h4>
               <JSONEditor
-                value={JSON.stringify(JSON.parse(schema.schema), null, '\t')}
+                value={newSchema}
                 name="newSchema"
                 onChange={(e) => handleChange(e)}
               />

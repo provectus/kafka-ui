@@ -65,7 +65,7 @@ describe('Details', () => {
       });
     });
 
-    describe('when page with schema versions is loading', () => {
+    describe('when page with schema versions are loading', () => {
       const wrapper = shallow(setupWrapper({ versionsAreFetched: false }));
 
       it('renders PageLoader', () => {
@@ -121,6 +121,20 @@ describe('Details', () => {
             ).exists('.level-right')
           ).toBeFalsy();
         });
+      });
+    });
+
+    describe('when page with schemas are loading', () => {
+      const wrapper = shallow(setupWrapper({ schemasAreFetched: false }));
+
+      it('renders PageLoader', () => {
+        expect(wrapper.exists('PageLoader')).toBeTruthy();
+      });
+
+      it('matches snapshot', () => {
+        expect(
+          shallow(setupWrapper({ versionsAreFetched: false }))
+        ).toMatchSnapshot();
       });
     });
   });
