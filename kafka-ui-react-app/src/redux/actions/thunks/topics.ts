@@ -234,13 +234,14 @@ export const createTopic = (
 
 export const updateTopic = (
   clusterName: ClusterName,
+  topicName: TopicName,
   form: TopicFormDataRaw
 ): PromiseThunkResult => async (dispatch, getState) => {
   dispatch(actions.updateTopicAction.request());
   try {
     const topic: Topic = await topicsApiClient.updateTopic({
       clusterName,
-      topicName: form.name,
+      topicName,
       topicUpdate: formatTopicUpdate(form),
     });
 
