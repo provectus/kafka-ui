@@ -78,7 +78,7 @@ public class JmxClusterUtil {
       var attrNames = msc.getMBeanInfo(name).getAttributes();
       for (MBeanAttributeInfo attrName : attrNames) {
         var value = msc.getAttribute(name, attrName.getName());
-        if (value != null && NumberUtils.isCreatable(value.toString())) {
+        if (NumberUtil.isNumeric(value)) {
           resultAttr.put(attrName.getName(), new BigDecimal(value.toString()));
         }
       }
