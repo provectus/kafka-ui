@@ -1,16 +1,21 @@
 package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.model.Metric;
-
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
-
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -43,8 +48,8 @@ public class JmxClusterUtil {
     try {
       MBeanServerConnection msc = srv.getMBeanServerConnection();
       var jmxMetrics = msc.queryNames(null, null).stream()
-              .filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM))
-              .collect(Collectors.toList());
+          .filter(q -> q.getCanonicalName().startsWith(KAFKA_SERVER_PARAM))
+          .collect(Collectors.toList());
       for (ObjectName jmxMetric : jmxMetrics) {
         final Hashtable<String, String> params = jmxMetric.getKeyPropertyList();
         Metric metric = new Metric();
