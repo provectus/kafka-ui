@@ -41,6 +41,8 @@ securityContext: {}
 service:
   type: ClusterIP
   port: 80
+  # if you want to force a specific nodePort. Must be use with service.type=NodePort
+  # nodePort:
 
 ingress:
   enabled: false
