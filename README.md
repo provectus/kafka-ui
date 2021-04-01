@@ -101,7 +101,11 @@ Then start Kafka UI with a **local** profile.
 
 
 ## Running in Kubernetes
-To be done
+``` bash
+helm repo add kafka-ui https://provectus.github.io/kafka-ui
+helm install kafka-ui kafka-ui/kafka-ui
+```
+To read more please follow to [chart documentation](charts/kafka-ui/README.md)
 
 # Guides
 
