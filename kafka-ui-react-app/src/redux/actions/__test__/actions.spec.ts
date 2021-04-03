@@ -93,8 +93,19 @@ describe('Actions', () => {
     });
 
     it('creates a FAILURE action', () => {
-      expect(actions.createSchemaAction.failure()).toEqual({
+      expect(actions.createSchemaAction.failure({})).toEqual({
         type: 'POST_SCHEMA__FAILURE',
+        payload: {},
+      });
+    });
+  });
+
+  describe('dismissAlert', () => {
+    it('creates a REQUEST action', () => {
+      const id = 'alert-id1';
+      expect(actions.dismissAlert(id)).toEqual({
+        type: 'DISMISS_ALERT',
+        payload: id,
       });
     });
   });

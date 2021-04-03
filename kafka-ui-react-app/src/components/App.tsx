@@ -1,18 +1,22 @@
+import './App.scss';
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import './App.scss';
+import { Alerts } from 'redux/interfaces';
 import NavContainer from './Nav/NavContainer';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
 import Cluster from './Cluster/Cluster';
+import Alert from './Alert/Alert';
 
-interface AppProps {
+export interface AppProps {
   isClusterListFetched: boolean;
+  alerts: Alerts;
   fetchClustersList: () => void;
 }
 
 const App: React.FC<AppProps> = ({
   isClusterListFetched,
+  alerts,
   fetchClustersList,
 }) => {
   React.useEffect(() => {
@@ -32,6 +36,7 @@ const App: React.FC<AppProps> = ({
           </a>
         </div>
       </nav>
+
       <main className="Layout__container">
         <NavContainer className="Layout__navbar" />
         {isClusterListFetched ? (
@@ -47,6 +52,20 @@ const App: React.FC<AppProps> = ({
           <PageLoader fullHeight />
         )}
       </main>
+
+      <div className="Layout__alerts">
+        {alerts.map(({ id, type, title, message, response, createdAt }) => (
+          <Alert
+            key={id}
+            id={id}
+            type={type}
+            title={title}
+            message={message}
+            response={response}
+            createdAt={createdAt}
+          />
+        ))}
+      </div>
     </div>
   );
 };

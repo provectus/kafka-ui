@@ -16,9 +16,11 @@ import {
   TopicFormFormattedParams,
   TopicFormDataRaw,
   TopicsState,
+  FailurePayload,
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
-import * as actions from '../actions';
+import * as actions from 'redux/actions/actions';
+import { getResponse } from 'lib/errorHandling';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const topicsApiClient = new TopicsApi(apiClientConf);
@@ -227,8 +229,15 @@ export const createTopic = (
     };
 
     dispatch(actions.createTopicAction.success(newState));
-  } catch (e) {
-    dispatch(actions.createTopicAction.failure());
+  } catch (error) {
+    const response = await getResponse(error);
+    const alert: FailurePayload = {
+      subjectId: form.name,
+      subject: 'schema',
+      title: `Schema ${form.name}`,
+      response,
+    };
+    dispatch(actions.createTopicAction.failure({ alert }));
   }
 };
 

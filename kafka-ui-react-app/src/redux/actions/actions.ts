@@ -1,5 +1,10 @@
-import { createAsyncAction } from 'typesafe-actions';
-import { ConsumerGroupID, TopicName, TopicsState } from 'redux/interfaces';
+import { createAction, createAsyncAction } from 'typesafe-actions';
+import {
+  ConsumerGroupID,
+  FailurePayload,
+  TopicName,
+  TopicsState,
+} from 'redux/interfaces';
 
 import {
   Cluster,
@@ -71,7 +76,7 @@ export const createTopicAction = createAsyncAction(
   'POST_TOPIC__REQUEST',
   'POST_TOPIC__SUCCESS',
   'POST_TOPIC__FAILURE'
-)<undefined, TopicsState, undefined>();
+)<undefined, TopicsState, { alert?: FailurePayload }>();
 
 export const updateTopicAction = createAsyncAction(
   'PATCH_TOPIC__REQUEST',
@@ -117,4 +122,6 @@ export const createSchemaAction = createAsyncAction(
   'POST_SCHEMA__REQUEST',
   'POST_SCHEMA__SUCCESS',
   'POST_SCHEMA__FAILURE'
-)<undefined, SchemaSubject, undefined>();
+)<undefined, SchemaSubject, { alert?: FailurePayload }>();
+
+export const dismissAlert = createAction('DISMISS_ALERT')<string>();

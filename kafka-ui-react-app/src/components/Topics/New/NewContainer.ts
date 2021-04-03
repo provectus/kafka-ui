@@ -41,7 +41,7 @@ const mapDispatchToProps = (
   redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => {
     history.push(clusterTopicPath(clusterName, topicName));
   },
-  resetUploadedState: () => dispatch(createTopicAction.failure()),
+  resetUploadedState: () => dispatch(createTopicAction.failure({})),
 });
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(New));
