@@ -132,9 +132,7 @@ describe('Details', () => {
       });
 
       it('matches snapshot', () => {
-        expect(
-          shallow(setupWrapper({ versionsAreFetched: false }))
-        ).toMatchSnapshot();
+        expect(wrapper).toMatchSnapshot();
       });
     });
   });

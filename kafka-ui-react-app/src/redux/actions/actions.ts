@@ -118,3 +118,9 @@ export const createSchemaAction = createAsyncAction(
   'POST_SCHEMA__SUCCESS',
   'POST_SCHEMA__FAILURE'
 )<undefined, SchemaSubject, undefined>();
+
+export const updateSchemaCompatibilityLevelAction = createAsyncAction(
+  'PATCH_SCHEMA_COMPATIBILITY__REQUEST',
+  'PATCH_SCHEMA_COMPATIBILITY__SUCCESS',
+  'PATCH_SCHEMA_COMPATIBILITY__FAILURE'
+)<undefined, undefined, undefined>();

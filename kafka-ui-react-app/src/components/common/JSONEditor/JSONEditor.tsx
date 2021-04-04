@@ -23,6 +23,7 @@ const JSONEditor: React.FC<JSONEditorProps> = ({
       name={name}
       value={value}
       tabSize={2}
+      width="540px"
       readOnly={readonly}
       onChange={onChange}
       wrapEnabled

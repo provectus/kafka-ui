@@ -3,6 +3,7 @@ import {
   Configuration,
   NewSchemaSubject,
   SchemaSubject,
+  CompatibilityLevelCompatibilityEnum,
 } from 'generated-sources';
 import { PromiseThunkResult, ClusterName, SchemaName } from 'redux/interfaces';
 
@@ -54,6 +55,27 @@ export const createSchema = (
     dispatch(actions.createSchemaAction.success(schema));
   } catch (e) {
     dispatch(actions.createSchemaAction.failure());
+    throw e;
+  }
+};
+
+export const updateSchemaCompatibilityLevel = (
+  clusterName: ClusterName,
+  subject: string,
+  compatibilityLevel: CompatibilityLevelCompatibilityEnum
+): PromiseThunkResult => async (dispatch) => {
+  dispatch(actions.updateSchemaCompatibilityLevelAction.request());
+  try {
+    await schemasApiClient.updateSchemaCompatibilityLevel({
+      clusterName,
+      subject,
+      compatibilityLevel: {
+        compatibility: compatibilityLevel,
+      },
+    });
+    dispatch(actions.updateSchemaCompatibilityLevelAction.success());
+  } catch (e) {
+    dispatch(actions.updateSchemaCompatibilityLevelAction.failure());
     throw e;
   }
 };

@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
-import { NewSchemaSubject } from 'generated-sources';
+import { NewSchemaSubject, SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useHistory, useParams } from 'react-router';
 
@@ -103,7 +103,7 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
 
             <div className="field">
               <label className="label">Schema Type *</label>
-              <div className="control select is-rounded">
+              <div className="control select">
                 <select
                   ref={register({
                     required: 'Schema Type is required.',
@@ -111,9 +111,9 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
                   name="schemaType"
                   disabled={isSubmitting}
                 >
-                  <option value="AVRO">AVRO</option>
-                  <option value="JSON">JSON</option>
-                  <option value="PROTOBUF">PROTOBUF</option>
+                  <option value={SchemaType.AVRO}>AVRO</option>
+                  <option value={SchemaType.JSON}>JSON</option>
+                  <option value={SchemaType.PROTOBUF}>PROTOBUF</option>
                 </select>
               </div>
               <p className="help is-danger">

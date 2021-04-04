@@ -20,6 +20,7 @@ describe('Edit Component', () => {
         clusterName="ClusterName"
         schemasAreFetched={false}
         fetchSchemasByClusterName={jest.fn()}
+        updateSchemaCompatibilityLevel={jest.fn()}
         createSchema={jest.fn()}
         schema={mockSchema}
       />
@@ -39,6 +40,7 @@ describe('Edit Component', () => {
         clusterName="ClusterName"
         schemasAreFetched
         fetchSchemasByClusterName={jest.fn()}
+        updateSchemaCompatibilityLevel={jest.fn()}
         createSchema={jest.fn()}
         schema={mockSchema}
       />
@@ -50,7 +52,7 @@ describe('Edit Component', () => {
       expect(component.find('JSONEditor').length).toEqual(2);
       expect(component.find('button').exists()).toBeTruthy();
     });
-    it('calls createSchema on button click', () => {
+    it('does not call createSchema on button click without changing the schema', () => {
       const mockCreateSchema = jest.fn();
       const componentWithMockFn = shallow(
         <Edit
@@ -58,16 +60,44 @@ describe('Edit Component', () => {
           clusterName="ClusterName"
           schemasAreFetched
           fetchSchemasByClusterName={jest.fn()}
+          updateSchemaCompatibilityLevel={jest.fn()}
           createSchema={mockCreateSchema}
           schema={mockSchema}
         />
       );
       componentWithMockFn.find('button').simulate('click');
-      expect(mockCreateSchema).toHaveBeenCalledWith('ClusterName', {
-        ...mockSchema,
-        schema: '',
-      });
-      expect(mockCreateSchema).toHaveBeenCalledTimes(1);
+      expect(mockCreateSchema).toHaveBeenCalledTimes(0);
+    });
+    it('does not call updateSchemaCompatibilityLevel on button click without changing the compatibility level', () => {
+      const mockupdateSchemaCompatibilityLevel = jest.fn();
+      const componentWithMockFn = shallow(
+        <Edit
+          subject="Subject"
+          clusterName="ClusterName"
+          schemasAreFetched
+          fetchSchemasByClusterName={jest.fn()}
+          updateSchemaCompatibilityLevel={mockupdateSchemaCompatibilityLevel}
+          createSchema={jest.fn()}
+          schema={mockSchema}
+        />
+      );
+      componentWithMockFn.find('button').simulate('click');
+      expect(mockupdateSchemaCompatibilityLevel).toHaveBeenCalledTimes(0);
+    });
+    it('does not fetch them', () => {
+      const mockFetch = jest.fn();
+      shallow(
+        <Edit
+          subject="Subject"
+          clusterName="ClusterName"
+          schemasAreFetched
+          fetchSchemasByClusterName={mockFetch}
+          updateSchemaCompatibilityLevel={jest.fn()}
+          createSchema={jest.fn()}
+          schema={mockSchema}
+        />
+      );
+      expect(mockFetch).toHaveBeenCalledTimes(0);
     });
   });
 });

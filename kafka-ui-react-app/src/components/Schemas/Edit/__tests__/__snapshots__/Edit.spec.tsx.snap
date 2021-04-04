@@ -32,9 +32,11 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
     className="box"
   >
     <div
-      className="is-flex is-justify-content-space-evenly"
+      className="columns"
     >
-      <div>
+      <div
+        className="column is-one-half"
+      >
         <h4
           className="title is-5 mb-2"
         >
@@ -48,7 +50,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
 }"
         />
       </div>
-      <div>
+      <div
+        className="column is-one-half"
+      >
         <h4
           className="title is-5 mb-2"
         >
@@ -57,21 +61,123 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
         <JSONEditor
           name="newSchema"
           onChange={[Function]}
-          value=""
+          value="{
+	\\"schema\\": \\"schema\\"
+}"
         />
       </div>
     </div>
-    <div
-      className="is-flex is-justify-content-center is-align-items-center"
+    <form
+      className="mt-3 is-flex-direction-column"
+      onSubmit={[Function]}
     >
+      <div
+        className="columns"
+      >
+        <div
+          className="column is-one-half"
+        >
+          <h5
+            className="title is-5 mb-2"
+          >
+            Schema Type
+          </h5>
+          <div
+            className="is-block select"
+          >
+            <select
+              defaultValue="AVRO"
+              name="schemaType"
+            >
+              <option
+                key="AVRO"
+                value="AVRO"
+              >
+                AVRO
+              </option>
+              <option
+                key="JSON"
+                value="JSON"
+              >
+                JSON
+              </option>
+              <option
+                key="PROTOBUF"
+                value="PROTOBUF"
+              >
+                PROTOBUF
+              </option>
+            </select>
+          </div>
+        </div>
+        <div
+          className="column is-one-half"
+        >
+          <h5
+            className="title is-5 mb-2"
+          >
+            Compatibility Level
+          </h5>
+          <div
+            className="select is-block "
+          >
+            <select
+              defaultValue="BACKWARD"
+              name="compatibilityLevel"
+            >
+              <option
+                key="BACKWARD"
+                value="BACKWARD"
+              >
+                BACKWARD
+              </option>
+              <option
+                key="BACKWARD_TRANSITIVE"
+                value="BACKWARD_TRANSITIVE"
+              >
+                BACKWARD_TRANSITIVE
+              </option>
+              <option
+                key="FORWARD"
+                value="FORWARD"
+              >
+                FORWARD
+              </option>
+              <option
+                key="FORWARD_TRANSITIVE"
+                value="FORWARD_TRANSITIVE"
+              >
+                FORWARD_TRANSITIVE
+              </option>
+              <option
+                key="FULL"
+                value="FULL"
+              >
+                FULL
+              </option>
+              <option
+                key="FULL_TRANSITIVE"
+                value="FULL_TRANSITIVE"
+              >
+                FULL_TRANSITIVE
+              </option>
+              <option
+                key="NONE"
+                value="NONE"
+              >
+                NONE
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
       <button
-        className="button is-primary mt-3"
-        onClick={[Function]}
+        className="button is-primary"
         type="submit"
       >
         Submit
       </button>
-    </div>
+    </form>
   </div>
 </div>
 `;

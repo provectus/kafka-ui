@@ -1,11 +1,18 @@
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { NewSchemaSubject, SchemaSubject } from 'generated-sources';
+import {
+  CompatibilityLevelCompatibilityEnum,
+  NewSchemaSubject,
+  SchemaSubject,
+  SchemaType,
+} from 'generated-sources';
 import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
 import React from 'react';
-import { ClusterName, SchemaName } from 'redux/interfaces';
+import { ClusterName, NewSchemaSubjectRaw, SchemaName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { useHistory } from 'react-router';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import { useForm } from 'react-hook-form';
+import { isEqual } from 'lodash';
 
 export interface EditProps {
   subject: SchemaName;
@@ -17,6 +24,11 @@ export interface EditProps {
     newSchemaSubject: NewSchemaSubject
   ) => Promise<void>;
   fetchSchemasByClusterName: (clusterName: ClusterName) => void;
+  updateSchemaCompatibilityLevel: (
+    clusterName: ClusterName,
+    subject: string,
+    compatibilityLevel: CompatibilityLevelCompatibilityEnum
+  ) => void;
 }
 
 export default function Edit({
@@ -26,29 +38,53 @@ export default function Edit({
   schemasAreFetched,
   createSchema,
   fetchSchemasByClusterName,
+  updateSchemaCompatibilityLevel,
 }: EditProps) {
-  let newSchema = '';
-
   React.useEffect(() => {
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
   }, [clusterName, fetchSchemasByClusterName]);
 
-  const handleChange = (e: string) => {
+  let newSchema = '';
+  let isSubmitting = false;
+  const { register, handleSubmit } = useForm<NewSchemaSubjectRaw>();
+  const handleSchemaChange = (e: string) => {
     newSchema = e;
   };
-
   const history = useHistory();
-  const onSubmit = async () => {
+  const onSubmit = async ({
+    schemaType,
+    compatibilityLevel,
+  }: {
+    schemaType: SchemaType;
+    compatibilityLevel: CompatibilityLevelCompatibilityEnum;
+  }) => {
     try {
-      await createSchema(clusterName, {
-        ...schema,
-        schema: newSchema,
-      });
+      isSubmitting = true;
+      if (
+        (newSchema &&
+          !isEqual(JSON.parse(schema.schema), JSON.parse(newSchema))) ||
+        schemaType !== schema.schemaType
+      ) {
+        await createSchema(clusterName, {
+          ...schema,
+          schema: newSchema || schema.schema,
+          schemaType: schemaType || schema.schemaType,
+        });
+      }
+      if (compatibilityLevel !== schema.compatibilityLevel) {
+        await updateSchemaCompatibilityLevel(
+          clusterName,
+          subject,
+          compatibilityLevel
+        );
+      }
       history.push(clusterSchemaPath(clusterName, subject));
     } catch (e) {
+      isSubmitting = false;
       // Show Error
     }
   };
+
   return (
     <div className="section">
       <div className="level">
@@ -70,10 +106,10 @@ export default function Edit({
         </div>
       </div>
 
-      {schemasAreFetched ? (
+      {schemasAreFetched && !isSubmitting ? (
         <div className="box">
-          <div className="is-flex is-justify-content-space-evenly">
-            <div>
+          <div className="columns">
+            <div className="column is-one-half">
               <h4 className="title is-5 mb-2">Latest Schema</h4>
               <JSONEditor
                 readonly
@@ -81,24 +117,63 @@ export default function Edit({
                 name="latestSchema"
               />
             </div>
-            <div>
+            <div className="column is-one-half">
               <h4 className="title is-5 mb-2">New Schema</h4>
               <JSONEditor
-                value={newSchema}
+                value={JSON.stringify(JSON.parse(schema.schema), null, '\t')}
                 name="newSchema"
-                onChange={(e) => handleChange(e)}
+                onChange={(e) => handleSchemaChange(e)}
               />
             </div>
           </div>
-          <div className="is-flex is-justify-content-center is-align-items-center">
-            <button
-              type="submit"
-              className="button is-primary mt-3"
-              onClick={onSubmit}
-            >
+
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="mt-3 is-flex-direction-column"
+          >
+            <div className="columns">
+              <div className="column is-one-half">
+                <h5 className="title is-5 mb-2">Schema Type</h5>
+                <div className="is-block select">
+                  <select
+                    name="schemaType"
+                    ref={register({
+                      required: 'Schema Type is required.',
+                    })}
+                    defaultValue={schema.schemaType}
+                  >
+                    {Object.keys(SchemaType).map((type: string) => (
+                      <option key={type} value={type}>
+                        {type}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="column is-one-half">
+                <h5 className="title is-5 mb-2">Compatibility Level</h5>
+                <div className="select is-block ">
+                  <select
+                    name="compatibilityLevel"
+                    ref={register()}
+                    defaultValue={schema.compatibilityLevel}
+                  >
+                    {Object.keys(CompatibilityLevelCompatibilityEnum).map(
+                      (level: string) => (
+                        <option key={level} value={level}>
+                          {level}
+                        </option>
+                      )
+                    )}
+                  </select>
+                </div>
+              </div>
+            </div>
+            <button type="submit" className="button is-primary">
               Submit
             </button>
-          </div>
+          </form>
         </div>
       ) : (
         <PageLoader />
