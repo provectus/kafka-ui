@@ -21,7 +21,11 @@ interface Props {
   isFetched: boolean;
   isTopicUpdated: boolean;
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
-  updateTopic: (clusterName: ClusterName, form: TopicFormDataRaw) => void;
+  updateTopic: (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    form: TopicFormDataRaw
+  ) => void;
 }
 
 const DEFAULTS = {
@@ -104,7 +108,7 @@ const Edit: React.FC<Props> = ({
   });
 
   const onSubmit = async (data: TopicFormDataRaw) => {
-    updateTopic(clusterName, data);
+    updateTopic(clusterName, topicName, data);
     setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
   };
 

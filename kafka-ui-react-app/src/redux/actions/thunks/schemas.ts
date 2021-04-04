@@ -5,10 +5,16 @@ import {
   SchemaSubject,
   CompatibilityLevelCompatibilityEnum,
 } from 'generated-sources';
-import { PromiseThunkResult, ClusterName, SchemaName } from 'redux/interfaces';
+import {
+  PromiseThunkResult,
+  ClusterName,
+  SchemaName,
+  FailurePayload,
+} from 'redux/interfaces';
 
 import { BASE_PARAMS } from 'lib/constants';
-import * as actions from '../actions';
+import * as actions from 'redux/actions';
+import { getResponse } from 'lib/errorHandling';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const schemasApiClient = new SchemasApi(apiClientConf);
@@ -53,9 +59,15 @@ export const createSchema = (
       newSchemaSubject,
     });
     dispatch(actions.createSchemaAction.success(schema));
-  } catch (e) {
-    dispatch(actions.createSchemaAction.failure());
-    throw e;
+  } catch (error) {
+    const response = await getResponse(error);
+    const alert: FailurePayload = {
+      subject: 'schema',
+      subjectId: newSchemaSubject.subject,
+      title: `Schema ${newSchemaSubject.subject}`,
+      response,
+    };
+    dispatch(actions.createSchemaAction.failure({ alert }));
   }
 };
 

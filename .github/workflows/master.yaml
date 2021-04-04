@@ -54,7 +54,7 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api
           push: true
-          tags: provectuslabs/kafka-ui:latest
+          tags: provectuslabs/kafka-ui:master
           build-args: |
             JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
