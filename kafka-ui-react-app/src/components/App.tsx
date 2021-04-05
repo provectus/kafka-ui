@@ -5,6 +5,7 @@ import NavContainer from './Nav/NavContainer';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
 import Cluster from './Cluster/Cluster';
+import Version from './Vesrion/Version';
 
 interface AppProps {
   isClusterListFetched: boolean;
@@ -30,6 +31,11 @@ const App: React.FC<AppProps> = ({
           <a className="navbar-item title is-5 is-marginless" href="/ui">
             Kafka UI
           </a>
+        </div>
+        <div className="navbar-end">
+          <div className="navbar-item mr-2">
+            <Version />
+          </div>
         </div>
       </nav>
       <main className="Layout__container">

@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import { Cluster } from 'generated-sources';
 import ClusterMenu from './ClusterMenu';
-import VersionApp from './VersionApp';
 
 interface Props {
   isClusterListFetched: boolean;
@@ -32,7 +31,6 @@ const Nav: React.FC<Props> = ({
       clusters.map((cluster) => (
         <ClusterMenu cluster={cluster} key={cluster.name} />
       ))}
-    <VersionApp />
   </aside>
 );
 
