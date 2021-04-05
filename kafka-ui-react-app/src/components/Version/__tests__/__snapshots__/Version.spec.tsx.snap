@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Version matches snapshot 1`] = `
+<Version
+  commit="123sdf34"
+  tag="v1.0.1-SHAPSHOT"
+>
+  <div
+    className="is-size-7 has-text-grey"
+  >
+    <span
+      className="has-text-grey-light mr-1"
+    >
+      Version:
+    </span>
+    <span
+      className="mr-1"
+    >
+      v1.0.1-SHAPSHOT
+    </span>
+    <span>
+      (
+    </span>
+    <a
+      href="https://github.com/provectus/kafka-ui/commit/123sdf34"
+      target="__blank"
+      title="Current commit"
+    >
+      123sdf34
+    </a>
+    <span>
+      )
+    </span>
+  </div>
+</Version>
+`;

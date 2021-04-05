@@ -1,15 +1,17 @@
 import './App.scss';
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
+import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import { Alerts } from 'redux/interfaces';
 import NavContainer from './Nav/NavContainer';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
 import Cluster from './Cluster/Cluster';
+import Version from './Version/Version';
 import Alert from './Alert/Alert';
 
 export interface AppProps {
-  isClusterListFetched: boolean;
+  isClusterListFetched?: boolean;
   alerts: Alerts;
   fetchClustersList: () => void;
 }
@@ -34,6 +36,11 @@ const App: React.FC<AppProps> = ({
           <a className="navbar-item title is-5 is-marginless" href="/ui">
             Kafka UI
           </a>
+        </div>
+        <div className="navbar-end">
+          <div className="navbar-item mr-2">
+            <Version tag={GIT_TAG} commit={GIT_COMMIT} />
+          </div>
         </div>
       </nav>
 

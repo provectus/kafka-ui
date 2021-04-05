@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App matches snapshot with initial props 1`] = `
+exports[`App matches snapshot 1`] = `
 <div
   className="Layout"
 >
@@ -18,6 +18,15 @@ exports[`App matches snapshot with initial props 1`] = `
       >
         Kafka UI
       </a>
+    </div>
+    <div
+      className="navbar-end"
+    >
+      <div
+        className="navbar-item mr-2"
+      >
+        <Version />
+      </div>
     </div>
   </nav>
   <main
