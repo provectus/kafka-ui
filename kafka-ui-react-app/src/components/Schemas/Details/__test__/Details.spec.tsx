@@ -110,7 +110,13 @@ describe('Details', () => {
           expect(
             mount(
               <StaticRouter>
-                <ClusterContext.Provider value={{ isReadOnly: true }}>
+                <ClusterContext.Provider
+                  value={{
+                    isReadOnly: true,
+                    hasKafkaConnectConfigured: true,
+                    hasSchemaRegistryConfigured: true,
+                  }}
+                >
                   {setupWrapper({ versions })}
                 </ClusterContext.Provider>
               </StaticRouter>
