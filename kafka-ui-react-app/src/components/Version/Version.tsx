@@ -1,5 +1,5 @@
 import React from 'react';
-import { GIT_REPO_LINK } from 'lib/constants';
+import { gitCommitPath } from 'lib/paths';
 
 export interface VesionProps {
   tag?: string;
@@ -21,7 +21,7 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
           <a
             title="Current commit"
             target="__blank"
-            href={`${GIT_REPO_LINK}/commit/${commit}`}
+            href={gitCommitPath(commit)}
           >
             {commit}
           </a>

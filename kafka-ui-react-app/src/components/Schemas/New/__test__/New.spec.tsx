@@ -22,7 +22,7 @@ describe('New', () => {
   });
 
   describe('View', () => {
-    const pathname = '/ui/clusters/clusterName/schemas/new';
+    const pathname = '/ui/clusters/clusterName/schemas/create_new';
 
     const setupWrapper = (props: Partial<NewProps> = {}) => (
       <StaticRouter location={{ pathname }} context={{}}>
