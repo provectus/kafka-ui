@@ -301,10 +301,11 @@
                         <artifactId>frontend-maven-plugin</artifactId>
                         <version>${frontend-maven-plugin.version}</version>
                         <configuration>
-                            <environmentVariables>
-                                <VERSION>${project.version}-${git.commit.id.describe-short}</VERSION>
-                            </environmentVariables>
                             <workingDirectory>../kafka-ui-react-app</workingDirectory>
+                            <environmentVariables>
+                                <REACT_APP_TAG>v${project.version}</REACT_APP_TAG>
+                                <REACT_APP_COMMIT>${git.commit.id.abbrev}</REACT_APP_COMMIT>
+                            </environmentVariables>
                         </configuration>
                         <executions>
                             <execution>
