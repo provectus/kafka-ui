@@ -1,14 +1,15 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import './App.scss';
+import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import NavContainer from './Nav/NavContainer';
 import PageLoader from './common/PageLoader/PageLoader';
 import Dashboard from './Dashboard/Dashboard';
 import Cluster from './Cluster/Cluster';
-import Version from './Vesrion/Version';
+import Version from './Version/Version';
+import './App.scss';
 
 interface AppProps {
-  isClusterListFetched: boolean;
+  isClusterListFetched?: boolean;
   fetchClustersList: () => void;
 }
 
@@ -34,7 +35,7 @@ const App: React.FC<AppProps> = ({
         </div>
         <div className="navbar-end">
           <div className="navbar-item mr-2">
-            <Version />
+            <Version tag={GIT_TAG} commit={GIT_COMMIT} />
           </div>
         </div>
       </nav>

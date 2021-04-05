@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App matches snapshot 1`] = `
+<div
+  className="Layout"
+>
+  <nav
+    aria-label="main navigation"
+    className="navbar is-fixed-top is-white Layout__header"
+    role="navigation"
+  >
+    <div
+      className="navbar-brand"
+    >
+      <a
+        className="navbar-item title is-5 is-marginless"
+        href="/ui"
+      >
+        Kafka UI
+      </a>
+    </div>
+    <div
+      className="navbar-end"
+    >
+      <div
+        className="navbar-item mr-2"
+      >
+        <Version />
+      </div>
+    </div>
+  </nav>
+  <main
+    className="Layout__container"
+  >
+    <Connect(Nav)
+      className="Layout__navbar"
+    />
+    <PageLoader
+      fullHeight={true}
+    />
+  </main>
+</div>
+`;
