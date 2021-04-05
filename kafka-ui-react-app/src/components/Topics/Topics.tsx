@@ -3,7 +3,6 @@ import { Switch, Route } from 'react-router-dom';
 import {
   clusterTopicNewPath,
   clusterTopicPath,
-  clusterTopicSettingsPath,
   clusterTopicsPath,
 } from 'lib/paths';
 import ListContainer from './List/ListContainer';
