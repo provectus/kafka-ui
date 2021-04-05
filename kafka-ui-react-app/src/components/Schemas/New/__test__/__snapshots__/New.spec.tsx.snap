@@ -5,7 +5,7 @@ exports[`New View matches snapshot 1`] = `
   context={Object {}}
   location={
     Object {
-      "pathname": "/ui/clusters/clusterName/schemas/new",
+      "pathname": "/ui/clusters/clusterName/schemas/create_new",
     }
   }
 >
@@ -21,7 +21,7 @@ exports[`New View matches snapshot 1`] = `
         "listen": [Function],
         "location": Object {
           "hash": "",
-          "pathname": "/ui/clusters/clusterName/schemas/new",
+          "pathname": "/ui/clusters/clusterName/schemas/create_new",
           "search": "",
         },
         "push": [Function],
