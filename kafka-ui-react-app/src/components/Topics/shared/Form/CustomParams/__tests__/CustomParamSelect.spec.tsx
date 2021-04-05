@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import { useForm, FormProvider, useFormContext } from 'react-hook-form';
+import { useForm, FormProvider } from 'react-hook-form';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import CustomParamSelect, {
   CustomParamSelectProps,

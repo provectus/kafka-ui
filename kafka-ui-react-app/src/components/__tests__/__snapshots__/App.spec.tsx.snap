@@ -35,9 +35,26 @@ exports[`App matches snapshot 1`] = `
     <Connect(Nav)
       className="Layout__navbar"
     />
-    <PageLoader
-      fullHeight={true}
-    />
+    <Switch>
+      <Route
+        component={[Function]}
+        exact={true}
+        path={
+          Array [
+            "/",
+            "/ui",
+            "/ui/clusters",
+          ]
+        }
+      />
+      <Route
+        component={[Function]}
+        path="/ui/clusters/:clusterName"
+      />
+    </Switch>
   </main>
+  <div
+    className="Layout__alerts"
+  />
 </div>
 `;

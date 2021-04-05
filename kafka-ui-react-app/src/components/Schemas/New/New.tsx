@@ -3,10 +3,10 @@ import { ClusterName, NewSchemaSubjectRaw } from 'redux/interfaces';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
+import { clusterSchemasPath } from 'lib/paths';
 import { NewSchemaSubject, SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
-import { useHistory, useParams } from 'react-router';
+import { useParams } from 'react-router';
 
 export interface NewProps {
   createSchema: (
@@ -17,7 +17,6 @@ export interface NewProps {
 
 const New: React.FC<NewProps> = ({ createSchema }) => {
   const { clusterName } = useParams<{ clusterName: string }>();
-  const history = useHistory();
   const {
     register,
     errors,
@@ -27,16 +26,11 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
 
   const onSubmit = React.useCallback(
     async ({ subject, schema }: NewSchemaSubjectRaw) => {
-      try {
-        await createSchema(clusterName, {
-          subject,
-          schema,
-          schemaType: SchemaType.AVRO,
-        });
-        history.push(clusterSchemaPath(clusterName, subject));
-      } catch (e) {
-        // Show Error
-      }
+      await createSchema(clusterName, {
+        subject,
+        schema,
+        schemaType: SchemaType.AVRO,
+      });
     },
     [clusterName]
   );

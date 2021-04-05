@@ -11,5 +11,8 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
+      {{- if (and (eq .Values.service.type "NodePort") .Values.service.nodePort) }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
   selector:
     {{- include "kafka-ui.selectorLabels" . | nindent 4 }}
