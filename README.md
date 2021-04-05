@@ -161,6 +161,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read only mode. Default: false
+|`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL`	|To Enable SSL
 
  
 
