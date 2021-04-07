@@ -1,19 +1,28 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { fetchSchemasByClusterName } from 'redux/actions';
 import {
-  getIsSchemaListFetching,
-  getSchemaList,
-} from 'redux/reducers/schemas/selectors';
+  fetchConnects,
+  fetchConnectors,
+} from 'redux/actions/thunks/connectors';
+import {
+  getConnects,
+  getConnectors,
+  getAreConnectsFetching,
+  getAreConnectorsFetching,
+} from 'redux/reducers/connect/selectors';
 import List from './List';
 
 const mapStateToProps = (state: RootState) => ({
-  isFetching: getIsSchemaListFetching(state),
-  schemas: getSchemaList(state),
+  areConnectsFetching: getAreConnectsFetching(state),
+  areConnectorsFetching: getAreConnectorsFetching(state),
+
+  connects: getConnects(state),
+  connectors: getConnectors(state),
 });
 
 const mapDispatchToProps = {
-  fetchSchemasByClusterName,
+  fetchConnects,
+  fetchConnectors,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

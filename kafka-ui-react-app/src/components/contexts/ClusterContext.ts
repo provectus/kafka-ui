@@ -1,12 +1,12 @@
 import React from 'react';
 
-interface ContextProps {
+export interface ContextProps {
   isReadOnly: boolean;
   hasKafkaConnectConfigured: boolean;
   hasSchemaRegistryConfigured: boolean;
 }
 
-const initialValue: ContextProps = {
+export const initialValue: ContextProps = {
   isReadOnly: false,
   hasKafkaConnectConfigured: false,
   hasSchemaRegistryConfigured: false,

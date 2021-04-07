@@ -31,49 +31,60 @@ const ClusterMenu: React.FC<Props> = ({
           title={name}
           className="has-text-overflow-ellipsis"
         >
-          {!defaultCluster && <DefaultClusterIcon />}
+          {defaultCluster && <DefaultClusterIcon />}
           {name}
           <ClusterStatusIcon status={status} />
         </NavLink>
         <ul>
-          <NavLink
-            to={clusterBrokersPath(name)}
-            activeClassName="is-active"
-            title="Brokers"
-          >
-            Brokers
-          </NavLink>
-          <NavLink
-            to={clusterTopicsPath(name)}
-            activeClassName="is-active"
-            title="Topics"
-          >
-            Topics
-          </NavLink>
-          <NavLink
-            to={clusterConsumerGroupsPath(name)}
-            activeClassName="is-active"
-            title="Consumers"
-          >
-            Consumers
-          </NavLink>
-          {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
+          <li>
             <NavLink
-              to={clusterSchemasPath(name)}
+              to={clusterBrokersPath(name)}
               activeClassName="is-active"
-              title="Schema Registry"
+              title="Brokers"
             >
-              Schema Registry
+              Brokers
             </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to={clusterTopicsPath(name)}
+              activeClassName="is-active"
+              title="Topics"
+            >
+              Topics
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to={clusterConsumerGroupsPath(name)}
+              activeClassName="is-active"
+              title="Consumers"
+            >
+              Consumers
+            </NavLink>
+          </li>
+
+          {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
+            <li>
+              <NavLink
+                to={clusterSchemasPath(name)}
+                activeClassName="is-active"
+                title="Schema Registry"
+              >
+                Schema Registry
+              </NavLink>
+            </li>
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_CONNECT) && (
-            <NavLink
-              to={clusterConnectorsPath(name)}
-              activeClassName="is-active"
-              title="Kafka Connect"
-            >
-              Kafka Connect
-            </NavLink>
+            <li>
+              <NavLink
+                to={clusterConnectorsPath(name)}
+                activeClassName="is-active"
+                title="Kafka Connect"
+              >
+                Kafka Connect
+              </NavLink>
+            </li>
           )}
         </ul>
       </li>

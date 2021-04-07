@@ -3,7 +3,7 @@ import { Switch, Route } from 'react-router-dom';
 import { clusterConnectorsPath } from 'lib/paths';
 import ListContainer from './List/ListContainer';
 
-const Schemas: React.FC = () => (
+const Connect: React.FC = () => (
   <Switch>
     <Route
       exact
@@ -13,4 +13,4 @@ const Schemas: React.FC = () => (
   </Switch>
 );
 
-export default Schemas;
+export default Connect;

@@ -4,8 +4,8 @@ import {
   FailurePayload,
   TopicName,
   TopicsState,
+  ConnectState,
 } from 'redux/interfaces';
-
 import {
   Cluster,
   ClusterStats,
@@ -125,3 +125,21 @@ export const createSchemaAction = createAsyncAction(
 )<undefined, SchemaSubject, { alert?: FailurePayload }>();
 
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
+
+export const fetchConnectsAction = createAsyncAction(
+  'GET_CONNECTS__REQUEST',
+  'GET_CONNECTS__SUCCESS',
+  'GET_CONNECTS__FAILURE'
+)<undefined, ConnectState, { alert?: FailurePayload }>();
+
+export const fetchConnectorsAction = createAsyncAction(
+  'GET_CONNECTORS__REQUEST',
+  'GET_CONNECTORS__SUCCESS',
+  'GET_CONNECTORS__FAILURE'
+)<undefined, ConnectState, { alert?: FailurePayload }>();
+
+export const fetchConnectorAction = createAsyncAction(
+  'GET_CONNECTOR__REQUEST',
+  'GET_CONNECTOR__SUCCESS',
+  'GET_CONNECTOR__FAILURE'
+)<undefined, ConnectState, { alert?: FailurePayload }>();

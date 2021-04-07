@@ -17,7 +17,7 @@ exports[`Indicator matches the snapshot 1`] = `
         label
       </p>
       <p
-        className="title"
+        className="title has-text-centered"
       >
         Child
       </p>

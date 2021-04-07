@@ -8,6 +8,7 @@ import { LoaderState } from './loader';
 import { ConsumerGroupsState } from './consumerGroup';
 import { SchemasState } from './schema';
 import { AlertsState } from './alerts';
+import { ConnectState } from './connect';
 
 export * from './topic';
 export * from './cluster';
@@ -16,6 +17,7 @@ export * from './consumerGroup';
 export * from './schema';
 export * from './loader';
 export * from './alerts';
+export * from './connect';
 
 export interface RootState {
   topics: TopicsState;
@@ -23,6 +25,7 @@ export interface RootState {
   brokers: BrokersState;
   consumerGroups: ConsumerGroupsState;
   schemas: SchemasState;
+  connect: ConnectState;
   loader: LoaderState;
   alerts: AlertsState;
 }
