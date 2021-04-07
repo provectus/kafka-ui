@@ -45,3 +45,7 @@ export const clusterTopicsTopicEditPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;
+
+// Kafka Connect
+export const clusterConnectorsPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/connectors`;

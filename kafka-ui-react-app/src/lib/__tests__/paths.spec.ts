@@ -66,4 +66,10 @@ describe('Paths', () => {
       '/ui/clusters/local/topics/topic123/edit'
     );
   });
+
+  it('clusterConnectorsPath', () => {
+    expect(paths.clusterConnectorsPath('local')).toEqual(
+      '/ui/clusters/local/connectors'
+    );
+  });
 });

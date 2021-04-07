@@ -9,7 +9,13 @@ describe('List', () => {
     it('does not render the Add a Topic button', () => {
       const component = mount(
         <StaticRouter>
-          <ClusterContext.Provider value={{ isReadOnly: true }}>
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: true,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+            }}
+          >
             <List
               areTopicsFetching={false}
               topics={[]}
@@ -29,7 +35,13 @@ describe('List', () => {
     it('renders the Add a Topic button', () => {
       const component = mount(
         <StaticRouter>
-          <ClusterContext.Provider value={{ isReadOnly: false }}>
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: false,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+            }}
+          >
             <List
               areTopicsFetching={false}
               topics={[]}

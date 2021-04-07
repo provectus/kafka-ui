@@ -9,6 +9,7 @@ export const onlineClusterPayload: Cluster = {
   topicCount: 3,
   bytesInPerSec: 1.55,
   bytesOutPerSec: 9.314,
+  features: [],
 };
 export const offlineClusterPayload: Cluster = {
   name: 'local',
@@ -19,6 +20,7 @@ export const offlineClusterPayload: Cluster = {
   topicCount: 2,
   bytesInPerSec: 3.42,
   bytesOutPerSec: 4.14,
+  features: [],
 };
 
 export const clustersPayload: Cluster[] = [

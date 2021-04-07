@@ -1,25 +1,11 @@
-import configureMockStore, {
-  MockStoreCreator,
-  MockStoreEnhanced,
-} from 'redux-mock-store';
-import thunk, { ThunkDispatch } from 'redux-thunk';
 import fetchMock from 'fetch-mock-jest';
-import { Middleware } from 'redux';
-import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
+import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 import * as fixtures from '../fixtures';
 
-const middlewares: Array<Middleware> = [thunk];
-type DispatchExts = ThunkDispatch<RootState, undefined, Action>;
-
-const mockStoreCreator: MockStoreCreator<
-  RootState,
-  DispatchExts
-> = configureMockStore<RootState, DispatchExts>(middlewares);
-
-const store: MockStoreEnhanced<RootState, DispatchExts> = mockStoreCreator();
+const store = mockStoreCreator;
 
 const clusterName = 'local';
 const subject = 'test';

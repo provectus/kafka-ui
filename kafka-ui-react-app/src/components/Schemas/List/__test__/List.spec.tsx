@@ -91,7 +91,13 @@ describe('List', () => {
     describe('with readonly cluster', () => {
       const wrapper = mount(
         <StaticRouter>
-          <ClusterContext.Provider value={{ isReadOnly: true }}>
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: true,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+            }}
+          >
             {setupWrapper({ schemas: [] })}
           </ClusterContext.Provider>
         </StaticRouter>

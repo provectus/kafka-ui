@@ -61,8 +61,7 @@ export const createSchema = (
   } catch (error) {
     const response = await getResponse(error);
     const alert: FailurePayload = {
-      subject: 'schema',
-      subjectId: newSchemaSubject.subject,
+      subject: ['schema', newSchemaSubject.subject].join('-'),
       title: `Schema ${newSchemaSubject.subject}`,
       response,
     };

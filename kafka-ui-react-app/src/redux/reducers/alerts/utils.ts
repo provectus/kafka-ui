@@ -8,15 +8,9 @@ export const addError = (state: AlertsState, action: Action) => {
     'alert' in action.payload &&
     action.payload.alert !== undefined
   ) {
-    const {
-      subject,
-      subjectId,
-      title,
-      message,
-      response,
-    } = action.payload.alert;
+    const { subject, title, message, response } = action.payload.alert;
 
-    const id = `alert-${subject}${subjectId || ''}`;
+    const id = `alert-${subject}`;
 
     return {
       ...state,
