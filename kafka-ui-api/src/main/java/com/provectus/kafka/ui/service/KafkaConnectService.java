@@ -1,5 +1,8 @@
 package com.provectus.kafka.ui.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.client.KafkaConnectClients;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ConnectNotFoundException;
@@ -10,16 +13,22 @@ import com.provectus.kafka.ui.model.Connector;
 import com.provectus.kafka.ui.model.ConnectorAction;
 import com.provectus.kafka.ui.model.ConnectorPlugin;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponse;
+import com.provectus.kafka.ui.model.FullConnectorInfo;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.NewConnector;
 import com.provectus.kafka.ui.model.Task;
+import com.provectus.kafka.ui.model.TaskStatus;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -31,6 +40,7 @@ public class KafkaConnectService {
   private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
   private final KafkaConnectMapper kafkaConnectMapper;
+  private final ObjectMapper objectMapper;
 
   public Mono<Flux<Connect>> getConnects(String clusterName) {
     return Mono.just(
@@ -41,6 +51,58 @@ public class KafkaConnectService {
             .collect(Collectors.toList())
         )
     );
+  }
+
+  public Flux<FullConnectorInfo> getAllConnectors(String clusterName) {
+    return getConnects(clusterName)
+        .flatMapMany(Function.identity())
+        // for some reason `getConnectors` method returns the response as a single string
+        .flatMap(connect -> getConnectors(clusterName, connect.getName())
+            .collectList().map(e -> e.get(0))
+            .map(connectorStr -> {
+              try {
+                return objectMapper.readValue(connectorStr, new TypeReference<List<String>>() {
+                });
+              } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+              }
+            })
+            .flatMapMany(Flux::fromIterable)
+            .map(connector -> Pair.of(connect.getName(), connector))
+        )
+        .flatMap(pair -> getConnector(clusterName, pair.getLeft(), pair.getRight())
+        )
+        .flatMap(connector ->
+            getConnectorConfig(clusterName, connector.getConnect(), connector.getName())
+                .map(config -> Pair.of(connector, config))
+        )
+        .flatMap(pair ->
+            getConnectorTasks(clusterName, pair.getLeft().getConnect(), pair.getLeft().getName())
+                .collectList()
+                .map(tasks -> Triple.of(pair.getLeft(), pair.getRight(), tasks))
+        )
+        .map(triple -> new FullConnectorInfo()
+            .connect(triple.getLeft().getConnect())
+            .name(triple.getLeft().getName())
+            .type(FullConnectorInfo.TypeEnum.valueOf(triple.getLeft().getType().name()))
+            .topics(getTopicsFromConfig(triple.getMiddle()))
+            .status(
+                FullConnectorInfo.StatusEnum.valueOf(triple.getLeft().getStatus().getState().name())
+            )
+            .tasksCount(triple.getRight().size())
+            .hasFailedTasks(triple.getRight().stream()
+                .map(Task::getStatus)
+                .map(TaskStatus::getState)
+                .anyMatch(TaskStatus.StateEnum.FAILED::equals))
+        );
+  }
+
+  private List<String> getTopicsFromConfig(Map<String, Object> config) {
+    var topic = config.get("topic");
+    if (topic != null) {
+      return List.of((String) topic);
+    }
+    return Arrays.asList(((String) config.get("topics")).split(","));
   }
 
   public Flux<String> getConnectors(String clusterName, String connectName) {
@@ -76,6 +138,7 @@ public class KafkaConnectService {
                           var status = connectorStatus.getConnector();
                           connector.status(kafkaConnectMapper.fromClient(status));
                           return (Connector) new Connector()
+                              .connect(connectName)
                               .status(kafkaConnectMapper.fromClient(status))
                               .type(connector.getType())
                               .tasks(connector.getTasks())

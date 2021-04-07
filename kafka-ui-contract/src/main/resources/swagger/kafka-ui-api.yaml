@@ -720,11 +720,33 @@ paths:
                 items:
                   $ref: '#/components/schemas/Connect'
 
+  /api/clusters/{clusterName}/connectors:
+    get:
+      tags:
+        - Kafka Connect
+      summary: get all kafka connectors
+      operationId: getAllConnectors
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FullConnectorInfo'
+
   /api/clusters/{clusterName}/connects/{connectName}/connectors:
     get:
       tags:
         - Kafka Connect
-      summary: get all connectors from Kafka Connect service
+      summary: get connectors for provided kafka connect instance
       operationId: getConnectors
       parameters:
         - name: clusterName
@@ -1571,7 +1593,8 @@ components:
                 - sink
             status:
               $ref: '#/components/schemas/ConnectorStatus'
-
+            connect:
+              type: string
 
     TaskStatus:
       type: object
@@ -1709,3 +1732,31 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
+
+    FullConnectorInfo:
+      type: object
+      properties:
+        connect:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - source
+            - sink
+        topics:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+            - RUNNING
+            - FAILED
+            - PAUSED
+            - UNASSIGNED
+        tasks_count:
+          type: integer
+        has_failed_tasks:
+          type: boolean

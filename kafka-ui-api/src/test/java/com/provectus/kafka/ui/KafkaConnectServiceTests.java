@@ -100,6 +100,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   @Test
   public void shouldRetrieveConnector() {
     Connector expected = (Connector) new Connector()
+        .connect(connectName)
         .status(new ConnectorStatus()
             .state(ConnectorStatus.StateEnum.RUNNING)
             .workerId("kafka-connect:8083"))
