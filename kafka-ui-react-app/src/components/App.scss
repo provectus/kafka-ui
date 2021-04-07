@@ -13,6 +13,8 @@ $navbar-width: 250px;
   &__container {
     margin-top: $header-height;
     margin-left: $navbar-width;
+    position: relative;
+    z-index: 20;
   }
 
   &__navbar {
