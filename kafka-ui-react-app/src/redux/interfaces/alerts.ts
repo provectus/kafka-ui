@@ -11,7 +11,6 @@ export interface FailurePayload {
   title: string;
   message?: string;
   subject: string;
-  subjectId?: string | number;
   response?: ServerResponse;
 }
 

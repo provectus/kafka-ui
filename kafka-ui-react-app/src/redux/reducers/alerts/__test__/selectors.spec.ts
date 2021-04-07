@@ -1,7 +1,7 @@
 import configureStore from 'redux/store/configureStore';
 import { createTopicAction } from 'redux/actions';
 import * as selectors from '../selectors';
-import { failurePayloadWithId, failurePayloadWithoutId } from './fixtures';
+import { failurePayload1, failurePayload2 } from './fixtures';
 
 const store = configureStore();
 
@@ -14,12 +14,8 @@ describe('Alerts selectors', () => {
 
   describe('state', () => {
     beforeAll(() => {
-      store.dispatch(
-        createTopicAction.failure({ alert: failurePayloadWithoutId })
-      );
-      store.dispatch(
-        createTopicAction.failure({ alert: failurePayloadWithId })
-      );
+      store.dispatch(createTopicAction.failure({ alert: failurePayload1 }));
+      store.dispatch(createTopicAction.failure({ alert: failurePayload2 }));
     });
 
     it('returns fetch status', () => {

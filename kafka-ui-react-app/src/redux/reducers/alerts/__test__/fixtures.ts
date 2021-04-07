@@ -1,10 +1,10 @@
-export const failurePayloadWithoutId = {
+export const failurePayload1 = {
   title: 'title',
   message: 'message',
-  subject: 'topic',
+  subject: 'topic-1',
 };
 
-export const failurePayloadWithId = {
-  ...failurePayloadWithoutId,
-  subjectId: '12345',
+export const failurePayload2 = {
+  ...failurePayload1,
+  subject: 'topic-2',
 };
