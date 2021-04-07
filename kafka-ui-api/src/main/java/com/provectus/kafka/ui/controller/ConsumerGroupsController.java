@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.ConsumerGroupsApi;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
+import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.service.ClusterService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,5 +34,12 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
         .map(Flux::fromIterable)
         .map(ResponseEntity::ok)
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
+  }
+
+  @Override
+  public Mono<ResponseEntity<TopicConsumerGroups>> getTopicConsumerGroups(
+      String clusterName, String topicName, ServerWebExchange exchange) {
+    return clusterService.getTopicConsumerGroupDetail(clusterName, topicName)
+        .map(ResponseEntity::ok);
   }
 }

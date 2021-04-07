@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metric;
 import com.provectus.kafka.ui.model.ServerStatus;
+import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.util.ClusterUtil;
@@ -38,12 +39,14 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
+import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
@@ -296,15 +299,71 @@ public class KafkaService {
         );
   }
 
+  public Mono<Collection<ConsumerGroupDescription>> getConsumerGroupsInternal(
+      KafkaCluster cluster) {
+    return getOrCreateAdminClient(cluster).flatMap(ac ->
+        ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all())
+            .flatMap(s ->
+                ClusterUtil.toMono(
+                    ac.getAdminClient().describeConsumerGroups(
+                        s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())
+                    ).all()
+                ).map(Map::values)
+            )
+    );
+  }
+
   public Mono<List<ConsumerGroup>> getConsumerGroups(KafkaCluster cluster) {
-    return getOrCreateAdminClient(cluster)
-        .flatMap(ac -> ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all())
-            .flatMap(s -> ClusterUtil.toMono(ac.getAdminClient()
-                .describeConsumerGroups(
-                    s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList()))
-                .all()))
-            .map(s -> s.values().stream()
-                .map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList())));
+    return getConsumerGroupsInternal(cluster)
+        .map(c -> c.stream().map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList()));
+  }
+
+  public Mono<TopicConsumerGroups> getTopicConsumerGroups(KafkaCluster cluster, String topic) {
+    final Map<TopicPartition, Long> endOffsets = topicEndOffsets(cluster, topic);
+
+    return getConsumerGroupsInternal(cluster)
+        .flatMapIterable(c ->
+            c.stream()
+                .map(d -> ClusterUtil.filterConsumerGroupTopic(d, topic))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(d ->
+                    groupMetadata(cluster, d.groupId())
+                      .flatMapIterable(meta ->
+                          d.members().stream().flatMap(m ->
+                              ClusterUtil.convertToConsumerTopicPartitionDetails(
+                                  m, meta, endOffsets, d.groupId()
+                              ).stream()
+                          ).collect(Collectors.toList())
+                      )
+                ).collect(Collectors.toList())
+        ).flatMap(f -> f).collectList().map(l -> new TopicConsumerGroups().consumers(l));
+  }
+
+  public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster,
+                                                                    String consumerGroupId) {
+    return getOrCreateAdminClient(cluster).map(ac ->
+        ac.getAdminClient()
+            .listConsumerGroupOffsets(consumerGroupId)
+            .partitionsToOffsetAndMetadata()
+    ).flatMap(ClusterUtil::toMono);
+  }
+
+  public Map<TopicPartition, Long> topicEndOffsets(
+      KafkaCluster cluster, String topic) {
+    try (KafkaConsumer<Bytes, Bytes> consumer = createConsumer(cluster)) {
+      final List<TopicPartition> topicPartitions = consumer.partitionsFor(topic).stream()
+          .map(i -> new TopicPartition(i.topic(), i.partition()))
+          .collect(Collectors.toList());
+      return consumer.endOffsets(topicPartitions);
+    }
+  }
+
+  public Map<TopicPartition, Long> topicPartitionsEndOffsets(
+      KafkaCluster cluster, Collection<TopicPartition> topicPartitions) {
+    try (KafkaConsumer<Bytes, Bytes> consumer = createConsumer(cluster)) {
+      return consumer.endOffsets(topicPartitions);
+    }
   }
 
   public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster) {
@@ -571,4 +630,6 @@ public class KafkaService {
     return getOrCreateAdminClient(cluster).map(ExtendedAdminClient::getAdminClient)
         .map(ac -> ac.deleteRecords(records)).then();
   }
+
+
 }

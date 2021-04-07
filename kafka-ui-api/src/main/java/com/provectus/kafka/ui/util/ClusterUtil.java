@@ -5,6 +5,7 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 
 import com.provectus.kafka.ui.deserialization.RecordDeserializer;
 import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerTopicPartitionDetail;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalPartition;
@@ -30,6 +31,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.admin.MemberAssignment;
 import org.apache.kafka.clients.admin.MemberDescription;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -77,20 +79,40 @@ public class ClusterUtil {
         .flatMap(m -> m.assignment().topicPartitions().stream().flatMap(t -> Stream.of(t.topic())))
         .collect(Collectors.toSet()).size();
     consumerGroup.setNumTopics(numTopics);
+    consumerGroup.setSimple(c.isSimpleConsumerGroup());
+    Optional.ofNullable(c.state())
+        .ifPresent(s -> consumerGroup.setState(s.name()));
+    Optional.ofNullable(c.coordinator())
+        .ifPresent(coord -> consumerGroup.setCoordintor(coord.host()));
+    consumerGroup.setPartitionAssignor(c.partitionAssignor());
     return consumerGroup;
+  }
+
+  public static ConsumerGroupDetails convertToConsumerGroupDetails(
+      ConsumerGroupDescription desc, List<ConsumerTopicPartitionDetail> consumers
+  ) {
+    return new ConsumerGroupDetails()
+        .consumers(consumers)
+        .consumerGroupId(desc.groupId())
+        .simple(desc.isSimpleConsumerGroup())
+        .coordintor(Optional.ofNullable(desc.coordinator()).map(Node::host).orElse(""))
+        .state(Optional.ofNullable(desc.state()).map(Enum::name).orElse(""))
+        .partitionAssignor(desc.partitionAssignor());
   }
 
   public static List<ConsumerTopicPartitionDetail> convertToConsumerTopicPartitionDetails(
       MemberDescription consumer,
       Map<TopicPartition, OffsetAndMetadata> groupOffsets,
-      Map<TopicPartition, Long> endOffsets
+      Map<TopicPartition, Long> endOffsets,
+      String groupId
   ) {
     return consumer.assignment().topicPartitions().stream()
         .map(tp -> {
-          Long currentOffset = Optional.ofNullable(
-              groupOffsets.get(tp)).map(o -> o.offset()).orElse(0L);
-          Long endOffset = Optional.ofNullable(endOffsets.get(tp)).orElse(0L);
+          long currentOffset = Optional.ofNullable(groupOffsets.get(tp))
+              .map(OffsetAndMetadata::offset).orElse(0L);
+          long endOffset = Optional.ofNullable(endOffsets.get(tp)).orElse(0L);
           ConsumerTopicPartitionDetail cd = new ConsumerTopicPartitionDetail();
+          cd.setGroupId(groupId);
           cd.setConsumerId(consumer.consumerId());
           cd.setHost(consumer.host());
           cd.setTopic(tp.topic());
@@ -248,6 +270,44 @@ public class ClusterUtil {
     return streamOfMaps
         .reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
+  }
+
+  public static Optional<ConsumerGroupDescription> filterConsumerGroupTopic(
+      ConsumerGroupDescription description, String topic) {
+    final List<MemberDescription> members = description.members().stream()
+        .map(m -> filterConsumerMemberTopic(m, topic))
+        .filter(m -> !m.assignment().topicPartitions().isEmpty())
+        .collect(Collectors.toList());
+
+    if (!members.isEmpty()) {
+      return Optional.of(
+          new ConsumerGroupDescription(
+              description.groupId(),
+              description.isSimpleConsumerGroup(),
+              members,
+              description.partitionAssignor(),
+              description.state(),
+              description.coordinator()
+          )
+      );
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  public static MemberDescription filterConsumerMemberTopic(
+      MemberDescription description, String topic) {
+    final Set<TopicPartition> topicPartitions = description.assignment().topicPartitions()
+        .stream().filter(tp -> tp.topic().equals(topic))
+        .collect(Collectors.toSet());
+    MemberAssignment assignment = new MemberAssignment(topicPartitions);
+    return new MemberDescription(
+        description.consumerId(),
+        description.groupInstanceId(),
+        description.clientId(),
+        description.host(),
+        assignment
+    );
   }
 
 }
