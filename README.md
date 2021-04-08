@@ -162,8 +162,8 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read only mode. Default: false
-|`LOGGING_LEVEL_ROOT`        	| Setting log level (???, error)
-|`LOGGING_LEVEL_COM_PROVECTUS`        	|Setting log level (???, error)
+|`LOGGING_LEVEL_ROOT`        	| Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
+|`LOGGING_LEVEL_COM_PROVECTUS`        	|Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
 
  
 
