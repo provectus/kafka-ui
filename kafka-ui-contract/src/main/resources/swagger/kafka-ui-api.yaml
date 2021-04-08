@@ -346,6 +346,31 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/topics/{topicName}/consumergroups:
+    get:
+      tags:
+        - Consumer Groups
+      summary: get Consumer Groups By Topics
+      operationId: getTopicConsumerGroups
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicConsumerGroups'
+
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
       tags:
@@ -1330,6 +1355,14 @@ components:
             type: integer
         numTopics:
             type: integer
+        simple:
+          type: boolean
+        partitionAssignor:
+          type: string
+        state:
+          type: string
+        coordintor:
+          type: string
       required:
         - clusterId
         - consumerGroupId
@@ -1397,6 +1430,8 @@ components:
     ConsumerTopicPartitionDetail:
       type: object
       properties:
+        groupId:
+          type: string
         consumerId:
           type: string
         topic:
@@ -1416,11 +1451,27 @@ components:
           format: int64
       required:
         - consumerId
-        
+
+    TopicConsumerGroups:
+      type: object
+      properties:
+        consumers:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
+
     ConsumerGroupDetails:
       type: object
       properties:
         consumerGroupId:
+          type: string
+        simple:
+         type: boolean
+        partitionAssignor:
+          type: string
+        state:
+          type: string
+        coordintor:
           type: string
         consumers:
           type: array
