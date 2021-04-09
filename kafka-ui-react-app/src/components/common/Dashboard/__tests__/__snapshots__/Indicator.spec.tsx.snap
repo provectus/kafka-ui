@@ -6,7 +6,7 @@ exports[`Indicator matches the snapshot 1`] = `
   title="title"
 >
   <div
-    className="level-item level-left"
+    className="level-item"
   >
     <div
       title="title"

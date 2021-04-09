@@ -43,26 +43,28 @@ const Overview: React.FC<Props> = ({
       <Indicator label="Segment count">{segmentCount}</Indicator>
     </MetricsWrapper>
     <div className="box">
-      <table className="table is-striped is-fullwidth">
-        <thead>
-          <tr>
-            <th>Partition ID</th>
-            <th>Broker leader</th>
-            <th>Min offset</th>
-            <th>Max offset</th>
-          </tr>
-        </thead>
-        <tbody>
-          {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
-            <tr key={`partition-list-item-key-${partition}`}>
-              <td>{partition}</td>
-              <td>{leader}</td>
-              <td>{offsetMin}</td>
-              <td>{offsetMax}</td>
+      <div className="table-container">
+        <table className="table is-striped is-fullwidth">
+          <thead>
+            <tr>
+              <th>Partition ID</th>
+              <th>Broker leader</th>
+              <th>Min offset</th>
+              <th>Max offset</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
+              <tr key={`partition-list-item-key-${partition}`}>
+                <td>{partition}</td>
+                <td>{leader}</td>
+                <td>{offsetMin}</td>
+                <td>{offsetMax}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   </>
 );

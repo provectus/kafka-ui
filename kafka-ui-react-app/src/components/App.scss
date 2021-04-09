@@ -17,7 +17,7 @@ $navbar-width: 250px;
     z-index: 20;
   }
 
-  &__navbar {
+  &__sidebar{
     width: $navbar-width;
     display: flex;
     flex-direction: column;
@@ -28,6 +28,19 @@ $navbar-width: 250px;
     bottom: 0;
     padding: 20px 20px;
     overflow-y: scroll;
+    transition: width .25s,opacity .25s,transform .25s,-webkit-transform .25s;
+
+    &Overlay {
+      position: fixed;
+      top: 0;
+      height: 120vh;
+      z-index: 99;
+      display: block;
+      visibility: hidden;
+      opacity: 0;
+      -webkit-transition: all .5s ease;
+      transition: all .5s ease;
+    }
   }
 
   &__alerts {
@@ -46,4 +59,36 @@ $navbar-width: 250px;
 
 .react-datepicker-popper {
   z-index: 30 !important;
+}
+
+@media screen and (max-width: 1023px) {
+  .Layout {
+    &__container {
+      margin-left: initial;
+      margin-top: 1.5rem;
+    }
+
+    &__sidebar {
+      left: -$navbar-width;
+      z-index: 100;
+    }
+
+    &__alerts {
+      max-width: initial;
+    }
+
+    &--sidebarVisible {
+      .Layout__sidebar {
+        transform: translate3d($navbar-width,0,0);
+
+        &Overlay {
+          background-color: rgba(34,41,47,.5);
+          left: 0;
+          right: 0;
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+    }
+  }
 }

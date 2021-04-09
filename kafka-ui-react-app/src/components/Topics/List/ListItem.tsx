@@ -37,7 +37,7 @@ const ListItem: React.FC<ListItemProps> = ({
 
   return (
     <tr>
-      <td>
+      <td className="has-text-overflow-ellipsis">
         <NavLink
           exact
           to={`topics/${name}`}

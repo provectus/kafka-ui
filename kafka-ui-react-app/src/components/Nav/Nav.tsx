@@ -5,7 +5,7 @@ import { Cluster } from 'generated-sources';
 import ClusterMenu from './ClusterMenu';
 
 interface Props {
-  isClusterListFetched: boolean;
+  isClusterListFetched?: boolean;
   clusters: Cluster[];
   className?: string;
 }

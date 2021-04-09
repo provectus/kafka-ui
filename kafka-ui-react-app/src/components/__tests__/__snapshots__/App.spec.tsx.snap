@@ -1,60 +1,383 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`App matches snapshot 1`] = `
-<div
-  className="Layout"
+exports[`App view matches snapshot 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
+    }
+  }
 >
-  <nav
-    aria-label="main navigation"
-    className="navbar is-fixed-top is-white Layout__header"
-    role="navigation"
-  >
-    <div
-      className="navbar-brand"
-    >
-      <a
-        className="navbar-item title is-5 is-marginless"
-        href="/ui"
-      >
-        Kafka UI
-      </a>
-    </div>
-    <div
-      className="navbar-end"
-    >
-      <div
-        className="navbar-item mr-2"
-      >
-        <Version />
-      </div>
-    </div>
-  </nav>
-  <main
-    className="Layout__container"
-  >
-    <Connect(Nav)
-      className="Layout__navbar"
-    />
-    <Switch>
-      <Route
-        component={[Function]}
-        exact={true}
-        path={
-          Array [
-            "/",
-            "/ui",
-            "/ui/clusters",
-          ]
+  <StaticRouter>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
         }
-      />
-      <Route
-        component={[Function]}
-        path="/ui/clusters/:clusterName"
-      />
-    </Switch>
-  </main>
-  <div
-    className="Layout__alerts"
-  />
-</div>
+      }
+      staticContext={Object {}}
+    >
+      <App
+        alerts={Array []}
+        clusters={Array []}
+        fetchClustersList={
+          [MockFunction] {
+            "calls": Array [
+              Array [],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        isClusterListFetched={true}
+      >
+        <div
+          className="Layout"
+        >
+          <nav
+            aria-label="main navigation"
+            className="navbar is-fixed-top is-white Layout__header"
+            role="navigation"
+          >
+            <div
+              className="navbar-brand"
+            >
+              <div
+                className="navbar-burger ml-0"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                role="button"
+                tabIndex={0}
+              >
+                <span />
+                <span />
+                <span />
+              </div>
+              <a
+                className="navbar-item title is-5 is-marginless"
+                href="/ui"
+              >
+                Kafka UI
+              </a>
+              <div
+                className="navbar-item"
+              >
+                <Version />
+              </div>
+            </div>
+          </nav>
+          <main
+            className="Layout__container"
+          >
+            <div
+              className="Layout__sidebar has-shadow has-background-white"
+            >
+              <Nav
+                clusters={Array []}
+                isClusterListFetched={true}
+              >
+                <aside
+                  className="menu has-shadow has-background-white"
+                >
+                  <p
+                    className="menu-label"
+                  >
+                    General
+                  </p>
+                  <ul
+                    className="menu-list"
+                  >
+                    <li>
+                      <NavLink
+                        activeClassName="is-active"
+                        exact={true}
+                        title="Dashboard"
+                        to="/ui"
+                      >
+                        <Link
+                          aria-current={null}
+                          title="Dashboard"
+                          to={
+                            Object {
+                              "hash": "",
+                              "pathname": "/ui",
+                              "search": "",
+                              "state": null,
+                            }
+                          }
+                        >
+                          <LinkAnchor
+                            aria-current={null}
+                            href="/ui"
+                            navigate={[Function]}
+                            title="Dashboard"
+                          >
+                            <a
+                              aria-current={null}
+                              href="/ui"
+                              onClick={[Function]}
+                              title="Dashboard"
+                            >
+                              Dashboard
+                            </a>
+                          </LinkAnchor>
+                        </Link>
+                      </NavLink>
+                    </li>
+                  </ul>
+                  <p
+                    className="menu-label"
+                  >
+                    Clusters
+                  </p>
+                </aside>
+              </Nav>
+            </div>
+            <div
+              aria-hidden="true"
+              className="Layout__sidebarOverlay is-overlay"
+              onClick={[Function]}
+              onKeyDown={[Function]}
+              tabIndex={-1}
+            />
+            <Switch>
+              <Route
+                component={[Function]}
+                computedMatch={
+                  Object {
+                    "isExact": true,
+                    "params": Object {},
+                    "path": "/",
+                    "url": "/",
+                  }
+                }
+                exact={true}
+                location={
+                  Object {
+                    "hash": "",
+                    "pathname": "/",
+                    "search": "",
+                    "state": undefined,
+                  }
+                }
+                path={
+                  Array [
+                    "/",
+                    "/ui",
+                    "/ui/clusters",
+                  ]
+                }
+              >
+                <Dashboard
+                  history={
+                    Object {
+                      "action": "POP",
+                      "block": [Function],
+                      "createHref": [Function],
+                      "go": [Function],
+                      "goBack": [Function],
+                      "goForward": [Function],
+                      "listen": [Function],
+                      "location": Object {
+                        "hash": "",
+                        "pathname": "/",
+                        "search": "",
+                        "state": undefined,
+                      },
+                      "push": [Function],
+                      "replace": [Function],
+                    }
+                  }
+                  location={
+                    Object {
+                      "hash": "",
+                      "pathname": "/",
+                      "search": "",
+                      "state": undefined,
+                    }
+                  }
+                  match={
+                    Object {
+                      "isExact": true,
+                      "params": Object {},
+                      "path": "/",
+                      "url": "/",
+                    }
+                  }
+                  staticContext={Object {}}
+                >
+                  <div
+                    className="section"
+                  >
+                    <div
+                      className="level"
+                    >
+                      <div
+                        className="level-item level-left"
+                      >
+                        <Breadcrumb>
+                          <nav
+                            aria-label="breadcrumbs"
+                            className="breadcrumb"
+                          >
+                            <ul>
+                              <li
+                                className="is-active"
+                              >
+                                <span
+                                  className=""
+                                >
+                                  Dashboard
+                                </span>
+                              </li>
+                            </ul>
+                          </nav>
+                        </Breadcrumb>
+                      </div>
+                    </div>
+                    <Connect(ClustersWidget)>
+                      <ClustersWidget
+                        clusters={Array []}
+                        dispatch={[Function]}
+                        offlineClusters={Array []}
+                        onlineClusters={Array []}
+                      >
+                        <div>
+                          <h5
+                            className="title is-5"
+                          >
+                            Clusters
+                          </h5>
+                          <MetricsWrapper>
+                            <div
+                              className="box"
+                            >
+                              <div
+                                className="level"
+                              >
+                                <Indicator
+                                  label="Online Clusters"
+                                >
+                                  <div
+                                    className="level-item"
+                                  >
+                                    <div
+                                      title="Online Clusters"
+                                    >
+                                      <p
+                                        className="heading"
+                                      >
+                                        Online Clusters
+                                      </p>
+                                      <p
+                                        className="title has-text-centered"
+                                      >
+                                        <span
+                                          className="tag is-primary"
+                                        >
+                                          0
+                                        </span>
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Indicator>
+                                <Indicator
+                                  label="Offline Clusters"
+                                >
+                                  <div
+                                    className="level-item"
+                                  >
+                                    <div
+                                      title="Offline Clusters"
+                                    >
+                                      <p
+                                        className="heading"
+                                      >
+                                        Offline Clusters
+                                      </p>
+                                      <p
+                                        className="title has-text-centered"
+                                      >
+                                        <span
+                                          className="tag is-danger"
+                                        >
+                                          0
+                                        </span>
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Indicator>
+                                <Indicator
+                                  label="Hide online clusters"
+                                >
+                                  <div
+                                    className="level-item"
+                                  >
+                                    <div
+                                      title="Hide online clusters"
+                                    >
+                                      <p
+                                        className="heading"
+                                      >
+                                        Hide online clusters
+                                      </p>
+                                      <p
+                                        className="title has-text-centered"
+                                      >
+                                        <input
+                                          checked={false}
+                                          className="switch is-rounded"
+                                          id="switchRoundedDefault"
+                                          name="switchRoundedDefault"
+                                          onChange={[Function]}
+                                          type="checkbox"
+                                        />
+                                        <label
+                                          htmlFor="switchRoundedDefault"
+                                        />
+                                      </p>
+                                    </div>
+                                  </div>
+                                </Indicator>
+                              </div>
+                            </div>
+                          </MetricsWrapper>
+                        </div>
+                      </ClustersWidget>
+                    </Connect(ClustersWidget)>
+                  </div>
+                </Dashboard>
+              </Route>
+            </Switch>
+          </main>
+          <div
+            className="Layout__alerts"
+          />
+        </div>
+      </App>
+    </Router>
+  </StaticRouter>
+</Provider>
 `;
