@@ -10,36 +10,40 @@ exports[`LatestVersionItem matches snapshot 1`] = `
     <div
       className="tile is-child"
     >
-      <table
-        className="table is-fullwidth"
+      <div
+        className="table-container"
       >
-        <tbody>
-          <tr>
-            <td>
-              ID
-            </td>
-            <td>
-              1
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Subject
-            </td>
-            <td>
-              test
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Compatibility
-            </td>
-            <td>
-              BACKWARD
-            </td>
-          </tr>
-        </tbody>
-      </table>
+        <table
+          className="table is-fullwidth"
+        >
+          <tbody>
+            <tr>
+              <td>
+                ID
+              </td>
+              <td>
+                1
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Subject
+              </td>
+              <td>
+                test
+              </td>
+            </tr>
+            <tr>
+              <td>
+                Compatibility
+              </td>
+              <td>
+                BACKWARD
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
   <div

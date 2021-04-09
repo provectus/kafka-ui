@@ -57,27 +57,29 @@ const List: React.FC<ListProps> = ({
         <PageLoader />
       ) : (
         <div className="box">
-          <table className="table is-fullwidth">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Connect</th>
-                <th>Type</th>
-                <th>Plugin</th>
-                <th>Topics</th>
-                <th>Status</th>
-                <th>Tasks</th>
-                <th> </th>
-              </tr>
-            </thead>
-            <tbody>
-              {connectors.length === 0 && (
+          <div className="table-container">
+            <table className="table is-fullwidth">
+              <thead>
                 <tr>
-                  <td colSpan={10}>No connectors found</td>
+                  <th>Name</th>
+                  <th>Connect</th>
+                  <th>Type</th>
+                  <th>Plugin</th>
+                  <th>Topics</th>
+                  <th>Status</th>
+                  <th>Tasks</th>
+                  <th> </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {connectors.length === 0 && (
+                  <tr>
+                    <td colSpan={10}>No connectors found</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

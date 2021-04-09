@@ -7,16 +7,15 @@ import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { useParams } from 'react-router';
 
 interface Props extends ClusterStats {
-  clusterName: ClusterName;
   isFetched: boolean;
   fetchClusterStats: (clusterName: ClusterName) => void;
   fetchBrokers: (clusterName: ClusterName) => void;
 }
 
 const Brokers: React.FC<Props> = ({
-  clusterName,
   brokerCount,
   activeControllers,
   zooKeeperStatus,
@@ -29,6 +28,8 @@ const Brokers: React.FC<Props> = ({
   fetchClusterStats,
   fetchBrokers,
 }) => {
+  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+
   React.useEffect(() => {
     fetchClusterStats(clusterName);
     fetchBrokers(clusterName);
@@ -44,9 +45,13 @@ const Brokers: React.FC<Props> = ({
     <div className="section">
       <Breadcrumb>Brokers overview</Breadcrumb>
       <MetricsWrapper title="Uptime">
-        <Indicator label="Total Brokers">{brokerCount}</Indicator>
-        <Indicator label="Active Controllers">{activeControllers}</Indicator>
-        <Indicator label="Zookeeper Status">
+        <Indicator className="is-one-third" label="Total Brokers">
+          {brokerCount}
+        </Indicator>
+        <Indicator className="is-one-third" label="Active Controllers">
+          {activeControllers}
+        </Indicator>
+        <Indicator className="is-one-third" label="Zookeeper Status">
           <span className={cx('tag', zkOnline ? 'is-primary' : 'is-danger')}>
             {zkOnline ? 'Online' : 'Offline'}
           </span>

@@ -16,7 +16,7 @@ const Indicator: React.FC<Props> = ({
   children,
 }) => {
   return (
-    <div className={cx('level-item', 'level-left', className)}>
+    <div className={cx('level-item', className)}>
       <div title={title || label}>
         <p className="heading">{label}</p>
         <p className="title has-text-centered">
