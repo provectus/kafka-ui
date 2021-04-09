@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.client.KafkaConnectClients;
@@ -18,14 +17,13 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.NewConnector;
 import com.provectus.kafka.ui.model.Task;
-import com.provectus.kafka.ui.model.TaskStatus;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
@@ -56,22 +54,8 @@ public class KafkaConnectService {
   public Flux<FullConnectorInfo> getAllConnectors(String clusterName) {
     return getConnects(clusterName)
         .flatMapMany(Function.identity())
-        // for some reason `getConnectors` method returns the response as a single string
-        .flatMap(connect -> getConnectors(clusterName, connect.getName())
-            .collectList().map(e -> e.get(0))
-            .map(connectorStr -> {
-              try {
-                return objectMapper.readValue(connectorStr, new TypeReference<List<String>>() {
-                });
-              } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-              }
-            })
-            .flatMapMany(Flux::fromIterable)
-            .map(connector -> Pair.of(connect.getName(), connector))
-        )
-        .flatMap(pair -> getConnector(clusterName, pair.getLeft(), pair.getRight())
-        )
+        .flatMap(connect -> getConnectorNames(clusterName, connect))
+        .flatMap(pair -> getConnector(clusterName, pair.getLeft(), pair.getRight()))
         .flatMap(connector ->
             getConnectorConfig(clusterName, connector.getConnect(), connector.getName())
                 .map(config -> Pair.of(connector, config))
@@ -81,28 +65,22 @@ public class KafkaConnectService {
                 .collectList()
                 .map(tasks -> Triple.of(pair.getLeft(), pair.getRight(), tasks))
         )
-        .map(triple -> new FullConnectorInfo()
-            .connect(triple.getLeft().getConnect())
-            .name(triple.getLeft().getName())
-            .type(FullConnectorInfo.TypeEnum.valueOf(triple.getLeft().getType().name()))
-            .topics(getTopicsFromConfig(triple.getMiddle()))
-            .status(
-                FullConnectorInfo.StatusEnum.valueOf(triple.getLeft().getStatus().getState().name())
-            )
-            .tasksCount(triple.getRight().size())
-            .hasFailedTasks(triple.getRight().stream()
-                .map(Task::getStatus)
-                .map(TaskStatus::getState)
-                .anyMatch(TaskStatus.StateEnum.FAILED::equals))
-        );
+        .map(kafkaConnectMapper::fullConnectorInfoFromTuple);
   }
 
-  private List<String> getTopicsFromConfig(Map<String, Object> config) {
-    var topic = config.get("topic");
-    if (topic != null) {
-      return List.of((String) topic);
-    }
-    return Arrays.asList(((String) config.get("topics")).split(","));
+  private Flux<Pair<String, String>> getConnectorNames(String clusterName, Connect connect) {
+    return getConnectors(clusterName, connect.getName())
+        .collectList().map(e -> e.get(0))
+        // for some reason `getConnectors` method returns the response as a single string
+        .map(this::parseToList)
+        .flatMapMany(Flux::fromIterable)
+        .map(connector -> Pair.of(connect.getName(), connector));
+  }
+
+  @SneakyThrows
+  private List<String> parseToList(String json) {
+    return objectMapper.readValue(json, new TypeReference<>() {
+    });
   }
 
   public Flux<String> getConnectors(String clusterName, String connectName) {

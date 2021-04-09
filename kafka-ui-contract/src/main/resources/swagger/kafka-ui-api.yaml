@@ -1587,14 +1587,17 @@ components:
               items:
                 $ref: '#/components/schemas/TaskId'
             type:
-              type: string
-              enum:
-                - source
-                - sink
+              $ref: '#/components/schemas/ConnectorType'
             status:
               $ref: '#/components/schemas/ConnectorStatus'
             connect:
               type: string
+
+    ConnectorType:
+      type: string
+      enum:
+        - SOURCE
+        - SINK
 
     TaskStatus:
       type: object
@@ -1602,12 +1605,7 @@ components:
         id:
           type: integer
         state:
-          type: string
-          enum:
-            - RUNNING
-            - FAILED
-            - PAUSED
-            - UNASSIGNED
+          $ref: '#/components/schemas/ConnectorTaskStatus'
         worker_id:
           type: string
         trace:
@@ -1617,14 +1615,17 @@ components:
       type: object
       properties:
         state:
-          type: string
-          enum:
-            - RUNNING
-            - FAILED
-            - PAUSED
-            - UNASSIGNED
+          $ref: '#/components/schemas/ConnectorTaskStatus'
         worker_id:
           type: string
+
+    ConnectorTaskStatus:
+      type: string
+      enum:
+        - RUNNING
+        - FAILED
+        - PAUSED
+        - UNASSIGNED
 
     ConnectorAction:
       type: string
@@ -1740,23 +1741,17 @@ components:
           type: string
         name:
           type: string
-        type:
+        connector_class:
           type: string
-          enum:
-            - source
-            - sink
+        type:
+          $ref: '#/components/schemas/ConnectorType'
         topics:
           type: array
           items:
             type: string
         status:
-          type: string
-          enum:
-            - RUNNING
-            - FAILED
-            - PAUSED
-            - UNASSIGNED
+          $ref: '#/components/schemas/ConnectorTaskStatus'
         tasks_count:
           type: integer
-        has_failed_tasks:
-          type: boolean
+        failed_tasks_count:
+          type: integer
