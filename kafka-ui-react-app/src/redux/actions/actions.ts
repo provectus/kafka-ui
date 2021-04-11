@@ -124,6 +124,12 @@ export const createSchemaAction = createAsyncAction(
   'POST_SCHEMA__FAILURE'
 )<undefined, SchemaSubject, { alert?: FailurePayload }>();
 
+export const deleteSchemaAction = createAsyncAction(
+  'DELETE_SCHEMA__REQUEST',
+  'DELETE_SCHEMA__SUCCESS',
+  'DELETE_SCHEMA__FAILURE'
+)<undefined, string, { alert?: FailurePayload }>();
+
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
 
 export const fetchConnectsAction = createAsyncAction(

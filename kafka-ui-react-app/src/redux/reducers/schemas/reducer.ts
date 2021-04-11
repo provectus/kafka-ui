@@ -1,5 +1,7 @@
 import { SchemaSubject } from 'generated-sources';
 import { Action, SchemasState } from 'redux/interfaces';
+import * as actions from 'redux/actions';
+import { getType } from 'typesafe-actions';
 
 export const initialState: SchemasState = {
   byName: {},
@@ -44,6 +46,18 @@ const addToSchemaList = (
   return newState;
 };
 
+const deleteFromSchemaList = (
+  state: SchemasState,
+  payload: string
+): SchemasState => {
+  const newState: SchemasState = {
+    ...state,
+  };
+  delete newState.byName[payload];
+  newState.allNames = newState.allNames.filter((name) => name !== payload);
+  return newState;
+};
+
 const reducer = (state = initialState, action: Action): SchemasState => {
   switch (action.type) {
     case 'GET_CLUSTER_SCHEMAS__SUCCESS':
@@ -52,6 +66,8 @@ const reducer = (state = initialState, action: Action): SchemasState => {
       return { ...state, currentSchemaVersions: action.payload };
     case 'POST_SCHEMA__SUCCESS':
       return addToSchemaList(state, action.payload);
+    case getType(actions.deleteSchemaAction.success):
+      return deleteFromSchemaList(state, action.payload);
     default:
       return state;
   }

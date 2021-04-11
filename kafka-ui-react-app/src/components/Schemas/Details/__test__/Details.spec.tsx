@@ -30,6 +30,7 @@ describe('Details', () => {
         schema={schema}
         clusterName="Test cluster"
         fetchSchemaVersions={jest.fn()}
+        deleteSchema={jest.fn()}
         isFetched
         versions={[]}
         {...props}
@@ -98,6 +99,17 @@ describe('Details', () => {
           expect(wrapper.exists('button')).toBeTruthy();
           expect(wrapper.exists('thead')).toBeTruthy();
           expect(wrapper.find('SchemaVersion').length).toEqual(2);
+        });
+
+        it('calls deleteSchema on button click', () => {
+          const mockDelete = jest.fn();
+          const component = mount(
+            <StaticRouter>
+              {setupWrapper({ versions, deleteSchema: mockDelete })}
+            </StaticRouter>
+          );
+          component.find('button').at(1).simulate('click');
+          expect(mockDelete).toHaveBeenCalledTimes(1);
         });
 
         it('matches snapshot', () => {
