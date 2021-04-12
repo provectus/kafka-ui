@@ -128,6 +128,6 @@ export const updateSchemaCompatibilityLevelAction = createAsyncAction(
   'PATCH_SCHEMA_COMPATIBILITY__REQUEST',
   'PATCH_SCHEMA_COMPATIBILITY__SUCCESS',
   'PATCH_SCHEMA_COMPATIBILITY__FAILURE'
-)<undefined, undefined, undefined>();
+)<undefined, undefined, { alert?: FailurePayload }>();
 
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();

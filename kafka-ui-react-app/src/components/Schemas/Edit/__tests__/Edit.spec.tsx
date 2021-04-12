@@ -1,7 +1,11 @@
-import { shallow } from 'enzyme';
-import { SchemaType } from 'generated-sources';
+import { mount, shallow } from 'enzyme';
+import {
+  CompatibilityLevelCompatibilityEnum,
+  SchemaType,
+} from 'generated-sources';
 import React from 'react';
-import Edit from '../Edit';
+import { StaticRouter } from 'react-router-dom';
+import Edit, { EditProps } from '../Edit';
 
 describe('Edit Component', () => {
   const mockSchema = {
@@ -13,38 +17,42 @@ describe('Edit Component', () => {
     schemaType: SchemaType.AVRO,
   };
 
+  const setupWrapper = (props: Partial<EditProps> = {}) => (
+    <Edit
+      subject="Subject"
+      clusterName="ClusterName"
+      schemasAreFetched
+      fetchSchemasByClusterName={jest.fn()}
+      updateSchema={jest.fn()}
+      schema={mockSchema}
+      {...props}
+    />
+  );
+
   describe('when schemas are not fetched', () => {
-    const component = shallow(
-      <Edit
-        subject="Subject"
-        clusterName="ClusterName"
-        schemasAreFetched={false}
-        fetchSchemasByClusterName={jest.fn()}
-        updateSchemaCompatibilityLevel={jest.fn()}
-        createSchema={jest.fn()}
-        schema={mockSchema}
-      />
-    );
+    const component = shallow(setupWrapper({ schemasAreFetched: false }));
     it('matches the snapshot', () => {
       expect(component).toMatchSnapshot();
     });
     it('shows loader', () => {
       expect(component.find('PageLoader').exists()).toBeTruthy();
     });
+    it('fetches them', () => {
+      const mockFetch = jest.fn();
+      mount(
+        <StaticRouter>
+          {setupWrapper({
+            schemasAreFetched: false,
+            fetchSchemasByClusterName: mockFetch,
+          })}
+        </StaticRouter>
+      );
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('when schemas are fetched', () => {
-    const component = shallow(
-      <Edit
-        subject="Subject"
-        clusterName="ClusterName"
-        schemasAreFetched
-        fetchSchemasByClusterName={jest.fn()}
-        updateSchemaCompatibilityLevel={jest.fn()}
-        createSchema={jest.fn()}
-        schema={mockSchema}
-      />
-    );
+    const component = shallow(setupWrapper());
     it('matches the snapshot', () => {
       expect(component).toMatchSnapshot();
     });
@@ -52,51 +60,17 @@ describe('Edit Component', () => {
       expect(component.find('JSONEditor').length).toEqual(2);
       expect(component.find('button').exists()).toBeTruthy();
     });
-    it('does not call createSchema on button click without changing the schema', () => {
-      const mockCreateSchema = jest.fn();
+    xit('calls updateSchema on button click', () => {
+      const mockUpdateSchema = jest.fn();
       const componentWithMockFn = shallow(
-        <Edit
-          subject="Subject"
-          clusterName="ClusterName"
-          schemasAreFetched
-          fetchSchemasByClusterName={jest.fn()}
-          updateSchemaCompatibilityLevel={jest.fn()}
-          createSchema={mockCreateSchema}
-          schema={mockSchema}
-        />
+        setupWrapper({ updateSchema: mockUpdateSchema })
       );
-      componentWithMockFn.find('button').simulate('click');
-      expect(mockCreateSchema).toHaveBeenCalledTimes(0);
-    });
-    it('does not call updateSchemaCompatibilityLevel on button click without changing the compatibility level', () => {
-      const mockupdateSchemaCompatibilityLevel = jest.fn();
-      const componentWithMockFn = shallow(
-        <Edit
-          subject="Subject"
-          clusterName="ClusterName"
-          schemasAreFetched
-          fetchSchemasByClusterName={jest.fn()}
-          updateSchemaCompatibilityLevel={mockupdateSchemaCompatibilityLevel}
-          createSchema={jest.fn()}
-          schema={mockSchema}
-        />
-      );
-      componentWithMockFn.find('button').simulate('click');
-      expect(mockupdateSchemaCompatibilityLevel).toHaveBeenCalledTimes(0);
+      componentWithMockFn.find('button').simulate('submit');
+      expect(mockUpdateSchema).toHaveBeenCalledTimes(1);
     });
     it('does not fetch them', () => {
       const mockFetch = jest.fn();
-      shallow(
-        <Edit
-          subject="Subject"
-          clusterName="ClusterName"
-          schemasAreFetched
-          fetchSchemasByClusterName={mockFetch}
-          updateSchemaCompatibilityLevel={jest.fn()}
-          createSchema={jest.fn()}
-          schema={mockSchema}
-        />
-      );
+      shallow(setupWrapper());
       expect(mockFetch).toHaveBeenCalledTimes(0);
     });
   });

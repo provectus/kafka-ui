@@ -5,11 +5,7 @@ import {
   getIsSchemaListFetched,
   getSchema,
 } from 'redux/reducers/schemas/selectors';
-import {
-  createSchema,
-  fetchSchemasByClusterName,
-  updateSchemaCompatibilityLevel,
-} from 'redux/actions';
+import { fetchSchemasByClusterName, updateSchema } from 'redux/actions';
 import Edit from './Edit';
 
 interface RouteProps {
@@ -34,9 +30,8 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  createSchema,
   fetchSchemasByClusterName,
-  updateSchemaCompatibilityLevel,
+  updateSchema,
 };
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Edit));

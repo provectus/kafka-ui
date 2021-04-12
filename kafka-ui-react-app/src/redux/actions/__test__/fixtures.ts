@@ -1,4 +1,10 @@
-import { ClusterStats, NewSchemaSubject, SchemaType } from 'generated-sources';
+import {
+  ClusterStats,
+  CompatibilityLevelCompatibilityEnum,
+  NewSchemaSubject,
+  SchemaSubject,
+  SchemaType,
+} from 'generated-sources';
 
 export const clusterStats: ClusterStats = {
   brokerCount: 1,
@@ -17,4 +23,14 @@ export const schemaPayload: NewSchemaSubject = {
   schema:
     '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
   schemaType: SchemaType.JSON,
+};
+
+export const schema: SchemaSubject = {
+  subject: 'NewSchema',
+  schema:
+    '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
+  schemaType: SchemaType.JSON,
+  version: '1',
+  id: 1,
+  compatibilityLevel: CompatibilityLevelCompatibilityEnum.BACKWARD,
 };

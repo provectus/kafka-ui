@@ -9,6 +9,11 @@ import { RootState, Action } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
+import {
+  CompatibilityLevelCompatibilityEnum,
+  SchemaType,
+} from 'generated-sources';
+import { action } from 'typesafe-actions';
 import * as fixtures from '../fixtures';
 
 const middlewares: Array<Middleware> = [thunk];
@@ -135,6 +140,82 @@ describe('Thunks', () => {
           actions.createSchemaAction.failure({}),
         ]);
       }
+    });
+  });
+
+  describe('updateSchemaCompatibilityLevel', () => {
+    it('creates UPDATE_SCHEMA__SUCCESS when patching a schema', async () => {
+      fetchMock.putOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
+        200
+      );
+      await store.dispatch(
+        thunks.updateSchemaCompatibilityLevel(
+          clusterName,
+          subject,
+          CompatibilityLevelCompatibilityEnum.BACKWARD
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateSchemaCompatibilityLevelAction.request(),
+        actions.updateSchemaCompatibilityLevelAction.success(),
+      ]);
+    });
+
+    it('creates UPDATE_SCHEMA__SUCCESS when failing to patch a schema', async () => {
+      fetchMock.putOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
+        404
+      );
+      try {
+        await store.dispatch(
+          thunks.updateSchemaCompatibilityLevel(
+            clusterName,
+            subject,
+            CompatibilityLevelCompatibilityEnum.BACKWARD
+          )
+        );
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.updateSchemaCompatibilityLevelAction.request(),
+          actions.updateSchemaCompatibilityLevelAction.failure({}),
+        ]);
+      }
+    });
+  });
+
+  describe('updateSchema', () => {
+    it('calls createSchema', () => {
+      store.dispatch(
+        thunks.updateSchema(
+          fixtures.schema,
+          fixtures.schemaPayload.schema,
+          SchemaType.AVRO,
+          CompatibilityLevelCompatibilityEnum.BACKWARD,
+          clusterName,
+          subject
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.createSchemaAction.request(),
+      ]);
+    });
+
+    it('calls updateSchema and does not call createSchema when schema does not change', () => {
+      store.dispatch(
+        thunks.updateSchema(
+          fixtures.schema,
+          fixtures.schema.schema,
+          SchemaType.JSON,
+          CompatibilityLevelCompatibilityEnum.FORWARD,
+          clusterName,
+          subject
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateSchemaCompatibilityLevelAction.request(),
+      ]);
     });
   });
 });

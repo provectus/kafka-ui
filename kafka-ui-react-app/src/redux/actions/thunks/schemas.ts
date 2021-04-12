@@ -4,6 +4,7 @@ import {
   NewSchemaSubject,
   SchemaSubject,
   CompatibilityLevelCompatibilityEnum,
+  SchemaType,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
@@ -15,6 +16,7 @@ import {
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions';
 import { getResponse } from 'lib/errorHandling';
+import { isEqual } from 'lodash';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const schemasApiClient = new SchemasApi(apiClientConf);
@@ -86,8 +88,46 @@ export const updateSchemaCompatibilityLevel = (
       },
     });
     dispatch(actions.updateSchemaCompatibilityLevelAction.success());
-  } catch (e) {
-    dispatch(actions.updateSchemaCompatibilityLevelAction.failure());
-    throw e;
+  } catch (error) {
+    const response = await getResponse(error);
+    const alert: FailurePayload = {
+      subject: 'compatibilityLevel',
+      subjectId: subject,
+      title: `Compatibility level ${subject}`,
+      response,
+    };
+    dispatch(actions.updateSchemaCompatibilityLevelAction.failure({ alert }));
+  }
+};
+
+export const updateSchema = (
+  latestSchema: SchemaSubject,
+  newSchema: string,
+  newSchemaType: SchemaType,
+  newCompatibilityLevel: CompatibilityLevelCompatibilityEnum,
+  clusterName: string,
+  subject: string
+): PromiseThunkResult => async (dispatch) => {
+  if (
+    (newSchema &&
+      !isEqual(JSON.parse(latestSchema.schema), JSON.parse(newSchema))) ||
+    newSchemaType !== latestSchema.schemaType
+  ) {
+    await dispatch(
+      createSchema(clusterName, {
+        ...latestSchema,
+        schema: newSchema || latestSchema.schema,
+        schemaType: newSchemaType || latestSchema.schemaType,
+      })
+    );
+  }
+  if (newCompatibilityLevel !== latestSchema.compatibilityLevel) {
+    await dispatch(
+      updateSchemaCompatibilityLevel(
+        clusterName,
+        subject,
+        newCompatibilityLevel
+      )
+    );
   }
 };

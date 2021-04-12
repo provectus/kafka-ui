@@ -1,7 +1,6 @@
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import {
   CompatibilityLevelCompatibilityEnum,
-  NewSchemaSubject,
   SchemaSubject,
   SchemaType,
 } from 'generated-sources';
@@ -12,23 +11,21 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import { useHistory } from 'react-router';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import { useForm } from 'react-hook-form';
-import { isEqual } from 'lodash';
 
 export interface EditProps {
   subject: SchemaName;
   schema: SchemaSubject;
   clusterName: ClusterName;
   schemasAreFetched: boolean;
-  createSchema: (
-    clusterName: ClusterName,
-    newSchemaSubject: NewSchemaSubject
-  ) => Promise<void>;
   fetchSchemasByClusterName: (clusterName: ClusterName) => void;
-  updateSchemaCompatibilityLevel: (
-    clusterName: ClusterName,
-    subject: string,
-    compatibilityLevel: CompatibilityLevelCompatibilityEnum
-  ) => void;
+  updateSchema: (
+    latestSchema: SchemaSubject,
+    newSchema: string,
+    newSchemaType: SchemaType,
+    newCompatibilityLevel: CompatibilityLevelCompatibilityEnum,
+    clusterName: string,
+    subject: string
+  ) => Promise<void>;
 }
 
 export default function Edit({
@@ -36,54 +33,53 @@ export default function Edit({
   schema,
   clusterName,
   schemasAreFetched,
-  createSchema,
   fetchSchemasByClusterName,
-  updateSchemaCompatibilityLevel,
+  updateSchema,
 }: EditProps) {
   React.useEffect(() => {
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
   }, [clusterName, fetchSchemasByClusterName]);
 
-  let newSchema = '';
-  let isSubmitting = false;
+  const [newSchema, setNewSchema] = React.useState('');
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const { register, handleSubmit } = useForm<NewSchemaSubjectRaw>();
-  const handleSchemaChange = (e: string) => {
-    newSchema = e;
-  };
+  const getFormattedSchema = React.useCallback(
+    () => JSON.stringify(JSON.parse(schema.schema), null, '\t'),
+    [schema]
+  );
+
+  const handleSchemaChange = React.useCallback(
+    (e: string) => {
+      setNewSchema(e);
+    },
+    [setNewSchema]
+  );
   const history = useHistory();
-  const onSubmit = async ({
-    schemaType,
-    compatibilityLevel,
-  }: {
-    schemaType: SchemaType;
-    compatibilityLevel: CompatibilityLevelCompatibilityEnum;
-  }) => {
-    try {
-      isSubmitting = true;
-      if (
-        (newSchema &&
-          !isEqual(JSON.parse(schema.schema), JSON.parse(newSchema))) ||
-        schemaType !== schema.schemaType
-      ) {
-        await createSchema(clusterName, {
-          ...schema,
-          schema: newSchema || schema.schema,
-          schemaType: schemaType || schema.schemaType,
-        });
-      }
-      if (compatibilityLevel !== schema.compatibilityLevel) {
-        await updateSchemaCompatibilityLevel(
+  const onSubmit = React.useCallback(
+    async ({
+      schemaType,
+      compatibilityLevel,
+    }: {
+      schemaType: SchemaType;
+      compatibilityLevel: CompatibilityLevelCompatibilityEnum;
+    }) => {
+      try {
+        setIsSubmitting(true);
+        await updateSchema(
+          schema,
+          newSchema,
+          schemaType,
+          compatibilityLevel,
           clusterName,
-          subject,
-          compatibilityLevel
+          subject
         );
+        history.push(clusterSchemaPath(clusterName, subject));
+      } catch (e) {
+        setIsSubmitting(false);
       }
-      history.push(clusterSchemaPath(clusterName, subject));
-    } catch (e) {
-      isSubmitting = false;
-      // Show Error
-    }
-  };
+    },
+    [schema, newSchema, register, clusterName, subject, updateSchema, history]
+  );
 
   return (
     <div className="section">
@@ -113,16 +109,16 @@ export default function Edit({
               <h4 className="title is-5 mb-2">Latest Schema</h4>
               <JSONEditor
                 readonly
-                value={JSON.stringify(JSON.parse(schema.schema), null, '\t')}
+                value={getFormattedSchema()}
                 name="latestSchema"
               />
             </div>
             <div className="column is-one-half">
               <h4 className="title is-5 mb-2">New Schema</h4>
               <JSONEditor
-                value={JSON.stringify(JSON.parse(schema.schema), null, '\t')}
+                value={newSchema || getFormattedSchema()}
                 name="newSchema"
-                onChange={(e) => handleSchemaChange(e)}
+                onChange={handleSchemaChange}
               />
             </div>
           </div>
