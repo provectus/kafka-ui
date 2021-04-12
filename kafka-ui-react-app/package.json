@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
-    "@hookform/error-message": "0.0.5",
+    "@hookform/error-message": "1.1.0",
     "@rooks/use-outside-click-ref": "^4.10.1",
     "bulma": "^0.9.2",
     "bulma-switch": "^2.0.0",
