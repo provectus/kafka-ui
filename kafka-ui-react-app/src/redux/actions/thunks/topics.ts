@@ -232,8 +232,7 @@ export const createTopic = (
   } catch (error) {
     const response = await getResponse(error);
     const alert: FailurePayload = {
-      subjectId: form.name,
-      subject: 'schema',
+      subject: ['schema', form.name].join('-'),
       title: `Schema ${form.name}`,
       response,
     };

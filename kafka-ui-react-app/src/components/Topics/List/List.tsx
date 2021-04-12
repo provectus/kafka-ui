@@ -81,33 +81,35 @@ const List: React.FC<Props> = ({
         <PageLoader />
       ) : (
         <div className="box">
-          <table className="table is-fullwidth">
-            <thead>
-              <tr>
-                <th>Topic Name</th>
-                <th>Total Partitions</th>
-                <th>Out of sync replicas</th>
-                <th>Type</th>
-                <th> </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((topic) => (
-                <ListItem
-                  clusterName={clusterName}
-                  key={topic.name}
-                  topic={topic}
-                  deleteTopic={deleteTopic}
-                />
-              ))}
-              {items.length === 0 && (
+          <div className="table-container">
+            <table className="table is-fullwidth">
+              <thead>
                 <tr>
-                  <td colSpan={10}>No topics found</td>
+                  <th>Topic Name</th>
+                  <th>Total Partitions</th>
+                  <th>Out of sync replicas</th>
+                  <th>Type</th>
+                  <th> </th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-          <Pagination totalPages={totalPages} />
+              </thead>
+              <tbody>
+                {items.map((topic) => (
+                  <ListItem
+                    clusterName={clusterName}
+                    key={topic.name}
+                    topic={topic}
+                    deleteTopic={deleteTopic}
+                  />
+                ))}
+                {items.length === 0 && (
+                  <tr>
+                    <td colSpan={10}>No topics found</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+            <Pagination totalPages={totalPages} />
+          </div>
         </div>
       )}
     </div>

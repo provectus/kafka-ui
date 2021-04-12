@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
 import { RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-import { Cluster, ServerStatus } from 'generated-sources';
+import { Cluster, ClusterFeaturesEnum, ServerStatus } from 'generated-sources';
 
 const clustersState = ({ clusters }: RootState): Cluster[] => clusters;
 
@@ -30,4 +30,11 @@ export const getClustersReadonlyStatus = (clusterName: string) =>
     getClusterList,
     (clusters): boolean =>
       clusters.find(({ name }) => name === clusterName)?.readOnly || false
+  );
+
+export const getClustersFeatures = (clusterName: string) =>
+  createSelector(
+    getClusterList,
+    (clusters): ClusterFeaturesEnum[] =>
+      clusters.find(({ name }) => name === clusterName)?.features || []
   );

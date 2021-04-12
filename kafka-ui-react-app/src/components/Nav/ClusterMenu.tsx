@@ -1,101 +1,95 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
+import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { NavLink } from 'react-router-dom';
 import {
   clusterBrokersPath,
   clusterTopicsPath,
   clusterConsumerGroupsPath,
   clusterSchemasPath,
+  clusterConnectorsPath,
 } from 'lib/paths';
-import { Cluster, ServerStatus } from 'generated-sources';
+import DefaultClusterIcon from './DefaultClusterIcon';
+import ClusterStatusIcon from './ClusterStatusIcon';
 
 interface Props {
   cluster: Cluster;
 }
 
-const DefaultIcon: React.FC = () => {
-  const style: CSSProperties = {
-    width: '.6rem',
-    left: '-8px',
-    top: '-4px',
-    position: 'relative',
-  };
-
+const ClusterMenu: React.FC<Props> = ({
+  cluster: { name, status, defaultCluster, features },
+}) => {
+  const hasFeatureConfigured = React.useCallback(
+    (key) => features?.includes(key),
+    [features]
+  );
   return (
-    <span title="Default Cluster" className="icon has-text-primary is-small">
-      <i
-        style={style}
-        data-fa-transform="rotate-340"
-        className="fas fa-thumbtack"
-      />
-    </span>
+    <ul className="menu-list">
+      <li>
+        <NavLink
+          exact
+          to={clusterBrokersPath(name)}
+          title={name}
+          className="has-text-overflow-ellipsis"
+        >
+          {defaultCluster && <DefaultClusterIcon />}
+          {name}
+          <ClusterStatusIcon status={status} />
+        </NavLink>
+        <ul>
+          <li>
+            <NavLink
+              to={clusterBrokersPath(name)}
+              activeClassName="is-active"
+              title="Brokers"
+            >
+              Brokers
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to={clusterTopicsPath(name)}
+              activeClassName="is-active"
+              title="Topics"
+            >
+              Topics
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              to={clusterConsumerGroupsPath(name)}
+              activeClassName="is-active"
+              title="Consumers"
+            >
+              Consumers
+            </NavLink>
+          </li>
+
+          {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
+            <li>
+              <NavLink
+                to={clusterSchemasPath(name)}
+                activeClassName="is-active"
+                title="Schema Registry"
+              >
+                Schema Registry
+              </NavLink>
+            </li>
+          )}
+          {hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_CONNECT) && (
+            <li>
+              <NavLink
+                to={clusterConnectorsPath(name)}
+                activeClassName="is-active"
+                title="Kafka Connect"
+              >
+                Kafka Connect
+              </NavLink>
+            </li>
+          )}
+        </ul>
+      </li>
+    </ul>
   );
 };
-
-const StatusIcon: React.FC<Props> = ({ cluster }) => {
-  const style: CSSProperties = {
-    width: '10px',
-    height: '10px',
-    borderRadius: '5px',
-    marginLeft: '7px',
-    padding: 0,
-  };
-
-  return (
-    <span
-      className={`tag ${
-        cluster.status === ServerStatus.ONLINE ? 'is-primary' : 'is-danger'
-      }`}
-      title={cluster.status}
-      style={style}
-    />
-  );
-};
-
-const ClusterMenu: React.FC<Props> = ({ cluster }) => (
-  <ul className="menu-list">
-    <li>
-      <NavLink
-        exact
-        to={clusterBrokersPath(cluster.name)}
-        title={cluster.name}
-        className="has-text-overflow-ellipsis"
-      >
-        {cluster.defaultCluster && <DefaultIcon />}
-        {cluster.name}
-        <StatusIcon cluster={cluster} />
-      </NavLink>
-      <ul>
-        <NavLink
-          to={clusterBrokersPath(cluster.name)}
-          activeClassName="is-active"
-          title="Brokers"
-        >
-          Brokers
-        </NavLink>
-        <NavLink
-          to={clusterTopicsPath(cluster.name)}
-          activeClassName="is-active"
-          title="Topics"
-        >
-          Topics
-        </NavLink>
-        <NavLink
-          to={clusterConsumerGroupsPath(cluster.name)}
-          activeClassName="is-active"
-          title="Consumers"
-        >
-          Consumers
-        </NavLink>
-        <NavLink
-          to={clusterSchemasPath(cluster.name)}
-          activeClassName="is-active"
-          title="Schema Registry"
-        >
-          Schema Registry
-        </NavLink>
-      </ul>
-    </li>
-  </ul>
-);
 
 export default ClusterMenu;

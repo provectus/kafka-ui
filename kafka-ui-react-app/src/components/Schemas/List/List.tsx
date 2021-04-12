@@ -48,25 +48,27 @@ const List: React.FC<ListProps> = ({
         <PageLoader />
       ) : (
         <div className="box">
-          <table className="table is-striped is-fullwidth">
-            <thead>
-              <tr>
-                <th>Schema Name</th>
-                <th>Version</th>
-                <th>Compatibility</th>
-              </tr>
-            </thead>
-            <tbody>
-              {schemas.length === 0 && (
+          <div className="table-container">
+            <table className="table is-striped is-fullwidth">
+              <thead>
                 <tr>
-                  <td colSpan={10}>No schemas found</td>
+                  <th>Schema Name</th>
+                  <th>Version</th>
+                  <th>Compatibility</th>
                 </tr>
-              )}
-              {schemas.map((subject) => (
-                <ListItem key={subject.id} subject={subject} />
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {schemas.length === 0 && (
+                  <tr>
+                    <td colSpan={10}>No schemas found</td>
+                  </tr>
+                )}
+                {schemas.map((subject) => (
+                  <ListItem key={subject.id} subject={subject} />
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>

@@ -4,14 +4,13 @@ import React from 'react';
 export interface ServerResponse {
   status: number;
   statusText: string;
-  body: ErrorResponse;
+  body?: ErrorResponse;
 }
 
 export interface FailurePayload {
   title: string;
   message?: string;
   subject: string;
-  subjectId?: string | number;
   response?: ServerResponse;
 }
 

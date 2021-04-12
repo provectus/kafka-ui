@@ -1,6 +1,6 @@
 import { dismissAlert, createTopicAction } from 'redux/actions';
 import reducer from 'redux/reducers/alerts/reducer';
-import { failurePayloadWithId, failurePayloadWithoutId } from './fixtures';
+import { failurePayload1, failurePayload2 } from './fixtures';
 
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
@@ -12,38 +12,18 @@ describe('Clusters reducer', () => {
     expect(reducer(undefined, createTopicAction.failure({}))).toEqual({});
   });
 
-  it('creates error alert with subjectId', () => {
+  it('creates error alert', () => {
     expect(
       reducer(
         undefined,
         createTopicAction.failure({
-          alert: failurePayloadWithId,
+          alert: failurePayload2,
         })
       )
     ).toEqual({
-      'alert-topic12345': {
+      'alert-topic-2': {
         createdAt: 1234567890,
-        id: 'alert-topic12345',
-        message: 'message',
-        response: undefined,
-        title: 'title',
-        type: 'error',
-      },
-    });
-  });
-
-  it('creates error alert without subjectId', () => {
-    expect(
-      reducer(
-        undefined,
-        createTopicAction.failure({
-          alert: failurePayloadWithoutId,
-        })
-      )
-    ).toEqual({
-      'alert-topic': {
-        createdAt: 1234567890,
-        id: 'alert-topic',
+        id: 'alert-topic-2',
         message: 'message',
         response: undefined,
         title: 'title',
@@ -56,23 +36,23 @@ describe('Clusters reducer', () => {
     const state = reducer(
       undefined,
       createTopicAction.failure({
-        alert: failurePayloadWithoutId,
+        alert: failurePayload1,
       })
     );
-    expect(reducer(state, dismissAlert('alert-topic'))).toEqual({});
+    expect(reducer(state, dismissAlert('alert-topic-1'))).toEqual({});
   });
 
   it('does not remove alert if id is wrong', () => {
     const state = reducer(
       undefined,
       createTopicAction.failure({
-        alert: failurePayloadWithoutId,
+        alert: failurePayload1,
       })
     );
     expect(reducer(state, dismissAlert('wrong-id'))).toEqual({
-      'alert-topic': {
+      'alert-topic-1': {
         createdAt: 1234567890,
-        id: 'alert-topic',
+        id: 'alert-topic-1',
         message: 'message',
         response: undefined,
         title: 'title',

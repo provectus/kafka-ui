@@ -85,24 +85,28 @@ exports[`Details View Initial state matches snapshot 1`] = `
   <div
     className="box"
   >
-    <table
-      className="table is-striped is-fullwidth"
+    <div
+      className="table-container"
     >
-      <thead>
-        <tr>
-          <th>
-            Version
-          </th>
-          <th>
-            ID
-          </th>
-          <th>
-            Schema
-          </th>
-        </tr>
-      </thead>
-      <tbody />
-    </table>
+      <table
+        className="table is-striped is-fullwidth"
+      >
+        <thead>
+          <tr>
+            <th>
+              Version
+            </th>
+            <th>
+              ID
+            </th>
+            <th>
+              Schema
+            </th>
+          </tr>
+        </thead>
+        <tbody />
+      </table>
+    </div>
   </div>
 </div>
 `;
@@ -216,51 +220,55 @@ exports[`Details View when page with schema versions loaded when schema has vers
   <div
     className="box"
   >
-    <table
-      className="table is-striped is-fullwidth"
+    <div
+      className="table-container"
     >
-      <thead>
-        <tr>
-          <th>
-            Version
-          </th>
-          <th>
-            ID
-          </th>
-          <th>
-            Schema
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <SchemaVersion
-          key="1"
-          version={
-            Object {
-              "compatibilityLevel": "BACKWARD",
-              "id": 1,
-              "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
-              "schemaType": "JSON",
-              "subject": "test",
-              "version": "1",
+      <table
+        className="table is-striped is-fullwidth"
+      >
+        <thead>
+          <tr>
+            <th>
+              Version
+            </th>
+            <th>
+              ID
+            </th>
+            <th>
+              Schema
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <SchemaVersion
+            key="1"
+            version={
+              Object {
+                "compatibilityLevel": "BACKWARD",
+                "id": 1,
+                "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+                "schemaType": "JSON",
+                "subject": "test",
+                "version": "1",
+              }
             }
-          }
-        />
-        <SchemaVersion
-          key="2"
-          version={
-            Object {
-              "compatibilityLevel": "BACKWARD",
-              "id": 2,
-              "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
-              "schemaType": "JSON",
-              "subject": "test",
-              "version": "2",
+          />
+          <SchemaVersion
+            key="2"
+            version={
+              Object {
+                "compatibilityLevel": "BACKWARD",
+                "id": 2,
+                "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord2\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+                "schemaType": "JSON",
+                "subject": "test",
+                "version": "2",
+              }
             }
-          }
-        />
-      </tbody>
-    </table>
+          />
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 `;
@@ -350,24 +358,28 @@ exports[`Details View when page with schema versions loaded when versions are em
   <div
     className="box"
   >
-    <table
-      className="table is-striped is-fullwidth"
+    <div
+      className="table-container"
     >
-      <thead>
-        <tr>
-          <th>
-            Version
-          </th>
-          <th>
-            ID
-          </th>
-          <th>
-            Schema
-          </th>
-        </tr>
-      </thead>
-      <tbody />
-    </table>
+      <table
+        className="table is-striped is-fullwidth"
+      >
+        <thead>
+          <tr>
+            <th>
+              Version
+            </th>
+            <th>
+              ID
+            </th>
+            <th>
+              Schema
+            </th>
+          </tr>
+        </thead>
+        <tbody />
+      </table>
+    </div>
   </div>
 </div>
 `;
