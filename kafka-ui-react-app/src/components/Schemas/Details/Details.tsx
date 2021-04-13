@@ -3,6 +3,7 @@ import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemasPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
+import { useHistory } from 'react-router';
 import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
@@ -18,6 +19,7 @@ export interface DetailsProps {
     clusterName: ClusterName,
     schemaName: SchemaName
   ) => void;
+  deleteSchema: (clusterName: ClusterName, subject: string) => Promise<void>;
 }
 
 const Details: React.FC<DetailsProps> = ({
@@ -25,6 +27,7 @@ const Details: React.FC<DetailsProps> = ({
   schema,
   clusterName,
   fetchSchemaVersions,
+  deleteSchema,
   versions,
   isFetched,
 }) => {
@@ -32,6 +35,12 @@ const Details: React.FC<DetailsProps> = ({
   React.useEffect(() => {
     fetchSchemaVersions(clusterName, subject);
   }, [fetchSchemaVersions, clusterName]);
+
+  const history = useHistory();
+  const onDelete = async () => {
+    await deleteSchema(clusterName, subject);
+    history.push(clusterSchemasPath(clusterName));
+  };
 
   return (
     <div className="section">
@@ -75,7 +84,7 @@ const Details: React.FC<DetailsProps> = ({
                     className="button is-danger is-small level-item"
                     type="button"
                     title="in development"
-                    disabled
+                    onClick={onDelete}
                   >
                     Delete
                   </button>

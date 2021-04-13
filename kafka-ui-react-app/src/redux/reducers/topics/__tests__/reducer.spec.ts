@@ -11,7 +11,7 @@ describe('topics reducer', () => {
       reducer(
         {
           byName: {
-            topic,
+            [topic.name]: topic,
           },
           allNames: [topic.name],
           messages: [],

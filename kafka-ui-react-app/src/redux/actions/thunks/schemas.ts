@@ -68,3 +68,25 @@ export const createSchema = (
     dispatch(actions.createSchemaAction.failure({ alert }));
   }
 };
+
+export const deleteSchema = (
+  clusterName: ClusterName,
+  subject: string
+): PromiseThunkResult => async (dispatch) => {
+  dispatch(actions.deleteSchemaAction.request());
+  try {
+    await schemasApiClient.deleteSchema({
+      clusterName,
+      subject,
+    });
+    dispatch(actions.deleteSchemaAction.success(subject));
+  } catch (error) {
+    const response = await getResponse(error);
+    const alert: FailurePayload = {
+      subject: ['schema', subject].join('-'),
+      title: `Schema ${subject}`,
+      response,
+    };
+    dispatch(actions.deleteSchemaAction.failure({ alert }));
+  }
+};

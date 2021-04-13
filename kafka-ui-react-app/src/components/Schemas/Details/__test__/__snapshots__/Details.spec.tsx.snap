@@ -61,7 +61,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
         </button>
         <button
           className="button is-danger is-small level-item"
-          disabled={true}
+          onClick={[Function]}
           title="in development"
           type="button"
         >
@@ -196,7 +196,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
         </button>
         <button
           className="button is-danger is-small level-item"
-          disabled={true}
+          onClick={[Function]}
           title="in development"
           type="button"
         >
@@ -334,7 +334,7 @@ exports[`Details View when page with schema versions loaded when versions are em
         </button>
         <button
           className="button is-danger is-small level-item"
-          disabled={true}
+          onClick={[Function]}
           title="in development"
           type="button"
         >
