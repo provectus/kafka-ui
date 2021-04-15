@@ -1,6 +1,8 @@
 import { connect } from 'react-redux';
 import { ClusterName, RootState, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { clearMessagesTopic } from 'redux/actions';
+
 import Details from './Details';
 
 interface RouteProps {
@@ -22,4 +24,10 @@ const mapStateToProps = (
   topicName,
 });
 
-export default withRouter(connect(mapStateToProps)(Details));
+const mapDispatchToProps = {
+  clearMessagesTopic,
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Details)
+);

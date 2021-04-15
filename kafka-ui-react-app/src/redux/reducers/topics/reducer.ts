@@ -53,6 +53,7 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       );
       return newState;
     }
+    case getType(actions.clearMessagesTopicAction.success):
     default:
       return state;
   }

@@ -16,9 +16,18 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
+  deleteMessageTopic(
+    clusterName: ClusterName,
+    topicName: TopicName,
+    partitions: Array<number> | undefined
+  ): void;
 }
 
-const Details: React.FC<Props> = ({ clusterName, topicName }) => {
+const Details: React.FC<Props> = ({
+  clusterName,
+  topicName,
+  deleteMessageTopic,
+}) => {
   const { isReadOnly } = React.useContext(ClusterContext);
 
   return (
@@ -50,14 +59,25 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
             Settings
           </NavLink>
         </div>
-        <div className="navbar-end">
+        <div className="navbar-end buttons">
           {!isReadOnly && (
-            <Link
-              to={clusterTopicsTopicEditPath(clusterName, topicName)}
-              className="button"
-            >
-              Edit settings
-            </Link>
+            <>
+              <button
+                type="button"
+                className="button is-danger"
+                onClick={() =>
+                  deleteMessageTopic(clusterName, topicName, undefined)
+                }
+              >
+                Clear All Messages
+              </button>
+              <Link
+                to={clusterTopicsTopicEditPath(clusterName, topicName)}
+                className="button"
+              >
+                Edit settings
+              </Link>
+            </>
           )}
         </div>
       </nav>

@@ -12,9 +12,10 @@ describe('ListItem', () => {
         topic={topic}
         deleteTopic={mockDelete}
         clusterName={clustterName}
+        clearMessagesTopic={jest.fn()}
       />
     );
-    component.find('DropdownItem').simulate('click');
+    component.find('DropdownItem').at(0).simulate('click');
     expect(mockDelete).toBeCalledTimes(1);
     expect(mockDelete).toBeCalledWith(clustterName, topic.name);
   });
