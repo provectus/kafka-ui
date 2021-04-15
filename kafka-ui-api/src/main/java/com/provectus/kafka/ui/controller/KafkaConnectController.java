@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.model.Connector;
 import com.provectus.kafka.ui.model.ConnectorAction;
 import com.provectus.kafka.ui.model.ConnectorPlugin;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponse;
+import com.provectus.kafka.ui.model.FullConnectorInfo;
 import com.provectus.kafka.ui.model.NewConnector;
 import com.provectus.kafka.ui.model.Task;
 import com.provectus.kafka.ui.service.KafkaConnectService;
@@ -60,6 +61,14 @@ public class KafkaConnectController implements KafkaConnectApi {
                                                     ServerWebExchange exchange) {
     return kafkaConnectService.deleteConnector(clusterName, connectName, connectorName)
         .map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<FullConnectorInfo>>> getAllConnectors(
+      String clusterName,
+      ServerWebExchange exchange
+  ) {
+    return Mono.just(ResponseEntity.ok(kafkaConnectService.getAllConnectors(clusterName)));
   }
 
   @Override

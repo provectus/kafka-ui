@@ -9,6 +9,8 @@ import com.provectus.kafka.ui.model.ConnectorPluginConfig;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponse;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValue;
 import com.provectus.kafka.ui.model.ConnectorStatus;
+import com.provectus.kafka.ui.model.ConnectorTaskStatus;
+import com.provectus.kafka.ui.model.ConnectorType;
 import com.provectus.kafka.ui.model.NewConnector;
 import com.provectus.kafka.ui.model.TaskId;
 import java.util.List;
@@ -100,13 +102,14 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   @Test
   public void shouldRetrieveConnector() {
     Connector expected = (Connector) new Connector()
+        .connect(connectName)
         .status(new ConnectorStatus()
-            .state(ConnectorStatus.StateEnum.RUNNING)
+            .state(ConnectorTaskStatus.RUNNING)
             .workerId("kafka-connect:8083"))
         .tasks(List.of(new TaskId()
             .connector(connectorName)
             .task(0)))
-        .type(Connector.TypeEnum.SINK)
+        .type(ConnectorType.SINK)
         .name(connectorName)
         .config(config);
     webTestClient.get()
