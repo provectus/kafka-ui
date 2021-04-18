@@ -10,10 +10,10 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
-  clearMessagesTopic(
+  clearTopicMessages(
     clusterName: ClusterName,
     topicName: TopicName,
-    partitions: Array<number> | undefined
+    partitions?: number[]
   ): void;
 }
 
@@ -29,7 +29,7 @@ const Overview: React.FC<Props> = ({
   segmentCount,
   clusterName,
   topicName,
-  clearMessagesTopic,
+  clearTopicMessages,
 }) => (
   <>
     <MetricsWrapper>
@@ -85,7 +85,7 @@ const Overview: React.FC<Props> = ({
                 >
                   <DropdownItem
                     onClick={() =>
-                      clearMessagesTopic(clusterName, topicName, [partition])
+                      clearTopicMessages(clusterName, topicName, [partition])
                     }
                   >
                     <span className="has-text-danger">Clear Messages</span>

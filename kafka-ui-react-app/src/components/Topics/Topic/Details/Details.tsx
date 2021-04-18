@@ -16,19 +16,19 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
-  deleteMessageTopic(
-    clusterName: ClusterName,
-    topicName: TopicName,
-    partitions: Array<number> | undefined
-  ): void;
+  clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
 
 const Details: React.FC<Props> = ({
   clusterName,
   topicName,
-  deleteMessageTopic,
+  clearTopicMessages,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
+
+  const clearTopicMessagesHandler = React.useCallback(() => {
+    clearTopicMessages(clusterName, topicName);
+  }, [clusterName, topicName]);
 
   return (
     <div className="box">
@@ -65,9 +65,7 @@ const Details: React.FC<Props> = ({
               <button
                 type="button"
                 className="button is-danger"
-                onClick={() =>
-                  deleteMessageTopic(clusterName, topicName, undefined)
-                }
+                onClick={clearTopicMessagesHandler}
               >
                 Clear All Messages
               </button>

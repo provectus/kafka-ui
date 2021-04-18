@@ -13,18 +13,14 @@ interface ListItemProps {
   topic: TopicWithDetailedInfo;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
-  clearMessagesTopic(
-    topicName: TopicName,
-    clusterName: ClusterName,
-    partitions: Array<number> | undefined
-  ): void;
+  clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
   topic: { name, internal, partitions },
   deleteTopic,
   clusterName,
-  clearMessagesTopic,
+  clearTopicMessages,
 }) => {
   const outOfSyncReplicas = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
@@ -39,6 +35,10 @@ const ListItem: React.FC<ListItemProps> = ({
 
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, name);
+  }, [clusterName, name]);
+
+  const clearTopicMessagesHandler = React.useCallback(() => {
+    clearTopicMessages(clusterName, name);
   }, [clusterName, name]);
 
   return (
@@ -71,13 +71,11 @@ const ListItem: React.FC<ListItemProps> = ({
           }
           right
         >
+          <DropdownItem onClick={clearTopicMessagesHandler}>
+            <span className="has-text-danger">Clear Messages</span>
+          </DropdownItem>
           <DropdownItem onClick={deleteTopicHandler}>
             <span className="has-text-danger">Delete Topic</span>
-          </DropdownItem>
-          <DropdownItem
-            onClick={() => clearMessagesTopic(clusterName, name, undefined)}
-          >
-            <span className="has-text-danger">Clear Messages</span>
           </DropdownItem>
         </Dropdown>
       </td>

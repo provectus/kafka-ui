@@ -81,10 +81,10 @@ export const fetchTopicMessages = (
   }
 };
 
-export const clearMessagesTopic = (
+export const clearTopicMessages = (
   clusterName: ClusterName,
   topicName: TopicName,
-  partitions: Array<number>
+  partitions?: number[]
 ): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.clearMessagesTopicAction.request());
   try {

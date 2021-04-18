@@ -3,7 +3,7 @@ import { RootState } from 'redux/interfaces';
 import {
   fetchTopicsList,
   deleteTopic,
-  clearMessagesTopic,
+  clearTopicMessages,
 } from 'redux/actions';
 import {
   getTopicList,
@@ -23,7 +23,7 @@ const mapStateToProps = (state: RootState) => ({
 const mapDispatchToProps = {
   fetchTopicsList,
   deleteTopic,
-  clearMessagesTopic,
+  clearTopicMessages,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);
