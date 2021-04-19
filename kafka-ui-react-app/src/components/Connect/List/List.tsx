@@ -1,19 +1,21 @@
 import React from 'react';
-import { Connect, Connector } from 'generated-sources';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import ClusterContext from 'components/contexts/ClusterContext';
+import { Connect, FullConnectorInfo } from 'generated-sources';
 import { useParams } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import ClusterContext from 'components/contexts/ClusterContext';
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import ListItem from './ListItem';
 
 export interface ListProps {
   areConnectsFetching: boolean;
   areConnectorsFetching: boolean;
-  connectors: Connector[];
+  connectors: FullConnectorInfo[];
   connects: Connect[];
   fetchConnects(clusterName: ClusterName): void;
+  fetchConnectors(clusterName: ClusterName): void;
 }
 
 const List: React.FC<ListProps> = ({
@@ -22,13 +24,15 @@ const List: React.FC<ListProps> = ({
   areConnectsFetching,
   areConnectorsFetching,
   fetchConnects,
+  fetchConnectors,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
 
   React.useEffect(() => {
     fetchConnects(clusterName);
-  }, [fetchConnects, clusterName]);
+    fetchConnectors(clusterName);
+  }, [fetchConnects, fetchConnectors, clusterName]);
 
   return (
     <div className="section">
@@ -38,6 +42,7 @@ const List: React.FC<ListProps> = ({
       </div>
       <MetricsWrapper>
         <Indicator
+          className="level-left is-one-third"
           label="Connects"
           title="Connects"
           fetching={areConnectsFetching}
@@ -57,29 +62,36 @@ const List: React.FC<ListProps> = ({
         <PageLoader />
       ) : (
         <div className="box">
-          <div className="table-container">
-            <table className="table is-fullwidth">
-              <thead>
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Connect</th>
+                <th>Type</th>
+                <th>Plugin</th>
+                <th>Topics</th>
+                <th>Status</th>
+                <th>Running Tasks</th>
+                <th> </th>
+              </tr>
+            </thead>
+            <tbody>
+              {connectors.length === 0 && (
                 <tr>
-                  <th>Name</th>
-                  <th>Connect</th>
-                  <th>Type</th>
-                  <th>Plugin</th>
-                  <th>Topics</th>
-                  <th>Status</th>
-                  <th>Tasks</th>
-                  <th> </th>
+                  <td colSpan={10}>No connectors found</td>
                 </tr>
-              </thead>
-              <tbody>
-                {connectors.length === 0 && (
-                  <tr>
-                    <td colSpan={10}>No connectors found</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              )}
+              {connectors.map((connector) => (
+                <ListItem
+                  key={[connector.name, connector.connect, clusterName].join(
+                    '-'
+                  )}
+                  connector={connector}
+                  clusterName={clusterName}
+                />
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>

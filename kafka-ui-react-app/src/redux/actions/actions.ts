@@ -149,3 +149,9 @@ export const fetchConnectorAction = createAsyncAction(
   'GET_CONNECTOR__SUCCESS',
   'GET_CONNECTOR__FAILURE'
 )<undefined, ConnectState, { alert?: FailurePayload }>();
+
+export const deleteConnectorAction = createAsyncAction(
+  'DELETE_CONNECTOR__REQUEST',
+  'DELETE_CONNECTOR__SUCCESS',
+  'DELETE_CONNECTOR__FAILURE'
+)<undefined, ConnectState, { alert?: FailurePayload }>();

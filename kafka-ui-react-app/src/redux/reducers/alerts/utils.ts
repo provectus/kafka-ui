@@ -10,7 +10,7 @@ export const addError = (state: AlertsState, action: Action) => {
   ) {
     const { subject, title, message, response } = action.payload.alert;
 
-    const id = `alert-${subject}`;
+    const id = `${action.type}-${subject}`;
 
     return {
       ...state,

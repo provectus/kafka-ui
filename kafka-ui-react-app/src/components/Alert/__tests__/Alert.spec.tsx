@@ -4,11 +4,6 @@ import { Alert as AlertProps } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import Alert from '../Alert';
 
-jest.mock('react-redux', () => ({
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => jest.fn(),
-}));
-
 const id = 'test-id';
 const title = 'My Alert Title';
 const message = 'My Alert Message';

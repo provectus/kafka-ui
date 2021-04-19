@@ -12,7 +12,7 @@ const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   }
 
   return (
-    <tr className="cursor-pointer" onClick={goToConsumerGroupDetails}>
+    <tr className="is-clickable" onClick={goToConsumerGroupDetails}>
       <td>{consumerGroup.consumerGroupId}</td>
       <td>{consumerGroup.numConsumers}</td>
       <td>{consumerGroup.numTopics}</td>

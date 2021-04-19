@@ -33,7 +33,7 @@ const Overview: React.FC<Props> = ({
         </span>
       </Indicator>
       <Indicator label="Type">
-        <span className="tag is-primary">
+        <span className={`tag ${internal ? 'is-light' : 'is-primary'}`}>
           {internal ? 'Internal' : 'External'}
         </span>
       </Indicator>

@@ -17,7 +17,7 @@ const ClusterStatusIcon: React.FC<Props> = ({ status }) => {
   return (
     <span
       className={`tag ${
-        status === ServerStatus.ONLINE ? 'is-primary' : 'is-danger'
+        status === ServerStatus.ONLINE ? 'is-success' : 'is-danger'
       }`}
       title={status}
       style={style}

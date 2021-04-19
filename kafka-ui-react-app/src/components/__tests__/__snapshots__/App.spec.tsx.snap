@@ -295,7 +295,7 @@ exports[`App view matches snapshot 1`] = `
                                         className="title has-text-centered"
                                       >
                                         <span
-                                          className="tag is-primary"
+                                          className="tag is-success"
                                         >
                                           0
                                         </span>
