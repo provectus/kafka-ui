@@ -13,6 +13,7 @@ const reducer = (state = initialState, action: Action): ConnectState => {
     case getType(actions.fetchConnectsAction.success):
     case getType(actions.fetchConnectorAction.success):
     case getType(actions.fetchConnectorsAction.success):
+    case getType(actions.deleteConnectorAction.success):
       return action.payload;
     default:
       return state;

@@ -15,7 +15,6 @@ import List from './List';
 const mapStateToProps = (state: RootState) => ({
   areConnectsFetching: getAreConnectsFetching(state),
   areConnectorsFetching: getAreConnectorsFetching(state),
-
   connects: getConnects(state),
   connectors: getConnectors(state),
 });

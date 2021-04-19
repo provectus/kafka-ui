@@ -86,7 +86,7 @@ const Details: React.FC<DetailsProps> = ({
                     title="in development"
                     onClick={onDelete}
                   >
-                    Delete
+                    Remove
                   </button>
                 </div>
               )}

@@ -1,0 +1,192 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Connectors ListItem matches snapshot 1`] = `
+<Provider
+  store={
+    Object {
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+      Symbol(observable): [Function],
+    }
+  }
+>
+  <BrowserRouter>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "length": 1,
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+    >
+      <table>
+        <tbody>
+          <ListItem
+            clusterName="local"
+            connector={
+              Object {
+                "connect": "first",
+                "connectorClass": "FileStreamSource",
+                "failedTasksCount": 0,
+                "name": "hdfs-source-connector",
+                "status": "RUNNING",
+                "tasksCount": 2,
+                "topics": Array [
+                  "test-topic",
+                ],
+                "type": "SOURCE",
+              }
+            }
+          >
+            <tr>
+              <td
+                className="has-text-overflow-ellipsis"
+              >
+                hdfs-source-connector
+              </td>
+              <td>
+                first
+              </td>
+              <td>
+                SOURCE
+              </td>
+              <td>
+                FileStreamSource
+              </td>
+              <td>
+                <Link
+                  className="mr-1"
+                  key="test-topic"
+                  to="/ui/clusters/local/topics/test-topic"
+                >
+                  <LinkAnchor
+                    className="mr-1"
+                    href="/ui/clusters/local/topics/test-topic"
+                    navigate={[Function]}
+                  >
+                    <a
+                      className="mr-1"
+                      href="/ui/clusters/local/topics/test-topic"
+                      onClick={[Function]}
+                    >
+                      test-topic
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </td>
+              <td>
+                <StatusTag
+                  status="RUNNING"
+                >
+                  <span
+                    className="tag is-success"
+                  >
+                    RUNNING
+                  </span>
+                </StatusTag>
+              </td>
+              <td>
+                <span
+                  className="has-text-success"
+                >
+                  2
+                   of 
+                  2
+                </span>
+              </td>
+              <td
+                className="has-text-right"
+              >
+                <Dropdown
+                  label={
+                    <span
+                      className="icon"
+                    >
+                      <i
+                        className="fas fa-cog"
+                      />
+                    </span>
+                  }
+                  right={true}
+                >
+                  <div
+                    className="dropdown is-right"
+                  >
+                    <div
+                      className="dropdown-trigger"
+                    >
+                      <button
+                        aria-controls="dropdown-menu"
+                        aria-haspopup="true"
+                        className="button is-small"
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        <span
+                          className="icon"
+                        >
+                          <i
+                            className="fas fa-cog"
+                          />
+                        </span>
+                      </button>
+                    </div>
+                    <div
+                      className="dropdown-menu"
+                      id="dropdown-menu"
+                      role="menu"
+                    >
+                      <div
+                        className="dropdown-content has-text-left"
+                      >
+                        <DropdownDivider>
+                          <hr
+                            className="dropdown-divider"
+                          />
+                        </DropdownDivider>
+                        <DropdownItem
+                          onClick={[Function]}
+                        >
+                          <a
+                            className="dropdown-item is-link"
+                            href="#end"
+                            onClick={[Function]}
+                            role="menuitem"
+                            type="button"
+                          >
+                            <span
+                              className="has-text-danger"
+                            >
+                              Remove Connector
+                            </span>
+                          </a>
+                        </DropdownItem>
+                      </div>
+                    </div>
+                  </div>
+                </Dropdown>
+              </td>
+            </tr>
+          </ListItem>
+        </tbody>
+      </table>
+    </Router>
+  </BrowserRouter>
+</Provider>
+`;

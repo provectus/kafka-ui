@@ -5,7 +5,6 @@ import {
   TopicName,
   TopicConfigByName,
   TopicWithDetailedInfo,
-  CleanupPolicy,
 } from 'redux/interfaces';
 import { TopicConfig } from 'generated-sources';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -32,7 +31,7 @@ const DEFAULTS = {
   partitions: 1,
   replicationFactor: 1,
   minInSyncReplicas: 1,
-  cleanupPolicy: CleanupPolicy.Delete,
+  cleanupPolicy: 'delete',
   retentionBytes: -1,
   maxMessageBytes: 1000012,
 };
