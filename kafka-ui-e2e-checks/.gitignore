@@ -1,0 +1,6 @@
+.env
+build/
+allure-results/
+selenoid/video/
+target/
+selenoid/logs/
