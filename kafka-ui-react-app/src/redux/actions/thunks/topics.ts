@@ -95,7 +95,13 @@ export const clearTopicMessages = (
     });
     dispatch(actions.clearMessagesTopicAction.success(topicName));
   } catch (e) {
-    dispatch(actions.clearMessagesTopicAction.failure());
+    const response = await getResponse(e);
+    const alert: FailurePayload = {
+      subject: 'Something Went Wrong',
+      title: `Clear Messages Topic`,
+      response,
+    };
+    dispatch(actions.clearMessagesTopicAction.failure({ alert }));
   }
 };
 

@@ -125,8 +125,9 @@ describe('Actions', () => {
     });
 
     it('creates a FAILURE action', () => {
-      expect(actions.clearMessagesTopicAction.failure()).toEqual({
+      expect(actions.clearMessagesTopicAction.failure({})).toEqual({
         type: 'CLEAR_TOPIC_MESSAGES__FAILURE',
+        payload: {},
       });
     });
   });
