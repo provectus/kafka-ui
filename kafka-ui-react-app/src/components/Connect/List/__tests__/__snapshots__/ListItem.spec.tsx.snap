@@ -183,11 +183,17 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                     </div>
                   </Dropdown>
                 </div>
-                <ConfirmationModal
+                <mock-ConfirmationModal
                   isOpen={false}
                   onCancel={[Function]}
                   onConfirm={[Function]}
-                />
+                >
+                  Are you sure want to remove 
+                  <b>
+                    hdfs-source-connector
+                  </b>
+                   connector?
+                </mock-ConfirmationModal>
               </td>
             </tr>
           </ListItem>
