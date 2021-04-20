@@ -11,6 +11,11 @@ import { schema, versions } from './fixtures';
 const clusterName = 'testCluster';
 const fetchSchemaVersionsMock = jest.fn();
 
+jest.mock(
+  'components/common/ConfirmationModal/ConfirmationModal',
+  () => 'mock-ConfirmationModal'
+);
+
 describe('Details', () => {
   describe('Container', () => {
     const store = configureStore();
@@ -92,23 +97,34 @@ describe('Details', () => {
       });
 
       describe('when schema has versions', () => {
-        const wrapper = shallow(setupWrapper({ versions }));
-
         it('renders table heading with SchemaVersion', () => {
+          const wrapper = shallow(setupWrapper({ versions }));
           expect(wrapper.exists('LatestVersionItem')).toBeTruthy();
           expect(wrapper.exists('button')).toBeTruthy();
           expect(wrapper.exists('thead')).toBeTruthy();
           expect(wrapper.find('SchemaVersion').length).toEqual(2);
         });
 
-        it('calls deleteSchema on button click', () => {
+        it('calls deleteSchema after confirmation', () => {
           const mockDelete = jest.fn();
-          const component = mount(
+          const wrapper = mount(
             <StaticRouter>
               {setupWrapper({ versions, deleteSchema: mockDelete })}
             </StaticRouter>
           );
-          component.find('button').at(1).simulate('click');
+          expect(
+            wrapper.find('mock-ConfirmationModal').prop('isOpen')
+          ).toBeFalsy();
+
+          wrapper.find('button').at(1).simulate('click');
+          expect(
+            wrapper.find('mock-ConfirmationModal').prop('isOpen')
+          ).toBeTruthy();
+
+          wrapper
+            .find('mock-ConfirmationModal')
+            .prop<() => void>('onConfirm')();
+
           expect(mockDelete).toHaveBeenCalledTimes(1);
         });
 
