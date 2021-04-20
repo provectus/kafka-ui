@@ -37,9 +37,11 @@ const List: React.FC<ListProps> = ({
   return (
     <div className="section">
       <Breadcrumb>All Connectors</Breadcrumb>
-      <div className="box has-background-danger has-text-centered has-text-light">
-        Kafka Connect section is under construction.
-      </div>
+      <article className="message is-warning">
+        <div className="message-body">
+          Kafka Connect section is under construction.
+        </div>
+      </article>
       <MetricsWrapper>
         <Indicator
           className="level-left is-one-third"

@@ -9,6 +9,7 @@ import { deleteConnector } from 'redux/actions';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import StatusTag from '../StatusTag';
 
 export interface ListItemProps {
@@ -30,11 +31,16 @@ const ListItem: React.FC<ListItemProps> = ({
   },
 }) => {
   const dispatch = useDispatch();
+  const [
+    isDeleteConnectorConfirmationVisible,
+    setDeleteConnectorConfirmationVisible,
+  ] = React.useState(false);
 
   const handleDelete = React.useCallback(() => {
     if (clusterName && connect && name) {
       dispatch(deleteConnector(clusterName, connect, name));
     }
+    setDeleteConnectorConfirmationVisible(false);
   }, [clusterName, connect, name]);
 
   const runningTasks = React.useMemo(() => {
@@ -67,20 +73,31 @@ const ListItem: React.FC<ListItemProps> = ({
           </span>
         )}
       </td>
-      <td className="has-text-right">
-        <Dropdown
-          label={
-            <span className="icon">
-              <i className="fas fa-cog" />
-            </span>
-          }
-          right
+      <td>
+        <div className="has-text-right">
+          <Dropdown
+            label={
+              <span className="icon">
+                <i className="fas fa-cog" />
+              </span>
+            }
+            right
+          >
+            <DropdownDivider />
+            <DropdownItem
+              onClick={() => setDeleteConnectorConfirmationVisible(true)}
+            >
+              <span className="has-text-danger">Remove Connector</span>
+            </DropdownItem>
+          </Dropdown>
+        </div>
+        <ConfirmationModal
+          isOpen={isDeleteConnectorConfirmationVisible}
+          onCancel={() => setDeleteConnectorConfirmationVisible(false)}
+          onConfirm={handleDelete}
         >
-          <DropdownDivider />
-          <DropdownItem onClick={handleDelete}>
-            <span className="has-text-danger">Remove Connector</span>
-          </DropdownItem>
-        </Dropdown>
+          Are you sure want to remove <b>{name}</b> connector?
+        </ConfirmationModal>
       </td>
     </tr>
   );
