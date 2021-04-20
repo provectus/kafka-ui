@@ -110,77 +110,90 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                   2
                 </span>
               </td>
-              <td
-                className="has-text-right"
-              >
-                <Dropdown
-                  label={
-                    <span
-                      className="icon"
-                    >
-                      <i
-                        className="fas fa-cog"
-                      />
-                    </span>
-                  }
-                  right={true}
+              <td>
+                <div
+                  className="has-text-right"
                 >
-                  <div
-                    className="dropdown is-right"
+                  <Dropdown
+                    label={
+                      <span
+                        className="icon"
+                      >
+                        <i
+                          className="fas fa-cog"
+                        />
+                      </span>
+                    }
+                    right={true}
                   >
                     <div
-                      className="dropdown-trigger"
-                    >
-                      <button
-                        aria-controls="dropdown-menu"
-                        aria-haspopup="true"
-                        className="button is-small"
-                        onClick={[Function]}
-                        type="button"
-                      >
-                        <span
-                          className="icon"
-                        >
-                          <i
-                            className="fas fa-cog"
-                          />
-                        </span>
-                      </button>
-                    </div>
-                    <div
-                      className="dropdown-menu"
-                      id="dropdown-menu"
-                      role="menu"
+                      className="dropdown is-right"
                     >
                       <div
-                        className="dropdown-content has-text-left"
+                        className="dropdown-trigger"
                       >
-                        <DropdownDivider>
-                          <hr
-                            className="dropdown-divider"
-                          />
-                        </DropdownDivider>
-                        <DropdownItem
+                        <button
+                          aria-controls="dropdown-menu"
+                          aria-haspopup="true"
+                          className="button is-small"
                           onClick={[Function]}
+                          type="button"
                         >
-                          <a
-                            className="dropdown-item is-link"
-                            href="#end"
-                            onClick={[Function]}
-                            role="menuitem"
-                            type="button"
+                          <span
+                            className="icon"
                           >
-                            <span
-                              className="has-text-danger"
+                            <i
+                              className="fas fa-cog"
+                            />
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        className="dropdown-menu"
+                        id="dropdown-menu"
+                        role="menu"
+                      >
+                        <div
+                          className="dropdown-content has-text-left"
+                        >
+                          <DropdownDivider>
+                            <hr
+                              className="dropdown-divider"
+                            />
+                          </DropdownDivider>
+                          <DropdownItem
+                            onClick={[Function]}
+                          >
+                            <a
+                              className="dropdown-item is-link"
+                              href="#end"
+                              onClick={[Function]}
+                              role="menuitem"
+                              type="button"
                             >
-                              Remove Connector
-                            </span>
-                          </a>
-                        </DropdownItem>
+                              <span
+                                className="has-text-danger"
+                              >
+                                Remove Connector
+                              </span>
+                            </a>
+                          </DropdownItem>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Dropdown>
+                  </Dropdown>
+                </div>
+                <mock-ConfirmationModal
+                  isOpen={false}
+                  onCancel={[Function]}
+                  onConfirm={[Function]}
+                >
+                  Are you sure want to remove 
+                  <b>
+                    hdfs-source-connector
+                  </b>
+                   connector?
+                </mock-ConfirmationModal>
               </td>
             </tr>
           </ListItem>

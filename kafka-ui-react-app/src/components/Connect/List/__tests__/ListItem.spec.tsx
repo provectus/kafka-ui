@@ -8,6 +8,11 @@ import ListItem, { ListItemProps } from '../ListItem';
 
 const store = configureStore();
 
+jest.mock(
+  'components/common/ConfirmationModal/ConfirmationModal',
+  () => 'mock-ConfirmationModal'
+);
+
 describe('Connectors ListItem', () => {
   const connector = connectorsPayload[0];
   const setupWrapper = (props: Partial<ListItemProps> = {}) => (
@@ -57,7 +62,12 @@ describe('Connectors ListItem', () => {
 
   it('handles delete', () => {
     const wrapper = mount(setupWrapper());
-    wrapper.find('DropdownItem a').last().simulate('click');
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+    wrapper.find('DropdownItem').last().simulate('click');
+    const modal = wrapper.find('mock-ConfirmationModal');
+    expect(modal.prop('isOpen')).toBeTruthy();
+    modal.simulate('cancel');
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
   });
 
   it('matches snapshot', () => {
