@@ -10,6 +10,11 @@ import ListItem, { ListItemProps } from '../ListItem';
 const mockDelete = jest.fn();
 const clusterName = 'local';
 
+jest.mock(
+  'components/common/ConfirmationModal/ConfirmationModal',
+  () => 'mock-ConfirmationModal'
+);
+
 describe('ListItem', () => {
   const setupComponent = (props: Partial<ListItemProps> = {}) => (
     <ListItem
@@ -22,9 +27,23 @@ describe('ListItem', () => {
 
   it('triggers the deleteTopic when clicked on the delete button', () => {
     const wrapper = shallow(setupComponent());
-    wrapper.find('DropdownItem').simulate('click');
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+    wrapper.find('DropdownItem').last().simulate('click');
+    const modal = wrapper.find('mock-ConfirmationModal');
+    expect(modal.prop('isOpen')).toBeTruthy();
+    modal.simulate('confirm');
     expect(mockDelete).toBeCalledTimes(1);
     expect(mockDelete).toBeCalledWith(clusterName, internalTopicPayload.name);
+  });
+
+  it('closes ConfirmationModal when clicked on the cancel button', () => {
+    const wrapper = shallow(setupComponent());
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+    wrapper.find('DropdownItem').last().simulate('click');
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeTruthy();
+    wrapper.find('mock-ConfirmationModal').simulate('cancel');
+    expect(mockDelete).toBeCalledTimes(0);
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
   });
 
   it('renders correct tags for internal topic', () => {
@@ -49,5 +68,21 @@ describe('ListItem', () => {
     );
 
     expect(wrapper.find('.tag.is-primary').text()).toEqual('External');
+  });
+
+  it('renders correct out of sync replicas number', () => {
+    const wrapper = mount(
+      <StaticRouter>
+        <table>
+          <tbody>
+            {setupComponent({
+              topic: { ...externalTopicPayload, partitions: undefined },
+            })}
+          </tbody>
+        </table>
+      </StaticRouter>
+    );
+
+    expect(wrapper.find('td').at(2).text()).toEqual('0');
   });
 });

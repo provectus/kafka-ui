@@ -30,8 +30,7 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) =>
-    fetchTopicConfig(clusterName, topicName),
+  fetchTopicConfig,
 };
 
 export default withRouter(
