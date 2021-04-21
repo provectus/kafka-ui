@@ -1,6 +1,5 @@
 import { KafkaConnectApi, Configuration } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
-
 import {
   ClusterName,
   FailurePayload,
@@ -33,62 +32,55 @@ export const fetchConnects = (
 
 export const fetchConnectors = (
   clusterName: ClusterName,
-  connectName: string
+  silent = false
 ): PromiseThunkResult<void> => async (dispatch, getState) => {
-  dispatch(actions.fetchConnectorsAction.request());
+  if (!silent) dispatch(actions.fetchConnectorsAction.request());
   try {
-    const connectorNames = await kafkaConnectApiClient.getConnectors({
+    const connectors = await kafkaConnectApiClient.getAllConnectors({
       clusterName,
-      connectName,
     });
-    const connectors = await Promise.all(
-      connectorNames.map((connectorName) =>
-        kafkaConnectApiClient.getConnector({
-          clusterName,
-          connectName,
-          connectorName,
-        })
-      )
-    );
     const state = getState().connect;
     dispatch(actions.fetchConnectorsAction.success({ ...state, connectors }));
   } catch (error) {
     const response = await getResponse(error);
     const alert: FailurePayload = {
-      subject: ['connect', connectName, 'connectors'].join('-'),
-      title: `Kafka Connect ${connectName}. Connectors`,
+      subject: [clusterName, 'connectors'].join('-'),
+      title: `Kafka Connect Connectors`,
       response,
     };
     dispatch(actions.fetchConnectorsAction.failure({ alert }));
   }
 };
 
-export const fetchConnector = (
+export const deleteConnector = (
   clusterName: ClusterName,
   connectName: string,
   connectorName: string
 ): PromiseThunkResult<void> => async (dispatch, getState) => {
-  dispatch(actions.fetchConnectorAction.request());
+  dispatch(actions.deleteConnectorAction.request());
   try {
-    const connector = await kafkaConnectApiClient.getConnector({
+    await kafkaConnectApiClient.deleteConnector({
       clusterName,
       connectName,
       connectorName,
     });
     const state = getState().connect;
-    const newState = {
-      ...state,
-      connectors: [...state.connectors, connector],
-    };
-
-    dispatch(actions.fetchConnectorAction.success(newState));
+    dispatch(
+      actions.deleteConnectorAction.success({
+        ...state,
+        connectors: state?.connectors.filter(
+          ({ name }) => name !== connectorName
+        ),
+      })
+    );
+    dispatch(fetchConnectors(clusterName, true));
   } catch (error) {
     const response = await getResponse(error);
     const alert: FailurePayload = {
-      subject: ['connect', connectName, 'connectors', connectorName].join('-'),
-      title: `Kafka Connect ${connectName}. Connector ${connectorName}`,
+      subject: [clusterName, connectName, connectorName].join('-'),
+      title: `Kafka Connect Connector Delete`,
       response,
     };
-    dispatch(actions.fetchConnectorAction.failure({ alert }));
+    dispatch(actions.deleteConnectorAction.failure({ alert }));
   }
 };

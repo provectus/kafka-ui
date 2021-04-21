@@ -5,7 +5,7 @@ exports[`ClusterStatusIcon matches snapshot 1`] = `
   status="online"
 >
   <span
-    className="tag is-primary"
+    className="tag is-success"
     style={
       Object {
         "borderRadius": "5px",

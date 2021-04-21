@@ -1,40 +1,65 @@
-import { shallow } from 'enzyme';
 import React from 'react';
-import ListItem from '../ListItem';
+import { StaticRouter } from 'react-router';
+import { shallow, mount } from 'enzyme';
+import {
+  externalTopicPayload,
+  internalTopicPayload,
+} from 'redux/reducers/topics/__test__/fixtures';
+import ListItem, { ListItemProps } from '../ListItem';
+
+const mockDelete = jest.fn();
+const clusterName = 'local';
+const mockDeleteMessages = jest.fn();
 
 describe('ListItem', () => {
-  it('triggers the deleting thunk when clicked on the delete button', () => {
-    const mockDelete = jest.fn();
-    const topic = { name: 'topic', id: 'id' };
-    const clustterName = 'cluster';
-    const component = shallow(
-      <ListItem
-        topic={topic}
-        deleteTopic={mockDelete}
-        clusterName={clustterName}
-        clearTopicMessages={jest.fn()}
-      />
-    );
-    component.find('DropdownItem').at(1).simulate('click');
+  const setupComponent = (props: Partial<ListItemProps> = {}) => (
+    <ListItem
+      topic={internalTopicPayload}
+      deleteTopic={mockDelete}
+      clusterName={clusterName}
+      clearTopicMessages={mockDeleteMessages}
+      {...props}
+    />
+  );
+
+  it('triggers the deleteTopic when clicked on the delete button', () => {
+    const wrapper = shallow(setupComponent());
+    wrapper.find('DropdownItem').at(1).simulate('click');
     expect(mockDelete).toBeCalledTimes(1);
-    expect(mockDelete).toBeCalledWith(clustterName, topic.name);
+    expect(mockDelete).toBeCalledWith(clusterName, internalTopicPayload.name);
   });
 
   it('triggers the deleting messages when clicked on the delete messages button', () => {
-    const mockDelete = jest.fn();
-    const mockDeleteMessages = jest.fn();
-    const topic = { name: 'topic', id: 'id' };
-    const clusterName = 'cluster';
-    const component = shallow(
-      <ListItem
-        topic={topic}
-        deleteTopic={mockDelete}
-        clusterName={clusterName}
-        clearTopicMessages={mockDeleteMessages}
-      />
-    );
+    const component = shallow(setupComponent());
     component.find('DropdownItem').at(0).simulate('click');
     expect(mockDeleteMessages).toBeCalledTimes(1);
-    expect(mockDeleteMessages).toBeCalledWith(clusterName, topic.name);
+    expect(mockDeleteMessages).toBeCalledWith(
+      clusterName,
+      internalTopicPayload.name
+    );
+  });
+
+  it('renders correct tags for internal topic', () => {
+    const wrapper = mount(
+      <StaticRouter>
+        <table>
+          <tbody>{setupComponent()}</tbody>
+        </table>
+      </StaticRouter>
+    );
+
+    expect(wrapper.find('.tag.is-light').text()).toEqual('Internal');
+  });
+
+  it('renders correct tags for external topic', () => {
+    const wrapper = mount(
+      <StaticRouter>
+        <table>
+          <tbody>{setupComponent({ topic: externalTopicPayload })}</tbody>
+        </table>
+      </StaticRouter>
+    );
+
+    expect(wrapper.find('.tag.is-primary').text()).toEqual('External');
   });
 });

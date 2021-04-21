@@ -11,7 +11,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
       links={
         Array [
           Object {
-            "href": "/ui/clusters/Test cluster/schemas",
+            "href": "/ui/clusters/testCluster/schemas",
             "label": "Schema Registry",
           },
         ]
@@ -65,7 +65,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
           title="in development"
           type="button"
         >
-          Delete
+          Remove
         </button>
       </div>
     </div>
@@ -122,7 +122,7 @@ exports[`Details View when page with schema versions is loading matches snapshot
       links={
         Array [
           Object {
-            "href": "/ui/clusters/Test cluster/schemas",
+            "href": "/ui/clusters/testCluster/schemas",
             "label": "Schema Registry",
           },
         ]
@@ -146,7 +146,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
       links={
         Array [
           Object {
-            "href": "/ui/clusters/Test cluster/schemas",
+            "href": "/ui/clusters/testCluster/schemas",
             "label": "Schema Registry",
           },
         ]
@@ -200,7 +200,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
           title="in development"
           type="button"
         >
-          Delete
+          Remove
         </button>
       </div>
     </div>
@@ -284,7 +284,7 @@ exports[`Details View when page with schema versions loaded when versions are em
       links={
         Array [
           Object {
-            "href": "/ui/clusters/Test cluster/schemas",
+            "href": "/ui/clusters/testCluster/schemas",
             "label": "Schema Registry",
           },
         ]
@@ -338,7 +338,7 @@ exports[`Details View when page with schema versions loaded when versions are em
           title="in development"
           type="button"
         >
-          Delete
+          Remove
         </button>
       </div>
     </div>

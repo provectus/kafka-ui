@@ -11,7 +11,7 @@ describe('ClusterWidget', () => {
       const tag = shallow(<ClusterWidget cluster={onlineCluster} />).find(
         '.tag'
       );
-      expect(tag.hasClass('is-primary')).toBeTruthy();
+      expect(tag.hasClass('is-success')).toBeTruthy();
       expect(tag.text()).toEqual(ServerStatus.ONLINE);
     });
 

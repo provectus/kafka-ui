@@ -3,7 +3,9 @@
 @import '~bulma-switch';
 @import 'src/theme/bulma_overrides';
 
-#root, body, html {
+#root,
+body,
+html {
   width: 100%;
   position: relative;
   margin: 0;
@@ -13,28 +15,23 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: repeating-linear-gradient(
-    145deg,
-    rgba(0,0,0,.003),
-    rgba(0,0,0,.005) 5px,
-    rgba(0,0,0,0) 5px,
-    rgba(0,0,0,0) 10px
-  ),
-  repeating-linear-gradient(
-    -145deg,
-    rgba(0,0,0,.003),
-    rgba(0,0,0,.005) 5px,
-    rgba(0,0,0,0) 5px,
-    rgba(0,0,0,0) 10px
-  );
+      145deg,
+      rgba(0, 0, 0, 0.003),
+      rgba(0, 0, 0, 0.005) 5px,
+      rgba(0, 0, 0, 0) 5px,
+      rgba(0, 0, 0, 0) 10px
+    ),
+    repeating-linear-gradient(
+      -145deg,
+      rgba(0, 0, 0, 0.003),
+      rgba(0, 0, 0, 0.005) 5px,
+      rgba(0, 0, 0, 0) 5px,
+      rgba(0, 0, 0, 0) 10px
+    );
   background-color: $light;
-
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
-}
-
-.cursor-pointer {
-  cursor: pointer;
 }

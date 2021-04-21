@@ -9,10 +9,7 @@ import {
 
 export type TopicName = Topic['name'];
 
-export enum CleanupPolicy {
-  Delete = 'delete',
-  Compact = 'compact',
-}
+export type CleanupPolicy = 'delete' | 'compact';
 
 export interface TopicConfigByName {
   byName: TopicConfigParams;

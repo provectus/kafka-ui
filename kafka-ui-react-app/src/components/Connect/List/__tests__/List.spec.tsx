@@ -3,6 +3,7 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
 import configureStore from 'redux/store/configureStore';
+import { connectorsPayload } from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
   initialValue,
@@ -30,6 +31,7 @@ describe('Connectors List', () => {
 
   describe('View', () => {
     const fetchConnects = jest.fn();
+    const fetchConnectors = jest.fn();
     const setupComponent = (
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
@@ -42,6 +44,7 @@ describe('Connectors List', () => {
             connectors={[]}
             connects={[]}
             fetchConnects={fetchConnects}
+            fetchConnectors={fetchConnectors}
             {...props}
           />
         </ClusterContext.Provider>
@@ -60,9 +63,22 @@ describe('Connectors List', () => {
       expect(wrapper.exists('table')).toBeTruthy();
     });
 
-    it('handles fetchConnects', () => {
+    it('renders connectors list', () => {
+      const wrapper = mount(
+        setupComponent({
+          areConnectorsFetching: false,
+          connectors: connectorsPayload,
+        })
+      );
+      expect(wrapper.exists('PageLoader')).toBeFalsy();
+      expect(wrapper.exists('table')).toBeTruthy();
+      expect(wrapper.find('ListItem').length).toEqual(2);
+    });
+
+    it('handles fetchConnects and fetchConnectors', () => {
       mount(setupComponent());
       expect(fetchConnects).toHaveBeenCalledTimes(1);
+      expect(fetchConnectors).toHaveBeenCalledTimes(1);
     });
 
     it('renders actions if cluster is not readonly', () => {
