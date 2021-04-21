@@ -1,6 +1,6 @@
 import React from 'react';
 import { Provider } from 'react-redux';
-import { shallow, mount } from 'enzyme';
+import { shallow, mount, ReactWrapper } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
 import { StaticRouter } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -10,6 +10,11 @@ import { schema, versions } from './fixtures';
 
 const clusterName = 'testCluster';
 const fetchSchemaVersionsMock = jest.fn();
+
+jest.mock(
+  'components/common/ConfirmationModal/ConfirmationModal',
+  () => 'mock-ConfirmationModal'
+);
 
 describe('Details', () => {
   describe('Container', () => {
@@ -92,28 +97,52 @@ describe('Details', () => {
       });
 
       describe('when schema has versions', () => {
-        const wrapper = shallow(setupWrapper({ versions }));
-
         it('renders table heading with SchemaVersion', () => {
+          const wrapper = shallow(setupWrapper({ versions }));
           expect(wrapper.exists('LatestVersionItem')).toBeTruthy();
           expect(wrapper.exists('button')).toBeTruthy();
           expect(wrapper.exists('thead')).toBeTruthy();
           expect(wrapper.find('SchemaVersion').length).toEqual(2);
         });
 
-        it('calls deleteSchema on button click', () => {
-          const mockDelete = jest.fn();
-          const component = mount(
-            <StaticRouter>
-              {setupWrapper({ versions, deleteSchema: mockDelete })}
-            </StaticRouter>
-          );
-          component.find('button').at(1).simulate('click');
-          expect(mockDelete).toHaveBeenCalledTimes(1);
-        });
-
         it('matches snapshot', () => {
           expect(shallow(setupWrapper({ versions }))).toMatchSnapshot();
+        });
+
+        describe('confirmation', () => {
+          let wrapper: ReactWrapper;
+          let confirmationModal: ReactWrapper;
+          const mockDelete = jest.fn();
+
+          const findConfirmationModal = () =>
+            wrapper.find('mock-ConfirmationModal');
+
+          beforeEach(() => {
+            wrapper = mount(
+              <StaticRouter>
+                {setupWrapper({ versions, deleteSchema: mockDelete })}
+              </StaticRouter>
+            );
+            confirmationModal = findConfirmationModal();
+          });
+
+          it('calls deleteSchema after confirmation', () => {
+            expect(confirmationModal.prop('isOpen')).toBeFalsy();
+            wrapper.find('button').at(1).simulate('click');
+            expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
+            // @ts-expect-error lack of typing of enzyme#invoke
+            confirmationModal.invoke('onConfirm')();
+            expect(mockDelete).toHaveBeenCalledTimes(1);
+          });
+
+          it('calls deleteSchema after confirmation', () => {
+            expect(confirmationModal.prop('isOpen')).toBeFalsy();
+            wrapper.find('button').at(1).simulate('click');
+            expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
+            // @ts-expect-error lack of typing of enzyme#invoke
+            wrapper.find('mock-ConfirmationModal').invoke('onCancel')();
+            expect(findConfirmationModal().prop('isOpen')).toBeFalsy();
+          });
         });
       });
 
