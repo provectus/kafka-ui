@@ -21,9 +21,9 @@ describe('Clusters reducer', () => {
         })
       )
     ).toEqual({
-      'alert-topic-2': {
+      'POST_TOPIC__FAILURE-topic-2': {
         createdAt: 1234567890,
-        id: 'alert-topic-2',
+        id: 'POST_TOPIC__FAILURE-topic-2',
         message: 'message',
         response: undefined,
         title: 'title',
@@ -39,7 +39,9 @@ describe('Clusters reducer', () => {
         alert: failurePayload1,
       })
     );
-    expect(reducer(state, dismissAlert('alert-topic-1'))).toEqual({});
+    expect(reducer(state, dismissAlert('POST_TOPIC__FAILURE-topic-1'))).toEqual(
+      {}
+    );
   });
 
   it('does not remove alert if id is wrong', () => {
@@ -50,9 +52,9 @@ describe('Clusters reducer', () => {
       })
     );
     expect(reducer(state, dismissAlert('wrong-id'))).toEqual({
-      'alert-topic-1': {
+      'POST_TOPIC__FAILURE-topic-1': {
         createdAt: 1234567890,
-        id: 'alert-topic-1',
+        id: 'POST_TOPIC__FAILURE-topic-1',
         message: 'message',
         response: undefined,
         title: 'title',

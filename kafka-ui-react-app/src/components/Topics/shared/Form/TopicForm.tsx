@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
-import { CleanupPolicy, TopicName, TopicConfigByName } from 'redux/interfaces';
+import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
@@ -104,13 +104,13 @@ const TopicForm: React.FC<Props> = ({
           <label className="label">Cleanup policy</label>
           <div className="select is-block">
             <select
-              defaultValue={CleanupPolicy.Delete}
+              defaultValue="delete"
               name="cleanupPolicy"
               ref={register}
               disabled={isSubmitting}
             >
-              <option value={CleanupPolicy.Delete}>Delete</option>
-              <option value={CleanupPolicy.Compact}>Compact</option>
+              <option value="delete">Delete</option>
+              <option value="compact">Compact</option>
             </select>
           </div>
         </div>

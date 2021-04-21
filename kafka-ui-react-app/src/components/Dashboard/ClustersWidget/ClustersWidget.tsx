@@ -46,7 +46,7 @@ const ClustersWidget: React.FC<Props> = ({
 
       <MetricsWrapper>
         <Indicator label="Online Clusters">
-          <span className="tag is-primary">{onlineClusters.length}</span>
+          <span className="tag is-success">{onlineClusters.length}</span>
         </Indicator>
         <Indicator label="Offline Clusters">
           <span className="tag is-danger">{offlineClusters.length}</span>

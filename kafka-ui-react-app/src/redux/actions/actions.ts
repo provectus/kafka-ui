@@ -130,6 +130,12 @@ export const updateSchemaCompatibilityLevelAction = createAsyncAction(
   'PATCH_SCHEMA_COMPATIBILITY__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
 
+export const deleteSchemaAction = createAsyncAction(
+  'DELETE_SCHEMA__REQUEST',
+  'DELETE_SCHEMA__SUCCESS',
+  'DELETE_SCHEMA__FAILURE'
+)<undefined, string, { alert?: FailurePayload }>();
+
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
 
 export const fetchConnectsAction = createAsyncAction(
@@ -148,4 +154,10 @@ export const fetchConnectorAction = createAsyncAction(
   'GET_CONNECTOR__REQUEST',
   'GET_CONNECTOR__SUCCESS',
   'GET_CONNECTOR__FAILURE'
+)<undefined, ConnectState, { alert?: FailurePayload }>();
+
+export const deleteConnectorAction = createAsyncAction(
+  'DELETE_CONNECTOR__REQUEST',
+  'DELETE_CONNECTOR__SUCCESS',
+  'DELETE_CONNECTOR__FAILURE'
 )<undefined, ConnectState, { alert?: FailurePayload }>();

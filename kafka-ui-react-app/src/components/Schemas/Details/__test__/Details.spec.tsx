@@ -8,18 +8,23 @@ import DetailsContainer from '../DetailsContainer';
 import Details, { DetailsProps } from '../Details';
 import { schema, versions } from './fixtures';
 
+const clusterName = 'testCluster';
+const fetchSchemaVersionsMock = jest.fn();
+
 describe('Details', () => {
   describe('Container', () => {
     const store = configureStore();
 
     it('renders view', () => {
-      const component = shallow(
+      const wrapper = mount(
         <Provider store={store}>
-          <DetailsContainer />
+          <StaticRouter>
+            <DetailsContainer />
+          </StaticRouter>
         </Provider>
       );
 
-      expect(component.exists()).toBeTruthy();
+      expect(wrapper.exists(Details)).toBeTruthy();
     });
   });
 
@@ -28,8 +33,9 @@ describe('Details', () => {
       <Details
         subject={schema.subject}
         schema={schema}
-        clusterName="Test cluster"
-        fetchSchemaVersions={jest.fn()}
+        clusterName={clusterName}
+        fetchSchemaVersions={fetchSchemaVersionsMock}
+        deleteSchema={jest.fn()}
         fetchSchemasByClusterName={jest.fn()}
         schemasAreFetched
         versionsAreFetched
@@ -38,29 +44,24 @@ describe('Details', () => {
       />
     );
     describe('Initial state', () => {
-      let useEffect: jest.SpyInstance<
-        void,
-        [effect: React.EffectCallback, deps?: React.DependencyList | undefined]
-      >;
-      const mockedFn = jest.fn();
-
-      const mockedUseEffect = () => {
-        useEffect.mockImplementationOnce(mockedFn);
-      };
-
-      beforeEach(() => {
-        useEffect = jest.spyOn(React, 'useEffect');
-        mockedUseEffect();
-        shallow(setupWrapper({ fetchSchemaVersions: mockedFn }));
-      });
-
       it('should call fetchSchemaVersions every render', () => {
-        expect(mockedFn).toHaveBeenCalled();
+        mount(
+          <StaticRouter>
+            {setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })}
+          </StaticRouter>
+        );
+
+        expect(fetchSchemaVersionsMock).toHaveBeenCalledWith(
+          clusterName,
+          schema.subject
+        );
       });
 
       it('matches snapshot', () => {
         expect(
-          shallow(setupWrapper({ fetchSchemaVersions: mockedFn }))
+          shallow(
+            setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })
+          )
         ).toMatchSnapshot();
       });
     });
@@ -102,6 +103,17 @@ describe('Details', () => {
           expect(wrapper.exists('button')).toBeTruthy();
           expect(wrapper.exists('thead')).toBeTruthy();
           expect(wrapper.find('SchemaVersion').length).toEqual(2);
+        });
+
+        it('calls deleteSchema on button click', () => {
+          const mockDelete = jest.fn();
+          const component = mount(
+            <StaticRouter>
+              {setupWrapper({ versions, deleteSchema: mockDelete })}
+            </StaticRouter>
+          );
+          component.find('button').at(1).simulate('click');
+          expect(mockDelete).toHaveBeenCalledTimes(1);
         });
 
         it('matches snapshot', () => {

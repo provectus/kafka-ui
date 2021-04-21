@@ -127,7 +127,7 @@ describe('Thunks', () => {
       }
     });
   });
-
+  
   describe('updateSchemaCompatibilityLevel', () => {
     it('creates UPDATE_SCHEMA__SUCCESS when patching a schema', async () => {
       fetchMock.putOnce(
@@ -165,6 +165,38 @@ describe('Thunks', () => {
         expect(store.getActions()).toEqual([
           actions.updateSchemaCompatibilityLevelAction.request(),
           actions.updateSchemaCompatibilityLevelAction.failure({}),
+        ]);
+      }
+    });
+  });
+  describe('deleteSchema', () => {
+    it('fires DELETE_SCHEMA__SUCCESS on success', async () => {
+      fetchMock.deleteOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}`,
+        200
+      );
+
+      await store.dispatch(thunks.deleteSchema(clusterName, subject));
+
+      expect(store.getActions()).toEqual([
+        actions.deleteSchemaAction.request(),
+        actions.deleteSchemaAction.success(subject),
+      ]);
+    });
+
+    it('fires DELETE_SCHEMA__FAILURE on failure', async () => {
+      fetchMock.deleteOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}`,
+        404
+      );
+
+      try {
+        await store.dispatch(thunks.deleteSchema(clusterName, subject));
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.deleteSchemaAction.request(),
+          actions.deleteSchemaAction.failure({}),
         ]);
       }
     });

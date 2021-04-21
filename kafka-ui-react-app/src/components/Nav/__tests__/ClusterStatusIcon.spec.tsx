@@ -11,12 +11,12 @@ describe('ClusterStatusIcon', () => {
 
   it('renders online icon', () => {
     const wrapper = mount(<ClusterStatusIcon status={ServerStatus.ONLINE} />);
-    expect(wrapper.exists('.is-primary')).toBeTruthy();
+    expect(wrapper.exists('.is-success')).toBeTruthy();
     expect(wrapper.exists('.is-danger')).toBeFalsy();
   });
   it('renders offline icon', () => {
     const wrapper = mount(<ClusterStatusIcon status={ServerStatus.OFFLINE} />);
     expect(wrapper.exists('.is-danger')).toBeTruthy();
-    expect(wrapper.exists('.is-primary')).toBeFalsy();
+    expect(wrapper.exists('.is-success')).toBeFalsy();
   });
 });

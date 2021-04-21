@@ -90,7 +90,7 @@ exports[`ClusterWidget when cluster is online matches snapshot 1`] = `
       className="title is-6 has-text-overflow-ellipsis"
     >
       <div
-        className="tag has-margin-right is-primary"
+        className="tag has-margin-right is-success"
       >
         online
       </div>

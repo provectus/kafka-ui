@@ -1,6 +1,6 @@
-import { Connect, Connector } from 'generated-sources';
+import { Connect, FullConnectorInfo } from 'generated-sources';
 
 export interface ConnectState {
   connects: Connect[];
-  connectors: Connector[];
+  connectors: FullConnectorInfo[];
 }

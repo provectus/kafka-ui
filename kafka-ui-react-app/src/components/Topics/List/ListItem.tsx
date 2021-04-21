@@ -9,7 +9,7 @@ import {
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 
-interface ListItemProps {
+export interface ListItemProps {
   topic: TopicWithDetailedInfo;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
@@ -50,9 +50,7 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
       <td>
-        <div
-          className={cx('tag is-small', internal ? 'is-light' : 'is-success')}
-        >
+        <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
           {internal ? 'Internal' : 'External'}
         </div>
       </td>
@@ -66,7 +64,7 @@ const ListItem: React.FC<ListItemProps> = ({
           right
         >
           <DropdownItem onClick={deleteTopicHandler}>
-            <span className="has-text-danger">Delete Topic</span>
+            <span className="has-text-danger">Remove Topic</span>
           </DropdownItem>
         </Dropdown>
       </td>

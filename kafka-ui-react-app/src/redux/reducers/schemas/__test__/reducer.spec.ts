@@ -1,5 +1,7 @@
+import { SchemaSubject, SchemaType } from 'generated-sources';
 import {
   createSchemaAction,
+  deleteSchemaAction,
   fetchSchemasByClusterNameAction,
   fetchSchemaVersionsAction,
 } from 'redux/actions';
@@ -45,5 +47,32 @@ describe('Schemas reducer', () => {
     expect(
       reducer(undefined, createSchemaAction.success(schemaVersionsPayload[0]))
     ).toMatchSnapshot();
+  });
+
+  it('deletes the schema from the list on DELETE_SCHEMA__SUCCESS', () => {
+    const schema: SchemaSubject = {
+      subject: 'name',
+      version: '1',
+      id: 1,
+      schema: '{}',
+      compatibilityLevel: 'BACKWARD',
+      schemaType: SchemaType.AVRO,
+    };
+    expect(
+      reducer(
+        {
+          byName: {
+            [schema.subject]: schema,
+          },
+          allNames: [schema.subject],
+          currentSchemaVersions: [],
+        },
+        deleteSchemaAction.success(schema.subject)
+      )
+    ).toEqual({
+      byName: {},
+      allNames: [],
+      currentSchemaVersions: [],
+    });
   });
 });

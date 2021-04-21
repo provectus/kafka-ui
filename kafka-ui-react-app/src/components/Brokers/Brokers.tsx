@@ -52,7 +52,7 @@ const Brokers: React.FC<Props> = ({
           {activeControllers}
         </Indicator>
         <Indicator className="is-one-third" label="Zookeeper Status">
-          <span className={cx('tag', zkOnline ? 'is-primary' : 'is-danger')}>
+          <span className={cx('tag', zkOnline ? 'is-success' : 'is-danger')}>
             {zkOnline ? 'Online' : 'Offline'}
           </span>
         </Indicator>

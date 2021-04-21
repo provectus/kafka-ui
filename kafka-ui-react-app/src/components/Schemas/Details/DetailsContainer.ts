@@ -7,7 +7,7 @@ import {
   getSortedSchemaVersions,
   getIsSchemaListFetched,
 } from 'redux/reducers/schemas/selectors';
-import { fetchSchemaVersions, fetchSchemasByClusterName } from 'redux/actions';
+import { fetchSchemaVersions, deleteSchema, fetchSchemasByClusterName } from 'redux/actions';
 import Details from './Details';
 
 interface RouteProps {
@@ -36,6 +36,7 @@ const mapStateToProps = (
 const mapDispatchToProps = {
   fetchSchemaVersions,
   fetchSchemasByClusterName,
+  deleteSchema,
 };
 
 export default withRouter(
