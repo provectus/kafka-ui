@@ -42,8 +42,8 @@ describe('Details', () => {
         fetchSchemaVersions={fetchSchemaVersionsMock}
         deleteSchema={jest.fn()}
         fetchSchemasByClusterName={jest.fn()}
-        schemasAreFetched
-        versionsAreFetched
+        areSchemasFetched
+        areVersionsFetched
         versions={[]}
         {...props}
       />
@@ -72,7 +72,7 @@ describe('Details', () => {
     });
 
     describe('when page with schema versions is loading', () => {
-      const wrapper = shallow(setupWrapper({ versionsAreFetched: false }));
+      const wrapper = shallow(setupWrapper({ areVersionsFetched: false }));
 
       it('renders PageLoader', () => {
         expect(wrapper.exists('PageLoader')).toBeTruthy();
@@ -80,7 +80,7 @@ describe('Details', () => {
 
       it('matches snapshot', () => {
         expect(
-          shallow(setupWrapper({ versionsAreFetched: false }))
+          shallow(setupWrapper({ areVersionsFetched: false }))
         ).toMatchSnapshot();
       });
     });
@@ -172,7 +172,7 @@ describe('Details', () => {
     });
 
     describe('when page with schemas are loading', () => {
-      const wrapper = shallow(setupWrapper({ schemasAreFetched: false }));
+      const wrapper = shallow(setupWrapper({ areSchemasFetched: false }));
 
       it('renders PageLoader', () => {
         expect(wrapper.exists('PageLoader')).toBeTruthy();

@@ -37,7 +37,7 @@ exports[`JSONEditor component matches the snapshot 1`] = `
   tabSize={2}
   theme="dawn"
   value="{}"
-  width="540px"
+  width="100%"
   wrapEnabled={true}
 />
 `;

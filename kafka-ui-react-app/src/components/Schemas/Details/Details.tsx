@@ -16,8 +16,8 @@ export interface DetailsProps {
   schema: SchemaSubject;
   clusterName: ClusterName;
   versions: SchemaSubject[];
-  versionsAreFetched: boolean;
-  schemasAreFetched: boolean;
+  areVersionsFetched: boolean;
+  areSchemasFetched: boolean;
   fetchSchemaVersions: (
     clusterName: ClusterName,
     schemaName: SchemaName
@@ -34,8 +34,8 @@ const Details: React.FC<DetailsProps> = ({
   fetchSchemasByClusterName,
   deleteSchema,
   versions,
-  versionsAreFetched,
-  schemasAreFetched,
+  areVersionsFetched,
+  areSchemasFetched,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const [
@@ -68,7 +68,7 @@ const Details: React.FC<DetailsProps> = ({
           {subject}
         </Breadcrumb>
       </div>
-      {versionsAreFetched && schemasAreFetched ? (
+      {areVersionsFetched && areSchemasFetched ? (
         <>
           <div className="box">
             <div className="level">
@@ -83,19 +83,17 @@ const Details: React.FC<DetailsProps> = ({
                 </div>
               </div>
               {!isReadOnly && (
-                <div className="level-right">
+                <div className="level-right buttons">
                   <Link
-                    className="button is-warning is-small level-item"
+                    className="button is-warning"
                     type="button"
-                    title="in development"
                     to={clusterSchemaSchemaEditPath(clusterName, subject)}
                   >
                     Update Schema
                   </Link>
                   <button
-                    className="button is-danger is-small level-item"
+                    className="button is-danger"
                     type="button"
-                    title="in development"
                     onClick={() => setDeleteSchemaConfirmationVisible(true)}
                   >
                     Remove

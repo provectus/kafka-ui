@@ -28,21 +28,20 @@ export interface EditProps {
   ) => Promise<void>;
 }
 
-export default function Edit({
+const Edit = ({
   subject,
   schema,
   clusterName,
   schemasAreFetched,
   fetchSchemasByClusterName,
   updateSchema,
-}: EditProps) {
+}: EditProps) => {
   React.useEffect(() => {
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
   }, [clusterName, fetchSchemasByClusterName]);
 
   const [newSchema, setNewSchema] = React.useState('');
-  const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const { register, handleSubmit } = useForm<NewSchemaSubjectRaw>();
+  const { register, handleSubmit, formState } = useForm<NewSchemaSubjectRaw>();
   const getFormattedSchema = React.useCallback(
     () => JSON.stringify(JSON.parse(schema.schema), null, '\t'),
     [schema]
@@ -63,20 +62,15 @@ export default function Edit({
       schemaType: SchemaType;
       compatibilityLevel: CompatibilityLevelCompatibilityEnum;
     }) => {
-      try {
-        setIsSubmitting(true);
-        await updateSchema(
-          schema,
-          newSchema,
-          schemaType,
-          compatibilityLevel,
-          clusterName,
-          subject
-        );
-        history.push(clusterSchemaPath(clusterName, subject));
-      } catch (e) {
-        setIsSubmitting(false);
-      }
+      await updateSchema(
+        schema,
+        newSchema,
+        schemaType,
+        compatibilityLevel,
+        clusterName,
+        subject
+      );
+      history.push(clusterSchemaPath(clusterName, subject));
     },
     [schema, newSchema, register, clusterName, subject, updateSchema, history]
   );
@@ -102,68 +96,65 @@ export default function Edit({
         </div>
       </div>
 
-      {schemasAreFetched && !isSubmitting ? (
+      {schemasAreFetched && !formState.isSubmitting ? (
         <div className="box">
-          <div className="columns">
-            <div className="column is-one-half">
-              <h4 className="title is-5 mb-2">Latest Schema</h4>
-              <JSONEditor
-                readonly
-                value={getFormattedSchema()}
-                name="latestSchema"
-              />
-            </div>
-            <div className="column is-one-half">
-              <h4 className="title is-5 mb-2">New Schema</h4>
-              <JSONEditor
-                value={newSchema || getFormattedSchema()}
-                name="newSchema"
-                onChange={handleSchemaChange}
-              />
-            </div>
-          </div>
-
           <form
             onSubmit={handleSubmit(onSubmit)}
             className="mt-3 is-flex-direction-column"
           >
+            <div className="mb-4">
+              <h5 className="title is-5 mb-2">Schema Type</h5>
+              <div className="select">
+                <select
+                  name="schemaType"
+                  ref={register({
+                    required: 'Schema Type is required.',
+                  })}
+                  defaultValue={schema.schemaType}
+                >
+                  {Object.keys(SchemaType).map((type: string) => (
+                    <option key={type} value={type}>
+                      {type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <h5 className="title is-5 mb-2">Compatibility Level</h5>
+              <div className="select">
+                <select
+                  name="compatibilityLevel"
+                  ref={register()}
+                  defaultValue={schema.compatibilityLevel}
+                >
+                  {Object.keys(CompatibilityLevelCompatibilityEnum).map(
+                    (level: string) => (
+                      <option key={level} value={level}>
+                        {level}
+                      </option>
+                    )
+                  )}
+                </select>
+              </div>
+            </div>
             <div className="columns">
               <div className="column is-one-half">
-                <h5 className="title is-5 mb-2">Schema Type</h5>
-                <div className="is-block select">
-                  <select
-                    name="schemaType"
-                    ref={register({
-                      required: 'Schema Type is required.',
-                    })}
-                    defaultValue={schema.schemaType}
-                  >
-                    {Object.keys(SchemaType).map((type: string) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <h4 className="title is-5 mb-2">Latest Schema</h4>
+                <JSONEditor
+                  readonly
+                  value={getFormattedSchema()}
+                  name="latestSchema"
+                />
               </div>
-
               <div className="column is-one-half">
-                <h5 className="title is-5 mb-2">Compatibility Level</h5>
-                <div className="select is-block ">
-                  <select
-                    name="compatibilityLevel"
-                    ref={register()}
-                    defaultValue={schema.compatibilityLevel}
-                  >
-                    {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                      (level: string) => (
-                        <option key={level} value={level}>
-                          {level}
-                        </option>
-                      )
-                    )}
-                  </select>
-                </div>
+                <h4 className="title is-5 mb-2">New Schema</h4>
+                <JSONEditor
+                  value={newSchema || getFormattedSchema()}
+                  name="newSchema"
+                  onChange={handleSchemaChange}
+                />
               </div>
             </div>
             <button type="submit" className="button is-primary">
@@ -176,4 +167,6 @@ export default function Edit({
       )}
     </div>
   );
-}
+};
+
+export default Edit;

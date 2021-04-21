@@ -31,144 +31,140 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
   <div
     className="box"
   >
-    <div
-      className="columns"
-    >
-      <div
-        className="column is-one-half"
-      >
-        <h4
-          className="title is-5 mb-2"
-        >
-          Latest Schema
-        </h4>
-        <JSONEditor
-          name="latestSchema"
-          readonly={true}
-          value="{
-	\\"schema\\": \\"schema\\"
-}"
-        />
-      </div>
-      <div
-        className="column is-one-half"
-      >
-        <h4
-          className="title is-5 mb-2"
-        >
-          New Schema
-        </h4>
-        <JSONEditor
-          name="newSchema"
-          onChange={[Function]}
-          value="{
-	\\"schema\\": \\"schema\\"
-}"
-        />
-      </div>
-    </div>
     <form
       className="mt-3 is-flex-direction-column"
       onSubmit={[Function]}
     >
+      <div
+        className="mb-4"
+      >
+        <h5
+          className="title is-5 mb-2"
+        >
+          Schema Type
+        </h5>
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="AVRO"
+            name="schemaType"
+          >
+            <option
+              key="AVRO"
+              value="AVRO"
+            >
+              AVRO
+            </option>
+            <option
+              key="JSON"
+              value="JSON"
+            >
+              JSON
+            </option>
+            <option
+              key="PROTOBUF"
+              value="PROTOBUF"
+            >
+              PROTOBUF
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        className="mb-4"
+      >
+        <h5
+          className="title is-5 mb-2"
+        >
+          Compatibility Level
+        </h5>
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="BACKWARD"
+            name="compatibilityLevel"
+          >
+            <option
+              key="BACKWARD"
+              value="BACKWARD"
+            >
+              BACKWARD
+            </option>
+            <option
+              key="BACKWARD_TRANSITIVE"
+              value="BACKWARD_TRANSITIVE"
+            >
+              BACKWARD_TRANSITIVE
+            </option>
+            <option
+              key="FORWARD"
+              value="FORWARD"
+            >
+              FORWARD
+            </option>
+            <option
+              key="FORWARD_TRANSITIVE"
+              value="FORWARD_TRANSITIVE"
+            >
+              FORWARD_TRANSITIVE
+            </option>
+            <option
+              key="FULL"
+              value="FULL"
+            >
+              FULL
+            </option>
+            <option
+              key="FULL_TRANSITIVE"
+              value="FULL_TRANSITIVE"
+            >
+              FULL_TRANSITIVE
+            </option>
+            <option
+              key="NONE"
+              value="NONE"
+            >
+              NONE
+            </option>
+          </select>
+        </div>
+      </div>
       <div
         className="columns"
       >
         <div
           className="column is-one-half"
         >
-          <h5
+          <h4
             className="title is-5 mb-2"
           >
-            Schema Type
-          </h5>
-          <div
-            className="is-block select"
-          >
-            <select
-              defaultValue="AVRO"
-              name="schemaType"
-            >
-              <option
-                key="AVRO"
-                value="AVRO"
-              >
-                AVRO
-              </option>
-              <option
-                key="JSON"
-                value="JSON"
-              >
-                JSON
-              </option>
-              <option
-                key="PROTOBUF"
-                value="PROTOBUF"
-              >
-                PROTOBUF
-              </option>
-            </select>
-          </div>
+            Latest Schema
+          </h4>
+          <JSONEditor
+            name="latestSchema"
+            readonly={true}
+            value="{
+	\\"schema\\": \\"schema\\"
+}"
+          />
         </div>
         <div
           className="column is-one-half"
         >
-          <h5
+          <h4
             className="title is-5 mb-2"
           >
-            Compatibility Level
-          </h5>
-          <div
-            className="select is-block "
-          >
-            <select
-              defaultValue="BACKWARD"
-              name="compatibilityLevel"
-            >
-              <option
-                key="BACKWARD"
-                value="BACKWARD"
-              >
-                BACKWARD
-              </option>
-              <option
-                key="BACKWARD_TRANSITIVE"
-                value="BACKWARD_TRANSITIVE"
-              >
-                BACKWARD_TRANSITIVE
-              </option>
-              <option
-                key="FORWARD"
-                value="FORWARD"
-              >
-                FORWARD
-              </option>
-              <option
-                key="FORWARD_TRANSITIVE"
-                value="FORWARD_TRANSITIVE"
-              >
-                FORWARD_TRANSITIVE
-              </option>
-              <option
-                key="FULL"
-                value="FULL"
-              >
-                FULL
-              </option>
-              <option
-                key="FULL_TRANSITIVE"
-                value="FULL_TRANSITIVE"
-              >
-                FULL_TRANSITIVE
-              </option>
-              <option
-                key="NONE"
-                value="NONE"
-              >
-                NONE
-              </option>
-            </select>
-          </div>
+            New Schema
+          </h4>
+          <JSONEditor
+            name="newSchema"
+            onChange={[Function]}
+            value="{
+	\\"schema\\": \\"schema\\"
+}"
+          />
         </div>
       </div>
       <button

@@ -32,8 +32,8 @@ const mapStateToProps = (
   subject,
   schema: getSchema(state, subject),
   versions: getSortedSchemaVersions(state),
-  versionsAreFetched: getIsSchemaVersionFetched(state),
-  schemasAreFetched: getIsSchemaListFetched(state),
+  areVersionsFetched: getIsSchemaVersionFetched(state),
+  areSchemasFetched: getIsSchemaListFetched(state),
   clusterName,
 });
 
