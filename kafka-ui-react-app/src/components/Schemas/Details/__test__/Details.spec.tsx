@@ -121,11 +121,34 @@ describe('Details', () => {
             wrapper.find('mock-ConfirmationModal').prop('isOpen')
           ).toBeTruthy();
 
-          wrapper
-            .find('mock-ConfirmationModal')
-            .prop<() => void>('onConfirm')();
+          // @ts-expect-error lack of typing of enzyme#invoke
+          wrapper.find('mock-ConfirmationModal').invoke('onConfirm')();
 
           expect(mockDelete).toHaveBeenCalledTimes(1);
+        });
+
+        it('calls deleteSchema after confirmation', () => {
+          const mockDelete = jest.fn();
+          const wrapper = mount(
+            <StaticRouter>
+              {setupWrapper({ versions, deleteSchema: mockDelete })}
+            </StaticRouter>
+          );
+          expect(
+            wrapper.find('mock-ConfirmationModal').prop('isOpen')
+          ).toBeFalsy();
+
+          wrapper.find('button').at(1).simulate('click');
+          expect(
+            wrapper.find('mock-ConfirmationModal').prop('isOpen')
+          ).toBeTruthy();
+
+          // @ts-expect-error lack of typing of enzyme#invoke
+          wrapper.find('mock-ConfirmationModal').invoke('onCancel')();
+
+          expect(
+            wrapper.find('mock-ConfirmationModal').prop('isOpen')
+          ).toBeFalsy();
         });
 
         it('matches snapshot', () => {
