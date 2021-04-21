@@ -97,8 +97,8 @@ export const clearTopicMessages = (
   } catch (e) {
     const response = await getResponse(e);
     const alert: FailurePayload = {
-      subject: 'Something Went Wrong',
-      title: `Clear Messages Topic`,
+      subject: [clusterName, topicName, partitions].join('-'),
+      title: `Clear Topic Messages`,
       response,
     };
     dispatch(actions.clearMessagesTopicAction.failure({ alert }));
