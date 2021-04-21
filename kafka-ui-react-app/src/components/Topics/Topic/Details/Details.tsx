@@ -1,14 +1,16 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { Topic, TopicDetails } from 'generated-sources';
-import { NavLink, Switch, Route, Link } from 'react-router-dom';
+import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
 import {
   clusterTopicSettingsPath,
   clusterTopicPath,
   clusterTopicMessagesPath,
-  clusterTopicsTopicEditPath,
+  clusterTopicsPath,
+  clusterTopicEditPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import OverviewContainer from './Overview/OverviewContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
@@ -16,10 +18,20 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
+  deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
 }
 
-const Details: React.FC<Props> = ({ clusterName, topicName }) => {
+const Details: React.FC<Props> = ({ clusterName, topicName, deleteTopic }) => {
+  const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
+  const [
+    isDeleteTopicConfirmationVisible,
+    setDeleteTopicConfirmationVisible,
+  ] = React.useState(false);
+  const deleteTopicHandler = React.useCallback(() => {
+    deleteTopic(clusterName, topicName);
+    history.push(clusterTopicsPath(clusterName));
+  }, [clusterName, topicName]);
 
   return (
     <div className="box">
@@ -51,14 +63,34 @@ const Details: React.FC<Props> = ({ clusterName, topicName }) => {
           </NavLink>
         </div>
         <div className="navbar-end">
-          {!isReadOnly && (
-            <Link
-              to={clusterTopicsTopicEditPath(clusterName, topicName)}
-              className="button"
-            >
-              Edit settings
-            </Link>
-          )}
+          <div className="buttons">
+            {!isReadOnly && (
+              <>
+                <button
+                  className="button is-danger"
+                  type="button"
+                  onClick={() => setDeleteTopicConfirmationVisible(true)}
+                >
+                  Delete Topic
+                </button>
+
+                <Link
+                  to={clusterTopicEditPath(clusterName, topicName)}
+                  className="button"
+                >
+                  Edit settings
+                </Link>
+
+                <ConfirmationModal
+                  isOpen={isDeleteTopicConfirmationVisible}
+                  onCancel={() => setDeleteTopicConfirmationVisible(false)}
+                  onConfirm={deleteTopicHandler}
+                >
+                  Are you sure want to remove <b>{topicName}</b> topic?
+                </ConfirmationModal>
+              </>
+            )}
+          </div>
         </div>
       </nav>
       <br />

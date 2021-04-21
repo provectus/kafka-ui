@@ -1,14 +1,15 @@
 import React from 'react';
+import { useHistory } from 'react-router';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemaSchemaEditPath, clusterSchemasPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import { Link } from 'react-router-dom';
-import { useHistory } from 'react-router';
-import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
-import PageLoader from '../../common/PageLoader/PageLoader';
 
 export interface DetailsProps {
   subject: SchemaName;
@@ -37,16 +38,21 @@ const Details: React.FC<DetailsProps> = ({
   schemasAreFetched,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
+  const [
+    isDeleteSchemaConfirmationVisible,
+    setDeleteSchemaConfirmationVisible,
+  ] = React.useState(false);
+
   React.useEffect(() => {
     fetchSchemasByClusterName(clusterName);
     fetchSchemaVersions(clusterName, subject);
   }, [fetchSchemaVersions, fetchSchemasByClusterName, clusterName]);
 
   const history = useHistory();
-  const onDelete = async () => {
-    await deleteSchema(clusterName, subject);
+  const onDelete = React.useCallback(() => {
+    deleteSchema(clusterName, subject);
     history.push(clusterSchemasPath(clusterName));
-  };
+  }, [deleteSchema, clusterName, subject]);
 
   return (
     <div className="section">
@@ -90,10 +96,17 @@ const Details: React.FC<DetailsProps> = ({
                     className="button is-danger is-small level-item"
                     type="button"
                     title="in development"
-                    onClick={onDelete}
+                    onClick={() => setDeleteSchemaConfirmationVisible(true)}
                   >
                     Remove
                   </button>
+                  <ConfirmationModal
+                    isOpen={isDeleteSchemaConfirmationVisible}
+                    onCancel={() => setDeleteSchemaConfirmationVisible(false)}
+                    onConfirm={onDelete}
+                  >
+                    Are you sure want to remove <b>{subject}</b> schema?
+                  </ConfirmationModal>
                 </div>
               )}
             </div>
