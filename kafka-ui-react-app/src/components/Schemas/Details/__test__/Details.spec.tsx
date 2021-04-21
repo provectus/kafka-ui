@@ -132,7 +132,7 @@ describe('Details', () => {
 
           it('calls deleteSchema after confirmation', () => {
             expect(confirmationModal.prop('isOpen')).toBeFalsy();
-            wrapper.find('button').at(1).simulate('click');
+            wrapper.find('button').simulate('click');
             expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
             // @ts-expect-error lack of typing of enzyme#invoke
             confirmationModal.invoke('onConfirm')();
@@ -141,7 +141,7 @@ describe('Details', () => {
 
           it('calls deleteSchema after confirmation', () => {
             expect(confirmationModal.prop('isOpen')).toBeFalsy();
-            wrapper.find('button').at(1).simulate('click');
+            wrapper.find('button').simulate('click');
             expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
             // @ts-expect-error lack of typing of enzyme#invoke
             wrapper.find('mock-ConfirmationModal').invoke('onCancel')();
