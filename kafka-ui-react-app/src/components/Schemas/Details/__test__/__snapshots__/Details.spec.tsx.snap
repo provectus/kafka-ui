@@ -54,7 +54,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
         <Link
           className="button is-warning is-small level-item"
           title="in development"
-          to="/ui/clusters/Test cluster/schemas/test/edit"
+          to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
           Update Schema
@@ -189,7 +189,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
         <Link
           className="button is-warning is-small level-item"
           title="in development"
-          to="/ui/clusters/Test cluster/schemas/test/edit"
+          to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
           Update Schema
@@ -327,7 +327,7 @@ exports[`Details View when page with schema versions loaded when versions are em
         <Link
           className="button is-warning is-small level-item"
           title="in development"
-          to="/ui/clusters/Test cluster/schemas/test/edit"
+          to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
           Update Schema
@@ -395,7 +395,7 @@ exports[`Details View when page with schemas are loading matches snapshot 1`] = 
       links={
         Array [
           Object {
-            "href": "/ui/clusters/Test cluster/schemas",
+            "href": "/ui/clusters/testCluster/schemas",
             "label": "Schema Registry",
           },
         ]

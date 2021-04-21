@@ -112,7 +112,7 @@ describe('Details', () => {
               {setupWrapper({ versions, deleteSchema: mockDelete })}
             </StaticRouter>
           );
-          component.find('button').at(1).simulate('click');
+          component.find('button').simulate('click');
           expect(mockDelete).toHaveBeenCalledTimes(1);
         });
 

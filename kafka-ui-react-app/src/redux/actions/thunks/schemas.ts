@@ -91,7 +91,6 @@ export const updateSchemaCompatibilityLevel = (
     const response = await getResponse(error);
     const alert: FailurePayload = {
       subject: 'compatibilityLevel',
-      subjectId: subject,
       title: `Compatibility level ${subject}`,
       response,
     };

@@ -7,7 +7,11 @@ import {
   getSortedSchemaVersions,
   getIsSchemaListFetched,
 } from 'redux/reducers/schemas/selectors';
-import { fetchSchemaVersions, deleteSchema, fetchSchemasByClusterName } from 'redux/actions';
+import {
+  fetchSchemaVersions,
+  deleteSchema,
+  fetchSchemasByClusterName,
+} from 'redux/actions';
 import Details from './Details';
 
 interface RouteProps {
