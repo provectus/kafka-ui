@@ -76,6 +76,9 @@ const ListItem: React.FC<ListItemProps> = ({
             }
             right
           >
+            <DropdownItem onClick={clearTopicMessagesHandler}>
+              <span className="has-text-danger">Clear Messages</span>
+            </DropdownItem>
             <DropdownItem
               onClick={() => setDeleteTopicConfirmationVisible(true)}
             >

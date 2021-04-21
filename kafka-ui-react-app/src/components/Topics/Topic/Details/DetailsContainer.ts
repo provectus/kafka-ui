@@ -26,6 +26,7 @@ const mapStateToProps = (
 
 const mapDispatchToProps = {
   deleteTopic,
+  clearTopicMessages,
 };
 
 export default withRouter(
