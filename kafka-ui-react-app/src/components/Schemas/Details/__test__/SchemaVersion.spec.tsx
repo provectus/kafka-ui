@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import SchemaVersion from '../SchemaVersion';
+import SchemaVersion from 'components/Schemas/Details/SchemaVersion';
 import { versions } from './fixtures';
 
 describe('SchemaVersion', () => {

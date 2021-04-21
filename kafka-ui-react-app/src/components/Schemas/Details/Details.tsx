@@ -4,10 +4,10 @@ import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemasPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import { useHistory } from 'react-router';
-import Breadcrumb from '../../common/Breadcrumb/Breadcrumb';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
-import PageLoader from '../../common/PageLoader/PageLoader';
 
 export interface DetailsProps {
   subject: SchemaName;

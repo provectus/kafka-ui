@@ -3,7 +3,7 @@ import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
-import * as fixtures from '../fixtures';
+import * as fixtures from 'redux/actions/__test__/fixtures';
 
 const store = mockStoreCreator;
 

@@ -1,6 +1,8 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import BytesFormatted, { sizes } from '../BytesFormatted';
+import BytesFormatted, {
+  sizes,
+} from 'components/common/BytesFormatted/BytesFormatted';
 
 describe('BytesFormatted', () => {
   it('renders Bytes correctly', () => {

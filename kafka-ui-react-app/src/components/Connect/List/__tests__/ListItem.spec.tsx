@@ -4,7 +4,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { connectorsPayload } from 'redux/reducers/connect/__test__/fixtures';
 import configureStore from 'redux/store/configureStore';
-import ListItem, { ListItemProps } from '../ListItem';
+import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
 
 const store = configureStore();
 

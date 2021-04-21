@@ -1,5 +1,5 @@
 import { deleteTopicAction } from 'redux/actions';
-import reducer from '../reducer';
+import reducer from 'redux/reducers/topics/reducer';
 
 describe('topics reducer', () => {
   it('deletes the topic from the list on DELETE_TOPIC__SUCCESS', () => {

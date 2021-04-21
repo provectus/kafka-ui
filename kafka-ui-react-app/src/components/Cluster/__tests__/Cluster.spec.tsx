@@ -6,7 +6,7 @@ import { ClusterFeaturesEnum } from 'generated-sources';
 import { fetchClusterListAction } from 'redux/actions';
 import configureStore from 'redux/store/configureStore';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
-import Cluster from '../Cluster';
+import Cluster from 'components/Cluster/Cluster';
 
 const store = configureStore();
 
