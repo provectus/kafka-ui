@@ -66,12 +66,11 @@ Steps to build Kafka UI locally with Docker:
 1. Install Homebrew Cask:
 ```sh
 > brew update
-> brew cask
 ``` 
 2. Install JAVA 13 with Homebrew Cask:
 ```sh
-> brew tap homebrew/cask-versions
-> brew cask install java (or java13 if 13th version is not the latest one)
+> brew tap adoptopenjdk/openjdk
+> brew install adoptopenjdk13
 ``` 
 ### Building
 
