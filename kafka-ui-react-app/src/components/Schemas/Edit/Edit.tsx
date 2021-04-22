@@ -40,27 +40,27 @@ const Edit = ({
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
   }, [clusterName, fetchSchemasByClusterName]);
 
-  const [newSchema, setNewSchema] = React.useState('');
-  const { register, handleSubmit, formState } = useForm<NewSchemaSubjectRaw>();
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+    control,
+  } = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
+
   const getFormattedSchema = React.useCallback(
     () => JSON.stringify(JSON.parse(schema.schema), null, '\t'),
     [schema]
-  );
-
-  const handleSchemaChange = React.useCallback(
-    (e: string) => {
-      setNewSchema(e);
-    },
-    [setNewSchema]
   );
   const history = useHistory();
   const onSubmit = React.useCallback(
     async ({
       schemaType,
       compatibilityLevel,
+      newSchema,
     }: {
       schemaType: SchemaType;
       compatibilityLevel: CompatibilityLevelCompatibilityEnum;
+      newSchema: string;
     }) => {
       await updateSchema(
         schema,
@@ -72,7 +72,7 @@ const Edit = ({
       );
       history.push(clusterSchemaPath(clusterName, subject));
     },
-    [schema, newSchema, register, clusterName, subject, updateSchema, history]
+    [schema, register, control, clusterName, subject, updateSchema, history]
   );
 
   return (
@@ -96,7 +96,7 @@ const Edit = ({
         </div>
       </div>
 
-      {schemasAreFetched && !formState.isSubmitting ? (
+      {schemasAreFetched && !isSubmitting ? (
         <div className="box">
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -151,9 +151,9 @@ const Edit = ({
               <div className="column is-one-half">
                 <h4 className="title is-5 mb-2">New Schema</h4>
                 <JSONEditor
-                  value={newSchema || getFormattedSchema()}
+                  control={control}
+                  value={getFormattedSchema()}
                   name="newSchema"
-                  onChange={handleSchemaChange}
                 />
               </div>
             </div>
