@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import JSONEditor from '../JSONEditor';
+import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 
 describe('JSONEditor component', () => {
   it('matches the snapshot', () => {

@@ -2,7 +2,7 @@ import { mount, shallow } from 'enzyme';
 import { SchemaType } from 'generated-sources';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
-import Edit, { EditProps } from '../Edit';
+import Edit, { EditProps } from 'components/Schemas/Edit/Edit';
 
 describe('Edit Component', () => {
   const mockSchema = {
