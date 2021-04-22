@@ -22,6 +22,11 @@ interface Props {
   totalPages: number;
   fetchTopicsList(props: FetchTopicsListParams): void;
   deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
+  clearTopicMessages(
+    topicName: TopicName,
+    clusterName: ClusterName,
+    partitions?: number[]
+  ): void;
 }
 
 const List: React.FC<Props> = ({
@@ -31,6 +36,7 @@ const List: React.FC<Props> = ({
   totalPages,
   fetchTopicsList,
   deleteTopic,
+  clearTopicMessages,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
@@ -100,6 +106,7 @@ const List: React.FC<Props> = ({
                     key={topic.name}
                     topic={topic}
                     deleteTopic={deleteTopic}
+                    clearTopicMessages={clearTopicMessages}
                   />
                 ))}
                 {items.length === 0 && (

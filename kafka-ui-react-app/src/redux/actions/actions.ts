@@ -60,6 +60,12 @@ export const fetchTopicMessagesAction = createAsyncAction(
   'GET_TOPIC_MESSAGES__FAILURE'
 )<undefined, TopicMessage[], undefined>();
 
+export const clearMessagesTopicAction = createAsyncAction(
+  'CLEAR_TOPIC_MESSAGES__REQUEST',
+  'CLEAR_TOPIC_MESSAGES__SUCCESS',
+  'CLEAR_TOPIC_MESSAGES__FAILURE'
+)<undefined, TopicName, { alert?: FailurePayload }>();
+
 export const fetchTopicDetailsAction = createAsyncAction(
   'GET_TOPIC_DETAILS__REQUEST',
   'GET_TOPIC_DETAILS__SUCCESS',

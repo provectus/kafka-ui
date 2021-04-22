@@ -81,6 +81,30 @@ export const fetchTopicMessages = (
   }
 };
 
+export const clearTopicMessages = (
+  clusterName: ClusterName,
+  topicName: TopicName,
+  partitions?: number[]
+): PromiseThunkResult => async (dispatch) => {
+  dispatch(actions.clearMessagesTopicAction.request());
+  try {
+    await messagesApiClient.deleteTopicMessages({
+      clusterName,
+      topicName,
+      partitions,
+    });
+    dispatch(actions.clearMessagesTopicAction.success(topicName));
+  } catch (e) {
+    const response = await getResponse(e);
+    const alert: FailurePayload = {
+      subject: [clusterName, topicName, partitions].join('-'),
+      title: `Clear Topic Messages`,
+      response,
+    };
+    dispatch(actions.clearMessagesTopicAction.failure({ alert }));
+  }
+};
+
 export const fetchTopicDetails = (
   clusterName: ClusterName,
   topicName: TopicName
