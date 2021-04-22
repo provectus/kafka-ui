@@ -6,6 +6,7 @@ import {
   getSchema,
 } from 'redux/reducers/schemas/selectors';
 import { fetchSchemasByClusterName, updateSchema } from 'redux/actions';
+
 import Edit from './Edit';
 
 interface RouteProps {
