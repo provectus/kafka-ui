@@ -23,6 +23,7 @@ describe('List', () => {
               totalPages={1}
               fetchTopicsList={jest.fn()}
               deleteTopic={jest.fn()}
+              clearTopicMessages={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>
@@ -49,6 +50,7 @@ describe('List', () => {
               totalPages={1}
               fetchTopicsList={jest.fn()}
               deleteTopic={jest.fn()}
+              clearTopicMessages={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>

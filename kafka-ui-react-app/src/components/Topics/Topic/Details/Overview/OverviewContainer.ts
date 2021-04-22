@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { RootState, TopicName, ClusterName } from 'redux/interfaces';
 import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { clearTopicMessages } from 'redux/actions';
 import Overview from './Overview';
 
 interface RouteProps {
@@ -15,11 +16,19 @@ const mapStateToProps = (
   state: RootState,
   {
     match: {
-      params: { topicName },
+      params: { topicName, clusterName },
     },
   }: OwnProps
 ) => ({
   ...getTopicByName(state, topicName),
+  topicName,
+  clusterName,
 });
 
-export default withRouter(connect(mapStateToProps)(Overview));
+const mapDispatchToProps = {
+  clearTopicMessages,
+};
+
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(Overview)
+);

@@ -19,9 +19,15 @@ interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
 
-const Details: React.FC<Props> = ({ clusterName, topicName, deleteTopic }) => {
+const Details: React.FC<Props> = ({
+  clusterName,
+  topicName,
+  deleteTopic,
+  clearTopicMessages,
+}) => {
   const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
   const [
@@ -31,6 +37,10 @@ const Details: React.FC<Props> = ({ clusterName, topicName, deleteTopic }) => {
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
     history.push(clusterTopicsPath(clusterName));
+  }, [clusterName, topicName]);
+
+  const clearTopicMessagesHandler = React.useCallback(() => {
+    clearTopicMessages(clusterName, topicName);
   }, [clusterName, topicName]);
 
   return (
@@ -66,6 +76,13 @@ const Details: React.FC<Props> = ({ clusterName, topicName, deleteTopic }) => {
           <div className="buttons">
             {!isReadOnly && (
               <>
+                <button
+                  type="button"
+                  className="button is-danger"
+                  onClick={clearTopicMessagesHandler}
+                >
+                  Clear All Messages
+                </button>
                 <button
                   className="button is-danger"
                   type="button"

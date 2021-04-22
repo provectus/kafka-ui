@@ -109,4 +109,26 @@ describe('Actions', () => {
       });
     });
   });
+
+  describe('clearMessagesTopicAction', () => {
+    it('creates a REQUEST action', () => {
+      expect(actions.clearMessagesTopicAction.request()).toEqual({
+        type: 'CLEAR_TOPIC_MESSAGES__REQUEST',
+      });
+    });
+
+    it('creates a SUCCESS action', () => {
+      expect(actions.clearMessagesTopicAction.success('topic')).toEqual({
+        type: 'CLEAR_TOPIC_MESSAGES__SUCCESS',
+        payload: 'topic',
+      });
+    });
+
+    it('creates a FAILURE action', () => {
+      expect(actions.clearMessagesTopicAction.failure({})).toEqual({
+        type: 'CLEAR_TOPIC_MESSAGES__FAILURE',
+        payload: {},
+      });
+    });
+  });
 });
