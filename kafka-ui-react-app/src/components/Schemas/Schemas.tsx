@@ -9,6 +9,7 @@ import {
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import NewContainer from './New/NewContainer';
+import EditContainer from './Edit/EditContainer';
 
 const Schemas: React.FC = () => (
   <Switch>
@@ -26,6 +27,11 @@ const Schemas: React.FC = () => (
       exact
       path={clusterSchemaPath(':clusterName', ':subject')}
       component={DetailsContainer}
+    />
+    <Route
+      exact
+      path="/ui/clusters/:clusterName/schemas/:subject/edit"
+      component={EditContainer}
     />
   </Switch>
 );

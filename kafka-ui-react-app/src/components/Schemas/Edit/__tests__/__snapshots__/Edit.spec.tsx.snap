@@ -1,0 +1,311 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <div
+      className="level-item level-left"
+    >
+      <Breadcrumb
+        links={
+          Array [
+            Object {
+              "href": "/ui/clusters/ClusterName/schemas",
+              "label": "Schema Registry",
+            },
+            Object {
+              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
+              "label": "Subject",
+            },
+          ]
+        }
+      >
+        Edit
+      </Breadcrumb>
+    </div>
+  </div>
+  <div
+    className="box"
+  >
+    <form
+      className="mt-3 is-flex-direction-column"
+      onSubmit={[Function]}
+    >
+      <div
+        className="mb-4"
+      >
+        <h5
+          className="title is-5 mb-2"
+        >
+          Schema Type
+        </h5>
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="AVRO"
+            name="schemaType"
+          >
+            <option
+              key="AVRO"
+              value="AVRO"
+            >
+              AVRO
+            </option>
+            <option
+              key="JSON"
+              value="JSON"
+            >
+              JSON
+            </option>
+            <option
+              key="PROTOBUF"
+              value="PROTOBUF"
+            >
+              PROTOBUF
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        className="mb-4"
+      >
+        <h5
+          className="title is-5 mb-2"
+        >
+          Compatibility Level
+        </h5>
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="BACKWARD"
+            name="compatibilityLevel"
+          >
+            <option
+              key="BACKWARD"
+              value="BACKWARD"
+            >
+              BACKWARD
+            </option>
+            <option
+              key="BACKWARD_TRANSITIVE"
+              value="BACKWARD_TRANSITIVE"
+            >
+              BACKWARD_TRANSITIVE
+            </option>
+            <option
+              key="FORWARD"
+              value="FORWARD"
+            >
+              FORWARD
+            </option>
+            <option
+              key="FORWARD_TRANSITIVE"
+              value="FORWARD_TRANSITIVE"
+            >
+              FORWARD_TRANSITIVE
+            </option>
+            <option
+              key="FULL"
+              value="FULL"
+            >
+              FULL
+            </option>
+            <option
+              key="FULL_TRANSITIVE"
+              value="FULL_TRANSITIVE"
+            >
+              FULL_TRANSITIVE
+            </option>
+            <option
+              key="NONE"
+              value="NONE"
+            >
+              NONE
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        className="columns"
+      >
+        <div
+          className="column is-one-half"
+        >
+          <h4
+            className="title is-5 mb-2"
+          >
+            Latest Schema
+          </h4>
+          <JSONEditor
+            name="latestSchema"
+            readonly={true}
+            value="{
+	\\"schema\\": \\"schema\\"
+}"
+          />
+        </div>
+        <div
+          className="column is-one-half"
+        >
+          <h4
+            className="title is-5 mb-2"
+          >
+            New Schema
+          </h4>
+          <JSONEditor
+            control={
+              Object {
+                "defaultValuesRef": Object {
+                  "current": Object {},
+                },
+                "fieldArrayDefaultValuesRef": Object {
+                  "current": Object {},
+                },
+                "fieldArrayNamesRef": Object {
+                  "current": Set {},
+                },
+                "fieldArrayValuesRef": Object {
+                  "current": Object {},
+                },
+                "fieldsRef": Object {
+                  "current": Object {},
+                },
+                "fieldsWithValidationRef": Object {
+                  "current": Object {},
+                },
+                "formState": Object {
+                  "dirtyFields": Object {},
+                  "errors": Object {},
+                  "isDirty": false,
+                  "isSubmitSuccessful": false,
+                  "isSubmitted": false,
+                  "isSubmitting": false,
+                  "isValid": true,
+                  "isValidating": false,
+                  "submitCount": 0,
+                  "touched": Object {},
+                },
+                "formStateRef": Object {
+                  "current": Object {
+                    "dirtyFields": Object {},
+                    "errors": Object {},
+                    "isDirty": false,
+                    "isSubmitSuccessful": false,
+                    "isSubmitted": false,
+                    "isSubmitting": false,
+                    "isValid": true,
+                    "isValidating": false,
+                    "submitCount": 0,
+                    "touched": Object {},
+                  },
+                },
+                "getValues": [Function],
+                "isFormDirty": [Function],
+                "mode": Object {
+                  "isOnAll": false,
+                  "isOnBlur": false,
+                  "isOnChange": true,
+                  "isOnSubmit": false,
+                  "isOnTouch": false,
+                },
+                "reValidateMode": Object {
+                  "isReValidateOnBlur": false,
+                  "isReValidateOnChange": true,
+                },
+                "readFormStateRef": Object {
+                  "current": Object {
+                    "constructor": true,
+                    "dirtyFields": true,
+                    "errors": true,
+                    "isDirty": true,
+                    "isSubmitSuccessful": true,
+                    "isSubmitted": true,
+                    "isSubmitting": true,
+                    "isValid": true,
+                    "isValidating": true,
+                    "submitCount": true,
+                    "touched": true,
+                  },
+                },
+                "register": [Function],
+                "removeFieldEventListener": [Function],
+                "resetFieldArrayFunctionRef": Object {
+                  "current": Object {},
+                },
+                "setValue": [Function],
+                "shallowFieldsStateRef": Object {
+                  "current": Object {},
+                },
+                "shouldUnregister": true,
+                "trigger": [Function],
+                "unregister": [Function],
+                "updateFormState": [Function],
+                "updateWatchedValue": [Function],
+                "useWatchFieldsRef": Object {
+                  "current": Object {},
+                },
+                "useWatchRenderFunctionsRef": Object {
+                  "current": Object {},
+                },
+                "validFieldsRef": Object {
+                  "current": Object {},
+                },
+                "validateResolver": undefined,
+                "watchInternal": [Function],
+              }
+            }
+            name="newSchema"
+            value="{
+	\\"schema\\": \\"schema\\"
+}"
+          />
+        </div>
+      </div>
+      <button
+        className="button is-primary"
+        type="submit"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</div>
+`;
+
+exports[`Edit Component when schemas are not fetched matches the snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <div
+      className="level-item level-left"
+    >
+      <Breadcrumb
+        links={
+          Array [
+            Object {
+              "href": "/ui/clusters/ClusterName/schemas",
+              "label": "Schema Registry",
+            },
+            Object {
+              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
+              "label": "Subject",
+            },
+          ]
+        }
+      >
+        Edit
+      </Breadcrumb>
+    </div>
+  </div>
+  <PageLoader />
+</div>
+`;

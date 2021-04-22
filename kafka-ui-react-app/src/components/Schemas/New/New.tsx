@@ -3,10 +3,10 @@ import { ClusterName, NewSchemaSubjectRaw } from 'redux/interfaces';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
 import { NewSchemaSubject, SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
-import { useParams } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 
 export interface NewProps {
   createSchema: (
@@ -17,6 +17,7 @@ export interface NewProps {
 
 const New: React.FC<NewProps> = ({ createSchema }) => {
   const { clusterName } = useParams<{ clusterName: string }>();
+  const history = useHistory();
   const {
     register,
     errors,
@@ -25,12 +26,17 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
   } = useForm<NewSchemaSubjectRaw>();
 
   const onSubmit = React.useCallback(
-    async ({ subject, schema }: NewSchemaSubjectRaw) => {
-      await createSchema(clusterName, {
-        subject,
-        schema,
-        schemaType: SchemaType.AVRO,
-      });
+    async ({ subject, schema, schemaType }: NewSchemaSubjectRaw) => {
+      try {
+        await createSchema(clusterName, {
+          subject,
+          schema,
+          schemaType,
+        });
+        history.push(clusterSchemaPath(clusterName, subject));
+      } catch (e) {
+        // Show Error
+      }
     },
     [clusterName]
   );
@@ -62,7 +68,7 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
                   className="input"
                   placeholder="Schema Name"
                   ref={register({
-                    required: 'Topic Name is required.',
+                    required: 'Schema Name is required.',
                     pattern: {
                       value: SCHEMA_NAME_VALIDATION_PATTERN,
                       message: 'Only alphanumeric, _, -, and . allowed',
@@ -83,13 +89,35 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
               <div className="control">
                 <textarea
                   className="textarea"
-                  ref={register}
+                  ref={register({
+                    required: 'Schema is required.',
+                  })}
                   name="schema"
                   disabled={isSubmitting}
                 />
               </div>
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="schema" />
+              </p>
+            </div>
+
+            <div className="field">
+              <label className="label">Schema Type *</label>
+              <div className="control select">
+                <select
+                  ref={register({
+                    required: 'Schema Type is required.',
+                  })}
+                  name="schemaType"
+                  disabled={isSubmitting}
+                >
+                  <option value={SchemaType.AVRO}>AVRO</option>
+                  <option value={SchemaType.JSON}>JSON</option>
+                  <option value={SchemaType.PROTOBUF}>PROTOBUF</option>
+                </select>
+              </div>
+              <p className="help is-danger">
+                <ErrorMessage errors={errors} name="schemaType" />
               </p>
             </div>
           </div>

@@ -2,6 +2,10 @@ import fetchMock from 'fetch-mock-jest';
 import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import * as schemaFixtures from 'redux/reducers/schemas/__test__/fixtures';
+import {
+  CompatibilityLevelCompatibilityEnum,
+  SchemaType,
+} from 'generated-sources';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 import * as fixtures from 'redux/actions/__test__/fixtures';
 
@@ -124,6 +128,47 @@ describe('Thunks', () => {
     });
   });
 
+  describe('updateSchemaCompatibilityLevel', () => {
+    it('creates UPDATE_SCHEMA__SUCCESS when patching a schema', async () => {
+      fetchMock.putOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
+        200
+      );
+      await store.dispatch(
+        thunks.updateSchemaCompatibilityLevel(
+          clusterName,
+          subject,
+          CompatibilityLevelCompatibilityEnum.BACKWARD
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateSchemaCompatibilityLevelAction.request(),
+        actions.updateSchemaCompatibilityLevelAction.success(),
+      ]);
+    });
+
+    it('creates UPDATE_SCHEMA__SUCCESS when failing to patch a schema', async () => {
+      fetchMock.putOnce(
+        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
+        404
+      );
+      try {
+        await store.dispatch(
+          thunks.updateSchemaCompatibilityLevel(
+            clusterName,
+            subject,
+            CompatibilityLevelCompatibilityEnum.BACKWARD
+          )
+        );
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.updateSchemaCompatibilityLevelAction.request(),
+          actions.updateSchemaCompatibilityLevelAction.failure({}),
+        ]);
+      }
+    });
+  });
   describe('deleteSchema', () => {
     it('fires DELETE_SCHEMA__SUCCESS on success', async () => {
       fetchMock.deleteOnce(
@@ -154,6 +199,40 @@ describe('Thunks', () => {
           actions.deleteSchemaAction.failure({}),
         ]);
       }
+    });
+  });
+
+  describe('updateSchema', () => {
+    it('calls createSchema', () => {
+      store.dispatch(
+        thunks.updateSchema(
+          fixtures.schema,
+          fixtures.schemaPayload.schema,
+          SchemaType.AVRO,
+          CompatibilityLevelCompatibilityEnum.BACKWARD,
+          clusterName,
+          subject
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.createSchemaAction.request(),
+      ]);
+    });
+
+    it('calls updateSchema and does not call createSchema when schema does not change', () => {
+      store.dispatch(
+        thunks.updateSchema(
+          fixtures.schema,
+          fixtures.schema.schema,
+          SchemaType.JSON,
+          CompatibilityLevelCompatibilityEnum.FORWARD,
+          clusterName,
+          subject
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateSchemaCompatibilityLevelAction.request(),
+      ]);
     });
   });
 });

@@ -42,7 +42,9 @@ describe('Details', () => {
         clusterName={clusterName}
         fetchSchemaVersions={fetchSchemaVersionsMock}
         deleteSchema={jest.fn()}
-        isFetched
+        fetchSchemasByClusterName={jest.fn()}
+        areSchemasFetched
+        areVersionsFetched
         versions={[]}
         {...props}
       />
@@ -71,14 +73,16 @@ describe('Details', () => {
     });
 
     describe('when page with schema versions is loading', () => {
-      const wrapper = shallow(setupWrapper({ isFetched: false }));
+      const wrapper = shallow(setupWrapper({ areVersionsFetched: false }));
 
       it('renders PageLoader', () => {
         expect(wrapper.exists('PageLoader')).toBeTruthy();
       });
 
       it('matches snapshot', () => {
-        expect(shallow(setupWrapper({ isFetched: false }))).toMatchSnapshot();
+        expect(
+          shallow(setupWrapper({ areVersionsFetched: false }))
+        ).toMatchSnapshot();
       });
     });
 
@@ -129,7 +133,7 @@ describe('Details', () => {
 
           it('calls deleteSchema after confirmation', () => {
             expect(confirmationModal.prop('isOpen')).toBeFalsy();
-            wrapper.find('button').at(1).simulate('click');
+            wrapper.find('button').simulate('click');
             expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
             // @ts-expect-error lack of typing of enzyme#invoke
             confirmationModal.invoke('onConfirm')();
@@ -138,7 +142,7 @@ describe('Details', () => {
 
           it('calls deleteSchema after confirmation', () => {
             expect(confirmationModal.prop('isOpen')).toBeFalsy();
-            wrapper.find('button').at(1).simulate('click');
+            wrapper.find('button').simulate('click');
             expect(findConfirmationModal().prop('isOpen')).toBeTruthy();
             // @ts-expect-error lack of typing of enzyme#invoke
             wrapper.find('mock-ConfirmationModal').invoke('onCancel')();
@@ -165,6 +169,18 @@ describe('Details', () => {
             ).exists('.level-right')
           ).toBeFalsy();
         });
+      });
+    });
+
+    describe('when page with schemas are loading', () => {
+      const wrapper = shallow(setupWrapper({ areSchemasFetched: false }));
+
+      it('renders PageLoader', () => {
+        expect(wrapper.exists('PageLoader')).toBeTruthy();
+      });
+
+      it('matches snapshot', () => {
+        expect(wrapper).toMatchSnapshot();
       });
     });
   });

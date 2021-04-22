@@ -5,6 +5,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hookform/error-message": "0.0.5",
+    "ace-builds": "^1.4.12",
     "@rooks/use-outside-click-ref": "^4.10.1",
     "bulma": "^0.9.2",
     "bulma-switch": "^2.0.0",
@@ -16,6 +17,7 @@
     "node-fetch": "^2.6.1",
     "pretty-ms": "^7.0.1",
     "react": "^17.0.1",
+    "react-ace": "^9.3.0",
     "react-datepicker": "^3.7.0",
     "react-dom": "^17.0.1",
     "react-hook-form": "^6.15.5",

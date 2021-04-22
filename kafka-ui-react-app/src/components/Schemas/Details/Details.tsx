@@ -2,9 +2,10 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import { clusterSchemasPath } from 'lib/paths';
+import { clusterSchemasPath, clusterSchemaSchemaEditPath } from 'lib/paths';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
+import { Link } from 'react-router-dom';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
@@ -16,11 +17,13 @@ export interface DetailsProps {
   schema: SchemaSubject;
   clusterName: ClusterName;
   versions: SchemaSubject[];
-  isFetched: boolean;
+  areVersionsFetched: boolean;
+  areSchemasFetched: boolean;
   fetchSchemaVersions: (
     clusterName: ClusterName,
     schemaName: SchemaName
   ) => void;
+  fetchSchemasByClusterName: (clusterName: ClusterName) => void;
   deleteSchema: (clusterName: ClusterName, subject: string) => Promise<void>;
 }
 
@@ -29,9 +32,11 @@ const Details: React.FC<DetailsProps> = ({
   schema,
   clusterName,
   fetchSchemaVersions,
+  fetchSchemasByClusterName,
   deleteSchema,
   versions,
-  isFetched,
+  areVersionsFetched,
+  areSchemasFetched,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const [
@@ -40,8 +45,9 @@ const Details: React.FC<DetailsProps> = ({
   ] = React.useState(false);
 
   React.useEffect(() => {
+    fetchSchemasByClusterName(clusterName);
     fetchSchemaVersions(clusterName, subject);
-  }, [fetchSchemaVersions, clusterName]);
+  }, [fetchSchemaVersions, fetchSchemasByClusterName, clusterName]);
 
   const history = useHistory();
   const onDelete = React.useCallback(() => {
@@ -63,7 +69,7 @@ const Details: React.FC<DetailsProps> = ({
           {subject}
         </Breadcrumb>
       </div>
-      {isFetched ? (
+      {areVersionsFetched && areSchemasFetched ? (
         <>
           <div className="box">
             <div className="level">
@@ -78,19 +84,17 @@ const Details: React.FC<DetailsProps> = ({
                 </div>
               </div>
               {!isReadOnly && (
-                <div className="level-right">
-                  <button
-                    className="button is-warning is-small level-item"
+                <div className="level-right buttons">
+                  <Link
+                    className="button is-warning"
                     type="button"
-                    title="in development"
-                    disabled
+                    to={clusterSchemaSchemaEditPath(clusterName, subject)}
                   >
                     Update Schema
-                  </button>
+                  </Link>
                   <button
-                    className="button is-danger is-small level-item"
+                    className="button is-danger"
                     type="button"
-                    title="in development"
                     onClick={() => setDeleteSchemaConfirmationVisible(true)}
                   >
                     Remove

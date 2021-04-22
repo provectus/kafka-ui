@@ -49,20 +49,18 @@ exports[`Details View Initial state matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="level-right"
+        className="level-right buttons"
       >
-        <button
-          className="button is-warning is-small level-item"
-          disabled={true}
-          title="in development"
+        <Link
+          className="button is-warning"
+          to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
           Update Schema
-        </button>
+        </Link>
         <button
-          className="button is-danger is-small level-item"
+          className="button is-danger"
           onClick={[Function]}
-          title="in development"
           type="button"
         >
           Remove
@@ -195,20 +193,18 @@ exports[`Details View when page with schema versions loaded when schema has vers
         </div>
       </div>
       <div
-        className="level-right"
+        className="level-right buttons"
       >
-        <button
-          className="button is-warning is-small level-item"
-          disabled={true}
-          title="in development"
+        <Link
+          className="button is-warning"
+          to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
           Update Schema
-        </button>
+        </Link>
         <button
-          className="button is-danger is-small level-item"
+          className="button is-danger"
           onClick={[Function]}
-          title="in development"
           type="button"
         >
           Remove
@@ -344,20 +340,18 @@ exports[`Details View when page with schema versions loaded when versions are em
         </div>
       </div>
       <div
-        className="level-right"
+        className="level-right buttons"
       >
-        <button
-          className="button is-warning is-small level-item"
-          disabled={true}
-          title="in development"
+        <Link
+          className="button is-warning"
+          to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
           Update Schema
-        </button>
+        </Link>
         <button
-          className="button is-danger is-small level-item"
+          className="button is-danger"
           onClick={[Function]}
-          title="in development"
           type="button"
         >
           Remove
@@ -414,5 +408,29 @@ exports[`Details View when page with schema versions loaded when versions are em
       </table>
     </div>
   </div>
+</div>
+`;
+
+exports[`Details View when page with schemas are loading matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/testCluster/schemas",
+            "label": "Schema Registry",
+          },
+        ]
+      }
+    >
+      test
+    </Breadcrumb>
+  </div>
+  <PageLoader />
 </div>
 `;

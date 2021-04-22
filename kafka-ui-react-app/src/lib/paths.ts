@@ -24,6 +24,10 @@ export const clusterSchemaPath = (
   clusterName: ClusterName,
   subject: SchemaName
 ) => `${clusterSchemasPath(clusterName)}/${subject}/latest`;
+export const clusterSchemaSchemaEditPath = (
+  clusterName: ClusterName,
+  subject: SchemaName
+) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
 
 // Topics
 export const clusterTopicsPath = (clusterName: ClusterName) =>

@@ -151,6 +151,47 @@ exports[`New View matches snapshot 1`] = `
                   />
                 </p>
               </div>
+              <div
+                className="field"
+              >
+                <label
+                  className="label"
+                >
+                  Schema Type *
+                </label>
+                <div
+                  className="control select"
+                >
+                  <select
+                    disabled={false}
+                    name="schemaType"
+                  >
+                    <option
+                      value="AVRO"
+                    >
+                      AVRO
+                    </option>
+                    <option
+                      value="JSON"
+                    >
+                      JSON
+                    </option>
+                    <option
+                      value="PROTOBUF"
+                    >
+                      PROTOBUF
+                    </option>
+                  </select>
+                </div>
+                <p
+                  className="help is-danger"
+                >
+                  <Component
+                    errors={Object {}}
+                    name="schemaType"
+                  />
+                </p>
+              </div>
             </div>
             <br />
             <div

@@ -130,6 +130,12 @@ export const createSchemaAction = createAsyncAction(
   'POST_SCHEMA__FAILURE'
 )<undefined, SchemaSubject, { alert?: FailurePayload }>();
 
+export const updateSchemaCompatibilityLevelAction = createAsyncAction(
+  'PATCH_SCHEMA_COMPATIBILITY__REQUEST',
+  'PATCH_SCHEMA_COMPATIBILITY__SUCCESS',
+  'PATCH_SCHEMA_COMPATIBILITY__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
 export const deleteSchemaAction = createAsyncAction(
   'DELETE_SCHEMA__REQUEST',
   'DELETE_SCHEMA__SUCCESS',
