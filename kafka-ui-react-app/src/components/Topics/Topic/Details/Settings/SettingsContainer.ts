@@ -6,6 +6,7 @@ import {
   getTopicConfig,
   getTopicConfigFetched,
 } from 'redux/reducers/topics/selectors';
+
 import Settings from './Settings';
 
 interface RouteProps {
@@ -30,8 +31,7 @@ const mapStateToProps = (
 });
 
 const mapDispatchToProps = {
-  fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) =>
-    fetchTopicConfig(clusterName, topicName),
+  fetchTopicConfig,
 };
 
 export default withRouter(

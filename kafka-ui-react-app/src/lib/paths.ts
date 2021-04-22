@@ -1,4 +1,5 @@
 import { ClusterName, SchemaName, TopicName } from 'redux/interfaces';
+
 import { GIT_REPO_LINK } from './constants';
 
 export const gitCommitPath = (commit: string) =>
@@ -41,7 +42,7 @@ export const clusterTopicMessagesPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/messages`;
-export const clusterTopicsTopicEditPath = (
+export const clusterTopicEditPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;

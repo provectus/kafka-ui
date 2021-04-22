@@ -8,6 +8,7 @@ import {
 } from 'redux/interfaces';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import Dropdown from 'components/common/Dropdown/Dropdown';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -20,6 +21,11 @@ const ListItem: React.FC<ListItemProps> = ({
   deleteTopic,
   clusterName,
 }) => {
+  const [
+    isDeleteTopicConfirmationVisible,
+    setDeleteTopicConfirmationVisible,
+  ] = React.useState(false);
+
   const outOfSyncReplicas = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
       return 0;
@@ -54,19 +60,30 @@ const ListItem: React.FC<ListItemProps> = ({
           {internal ? 'Internal' : 'External'}
         </div>
       </td>
-      <td className="has-text-right">
-        <Dropdown
-          label={
-            <span className="icon">
-              <i className="fas fa-cog" />
-            </span>
-          }
-          right
+      <td>
+        <div className="has-text-right">
+          <Dropdown
+            label={
+              <span className="icon">
+                <i className="fas fa-cog" />
+              </span>
+            }
+            right
+          >
+            <DropdownItem
+              onClick={() => setDeleteTopicConfirmationVisible(true)}
+            >
+              <span className="has-text-danger">Remove Topic</span>
+            </DropdownItem>
+          </Dropdown>
+        </div>
+        <ConfirmationModal
+          isOpen={isDeleteTopicConfirmationVisible}
+          onCancel={() => setDeleteTopicConfirmationVisible(false)}
+          onConfirm={deleteTopicHandler}
         >
-          <DropdownItem onClick={deleteTopicHandler}>
-            <span className="has-text-danger">Remove Topic</span>
-          </DropdownItem>
-        </Dropdown>
+          Are you sure want to remove <b>{name}</b> topic?
+        </ConfirmationModal>
       </td>
     </tr>
   );

@@ -12,6 +12,7 @@ import { FetchTopicsListParams } from 'redux/actions';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
+
 import ListItem from './ListItem';
 
 interface Props {

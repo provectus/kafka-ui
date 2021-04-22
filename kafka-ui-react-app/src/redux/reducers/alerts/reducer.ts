@@ -1,6 +1,7 @@
 import { getType } from 'typesafe-actions';
 import { dismissAlert } from 'redux/actions';
 import { Action, AlertsState } from 'redux/interfaces';
+
 import { addError, removeAlert } from './utils';
 
 export const initialState: AlertsState = {};

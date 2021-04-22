@@ -1,6 +1,7 @@
 import 'react-datepicker/dist/react-datepicker.css';
 import React, { useCallback, useEffect, useRef } from 'react';
 import { groupBy, map, concat, maxBy } from 'lodash';
+import DatePicker from 'react-datepicker';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import { useDebouncedCallback } from 'use-debounce';
@@ -11,7 +12,7 @@ import {
 } from 'redux/interfaces';
 import { TopicMessage, Partition, SeekType } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import DatePicker from 'react-datepicker';
+
 import MessagesTable from './MessagesTable';
 
 export interface Props {

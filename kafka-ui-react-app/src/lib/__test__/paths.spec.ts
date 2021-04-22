@@ -61,12 +61,11 @@ describe('Paths', () => {
       '/ui/clusters/local/topics/topic123/messages'
     );
   });
-  it('clusterTopicsTopicEditPath', () => {
-    expect(paths.clusterTopicsTopicEditPath('local', 'topic123')).toEqual(
+  it('clusterTopicEditPath', () => {
+    expect(paths.clusterTopicEditPath('local', 'topic123')).toEqual(
       '/ui/clusters/local/topics/topic123/edit'
     );
   });
-
   it('clusterConnectorsPath', () => {
     expect(paths.clusterConnectorsPath('local')).toEqual(
       '/ui/clusters/local/connectors'

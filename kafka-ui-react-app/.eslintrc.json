@@ -35,8 +35,12 @@
     "@typescript-eslint/no-explicit-any": "error",
     "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
     "import/no-cycle": "error",
-    "import/order": ["error", {"groups": ["builtin", "external", "parent", "sibling", "index"]}],
-    "import/no-relative-parent-imports": "error"
+    "import/order": ["error", {
+      "groups": ["builtin", "external", "parent", "sibling", "index"],
+      "newlines-between": "always"
+    }],
+    "import/no-relative-parent-imports": "error",
+    "no-debugger": "warn"
   },
   "overrides": [
     {

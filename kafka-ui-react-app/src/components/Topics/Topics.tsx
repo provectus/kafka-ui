@@ -5,6 +5,7 @@ import {
   clusterTopicPath,
   clusterTopicsPath,
 } from 'lib/paths';
+
 import ListContainer from './List/ListContainer';
 import TopicContainer from './Topic/TopicContainer';
 import NewContainer from './New/NewContainer';

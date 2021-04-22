@@ -1,16 +1,16 @@
-import './App.scss';
 import React from 'react';
 import cx from 'classnames';
 import { Cluster } from 'generated-sources';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import { Alerts } from 'redux/interfaces';
-import Nav from './Nav/Nav';
-import PageLoader from './common/PageLoader/PageLoader';
-import Dashboard from './Dashboard/Dashboard';
-import ClusterPage from './Cluster/Cluster';
-import Version from './Version/Version';
-import Alert from './Alert/Alert';
+import Nav from 'components/Nav/Nav';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import Dashboard from 'components/Dashboard/Dashboard';
+import ClusterPage from 'components/Cluster/Cluster';
+import Version from 'components/Version/Version';
+import Alert from 'components/Alert/Alert';
+import 'components/App.scss';
 
 export interface AppProps {
   isClusterListFetched?: boolean;

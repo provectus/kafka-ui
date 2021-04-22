@@ -6,6 +6,7 @@ import configureStore from 'redux/store/configureStore';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Schemas/List/ListContainer';
 import List, { ListProps } from 'components/Schemas/List/List';
+
 import { schemas } from './fixtures';
 
 describe('List', () => {

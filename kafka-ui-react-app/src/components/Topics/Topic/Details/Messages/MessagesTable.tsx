@@ -1,6 +1,7 @@
 import React from 'react';
 import { TopicMessage } from 'generated-sources';
 import CustomParamButton from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
+
 import MessageItem from './MessageItem';
 
 export interface MessagesTableProp {

@@ -1,5 +1,6 @@
 import React from 'react';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+
 import ClustersWidgetContainer from './ClustersWidget/ClustersWidgetContainer';
 
 const Dashboard: React.FC = () => (

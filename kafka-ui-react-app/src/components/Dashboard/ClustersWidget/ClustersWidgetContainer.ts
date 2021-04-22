@@ -5,6 +5,7 @@ import {
   getOfflineClusters,
 } from 'redux/reducers/clusters/selectors';
 import { RootState } from 'redux/interfaces';
+
 import ClustersWidget from './ClustersWidget';
 
 const mapStateToProps = (state: RootState) => ({

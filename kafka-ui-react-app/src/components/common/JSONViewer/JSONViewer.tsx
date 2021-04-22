@@ -1,6 +1,6 @@
 import React from 'react';
 import JSONTree from 'react-json-tree';
-import theme from './themes/google';
+import theme from 'components/common/JSONViewer/themes/google';
 
 interface JSONViewerProps {
   data: Record<string, string>;

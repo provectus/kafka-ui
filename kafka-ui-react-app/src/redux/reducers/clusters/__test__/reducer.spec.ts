@@ -1,5 +1,6 @@
 import { fetchClusterListAction } from 'redux/actions';
 import reducer from 'redux/reducers/clusters/reducer';
+
 import { clustersPayload } from './fixtures';
 
 describe('Clusters reducer', () => {

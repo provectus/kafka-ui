@@ -67,6 +67,17 @@ exports[`Details View Initial state matches snapshot 1`] = `
         >
           Remove
         </button>
+        <mock-ConfirmationModal
+          isOpen={false}
+          onCancel={[Function]}
+          onConfirm={[Function]}
+        >
+          Are you sure want to remove 
+          <b>
+            test
+          </b>
+           schema?
+        </mock-ConfirmationModal>
       </div>
     </div>
     <LatestVersionItem
@@ -202,6 +213,17 @@ exports[`Details View when page with schema versions loaded when schema has vers
         >
           Remove
         </button>
+        <mock-ConfirmationModal
+          isOpen={false}
+          onCancel={[Function]}
+          onConfirm={[Function]}
+        >
+          Are you sure want to remove 
+          <b>
+            test
+          </b>
+           schema?
+        </mock-ConfirmationModal>
       </div>
     </div>
     <LatestVersionItem
@@ -340,6 +362,17 @@ exports[`Details View when page with schema versions loaded when versions are em
         >
           Remove
         </button>
+        <mock-ConfirmationModal
+          isOpen={false}
+          onCancel={[Function]}
+          onConfirm={[Function]}
+        >
+          Are you sure want to remove 
+          <b>
+            test
+          </b>
+           schema?
+        </mock-ConfirmationModal>
       </div>
     </div>
     <LatestVersionItem

@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 import LatestVersionItem from 'components/Schemas/Details/LatestVersionItem';
+
 import { schema } from './fixtures';
 
 describe('LatestVersionItem', () => {

@@ -5,6 +5,7 @@ import {
 } from 'redux/actions';
 import configureStore from 'redux/store/configureStore';
 import * as selectors from 'redux/reducers/schemas/selectors';
+
 import {
   clusterSchemasPayload,
   clusterSchemasPayloadWithNewSchema,

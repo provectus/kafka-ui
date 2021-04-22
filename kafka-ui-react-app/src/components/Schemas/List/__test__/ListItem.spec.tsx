@@ -2,6 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { BrowserRouter as Router } from 'react-router-dom';
 import ListItem from 'components/Schemas/List/ListItem';
+
 import { schemas } from './fixtures';
 
 describe('ListItem', () => {

@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { RootState, TopicName, ClusterName } from 'redux/interfaces';
 import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+
 import Overview from './Overview';
 
 interface RouteProps {

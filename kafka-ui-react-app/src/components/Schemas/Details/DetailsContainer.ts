@@ -7,6 +7,7 @@ import {
   getSortedSchemaVersions,
 } from 'redux/reducers/schemas/selectors';
 import { fetchSchemaVersions, deleteSchema } from 'redux/actions';
+
 import Details from './Details';
 
 interface RouteProps {
