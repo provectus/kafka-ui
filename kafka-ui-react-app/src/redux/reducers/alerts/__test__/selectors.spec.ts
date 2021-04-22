@@ -1,6 +1,7 @@
 import configureStore from 'redux/store/configureStore';
 import { createTopicAction } from 'redux/actions';
-import * as selectors from '../selectors';
+import * as selectors from 'redux/reducers/alerts/selectors';
+
 import { failurePayload1, failurePayload2 } from './fixtures';
 
 const store = configureStore();

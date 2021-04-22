@@ -11,6 +11,7 @@ import { createTopic, createTopicAction } from 'redux/actions';
 import { getTopicCreated } from 'redux/reducers/topics/selectors';
 import { clusterTopicPath } from 'lib/paths';
 import { ThunkDispatch } from 'redux-thunk';
+
 import New from './New';
 
 interface RouteProps {

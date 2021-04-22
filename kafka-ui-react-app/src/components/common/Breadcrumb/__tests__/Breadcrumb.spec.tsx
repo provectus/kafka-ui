@@ -1,7 +1,9 @@
 import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
-import Breadcrumb, { BreadcrumbItem } from '../Breadcrumb';
+import Breadcrumb, {
+  BreadcrumbItem,
+} from 'components/common/Breadcrumb/Breadcrumb';
 
 describe('Breadcrumb component', () => {
   const links: BreadcrumbItem[] = [

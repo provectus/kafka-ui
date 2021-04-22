@@ -4,7 +4,7 @@ import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import {
   ConsumerGroupID,
   ConsumerGroupsState,
-} from '../../interfaces/consumerGroup';
+} from 'redux/interfaces/consumerGroup';
 
 const consumerGroupsState = ({
   consumerGroups,

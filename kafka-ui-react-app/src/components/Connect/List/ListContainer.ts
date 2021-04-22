@@ -10,7 +10,7 @@ import {
   getAreConnectsFetching,
   getAreConnectorsFetching,
 } from 'redux/reducers/connect/selectors';
-import List from './List';
+import List from 'components/Connect/List/List';
 
 const mapStateToProps = (state: RootState) => ({
   areConnectsFetching: getAreConnectsFetching(state),

@@ -3,6 +3,7 @@ import { shallow } from 'enzyme';
 import MessagesTable, {
   MessagesTableProp,
 } from 'components/Topics/Topic/Details/Messages/MessagesTable';
+
 import { messages } from './fixtures';
 
 jest.mock('date-fns', () => ({

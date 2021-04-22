@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
-import ClusterMenu from '../ClusterMenu';
+import ClusterMenu from 'components/Nav/ClusterMenu';
 
 describe('ClusterMenu', () => {
   const setupComponent = (cluster: Cluster) => (

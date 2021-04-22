@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { ClusterName, RootState } from 'redux/interfaces';
 import { getConsumerGroupsList } from 'redux/reducers/consumerGroups/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+
 import List from './List';
 
 interface RouteProps {

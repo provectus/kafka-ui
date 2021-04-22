@@ -1,10 +1,21 @@
 import React from 'react';
 import { Topic, TopicDetails } from 'generated-sources';
+import { ClusterName, TopicName } from 'redux/interfaces';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
-interface Props extends Topic, TopicDetails {}
+interface Props extends Topic, TopicDetails {
+  clusterName: ClusterName;
+  topicName: TopicName;
+  clearTopicMessages(
+    clusterName: ClusterName,
+    topicName: TopicName,
+    partitions?: number[]
+  ): void;
+}
 
 const Overview: React.FC<Props> = ({
   partitions,
@@ -16,6 +27,9 @@ const Overview: React.FC<Props> = ({
   replicationFactor,
   segmentSize,
   segmentCount,
+  clusterName,
+  topicName,
+  clearTopicMessages,
 }) => (
   <>
     <MetricsWrapper>
@@ -43,28 +57,45 @@ const Overview: React.FC<Props> = ({
       <Indicator label="Segment count">{segmentCount}</Indicator>
     </MetricsWrapper>
     <div className="box">
-      <div className="table-container">
-        <table className="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Partition ID</th>
-              <th>Broker leader</th>
-              <th>Min offset</th>
-              <th>Max offset</th>
+      <table className="table is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th>Partition ID</th>
+            <th>Broker leader</th>
+            <th>Min offset</th>
+            <th>Max offset</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
+            <tr key={`partition-list-item-key-${partition}`}>
+              <td>{partition}</td>
+              <td>{leader}</td>
+              <td>{offsetMin}</td>
+              <td>{offsetMax}</td>
+              <td className="has-text-right">
+                <Dropdown
+                  label={
+                    <span className="icon">
+                      <i className="fas fa-cog" />
+                    </span>
+                  }
+                  right
+                >
+                  <DropdownItem
+                    onClick={() =>
+                      clearTopicMessages(clusterName, topicName, [partition])
+                    }
+                  >
+                    <span className="has-text-danger">Clear Messages</span>
+                  </DropdownItem>
+                </Dropdown>
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
-              <tr key={`partition-list-item-key-${partition}`}>
-                <td>{partition}</td>
-                <td>{leader}</td>
-                <td>{offsetMin}</td>
-                <td>{offsetMax}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   </>
 );

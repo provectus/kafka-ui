@@ -5,10 +5,11 @@ import {
   externalTopicPayload,
   internalTopicPayload,
 } from 'redux/reducers/topics/__test__/fixtures';
-import ListItem, { ListItemProps } from '../ListItem';
+import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
 
 const mockDelete = jest.fn();
 const clusterName = 'local';
+const mockDeleteMessages = jest.fn();
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -21,14 +22,25 @@ describe('ListItem', () => {
       topic={internalTopicPayload}
       deleteTopic={mockDelete}
       clusterName={clusterName}
+      clearTopicMessages={mockDeleteMessages}
       {...props}
     />
   );
 
+  it('triggers the deleting messages when clicked on the delete messages button', () => {
+    const component = shallow(setupComponent());
+    component.find('DropdownItem').at(0).simulate('click');
+    expect(mockDeleteMessages).toBeCalledTimes(1);
+    expect(mockDeleteMessages).toBeCalledWith(
+      clusterName,
+      internalTopicPayload.name
+    );
+  });
+
   it('triggers the deleteTopic when clicked on the delete button', () => {
     const wrapper = shallow(setupComponent());
     expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
-    wrapper.find('DropdownItem').last().simulate('click');
+    wrapper.find('DropdownItem').at(1).simulate('click');
     const modal = wrapper.find('mock-ConfirmationModal');
     expect(modal.prop('isOpen')).toBeTruthy();
     modal.simulate('confirm');

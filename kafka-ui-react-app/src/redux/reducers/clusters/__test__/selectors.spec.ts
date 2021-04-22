@@ -1,6 +1,7 @@
 import { fetchClusterListAction } from 'redux/actions';
 import configureStore from 'redux/store/configureStore';
-import * as selectors from '../selectors';
+import * as selectors from 'redux/reducers/clusters/selectors';
+
 import {
   clustersPayload,
   offlineClusterPayload,

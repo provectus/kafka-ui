@@ -14,12 +14,14 @@ export interface ListItemProps {
   topic: TopicWithDetailedInfo;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
+  clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
   topic: { name, internal, partitions },
   deleteTopic,
   clusterName,
+  clearTopicMessages,
 }) => {
   const [
     isDeleteTopicConfirmationVisible,
@@ -39,6 +41,10 @@ const ListItem: React.FC<ListItemProps> = ({
 
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, name);
+  }, [clusterName, name]);
+
+  const clearTopicMessagesHandler = React.useCallback(() => {
+    clearTopicMessages(clusterName, name);
   }, [clusterName, name]);
 
   return (
@@ -70,6 +76,9 @@ const ListItem: React.FC<ListItemProps> = ({
             }
             right
           >
+            <DropdownItem onClick={clearTopicMessagesHandler}>
+              <span className="has-text-danger">Clear Messages</span>
+            </DropdownItem>
             <DropdownItem
               onClick={() => setDeleteTopicConfirmationVisible(true)}
             >

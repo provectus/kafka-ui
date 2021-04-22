@@ -33,7 +33,14 @@
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-explicit-any": "error",
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }]
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": true }],
+    "import/no-cycle": "error",
+    "import/order": ["error", {
+      "groups": ["builtin", "external", "parent", "sibling", "index"],
+      "newlines-between": "always"
+    }],
+    "import/no-relative-parent-imports": "error",
+    "no-debugger": "warn"
   },
   "overrides": [
     {

@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import { Cluster } from 'generated-sources';
+
 import ClusterMenu from './ClusterMenu';
 
 interface Props {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
-import Nav from '../Nav';
+import Nav from 'components/Nav/Nav';
 
 describe('Nav', () => {
   it('renders loader', () => {

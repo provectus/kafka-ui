@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { RootState, TopicConfigByName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
+
 import CustomParams from './CustomParams';
 
 interface OwnProps extends RouteComponentProps {

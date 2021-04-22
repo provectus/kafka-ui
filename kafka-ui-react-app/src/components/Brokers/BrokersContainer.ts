@@ -13,7 +13,7 @@ import {
   getUnderReplicatedPartitionCount,
   getDiskUsage,
 } from 'redux/reducers/brokers/selectors';
-import Brokers from './Brokers';
+import Brokers from 'components/Brokers/Brokers';
 
 const mapStateToProps = (state: RootState) => ({
   isFetched: getIsBrokerListFetched(state),

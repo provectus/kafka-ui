@@ -1,6 +1,6 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import MetricsWrapper from '../MetricsWrapper';
+import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 
 describe('MetricsWrapper', () => {
   it('correctly adds classes', () => {

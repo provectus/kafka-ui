@@ -12,6 +12,7 @@ import {
   deleteSchema,
   fetchSchemasByClusterName,
 } from 'redux/actions';
+
 import Details from './Details';
 
 interface RouteProps {

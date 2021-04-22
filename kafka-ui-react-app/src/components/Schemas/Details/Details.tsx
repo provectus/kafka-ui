@@ -2,12 +2,13 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import { clusterSchemaSchemaEditPath, clusterSchemasPath } from 'lib/paths';
+import { clusterSchemasPath, clusterSchemaSchemaEditPath } from 'lib/paths';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
 import { Link } from 'react-router-dom';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+
 import SchemaVersion from './SchemaVersion';
 import LatestVersionItem from './LatestVersionItem';
 

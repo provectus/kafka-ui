@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router-dom';
 import ClusterContext from 'components/contexts/ClusterContext';
-import List from '../List';
+import List from 'components/Topics/List/List';
 
 describe('List', () => {
   describe('when it has readonly flag', () => {
@@ -23,6 +23,7 @@ describe('List', () => {
               totalPages={1}
               fetchTopicsList={jest.fn()}
               deleteTopic={jest.fn()}
+              clearTopicMessages={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>
@@ -49,6 +50,7 @@ describe('List', () => {
               totalPages={1}
               fetchTopicsList={jest.fn()}
               deleteTopic={jest.fn()}
+              clearTopicMessages={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>

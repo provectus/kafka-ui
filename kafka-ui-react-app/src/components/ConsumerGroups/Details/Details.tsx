@@ -8,8 +8,8 @@ import {
   ConsumerGroupDetails,
   ConsumerTopicPartitionDetail,
 } from 'generated-sources';
-
 import PageLoader from 'components/common/PageLoader/PageLoader';
+
 import ListItem from './ListItem';
 
 interface Props extends ConsumerGroup, ConsumerGroupDetails {

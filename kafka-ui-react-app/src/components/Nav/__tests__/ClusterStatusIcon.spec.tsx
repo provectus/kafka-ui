@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { ServerStatus } from 'generated-sources';
-import ClusterStatusIcon from '../ClusterStatusIcon';
+import ClusterStatusIcon from 'components/Nav/ClusterStatusIcon';
 
 describe('ClusterStatusIcon', () => {
   it('matches snapshot', () => {

@@ -2,7 +2,7 @@ import {
   clusterSchemasPayload,
   schemaVersionsPayload,
 } from 'redux/reducers/schemas/__test__/fixtures';
-import * as actions from '../actions';
+import * as actions from 'redux/actions';
 
 describe('Actions', () => {
   describe('fetchClusterStatsAction', () => {
@@ -106,6 +106,28 @@ describe('Actions', () => {
       expect(actions.dismissAlert(id)).toEqual({
         type: 'DISMISS_ALERT',
         payload: id,
+      });
+    });
+  });
+
+  describe('clearMessagesTopicAction', () => {
+    it('creates a REQUEST action', () => {
+      expect(actions.clearMessagesTopicAction.request()).toEqual({
+        type: 'CLEAR_TOPIC_MESSAGES__REQUEST',
+      });
+    });
+
+    it('creates a SUCCESS action', () => {
+      expect(actions.clearMessagesTopicAction.success('topic')).toEqual({
+        type: 'CLEAR_TOPIC_MESSAGES__SUCCESS',
+        payload: 'topic',
+      });
+    });
+
+    it('creates a FAILURE action', () => {
+      expect(actions.clearMessagesTopicAction.failure({})).toEqual({
+        type: 'CLEAR_TOPIC_MESSAGES__FAILURE',
+        payload: {},
       });
     });
   });

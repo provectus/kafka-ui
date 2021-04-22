@@ -2,7 +2,8 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { ServerStatus } from 'generated-sources';
 import { clusterBrokersPath, clusterTopicsPath } from 'lib/paths';
-import ClusterWidget from '../ClusterWidget';
+import ClusterWidget from 'components/Dashboard/ClustersWidget/ClusterWidget';
+
 import { offlineCluster, onlineCluster } from './fixtures';
 
 describe('ClusterWidget', () => {

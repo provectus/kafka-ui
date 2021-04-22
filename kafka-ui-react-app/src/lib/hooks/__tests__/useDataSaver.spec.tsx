@@ -1,4 +1,4 @@
-import useDataSaver from '../useDataSaver';
+import useDataSaver from 'lib/hooks/useDataSaver';
 
 describe('useDataSaver hook', () => {
   const content = {

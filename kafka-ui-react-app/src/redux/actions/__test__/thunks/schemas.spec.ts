@@ -7,7 +7,7 @@ import {
   SchemaType,
 } from 'generated-sources';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
-import * as fixtures from '../fixtures';
+import * as fixtures from 'redux/actions/__test__/fixtures';
 
 const store = mockStoreCreator;
 
@@ -127,7 +127,7 @@ describe('Thunks', () => {
       }
     });
   });
-  
+
   describe('updateSchemaCompatibilityLevel', () => {
     it('creates UPDATE_SCHEMA__SUCCESS when patching a schema', async () => {
       fetchMock.putOnce(

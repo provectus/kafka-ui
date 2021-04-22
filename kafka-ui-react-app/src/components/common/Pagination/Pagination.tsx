@@ -3,7 +3,7 @@ import usePagination from 'lib/hooks/usePagination';
 import { range } from 'lodash';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import PageControl from './PageControl';
+import PageControl from 'components/common/Pagination/PageControl';
 
 export interface PaginationProps {
   totalPages: number;

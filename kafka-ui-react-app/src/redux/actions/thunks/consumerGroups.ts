@@ -4,9 +4,8 @@ import {
   PromiseThunkResult,
   ClusterName,
 } from 'redux/interfaces';
-
 import { BASE_PARAMS } from 'lib/constants';
-import * as actions from '../actions';
+import * as actions from 'redux/actions/actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const consumerGroupsApiClient = new ConsumerGroupsApi(apiClientConf);
