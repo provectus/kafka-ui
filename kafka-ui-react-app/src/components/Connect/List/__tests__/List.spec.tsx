@@ -8,9 +8,8 @@ import ClusterContext, {
   ContextProps,
   initialValue,
 } from 'components/contexts/ClusterContext';
-
-import ListContainer from '../ListContainer';
-import List, { ListProps } from '../List';
+import ListContainer from 'components/Connect/List/ListContainer';
+import List, { ListProps } from 'components/Connect/List/List';
 
 const store = configureStore();
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import Version from '../Version';
+import Version from 'components/Version/Version';
 
 const tag = 'v1.0.1-SHAPSHOT';
 const commit = '123sdf34';

@@ -7,7 +7,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import ListItem from './ListItem';
+import ListItem from 'components/Connect/List/ListItem';
 
 export interface ListProps {
   areConnectsFetching: boolean;

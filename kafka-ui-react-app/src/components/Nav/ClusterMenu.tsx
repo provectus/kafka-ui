@@ -8,6 +8,7 @@ import {
   clusterSchemasPath,
   clusterConnectorsPath,
 } from 'lib/paths';
+
 import DefaultClusterIcon from './DefaultClusterIcon';
 import ClusterStatusIcon from './ClusterStatusIcon';
 

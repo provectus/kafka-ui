@@ -1,5 +1,6 @@
 import { dismissAlert, createTopicAction } from 'redux/actions';
 import reducer from 'redux/reducers/alerts/reducer';
+
 import { failurePayload1, failurePayload2 } from './fixtures';
 
 jest.mock('lodash', () => ({

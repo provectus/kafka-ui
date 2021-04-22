@@ -1,6 +1,6 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import PageLoader from '../PageLoader';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 describe('PageLoader', () => {
   it('matches the snapshot', () => {

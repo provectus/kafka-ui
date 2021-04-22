@@ -10,7 +10,6 @@ import {
   SchemaName,
   FailurePayload,
 } from 'redux/interfaces';
-
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions';
 import { getResponse } from 'lib/errorHandling';

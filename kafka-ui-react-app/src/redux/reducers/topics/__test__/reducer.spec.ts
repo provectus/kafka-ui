@@ -1,5 +1,5 @@
 import { deleteTopicAction, clearMessagesTopicAction } from 'redux/actions';
-import reducer from '../reducer';
+import reducer from 'redux/reducers/topics/reducer';
 
 const topic = {
   name: 'topic',

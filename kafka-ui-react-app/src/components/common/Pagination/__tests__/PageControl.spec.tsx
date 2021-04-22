@@ -1,7 +1,9 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
 import { StaticRouter } from 'react-router';
-import PageControl, { PageControlProps } from '../PageControl';
+import PageControl, {
+  PageControlProps,
+} from 'components/common/Pagination/PageControl';
 
 const page = 138;
 

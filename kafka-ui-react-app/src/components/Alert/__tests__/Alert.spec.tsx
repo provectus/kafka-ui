@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Alert as AlertProps } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
-import Alert from '../Alert';
+import Alert from 'components/Alert/Alert';
 
 const id = 'test-id';
 const title = 'My Alert Title';

@@ -11,6 +11,7 @@ import {
   getAreTopicsFetching,
   getTopicListTotalPages,
 } from 'redux/reducers/topics/selectors';
+
 import List from './List';
 
 const mapStateToProps = (state: RootState) => ({

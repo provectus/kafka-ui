@@ -4,7 +4,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import CustomParamSelect, {
   CustomParamSelectProps,
-} from '../CustomParamSelect';
+} from 'components/Topics/shared/Form/CustomParams/CustomParamSelect';
 
 const existingFields = [
   'leader.replication.throttled.replicas',

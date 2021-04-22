@@ -1,10 +1,10 @@
 import React from 'react';
 import { chunk } from 'lodash';
 import { v4 } from 'uuid';
-
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import { Cluster } from 'generated-sources';
+
 import ClusterWidget from './ClusterWidget';
 
 interface Props {

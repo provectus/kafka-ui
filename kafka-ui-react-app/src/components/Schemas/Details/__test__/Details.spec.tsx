@@ -4,8 +4,9 @@ import { shallow, mount, ReactWrapper } from 'enzyme';
 import configureStore from 'redux/store/configureStore';
 import { StaticRouter } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
-import DetailsContainer from '../DetailsContainer';
-import Details, { DetailsProps } from '../Details';
+import DetailsContainer from 'components/Schemas/Details/DetailsContainer';
+import Details, { DetailsProps } from 'components/Schemas/Details/Details';
+
 import { schema, versions } from './fixtures';
 
 const clusterName = 'testCluster';

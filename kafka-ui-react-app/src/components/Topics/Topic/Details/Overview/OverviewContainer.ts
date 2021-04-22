@@ -3,7 +3,7 @@ import { RootState, TopicName, ClusterName } from 'redux/interfaces';
 import { getTopicByName } from 'redux/reducers/topics/selectors';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { clearTopicMessages } from 'redux/actions';
-import Overview from './Overview';
+import Overview from 'components/Topics/Topic/Details/Overview/Overview';
 
 interface RouteProps {
   clusterName: ClusterName;

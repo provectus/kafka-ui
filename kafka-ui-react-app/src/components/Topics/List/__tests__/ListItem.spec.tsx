@@ -5,7 +5,7 @@ import {
   externalTopicPayload,
   internalTopicPayload,
 } from 'redux/reducers/topics/__test__/fixtures';
-import ListItem, { ListItemProps } from '../ListItem';
+import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
 
 const mockDelete = jest.fn();
 const clusterName = 'local';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount, shallow } from 'enzyme';
-import DynamicTextButton from '../DynamicTextButton';
+import DynamicTextButton from 'components/common/DynamicTextButton/DynamicTextButton';
 
 describe('DynamicButton', () => {
   const mockCallback = jest.fn();

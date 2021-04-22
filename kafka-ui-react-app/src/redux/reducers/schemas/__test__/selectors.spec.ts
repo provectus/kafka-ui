@@ -4,7 +4,8 @@ import {
   fetchSchemaVersionsAction,
 } from 'redux/actions';
 import configureStore from 'redux/store/configureStore';
-import * as selectors from '../selectors';
+import * as selectors from 'redux/reducers/schemas/selectors';
+
 import {
   clusterSchemasPayload,
   clusterSchemasPayloadWithNewSchema,

@@ -1,7 +1,9 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
-import Pagination, { PaginationProps } from '../Pagination';
+import Pagination, {
+  PaginationProps,
+} from 'components/common/Pagination/Pagination';
 
 describe('Pagination', () => {
   const setupWrapper = (search = '', props: Partial<PaginationProps> = {}) => (

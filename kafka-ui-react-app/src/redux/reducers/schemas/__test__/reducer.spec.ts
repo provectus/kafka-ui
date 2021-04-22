@@ -6,6 +6,7 @@ import {
   fetchSchemaVersionsAction,
 } from 'redux/actions';
 import reducer from 'redux/reducers/schemas/reducer';
+
 import {
   clusterSchemasPayload,
   initialState,

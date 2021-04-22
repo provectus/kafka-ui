@@ -3,8 +3,8 @@ import configureStore from 'redux/store/configureStore';
 import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
-import NewContainer from '../NewContainer';
-import New, { NewProps } from '../New';
+import NewContainer from 'components/Schemas/New/NewContainer';
+import New, { NewProps } from 'components/Schemas/New/New';
 
 describe('New', () => {
   describe('Container', () => {

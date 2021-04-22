@@ -6,6 +6,7 @@ import {
   getTopicConfig,
   getTopicConfigFetched,
 } from 'redux/reducers/topics/selectors';
+
 import Settings from './Settings';
 
 interface RouteProps {

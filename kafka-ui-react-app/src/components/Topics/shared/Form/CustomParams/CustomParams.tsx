@@ -1,12 +1,12 @@
 import React from 'react';
 import { omit, reject, reduce, remove } from 'lodash';
 import { v4 } from 'uuid';
-
 import {
   TopicFormCustomParams,
   TopicConfigByName,
   TopicConfigParams,
 } from 'redux/interfaces';
+
 import CustomParamButton from './CustomParamButton';
 import CustomParamField from './CustomParamField';
 

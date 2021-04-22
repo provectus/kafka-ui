@@ -2,7 +2,7 @@ import { mount, ReactWrapper } from 'enzyme';
 import React from 'react';
 import ConfirmationModal, {
   ConfirmationModalProps,
-} from '../ConfirmationModal';
+} from 'components/common/ConfirmationModal/ConfirmationModal';
 
 const confirmMock = jest.fn();
 const cancelMock = jest.fn();

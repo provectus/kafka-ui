@@ -6,7 +6,7 @@ import {
 } from 'redux/reducers/clusters/selectors';
 import { getAlerts } from 'redux/reducers/alerts/selectors';
 import { RootState } from 'redux/interfaces';
-import App from './App';
+import App from 'components/App';
 
 const mapStateToProps = (state: RootState) => ({
   isClusterListFetched: getIsClusterListFetched(state),

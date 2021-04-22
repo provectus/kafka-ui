@@ -1,6 +1,6 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import DropdownItem from '../DropdownItem';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
 
 const onClick = jest.fn();
 

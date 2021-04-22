@@ -7,6 +7,7 @@ import {
 } from 'redux/reducers/consumerGroups/selectors';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import { fetchConsumerGroupDetails } from 'redux/actions/thunks';
+
 import Details from './Details';
 
 interface RouteProps {

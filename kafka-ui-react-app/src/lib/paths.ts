@@ -1,4 +1,5 @@
 import { ClusterName, SchemaName, TopicName } from 'redux/interfaces';
+
 import { GIT_REPO_LINK } from './constants';
 
 export const gitCommitPath = (commit: string) =>

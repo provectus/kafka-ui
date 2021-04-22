@@ -1,5 +1,5 @@
 import { GIT_REPO_LINK } from 'lib/constants';
-import * as paths from '../paths';
+import * as paths from 'lib/paths';
 
 describe('Paths', () => {
   it('gitCommitPath', () => {

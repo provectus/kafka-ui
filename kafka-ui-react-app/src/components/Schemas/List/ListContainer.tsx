@@ -5,6 +5,7 @@ import {
   getIsSchemaListFetching,
   getSchemaList,
 } from 'redux/reducers/schemas/selectors';
+
 import List from './List';
 
 const mapStateToProps = (state: RootState) => ({

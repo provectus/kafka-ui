@@ -2,7 +2,7 @@ import {
   clusterSchemasPayload,
   schemaVersionsPayload,
 } from 'redux/reducers/schemas/__test__/fixtures';
-import * as actions from '../actions';
+import * as actions from 'redux/actions';
 
 describe('Actions', () => {
   describe('fetchClusterStatsAction', () => {

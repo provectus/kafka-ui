@@ -1,8 +1,8 @@
 import React from 'react';
 import { mount } from 'enzyme';
-import Dropdown, { DropdownProps } from '../Dropdown';
-import DropdownItem from '../DropdownItem';
-import DropdownDivider from '../DropdownDivider';
+import Dropdown, { DropdownProps } from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 
 const dummyLable = 'My Test Label';
 const dummyChildren = (
