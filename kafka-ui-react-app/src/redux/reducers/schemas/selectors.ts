@@ -1,7 +1,7 @@
 import { createSelector } from 'reselect';
+import { orderBy } from 'lodash';
 import { RootState, SchemasState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-import { sortBy } from 'lodash';
 
 const schemasState = ({ schemas }: RootState): SchemasState => schemas;
 
@@ -56,5 +56,6 @@ export const getSchema = createSelector(
 
 export const getSortedSchemaVersions = createSelector(
   schemasState,
-  ({ currentSchemaVersions }) => sortBy(currentSchemaVersions, ['id'])
+  ({ currentSchemaVersions }) =>
+    orderBy(currentSchemaVersions, ['id'], ['desc'])
 );

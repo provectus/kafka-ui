@@ -1,3 +1,4 @@
+import { orderBy } from 'lodash';
 import {
   createSchemaAction,
   fetchSchemasByClusterNameAction,
@@ -65,9 +66,9 @@ describe('Schemas selectors', () => {
       );
     });
 
-    it('returns sorted versions of schema', () => {
+    it('returns ordered versions of schema', () => {
       expect(selectors.getSortedSchemaVersions(store.getState())).toEqual(
-        schemaVersionsPayload
+        orderBy(schemaVersionsPayload, 'id', 'desc')
       );
     });
   });

@@ -47,22 +47,20 @@ const Settings: React.FC<Props> = ({
 
   return (
     <div className="box">
-      <div className="table-container">
-        <table className="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Key</th>
-              <th>Value</th>
-              <th>Default Value</th>
-            </tr>
-          </thead>
-          <tbody>
-            {config.map((item) => (
-              <ConfigListItem key={item.name} config={item} />
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <table className="table is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th>Key</th>
+            <th>Value</th>
+            <th>Default Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {config.map((item) => (
+            <ConfigListItem key={item.name} config={item} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

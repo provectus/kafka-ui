@@ -9,7 +9,7 @@ describe('SchemaVersion', () => {
     const wrapper = shallow(<SchemaVersion version={versions[0]} />);
 
     expect(wrapper.find('td').length).toEqual(3);
-    expect(wrapper.exists('JSONViewer')).toBeTruthy();
+    expect(wrapper.exists('JSONEditor')).toBeTruthy();
   });
 
   it('matches snapshot', () => {

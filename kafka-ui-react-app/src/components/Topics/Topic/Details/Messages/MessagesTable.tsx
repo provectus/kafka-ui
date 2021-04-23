@@ -16,32 +16,30 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
 
   return (
     <>
-      <div className="table-container">
-        <table className="table is-fullwidth">
-          <thead>
-            <tr>
-              <th>Timestamp</th>
-              <th>Offset</th>
-              <th>Partition</th>
-              <th>Content</th>
-              <th> </th>
-            </tr>
-          </thead>
-          <tbody>
-            {messages.map(
-              ({ partition, offset, timestamp, content }: TopicMessage) => (
-                <MessageItem
-                  key={`message-${timestamp.getTime()}-${offset}`}
-                  partition={partition}
-                  offset={offset}
-                  timestamp={timestamp}
-                  content={content}
-                />
-              )
-            )}
-          </tbody>
-        </table>
-      </div>
+      <table className="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Timestamp</th>
+            <th>Offset</th>
+            <th>Partition</th>
+            <th>Content</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody>
+          {messages.map(
+            ({ partition, offset, timestamp, content }: TopicMessage) => (
+              <MessageItem
+                key={`message-${timestamp.getTime()}-${offset}`}
+                partition={partition}
+                offset={offset}
+                timestamp={timestamp}
+                content={content}
+              />
+            )
+          )}
+        </tbody>
+      </table>
       <div className="columns">
         <div className="column is-full">
           <CustomParamButton

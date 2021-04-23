@@ -88,36 +88,34 @@ const List: React.FC<Props> = ({
         <PageLoader />
       ) : (
         <div className="box">
-          <div className="table-container">
-            <table className="table is-fullwidth">
-              <thead>
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                <th>Topic Name</th>
+                <th>Total Partitions</th>
+                <th>Out of sync replicas</th>
+                <th>Type</th>
+                <th> </th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((topic) => (
+                <ListItem
+                  clusterName={clusterName}
+                  key={topic.name}
+                  topic={topic}
+                  deleteTopic={deleteTopic}
+                  clearTopicMessages={clearTopicMessages}
+                />
+              ))}
+              {items.length === 0 && (
                 <tr>
-                  <th>Topic Name</th>
-                  <th>Total Partitions</th>
-                  <th>Out of sync replicas</th>
-                  <th>Type</th>
-                  <th> </th>
+                  <td colSpan={10}>No topics found</td>
                 </tr>
-              </thead>
-              <tbody>
-                {items.map((topic) => (
-                  <ListItem
-                    clusterName={clusterName}
-                    key={topic.name}
-                    topic={topic}
-                    deleteTopic={deleteTopic}
-                    clearTopicMessages={clearTopicMessages}
-                  />
-                ))}
-                {items.length === 0 && (
-                  <tr>
-                    <td colSpan={10}>No topics found</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            <Pagination totalPages={totalPages} />
-          </div>
+              )}
+            </tbody>
+          </table>
+          <Pagination totalPages={totalPages} />
         </div>
       )}
     </div>

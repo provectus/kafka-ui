@@ -10,12 +10,12 @@ jest.mock('date-fns', () => ({
 
 describe('MessageItem', () => {
   describe('when content is defined', () => {
-    it('renders table row with JSONTree', () => {
+    it('renders table row with JSONEditor', () => {
       const wrapper = shallow(<MessageItem {...messages[0]} />);
 
       expect(wrapper.find('tr').length).toEqual(1);
       expect(wrapper.find('td').length).toEqual(5);
-      expect(wrapper.find('JSONViewer').length).toEqual(1);
+      expect(wrapper.find('JSONEditor').length).toEqual(1);
     });
 
     it('matches snapshot', () => {
@@ -24,14 +24,6 @@ describe('MessageItem', () => {
   });
 
   describe('when content is undefined', () => {
-    it('renders table row without JSONTree', () => {
-      const wrapper = shallow(<MessageItem {...messages[1]} />);
-
-      expect(wrapper.find('tr').length).toEqual(1);
-      expect(wrapper.find('td').length).toEqual(5);
-      expect(wrapper.find('JSONViewer').length).toEqual(0);
-    });
-
     it('matches snapshot', () => {
       expect(shallow(<MessageItem {...messages[1]} />)).toMatchSnapshot();
     });

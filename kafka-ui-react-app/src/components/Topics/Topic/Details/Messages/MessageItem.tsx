@@ -1,10 +1,9 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { TopicMessage } from 'generated-sources';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
-import { isObject } from 'lodash';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import useDataSaver from 'lib/hooks/useDataSaver';
 
 export interface MessageItemProp {
@@ -24,18 +23,19 @@ const MessageItem: React.FC<MessageItemProp> = ({
     'topic-message',
     (content as Record<string, string>) || ''
   );
-
   return (
     <tr>
       <td style={{ width: 200 }}>{format(timestamp, 'yyyy-MM-dd HH:mm:ss')}</td>
       <td style={{ width: 150 }}>{offset}</td>
       <td style={{ width: 100 }}>{partition}</td>
       <td style={{ wordBreak: 'break-word' }}>
-        {isObject(content) ? (
-          <JSONViewer data={content as Record<string, string>} />
-        ) : (
-          content
-        )}
+        <JSONEditor
+          readOnly
+          value={JSON.stringify(content, null, '\t')}
+          name="latestSchema"
+          highlightActiveLine={false}
+          height="300px"
+        />
       </td>
       <td className="has-text-right">
         <Dropdown

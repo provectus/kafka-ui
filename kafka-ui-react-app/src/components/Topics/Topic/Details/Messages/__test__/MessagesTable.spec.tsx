@@ -16,7 +16,7 @@ describe('MessagesTable', () => {
   );
 
   describe('when topic is empty', () => {
-    it('renders table row with JSONTree', () => {
+    it('renders table row with JSONEditor', () => {
       const wrapper = shallow(setupWrapper());
       expect(wrapper.exists('table')).toBeFalsy();
       expect(wrapper.exists('CustomParamButton')).toBeFalsy();
@@ -32,7 +32,7 @@ describe('MessagesTable', () => {
     const onNext = jest.fn();
     const wrapper = shallow(setupWrapper({ messages, onNext }));
 
-    it('renders table row without JSONTree', () => {
+    it('renders table row without JSONEditor', () => {
       expect(wrapper.exists('table')).toBeTruthy();
       expect(wrapper.exists('CustomParamButton')).toBeTruthy();
       expect(wrapper.find('MessageItem').length).toEqual(2);

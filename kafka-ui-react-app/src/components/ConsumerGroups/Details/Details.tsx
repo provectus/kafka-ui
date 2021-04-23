@@ -54,30 +54,28 @@ const Details: React.FC<Props> = ({
 
       {isFetched ? (
         <div className="box">
-          <div className="table-container">
-            <table className="table is-striped is-fullwidth">
-              <thead>
-                <tr>
-                  <th>Consumer ID</th>
-                  <th>Host</th>
-                  <th>Topic</th>
-                  <th>Partition</th>
-                  <th>Messages behind</th>
-                  <th>Current offset</th>
-                  <th>End offset</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((consumer) => (
-                  <ListItem
-                    key={consumer.consumerId}
-                    clusterName={clusterName}
-                    consumer={consumer}
-                  />
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <table className="table is-striped is-fullwidth">
+            <thead>
+              <tr>
+                <th>Consumer ID</th>
+                <th>Host</th>
+                <th>Topic</th>
+                <th>Partition</th>
+                <th>Messages behind</th>
+                <th>Current offset</th>
+                <th>End offset</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((consumer) => (
+                <ListItem
+                  key={consumer.consumerId}
+                  clusterName={clusterName}
+                  consumer={consumer}
+                />
+              ))}
+            </tbody>
+          </table>
         </div>
       ) : (
         <PageLoader />
