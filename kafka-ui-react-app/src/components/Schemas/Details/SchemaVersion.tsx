@@ -1,6 +1,6 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
+import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 
 interface SchemaVersionProps {
   version: SchemaSubject;
@@ -13,8 +13,13 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
     <tr>
       <td>{version}</td>
       <td>{id}</td>
-      <td className="py-0">
-        <JSONViewer data={JSON.parse(schema)} />
+      <td>
+        <JSONEditor
+          name="schema"
+          value={JSON.stringify(JSON.parse(schema), null, '\t')}
+          showGutter={false}
+          readOnly
+        />
       </td>
     </tr>
   );

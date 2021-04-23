@@ -1,16 +1,16 @@
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import React from 'react';
+import { useHistory } from 'react-router';
+import { useForm, Controller } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
   SchemaSubject,
   SchemaType,
 } from 'generated-sources';
 import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
-import React from 'react';
 import { ClusterName, NewSchemaSubjectRaw, SchemaName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { useHistory } from 'react-router';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
-import { useForm } from 'react-hook-form';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 export interface EditProps {
   subject: SchemaName;
@@ -143,17 +143,24 @@ const Edit = ({
               <div className="column is-one-half">
                 <h4 className="title is-5 mb-2">Latest Schema</h4>
                 <JSONEditor
-                  readonly
+                  readOnly
                   value={getFormattedSchema()}
                   name="latestSchema"
+                  highlightActiveLine={false}
                 />
               </div>
               <div className="column is-one-half">
                 <h4 className="title is-5 mb-2">New Schema</h4>
-                <JSONEditor
+                <Controller
                   control={control}
-                  value={getFormattedSchema()}
                   name="newSchema"
+                  render={({ name, onChange }) => (
+                    <JSONEditor
+                      defaultValue={getFormattedSchema()}
+                      name={name}
+                      onChange={onChange}
+                    />
+                  )}
                 />
               </div>
             </div>

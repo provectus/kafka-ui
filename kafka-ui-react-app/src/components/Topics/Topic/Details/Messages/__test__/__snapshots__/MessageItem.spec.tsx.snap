@@ -36,13 +36,15 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     }
   >
-    <JSONViewer
-      data={
-        Object {
-          "foo": "bar",
-          "key": "val",
-        }
-      }
+    <JSONEditor
+      height="300px"
+      highlightActiveLine={false}
+      name="latestSchema"
+      readOnly={true}
+      value="{
+	\\"foo\\": \\"bar\\",
+	\\"key\\": \\"val\\"
+}"
     />
   </td>
   <td
@@ -110,7 +112,14 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
         "wordBreak": "break-word",
       }
     }
-  />
+  >
+    <JSONEditor
+      height="300px"
+      highlightActiveLine={false}
+      name="latestSchema"
+      readOnly={true}
+    />
+  </td>
   <td
     className="has-text-right"
   >

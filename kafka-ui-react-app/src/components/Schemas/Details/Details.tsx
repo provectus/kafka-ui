@@ -112,22 +112,20 @@ const Details: React.FC<DetailsProps> = ({
             <LatestVersionItem schema={schema} />
           </div>
           <div className="box">
-            <div className="table-container">
-              <table className="table is-striped is-fullwidth">
-                <thead>
-                  <tr>
-                    <th>Version</th>
-                    <th>ID</th>
-                    <th>Schema</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {versions.map((version) => (
-                    <SchemaVersion key={version.id} version={version} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <table className="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Version</th>
+                  <th>ID</th>
+                  <th>Schema</th>
+                </tr>
+              </thead>
+              <tbody>
+                {versions.map((version) => (
+                  <SchemaVersion key={version.id} version={version} />
+                ))}
+              </tbody>
+            </table>
           </div>
         </>
       ) : (

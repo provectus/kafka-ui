@@ -10,7 +10,7 @@ describe('LatestVersionItem', () => {
 
     expect(wrapper.find('table').length).toEqual(1);
     expect(wrapper.find('td').at(1).text()).toEqual('1');
-    expect(wrapper.exists('JSONViewer')).toBeTruthy();
+    expect(wrapper.exists('JSONEditor')).toBeTruthy();
   });
 
   it('matches snapshot', () => {

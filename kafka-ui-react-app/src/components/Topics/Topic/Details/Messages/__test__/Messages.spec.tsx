@@ -65,8 +65,8 @@ describe('Messages', () => {
         it('renders table', () => {
           expect(messagesWrapper.exists('.table.is-fullwidth')).toBeTruthy();
         });
-        it('renders JSONTree', () => {
-          expect(messagesWrapper.find('JSONTree').length).toEqual(1);
+        it('renders JSONEditor', () => {
+          expect(messagesWrapper.find('JSONEditor').length).toEqual(1);
         });
         it('parses message content correctly', () => {
           const messages = [

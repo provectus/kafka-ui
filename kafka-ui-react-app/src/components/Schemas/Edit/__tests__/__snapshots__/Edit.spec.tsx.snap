@@ -143,8 +143,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             Latest Schema
           </h4>
           <JSONEditor
+            highlightActiveLine={false}
             name="latestSchema"
-            readonly={true}
+            readOnly={true}
             value="{
 	\\"schema\\": \\"schema\\"
 }"
@@ -158,7 +159,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           >
             New Schema
           </h4>
-          <JSONEditor
+          <Controller
             control={
               Object {
                 "defaultValuesRef": Object {
@@ -261,9 +262,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
               }
             }
             name="newSchema"
-            value="{
-	\\"schema\\": \\"schema\\"
-}"
+            render={[Function]}
           />
         </div>
       </div>
