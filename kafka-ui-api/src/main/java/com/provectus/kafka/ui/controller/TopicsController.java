@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.TopicsApi;
 import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
@@ -64,9 +65,19 @@ public class TopicsController implements TopicsApi {
   @Override
   public Mono<ResponseEntity<TopicsResponse>> getTopics(String clusterName, @Valid Integer page,
                                                         @Valid Integer perPage,
+                                                        @Valid Boolean showInternal,
+                                                        @Valid String search,
+                                                        @Valid TopicColumnsToSort orderBy,
                                                         ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(clusterService
-        .getTopics(clusterName, Optional.ofNullable(page), Optional.ofNullable(perPage))));
+        .getTopics(
+            clusterName,
+            Optional.ofNullable(page),
+            Optional.ofNullable(perPage),
+            Optional.ofNullable(showInternal),
+            Optional.ofNullable(search),
+            Optional.ofNullable(orderBy)
+        )));
   }
 
   @Override

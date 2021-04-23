@@ -140,6 +140,21 @@ paths:
           required: false
           schema:
             type: integer
+        - name: showInternal
+          in: query
+          required: false
+          schema:
+            type: boolean
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/TopicColumnsToSort'
       responses:
         200:
           description: OK
@@ -1244,6 +1259,13 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Topic'
+
+    TopicColumnsToSort:
+      type: string
+      enum:
+        - NAME
+        - OUT_OF_SYNC_REPLICAS
+        - TOTAL_PARTITIONS
 
     Topic:
       type: object
