@@ -92,7 +92,6 @@ public class ClusterService {
     var cluster = clustersStorage.getClusterByName(name)
         .orElseThrow(ClusterNotFoundException::new);
     List<Topic> topics = cluster.getTopics().values().stream()
-        .sorted(getComparatorForTopic(sortBy))
         .filter(topic -> !topic.isInternal()
             || showInternal
             .map(i -> topic.isInternal() == i)
@@ -101,6 +100,7 @@ public class ClusterService {
             search
                 .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
                 .orElse(true))
+        .sorted(getComparatorForTopic(sortBy))
         .map(clusterMapper::toTopic)
         .collect(Collectors.toList());
     var totalPages = (topics.size() / perPage)
