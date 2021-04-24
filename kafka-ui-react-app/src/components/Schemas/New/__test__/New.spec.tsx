@@ -26,7 +26,7 @@ describe('New', () => {
 
     const setupWrapper = (props: Partial<NewProps> = {}) => (
       <StaticRouter location={{ pathname }} context={{}}>
-        <New createSchema={jest.fn()} {...props} />
+        <New createSchema={jest.fn()} isSchemaCreated {...props} />
       </StaticRouter>
     );
 

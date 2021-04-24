@@ -26,6 +26,7 @@ export interface EditProps {
     clusterName: string,
     subject: string
   ) => Promise<void>;
+  isSchemaUpdated: boolean;
 }
 
 const Edit = ({
@@ -35,6 +36,7 @@ const Edit = ({
   schemasAreFetched,
   fetchSchemasByClusterName,
   updateSchema,
+  isSchemaUpdated,
 }: EditProps) => {
   React.useEffect(() => {
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
@@ -43,7 +45,7 @@ const Edit = ({
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     control,
   } = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
 
@@ -70,10 +72,15 @@ const Edit = ({
         clusterName,
         subject
       );
-      history.push(clusterSchemaPath(clusterName, subject));
     },
     [schema, register, control, clusterName, subject, updateSchema, history]
   );
+
+  React.useEffect(() => {
+    if (isSubmitting && isSchemaUpdated) {
+      history.push(clusterSchemaPath(clusterName, subject));
+    }
+  }, [isSchemaUpdated, clusterName, subject]);
 
   return (
     <div className="section">
@@ -96,7 +103,7 @@ const Edit = ({
         </div>
       </div>
 
-      {schemasAreFetched && !isSubmitting ? (
+      {schemasAreFetched ? (
         <div className="box">
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -111,6 +118,7 @@ const Edit = ({
                     required: 'Schema Type is required.',
                   })}
                   defaultValue={schema.schemaType}
+                  disabled={isSubmitting}
                 >
                   {Object.keys(SchemaType).map((type: string) => (
                     <option key={type} value={type}>
@@ -128,6 +136,7 @@ const Edit = ({
                   name="compatibilityLevel"
                   ref={register()}
                   defaultValue={schema.compatibilityLevel}
+                  disabled={isSubmitting}
                 >
                   {Object.keys(CompatibilityLevelCompatibilityEnum).map(
                     (level: string) => (
@@ -144,6 +153,7 @@ const Edit = ({
                 <h4 className="title is-5 mb-2">Latest Schema</h4>
                 <JSONEditor
                   readOnly
+                  height="500px"
                   value={getFormattedSchema()}
                   name="latestSchema"
                   highlightActiveLine={false}
@@ -154,6 +164,7 @@ const Edit = ({
                 <Controller
                   control={control}
                   name="newSchema"
+                  disabled={isSubmitting}
                   render={({ name, onChange }) => (
                     <JSONEditor
                       defaultValue={getFormattedSchema()}
@@ -164,7 +175,11 @@ const Edit = ({
                 />
               </div>
             </div>
-            <button type="submit" className="button is-primary">
+            <button
+              type="submit"
+              className="button is-primary"
+              disabled={!isDirty || isSubmitting}
+            >
               Submit
             </button>
           </form>

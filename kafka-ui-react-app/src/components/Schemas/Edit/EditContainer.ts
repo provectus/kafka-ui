@@ -4,6 +4,7 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   getIsSchemaListFetched,
   getSchema,
+  getSchemaUpdated,
 } from 'redux/reducers/schemas/selectors';
 import { fetchSchemasByClusterName, updateSchema } from 'redux/actions';
 
@@ -28,6 +29,7 @@ const mapStateToProps = (
   schema: getSchema(state, subject),
   schemasAreFetched: getIsSchemaListFetched(state),
   clusterName,
+  isSchemaUpdated: getSchemaUpdated(state),
 });
 
 const mapDispatchToProps = {

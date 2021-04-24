@@ -13,9 +13,10 @@ export interface NewProps {
     clusterName: ClusterName,
     newSchemaSubject: NewSchemaSubject
   ) => Promise<void>;
+  isSchemaCreated: boolean;
 }
 
-const New: React.FC<NewProps> = ({ createSchema }) => {
+const New: React.FC<NewProps> = ({ createSchema, isSchemaCreated }) => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const history = useHistory();
   const {
@@ -23,6 +24,7 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
     errors,
     handleSubmit,
     formState: { isDirty, isSubmitting },
+    getValues,
   } = useForm<NewSchemaSubjectRaw>();
 
   const onSubmit = React.useCallback(
@@ -33,13 +35,19 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
           schema,
           schemaType,
         });
-        history.push(clusterSchemaPath(clusterName, subject));
       } catch (e) {
         // Show Error
       }
     },
     [clusterName]
   );
+
+  React.useEffect(() => {
+    if (isSubmitting && isSchemaCreated) {
+      const { subject } = getValues();
+      history.push(clusterSchemaPath(clusterName, subject));
+    }
+  }, [isSubmitting, isSchemaCreated, clusterName]);
 
   return (
     <div className="section">
