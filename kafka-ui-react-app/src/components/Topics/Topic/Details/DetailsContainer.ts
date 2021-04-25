@@ -22,6 +22,7 @@ const mapStateToProps = (
 ) => ({
   clusterName,
   topicName,
+  state,
 });
 
 const mapDispatchToProps = {

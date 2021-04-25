@@ -66,26 +66,28 @@ const ListItem: React.FC<ListItemProps> = ({
           {internal ? 'Internal' : 'External'}
         </div>
       </td>
-      <td>
-        <div className="has-text-right">
-          <Dropdown
-            label={
-              <span className="icon">
-                <i className="fas fa-cog" />
-              </span>
-            }
-            right
-          >
-            <DropdownItem onClick={clearTopicMessagesHandler}>
-              <span className="has-text-danger">Clear Messages</span>
-            </DropdownItem>
-            <DropdownItem
-              onClick={() => setDeleteTopicConfirmationVisible(true)}
+      <td className="value">
+        {!internal ? (
+          <div className="has-text-right">
+            <Dropdown
+              label={
+                <span className="icon">
+                  <i className="fas fa-cog" />
+                </span>
+              }
+              right
             >
-              <span className="has-text-danger">Remove Topic</span>
-            </DropdownItem>
-          </Dropdown>
-        </div>
+              <DropdownItem onClick={clearTopicMessagesHandler}>
+                <span className="has-text-danger">Clear Messages</span>
+              </DropdownItem>
+              <DropdownItem
+                onClick={() => setDeleteTopicConfirmationVisible(true)}
+              >
+                <span className="has-text-danger">Remove Topic</span>
+              </DropdownItem>
+            </Dropdown>
+          </div>
+        ) : null}
         <ConfirmationModal
           isOpen={isDeleteTopicConfirmationVisible}
           onCancel={() => setDeleteTopicConfirmationVisible(false)}

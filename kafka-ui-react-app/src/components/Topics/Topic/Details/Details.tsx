@@ -1,5 +1,5 @@
 import React from 'react';
-import { ClusterName, TopicName } from 'redux/interfaces';
+import { ClusterName, TopicName, RootState } from 'redux/interfaces';
 import { Topic, TopicDetails } from 'generated-sources';
 import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
 import {
@@ -19,6 +19,7 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
+  state: RootState;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -26,9 +27,12 @@ interface Props extends Topic, TopicDetails {
 const Details: React.FC<Props> = ({
   clusterName,
   topicName,
+  state,
   deleteTopic,
   clearTopicMessages,
 }) => {
+  const isInternal = state.topics.byName[topicName].internal;
+
   const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
   const [
@@ -75,7 +79,7 @@ const Details: React.FC<Props> = ({
         </div>
         <div className="navbar-end">
           <div className="buttons">
-            {!isReadOnly && (
+            {!isReadOnly && !isInternal ? (
               <>
                 <button
                   type="button"
@@ -107,7 +111,7 @@ const Details: React.FC<Props> = ({
                   Are you sure want to remove <b>{topicName}</b> topic?
                 </ConfirmationModal>
               </>
-            )}
+            ) : null}
           </div>
         </div>
       </nav>

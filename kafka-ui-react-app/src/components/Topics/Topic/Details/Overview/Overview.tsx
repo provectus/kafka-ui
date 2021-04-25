@@ -75,22 +75,24 @@ const Overview: React.FC<Props> = ({
               <td>{offsetMin}</td>
               <td>{offsetMax}</td>
               <td className="has-text-right">
-                <Dropdown
-                  label={
-                    <span className="icon">
-                      <i className="fas fa-cog" />
-                    </span>
-                  }
-                  right
-                >
-                  <DropdownItem
-                    onClick={() =>
-                      clearTopicMessages(clusterName, topicName, [partition])
+                {!internal ? (
+                  <Dropdown
+                    label={
+                      <span className="icon">
+                        <i className="fas fa-cog" />
+                      </span>
                     }
+                    right
                   >
-                    <span className="has-text-danger">Clear Messages</span>
-                  </DropdownItem>
-                </Dropdown>
+                    <DropdownItem
+                      onClick={() =>
+                        clearTopicMessages(clusterName, topicName, [partition])
+                      }
+                    >
+                      <span className="has-text-danger">Clear Messages</span>
+                    </DropdownItem>
+                  </Dropdown>
+                ) : null}
               </td>
             </tr>
           ))}
