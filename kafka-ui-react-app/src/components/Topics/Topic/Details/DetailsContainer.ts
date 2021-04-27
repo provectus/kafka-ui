@@ -22,7 +22,7 @@ const mapStateToProps = (
 ) => ({
   clusterName,
   topicName,
-  state,
+  isInternal: state.topics.byName[topicName].internal,
 });
 
 const mapDispatchToProps = {
