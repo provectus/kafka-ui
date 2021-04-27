@@ -9,10 +9,9 @@ import { ClusterName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useForm } from 'react-hook-form';
 
 import ListItem from './ListItem';
+import GlobalSchemaSelector from './GlobalSchemaSelector';
 
 export interface ListProps {
   schemas: SchemaSubject[];
@@ -40,29 +39,11 @@ const List: React.FC<ListProps> = ({
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm();
-  const [
-    isUpdateCompatibilityConfirmationVisible,
-    setUpdateCompatibilityConfirmationVisible,
-  ] = React.useState(false);
 
   React.useEffect(() => {
     fetchSchemasByClusterName(clusterName);
     fetchGlobalSchemaCompatibilityLevel(clusterName);
   }, [fetchSchemasByClusterName, clusterName]);
-
-  const onCompatibilityLevelUpdate = async ({
-    compatibilityLevel,
-  }: {
-    compatibilityLevel: CompatibilityLevelCompatibilityEnum;
-  }) => {
-    await updateGlobalSchemaCompatibilityLevel(clusterName, compatibilityLevel);
-    setUpdateCompatibilityConfirmationVisible(false);
-  };
 
   return (
     <div className="section">
@@ -71,45 +52,18 @@ const List: React.FC<ListProps> = ({
         <div className="level">
           {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (
             <div className="level-item level-right">
-              <h5 className="is-5 mr-2">Global Compatibility Level: </h5>
-              <div className="select mr-2">
-                <select
-                  name="compatibilityLevel"
-                  defaultValue={globalSchemaCompatibilityLevel}
-                  ref={register()}
-                  onChange={() =>
-                    setUpdateCompatibilityConfirmationVisible(true)
-                  }
-                >
-                  {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                    (level: string) => (
-                      <option key={level} value={level}>
-                        {level}
-                      </option>
-                    )
-                  )}
-                </select>
-              </div>
+              <GlobalSchemaSelector
+                globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
+                updateGlobalSchemaCompatibilityLevel={
+                  updateGlobalSchemaCompatibilityLevel
+                }
+              />
               <Link
                 className="button is-primary"
                 to={clusterSchemaNewPath(clusterName)}
               >
                 Create Schema
               </Link>
-              <ConfirmationModal
-                isOpen={isUpdateCompatibilityConfirmationVisible}
-                onCancel={() =>
-                  setUpdateCompatibilityConfirmationVisible(false)
-                }
-                onConfirm={handleSubmit(onCompatibilityLevelUpdate)}
-              >
-                {isSubmitting ? (
-                  <PageLoader />
-                ) : (
-                  `Are you sure you want to update the global compatibility level?
-                  This may affect the compatibility levels of the schemas.`
-                )}
-              </ConfirmationModal>
             </div>
           )}
         </div>
