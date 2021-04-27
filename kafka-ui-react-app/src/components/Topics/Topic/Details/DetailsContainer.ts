@@ -2,6 +2,7 @@ import { connect } from 'react-redux';
 import { ClusterName, RootState, TopicName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { deleteTopic, clearTopicMessages } from 'redux/actions';
+import { getIsTopicInternal } from 'redux/reducers/topics/selectors';
 
 import Details from './Details';
 
@@ -22,7 +23,7 @@ const mapStateToProps = (
 ) => ({
   clusterName,
   topicName,
-  isInternal: state.topics.byName[topicName].internal,
+  isInternal: getIsTopicInternal(state, topicName),
 });
 
 const mapDispatchToProps = {

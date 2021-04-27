@@ -28,42 +28,37 @@ describe('ListItem', () => {
   );
 
   it('triggers the deleting messages when clicked on the delete messages button', () => {
-    if (!internalTopicPayload.internal) {
-      const component = shallow(setupComponent());
-      component.find('DropdownItem').at(0).simulate('click');
-      expect(mockDeleteMessages).toBeCalledTimes(1);
-      expect(mockDeleteMessages).toBeCalledWith(
-        clusterName,
-        internalTopicPayload.name
-      );
-    }
+    const component = shallow(setupComponent({ topic: externalTopicPayload }));
+    expect(component.exists('.value')).toBeTruthy();
+    component.find('DropdownItem').at(0).simulate('click');
+    expect(mockDeleteMessages).toBeCalledTimes(1);
+    expect(mockDeleteMessages).toBeCalledWith(
+      clusterName,
+      externalTopicPayload.name
+    );
   });
 
   it('triggers the deleteTopic when clicked on the delete button', () => {
-    if (!internalTopicPayload.internal) {
-      const wrapper = shallow(setupComponent());
-      expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
-      wrapper.find('DropdownItem').at(1).simulate('click');
-      const modal = wrapper.find('mock-ConfirmationModal');
-      expect(modal.prop('isOpen')).toBeTruthy();
-      modal.simulate('confirm');
-      expect(mockDelete).toBeCalledTimes(1);
-      expect(mockDelete).toBeCalledWith(clusterName, internalTopicPayload.name);
-    }
+    const wrapper = shallow(setupComponent({ topic: externalTopicPayload }));
+    expect(wrapper.exists('.value')).toBeTruthy();
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+    wrapper.find('DropdownItem').at(1).simulate('click');
+    const modal = wrapper.find('mock-ConfirmationModal');
+    expect(modal.prop('isOpen')).toBeTruthy();
+    modal.simulate('confirm');
+    expect(mockDelete).toBeCalledTimes(1);
+    expect(mockDelete).toBeCalledWith(clusterName, externalTopicPayload.name);
   });
 
   it('closes ConfirmationModal when clicked on the cancel button', () => {
-    if (!internalTopicPayload.internal) {
-      const wrapper = shallow(setupComponent());
-      expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
-      wrapper.find('DropdownItem').last().simulate('click');
-      expect(
-        wrapper.find('mock-ConfirmationModal').prop('isOpen')
-      ).toBeTruthy();
-      wrapper.find('mock-ConfirmationModal').simulate('cancel');
-      expect(mockDelete).toBeCalledTimes(0);
-      expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
-    }
+    const wrapper = shallow(setupComponent({ topic: externalTopicPayload }));
+    expect(wrapper.exists('.value')).toBeTruthy();
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+    wrapper.find('DropdownItem').last().simulate('click');
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeTruthy();
+    wrapper.find('mock-ConfirmationModal').simulate('cancel');
+    expect(mockDelete).toBeCalledTimes(0);
+    expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
   });
 
   it('renders correct tags for internal topic', () => {

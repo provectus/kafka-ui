@@ -66,8 +66,8 @@ const ListItem: React.FC<ListItemProps> = ({
           {internal ? 'Internal' : 'External'}
         </div>
       </td>
-      <td className="value">
-        {!internal ? (
+      {!internal ? (
+        <td className="value">
           <div className="has-text-right">
             <Dropdown
               label={
@@ -87,15 +87,15 @@ const ListItem: React.FC<ListItemProps> = ({
               </DropdownItem>
             </Dropdown>
           </div>
-        ) : null}
-        <ConfirmationModal
-          isOpen={isDeleteTopicConfirmationVisible}
-          onCancel={() => setDeleteTopicConfirmationVisible(false)}
-          onConfirm={deleteTopicHandler}
-        >
-          Are you sure want to remove <b>{name}</b> topic?
-        </ConfirmationModal>
-      </td>
+          <ConfirmationModal
+            isOpen={isDeleteTopicConfirmationVisible}
+            onCancel={() => setDeleteTopicConfirmationVisible(false)}
+            onConfirm={deleteTopicHandler}
+          >
+            Are you sure want to remove <b>{name}</b> topic?
+          </ConfirmationModal>
+        </td>
+      ) : null}
     </tr>
   );
 };
