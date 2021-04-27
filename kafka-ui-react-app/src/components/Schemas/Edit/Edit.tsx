@@ -36,7 +36,6 @@ const Edit = ({
   schemasAreFetched,
   fetchSchemasByClusterName,
   updateSchema,
-  isSchemaUpdated,
 }: EditProps) => {
   React.useEffect(() => {
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
@@ -64,23 +63,22 @@ const Edit = ({
       compatibilityLevel: CompatibilityLevelCompatibilityEnum;
       newSchema: string;
     }) => {
-      await updateSchema(
-        schema,
-        newSchema,
-        schemaType,
-        compatibilityLevel,
-        clusterName,
-        subject
-      );
+      try {
+        await updateSchema(
+          schema,
+          newSchema,
+          schemaType,
+          compatibilityLevel,
+          clusterName,
+          subject
+        );
+        history.push(clusterSchemaPath(clusterName, subject));
+      } catch (e) {
+        // do not redirect
+      }
     },
     [schema, register, control, clusterName, subject, updateSchema, history]
   );
-
-  React.useEffect(() => {
-    if (isSubmitting && isSchemaUpdated) {
-      history.push(clusterSchemaPath(clusterName, subject));
-    }
-  }, [isSchemaUpdated, clusterName, subject]);
 
   return (
     <div className="section">
@@ -152,6 +150,7 @@ const Edit = ({
               <div className="column is-one-half">
                 <h4 className="title is-5 mb-2">Latest Schema</h4>
                 <JSONEditor
+                  isFixedHeight
                   readOnly
                   height="500px"
                   value={getFormattedSchema()}
@@ -167,6 +166,7 @@ const Edit = ({
                   disabled={isSubmitting}
                   render={({ name, onChange }) => (
                     <JSONEditor
+                      readOnly={isSubmitting}
                       defaultValue={getFormattedSchema()}
                       name={name}
                       onChange={onChange}

@@ -128,47 +128,6 @@ describe('Thunks', () => {
     });
   });
 
-  describe('updateSchemaCompatibilityLevel', () => {
-    it('creates UPDATE_SCHEMA__SUCCESS when patching a schema', async () => {
-      fetchMock.putOnce(
-        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
-        200
-      );
-      await store.dispatch(
-        thunks.updateSchemaCompatibilityLevel(
-          clusterName,
-          subject,
-          CompatibilityLevelCompatibilityEnum.BACKWARD
-        )
-      );
-      expect(store.getActions()).toEqual([
-        actions.updateSchemaCompatibilityLevelAction.request(),
-        actions.updateSchemaCompatibilityLevelAction.success(),
-      ]);
-    });
-
-    it('creates UPDATE_SCHEMA__SUCCESS when failing to patch a schema', async () => {
-      fetchMock.putOnce(
-        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
-        404
-      );
-      try {
-        await store.dispatch(
-          thunks.updateSchemaCompatibilityLevel(
-            clusterName,
-            subject,
-            CompatibilityLevelCompatibilityEnum.BACKWARD
-          )
-        );
-      } catch (error) {
-        expect(error.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.updateSchemaCompatibilityLevelAction.request(),
-          actions.updateSchemaCompatibilityLevelAction.failure({}),
-        ]);
-      }
-    });
-  });
   describe('deleteSchema', () => {
     it('fires DELETE_SCHEMA__SUCCESS on success', async () => {
       fetchMock.deleteOnce(
@@ -203,7 +162,7 @@ describe('Thunks', () => {
   });
 
   describe('updateSchema', () => {
-    it('calls createSchema', () => {
+    it('calls PATCH_SCHEMA__REQUEST', () => {
       store.dispatch(
         thunks.updateSchema(
           fixtures.schema,
@@ -215,23 +174,7 @@ describe('Thunks', () => {
         )
       );
       expect(store.getActions()).toEqual([
-        actions.createSchemaAction.request(),
-      ]);
-    });
-
-    it('calls updateSchema and does not call createSchema when schema does not change', () => {
-      store.dispatch(
-        thunks.updateSchema(
-          fixtures.schema,
-          fixtures.schema.schema,
-          SchemaType.JSON,
-          CompatibilityLevelCompatibilityEnum.FORWARD,
-          clusterName,
-          subject
-        )
-      );
-      expect(store.getActions()).toEqual([
-        actions.updateSchemaCompatibilityLevelAction.request(),
+        actions.updateSchemaAction.request(),
       ]);
     });
   });

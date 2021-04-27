@@ -18,10 +18,6 @@ const getSchemaVersionsFetchingStatus = createFetchingSelector(
 
 const getSchemaCreationStatus = createFetchingSelector('POST_SCHEMA');
 
-const getSchemaCompatibilityLevelUpdatingStatus = createFetchingSelector(
-  'PATCH_SCHEMA_COMPATIBILITY'
-);
-
 export const getIsSchemaListFetched = createSelector(
   getSchemaListFetchingStatus,
   (status) => status === 'fetched'
@@ -40,23 +36,6 @@ export const getIsSchemaVersionFetched = createSelector(
 export const getSchemaCreated = createSelector(
   getSchemaCreationStatus,
   (status) => status === 'fetched'
-);
-
-export const getSchemaUpdated = createSelector(
-  getSchemaCreationStatus,
-  getSchemaCompatibilityLevelUpdatingStatus,
-  (schemaStatus, compatibilityLevelStatus) => {
-    if (
-      schemaStatus === 'errorFetching' ||
-      compatibilityLevelStatus === 'errorFetching' ||
-      schemaStatus === 'fetching' ||
-      compatibilityLevelStatus === 'fetching'
-    ) {
-      return false;
-    }
-
-    return schemaStatus === 'fetched' || compatibilityLevelStatus === 'fetched';
-  }
 );
 
 export const getSchemaList = createSelector(

@@ -147,6 +147,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           <JSONEditor
             height="500px"
             highlightActiveLine={false}
+            isFixedHeight={true}
             name="latestSchema"
             readOnly={true}
             value="{

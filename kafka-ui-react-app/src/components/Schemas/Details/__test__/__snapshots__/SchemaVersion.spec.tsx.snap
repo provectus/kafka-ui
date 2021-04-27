@@ -10,6 +10,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
   </td>
   <td>
     <JSONEditor
+      isFixedHeight={true}
       name="schema"
       readOnly={true}
       showGutter={false}
