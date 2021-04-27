@@ -14,6 +14,7 @@ import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
+import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
@@ -32,6 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -80,24 +82,53 @@ public class ClusterService {
 
 
   public TopicsResponse getTopics(String name, Optional<Integer> page,
-                                  Optional<Integer> nullablePerPage) {
+                                  Optional<Integer> nullablePerPage,
+                                  Optional<Boolean> showInternal,
+                                  Optional<String> search,
+                                  Optional<TopicColumnsToSort> sortBy) {
     Predicate<Integer> positiveInt = i -> i > 0;
     int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
     var cluster = clustersStorage.getClusterByName(name)
         .orElseThrow(ClusterNotFoundException::new);
-    var totalPages = (cluster.getTopics().size() / perPage)
-        + (cluster.getTopics().size() % perPage == 0 ? 0 : 1);
+    List<Topic> topics = cluster.getTopics().values().stream()
+        .filter(topic -> !topic.isInternal()
+            || showInternal
+            .map(i -> topic.isInternal() == i)
+            .orElse(true))
+        .filter(topic ->
+            search
+                .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
+                .orElse(true))
+        .sorted(getComparatorForTopic(sortBy))
+        .map(clusterMapper::toTopic)
+        .collect(Collectors.toList());
+    var totalPages = (topics.size() / perPage)
+        + (topics.size() % perPage == 0 ? 0 : 1);
     return new TopicsResponse()
         .pageCount(totalPages)
         .topics(
-            cluster.getTopics().values().stream()
-                .sorted(Comparator.comparing(InternalTopic::getName))
+            topics.stream()
                 .skip(topicsToSkip)
                 .limit(perPage)
-                .map(clusterMapper::toTopic)
                 .collect(Collectors.toList())
         );
+  }
+
+  private Comparator<InternalTopic> getComparatorForTopic(Optional<TopicColumnsToSort> sortBy) {
+    var defaultComparator = Comparator.comparing(InternalTopic::getName);
+    if (sortBy.isEmpty()) {
+      return defaultComparator;
+    }
+    switch (sortBy.get()) {
+      case TOTAL_PARTITIONS:
+        return Comparator.comparing(InternalTopic::getPartitionCount);
+      case OUT_OF_SYNC_REPLICAS:
+        return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
+      case NAME:
+      default:
+        return defaultComparator;
+    }
   }
 
   public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
