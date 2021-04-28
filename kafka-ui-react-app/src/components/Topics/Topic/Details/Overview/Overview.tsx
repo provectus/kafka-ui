@@ -74,8 +74,8 @@ const Overview: React.FC<Props> = ({
               <td>{leader}</td>
               <td>{offsetMin}</td>
               <td>{offsetMax}</td>
-              <td className="has-text-right">
-                {!internal ? (
+              {!internal ? (
+                <td className="has-text-right">
                   <Dropdown
                     label={
                       <span className="icon">
@@ -92,8 +92,8 @@ const Overview: React.FC<Props> = ({
                       <span className="has-text-danger">Clear Messages</span>
                     </DropdownItem>
                   </Dropdown>
-                ) : null}
-              </td>
+                </td>
+              ) : null}
             </tr>
           ))}
         </tbody>
