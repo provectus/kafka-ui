@@ -19,7 +19,7 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
-  isInternal: boolean | undefined;
+  isInternal: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
