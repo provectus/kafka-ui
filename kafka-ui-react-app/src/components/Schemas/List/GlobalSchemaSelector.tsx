@@ -14,10 +14,10 @@ export interface GlobalSchemaSelectorProps {
   ) => Promise<void>;
 }
 
-const GlobalSchemaSelector = ({
+const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
   globalSchemaCompatibilityLevel,
   updateGlobalSchemaCompatibilityLevel,
-}: GlobalSchemaSelectorProps) => {
+}) => {
   const { clusterName } = useParams<{ clusterName: string }>();
 
   const {
