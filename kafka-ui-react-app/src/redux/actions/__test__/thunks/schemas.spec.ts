@@ -122,7 +122,17 @@ describe('Thunks', () => {
         expect(error.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.createSchemaAction.request(),
-          actions.createSchemaAction.failure({}),
+          actions.createSchemaAction.failure({
+            alert: {
+              response: {
+                body: undefined,
+                status: 404,
+                statusText: 'Not Found',
+              },
+              subject: 'schema-NewSchema',
+              title: 'Schema NewSchema',
+            },
+          }),
         ]);
       }
     });

@@ -32,7 +32,6 @@ exports[`New View matches snapshot 1`] = `
   >
     <New
       createSchema={[MockFunction]}
-      isSchemaCreated={true}
     >
       <div
         className="section"

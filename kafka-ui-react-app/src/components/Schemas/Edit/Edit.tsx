@@ -26,7 +26,6 @@ export interface EditProps {
     clusterName: string,
     subject: string
   ) => Promise<void>;
-  isSchemaUpdated: boolean;
 }
 
 const Edit = ({

@@ -22,7 +22,6 @@ describe('Edit Component', () => {
       fetchSchemasByClusterName={jest.fn()}
       updateSchema={jest.fn()}
       schema={mockSchema}
-      isSchemaUpdated
       {...props}
     />
   );

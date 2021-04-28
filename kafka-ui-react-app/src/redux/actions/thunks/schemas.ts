@@ -68,6 +68,7 @@ export const createSchema = (
       response,
     };
     dispatch(actions.createSchemaAction.failure({ alert }));
+    throw error;
   }
 };
 
