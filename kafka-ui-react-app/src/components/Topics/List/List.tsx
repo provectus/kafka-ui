@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import {
   TopicWithDetailedInfo,
@@ -120,9 +118,7 @@ const List: React.FC<Props> = ({
       ) : (
         <div className="box">
           <table className="table is-fullwidth">
-            <thead>
-              <ListHeader orderBy={orderBy} setOrderBy={setOrderBy} />
-            </thead>
+            <ListHeader orderBy={orderBy} setOrderBy={setOrderBy} />
             <tbody>
               {items.map((topic) => (
                 <ListItem

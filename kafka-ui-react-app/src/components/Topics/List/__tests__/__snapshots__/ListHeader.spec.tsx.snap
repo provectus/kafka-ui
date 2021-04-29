@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListHeader matches the snapshot 1`] = `
+<table>
+  <ListHeader
+    setOrderBy={[MockFunction]}
+  >
+    <thead>
+      <tr>
+        <th
+          className="is-clickable"
+          onClick={[Function]}
+        >
+          Topic Name
+           
+          <span
+            className="icon is-small"
+          >
+            <i
+              className="fas fa-caret-down"
+            />
+          </span>
+        </th>
+        <th
+          className="is-clickable"
+          onClick={[Function]}
+        >
+          Total Partitions
+           
+          <span
+            className="icon is-small"
+          >
+            <i
+              className="fas fa-caret-down"
+            />
+          </span>
+        </th>
+        <th
+          className="is-clickable"
+          onClick={[Function]}
+        >
+          Out of sync replicas
+           
+          <span
+            className="icon is-small"
+          >
+            <i
+              className="fas fa-caret-down"
+            />
+          </span>
+        </th>
+        <th>
+          Type
+        </th>
+        <th>
+           
+        </th>
+      </tr>
+    </thead>
+  </ListHeader>
+</table>
+`;
+
+exports[`ListHeader on column click matches the snapshot 1`] = `
+<th
+  className="is-clickable"
+  onClick={[Function]}
+>
+  Topic Name
+   
+  <span
+    className="icon is-small"
+  >
+    <i
+      className="fas fa-caret-down"
+    />
+  </span>
+</th>
+`;
