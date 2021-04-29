@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import React from 'react';
 import {
   TopicWithDetailedInfo,
@@ -12,8 +14,10 @@ import { FetchTopicsListParams } from 'redux/actions';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
+import { TopicColumnsToSort } from 'generated-sources';
 
 import ListItem from './ListItem';
+import ListHeader from './ListHeader';
 
 interface Props {
   areTopicsFetching: boolean;
@@ -41,10 +45,15 @@ const List: React.FC<Props> = ({
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage } = usePagination();
+  const [orderBy, setOrderBy] = React.useState<
+    TopicColumnsToSort | undefined
+  >();
+  const [search, setSearch] = React.useState<string>('');
+  let debounceTimeout: NodeJS.Timeout;
 
   React.useEffect(() => {
-    fetchTopicsList({ clusterName, page, perPage });
-  }, [fetchTopicsList, clusterName, page, perPage]);
+    fetchTopicsList({ clusterName, page, perPage, orderBy, search });
+  }, [fetchTopicsList, clusterName, page, perPage, orderBy, search]);
 
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
 
@@ -52,14 +61,23 @@ const List: React.FC<Props> = ({
     setShowInternal(!showInternal);
   }, [showInternal]);
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (debounceTimeout) window.clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(() => setSearch(e.target.value), 300);
+  };
+
+  React.useEffect(() => () => {
+    if (debounceTimeout) window.clearTimeout(debounceTimeout);
+  });
+
   const items = showInternal ? topics : externalTopics;
 
   return (
     <div className="section">
       <Breadcrumb>{showInternal ? `All Topics` : `External Topics`}</Breadcrumb>
       <div className="box">
-        <div className="level">
-          <div className="level-item level-left">
+        <div className="columns">
+          <div className="column is-one-quarter is-align-items-center is-flex">
             <div className="field">
               <input
                 id="switchRoundedDefault"
@@ -72,7 +90,20 @@ const List: React.FC<Props> = ({
               <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
             </div>
           </div>
-          <div className="level-item level-right">
+          <div className="column">
+            <p className="control has-icons-left">
+              <input
+                className="input"
+                type="text"
+                placeholder="Search by Topic Name"
+                onChange={(e) => handleSearch(e)}
+              />
+              <span className="icon is-small is-left">
+                <i className="fas fa-search" />
+              </span>
+            </p>
+          </div>
+          <div className="column is-2 is-justify-content-flex-end is-flex">
             {!isReadOnly && (
               <Link
                 className="button is-primary"
@@ -90,13 +121,7 @@ const List: React.FC<Props> = ({
         <div className="box">
           <table className="table is-fullwidth">
             <thead>
-              <tr>
-                <th>Topic Name</th>
-                <th>Total Partitions</th>
-                <th>Out of sync replicas</th>
-                <th>Type</th>
-                <th> </th>
-              </tr>
+              <ListHeader orderBy={orderBy} setOrderBy={setOrderBy} />
             </thead>
             <tbody>
               {items.map((topic) => (

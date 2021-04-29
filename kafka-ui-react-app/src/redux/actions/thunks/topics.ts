@@ -7,6 +7,7 @@ import {
   TopicCreation,
   TopicUpdate,
   TopicConfig,
+  TopicColumnsToSort,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
@@ -30,6 +31,9 @@ export interface FetchTopicsListParams {
   clusterName: ClusterName;
   page?: number;
   perPage?: number;
+  showInternal?: boolean;
+  search?: string;
+  orderBy?: TopicColumnsToSort;
 }
 
 export const fetchTopicsList = (
