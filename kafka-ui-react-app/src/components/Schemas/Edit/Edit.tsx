@@ -43,7 +43,7 @@ const Edit = ({
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
     control,
   } = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
 
@@ -62,15 +62,19 @@ const Edit = ({
       compatibilityLevel: CompatibilityLevelCompatibilityEnum;
       newSchema: string;
     }) => {
-      await updateSchema(
-        schema,
-        newSchema,
-        schemaType,
-        compatibilityLevel,
-        clusterName,
-        subject
-      );
-      history.push(clusterSchemaPath(clusterName, subject));
+      try {
+        await updateSchema(
+          schema,
+          newSchema,
+          schemaType,
+          compatibilityLevel,
+          clusterName,
+          subject
+        );
+        history.push(clusterSchemaPath(clusterName, subject));
+      } catch (e) {
+        // do not redirect
+      }
     },
     [schema, register, control, clusterName, subject, updateSchema, history]
   );
@@ -96,7 +100,7 @@ const Edit = ({
         </div>
       </div>
 
-      {schemasAreFetched && !isSubmitting ? (
+      {schemasAreFetched ? (
         <div className="box">
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -111,6 +115,7 @@ const Edit = ({
                     required: 'Schema Type is required.',
                   })}
                   defaultValue={schema.schemaType}
+                  disabled={isSubmitting}
                 >
                   {Object.keys(SchemaType).map((type: string) => (
                     <option key={type} value={type}>
@@ -128,6 +133,7 @@ const Edit = ({
                   name="compatibilityLevel"
                   ref={register()}
                   defaultValue={schema.compatibilityLevel}
+                  disabled={isSubmitting}
                 >
                   {Object.keys(CompatibilityLevelCompatibilityEnum).map(
                     (level: string) => (
@@ -143,7 +149,9 @@ const Edit = ({
               <div className="column is-one-half">
                 <h4 className="title is-5 mb-2">Latest Schema</h4>
                 <JSONEditor
+                  isFixedHeight
                   readOnly
+                  height="500px"
                   value={getFormattedSchema()}
                   name="latestSchema"
                   highlightActiveLine={false}
@@ -154,8 +162,10 @@ const Edit = ({
                 <Controller
                   control={control}
                   name="newSchema"
+                  disabled={isSubmitting}
                   render={({ name, onChange }) => (
                     <JSONEditor
+                      readOnly={isSubmitting}
                       defaultValue={getFormattedSchema()}
                       name={name}
                       onChange={onChange}
@@ -164,7 +174,11 @@ const Edit = ({
                 />
               </div>
             </div>
-            <button type="submit" className="button is-primary">
+            <button
+              type="submit"
+              className="button is-primary"
+              disabled={!isDirty || isSubmitting}
+            >
               Submit
             </button>
           </form>

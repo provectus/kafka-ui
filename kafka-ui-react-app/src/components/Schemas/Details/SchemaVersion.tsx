@@ -15,6 +15,7 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
       <td>{id}</td>
       <td>
         <JSONEditor
+          isFixedHeight
           name="schema"
           value={JSON.stringify(JSON.parse(schema), null, '\t')}
           showGutter={false}

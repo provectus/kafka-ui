@@ -66,6 +66,8 @@ const reducer = (state = initialState, action: Action): SchemasState => {
       return { ...state, currentSchemaVersions: action.payload };
     case 'POST_SCHEMA__SUCCESS':
       return addToSchemaList(state, action.payload);
+    case 'PATCH_SCHEMA__SUCCESS':
+      return addToSchemaList(state, action.payload);
     case getType(actions.deleteSchemaAction.success):
       return deleteFromSchemaList(state, action.payload);
     default:

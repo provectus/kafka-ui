@@ -49,6 +49,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
       className="tile is-child box"
     >
       <JSONEditor
+        isFixedHeight={true}
         name="schema"
         readOnly={true}
         showGutter={false}

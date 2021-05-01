@@ -68,32 +68,7 @@ export const createSchema = (
       response,
     };
     dispatch(actions.createSchemaAction.failure({ alert }));
-  }
-};
-
-export const updateSchemaCompatibilityLevel = (
-  clusterName: ClusterName,
-  subject: string,
-  compatibilityLevel: CompatibilityLevelCompatibilityEnum
-): PromiseThunkResult => async (dispatch) => {
-  dispatch(actions.updateSchemaCompatibilityLevelAction.request());
-  try {
-    await schemasApiClient.updateSchemaCompatibilityLevel({
-      clusterName,
-      subject,
-      compatibilityLevel: {
-        compatibility: compatibilityLevel,
-      },
-    });
-    dispatch(actions.updateSchemaCompatibilityLevelAction.success());
-  } catch (error) {
-    const response = await getResponse(error);
-    const alert: FailurePayload = {
-      subject: 'compatibilityLevel',
-      title: `Compatibility level ${subject}`,
-      response,
-    };
-    dispatch(actions.updateSchemaCompatibilityLevelAction.failure({ alert }));
+    throw error;
   }
 };
 
@@ -105,27 +80,42 @@ export const updateSchema = (
   clusterName: string,
   subject: string
 ): PromiseThunkResult => async (dispatch) => {
-  if (
-    (newSchema &&
-      !isEqual(JSON.parse(latestSchema.schema), JSON.parse(newSchema))) ||
-    newSchemaType !== latestSchema.schemaType
-  ) {
-    await dispatch(
-      createSchema(clusterName, {
-        ...latestSchema,
-        schema: newSchema || latestSchema.schema,
-        schemaType: newSchemaType || latestSchema.schemaType,
-      })
-    );
-  }
-  if (newCompatibilityLevel !== latestSchema.compatibilityLevel) {
-    await dispatch(
-      updateSchemaCompatibilityLevel(
+  dispatch(actions.updateSchemaAction.request());
+  try {
+    let schema: SchemaSubject = latestSchema;
+    if (
+      (newSchema &&
+        !isEqual(JSON.parse(latestSchema.schema), JSON.parse(newSchema))) ||
+      newSchemaType !== latestSchema.schemaType
+    ) {
+      schema = await schemasApiClient.createNewSchema({
+        clusterName,
+        newSchemaSubject: {
+          ...latestSchema,
+          schema: newSchema || latestSchema.schema,
+          schemaType: newSchemaType || latestSchema.schemaType,
+        },
+      });
+    }
+    if (newCompatibilityLevel !== latestSchema.compatibilityLevel) {
+      await schemasApiClient.updateSchemaCompatibilityLevel({
         clusterName,
         subject,
-        newCompatibilityLevel
-      )
-    );
+        compatibilityLevel: {
+          compatibility: newCompatibilityLevel,
+        },
+      });
+    }
+    actions.updateSchemaAction.success(schema);
+  } catch (e) {
+    const response = await getResponse(e);
+    const alert: FailurePayload = {
+      subject: ['schema', subject].join('-'),
+      title: `Schema ${subject}`,
+      response,
+    };
+    dispatch(actions.updateSchemaAction.failure({ alert }));
+    throw e;
   }
 };
 export const deleteSchema = (

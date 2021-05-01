@@ -48,6 +48,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
         >
           <select
             defaultValue="AVRO"
+            disabled={false}
             name="schemaType"
           >
             <option
@@ -84,6 +85,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
         >
           <select
             defaultValue="BACKWARD"
+            disabled={false}
             name="compatibilityLevel"
           >
             <option
@@ -143,7 +145,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             Latest Schema
           </h4>
           <JSONEditor
+            height="500px"
             highlightActiveLine={false}
+            isFixedHeight={true}
             name="latestSchema"
             readOnly={true}
             value="{
@@ -261,6 +265,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                 "watchInternal": [Function],
               }
             }
+            disabled={false}
             name="newSchema"
             render={[Function]}
           />
@@ -268,6 +273,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
       </div>
       <button
         className="button is-primary"
+        disabled={true}
         type="submit"
       >
         Submit
