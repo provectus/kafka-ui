@@ -66,6 +66,91 @@ exports[`ListHeader on column click matches the snapshot 1`] = `
   className="is-clickable"
   onClick={[Function]}
 >
+  Topic Name
+   
+  <span
+    className="icon is-small"
+  >
+    <i
+      className="fas fa-caret-down"
+    />
+  </span>
+</th>
+`;
+
+exports[`ListHeader on column click matches the snapshot 2`] = `
+<th
+  className="is-clickable"
+  onClick={[Function]}
+>
+  Topic Name
+   
+  <span
+    className="icon is-small"
+  >
+    <i
+      className="fas fa-caret-down"
+    />
+  </span>
+</th>
+`;
+
+exports[`ListHeader on column click matches the snapshot 3`] = `
+<th
+  className="is-clickable"
+  onClick={[Function]}
+>
+  Total Partitions
+   
+  <span
+    className="icon is-small"
+  >
+    <i
+      className="fas fa-caret-down"
+    />
+  </span>
+</th>
+`;
+
+exports[`ListHeader on column click matches the snapshot 4`] = `
+<th
+  className="is-clickable"
+  onClick={[Function]}
+>
+  Total Partitions
+   
+  <span
+    className="icon is-small"
+  >
+    <i
+      className="fas fa-caret-down"
+    />
+  </span>
+</th>
+`;
+
+exports[`ListHeader on column click matches the snapshot 5`] = `
+<th
+  className="is-clickable"
+  onClick={[Function]}
+>
+  Out of sync replicas
+   
+  <span
+    className="icon is-small"
+  >
+    <i
+      className="fas fa-caret-down"
+    />
+  </span>
+</th>
+`;
+
+exports[`ListHeader on column click matches the snapshot 6`] = `
+<th
+  className="is-clickable"
+  onClick={[Function]}
+>
   Out of sync replicas
    
   <span

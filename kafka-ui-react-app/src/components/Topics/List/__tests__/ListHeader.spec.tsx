@@ -31,6 +31,16 @@ describe('ListHeader', () => {
       );
     });
     it('matches the snapshot', () => {
+      expect(component.find('th').at(0)).toMatchSnapshot();
+      component.find('th').at(0).simulate('click');
+      expect(component.find('th').at(0)).toMatchSnapshot();
+
+      expect(component.find('th').at(1)).toMatchSnapshot();
+      component.find('th').at(1).simulate('click');
+      expect(component.find('th').at(1)).toMatchSnapshot();
+
+      expect(component.find('th').at(2)).toMatchSnapshot();
+      component.find('th').at(2).simulate('click');
       expect(component.find('th').at(2)).toMatchSnapshot();
     });
   });
