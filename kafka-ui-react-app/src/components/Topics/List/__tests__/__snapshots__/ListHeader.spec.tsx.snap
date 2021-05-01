@@ -63,7 +63,7 @@ exports[`ListHeader matches the snapshot 1`] = `
 
 exports[`ListHeader on column click matches the snapshot 1`] = `
 <th
-  className="is-clickable"
+  className="is-clickable has-text-link-dark"
   onClick={[Function]}
 >
   Topic Name
@@ -72,7 +72,7 @@ exports[`ListHeader on column click matches the snapshot 1`] = `
     className="icon is-small"
   >
     <i
-      className="fas fa-caret-down"
+      className="fas fa-caret-up"
     />
   </span>
 </th>
@@ -80,16 +80,16 @@ exports[`ListHeader on column click matches the snapshot 1`] = `
 
 exports[`ListHeader on column click matches the snapshot 2`] = `
 <th
-  className="is-clickable"
+  className="is-clickable has-text-link-dark"
   onClick={[Function]}
 >
-  Topic Name
+  Total Partitions
    
   <span
     className="icon is-small"
   >
     <i
-      className="fas fa-caret-down"
+      className="fas fa-caret-up"
     />
   </span>
 </th>
@@ -97,41 +97,7 @@ exports[`ListHeader on column click matches the snapshot 2`] = `
 
 exports[`ListHeader on column click matches the snapshot 3`] = `
 <th
-  className="is-clickable"
-  onClick={[Function]}
->
-  Total Partitions
-   
-  <span
-    className="icon is-small"
-  >
-    <i
-      className="fas fa-caret-down"
-    />
-  </span>
-</th>
-`;
-
-exports[`ListHeader on column click matches the snapshot 4`] = `
-<th
-  className="is-clickable"
-  onClick={[Function]}
->
-  Total Partitions
-   
-  <span
-    className="icon is-small"
-  >
-    <i
-      className="fas fa-caret-down"
-    />
-  </span>
-</th>
-`;
-
-exports[`ListHeader on column click matches the snapshot 5`] = `
-<th
-  className="is-clickable"
+  className="is-clickable has-text-link-dark"
   onClick={[Function]}
 >
   Out of sync replicas
@@ -140,24 +106,7 @@ exports[`ListHeader on column click matches the snapshot 5`] = `
     className="icon is-small"
   >
     <i
-      className="fas fa-caret-down"
-    />
-  </span>
-</th>
-`;
-
-exports[`ListHeader on column click matches the snapshot 6`] = `
-<th
-  className="is-clickable"
-  onClick={[Function]}
->
-  Out of sync replicas
-   
-  <span
-    className="icon is-small"
-  >
-    <i
-      className="fas fa-caret-down"
+      className="fas fa-caret-up"
     />
   </span>
 </th>

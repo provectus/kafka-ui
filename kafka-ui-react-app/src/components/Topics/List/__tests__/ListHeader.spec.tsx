@@ -5,7 +5,7 @@ import React from 'react';
 
 describe('ListHeader', () => {
   const setOrderBy = jest.fn();
-  const component = mount(
+  let component = mount(
     <table>
       <ListHeader orderBy={undefined} setOrderBy={setOrderBy} />
     </table>
@@ -31,16 +31,34 @@ describe('ListHeader', () => {
       );
     });
     it('matches the snapshot', () => {
-      expect(component.find('th').at(0)).toMatchSnapshot();
-      component.find('th').at(0).simulate('click');
+      component = mount(
+        <table>
+          <ListHeader
+            orderBy={TopicColumnsToSort.NAME}
+            setOrderBy={setOrderBy}
+          />
+        </table>
+      );
       expect(component.find('th').at(0)).toMatchSnapshot();
 
-      expect(component.find('th').at(1)).toMatchSnapshot();
-      component.find('th').at(1).simulate('click');
+      component = mount(
+        <table>
+          <ListHeader
+            orderBy={TopicColumnsToSort.TOTAL_PARTITIONS}
+            setOrderBy={setOrderBy}
+          />
+        </table>
+      );
       expect(component.find('th').at(1)).toMatchSnapshot();
 
-      expect(component.find('th').at(2)).toMatchSnapshot();
-      component.find('th').at(2).simulate('click');
+      component = mount(
+        <table>
+          <ListHeader
+            orderBy={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+            setOrderBy={setOrderBy}
+          />
+        </table>
+      );
       expect(component.find('th').at(2)).toMatchSnapshot();
     });
   });
