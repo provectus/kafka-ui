@@ -33,6 +33,8 @@ describe('List', () => {
   });
 
   describe('when it does not have readonly flag', () => {
+    const mockFetch = jest.fn();
+    jest.useFakeTimers();
     const component = mount(
       <StaticRouter>
         <ClusterContext.Provider
@@ -47,7 +49,7 @@ describe('List', () => {
             topics={[]}
             externalTopics={[]}
             totalPages={1}
-            fetchTopicsList={jest.fn()}
+            fetchTopicsList={mockFetch}
             deleteTopic={jest.fn()}
             clearTopicMessages={jest.fn()}
           />
@@ -59,6 +61,16 @@ describe('List', () => {
     });
     it('matches the snapshot', () => {
       expect(component).toMatchSnapshot();
+    });
+
+    it('calls fetchTopicsList on input', () => {
+      const input = component.find('input').at(1);
+      input.simulate('change', { target: { value: 't' } });
+      expect(setTimeout).toHaveBeenCalledTimes(1);
+      expect(setTimeout).toHaveBeenLastCalledWith(expect.any(Function), 300);
+      setTimeout(() => {
+        expect(mockFetch).toHaveBeenCalledTimes(1);
+      }, 301);
     });
   });
 });
