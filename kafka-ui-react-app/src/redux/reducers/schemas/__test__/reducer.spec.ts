@@ -1,7 +1,12 @@
-import { SchemaSubject, SchemaType } from 'generated-sources';
+import {
+  CompatibilityLevelCompatibilityEnum,
+  SchemaSubject,
+  SchemaType,
+} from 'generated-sources';
 import {
   createSchemaAction,
   deleteSchemaAction,
+  fetchGlobalSchemaCompatibilityLevelAction,
   fetchSchemasByClusterNameAction,
   fetchSchemaVersionsAction,
 } from 'redux/actions';
@@ -74,6 +79,40 @@ describe('Schemas reducer', () => {
       byName: {},
       allNames: [],
       currentSchemaVersions: [],
+    });
+  });
+
+  it('adds global compatibility on successful fetch', () => {
+    expect(
+      reducer(
+        initialState,
+        fetchGlobalSchemaCompatibilityLevelAction.success(
+          CompatibilityLevelCompatibilityEnum.BACKWARD
+        )
+      )
+    ).toEqual({
+      ...initialState,
+      globalSchemaCompatibilityLevel:
+        CompatibilityLevelCompatibilityEnum.BACKWARD,
+    });
+  });
+
+  it('replaces global compatibility on successful update', () => {
+    expect(
+      reducer(
+        {
+          ...initialState,
+          globalSchemaCompatibilityLevel:
+            CompatibilityLevelCompatibilityEnum.FORWARD,
+        },
+        fetchGlobalSchemaCompatibilityLevelAction.success(
+          CompatibilityLevelCompatibilityEnum.BACKWARD
+        )
+      )
+    ).toEqual({
+      ...initialState,
+      globalSchemaCompatibilityLevel:
+        CompatibilityLevelCompatibilityEnum.BACKWARD,
     });
   });
 });

@@ -49,6 +49,44 @@ export const fetchSchemaVersions = (
   }
 };
 
+export const fetchGlobalSchemaCompatibilityLevel = (
+  clusterName: ClusterName
+): PromiseThunkResult<void> => async (dispatch) => {
+  dispatch(actions.fetchGlobalSchemaCompatibilityLevelAction.request());
+  try {
+    const result = await schemasApiClient.getGlobalSchemaCompatibilityLevel({
+      clusterName,
+    });
+    dispatch(
+      actions.fetchGlobalSchemaCompatibilityLevelAction.success(
+        result.compatibility
+      )
+    );
+  } catch (e) {
+    dispatch(actions.fetchGlobalSchemaCompatibilityLevelAction.failure());
+  }
+};
+
+export const updateGlobalSchemaCompatibilityLevel = (
+  clusterName: ClusterName,
+  compatibilityLevel: CompatibilityLevelCompatibilityEnum
+): PromiseThunkResult<void> => async (dispatch) => {
+  dispatch(actions.updateGlobalSchemaCompatibilityLevelAction.request());
+  try {
+    await schemasApiClient.updateGlobalSchemaCompatibilityLevel({
+      clusterName,
+      compatibilityLevel: { compatibility: compatibilityLevel },
+    });
+    dispatch(
+      actions.updateGlobalSchemaCompatibilityLevelAction.success(
+        compatibilityLevel
+      )
+    );
+  } catch (e) {
+    dispatch(actions.updateGlobalSchemaCompatibilityLevelAction.failure());
+  }
+};
+
 export const createSchema = (
   clusterName: ClusterName,
   newSchemaSubject: NewSchemaSubject

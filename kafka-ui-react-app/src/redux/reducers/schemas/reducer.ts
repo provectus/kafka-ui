@@ -70,6 +70,10 @@ const reducer = (state = initialState, action: Action): SchemasState => {
       return addToSchemaList(state, action.payload);
     case getType(actions.deleteSchemaAction.success):
       return deleteFromSchemaList(state, action.payload);
+    case getType(actions.fetchGlobalSchemaCompatibilityLevelAction.success):
+      return { ...state, globalSchemaCompatibilityLevel: action.payload };
+    case getType(actions.updateGlobalSchemaCompatibilityLevelAction.success):
+      return { ...state, globalSchemaCompatibilityLevel: action.payload };
     default:
       return state;
   }
