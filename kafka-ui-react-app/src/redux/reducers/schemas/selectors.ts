@@ -7,6 +7,8 @@ const schemasState = ({ schemas }: RootState): SchemasState => schemas;
 
 const getAllNames = (state: RootState) => schemasState(state).allNames;
 const getSchemaMap = (state: RootState) => schemasState(state).byName;
+export const getGlobalSchemaCompatibilityLevel = (state: RootState) =>
+  schemasState(state).globalSchemaCompatibilityLevel;
 
 const getSchemaListFetchingStatus = createFetchingSelector(
   'GET_CLUSTER_SCHEMAS'
@@ -18,8 +20,17 @@ const getSchemaVersionsFetchingStatus = createFetchingSelector(
 
 const getSchemaCreationStatus = createFetchingSelector('POST_SCHEMA');
 
+const getGlobalSchemaCompatibilityLevelFetchingStatus = createFetchingSelector(
+  'GET_GLOBAL_SCHEMA_COMPATIBILITY'
+);
+
 export const getIsSchemaListFetched = createSelector(
   getSchemaListFetchingStatus,
+  (status) => status === 'fetched'
+);
+
+export const getGlobalSchemaCompatibilityLevelFetched = createSelector(
+  getGlobalSchemaCompatibilityLevelFetchingStatus,
   (status) => status === 'fetched'
 );
 

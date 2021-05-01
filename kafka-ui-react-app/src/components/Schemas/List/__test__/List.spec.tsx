@@ -32,6 +32,9 @@ describe('List', () => {
         <List
           isFetching
           fetchSchemasByClusterName={jest.fn()}
+          isGlobalSchemaCompatibilityLevelFetched
+          fetchGlobalSchemaCompatibilityLevel={jest.fn()}
+          updateGlobalSchemaCompatibilityLevel={jest.fn()}
           schemas={[]}
           {...props}
         />

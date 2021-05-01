@@ -16,6 +16,7 @@ import {
   ConsumerGroup,
   ConsumerGroupDetails,
   SchemaSubject,
+  CompatibilityLevelCompatibilityEnum,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -118,6 +119,18 @@ export const fetchSchemasByClusterNameAction = createAsyncAction(
   'GET_CLUSTER_SCHEMAS__FAILURE'
 )<undefined, SchemaSubject[], undefined>();
 
+export const fetchGlobalSchemaCompatibilityLevelAction = createAsyncAction(
+  'GET_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST',
+  'GET_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS',
+  'GET_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE'
+)<undefined, CompatibilityLevelCompatibilityEnum, undefined>();
+
+export const updateGlobalSchemaCompatibilityLevelAction = createAsyncAction(
+  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST',
+  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS',
+  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE'
+)<undefined, CompatibilityLevelCompatibilityEnum, undefined>();
+
 export const fetchSchemaVersionsAction = createAsyncAction(
   'GET_SCHEMA_VERSIONS__REQUEST',
   'GET_SCHEMA_VERSIONS__SUCCESS',
@@ -130,11 +143,11 @@ export const createSchemaAction = createAsyncAction(
   'POST_SCHEMA__FAILURE'
 )<undefined, SchemaSubject, { alert?: FailurePayload }>();
 
-export const updateSchemaCompatibilityLevelAction = createAsyncAction(
-  'PATCH_SCHEMA_COMPATIBILITY__REQUEST',
-  'PATCH_SCHEMA_COMPATIBILITY__SUCCESS',
-  'PATCH_SCHEMA_COMPATIBILITY__FAILURE'
-)<undefined, undefined, { alert?: FailurePayload }>();
+export const updateSchemaAction = createAsyncAction(
+  'PATCH_SCHEMA__REQUEST',
+  'PATCH_SCHEMA__SUCCESS',
+  'PATCH_SCHEMA__FAILURE'
+)<undefined, SchemaSubject, { alert?: FailurePayload }>();
 
 export const deleteSchemaAction = createAsyncAction(
   'DELETE_SCHEMA__REQUEST',

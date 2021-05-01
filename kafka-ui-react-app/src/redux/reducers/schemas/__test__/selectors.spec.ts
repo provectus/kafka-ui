@@ -1,11 +1,13 @@
 import { orderBy } from 'lodash';
 import {
   createSchemaAction,
+  fetchGlobalSchemaCompatibilityLevelAction,
   fetchSchemasByClusterNameAction,
   fetchSchemaVersionsAction,
 } from 'redux/actions';
 import configureStore from 'redux/store/configureStore';
 import * as selectors from 'redux/reducers/schemas/selectors';
+import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 
 import {
   clusterSchemasPayload,
@@ -44,6 +46,11 @@ describe('Schemas selectors', () => {
       );
       store.dispatch(fetchSchemaVersionsAction.success(schemaVersionsPayload));
       store.dispatch(createSchemaAction.success(newSchemaPayload));
+      store.dispatch(
+        fetchGlobalSchemaCompatibilityLevelAction.success(
+          CompatibilityLevelCompatibilityEnum.BACKWARD
+        )
+      );
     });
 
     it('returns fetch status', () => {
@@ -52,6 +59,9 @@ describe('Schemas selectors', () => {
         selectors.getIsSchemaVersionFetched(store.getState())
       ).toBeTruthy();
       expect(selectors.getSchemaCreated(store.getState())).toBeTruthy();
+      expect(
+        selectors.getGlobalSchemaCompatibilityLevelFetched(store.getState())
+      ).toBeTruthy();
     });
 
     it('returns schema list', () => {
@@ -70,6 +80,12 @@ describe('Schemas selectors', () => {
       expect(selectors.getSortedSchemaVersions(store.getState())).toEqual(
         orderBy(schemaVersionsPayload, 'id', 'desc')
       );
+    });
+
+    it('return registry compatibility level', () => {
+      expect(
+        selectors.getGlobalSchemaCompatibilityLevel(store.getState())
+      ).toEqual(CompatibilityLevelCompatibilityEnum.BACKWARD);
     });
   });
 });

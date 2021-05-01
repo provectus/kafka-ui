@@ -33,6 +33,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
     <div className="tile is-parent">
       <div className="tile is-child box">
         <JSONEditor
+          isFixedHeight
           name="schema"
           value={JSON.stringify(JSON.parse(schema), null, '\t')}
           showGutter={false}

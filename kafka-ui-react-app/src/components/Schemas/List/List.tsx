@@ -1,5 +1,8 @@
 import React from 'react';
-import { SchemaSubject } from 'generated-sources';
+import {
+  CompatibilityLevelCompatibilityEnum,
+  SchemaSubject,
+} from 'generated-sources';
 import { Link, useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
@@ -8,23 +11,38 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
 
 import ListItem from './ListItem';
+import GlobalSchemaSelector from './GlobalSchemaSelector';
 
 export interface ListProps {
   schemas: SchemaSubject[];
   isFetching: boolean;
+  isGlobalSchemaCompatibilityLevelFetched: boolean;
+  globalSchemaCompatibilityLevel?: CompatibilityLevelCompatibilityEnum;
   fetchSchemasByClusterName: (clusterName: ClusterName) => void;
+  fetchGlobalSchemaCompatibilityLevel: (
+    clusterName: ClusterName
+  ) => Promise<void>;
+  updateGlobalSchemaCompatibilityLevel: (
+    clusterName: ClusterName,
+    compatibilityLevel: CompatibilityLevelCompatibilityEnum
+  ) => Promise<void>;
 }
 
 const List: React.FC<ListProps> = ({
   schemas,
   isFetching,
+  globalSchemaCompatibilityLevel,
+  isGlobalSchemaCompatibilityLevelFetched,
   fetchSchemasByClusterName,
+  fetchGlobalSchemaCompatibilityLevel,
+  updateGlobalSchemaCompatibilityLevel,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
 
   React.useEffect(() => {
     fetchSchemasByClusterName(clusterName);
+    fetchGlobalSchemaCompatibilityLevel(clusterName);
   }, [fetchSchemasByClusterName, clusterName]);
 
   return (
@@ -32,8 +50,14 @@ const List: React.FC<ListProps> = ({
       <Breadcrumb>Schema Registry</Breadcrumb>
       <div className="box">
         <div className="level">
-          {!isReadOnly && (
+          {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (
             <div className="level-item level-right">
+              <GlobalSchemaSelector
+                globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
+                updateGlobalSchemaCompatibilityLevel={
+                  updateGlobalSchemaCompatibilityLevel
+                }
+              />
               <Link
                 className="button is-primary"
                 to={clusterSchemaNewPath(clusterName)}

@@ -122,53 +122,22 @@ describe('Thunks', () => {
         expect(error.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.createSchemaAction.request(),
-          actions.createSchemaAction.failure({}),
+          actions.createSchemaAction.failure({
+            alert: {
+              response: {
+                body: undefined,
+                status: 404,
+                statusText: 'Not Found',
+              },
+              subject: 'schema-NewSchema',
+              title: 'Schema NewSchema',
+            },
+          }),
         ]);
       }
     });
   });
 
-  describe('updateSchemaCompatibilityLevel', () => {
-    it('creates UPDATE_SCHEMA__SUCCESS when patching a schema', async () => {
-      fetchMock.putOnce(
-        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
-        200
-      );
-      await store.dispatch(
-        thunks.updateSchemaCompatibilityLevel(
-          clusterName,
-          subject,
-          CompatibilityLevelCompatibilityEnum.BACKWARD
-        )
-      );
-      expect(store.getActions()).toEqual([
-        actions.updateSchemaCompatibilityLevelAction.request(),
-        actions.updateSchemaCompatibilityLevelAction.success(),
-      ]);
-    });
-
-    it('creates UPDATE_SCHEMA__SUCCESS when failing to patch a schema', async () => {
-      fetchMock.putOnce(
-        `/api/clusters/${clusterName}/schemas/${subject}/compatibility`,
-        404
-      );
-      try {
-        await store.dispatch(
-          thunks.updateSchemaCompatibilityLevel(
-            clusterName,
-            subject,
-            CompatibilityLevelCompatibilityEnum.BACKWARD
-          )
-        );
-      } catch (error) {
-        expect(error.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.updateSchemaCompatibilityLevelAction.request(),
-          actions.updateSchemaCompatibilityLevelAction.failure({}),
-        ]);
-      }
-    });
-  });
   describe('deleteSchema', () => {
     it('fires DELETE_SCHEMA__SUCCESS on success', async () => {
       fetchMock.deleteOnce(
@@ -203,7 +172,7 @@ describe('Thunks', () => {
   });
 
   describe('updateSchema', () => {
-    it('calls createSchema', () => {
+    it('calls PATCH_SCHEMA__REQUEST', () => {
       store.dispatch(
         thunks.updateSchema(
           fixtures.schema,
@@ -215,24 +184,105 @@ describe('Thunks', () => {
         )
       );
       expect(store.getActions()).toEqual([
-        actions.createSchemaAction.request(),
+        actions.updateSchemaAction.request(),
+      ]);
+    });
+  });
+
+  describe('fetchGlobalSchemaCompatibilityLevel', () => {
+    it('calls GET_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST on the fucntion call', () => {
+      store.dispatch(thunks.fetchGlobalSchemaCompatibilityLevel(clusterName));
+      expect(store.getActions()).toEqual([
+        actions.fetchGlobalSchemaCompatibilityLevelAction.request(),
       ]);
     });
 
-    it('calls updateSchema and does not call createSchema when schema does not change', () => {
+    it('calls GET_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS on a successful API call', async () => {
+      fetchMock.getOnce(`/api/clusters/${clusterName}/schemas/compatibility`, {
+        compatibility: CompatibilityLevelCompatibilityEnum.FORWARD,
+      });
+      await store.dispatch(
+        thunks.fetchGlobalSchemaCompatibilityLevel(clusterName)
+      );
+      expect(store.getActions()).toEqual([
+        actions.fetchGlobalSchemaCompatibilityLevelAction.request(),
+        actions.fetchGlobalSchemaCompatibilityLevelAction.success(
+          CompatibilityLevelCompatibilityEnum.FORWARD
+        ),
+      ]);
+    });
+
+    it('calls GET_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE on an unsuccessful API call', async () => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/schemas/compatibility`,
+        404
+      );
+      try {
+        await store.dispatch(
+          thunks.fetchGlobalSchemaCompatibilityLevel(clusterName)
+        );
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.fetchGlobalSchemaCompatibilityLevelAction.request(),
+          actions.fetchGlobalSchemaCompatibilityLevelAction.failure(),
+        ]);
+      }
+    });
+  });
+
+  describe('updateGlobalSchemaCompatibilityLevel', () => {
+    const compatibilityLevel = CompatibilityLevelCompatibilityEnum.FORWARD;
+    it('calls POST_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST on the fucntion call', () => {
       store.dispatch(
-        thunks.updateSchema(
-          fixtures.schema,
-          fixtures.schema.schema,
-          SchemaType.JSON,
-          CompatibilityLevelCompatibilityEnum.FORWARD,
+        thunks.updateGlobalSchemaCompatibilityLevel(
           clusterName,
-          subject
+          compatibilityLevel
         )
       );
       expect(store.getActions()).toEqual([
-        actions.updateSchemaCompatibilityLevelAction.request(),
+        actions.updateGlobalSchemaCompatibilityLevelAction.request(),
       ]);
+    });
+
+    it('calls POST_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS on a successful API call', async () => {
+      fetchMock.putOnce(
+        `/api/clusters/${clusterName}/schemas/compatibility`,
+        200
+      );
+      await store.dispatch(
+        thunks.updateGlobalSchemaCompatibilityLevel(
+          clusterName,
+          compatibilityLevel
+        )
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateGlobalSchemaCompatibilityLevelAction.request(),
+        actions.updateGlobalSchemaCompatibilityLevelAction.success(
+          CompatibilityLevelCompatibilityEnum.FORWARD
+        ),
+      ]);
+    });
+
+    it('calls POST_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE on an unsuccessful API call', async () => {
+      fetchMock.putOnce(
+        `/api/clusters/${clusterName}/schemas/compatibility`,
+        404
+      );
+      try {
+        await store.dispatch(
+          thunks.updateGlobalSchemaCompatibilityLevel(
+            clusterName,
+            compatibilityLevel
+          )
+        );
+      } catch (error) {
+        expect(error.status).toEqual(404);
+        expect(store.getActions()).toEqual([
+          actions.updateGlobalSchemaCompatibilityLevelAction.request(),
+          actions.updateGlobalSchemaCompatibilityLevelAction.failure(),
+        ]);
+      }
     });
   });
 });
