@@ -22,7 +22,7 @@ const ListHeaderCell: React.FC<ListHeaderProps> = ({
     >
       {title}
       <span className="icon is-small">
-        {orderBy === value ? <i className="fas fa-sort" /> : ''}
+        <i className="fas fa-sort" />
       </span>
     </th>
   );

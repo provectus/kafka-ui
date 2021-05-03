@@ -151,7 +151,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                       Topic Name
                       <span
                         className="icon is-small"
-                      />
+                      >
+                        <i
+                          className="fas fa-sort"
+                        />
+                      </span>
                     </th>
                   </ListHeaderCell>
                   <ListHeaderCell
@@ -167,7 +171,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                       Total Partitions
                       <span
                         className="icon is-small"
-                      />
+                      >
+                        <i
+                          className="fas fa-sort"
+                        />
+                      </span>
                     </th>
                   </ListHeaderCell>
                   <ListHeaderCell
@@ -183,7 +191,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                       Out of sync replicas
                       <span
                         className="icon is-small"
-                      />
+                      >
+                        <i
+                          className="fas fa-sort"
+                        />
+                      </span>
                     </th>
                   </ListHeaderCell>
                   <th>
