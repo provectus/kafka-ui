@@ -7,7 +7,7 @@ describe('ListHeader', () => {
   const setOrderBy = jest.fn();
   let component = mount(
     <table>
-      <ListHeader orderBy={undefined} setOrderBy={setOrderBy} />
+      <ListHeader orderBy={null} setOrderBy={setOrderBy} />
     </table>
   );
   it('matches the snapshot', () => {

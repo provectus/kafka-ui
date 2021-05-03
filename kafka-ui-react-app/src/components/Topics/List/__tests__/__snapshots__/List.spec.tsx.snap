@@ -133,52 +133,59 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
             className="table is-fullwidth"
           >
             <ListHeader
+              orderBy={null}
               setOrderBy={[Function]}
             >
               <thead>
                 <tr>
-                  <th
-                    className="is-clickable"
-                    onClick={[Function]}
+                  <ListHeaderCell
+                    orderBy={null}
+                    setOrderBy={[Function]}
+                    title="Topic Name"
+                    value="NAME"
                   >
-                    Topic Name
-                     
-                    <span
-                      className="icon is-small"
+                    <th
+                      className="is-clickable"
+                      onClick={[Function]}
                     >
-                      <i
-                        className="fas fa-caret-down"
+                      Topic Name
+                      <span
+                        className="icon is-small"
                       />
-                    </span>
-                  </th>
-                  <th
-                    className="is-clickable"
-                    onClick={[Function]}
+                    </th>
+                  </ListHeaderCell>
+                  <ListHeaderCell
+                    orderBy={null}
+                    setOrderBy={[Function]}
+                    title="Total Partitions"
+                    value="TOTAL_PARTITIONS"
                   >
-                    Total Partitions
-                     
-                    <span
-                      className="icon is-small"
+                    <th
+                      className="is-clickable"
+                      onClick={[Function]}
                     >
-                      <i
-                        className="fas fa-caret-down"
+                      Total Partitions
+                      <span
+                        className="icon is-small"
                       />
-                    </span>
-                  </th>
-                  <th
-                    className="is-clickable"
-                    onClick={[Function]}
+                    </th>
+                  </ListHeaderCell>
+                  <ListHeaderCell
+                    orderBy={null}
+                    setOrderBy={[Function]}
+                    title="Out of sync replicas"
+                    value="OUT_OF_SYNC_REPLICAS"
                   >
-                    Out of sync replicas
-                     
-                    <span
-                      className="icon is-small"
+                    <th
+                      className="is-clickable"
+                      onClick={[Function]}
                     >
-                      <i
-                        className="fas fa-caret-down"
+                      Out of sync replicas
+                      <span
+                        className="icon is-small"
                       />
-                    </span>
-                  </th>
+                    </th>
+                  </ListHeaderCell>
                   <th>
                     Type
                   </th>

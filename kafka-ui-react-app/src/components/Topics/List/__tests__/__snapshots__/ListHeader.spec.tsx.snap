@@ -3,52 +3,59 @@
 exports[`ListHeader matches the snapshot 1`] = `
 <table>
   <ListHeader
+    orderBy={null}
     setOrderBy={[MockFunction]}
   >
     <thead>
       <tr>
-        <th
-          className="is-clickable"
-          onClick={[Function]}
+        <ListHeaderCell
+          orderBy={null}
+          setOrderBy={[MockFunction]}
+          title="Topic Name"
+          value="NAME"
         >
-          Topic Name
-           
-          <span
-            className="icon is-small"
+          <th
+            className="is-clickable"
+            onClick={[Function]}
           >
-            <i
-              className="fas fa-caret-down"
+            Topic Name
+            <span
+              className="icon is-small"
             />
-          </span>
-        </th>
-        <th
-          className="is-clickable"
-          onClick={[Function]}
+          </th>
+        </ListHeaderCell>
+        <ListHeaderCell
+          orderBy={null}
+          setOrderBy={[MockFunction]}
+          title="Total Partitions"
+          value="TOTAL_PARTITIONS"
         >
-          Total Partitions
-           
-          <span
-            className="icon is-small"
+          <th
+            className="is-clickable"
+            onClick={[Function]}
           >
-            <i
-              className="fas fa-caret-down"
+            Total Partitions
+            <span
+              className="icon is-small"
             />
-          </span>
-        </th>
-        <th
-          className="is-clickable"
-          onClick={[Function]}
+          </th>
+        </ListHeaderCell>
+        <ListHeaderCell
+          orderBy={null}
+          setOrderBy={[MockFunction]}
+          title="Out of sync replicas"
+          value="OUT_OF_SYNC_REPLICAS"
         >
-          Out of sync replicas
-           
-          <span
-            className="icon is-small"
+          <th
+            className="is-clickable"
+            onClick={[Function]}
           >
-            <i
-              className="fas fa-caret-down"
+            Out of sync replicas
+            <span
+              className="icon is-small"
             />
-          </span>
-        </th>
+          </th>
+        </ListHeaderCell>
         <th>
           Type
         </th>
@@ -67,12 +74,11 @@ exports[`ListHeader on column click matches the snapshot 1`] = `
   onClick={[Function]}
 >
   Topic Name
-   
   <span
     className="icon is-small"
   >
     <i
-      className="fas fa-caret-up"
+      className="fas fa-sort"
     />
   </span>
 </th>
@@ -84,12 +90,11 @@ exports[`ListHeader on column click matches the snapshot 2`] = `
   onClick={[Function]}
 >
   Total Partitions
-   
   <span
     className="icon is-small"
   >
     <i
-      className="fas fa-caret-up"
+      className="fas fa-sort"
     />
   </span>
 </th>
@@ -101,12 +106,11 @@ exports[`ListHeader on column click matches the snapshot 3`] = `
   onClick={[Function]}
 >
   Out of sync replicas
-   
   <span
     className="icon is-small"
   >
     <i
-      className="fas fa-caret-up"
+      className="fas fa-sort"
     />
   </span>
 </th>

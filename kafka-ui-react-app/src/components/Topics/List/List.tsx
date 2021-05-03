@@ -13,6 +13,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
 import { TopicColumnsToSort } from 'generated-sources';
+import { useDebouncedCallback } from 'use-debounce';
 
 import ListItem from './ListItem';
 import ListHeader from './ListHeader';
@@ -43,14 +44,17 @@ const List: React.FC<Props> = ({
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage } = usePagination();
-  const [orderBy, setOrderBy] = React.useState<
-    TopicColumnsToSort | undefined
-  >();
+  const [orderBy, setOrderBy] = React.useState<TopicColumnsToSort | null>(null);
   const [search, setSearch] = React.useState<string>('');
-  let debounceTimeout: NodeJS.Timeout;
 
   React.useEffect(() => {
-    fetchTopicsList({ clusterName, page, perPage, orderBy, search });
+    fetchTopicsList({
+      clusterName,
+      page,
+      perPage,
+      orderBy: orderBy || undefined,
+      search,
+    });
   }, [fetchTopicsList, clusterName, page, perPage, orderBy, search]);
 
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
@@ -59,14 +63,10 @@ const List: React.FC<Props> = ({
     setShowInternal(!showInternal);
   }, [showInternal]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (debounceTimeout) window.clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(() => setSearch(e.target.value), 300);
-  };
-
-  React.useEffect(() => () => {
-    if (debounceTimeout) window.clearTimeout(debounceTimeout);
-  });
+  const handleSearch = useDebouncedCallback(
+    (e) => setSearch(e.target.value),
+    300
+  );
 
   const items = showInternal ? topics : externalTopics;
 
@@ -94,7 +94,7 @@ const List: React.FC<Props> = ({
                 className="input"
                 type="text"
                 placeholder="Search by Topic Name"
-                onChange={(e) => handleSearch(e)}
+                onChange={handleSearch}
               />
               <span className="icon is-small is-left">
                 <i className="fas fa-search" />
