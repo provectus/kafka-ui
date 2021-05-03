@@ -1,9 +1,9 @@
 import React from 'react';
 import cx from 'classnames';
 import { FullConnectorInfo } from 'generated-sources';
-import { clusterTopicPath } from 'lib/paths';
+import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { deleteConnector } from 'redux/actions';
 import Dropdown from 'components/common/Dropdown/Dropdown';
@@ -50,7 +50,16 @@ const ListItem: React.FC<ListItemProps> = ({
 
   return (
     <tr>
-      <td className="has-text-overflow-ellipsis">{name}</td>
+      <td className="has-text-overflow-ellipsis">
+        <NavLink
+          exact
+          to={clusterConnectConnectorPath(clusterName, connect, name)}
+          activeClassName="is-active"
+          className="title is-6"
+        >
+          {name}
+        </NavLink>
+      </td>
       <td>{connect}</td>
       <td>{type}</td>
       <td>{connectorClass}</td>
@@ -61,7 +70,7 @@ const ListItem: React.FC<ListItemProps> = ({
           </Link>
         ))}
       </td>
-      <td>{status && <StatusTag status={status} />}</td>
+      <td>{status && <StatusTag status={status.state} />}</td>
       <td>
         {runningTasks && (
           <span

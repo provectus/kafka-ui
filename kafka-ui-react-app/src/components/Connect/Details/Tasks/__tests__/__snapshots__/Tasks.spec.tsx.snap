@@ -1,0 +1,138 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Tasks view matches snapshot 1`] = `
+<table
+  className="table is-fullwidth"
+>
+  <thead>
+    <tr>
+      <th>
+        ID
+      </th>
+      <th>
+        Worker
+      </th>
+      <th>
+        State
+      </th>
+      <th>
+        Trace
+      </th>
+      <th>
+        <span
+          className="is-pulled-right"
+        >
+          Restart
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr
+      task={
+        Object {
+          "config": Object {
+            "batch.size": "2000",
+            "file": "/some/file",
+            "task.class": "org.apache.kafka.connect.file.FileStreamSourceTask",
+            "topic": "test-topic",
+          },
+          "id": Object {
+            "connector": "first",
+            "task": 1,
+          },
+          "status": Object {
+            "id": 1,
+            "state": "RUNNING",
+            "workerId": "kafka-connect0:8083",
+          },
+        }
+      }
+    />
+    <tr
+      task={
+        Object {
+          "config": Object {
+            "batch.size": "1000",
+            "file": "/some/file2",
+            "task.class": "org.apache.kafka.connect.file.FileStreamSourceTask",
+            "topic": "test-topic",
+          },
+          "id": Object {
+            "connector": "first",
+            "task": 2,
+          },
+          "status": Object {
+            "id": 2,
+            "state": "FAILED",
+            "trace": "Failure 1",
+            "workerId": "kafka-connect0:8083",
+          },
+        }
+      }
+    />
+    <tr
+      task={
+        Object {
+          "config": Object {
+            "batch.size": "3000",
+            "file": "/some/file3",
+            "task.class": "org.apache.kafka.connect.file.FileStreamSourceTask",
+            "topic": "test-topic",
+          },
+          "id": Object {
+            "connector": "first",
+            "task": 3,
+          },
+          "status": Object {
+            "id": 3,
+            "state": "RUNNING",
+            "workerId": "kafka-connect0:8083",
+          },
+        }
+      }
+    />
+  </tbody>
+</table>
+`;
+
+exports[`Tasks view matches snapshot when fetching tasks 1`] = `<mock-PageLoader />`;
+
+exports[`Tasks view matches snapshot when no tasks 1`] = `
+<table
+  className="table is-fullwidth"
+>
+  <thead>
+    <tr>
+      <th>
+        ID
+      </th>
+      <th>
+        Worker
+      </th>
+      <th>
+        State
+      </th>
+      <th>
+        Trace
+      </th>
+      <th>
+        <span
+          className="is-pulled-right"
+        >
+          Restart
+        </span>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td
+        colSpan={10}
+      >
+        No tasks found
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;

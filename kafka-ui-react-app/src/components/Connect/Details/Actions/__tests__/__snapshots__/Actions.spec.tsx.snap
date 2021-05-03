@@ -1,0 +1,483 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Actions view matches snapshot 1`] = `
+<div
+  className="buttons"
+>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pause"
+      />
+    </span>
+    <span>
+      Pause
+    </span>
+  </button>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart all tasks
+    </span>
+  </button>
+  <a
+    className="button"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    onClick={[Function]}
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pencil-alt"
+      />
+    </span>
+    <span>
+      Edit config
+    </span>
+  </a>
+  <button
+    className="button is-danger"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="far fa-trash-alt"
+      />
+    </span>
+    <span>
+      Delete
+    </span>
+  </button>
+  <mock-ConfirmationModal
+    isConfirming={false}
+    isOpen={false}
+    onCancel={[Function]}
+    onConfirm={[Function]}
+  >
+    Are you sure you want to remove 
+    <b>
+      my-connector
+    </b>
+     connector?
+  </mock-ConfirmationModal>
+</div>
+`;
+
+exports[`Actions view matches snapshot when deleting connector 1`] = `
+<div
+  className="buttons"
+>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pause"
+      />
+    </span>
+    <span>
+      Pause
+    </span>
+  </button>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart all tasks
+    </span>
+  </button>
+  <a
+    className="button"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    onClick={[Function]}
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pencil-alt"
+      />
+    </span>
+    <span>
+      Edit config
+    </span>
+  </a>
+  <button
+    className="button is-danger"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="far fa-trash-alt"
+      />
+    </span>
+    <span>
+      Delete
+    </span>
+  </button>
+  <mock-ConfirmationModal
+    isConfirming={true}
+    isOpen={false}
+    onCancel={[Function]}
+    onConfirm={[Function]}
+  >
+    Are you sure you want to remove 
+    <b>
+      my-connector
+    </b>
+     connector?
+  </mock-ConfirmationModal>
+</div>
+`;
+
+exports[`Actions view matches snapshot when failed 1`] = `
+<div
+  className="buttons"
+>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart all tasks
+    </span>
+  </button>
+  <a
+    className="button"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    onClick={[Function]}
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pencil-alt"
+      />
+    </span>
+    <span>
+      Edit config
+    </span>
+  </a>
+  <button
+    className="button is-danger"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="far fa-trash-alt"
+      />
+    </span>
+    <span>
+      Delete
+    </span>
+  </button>
+  <mock-ConfirmationModal
+    isConfirming={false}
+    isOpen={false}
+    onCancel={[Function]}
+    onConfirm={[Function]}
+  >
+    Are you sure you want to remove 
+    <b>
+      my-connector
+    </b>
+     connector?
+  </mock-ConfirmationModal>
+</div>
+`;
+
+exports[`Actions view matches snapshot when paused 1`] = `
+<div
+  className="buttons"
+>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-play"
+      />
+    </span>
+    <span>
+      Resume
+    </span>
+  </button>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart all tasks
+    </span>
+  </button>
+  <a
+    className="button"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    onClick={[Function]}
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pencil-alt"
+      />
+    </span>
+    <span>
+      Edit config
+    </span>
+  </a>
+  <button
+    className="button is-danger"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="far fa-trash-alt"
+      />
+    </span>
+    <span>
+      Delete
+    </span>
+  </button>
+  <mock-ConfirmationModal
+    isConfirming={false}
+    isOpen={false}
+    onCancel={[Function]}
+    onConfirm={[Function]}
+  >
+    Are you sure you want to remove 
+    <b>
+      my-connector
+    </b>
+     connector?
+  </mock-ConfirmationModal>
+</div>
+`;
+
+exports[`Actions view matches snapshot when running connector action 1`] = `
+<div
+  className="buttons"
+>
+  <button
+    className="button"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pause"
+      />
+    </span>
+    <span>
+      Pause
+    </span>
+  </button>
+  <button
+    className="button"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart all tasks
+    </span>
+  </button>
+  <button
+    className="button"
+    disabled={true}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-edit"
+      />
+    </span>
+    <span>
+      Edit config
+    </span>
+  </button>
+  <button
+    className="button is-danger"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="far fa-trash-alt"
+      />
+    </span>
+    <span>
+      Delete
+    </span>
+  </button>
+  <mock-ConfirmationModal
+    isConfirming={false}
+    isOpen={false}
+    onCancel={[Function]}
+    onConfirm={[Function]}
+  >
+    Are you sure you want to remove 
+    <b>
+      my-connector
+    </b>
+     connector?
+  </mock-ConfirmationModal>
+</div>
+`;
+
+exports[`Actions view matches snapshot when unassigned 1`] = `
+<div
+  className="buttons"
+>
+  <button
+    className="button"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart all tasks
+    </span>
+  </button>
+  <a
+    className="button"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    onClick={[Function]}
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="fas fa-pencil-alt"
+      />
+    </span>
+    <span>
+      Edit config
+    </span>
+  </a>
+  <button
+    className="button is-danger"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="icon"
+    >
+      <i
+        className="far fa-trash-alt"
+      />
+    </span>
+    <span>
+      Delete
+    </span>
+  </button>
+  <mock-ConfirmationModal
+    isConfirming={false}
+    isOpen={false}
+    onCancel={[Function]}
+    onConfirm={[Function]}
+  >
+    Are you sure you want to remove 
+    <b>
+      my-connector
+    </b>
+     connector?
+  </mock-ConfirmationModal>
+</div>
+`;

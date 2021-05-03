@@ -1,0 +1,105 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Details view matches snapshot 1`] = `
+<div
+  className="box"
+>
+  <nav
+    className="navbar mb-4"
+    role="navigation"
+  >
+    <div
+      className="navbar-start tabs mb-0"
+    >
+      <a
+        aria-current="page"
+        className="navbar-item is-tab is-active"
+        href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector"
+        onClick={[Function]}
+        style={Object {}}
+      >
+        Overview
+      </a>
+      <a
+        aria-current={null}
+        className="navbar-item is-tab"
+        href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/tasks"
+        onClick={[Function]}
+      >
+        Tasks
+      </a>
+      <a
+        aria-current={null}
+        className="navbar-item is-tab"
+        href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/config"
+        onClick={[Function]}
+      >
+        Config
+      </a>
+    </div>
+    <div
+      className="navbar-end"
+    >
+      <mock-ActionsContainer />
+    </div>
+  </nav>
+  <mock-OverviewContainer
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "canGo": [Function],
+        "createHref": [Function],
+        "entries": Array [
+          Object {
+            "hash": "",
+            "key": "test",
+            "pathname": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+            "search": "",
+          },
+        ],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "index": 0,
+        "length": 1,
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "key": "test",
+          "pathname": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+          "search": "",
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    location={
+      Object {
+        "hash": "",
+        "key": "test",
+        "pathname": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+        "search": "",
+      }
+    }
+    match={
+      Object {
+        "isExact": true,
+        "params": Object {
+          "clusterName": "my-cluster",
+          "connectName": "my-connect",
+          "connectorName": "my-connector",
+        },
+        "path": "/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName",
+        "url": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Details view matches snapshot when fetching connector 1`] = `<mock-PageLoader />`;
+
+exports[`Details view matches snapshot when fetching tasks 1`] = `<mock-PageLoader />`;
+
+exports[`Details view matches snapshot when no connector 1`] = `null`;

@@ -1615,11 +1615,13 @@ components:
           type: string
         address:
           type: string
+      required:
+        - name
 
     ConnectorConfig:
       type: object
       additionalProperties:
-        type: object
+        type: string
 
     TaskId:
       type: object
@@ -1638,6 +1640,8 @@ components:
           $ref: '#/components/schemas/TaskStatus'
         config:
           $ref: '#/components/schemas/ConnectorConfig'
+      required:
+        - status
 
     NewConnector:
       type: object
@@ -1665,6 +1669,10 @@ components:
               $ref: '#/components/schemas/ConnectorStatus'
             connect:
               type: string
+          required:
+            - type
+            - status
+            - connect
 
     ConnectorType:
       type: string
@@ -1683,6 +1691,10 @@ components:
           type: string
         trace:
           type: string
+      required:
+        - id
+        - state
+        - worker_id
 
     ConnectorStatus:
       type: object
@@ -1691,6 +1703,8 @@ components:
           $ref: '#/components/schemas/ConnectorTaskStatus'
         worker_id:
           type: string
+      required:
+        - state
 
     ConnectorTaskStatus:
       type: string
@@ -1703,9 +1717,9 @@ components:
     ConnectorAction:
       type: string
       enum:
-        - restart
-        - pause
-        - resume
+        - RESTART
+        - PAUSE
+        - RESUME
 
     TaskAction:
       type: string
@@ -1823,8 +1837,12 @@ components:
           items:
             type: string
         status:
-          $ref: '#/components/schemas/ConnectorTaskStatus'
+          $ref: '#/components/schemas/ConnectorStatus'
         tasks_count:
           type: integer
         failed_tasks_count:
           type: integer
+      required:
+        - name
+        - connect
+        - status
