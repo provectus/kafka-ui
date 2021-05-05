@@ -1,0 +1,77 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/kafka-ui-react-app"
+  schedule:
+    interval: weekly
+    time: "10:00"
+    timezone: Europe/Moscow
+  open-pull-requests-limit: 10
+  versioning-strategy: increase-if-necessary
+  ignore:
+  - dependency-name: react-hook-form
+    versions:
+    - 6.15.5
+    - 7.0.0
+    - 7.0.6
+  - dependency-name: "@hookform/error-message"
+    versions:
+    - 1.1.0
+  - dependency-name: use-debounce
+    versions:
+    - 6.0.0
+    - 6.0.1
+  - dependency-name: "@rooks/use-outside-click-ref"
+    versions:
+    - 4.10.1
+  - dependency-name: react-multi-select-component
+    versions:
+    - 3.1.6
+    - 4.0.0
+  - dependency-name: husky
+    versions:
+    - 5.1.3
+    - 5.2.0
+    - 6.0.0
+  - dependency-name: "@types/node-fetch"
+    versions:
+    - 2.5.9
+  - dependency-name: "@testing-library/jest-dom"
+    versions:
+    - 5.11.10
+  - dependency-name: "@typescript-eslint/eslint-plugin"
+    versions:
+    - 4.20.0
+  - dependency-name: "@openapitools/openapi-generator-cli"
+    versions:
+    - 2.2.5
+  - dependency-name: "@typescript-eslint/parser"
+    versions:
+    - 4.20.0
+  - dependency-name: react-datepicker
+    versions:
+    - 3.7.0
+  - dependency-name: eslint
+    versions:
+    - 7.23.0
+  - dependency-name: "@testing-library/user-event"
+    versions:
+    - 13.0.6
+  - dependency-name: immer
+    versions:
+    - 9.0.1
+  - dependency-name: react-scripts
+    versions:
+    - 4.0.3
+  - dependency-name: eslint-config-prettier
+    versions:
+    - 8.1.0
+  - dependency-name: "@testing-library/react"
+    versions:
+    - 11.2.5
+  - dependency-name: lodash
+    versions:
+    - 4.17.21
+  - dependency-name: react-json-tree
+    versions:
+    - 0.15.0
