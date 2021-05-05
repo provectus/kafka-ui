@@ -16,5 +16,3 @@ exports[`Config view matches snapshot 1`] = `
 `;
 
 exports[`Config view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;
-
-exports[`Config view matches snapshot when no config 1`] = `null`;

@@ -62,5 +62,3 @@ exports[`Overview view matches snapshot 1`] = `
   </table>
 </div>
 `;
-
-exports[`Overview view matches snapshot when no connector 1`] = `null`;

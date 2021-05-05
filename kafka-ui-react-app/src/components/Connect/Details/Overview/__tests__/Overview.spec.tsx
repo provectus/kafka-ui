@@ -1,5 +1,6 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
+import { mount } from 'enzyme';
 import { containerRendersView } from 'lib/testHelpers';
 import OverviewContainer from 'components/Connect/Details/Overview/OverviewContainer';
 import Overview, {
@@ -27,9 +28,9 @@ describe('Overview', () => {
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
-    it('matches snapshot when no connector', () => {
-      const wrapper = create(setupWrapper({ connector: null }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('is empty when no connector', () => {
+      const wrapper = mount(setupWrapper({ connector: null }));
+      expect(wrapper.html()).toBeNull();
     });
   });
 });

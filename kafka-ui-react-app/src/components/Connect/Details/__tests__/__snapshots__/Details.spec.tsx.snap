@@ -101,5 +101,3 @@ exports[`Details view matches snapshot 1`] = `
 exports[`Details view matches snapshot when fetching connector 1`] = `<mock-PageLoader />`;
 
 exports[`Details view matches snapshot when fetching tasks 1`] = `<mock-PageLoader />`;
-
-exports[`Details view matches snapshot when no connector 1`] = `null`;

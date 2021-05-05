@@ -48,9 +48,9 @@ describe('Config', () => {
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
-    it('matches snapshot when no config', () => {
-      const wrapper = create(setupWrapper({ config: null }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('is empty when no config', () => {
+      const wrapper = mount(setupWrapper({ config: null }));
+      expect(wrapper.html()).toEqual('');
     });
 
     it('fetches config on mount', () => {

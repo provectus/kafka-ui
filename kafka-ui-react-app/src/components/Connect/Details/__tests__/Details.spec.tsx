@@ -74,9 +74,9 @@ describe('Details', () => {
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
-    it('matches snapshot when no connector', () => {
-      const wrapper = create(setupWrapper({ connector: null }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+    it('is empty when no connector', () => {
+      const wrapper = mount(setupWrapper({ connector: null }));
+      expect(wrapper.html()).toEqual('');
     });
 
     it('fetches connector on mount', () => {
