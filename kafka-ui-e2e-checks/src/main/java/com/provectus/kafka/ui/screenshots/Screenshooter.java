@@ -115,10 +115,8 @@ public class Screenshooter {
     } else {
       Assertions.assertTrue(
           PIXELS_THRESHOLD >= diff.getDiffSize(),
-          ("""
-                  Amount of differing pixels should be less or equals than %s, actual %s
-                  diff file: %s
-                  """)
+              ("Amount of differing pixels should be less or equals than %s, actual %s\n"+
+                  "diff file: %s")
               .formatted(PIXELS_THRESHOLD, diff.getDiffSize(), FileSystems.getDefault().getPath(fullPathNameDiff).normalize().toAbsolutePath().toString()));
     }
   }
