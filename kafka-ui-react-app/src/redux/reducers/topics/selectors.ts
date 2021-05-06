@@ -123,3 +123,13 @@ export const getTopicConfigByParamName = createSelector(
     return byParamName;
   }
 );
+
+export const getTopicsSearch = createSelector(
+  topicsState,
+  (state) => state.search
+);
+
+export const getTopicsOrderBy = createSelector(
+  topicsState,
+  (state) => state.orderBy
+);

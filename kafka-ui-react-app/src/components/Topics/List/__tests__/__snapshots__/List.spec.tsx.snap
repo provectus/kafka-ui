@@ -30,6 +30,10 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
       deleteTopic={[MockFunction]}
       externalTopics={Array []}
       fetchTopicsList={[MockFunction]}
+      orderBy={null}
+      search=""
+      setTopicsOrderBy={[MockFunction]}
+      setTopicsSearch={[MockFunction]}
       topics={Array []}
       totalPages={1}
     >
@@ -141,7 +145,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               <tr>
                 <ListHeaderCell
                   orderBy={null}
-                  setOrderBy={[Function]}
+                  setOrderBy={[MockFunction]}
                   title="Topic Name"
                   value="NAME"
                 >
@@ -161,7 +165,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 </ListHeaderCell>
                 <ListHeaderCell
                   orderBy={null}
-                  setOrderBy={[Function]}
+                  setOrderBy={[MockFunction]}
                   title="Total Partitions"
                   value="TOTAL_PARTITIONS"
                 >
@@ -181,7 +185,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 </ListHeaderCell>
                 <ListHeaderCell
                   orderBy={null}
-                  setOrderBy={[Function]}
+                  setOrderBy={[MockFunction]}
                   title="Out of sync replicas"
                   value="OUT_OF_SYNC_REPLICAS"
                 >

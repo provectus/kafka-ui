@@ -14,18 +14,16 @@ const ListHeaderCell: React.FC<ListHeaderProps> = ({
   title,
   orderBy,
   setOrderBy,
-}) => {
-  return (
-    <th
-      className={cx('is-clickable', orderBy === value && 'has-text-link-dark')}
-      onClick={() => setOrderBy(value)}
-    >
-      {title}
-      <span className="icon is-small">
-        <i className="fas fa-sort" />
-      </span>
-    </th>
-  );
-};
+}) => (
+  <th
+    className={cx('is-clickable', orderBy === value && 'has-text-link-dark')}
+    onClick={() => setOrderBy(value)}
+  >
+    {title}
+    <span className="icon is-small">
+      <i className="fas fa-sort" />
+    </span>
+  </th>
+);
 
 export default ListHeaderCell;

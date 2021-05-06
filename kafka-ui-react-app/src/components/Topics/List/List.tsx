@@ -30,6 +30,10 @@ interface Props {
     clusterName: ClusterName,
     partitions?: number[]
   ): void;
+  search: string;
+  orderBy: TopicColumnsToSort | null;
+  setTopicsSearch(search: string): void;
+  setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
 }
 
 const List: React.FC<Props> = ({
@@ -40,12 +44,14 @@ const List: React.FC<Props> = ({
   fetchTopicsList,
   deleteTopic,
   clearTopicMessages,
+  search,
+  orderBy,
+  setTopicsSearch,
+  setTopicsOrderBy,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage } = usePagination();
-  const [orderBy, setOrderBy] = React.useState<TopicColumnsToSort | null>(null);
-  const [search, setSearch] = React.useState<string>('');
 
   React.useEffect(() => {
     fetchTopicsList({
@@ -63,7 +69,7 @@ const List: React.FC<Props> = ({
     setShowInternal(!showInternal);
   }, [showInternal]);
 
-  const handleSearch = (value: string) => setSearch(value);
+  const handleSearch = (value: string) => setTopicsSearch(value);
 
   const items = showInternal ? topics : externalTopics;
 
@@ -114,19 +120,19 @@ const List: React.FC<Props> = ({
                   value={TopicColumnsToSort.NAME}
                   title="Topic Name"
                   orderBy={orderBy}
-                  setOrderBy={setOrderBy}
+                  setOrderBy={setTopicsOrderBy}
                 />
                 <SortableColumnHeader
                   value={TopicColumnsToSort.TOTAL_PARTITIONS}
                   title="Total Partitions"
                   orderBy={orderBy}
-                  setOrderBy={setOrderBy}
+                  setOrderBy={setTopicsOrderBy}
                 />
                 <SortableColumnHeader
                   value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
                   title="Out of sync replicas"
                   orderBy={orderBy}
-                  setOrderBy={setOrderBy}
+                  setOrderBy={setTopicsOrderBy}
                 />
                 <th>Type</th>
                 <th> </th>

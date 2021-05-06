@@ -17,6 +17,7 @@ import {
   ConsumerGroupDetails,
   SchemaSubject,
   CompatibilityLevelCompatibilityEnum,
+  TopicColumnsToSort,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -180,3 +181,11 @@ export const deleteConnectorAction = createAsyncAction(
   'DELETE_CONNECTOR__SUCCESS',
   'DELETE_CONNECTOR__FAILURE'
 )<undefined, ConnectState, { alert?: FailurePayload }>();
+
+export const setTopicsSearchAction = createAction(
+  'SET_TOPICS_SEARCH'
+)<string>();
+
+export const setTopicsOrderByAction = createAction(
+  'SET_TOPICS_ORDER_BY'
+)<TopicColumnsToSort>();

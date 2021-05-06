@@ -24,6 +24,10 @@ describe('List', () => {
               fetchTopicsList={jest.fn()}
               deleteTopic={jest.fn()}
               clearTopicMessages={jest.fn()}
+              search=""
+              orderBy={null}
+              setTopicsSearch={jest.fn()}
+              setTopicsOrderBy={jest.fn()}
             />
           </ClusterContext.Provider>
         </StaticRouter>
@@ -52,6 +56,10 @@ describe('List', () => {
             fetchTopicsList={mockFetch}
             deleteTopic={jest.fn()}
             clearTopicMessages={jest.fn()}
+            search=""
+            orderBy={null}
+            setTopicsSearch={jest.fn()}
+            setTopicsOrderBy={jest.fn()}
           />
         </ClusterContext.Provider>
       </StaticRouter>
