@@ -7,7 +7,7 @@ public class TestConfiguration {
   public static boolean SHOULD_START_SELENOID =
       Boolean.parseBoolean(System.getProperty("SHOULD_START_SELENOID", "false"));
 
-  public static String BASE_URL = System.getProperty("BASE_URL", "http://192.168.1.2:8080/");
+  public static String BASE_URL = System.getProperty("BASE_URL", "http://localhost:8080/");
 
   public static boolean USE_LOCAL_BROWSER =
       Boolean.parseBoolean(System.getProperty("USE_LOCAL_BROWSER", "true"));

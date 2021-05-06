@@ -48,16 +48,10 @@ public class BaseTest {
 
   static {
     Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
-    if (TestConfiguration.CLEAR_REPORTS_DIR) clearReports();
-    String remote = TestConfiguration.SELENOID_URL;
-    if (TestConfiguration.SHOULD_START_SELENOID) {
-      selenoid.start();
-      remote =
-          "http://%s:%s/wd/hub"
-              .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
+    if (TestConfiguration.CLEAR_REPORTS_DIR) {
+      clearReports();
     }
-    setupSelenoid(remote);
-    SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
+    setupSelenoid();
   }
 
   @AfterAll
@@ -67,10 +61,19 @@ public class BaseTest {
   }
 
   @SneakyThrows
-  private static void setupSelenoid(String remote) {
+  private static void setupSelenoid() {
+    String remote = TestConfiguration.SELENOID_URL;
+    if (TestConfiguration.SHOULD_START_SELENOID) {
+      selenoid.start();
+      remote =
+          "http://%s:%s/wd/hub"
+              .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
+    }
+
     Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
     if (!TestConfiguration.USE_LOCAL_BROWSER) {
       Configuration.remote = remote;
+      TestConfiguration.BASE_URL = TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
     }
     Configuration.screenshots = TestConfiguration.SCREENSHOTS;
     Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
@@ -81,6 +84,8 @@ public class BaseTest {
     var capabilities = new DesiredCapabilities();
     capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
     Configuration.browserCapabilities = capabilities;
+
+    SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
   }
 
   public static void clearReports() {
