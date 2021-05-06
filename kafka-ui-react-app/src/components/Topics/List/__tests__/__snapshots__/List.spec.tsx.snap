@@ -84,23 +84,28 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
             <div
               className="column"
             >
-              <p
-                className="control has-icons-left"
+              <Search
+                handleSearch={[Function]}
+                placeholder="Search by Topic Name"
               >
-                <input
-                  className="input"
-                  onChange={[Function]}
-                  placeholder="Search by Topic Name"
-                  type="text"
-                />
-                <span
-                  className="icon is-small is-left"
+                <p
+                  className="control has-icons-left"
                 >
-                  <i
-                    className="fas fa-search"
+                  <input
+                    className="input"
+                    onChange={[Function]}
+                    placeholder="Search by Topic Name"
+                    type="text"
                   />
-                </span>
-              </p>
+                  <span
+                    className="icon is-small is-left"
+                  >
+                    <i
+                      className="fas fa-search"
+                    />
+                  </span>
+                </p>
+              </Search>
             </div>
             <div
               className="column is-2 is-justify-content-flex-end is-flex"
@@ -132,81 +137,76 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
           <table
             className="table is-fullwidth"
           >
-            <ListHeader
-              orderBy={null}
-              setOrderBy={[Function]}
-            >
-              <thead>
-                <tr>
-                  <ListHeaderCell
-                    orderBy={null}
-                    setOrderBy={[Function]}
-                    title="Topic Name"
-                    value="NAME"
+            <thead>
+              <tr>
+                <ListHeaderCell
+                  orderBy={null}
+                  setOrderBy={[Function]}
+                  title="Topic Name"
+                  value="NAME"
+                >
+                  <th
+                    className="is-clickable"
+                    onClick={[Function]}
                   >
-                    <th
-                      className="is-clickable"
-                      onClick={[Function]}
+                    Topic Name
+                    <span
+                      className="icon is-small"
                     >
-                      Topic Name
-                      <span
-                        className="icon is-small"
-                      >
-                        <i
-                          className="fas fa-sort"
-                        />
-                      </span>
-                    </th>
-                  </ListHeaderCell>
-                  <ListHeaderCell
-                    orderBy={null}
-                    setOrderBy={[Function]}
-                    title="Total Partitions"
-                    value="TOTAL_PARTITIONS"
-                  >
-                    <th
-                      className="is-clickable"
-                      onClick={[Function]}
-                    >
-                      Total Partitions
-                      <span
-                        className="icon is-small"
-                      >
-                        <i
-                          className="fas fa-sort"
-                        />
-                      </span>
-                    </th>
-                  </ListHeaderCell>
-                  <ListHeaderCell
-                    orderBy={null}
-                    setOrderBy={[Function]}
-                    title="Out of sync replicas"
-                    value="OUT_OF_SYNC_REPLICAS"
-                  >
-                    <th
-                      className="is-clickable"
-                      onClick={[Function]}
-                    >
-                      Out of sync replicas
-                      <span
-                        className="icon is-small"
-                      >
-                        <i
-                          className="fas fa-sort"
-                        />
-                      </span>
-                    </th>
-                  </ListHeaderCell>
-                  <th>
-                    Type
+                      <i
+                        className="fas fa-sort"
+                      />
+                    </span>
                   </th>
-                  <th>
-                     
+                </ListHeaderCell>
+                <ListHeaderCell
+                  orderBy={null}
+                  setOrderBy={[Function]}
+                  title="Total Partitions"
+                  value="TOTAL_PARTITIONS"
+                >
+                  <th
+                    className="is-clickable"
+                    onClick={[Function]}
+                  >
+                    Total Partitions
+                    <span
+                      className="icon is-small"
+                    >
+                      <i
+                        className="fas fa-sort"
+                      />
+                    </span>
                   </th>
-                </tr>
-              </thead>
-            </ListHeader>
+                </ListHeaderCell>
+                <ListHeaderCell
+                  orderBy={null}
+                  setOrderBy={[Function]}
+                  title="Out of sync replicas"
+                  value="OUT_OF_SYNC_REPLICAS"
+                >
+                  <th
+                    className="is-clickable"
+                    onClick={[Function]}
+                  >
+                    Out of sync replicas
+                    <span
+                      className="icon is-small"
+                    >
+                      <i
+                        className="fas fa-sort"
+                      />
+                    </span>
+                  </th>
+                </ListHeaderCell>
+                <th>
+                  Type
+                </th>
+                <th>
+                   
+                </th>
+              </tr>
+            </thead>
             <tbody>
               <tr>
                 <td

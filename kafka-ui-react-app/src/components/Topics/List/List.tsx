@@ -13,10 +13,10 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
 import { TopicColumnsToSort } from 'generated-sources';
-import { useDebouncedCallback } from 'use-debounce';
+import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
+import Search from 'components/common/Search/Search';
 
 import ListItem from './ListItem';
-import ListHeader from './ListHeader';
 
 interface Props {
   areTopicsFetching: boolean;
@@ -63,10 +63,7 @@ const List: React.FC<Props> = ({
     setShowInternal(!showInternal);
   }, [showInternal]);
 
-  const handleSearch = useDebouncedCallback(
-    (e) => setSearch(e.target.value),
-    300
-  );
+  const handleSearch = (value: string) => setSearch(value);
 
   const items = showInternal ? topics : externalTopics;
 
@@ -89,17 +86,10 @@ const List: React.FC<Props> = ({
             </div>
           </div>
           <div className="column">
-            <p className="control has-icons-left">
-              <input
-                className="input"
-                type="text"
-                placeholder="Search by Topic Name"
-                onChange={handleSearch}
-              />
-              <span className="icon is-small is-left">
-                <i className="fas fa-search" />
-              </span>
-            </p>
+            <Search
+              handleSearch={handleSearch}
+              placeholder="Search by Topic Name"
+            />
           </div>
           <div className="column is-2 is-justify-content-flex-end is-flex">
             {!isReadOnly && (
@@ -118,7 +108,30 @@ const List: React.FC<Props> = ({
       ) : (
         <div className="box">
           <table className="table is-fullwidth">
-            <ListHeader orderBy={orderBy} setOrderBy={setOrderBy} />
+            <thead>
+              <tr>
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.NAME}
+                  title="Topic Name"
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
+                />
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.TOTAL_PARTITIONS}
+                  title="Total Partitions"
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
+                />
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+                  title="Out of sync replicas"
+                  orderBy={orderBy}
+                  setOrderBy={setOrderBy}
+                />
+                <th>Type</th>
+                <th> </th>
+              </tr>
+            </thead>
             <tbody>
               {items.map((topic) => (
                 <ListItem

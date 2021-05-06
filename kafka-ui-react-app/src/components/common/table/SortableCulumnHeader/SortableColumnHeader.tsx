@@ -1,12 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { TopicColumnsToSort } from 'generated-sources';
 import cx from 'classnames';
 
 export interface ListHeaderProps {
-  value: TopicColumnsToSort;
+  value: any;
   title: string;
-  orderBy: TopicColumnsToSort | null;
-  setOrderBy: React.Dispatch<React.SetStateAction<TopicColumnsToSort | null>>;
+  orderBy: any;
+  setOrderBy: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const ListHeaderCell: React.FC<ListHeaderProps> = ({
