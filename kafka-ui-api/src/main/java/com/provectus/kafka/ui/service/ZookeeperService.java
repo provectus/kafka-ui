@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.I0Itec.zkclient.ZkClient;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -17,10 +18,12 @@ public class ZookeeperService {
 
   public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
     var isConnected = false;
-    var zkClient = getOrCreateZkClient(kafkaCluster);
-    log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
-    if (zkClient != null) {
-      isConnected = isZkClientConnected(zkClient);
+    if (StringUtils.hasText(kafkaCluster.getZookeeper())) {
+      var zkClient = getOrCreateZkClient(kafkaCluster);
+      log.debug("Start getting Zookeeper metrics for kafkaCluster: {}", kafkaCluster.getName());
+      if (zkClient != null) {
+        isConnected = isZkClientConnected(zkClient);
+      }
     }
     return isConnected;
   }
