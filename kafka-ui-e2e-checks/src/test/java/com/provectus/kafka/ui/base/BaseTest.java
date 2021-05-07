@@ -4,6 +4,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
+import com.provectus.kafka.ui.steps.Steps;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
@@ -24,6 +25,7 @@ import static com.codeborne.selenide.Selenide.closeWebDriver;
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
+  protected Steps steps = Steps.INSTANCE;
   protected Pages pages = Pages.INSTANCE;
 
   private Screenshooter screenshooter = new Screenshooter();
