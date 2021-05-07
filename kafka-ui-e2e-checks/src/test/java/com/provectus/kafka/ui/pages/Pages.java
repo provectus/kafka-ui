@@ -9,8 +9,11 @@ public class Pages {
 
     public MainPage mainPage = new MainPage();
 
-    public Pages goTo(String path) {
+    private Pages goTo(String path) {
         Selenide.open(TestConfiguration.BASE_URL+path);
         return this;
+    }
+    public Pages open() {
+       return goTo("");
     }
 }
