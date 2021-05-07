@@ -56,6 +56,7 @@ public class Screenshooter {
     compareScreenshots(name, false);
   }
 
+  @SneakyThrows
   public void compareScreenshots(String name, boolean shouldUpdateScreenshotIfDiffer) {
     if (TURN_OFF_SCREENSHOTS) {
       return;
@@ -64,7 +65,7 @@ public class Screenshooter {
       if (SHOULD_SAVE_SCREENSHOTS_IF_NOT_EXIST) {
         updateActualScreenshot(name);
       } else {
-        fail("no reference screenshot found for %s".formatted(name));
+        throw new NoReferenceScreenshotFoundException(name);
       }
     } else {
       makeImageDiff(name, shouldUpdateScreenshotIfDiffer);
