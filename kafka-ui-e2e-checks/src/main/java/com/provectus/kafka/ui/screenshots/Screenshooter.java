@@ -125,7 +125,7 @@ public class Screenshooter {
   @SneakyThrows
   private byte[] imgToBytes(String filename) {
     BufferedImage bImage2 = ImageIO.read(new File(filename));
-    ByteArrayOutputStream bos2 = new ByteArrayOutputStream();
+    var bos2 = new ByteArrayOutputStream();
     ImageIO.write(bImage2, "png", bos2);
     return bos2.toByteArray();
   }
