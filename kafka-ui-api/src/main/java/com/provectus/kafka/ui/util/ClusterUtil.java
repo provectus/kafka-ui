@@ -140,7 +140,7 @@ public class ClusterUtil {
   public static InternalTopic mapToInternalTopic(TopicDescription topicDescription) {
     var topic = InternalTopic.builder();
     topic.internal(
-        topicDescription.isInternal() || topicDescription.name().startsWith("__")
+        topicDescription.isInternal() || topicDescription.name().startsWith("_")
     );
     topic.name(topicDescription.name());
 
