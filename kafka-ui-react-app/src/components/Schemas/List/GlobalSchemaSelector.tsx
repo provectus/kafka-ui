@@ -45,9 +45,8 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
       <h5 className="is-5 mr-2">Global Compatibility Level: </h5>
       <div className="select mr-2">
         <select
-          name="compatibilityLevel"
+          {...register('compatibilityLevel')}
           defaultValue={globalSchemaCompatibilityLevel}
-          ref={register()}
           onChange={() => setUpdateCompatibilityConfirmationVisible(true)}
         >
           {Object.keys(CompatibilityLevelCompatibilityEnum).map(

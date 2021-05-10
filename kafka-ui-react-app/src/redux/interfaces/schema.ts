@@ -15,4 +15,6 @@ export interface SchemasState {
 
 export interface NewSchemaSubjectRaw extends NewSchemaSubject {
   subject: string;
+  compatibilityLevel: CompatibilityLevelCompatibilityEnum;
+  newSchema: string;
 }

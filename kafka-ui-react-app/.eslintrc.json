@@ -40,7 +40,8 @@
       "newlines-between": "always"
     }],
     "import/no-relative-parent-imports": "error",
-    "no-debugger": "warn"
+    "no-debugger": "warn",
+    "react/jsx-props-no-spreading": "off"
   },
   "overrides": [
     {

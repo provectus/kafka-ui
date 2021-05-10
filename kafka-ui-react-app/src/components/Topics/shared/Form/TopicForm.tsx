@@ -22,7 +22,10 @@ const TopicForm: React.FC<Props> = ({
   isSubmitting,
   onSubmit,
 }) => {
-  const { register, errors } = useFormContext();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext();
 
   return (
     <form onSubmit={onSubmit}>
@@ -32,15 +35,14 @@ const TopicForm: React.FC<Props> = ({
           <input
             className="input"
             placeholder="Topic Name"
-            ref={register({
+            defaultValue={topicName}
+            {...register('name', {
               required: 'Topic Name is required.',
               pattern: {
                 value: TOPIC_NAME_VALIDATION_PATTERN,
                 message: 'Only alphanumeric, _, -, and . allowed',
               },
             })}
-            defaultValue={topicName}
-            name="name"
             autoComplete="off"
             disabled={isEditing || isSubmitting}
           />
@@ -56,8 +58,9 @@ const TopicForm: React.FC<Props> = ({
             type="number"
             placeholder="Number of partitions"
             defaultValue="1"
-            ref={register({ required: 'Number of partitions is required.' })}
-            name="partitions"
+            {...register('partitions', {
+              required: 'Number of partitions is required.',
+            })}
             disabled={isEditing || isSubmitting}
           />
           <p className="help is-danger">
@@ -74,8 +77,9 @@ const TopicForm: React.FC<Props> = ({
             type="number"
             placeholder="Replication Factor"
             defaultValue="1"
-            ref={register({ required: 'Replication Factor is required.' })}
-            name="replicationFactor"
+            {...register('replicationFactor', {
+              required: 'Replication Factor is required.',
+            })}
             disabled={isEditing || isSubmitting}
           />
           <p className="help is-danger">
@@ -90,8 +94,9 @@ const TopicForm: React.FC<Props> = ({
             type="number"
             placeholder="Min In Sync Replicas"
             defaultValue="1"
-            ref={register({ required: 'Min In Sync Replicas is required.' })}
-            name="minInSyncReplicas"
+            {...register('minInSyncReplicas', {
+              required: 'Min In Sync Replicas is required.',
+            })}
             disabled={isSubmitting}
           />
           <p className="help is-danger">
@@ -106,8 +111,7 @@ const TopicForm: React.FC<Props> = ({
           <div className="select is-block">
             <select
               defaultValue="delete"
-              name="cleanupPolicy"
-              ref={register}
+              {...register('cleanupPolicy')}
               disabled={isSubmitting}
             >
               <option value="delete">Delete</option>
@@ -125,8 +129,7 @@ const TopicForm: React.FC<Props> = ({
           <div className="select is-block">
             <select
               defaultValue={-1}
-              name="retentionBytes"
-              ref={register}
+              {...register('retentionBytes')}
               disabled={isSubmitting}
             >
               <option value={-1}>Not Set</option>
@@ -146,10 +149,9 @@ const TopicForm: React.FC<Props> = ({
             className="input"
             type="number"
             defaultValue="1000012"
-            ref={register({
+            {...register('maxMessageBytes', {
               required: 'Maximum message size in bytes is required',
             })}
-            name="maxMessageBytes"
             disabled={isSubmitting}
           />
           <p className="help is-danger">

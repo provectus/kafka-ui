@@ -26,6 +26,7 @@ exports[`CustomParamSelect matches snapshot 1`] = `
       defaultValue="my_custom_param"
       disabled={true}
       name="1[name]"
+      onBlur={[Function]}
       onChange={[Function]}
     >
       <option

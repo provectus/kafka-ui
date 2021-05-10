@@ -20,9 +20,8 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
   const history = useHistory();
   const {
     register,
-    errors,
     handleSubmit,
-    formState: { isDirty, isSubmitting },
+    formState: { isDirty, isSubmitting, errors },
   } = useForm<NewSchemaSubjectRaw>();
 
   const onSubmit = React.useCallback(
@@ -67,14 +66,13 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
                 <input
                   className="input"
                   placeholder="Schema Name"
-                  ref={register({
+                  {...register('subject', {
                     required: 'Schema Name is required.',
                     pattern: {
                       value: SCHEMA_NAME_VALIDATION_PATTERN,
                       message: 'Only alphanumeric, _, -, and . allowed',
                     },
                   })}
-                  name="subject"
                   autoComplete="off"
                   disabled={isSubmitting}
                 />
@@ -89,10 +87,9 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
               <div className="control">
                 <textarea
                   className="textarea"
-                  ref={register({
+                  {...register('schema', {
                     required: 'Schema is required.',
                   })}
-                  name="schema"
                   disabled={isSubmitting}
                 />
               </div>
@@ -105,10 +102,9 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
               <label className="label">Schema Type *</label>
               <div className="control select">
                 <select
-                  ref={register({
+                  {...register('schemaType', {
                     required: 'Schema Type is required.',
                   })}
-                  name="schemaType"
                   disabled={isSubmitting}
                 >
                   <option value={SchemaType.AVRO}>AVRO</option>
