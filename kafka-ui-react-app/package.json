@@ -102,7 +102,7 @@
     "fetch-mock-jest": "^1.5.1",
     "husky": "^6.0.0",
     "jest-sonar-reporter": "^2.0.0",
-    "lint-staged": "^10.5.4",
+    "lint-staged": "^11.0.0",
     "node-sass": "^5.0.0",
     "prettier": "^2.2.1",
     "react-scripts": "4.0.3",
