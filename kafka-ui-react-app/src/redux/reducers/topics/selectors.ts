@@ -121,3 +121,8 @@ export const getTopicConfigByParamName = createSelector(
     return byParamName;
   }
 );
+
+export const getIsTopicInternal = createSelector(
+  getTopicByName,
+  ({ internal }) => !!internal
+);

@@ -64,33 +64,37 @@ const ListItem: React.FC<ListItemProps> = ({
           {internal ? 'Internal' : 'External'}
         </div>
       </td>
-      <td>
-        <div className="has-text-right">
-          <Dropdown
-            label={
-              <span className="icon">
-                <i className="fas fa-cog" />
-              </span>
-            }
-            right
-          >
-            <DropdownItem onClick={clearTopicMessagesHandler}>
-              <span className="has-text-danger">Clear Messages</span>
-            </DropdownItem>
-            <DropdownItem
-              onClick={() => setDeleteTopicConfirmationVisible(true)}
+      <td className="topic-action-block">
+        {!internal ? (
+          <>
+            <div className="has-text-right">
+              <Dropdown
+                label={
+                  <span className="icon">
+                    <i className="fas fa-cog" />
+                  </span>
+                }
+                right
+              >
+                <DropdownItem onClick={clearTopicMessagesHandler}>
+                  <span className="has-text-danger">Clear Messages</span>
+                </DropdownItem>
+                <DropdownItem
+                  onClick={() => setDeleteTopicConfirmationVisible(true)}
+                >
+                  <span className="has-text-danger">Remove Topic</span>
+                </DropdownItem>
+              </Dropdown>
+            </div>
+            <ConfirmationModal
+              isOpen={isDeleteTopicConfirmationVisible}
+              onCancel={() => setDeleteTopicConfirmationVisible(false)}
+              onConfirm={deleteTopicHandler}
             >
-              <span className="has-text-danger">Remove Topic</span>
-            </DropdownItem>
-          </Dropdown>
-        </div>
-        <ConfirmationModal
-          isOpen={isDeleteTopicConfirmationVisible}
-          onCancel={() => setDeleteTopicConfirmationVisible(false)}
-          onConfirm={deleteTopicHandler}
-        >
-          Are you sure want to remove <b>{name}</b> topic?
-        </ConfirmationModal>
+              Are you sure want to remove <b>{name}</b> topic?
+            </ConfirmationModal>
+          </>
+        ) : null}
       </td>
     </tr>
   );
