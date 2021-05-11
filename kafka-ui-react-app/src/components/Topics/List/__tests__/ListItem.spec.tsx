@@ -29,7 +29,7 @@ describe('ListItem', () => {
 
   it('triggers the deleting messages when clicked on the delete messages button', () => {
     const component = shallow(setupComponent({ topic: externalTopicPayload }));
-    expect(component.exists('.value')).toBeTruthy();
+    expect(component.exists('.topic-action-block')).toBeTruthy();
     component.find('DropdownItem').at(0).simulate('click');
     expect(mockDeleteMessages).toBeCalledTimes(1);
     expect(mockDeleteMessages).toBeCalledWith(
@@ -40,7 +40,7 @@ describe('ListItem', () => {
 
   it('triggers the deleteTopic when clicked on the delete button', () => {
     const wrapper = shallow(setupComponent({ topic: externalTopicPayload }));
-    expect(wrapper.exists('.value')).toBeTruthy();
+    expect(wrapper.exists('.topic-action-block')).toBeTruthy();
     expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
     wrapper.find('DropdownItem').at(1).simulate('click');
     const modal = wrapper.find('mock-ConfirmationModal');
@@ -52,7 +52,7 @@ describe('ListItem', () => {
 
   it('closes ConfirmationModal when clicked on the cancel button', () => {
     const wrapper = shallow(setupComponent({ topic: externalTopicPayload }));
-    expect(wrapper.exists('.value')).toBeTruthy();
+    expect(wrapper.exists('.topic-action-block')).toBeTruthy();
     expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
     wrapper.find('DropdownItem').last().simulate('click');
     expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeTruthy();
