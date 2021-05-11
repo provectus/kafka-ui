@@ -16,14 +16,14 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     void  afterEach(){
         steps.kafka.deleteTopic(NEW_TOPIC);
-        Thread.sleep(15000);
+//        Thread.sleep(15000);
     }
     @SneakyThrows
     @DisplayName("should create a topic")
     @Test
     void shouldWhen(){
         steps.kafka.createTopic(NEW_TOPIC);
-        Thread.sleep(15000);
+//        Thread.sleep(15000);
         pages.open()
                 .mainPage.shouldBeOnPage()
         .goToSideMenu("secondLocal", MainPage.SideMenuOptions.TOPICS)
