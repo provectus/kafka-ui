@@ -16,7 +16,6 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     void  afterEach(){
         steps.kafka.deleteTopic(NEW_TOPIC);
-//        Thread.sleep(15000);
     }
     @SneakyThrows
     @DisplayName("should create a topic")
