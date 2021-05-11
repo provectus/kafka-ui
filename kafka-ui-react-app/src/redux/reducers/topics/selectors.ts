@@ -18,12 +18,10 @@ export const getTopicListTotalPages = (state: RootState) =>
   topicsState(state).totalPages;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
-const getTopicDetailsFetchingStatus = createFetchingSelector(
-  'GET_TOPIC_DETAILS'
-);
-const getTopicMessagesFetchingStatus = createFetchingSelector(
-  'GET_TOPIC_MESSAGES'
-);
+const getTopicDetailsFetchingStatus =
+  createFetchingSelector('GET_TOPIC_DETAILS');
+const getTopicMessagesFetchingStatus =
+  createFetchingSelector('GET_TOPIC_MESSAGES');
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');

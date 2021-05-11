@@ -31,10 +31,8 @@ const Details: React.FC<Props> = ({
 }) => {
   const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const [
-    isDeleteTopicConfirmationVisible,
-    setDeleteTopicConfirmationVisible,
-  ] = React.useState(false);
+  const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
+    React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
     history.push(clusterTopicsPath(clusterName));

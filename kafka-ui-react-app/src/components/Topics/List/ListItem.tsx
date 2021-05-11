@@ -23,10 +23,8 @@ const ListItem: React.FC<ListItemProps> = ({
   clusterName,
   clearTopicMessages,
 }) => {
-  const [
-    isDeleteTopicConfirmationVisible,
-    setDeleteTopicConfirmationVisible,
-  ] = React.useState(false);
+  const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
+    React.useState(false);
 
   const outOfSyncReplicas = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {

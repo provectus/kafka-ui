@@ -5,8 +5,8 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@hookform/error-message": "0.0.5",
-    "ace-builds": "^1.4.12",
     "@rooks/use-outside-click-ref": "^4.10.1",
+    "ace-builds": "^1.4.12",
     "bulma": "^0.9.2",
     "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
