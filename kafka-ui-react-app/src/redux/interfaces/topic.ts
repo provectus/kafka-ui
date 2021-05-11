@@ -5,6 +5,7 @@ import {
   TopicConfig,
   TopicCreation,
   GetTopicMessagesRequest,
+  ConsumerGroup,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -45,6 +46,7 @@ export interface TopicsState {
   allNames: TopicName[];
   totalPages: number;
   messages: TopicMessage[];
+  consumerGroups: ConsumerGroup[];
 }
 
 export type TopicFormFormattedParams = TopicCreation['configs'];

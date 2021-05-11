@@ -180,3 +180,9 @@ export const deleteConnectorAction = createAsyncAction(
   'DELETE_CONNECTOR__SUCCESS',
   'DELETE_CONNECTOR__FAILURE'
 )<undefined, ConnectState, { alert?: FailurePayload }>();
+
+export const fetchTopicConsumerGroupsAction = createAsyncAction(
+  'GET_TOPIC_CONSUMER_GROUPS__REQUEST',
+  'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
+  'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
+)<undefined, TopicsState, undefined>();

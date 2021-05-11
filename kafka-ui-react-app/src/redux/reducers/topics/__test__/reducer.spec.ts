@@ -13,6 +13,7 @@ const state = {
   allNames: [topic.name],
   messages: [],
   totalPages: 1,
+  consumerGroups: [],
 };
 
 describe('topics reducer', () => {
@@ -22,6 +23,7 @@ describe('topics reducer', () => {
       allNames: [],
       messages: [],
       totalPages: 1,
+      consumerGroups: [],
     });
   });
 

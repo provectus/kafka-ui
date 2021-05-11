@@ -7,6 +7,7 @@ import {
   TopicCreation,
   TopicUpdate,
   TopicConfig,
+  ConsumerGroupsApi,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
@@ -25,6 +26,9 @@ import { getResponse } from 'lib/errorHandling';
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const topicsApiClient = new TopicsApi(apiClientConf);
 export const messagesApiClient = new MessagesApi(apiClientConf);
+export const topicConsumerGroupsApiClient = new ConsumerGroupsApi(
+  apiClientConf
+);
 
 export interface FetchTopicsListParams {
   clusterName: ClusterName;
@@ -308,5 +312,36 @@ export const deleteTopic = (
     dispatch(actions.deleteTopicAction.success(topicName));
   } catch (e) {
     dispatch(actions.deleteTopicAction.failure());
+  }
+};
+
+export const fetchTopicConsumerGroups = (
+  clusterName: ClusterName,
+  topicName: TopicName
+): PromiseThunkResult => async (dispatch, getState) => {
+  dispatch(actions.fetchTopicConsumerGroupsAction.request());
+  try {
+    const topicDetails = await topicConsumerGroupsApiClient.getTopicConsumerGroups(
+      {
+        clusterName,
+        topicName,
+      }
+    );
+    const state = getState().topics;
+    const newState = {
+      ...state,
+      byName: {
+        ...state.byName,
+        [topicName]: {
+          ...state.byName[topicName],
+          consumerGroups: {
+            ...topicDetails,
+          },
+        },
+      },
+    };
+    dispatch(actions.fetchTopicConsumerGroupsAction.success(newState));
+  } catch (e) {
+    dispatch(actions.fetchTopicConsumerGroupsAction.failure());
   }
 };
