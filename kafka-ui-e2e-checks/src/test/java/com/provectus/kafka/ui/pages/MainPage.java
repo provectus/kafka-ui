@@ -17,7 +17,7 @@ public class MainPage {
 
   public void shouldBeTopic(String topicName) {
     $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)))
-        .shouldBe(Condition.visible);
+        .waitUntil(Condition.visible,15000);
   }
 
   public enum SideMenuOptions {
