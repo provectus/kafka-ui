@@ -40,6 +40,7 @@ public class KafkaSteps {
   @SneakyThrows
   public void deleteTopic(String topicName) {
     try (AdminClient client = AdminClient.create(conf)) {
+      assertTrue(client.listTopics().names().get().contains(topicName));
       client
           .deleteTopics(
               Collections.singleton(topicName), new DeleteTopicsOptions().timeoutMs(1000))

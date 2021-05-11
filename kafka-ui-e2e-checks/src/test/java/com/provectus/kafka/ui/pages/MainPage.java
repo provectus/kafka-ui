@@ -8,6 +8,8 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
 
+  private static final long TIMEOUT = 25000;
+
   @Step
   public MainPage shouldBeOnPage() {
     $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
@@ -16,8 +18,9 @@ public class MainPage {
   }
 
   public void shouldBeTopic(String topicName) {
-    $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)))
-        .waitUntil(Condition.visible,15000);
+    var topic = $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
+    topic.waitUntil(Condition.exist,TIMEOUT);
+    topic.shouldBe(Condition.visible);
   }
 
   public enum SideMenuOptions {
