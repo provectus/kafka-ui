@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.topics;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.steps.kafka.KafkaSteps;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,17 +16,17 @@ public class TopicTests extends BaseTest {
     @AfterEach
     @SneakyThrows
     void  afterEach(){
-        steps.kafka.deleteTopic(NEW_TOPIC);
+        steps.kafka.deleteTopic(KafkaSteps.Cluster.SECOND_LOCAL,NEW_TOPIC);
     }
+
     @SneakyThrows
     @DisplayName("should create a topic")
     @Test
     void shouldWhen(){
-        steps.kafka.createTopic(NEW_TOPIC);
-//        Thread.sleep(15000);
+        steps.kafka.createTopic(KafkaSteps.Cluster.SECOND_LOCAL,NEW_TOPIC);
         pages.open()
                 .mainPage.shouldBeOnPage()
-        .goToSideMenu("secondLocal", MainPage.SideMenuOptions.TOPICS)
+        .goToSideMenu(KafkaSteps.Cluster.SECOND_LOCAL.getName(), MainPage.SideMenuOptions.TOPICS)
         .shouldBeTopic(NEW_TOPIC);
     }
 }
