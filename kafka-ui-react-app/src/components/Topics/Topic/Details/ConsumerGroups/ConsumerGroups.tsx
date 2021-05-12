@@ -26,25 +26,23 @@ const TopicConsumerGroups: React.FC<Props> = ({
   return (
     <div className="box">
       {consumerGroups.length > 0 ? (
-        <div>
-          <table className="table is-striped is-fullwidth is-hoverable">
-            <thead>
-              <tr>
-                <th>Consumer group ID</th>
-                <th>Num of consumers</th>
-                <th>Num of topics</th>
-              </tr>
-            </thead>
-            <tbody>
-              {consumerGroups.map((consumerGroup) => (
-                <ListItem
-                  key={consumerGroup.consumerGroupId}
-                  consumerGroup={consumerGroup}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <table className="table is-striped is-fullwidth is-hoverable">
+          <thead>
+            <tr>
+              <th>Consumer group ID</th>
+              <th>Num of consumers</th>
+              <th>Num of topics</th>
+            </tr>
+          </thead>
+          <tbody>
+            {consumerGroups.map((consumerGroup) => (
+              <ListItem
+                key={consumerGroup.consumerGroupId}
+                consumerGroup={consumerGroup}
+              />
+            ))}
+          </tbody>
+        </table>
       ) : (
         'No active consumer groups'
       )}
