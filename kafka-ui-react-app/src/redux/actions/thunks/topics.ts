@@ -322,7 +322,7 @@ export const fetchTopicConsumerGroups =
   async (dispatch, getState) => {
     dispatch(actions.fetchTopicConsumerGroupsAction.request());
     try {
-      const topicDetails =
+      const consumerGroups =
         await topicConsumerGroupsApiClient.getTopicConsumerGroups({
           clusterName,
           topicName,
@@ -335,7 +335,7 @@ export const fetchTopicConsumerGroups =
           [topicName]: {
             ...state.byName[topicName],
             consumerGroups: {
-              ...topicDetails,
+              ...consumerGroups,
             },
           },
         },
