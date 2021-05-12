@@ -5,6 +5,7 @@ export interface ConfirmationModalProps {
   title?: React.ReactNode;
   onConfirm(): void;
   onCancel(): void;
+  isConfirming?: boolean;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -13,20 +14,32 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   title,
   onCancel,
   onConfirm,
+  isConfirming = false,
 }) => {
   if (!isOpen) return null;
 
+  const cancelHandler = React.useCallback(() => {
+    if (!isConfirming) {
+      onCancel();
+    }
+  }, [isConfirming, onCancel]);
+
   return (
     <div className="modal is-active">
-      <div className="modal-background" onClick={onCancel} aria-hidden="true" />
+      <div
+        className="modal-background"
+        onClick={cancelHandler}
+        aria-hidden="true"
+      />
       <div className="modal-card">
         <header className="modal-card-head">
           <p className="modal-card-title">{title || 'Confirm the action'}</p>
           <button
-            onClick={onCancel}
+            onClick={cancelHandler}
             type="button"
             className="delete"
             aria-label="close"
+            disabled={isConfirming}
           />
         </header>
         <section className="modal-card-body">{children}</section>
@@ -35,10 +48,16 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onConfirm}
             type="button"
             className="button is-danger"
+            disabled={isConfirming}
           >
             Confirm
           </button>
-          <button onClick={onCancel} type="button" className="button">
+          <button
+            onClick={cancelHandler}
+            type="button"
+            className="button"
+            disabled={isConfirming}
+          >
             Cancel
           </button>
         </footer>

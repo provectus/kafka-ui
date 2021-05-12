@@ -24,6 +24,7 @@ describe('ConfiramationModal', () => {
     expect(wrapper.exists(ConfirmationModal)).toBeTruthy();
     expect(wrapper.exists('.modal.is-active')).toBeTruthy();
     expect(wrapper.find('.modal-card-body').text()).toEqual(body);
+    expect(wrapper.find('.modal-card-foot button').length).toEqual(2);
   });
   it('renders modal with default header', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
@@ -38,31 +39,47 @@ describe('ConfiramationModal', () => {
   });
   it('handles onConfirm when user clicks confirm button', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
-    expect(wrapper.find('.modal-card-foot button').length).toEqual(2);
-    const cancelBtn = wrapper.find('.modal-card-foot button').at(0);
-    expect(cancelBtn.text()).toEqual('Confirm');
-    cancelBtn.simulate('click');
+    const confirmBtn = wrapper.find({ children: 'Confirm' });
+    confirmBtn.simulate('click');
     expect(cancelMock).toHaveBeenCalledTimes(0);
     expect(confirmMock).toHaveBeenCalledTimes(1);
   });
 
   describe('cancellation', () => {
     let wrapper: ReactWrapper;
-    beforeEach(() => {
-      wrapper = mount(setupWrapper({ isOpen: true }));
+
+    describe('when not confirming', () => {
+      beforeEach(() => {
+        wrapper = mount(setupWrapper({ isOpen: true }));
+      });
+      it('handles onCancel when user clicks on modal-background', () => {
+        wrapper.find('.modal-background').simulate('click');
+        expect(cancelMock).toHaveBeenCalledTimes(1);
+        expect(confirmMock).toHaveBeenCalledTimes(0);
+      });
+      it('handles onCancel when user clicks on Cancel button', () => {
+        const cancelBtn = wrapper.find({ children: 'Cancel' });
+        cancelBtn.simulate('click');
+        expect(cancelMock).toHaveBeenCalledTimes(1);
+        expect(confirmMock).toHaveBeenCalledTimes(0);
+      });
     });
-    it('handles onCancel when user clicks on modal-background', () => {
-      wrapper.find('.modal-background').simulate('click');
-      expect(cancelMock).toHaveBeenCalledTimes(1);
-      expect(confirmMock).toHaveBeenCalledTimes(0);
-    });
-    it('handles onCancel when user clicks on Cancel button', () => {
-      expect(wrapper.find('.modal-card-foot button').length).toEqual(2);
-      const cancelBtn = wrapper.find('.modal-card-foot button').at(1);
-      expect(cancelBtn.text()).toEqual('Cancel');
-      cancelBtn.simulate('click');
-      expect(cancelMock).toHaveBeenCalledTimes(1);
-      expect(confirmMock).toHaveBeenCalledTimes(0);
+
+    describe('when confirming', () => {
+      beforeEach(() => {
+        wrapper = mount(setupWrapper({ isOpen: true, isConfirming: true }));
+      });
+      it('does not call onCancel when user clicks on modal-background', () => {
+        wrapper.find('.modal-background').simulate('click');
+        expect(cancelMock).toHaveBeenCalledTimes(0);
+        expect(confirmMock).toHaveBeenCalledTimes(0);
+      });
+      it('does not call onCancel when user clicks on Cancel button', () => {
+        const cancelBtn = wrapper.find({ children: 'Cancel' });
+        cancelBtn.simulate('click');
+        expect(cancelMock).toHaveBeenCalledTimes(0);
+        expect(confirmMock).toHaveBeenCalledTimes(0);
+      });
     });
   });
 });

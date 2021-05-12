@@ -1,4 +1,10 @@
-import { ClusterName, SchemaName, TopicName } from 'redux/interfaces';
+import {
+  ClusterName,
+  ConnectName,
+  ConnectorName,
+  SchemaName,
+  TopicName,
+} from 'redux/interfaces';
 
 import { GIT_REPO_LINK } from './constants';
 
@@ -52,5 +58,48 @@ export const clusterTopicEditPath = (
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/edit`;
 
 // Kafka Connect
+export const clusterConnectsPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/connects`;
 export const clusterConnectorsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/connectors`;
+export const clusterConnectorNewPath = (clusterName: ClusterName) =>
+  `${clusterConnectorsPath(clusterName)}/create_new`;
+const clusterConnectConnectorsPath = (
+  clusterName: ClusterName,
+  connectName: ConnectName
+) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;
+export const clusterConnectConnectorPath = (
+  clusterName: ClusterName,
+  connectName: ConnectName,
+  connectorName: ConnectorName
+) =>
+  `${clusterConnectConnectorsPath(clusterName, connectName)}/${connectorName}`;
+export const clusterConnectConnectorEditPath = (
+  clusterName: ClusterName,
+  connectName: ConnectName,
+  connectorName: ConnectorName
+) =>
+  `${clusterConnectConnectorsPath(
+    clusterName,
+    connectName
+  )}/${connectorName}/edit`;
+export const clusterConnectConnectorTasksPath = (
+  clusterName: ClusterName,
+  connectName: ConnectName,
+  connectorName: ConnectorName
+) =>
+  `${clusterConnectConnectorPath(
+    clusterName,
+    connectName,
+    connectorName
+  )}/tasks`;
+export const clusterConnectConnectorConfigPath = (
+  clusterName: ClusterName,
+  connectName: ConnectName,
+  connectorName: ConnectorName
+) =>
+  `${clusterConnectConnectorPath(
+    clusterName,
+    connectName,
+    connectorName
+  )}/config`;

@@ -1,0 +1,103 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`New view matches snapshot 1`] = `
+<div
+  className="box"
+>
+  <form
+    onSubmit={[Function]}
+  >
+    <div
+      className="field "
+    >
+      <label
+        className="label"
+      >
+        Connect *
+      </label>
+      <div
+        className="control select"
+      >
+        <select
+          disabled={false}
+          name="connectName"
+        >
+          <option
+            value="first"
+          >
+            first
+          </option>
+          <option
+            value="second"
+          >
+            second
+          </option>
+        </select>
+      </div>
+      <p
+        className="help is-danger"
+      />
+    </div>
+    <div
+      className="field"
+    >
+      <label
+        className="label"
+      >
+        Name *
+      </label>
+      <div
+        className="control"
+      >
+        <input
+          autoComplete="off"
+          className="input"
+          disabled={false}
+          name="name"
+          placeholder="Connector Name"
+        />
+      </div>
+      <p
+        className="help is-danger"
+      />
+    </div>
+    <div
+      className="field"
+    >
+      <label
+        className="label"
+      >
+        Config *
+      </label>
+      <div
+        className="control"
+      >
+        <mock-JSONEditor
+          name="config"
+          onBlur={[Function]}
+          onChange={[Function]}
+          readOnly={false}
+        />
+      </div>
+      <p
+        className="help is-danger"
+      />
+    </div>
+    <div
+      className="field"
+    >
+      <div
+        className="control"
+      >
+        <input
+          className="button is-primary"
+          disabled={true}
+          type="submit"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`New view matches snapshot when fetching connects 1`] = `<mock-PageLoader />`;

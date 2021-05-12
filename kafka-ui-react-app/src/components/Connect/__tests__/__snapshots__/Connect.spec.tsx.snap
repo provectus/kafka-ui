@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Connect matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <Switch>
+    <Route
+      component={[Function]}
+      path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName"
+    />
+    <Route
+      component={[Function]}
+      path="/ui/clusters/:clusterName/connectors"
+    />
+  </Switch>
+  <Switch>
+    <Route
+      component={
+        Object {
+          "$$typeof": Symbol(react.memo),
+          "WrappedComponent": [Function],
+          "compare": null,
+          "type": [Function],
+        }
+      }
+      exact={true}
+      path="/ui/clusters/:clusterName/connectors"
+    />
+    <Route
+      component={[Function]}
+      exact={true}
+      path="/ui/clusters/:clusterName/connectors/create_new"
+    />
+    <Route
+      component={[Function]}
+      exact={true}
+      path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName/edit"
+    />
+    <Route
+      component={[Function]}
+      path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName"
+    />
+  </Switch>
+</div>
+`;
