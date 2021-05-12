@@ -112,9 +112,9 @@ describe('Actions', () => {
     it('calls deleteConnector when confirm button clicked', () => {
       const deleteConnector = jest.fn();
       const wrapper = mount(setupWrapper({ deleteConnector }));
-      (wrapper
-        .find('mock-ConfirmationModal')
-        .props() as ConfirmationModalProps).onConfirm();
+      (
+        wrapper.find('mock-ConfirmationModal').props() as ConfirmationModalProps
+      ).onConfirm();
       expect(deleteConnector).toHaveBeenCalledTimes(1);
       expect(deleteConnector).toHaveBeenCalledWith(
         clusterName,
@@ -129,9 +129,11 @@ describe('Actions', () => {
         .mockResolvedValueOnce({ message: 'success' });
       const wrapper = mount(setupWrapper({ deleteConnector }));
       await act(async () => {
-        (wrapper
-          .find('mock-ConfirmationModal')
-          .props() as ConfirmationModalProps).onConfirm();
+        (
+          wrapper
+            .find('mock-ConfirmationModal')
+            .props() as ConfirmationModalProps
+        ).onConfirm();
       });
       expect(mockHistoryPush).toHaveBeenCalledTimes(1);
       expect(mockHistoryPush).toHaveBeenCalledWith(

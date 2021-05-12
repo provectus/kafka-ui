@@ -54,9 +54,8 @@ export const getIsConnectorDeleting = createSelector(
   (status) => status === 'fetching'
 );
 
-const getConnectorRestartingStatus = createFetchingSelector(
-  'RESTART_CONNECTOR'
-);
+const getConnectorRestartingStatus =
+  createFetchingSelector('RESTART_CONNECTOR');
 export const getIsConnectorRestarting = createSelector(
   getConnectorRestartingStatus,
   (status) => status === 'fetching'
