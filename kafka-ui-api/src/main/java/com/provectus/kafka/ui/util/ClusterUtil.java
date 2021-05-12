@@ -139,7 +139,9 @@ public class ClusterUtil {
 
   public static InternalTopic mapToInternalTopic(TopicDescription topicDescription) {
     var topic = InternalTopic.builder();
-    topic.internal(topicDescription.isInternal());
+    topic.internal(
+        topicDescription.isInternal() || topicDescription.name().startsWith("_")
+    );
     topic.name(topicDescription.name());
 
     List<InternalPartition> partitions = topicDescription.partitions().stream().map(

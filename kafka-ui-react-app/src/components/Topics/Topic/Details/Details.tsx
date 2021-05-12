@@ -21,6 +21,7 @@ import SettingsContainer from './Settings/SettingsContainer';
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
+  isInternal: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -28,15 +29,14 @@ interface Props extends Topic, TopicDetails {
 const Details: React.FC<Props> = ({
   clusterName,
   topicName,
+  isInternal,
   deleteTopic,
   clearTopicMessages,
 }) => {
   const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
-  const [
-    isDeleteTopicConfirmationVisible,
-    setDeleteTopicConfirmationVisible,
-  ] = React.useState(false);
+  const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
+    React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
     history.push(clusterTopicsPath(clusterName));
@@ -84,8 +84,8 @@ const Details: React.FC<Props> = ({
           </NavLink>
         </div>
         <div className="navbar-end">
-          <div className="buttons">
-            {!isReadOnly && (
+          {!isReadOnly && !isInternal ? (
+            <div className="buttons">
               <>
                 <button
                   type="button"
@@ -117,8 +117,8 @@ const Details: React.FC<Props> = ({
                   Are you sure want to remove <b>{topicName}</b> topic?
                 </ConfirmationModal>
               </>
-            )}
-          </div>
+            </div>
+          ) : null}
         </div>
       </nav>
       <br />
