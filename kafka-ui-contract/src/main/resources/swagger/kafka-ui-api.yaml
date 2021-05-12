@@ -1621,7 +1621,7 @@ components:
     ConnectorConfig:
       type: object
       additionalProperties:
-        type: string
+        type: object
 
     TaskId:
       type: object

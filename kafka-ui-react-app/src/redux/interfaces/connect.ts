@@ -2,9 +2,7 @@ import { Connect, Connector, FullConnectorInfo, Task } from 'generated-sources';
 
 export type ConnectName = Connect['name'];
 export type ConnectorName = Connector['name'];
-export interface ConnectorConfig {
-  [key: string]: string | undefined;
-}
+export type ConnectorConfig = Connector['config'];
 
 export interface ConnectState {
   connects: Connect[];
