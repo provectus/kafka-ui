@@ -50,9 +50,8 @@ const Messages: React.FC<Props> = ({
   fetchTopicMessages,
 }) => {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
-  const [searchTimestamp, setSearchTimestamp] = React.useState<Date | null>(
-    null
-  );
+  const [searchTimestamp, setSearchTimestamp] =
+    React.useState<Date | null>(null);
   const [filterProps, setFilterProps] = React.useState<FilterProps[]>([]);
   const [selectedSeekType, setSelectedSeekType] = React.useState<SeekType>(
     SeekType.OFFSET

@@ -16,28 +16,28 @@ export const fetchClustersList = (): PromiseThunkResult => async (dispatch) => {
   }
 };
 
-export const fetchClusterStats = (
-  clusterName: ClusterName
-): PromiseThunkResult => async (dispatch) => {
-  dispatch(actions.fetchClusterStatsAction.request());
-  try {
-    const payload = await clustersApiClient.getClusterStats({ clusterName });
-    dispatch(actions.fetchClusterStatsAction.success(payload));
-  } catch (e) {
-    dispatch(actions.fetchClusterStatsAction.failure());
-  }
-};
+export const fetchClusterStats =
+  (clusterName: ClusterName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.fetchClusterStatsAction.request());
+    try {
+      const payload = await clustersApiClient.getClusterStats({ clusterName });
+      dispatch(actions.fetchClusterStatsAction.success(payload));
+    } catch (e) {
+      dispatch(actions.fetchClusterStatsAction.failure());
+    }
+  };
 
-export const fetchClusterMetrics = (
-  clusterName: ClusterName
-): PromiseThunkResult => async (dispatch) => {
-  dispatch(actions.fetchClusterMetricsAction.request());
-  try {
-    const payload = await clustersApiClient.getClusterMetrics({
-      clusterName,
-    });
-    dispatch(actions.fetchClusterMetricsAction.success(payload));
-  } catch (e) {
-    dispatch(actions.fetchClusterMetricsAction.failure());
-  }
-};
+export const fetchClusterMetrics =
+  (clusterName: ClusterName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.fetchClusterMetricsAction.request());
+    try {
+      const payload = await clustersApiClient.getClusterMetrics({
+        clusterName,
+      });
+      dispatch(actions.fetchClusterMetricsAction.success(payload));
+    } catch (e) {
+      dispatch(actions.fetchClusterMetricsAction.failure());
+    }
+  };
