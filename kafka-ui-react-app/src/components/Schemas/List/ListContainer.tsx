@@ -18,9 +18,8 @@ const mapStateToProps = (state: RootState) => ({
   isFetching: getIsSchemaListFetching(state),
   schemas: getSchemaList(state),
   globalSchemaCompatibilityLevel: getGlobalSchemaCompatibilityLevel(state),
-  isGlobalSchemaCompatibilityLevelFetched: getGlobalSchemaCompatibilityLevelFetched(
-    state
-  ),
+  isGlobalSchemaCompatibilityLevelFetched:
+    getGlobalSchemaCompatibilityLevelFetched(state),
 });
 
 const mapDispatchToProps = {
