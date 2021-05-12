@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
 import configureStore from 'redux/store/configureStore';
-import { connectorsPayload } from 'redux/reducers/connect/__test__/fixtures';
+import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
   initialValue,
@@ -66,7 +66,7 @@ describe('Connectors List', () => {
       const wrapper = mount(
         setupComponent({
           areConnectorsFetching: false,
-          connectors: connectorsPayload,
+          connectors,
         })
       );
       expect(wrapper.exists('PageLoader')).toBeFalsy();
@@ -85,7 +85,7 @@ describe('Connectors List', () => {
         setupComponent({}, { ...initialValue, isReadOnly: false })
       );
       expect(
-        wrapper.exists('.level-item.level-right > button.is-primary')
+        wrapper.exists('.level-item.level-right > .button.is-primary')
       ).toBeTruthy();
     });
 
@@ -95,7 +95,7 @@ describe('Connectors List', () => {
           setupComponent({}, { ...initialValue, isReadOnly: true })
         );
         expect(
-          wrapper.exists('.level-item.level-right > button.is-primary')
+          wrapper.exists('.level-item.level-right > .button.is-primary')
         ).toBeFalsy();
       });
     });

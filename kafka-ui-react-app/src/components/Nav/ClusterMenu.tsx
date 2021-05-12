@@ -7,6 +7,7 @@ import {
   clusterConsumerGroupsPath,
   clusterSchemasPath,
   clusterConnectorsPath,
+  clusterConnectsPath,
 } from 'lib/paths';
 
 import DefaultClusterIcon from './DefaultClusterIcon';
@@ -82,6 +83,10 @@ const ClusterMenu: React.FC<Props> = ({
                 to={clusterConnectorsPath(name)}
                 activeClassName="is-active"
                 title="Kafka Connect"
+                isActive={(_, location) =>
+                  location.pathname.startsWith(clusterConnectsPath(name)) ||
+                  location.pathname.startsWith(clusterConnectorsPath(name))
+                }
               >
                 Kafka Connect
               </NavLink>

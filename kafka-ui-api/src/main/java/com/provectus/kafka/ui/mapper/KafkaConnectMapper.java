@@ -53,7 +53,7 @@ public interface KafkaConnectMapper {
         .type(triple.getLeft().getType())
         .topics(getTopicsFromConfig.apply(triple.getMiddle()))
         .status(
-            triple.getLeft().getStatus().getState()
+            triple.getLeft().getStatus()
         )
         .tasksCount(triple.getRight().size())
         .failedTasksCount((int) triple.getRight().stream()

@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Overview view matches snapshot 1`] = `
+<div
+  className="tile is-6"
+>
+  <table
+    className="table is-fullwidth"
+  >
+    <tbody>
+      <tr>
+        <th>
+          Worker
+        </th>
+        <td>
+          kafka-connect0:8083
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Type
+        </th>
+        <td>
+          SOURCE
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Class
+        </th>
+        <td>
+          FileStreamSource
+        </td>
+      </tr>
+      <tr>
+        <th>
+          State
+        </th>
+        <td>
+          <mock-StatusTag
+            status="RUNNING"
+          />
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Tasks Running
+        </th>
+        <td>
+          10
+        </td>
+      </tr>
+      <tr>
+        <th>
+          Tasks Failed
+        </th>
+        <td>
+          2
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+`;
