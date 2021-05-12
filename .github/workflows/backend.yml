@@ -4,6 +4,7 @@ on:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
     - 'kafka-ui-api/**'
+    - 'kafka-ui-e2e-checks/**'
 jobs:
   build:
     runs-on: ubuntu-latest
