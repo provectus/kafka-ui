@@ -95,6 +95,7 @@ const List: React.FC<Props> = ({
             <Search
               handleSearch={handleSearch}
               placeholder="Search by Topic Name"
+              value={search}
             />
           </div>
           <div className="column is-2 is-justify-content-flex-end is-flex">

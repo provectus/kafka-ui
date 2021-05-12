@@ -91,12 +91,14 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               <Search
                 handleSearch={[Function]}
                 placeholder="Search by Topic Name"
+                value=""
               >
                 <p
                   className="control has-icons-left"
                 >
                   <input
                     className="input"
+                    defaultValue=""
                     onChange={[Function]}
                     placeholder="Search by Topic Name"
                     type="text"

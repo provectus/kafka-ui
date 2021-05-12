@@ -3,10 +3,15 @@ import { useDebouncedCallback } from 'use-debounce';
 
 interface SearchProps {
   handleSearch: (value: string) => void;
-  placeholder: string;
+  placeholder?: string;
+  value: string;
 }
 
-const Search: React.FC<SearchProps> = ({ handleSearch, placeholder }) => {
+const Search: React.FC<SearchProps> = ({
+  handleSearch,
+  placeholder = 'Search',
+  value,
+}) => {
   const onChange = useDebouncedCallback(
     (e) => handleSearch(e.target.value),
     300
@@ -18,6 +23,7 @@ const Search: React.FC<SearchProps> = ({ handleSearch, placeholder }) => {
         type="text"
         placeholder={placeholder}
         onChange={onChange}
+        defaultValue={value}
       />
       <span className="icon is-small is-left">
         <i className="fas fa-search" />
