@@ -33,7 +33,9 @@ export const fetchClusterMetrics = (
 ): PromiseThunkResult => async (dispatch) => {
   dispatch(actions.fetchClusterMetricsAction.request());
   try {
-    const payload = await clustersApiClient.getClusterMetrics({ clusterName });
+    const payload = await clustersApiClient.getClusterMetrics({
+      clusterName,
+    });
     dispatch(actions.fetchClusterMetricsAction.success(payload));
   } catch (e) {
     dispatch(actions.fetchClusterMetricsAction.failure());

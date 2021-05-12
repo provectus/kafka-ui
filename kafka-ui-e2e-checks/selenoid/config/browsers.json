@@ -1,0 +1,11 @@
+{
+  "chrome": {
+    "default": "86.0",
+    "versions": {
+      "86.0": {
+        "image": "selenoid/vnc:chrome_86.0",
+        "port": "4444"
+      }
+    }
+  }
+}
