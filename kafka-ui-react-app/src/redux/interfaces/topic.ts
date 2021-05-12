@@ -5,6 +5,7 @@ import {
   TopicConfig,
   TopicCreation,
   GetTopicMessagesRequest,
+  TopicColumnsToSort,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -45,6 +46,8 @@ export interface TopicsState {
   allNames: TopicName[];
   totalPages: number;
   messages: TopicMessage[];
+  search: string;
+  orderBy: TopicColumnsToSort | null;
 }
 
 export type TopicFormFormattedParams = TopicCreation['configs'];

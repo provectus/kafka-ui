@@ -39,11 +39,12 @@ const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
     return valid || 'Custom Parameter must be unique';
   };
 
-  const onChange =
-    (inputName: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
-      trigger(inputName);
-      onNameChange(index, event.target.value);
-    };
+  const onChange = (inputName: string) => (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    trigger(inputName);
+    onNameChange(index, event.target.value);
+  };
 
   return (
     <>

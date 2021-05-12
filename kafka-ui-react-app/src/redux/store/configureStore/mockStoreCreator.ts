@@ -6,7 +6,9 @@ import { RootState, Action } from 'redux/interfaces';
 const middlewares: Array<Middleware> = [thunk];
 type DispatchExts = ThunkDispatch<RootState, undefined, Action>;
 
-const mockStoreCreator: MockStoreCreator<RootState, DispatchExts> =
-  configureMockStore<RootState, DispatchExts>(middlewares);
+const mockStoreCreator: MockStoreCreator<
+  RootState,
+  DispatchExts
+> = configureMockStore<RootState, DispatchExts>(middlewares);
 
 export default mockStoreCreator();

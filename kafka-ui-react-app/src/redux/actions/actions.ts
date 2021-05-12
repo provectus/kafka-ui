@@ -18,6 +18,7 @@ import {
   ConsumerGroupDetails,
   SchemaSubject,
   CompatibilityLevelCompatibilityEnum,
+  TopicColumnsToSort,
   Connector,
   FullConnectorInfo,
   Connect,
@@ -233,3 +234,11 @@ export const updateConnectorConfigAction = createAsyncAction(
   'PATCH_CONNECTOR_CONFIG__SUCCESS',
   'PATCH_CONNECTOR_CONFIG__FAILURE'
 )<undefined, { connector: Connector }, { alert?: FailurePayload }>();
+
+export const setTopicsSearchAction = createAction(
+  'SET_TOPICS_SEARCH'
+)<string>();
+
+export const setTopicsOrderByAction = createAction(
+  'SET_TOPICS_ORDER_BY'
+)<TopicColumnsToSort>();

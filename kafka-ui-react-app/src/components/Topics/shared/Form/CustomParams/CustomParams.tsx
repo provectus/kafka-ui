@@ -35,11 +35,13 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
       )
     : {};
 
-  const [formCustomParams, setFormCustomParams] =
-    React.useState<TopicFormCustomParams>({
-      byIndex,
-      allIndexes: Object.keys(byIndex),
-    });
+  const [
+    formCustomParams,
+    setFormCustomParams,
+  ] = React.useState<TopicFormCustomParams>({
+    byIndex,
+    allIndexes: Object.keys(byIndex),
+  });
 
   const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();

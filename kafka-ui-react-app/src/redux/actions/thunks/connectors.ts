@@ -20,7 +20,6 @@ import { getResponse } from 'lib/errorHandling';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
-
 export const fetchConnects =
   (clusterName: ClusterName): PromiseThunkResult<void> =>
   async (dispatch) => {

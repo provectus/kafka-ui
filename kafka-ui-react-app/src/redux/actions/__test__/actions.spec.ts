@@ -3,6 +3,7 @@ import {
   schemaVersionsPayload,
 } from 'redux/reducers/schemas/__test__/fixtures';
 import * as actions from 'redux/actions';
+import { TopicColumnsToSort } from 'generated-sources';
 
 describe('Actions', () => {
   describe('fetchClusterStatsAction', () => {
@@ -128,6 +129,24 @@ describe('Actions', () => {
       expect(actions.clearMessagesTopicAction.failure({})).toEqual({
         type: 'CLEAR_TOPIC_MESSAGES__FAILURE',
         payload: {},
+      });
+    });
+  });
+
+  describe('setTopicsSearchAction', () => {
+    it('creartes SET_TOPICS_SEARCH', () => {
+      expect(actions.setTopicsSearchAction('test')).toEqual({
+        type: 'SET_TOPICS_SEARCH',
+        payload: 'test',
+      });
+    });
+  });
+
+  describe('setTopicsOrderByAction', () => {
+    it('creartes SET_TOPICS_ORDER_BY', () => {
+      expect(actions.setTopicsOrderByAction(TopicColumnsToSort.NAME)).toEqual({
+        type: 'SET_TOPICS_ORDER_BY',
+        payload: TopicColumnsToSort.NAME,
       });
     });
   });
