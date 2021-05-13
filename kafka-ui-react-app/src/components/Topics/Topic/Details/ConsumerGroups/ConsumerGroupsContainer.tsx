@@ -19,13 +19,11 @@ const mapStateToProps = (
       params: { topicName, clusterName },
     },
   }: OwnProps
-) => {
-  return {
-    consumerGroups: getTopicConsumerGroups(state),
-    topicName,
-    clusterName,
-  };
-};
+) => ({
+  consumerGroups: getTopicConsumerGroups(state),
+  topicName,
+  clusterName,
+});
 
 const mapDispatchToProps = {
   fetchTopicConsumerGroups,
