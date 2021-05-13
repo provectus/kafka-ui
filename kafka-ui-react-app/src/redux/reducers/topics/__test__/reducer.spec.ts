@@ -4,6 +4,7 @@ import {
   clearMessagesTopicAction,
   setTopicsSearchAction,
   setTopicsOrderByAction,
+  fetchTopicConsumerGroupsAction,
 } from 'redux/actions';
 import reducer from 'redux/reducers/topics/reducer';
 
@@ -59,6 +60,14 @@ describe('topics reducer', () => {
         ...state,
         orderBy: TopicColumnsToSort.NAME,
       });
+    });
+  });
+
+  describe('topic consumer groups', () => {
+    it('GET_TOPIC_CONSUMER_GROUPS__SUCCESS', () => {
+      expect(
+        reducer(state, fetchTopicConsumerGroupsAction.success(state))
+      ).toEqual(state);
     });
   });
 });
