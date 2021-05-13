@@ -12,7 +12,7 @@ jobs:
     - name: Set the value
       id: step_one
       run: |
-        cp ./kafka-ui-e2e-checks/.env.example $GITHUB_ENV
+        ls
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:
