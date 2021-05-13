@@ -12,7 +12,7 @@ jobs:
     - name: Set the value1
       id: step_one
       run: |
-        echo "USE_LOCAL_BROWSER=false" >> "kafka-ui-e2e-checks/.env"
+        echo "USE_LOCAL_BROWSER=false" > "kafka-ui-e2e-checks/.env"
     - name: Set the value2
       id: step_two
       run: |
