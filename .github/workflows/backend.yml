@@ -9,22 +9,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - name: create file
-      id: create_file
-      run: |
-        echo $CLASSPATH
     - name: Set the value1
       id: step_one
       run: |
-        echo "USE_LOCAL_BROWSER=false" >> /.env
+        echo "USE_LOCAL_BROWSER=false" >> "kafka-ui-e2e-checks/.env"
     - name: Set the value2
       id: step_two
       run: |
-        echo "SHOULD_START_SELENOID=true" >> /.env
+        echo "SHOULD_START_SELENOID=true" >> "kafka-ui-e2e-checks/.env"
     - name: Set the value3
       id: step_three
       run: |
-        echo "TURN_OFF_SCREENSHOTS=true" >> /.env
+        echo "TURN_OFF_SCREENSHOTS=true" >> "kafka-ui-e2e-checks/.env"
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:
