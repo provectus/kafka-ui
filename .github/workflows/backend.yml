@@ -29,6 +29,9 @@ jobs:
       id: step_three
       run: |
         echo "TURN_OFF_SCREENSHOTS=true" >> "./kafka-ui-e2e-checks/.env"
+    - name: pull docker
+      - run: |
+          docker pull selenoid/vnc:chrome_86.0
     - name: Set up JDK 1.13
       uses: actions/setup-java@v1
       with:
