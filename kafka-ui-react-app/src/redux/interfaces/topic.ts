@@ -6,6 +6,7 @@ import {
   TopicCreation,
   GetTopicMessagesRequest,
   ConsumerGroup,
+  TopicColumnsToSort,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -46,6 +47,8 @@ export interface TopicsState {
   allNames: TopicName[];
   totalPages: number;
   messages: TopicMessage[];
+  search: string;
+  orderBy: TopicColumnsToSort | null;
   consumerGroups: ConsumerGroup[];
 }
 

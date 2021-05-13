@@ -9,6 +9,7 @@ import {
 import {
   clusterBrokersPath,
   clusterConnectorsPath,
+  clusterConnectsPath,
   clusterConsumerGroupsPath,
   clusterSchemasPath,
   clusterTopicsPath,
@@ -57,6 +58,12 @@ const Cluster: React.FC = () => {
           <Route
             path={clusterSchemasPath(':clusterName')}
             component={Schemas}
+          />
+        )}
+        {hasKafkaConnectConfigured && (
+          <Route
+            path={clusterConnectsPath(':clusterName')}
+            component={Connect}
           />
         )}
         {hasKafkaConnectConfigured && (

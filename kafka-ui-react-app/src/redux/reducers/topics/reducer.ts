@@ -8,6 +8,8 @@ export const initialState: TopicsState = {
   allNames: [],
   totalPages: 1,
   messages: [],
+  search: '',
+  orderBy: null,
   consumerGroups: [],
 };
 
@@ -59,6 +61,18 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       return {
         ...state,
         messages: [],
+      };
+    }
+    case getType(actions.setTopicsSearchAction): {
+      return {
+        ...state,
+        search: action.payload,
+      };
+    }
+    case getType(actions.setTopicsOrderByAction): {
+      return {
+        ...state,
+        orderBy: action.payload,
       };
     }
     default:

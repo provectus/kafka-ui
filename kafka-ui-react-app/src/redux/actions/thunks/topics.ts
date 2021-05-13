@@ -7,6 +7,7 @@ import {
   TopicCreation,
   TopicUpdate,
   TopicConfig,
+  TopicColumnsToSort,
   ConsumerGroupsApi,
 } from 'generated-sources';
 import {
@@ -34,6 +35,9 @@ export interface FetchTopicsListParams {
   clusterName: ClusterName;
   page?: number;
   perPage?: number;
+  showInternal?: boolean;
+  search?: string;
+  orderBy?: TopicColumnsToSort;
 }
 
 export const fetchTopicsList =

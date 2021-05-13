@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Edit view matches snapshot 1`] = `
+<div
+  className="box"
+>
+  <form
+    onSubmit={[Function]}
+  >
+    <div
+      className="field"
+    >
+      <div
+        className="control"
+      >
+        <mock-JSONEditor
+          name="config"
+          onBlur={[Function]}
+          onChange={[Function]}
+          readOnly={false}
+          value="{
+	\\"connector.class\\": \\"FileStreamSource\\",
+	\\"tasks.max\\": \\"10\\",
+	\\"topic\\": \\"test-topic\\",
+	\\"file\\": \\"/some/file\\"
+}"
+        />
+      </div>
+      <p
+        className="help is-danger"
+      />
+    </div>
+    <div
+      className="field"
+    >
+      <div
+        className="control"
+      >
+        <input
+          className="button is-primary"
+          disabled={true}
+          type="submit"
+        />
+      </div>
+    </div>
+  </form>
+</div>
+`;
+
+exports[`Edit view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;

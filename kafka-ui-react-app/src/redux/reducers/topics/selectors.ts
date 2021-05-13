@@ -124,6 +124,16 @@ export const getTopicConfigByParamName = createSelector(
   }
 );
 
+export const getTopicsSearch = createSelector(
+  topicsState,
+  (state) => state.search
+);
+
+export const getTopicsOrderBy = createSelector(
+  topicsState,
+  (state) => state.orderBy
+);
+
 export const getIsTopicInternal = createSelector(
   getTopicByName,
   ({ internal }) => !!internal

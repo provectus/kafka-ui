@@ -1,13 +1,14 @@
 import React from 'react';
+import { Link, useParams } from 'react-router-dom';
 import { Connect, FullConnectorInfo } from 'generated-sources';
-import { useParams } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { clusterConnectorNewPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import ListItem from 'components/Connect/List/ListItem';
+
+import ListItem from './ListItem';
 
 export interface ListProps {
   areConnectsFetching: boolean;
@@ -35,13 +36,7 @@ const List: React.FC<ListProps> = ({
   }, [fetchConnects, fetchConnectors, clusterName]);
 
   return (
-    <div className="section">
-      <Breadcrumb>All Connectors</Breadcrumb>
-      <article className="message is-warning">
-        <div className="message-body">
-          Kafka Connect section is under construction.
-        </div>
-      </article>
+    <>
       <MetricsWrapper>
         <Indicator
           className="level-left is-one-third"
@@ -54,9 +49,12 @@ const List: React.FC<ListProps> = ({
 
         {!isReadOnly && (
           <div className="level-item level-right">
-            <button type="button" className="button is-primary" disabled>
+            <Link
+              className="button is-primary"
+              to={clusterConnectorNewPath(clusterName)}
+            >
               Create Connector
-            </button>
+            </Link>
           </div>
         )}
       </MetricsWrapper>
@@ -96,7 +94,7 @@ const List: React.FC<ListProps> = ({
           </table>
         </div>
       )}
-    </div>
+    </>
   );
 };
 
