@@ -12,7 +12,7 @@ jobs:
     - name: create file
       id: create_file
       run: |
-        touch /.env
+        echo $CLASSPATH
     - name: Set the value1
       id: step_one
       run: |
