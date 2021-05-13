@@ -9,18 +9,22 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    - name: create file
+      id: create_file
+      run: |
+        touch /.env
     - name: Set the value1
       id: step_one
       run: |
-        echo "USE_LOCAL_BROWSER=false" >> $GITHUB_ENV
+        echo "USE_LOCAL_BROWSER=false" >> /.env
     - name: Set the value2
       id: step_two
       run: |
-        echo "SHOULD_START_SELENOID=true" >> $GITHUB_ENV
+        echo "SHOULD_START_SELENOID=true" >> /.env
     - name: Set the value3
       id: step_three
       run: |
-        echo "TURN_OFF_SCREENSHOTS=true" >> $GITHUB_ENV
+        echo "TURN_OFF_SCREENSHOTS=true" >> /.env
     - name: Cache local Maven repository
       uses: actions/cache@v2
       with:
