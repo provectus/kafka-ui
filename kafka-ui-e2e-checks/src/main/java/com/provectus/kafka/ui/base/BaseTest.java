@@ -43,6 +43,7 @@ public class BaseTest {
           .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
           .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
           .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
+              .withExtraHost("host.docker.internal","172.17.0.1")
           .withCommand(
               "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 

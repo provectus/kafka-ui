@@ -29,8 +29,6 @@ services:
       KAFKA_CLUSTERS_1_SCHEMAREGISTRY: http://schemaregistry0:8085
       KAFKA_CLUSTERS_1_KAFKACONNECT_0_NAME: first
       KAFKA_CLUSTERS_1_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
-    extra_hosts:
-      - "host.docker.internal: 172.17.0.1"
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
