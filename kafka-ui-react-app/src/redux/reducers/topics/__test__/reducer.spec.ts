@@ -4,6 +4,7 @@ import {
   clearMessagesTopicAction,
   setTopicsSearchAction,
   setTopicsOrderByAction,
+  fetchTopicConsumerGroupsAction,
 } from 'redux/actions';
 import reducer from 'redux/reducers/topics/reducer';
 
@@ -21,6 +22,7 @@ const state = {
   totalPages: 1,
   search: '',
   orderBy: null,
+  consumerGroups: [],
 };
 
 describe('topics reducer', () => {
@@ -30,6 +32,7 @@ describe('topics reducer', () => {
         ...state,
         byName: {},
         allNames: [],
+        consumerGroups: [],
       });
     });
 
@@ -57,6 +60,14 @@ describe('topics reducer', () => {
         ...state,
         orderBy: TopicColumnsToSort.NAME,
       });
+    });
+  });
+
+  describe('topic consumer groups', () => {
+    it('GET_TOPIC_CONSUMER_GROUPS__SUCCESS', () => {
+      expect(
+        reducer(state, fetchTopicConsumerGroupsAction.success(state))
+      ).toEqual(state);
     });
   });
 });

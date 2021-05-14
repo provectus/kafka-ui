@@ -7,12 +7,14 @@ import {
   clusterTopicPath,
   clusterTopicMessagesPath,
   clusterTopicsPath,
+  clusterTopicConsumerGroupsPath,
   clusterTopicEditPath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 
 import OverviewContainer from './Overview/OverviewContainer';
+import TopicConsumerGroupsContainer from './ConsumerGroups/ConsumerGroupsContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 
@@ -63,6 +65,14 @@ const Details: React.FC<Props> = ({
             activeClassName="is-active"
           >
             Messages
+          </NavLink>
+          <NavLink
+            exact
+            to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
+            className="navbar-item is-tab"
+            activeClassName="is-active"
+          >
+            Consumers
           </NavLink>
           <NavLink
             exact
@@ -127,6 +137,11 @@ const Details: React.FC<Props> = ({
           exact
           path="/ui/clusters/:clusterName/topics/:topicName"
           component={OverviewContainer}
+        />
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName/consumergroups"
+          component={TopicConsumerGroupsContainer}
         />
       </Switch>
     </div>

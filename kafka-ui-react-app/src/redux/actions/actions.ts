@@ -241,3 +241,9 @@ export const setTopicsSearchAction =
 export const setTopicsOrderByAction = createAction(
   'SET_TOPICS_ORDER_BY'
 )<TopicColumnsToSort>();
+
+export const fetchTopicConsumerGroupsAction = createAsyncAction(
+  'GET_TOPIC_CONSUMER_GROUPS__REQUEST',
+  'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
+  'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
+)<undefined, TopicsState, undefined>();

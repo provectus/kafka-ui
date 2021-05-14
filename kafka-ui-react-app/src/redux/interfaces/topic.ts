@@ -5,6 +5,7 @@ import {
   TopicConfig,
   TopicCreation,
   GetTopicMessagesRequest,
+  ConsumerGroup,
   TopicColumnsToSort,
 } from 'generated-sources';
 
@@ -48,6 +49,7 @@ export interface TopicsState {
   messages: TopicMessage[];
   search: string;
   orderBy: TopicColumnsToSort | null;
+  consumerGroups: ConsumerGroup[];
 }
 
 export type TopicFormFormattedParams = TopicCreation['configs'];

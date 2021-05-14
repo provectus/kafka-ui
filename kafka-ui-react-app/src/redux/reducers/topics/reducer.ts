@@ -10,6 +10,7 @@ export const initialState: TopicsState = {
   messages: [],
   search: '',
   orderBy: null,
+  consumerGroups: [],
 };
 
 const transformTopicMessages = (
@@ -43,6 +44,7 @@ const reducer = (state = initialState, action: Action): TopicsState => {
     case getType(actions.fetchTopicDetailsAction.success):
     case getType(actions.fetchTopicConfigAction.success):
     case getType(actions.createTopicAction.success):
+    case getType(actions.fetchTopicConsumerGroupsAction.success):
     case getType(actions.updateTopicAction.success):
       return action.payload;
     case getType(actions.fetchTopicMessagesAction.success):
