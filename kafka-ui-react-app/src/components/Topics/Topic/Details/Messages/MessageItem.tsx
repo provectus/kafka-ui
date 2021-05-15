@@ -3,8 +3,9 @@ import { format } from 'date-fns';
 import { TopicMessage } from 'generated-sources';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import useDataSaver from 'lib/hooks/useDataSaver';
+
+import MessageContent from './MessageContent';
 
 export interface MessageItemProp {
   partition: TopicMessage['partition'];
@@ -29,13 +30,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
       <td style={{ width: 150 }}>{offset}</td>
       <td style={{ width: 100 }}>{partition}</td>
       <td style={{ wordBreak: 'break-word' }}>
-        <JSONEditor
-          readOnly
-          value={JSON.stringify(content, null, '\t')}
-          name="latestSchema"
-          highlightActiveLine={false}
-          height="300px"
-        />
+        <MessageContent message={JSON.stringify(content, null, '\t')} />
       </td>
       <td className="has-text-right">
         <Dropdown

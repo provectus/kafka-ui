@@ -36,12 +36,8 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
       }
     }
   >
-    <JSONEditor
-      height="300px"
-      highlightActiveLine={false}
-      name="latestSchema"
-      readOnly={true}
-      value="{
+    <MessageContent
+      message="{
 	\\"foo\\": \\"bar\\",
 	\\"key\\": \\"val\\"
 }"
@@ -113,12 +109,7 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
       }
     }
   >
-    <JSONEditor
-      height="300px"
-      highlightActiveLine={false}
-      name="latestSchema"
-      readOnly={true}
-    />
+    <MessageContent />
   </td>
   <td
     className="has-text-right"
