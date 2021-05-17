@@ -56,7 +56,7 @@ jobs:
         if: always()
         id: allure-report
         with:
-          allure_results: allure-results
+          allure_results: ./kafka-ui-e2e-checks/allure-results
           gh_pages: allure-results
           allure_report: allure-report
           subfolder: allure-results
@@ -76,4 +76,4 @@ jobs:
           context: 'Test report'
           state: 'success'
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: https://${{ github.repository_owner }}.github.io/java-ui-checks/allure-results/${{ github.run_number }}
+          target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure-results/${{ github.run_number }}
