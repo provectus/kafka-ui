@@ -3,8 +3,7 @@ on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
-    - 'kafka-ui-api/**'
-    - 'kafka-ui-e2e-checks/**'
+      - 'kafka-ui-api/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -78,4 +77,3 @@ jobs:
         state: 'success'
         sha: ${{ github.event.pull_request.head.sha  || github.sha }}
         target_url: https://${{ github.repository_owner }}.github.io/java-ui-checks/allure-results/${{ github.run_number }}
-
