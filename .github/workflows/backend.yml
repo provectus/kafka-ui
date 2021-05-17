@@ -57,7 +57,7 @@ jobs:
       id: allure-report
       with:
         allure_results: allure-results
-        gh_pages: allure-results
+        gh_pages: gh-pages
         allure_report: allure-report
         subfolder: allure-results
     - name: Deploy allure report to Github Pages
