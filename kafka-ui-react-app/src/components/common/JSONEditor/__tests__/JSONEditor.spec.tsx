@@ -7,4 +7,16 @@ describe('JSONEditor component', () => {
     const component = shallow(<JSONEditor value="{}" name="name" />);
     expect(component).toMatchSnapshot();
   });
+
+  it('matches the snapshot with fixed height', () => {
+    const component = shallow(
+      <JSONEditor value="{}" name="name" isFixedHeight />
+    );
+    expect(component).toMatchSnapshot();
+  });
+
+  it('matches the snapshot with fixed height with no value', () => {
+    const component = shallow(<JSONEditor name="name" isFixedHeight />);
+    expect(component).toMatchSnapshot();
+  });
 });

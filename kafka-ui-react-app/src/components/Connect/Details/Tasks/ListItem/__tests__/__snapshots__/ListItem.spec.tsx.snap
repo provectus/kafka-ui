@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ListItem view matches snapshot 1`] = `
+<table>
+  <tbody>
+    <tr>
+      <td
+        className="has-text-overflow-ellipsis"
+      >
+        1
+      </td>
+      <td>
+        kafka-connect0:8083
+      </td>
+      <td>
+        <mock-StatusTag
+          status="RUNNING"
+        />
+      </td>
+      <td />
+      <td>
+        <button
+          className="button is-small is-pulled-right"
+          disabled={false}
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            className="icon"
+          >
+            <i
+              className="fas fa-sync-alt"
+            />
+          </span>
+        </button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+`;

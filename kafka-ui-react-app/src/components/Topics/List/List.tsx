@@ -12,6 +12,9 @@ import { FetchTopicsListParams } from 'redux/actions';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
+import { TopicColumnsToSort } from 'generated-sources';
+import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
+import Search from 'components/common/Search/Search';
 
 import ListItem from './ListItem';
 
@@ -27,6 +30,10 @@ interface Props {
     clusterName: ClusterName,
     partitions?: number[]
   ): void;
+  search: string;
+  orderBy: TopicColumnsToSort | null;
+  setTopicsSearch(search: string): void;
+  setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
 }
 
 const List: React.FC<Props> = ({
@@ -37,14 +44,24 @@ const List: React.FC<Props> = ({
   fetchTopicsList,
   deleteTopic,
   clearTopicMessages,
+  search,
+  orderBy,
+  setTopicsSearch,
+  setTopicsOrderBy,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage } = usePagination();
 
   React.useEffect(() => {
-    fetchTopicsList({ clusterName, page, perPage });
-  }, [fetchTopicsList, clusterName, page, perPage]);
+    fetchTopicsList({
+      clusterName,
+      page,
+      perPage,
+      orderBy: orderBy || undefined,
+      search,
+    });
+  }, [fetchTopicsList, clusterName, page, perPage, orderBy, search]);
 
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
 
@@ -52,14 +69,16 @@ const List: React.FC<Props> = ({
     setShowInternal(!showInternal);
   }, [showInternal]);
 
+  const handleSearch = (value: string) => setTopicsSearch(value);
+
   const items = showInternal ? topics : externalTopics;
 
   return (
     <div className="section">
       <Breadcrumb>{showInternal ? `All Topics` : `External Topics`}</Breadcrumb>
       <div className="box">
-        <div className="level">
-          <div className="level-item level-left">
+        <div className="columns">
+          <div className="column is-one-quarter is-align-items-center is-flex">
             <div className="field">
               <input
                 id="switchRoundedDefault"
@@ -72,7 +91,14 @@ const List: React.FC<Props> = ({
               <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
             </div>
           </div>
-          <div className="level-item level-right">
+          <div className="column">
+            <Search
+              handleSearch={handleSearch}
+              placeholder="Search by Topic Name"
+              value={search}
+            />
+          </div>
+          <div className="column is-2 is-justify-content-flex-end is-flex">
             {!isReadOnly && (
               <Link
                 className="button is-primary"
@@ -91,9 +117,24 @@ const List: React.FC<Props> = ({
           <table className="table is-fullwidth">
             <thead>
               <tr>
-                <th>Topic Name</th>
-                <th>Total Partitions</th>
-                <th>Out of sync replicas</th>
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.NAME}
+                  title="Topic Name"
+                  orderBy={orderBy}
+                  setOrderBy={setTopicsOrderBy}
+                />
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.TOTAL_PARTITIONS}
+                  title="Total Partitions"
+                  orderBy={orderBy}
+                  setOrderBy={setTopicsOrderBy}
+                />
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+                  title="Out of sync replicas"
+                  orderBy={orderBy}
+                  setOrderBy={setTopicsOrderBy}
+                />
                 <th>Type</th>
                 <th> </th>
               </tr>

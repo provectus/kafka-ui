@@ -3,6 +3,9 @@ import {
   schemaVersionsPayload,
 } from 'redux/reducers/schemas/__test__/fixtures';
 import * as actions from 'redux/actions';
+import { TopicColumnsToSort } from 'generated-sources';
+
+import { mockTopicsState } from './fixtures';
 
 describe('Actions', () => {
   describe('fetchClusterStatsAction', () => {
@@ -128,6 +131,47 @@ describe('Actions', () => {
       expect(actions.clearMessagesTopicAction.failure({})).toEqual({
         type: 'CLEAR_TOPIC_MESSAGES__FAILURE',
         payload: {},
+      });
+    });
+  });
+
+  describe('fetchTopicConsumerGroups', () => {
+    it('creates a REQUEST action', () => {
+      expect(actions.fetchTopicConsumerGroupsAction.request()).toEqual({
+        type: 'GET_TOPIC_CONSUMER_GROUPS__REQUEST',
+      });
+    });
+
+    it('creates a SUCCESS action', () => {
+      expect(
+        actions.fetchTopicConsumerGroupsAction.success(mockTopicsState)
+      ).toEqual({
+        type: 'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
+        payload: mockTopicsState,
+      });
+    });
+
+    it('creates a FAILURE action', () => {
+      expect(actions.fetchTopicConsumerGroupsAction.failure()).toEqual({
+        type: 'GET_TOPIC_CONSUMER_GROUPS__FAILURE',
+      });
+    });
+  });
+
+  describe('setTopicsSearchAction', () => {
+    it('creartes SET_TOPICS_SEARCH', () => {
+      expect(actions.setTopicsSearchAction('test')).toEqual({
+        type: 'SET_TOPICS_SEARCH',
+        payload: 'test',
+      });
+    });
+  });
+
+  describe('setTopicsOrderByAction', () => {
+    it('creartes SET_TOPICS_ORDER_BY', () => {
+      expect(actions.setTopicsOrderByAction(TopicColumnsToSort.NAME)).toEqual({
+        type: 'SET_TOPICS_ORDER_BY',
+        payload: TopicColumnsToSort.NAME,
       });
     });
   });

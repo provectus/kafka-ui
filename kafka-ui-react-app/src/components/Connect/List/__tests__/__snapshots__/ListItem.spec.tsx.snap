@@ -45,7 +45,9 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                 "connectorClass": "FileStreamSource",
                 "failedTasksCount": 0,
                 "name": "hdfs-source-connector",
-                "status": "RUNNING",
+                "status": Object {
+                  "state": "RUNNING",
+                },
                 "tasksCount": 2,
                 "topics": Array [
                   "test-topic",
@@ -58,7 +60,41 @@ exports[`Connectors ListItem matches snapshot 1`] = `
               <td
                 className="has-text-overflow-ellipsis"
               >
-                hdfs-source-connector
+                <NavLink
+                  activeClassName="is-active"
+                  className="title is-6"
+                  exact={true}
+                  to="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                >
+                  <Link
+                    aria-current={null}
+                    className="title is-6"
+                    to={
+                      Object {
+                        "hash": "",
+                        "pathname": "/ui/clusters/local/connects/first/connectors/hdfs-source-connector",
+                        "search": "",
+                        "state": null,
+                      }
+                    }
+                  >
+                    <LinkAnchor
+                      aria-current={null}
+                      className="title is-6"
+                      href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                      navigate={[Function]}
+                    >
+                      <a
+                        aria-current={null}
+                        className="title is-6"
+                        href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                        onClick={[Function]}
+                      >
+                        hdfs-source-connector
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
               </td>
               <td>
                 first
