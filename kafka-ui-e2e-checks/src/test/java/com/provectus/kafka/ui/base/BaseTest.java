@@ -14,6 +14,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
+
 import java.io.File;
 import java.util.Arrays;
 
@@ -47,7 +48,9 @@ public class BaseTest {
               "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 
   static {
-    Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
+    if (new File("./.env").exists()) {
+      Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
+    }
     if (TestConfiguration.CLEAR_REPORTS_DIR) {
       clearReports();
     }
@@ -73,7 +76,8 @@ public class BaseTest {
     Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
     if (!TestConfiguration.USE_LOCAL_BROWSER) {
       Configuration.remote = remote;
-      TestConfiguration.BASE_URL = TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+      TestConfiguration.BASE_URL =
+          TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
     }
     Configuration.screenshots = TestConfiguration.SCREENSHOTS;
     Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;

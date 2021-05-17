@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Search when placeholder is not provided matches the snapshot 1`] = `
+<p
+  className="control has-icons-left"
+>
+  <input
+    className="input"
+    defaultValue=""
+    onChange={[Function]}
+    placeholder="Search"
+    type="text"
+  />
+  <span
+    className="icon is-small is-left"
+  >
+    <i
+      className="fas fa-search"
+    />
+  </span>
+</p>
+`;
+
+exports[`Search when placeholder is provided matches the snapshot 1`] = `
+<p
+  className="control has-icons-left"
+>
+  <input
+    className="input"
+    defaultValue=""
+    onChange={[Function]}
+    placeholder="Search"
+    type="text"
+  />
+  <span
+    className="icon is-small is-left"
+  >
+    <i
+      className="fas fa-search"
+    />
+  </span>
+</p>
+`;
