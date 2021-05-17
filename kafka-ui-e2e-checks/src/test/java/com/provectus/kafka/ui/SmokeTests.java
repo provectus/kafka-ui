@@ -8,8 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class SmokeTests extends BaseTest {
-
-    @Disabled("till we get tests in ci run")
     @SneakyThrows
     @DisplayName("main page should load")
     @Issue("380")
