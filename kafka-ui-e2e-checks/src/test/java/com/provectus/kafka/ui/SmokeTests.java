@@ -12,7 +12,7 @@ public class SmokeTests extends BaseTest {
     @Test
     @DisplayName("main page should load")
     @Issue("380")
-    void mainPageLoads() {
+    public void mainPageLoads() {
         pages.goTo("")
             .mainPage.shouldBeOnPage();
         compareScreenshots("main");
