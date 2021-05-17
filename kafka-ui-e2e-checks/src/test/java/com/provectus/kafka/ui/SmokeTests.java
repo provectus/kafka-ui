@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 public class SmokeTests extends BaseTest {
     @SneakyThrows
+    @Test
     @DisplayName("main page should load")
     @Issue("380")
     void mainPageLoads() {
