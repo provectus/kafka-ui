@@ -56,7 +56,7 @@ jobs:
       if: always()
       id: allure-report
       with:
-        allure_results: allure-results
+        allure_results: ./kafka-ui-e2e-checks/allure-results
         gh_pages: allure-results
         allure_report: allure-report
         subfolder: allure-results
