@@ -34,3 +34,13 @@ export const schema: SchemaSubject = {
   id: 1,
   compatibilityLevel: CompatibilityLevelCompatibilityEnum.BACKWARD,
 };
+
+export const mockTopicsState = {
+  byName: {},
+  allNames: [],
+  totalPages: 1,
+  messages: [],
+  search: '',
+  orderBy: null,
+  consumerGroups: [],
+};
