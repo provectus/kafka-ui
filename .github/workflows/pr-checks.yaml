@@ -1,0 +1,15 @@
+name: 'PR Checklist checked'
+on:
+  pull_request:
+    types: [opened, edited, synchronized, reopened]
+
+jobs:
+  task-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: kentaro-m/task-completed-checker-action@v0.1.0
+        with:
+          repo-token: "${{ secrets.GITHUB_TOKEN }}"
+      - uses: derkinderfietsen/pr-description-enforcer@v1
+        with:
+          repo-token: '${{ secrets.GITHUB_TOKEN }}'
