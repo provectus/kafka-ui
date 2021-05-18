@@ -11,6 +11,17 @@
       margin-right: 10px;
     }
   }
+
+  &-content-overflow-ellipsis {
+    max-height: 73px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    background:
+      -webkit-linear-gradient(90deg, rgba(0, 0, 0, .1) 0%, rgba(0, 0, 0, 1) 40%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 
 .breadcrumb li {
