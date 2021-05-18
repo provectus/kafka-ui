@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MessageContent when it is folded matches the snapshot 1`] = `
+<div
+  className="is-flex is-flex-direction-column is-align-items-center"
+>
+  <p
+    className="has-content-overflow-ellipsis"
+  >
+    {
+  "_id": "609fab8aed527f514f4e648d",
+  "name": "in nostrud",
+  "desc": "Dolore nostrud commodo magna velit ut magna voluptate sint aute. Excepteur aute culpa culpa dolor ipsum. Tempor est ut officia tempor laborum consectetur.
+Amet officia eu veni...
+  </p>
+  <button
+    className="button is-small mt-2"
+    onClick={[Function]}
+    title="Expand to JSON"
+    type="button"
+  >
+    <span
+      className="icon is-small"
+    >
+      <i
+        className="fas fa-chevron-down"
+      />
+    </span>
+  </button>
+</div>
+`;
+
+exports[`MessageContent when it is unfolded matches the snapshot 1`] = `
+<div
+  className="is-flex is-flex-direction-column is-align-items-center"
+>
+  <JSONTree
+    collectionLimit={50}
+    data="{
+  \\"_id\\": \\"609fab8aed527f514f4e648d\\",
+  \\"name\\": \\"in nostrud\\",
+  \\"desc\\": \\"Dolore nostrud commodo magna velit ut magna voluptate sint aute. Excepteur aute culpa culpa dolor ipsum. Tempor est ut officia tempor laborum consectetur.
+Amet officia eu veniam Lorem enim aliqua aute voluptate elit do sunt in magna occaecat. Nisi sit non est adipisicing adipisicing consequat duis duis tempor consequat deserunt ea quis ad. Veniam sunt culpa nostrud adipisicing cillum voluptate non est cupidatat. Eiusmod tempor officia irure et deserunt est ex laboris occaecat adipisicing occaecat in aliquip aliqua. Do laboris culpa cupidatat cillum non. Ullamco excepteur mollit voluptate anim in nisi anim elit culpa aute. Ad officia sunt proident ut ullamco officia ea fugiat culpa cillum et fugiat aliquip.
+Amet non labore anim in ipsum. Et Lorem velit dolor ipsum. Irure id proident excepteur aliquip deserunt id officia dolor deserunt amet in sint. Aute in nostrud nulla ut laboris Lorem commodo nulla ipsum. Aliqua nulla commodo Lorem labore magna esse proident id ea in pariatur consectetur sint Lorem.
+Cupidatat deserunt mollit tempor aliqua. Fugiat ullamco magna pariatur quis nulla magna. Esse duis labore ipsum nisi ullamco qui aute duis duis amet est laborum adipisicing magna. Est aliquip quis qui do aliquip nisi elit tempor ex aliquip. Excepteur aliquip ea deserunt amet adipisicing voluptate eiusmod sit sint exercitation exercitation. Id labore amet mollit ex commodo. Proident ex adipisicing deserunt esse Lorem tempor laborum nostrud commodo incididunt ea id.
+\\",
+  \\"semster\\": \\"spring19\\",
+  \\"profile\\": \\"cs\\",
+  \\"degree\\": \\"bachelor\\",
+  \\"degreee\\": \\"master\\",
+  \\"degreeeee\\": \\"bachelor\\"
+}"
+    getItemString={[Function]}
+    hideRoot={true}
+    invertTheme={true}
+    isCustomNode={[Function]}
+    keyPath={
+      Array [
+        "root",
+      ]
+    }
+    labelRenderer={[Function]}
+    postprocessValue={[Function]}
+    shouldExpandNode={[Function]}
+    theme={
+      Object {
+        "author": "seth wright (http://sethawright.com)",
+        "base00": "#1d1f21",
+        "base01": "#282a2e",
+        "base02": "#373b41",
+        "base03": "#969896",
+        "base04": "#b4b7b4",
+        "base05": "#c5c8c6",
+        "base06": "#e0e0e0",
+        "base07": "#ffffff",
+        "base08": "#CC342B",
+        "base09": "#F96A38",
+        "base0A": "#FBA922",
+        "base0B": "#198844",
+        "base0C": "#3971ED",
+        "base0D": "#3971ED",
+        "base0E": "#A36AC7",
+        "base0F": "#3971ED",
+        "scheme": "google",
+      }
+    }
+    valueRenderer={[Function]}
+  />
+</div>
+`;

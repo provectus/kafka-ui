@@ -10,12 +10,12 @@ jest.mock('date-fns', () => ({
 
 describe('MessageItem', () => {
   describe('when content is defined', () => {
-    it('renders table row with JSONEditor', () => {
+    it('renders table row with MessageContent', () => {
       const wrapper = shallow(<MessageItem {...messages[0]} />);
 
       expect(wrapper.find('tr').length).toEqual(1);
       expect(wrapper.find('td').length).toEqual(5);
-      expect(wrapper.find('JSONEditor').length).toEqual(1);
+      expect(wrapper.find('MessageContent').length).toEqual(1);
     });
 
     it('matches snapshot', () => {
