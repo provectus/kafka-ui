@@ -60,7 +60,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-history
           publish_branch: gh-pages
-          destination_dir: .
+          destination_dir: ./allure
       - name: Post the link to allure report
         if: always()
         uses: Sibz/github-status-action@v1
@@ -69,4 +69,4 @@ jobs:
           context: 'Test report'
           state: 'success'
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure-results/${{ github.run_number }}
+          target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
