@@ -9,12 +9,14 @@ export const messages: TopicMessage[] = [
       foo: 'bar',
       key: 'val',
     },
+    key: '1',
   },
   {
     partition: 2,
     offset: 20,
     timestamp: new Date(Date.UTC(2020, 7, 5)),
     content: undefined,
+    key: '1',
   },
 ];
 

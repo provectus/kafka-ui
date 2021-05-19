@@ -12,6 +12,7 @@ export interface MessageItemProp {
   offset: TopicMessage['offset'];
   timestamp: TopicMessage['timestamp'];
   content?: TopicMessage['content'];
+  keyMessage?: TopicMessage['key'];
 }
 
 const MessageItem: React.FC<MessageItemProp> = ({
@@ -19,6 +20,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
   offset,
   timestamp,
   content,
+  keyMessage,
 }) => {
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
@@ -26,6 +28,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
   );
   return (
     <tr>
+      <td style={{ width: 100 }}>{keyMessage}</td>
       <td style={{ width: 200 }}>{format(timestamp, 'yyyy-MM-dd HH:mm:ss')}</td>
       <td style={{ width: 150 }}>{offset}</td>
       <td style={{ width: 100 }}>{partition}</td>
