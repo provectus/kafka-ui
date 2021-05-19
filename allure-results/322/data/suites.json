@@ -4,13 +4,13 @@
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "b34f7dccb0de8a08",
+      "uid" : "52257bb4b83ad8c8",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1621340258107,
-        "stop" : 1621340263900,
-        "duration" : 5793
+        "start" : 1621415791320,
+        "stop" : 1621415798658,
+        "duration" : 7338
       },
       "flaky" : false,
       "newFailed" : false,
