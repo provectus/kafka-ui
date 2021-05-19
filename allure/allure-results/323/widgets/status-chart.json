@@ -1,0 +1,11 @@
+[ {
+  "uid" : "de937cc307794934",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1621417426351,
+    "stop" : 1621417433091,
+    "duration" : 6740
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]

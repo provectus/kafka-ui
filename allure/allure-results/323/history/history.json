@@ -1,0 +1,22 @@
+{
+  "5472b00abbb74c5c8bdcfb9f276f316" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "de937cc307794934",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/323//#testresult/de937cc307794934",
+      "status" : "passed",
+      "time" : {
+        "start" : 1621417426351,
+        "stop" : 1621417433091,
+        "duration" : 6740
+      }
+    } ]
+  }
+}

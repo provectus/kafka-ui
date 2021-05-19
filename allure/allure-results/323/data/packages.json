@@ -1,0 +1,22 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "children" : [ {
+    "name" : "com.provectus.kafka.ui.SmokeTests",
+    "children" : [ {
+      "name" : "mainPageLoads",
+      "uid" : "de937cc307794934",
+      "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
+      "status" : "passed",
+      "time" : {
+        "start" : 1621417426351,
+        "stop" : 1621417433091,
+        "duration" : 6740
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "com.provectus.kafka.ui.SmokeTests"
+  } ],
+  "name" : "packages"
+}
