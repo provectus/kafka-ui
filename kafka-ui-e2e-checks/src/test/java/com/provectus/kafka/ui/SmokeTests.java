@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class SmokeTests extends BaseTest {
-
     @Test
     @SneakyThrows
     @DisplayName("main page should load")
@@ -18,4 +17,5 @@ public class SmokeTests extends BaseTest {
             .mainPage.shouldBeOnPage();
         compareScreenshots("main");
     }
+
 }
