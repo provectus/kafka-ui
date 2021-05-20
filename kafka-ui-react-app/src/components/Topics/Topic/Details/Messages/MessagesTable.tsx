@@ -19,8 +19,8 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
       <table className="table is-fullwidth">
         <thead>
           <tr>
-            <th>Key</th>
             <th>Timestamp</th>
+            <th>Key</th>
             <th>Offset</th>
             <th>Partition</th>
             <th>Content</th>
@@ -36,7 +36,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
                 offset={offset}
                 timestamp={timestamp}
                 content={content}
-                keyMessage={key}
+                messageKey={key}
               />
             )
           )}

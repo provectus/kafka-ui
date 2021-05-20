@@ -5,19 +5,13 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
   <td
     style={
       Object {
-        "width": 100,
-      }
-    }
-  />
-  <td
-    style={
-      Object {
         "width": 200,
       }
     }
   >
     mocked date
   </td>
+  <td />
   <td
     style={
       Object {
@@ -85,19 +79,13 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
   <td
     style={
       Object {
-        "width": 100,
-      }
-    }
-  />
-  <td
-    style={
-      Object {
         "width": 200,
       }
     }
   >
     mocked date
   </td>
+  <td />
   <td
     style={
       Object {
