@@ -11,6 +11,9 @@ exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
           Timestamp
         </th>
         <th>
+          Key
+        </th>
+        <th>
           Offset
         </th>
         <th>
@@ -33,12 +36,14 @@ exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
           }
         }
         key="message-802310400000-2"
+        messageKey="1"
         offset={2}
         partition={1}
         timestamp={1995-06-05T00:00:00.000Z}
       />
       <MessageItem
         key="message-1596585600000-20"
+        messageKey="1"
         offset={20}
         partition={2}
         timestamp={2020-08-05T00:00:00.000Z}

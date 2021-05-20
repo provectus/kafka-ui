@@ -11,6 +11,7 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
   >
     mocked date
   </td>
+  <td />
   <td
     style={
       Object {
@@ -84,6 +85,7 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
   >
     mocked date
   </td>
+  <td />
   <td
     style={
       Object {

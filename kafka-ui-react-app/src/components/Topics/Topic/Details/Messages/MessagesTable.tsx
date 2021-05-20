@@ -20,6 +20,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
         <thead>
           <tr>
             <th>Timestamp</th>
+            <th>Key</th>
             <th>Offset</th>
             <th>Partition</th>
             <th>Content</th>
@@ -28,13 +29,14 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
         </thead>
         <tbody>
           {messages.map(
-            ({ partition, offset, timestamp, content }: TopicMessage) => (
+            ({ partition, offset, timestamp, content, key }: TopicMessage) => (
               <MessageItem
                 key={`message-${timestamp.getTime()}-${offset}`}
                 partition={partition}
                 offset={offset}
                 timestamp={timestamp}
                 content={content}
+                messageKey={key}
               />
             )
           )}
