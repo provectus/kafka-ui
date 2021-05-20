@@ -237,6 +237,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                   },
                 },
                 "getIsDirty": [Function],
+                "inFieldArrayActionRef": Object {
+                  "current": false,
+                },
                 "isWatchAllRef": Object {
                   "current": false,
                 },
@@ -252,7 +255,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                   },
                 },
                 "register": [Function],
-                "shouldUnmountUnregister": undefined,
+                "shouldUnmount": undefined,
                 "unregister": [Function],
                 "validFieldsRef": Object {
                   "current": Object {},
