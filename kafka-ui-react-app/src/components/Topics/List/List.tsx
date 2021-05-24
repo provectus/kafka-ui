@@ -147,7 +147,6 @@ const List: React.FC<Props> = ({
                   topic={topic}
                   deleteTopic={deleteTopic}
                   clearTopicMessages={clearTopicMessages}
-                  isReadOnly={isReadOnly}
                 />
               ))}
               {items.length === 0 && (

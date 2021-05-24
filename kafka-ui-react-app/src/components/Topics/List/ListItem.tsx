@@ -9,13 +9,13 @@ import {
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import ClusterContext from 'components/contexts/ClusterContext';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
   clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
-  isReadOnly: boolean;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
@@ -23,8 +23,9 @@ const ListItem: React.FC<ListItemProps> = ({
   deleteTopic,
   clusterName,
   clearTopicMessages,
-  isReadOnly,
 }) => {
+  const { isReadOnly } = React.useContext(ClusterContext);
+
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
 

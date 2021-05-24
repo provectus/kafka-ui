@@ -10,7 +10,6 @@ import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
 const mockDelete = jest.fn();
 const clusterName = 'local';
 const mockDeleteMessages = jest.fn();
-const mockIsReadOnly = false;
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -24,7 +23,6 @@ describe('ListItem', () => {
       deleteTopic={mockDelete}
       clusterName={clusterName}
       clearTopicMessages={mockDeleteMessages}
-      isReadOnly={mockIsReadOnly}
       {...props}
     />
   );
