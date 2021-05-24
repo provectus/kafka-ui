@@ -2,11 +2,18 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
-import { connectorsPayload } from 'redux/reducers/connect/__test__/fixtures';
+import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import configureStore from 'redux/store/configureStore';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
+import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
 
 const store = configureStore();
+
+const mockDeleteConnector = jest.fn();
+jest.mock('redux/actions', () => ({
+  ...jest.requireActual('redux/actions'),
+  deleteConnector: () => mockDeleteConnector(),
+}));
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -14,7 +21,7 @@ jest.mock(
 );
 
 describe('Connectors ListItem', () => {
-  const connector = connectorsPayload[0];
+  const connector = connectors[0];
   const setupWrapper = (props: Partial<ListItemProps> = {}) => (
     <Provider store={store}>
       <BrowserRouter>
@@ -60,7 +67,7 @@ describe('Connectors ListItem', () => {
     expect(wrapper.find('td').at(6).text()).toEqual('');
   });
 
-  it('handles delete', () => {
+  it('handles cancel', () => {
     const wrapper = mount(setupWrapper());
     expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
     wrapper.find('DropdownItem').last().simulate('click');
@@ -68,6 +75,24 @@ describe('Connectors ListItem', () => {
     expect(modal.prop('isOpen')).toBeTruthy();
     modal.simulate('cancel');
     expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
+  });
+
+  it('handles delete', () => {
+    const wrapper = mount(setupWrapper());
+    const modalProps = wrapper
+      .find('mock-ConfirmationModal')
+      .props() as ConfirmationModalProps;
+    modalProps.onConfirm();
+    expect(mockDeleteConnector).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles delete when clusterName is not present', () => {
+    const wrapper = mount(setupWrapper({ clusterName: undefined }));
+    const modalProps = wrapper
+      .find('mock-ConfirmationModal')
+      .props() as ConfirmationModalProps;
+    modalProps.onConfirm();
+    expect(mockDeleteConnector).toHaveBeenCalledTimes(0);
   });
 
   it('matches snapshot', () => {

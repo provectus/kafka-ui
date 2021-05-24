@@ -3,6 +3,7 @@
     "default": "86.0",
     "versions": {
       "86.0": {
+        "hosts": ["host.docker.internal:172.17.0.1"],
         "image": "selenoid/vnc:chrome_86.0",
         "port": "4444"
       }

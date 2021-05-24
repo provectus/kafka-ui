@@ -16,14 +16,14 @@ export const getTopicMessages = (state: RootState) =>
   topicsState(state).messages;
 export const getTopicListTotalPages = (state: RootState) =>
   topicsState(state).totalPages;
+export const getTopicConsumerGroups = (state: RootState) =>
+  topicsState(state).consumerGroups;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
-const getTopicDetailsFetchingStatus = createFetchingSelector(
-  'GET_TOPIC_DETAILS'
-);
-const getTopicMessagesFetchingStatus = createFetchingSelector(
-  'GET_TOPIC_MESSAGES'
-);
+const getTopicDetailsFetchingStatus =
+  createFetchingSelector('GET_TOPIC_DETAILS');
+const getTopicMessagesFetchingStatus =
+  createFetchingSelector('GET_TOPIC_MESSAGES');
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
@@ -122,4 +122,19 @@ export const getTopicConfigByParamName = createSelector(
 
     return byParamName;
   }
+);
+
+export const getTopicsSearch = createSelector(
+  topicsState,
+  (state) => state.search
+);
+
+export const getTopicsOrderBy = createSelector(
+  topicsState,
+  (state) => state.orderBy
+);
+
+export const getIsTopicInternal = createSelector(
+  getTopicByName,
+  ({ internal }) => !!internal
 );
