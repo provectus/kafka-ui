@@ -15,6 +15,7 @@ export interface ListItemProps {
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
   clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
+  isReadOnly: boolean;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
@@ -22,6 +23,7 @@ const ListItem: React.FC<ListItemProps> = ({
   deleteTopic,
   clusterName,
   clearTopicMessages,
+  isReadOnly,
 }) => {
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
@@ -65,7 +67,7 @@ const ListItem: React.FC<ListItemProps> = ({
         </div>
       </td>
       <td className="topic-action-block">
-        {!internal ? (
+        {!internal && !isReadOnly ? (
           <>
             <div className="has-text-right">
               <Dropdown
