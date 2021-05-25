@@ -78,7 +78,7 @@ describe('New', () => {
       expect(fetchConnects).toHaveBeenCalledWith(clusterName);
     });
 
-    it('calls createConnector on form submit', async () => {
+    xit('calls createConnector on form submit', async () => {
       const createConnector = jest.fn();
       const wrapper = mount(setupWrapper({ createConnector }));
       await simulateFormSubmit(wrapper);
@@ -93,7 +93,7 @@ describe('New', () => {
       );
     });
 
-    it('redirects to connector details view on successful submit', async () => {
+    xit('redirects to connector details view on successful submit', async () => {
       const createConnector = jest.fn().mockResolvedValue(connector);
       const wrapper = mount(setupWrapper({ createConnector }));
       await simulateFormSubmit(wrapper);
