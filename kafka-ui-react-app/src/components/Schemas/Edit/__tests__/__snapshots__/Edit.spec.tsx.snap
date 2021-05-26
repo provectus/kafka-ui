@@ -167,7 +167,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           >
             New Schema
           </h4>
-          <Component
+          <Controller
             control={
               Object {
                 "controllerSubjectRef": Object {
