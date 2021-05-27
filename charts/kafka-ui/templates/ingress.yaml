@@ -16,26 +16,34 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- if .Values.ingress.tls }}
+  {{- if .Values.ingress.tls.enabled }}
   tls:
-    {{- range .Values.ingress.tls }}
     - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tls.secretName }}
   {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
-      http:
+    - http:
         paths:
-          {{- range .paths }}
-          - path: {{ . }}
+          {{- range .Values.ingress.precedingPaths }}
+          - path: {{ .path }}
             backend:
+              serviceName: {{ .serviceName }}
+              servicePort: {{ .servicePort }}
+          {{- end }}
+          - backend:
               serviceName: {{ $fullName }}
               servicePort: {{ $svcPort }}
+{{- if .Values.ingress.path }}
+            path: {{ .Values.ingress.path }}
+{{- end }}
+          {{- range .Values.ingress.succeedingPaths }}
+          - path: {{ .path }}
+            backend:
+              serviceName: {{ .serviceName }}
+              servicePort: {{ .servicePort }}
           {{- end }}
-    {{- end }}
+{{- if .Values.ingress.host }}
+      host: {{ .Values.ingress.host }}
+{{- end }}
   {{- end }}
