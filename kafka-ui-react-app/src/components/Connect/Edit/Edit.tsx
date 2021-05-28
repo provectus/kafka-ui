@@ -107,16 +107,9 @@ const Edit: React.FC<EditProps> = ({
             <Controller
               control={control}
               name="config"
-              render={({
-                field,
-              }: {
-                field: {
-                  name: string;
-                  onChange: () => void;
-                  value: string;
-                  onBlur: () => void;
-                };
-              }) => <JSONEditor {...field} readOnly={isSubmitting} />}
+              render={({ field }) => (
+                <JSONEditor {...field} readOnly={isSubmitting} />
+              )}
             />
           </div>
           <p className="help is-danger">

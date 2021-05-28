@@ -198,6 +198,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                         "ref": Object {
                           "name": "compatibilityLevel",
                         },
+                        "value": undefined,
                       },
                     },
                     "schemaType": Object {
@@ -208,6 +209,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                           "name": "schemaType",
                         },
                         "required": "Schema Type is required.",
+                        "value": undefined,
                       },
                     },
                   },

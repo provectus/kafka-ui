@@ -31,10 +31,9 @@ describe('New', () => {
     const clusterName = 'my-cluster';
     const simulateFormSubmit = (wrapper: ReactWrapper) =>
       act(async () => {
-        const nameInput = wrapper
-          .find('input[name="name"]')
-          .getDOMNode<HTMLInputElement>();
-        nameInput.value = 'my-connector';
+        wrapper.find('input[name="name"]').simulate('change', {
+          target: { name: 'name', value: 'my-connector' },
+        });
         wrapper
           .find('mock-JSONEditor')
           .simulate('change', { target: { value: '{"class":"MyClass"}' } });
@@ -78,7 +77,7 @@ describe('New', () => {
       expect(fetchConnects).toHaveBeenCalledWith(clusterName);
     });
 
-    xit('calls createConnector on form submit', async () => {
+    it('calls createConnector on form submit', async () => {
       const createConnector = jest.fn();
       const wrapper = mount(setupWrapper({ createConnector }));
       await simulateFormSubmit(wrapper);
@@ -93,7 +92,7 @@ describe('New', () => {
       );
     });
 
-    xit('redirects to connector details view on successful submit', async () => {
+    it('redirects to connector details view on successful submit', async () => {
       const createConnector = jest.fn().mockResolvedValue(connector);
       const wrapper = mount(setupWrapper({ createConnector }));
       await simulateFormSubmit(wrapper);

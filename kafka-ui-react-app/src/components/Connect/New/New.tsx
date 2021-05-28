@@ -145,15 +145,9 @@ const New: React.FC<NewProps> = ({
             <Controller
               control={control}
               name="config"
-              render={({
-                field,
-              }: {
-                field: {
-                  name: string;
-                  onChange: () => void;
-                  onBlur: () => void;
-                };
-              }) => <JSONEditor {...field} readOnly={isSubmitting} />}
+              render={({ field }) => (
+                <JSONEditor {...field} readOnly={isSubmitting} />
+              )}
             />
           </div>
           <p className="help is-danger">

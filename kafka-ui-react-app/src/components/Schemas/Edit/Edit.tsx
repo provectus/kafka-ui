@@ -160,11 +160,7 @@ const Edit = ({
                 <Controller
                   control={control}
                   name="newSchema"
-                  render={({
-                    field: { name, onChange },
-                  }: {
-                    field: { name: string; onChange: () => void };
-                  }) => (
+                  render={({ field: { name, onChange } }) => (
                     <JSONEditor
                       readOnly={isSubmitting}
                       defaultValue={getFormattedSchema()}
