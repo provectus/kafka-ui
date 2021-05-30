@@ -11,11 +11,8 @@ import com.provectus.kafka.ui.model.ConnectorTaskStatus;
 import com.provectus.kafka.ui.model.FullConnectorInfo;
 import com.provectus.kafka.ui.model.Task;
 import com.provectus.kafka.ui.model.TaskStatus;
-import java.util.Arrays;
+import com.provectus.kafka.ui.model.connect.InternalConnectInfo;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import org.apache.commons.lang3.tuple.Triple;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -36,32 +33,22 @@ public interface KafkaConnectMapper {
       com.provectus.kafka.ui.connect.model.ConnectorPluginConfigValidationResponse
           connectorPluginConfigValidationResponse);
 
-  default FullConnectorInfo fullConnectorInfoFromTuple(Triple<Connector, Map<String, Object>,
-      List<Task>> triple) {
-    Function<Map<String, Object>, List<String>> getTopicsFromConfig = config -> {
-      var topic = config.get("topic");
-      if (topic != null) {
-        return List.of((String) topic);
-      }
-      return Arrays.asList(((String) config.get("topics")).split(","));
-    };
-
+  default FullConnectorInfo fullConnectorInfoFromTuple(InternalConnectInfo connectInfo) {
+    Connector connector = connectInfo.getConnector();
+    List<Task> tasks = connectInfo.getTasks();
+    int failedTasksCount = (int) tasks.stream()
+        .map(Task::getStatus)
+        .map(TaskStatus::getState)
+        .filter(ConnectorTaskStatus.FAILED::equals)
+        .count();
     return new FullConnectorInfo()
-        .connect(triple.getLeft().getConnect())
-        .name(triple.getLeft().getName())
-        .connectorClass((String) triple.getMiddle().get("connector.class"))
-        .type(triple.getLeft().getType())
-        .topics(getTopicsFromConfig.apply(triple.getMiddle()))
-        .status(
-            triple.getLeft().getStatus()
-        )
-        .tasksCount(triple.getRight().size())
-        .failedTasksCount((int) triple.getRight().stream()
-            .map(Task::getStatus)
-            .map(TaskStatus::getState)
-            .filter(ConnectorTaskStatus.FAILED::equals)
-            .count());
+        .connect(connector.getConnect())
+        .name(connector.getName())
+        .connectorClass((String) connectInfo.getConfig().get("connector.class"))
+        .type(connector.getType())
+        .topics(connectInfo.getTopics())
+        .status(connector.getStatus())
+        .tasksCount(tasks.size())
+        .failedTasksCount(failedTasksCount);
   }
-
-  ;
 }

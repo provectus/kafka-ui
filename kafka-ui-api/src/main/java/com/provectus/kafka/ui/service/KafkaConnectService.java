@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.client.KafkaConnectClients;
+import com.provectus.kafka.ui.connect.model.ConnectorTopics;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ConnectNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
@@ -17,6 +18,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.NewConnector;
 import com.provectus.kafka.ui.model.Task;
+import com.provectus.kafka.ui.model.connect.InternalConnectInfo;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -58,14 +59,40 @@ public class KafkaConnectService {
         .flatMap(pair -> getConnector(clusterName, pair.getLeft(), pair.getRight()))
         .flatMap(connector ->
             getConnectorConfig(clusterName, connector.getConnect(), connector.getName())
-                .map(config -> Pair.of(connector, config))
+                .map(config -> InternalConnectInfo.builder()
+                    .connector(connector)
+                    .config(config)
+                    .build()
+                )
         )
-        .flatMap(pair ->
-            getConnectorTasks(clusterName, pair.getLeft().getConnect(), pair.getLeft().getName())
+        .flatMap(connectInfo ->
+            getConnectorTasks(clusterName, connectInfo.getConnector().getConnect(), connectInfo.getConnector().getName())
                 .collectList()
-                .map(tasks -> Triple.of(pair.getLeft(), pair.getRight(), tasks))
+                .map(tasks -> InternalConnectInfo.builder()
+                    .connector(connectInfo.getConnector())
+                    .config(connectInfo.getConfig())
+                    .tasks(tasks)
+                    .build()
+                )
         )
+        .flatMap(connectInfo -> getConnectorTopics(clusterName, connectInfo.getConnector().getConnect(), connectInfo.getConnector().getName())
+            .map(ct -> InternalConnectInfo.builder()
+                .connector(connectInfo.getConnector())
+                .config(connectInfo.getConfig())
+                .tasks(connectInfo.getTasks())
+                .topics(ct.getTopics())
+                .build()
+            ))
         .map(kafkaConnectMapper::fullConnectorInfoFromTuple);
+  }
+
+  private Mono<ConnectorTopics> getConnectorTopics(String clusterName, String kafkaConnectClusterName, String connectorName) {
+    return getConnectAddress(clusterName, kafkaConnectClusterName)
+        .flatMap(connectUrl -> KafkaConnectClients
+            .withBaseUrl(connectUrl)
+            .getConnectorTopics(connectorName)
+            .map(result -> result.get(connectorName))
+        );
   }
 
   private Flux<Pair<String, String>> getConnectorNames(String clusterName, Connect connect) {
