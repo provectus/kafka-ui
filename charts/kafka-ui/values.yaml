@@ -44,13 +44,32 @@ service:
   # if you want to force a specific nodePort. Must be use with service.type=NodePort
   # nodePort:
 
+# Ingress configuration
 ingress:
+  # Enable ingress resource
   enabled: false
+
+  # Annotations for the Ingress
   annotations: {}
-  hosts:
-    - host: chart-example.local
-      paths: []
-  tls: []
+
+  # The path for the Ingress
+  path: ""
+
+  # The hostname for the Ingress
+  host: ""
+
+  # configs for Ingress TLS
+  tls:
+    # Enable TLS termination for the Ingress
+    enabled: false
+    # the name of a pre-created Secret containing a TLS private key and certificate
+    secretName: ""
+
+  # HTTP paths to add to the Ingress before the default path
+  precedingPaths: []
+
+  # Http paths to add to the Ingress after the default path
+  succeedingPaths: []
 
 resources: {}
   # limits:
