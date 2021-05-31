@@ -65,19 +65,17 @@ public class KafkaConnectService {
                     .build()
                 )
         )
-        .flatMap(connectInfo ->
-            {
-              Connector connector = connectInfo.getConnector();
-              return getConnectorTasks(clusterName, connector.getConnect(), connector.getName())
-                  .collectList()
-                  .map(tasks -> InternalConnectInfo.builder()
-                      .connector(connector)
-                      .config(connectInfo.getConfig())
-                      .tasks(tasks)
-                      .build()
-                  );
-            }
-        )
+        .flatMap(connectInfo -> {
+          Connector connector = connectInfo.getConnector();
+          return getConnectorTasks(clusterName, connector.getConnect(), connector.getName())
+              .collectList()
+              .map(tasks -> InternalConnectInfo.builder()
+                  .connector(connector)
+                  .config(connectInfo.getConfig())
+                  .tasks(tasks)
+                  .build()
+              );
+        })
         .flatMap(connectInfo -> {
           Connector connector = connectInfo.getConnector();
           return getConnectorTopics(clusterName, connector.getConnect(), connector.getName())
