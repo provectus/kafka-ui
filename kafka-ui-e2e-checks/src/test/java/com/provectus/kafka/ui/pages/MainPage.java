@@ -26,7 +26,8 @@ public class MainPage {
       refresh();
       i++;
       sleep(2000);
-    } while(getElements(by).size()<1 && i!=10);
+    } while(getElements(by).size()<1 && i!=20);
+    $(by).shouldBe(Condition.visible);
   }
 
   @SneakyThrows
