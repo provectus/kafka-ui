@@ -50,6 +50,8 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             defaultValue="AVRO"
             disabled={false}
             name="schemaType"
+            onBlur={[Function]}
+            onChange={[Function]}
           >
             <option
               key="AVRO"
@@ -87,6 +89,8 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             defaultValue="BACKWARD"
             disabled={false}
             name="compatibilityLevel"
+            onBlur={[Function]}
+            onChange={[Function]}
           >
             <option
               key="BACKWARD"
@@ -166,6 +170,11 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           <Controller
             control={
               Object {
+                "controllerSubjectRef": Object {
+                  "current": Re {
+                    "observers": Array [],
+                  },
+                },
                 "defaultValuesRef": Object {
                   "current": Object {},
                 },
@@ -175,26 +184,40 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                 "fieldArrayNamesRef": Object {
                   "current": Set {},
                 },
-                "fieldArrayValuesRef": Object {
-                  "current": Object {},
+                "fieldArraySubjectRef": Object {
+                  "current": Re {
+                    "observers": Array [],
+                  },
                 },
                 "fieldsRef": Object {
-                  "current": Object {},
+                  "current": Object {
+                    "compatibilityLevel": Object {
+                      "_f": Object {
+                        "mount": true,
+                        "name": "compatibilityLevel",
+                        "ref": Object {
+                          "name": "compatibilityLevel",
+                        },
+                        "value": undefined,
+                      },
+                    },
+                    "schemaType": Object {
+                      "_f": Object {
+                        "mount": true,
+                        "name": "schemaType",
+                        "ref": Object {
+                          "name": "schemaType",
+                        },
+                        "required": "Schema Type is required.",
+                        "value": undefined,
+                      },
+                    },
+                  },
                 },
                 "fieldsWithValidationRef": Object {
-                  "current": Object {},
-                },
-                "formState": Object {
-                  "dirtyFields": Object {},
-                  "errors": Object {},
-                  "isDirty": false,
-                  "isSubmitSuccessful": false,
-                  "isSubmitted": false,
-                  "isSubmitting": false,
-                  "isValid": true,
-                  "isValidating": false,
-                  "submitCount": 0,
-                  "touched": Object {},
+                  "current": Object {
+                    "schemaType": true,
+                  },
                 },
                 "formStateRef": Object {
                   "current": Object {
@@ -207,65 +230,49 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                     "isValid": true,
                     "isValidating": false,
                     "submitCount": 0,
-                    "touched": Object {},
+                    "touchedFields": Object {},
                   },
                 },
-                "getValues": [Function],
-                "isFormDirty": [Function],
-                "mode": Object {
-                  "isOnAll": false,
-                  "isOnBlur": false,
-                  "isOnChange": true,
-                  "isOnSubmit": false,
-                  "isOnTouch": false,
+                "formStateSubjectRef": Object {
+                  "current": Re {
+                    "observers": Array [],
+                  },
                 },
-                "reValidateMode": Object {
-                  "isReValidateOnBlur": false,
-                  "isReValidateOnChange": true,
+                "getIsDirty": [Function],
+                "inFieldArrayActionRef": Object {
+                  "current": false,
+                },
+                "isWatchAllRef": Object {
+                  "current": false,
                 },
                 "readFormStateRef": Object {
                   "current": Object {
-                    "constructor": true,
-                    "dirtyFields": true,
-                    "errors": true,
-                    "isDirty": true,
-                    "isSubmitSuccessful": true,
-                    "isSubmitted": true,
-                    "isSubmitting": true,
-                    "isValid": true,
-                    "isValidating": true,
-                    "submitCount": true,
-                    "touched": true,
+                    "dirtyFields": false,
+                    "errors": false,
+                    "isDirty": "all",
+                    "isSubmitting": "all",
+                    "isValid": false,
+                    "isValidating": false,
+                    "touchedFields": false,
                   },
                 },
                 "register": [Function],
-                "removeFieldEventListener": [Function],
-                "resetFieldArrayFunctionRef": Object {
-                  "current": Object {},
-                },
-                "setValue": [Function],
-                "shallowFieldsStateRef": Object {
-                  "current": Object {},
-                },
-                "shouldUnregister": true,
-                "trigger": [Function],
+                "shouldUnmount": undefined,
                 "unregister": [Function],
-                "updateFormState": [Function],
-                "updateWatchedValue": [Function],
-                "useWatchFieldsRef": Object {
-                  "current": Object {},
-                },
-                "useWatchRenderFunctionsRef": Object {
-                  "current": Object {},
-                },
                 "validFieldsRef": Object {
                   "current": Object {},
                 },
-                "validateResolver": undefined,
+                "watchFieldsRef": Object {
+                  "current": Set {},
+                },
                 "watchInternal": [Function],
+                "watchSubjectRef": Object {
+                  "current": Re {
+                    "observers": Array [],
+                  },
+                },
               }
             }
-            disabled={false}
             name="newSchema"
             render={[Function]}
           />

@@ -21,7 +21,12 @@ const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
   existingFields,
   onNameChange,
 }) => {
-  const { register, errors, getValues, trigger } = useFormContext();
+  const {
+    register,
+    getValues,
+    trigger,
+    formState: { errors },
+  } = useFormContext();
   const optInputName = `${index}[name]`;
 
   const selectedMustBeUniq = (selected: string) => {
@@ -50,8 +55,7 @@ const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
       <label className="label">Custom Parameter</label>
       <div className="select is-block">
         <select
-          name={optInputName}
-          ref={register({
+          {...register(optInputName, {
             required: 'Custom Parameter is required.',
             validate: { unique: (selected) => selectedMustBeUniq(selected) },
           })}

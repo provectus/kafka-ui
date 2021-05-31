@@ -21,6 +21,8 @@ exports[`New view matches snapshot 1`] = `
         <select
           disabled={false}
           name="connectName"
+          onBlur={[Function]}
+          onChange={[Function]}
         >
           <option
             value="first"
@@ -54,6 +56,8 @@ exports[`New view matches snapshot 1`] = `
           className="input"
           disabled={false}
           name="name"
+          onBlur={[Function]}
+          onChange={[Function]}
           placeholder="Connector Name"
         />
       </div>
@@ -77,6 +81,7 @@ exports[`New view matches snapshot 1`] = `
           onBlur={[Function]}
           onChange={[Function]}
           readOnly={false}
+          value=""
         />
       </div>
       <p

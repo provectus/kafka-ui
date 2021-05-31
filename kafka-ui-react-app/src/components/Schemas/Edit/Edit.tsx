@@ -110,8 +110,7 @@ const Edit = ({
               <h5 className="title is-5 mb-2">Schema Type</h5>
               <div className="select">
                 <select
-                  name="schemaType"
-                  ref={register({
+                  {...register('schemaType', {
                     required: 'Schema Type is required.',
                   })}
                   defaultValue={schema.schemaType}
@@ -130,8 +129,7 @@ const Edit = ({
               <h5 className="title is-5 mb-2">Compatibility Level</h5>
               <div className="select">
                 <select
-                  name="compatibilityLevel"
-                  ref={register()}
+                  {...register('compatibilityLevel')}
                   defaultValue={schema.compatibilityLevel}
                   disabled={isSubmitting}
                 >
@@ -162,8 +160,7 @@ const Edit = ({
                 <Controller
                   control={control}
                   name="newSchema"
-                  disabled={isSubmitting}
-                  render={({ name, onChange }) => (
+                  render={({ field: { name, onChange } }) => (
                     <JSONEditor
                       readOnly={isSubmitting}
                       defaultValue={getFormattedSchema()}

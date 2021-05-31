@@ -11,7 +11,11 @@ interface Props {
 }
 
 const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
-  const { register, errors, watch } = useFormContext();
+  const {
+    register,
+    watch,
+    formState: { errors },
+  } = useFormContext();
   const defaultValue = MILLISECONDS_IN_WEEK;
   const name = 'retentionMs';
   const watchedValue = watch(name, defaultValue.toString());
@@ -35,8 +39,7 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
         id="timeToRetain"
         type="number"
         defaultValue={defaultValue}
-        name={name}
-        ref={register({
+        {...register(name, {
           min: { value: -1, message: 'must be greater than or equal to -1' },
         })}
         disabled={isSubmitting}

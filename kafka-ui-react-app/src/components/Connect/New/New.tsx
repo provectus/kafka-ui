@@ -47,10 +47,9 @@ const New: React.FC<NewProps> = ({
 
   const {
     register,
-    errors,
     handleSubmit,
     control,
-    formState: { isDirty, isSubmitting, isValid },
+    formState: { isDirty, isSubmitting, isValid, errors },
     getValues,
     setValue,
   } = useForm<FormValues>({
@@ -111,7 +110,7 @@ const New: React.FC<NewProps> = ({
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <label className="label">Connect *</label>
           <div className="control select">
-            <select ref={register} name="connectName" disabled={isSubmitting}>
+            <select {...register('connectName')} disabled={isSubmitting}>
               {connects.map(({ name }) => (
                 <option key={name} value={name}>
                   {name}
@@ -128,10 +127,9 @@ const New: React.FC<NewProps> = ({
           <label className="label">Name *</label>
           <div className="control">
             <input
-              ref={register}
               className="input"
               placeholder="Connector Name"
-              name="name"
+              {...register('name')}
               autoComplete="off"
               disabled={isSubmitting}
             />
@@ -147,14 +145,8 @@ const New: React.FC<NewProps> = ({
             <Controller
               control={control}
               name="config"
-              render={({ name, onChange, onBlur }) => (
-                <JSONEditor
-                  ref={register}
-                  name={name}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  readOnly={isSubmitting}
-                />
+              render={({ field }) => (
+                <JSONEditor {...field} readOnly={isSubmitting} />
               )}
             />
           </div>

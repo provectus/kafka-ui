@@ -31,10 +31,9 @@ describe('New', () => {
     const clusterName = 'my-cluster';
     const simulateFormSubmit = (wrapper: ReactWrapper) =>
       act(async () => {
-        const nameInput = wrapper
-          .find('input[name="name"]')
-          .getDOMNode<HTMLInputElement>();
-        nameInput.value = 'my-connector';
+        wrapper.find('input[name="name"]').simulate('change', {
+          target: { name: 'name', value: 'my-connector' },
+        });
         wrapper
           .find('mock-JSONEditor')
           .simulate('change', { target: { value: '{"class":"MyClass"}' } });

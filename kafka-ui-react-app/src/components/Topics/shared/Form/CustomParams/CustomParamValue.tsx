@@ -17,7 +17,12 @@ const CustomParamValue: React.FC<Props> = ({
   name,
   defaultValue,
 }) => {
-  const { register, errors, watch, setValue } = useFormContext();
+  const {
+    register,
+    watch,
+    setValue,
+    formState: { errors },
+  } = useFormContext();
   const selectInputName = `${index}[name]`;
   const valInputName = `${index}[value]`;
   const selectedParamName = watch(selectInputName, name);
@@ -34,10 +39,9 @@ const CustomParamValue: React.FC<Props> = ({
       <input
         className="input"
         placeholder="Value"
-        ref={register({
+        {...register(valInputName, {
           required: 'Value is required.',
         })}
-        name={valInputName}
         defaultValue={defaultValue}
         autoComplete="off"
         disabled={isDisabled}

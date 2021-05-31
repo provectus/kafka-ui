@@ -113,6 +113,8 @@ exports[`New View matches snapshot 1`] = `
                     className="input"
                     disabled={false}
                     name="subject"
+                    onBlur={[Function]}
+                    onChange={[Function]}
                     placeholder="Schema Name"
                   />
                 </div>
@@ -140,6 +142,8 @@ exports[`New View matches snapshot 1`] = `
                     className="textarea"
                     disabled={false}
                     name="schema"
+                    onBlur={[Function]}
+                    onChange={[Function]}
                   />
                 </div>
                 <p
@@ -165,6 +169,8 @@ exports[`New View matches snapshot 1`] = `
                   <select
                     disabled={false}
                     name="schemaType"
+                    onBlur={[Function]}
+                    onChange={[Function]}
                   >
                     <option
                       value="AVRO"

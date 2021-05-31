@@ -4,6 +4,11 @@ import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import Edit, { EditProps } from 'components/Schemas/Edit/Edit';
 
+jest.mock('react-hook-form', () => ({
+  ...jest.requireActual('react-hook-form'),
+  Controller: () => 'Controller',
+}));
+
 describe('Edit Component', () => {
   const mockSchema = {
     subject: 'Subject',
@@ -57,7 +62,7 @@ describe('Edit Component', () => {
       expect(component.find('JSONEditor[name="latestSchema"]').length).toEqual(
         1
       );
-      expect(component.find('Controller[name="newSchema"]').length).toEqual(1);
+      expect(component.find('Controller').length).toEqual(1);
       expect(component.find('button').exists()).toBeTruthy();
     });
     it('does not fetch them', () => {

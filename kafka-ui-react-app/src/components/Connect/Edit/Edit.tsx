@@ -54,11 +54,9 @@ const Edit: React.FC<EditProps> = ({
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
   const history = useHistory();
   const {
-    register,
-    errors,
     handleSubmit,
     control,
-    formState: { isDirty, isSubmitting, isValid },
+    formState: { isDirty, isSubmitting, isValid, errors },
     setValue,
   } = useForm<FormValues>({
     mode: 'onTouched',
@@ -109,15 +107,8 @@ const Edit: React.FC<EditProps> = ({
             <Controller
               control={control}
               name="config"
-              render={({ name, value, onChange, onBlur }) => (
-                <JSONEditor
-                  ref={register}
-                  name={name}
-                  value={value}
-                  onChange={onChange}
-                  onBlur={onBlur}
-                  readOnly={isSubmitting}
-                />
+              render={({ field }) => (
+                <JSONEditor {...field} readOnly={isSubmitting} />
               )}
             />
           </div>
