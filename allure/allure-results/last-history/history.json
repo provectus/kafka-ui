@@ -9,13 +9,13 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "4bcae67f9ecdaac2",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/345//#testresult/4bcae67f9ecdaac2",
+      "uid" : "f7a76a7cd7999629",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/346//#testresult/f7a76a7cd7999629",
       "status" : "passed",
       "time" : {
-        "start" : 1622481986487,
-        "stop" : 1622481993315,
-        "duration" : 6828
+        "start" : 1622482002533,
+        "stop" : 1622482008458,
+        "duration" : 5925
       }
     } ]
   }
