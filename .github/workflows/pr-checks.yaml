@@ -1,6 +1,6 @@
 name: 'PR Checklist checked'
 on:
-  pull_request:
+  pull_request_target:
     types: [opened, edited, synchronized, reopened]
 
 jobs:
