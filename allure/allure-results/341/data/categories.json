@@ -1,0 +1,26 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.\nBuild info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'\nSystem info: host: 'fv-az213-876', ip: '10.1.1.247', os.name: 'Linux', os.arch: 'amd64', os.version: '5.4.0-1047-azure', java.version: '13.0.7'\nselenide.remote: http://localhost:49161/wd/hub\nDriver info: driver.version: SelenideDriver\nselenide.url: http://host.docker.internal:8080/\nselenide.baseUrl: http://host.docker.internal:8080/",
+      "children" : [ {
+        "name" : "should create a topic",
+        "uid" : "a0ccf4f2c7db2bc0",
+        "parentUid" : "d37c81aa2c18e7b5b4f9bd8d5f373fec",
+        "status" : "broken",
+        "time" : {
+          "start" : 1622453667009,
+          "stop" : 1622453668285,
+          "duration" : 1276
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "d37c81aa2c18e7b5b4f9bd8d5f373fec"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
