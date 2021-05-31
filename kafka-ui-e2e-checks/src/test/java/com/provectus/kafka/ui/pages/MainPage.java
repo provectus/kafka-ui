@@ -2,9 +2,10 @@ package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
+import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.*;
 
 public class MainPage {
 
@@ -17,11 +18,23 @@ public class MainPage {
     return this;
   }
 
-  public void shouldBeTopic(String topicName) {
-    var topic = $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
-    topic.waitUntil(Condition.exist,TIMEOUT);
-    topic.shouldBe(Condition.visible);
+
+  private void refreshUntil(By by){
+    int i =0;
+    do
+    {
+      refresh();
+      i++;
+      sleep(2000);
+    } while(getElements(by).size()<1 && i!=10);
   }
+
+  @SneakyThrows
+  public void shouldBeTopic(String topicName) {
+    refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
+  }
+
+
 
   public enum SideMenuOptions {
     BROKERS("Brokers"),
