@@ -231,6 +231,28 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConnectorTask'
 
+  /connectors/{connectorName}/topics:
+    get:
+      tags:
+        - KafkaConnectClient
+      summary: The set of topic names the connector has been using since its creation or since the last time its set of active topics was reset
+      operationId: getConnectorTopics
+      parameters:
+        - name: connectorName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/ConnectorTopics'
+
   /connectors/{connectorName}/tasks/{taskId}/status:
     get:
       tags:
@@ -498,4 +520,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
+
+    ConnectorTopics:
+      type: object
+      properties:
+        topics:
+          type: array
+          items:
+            type: string
 
