@@ -66,28 +66,35 @@ public class KafkaConnectService {
                 )
         )
         .flatMap(connectInfo ->
-            getConnectorTasks(clusterName, connectInfo.getConnector().getConnect(), connectInfo.getConnector().getName())
-                .collectList()
-                .map(tasks -> InternalConnectInfo.builder()
-                    .connector(connectInfo.getConnector())
-                    .config(connectInfo.getConfig())
-                    .tasks(tasks)
-                    .build()
-                )
+            {
+              Connector connector = connectInfo.getConnector();
+              return getConnectorTasks(clusterName, connector.getConnect(), connector.getName())
+                  .collectList()
+                  .map(tasks -> InternalConnectInfo.builder()
+                      .connector(connector)
+                      .config(connectInfo.getConfig())
+                      .tasks(tasks)
+                      .build()
+                  );
+            }
         )
-        .flatMap(connectInfo -> getConnectorTopics(clusterName, connectInfo.getConnector().getConnect(), connectInfo.getConnector().getName())
-            .map(ct -> InternalConnectInfo.builder()
-                .connector(connectInfo.getConnector())
-                .config(connectInfo.getConfig())
-                .tasks(connectInfo.getTasks())
-                .topics(ct.getTopics())
-                .build()
-            ))
+        .flatMap(connectInfo -> {
+          Connector connector = connectInfo.getConnector();
+          return getConnectorTopics(clusterName, connector.getConnect(), connector.getName())
+              .map(ct -> InternalConnectInfo.builder()
+                  .connector(connector)
+                  .config(connectInfo.getConfig())
+                  .tasks(connectInfo.getTasks())
+                  .topics(ct.getTopics())
+                  .build()
+              );
+        })
         .map(kafkaConnectMapper::fullConnectorInfoFromTuple);
   }
 
-  private Mono<ConnectorTopics> getConnectorTopics(String clusterName, String kafkaConnectClusterName, String connectorName) {
-    return getConnectAddress(clusterName, kafkaConnectClusterName)
+  private Mono<ConnectorTopics> getConnectorTopics(String clusterName, String connectClusterName,
+                                                   String connectorName) {
+    return getConnectAddress(clusterName, connectClusterName)
         .flatMap(connectUrl -> KafkaConnectClients
             .withBaseUrl(connectUrl)
             .getConnectorTopics(connectorName)
