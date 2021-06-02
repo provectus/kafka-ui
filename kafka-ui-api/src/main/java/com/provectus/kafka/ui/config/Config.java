@@ -22,7 +22,7 @@ public class Config {
   }
 
   private GenericKeyedObjectPoolConfig poolConfig() {
-    GenericKeyedObjectPoolConfig poolConfig = new GenericKeyedObjectPoolConfig();
+    final var poolConfig = new GenericKeyedObjectPoolConfig();
     poolConfig.setMaxIdlePerKey(3);
     poolConfig.setMaxTotalPerKey(3);
     return poolConfig;
@@ -30,7 +30,7 @@ public class Config {
 
   @Bean
   public MBeanExporter exporter() {
-    final MBeanExporter exporter = new MBeanExporter();
+    final var exporter = new MBeanExporter();
     exporter.setAutodetect(true);
     exporter.setExcludedBeans("pool");
     return exporter;

@@ -26,16 +26,16 @@ public class ProtobufFileRecordDeserializer implements RecordDeserializer {
   }
 
   @Override
-  public Object deserialize(ConsumerRecord<Bytes, Bytes> record) {
+  public Object deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      final DynamicMessage message = DynamicMessage.parseFrom(
+      final var message = DynamicMessage.parseFrom(
           protobufSchema.toDescriptor(),
-          new ByteArrayInputStream(record.value().get())
+          new ByteArrayInputStream(msg.value().get())
       );
       byte[] bytes = ProtobufSchemaUtils.toJson(message);
       return parseJson(bytes);
     } catch (Throwable e) {
-      throw new RuntimeException("Failed to parse record from topic " + record.topic(), e);
+      throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
   }
 
