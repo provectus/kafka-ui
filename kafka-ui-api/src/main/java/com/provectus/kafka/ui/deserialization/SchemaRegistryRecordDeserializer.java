@@ -108,21 +108,21 @@ public class SchemaRegistryRecordDeserializer implements RecordDeserializer {
       try {
         final Optional<String> type = getSchemaFromMessage(msg).or(() -> getSchemaBySubject(msg));
         if (type.isPresent()) {
-          if (type.equals(MessageFormat.PROTOBUF.name())) {
+          if (type.get().equals(MessageFormat.PROTOBUF.name())) {
             try {
               protobufDeserializer.deserialize(msg.topic(), msg.value().get());
               return MessageFormat.PROTOBUF;
             } catch (Throwable e) {
               log.info("Failed to get Protobuf schema for topic {}", msg.topic(), e);
             }
-          } else if (type.equals(MessageFormat.AVRO.name())) {
+          } else if (type.get().equals(MessageFormat.AVRO.name())) {
             try {
               avroDeserializer.deserialize(msg.topic(), msg.value().get());
               return MessageFormat.AVRO;
             } catch (Throwable e) {
               log.info("Failed to get Avro schema for topic {}", msg.topic(), e);
             }
-          } else if (type.equals(MessageFormat.JSON.name())) {
+          } else if (type.get().equals(MessageFormat.JSON.name())) {
             try {
               parseJsonRecord(msg);
               return MessageFormat.JSON;
