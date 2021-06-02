@@ -9,7 +9,7 @@ services:
       - 8080:80
 
   kafka-ui:
-    container_name: kafka-ui-new
+    container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8082:8080
@@ -17,6 +17,3 @@ services:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
       SERVER_SERVLET_CONTEXT_PATH: /kafka-ui
-      SERVER_SERVLET_CONTEXTPATH: /kafka-ui
-      SPRING_SERVER_SERVLET_CONTEXT_PATH: /kafka-ui
-      SPRING_SERVER_SERVLET_CONTEXTPATH: /kafka-ui
