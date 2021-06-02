@@ -1,0 +1,11 @@
+[ {
+  "uid" : "dac539e076963eb2",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1622648279554,
+    "stop" : 1622648286535,
+    "duration" : 6981
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]
