@@ -1,1 +1,43 @@
-{ }
+{
+  "61d3874fc5d35b85b0cd7942ccda45ef" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 1,
+      "skipped" : 0,
+      "passed" : 0,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "e4e52f8fbd10580f",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/349//#testresult/e4e52f8fbd10580f",
+      "status" : "broken",
+      "statusDetails" : "Could not start a new session. Possible causes are invalid address of the remote server or browser start-up failure.\nBuild info: version: '3.141.59', revision: 'e82be7d358', time: '2018-11-14T08:17:03'\nSystem info: host: 'fv-az212-958', ip: '10.1.1.154', os.name: 'Linux', os.arch: 'amd64', os.version: '5.4.0-1047-azure', java.version: '13.0.7'\nselenide.remote: http://localhost:49162/wd/hub\nDriver info: driver.version: SelenideDriver\nselenide.url: http://host.docker.internal:8080/\nselenide.baseUrl: http://host.docker.internal:8080/",
+      "time" : {
+        "start" : 1622629026831,
+        "stop" : 1622629027823,
+        "duration" : 992
+      }
+    } ]
+  },
+  "5472b00abbb74c5c8bdcfb9f276f316" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "63753f3affb32923",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/349//#testresult/63753f3affb32923",
+      "status" : "passed",
+      "time" : {
+        "start" : 1622629020824,
+        "stop" : 1622629026308,
+        "duration" : 5484
+      }
+    } ]
+  }
+}
