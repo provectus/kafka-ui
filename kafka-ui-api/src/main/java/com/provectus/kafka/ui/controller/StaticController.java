@@ -48,8 +48,8 @@ public class StaticController {
         ? serverProperties.getServlet().getContextPath() : "";
     final String staticPath = contextPath + "/static";
     return ResourceUtil.readAsString(indexFile)
-        .replace("href=\"./static", "href=\""+staticPath)
-        .replace("src=\"./static", "src=\""+staticPath)
+        .replace("href=\"./static", "href=\"" + staticPath)
+        .replace("src=\"./static", "src=\"" + staticPath)
         .replace("window.basePath=\"/\"", "window.basePath=\"" + contextPath + "\"");
   }
 }
