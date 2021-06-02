@@ -22,7 +22,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create a topic")
     @Test
-    void shouldWhen(){
+    void createTopic(){
         steps.kafka.createTopic(KafkaSteps.Cluster.SECOND_LOCAL,NEW_TOPIC);
         pages.open()
                 .mainPage.shouldBeOnPage()
