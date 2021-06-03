@@ -7,7 +7,7 @@ declare global {
 }
 
 export const BASE_PARAMS: ConfigurationParameters = {
-  basePath: process.env.REACT_APP_API_URL || window.basePath || '',
+  basePath: window.basePath,
   credentials: 'include',
   headers: {
     'Content-Type': 'application/json',

@@ -153,6 +153,7 @@ For example, if you want to use an environment variable to set the `name` parame
 
 |Name               	|Description
 |-----------------------|-------------------------------
+|`SERVER_SERVLET_CONTEXT_PATH` | URI basePath
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
 |`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
 |`KAFKA_CLUSTERS_0_ZOOKEEPER` 	| Zookeper service address 
@@ -163,8 +164,3 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read only mode. Default: false
 |`LOGGING_LEVEL_ROOT`        	| Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
 |`LOGGING_LEVEL_COM_PROVECTUS`        	|Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
-
- 
-
- 
-
