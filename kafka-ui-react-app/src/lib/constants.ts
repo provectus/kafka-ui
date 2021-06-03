@@ -7,7 +7,7 @@ declare global {
 }
 
 export const BASE_PARAMS: ConfigurationParameters = {
-  basePath: window.basePath,
+  basePath: window.basePath || '',
   credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
