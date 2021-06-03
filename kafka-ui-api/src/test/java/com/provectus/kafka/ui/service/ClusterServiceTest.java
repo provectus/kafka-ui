@@ -33,7 +33,7 @@ class ClusterServiceTest {
   private ClustersStorage clustersStorage;
 
   @Test
-  public void shouldListFirst20Topics() {
+  public void shouldListFirst25Topics() {
     var topicName = UUID.randomUUID().toString();
 
     when(clustersStorage.getClusterByName(topicName))
@@ -51,8 +51,8 @@ class ClusterServiceTest {
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.empty());
-    assertThat(topics.getPageCount()).isEqualTo(5);
-    assertThat(topics.getTopics()).hasSize(20);
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getName).isSorted();
   }
 
@@ -97,8 +97,8 @@ class ClusterServiceTest {
 
     var topics = clusterService.getTopics(topicName, Optional.of(0), Optional.of(-1),
         Optional.empty(), Optional.empty(), Optional.empty());
-    assertThat(topics.getPageCount()).isEqualTo(5);
-    assertThat(topics.getTopics()).hasSize(20);
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getName).isSorted();
   }
 
@@ -122,8 +122,8 @@ class ClusterServiceTest {
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.of(true),
         Optional.empty(), Optional.empty());
-    assertThat(topics.getPageCount()).isEqualTo(5);
-    assertThat(topics.getTopics()).hasSize(20);
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getName).isSorted();
   }
 
@@ -148,8 +148,8 @@ class ClusterServiceTest {
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.of(true),
         Optional.empty(), Optional.empty());
-    assertThat(topics.getPageCount()).isEqualTo(5);
-    assertThat(topics.getTopics()).hasSize(20);
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getName).isSorted();
   }
 
@@ -198,8 +198,8 @@ class ClusterServiceTest {
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.of(TopicColumnsToSort.TOTAL_PARTITIONS));
-    assertThat(topics.getPageCount()).isEqualTo(5);
-    assertThat(topics.getTopics()).hasSize(20);
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getPartitionCount).isSorted();
   }
 }
