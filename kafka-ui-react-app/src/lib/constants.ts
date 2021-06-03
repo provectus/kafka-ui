@@ -1,7 +1,13 @@
 import { ConfigurationParameters } from 'generated-sources';
 
+declare global {
+  interface Window {
+    basePath: string;
+  }
+}
+
 export const BASE_PARAMS: ConfigurationParameters = {
-  basePath: process.env.REACT_APP_API_URL || '',
+  basePath: window.basePath || '',
   credentials: 'include',
   headers: {
     'Content-Type': 'application/json',
