@@ -52,14 +52,16 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              path: /
+              {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/" | urlParse }}
+              path: {{ get $contextPath "path" }}
               port: http
             initialDelaySeconds: 60
             periodSeconds: 30
             timeoutSeconds: 10
           readinessProbe:
             httpGet:
-              path: /
+              {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/" | urlParse }}
+              path: {{ get $contextPath "path" }}
               port: http
             initialDelaySeconds: 60
             periodSeconds: 30
