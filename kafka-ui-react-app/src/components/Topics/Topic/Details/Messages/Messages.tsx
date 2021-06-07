@@ -1,6 +1,6 @@
 import 'react-datepicker/dist/react-datepicker.css';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { groupBy, map, concat, maxBy } from 'lodash';
+import { groupBy, map, concat, maxBy, minBy } from 'lodash';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -88,7 +88,10 @@ const Messages: React.FC<Props> = ({
     }));
     const messageUniqs: FilterProps[] = map(
       groupBy(messages, 'partition'),
-      (v) => maxBy(v, 'offset')
+      (v) =>
+        selectedSeekDirection === SeekDirection.FORWARD
+          ? maxBy(v, 'offset')
+          : minBy(v, 'offset')
     ).map((v) => ({
       offset: v ? v.offset : 0,
       partition: v ? v.partition : 0,
