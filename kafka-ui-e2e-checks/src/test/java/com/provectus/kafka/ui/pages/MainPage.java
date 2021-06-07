@@ -32,7 +32,8 @@ public class MainPage {
 
   @SneakyThrows
   public void shouldBeTopic(String topicName) {
-    refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
+//    refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
+    $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName))).waitUntil(Condition.visible, 3000);
   }
 
 
