@@ -323,10 +323,6 @@ paths:
           in: query
           schema:
             type: string
-        - name: seekDirection
-          in: query
-          schema:
-            $ref: "#/components/schemas/SeekDirection"
       responses:
         200:
           description: OK
@@ -1451,12 +1447,6 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
-
-    SeekDirection:
-      type: string
-      enum:
-        - FORWARD
-        - BACKWARD
 
     Partition:
       type: object
