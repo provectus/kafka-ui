@@ -10,7 +10,12 @@ import {
   TopicMessageQueryParams,
   TopicName,
 } from 'redux/interfaces';
-import { TopicMessage, Partition, SeekType } from 'generated-sources';
+import {
+  TopicMessage,
+  Partition,
+  SeekType,
+  SeekDirection,
+} from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
 import MessagesTable from './MessagesTable';
@@ -71,6 +76,8 @@ const Messages: React.FC<Props> = ({
       setQueryParams({ ...queryParams, ...query }),
     1000
   );
+  const [selectedSeekDirection, setSelectedSeekDirection] =
+    React.useState<SeekDirection>(SeekDirection.FORWARD);
 
   const prevSearchTimestamp = usePrevious(searchTimestamp);
 
@@ -194,6 +201,23 @@ const Messages: React.FC<Props> = ({
     );
   };
 
+  const toggleSeekDirection = () => {
+    const nextSeekDirectionValue =
+      selectedSeekDirection === SeekDirection.FORWARD
+        ? SeekDirection.BACKWARD
+        : SeekDirection.FORWARD;
+    setSelectedSeekDirection(nextSeekDirectionValue);
+
+    debouncedCallback({
+      seekDirection: nextSeekDirectionValue,
+    });
+
+    fetchTopicMessages(clusterName, topicName, {
+      ...queryParams,
+      seekDirection: nextSeekDirectionValue,
+    });
+  };
+
   if (!isFetched) {
     return <PageLoader />;
   }
@@ -270,7 +294,20 @@ const Messages: React.FC<Props> = ({
         </div>
       </div>
       <div className="columns">
-        <div className="column is-full" style={{ textAlign: 'right' }}>
+        <div className="column is-half">
+          <div className="field">
+            <input
+              id="switchRoundedDefault"
+              type="checkbox"
+              name="switchRoundedDefault"
+              className="switch is-rounded"
+              checked={selectedSeekDirection === SeekDirection.BACKWARD}
+              onChange={toggleSeekDirection}
+            />
+            <label htmlFor="switchRoundedDefault">Newest first</label>
+          </div>
+        </div>
+        <div className="column is-half" style={{ textAlign: 'right' }}>
           <input
             type="submit"
             className="button is-primary"
