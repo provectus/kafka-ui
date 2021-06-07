@@ -18,4 +18,14 @@ describe('ClustersWidget', () => {
     const wrapper = component().find('ClusterWidget');
     expect(wrapper.length).toBe(2);
   });
+
+  it('ClusterWidget can be truthy', () => {
+    const wrapper = component().find('ClusterWidget');
+    expect(wrapper).toBeTruthy();
+  });
+
+  it('columns can be truthy', () => {
+    const wrapper = component().find('.columns');
+    expect(wrapper).toBeTruthy();
+  });
 });
