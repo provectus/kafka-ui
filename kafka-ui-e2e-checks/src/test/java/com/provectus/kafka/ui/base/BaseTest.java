@@ -61,8 +61,8 @@ public class BaseTest {
 
   @AfterAll
   public static void afterAll() {
-    closeWebDriver();
-    selenoid.close();
+//    closeWebDriver();
+//    selenoid.close();
   }
 
   @SneakyThrows
@@ -88,6 +88,7 @@ public class BaseTest {
     Configuration.baseUrl = TestConfiguration.BASE_URL;
     Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
     var capabilities = new DesiredCapabilities();
+//    DesiredCapabilities capabilities = DesiredCapabilities.chrome();
     capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
     Configuration.browserCapabilities = capabilities;
 
