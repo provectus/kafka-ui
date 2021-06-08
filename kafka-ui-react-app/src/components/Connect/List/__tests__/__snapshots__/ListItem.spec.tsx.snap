@@ -105,29 +105,31 @@ exports[`Connectors ListItem matches snapshot 1`] = `
               <td>
                 FileStreamSource
               </td>
-              <td
-                className="is-flex is-flex-wrap-wrap"
-              >
-                <span
-                  className="tag is-info is-light mr-1 mb-1"
-                  key="test-topic"
+              <td>
+                <div
+                  className="is-flex is-flex-wrap-wrap"
                 >
-                  <Link
-                    to="/ui/clusters/local/topics/test-topic"
+                  <span
+                    className="tag is-info is-light mr-1 mb-1"
+                    key="test-topic"
                   >
-                    <LinkAnchor
-                      href="/ui/clusters/local/topics/test-topic"
-                      navigate={[Function]}
+                    <Link
+                      to="/ui/clusters/local/topics/test-topic"
                     >
-                      <a
+                      <LinkAnchor
                         href="/ui/clusters/local/topics/test-topic"
-                        onClick={[Function]}
+                        navigate={[Function]}
                       >
-                        test-topic
-                      </a>
-                    </LinkAnchor>
-                  </Link>
-                </span>
+                        <a
+                          href="/ui/clusters/local/topics/test-topic"
+                          onClick={[Function]}
+                        >
+                          test-topic
+                        </a>
+                      </LinkAnchor>
+                    </Link>
+                  </span>
+                </div>
               </td>
               <td>
                 <StatusTag

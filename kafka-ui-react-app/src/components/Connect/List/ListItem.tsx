@@ -63,12 +63,14 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{connect}</td>
       <td>{type}</td>
       <td>{connectorClass}</td>
-      <td className="is-flex is-flex-wrap-wrap">
-        {topics?.map((t) => (
-          <span key={t} className="tag is-info is-light mr-1 mb-1">
-            <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
-          </span>
-        ))}
+      <td>
+        <div className="is-flex is-flex-wrap-wrap">
+          {topics?.map((t) => (
+            <span key={t} className="tag is-info is-light mr-1 mb-1">
+              <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
+            </span>
+          ))}
+        </div>
       </td>
       <td>{status && <StatusTag status={status.state} />}</td>
       <td>
