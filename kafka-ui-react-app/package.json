@@ -91,7 +91,7 @@
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.0",
-    "dotenv": "^9.0.1",
+    "dotenv": "^10.0.0",
     "enzyme": "^3.11.0",
     "enzyme-to-json": "^3.6.1",
     "eslint": "^7.22.0",
