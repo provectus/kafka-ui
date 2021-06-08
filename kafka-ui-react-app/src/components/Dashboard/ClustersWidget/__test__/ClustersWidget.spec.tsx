@@ -28,4 +28,10 @@ describe('ClustersWidget', () => {
     const wrapper = component().find('.columns');
     expect(wrapper).toBeTruthy();
   });
+
+  it('after clicking into input list length can be 1', () => {
+    const wrapper = component().find('input');
+    wrapper.simulate('click');
+    expect(wrapper.length).toBe(1);
+  });
 });
