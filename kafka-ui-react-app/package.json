@@ -20,7 +20,7 @@
     "pretty-ms": "^7.0.1",
     "react": "^17.0.1",
     "react-ace": "^9.3.0",
-    "react-datepicker": "^3.7.0",
+    "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.1",
     "react-hook-form": "^7.6.9",
     "react-json-tree": "^0.15.0",
