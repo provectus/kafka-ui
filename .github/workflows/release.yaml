@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
     inputs:
       customVersion:
-        description: "A new version for release, please provide with -SNAPSHOT suffix"
+        description: 'A new version for release, please provide with -SNAPSHOT suffix'
         required: false
-        default: "0.0.0"
+        default: '0.0.0'
 
 jobs:
   release:
@@ -30,7 +30,7 @@ jobs:
         with:
           java-version: 1.13
       - name: Set custom version
-        if: github.event.inputs.customVersion != "0.0.0"
+        if: github.event.inputs.customVersion != '0.0.0'
         run: |
           mvn -q versions:set -DnewVersion=${{ github.event.inputs.customVersion }}
           git add pom.xml **/pom.xml
