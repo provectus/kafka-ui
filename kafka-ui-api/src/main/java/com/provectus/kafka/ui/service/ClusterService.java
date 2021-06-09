@@ -43,7 +43,7 @@ import reactor.util.function.Tuples;
 @Service
 @RequiredArgsConstructor
 public class ClusterService {
-  private static final Integer DEFAULT_PAGE_SIZE = 20;
+  private static final Integer DEFAULT_PAGE_SIZE = 25;
 
   private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;

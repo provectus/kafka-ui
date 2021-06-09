@@ -20,7 +20,7 @@
     "pretty-ms": "^7.0.1",
     "react": "^17.0.1",
     "react-ace": "^9.3.0",
-    "react-datepicker": "^3.7.0",
+    "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.1",
     "react-hook-form": "^7.6.9",
     "react-json-tree": "^0.15.0",
@@ -91,7 +91,7 @@
     "@typescript-eslint/eslint-plugin": "^4.20.0",
     "@typescript-eslint/parser": "^4.20.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.0",
-    "dotenv": "^9.0.1",
+    "dotenv": "^10.0.0",
     "enzyme": "^3.11.0",
     "enzyme-to-json": "^3.6.1",
     "eslint": "^7.22.0",
@@ -114,7 +114,7 @@
     "react-test-renderer": "^17.0.2",
     "redux-mock-store": "^1.5.4",
     "ts-jest": "^26.5.4",
-    "ts-node": "^9.1.1",
+    "ts-node": "^10.0.0",
     "typescript": "^4.2.3"
   },
   "engines": {

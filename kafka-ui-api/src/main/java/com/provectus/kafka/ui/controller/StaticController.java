@@ -50,6 +50,6 @@ public class StaticController {
     return ResourceUtil.readAsString(indexFile)
         .replace("href=\"./static", "href=\"" + staticPath)
         .replace("src=\"./static", "src=\"" + staticPath)
-        .replace("window.basePath=\"/\"", "window.basePath=\"" + contextPath + "\"");
+        .replace("window.basePath=\"\"", "window.basePath=\"" + contextPath + "\"");
   }
 }
