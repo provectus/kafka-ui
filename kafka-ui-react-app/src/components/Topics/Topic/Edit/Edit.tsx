@@ -13,6 +13,8 @@ import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
 
+import DangerZone from './DangerZone';
+
 interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
@@ -112,17 +114,26 @@ const Edit: React.FC<Props> = ({
   };
 
   return (
-    <div className="box">
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <FormProvider {...methods}>
-        <TopicForm
-          topicName={topicName}
-          config={config}
-          isSubmitting={isSubmitting}
-          isEditing
-          onSubmit={methods.handleSubmit(onSubmit)}
+    <div>
+      <div className="box">
+        <FormProvider {...methods}>
+          <TopicForm
+            topicName={topicName}
+            config={config}
+            isSubmitting={isSubmitting}
+            isEditing
+            onSubmit={methods.handleSubmit(onSubmit)}
+          />
+        </FormProvider>
+      </div>
+      {topic && (
+        <DangerZone
+          defaultPartitions={defaultValues.partitions}
+          defaultReplicationFactor={
+            defaultValues.replicationFactor || DEFAULTS.replicationFactor
+          }
         />
-      </FormProvider>
+      )}
     </div>
   );
 };
