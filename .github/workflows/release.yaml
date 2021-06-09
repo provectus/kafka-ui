@@ -1,6 +1,11 @@
 name: release
 on: 
   workflow_dispatch:
+    inputs:
+      customVersion:
+        description: "A new version for release, please provide with -SNAPSHOT suffix"
+        required: false
+        default: "0.0.0"
 
 jobs:
   release:
@@ -24,6 +29,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.13
+      - name: Set custom version
+        if: github.event.inputs.customVersion != "0.0.0"
+        run: |
+          mvn -q versions:set -DnewVersion=${{ github.event.inputs.customVersion }}
       - name: Update development version
         run: |
           mvn -q versions:set -DnextSnapshot
@@ -112,7 +121,7 @@ jobs:
         run: |
           export version=${{needs.release.outputs.version}}
           sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
-      - name:
+      - name: add chart
         run: |
           export VERSION=${{needs.release.outputs.version}}
           MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
