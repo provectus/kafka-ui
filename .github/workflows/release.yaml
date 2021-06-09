@@ -33,6 +33,8 @@ jobs:
         if: github.event.inputs.customVersion != "0.0.0"
         run: |
           mvn -q versions:set -DnewVersion=${{ github.event.inputs.customVersion }}
+          git add pom.xml **/pom.xml
+          git commit -m "Increased release"
       - name: Update development version
         run: |
           mvn -q versions:set -DnextSnapshot
