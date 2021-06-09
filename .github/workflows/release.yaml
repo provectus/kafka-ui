@@ -19,7 +19,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{steps.prep.outputs.version}}
+      version: ${{steps.build.outputs.version}}
     steps:
       - uses: actions/checkout@v2
         with:
@@ -58,22 +58,23 @@ jobs:
           git reset --hard HEAD~1
       - name: Prepare release
         if: github.event.inputs.rebuild == 'v0.0.0'
-        id: prep
         run: |
           mvn -q versions:set -DremoveSnapshot
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           git add .
           git commit -m "release ${VERSION}"
           git tag -f v${VERSION}
           git push --tags
-          echo ::set-output name=version::${VERSION}
       - name: Build with Maven
-        run: mvn clean package -Pprod ${{ github.event.inputs.extraMavenOptions }}
+        id: build
+        run: |
+          mvn clean package -Pprod ${{ github.event.inputs.extraMavenOptions }}
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo ::set-output name=version::${VERSION}
       - name: Archive JAR
         uses: actions/upload-artifact@v2
         with:
-          name: kafka-ui-${{ steps.prep.outputs.version }}
-          path: kafka-ui-api/target/kafka-ui-api-${{ steps.prep.outputs.version }}.jar
+          name: kafka-ui-${{ steps.build.outputs.version }}
+          path: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar
 #################
 #               #
 # Docker images #
@@ -104,10 +105,10 @@ jobs:
           context: kafka-ui-api
           push: true
           tags: |
-            provectuslabs/kafka-ui:${{ steps.prep.outputs.version }}
+            provectuslabs/kafka-ui:${{ steps.build.outputs.version }}
             provectuslabs/kafka-ui:latest
           build-args: |
-            JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
+            JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
   charts:
