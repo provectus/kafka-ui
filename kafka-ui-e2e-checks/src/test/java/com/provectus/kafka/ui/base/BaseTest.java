@@ -19,8 +19,6 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.File;
 import java.util.Arrays;
 
-import static com.codeborne.selenide.Selenide.closeWebDriver;
-
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
