@@ -69,7 +69,7 @@ const App: React.FC<AppProps> = ({
           </div>
 
           <a className="navbar-item title is-5 is-marginless" href="/ui">
-            Kafka UI
+            UI for Apache Kafka
           </a>
 
           <div className="navbar-item">
