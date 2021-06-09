@@ -6,6 +6,14 @@ on:
         description: 'A new version for release, please provide with -SNAPSHOT suffix'
         required: false
         default: '0.0.0'
+      rebuild:
+        description: 'A tag name for building previously created release'
+        required: false
+        default: 'v0.0.0'
+      extraMavenOptions:
+        description: 'A extra options for Maven'
+        required: false
+        default: ''
 
 jobs:
   release:
@@ -29,13 +37,18 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.13
+      - name: Checkout to specific tag
+        if: github.event.inputs.rebuild != 'v0.0.0'
+        run: |
+          git checkout tags/${{ github.event.inputs.rebuild }} -b rebuild-${{ github.event.inputs.rebuild }}
       - name: Set custom version
-        if: github.event.inputs.customVersion != '0.0.0'
+        if: github.event.inputs.customVersion != '0.0.0' && github.event.inputs.rebuild == 'v0.0.0'
         run: |
           mvn -q versions:set -DnewVersion=${{ github.event.inputs.customVersion }}
           git add pom.xml **/pom.xml
           git commit -m "Increased release"
       - name: Update development version
+        if: github.event.inputs.rebuild == 'v0.0.0'
         run: |
           mvn -q versions:set -DnextSnapshot
           git add pom.xml **/pom.xml
@@ -43,6 +56,7 @@ jobs:
           git push -f
           git reset --hard HEAD~1
       - name: Prepare release
+        if: github.event.inputs.rebuild == 'v0.0.0'
         id: prep
         run: |
           mvn -q versions:set -DremoveSnapshot
@@ -53,7 +67,7 @@ jobs:
           git push --tags
           echo ::set-output name=version::${VERSION}
       - name: Build with Maven
-        run: mvn clean package -Pprod
+        run: mvn clean package -Pprod ${{ github.event.inputs.extraMavenOptions }}
       - name: Archive JAR
         uses: actions/upload-artifact@v2
         with:
@@ -81,20 +95,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build
-        if: github.ref != 'refs/heads/master'
-        id: docker_build
-        uses: docker/build-push-action@v2
-        with:
-          builder: ${{ steps.buildx.outputs.name }}
-          context: kafka-ui-api
-          push: false
-          build-args: |
-            JAR_FILE=kafka-ui-api-${{ steps.prep.outputs.version }}.jar
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
       - name: Build and push
-        if: github.ref == 'refs/heads/master'
         id: docker_build_and_push
         uses: docker/build-push-action@v2
         with:
