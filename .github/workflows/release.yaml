@@ -22,6 +22,8 @@ jobs:
       version: ${{steps.prep.outputs.version}}
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -32,7 +34,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/checkout@v2
       - name: Set up JDK 1.13
         uses: actions/setup-java@v1
         with:
