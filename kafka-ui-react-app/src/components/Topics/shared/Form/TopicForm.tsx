@@ -29,61 +29,65 @@ const TopicForm: React.FC<Props> = ({
 
   return (
     <form onSubmit={onSubmit}>
-      <fieldset disabled={isEditing || isSubmitting}>
-        <div className="columns">
-          <div className="column is-three-quarters">
-            <label className="label">Topic Name *</label>
-            <input
-              className="input"
-              placeholder="Topic Name"
-              defaultValue={topicName}
-              {...register('name', {
-                required: 'Topic Name is required.',
-                pattern: {
-                  value: TOPIC_NAME_VALIDATION_PATTERN,
-                  message: 'Only alphanumeric, _, -, and . allowed',
-                },
-              })}
-              autoComplete="off"
-            />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="name" />
-            </p>
-          </div>
+      <fieldset disabled={isSubmitting}>
+        <fieldset disabled={isEditing}>
+          <div className="columns">
+            <div className="column is-three-quarters">
+              <label className="label">Topic Name *</label>
+              <input
+                className="input"
+                placeholder="Topic Name"
+                defaultValue={topicName}
+                {...register('name', {
+                  required: 'Topic Name is required.',
+                  pattern: {
+                    value: TOPIC_NAME_VALIDATION_PATTERN,
+                    message: 'Only alphanumeric, _, -, and . allowed',
+                  },
+                })}
+                autoComplete="off"
+              />
+              <p className="help is-danger">
+                <ErrorMessage errors={errors} name="name" />
+              </p>
+            </div>
 
-          <div className="column">
-            <label className="label">Number of partitions *</label>
-            <input
-              className="input"
-              type="number"
-              placeholder="Number of partitions"
-              defaultValue="1"
-              {...register('partitions', {
-                required: 'Number of partitions is required.',
-              })}
-            />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="partitions" />
-            </p>
+            <div className="column">
+              <label className="label">Number of partitions *</label>
+              <input
+                className="input"
+                type="number"
+                placeholder="Number of partitions"
+                defaultValue="1"
+                {...register('partitions', {
+                  required: 'Number of partitions is required.',
+                })}
+              />
+              <p className="help is-danger">
+                <ErrorMessage errors={errors} name="partitions" />
+              </p>
+            </div>
           </div>
-        </div>
+        </fieldset>
 
         <div className="columns">
-          <div className="column">
-            <label className="label">Replication Factor *</label>
-            <input
-              className="input"
-              type="number"
-              placeholder="Replication Factor"
-              defaultValue="1"
-              {...register('replicationFactor', {
-                required: 'Replication Factor is required.',
-              })}
-            />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="replicationFactor" />
-            </p>
-          </div>
+          <fieldset disabled={isEditing}>
+            <div className="column">
+              <label className="label">Replication Factor *</label>
+              <input
+                className="input"
+                type="number"
+                placeholder="Replication Factor"
+                defaultValue="1"
+                {...register('replicationFactor', {
+                  required: 'Replication Factor is required.',
+                })}
+              />
+              <p className="help is-danger">
+                <ErrorMessage errors={errors} name="replicationFactor" />
+              </p>
+            </div>
+          </fieldset>
 
           <div className="column">
             <label className="label">Min In Sync Replicas *</label>
