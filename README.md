@@ -9,7 +9,7 @@ UI for Apache Kafka is a simple tool that makes your data flows observable, help
 
 Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
 
-![UI for Apache Kafka interface dashboard screenshot](images/kafka-ui-interface-dashboard.png)
+![UI for Apache Kafka interface dashboard screenshot](images/apache-kafka-ui-interface-dashboard.png)
 
 
 # Features
