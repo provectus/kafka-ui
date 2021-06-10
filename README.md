@@ -108,7 +108,7 @@ To read more please follow to [chart documentation](charts/kafka-ui/README.md)
 
 # Guides
 
-To be done
+- [SSO configuration](guides/SSO.md)
 
 ## Connecting to a Secure Broker
 
