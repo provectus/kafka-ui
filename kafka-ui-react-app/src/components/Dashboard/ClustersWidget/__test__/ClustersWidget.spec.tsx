@@ -14,24 +14,22 @@ const component = () =>
   );
 
 describe('ClustersWidget', () => {
-  it('render list length can be 2', () => {
-    const wrapper = component().find('ClusterWidget');
-    expect(wrapper.length).toBe(2);
+  it('renders clusterWidget list', () => {
+    const clusterWidget = component().find('ClusterWidget');
+    expect(clusterWidget.length).toBe(2);
   });
 
-  it('ClusterWidget can be truthy', () => {
-    const wrapper = component().find('ClusterWidget');
-    expect(wrapper).toBeTruthy();
+  it('renders ClusterWidget', () => {
+    expect(component().find('ClusterWidget')).toBeTruthy();
   });
 
-  it('columns can be truthy', () => {
-    const wrapper = component().find('.columns');
-    expect(wrapper).toBeTruthy();
+  it('renders columns', () => {
+    expect(component().find('.columns')).toBeTruthy();
   });
 
-  it('after clicking into input list length can be 1', () => {
-    const wrapper = component().find('input');
-    wrapper.simulate('click');
-    expect(wrapper.length).toBe(1);
+  it('hides online cluster widgets', () => {
+    const input = component().find('input');
+    input.simulate('click');
+    expect(input.length).toBe(1);
   });
 });

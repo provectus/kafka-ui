@@ -14,9 +14,5 @@ describe('ClustersWidgetContainer', () => {
       const wrapper = mount(setupEmptyWrapper());
       expect(wrapper.find('.is-success').text()).toBe('0');
     });
-    it(' is empty when no offline clusters', () => {
-      const wrapper = mount(setupEmptyWrapper());
-      expect(wrapper.find('.is-danger').text()).toBe('0');
-    });
   });
 });
