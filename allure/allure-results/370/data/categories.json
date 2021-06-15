@@ -1,0 +1,26 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "host.docker.internal",
+      "children" : [ {
+        "name" : "should create a topic",
+        "uid" : "6912e28d05ec8619",
+        "parentUid" : "3d7929bed2831b19f0404738da18412a",
+        "status" : "broken",
+        "time" : {
+          "start" : 1623761302068,
+          "stop" : 1623761302156,
+          "duration" : 88
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "3d7929bed2831b19f0404738da18412a"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
