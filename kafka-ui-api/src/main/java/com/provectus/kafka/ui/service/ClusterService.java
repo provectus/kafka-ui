@@ -9,8 +9,11 @@ import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.ConsumerGroupDeleteResult;
+import com.provectus.kafka.ui.model.ConsumerGroupDeletes;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
@@ -28,13 +31,20 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.clients.admin.DeleteConsumerGroupsResult;
+import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,6 +52,7 @@ import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ClusterService {
   private static final Integer DEFAULT_PAGE_SIZE = 25;
 
@@ -273,4 +284,41 @@ public class ClusterService {
   }
 
 
+  public Flux<ConsumerGroupDeleteResult> deleteConsumerGroups(String clusterName,
+                                                              Mono<ConsumerGroupDeletes> groupIds) {
+    Optional<Flux<ConsumerGroupDeleteResult>> result =
+        clustersStorage.getClusterByName(clusterName)
+            .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
+                .map(ExtendedAdminClient::getAdminClient)
+                .flatMap(kafkaClient -> groupIds
+                    .map(ConsumerGroupDeletes::getIds)
+                    .map(kafkaClient::deleteConsumerGroups)
+                    .map(DeleteConsumerGroupsResult::deletedGroups)
+                    .map(this::getConsumerGroupDeletesResult))
+                .flatMapMany(Flux::fromIterable));
+    return result.orElse(Flux.empty());
+  }
+
+  @NotNull
+  private List<ConsumerGroupDeleteResult> getConsumerGroupDeletesResult(
+      Map<String, KafkaFuture<Void>> futuresMap) {
+    return futuresMap.entrySet()
+        .stream()
+        .map(groupIdAndFuture -> {
+          try {
+            KafkaFuture<Void> future = groupIdAndFuture.getValue();
+            Void result = future.get(1, TimeUnit.SECONDS);
+            return new ConsumerGroupDeleteResult()
+                .id(groupIdAndFuture.getKey())
+                .deleted(true)
+                .error(null);
+          } catch (InterruptedException | TimeoutException | ExecutionException e) {
+            return new ConsumerGroupDeleteResult()
+                .id(groupIdAndFuture.getKey())
+                .deleted(false)
+                .error(e.getMessage());
+          }
+        })
+        .collect(Collectors.toList());
+  }
 }

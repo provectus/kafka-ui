@@ -433,6 +433,34 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
+    delete:
+      tags:
+        - Consumer Groups
+      summary: delete Consumer Groups
+      operationId: deleteConsumerGroups
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerGroupDeletes'
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumerGroupDeleteResult'
+
+
   /api/clusters/{clusterName}/schemas:
     post:
       tags:
@@ -1846,3 +1874,22 @@ components:
         - name
         - connect
         - status
+
+    ConsumerGroupDeletes:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+
+    ConsumerGroupDeleteResult:
+      type: object
+      properties:
+        id:
+          type: string
+        deleted:
+          type: boolean
+        error:
+          type: string
+

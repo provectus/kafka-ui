@@ -2,6 +2,8 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.ConsumerGroupsApi;
 import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.ConsumerGroupDeleteResult;
+import com.provectus.kafka.ui.model.ConsumerGroupDeletes;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.service.ClusterService;
@@ -18,6 +20,13 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class ConsumerGroupsController implements ConsumerGroupsApi {
   private final ClusterService clusterService;
+
+  @Override
+  public Mono<ResponseEntity<Flux<ConsumerGroupDeleteResult>>> deleteConsumerGroups(
+      String clusterName, Mono<ConsumerGroupDeletes> groupIds, ServerWebExchange exchange) {
+    var deletedGroups = clusterService.deleteConsumerGroups(clusterName, groupIds);
+    return Mono.just(ResponseEntity.ok(deletedGroups));
+  }
 
   @Override
   public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroup(
