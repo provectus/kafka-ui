@@ -17,6 +17,6 @@ helm install kafka-ui kafka-ui/kafka-ui --set envs.config.KAFKA_CLUSTERS_0_NAME=
 ``` 
 To connect to Kafka-UI web application need to execute:
 ``` bash
-kubectl port-forward svc/kafka-ui 8080:8080
+kubectl port-forward svc/kafka-ui 8080:80
 ```
 Open the `http://127.0.0.1:8080` on the browser to access Kafka-UI.
