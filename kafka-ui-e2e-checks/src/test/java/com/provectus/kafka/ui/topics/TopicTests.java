@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.steps.kafka.KafkaSteps;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

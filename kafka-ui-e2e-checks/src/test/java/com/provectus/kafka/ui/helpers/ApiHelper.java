@@ -18,9 +18,10 @@ public class ApiHelper {
     int partitions = 1;
     short replicationFactor = 1;
     String newTopic = "new-topic";
+    String baseURL = "http://localhost:8080/";
     @SneakyThrows
     private void sendRequest(String method, String additionalURL, JSONObject jsonObject){
-        URL url = new URL(TestConfiguration.BASE_URL+additionalURL);
+        URL url = new URL(baseURL+additionalURL);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setDoOutput(true);
         con.setDoInput(true);
