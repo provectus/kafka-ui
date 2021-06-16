@@ -28,7 +28,7 @@ public class TopicTests extends BaseTest {
         helpers.apiHelper.createTopic("secondLocal","new-topic");
         pages.open()
                 .mainPage.shouldBeOnPage()
-        .goToSideMenu(KafkaSteps.Cluster.SECOND_LOCAL.getName(), MainPage.SideMenuOptions.TOPICS)
+        .goToSideMenu("secondLocal", MainPage.SideMenuOptions.TOPICS)
         .shouldBeTopic(NEW_TOPIC);
     }
 }

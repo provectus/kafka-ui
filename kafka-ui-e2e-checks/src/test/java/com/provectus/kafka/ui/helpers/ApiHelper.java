@@ -6,6 +6,8 @@ import com.provectus.kafka.ui.api.*;
 import com.provectus.kafka.ui.api.model.*;
 import com.provectus.kafka.ui.api.api.TopicsApi;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApiHelper {
@@ -34,12 +36,12 @@ public class ApiHelper {
         topic.setName(topicName);
         topic.setPartitions(partitions);
         topic.setReplicationFactor(replicationFactor);
-       topicApi().createTopic(clusterName,topic);
+        topicApi().createTopic(clusterName,topic).block();
     }
 
     @SneakyThrows
     public void deleteTopic(String clusterName, String topicName) {
-        topicApi().deleteTopic(clusterName,topicName);
+        topicApi().deleteTopic(clusterName,topicName).block();
     }
 
 }
