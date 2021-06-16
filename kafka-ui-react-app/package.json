@@ -103,7 +103,7 @@
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
-    "esprint": "^2.0.0",
+    "esprint": "^3.1.0",
     "fetch-mock-jest": "^1.5.1",
     "husky": "^6.0.0",
     "jest-sonar-reporter": "^2.0.0",
