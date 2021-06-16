@@ -26,6 +26,16 @@ Go to react app folder
 cd ./kafka-ui-react-app
 ```
 
+Install Husky
+```
+npm install -g husky
+```
+
+Install dependencies
+```
+npm install
+```
+
 Generate API clients from OpenAPI document
 ```sh
 npm run gen:sources
