@@ -22,7 +22,7 @@
     "react-ace": "^9.3.0",
     "react-datepicker": "^4.1.1",
     "react-dom": "^17.0.1",
-    "react-hook-form": "^7.6.9",
+    "react-hook-form": "7.6.9",
     "react-json-tree": "^0.15.0",
     "react-multi-select-component": "^4.0.0",
     "react-redux": "^7.2.2",
@@ -88,8 +88,8 @@
     "@types/react-test-renderer": "^17.0.1",
     "@types/redux-mock-store": "^1.0.2",
     "@types/uuid": "^8.3.0",
-    "@typescript-eslint/eslint-plugin": "^4.20.0",
-    "@typescript-eslint/parser": "^4.20.0",
+    "@typescript-eslint/eslint-plugin": "^4.27.0",
+    "@typescript-eslint/parser": "^4.27.0",
     "@wojtekmaj/enzyme-adapter-react-17": "^0.6.0",
     "dotenv": "^10.0.0",
     "enzyme": "^3.11.0",
@@ -97,10 +97,10 @@
     "eslint": "^7.22.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-typescript": "^12.3.1",
-    "eslint-config-prettier": "^8.1.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
-    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "esprint": "^2.0.0",
@@ -109,7 +109,7 @@
     "jest-sonar-reporter": "^2.0.0",
     "lint-staged": "^11.0.0",
     "node-sass": "^5.0.0",
-    "prettier": "^2.2.1",
+    "prettier": "^2.3.1",
     "react-scripts": "4.0.3",
     "react-test-renderer": "^17.0.2",
     "redux-mock-store": "^1.5.4",
@@ -118,8 +118,8 @@
     "typescript": "^4.2.3"
   },
   "engines": {
-    "node": ">=14.15.4",
-    "npm": ">=7.15.1"
+    "node": "14.17.1",
+    "npm": "6.14.13"
   },
   "proxy": "http://localhost:8080",
   "jest": {
