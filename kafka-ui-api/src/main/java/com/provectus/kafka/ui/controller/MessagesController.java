@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.service.ClusterService;
@@ -40,13 +41,15 @@ public class MessagesController implements MessagesApi {
   @Override
   public Mono<ResponseEntity<Flux<TopicMessage>>> getTopicMessages(
       String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo,
-      @Valid Integer limit, @Valid String q, ServerWebExchange exchange) {
-    return parseConsumerPosition(seekType, seekTo)
+      @Valid Integer limit, @Valid String q, @Valid SeekDirection seekDirection,
+      ServerWebExchange exchange) {
+    return parseConsumerPosition(seekType, seekTo, seekDirection)
         .map(consumerPosition -> ResponseEntity
             .ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
   }
 
-  private Mono<ConsumerPosition> parseConsumerPosition(SeekType seekType, List<String> seekTo) {
+  private Mono<ConsumerPosition> parseConsumerPosition(
+      SeekType seekType, List<String> seekTo,  SeekDirection seekDirection) {
     return Mono.justOrEmpty(seekTo)
         .defaultIfEmpty(Collections.emptyList())
         .flatMapIterable(Function.identity())
@@ -61,7 +64,7 @@ public class MessagesController implements MessagesApi {
         })
         .collectMap(Pair::getKey, Pair::getValue)
         .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING,
-            positions));
+            positions, seekDirection));
   }
 
 }
