@@ -8,5 +8,5 @@ public class ConsumerPosition {
 
   private SeekType seekType;
   private Map<Integer, Long> seekTo;
-
+  private SeekDirection seekDirection;
 }
