@@ -20,11 +20,11 @@ describe('ClustersWidget', () => {
   });
 
   it('renders ClusterWidget', () => {
-    expect(component().find('ClusterWidget')).toBeTruthy();
+    expect(component().exists('ClusterWidget')).toBeTruthy();
   });
 
   it('renders columns', () => {
-    expect(component().find('.columns')).toBeTruthy();
+    expect(component().exists('.columns')).toBeTruthy();
   });
 
   it('hides online cluster widgets', () => {
