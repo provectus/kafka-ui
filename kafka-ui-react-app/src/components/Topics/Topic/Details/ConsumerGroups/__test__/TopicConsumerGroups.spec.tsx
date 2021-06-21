@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import ConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/ConsumerGroups';
+import ConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 
 describe('Details', () => {
   const mockFn = jest.fn();
