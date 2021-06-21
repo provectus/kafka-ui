@@ -19,7 +19,7 @@ services:
       - KAFKA_CLUSTERS_0_ZOOKEEPER=localhost:2181
 ```
 
-* If you prefer Kafka UI in read only mode
+* If you prefer UI for Apache Kafka in read only mode
    
 ```yaml
 version: '2'
@@ -37,7 +37,7 @@ services:
       - KAFKA_CLUSTERS_0_READONLY=true
 ```
   
-* Start Kafka UI process
+* Start UI for Apache Kafka process
 
 ```bash
 docker-compose up -d kafka-ui

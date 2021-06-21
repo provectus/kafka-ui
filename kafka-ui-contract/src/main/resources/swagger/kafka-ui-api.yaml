@@ -1457,6 +1457,7 @@ components:
       enum:
         - FORWARD
         - BACKWARD
+      default: FORWARD
 
     Partition:
       type: object

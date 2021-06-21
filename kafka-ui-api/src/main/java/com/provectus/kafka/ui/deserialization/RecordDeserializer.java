@@ -5,5 +5,5 @@ import org.apache.kafka.common.utils.Bytes;
 
 public interface RecordDeserializer {
 
-  Object deserialize(ConsumerRecord<Bytes, Bytes> record);
+  Object deserialize(ConsumerRecord<Bytes, Bytes> msg);
 }

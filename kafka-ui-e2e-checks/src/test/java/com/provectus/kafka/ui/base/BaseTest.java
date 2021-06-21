@@ -4,6 +4,7 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
+import com.provectus.kafka.ui.steps.Steps;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
@@ -18,12 +19,11 @@ import org.testcontainers.utility.DockerImageName;
 import java.io.File;
 import java.util.Arrays;
 
-import static com.codeborne.selenide.Selenide.closeWebDriver;
-
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
+  protected Steps steps = Steps.INSTANCE;
   protected Pages pages = Pages.INSTANCE;
 
   private Screenshooter screenshooter = new Screenshooter();
@@ -59,8 +59,8 @@ public class BaseTest {
 
   @AfterAll
   public static void afterAll() {
-    closeWebDriver();
-    selenoid.close();
+//    closeWebDriver();
+//    selenoid.close();
   }
 
   @SneakyThrows
@@ -86,6 +86,7 @@ public class BaseTest {
     Configuration.baseUrl = TestConfiguration.BASE_URL;
     Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
     var capabilities = new DesiredCapabilities();
+//    DesiredCapabilities capabilities = DesiredCapabilities.chrome();
     capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
     Configuration.browserCapabilities = capabilities;
 

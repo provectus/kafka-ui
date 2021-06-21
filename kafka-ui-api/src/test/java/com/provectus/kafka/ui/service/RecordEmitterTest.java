@@ -1,13 +1,14 @@
 package com.provectus.kafka.ui.service;
 
-import static com.provectus.kafka.ui.service.ConsumingService.OffsetsSeek;
 import static com.provectus.kafka.ui.service.ConsumingService.RecordEmitter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
+import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,7 +66,10 @@ class RecordEmitterTest extends AbstractBaseTest {
   void pollNothingOnEmptyTopic() {
     var emitter = new RecordEmitter(
         this::createConsumer,
-        new OffsetsSeek(EMPTY_TOPIC, new ConsumerPosition(SeekType.BEGINNING, Map.of())));
+        new OffsetsSeekForward(EMPTY_TOPIC,
+            new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD)
+        )
+    );
 
     Long polledValues = Flux.create(emitter)
         .limitRequest(100)
@@ -79,7 +83,10 @@ class RecordEmitterTest extends AbstractBaseTest {
   void pollFullTopicFromBeginning() {
     var emitter = new RecordEmitter(
         this::createConsumer,
-        new OffsetsSeek(TOPIC, new ConsumerPosition(SeekType.BEGINNING, Map.of())));
+        new OffsetsSeekForward(TOPIC,
+            new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD)
+        )
+    );
 
     var polledValues = Flux.create(emitter)
         .map(this::deserialize)
@@ -101,7 +108,10 @@ class RecordEmitterTest extends AbstractBaseTest {
 
     var emitter = new RecordEmitter(
         this::createConsumer,
-        new OffsetsSeek(TOPIC, new ConsumerPosition(SeekType.OFFSET, targetOffsets)));
+        new OffsetsSeekForward(TOPIC,
+            new ConsumerPosition(SeekType.OFFSET, targetOffsets, SeekDirection.FORWARD)
+        )
+    );
 
     var polledValues = Flux.create(emitter)
         .map(this::deserialize)
@@ -127,7 +137,10 @@ class RecordEmitterTest extends AbstractBaseTest {
 
     var emitter = new RecordEmitter(
         this::createConsumer,
-        new OffsetsSeek(TOPIC, new ConsumerPosition(SeekType.TIMESTAMP, targetTimestamps)));
+        new OffsetsSeekForward(TOPIC,
+            new ConsumerPosition(SeekType.TIMESTAMP, targetTimestamps, SeekDirection.FORWARD)
+        )
+    );
 
     var polledValues = Flux.create(emitter)
         .map(this::deserialize)

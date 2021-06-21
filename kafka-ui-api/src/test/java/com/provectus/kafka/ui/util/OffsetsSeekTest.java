@@ -1,8 +1,9 @@
-package com.provectus.kafka.ui.service;
+package com.provectus.kafka.ui.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import java.util.List;
 import java.util.Map;
@@ -51,10 +52,16 @@ class OffsetsSeekTest {
   }
 
   @Test
-  void seekToBeginningAllPartitions() {
-    var seek = new ConsumingService.OffsetsSeek(
+  void forwardSeekToBeginningAllPartitions() {
+    var seek = new OffsetsSeekForward(
         topic,
-        new ConsumerPosition(SeekType.BEGINNING, Map.of(0, 0L, 1, 0L)));
+        new ConsumerPosition(
+            SeekType.BEGINNING,
+            Map.of(0, 0L, 1, 0L),
+            SeekDirection.FORWARD
+        )
+    );
+
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1);
     assertThat(consumer.position(tp0)).isZero();
@@ -62,10 +69,28 @@ class OffsetsSeekTest {
   }
 
   @Test
-  void seekToBeginningWithPartitionsList() {
-    var seek = new ConsumingService.OffsetsSeek(
+  void backwardSeekToBeginningAllPartitions() {
+    var seek = new OffsetsSeekBackward(
         topic,
-        new ConsumerPosition(SeekType.BEGINNING, Map.of()));
+        new ConsumerPosition(
+            SeekType.BEGINNING,
+            Map.of(2, 0L, 3, 0L),
+            SeekDirection.BACKWARD
+        ),
+        10
+    );
+
+    seek.assignAndSeek(consumer);
+    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp2, tp3);
+    assertThat(consumer.position(tp2)).isEqualTo(15L);
+    assertThat(consumer.position(tp3)).isEqualTo(25L);
+  }
+
+  @Test
+  void forwardSeekToBeginningWithPartitionsList() {
+    var seek = new OffsetsSeekForward(
+        topic,
+        new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD));
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2, tp3);
     assertThat(consumer.position(tp0)).isZero();
@@ -75,10 +100,31 @@ class OffsetsSeekTest {
   }
 
   @Test
-  void seekToOffset() {
-    var seek = new ConsumingService.OffsetsSeek(
+  void backwardSeekToBeginningWithPartitionsList() {
+    var seek = new OffsetsSeekBackward(
         topic,
-        new ConsumerPosition(SeekType.OFFSET, Map.of(0, 0L, 1, 1L, 2, 2L)));
+        new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.BACKWARD),
+        10
+    );
+    seek.assignAndSeek(consumer);
+    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2, tp3);
+    assertThat(consumer.position(tp0)).isZero();
+    assertThat(consumer.position(tp1)).isEqualTo(10L);
+    assertThat(consumer.position(tp2)).isEqualTo(15L);
+    assertThat(consumer.position(tp3)).isEqualTo(25L);
+  }
+
+
+  @Test
+  void forwardSeekToOffset() {
+    var seek = new OffsetsSeekForward(
+        topic,
+        new ConsumerPosition(
+            SeekType.OFFSET,
+            Map.of(0, 0L, 1, 1L, 2, 2L),
+            SeekDirection.FORWARD
+        )
+    );
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2);
     assertThat(consumer.position(tp0)).isZero();
@@ -86,15 +132,34 @@ class OffsetsSeekTest {
     assertThat(consumer.position(tp2)).isEqualTo(2L);
   }
 
+  @Test
+  void backwardSeekToOffset() {
+    var seek = new OffsetsSeekBackward(
+        topic,
+        new ConsumerPosition(
+            SeekType.OFFSET,
+            Map.of(0, 0L, 1, 1L, 2, 2L),
+            SeekDirection.FORWARD
+        ),
+        2
+    );
+    seek.assignAndSeek(consumer);
+    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2);
+    assertThat(consumer.position(tp0)).isZero();
+    assertThat(consumer.position(tp1)).isEqualTo(1L);
+    assertThat(consumer.position(tp2)).isEqualTo(0L);
+  }
+
+
   @Nested
   class WaitingOffsetsTest {
 
-    ConsumingService.OffsetsSeek.WaitingOffsets offsets;
+    OffsetsSeekForward.WaitingOffsets offsets;
 
     @BeforeEach
     void assignAndCreateOffsets() {
       consumer.assign(List.of(tp0, tp1, tp2, tp3));
-      offsets = new ConsumingService.OffsetsSeek.WaitingOffsets(topic, consumer);
+      offsets = new OffsetsSeek.WaitingOffsets(topic, consumer);
     }
 
     @Test
