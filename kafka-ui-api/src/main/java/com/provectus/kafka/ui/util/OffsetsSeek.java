@@ -23,6 +23,10 @@ public abstract class OffsetsSeek {
     this.consumerPosition = consumerPosition;
   }
 
+  public ConsumerPosition getConsumerPosition() {
+    return consumerPosition;
+  }
+
   public WaitingOffsets assignAndSeek(Consumer<Bytes, Bytes> consumer) {
     SeekType seekType = consumerPosition.getSeekType();
     log.info("Positioning consumer for topic {} with {}", topic, consumerPosition);
