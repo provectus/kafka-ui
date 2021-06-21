@@ -18,21 +18,19 @@ const New: React.FC<Props> = ({
   isTopicCreated,
   createTopic,
   redirectToTopicPath,
+  resetUploadedState,
 }) => {
   const methods = useForm<TopicFormDataRaw>();
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-
   React.useEffect(() => {
-    if (isSubmitting && isTopicCreated) {
+    if (isTopicCreated) {
       const { name } = methods.getValues();
+      resetUploadedState();
       redirectToTopicPath(clusterName, name);
     }
-  }, [isSubmitting, isTopicCreated, redirectToTopicPath, clusterName, methods]);
+  }, [isTopicCreated, redirectToTopicPath, clusterName, methods]);
 
   const onSubmit = async (data: TopicFormDataRaw) => {
-    // TODO: need to fix loader. After success loading the first time, we won't wait for creation any more, because state is
-    // loaded, and we will try to get entity immediately after pressing the button, and we will receive null
-    // going to object page on the second creation. Setting of isSubmitting after createTopic is a workaround, need to tweak loader logic
     createTopic(clusterName, data);
     setIsSubmitting(true); // Keep this action after createTopic to prevent redirect before create.
   };
