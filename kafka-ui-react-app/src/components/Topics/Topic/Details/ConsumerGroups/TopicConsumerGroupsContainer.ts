@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 import { RootState, TopicName, ClusterName } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { fetchTopicConsumerGroups } from 'redux/actions';
-import TopicConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/ConsumerGroups';
+import TopicConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 import { getTopicConsumerGroups } from 'redux/reducers/topics/selectors';
 
 interface RouteProps {
