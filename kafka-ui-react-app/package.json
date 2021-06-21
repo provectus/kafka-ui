@@ -32,7 +32,7 @@
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
     "typesafe-actions": "^5.1.0",
-    "use-debounce": "^6.0.1",
+    "use-debounce": "^7.0.0",
     "uuid": "^8.3.1",
     "yup": "^0.32.9"
   },
