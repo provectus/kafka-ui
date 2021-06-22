@@ -40,13 +40,11 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
         new ConsumerGroupDeleteResult()
             .id("groupB")
             .deleted(false)
-            .error(
-                expError),
+            .error(expError),
         new ConsumerGroupDeleteResult()
             .id("groupA")
             .deleted(false)
-            .error(
-                expError));
+            .error(expError));
 
     deleteConsumerGroupAndAssert(groupIds, expectedResponse);
   }
