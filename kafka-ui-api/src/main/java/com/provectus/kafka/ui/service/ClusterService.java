@@ -13,6 +13,8 @@ import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.PartitionsIncrease;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
@@ -272,5 +274,11 @@ public class ClusterService {
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));
   }
 
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
+      String clusterName,
+      Mono<PartitionsIncrease> partitionsIncrease) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.increaseTopicPartitions(cluster, partitionsIncrease)).orElse(Mono.empty());
+  }
 
 }

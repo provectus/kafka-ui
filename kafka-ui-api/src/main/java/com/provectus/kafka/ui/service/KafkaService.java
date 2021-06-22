@@ -11,6 +11,8 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metric;
+import com.provectus.kafka.ui.model.PartitionsIncrease;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
@@ -42,6 +44,7 @@ import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
+import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -631,5 +634,36 @@ public class KafkaService {
         .map(ac -> ac.deleteRecords(records)).then();
   }
 
+  @SneakyThrows
+  private Mono<String> increaseTopicPartitions(AdminClient adminClient,
+                                               Map<String, NewPartitions> newPartitionsMap,
+                                               String topicName) {
+    return ClusterUtil.toMono(adminClient.createPartitions(newPartitionsMap).all(), topicName);
+  }
+
+  @SneakyThrows
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(AdminClient adminClient,
+                                               Mono<PartitionsIncrease> partitionsIncrease) {
+    return partitionsIncrease.flatMap(
+        partitions -> {
+          Map<String, NewPartitions> newPartitionsMap = Collections.singletonMap(
+              partitions.getTopicName(),
+              NewPartitions.increaseTo(partitions.getTotalPartitionsCount())
+          );
+          return increaseTopicPartitions(adminClient, newPartitionsMap, partitions.getTopicName())
+              .flatMap(
+                  topicName -> getTopicsData(adminClient, Collections.singleton(topicName))
+                      .map(t -> new PartitionsIncreaseResponse()
+                          .topicName(topicName)
+                          .totalPartitionsCount(t.getPartitionCount()))
+                      .next());
+        });
+  }
+
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(KafkaCluster cluster,
+                                                     Mono<PartitionsIncrease> partitionsIncrease) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> increaseTopicPartitions(ac.getAdminClient(), partitionsIncrease));
+  }
 
 }
