@@ -448,7 +448,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ConsumerGroupDeletes'
+              $ref: '#/components/schemas/ConsumerGroupIds'
 
       responses:
         200:
@@ -1875,7 +1875,7 @@ components:
         - connect
         - status
 
-    ConsumerGroupDeletes:
+    ConsumerGroupIds:
       type: object
       properties:
         ids:
@@ -1892,4 +1892,7 @@ components:
           type: boolean
         error:
           type: string
+      required:
+        - id
+        - deleted
 

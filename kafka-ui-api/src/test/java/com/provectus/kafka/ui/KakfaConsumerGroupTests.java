@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.model.ConsumerGroupDeleteResult;
-import com.provectus.kafka.ui.model.ConsumerGroupDeletes;
+import com.provectus.kafka.ui.model.ConsumerGroupIds;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
@@ -31,20 +31,22 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
 
   @Test
   void shouldReturnOkWithDeleteFalseWhenNoSuchConsumerGroupIds() {
-    ConsumerGroupDeletes groupIds = new ConsumerGroupDeletes()
+    ConsumerGroupIds groupIds = new ConsumerGroupIds()
         .ids(List.of("groupA", "groupB"));
 
+    String expError =
+        "org.apache.kafka.common.errors.GroupIdNotFoundException: The group id does not exist.";
     List<ConsumerGroupDeleteResult> expectedResponse = List.of(
-        new ConsumerGroupDeleteResult().
-            id("groupB")
+        new ConsumerGroupDeleteResult()
+            .id("groupB")
             .deleted(false)
             .error(
-                "org.apache.kafka.common.errors.GroupIdNotFoundException: The group id does not exist."),
-        new ConsumerGroupDeleteResult().
-            id("groupA")
+                expError),
+        new ConsumerGroupDeleteResult()
+            .id("groupA")
             .deleted(false)
             .error(
-                "org.apache.kafka.common.errors.GroupIdNotFoundException: The group id does not exist."));
+                expError));
 
     deleteConsumerGroupAndAssert(groupIds, expectedResponse);
   }
@@ -63,7 +65,7 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
     consumer.unsubscribe();
 
     //Delete the consumer when it's INACTIVE and check
-    ConsumerGroupDeletes groupIds = new ConsumerGroupDeletes().ids(List.of(groupId));
+    ConsumerGroupIds groupIds = new ConsumerGroupIds().ids(List.of(groupId));
     List<ConsumerGroupDeleteResult> expectedResponse = List.of(
         new ConsumerGroupDeleteResult()
             .id(groupId)
@@ -82,7 +84,7 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
     consumer.poll(Duration.ofMillis(100));
 
     //Try to delete the consumer when it's ACTIVE
-    ConsumerGroupDeletes groupIds = new ConsumerGroupDeletes().ids(List.of(groupId));
+    ConsumerGroupIds groupIds = new ConsumerGroupIds().ids(List.of(groupId));
     List<ConsumerGroupDeleteResult> expectedResponse = List.of(
         new ConsumerGroupDeleteResult()
             .id(groupId)
@@ -113,7 +115,7 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
 
   @NotNull
   private WebTestClient.ListBodySpec<ConsumerGroupDeleteResult> deleteConsumerGroupAndAssert(
-      ConsumerGroupDeletes groupIds, List<ConsumerGroupDeleteResult> expectedResponse) {
+      ConsumerGroupIds groupIds, List<ConsumerGroupDeleteResult> expectedResponse) {
     return webTestClient
         .method(HttpMethod.DELETE)
         .uri("/api/clusters/{clusterName}/consumerGroups", LOCAL)

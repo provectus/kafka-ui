@@ -10,8 +10,8 @@ import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDeleteResult;
-import com.provectus.kafka.ui.model.ConsumerGroupDeletes;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
+import com.provectus.kafka.ui.model.ConsumerGroupIds;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
@@ -285,13 +285,13 @@ public class ClusterService {
 
 
   public Flux<ConsumerGroupDeleteResult> deleteConsumerGroups(String clusterName,
-                                                              Mono<ConsumerGroupDeletes> groupIds) {
+                                                              Mono<ConsumerGroupIds> groupIds) {
     Optional<Flux<ConsumerGroupDeleteResult>> result =
         clustersStorage.getClusterByName(clusterName)
             .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
                 .map(ExtendedAdminClient::getAdminClient)
                 .flatMap(kafkaClient -> groupIds
-                    .map(ConsumerGroupDeletes::getIds)
+                    .map(ConsumerGroupIds::getIds)
                     .map(kafkaClient::deleteConsumerGroups)
                     .map(DeleteConsumerGroupsResult::deletedGroups)
                     .map(this::getConsumerGroupDeletesResult))
