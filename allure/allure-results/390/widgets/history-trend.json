@@ -1,6 +1,6 @@
 [ {
-  "buildOrder" : 385,
-  "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/385/",
+  "buildOrder" : 390,
+  "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/390/",
   "reportName" : "Allure Report with history",
   "data" : {
     "failed" : 0,
