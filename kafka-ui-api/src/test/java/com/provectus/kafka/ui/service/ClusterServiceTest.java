@@ -224,9 +224,8 @@ class ClusterServiceTest {
             )
             .build()));
 
-    clusterService.increaseTopicPartitions(topicName,
+    clusterService.increaseTopicPartitions(topicName, topicName,
         Mono.just(new PartitionsIncrease()
-            .topicName(topicName)
             .totalPartitionsCount(10)
         )
     ).subscribe(response ->

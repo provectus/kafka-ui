@@ -89,11 +89,12 @@ public class TopicsController implements TopicsApi {
     return clusterService.updateTopic(clusterId, topicName, topicUpdate).map(ResponseEntity::ok);
   }
 
+  @Override
   public Mono<ResponseEntity<PartitionsIncreaseResponse>> increaseTopicPartitions(
       String clusterName, String topicName,
       Mono<PartitionsIncrease> partitionsIncrease,
       ServerWebExchange exchange) {
-    return clusterService.increaseTopicPartitions(clusterName, partitionsIncrease)
+    return clusterService.increaseTopicPartitions(clusterName, topicName, partitionsIncrease)
         .map(ResponseEntity::ok);
   }
 }

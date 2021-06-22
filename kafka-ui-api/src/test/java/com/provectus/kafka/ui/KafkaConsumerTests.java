@@ -85,9 +85,11 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .isOk();
 
     PartitionsIncreaseResponse response = webTestClient.patch()
-        .uri("/api/clusters/{clusterName}/topics/{topicName}/partitions", LOCAL, topicName)
+        .uri("/api/clusters/{clusterName}/topics/{topicName}/partitions",
+            LOCAL,
+            topicName,
+            topicName)
         .bodyValue(new PartitionsIncrease()
-            .topicName(topicName)
             .totalPartitionsCount(10)
         )
         .exchange()

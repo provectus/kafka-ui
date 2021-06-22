@@ -276,9 +276,15 @@ public class ClusterService {
 
   public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
       String clusterName,
+      String topicName,
       Mono<PartitionsIncrease> partitionsIncrease) {
     return clustersStorage.getClusterByName(clusterName).map(cluster ->
-        kafkaService.increaseTopicPartitions(cluster, partitionsIncrease)).orElse(Mono.empty());
+        kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease))
+        .orElseThrow(
+            () -> new ClusterNotFoundException(
+                String.format("No cluster for name '%s'", clusterName)
+            )
+        );
   }
 
 }

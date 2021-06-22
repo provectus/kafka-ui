@@ -642,28 +642,31 @@ public class KafkaService {
   }
 
   @SneakyThrows
-  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(AdminClient adminClient,
-                                               Mono<PartitionsIncrease> partitionsIncrease) {
-    return partitionsIncrease.flatMap(
-        partitions -> {
-          Map<String, NewPartitions> newPartitionsMap = Collections.singletonMap(
-              partitions.getTopicName(),
-              NewPartitions.increaseTo(partitions.getTotalPartitionsCount())
-          );
-          return increaseTopicPartitions(adminClient, newPartitionsMap, partitions.getTopicName())
-              .flatMap(
-                  topicName -> getTopicsData(adminClient, Collections.singleton(topicName))
-                      .map(t -> new PartitionsIncreaseResponse()
-                          .topicName(topicName)
-                          .totalPartitionsCount(t.getPartitionCount()))
-                      .next());
-        });
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
+      AdminClient adminClient,
+      String topicName,
+      Map<String, NewPartitions> newPartitionsMap) {
+    return increaseTopicPartitions(adminClient, newPartitionsMap, topicName)
+        .flatMap(
+            topic -> getTopicsData(adminClient, Collections.singleton(topic))
+                .map(t -> new PartitionsIncreaseResponse()
+                    .topicName(topic)
+                    .totalPartitionsCount(t.getPartitionCount()))
+                .next());
   }
 
-  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(KafkaCluster cluster,
-                                                     Mono<PartitionsIncrease> partitionsIncrease) {
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
+      KafkaCluster cluster,
+      String topicName,
+      Mono<PartitionsIncrease> partitionsIncrease) {
     return getOrCreateAdminClient(cluster)
-        .flatMap(ac -> increaseTopicPartitions(ac.getAdminClient(), partitionsIncrease));
+        .flatMap(ac -> partitionsIncrease.flatMap(partition -> {
+          Map<String, NewPartitions> newPartitionsMap = Collections.singletonMap(
+              topicName,
+              NewPartitions.increaseTo(partition.getTotalPartitionsCount())
+          );
+          return increaseTopicPartitions(ac.getAdminClient(), topicName, newPartitionsMap);
+        }));
   }
 
 }

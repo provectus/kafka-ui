@@ -1895,8 +1895,6 @@ components:
       properties:
         totalPartitionsCount:
           type: integer
-        topicName:
-          type: string
       required:
         - totalPartitionsCount
         - topicName
