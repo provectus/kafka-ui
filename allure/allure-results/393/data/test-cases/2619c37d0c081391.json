@@ -1,12 +1,12 @@
 {
-  "uid" : "11adc546d8ce5fed",
+  "uid" : "2619c37d0c081391",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1624357747350,
-    "stop" : 1624357755404,
-    "duration" : 8054
+    "start" : 1624360570719,
+    "stop" : 1624360577546,
+    "duration" : 6827
   },
   "description" : "",
   "status" : "passed",
@@ -19,78 +19,78 @@
     "steps" : [ {
       "name" : "$(\"open\") http://host.docker.internal:8080/",
       "time" : {
-        "start" : 1624357747432,
-        "stop" : 1624357753745,
-        "duration" : 6313
+        "start" : 1624360570800,
+        "stop" : 1624360575980,
+        "duration" : 5180
       },
       "status" : "passed",
       "steps" : [ ],
       "attachments" : [ ],
       "parameters" : [ ],
+      "hasContent" : false,
       "stepsCount" : 0,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : false
+      "shouldDisplayMessage" : false
     }, {
       "name" : "shouldBeOnPage",
       "time" : {
-        "start" : 1624357753784,
-        "stop" : 1624357755385,
-        "duration" : 1601
+        "start" : 1624360576033,
+        "stop" : 1624360577533,
+        "duration" : 1500
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1624357753905,
-          "stop" : 1624357754750,
-          "duration" : 845
+          "start" : 1624360576187,
+          "stop" : 1624360576848,
+          "duration" : 661
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "shouldDisplayMessage" : false
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1624357754754,
-          "stop" : 1624357755385,
-          "duration" : 631
+          "start" : 1624360576848,
+          "stop" : 1624360577533,
+          "duration" : 685
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "shouldDisplayMessage" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
+      "hasContent" : true,
       "stepsCount" : 2,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "shouldDisplayMessage" : false
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
+    "hasContent" : true,
     "stepsCount" : 4,
     "attachmentsCount" : 0,
-    "shouldDisplayMessage" : false,
-    "hasContent" : true
+    "shouldDisplayMessage" : false
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az219-749"
+    "value" : "fv-az292-28"
   }, {
     "name" : "thread",
-    "value" : "8355@fv-az219-749.main(1)"
+    "value" : "8220@fv-az292-28.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -127,6 +127,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "11adc546d8ce5fed.json",
+  "source" : "2619c37d0c081391.json",
   "parameterValues" : [ ]
 }
