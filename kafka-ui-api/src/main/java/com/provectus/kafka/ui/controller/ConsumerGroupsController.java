@@ -20,6 +20,13 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
   private final ClusterService clusterService;
 
   @Override
+  public Mono<ResponseEntity<Void>> deleteConsumerGroup(String clusterName, String id,
+                                                        ServerWebExchange exchange) {
+    return clusterService.deleteConsumerGroupById(clusterName, id)
+        .map(ResponseEntity::ok);
+  }
+
+  @Override
   public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroup(
       String clusterName, String consumerGroupId, ServerWebExchange exchange) {
     return clusterService.getConsumerGroupDetail(clusterName, consumerGroupId)
