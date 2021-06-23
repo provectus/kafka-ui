@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
-import com.provectus.kafka.ui.exception.OperationInterruptedException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
@@ -305,24 +304,27 @@ public class ClusterService {
       Map<String, KafkaFuture<Void>> futuresMap) {
     return futuresMap.entrySet()
         .stream()
-        .map(groupIdAndFuture -> {
-          try {
-            KafkaFuture<Void> future = groupIdAndFuture.getValue();
-            Void result = future.get(1, TimeUnit.SECONDS);
-            return new ConsumerGroupDeleteResult()
-                .id(groupIdAndFuture.getKey())
-                .deleted(true)
-                .error(null);
-          } catch (InterruptedException e) {
-            log.warn("Interrupted deletion of consumer groups due to", e);
-            throw new OperationInterruptedException();
-          } catch (TimeoutException | ExecutionException e) {
-            return new ConsumerGroupDeleteResult()
-                .id(groupIdAndFuture.getKey())
-                .deleted(false)
-                .error(e.getMessage());
-          }
-        })
+        .map(this::getConsumerGroupDeleteResult)
         .collect(Collectors.toList());
+  }
+
+  @NotNull
+  @SneakyThrows
+  private ConsumerGroupDeleteResult getConsumerGroupDeleteResult(
+      Map.Entry<String, KafkaFuture<Void>> groupIdAndFuture) {
+    try {
+      KafkaFuture<Void> future = groupIdAndFuture.getValue();
+      Void result = future.get(1, TimeUnit.SECONDS);
+      return new ConsumerGroupDeleteResult()
+          .id(groupIdAndFuture.getKey())
+          .deleted(true)
+          .error(null);
+    } catch (TimeoutException | ExecutionException e) {
+      log.warn("Error when deleting the consumer group(s) due to: ", e);
+      return new ConsumerGroupDeleteResult()
+          .id(groupIdAndFuture.getKey())
+          .deleted(false)
+          .error(e.getMessage());
+    }
   }
 }
