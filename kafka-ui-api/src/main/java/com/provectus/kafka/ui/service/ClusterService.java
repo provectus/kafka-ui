@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
@@ -11,6 +13,7 @@ import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
@@ -33,8 +36,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.kafka.clients.admin.DeleteConsumerGroupsResult;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,6 +50,7 @@ import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ClusterService {
   private static final Integer DEFAULT_PAGE_SIZE = 25;
 
@@ -272,5 +281,27 @@ public class ClusterService {
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));
   }
 
+  public Mono<Void> deleteConsumerGroupById(String clusterName,
+                                            String groupId) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
+            .map(ExtendedAdminClient::getAdminClient)
+            .map(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)))
+            .map(DeleteConsumerGroupsResult::all)
+            .flatMap(ClusterUtil::toMono)
+            .onErrorResume(this::reThrowCustomException)
+        )
+        .orElse(Mono.empty());
+  }
 
+  @NotNull
+  private Mono<Void> reThrowCustomException(Throwable e) {
+    if (e instanceof GroupIdNotFoundException) {
+      return Mono.error(new NotFoundException("The group id does not exist"));
+    } else if (e instanceof GroupNotEmptyException) {
+      return Mono.error(new IllegalEntityStateException("The group is not empty"));
+    } else {
+      return Mono.error(e);
+    }
+  }
 }

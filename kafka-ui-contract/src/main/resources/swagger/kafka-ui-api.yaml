@@ -415,6 +415,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
+    delete:
+      tags:
+        - Consumer Groups
+      summary: Delete Consumer Group by ID
+      operationId: deleteConsumerGroup
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
   /api/clusters/{clusterName}/consumerGroups:
     get:
       tags:
@@ -1857,3 +1877,4 @@ components:
         - name
         - connect
         - status
+
