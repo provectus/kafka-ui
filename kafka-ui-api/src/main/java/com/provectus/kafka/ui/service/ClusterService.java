@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
@@ -273,4 +274,12 @@ public class ClusterService {
   }
 
 
+  public Mono<Void> sendMessage(String clusterName, String topicName, CreateTopicMessage msg) {
+    var cluster = clustersStorage.getClusterByName(clusterName)
+        .orElseThrow(ClusterNotFoundException::new);
+    if (!cluster.getTopics().containsKey(topicName)) {
+      throw new TopicNotFoundException();
+    }
+    return kafkaService.sendMessage(cluster, topicName, msg).then();
+  }
 }

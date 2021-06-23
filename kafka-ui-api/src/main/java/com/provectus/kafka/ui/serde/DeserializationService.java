@@ -1,7 +1,8 @@
-package com.provectus.kafka.ui.deserialization;
+package com.provectus.kafka.ui.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryRecordSerDe;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,7 +16,7 @@ public class DeserializationService {
 
   private final ClustersStorage clustersStorage;
   private final ObjectMapper objectMapper;
-  private Map<String, RecordDeserializer> clusterDeserializers;
+  private Map<String, RecordSerDe> clusterDeserializers;
 
 
   @PostConstruct
@@ -27,20 +28,20 @@ public class DeserializationService {
         ));
   }
 
-  private RecordDeserializer createRecordDeserializerForCluster(KafkaCluster cluster) {
+  private RecordSerDe createRecordDeserializerForCluster(KafkaCluster cluster) {
     try {
       if (cluster.getProtobufFile() != null) {
-        return new ProtobufFileRecordDeserializer(cluster.getProtobufFile(),
+        return new ProtobufFileRecordSerDe(cluster.getProtobufFile(),
             cluster.getProtobufMessageName(), objectMapper);
       } else {
-        return new SchemaRegistryRecordDeserializer(cluster, objectMapper);
+        return new SchemaRegistryRecordSerDe(cluster, objectMapper);
       }
     } catch (Throwable e) {
       throw new RuntimeException("Can't init deserializer", e);
     }
   }
 
-  public RecordDeserializer getRecordDeserializerForCluster(KafkaCluster cluster) {
+  public RecordSerDe getRecordDeserializerForCluster(KafkaCluster cluster) {
     return clusterDeserializers.get(cluster.getName());
   }
 }

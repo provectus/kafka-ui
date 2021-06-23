@@ -21,6 +21,7 @@ public class ClustersProperties {
     String zookeeper;
     String schemaRegistry;
     String schemaNameTemplate = "%s-value";
+    String keySchemaNameTemplate = "%s-key";
     String protobufFile;
     String protobufMessageName;
     List<ConnectCluster> kafkaConnect;

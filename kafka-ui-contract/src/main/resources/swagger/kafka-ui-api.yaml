@@ -364,6 +364,33 @@ paths:
           description: OK
         404:
           description: Not found
+    post:
+      tags:
+        - Messages
+      summary: sendTopicMessages
+      operationId: sendTopicMessages
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTopicMessage'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+
 
   /api/clusters/{clusterName}/topics/{topicName}/consumergroups:
     get:
@@ -1414,6 +1441,22 @@ components:
       required:
         - clusterId
         - consumerGroupId
+
+    CreateTopicMessage:
+      type: object
+      properties:
+        partition:
+          type: integer
+        key:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        content:
+          type: object
+      required:
+        - content
 
     TopicMessage:
       type: object
