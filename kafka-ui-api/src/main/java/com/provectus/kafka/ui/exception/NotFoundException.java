@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.exception;
 
-public class NotFoundException extends CustomBaseException{
+public class NotFoundException extends CustomBaseException {
 
   public NotFoundException(String message) {
     super(message);
