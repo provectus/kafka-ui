@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
@@ -9,9 +11,7 @@ import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ConsumerGroupDeleteResult;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
-import com.provectus.kafka.ui.model.ConsumerGroupIds;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
@@ -31,9 +31,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,8 +39,9 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.DeleteConsumerGroupsResult;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -283,48 +281,27 @@ public class ClusterService {
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));
   }
 
-
-  public Flux<ConsumerGroupDeleteResult> deleteConsumerGroups(String clusterName,
-                                                              Mono<ConsumerGroupIds> groupIds) {
-    Optional<Flux<ConsumerGroupDeleteResult>> result =
-        clustersStorage.getClusterByName(clusterName)
-            .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
-                .map(ExtendedAdminClient::getAdminClient)
-                .flatMap(kafkaClient -> groupIds
-                    .map(ConsumerGroupIds::getIds)
-                    .map(kafkaClient::deleteConsumerGroups)
-                    .map(DeleteConsumerGroupsResult::deletedGroups)
-                    .map(this::getConsumerGroupDeletesResult))
-                .flatMapMany(Flux::fromIterable));
-    return result.orElse(Flux.empty());
+  public Mono<Void> deleteConsumerGroupById(String clusterName,
+                                            String groupId) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
+            .map(ExtendedAdminClient::getAdminClient)
+            .map(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)))
+            .map(DeleteConsumerGroupsResult::all)
+            .flatMap(ClusterUtil::toMono)
+            .onErrorResume(this::reThrowCustomException)
+        )
+        .orElse(Mono.empty());
   }
 
   @NotNull
-  private List<ConsumerGroupDeleteResult> getConsumerGroupDeletesResult(
-      Map<String, KafkaFuture<Void>> futuresMap) {
-    return futuresMap.entrySet()
-        .stream()
-        .map(this::getConsumerGroupDeleteResult)
-        .collect(Collectors.toList());
-  }
-
-  @NotNull
-  @SneakyThrows
-  private ConsumerGroupDeleteResult getConsumerGroupDeleteResult(
-      Map.Entry<String, KafkaFuture<Void>> groupIdAndFuture) {
-    try {
-      KafkaFuture<Void> future = groupIdAndFuture.getValue();
-      Void result = future.get(1, TimeUnit.SECONDS);
-      return new ConsumerGroupDeleteResult()
-          .id(groupIdAndFuture.getKey())
-          .deleted(true)
-          .error(null);
-    } catch (TimeoutException | ExecutionException e) {
-      log.warn("Error when deleting the consumer group(s) due to: ", e);
-      return new ConsumerGroupDeleteResult()
-          .id(groupIdAndFuture.getKey())
-          .deleted(false)
-          .error(e.getMessage());
+  private Mono<Void> reThrowCustomException(Throwable e) {
+    if (e instanceof GroupIdNotFoundException) {
+      return Mono.error(new NotFoundException("The group id does not exist"));
+    } else if (e instanceof GroupNotEmptyException) {
+      return Mono.error(new IllegalEntityStateException("The group is not empty"));
+    } else {
+      return Mono.error(e);
     }
   }
 }

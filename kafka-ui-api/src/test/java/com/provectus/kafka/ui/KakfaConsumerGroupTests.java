@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.model.ConsumerGroupDeleteResult;
-import com.provectus.kafka.ui.model.ConsumerGroupIds;
 import java.time.Duration;
 import java.util.List;
 import java.util.Properties;
@@ -13,12 +11,9 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
-import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.http.HttpMethod;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
@@ -30,27 +25,19 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
   WebTestClient webTestClient;
 
   @Test
-  void shouldReturnOkWithDeleteFalseWhenNoSuchConsumerGroupIds() {
-    ConsumerGroupIds groupIds = new ConsumerGroupIds()
-        .ids(List.of("groupA", "groupB"));
-
-    String expError =
-        "org.apache.kafka.common.errors.GroupIdNotFoundException: The group id does not exist.";
-    List<ConsumerGroupDeleteResult> expectedResponse = List.of(
-        new ConsumerGroupDeleteResult()
-            .id("groupB")
-            .deleted(false)
-            .error(expError),
-        new ConsumerGroupDeleteResult()
-            .id("groupA")
-            .deleted(false)
-            .error(expError));
-
-    deleteConsumerGroupAndAssert(groupIds, expectedResponse);
+  void shouldNotFoundWhenNoSuchConsumerGroupId() {
+    String groupId = "groupA";
+    String expError = "The group id does not exist";
+    webTestClient
+        .delete()
+        .uri("/api/clusters/{clusterName}/consumer-groups/{groupId}", LOCAL, groupId)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
   }
 
   @Test
-  void shouldDeleteConsumerGroupWhenNotActive() {
+  void shouldOkWhenConsumerGroupIsNotActive() {
     String topicName = createTopicWithRandomName();
 
     //Create a consumer and subscribe to the topic
@@ -63,16 +50,16 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
     consumer.unsubscribe();
 
     //Delete the consumer when it's INACTIVE and check
-    ConsumerGroupIds groupIds = new ConsumerGroupIds().ids(List.of(groupId));
-    List<ConsumerGroupDeleteResult> expectedResponse = List.of(
-        new ConsumerGroupDeleteResult()
-            .id(groupId)
-            .deleted(true));
-    deleteConsumerGroupAndAssert(groupIds, expectedResponse);
+    webTestClient
+        .delete()
+        .uri("/api/clusters/{clusterName}/consumer-groups/{groupId}", LOCAL, groupId)
+        .exchange()
+        .expectStatus()
+        .isOk();
   }
 
   @Test
-  void shouldNotDeleteConsumerGroupWhenActive() {
+  void shouldBeBadRequestWhenConsumerGroupIsActive() {
     String topicName = createTopicWithRandomName();
 
     //Create a consumer and subscribe to the topic
@@ -82,14 +69,13 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
     consumer.poll(Duration.ofMillis(100));
 
     //Try to delete the consumer when it's ACTIVE
-    ConsumerGroupIds groupIds = new ConsumerGroupIds().ids(List.of(groupId));
-    List<ConsumerGroupDeleteResult> expectedResponse = List.of(
-        new ConsumerGroupDeleteResult()
-            .id(groupId)
-            .deleted(false)
-            .error(
-                "org.apache.kafka.common.errors.GroupNotEmptyException: The group is not empty."));
-    deleteConsumerGroupAndAssert(groupIds, expectedResponse);
+    String expError = "The group is not empty";
+    webTestClient
+        .delete()
+        .uri("/api/clusters/{clusterName}/consumer-groups/{groupId}", LOCAL, groupId)
+        .exchange()
+        .expectStatus()
+        .isBadRequest();
   }
 
   private String createTopicWithRandomName() {
@@ -109,19 +95,5 @@ public class KakfaConsumerGroupTests extends AbstractBaseTest {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     return new KafkaConsumer<>(props);
-  }
-
-  @NotNull
-  private WebTestClient.ListBodySpec<ConsumerGroupDeleteResult> deleteConsumerGroupAndAssert(
-      ConsumerGroupIds groupIds, List<ConsumerGroupDeleteResult> expectedResponse) {
-    return webTestClient
-        .method(HttpMethod.DELETE)
-        .uri("/api/clusters/{clusterName}/consumerGroups", LOCAL)
-        .bodyValue(groupIds)
-        .exchange()
-        .expectStatus()
-        .isOk()
-        .expectBodyList(ConsumerGroupDeleteResult.class)
-        .value(actualResponse -> Assertions.assertEquals(expectedResponse, actualResponse));
   }
 }
