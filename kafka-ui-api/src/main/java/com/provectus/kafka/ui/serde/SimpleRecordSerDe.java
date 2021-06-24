@@ -1,5 +1,9 @@
 package com.provectus.kafka.ui.serde;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.model.MessageSchema;
+import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import java.util.Optional;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -22,5 +26,16 @@ public class SimpleRecordSerDe implements RecordSerDe {
                                                   Optional<Integer> partition) {
     return partition.map(p -> new ProducerRecord<>(topic, p, key, data))
         .orElseGet(() -> new ProducerRecord<>(topic, key, data));
+  }
+
+  @Override
+  public TopicMessageSchema getTopicSchema(String topic) {
+    final MessageSchema schema = new MessageSchema()
+        .name("unknown")
+        .source(MessageSchema.SourceEnum.UNKNOWN)
+        .schema(JsonSchema.stringSchema().toJson(new ObjectMapper()));
+    return new TopicMessageSchema()
+        .key(schema)
+        .value(schema);
   }
 }

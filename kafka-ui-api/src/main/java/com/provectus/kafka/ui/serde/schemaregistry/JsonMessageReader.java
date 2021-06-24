@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
@@ -14,7 +15,7 @@ public class JsonMessageReader extends MessageReader<JsonNode> {
   private static final ObjectMapper mapper = new ObjectMapper();
 
   public JsonMessageReader(String topic, boolean isKey,
-                           SchemaRegistryClient client, Schema schema) throws IOException,
+                           SchemaRegistryClient client, SchemaMetadata schema) throws IOException,
       RestClientException {
     super(topic, isKey, client, schema);
   }

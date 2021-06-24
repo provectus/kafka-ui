@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.serde;
 
+import com.provectus.kafka.ui.model.TopicMessageSchema;
 import java.util.Optional;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -12,4 +13,6 @@ public interface RecordSerDe {
 
   ProducerRecord<byte[], byte[]> serialize(String topic, byte[] key, byte[] data,
                                            Optional<Integer> partition);
+
+  TopicMessageSchema getTopicSchema(String topic);
 }

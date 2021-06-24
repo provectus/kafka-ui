@@ -4,6 +4,7 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
@@ -15,7 +16,7 @@ import org.apache.kafka.common.serialization.Serializer;
 public class ProtobufMessageReader extends MessageReader<Message> {
 
   public ProtobufMessageReader(String topic, boolean isKey,
-                               SchemaRegistryClient client, Schema schema)
+                               SchemaRegistryClient client, SchemaMetadata schema)
       throws IOException, RestClientException {
     super(topic, isKey, client, schema);
   }

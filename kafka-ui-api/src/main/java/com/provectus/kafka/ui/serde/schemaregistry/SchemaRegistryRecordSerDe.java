@@ -2,14 +2,22 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.MessageSchema;
+import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
+import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
+import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.SchemaProvider;
+import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaProvider;
 import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.entities.Schema;
+import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +46,9 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
   private ProtobufMessageFormatter protobufFormatter;
   private final JsonMessageFormatter jsonFormatter;
   private final StringMessageFormatter stringFormatter = new StringMessageFormatter();
+  private final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
+  private final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
+  private final ObjectMapper objectMapper = new ObjectMapper();
 
   public SchemaRegistryRecordSerDe(KafkaCluster cluster, ObjectMapper objectMapper) {
     this.cluster = cluster;
@@ -85,8 +96,8 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
   @SneakyThrows
   public ProducerRecord<byte[], byte[]> serialize(String topic, byte[] key, byte[] data,
                                                   Optional<Integer> partition) {
-    final Optional<Schema> maybeValueSchema = getSchemaBySubject(topic, false);
-    final Optional<Schema> maybeKeySchema = getSchemaBySubject(topic, true);
+    final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
+    final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
 
     final Optional<byte[]> serializedValue = serialize(maybeValueSchema, topic, data);
     final Optional<byte[]> serializedKey = serialize(maybeKeySchema, topic, key);
@@ -104,9 +115,10 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
   }
 
   @SneakyThrows
-  private Optional<byte[]> serialize(Optional<Schema> maybeSchema, String topic, byte[] value) {
+  private Optional<byte[]> serialize(
+      Optional<SchemaMetadata> maybeSchema, String topic, byte[] value) {
     if (maybeSchema.isPresent()) {
-      final Schema schema = maybeSchema.get();
+      final SchemaMetadata schema = maybeSchema.get();
 
       MessageReader<?> reader;
       if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
@@ -124,6 +136,62 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
 
   }
 
+  @Override
+  public TopicMessageSchema getTopicSchema(String topic) {
+    final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
+    final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
+
+    String sourceValueSchema = maybeValueSchema.map(this::convertSchema)
+        .orElseGet(() -> JsonSchema.stringSchema().toJson(objectMapper));
+
+    String sourceKeySchema = maybeKeySchema.map(this::convertSchema)
+        .orElseGet(() -> JsonSchema.stringSchema().toJson(objectMapper));
+
+    final MessageSchema keySchema = new MessageSchema()
+        .name(maybeKeySchema.map(
+            (s) -> schemaSubject(topic, true)
+        ).orElse("unknown"))
+        .source(MessageSchema.SourceEnum.SCHEMA_REGISTRY)
+        .schema(sourceKeySchema);
+
+    final MessageSchema valueSchema = new MessageSchema()
+        .name(maybeValueSchema.map(
+            (s) -> schemaSubject(topic, false)
+        ).orElse("unknown"))
+        .source(MessageSchema.SourceEnum.SCHEMA_REGISTRY)
+        .schema(sourceValueSchema);
+
+    return new TopicMessageSchema()
+        .key(keySchema)
+        .value(valueSchema);
+  }
+
+  @SneakyThrows
+  private String convertSchema(SchemaMetadata schema) {
+
+    String jsonSchema;
+    URI basePath = new URI(cluster.getSchemaRegistry()).resolve(Integer.toString(schema.getId()));
+    final ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
+
+    if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
+      final ProtobufSchema protobufSchema = (ProtobufSchema) schemaById;
+      jsonSchema = protoSchemaConverter
+          .convert(basePath, protobufSchema.toDescriptor())
+          .toJson(objectMapper);
+    } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
+      final AvroSchema avroSchema = (AvroSchema) schemaById;
+      jsonSchema = avroSchemaConverter
+          .convert(basePath, avroSchema.rawSchema())
+          .toJson(objectMapper);
+    } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
+      jsonSchema = schema.getSchema();
+    } else {
+      jsonSchema = JsonSchema.stringSchema().toJson(objectMapper);
+    }
+
+    return jsonSchema;
+  }
+
   private MessageFormatter getMessageFormatter(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
     if (isKey) {
       return keyFormatMap.computeIfAbsent(msg.topic(), k -> detectFormat(msg, true));
@@ -136,28 +204,19 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
     if (schemaRegistryClient != null) {
       try {
         final Optional<String> type = getSchemaFromMessage(msg, isKey)
-            .or(() -> getSchemaBySubject(msg.topic(), isKey).map(Schema::getSchemaType));
+            .or(() -> getSchemaBySubject(msg.topic(), isKey).map(SchemaMetadata::getSchemaType));
         if (type.isPresent()) {
           if (type.get().equals(MessageFormat.PROTOBUF.name())) {
-            try {
-              protobufFormatter.format(msg.topic(), msg.value().get());
+            if (tryFormatter(protobufFormatter, msg).isPresent()) {
               return protobufFormatter;
-            } catch (Throwable e) {
-              log.info("Failed to get Protobuf schema for topic {}", msg.topic(), e);
             }
           } else if (type.get().equals(MessageFormat.AVRO.name())) {
-            try {
-              avroFormatter.format(msg.topic(), msg.value().get());
+            if (tryFormatter(avroFormatter, msg).isPresent()) {
               return avroFormatter;
-            } catch (Throwable e) {
-              log.info("Failed to get Avro schema for topic {}", msg.topic(), e);
             }
           } else if (type.get().equals(MessageFormat.JSON.name())) {
-            try {
-              jsonFormatter.format(msg.topic(), msg.value().get());
+            if (tryFormatter(jsonFormatter, msg).isPresent()) {
               return jsonFormatter;
-            } catch (Throwable e) {
-              log.info("Failed to parse json from topic {}", msg.topic());
             }
           }
         }
@@ -166,14 +225,23 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
       }
     }
 
-    try {
-      jsonFormatter.format(msg.topic(), msg.value().get());
+    if (tryFormatter(jsonFormatter, msg).isPresent()) {
       return jsonFormatter;
-    } catch (Throwable e) {
-      log.info("Failed to parse json from topic {}", msg.topic());
     }
 
     return stringFormatter;
+  }
+
+  private Optional<MessageFormatter> tryFormatter(
+      MessageFormatter formatter, ConsumerRecord<Bytes, Bytes> msg) {
+    try {
+      formatter.format(msg.topic(), msg.value().get());
+      return Optional.of(formatter);
+    } catch (Throwable e) {
+      log.info("Failed to parse by {} from topic {}", formatter.getClass(), msg.topic());
+    }
+
+    return Optional.empty();
   }
 
   @SneakyThrows
@@ -193,21 +261,18 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
   }
 
   @SneakyThrows
-  private Optional<Schema> getSchemaBySubject(String topic, boolean isKey) {
+  private Optional<SchemaMetadata> getSchemaBySubject(String topic, boolean isKey) {
+    return Optional.ofNullable(
+        schemaRegistryClient.getLatestSchemaMetadata(
+            schemaSubject(topic, isKey)
+        )
+    );
+  }
 
-    String schemaName = String.format(
+  private String schemaSubject(String topic, boolean isKey) {
+    return String.format(
         isKey ? cluster.getKeySchemaNameTemplate()
             : cluster.getSchemaNameTemplate(), topic
     );
-
-    final List<Integer> versions = schemaRegistryClient.getAllVersions(schemaName);
-    if (!versions.isEmpty()) {
-      final Integer version = versions.get(versions.size() - 1);
-      final String subjectName = String.format(cluster.getSchemaNameTemplate(), topic);
-      final Schema schema = schemaRegistryClient.getByVersion(subjectName, version, false);
-      return Optional.ofNullable(schema);
-    } else {
-      return Optional.empty();
-    }
   }
 }

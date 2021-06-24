@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +48,13 @@ public class MessagesController implements MessagesApi {
     return parseConsumerPosition(seekType, seekTo, seekDirection)
         .map(consumerPosition -> ResponseEntity
             .ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
+  }
+
+  @Override
+  public Mono<ResponseEntity<TopicMessageSchema>> getTopicSchema(
+      String clusterName, String topicName, ServerWebExchange exchange) {
+    return Mono.just(clusterService.getTopicSchema(clusterName, topicName))
+        .map(ResponseEntity::ok);
   }
 
   @Override

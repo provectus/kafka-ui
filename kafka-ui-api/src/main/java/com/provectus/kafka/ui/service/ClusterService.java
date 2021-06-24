@@ -24,8 +24,10 @@ import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
+import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import java.util.Collections;
 import java.util.Comparator;
@@ -59,6 +61,7 @@ public class ClusterService {
   private final ClusterMapper clusterMapper;
   private final KafkaService kafkaService;
   private final ConsumingService consumingService;
+  private final DeserializationService deserializationService;
 
   public List<Cluster> getClusters() {
     return clustersStorage.getKafkaClusters()
@@ -293,6 +296,17 @@ public class ClusterService {
             .onErrorResume(this::reThrowCustomException)
         )
         .orElse(Mono.empty());
+  }
+
+  public TopicMessageSchema getTopicSchema(String clusterName, String topicName) {
+    var cluster = clustersStorage.getClusterByName(clusterName)
+        .orElseThrow(ClusterNotFoundException::new);
+    if (!cluster.getTopics().containsKey(topicName)) {
+      throw new TopicNotFoundException();
+    }
+    return deserializationService
+        .getRecordDeserializerForCluster(cluster)
+        .getTopicSchema(topicName);
   }
 
   public Mono<Void> sendMessage(String clusterName, String topicName, CreateTopicMessage msg) {

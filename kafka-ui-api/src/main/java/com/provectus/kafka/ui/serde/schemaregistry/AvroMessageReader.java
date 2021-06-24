@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
+import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
@@ -15,7 +16,7 @@ public class AvroMessageReader extends MessageReader<Object> {
 
   public AvroMessageReader(String topic, boolean isKey,
                            SchemaRegistryClient client,
-                           io.confluent.kafka.schemaregistry.client.rest.entities.Schema schema)
+                           SchemaMetadata schema)
       throws IOException, RestClientException {
     super(topic, isKey, client, schema);
   }
