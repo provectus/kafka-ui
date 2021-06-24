@@ -295,6 +295,7 @@ public class ClusterService {
             )
         );
   }
+
   public Mono<Void> deleteConsumerGroupById(String clusterName,
                                             String groupId) {
     return clustersStorage.getClusterByName(clusterName)
