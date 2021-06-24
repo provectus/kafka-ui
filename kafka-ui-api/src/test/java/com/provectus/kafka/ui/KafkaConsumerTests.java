@@ -3,7 +3,6 @@ package com.provectus.kafka.ui;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.TopicCreation;
-import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import java.util.Map;
@@ -87,7 +86,6 @@ public class KafkaConsumerTests extends AbstractBaseTest {
     PartitionsIncreaseResponse response = webTestClient.patch()
         .uri("/api/clusters/{clusterName}/topics/{topicName}/partitions",
             LOCAL,
-            topicName,
             topicName)
         .bodyValue(new PartitionsIncrease()
             .totalPartitionsCount(10)

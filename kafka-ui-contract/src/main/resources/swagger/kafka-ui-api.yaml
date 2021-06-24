@@ -1897,8 +1897,6 @@ components:
           type: integer
       required:
         - totalPartitionsCount
-        - topicName
-
 
     PartitionsIncreaseResponse:
       type: object

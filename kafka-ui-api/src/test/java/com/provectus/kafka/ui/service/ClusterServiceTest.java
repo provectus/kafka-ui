@@ -6,7 +6,6 @@ import static org.mockito.Mockito.when;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import java.util.Map;
@@ -23,7 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import reactor.core.publisher.Mono;
 
 @ExtendWith(MockitoExtension.class)
 class ClusterServiceTest {
@@ -33,8 +31,6 @@ class ClusterServiceTest {
   private ClusterService clusterService;
   @Mock
   private ClustersStorage clustersStorage;
-  @Mock
-  private KafkaService kafkaService;
 
   @Test
   public void shouldListFirst25Topics() {
@@ -205,37 +201,6 @@ class ClusterServiceTest {
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getPartitionCount).isSorted();
-  }
-
-  @Test
-  public void shouldIncreasePartitionsUpTo10() {
-    var topicName = UUID.randomUUID().toString();
-
-    when(clustersStorage.getClusterByName(topicName))
-        .thenReturn(Optional.of(KafkaCluster.builder()
-            .topics(
-                IntStream.rangeClosed(1, 100).boxed()
-                    .map(Objects::toString)
-                    .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
-                        .partitions(Map.of())
-                        .name(e)
-                        .partitionCount(100 - Integer.parseInt(e))
-                        .build()))
-            )
-            .build()));
-
-    clusterService.increaseTopicPartitions(topicName, topicName,
-        Mono.just(new PartitionsIncrease()
-            .totalPartitionsCount(10)
-        )
-    ).subscribe(response ->
-        assertThat(response.getTotalPartitionsCount()).isEqualTo(10)
-    );
-
-    clusterService.getTopicDetails(topicName, topicName)
-        .map(t ->
-            assertThat(t.getPartitionCount()).isEqualTo(10)
-        );
   }
 
 }
