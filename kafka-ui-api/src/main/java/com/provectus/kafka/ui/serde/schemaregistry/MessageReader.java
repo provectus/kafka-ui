@@ -13,10 +13,8 @@ public abstract class MessageReader<T> {
   protected final boolean isKey;
 
   private ParsedSchema schema;
-  private String subject;
 
-
-  public MessageReader(String topic, boolean isKey, SchemaRegistryClient client,
+  protected MessageReader(String topic, boolean isKey, SchemaRegistryClient client,
                        Schema schema) throws IOException, RestClientException {
     this.topic = topic;
     this.isKey = isKey;

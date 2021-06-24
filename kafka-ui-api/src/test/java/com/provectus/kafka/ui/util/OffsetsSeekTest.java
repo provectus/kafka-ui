@@ -147,7 +147,7 @@ class OffsetsSeekTest {
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2);
     assertThat(consumer.position(tp0)).isZero();
     assertThat(consumer.position(tp1)).isEqualTo(1L);
-    assertThat(consumer.position(tp2)).isEqualTo(0L);
+    assertThat(consumer.position(tp2)).isZero();
   }
 
 

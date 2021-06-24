@@ -33,7 +33,6 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -52,7 +51,6 @@ import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -650,15 +648,15 @@ public class KafkaService {
     Properties properties = new Properties();
     properties.putAll(cluster.getProperties());
     properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
-    try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<byte[], byte[]>(properties)) {
-      final ProducerRecord<byte[], byte[]> record = serde.serialize(topic,
+    try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
+      final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(topic,
           msg.getKey() != null ? msg.getKey().getBytes() : null,
           msg.getContent().toString().getBytes(),
           Optional.ofNullable(msg.getPartition())
       );
 
       CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
-      producer.send(record, (metadata, exception) -> {
+      producer.send(producerRecord, (metadata, exception) -> {
         if (exception != null) {
           cf.completeExceptionally(exception);
         } else {

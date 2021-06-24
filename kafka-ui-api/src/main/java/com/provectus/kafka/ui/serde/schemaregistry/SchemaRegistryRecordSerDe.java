@@ -63,21 +63,21 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
     }
   }
 
-  public Tuple2<String, Object> deserialize(ConsumerRecord<Bytes, Bytes> record) {
-    MessageFormatter valueFormatter = getMessageFormatter(record, false);
-    MessageFormatter keyFormatter = getMessageFormatter(record, true);
+  public Tuple2<String, Object> deserialize(ConsumerRecord<Bytes, Bytes> msg) {
+    MessageFormatter valueFormatter = getMessageFormatter(msg, false);
+    MessageFormatter keyFormatter = getMessageFormatter(msg, true);
     try {
       return Tuples.of(
-          record.key() != null
-              ? keyFormatter.format(record.topic(), record.key().get()).toString()
+          msg.key() != null
+              ? keyFormatter.format(msg.topic(), msg.key().get()).toString()
               : "",
           valueFormatter.format(
-              record.topic(),
-              record.value() != null ? record.value().get() : null
+              msg.topic(),
+              msg.value() != null ? msg.value().get() : null
           )
       );
     } catch (Throwable e) {
-      throw new RuntimeException("Failed to parse record from topic " + record.topic(), e);
+      throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
   }
 
@@ -124,11 +124,11 @@ public class SchemaRegistryRecordSerDe implements RecordSerDe {
 
   }
 
-  private MessageFormatter getMessageFormatter(ConsumerRecord<Bytes, Bytes> record, boolean isKey) {
+  private MessageFormatter getMessageFormatter(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
     if (isKey) {
-      return keyFormatMap.computeIfAbsent(record.topic(), k -> detectFormat(record, true));
+      return keyFormatMap.computeIfAbsent(msg.topic(), k -> detectFormat(msg, true));
     } else {
-      return valueFormatMap.computeIfAbsent(record.topic(), k -> detectFormat(record, false));
+      return valueFormatMap.computeIfAbsent(msg.topic(), k -> detectFormat(msg, false));
     }
   }
 

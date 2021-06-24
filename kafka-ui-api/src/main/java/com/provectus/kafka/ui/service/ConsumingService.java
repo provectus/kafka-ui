@@ -166,10 +166,10 @@ public class ConsumingService {
                 .sorted(REVERED_COMPARING).collect(Collectors.toList());
           }
 
-          for (ConsumerRecord<Bytes, Bytes> record : iterable) {
+          for (ConsumerRecord<Bytes, Bytes> msg : iterable) {
             if (!sink.isCancelled() && !waitingOffsets.endReached()) {
-              sink.next(record);
-              waitingOffsets.markPolled(record);
+              sink.next(msg);
+              waitingOffsets.markPolled(msg);
             } else {
               break;
             }
