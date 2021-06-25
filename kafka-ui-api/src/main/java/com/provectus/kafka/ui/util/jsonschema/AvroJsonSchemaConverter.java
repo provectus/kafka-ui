@@ -46,7 +46,7 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
         final Optional<Schema> firstType =
             schema.getTypes().stream().filter(t -> !t.getType().equals(Schema.Type.NULL))
                 .findFirst();
-        schema = firstType.get();
+        schema = firstType.orElseThrow();
       }
       JsonType type = convertType(schema);
       switch (type.getType()) {
