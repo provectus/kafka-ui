@@ -31,6 +31,7 @@ export interface TopicMessageQueryParams {
   limit: GetTopicMessagesRequest['limit'];
   seekType: GetTopicMessagesRequest['seekType'];
   seekTo: GetTopicMessagesRequest['seekTo'];
+  seekDirection: GetTopicMessagesRequest['seekDirection'];
 }
 
 export interface TopicFormCustomParams {

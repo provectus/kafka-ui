@@ -149,5 +149,20 @@ describe('Messages', () => {
         expect(mockedfetchTopicMessages).toHaveBeenCalled();
       });
     });
+
+    describe('Seek Direction', () => {
+      it('fetches topic messages', () => {
+        const mockedfetchTopicMessages = jest.fn();
+        const wrapper = mount(
+          setupWrapper({ fetchTopicMessages: mockedfetchTopicMessages })
+        );
+
+        wrapper.find('input[type="checkbox"]').simulate('change');
+        expect(mockedfetchTopicMessages).toHaveBeenCalled();
+
+        wrapper.find('input[type="checkbox"]').simulate('change');
+        expect(mockedfetchTopicMessages).toHaveBeenCalled();
+      });
+    });
   });
 });
