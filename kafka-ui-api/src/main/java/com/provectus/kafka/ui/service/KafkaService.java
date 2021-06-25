@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
@@ -658,15 +659,30 @@ public class KafkaService {
   public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
       KafkaCluster cluster,
       String topicName,
-      Mono<PartitionsIncrease> partitionsIncrease) {
+      PartitionsIncrease partitionsIncrease) {
     return getOrCreateAdminClient(cluster)
-        .flatMap(ac -> partitionsIncrease.flatMap(partition -> {
+        .flatMap(ac -> {
+          Integer actualCount = cluster.getTopics().get(topicName).getPartitionCount();
+          Integer requestedCount = partitionsIncrease.getTotalPartitionsCount();
+
+          if (requestedCount < actualCount) {
+            return Mono.error(
+                new ValidationException(String.format(
+                    "Topic currently has %s partitions, which is higher than the requested %s.",
+                    actualCount, requestedCount)));
+          }
+          if (requestedCount.equals(actualCount)) {
+            return Mono.error(
+                new ValidationException(
+                    String.format("Topic already has %s partitions.", actualCount)));
+          }
+
           Map<String, NewPartitions> newPartitionsMap = Collections.singletonMap(
               topicName,
-              NewPartitions.increaseTo(partition.getTotalPartitionsCount())
+              NewPartitions.increaseTo(partitionsIncrease.getTotalPartitionsCount())
           );
           return increaseTopicPartitions(ac.getAdminClient(), topicName, newPartitionsMap);
-        }));
+        });
   }
 
 }

@@ -286,7 +286,7 @@ public class ClusterService {
   public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
       String clusterName,
       String topicName,
-      Mono<PartitionsIncrease> partitionsIncrease) {
+      PartitionsIncrease partitionsIncrease) {
     return clustersStorage.getClusterByName(clusterName).map(cluster ->
         kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease))
         .orElseThrow(

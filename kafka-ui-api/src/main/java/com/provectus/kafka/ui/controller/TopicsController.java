@@ -94,7 +94,8 @@ public class TopicsController implements TopicsApi {
       String clusterName, String topicName,
       Mono<PartitionsIncrease> partitionsIncrease,
       ServerWebExchange exchange) {
-    return clusterService.increaseTopicPartitions(clusterName, topicName, partitionsIncrease)
+    return partitionsIncrease.flatMap(
+        partitions -> clusterService.increaseTopicPartitions(clusterName, topicName, partitions))
         .map(ResponseEntity::ok);
   }
 }

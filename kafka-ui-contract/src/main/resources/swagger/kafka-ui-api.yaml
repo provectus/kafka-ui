@@ -1915,6 +1915,7 @@ components:
       properties:
         totalPartitionsCount:
           type: integer
+          minimum: 1
       required:
         - totalPartitionsCount
 
