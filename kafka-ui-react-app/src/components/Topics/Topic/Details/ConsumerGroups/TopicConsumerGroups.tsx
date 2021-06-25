@@ -1,12 +1,15 @@
 import React from 'react';
-import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
+import {
+  Topic,
+  TopicDetails,
+  ConsumerTopicPartitionDetail,
+} from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import ListItem from 'components/ConsumerGroups/List/ListItem';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
-  consumerGroups: Array<ConsumerGroup>;
+  consumerGroups: ConsumerTopicPartitionDetail[];
   fetchTopicConsumerGroups(
     clusterName: ClusterName,
     topicName: TopicName
@@ -26,20 +29,29 @@ const TopicConsumerGroups: React.FC<Props> = ({
   return (
     <div className="box">
       {consumerGroups.length > 0 ? (
-        <table className="table is-striped is-fullwidth is-hoverable">
+        <table className="table is-striped is-fullwidth">
           <thead>
             <tr>
-              <th>Consumer group ID</th>
-              <th>Num of consumers</th>
-              <th>Num of topics</th>
+              <th>Group ID</th>
+              <th>Consumer ID</th>
+              <th>Host</th>
+              <th>Partition</th>
+              <th>Messages behind</th>
+              <th>Current offset</th>
+              <th>End offset</th>
             </tr>
           </thead>
           <tbody>
-            {consumerGroups.map((consumerGroup) => (
-              <ListItem
-                key={consumerGroup.consumerGroupId}
-                consumerGroup={consumerGroup}
-              />
+            {consumerGroups.map((consumer) => (
+              <tr>
+                <td>{consumer.groupId}</td>
+                <td>{consumer.consumerId}</td>
+                <td>{consumer.host}</td>
+                <td>{consumer.partition}</td>
+                <td>{consumer.messagesBehind}</td>
+                <td>{consumer.currentOffset}</td>
+                <td>{consumer.endOffset}</td>
+              </tr>
             ))}
           </tbody>
         </table>
