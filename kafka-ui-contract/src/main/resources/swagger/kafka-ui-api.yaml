@@ -1517,7 +1517,7 @@ components:
       type: object
       properties:
         name:
-          type: String
+          type: string
         source:
           type: string
           enum:
@@ -1973,4 +1973,3 @@ components:
         - name
         - connect
         - status
-
