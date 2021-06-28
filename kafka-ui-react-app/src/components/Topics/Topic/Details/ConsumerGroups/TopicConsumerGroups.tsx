@@ -43,7 +43,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
           </thead>
           <tbody>
             {consumerGroups.map((consumer) => (
-              <tr>
+              <tr key={consumer.consumerId}>
                 <td>{consumer.groupId}</td>
                 <td>{consumer.consumerId}</td>
                 <td>{consumer.host}</td>
