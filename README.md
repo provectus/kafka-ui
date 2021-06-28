@@ -162,5 +162,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read only mode. Default: false
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME` |Given name for the Kafka Connect cluster
+|`KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS` |Address of the Kafka Connect service endpoint 
 |`LOGGING_LEVEL_ROOT`        	| Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
 |`LOGGING_LEVEL_COM_PROVECTUS`        	|Setting log level (all, debug, info, warn, error, fatal, off). Default: debug
