@@ -364,6 +364,57 @@ paths:
           description: OK
         404:
           description: Not found
+    post:
+      tags:
+        - Messages
+      summary: sendTopicMessages
+      operationId: sendTopicMessages
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTopicMessage'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/topics/{topicName}/messages/schema:
+    get:
+      tags:
+        - Messages
+      summary: getTopicSchema
+      operationId: getTopicSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicMessageSchema'
 
   /api/clusters/{clusterName}/topics/{topicName}/consumergroups:
     get:
@@ -1434,6 +1485,51 @@ components:
       required:
         - clusterId
         - consumerGroupId
+
+    CreateTopicMessage:
+      type: object
+      properties:
+        partition:
+          type: integer
+        key:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        content:
+          type: object
+      required:
+        - content
+
+    TopicMessageSchema:
+      type: object
+      properties:
+        key:
+          $ref: "#/components/schemas/MessageSchema"
+        value:
+          $ref: "#/components/schemas/MessageSchema"
+      required:
+        - key
+        - value
+
+    MessageSchema:
+      type: object
+      properties:
+        name:
+          type: String
+        source:
+          type: string
+          enum:
+            - SOURCE_SCHEMA_REGISTRY
+            - SOURCE_PROTO_FILE
+            - SOURCE_UNKNOWN
+        schema:
+          type: string
+      required:
+        - name
+        - source
+        - schema
 
     TopicMessage:
       type: object

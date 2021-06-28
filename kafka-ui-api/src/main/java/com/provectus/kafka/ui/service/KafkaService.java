@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.model.ConsumerGroup;
+import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
@@ -15,6 +16,8 @@ import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicUpdate;
+import com.provectus.kafka.ui.serde.DeserializationService;
+import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import com.provectus.kafka.ui.util.JmxMetricsName;
@@ -28,6 +31,7 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +51,10 @@ import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
@@ -71,6 +79,7 @@ public class KafkaService {
   private final Map<String, ExtendedAdminClient> adminClientCache = new ConcurrentHashMap<>();
   private final JmxClusterUtil jmxClusterUtil;
   private final ClustersStorage clustersStorage;
+  private final DeserializationService deserializationService;
   @Value("${kafka.admin-client-timeout}")
   private int clientTimeout;
 
@@ -631,5 +640,31 @@ public class KafkaService {
         .map(ac -> ac.deleteRecords(records)).then();
   }
 
+  public Mono<RecordMetadata> sendMessage(KafkaCluster cluster, String topic,
+                                          CreateTopicMessage msg) {
+    RecordSerDe serde =
+        deserializationService.getRecordDeserializerForCluster(cluster);
+
+    Properties properties = new Properties();
+    properties.putAll(cluster.getProperties());
+    properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
+    try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
+      final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(topic,
+          msg.getKey() != null ? msg.getKey().getBytes() : null,
+          msg.getContent().toString().getBytes(),
+          Optional.ofNullable(msg.getPartition())
+      );
+
+      CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
+      producer.send(producerRecord, (metadata, exception) -> {
+        if (exception != null) {
+          cf.completeExceptionally(exception);
+        } else {
+          cf.complete(metadata);
+        }
+      });
+      return Mono.fromFuture(cf);
+    }
+  }
 
 }

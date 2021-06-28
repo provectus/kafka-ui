@@ -2,12 +2,12 @@ package com.provectus.kafka.ui.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.deserialization.DeserializationService;
-import com.provectus.kafka.ui.deserialization.RecordDeserializer;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.serde.DeserializationService;
+import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.OffsetsSeek;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
@@ -61,7 +61,7 @@ public class ConsumingService {
             ? new OffsetsSeekForward(topic, consumerPosition)
             : new OffsetsSeekBackward(topic, consumerPosition, recordsLimit)
     );
-    RecordDeserializer recordDeserializer =
+    RecordSerDe recordDeserializer =
         deserializationService.getRecordDeserializerForCluster(cluster);
     return Flux.create(emitter)
         .subscribeOn(Schedulers.boundedElastic())
@@ -166,10 +166,10 @@ public class ConsumingService {
                 .sorted(REVERED_COMPARING).collect(Collectors.toList());
           }
 
-          for (ConsumerRecord<Bytes, Bytes> record : iterable) {
+          for (ConsumerRecord<Bytes, Bytes> msg : iterable) {
             if (!sink.isCancelled() && !waitingOffsets.endReached()) {
-              sink.next(record);
-              waitingOffsets.markPolled(record);
+              sink.next(msg);
+              waitingOffsets.markPolled(msg);
             } else {
               break;
             }
