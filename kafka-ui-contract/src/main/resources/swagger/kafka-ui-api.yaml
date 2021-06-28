@@ -287,6 +287,38 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicConfig'
 
+  /api/clusters/{clusterName}/topics/{topicName}/replications:
+    patch:
+      tags:
+        - Topics
+      summary: changeReplicationFactor
+      operationId: changeReplicationFactor
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplicationFactorChange'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplicationFactorChangeResponse'
+        404:
+          description: Not found
+
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
@@ -1973,3 +2005,23 @@ components:
         - name
         - connect
         - status
+
+    ReplicationFactorChange:
+      type: object
+      properties:
+        totalReplicationFactor:
+          type: integer
+          minimum: 1
+      required:
+        - totalReplicationFactor
+
+    ReplicationFactorChangeResponse:
+      type: object
+      properties:
+        totalReplicationFactor:
+          type: integer
+        topicName:
+          type: string
+      required:
+        - totalReplicationFactor
+        - topicName

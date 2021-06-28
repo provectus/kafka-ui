@@ -17,6 +17,8 @@ import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.ReplicationFactorChange;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
@@ -327,5 +329,24 @@ public class ClusterService {
     } else {
       return Mono.error(e);
     }
+  }
+
+  public Mono<ReplicationFactorChangeResponse> changeReplicationFactor(
+      String clusterName,
+      String topicName,
+      ReplicationFactorChange replicationFactorChange) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.changeReplicationFactor(cluster, topicName, replicationFactorChange)
+            .map(t -> {
+              updateCluster(t, cluster.getName(), cluster);
+              return new ReplicationFactorChangeResponse()
+                  .topicName(t.getName())
+                  .totalReplicationFactor(t.getReplicationFactor());
+            }))
+        .orElseThrow(
+            () -> new ClusterNotFoundException(
+                String.format("No cluster for name '%s'", clusterName)
+            )
+        );
   }
 }

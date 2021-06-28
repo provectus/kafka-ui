@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
@@ -7,11 +8,13 @@ import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalPartition;
+import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSegmentSizeDto;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metric;
+import com.provectus.kafka.ui.model.ReplicationFactorChange;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
@@ -26,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
@@ -46,6 +50,7 @@ import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
+import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -665,6 +670,126 @@ public class KafkaService {
       });
       return Mono.fromFuture(cf);
     }
+  }
+
+  private Mono<InternalTopic> changeReplicationFactor(
+      AdminClient adminClient,
+      String topicName,
+      Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments
+  ) {
+    return ClusterUtil.toMono(adminClient
+        .alterPartitionReassignments(reassignments).all(), topicName)
+        .flatMap(topic -> getTopicsData(adminClient, Collections.singleton(topic)).next());
+  }
+
+  public Mono<InternalTopic> changeReplicationFactor(
+      KafkaCluster cluster,
+      String topicName,
+      ReplicationFactorChange replicationFactorChange) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> {
+          Integer actual = cluster.getTopics().get(topicName).getReplicationFactor();
+          Integer requested = replicationFactorChange.getTotalReplicationFactor();
+          if (requested.equals(actual)) {
+            return Mono.error(
+                new ValidationException(
+                    String.format("Topic already has replicationFactor %s.", actual)));
+          }
+          return changeReplicationFactor(ac.getAdminClient(), topicName,
+              getPartitionsReassignments(cluster, topicName,
+                  replicationFactorChange));
+        });
+  }
+
+  @SneakyThrows
+  private Map<TopicPartition, Optional<NewPartitionReassignment>> getPartitionsReassignments(
+      KafkaCluster cluster,
+      String topicName,
+      ReplicationFactorChange replicationFactorChange) {
+    Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments = new HashMap<>();
+
+    Integer replicasCountDiff = replicationFactorChange.getTotalReplicationFactor() -
+        cluster.getTopics().get(topicName).getReplicationFactor();
+
+    Map<Integer, List<Integer>> currentAssignment = new HashMap<>();
+
+    if (replicasCountDiff > 0) {
+
+      Map<Integer, Integer> brokers = new LinkedHashMap<>();
+
+      cluster.getMetrics().getInternalBrokerDiskUsage().keySet()
+          .forEach(id -> brokers.put(id, 0));
+
+      cluster.getTopics().get(topicName).getPartitions().values()
+          .forEach(partition -> currentAssignment.put(partition.getPartition(),
+              partition.getReplicas().stream().map(t -> {
+                brokers.put(t.getBroker(), brokers.get(t.getBroker()) + 1);
+                return t.getBroker();
+              }).collect(Collectors.toList()))
+          );
+
+      Map<Integer, Integer> sortedBrokers = entriesSortedByValues(brokers);
+
+      for (var assignment : currentAssignment.entrySet()) {
+        sortedBrokers = entriesSortedByValues(sortedBrokers);
+        Integer added = 0;
+
+        for (Map.Entry<Integer, Integer> broker : sortedBrokers.entrySet()) {
+          var assignmentList = assignment.getValue();
+
+          if (!assignmentList.contains(broker.getKey())) {
+            assignmentList.add(broker.getKey());
+            sortedBrokers.put(broker.getKey(), broker.getValue() + 1);
+            added++;
+          }
+          if (added.equals(replicasCountDiff)) {
+            break;
+          }
+        }
+        if (!added.equals(replicasCountDiff)) {
+          throw new IllegalArgumentException("Some error while creating reassignment");
+        }
+      }
+
+      currentAssignment.forEach((key, value) -> reassignments.put(
+          new TopicPartition(topicName, key),
+          Optional.of(new NewPartitionReassignment(value))
+      ));
+    } else if (replicasCountDiff < 0) {
+
+      cluster.getTopics().get(topicName).getPartitions().values()
+          .forEach(partition -> currentAssignment.put(partition.getPartition(),
+              partition.getReplicas().stream()
+                  .map(InternalReplica::getBroker)
+                  .collect(Collectors.toList()))
+          );
+      for (var assignment : currentAssignment.entrySet()) {
+        var assignmentList = assignment.getValue();
+        if (assignmentList.size() == cluster.getTopics().get(topicName).getReplicationFactor()) {
+          for (int i = 0; i > replicasCountDiff; i--) {
+            assignmentList.remove(assignmentList.size() - 1);
+          }
+        } else {
+          throw new ValidationException("Something went wrong while decreasing replicas count");
+        }
+      }
+      currentAssignment.forEach((key, value) -> reassignments.put(
+          new TopicPartition(topicName, key),
+          Optional.of(new NewPartitionReassignment(value))
+      ));
+    } else {
+      throw new ValidationException("Replication factor already equals requested");
+    }
+    return reassignments;
+  }
+
+  private Map<Integer, Integer> entriesSortedByValues(Map<Integer, Integer> map) {
+    var sortedMap = new LinkedHashMap<Integer, Integer>();
+    map.entrySet()
+        .stream()
+        .sorted(Map.Entry.comparingByValue())
+        .forEachOrdered(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
+    return sortedMap;
   }
 
 }
