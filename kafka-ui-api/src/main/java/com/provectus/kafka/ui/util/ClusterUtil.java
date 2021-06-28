@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.util;
 import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
-import com.provectus.kafka.ui.deserialization.RecordDeserializer;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerTopicPartitionDetail;
@@ -14,6 +13,7 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.serde.RecordSerDe;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -43,6 +43,7 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 @Slf4j
 public class ClusterUtil {
@@ -197,7 +198,7 @@ public class ClusterUtil {
   }
 
   public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
-                                               RecordDeserializer recordDeserializer) {
+                                               RecordSerDe recordDeserializer) {
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
         .forEachRemaining(header -> headers.put(header.key(), new String(header.value())));
@@ -212,12 +213,11 @@ public class ClusterUtil {
     topicMessage.setOffset(consumerRecord.offset());
     topicMessage.setTimestamp(timestamp);
     topicMessage.setTimestampType(timestampType);
-    if (consumerRecord.key() != null) {
-      topicMessage.setKey(consumerRecord.key().toString());
-    }
+
     topicMessage.setHeaders(headers);
-    Object parsedValue = recordDeserializer.deserialize(consumerRecord);
-    topicMessage.setContent(parsedValue);
+    Tuple2<String, Object> parsed = recordDeserializer.deserialize(consumerRecord);
+    topicMessage.setKey(parsed.getT1());
+    topicMessage.setContent(parsed.getT2());
 
     return topicMessage;
   }

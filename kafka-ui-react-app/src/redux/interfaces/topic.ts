@@ -7,6 +7,7 @@ import {
   GetTopicMessagesRequest,
   ConsumerGroup,
   TopicColumnsToSort,
+  TopicConsumerGroups,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -31,6 +32,7 @@ export interface TopicMessageQueryParams {
   limit: GetTopicMessagesRequest['limit'];
   seekType: GetTopicMessagesRequest['seekType'];
   seekTo: GetTopicMessagesRequest['seekTo'];
+  seekDirection: GetTopicMessagesRequest['seekDirection'];
 }
 
 export interface TopicFormCustomParams {
@@ -40,6 +42,7 @@ export interface TopicFormCustomParams {
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
   config?: TopicConfig[];
+  consumerGroups?: TopicConsumerGroups;
 }
 
 export interface TopicsState {

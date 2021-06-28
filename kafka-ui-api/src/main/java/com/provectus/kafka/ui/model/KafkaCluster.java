@@ -17,6 +17,7 @@ public class KafkaCluster {
   private final String schemaRegistry;
   private final List<KafkaConnectCluster> kafkaConnect;
   private final String schemaNameTemplate;
+  private final String keySchemaNameTemplate;
   private final ServerStatus status;
   private final ServerStatus zookeeperStatus;
   private final InternalClusterMetrics metrics;

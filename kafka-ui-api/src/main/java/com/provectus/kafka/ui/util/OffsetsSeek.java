@@ -18,7 +18,7 @@ public abstract class OffsetsSeek {
   protected final String topic;
   protected final ConsumerPosition consumerPosition;
 
-  public OffsetsSeek(String topic, ConsumerPosition consumerPosition) {
+  protected OffsetsSeek(String topic, ConsumerPosition consumerPosition) {
     this.topic = topic;
     this.consumerPosition = consumerPosition;
   }

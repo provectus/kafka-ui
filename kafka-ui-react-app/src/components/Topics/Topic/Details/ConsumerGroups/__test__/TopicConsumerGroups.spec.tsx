@@ -8,8 +8,26 @@ describe('Details', () => {
   const mockTopicName = 'local';
   const mockWithConsumerGroup = [
     {
-      clusterId: '1',
-      consumerGroupId: '1',
+      groupId: 'messages-consumer',
+      consumerId:
+        'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0',
+      topic: 'messages',
+      host: '/172.31.9.153',
+      partition: 6,
+      currentOffset: 394,
+      endOffset: 394,
+      messagesBehind: 0,
+    },
+    {
+      groupId: 'messages-consumer',
+      consumerId:
+        'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0',
+      topic: 'messages',
+      host: '/172.31.9.153',
+      partition: 7,
+      currentOffset: 384,
+      endOffset: 384,
+      messagesBehind: 0,
     },
   ];
 

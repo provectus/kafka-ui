@@ -2,9 +2,11 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.Collections;
 import java.util.List;
@@ -47,6 +49,23 @@ public class MessagesController implements MessagesApi {
         .map(consumerPosition -> ResponseEntity
             .ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
   }
+
+  @Override
+  public Mono<ResponseEntity<TopicMessageSchema>> getTopicSchema(
+      String clusterName, String topicName, ServerWebExchange exchange) {
+    return Mono.just(clusterService.getTopicSchema(clusterName, topicName))
+        .map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> sendTopicMessages(
+      String clusterName, String topicName, @Valid Mono<CreateTopicMessage> createTopicMessage,
+      ServerWebExchange exchange) {
+    return createTopicMessage.flatMap(msg ->
+        clusterService.sendMessage(clusterName, topicName, msg)
+    ).map(ResponseEntity::ok);
+  }
+
 
   private Mono<ConsumerPosition> parseConsumerPosition(
       SeekType seekType, List<String> seekTo,  SeekDirection seekDirection) {
