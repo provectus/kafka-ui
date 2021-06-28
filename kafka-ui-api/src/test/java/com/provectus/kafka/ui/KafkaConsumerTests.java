@@ -3,6 +3,7 @@ package com.provectus.kafka.ui;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.TopicCreation;
+import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import java.util.Map;
@@ -99,6 +100,20 @@ public class KafkaConsumerTests extends AbstractBaseTest {
 
     assert response != null;
     Assertions.assertEquals(10, response.getTotalPartitionsCount());
+
+    TopicDetails topicDetails = webTestClient.get()
+        .uri("/api/clusters/{clusterName}/topics/{topicName}",
+            LOCAL,
+            topicName)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBody(TopicDetails.class)
+        .returnResult()
+        .getResponseBody();
+
+    assert topicDetails != null;
+    Assertions.assertEquals(10, topicDetails.getPartitionCount());
   }
 
   @Test

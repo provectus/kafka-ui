@@ -635,28 +635,15 @@ public class KafkaService {
         .map(ac -> ac.deleteRecords(records)).then();
   }
 
-  @SneakyThrows
-  private Mono<String> increaseTopicPartitions(AdminClient adminClient,
-                                               Map<String, NewPartitions> newPartitionsMap,
-                                               String topicName) {
-    return ClusterUtil.toMono(adminClient.createPartitions(newPartitionsMap).all(), topicName);
+  private Mono<InternalTopic> increaseTopicPartitions(AdminClient adminClient,
+                                                      String topicName,
+                                                      Map<String, NewPartitions> newPartitionsMap
+  ) {
+    return ClusterUtil.toMono(adminClient.createPartitions(newPartitionsMap).all(), topicName)
+        .flatMap(topic -> getTopicsData(adminClient, Collections.singleton(topic)).next());
   }
 
-  @SneakyThrows
-  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
-      AdminClient adminClient,
-      String topicName,
-      Map<String, NewPartitions> newPartitionsMap) {
-    return increaseTopicPartitions(adminClient, newPartitionsMap, topicName)
-        .flatMap(
-            topic -> getTopicsData(adminClient, Collections.singleton(topic))
-                .map(t -> new PartitionsIncreaseResponse()
-                    .topicName(topic)
-                    .totalPartitionsCount(t.getPartitionCount()))
-                .next());
-  }
-
-  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
+  public Mono<InternalTopic> increaseTopicPartitions(
       KafkaCluster cluster,
       String topicName,
       PartitionsIncrease partitionsIncrease) {

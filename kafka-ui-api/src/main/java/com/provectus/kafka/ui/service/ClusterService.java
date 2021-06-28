@@ -288,7 +288,13 @@ public class ClusterService {
       String topicName,
       PartitionsIncrease partitionsIncrease) {
     return clustersStorage.getClusterByName(clusterName).map(cluster ->
-        kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease))
+        kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease)
+            .map(t -> {
+              updateCluster(t, cluster.getName(), cluster);
+              return new PartitionsIncreaseResponse()
+                  .topicName(t.getName())
+                  .totalPartitionsCount(t.getPartitionCount());
+            }))
         .orElseThrow(
             () -> new ClusterNotFoundException(
                 String.format("No cluster for name '%s'", clusterName)
