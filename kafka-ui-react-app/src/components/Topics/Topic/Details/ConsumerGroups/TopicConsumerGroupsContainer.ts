@@ -20,7 +20,7 @@ const mapStateToProps = (
     },
   }: OwnProps
 ) => ({
-  consumerGroups: getTopicConsumerGroups(state),
+  consumerGroups: getTopicConsumerGroups(state, topicName),
   topicName,
   clusterName,
 });
