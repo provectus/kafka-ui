@@ -695,6 +695,12 @@ public class KafkaService {
                 new ValidationException(
                     String.format("Topic already has replicationFactor %s.", actual)));
           }
+          if (requested > cluster.getMetrics().getBrokerCount()) {
+            return Mono.error(
+                new ValidationException(
+                    String.format("Requested replication factor %s more than brokers count %s.",
+                        requested, actual)));
+          }
           return changeReplicationFactor(ac.getAdminClient(), topicName,
               getPartitionsReassignments(cluster, topicName,
                   replicationFactorChange));
@@ -708,18 +714,23 @@ public class KafkaService {
       ReplicationFactorChange replicationFactorChange) {
     Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments = new HashMap<>();
 
+    // Difference between requested and actual Replication factor
     Integer replicasCountDiff = replicationFactorChange.getTotalReplicationFactor() -
         cluster.getTopics().get(topicName).getReplicationFactor();
 
     Map<Integer, List<Integer>> currentAssignment = new HashMap<>();
 
+    // If we should to increase Replication factor
     if (replicasCountDiff > 0) {
 
+      // Map for store brokers (Entry<brokerId, topicReplicasCount>)
       Map<Integer, Integer> brokers = new LinkedHashMap<>();
 
+      // Add available brokers to map
       cluster.getMetrics().getInternalBrokerDiskUsage().keySet()
           .forEach(id -> brokers.put(id, 0));
 
+      // Fill currentAssignment and brokers
       cluster.getTopics().get(topicName).getPartitions().values()
           .forEach(partition -> currentAssignment.put(partition.getPartition(),
               partition.getReplicas().stream().map(t -> {
@@ -728,12 +739,21 @@ public class KafkaService {
               }).collect(Collectors.toList()))
           );
 
-      Map<Integer, Integer> sortedBrokers = entriesSortedByValues(brokers);
+      // Map for store brokers in order by topicReplicasCount (Entry<brokerId, topicReplicasCount>)
+      Map<Integer, Integer> sortedBrokers = brokers;
 
+      // For each topic partition
       for (var assignment : currentAssignment.entrySet()) {
+        // Sort brokers
         sortedBrokers = entriesSortedByValues(sortedBrokers);
         Integer added = 0;
 
+
+        /*
+          Iterate brokers while added != replicasCountDiff
+          and if available add broker to reassignment list for current partition
+          and increase added broker's topicReplicasCount
+        */
         for (Map.Entry<Integer, Integer> broker : sortedBrokers.entrySet()) {
           var assignmentList = assignment.getValue();
 
@@ -747,22 +767,31 @@ public class KafkaService {
           }
         }
         if (!added.equals(replicasCountDiff)) {
-          throw new IllegalArgumentException("Some error while creating reassignment");
+          throw new ValidationException("Something went wrong while adding replicas");
         }
       }
 
+      // Fill result map
       currentAssignment.forEach((key, value) -> reassignments.put(
           new TopicPartition(topicName, key),
           Optional.of(new NewPartitionReassignment(value))
       ));
+
+      // If we should to decrease Replication factor
     } else if (replicasCountDiff < 0) {
 
+      // Fill currentAssignment
       cluster.getTopics().get(topicName).getPartitions().values()
           .forEach(partition -> currentAssignment.put(partition.getPartition(),
               partition.getReplicas().stream()
                   .map(InternalReplica::getBroker)
                   .collect(Collectors.toList()))
           );
+      /*
+        For each topic partition remove last broker in assignment list (-replicasCountDiff) times
+        throw exception if between getting currentAssignment and removing replicas
+        topic's Replication factor has been changed
+      */
       for (var assignment : currentAssignment.entrySet()) {
         var assignmentList = assignment.getValue();
         if (assignmentList.size() == cluster.getTopics().get(topicName).getReplicationFactor()) {
@@ -773,6 +802,8 @@ public class KafkaService {
           throw new ValidationException("Something went wrong while decreasing replicas count");
         }
       }
+
+      // Fill result map
       currentAssignment.forEach((key, value) -> reassignments.put(
           new TopicPartition(topicName, key),
           Optional.of(new NewPartitionReassignment(value))
