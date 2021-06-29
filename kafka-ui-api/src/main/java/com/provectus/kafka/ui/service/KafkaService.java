@@ -697,16 +697,18 @@ public class KafkaService {
         .flatMap(ac -> {
           Integer actual = cluster.getTopics().get(topicName).getReplicationFactor();
           Integer requested = replicationFactorChange.getTotalReplicationFactor();
+          Integer brokersCount = cluster.getMetrics().getBrokerCount();
+
           if (requested.equals(actual)) {
             return Mono.error(
                 new ValidationException(
                     String.format("Topic already has replicationFactor %s.", actual)));
           }
-          if (requested > cluster.getMetrics().getBrokerCount()) {
+          if (requested > brokersCount) {
             return Mono.error(
                 new ValidationException(
                     String.format("Requested replication factor %s more than brokers count %s.",
-                        requested, actual)));
+                        requested, brokersCount)));
           }
           return changeReplicationFactor(ac.getAdminClient(), topicName,
               getPartitionsReassignments(cluster, topicName,
