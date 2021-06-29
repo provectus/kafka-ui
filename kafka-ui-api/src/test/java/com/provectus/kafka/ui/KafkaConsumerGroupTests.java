@@ -20,7 +20,7 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 @Log4j2
 @AutoConfigureWebTestClient(timeout = "10000")
-public class KakfaConsumerGroupTests extends AbstractBaseTest {
+public class KafkaConsumerGroupTests extends AbstractBaseTest {
   @Autowired
   WebTestClient webTestClient;
 

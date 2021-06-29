@@ -1,8 +1,10 @@
 package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.Consumer;
@@ -16,39 +18,44 @@ public class OffsetsSeekForward extends OffsetsSeek {
     super(topic, consumerPosition);
   }
 
-  protected void assignAndSeekForOffset(Consumer<Bytes, Bytes> consumer) {
-    List<TopicPartition> partitions = getRequestedPartitions(consumer);
-    consumer.assign(partitions);
-    consumerPosition.getSeekTo().forEach((partition, offset) -> {
-      TopicPartition topicPartition = new TopicPartition(topic, partition);
-      consumer.seek(topicPartition, offset);
-    });
+  protected Map<TopicPartition, Long> offsetsFromPositions(Consumer<Bytes, Bytes> consumer,
+                                        List<TopicPartition> partitions) {
+    final Map<TopicPartition, Long> offsets =
+        offsetsFromBeginning(consumer, partitions);
+
+    final Map<TopicPartition, Long> endOffsets = consumer.endOffsets(offsets.keySet());
+    final Set<TopicPartition> set = new HashSet<>(consumerPosition.getSeekTo().keySet());
+    final Map<TopicPartition, Long> collect = consumerPosition.getSeekTo().entrySet().stream()
+        .filter(e -> e.getValue() < endOffsets.get(e.getKey()))
+        .filter(e -> endOffsets.get(e.getKey()) > offsets.get(e.getKey()))
+        .collect(Collectors.toMap(
+            Map.Entry::getKey,
+            Map.Entry::getValue
+        ));
+    offsets.putAll(collect);
+    set.removeAll(collect.keySet());
+    set.forEach(offsets::remove);
+
+    return offsets;
   }
 
-  protected void assignAndSeekForTimestamp(Consumer<Bytes, Bytes> consumer) {
-    Map<TopicPartition, Long> timestampsToSearch =
-        consumerPosition.getSeekTo().entrySet().stream()
-            .collect(Collectors.toMap(
-                partitionPosition -> new TopicPartition(topic, partitionPosition.getKey()),
-                Map.Entry::getValue
-            ));
-    Map<TopicPartition, Long> offsetsForTimestamps = consumer.offsetsForTimes(timestampsToSearch)
-        .entrySet().stream()
-        .filter(e -> e.getValue() != null)
-        .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().offset()));
+  protected Map<TopicPartition, Long> offsetsForTimestamp(Consumer<Bytes, Bytes> consumer) {
+    Map<TopicPartition, Long> offsetsForTimestamps =
+        consumer.offsetsForTimes(consumerPosition.getSeekTo())
+            .entrySet().stream()
+            .filter(e -> e.getValue() != null)
+            .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue().offset()));
 
     if (offsetsForTimestamps.isEmpty()) {
       throw new IllegalArgumentException("No offsets were found for requested timestamps");
     }
 
-    consumer.assign(offsetsForTimestamps.keySet());
-    offsetsForTimestamps.forEach(consumer::seek);
+    return offsetsForTimestamps;
   }
 
-  protected void assignAndSeekFromBeginning(Consumer<Bytes, Bytes> consumer) {
-    List<TopicPartition> partitions = getRequestedPartitions(consumer);
-    consumer.assign(partitions);
-    consumer.seekToBeginning(partitions);
+  protected Map<TopicPartition, Long> offsetsFromBeginning(Consumer<Bytes, Bytes> consumer,
+                                            List<TopicPartition> partitions) {
+    return consumer.beginningOffsets(partitions);
   }
 
 }

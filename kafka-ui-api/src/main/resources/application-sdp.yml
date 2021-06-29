@@ -1,9 +1,9 @@
 kafka:
   clusters:
     - name: local
-      bootstrapServers: localhost:9093
-      zookeeper: localhost:2181
-      schemaRegistry: http://localhost:8083
+      bootstrapServers: b-1.kad-msk.uxahxx.c6.kafka.eu-west-1.amazonaws.com:9092
+#      zookeeper: localhost:2181
+#      schemaRegistry: http://localhost:8083
   #    -
   #      name: secondLocal
   #      zookeeper: zookeeper1:2181

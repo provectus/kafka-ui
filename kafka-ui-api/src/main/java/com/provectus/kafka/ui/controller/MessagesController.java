@@ -16,6 +16,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -45,7 +46,7 @@ public class MessagesController implements MessagesApi {
       String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo,
       @Valid Integer limit, @Valid String q, @Valid SeekDirection seekDirection,
       ServerWebExchange exchange) {
-    return parseConsumerPosition(seekType, seekTo, seekDirection)
+    return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
         .map(consumerPosition -> ResponseEntity
             .ok(clusterService.getMessages(clusterName, topicName, consumerPosition, q, limit)));
   }
@@ -68,18 +69,21 @@ public class MessagesController implements MessagesApi {
 
 
   private Mono<ConsumerPosition> parseConsumerPosition(
-      SeekType seekType, List<String> seekTo,  SeekDirection seekDirection) {
+      String topicName, SeekType seekType, List<String> seekTo,  SeekDirection seekDirection) {
     return Mono.justOrEmpty(seekTo)
         .defaultIfEmpty(Collections.emptyList())
         .flatMapIterable(Function.identity())
         .map(p -> {
-          String[] splited = p.split("::");
-          if (splited.length != 2) {
+          String[] split = p.split("::");
+          if (split.length != 2) {
             throw new IllegalArgumentException(
                 "Wrong seekTo argument format. See API docs for details");
           }
 
-          return Pair.of(Integer.parseInt(splited[0]), Long.parseLong(splited[1]));
+          return Pair.of(
+              new TopicPartition(topicName, Integer.parseInt(split[0])),
+              Long.parseLong(split[1])
+          );
         })
         .collectMap(Pair::getKey, Pair::getValue)
         .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING,
