@@ -724,8 +724,8 @@ public class KafkaService {
     Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments = new HashMap<>();
 
     // Difference between requested and actual Replication factor
-    Integer replicasCountDiff = replicationFactorChange.getTotalReplicationFactor() -
-        cluster.getTopics().get(topicName).getReplicationFactor();
+    Integer replicasCountDiff = replicationFactorChange.getTotalReplicationFactor()
+        - cluster.getTopics().get(topicName).getReplicationFactor();
 
     Map<Integer, List<Integer>> currentAssignment = new HashMap<>();
 
@@ -745,8 +745,7 @@ public class KafkaService {
               partition.getReplicas().stream().map(t -> {
                 brokers.put(t.getBroker(), brokers.get(t.getBroker()) + 1);
                 return t.getBroker();
-              }).collect(Collectors.toList()))
-          );
+              }).collect(Collectors.toList())));
 
       // Map for store brokers in order by topicReplicasCount (Entry<brokerId, topicReplicasCount>)
       Map<Integer, Integer> sortedBrokers = brokers;
@@ -794,8 +793,7 @@ public class KafkaService {
           .forEach(partition -> currentAssignment.put(partition.getPartition(),
               partition.getReplicas().stream()
                   .map(InternalReplica::getBroker)
-                  .collect(Collectors.toList()))
-          );
+                  .collect(Collectors.toList())));
       /*
         For each topic partition remove last broker in assignment list (-replicasCountDiff) times
         throw exception if between getting currentAssignment and removing replicas
