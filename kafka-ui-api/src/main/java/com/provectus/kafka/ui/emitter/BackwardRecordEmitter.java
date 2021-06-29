@@ -40,42 +40,44 @@ public class BackwardRecordEmitter
       ) {
         final Map<TopicPartition, Long> partitionsOffsets =
             offsetsSeek.getPartitionsOffsets(consumer);
-        log.info("partition offsets: {}", partitionsOffsets);
+        log.debug("partition offsets: {}", partitionsOffsets);
         var waitingOffsets =
             offsetsSeek.waitingOffsets(consumer, partitionsOffsets.keySet());
-        log.info("waittin offsets {} {}",
+        log.debug("waittin offsets {} {}",
             waitingOffsets.getBeginOffsets(),
             waitingOffsets.getEndOffsets()
         );
         while (!sink.isCancelled() && !waitingOffsets.beginReached()) {
           for (Map.Entry<TopicPartition, Long> entry : partitionsOffsets.entrySet()) {
             final Long lowest = waitingOffsets.getBeginOffsets().get(entry.getKey().partition());
-            consumer.assign(Collections.singleton(entry.getKey()));
-            final long offset = Math.max(lowest, entry.getValue() - msgsPerPartition);
-            log.info("Polling {} from {}", entry.getKey(), offset);
-            consumer.seek(entry.getKey(), offset);
-            ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
-            final List<ConsumerRecord<Bytes, Bytes>> partitionRecords =
-                records.records(entry.getKey()).stream()
-                  .filter(r -> r.offset() < partitionsOffsets.get(entry.getKey()))
-                  .collect(Collectors.toList());
-            Collections.reverse(partitionRecords);
+            if (lowest != null) {
+              consumer.assign(Collections.singleton(entry.getKey()));
+              final long offset = Math.max(lowest, entry.getValue() - msgsPerPartition);
+              log.debug("Polling {} from {}", entry.getKey(), offset);
+              consumer.seek(entry.getKey(), offset);
+              ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
+              final List<ConsumerRecord<Bytes, Bytes>> partitionRecords =
+                  records.records(entry.getKey()).stream()
+                      .filter(r -> r.offset() < partitionsOffsets.get(entry.getKey()))
+                      .collect(Collectors.toList());
+              Collections.reverse(partitionRecords);
 
-            log.info("{} records polled", records.count());
-            log.info("{} records sent", partitionRecords.size());
-            for (ConsumerRecord<Bytes, Bytes> msg : partitionRecords) {
-              if (!sink.isCancelled() && !waitingOffsets.beginReached()) {
-                sink.next(msg);
-                waitingOffsets.markPolled(msg);
-              } else {
-                log.info("Begin reached");
-                break;
+              log.debug("{} records polled", records.count());
+              log.debug("{} records sent", partitionRecords.size());
+              for (ConsumerRecord<Bytes, Bytes> msg : partitionRecords) {
+                if (!sink.isCancelled() && !waitingOffsets.beginReached()) {
+                  sink.next(msg);
+                  waitingOffsets.markPolled(msg);
+                } else {
+                  log.info("Begin reached");
+                  break;
+                }
               }
+              partitionsOffsets.put(
+                  entry.getKey(),
+                  Math.max(offset, entry.getValue() - msgsPerPartition)
+              );
             }
-            partitionsOffsets.put(
-                entry.getKey(),
-                Math.max(offset, entry.getValue() - msgsPerPartition)
-            );
           }
           if (waitingOffsets.beginReached()) {
             log.info("begin reached after partitions");
