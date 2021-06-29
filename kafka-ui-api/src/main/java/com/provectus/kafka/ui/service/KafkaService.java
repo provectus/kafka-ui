@@ -31,6 +31,7 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -376,13 +377,19 @@ public class KafkaService {
   }
 
   public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster) {
+    return createConsumer(cluster, Map.of());
+  }
+
+  public KafkaConsumer<Bytes, Bytes> createConsumer(KafkaCluster cluster,
+                                                    Map<String, Object> properties) {
     Properties props = new Properties();
     props.putAll(cluster.getProperties());
-    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui");
+    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui-" + UUID.randomUUID().toString());
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    props.putAll(properties);
 
     return new KafkaConsumer<>(props);
   }
@@ -496,7 +503,7 @@ public class KafkaService {
                   final Map<Integer, LongSummaryStatistics> brokerStats =
                       topicPartitions.stream().collect(
                           Collectors.groupingBy(
-                              t -> t.getT1(),
+                              Tuple2::getT1,
                               Collectors.summarizingLong(Tuple3::getT3)
                           )
                       );
