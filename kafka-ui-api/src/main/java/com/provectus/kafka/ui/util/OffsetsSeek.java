@@ -2,8 +2,7 @@ package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.SeekType;
-import com.provectus.kafka.ui.service.ConsumingService;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -12,6 +11,8 @@ import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Log4j2
 public abstract class OffsetsSeek {
@@ -27,62 +28,114 @@ public abstract class OffsetsSeek {
     return consumerPosition;
   }
 
-  public WaitingOffsets assignAndSeek(Consumer<Bytes, Bytes> consumer) {
+  public Map<TopicPartition, Long> getPartitionsOffsets(Consumer<Bytes, Bytes> consumer) {
     SeekType seekType = consumerPosition.getSeekType();
+    List<TopicPartition> partitions = getRequestedPartitions(consumer);
     log.info("Positioning consumer for topic {} with {}", topic, consumerPosition);
+    Map<TopicPartition, Long> offsets;
     switch (seekType) {
       case OFFSET:
-        assignAndSeekForOffset(consumer);
+        offsets = offsetsFromPositions(consumer, partitions);
         break;
       case TIMESTAMP:
-        assignAndSeekForTimestamp(consumer);
+        offsets = offsetsForTimestamp(consumer);
         break;
       case BEGINNING:
-        assignAndSeekFromBeginning(consumer);
+        offsets = offsetsFromBeginning(consumer, partitions);
         break;
       default:
         throw new IllegalArgumentException("Unknown seekType: " + seekType);
     }
-    log.info("Assignment: {}", consumer.assignment());
-    return new WaitingOffsets(topic, consumer);
+    return offsets;
   }
 
-  protected List<TopicPartition> getRequestedPartitions(Consumer<Bytes, Bytes> consumer) {
-    Map<Integer, Long> partitionPositions = consumerPosition.getSeekTo();
+  public WaitingOffsets waitingOffsets(Consumer<Bytes, Bytes> consumer,
+                                       Collection<TopicPartition> partitions) {
+    return new WaitingOffsets(topic, consumer, partitions);
+  }
+
+  public WaitingOffsets assignAndSeek(Consumer<Bytes, Bytes> consumer) {
+    final Map<TopicPartition, Long> partitionsOffsets = getPartitionsOffsets(consumer);
+    consumer.assign(partitionsOffsets.keySet());
+    partitionsOffsets.forEach(consumer::seek);
+    log.info("Assignment: {}", consumer.assignment());
+    return waitingOffsets(consumer, partitionsOffsets.keySet());
+  }
+
+
+  public List<TopicPartition> getRequestedPartitions(Consumer<Bytes, Bytes> consumer) {
+    Map<TopicPartition, Long> partitionPositions = consumerPosition.getSeekTo();
     return consumer.partitionsFor(topic).stream()
         .filter(
-            p -> partitionPositions.isEmpty() || partitionPositions.containsKey(p.partition()))
-        .map(p -> new TopicPartition(p.topic(), p.partition()))
+            p -> partitionPositions.isEmpty()
+                || partitionPositions.containsKey(new TopicPartition(p.topic(), p.partition()))
+        ).map(p -> new TopicPartition(p.topic(), p.partition()))
         .collect(Collectors.toList());
   }
 
 
-  protected abstract void assignAndSeekFromBeginning(Consumer<Bytes, Bytes> consumer);
+  protected abstract Map<TopicPartition, Long> offsetsFromBeginning(
+      Consumer<Bytes, Bytes> consumer, List<TopicPartition> partitions);
 
-  protected abstract void assignAndSeekForTimestamp(Consumer<Bytes, Bytes> consumer);
+  protected abstract Map<TopicPartition, Long> offsetsForTimestamp(
+      Consumer<Bytes, Bytes> consumer);
 
-  protected abstract void assignAndSeekForOffset(Consumer<Bytes, Bytes> consumer);
+  protected abstract Map<TopicPartition, Long> offsetsFromPositions(
+      Consumer<Bytes, Bytes> consumer, List<TopicPartition> partitions);
 
   public static class WaitingOffsets {
-    final Map<Integer, Long> offsets = new HashMap<>(); // partition number -> offset
+    private final Map<Integer, Long> endOffsets; // partition number -> offset
+    private final Map<Integer, Long> beginOffsets; // partition number -> offset
+    private final String topic;
 
-    public WaitingOffsets(String topic, Consumer<?, ?> consumer) {
-      var partitions = consumer.assignment().stream()
-          .map(TopicPartition::partition)
+    public WaitingOffsets(String topic, Consumer<?, ?> consumer,
+                          Collection<TopicPartition> partitions) {
+      this.topic = topic;
+      var allBeginningOffsets = consumer.beginningOffsets(partitions);
+      var allEndOffsets = consumer.endOffsets(partitions);
+
+      this.endOffsets = allEndOffsets.entrySet().stream()
+          .filter(entry -> !allBeginningOffsets.get(entry.getKey()).equals(entry.getValue()))
+          .map(e -> Tuples.of(e.getKey().partition(), e.getValue() - 1))
+          .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
+
+      this.beginOffsets = this.endOffsets.keySet().stream()
+         .map(p -> Tuples.of(p, allBeginningOffsets.get(new TopicPartition(topic, p))))
+         .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2));
+    }
+
+    public List<TopicPartition> topicPartitions() {
+      return this.endOffsets.keySet().stream()
+          .map(p -> new TopicPartition(topic, p))
           .collect(Collectors.toList());
-      ConsumingService.significantOffsets(consumer, topic, partitions)
-          .forEach((tp, offset) -> offsets.put(tp.partition(), offset - 1));
     }
 
     public void markPolled(ConsumerRecord<?, ?> rec) {
-      Long waiting = offsets.get(rec.partition());
-      if (waiting != null && waiting <= rec.offset()) {
-        offsets.remove(rec.partition());
+      Long endWaiting = endOffsets.get(rec.partition());
+      if (endWaiting != null && endWaiting <= rec.offset()) {
+        endOffsets.remove(rec.partition());
       }
+      Long beginWaiting = beginOffsets.get(rec.partition());
+      if (beginWaiting != null && beginWaiting >= rec.offset()) {
+        beginOffsets.remove(rec.partition());
+      }
+
     }
 
     public boolean endReached() {
-      return offsets.isEmpty();
+      return endOffsets.isEmpty();
+    }
+
+    public boolean beginReached() {
+      return beginOffsets.isEmpty();
+    }
+
+    public Map<Integer, Long> getEndOffsets() {
+      return endOffsets;
+    }
+
+    public Map<Integer, Long> getBeginOffsets() {
+      return beginOffsets;
     }
   }
 }

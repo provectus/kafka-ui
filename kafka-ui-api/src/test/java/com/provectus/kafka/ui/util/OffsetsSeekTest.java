@@ -21,11 +21,11 @@ import org.junit.jupiter.api.Test;
 
 class OffsetsSeekTest {
 
-  String topic = "test";
-  TopicPartition tp0 = new TopicPartition(topic, 0); //offsets: start 0, end 0
-  TopicPartition tp1 = new TopicPartition(topic, 1); //offsets: start 10, end 10
-  TopicPartition tp2 = new TopicPartition(topic, 2); //offsets: start 0, end 20
-  TopicPartition tp3 = new TopicPartition(topic, 3); //offsets: start 25, end 30
+  final String topic = "test";
+  final TopicPartition tp0 = new TopicPartition(topic, 0); //offsets: start 0, end 0
+  final TopicPartition tp1 = new TopicPartition(topic, 1); //offsets: start 10, end 10
+  final TopicPartition tp2 = new TopicPartition(topic, 2); //offsets: start 0, end 20
+  final TopicPartition tp3 = new TopicPartition(topic, 3); //offsets: start 25, end 30
 
   MockConsumer<Bytes, Bytes> consumer = new MockConsumer<>(OffsetResetStrategy.EARLIEST);
 
@@ -57,7 +57,7 @@ class OffsetsSeekTest {
         topic,
         new ConsumerPosition(
             SeekType.BEGINNING,
-            Map.of(0, 0L, 1, 0L),
+            Map.of(tp0, 0L, tp1, 0L),
             SeekDirection.FORWARD
         )
     );
@@ -74,7 +74,7 @@ class OffsetsSeekTest {
         topic,
         new ConsumerPosition(
             SeekType.BEGINNING,
-            Map.of(2, 0L, 3, 0L),
+            Map.of(tp2, 0L, tp3, 0L),
             SeekDirection.BACKWARD
         ),
         10
@@ -82,8 +82,8 @@ class OffsetsSeekTest {
 
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp2, tp3);
-    assertThat(consumer.position(tp2)).isEqualTo(15L);
-    assertThat(consumer.position(tp3)).isEqualTo(25L);
+    assertThat(consumer.position(tp2)).isEqualTo(20L);
+    assertThat(consumer.position(tp3)).isEqualTo(30L);
   }
 
   @Test
@@ -110,8 +110,8 @@ class OffsetsSeekTest {
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2, tp3);
     assertThat(consumer.position(tp0)).isZero();
     assertThat(consumer.position(tp1)).isEqualTo(10L);
-    assertThat(consumer.position(tp2)).isEqualTo(15L);
-    assertThat(consumer.position(tp3)).isEqualTo(25L);
+    assertThat(consumer.position(tp2)).isEqualTo(20L);
+    assertThat(consumer.position(tp3)).isEqualTo(30L);
   }
 
 
@@ -121,14 +121,12 @@ class OffsetsSeekTest {
         topic,
         new ConsumerPosition(
             SeekType.OFFSET,
-            Map.of(0, 0L, 1, 1L, 2, 2L),
+            Map.of(tp0, 0L, tp1, 1L, tp2, 2L),
             SeekDirection.FORWARD
         )
     );
     seek.assignAndSeek(consumer);
-    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2);
-    assertThat(consumer.position(tp0)).isZero();
-    assertThat(consumer.position(tp1)).isEqualTo(1L);
+    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp2);
     assertThat(consumer.position(tp2)).isEqualTo(2L);
   }
 
@@ -138,16 +136,30 @@ class OffsetsSeekTest {
         topic,
         new ConsumerPosition(
             SeekType.OFFSET,
-            Map.of(0, 0L, 1, 1L, 2, 2L),
-            SeekDirection.FORWARD
+            Map.of(tp0, 0L, tp1, 1L, tp2, 20L),
+            SeekDirection.BACKWARD
         ),
         2
     );
     seek.assignAndSeek(consumer);
-    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2);
-    assertThat(consumer.position(tp0)).isZero();
-    assertThat(consumer.position(tp1)).isEqualTo(1L);
-    assertThat(consumer.position(tp2)).isZero();
+    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp2);
+    assertThat(consumer.position(tp2)).isEqualTo(20L);
+  }
+
+  @Test
+  void backwardSeekToOffsetOnlyOnePartition() {
+    var seek = new OffsetsSeekBackward(
+        topic,
+        new ConsumerPosition(
+            SeekType.OFFSET,
+            Map.of(tp2, 20L),
+            SeekDirection.BACKWARD
+        ),
+        20
+    );
+    seek.assignAndSeek(consumer);
+    assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp2);
+    assertThat(consumer.position(tp2)).isEqualTo(20L);
   }
 
 
@@ -159,14 +171,14 @@ class OffsetsSeekTest {
     @BeforeEach
     void assignAndCreateOffsets() {
       consumer.assign(List.of(tp0, tp1, tp2, tp3));
-      offsets = new OffsetsSeek.WaitingOffsets(topic, consumer);
+      offsets = new OffsetsSeek.WaitingOffsets(topic, consumer, List.of(tp0, tp1, tp2, tp3));
     }
 
     @Test
     void collectsSignificantOffsetsMinus1ForAssignedPartitions() {
       // offsets for partition 0 & 1 should be skipped because they
       // effectively contains no data (start offset = end offset)
-      assertThat(offsets.offsets).containsExactlyInAnyOrderEntriesOf(
+      assertThat(offsets.getEndOffsets()).containsExactlyInAnyOrderEntriesOf(
           Map.of(2, 19L, 3, 29L)
       );
     }

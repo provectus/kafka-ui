@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.config;
 
-import java.util.Optional;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
