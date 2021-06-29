@@ -716,7 +716,6 @@ public class KafkaService {
         });
   }
 
-  @SneakyThrows
   private Map<TopicPartition, Optional<NewPartitionReassignment>> getPartitionsReassignments(
       KafkaCluster cluster,
       String topicName,
