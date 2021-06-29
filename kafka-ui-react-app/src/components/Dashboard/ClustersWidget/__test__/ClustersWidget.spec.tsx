@@ -28,8 +28,10 @@ describe('ClustersWidget', () => {
   });
 
   it('hides online cluster widgets', () => {
-    const input = component().find('input');
-    input.simulate('click');
-    expect(input.length).toBe(1);
+    const value = component();
+    const input = value.find('input');
+    expect(value.find('ClusterWidget').length).toBe(2);
+    input.simulate('change', { target: { checked: true } });
+    expect(value.find('ClusterWidget').length).toBe(1);
   });
 });
