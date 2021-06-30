@@ -4,9 +4,7 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.steps.kafka.KafkaSteps;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 public class TopicTests extends BaseTest {
 

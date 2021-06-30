@@ -20,7 +20,7 @@ jobs:
       - name: Set the values
         id: step_one
         run: |
-           cat "./kafka-ui-e2e-checks/.env.example" >> "./kafka-ui-e2e-checks/.env"
+           cat "./kafka-ui-e2e-checks/.env.ci" >> "./kafka-ui-e2e-checks/.env"
       - name: pull docker
         id: step_four
         run: |
