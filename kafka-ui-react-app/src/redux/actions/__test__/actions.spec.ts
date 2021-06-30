@@ -4,6 +4,7 @@ import {
 } from 'redux/reducers/schemas/__test__/fixtures';
 import * as actions from 'redux/actions';
 import { TopicColumnsToSort } from 'generated-sources';
+import { FailurePayload } from 'redux/interfaces';
 
 import { mockTopicsState } from './fixtures';
 
@@ -172,6 +173,32 @@ describe('Actions', () => {
       expect(actions.setTopicsOrderByAction(TopicColumnsToSort.NAME)).toEqual({
         type: 'SET_TOPICS_ORDER_BY',
         payload: TopicColumnsToSort.NAME,
+      });
+    });
+  });
+
+  describe('deleting consumer group', () => {
+    it('creates DELETE_CONSUMER_GROUP__REQUEST', () => {
+      expect(actions.deleteConsumerGroupAction.request()).toEqual({
+        type: 'DELETE_CONSUMER_GROUP__REQUEST',
+      });
+    });
+
+    it('creates DELETE_CONSUMER_GROUP__SUCCESS', () => {
+      expect(actions.deleteConsumerGroupAction.success('test')).toEqual({
+        type: 'DELETE_CONSUMER_GROUP__SUCCESS',
+        payload: 'test',
+      });
+    });
+
+    it('creates DELETE_CONSUMER_GROUP__FAILURE', () => {
+      const alert: FailurePayload = {
+        subject: ['consumer-group', 'test'].join('-'),
+        title: `Consumer Gropup Test`,
+      };
+      expect(actions.deleteConsumerGroupAction.failure({ alert })).toEqual({
+        type: 'DELETE_CONSUMER_GROUP__FAILURE',
+        payload: { alert },
       });
     });
   });

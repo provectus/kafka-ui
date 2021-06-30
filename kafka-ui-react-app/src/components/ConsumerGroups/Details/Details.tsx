@@ -14,7 +14,7 @@ import { useHistory } from 'react-router';
 
 import ListItem from './ListItem';
 
-interface Props extends ConsumerGroup, ConsumerGroupDetails {
+export interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
   consumerGroupID: ConsumerGroupID;
   consumers?: ConsumerTopicPartitionDetail[];
@@ -49,7 +49,9 @@ const Details: React.FC<Props> = ({
     deleteConsumerGroup(clusterName, consumerGroupID);
   };
   React.useEffect(() => {
-    if (isDeleted) history.push(clusterConsumerGroupsPath(clusterName));
+    if (isDeleted) {
+      history.push(clusterConsumerGroupsPath(clusterName));
+    }
   }, [isDeleted]);
 
   return (
