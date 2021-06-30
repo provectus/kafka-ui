@@ -16,7 +16,7 @@ import ListItem from './ListItem';
 
 export interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
-  consumerGroupID: ConsumerGroupID;
+  consumerGroupId: ConsumerGroupID;
   consumers?: ConsumerTopicPartitionDetail[];
   isFetched: boolean;
   isDeleted: boolean;
@@ -29,7 +29,7 @@ export interface Props extends ConsumerGroup, ConsumerGroupDetails {
 
 const Details: React.FC<Props> = ({
   clusterName,
-  consumerGroupID,
+  consumerGroupId,
   consumers,
   isFetched,
   isDeleted,
@@ -37,8 +37,8 @@ const Details: React.FC<Props> = ({
   deleteConsumerGroup,
 }) => {
   React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, consumerGroupID);
-  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
+    fetchConsumerGroupDetails(clusterName, consumerGroupId);
+  }, [fetchConsumerGroupDetails, clusterName, consumerGroupId]);
   const items = consumers || [];
   const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
     React.useState<boolean>(false);
@@ -46,7 +46,7 @@ const Details: React.FC<Props> = ({
 
   const onDelete = () => {
     setIsConfirmationModelVisible(false);
-    deleteConsumerGroup(clusterName, consumerGroupID);
+    deleteConsumerGroup(clusterName, consumerGroupId);
   };
   React.useEffect(() => {
     if (isDeleted) {
@@ -66,7 +66,7 @@ const Details: React.FC<Props> = ({
               },
             ]}
           >
-            {consumerGroupID}
+            {consumerGroupId}
           </Breadcrumb>
         </div>
       </div>
@@ -115,7 +115,7 @@ const Details: React.FC<Props> = ({
         onCancel={() => setIsConfirmationModelVisible(false)}
         onConfirm={onDelete}
       >
-        Are you sure want to delete this consumer group?
+        Are you sure you want to delete this consumer group?
       </ConfirmationModal>
     </div>
   );

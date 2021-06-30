@@ -16,9 +16,7 @@ describe('Details component', () => {
     <Details
       clusterName="local"
       clusterId="local"
-      consumerGroupID="test"
-      // eslint-disable-next-line react/jsx-no-duplicate-props
-      consumerGroupId="id"
+      consumerGroupId="test"
       isFetched
       isDeleted={false}
       fetchConsumerGroupDetails={jest.fn()}
@@ -96,7 +94,7 @@ describe('Details component', () => {
 
       describe('after deletion', () => {
         it('calls history.push', () => {
-          const component = mount(
+          mount(
             <StaticRouter>{setupWrapper({ isDeleted: true })}</StaticRouter>
           );
           expect(mockHistory.push).toHaveBeenCalledTimes(1);

@@ -30,7 +30,7 @@ exports[`Details component when consumer gruops are NOT fetched Matches the snap
     onCancel={[Function]}
     onConfirm={[Function]}
   >
-    Are you sure want to delete this consumer group?
+    Are you sure you want to delete this consumer group?
   </ConfirmationModal>
 </div>
 `;
@@ -146,7 +146,7 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
     onCancel={[Function]}
     onConfirm={[Function]}
   >
-    Are you sure want to delete this consumer group?
+    Are you sure you want to delete this consumer group?
   </ConfirmationModal>
 </div>
 `;
