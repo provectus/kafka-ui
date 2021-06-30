@@ -9,6 +9,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -17,6 +18,7 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 @Slf4j
@@ -48,9 +50,15 @@ public class BaseTest {
               "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 
   static {
-    if (new File("./.env").exists()) {
-      Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
+    if (!new File("./.env").exists()) {
+      try {
+        FileUtils.copyFile(new File(".env.example"), new File(".env"));
+      } catch (IOException e) {
+        log.error("couldn't copy .env.example to .env. Please add .env");
+        e.printStackTrace();
+      }
     }
+    Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
     if (TestConfiguration.CLEAR_REPORTS_DIR) {
       clearReports();
     }
