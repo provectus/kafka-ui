@@ -24,6 +24,11 @@ import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Component;
 
+/**
+ * Implementation follows https://cwiki.apache.org/confluence/display/KAFKA/KIP-122%3A+Add+Reset+Consumer+Group+Offsets+tooling
+ * to works like "kafka-consumer-groups --reset-offsets" console command
+ * (see kafka.admin.ConsumerGroupCommand)
+ */
 @Log4j2
 @Component
 @RequiredArgsConstructor
@@ -75,8 +80,9 @@ public class OffsetsResetService {
   private void checkGroupCondition(KafkaCluster cluster, String groupId) {
     ConsumerGroupDescription description =
         kafkaService.getConsumerGroupsInternal(cluster)
-            .block()
+            .blockOptional()
             .stream()
+            .flatMap(Collection::stream)
             .filter(cgd -> cgd.groupId().equals(groupId))
             .findAny()
             .orElseThrow(() -> new NotFoundException("Consumer group not found"));
@@ -122,6 +128,11 @@ public class OffsetsResetService {
         .collect(toSet());
   }
 
+  /**
+   * Checks if submitted offsets is between earliest and latest offsets. If case of range change
+   * fail we reset offset to either earliest or latest offsets (To follow logic from
+   * kafka.admin.ConsumerGroupCommand.scala)
+   */
   private Map<TopicPartition, Long> editOffsetsIfNeeded(Consumer<?, ?> consumer,
                                                         Map<TopicPartition, Long> offsetsToCheck) {
     var earliestOffsets = consumer.beginningOffsets(offsetsToCheck.keySet());
