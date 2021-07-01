@@ -293,17 +293,13 @@ public class ClusterService {
       PartitionsIncrease partitionsIncrease) {
     return clustersStorage.getClusterByName(clusterName).map(cluster ->
         kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease)
-            .map(t -> {
-              updateCluster(t, cluster.getName(), cluster);
-              return new PartitionsIncreaseResponse()
-                  .topicName(t.getName())
-                  .totalPartitionsCount(t.getPartitionCount());
-            }))
-        .orElseThrow(
-            () -> new ClusterNotFoundException(
-                String.format("No cluster for name '%s'", clusterName)
-            )
-        );
+            .doOnNext(t -> updateCluster(t, cluster.getName(), cluster))
+            .map(t -> new PartitionsIncreaseResponse()
+                .topicName(t.getName())
+                .totalPartitionsCount(t.getPartitionCount())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName)
+        )));
   }
 
   public Mono<Void> deleteConsumerGroupById(String clusterName,
