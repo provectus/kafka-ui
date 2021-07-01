@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 
 public class ProtobufSchemaConverterTest {
