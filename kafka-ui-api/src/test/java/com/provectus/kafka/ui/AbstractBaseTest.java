@@ -24,8 +24,8 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest
 @ActiveProfiles("test")
 public abstract class AbstractBaseTest {
-  public static String LOCAL = "local";
-  public static String SECOND_LOCAL = "secondLocal";
+  public static final String LOCAL = "local";
+  public static final String SECOND_LOCAL = "secondLocal";
 
   private static final String CONFLUENT_PLATFORM_VERSION = "5.5.0";
 

@@ -2,6 +2,8 @@ package com.provectus.kafka.ui.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirection;
@@ -9,25 +11,19 @@ import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.ClusterUtil;
-import com.provectus.kafka.ui.util.OffsetsSeek;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
-import java.time.Duration;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
@@ -55,12 +51,19 @@ public class ConsumingService {
     int recordsLimit = Optional.ofNullable(limit)
         .map(s -> Math.min(s, MAX_RECORD_LIMIT))
         .orElse(DEFAULT_RECORD_LIMIT);
-    RecordEmitter emitter = new RecordEmitter(
-        () -> kafkaService.createConsumer(cluster),
-        consumerPosition.getSeekDirection().equals(SeekDirection.FORWARD)
-            ? new OffsetsSeekForward(topic, consumerPosition)
-            : new OffsetsSeekBackward(topic, consumerPosition, recordsLimit)
-    );
+
+    java.util.function.Consumer<? super FluxSink<ConsumerRecord<Bytes, Bytes>>> emitter;
+    if (consumerPosition.getSeekDirection().equals(SeekDirection.FORWARD)) {
+      emitter = new ForwardRecordEmitter(
+          () -> kafkaService.createConsumer(cluster),
+          new OffsetsSeekForward(topic, consumerPosition)
+      );
+    } else {
+      emitter = new BackwardRecordEmitter(
+          (Map<String, Object> props) -> kafkaService.createConsumer(cluster, props),
+          new OffsetsSeekBackward(topic, consumerPosition, recordsLimit)
+      );
+    }
     RecordSerDe recordDeserializer =
         deserializationService.getRecordDeserializerForCluster(cluster);
     return Flux.create(emitter)
@@ -130,58 +133,6 @@ public class ConsumingService {
     }
 
     return false;
-  }
-
-  @RequiredArgsConstructor
-  static class RecordEmitter
-      implements java.util.function.Consumer<FluxSink<ConsumerRecord<Bytes, Bytes>>> {
-
-    private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
-
-    private static final Comparator<ConsumerRecord<?, ?>> PARTITION_COMPARING =
-        Comparator.comparing(
-            ConsumerRecord::partition,
-            Comparator.nullsFirst(Comparator.naturalOrder())
-        );
-    private static final Comparator<ConsumerRecord<?, ?>> REVERED_COMPARING =
-        PARTITION_COMPARING.thenComparing(ConsumerRecord::offset).reversed();
-
-
-    private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
-    private final OffsetsSeek offsetsSeek;
-
-    @Override
-    public void accept(FluxSink<ConsumerRecord<Bytes, Bytes>> sink) {
-      try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
-        var waitingOffsets = offsetsSeek.assignAndSeek(consumer);
-        while (!sink.isCancelled() && !waitingOffsets.endReached()) {
-          ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
-          log.info("{} records polled", records.count());
-
-          final Iterable<ConsumerRecord<Bytes, Bytes>> iterable;
-          if (offsetsSeek.getConsumerPosition().getSeekDirection().equals(SeekDirection.FORWARD)) {
-            iterable = records;
-          } else {
-            iterable = StreamSupport.stream(records.spliterator(), false)
-                .sorted(REVERED_COMPARING).collect(Collectors.toList());
-          }
-
-          for (ConsumerRecord<Bytes, Bytes> msg : iterable) {
-            if (!sink.isCancelled() && !waitingOffsets.endReached()) {
-              sink.next(msg);
-              waitingOffsets.markPolled(msg);
-            } else {
-              break;
-            }
-          }
-        }
-        sink.complete();
-        log.info("Polling finished");
-      } catch (Exception e) {
-        log.error("Error occurred while consuming records", e);
-        throw new RuntimeException(e);
-      }
-    }
   }
 
 }

@@ -7,7 +7,7 @@ import java.util.Map;
 
 
 public class EnumJsonType extends JsonType {
-  private List<String> values;
+  private final List<String> values;
 
   public EnumJsonType(List<String> values) {
     super(Type.ENUM);
