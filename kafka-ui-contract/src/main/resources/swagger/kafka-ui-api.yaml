@@ -1281,6 +1281,8 @@ components:
           type: number
         readOnly:
           type: boolean
+        version:
+          type: string
         features:
           type: array
           items:
