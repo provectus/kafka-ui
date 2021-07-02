@@ -6,13 +6,13 @@
       "name" : "topics.TopicTests",
       "children" : [ {
         "name" : "createTopic",
-        "uid" : "ef17e44e0b1d2aa5",
+        "uid" : "ea62adad876b34bc",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1625226343060,
-          "stop" : 1625226360048,
-          "duration" : 16988
+          "start" : 1625228941060,
+          "stop" : 1625228962300,
+          "duration" : 21240
         },
         "flaky" : false,
         "newFailed" : false,
@@ -23,13 +23,13 @@
       "name" : "SmokeTests",
       "children" : [ {
         "name" : "mainPageLoads",
-        "uid" : "34d69feb3664fde5",
+        "uid" : "d433515f0a1686ff",
         "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
         "status" : "passed",
         "time" : {
-          "start" : 1625226360300,
-          "stop" : 1625226361401,
-          "duration" : 1101
+          "start" : 1625228962490,
+          "stop" : 1625228963402,
+          "duration" : 912
         },
         "flaky" : false,
         "newFailed" : false,
