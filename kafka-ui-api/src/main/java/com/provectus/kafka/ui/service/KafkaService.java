@@ -14,6 +14,8 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metric;
+import com.provectus.kafka.ui.model.PartitionsIncrease;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.ReplicationFactorChange;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
@@ -51,6 +53,7 @@ import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
+import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.admin.RecordsToDelete;
@@ -105,13 +108,16 @@ public class KafkaService {
   public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
     return getOrCreateAdminClient(cluster)
         .flatMap(
-            ac -> getClusterMetrics(ac.getAdminClient())
-                .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
-                .flatMap(clusterMetrics ->
-                    getTopicsData(ac.getAdminClient()).flatMap(it ->
-                        updateSegmentMetrics(ac.getAdminClient(), clusterMetrics, it)
-                    ).map(segmentSizeDto -> buildFromData(cluster, segmentSizeDto))
-                )
+            ac -> ClusterUtil.getClusterVersion(ac.getAdminClient()).flatMap(
+                version ->
+                    getClusterMetrics(ac.getAdminClient())
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
+                        .flatMap(clusterMetrics ->
+                            getTopicsData(ac.getAdminClient()).flatMap(it ->
+                                updateSegmentMetrics(ac.getAdminClient(), clusterMetrics, it)
+                            ).map(segmentSizeDto -> buildFromData(cluster, version, segmentSizeDto))
+                        )
+            )
         ).onErrorResume(
             e -> Mono.just(cluster.toBuilder()
                 .status(ServerStatus.OFFLINE)
@@ -121,6 +127,7 @@ public class KafkaService {
   }
 
   private KafkaCluster buildFromData(KafkaCluster currentCluster,
+                                     String version,
                                      InternalSegmentSizeDto segmentSizeDto) {
 
     var topics = segmentSizeDto.getInternalTopicWithSegmentSize();
@@ -153,6 +160,7 @@ public class KafkaService {
         .build();
 
     return currentCluster.toBuilder()
+        .version(version)
         .status(ServerStatus.ONLINE)
         .zookeeperStatus(zookeeperStatus)
         .lastZookeeperException(zookeeperException)
@@ -677,6 +685,43 @@ public class KafkaService {
       });
       return Mono.fromFuture(cf);
     }
+  }
+
+  private Mono<InternalTopic> increaseTopicPartitions(AdminClient adminClient,
+                                                      String topicName,
+                                                      Map<String, NewPartitions> newPartitionsMap
+  ) {
+    return ClusterUtil.toMono(adminClient.createPartitions(newPartitionsMap).all(), topicName)
+        .flatMap(topic -> getTopicsData(adminClient, Collections.singleton(topic)).next());
+  }
+
+  public Mono<InternalTopic> increaseTopicPartitions(
+      KafkaCluster cluster,
+      String topicName,
+      PartitionsIncrease partitionsIncrease) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> {
+          Integer actualCount = cluster.getTopics().get(topicName).getPartitionCount();
+          Integer requestedCount = partitionsIncrease.getTotalPartitionsCount();
+
+          if (requestedCount < actualCount) {
+            return Mono.error(
+                new ValidationException(String.format(
+                    "Topic currently has %s partitions, which is higher than the requested %s.",
+                    actualCount, requestedCount)));
+          }
+          if (requestedCount.equals(actualCount)) {
+            return Mono.error(
+                new ValidationException(
+                    String.format("Topic already has %s partitions.", actualCount)));
+          }
+
+          Map<String, NewPartitions> newPartitionsMap = Collections.singletonMap(
+              topicName,
+              NewPartitions.increaseTo(partitionsIncrease.getTotalPartitionsCount())
+          );
+          return increaseTopicPartitions(ac.getAdminClient(), topicName, newPartitionsMap);
+        });
   }
 
   private Mono<InternalTopic> changeReplicationFactor(

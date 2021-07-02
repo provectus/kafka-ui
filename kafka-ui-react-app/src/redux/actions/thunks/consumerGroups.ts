@@ -3,8 +3,10 @@ import {
   ConsumerGroupID,
   PromiseThunkResult,
   ClusterName,
+  FailurePayload,
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
+import { getResponse } from 'lib/errorHandling';
 import * as actions from 'redux/actions/actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
@@ -45,5 +47,29 @@ export const fetchConsumerGroupDetails =
       );
     } catch (e) {
       dispatch(actions.fetchConsumerGroupDetailsAction.failure());
+    }
+  };
+
+export const deleteConsumerGroup =
+  (
+    clusterName: ClusterName,
+    consumerGroupID: ConsumerGroupID
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.deleteConsumerGroupAction.request());
+    try {
+      await consumerGroupsApiClient.deleteConsumerGroup({
+        clusterName,
+        id: consumerGroupID,
+      });
+      dispatch(actions.deleteConsumerGroupAction.success(consumerGroupID));
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['consumer-group', consumerGroupID].join('-'),
+        title: `Consumer Gropup ${consumerGroupID}`,
+        response,
+      };
+      dispatch(actions.deleteConsumerGroupAction.failure({ alert }));
     }
   };

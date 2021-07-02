@@ -11,6 +11,7 @@ import lombok.Data;
 @Builder(toBuilder = true)
 public class KafkaCluster {
   private final String name;
+  private final String version;
   private final Integer jmxPort;
   private final String bootstrapServers;
   private final String zookeeper;

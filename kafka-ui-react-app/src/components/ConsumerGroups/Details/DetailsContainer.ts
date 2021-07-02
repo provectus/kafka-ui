@@ -3,10 +3,14 @@ import { ClusterName, RootState } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import {
   getIsConsumerGroupDetailsFetched,
+  getIsConsumerGroupsDeleted,
   getConsumerGroupByID,
 } from 'redux/reducers/consumerGroups/selectors';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
-import { fetchConsumerGroupDetails } from 'redux/actions/thunks';
+import {
+  deleteConsumerGroup,
+  fetchConsumerGroupDetails,
+} from 'redux/actions/thunks';
 
 import Details from './Details';
 
@@ -28,6 +32,7 @@ const mapStateToProps = (
   clusterName,
   consumerGroupID,
   isFetched: getIsConsumerGroupDetailsFetched(state),
+  isDeleted: getIsConsumerGroupsDeleted(state),
   ...getConsumerGroupByID(state, consumerGroupID),
 });
 
@@ -36,6 +41,8 @@ const mapDispatchToProps = {
     clusterName: ClusterName,
     consumerGroupID: ConsumerGroupID
   ) => fetchConsumerGroupDetails(clusterName, consumerGroupID),
+  deleteConsumerGroup: (clusterName: string, id: ConsumerGroupID) =>
+    deleteConsumerGroup(clusterName, id),
 };
 
 export default withRouter(

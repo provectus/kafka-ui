@@ -110,6 +110,11 @@ public abstract class OffsetsSeek {
           .collect(Collectors.toList());
     }
 
+    public void markPolled(int partition) {
+      endOffsets.remove(partition);
+      beginOffsets.remove(partition);
+    }
+
     public void markPolled(ConsumerRecord<?, ?> rec) {
       Long endWaiting = endOffsets.get(rec.partition());
       if (endWaiting != null && endWaiting <= rec.offset()) {

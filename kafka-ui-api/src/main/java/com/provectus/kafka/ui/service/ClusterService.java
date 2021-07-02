@@ -17,6 +17,8 @@ import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.PartitionsIncrease;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.ReplicationFactorChange;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
@@ -294,6 +296,21 @@ public class ClusterService {
     }
     return consumingService.offsetsForDeletion(cluster, topicName, partitions)
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));
+  }
+
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
+      String clusterName,
+      String topicName,
+      PartitionsIncrease partitionsIncrease) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease)
+            .doOnNext(t -> updateCluster(t, cluster.getName(), cluster))
+            .map(t -> new PartitionsIncreaseResponse()
+                .topicName(t.getName())
+                .totalPartitionsCount(t.getPartitionCount())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName)
+        )));
   }
 
   public Mono<Void> deleteConsumerGroupById(String clusterName,

@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.TopicsApi;
+import com.provectus.kafka.ui.model.PartitionsIncrease;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.ReplicationFactorChange;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
@@ -87,6 +89,16 @@ public class TopicsController implements TopicsApi {
       String clusterId, String topicName, @Valid Mono<TopicUpdate> topicUpdate,
       ServerWebExchange exchange) {
     return clusterService.updateTopic(clusterId, topicName, topicUpdate).map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<PartitionsIncreaseResponse>> increaseTopicPartitions(
+      String clusterName, String topicName,
+      Mono<PartitionsIncrease> partitionsIncrease,
+      ServerWebExchange exchange) {
+    return partitionsIncrease.flatMap(
+        partitions -> clusterService.increaseTopicPartitions(clusterName, topicName, partitions))
+        .map(ResponseEntity::ok);
   }
 
   @Override
