@@ -10,11 +10,15 @@ import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.service.ClusterService;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.OffsetsResetService;
+
+import java.util.Map;
 import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Flux;
@@ -78,20 +82,28 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
               .resetToLatest(cluster, group, reset.getTopic(), reset.getPartitions());
           break;
         case TIMESTAMP:
+          if (reset.getResetToTimestamp() == null) {
+            throw new ValidationException(
+                "resetToTimestamp is required when TIMESTAMP reset type used");
+          }
           offsetsResetService
               .resetToTimestamp(cluster, group, reset.getTopic(), reset.getPartitions(),
                   reset.getResetToTimestamp().longValue());
           break;
         case OFFSET:
-          offsetsResetService.resetToOffsets(cluster, group, reset.getTopic(),
-              reset.getPartitionsOffsets().stream().map(p -> {
-                String[] split = p.split("::");
-                if (split.length != 2) {
-                  throw new IllegalArgumentException(
-                      "Wrong seekTo argument format. See API docs for details");
-                }
-                return Pair.of(Integer.parseInt(split[0]), Long.parseLong(split[1]));
-              }).collect(Collectors.toMap(Pair::getKey, Pair::getValue)));
+          if (CollectionUtils.isEmpty(reset.getPartitionsOffsets())) {
+            throw new ValidationException(
+                "partitionsOffsets is required when OFFSET reset type used");
+          }
+          Map<Integer, Long> offsets = reset.getPartitionsOffsets().stream().map(p -> {
+            String[] split = p.split("::");
+            if (split.length != 2) {
+              throw new IllegalArgumentException(
+                  "Wrong seekTo argument format. See API docs for details");
+            }
+            return Pair.of(Integer.parseInt(split[0]), Long.parseLong(split[1]));
+          }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+          offsetsResetService.resetToOffsets(cluster, group, reset.getTopic(), offsets);
           break;
         default:
           throw new ValidationException("Unknown resetType " + reset.getResetType());

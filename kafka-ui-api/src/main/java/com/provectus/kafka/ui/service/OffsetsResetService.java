@@ -105,6 +105,7 @@ public class OffsetsResetService {
         .filter(e -> e.getValue() != null)
         .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset()));
 
+    // for partitions where we didnt find offset by timestamp, we use end offsets
     foundOffsets.putAll(consumer.endOffsets(Sets.difference(partitions, foundOffsets.keySet())));
     return foundOffsets;
   }
