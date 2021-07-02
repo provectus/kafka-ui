@@ -508,7 +508,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
-  /api/clusters/{clusterName}/consumer-groups/{id}/reset-offsets:
+  /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
     post:
       tags:
         - Consumer Groups
