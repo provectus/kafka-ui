@@ -119,6 +119,12 @@ export const fetchConsumerGroupDetailsAction = createAsyncAction(
   undefined
 >();
 
+export const deleteConsumerGroupAction = createAsyncAction(
+  'DELETE_CONSUMER_GROUP__REQUEST',
+  'DELETE_CONSUMER_GROUP__SUCCESS',
+  'DELETE_CONSUMER_GROUP__FAILURE'
+)<undefined, ConsumerGroupID, { alert?: FailurePayload }>();
+
 export const fetchSchemasByClusterNameAction = createAsyncAction(
   'GET_CLUSTER_SCHEMAS__REQUEST',
   'GET_CLUSTER_SCHEMAS__SUCCESS',

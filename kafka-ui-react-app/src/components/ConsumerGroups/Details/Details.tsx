@@ -9,31 +9,50 @@ import {
   ConsumerTopicPartitionDetail,
 } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import { useHistory } from 'react-router';
 
 import ListItem from './ListItem';
 
-interface Props extends ConsumerGroup, ConsumerGroupDetails {
+export interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
-  consumerGroupID: ConsumerGroupID;
+  consumerGroupId: ConsumerGroupID;
   consumers?: ConsumerTopicPartitionDetail[];
   isFetched: boolean;
+  isDeleted: boolean;
   fetchConsumerGroupDetails: (
     clusterName: ClusterName,
     consumerGroupID: ConsumerGroupID
   ) => void;
+  deleteConsumerGroup: (clusterName: string, id: ConsumerGroupID) => void;
 }
 
 const Details: React.FC<Props> = ({
   clusterName,
-  consumerGroupID,
+  consumerGroupId,
   consumers,
   isFetched,
+  isDeleted,
   fetchConsumerGroupDetails,
+  deleteConsumerGroup,
 }) => {
   React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, consumerGroupID);
-  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
+    fetchConsumerGroupDetails(clusterName, consumerGroupId);
+  }, [fetchConsumerGroupDetails, clusterName, consumerGroupId]);
   const items = consumers || [];
+  const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
+    React.useState<boolean>(false);
+  const history = useHistory();
+
+  const onDelete = () => {
+    setIsConfirmationModelVisible(false);
+    deleteConsumerGroup(clusterName, consumerGroupId);
+  };
+  React.useEffect(() => {
+    if (isDeleted) {
+      history.push(clusterConsumerGroupsPath(clusterName));
+    }
+  }, [isDeleted]);
 
   return (
     <div className="section">
@@ -47,13 +66,24 @@ const Details: React.FC<Props> = ({
               },
             ]}
           >
-            {consumerGroupID}
+            {consumerGroupId}
           </Breadcrumb>
         </div>
       </div>
 
       {isFetched ? (
         <div className="box">
+          <div className="level">
+            <div className="level-item level-right buttons">
+              <button
+                type="button"
+                className="button is-danger"
+                onClick={() => setIsConfirmationModelVisible(true)}
+              >
+                Delete consumer group
+              </button>
+            </div>
+          </div>
           <table className="table is-striped is-fullwidth">
             <thead>
               <tr>
@@ -80,6 +110,13 @@ const Details: React.FC<Props> = ({
       ) : (
         <PageLoader />
       )}
+      <ConfirmationModal
+        isOpen={isConfirmationModelVisible}
+        onCancel={() => setIsConfirmationModelVisible(false)}
+        onConfirm={onDelete}
+      >
+        Are you sure you want to delete this consumer group?
+      </ConfirmationModal>
     </div>
   );
 };
