@@ -689,6 +689,9 @@ public class KafkaService {
         .flatMap(topic -> getTopicsData(adminClient, Collections.singleton(topic)).next());
   }
 
+  /**
+   * Change topic replication factor, works on brokers versions 5.4.x and higher
+   * */
   public Mono<InternalTopic> changeReplicationFactor(
       KafkaCluster cluster,
       String topicName,
@@ -720,112 +723,88 @@ public class KafkaService {
       KafkaCluster cluster,
       String topicName,
       ReplicationFactorChange replicationFactorChange) {
-    Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments = new HashMap<>();
-
-    // Difference between requested and actual Replication factor
-    Integer replicasCountDiff = replicationFactorChange.getTotalReplicationFactor()
-        - cluster.getTopics().get(topicName).getReplicationFactor();
-
-    Map<Integer, List<Integer>> currentAssignment = new HashMap<>();
+    // Current assignment map
+    Map<Integer, List<Integer>> currentAssignment = getCurrentAssignment(cluster, topicName);
+    Integer currentReplicationFactor = cluster.getTopics().get(topicName).getReplicationFactor();
 
     // If we should to increase Replication factor
-    if (replicasCountDiff > 0) {
+    if (replicationFactorChange.getTotalReplicationFactor() > currentReplicationFactor) {
+      Map<Integer, Integer> sortedBrokers = getBrokersMap(cluster, topicName);
 
-      // Map for store brokers (Entry<brokerId, topicReplicasCount>)
-      Map<Integer, Integer> brokers = new LinkedHashMap<>();
+      // For each partition
+      for (var assignmentList : currentAssignment.values()) {
+        sortedBrokers = getMapSortedByValues(sortedBrokers);
 
-      // Add available brokers to map
-      cluster.getMetrics().getInternalBrokerDiskUsage().keySet()
-          .forEach(id -> brokers.put(id, 0));
-
-      // Fill currentAssignment and brokers
-      cluster.getTopics().get(topicName).getPartitions().values()
-          .forEach(partition -> currentAssignment.put(partition.getPartition(),
-              partition.getReplicas().stream().map(t -> {
-                brokers.put(t.getBroker(), brokers.get(t.getBroker()) + 1);
-                return t.getBroker();
-              }).collect(Collectors.toList())));
-
-      // Map for store brokers in order by topicReplicasCount (Entry<brokerId, topicReplicasCount>)
-      Map<Integer, Integer> sortedBrokers = brokers;
-
-      // For each topic partition
-      for (var assignment : currentAssignment.entrySet()) {
-        // Sort brokers
-        sortedBrokers = entriesSortedByValues(sortedBrokers);
-        Integer added = 0;
-
-
-        /*
-          Iterate brokers while added != replicasCountDiff
-          and if available add broker to reassignment list for current partition
-          and increase added broker's topicReplicasCount
-        */
+        // Iterate brokers and try to add them in assignment
+        // while (partition replicas count != requested replication factor)
         for (Map.Entry<Integer, Integer> broker : sortedBrokers.entrySet()) {
-          var assignmentList = assignment.getValue();
-
           if (!assignmentList.contains(broker.getKey())) {
             assignmentList.add(broker.getKey());
             sortedBrokers.put(broker.getKey(), broker.getValue() + 1);
-            added++;
           }
-          if (added.equals(replicasCountDiff)) {
+          if (assignmentList.size() == replicationFactorChange.getTotalReplicationFactor()) {
             break;
           }
         }
-        if (!added.equals(replicasCountDiff)) {
+        if (assignmentList.size() != replicationFactorChange.getTotalReplicationFactor()) {
           throw new ValidationException("Something went wrong while adding replicas");
         }
       }
 
-      // Fill result map
-      currentAssignment.forEach((key, value) -> reassignments.put(
-          new TopicPartition(topicName, key),
-          Optional.of(new NewPartitionReassignment(value))
-      ));
-
       // If we should to decrease Replication factor
-    } else if (replicasCountDiff < 0) {
+    } else if (replicationFactorChange.getTotalReplicationFactor() < currentReplicationFactor) {
 
-      // Fill currentAssignment
-      cluster.getTopics().get(topicName).getPartitions().values()
-          .forEach(partition -> currentAssignment.put(partition.getPartition(),
-              partition.getReplicas().stream()
-                  .map(InternalReplica::getBroker)
-                  .collect(Collectors.toList())));
-      /*
-        For each topic partition remove last broker in assignment list (-replicasCountDiff) times
-        throw exception if between getting currentAssignment and removing replicas
-        topic's Replication factor has been changed
-      */
-      for (var assignment : currentAssignment.entrySet()) {
-        var assignmentList = assignment.getValue();
-        if (assignmentList.size() == cluster.getTopics().get(topicName).getReplicationFactor()) {
-          for (int i = 0; i > replicasCountDiff; i--) {
-            assignmentList.remove(assignmentList.size() - 1);
-          }
-        } else {
-          throw new ValidationException("Something went wrong while decreasing replicas count");
+      // For each partition remove replicas from the end of current assignment
+      // while (partition replicas count != requested replication factor)
+      currentAssignment.values().forEach(assignmentList -> {
+        while (assignmentList.size() != replicationFactorChange.getTotalReplicationFactor()) {
+          assignmentList.remove(assignmentList.size() - 1);
         }
-      }
-
-      // Fill result map
-      currentAssignment.forEach((key, value) -> reassignments.put(
-          new TopicPartition(topicName, key),
-          Optional.of(new NewPartitionReassignment(value))
-      ));
+      });
     } else {
       throw new ValidationException("Replication factor already equals requested");
     }
+
+    // Fill result map
+    Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments = new HashMap<>();
+    currentAssignment.forEach((key, value) -> reassignments.put(
+        new TopicPartition(topicName, key),
+        Optional.of(new NewPartitionReassignment(value))));
     return reassignments;
   }
 
-  private Map<Integer, Integer> entriesSortedByValues(Map<Integer, Integer> map) {
+  private Map<Integer, List<Integer>> getCurrentAssignment(KafkaCluster cluster, String topicName) {
+    Map<Integer, List<Integer>> currentAssignment = new HashMap<>();
+
+    cluster.getTopics().get(topicName).getPartitions().values()
+        .forEach(partition -> currentAssignment.put(partition.getPartition(),
+            partition.getReplicas().stream()
+                .map(InternalReplica::getBroker)
+                .collect(Collectors.toList())));
+
+    return currentAssignment;
+  }
+
+  private Map<Integer, Integer> getBrokersMap(KafkaCluster cluster, String topicName) {
+    Map<Integer, Integer> brokers = new LinkedHashMap<>();
+
+    cluster.getMetrics().getInternalBrokerDiskUsage().keySet()
+        .forEach(id -> brokers.put(id, 0));
+
+    cluster.getTopics().get(topicName).getPartitions().values().stream()
+        .flatMap(t -> t.getReplicas().stream())
+        .map(InternalReplica::getBroker)
+        .forEach(broker -> brokers.put(broker, brokers.get(broker) + 1));
+
+    return brokers;
+  }
+
+  private Map<Integer, Integer> getMapSortedByValues(Map<Integer, Integer> map) {
     var sortedMap = new LinkedHashMap<Integer, Integer>();
-    map.entrySet()
-        .stream()
+    map.entrySet().stream()
         .sorted(Map.Entry.comparingByValue())
         .forEachOrdered(entry -> sortedMap.put(entry.getKey(), entry.getValue()));
+
     return sortedMap;
   }
 

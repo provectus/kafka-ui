@@ -268,6 +268,15 @@ public class ClusterService {
     return updatedCluster;
   }
 
+  public Mono<Cluster> updateCluster(String clusterName) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getUpdatedCluster(cluster)
+            .doOnNext(updatedCluster -> clustersStorage
+                .setKafkaCluster(updatedCluster.getName(), updatedCluster))
+            .map(clusterMapper::toCluster))
+        .orElse(Mono.error(new ClusterNotFoundException()));
+  }
+
   public Flux<TopicMessage> getMessages(String clusterName, String topicName,
                                         ConsumerPosition consumerPosition, String query,
                                         Integer limit) {
@@ -337,16 +346,11 @@ public class ClusterService {
       ReplicationFactorChange replicationFactorChange) {
     return clustersStorage.getClusterByName(clusterName).map(cluster ->
         kafkaService.changeReplicationFactor(cluster, topicName, replicationFactorChange)
-            .map(t -> {
-              updateCluster(t, cluster.getName(), cluster);
-              return new ReplicationFactorChangeResponse()
-                  .topicName(t.getName())
-                  .totalReplicationFactor(t.getReplicationFactor());
-            }))
-        .orElseThrow(
-            () -> new ClusterNotFoundException(
-                String.format("No cluster for name '%s'", clusterName)
-            )
-        );
+            .doOnNext(topic -> updateCluster(topic, cluster.getName(), cluster))
+            .map(t -> new ReplicationFactorChangeResponse()
+                .topicName(t.getName())
+                .totalReplicationFactor(t.getReplicationFactor())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName))));
   }
 }

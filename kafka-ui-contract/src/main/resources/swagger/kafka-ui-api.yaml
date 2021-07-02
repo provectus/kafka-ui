@@ -31,6 +31,30 @@ paths:
                 items:
                   $ref: '#/components/schemas/Cluster'
 
+
+  /api/clusters/{clusterName}/update:
+    post:
+      tags:
+        - Clusters
+      summary: updateClusterInfo
+      operationId: updateClusterInfo
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/brokers:
     get:
       tags:
