@@ -104,13 +104,16 @@ public class KafkaService {
   public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
     return getOrCreateAdminClient(cluster)
         .flatMap(
-            ac -> getClusterMetrics(ac.getAdminClient())
-                .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
-                .flatMap(clusterMetrics ->
-                    getTopicsData(ac.getAdminClient()).flatMap(it ->
-                        updateSegmentMetrics(ac.getAdminClient(), clusterMetrics, it)
-                    ).map(segmentSizeDto -> buildFromData(cluster, segmentSizeDto))
-                )
+            ac -> ClusterUtil.getClusterVersion(ac.getAdminClient()).flatMap(
+                version ->
+                    getClusterMetrics(ac.getAdminClient())
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
+                        .flatMap(clusterMetrics ->
+                            getTopicsData(ac.getAdminClient()).flatMap(it ->
+                                updateSegmentMetrics(ac.getAdminClient(), clusterMetrics, it)
+                            ).map(segmentSizeDto -> buildFromData(cluster, version, segmentSizeDto))
+                        )
+            )
         ).onErrorResume(
             e -> Mono.just(cluster.toBuilder()
                 .status(ServerStatus.OFFLINE)
@@ -120,6 +123,7 @@ public class KafkaService {
   }
 
   private KafkaCluster buildFromData(KafkaCluster currentCluster,
+                                     String version,
                                      InternalSegmentSizeDto segmentSizeDto) {
 
     var topics = segmentSizeDto.getInternalTopicWithSegmentSize();
@@ -152,6 +156,7 @@ public class KafkaService {
         .build();
 
     return currentCluster.toBuilder()
+        .version(version)
         .status(ServerStatus.ONLINE)
         .zookeeperStatus(zookeeperStatus)
         .lastZookeeperException(zookeeperException)
