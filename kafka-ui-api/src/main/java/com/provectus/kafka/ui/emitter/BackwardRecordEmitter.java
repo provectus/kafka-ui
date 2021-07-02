@@ -64,6 +64,13 @@ public class BackwardRecordEmitter
 
               log.debug("{} records polled", records.count());
               log.debug("{} records sent", partitionRecords.size());
+
+              // This is workaround for case when partition begin offset is less than
+              // real minimal offset, usually appear in compcated topics
+              if (records.count() > 0  && partitionRecords.isEmpty()) {
+                waitingOffsets.markPolled(entry.getKey().partition());
+              }
+
               for (ConsumerRecord<Bytes, Bytes> msg : partitionRecords) {
                 if (!sink.isCancelled() && !waitingOffsets.beginReached()) {
                   sink.next(msg);
