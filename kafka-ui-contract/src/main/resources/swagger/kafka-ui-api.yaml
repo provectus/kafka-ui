@@ -1193,6 +1193,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConnectorPluginConfigValidationResponse'
 
+  /api/clusters/{clusterName}/topics/{topicName}/partitions:
+    patch:
+      tags:
+        - Topics
+      summary: increaseTopicPartitions
+      operationId: increaseTopicPartitions
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartitionsIncrease'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartitionsIncreaseResponse'
+        404:
+          description: Not found
+
 components:
   schemas:
     ErrorResponse:
@@ -1469,11 +1501,11 @@ components:
         clusterId:
           type: string
         consumerGroupId:
-            type: string
+          type: string
         numConsumers:
-            type: integer
+          type: integer
         numTopics:
-            type: integer
+          type: integer
         simple:
           type: boolean
         partitionAssignor:
@@ -1637,7 +1669,7 @@ components:
         consumerGroupId:
           type: string
         simple:
-         type: boolean
+          type: boolean
         partitionAssignor:
           type: string
         state:
@@ -1973,3 +2005,23 @@ components:
         - name
         - connect
         - status
+
+    PartitionsIncrease:
+      type: object
+      properties:
+        totalPartitionsCount:
+          type: integer
+          minimum: 1
+      required:
+        - totalPartitionsCount
+
+    PartitionsIncreaseResponse:
+      type: object
+      properties:
+        totalPartitionsCount:
+          type: integer
+        topicName:
+          type: string
+      required:
+        - totalPartitionsCount
+        - topicName

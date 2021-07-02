@@ -202,4 +202,5 @@ class ClusterServiceTest {
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getPartitionCount).isSorted();
   }
+
 }
