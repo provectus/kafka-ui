@@ -1,20 +1,21 @@
 package com.provectus.kafka.ui.controller;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.provectus.kafka.ui.api.ConsumerGroupsApi;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerGroupOffsetsReset;
+import com.provectus.kafka.ui.model.PartitionOffset;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.service.ClusterService;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.OffsetsResetService;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RestController;
@@ -86,21 +87,15 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
           }
           offsetsResetService
               .resetToTimestamp(cluster, group, reset.getTopic(), reset.getPartitions(),
-                  reset.getResetToTimestamp().longValue());
+                  reset.getResetToTimestamp());
           break;
         case OFFSET:
           if (CollectionUtils.isEmpty(reset.getPartitionsOffsets())) {
             throw new ValidationException(
                 "partitionsOffsets is required when OFFSET reset type used");
           }
-          Map<Integer, Long> offsets = reset.getPartitionsOffsets().stream().map(p -> {
-            String[] split = p.split("::");
-            if (split.length != 2) {
-              throw new IllegalArgumentException(
-                  "Wrong seekTo argument format. See API docs for details");
-            }
-            return Pair.of(Integer.parseInt(split[0]), Long.parseLong(split[1]));
-          }).collect(Collectors.toMap(Pair::getKey, Pair::getValue));
+          Map<Integer, Long> offsets = reset.getPartitionsOffsets().stream()
+              .collect(toMap(PartitionOffset::getPartition, PartitionOffset::getOffset));
           offsetsResetService.resetToOffsets(cluster, group, reset.getTopic(), offsets);
           break;
         default:

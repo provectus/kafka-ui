@@ -1846,16 +1846,29 @@ components:
             type: integer
           description: list of target partitions, all partitions will be used if it is not set or empty
         resetToTimestamp:
-          type: number
+          type: integer
+          format: int64
           description: should be set if resetType is TIMESTAMP
         partitionsOffsets:
           type: array
           items:
-            type: string
+            $ref: '#/components/schemas/PartitionOffset'
           description: The format of array elements is [partition]::[offset], should be set when resetType is OFFSET
       required:
         - topic
         - resetType
+
+    PartitionOffset:
+      type: object
+      properties:
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+      required:
+        - partition
+        - offset
 
     ConsumerGroupOffsetsResetType:
       type: string
