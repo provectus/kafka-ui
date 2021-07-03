@@ -136,7 +136,7 @@ const List: React.FC<Props> = ({
                   setOrderBy={setTopicsOrderBy}
                 />
                 <SortableColumnHeader
-                  value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+                  value={TopicColumnsToSort.REPLICATION_FACTOR}
                   title="Replication Factor"
                   orderBy={orderBy}
                   setOrderBy={setTopicsOrderBy}
