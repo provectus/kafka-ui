@@ -135,6 +135,12 @@ const List: React.FC<Props> = ({
                   orderBy={orderBy}
                   setOrderBy={setTopicsOrderBy}
                 />
+                <SortableColumnHeader
+                  value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+                  title="Replication Factor"
+                  orderBy={orderBy}
+                  setOrderBy={setTopicsOrderBy}
+                />
                 <th>Type</th>
                 <th> </th>
               </tr>

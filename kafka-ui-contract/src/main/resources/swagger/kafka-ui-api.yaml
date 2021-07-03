@@ -1374,6 +1374,7 @@ components:
       enum:
         - NAME
         - OUT_OF_SYNC_REPLICAS
+        - REPLICATION_FACTOR
         - TOTAL_PARTITIONS
 
     Topic:
