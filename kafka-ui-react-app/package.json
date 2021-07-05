@@ -78,7 +78,7 @@
     "@types/enzyme": "^3.10.8",
     "@types/jest": "^26.0.21",
     "@types/lodash": "^4.14.165",
-    "@types/node": "^15.12.5",
+    "@types/node": "^16.0.0",
     "@types/node-fetch": "^2.5.9",
     "@types/react": "^17.0.3",
     "@types/react-datepicker": "^3.1.8",
