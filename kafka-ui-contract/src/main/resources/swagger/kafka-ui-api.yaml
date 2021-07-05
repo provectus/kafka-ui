@@ -314,7 +314,7 @@ paths:
             type: array
             items:
               type: string
-          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timstamp in millis] for specifying timestamps
+          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timestamp in millis] for specifying timestamps
         - name: limit
           in: query
           schema:
@@ -507,6 +507,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
+
+  /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
+    post:
+      tags:
+        - Consumer Groups
+      summary: resets consumer group offsets
+      operationId: resetConsumerGroupOffsets
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerGroupOffsetsReset'
+      responses:
+        200:
+          description: OK
 
   /api/clusters/{clusterName}/schemas:
     post:
@@ -1840,6 +1866,51 @@ components:
       enum:
         - SOURCE
         - SINK
+
+    ConsumerGroupOffsetsReset:
+      type: object
+      properties:
+        topic:
+          type: string
+        resetType:
+          $ref: '#/components/schemas/ConsumerGroupOffsetsResetType'
+        partitions:
+          type: array
+          items:
+            type: integer
+          description: list of target partitions, all partitions will be used if it is not set or empty
+        resetToTimestamp:
+          type: integer
+          format: int64
+          description: should be set if resetType is TIMESTAMP
+        partitionsOffsets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartitionOffset'
+          description: List of partition offsets to reset to, should be set when resetType is OFFSET
+      required:
+        - topic
+        - resetType
+
+    PartitionOffset:
+      type: object
+      properties:
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+      required:
+        - partition
+        - offset
+
+    ConsumerGroupOffsetsResetType:
+      type: string
+      enum:
+        - EARLIEST
+        - LATEST
+        - TIMESTAMP
+        - OFFSET
 
     TaskStatus:
       type: object
