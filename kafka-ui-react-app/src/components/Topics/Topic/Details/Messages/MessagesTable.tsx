@@ -9,26 +9,22 @@ export interface MessagesTableProp {
   onNext(event: React.MouseEvent<HTMLButtonElement>): void;
 }
 
-const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
-  if (!messages.length) {
-    return <div>No messages at selected topic</div>;
-  }
-
-  return (
-    <>
-      <table className="table is-fullwidth">
-        <thead>
-          <tr>
-            <th>Timestamp</th>
-            <th>Key</th>
-            <th>Offset</th>
-            <th>Partition</th>
-            <th>Content</th>
-            <th> </th>
-          </tr>
-        </thead>
-        <tbody>
-          {messages.map(
+const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => (
+  <>
+    <table className="table is-fullwidth">
+      <thead>
+        <tr>
+          <th>Timestamp</th>
+          <th>Key</th>
+          <th>Offset</th>
+          <th>Partition</th>
+          <th>Content</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody>
+        {messages.length > 0 ? (
+          messages.map(
             ({ partition, offset, timestamp, content, key }: TopicMessage) => (
               <MessageItem
                 key={`message-${timestamp.getTime()}-${offset}`}
@@ -39,9 +35,15 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
                 messageKey={key}
               />
             )
-          )}
-        </tbody>
-      </table>
+          )
+        ) : (
+          <tr>
+            <td colSpan={10}>No messages at selected topic</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+    {messages.length > 0 ? (
       <div className="columns">
         <div className="column is-full">
           <CustomParamButton
@@ -52,8 +54,8 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
           />
         </div>
       </div>
-    </>
-  );
-};
+    ) : null}
+  </>
+);
 
 export default MessagesTable;

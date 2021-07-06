@@ -42,7 +42,7 @@ describe('Details', () => {
       />
     );
 
-    expect(component.exists('.table')).toBeFalsy();
+    expect(component.text()).toContain('No active consumer groups');
   });
 
   it('render ConsumerGroups in Topic', () => {

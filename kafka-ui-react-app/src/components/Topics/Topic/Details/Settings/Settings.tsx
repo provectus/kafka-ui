@@ -56,9 +56,15 @@ const Settings: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {config.map((item) => (
-            <ConfigListItem key={item.name} config={item} />
-          ))}
+          {config.length > 0 ? (
+            config.map((item) => (
+              <ConfigListItem key={item.name} config={item} />
+            ))
+          ) : (
+            <tr>
+              <td colSpan={10}>No active Settings</td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

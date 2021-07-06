@@ -97,13 +97,19 @@ const Details: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
-              {items.map((consumer) => (
-                <ListItem
-                  key={consumer.consumerId}
-                  clusterName={clusterName}
-                  consumer={consumer}
-                />
-              ))}
+              {items.length > 0 ? (
+                items.map((consumer) => (
+                  <ListItem
+                    key={consumer.consumerId}
+                    clusterName={clusterName}
+                    consumer={consumer}
+                  />
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={10}>No active consumer group</td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

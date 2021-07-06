@@ -68,7 +68,41 @@ exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
 `;
 
 exports[`MessagesTable when topic is empty matches snapshot 1`] = `
-<div>
-  No messages at selected topic
-</div>
+<Fragment>
+  <table
+    className="table is-fullwidth"
+  >
+    <thead>
+      <tr>
+        <th>
+          Timestamp
+        </th>
+        <th>
+          Key
+        </th>
+        <th>
+          Offset
+        </th>
+        <th>
+          Partition
+        </th>
+        <th>
+          Content
+        </th>
+        <th>
+           
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td
+          colSpan={10}
+        >
+          No messages at selected topic
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</Fragment>
 `;

@@ -62,7 +62,9 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
             </table>
           </div>
         ) : (
-          'No active consumer groups'
+          <tr>
+            <td colSpan={10}>No active consumer groups</td>
+          </tr>
         )}
       </div>
     </div>

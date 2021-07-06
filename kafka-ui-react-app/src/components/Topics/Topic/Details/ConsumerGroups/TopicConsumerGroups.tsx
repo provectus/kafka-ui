@@ -27,38 +27,38 @@ const TopicConsumerGroups: React.FC<Props> = ({
   }, []);
 
   return (
-    <div className="box">
-      {consumerGroups.length > 0 ? (
-        <table className="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Group ID</th>
-              <th>Consumer ID</th>
-              <th>Host</th>
-              <th>Partition</th>
-              <th>Messages behind</th>
-              <th>Current offset</th>
-              <th>End offset</th>
+    <table className="table is-striped is-fullwidth">
+      <thead>
+        <tr>
+          <th>Group ID</th>
+          <th>Consumer ID</th>
+          <th>Host</th>
+          <th>Partition</th>
+          <th>Messages behind</th>
+          <th>Current offset</th>
+          <th>End offset</th>
+        </tr>
+      </thead>
+      <tbody>
+        {consumerGroups.length > 0 ? (
+          consumerGroups.map((consumer) => (
+            <tr key={consumer.consumerId}>
+              <td>{consumer.groupId}</td>
+              <td>{consumer.consumerId}</td>
+              <td>{consumer.host}</td>
+              <td>{consumer.partition}</td>
+              <td>{consumer.messagesBehind}</td>
+              <td>{consumer.currentOffset}</td>
+              <td>{consumer.endOffset}</td>
             </tr>
-          </thead>
-          <tbody>
-            {consumerGroups.map((consumer) => (
-              <tr key={consumer.consumerId}>
-                <td>{consumer.groupId}</td>
-                <td>{consumer.consumerId}</td>
-                <td>{consumer.host}</td>
-                <td>{consumer.partition}</td>
-                <td>{consumer.messagesBehind}</td>
-                <td>{consumer.currentOffset}</td>
-                <td>{consumer.endOffset}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        'No active consumer groups'
-      )}
-    </div>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={10}>No active consumer groups</td>
+          </tr>
+        )}
+      </tbody>
+    </table>
   );
 };
 

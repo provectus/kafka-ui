@@ -72,36 +72,44 @@ const Overview: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
-              <tr key={`partition-list-item-key-${partition}`}>
-                <td>{partition}</td>
-                <td>{leader}</td>
-                <td>{offsetMin}</td>
-                <td>{offsetMax}</td>
-                <td className="has-text-right">
-                  {!internal && !isReadOnly ? (
-                    <Dropdown
-                      label={
-                        <span className="icon">
-                          <i className="fas fa-cog" />
-                        </span>
-                      }
-                      right
-                    >
-                      <DropdownItem
-                        onClick={() =>
-                          clearTopicMessages(clusterName, topicName, [
-                            partition,
-                          ])
+            {partitions?.length !== 0 && partitions?.length !== undefined ? (
+              partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
+                <tr key={`partition-list-item-key-${partition}`}>
+                  <td>{partition}</td>
+                  <td>{leader}</td>
+                  <td>{offsetMin}</td>
+                  <td>{offsetMax}</td>
+                  <td className="has-text-right">
+                    {!internal && !isReadOnly ? (
+                      <Dropdown
+                        label={
+                          <span className="icon">
+                            <i className="fas fa-cog" />
+                          </span>
                         }
+                        right
                       >
-                        <span className="has-text-danger">Clear Messages</span>
-                      </DropdownItem>
-                    </Dropdown>
-                  ) : null}
-                </td>
+                        <DropdownItem
+                          onClick={() =>
+                            clearTopicMessages(clusterName, topicName, [
+                              partition,
+                            ])
+                          }
+                        >
+                          <span className="has-text-danger">
+                            Clear Messages
+                          </span>
+                        </DropdownItem>
+                      </Dropdown>
+                    ) : null}
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={10}>No active Overview</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
