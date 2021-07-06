@@ -88,7 +88,7 @@ public class OffsetsResetService {
             .findAny()
             .orElseThrow(() -> new NotFoundException("Consumer group not found"));
 
-    if (!Set.of(DEAD.name(), EMPTY.name()).contains(description.getState())) {
+    if (!Set.of(DEAD, EMPTY).contains(description.getState())) {
       throw new ValidationException(
           String.format(
               "Group's offsets can be reset only if group is inactive, but group is in %s state",
