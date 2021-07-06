@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -85,6 +86,7 @@ public class KafkaService {
   private final JmxClusterUtil jmxClusterUtil;
   private final ClustersStorage clustersStorage;
   private final DeserializationService deserializationService;
+  @Setter // used in tests
   @Value("${kafka.admin-client-timeout}")
   private int clientTimeout;
 
@@ -393,7 +395,7 @@ public class KafkaService {
                                                     Map<String, Object> properties) {
     Properties props = new Properties();
     props.putAll(cluster.getProperties());
-    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui-" + UUID.randomUUID().toString());
+    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui-" + UUID.randomUUID());
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
     props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
