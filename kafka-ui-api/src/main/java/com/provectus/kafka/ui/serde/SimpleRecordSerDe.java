@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
-import java.util.Optional;
+import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
@@ -22,10 +22,11 @@ public class SimpleRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public ProducerRecord<byte[], byte[]> serialize(String topic, byte[] key, byte[] data,
-                                                  Optional<Integer> partition) {
-    return partition.map(p -> new ProducerRecord<>(topic, p, key, data))
-        .orElseGet(() -> new ProducerRecord<>(topic, key, data));
+  public ProducerRecord<byte[], byte[]> serialize(String topic,
+                                                  @Nullable byte[] key,
+                                                  @Nullable byte[] data,
+                                                  @Nullable Integer partition) {
+    return new ProducerRecord<>(topic, partition, key, data);
   }
 
   @Override

@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryRecordSerDe;
+import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryAwareRecordSerDe;
 import java.util.Map;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
@@ -13,8 +13,8 @@ import reactor.util.function.Tuples;
 
 class SchemaRegistryRecordDeserializerTest {
 
-  private final SchemaRegistryRecordSerDe deserializer =
-      new SchemaRegistryRecordSerDe(
+  private final SchemaRegistryAwareRecordSerDe deserializer =
+      new SchemaRegistryAwareRecordSerDe(
           KafkaCluster.builder()
               .schemaNameTemplate("%s-value")
               .build(),

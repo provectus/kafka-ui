@@ -1559,8 +1559,6 @@ components:
             type: string
         content:
           type: object
-      required:
-        - content
 
     TopicMessageSchema:
       type: object

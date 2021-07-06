@@ -15,9 +15,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
@@ -59,16 +59,19 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public ProducerRecord<byte[], byte[]> serialize(String topic, byte[] key, byte[] data,
-                                                  Optional<Integer> partition) {
+  public ProducerRecord<byte[], byte[]> serialize(String topic,
+                                                  @Nullable byte[] key,
+                                                  @Nullable byte[] data,
+                                                  @Nullable Integer partition) {
+    if (data == null) {
+      return new ProducerRecord<>(topic, partition, key, null);
+    }
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {
       JsonFormat.parser().merge(new String(data), builder);
       final DynamicMessage message = builder.build();
-      return partition
-          .map(p -> new ProducerRecord<>(topic, p, key, message.toByteArray()))
-          .orElseGet(() -> new ProducerRecord<>(topic, key, message.toByteArray()));
-
+      //TODO: currently we assume that all keys are string - need to discuss if it is ok
+      return new ProducerRecord<>(topic, partition, key, message.toByteArray());
     } catch (Throwable e) {
       throw new RuntimeException("Failed to merge record for topic " + topic, e);
     }
