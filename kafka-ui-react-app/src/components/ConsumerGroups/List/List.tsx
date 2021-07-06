@@ -22,31 +22,31 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
       <Breadcrumb>All Consumer Groups</Breadcrumb>
 
       <div className="box">
-        {consumerGroups.length > 0 ? (
-          <div>
-            <div className="columns">
-              <div className="column is-half is-offset-half">
-                <input
-                  id="searchText"
-                  type="text"
-                  name="searchText"
-                  className="input"
-                  placeholder="Search"
-                  value={searchText}
-                  onChange={handleInputChange}
-                />
-              </div>
+        <div>
+          <div className="columns">
+            <div className="column is-half is-offset-half">
+              <input
+                id="searchText"
+                type="text"
+                name="searchText"
+                className="input"
+                placeholder="Search"
+                value={searchText}
+                onChange={handleInputChange}
+              />
             </div>
-            <table className="table is-striped is-fullwidth is-hoverable">
-              <thead>
-                <tr>
-                  <th>Consumer group ID</th>
-                  <th>Num of consumers</th>
-                  <th>Num of topics</th>
-                </tr>
-              </thead>
-              <tbody>
-                {consumerGroups
+          </div>
+          <table className="table is-striped is-fullwidth is-hoverable">
+            <thead>
+              <tr>
+                <th>Consumer group ID</th>
+                <th>Num of consumers</th>
+                <th>Num of topics</th>
+              </tr>
+            </thead>
+            <tbody>
+              {consumerGroups.length > 0 ? (
+                consumerGroups
                   .filter(
                     (consumerGroup) =>
                       !searchText ||
@@ -57,15 +57,15 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
                       key={consumerGroup.consumerGroupId}
                       consumerGroup={consumerGroup}
                     />
-                  ))}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          <tr>
-            <td colSpan={10}>No active consumer groups</td>
-          </tr>
-        )}
+                  ))
+              ) : (
+                <tr>
+                  <td colSpan={10}>No active consumer groups</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
