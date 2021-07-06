@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.TopologyGraph;
 import com.provectus.kafka.ui.model.TopologyNode;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -59,14 +60,15 @@ public class StreamTopologyController implements StreamTopologyApi {
     sinkConnector.setName("sink connector");
     sinkConnector.setType(TopologyNode.TypeEnum.SINK_CONNECTOR);
 
+    final Map<String, List<String>> adjacency = new LinkedHashMap<>();
+    adjacency.put(sourceConnector.getName(), List.of(sourceTopic.getName()));
+    adjacency.put(sourceTopic.getName(), List.of(topologyNode.getName()));
+    adjacency.put(topologyNode.getName(), List.of(sinkTopic.getName()));
+    adjacency.put(sinkTopic.getName(), List.of(sinkConnector.getName()));
+    adjacency.put(sinkConnector.getName(), List.of());
+
     topology.setAdjacency(
-        new LinkedHashMap<>() {{
-          put(sourceConnector.getName(), List.of(sourceTopic.getName()));
-          put(sourceTopic.getName(), List.of(topologyNode.getName()));
-          put(topologyNode.getName(), List.of(sinkTopic.getName()));
-          put(sinkTopic.getName(), List.of(sinkConnector.getName()));
-          put(sinkConnector.getName(), List.of());
-        }}
+        adjacency
     );
     topology
         .setNodes(List.of(sourceConnector, sourceTopic, topologyNode, sinkTopic, sinkConnector));
@@ -114,12 +116,13 @@ public class StreamTopologyController implements StreamTopologyApi {
     topology0Processor2.setType(TopologyNode.TypeEnum.SINK_PROCESSOR);
     topology0Processor2.setTopic(sinkTopic);
 
+    final LinkedHashMap<String, List<String>> adjacency = new LinkedHashMap<>();
+    adjacency.put(topology0Processor0.getName(), List.of(topology0Processor1.getName()));
+    adjacency.put(topology0Processor1.getName(), List.of(topology0Processor2.getName()));
+    adjacency.put(topology0Processor2.getName(), List.of());
+
     subTopology.setAdjacency(
-        new LinkedHashMap<>() {{
-          put(topology0Processor0.getName(), List.of(topology0Processor1.getName()));
-          put(topology0Processor1.getName(), List.of(topology0Processor2.getName()));
-          put(topology0Processor2.getName(), List.of());
-        }}
+        adjacency
 
     );
     subTopology.setNodes(List.of(topology0Processor0, topology0Processor1, topology0Processor2));
