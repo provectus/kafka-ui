@@ -1225,6 +1225,34 @@ paths:
         404:
           description: Not found
 
+  /api/streamtopology:
+    get:
+      tags:
+        - StreamTopology
+      summary: get stream topology
+      operationId: getStreamTopology
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalTopology'
+
+  /api/streamtopology/dummy:
+    get:
+      tags:
+        - StreamTopology
+      summary: get dummy stream topology
+      operationId: getDummyStreamTopology
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GlobalTopology'
+
 components:
   schemas:
     ErrorResponse:
@@ -2027,3 +2055,102 @@ components:
       required:
         - totalPartitionsCount
         - topicName
+
+    TopologyNode:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+            - TOPIC
+            - SOURCE_CONNECTOR
+            - SINK_CONNECTOR
+            - SOURCE_PROCESSOR
+            - PROCESSOR
+            - SINK_PROCESSOR
+            - PROCESSOR_TOPOLOGY
+            - SUB_TOPOLOGY
+
+    TopicNode:
+      allOf:
+        - $ref: '#/components/schemas/TopologyNode'
+        - type: object
+          properties:
+            inputMessagesNumber:
+              type: integer
+            outputMessagesNumber:
+              type: integer
+            lag:
+              type: integer
+
+    ProcessorNode:
+      allOf:
+        - $ref: '#/components/schemas/TopologyNode'
+        - type: object
+          properties:
+            stores:
+              type: array
+              items:
+                type: string
+
+    SourceProcessorNode:
+      allOf:
+        - $ref: '#/components/schemas/TopologyNode'
+        - type: object
+          properties:
+            topics:
+              type: array
+              items:
+                type: string
+
+    SinkProcessorNode:
+      allOf:
+        - $ref: '#/components/schemas/TopologyNode'
+        - type: object
+          properties:
+            topic:
+              type: string
+
+    TopologyGraph:
+      type: object
+      properties:
+        adjacency:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopologyNode'
+
+    SubTopologyNode:
+      allOf:
+        - $ref: '#/components/schemas/TopologyNode'
+        - type: object
+          properties:
+            subTopology:
+              $ref: '#/components/schemas/TopologyGraph'
+
+    ProcessorTopologyNode:
+      allOf:
+        - $ref: '#/components/schemas/TopologyNode'
+        - type: object
+          properties:
+            processorsNumber:
+              type: integer
+            topicsNumber:
+              type: integer
+            topology:
+              type: array
+              items:
+                $ref: '#/components/schemas/TopologyNode'
+
+    GlobalTopology:
+      type: object
+      properties:
+        topology:
+          $ref: '#/components/schemas/TopologyGraph'
