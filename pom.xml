@@ -20,7 +20,7 @@
 		<org.projectlombok.version>1.18.10</org.projectlombok.version>
 		<git.revision>latest</git.revision>
 		<zkclient.version>0.11</zkclient.version>
-		<kafka-clients.version>2.4.0</kafka-clients.version>
+		<kafka-clients.version>2.4.1</kafka-clients.version>
 		<node.version>v14.17.1</node.version>
 		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
 		<frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
