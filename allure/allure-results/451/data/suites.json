@@ -4,13 +4,13 @@
     "name" : "com.provectus.kafka.ui.topics.TopicTests",
     "children" : [ {
       "name" : "should create a topic",
-      "uid" : "309a73f8651f8949",
+      "uid" : "505ecbb961078587",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1625649483844,
-        "stop" : 1625649495325,
-        "duration" : 11481
+        "start" : 1625656676835,
+        "stop" : 1625656690132,
+        "duration" : 13297
       },
       "flaky" : false,
       "newFailed" : false,
@@ -21,13 +21,13 @@
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "ee9d0754d69d13ea",
+      "uid" : "a67e67a29c7efb6f",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1625649495529,
-        "stop" : 1625649496699,
-        "duration" : 1170
+        "start" : 1625656690256,
+        "stop" : 1625656691119,
+        "duration" : 863
       },
       "flaky" : false,
       "newFailed" : false,
