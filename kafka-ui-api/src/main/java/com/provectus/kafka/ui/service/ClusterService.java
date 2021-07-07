@@ -142,6 +142,8 @@ public class ClusterService {
         return Comparator.comparing(InternalTopic::getPartitionCount);
       case OUT_OF_SYNC_REPLICAS:
         return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
+      case REPLICATION_FACTOR:
+        return Comparator.comparing(InternalTopic::getReplicationFactor);
       case NAME:
       default:
         return defaultComparator;
