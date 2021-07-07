@@ -32,7 +32,7 @@ paths:
                   $ref: '#/components/schemas/Cluster'
 
 
-  /api/clusters/{clusterName}/update:
+  /api/clusters/{clusterName}/cache:
     post:
       tags:
         - Clusters
