@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
@@ -15,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -23,6 +25,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
+//TODO: currently we assume that keys for this serde are always string - need to discuss if it is ok
 public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ProtobufSchema protobufSchema;
   private final ObjectMapper objectMapper;
@@ -44,7 +47,6 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
       return new DeserializedKeyValue(
-          //TODO currently we assume key is always string - need to discuss it
           msg.key() != null ? new String(msg.key().get()) : null,
           msg.value() != null ? parse(msg.value().get()) : null
       );
@@ -65,21 +67,32 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
 
   @Override
   public ProducerRecord<byte[], byte[]> serialize(String topic,
-                                                  @Nullable byte[] key,
-                                                  @Nullable byte[] data,
+                                                  @Nullable ParsedInputObject key,
+                                                  @Nullable ParsedInputObject data,
                                                   @Nullable Integer partition) {
     if (data == null) {
-      return new ProducerRecord<>(topic, partition, key, null);
+      return new ProducerRecord<>(topic, partition, toStringBytes(key), null);
+    }
+    if (!data.isJsonObject()) {
+      throw new ValidationException("message content should be an object");
     }
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {
-      JsonFormat.parser().merge(new String(data), builder);
+      JsonFormat.parser().merge(data.jsonForSerializing(), builder);
       final DynamicMessage message = builder.build();
-      //TODO: currently we assume that all keys are string - need to discuss if it is ok
-      return new ProducerRecord<>(topic, partition, key, message.toByteArray());
+      return new ProducerRecord<>(
+          topic,
+          partition,
+          toStringBytes(key),
+          message.toByteArray()
+      );
     } catch (Throwable e) {
       throw new RuntimeException("Failed to merge record for topic " + topic, e);
     }
+  }
+
+  private byte[] toStringBytes(ParsedInputObject obj) {
+    return Optional.ofNullable(obj).map(o -> o.jsonForSerializing().getBytes()).orElse(null);
   }
 
   @Override

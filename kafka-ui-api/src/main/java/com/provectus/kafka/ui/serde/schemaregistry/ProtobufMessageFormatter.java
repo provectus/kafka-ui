@@ -6,7 +6,6 @@ import com.google.protobuf.Message;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaUtils;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer;
-
 import java.io.IOException;
 import java.util.Map;
 import lombok.SneakyThrows;

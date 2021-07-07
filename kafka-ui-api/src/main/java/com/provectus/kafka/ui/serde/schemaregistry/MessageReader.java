@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
+import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
@@ -23,10 +24,10 @@ public abstract class MessageReader<T> {
 
   protected abstract Serializer<T> createSerializer(SchemaRegistryClient client);
 
-  public byte[] read(byte[] value) {
+  public byte[] read(ParsedInputObject value) {
     final T read = this.read(value, schema);
     return this.serializer.serialize(topic, read);
   }
 
-  protected abstract T read(byte[] value, ParsedSchema schema);
+  protected abstract T read(ParsedInputObject value, ParsedSchema schema);
 }

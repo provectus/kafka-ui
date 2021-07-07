@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
+import com.google.common.base.Preconditions;
+import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
@@ -31,11 +33,12 @@ public class AvroMessageReader extends MessageReader<Object> {
   }
 
   @Override
-  protected Object read(byte[] value, ParsedSchema schema) {
+  protected Object read(ParsedInputObject value, ParsedSchema schema) {
+    Preconditions.checkArgument(value.isJsonObject());
     Schema rawSchema = ((AvroSchema) schema).rawSchema();
-
     try {
-      Object object = AvroSchemaUtils.toObject(new String(value), (AvroSchema) schema);
+      Object object = AvroSchemaUtils.toObject(value.jsonForSerializing(), (AvroSchema) schema);
+      // TODO do we really need this code?
       if (rawSchema.getType().equals(Schema.Type.STRING)) {
         object = ((Utf8) object).toString();
       }

@@ -14,12 +14,12 @@ import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Metric;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
-import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.serde.DeserializationService;
+import com.provectus.kafka.ui.serde.ParsedInputObject;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
@@ -672,8 +672,8 @@ public class KafkaService {
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
       final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
-          msg.getKey() != null ? msg.getKey().toString().getBytes() : null,
-          msg.getContent() != null ? msg.getContent().toString().getBytes() : null,
+          msg.getKey() != null ? new ParsedInputObject(msg.getKey()) : null,
+          msg.getContent() != null ? new ParsedInputObject(msg.getContent()) : null,
           msg.getPartition()
       );
 

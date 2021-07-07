@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.AbstractBaseTest;
@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * TODO: as an improvement this tests can be rewritten in @ParametrizedTest fashion,
  * it should increase readability.
  */
-public class KafkaSendingTest extends AbstractBaseTest {
+public class SendAndReadTests extends AbstractBaseTest {
 
   private static final AvroSchema AVRO_SCHEMA_1 = new AvroSchema(
       "{"
@@ -65,11 +65,11 @@ public class KafkaSendingTest extends AbstractBaseTest {
           + "}"
   );
 
-  private static final String AVRO_SCHEMA_1_JSON_RECORD
-      = "{ \"field1\":\"testStr\", \"field2\": 123 }";
-  private static final String AVRO_SCHEMA_2_JSON_RECORD
-      = "{ \"f1\": 111, \"f2\": \"testStr\" }";
+  private static final Map<String, Object> AVRO_SCHEMA_1_JSON_RECORD
+      = toJsonArg("{ \"field1\":\"testStr\", \"field2\": 123 }");
 
+  private static final Map<String, Object> AVRO_SCHEMA_2_JSON_RECORD
+      = toJsonArg("{ \"f1\": 111, \"f2\": \"testStr\" }");
 
   private static final ProtobufSchema PROTOBUF_SCHEMA = new ProtobufSchema(
       "syntax = \"proto3\";\n"
@@ -82,7 +82,8 @@ public class KafkaSendingTest extends AbstractBaseTest {
           + "\n"
   );
 
-  private static final String PROTOBUF_SCHEMA_JSON_RECORD = "{ \"f1\" : \"test str\", \"f2\" : 123 }";
+  private static final Map<String, Object> PROTOBUF_SCHEMA_JSON_RECORD
+      = toJsonArg("{ \"f1\" : \"test str\", \"f2\" : 123 }");
 
   @Autowired
   private ClusterService clusterService;
@@ -91,7 +92,7 @@ public class KafkaSendingTest extends AbstractBaseTest {
   private ClustersMetricsScheduler clustersMetricsScheduler;
 
   @Test
-  void noSchemaWithNonNullableKeyValue() {
+  void noSchemaStringKeyStringValue() {
     new SendAndReadSpec()
         .withMsgToSend(
             new CreateTopicMessage()
@@ -101,6 +102,23 @@ public class KafkaSendingTest extends AbstractBaseTest {
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
           assertThat(polled.getContent()).isEqualTo("testValue");
+        });
+  }
+
+  @Test
+  void keyIsIntValueIsDoubleShouldBeSerializedAsStrings() {
+    new SendAndReadSpec()
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key(123)
+                .content(234.56)
+        )
+        .doAssert(polled -> {
+          // all non-object arguments will be serialized and returned as string
+          assertThat(polled.getKey()).isInstanceOf(String.class);
+          assertThat(polled.getKey()).isEqualTo("123");
+          assertThat(polled.getContent()).isInstanceOf(String.class);
+          assertThat((String) polled.getContent()).startsWith("234.56");
         });
   }
 
@@ -143,8 +161,8 @@ public class KafkaSendingTest extends AbstractBaseTest {
                 .content(AVRO_SCHEMA_2_JSON_RECORD)
         )
         .doAssert(polled -> {
-          assertJsonIsEqual(AVRO_SCHEMA_1_JSON_RECORD, polled.getKey());
-          assertJsonIsEqual(AVRO_SCHEMA_2_JSON_RECORD, polled.getContent());
+          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
+          assertThat(polled.getContent()).isEqualTo(AVRO_SCHEMA_2_JSON_RECORD);
         });
   }
 
@@ -159,7 +177,7 @@ public class KafkaSendingTest extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
-          assertJsonIsEqual(AVRO_SCHEMA_1_JSON_RECORD, polled.getContent());
+          assertThat(polled.getContent()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
         });
   }
 
@@ -173,7 +191,7 @@ public class KafkaSendingTest extends AbstractBaseTest {
                 .content("testVal")
         )
         .doAssert(polled -> {
-          assertJsonIsEqual(AVRO_SCHEMA_1_JSON_RECORD, polled.getKey());
+          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
           assertThat(polled.getContent()).isEqualTo("testVal");
         });
   }
@@ -189,7 +207,7 @@ public class KafkaSendingTest extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
-          assertJsonIsEqual(PROTOBUF_SCHEMA_JSON_RECORD, polled.getContent());
+          assertThat(polled.getContent()).isEqualTo(PROTOBUF_SCHEMA_JSON_RECORD);
         });
   }
 
@@ -205,7 +223,7 @@ public class KafkaSendingTest extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isNull();
-          assertJsonIsEqual(AVRO_SCHEMA_2_JSON_RECORD, polled.getContent());
+          assertThat(polled.getContent()).isEqualTo(AVRO_SCHEMA_2_JSON_RECORD);
         });
   }
 
@@ -220,7 +238,7 @@ public class KafkaSendingTest extends AbstractBaseTest {
                 .content(null)
         )
         .doAssert(polled -> {
-          assertJsonIsEqual(AVRO_SCHEMA_1_JSON_RECORD, polled.getKey());
+          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
           assertThat(polled.getContent()).isNull();
         });
   }
@@ -236,17 +254,15 @@ public class KafkaSendingTest extends AbstractBaseTest {
                 .content(PROTOBUF_SCHEMA_JSON_RECORD)
         )
         .doAssert(polled -> {
-          assertJsonIsEqual(AVRO_SCHEMA_1_JSON_RECORD, polled.getKey());
-          assertJsonIsEqual(PROTOBUF_SCHEMA_JSON_RECORD, polled.getContent());
+          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
+          assertThat(polled.getContent()).isEqualTo(PROTOBUF_SCHEMA_JSON_RECORD);
         });
   }
 
   @SneakyThrows
-  private void assertJsonIsEqual(String expectedJsonStr, Object actual) {
-    ObjectMapper objectMapper = new ObjectMapper();
-    JsonNode actualJsonNode = objectMapper.readTree(objectMapper.writeValueAsString(actual));
-    JsonNode expectedJsonNode = objectMapper.readTree(expectedJsonStr);
-    assertThat(actualJsonNode).isEqualTo(expectedJsonNode);
+  private static Map<String, Object> toJsonArg(String json) {
+    return new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>() {
+    });
   }
 
   class SendAndReadSpec {

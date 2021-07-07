@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.serde.ParsedInputObject;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
@@ -18,7 +19,6 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
-
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -29,7 +29,6 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
-
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -109,8 +108,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   @Override
   @SneakyThrows
   public ProducerRecord<byte[], byte[]> serialize(String topic,
-                                                  @Nullable byte[] key,
-                                                  @Nullable byte[] data,
+                                                  @Nullable ParsedInputObject key,
+                                                  @Nullable ParsedInputObject data,
                                                   @Nullable Integer partition) {
     final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
     final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
@@ -127,7 +126,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   @SneakyThrows
   private byte[] serialize(
-      Optional<SchemaMetadata> maybeSchema, String topic, byte[] value, boolean isKey) {
+      Optional<SchemaMetadata> maybeSchema, String topic, ParsedInputObject value, boolean isKey) {
     if (maybeSchema.isPresent()) {
       final SchemaMetadata schema = maybeSchema.get();
 
@@ -142,7 +141,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
       return reader.read(value);
     } else {
-      return value;
+      return value.jsonForSerializing().getBytes();
     }
   }
 

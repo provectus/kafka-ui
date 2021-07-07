@@ -18,8 +18,8 @@ public interface RecordSerDe {
   DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg);
 
   ProducerRecord<byte[], byte[]> serialize(String topic,
-                                           @Nullable byte[] key,
-                                           @Nullable byte[] data,
+                                           @Nullable ParsedInputObject key,
+                                           @Nullable ParsedInputObject data,
                                            @Nullable Integer partition);
 
   TopicMessageSchema getTopicSchema(String topic);

@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
@@ -26,8 +27,8 @@ public class JsonMessageReader extends MessageReader<JsonNode> {
 
   @Override
   @SneakyThrows
-  protected JsonNode read(byte[] value, ParsedSchema schema) {
-    return mapper.readTree(new String(value));
+  protected JsonNode read(ParsedInputObject value, ParsedSchema schema) {
+    return mapper.readTree(value.jsonForSerializing());
   }
 
   private static class JsonNodeSerializer implements Serializer<JsonNode> {
