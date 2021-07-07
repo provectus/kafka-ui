@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
-import com.google.common.base.Preconditions;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
@@ -11,8 +11,7 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import java.io.IOException;
 import java.util.Map;
-import org.apache.avro.Schema;
-import org.apache.avro.util.Utf8;
+import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
 
 public class AvroMessageReader extends MessageReader<Object> {
@@ -26,23 +25,21 @@ public class AvroMessageReader extends MessageReader<Object> {
 
   @Override
   protected Serializer<Object> createSerializer(SchemaRegistryClient client) {
-    var serializer =  new KafkaAvroSerializer(client);
+    var serializer = new KafkaAvroSerializer(client);
     // need to call configure to set isKey property
     serializer.configure(Map.of("schema.registry.url", "wontbeused"), isKey);
     return serializer;
   }
 
+  @SneakyThrows
   @Override
   protected Object read(ParsedInputObject value, ParsedSchema schema) {
-    Preconditions.checkArgument(value.isJsonObject());
-    Schema rawSchema = ((AvroSchema) schema).rawSchema();
+    if (!value.isJsonObject()) {
+      throw new ValidationException(
+          "Currently only json object can be passed as input when using avro schema");
+    }
     try {
-      Object object = AvroSchemaUtils.toObject(value.jsonForSerializing(), (AvroSchema) schema);
-      // TODO do we really need this code?
-      if (rawSchema.getType().equals(Schema.Type.STRING)) {
-        object = ((Utf8) object).toString();
-      }
-      return object;
+      return AvroSchemaUtils.toObject(value.jsonForSerializing(), (AvroSchema) schema);
     } catch (Throwable e) {
       throw new RuntimeException("Failed to merge record for topic " + topic, e);
     }

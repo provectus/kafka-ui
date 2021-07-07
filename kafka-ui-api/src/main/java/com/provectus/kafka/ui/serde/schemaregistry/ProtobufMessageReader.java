@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
@@ -33,7 +34,10 @@ public class ProtobufMessageReader extends MessageReader<Message> {
 
   @Override
   protected Message read(ParsedInputObject value, ParsedSchema schema) {
-    Preconditions.checkArgument(value.isJsonObject());
+    if (!value.isJsonObject()) {
+      throw new ValidationException("Input should be json object");
+    }
+
     ProtobufSchema protobufSchema = (ProtobufSchema) schema;
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {

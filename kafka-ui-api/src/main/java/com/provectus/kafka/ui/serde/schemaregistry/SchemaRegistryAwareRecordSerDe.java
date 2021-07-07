@@ -89,15 +89,13 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
-    MessageFormatter valueFormatter = getMessageFormatter(msg, false);
-    MessageFormatter keyFormatter = getMessageFormatter(msg, true);
     try {
       return new DeserializedKeyValue(
           msg.key() != null
-              ? keyFormatter.format(msg.topic(), msg.key().get())
+              ? getMessageFormatter(msg, true).format(msg.topic(), msg.key().get())
               : null,
           msg.value() != null
-              ? valueFormatter.format(msg.topic(), msg.value().get())
+              ? getMessageFormatter(msg, false).format(msg.topic(), msg.value().get())
               : null
       );
     } catch (Throwable e) {
@@ -141,6 +139,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
       return reader.read(value);
     } else {
+      // if no schema provided we treat input as string
       return value.jsonForSerializing().getBytes();
     }
   }

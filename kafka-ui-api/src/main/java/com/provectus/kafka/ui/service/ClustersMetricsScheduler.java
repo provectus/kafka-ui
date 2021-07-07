@@ -17,7 +17,7 @@ public class ClustersMetricsScheduler {
 
   private final MetricsUpdateService metricsUpdateService;
 
-  @Scheduled(fixedRateString = "${updateMetricsRateMillis:30000}")
+  @Scheduled(fixedRateString = "${kafka.update-metrics-rate-millis:30000}")
   public void updateMetrics() {
     Flux.fromIterable(clustersStorage.getKafkaClustersMap().entrySet())
         .parallel()

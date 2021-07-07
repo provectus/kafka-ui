@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Preconditions;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
@@ -16,6 +15,7 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.time.Duration;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
 import lombok.SneakyThrows;
@@ -24,11 +24,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Intention of this tests is to verify consistency between messages send and read logic & formats.
- * TODO: as an improvement this tests can be rewritten in @ParametrizedTest fashion,
- * it should increase readability.
- */
 public class SendAndReadTests extends AbstractBaseTest {
 
   private static final AvroSchema AVRO_SCHEMA_1 = new AvroSchema(
@@ -301,7 +296,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
     @SneakyThrows
     public void doAssert(Consumer<TopicMessage> msgAssert) {
-      Preconditions.checkArgument(msgToSend != null);
+      Objects.requireNonNull(msgToSend);
       String topic = UUID.randomUUID().toString();
       createTopic(new NewTopic(topic, 1, (short) 1));
       if (keySchema != null) {
