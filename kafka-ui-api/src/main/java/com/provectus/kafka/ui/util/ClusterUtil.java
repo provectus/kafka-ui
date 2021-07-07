@@ -6,6 +6,7 @@ import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
+import com.provectus.kafka.ui.model.ConsumerGroupState;
 import com.provectus.kafka.ui.model.ConsumerGroupTopicPartition;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
@@ -37,7 +38,6 @@ import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.ConsumerGroupState;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
@@ -178,14 +178,15 @@ public class ClusterUtil {
     return new Broker().host(node.host()).id(node.id());
   }
 
-  private static ConsumerGroup.StateEnum mapConsumerGroupState(ConsumerGroupState state) {
+  private static ConsumerGroupState mapConsumerGroupState(
+      org.apache.kafka.common.ConsumerGroupState state) {
     switch (state) {
-      case DEAD: return ConsumerGroup.StateEnum.DEAD;
-      case EMPTY: return ConsumerGroup.StateEnum.EMPTY;
-      case STABLE: return ConsumerGroup.StateEnum.STABLE;
-      case PREPARING_REBALANCE: return ConsumerGroup.StateEnum.PREPARING_REBALANCE;
-      case COMPLETING_REBALANCE: return ConsumerGroup.StateEnum.COMPLETING_REBALANCE;
-      default: return ConsumerGroup.StateEnum.UNKNOWN;
+      case DEAD: return ConsumerGroupState.DEAD;
+      case EMPTY: return ConsumerGroupState.EMPTY;
+      case STABLE: return ConsumerGroupState.STABLE;
+      case PREPARING_REBALANCE: return ConsumerGroupState.PREPARING_REBALANCE;
+      case COMPLETING_REBALANCE: return ConsumerGroupState.COMPLETING_REBALANCE;
+      default: return ConsumerGroupState.UNKNOWN;
     }
   }
 

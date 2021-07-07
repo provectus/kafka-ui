@@ -1583,6 +1583,16 @@ components:
       required:
         - id
 
+    ConsumerGroupState:
+      type: string
+      enum:
+        - UNKNOWN
+        - PREPARING_REBALANCE
+        - COMPLETING_REBALANCE
+        - STABLE
+        - DEAD
+        - EMPTY
+
     ConsumerGroup:
       type: object
       properties:
@@ -1597,14 +1607,7 @@ components:
         partitionAssignor:
           type: string
         state:
-          type: string
-          enum:
-            - UNKNOWN
-            - PREPARING_REBALANCE
-            - COMPLETING_REBALANCE
-            - STABLE
-            - DEAD
-            - EMPTY
+          $ref: "#/components/schemas/ConsumerGroupState"
         coordinator:
           $ref: "#/components/schemas/Broker"
         messagesBehind:
