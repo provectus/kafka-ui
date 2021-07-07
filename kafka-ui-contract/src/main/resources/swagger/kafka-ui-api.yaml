@@ -1457,6 +1457,7 @@ components:
         - NAME
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
+        - REPLICATION_FACTOR
 
     Topic:
       type: object
