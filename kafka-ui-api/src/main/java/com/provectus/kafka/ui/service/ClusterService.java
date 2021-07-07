@@ -108,7 +108,7 @@ public class ClusterService {
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
     var cluster = clustersStorage.getClusterByName(name)
         .orElseThrow(ClusterNotFoundException::new);
-    List<Topic> topics = cluster.getTopics().values().stream()
+    List<InternalTopic> topics = cluster.getTopics().values().stream()
         .filter(topic -> !topic.isInternal()
             || showInternal
             .map(i -> topic.isInternal() == i)
@@ -118,7 +118,6 @@ public class ClusterService {
                 .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
                 .orElse(true))
         .sorted(getComparatorForTopic(sortBy))
-        .map(clusterMapper::toTopic)
         .collect(Collectors.toList());
     var totalPages = (topics.size() / perPage)
         + (topics.size() % perPage == 0 ? 0 : 1);
@@ -128,6 +127,13 @@ public class ClusterService {
             topics.stream()
                 .skip(topicsToSkip)
                 .limit(perPage)
+                .map(t ->
+                    clusterMapper.toTopic(
+                        t.toBuilder().partitions(
+                          kafkaService.getTopicPartitions(cluster, t)
+                        ).build()
+                    )
+                )
                 .collect(Collectors.toList())
         );
   }
