@@ -22,13 +22,9 @@ public class AvroMessageFormatter implements MessageFormatter {
   @Override
   @SneakyThrows
   public Object format(String topic, byte[] value) {
-    if (value != null) {
-      GenericRecord avroRecord = (GenericRecord) avroDeserializer.deserialize(topic, value);
-      byte[] bytes = AvroSchemaUtils.toJson(avroRecord);
-      return parseJson(bytes);
-    } else {
-      return Map.of();
-    }
+    GenericRecord avroRecord = (GenericRecord) avroDeserializer.deserialize(topic, value);
+    byte[] bytes = AvroSchemaUtils.toJson(avroRecord);
+    return parseJson(bytes);
   }
 
   private Object parseJson(byte[] bytes) throws IOException {

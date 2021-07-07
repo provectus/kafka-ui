@@ -10,6 +10,7 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
 import java.io.IOException;
+import java.util.Map;
 import org.apache.kafka.common.serialization.Serializer;
 
 public class ProtobufMessageReader extends MessageReader<Message> {
@@ -22,7 +23,10 @@ public class ProtobufMessageReader extends MessageReader<Message> {
 
   @Override
   protected Serializer<Message> createSerializer(SchemaRegistryClient client) {
-    return new KafkaProtobufSerializer<>(client);
+    var serializer = new KafkaProtobufSerializer<>(client);
+    // need to call configure to set isKey property
+    serializer.configure(Map.of("schema.registry.url", "wontbeused"), isKey);
+    return serializer;
   }
 
   @Override

@@ -18,11 +18,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
+import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ProtobufSchema protobufSchema;
@@ -42,20 +41,26 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public Tuple2<String, Object> deserialize(ConsumerRecord<Bytes, Bytes> msg) {
+  public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      final var message = DynamicMessage.parseFrom(
-          protobufSchema.toDescriptor(),
-          new ByteArrayInputStream(msg.value().get())
-      );
-      byte[] bytes = ProtobufSchemaUtils.toJson(message);
-      return Tuples.of(
-          msg.key() != null ? new String(msg.key().get()) : "",
-          parseJson(bytes)
+      return new DeserializedKeyValue(
+          //TODO currently we assume key is always string - need to discuss it
+          msg.key() != null ? new String(msg.key().get()) : null,
+          msg.value() != null ? parse(msg.value().get()) : null
       );
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
+  }
+
+  @SneakyThrows
+  private Object parse(byte[] value) {
+    DynamicMessage protoMsg = DynamicMessage.parseFrom(
+        protobufSchema.toDescriptor(),
+        new ByteArrayInputStream(value)
+    );
+    byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
+    return parseJson(jsonFromProto);
   }
 
   @Override

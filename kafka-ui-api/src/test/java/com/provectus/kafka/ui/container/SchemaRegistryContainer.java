@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.container;
 
+import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
+import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.KafkaContainer;
 import org.testcontainers.containers.Network;
@@ -25,7 +27,12 @@ public class SchemaRegistryContainer extends GenericContainer<SchemaRegistryCont
     return self();
   }
 
-  public String getTarget() {
+  public String getUrl() {
     return "http://" + getContainerIpAddress() + ":" + getMappedPort(SCHEMA_PORT);
   }
+
+  public SchemaRegistryClient schemaRegistryClient() {
+    return new CachedSchemaRegistryClient(getUrl(), 1000);
+  }
+
 }

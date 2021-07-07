@@ -1552,7 +1552,7 @@ components:
         partition:
           type: integer
         key:
-          type: string
+          type: object
         headers:
           type: object
           additionalProperties:
@@ -1607,7 +1607,7 @@ components:
             - CREATE_TIME
             - LOG_APPEND_TIME
         key:
-          type: string
+          type: object
         headers:
           type: object
           additionalProperties:

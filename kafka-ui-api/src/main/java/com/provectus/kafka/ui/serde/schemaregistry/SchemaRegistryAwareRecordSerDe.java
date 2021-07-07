@@ -18,6 +18,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
+
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Collections;
@@ -28,13 +29,12 @@ import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
+
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 @Log4j2
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
@@ -82,25 +82,24 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
         : null;
     if (schemaRegistryClient != null) {
       this.avroFormatter = new AvroMessageFormatter(schemaRegistryClient, objectMapper);
-      this.protobufFormatter = new ProtobufMessageFormatter(schemaRegistryClient);
+      this.protobufFormatter = new ProtobufMessageFormatter(schemaRegistryClient, objectMapper);
     } else {
       this.avroFormatter = null;
       this.protobufFormatter = null;
     }
   }
 
-  public Tuple2<String, Object> deserialize(ConsumerRecord<Bytes, Bytes> msg) {
+  public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     MessageFormatter valueFormatter = getMessageFormatter(msg, false);
     MessageFormatter keyFormatter = getMessageFormatter(msg, true);
     try {
-      return Tuples.of(
+      return new DeserializedKeyValue(
           msg.key() != null
-              ? keyFormatter.format(msg.topic(), msg.key().get()).toString()
-              : "",
-          valueFormatter.format(
-              msg.topic(),
-              msg.value() != null ? msg.value().get() : null
-          )
+              ? keyFormatter.format(msg.topic(), msg.key().get())
+              : null,
+          msg.value() != null
+              ? valueFormatter.format(msg.topic(), msg.value().get())
+              : null
       );
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
@@ -116,31 +115,33 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
     final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
 
-    final byte[] serializedValue = data != null ? serialize(maybeValueSchema, topic, data) : null;
-    final byte[] serializedKey = key != null ? serialize(maybeKeySchema, topic, key) : null;
+    final byte[] serializedValue = data != null
+        ? serialize(maybeValueSchema, topic, data, false)
+        : null;
+    final byte[] serializedKey = key != null
+        ? serialize(maybeKeySchema, topic, key, true)
+        : null;
 
     return new ProducerRecord<>(topic, partition, serializedKey, serializedValue);
   }
 
   @SneakyThrows
   private byte[] serialize(
-      Optional<SchemaMetadata> maybeSchema, String topic, byte[] value) {
+      Optional<SchemaMetadata> maybeSchema, String topic, byte[] value, boolean isKey) {
     if (maybeSchema.isPresent()) {
       final SchemaMetadata schema = maybeSchema.get();
 
       MessageReader<?> reader;
       if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
-        reader = new ProtobufMessageReader(topic, false, schemaRegistryClient, schema);
+        reader = new ProtobufMessageReader(topic, isKey, schemaRegistryClient, schema);
       } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
-        reader = new AvroMessageReader(topic, false, schemaRegistryClient, schema);
+        reader = new AvroMessageReader(topic, isKey, schemaRegistryClient, schema);
       } else {
-        reader = new JsonMessageReader(topic, false, schemaRegistryClient, schema);
+        reader = new JsonMessageReader(topic, isKey, schemaRegistryClient, schema);
       }
 
       return reader.read(value);
     } else {
-      // If schema not found we just use input string
-      //TODO ???!!!
       return value;
     }
   }
@@ -217,15 +218,15 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
             .or(() -> getSchemaBySubject(msg.topic(), isKey).map(SchemaMetadata::getSchemaType));
         if (type.isPresent()) {
           if (type.get().equals(MessageFormat.PROTOBUF.name())) {
-            if (tryFormatter(protobufFormatter, msg).isPresent()) {
+            if (tryFormatter(protobufFormatter, msg, isKey).isPresent()) {
               return protobufFormatter;
             }
           } else if (type.get().equals(MessageFormat.AVRO.name())) {
-            if (tryFormatter(avroFormatter, msg).isPresent()) {
+            if (tryFormatter(avroFormatter, msg, isKey).isPresent()) {
               return avroFormatter;
             }
           } else if (type.get().equals(MessageFormat.JSON.name())) {
-            if (tryFormatter(jsonFormatter, msg).isPresent()) {
+            if (tryFormatter(jsonFormatter, msg, isKey).isPresent()) {
               return jsonFormatter;
             }
           }
@@ -235,7 +236,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       }
     }
 
-    if (tryFormatter(jsonFormatter, msg).isPresent()) {
+    if (tryFormatter(jsonFormatter, msg, isKey).isPresent()) {
       return jsonFormatter;
     }
 
@@ -243,12 +244,12 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   private Optional<MessageFormatter> tryFormatter(
-      MessageFormatter formatter, ConsumerRecord<Bytes, Bytes> msg) {
+      MessageFormatter formatter, ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
     try {
-      formatter.format(msg.topic(), msg.value().get());
+      formatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get());
       return Optional.of(formatter);
     } catch (Throwable e) {
-      log.info("Failed to parse by {} from topic {}", formatter.getClass(), msg.topic());
+      log.info("Failed to parse by {} from topic {}", formatter.getClass(), msg.topic(), e);
     }
 
     return Optional.empty();

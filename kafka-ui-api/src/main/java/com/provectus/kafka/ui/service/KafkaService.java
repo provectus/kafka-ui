@@ -88,7 +88,7 @@ public class KafkaService {
   private final ClustersStorage clustersStorage;
   private final DeserializationService deserializationService;
   @Setter // used in tests
-  @Value("${kafka.admin-client-timeout}")
+  @Value("${kafka.admin-client-timeout:5000}")
   private int clientTimeout;
 
   public KafkaCluster getUpdatedCluster(KafkaCluster cluster, InternalTopic updatedTopic) {
@@ -672,7 +672,7 @@ public class KafkaService {
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
       final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
-          msg.getKey() != null ? msg.getKey().getBytes() : null,
+          msg.getKey() != null ? msg.getKey().toString().getBytes() : null,
           msg.getContent() != null ? msg.getContent().toString().getBytes() : null,
           msg.getPartition()
       );

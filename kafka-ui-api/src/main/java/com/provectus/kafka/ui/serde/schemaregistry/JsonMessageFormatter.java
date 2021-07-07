@@ -16,9 +16,6 @@ public class JsonMessageFormatter implements MessageFormatter {
   @Override
   @SneakyThrows
   public Object format(String topic, byte[] value) {
-    if (value == null) {
-      return Map.of();
-    }
     return parseJson(value);
   }
 
