@@ -106,6 +106,20 @@ public class SendAndReadTests extends AbstractBaseTest {
   }
 
   @Test
+  void noSchemaJsonKeyJsonValue() {
+    new SendAndReadSpec()
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key(Map.of("f1", 1, "f2", "testKey"))
+                .content(Map.of("f1", 2, "f2", "testVal"))
+        )
+        .doAssert(polled -> {
+          assertThat(polled.getKey()).isEqualTo(Map.of("f1", 1, "f2", "testKey"));
+          assertThat(polled.getContent()).isEqualTo(Map.of("f1", 2, "f2", "testVal"));
+        });
+  }
+
+  @Test
   void keyIsIntValueIsDoubleShouldBeSerializedAsStrings() {
     new SendAndReadSpec()
         .withMsgToSend(
