@@ -2,26 +2,26 @@
   "uid" : "b1a8273437954620fa374b796ffaacdd",
   "children" : [ {
     "name" : "should create a topic",
-    "uid" : "505ecbb961078587",
+    "uid" : "d2c810c2e7546ee1",
     "parentUid" : "b1a8273437954620fa374b796ffaacdd",
     "status" : "passed",
     "time" : {
-      "start" : 1625656676835,
-      "stop" : 1625656690132,
-      "duration" : 13297
+      "start" : 1625657241226,
+      "stop" : 1625657253225,
+      "duration" : 11999
     },
     "flaky" : false,
     "newFailed" : false,
     "parameters" : [ ]
   }, {
     "name" : "main page should load",
-    "uid" : "a67e67a29c7efb6f",
+    "uid" : "6e108a648538d138",
     "parentUid" : "b1a8273437954620fa374b796ffaacdd",
     "status" : "passed",
     "time" : {
-      "start" : 1625656690256,
-      "stop" : 1625656691119,
-      "duration" : 863
+      "start" : 1625657253333,
+      "stop" : 1625657254198,
+      "duration" : 865
     },
     "flaky" : false,
     "newFailed" : false,
