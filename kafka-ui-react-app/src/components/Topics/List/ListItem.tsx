@@ -10,6 +10,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -19,7 +20,7 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: { name, internal, partitions },
+  topic: { name, internal, partitions, segmentSize },
   deleteTopic,
   clusterName,
   clearTopicMessages,
@@ -29,15 +30,27 @@ const ListItem: React.FC<ListItemProps> = ({
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
 
-  const outOfSyncReplicas = React.useMemo(() => {
+  const { outOfSyncReplicas, numberOfMessages } = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
-      return 0;
+      return {
+        outOfSyncReplicas: 0,
+        numberOfMessages: 0,
+      };
     }
 
-    return partitions.reduce((memo: number, { replicas }) => {
-      const outOfSync = replicas?.filter(({ inSync }) => !inSync);
-      return memo + (outOfSync?.length || 0);
-    }, 0);
+    return partitions.reduce(
+      (memo, { replicas, offsetMax, offsetMin }) => {
+        const outOfSync = replicas?.filter(({ inSync }) => !inSync);
+        return {
+          outOfSyncReplicas: memo.outOfSyncReplicas + (outOfSync?.length || 0),
+          numberOfMessages: memo.numberOfMessages + (offsetMax - offsetMin),
+        };
+      },
+      {
+        outOfSyncReplicas: 0,
+        numberOfMessages: 0,
+      }
+    );
   }, [partitions]);
 
   const deleteTopicHandler = React.useCallback(() => {
@@ -62,6 +75,10 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
+      <td>{numberOfMessages}</td>
+      <td>
+        <BytesFormatted value={segmentSize} />
+      </td>
       <td>
         <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
           {internal ? 'Internal' : 'External'}

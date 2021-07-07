@@ -19,6 +19,8 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
+import com.provectus.kafka.ui.model.ReplicationFactorChange;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
@@ -141,6 +143,8 @@ public class ClusterService {
         return Comparator.comparing(InternalTopic::getPartitionCount);
       case OUT_OF_SYNC_REPLICAS:
         return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
+      case REPLICATION_FACTOR:
+        return Comparator.comparing(InternalTopic::getReplicationFactor);
       case NAME:
       default:
         return defaultComparator;
@@ -269,9 +273,18 @@ public class ClusterService {
     return updatedCluster;
   }
 
+  public Mono<Cluster> updateCluster(String clusterName) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getUpdatedCluster(cluster)
+            .doOnNext(updatedCluster -> clustersStorage
+                .setKafkaCluster(updatedCluster.getName(), updatedCluster))
+            .map(clusterMapper::toCluster))
+        .orElse(Mono.error(new ClusterNotFoundException()));
+  }
+
   public Flux<TopicMessageEvent> getMessages(String clusterName, String topicName,
-                                             ConsumerPosition consumerPosition, String query,
-                                             Integer limit) {
+                                        ConsumerPosition consumerPosition, String query,
+                                        Integer limit) {
     return clustersStorage.getClusterByName(clusterName)
         .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
         .orElse(Flux.empty());
@@ -345,5 +358,19 @@ public class ClusterService {
     } else {
       return Mono.error(e);
     }
+  }
+
+  public Mono<ReplicationFactorChangeResponse> changeReplicationFactor(
+      String clusterName,
+      String topicName,
+      ReplicationFactorChange replicationFactorChange) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.changeReplicationFactor(cluster, topicName, replicationFactorChange)
+            .doOnNext(topic -> updateCluster(topic, cluster.getName(), cluster))
+            .map(t -> new ReplicationFactorChangeResponse()
+                .topicName(t.getName())
+                .totalReplicationFactor(t.getReplicationFactor())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName))));
   }
 }
