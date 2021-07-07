@@ -1,20 +1,20 @@
 [ {
-  "uid" : "3200f5a56c6940f3",
+  "uid" : "12ab633a328131db",
   "name" : "should create a topic",
   "time" : {
-    "start" : 1625672032552,
-    "stop" : 1625672034301,
-    "duration" : 1749
+    "start" : 1625672714721,
+    "stop" : 1625672732887,
+    "duration" : 18166
   },
-  "status" : "broken",
+  "status" : "passed",
   "severity" : "normal"
 }, {
-  "uid" : "ebf99806dd2cb5bd",
+  "uid" : "52b9c23edd9e1eb8",
   "name" : "main page should load",
   "time" : {
-    "start" : 1625672034464,
-    "stop" : 1625672042419,
-    "duration" : 7955
+    "start" : 1625672733070,
+    "stop" : 1625672734227,
+    "duration" : 1157
   },
   "status" : "passed",
   "severity" : "normal"

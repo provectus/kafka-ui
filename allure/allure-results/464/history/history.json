@@ -2,21 +2,20 @@
   "61d3874fc5d35b85b0cd7942ccda45ef" : {
     "statistic" : {
       "failed" : 0,
-      "broken" : 1,
+      "broken" : 0,
       "skipped" : 0,
-      "passed" : 0,
+      "passed" : 1,
       "unknown" : 0,
       "total" : 1
     },
     "items" : [ {
-      "uid" : "3200f5a56c6940f3",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/464//#testresult/3200f5a56c6940f3",
-      "status" : "broken",
-      "statusDetails" : "org.apache.kafka.common.errors.TimeoutException: Aborted due to timeout.",
+      "uid" : "12ab633a328131db",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/464//#testresult/12ab633a328131db",
+      "status" : "passed",
       "time" : {
-        "start" : 1625672032552,
-        "stop" : 1625672034301,
-        "duration" : 1749
+        "start" : 1625672714721,
+        "stop" : 1625672732887,
+        "duration" : 18166
       }
     } ]
   },
@@ -30,13 +29,13 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "ebf99806dd2cb5bd",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/464//#testresult/ebf99806dd2cb5bd",
+      "uid" : "52b9c23edd9e1eb8",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/464//#testresult/52b9c23edd9e1eb8",
       "status" : "passed",
       "time" : {
-        "start" : 1625672034464,
-        "stop" : 1625672042419,
-        "duration" : 7955
+        "start" : 1625672733070,
+        "stop" : 1625672734227,
+        "duration" : 1157
       }
     } ]
   }
