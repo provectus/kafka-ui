@@ -67,9 +67,7 @@ public class StreamTopologyController implements StreamTopologyApi {
     adjacency.put(sinkTopic.getName(), List.of(sinkConnector.getName()));
     adjacency.put(sinkConnector.getName(), List.of());
 
-    topology.setAdjacency(
-        adjacency
-    );
+    topology.setAdjacency(adjacency);
     topology
         .setNodes(List.of(sourceConnector, sourceTopic, topologyNode, sinkTopic, sinkConnector));
 
@@ -121,10 +119,7 @@ public class StreamTopologyController implements StreamTopologyApi {
     adjacency.put(topology0Processor1.getName(), List.of(topology0Processor2.getName()));
     adjacency.put(topology0Processor2.getName(), List.of());
 
-    subTopology.setAdjacency(
-        adjacency
-
-    );
+    subTopology.setAdjacency(adjacency);
     subTopology.setNodes(List.of(topology0Processor0, topology0Processor1, topology0Processor2));
     subTopologyNode.setSubTopology(subTopology);
     return subTopologyNode;
