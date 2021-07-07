@@ -26,6 +26,7 @@ import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
@@ -268,9 +269,9 @@ public class ClusterService {
     return updatedCluster;
   }
 
-  public Flux<TopicMessage> getMessages(String clusterName, String topicName,
-                                        ConsumerPosition consumerPosition, String query,
-                                        Integer limit) {
+  public Flux<TopicMessageEvent> getMessages(String clusterName, String topicName,
+                                             ConsumerPosition consumerPosition, String query,
+                                             Integer limit) {
     return clustersStorage.getClusterByName(clusterName)
         .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
         .orElse(Flux.empty());
