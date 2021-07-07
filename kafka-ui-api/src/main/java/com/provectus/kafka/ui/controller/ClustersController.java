@@ -39,4 +39,10 @@ public class ClustersController implements ClustersApi {
   public Mono<ResponseEntity<Flux<Cluster>>> getClusters(ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(Flux.fromIterable(clusterService.getClusters())));
   }
+
+  @Override
+  public Mono<ResponseEntity<Cluster>> updateClusterInfo(String clusterName,
+                                                         ServerWebExchange exchange) {
+    return clusterService.updateCluster(clusterName).map(ResponseEntity::ok);
+  }
 }
