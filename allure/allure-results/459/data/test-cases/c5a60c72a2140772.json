@@ -1,12 +1,12 @@
 {
-  "uid" : "cae2bcae6fbd1ef9",
+  "uid" : "c5a60c72a2140772",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1625657301393,
-    "stop" : 1625657302346,
-    "duration" : 953
+    "start" : 1625658299459,
+    "stop" : 1625658300704,
+    "duration" : 1245
   },
   "description" : "",
   "status" : "passed",
@@ -19,9 +19,9 @@
     "steps" : [ {
       "name" : "$(\"open\") http://host.docker.internal:8080/",
       "time" : {
-        "start" : 1625657301394,
-        "stop" : 1625657301809,
-        "duration" : 415
+        "start" : 1625658299464,
+        "stop" : 1625658300092,
+        "duration" : 628
       },
       "status" : "passed",
       "steps" : [ ],
@@ -34,17 +34,17 @@
     }, {
       "name" : "shouldBeOnPage",
       "time" : {
-        "start" : 1625657301809,
-        "stop" : 1625657302345,
-        "duration" : 536
+        "start" : 1625658300092,
+        "stop" : 1625658300703,
+        "duration" : 611
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1625657301811,
-          "stop" : 1625657301836,
-          "duration" : 25
+          "start" : 1625658300092,
+          "stop" : 1625658300107,
+          "duration" : 15
         },
         "status" : "passed",
         "steps" : [ ],
@@ -57,9 +57,9 @@
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1625657301837,
-          "stop" : 1625657302345,
-          "duration" : 508
+          "start" : 1625658300107,
+          "stop" : 1625658300703,
+          "duration" : 596
         },
         "status" : "passed",
         "steps" : [ ],
@@ -87,10 +87,10 @@
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az290-680"
+    "value" : "fv-az154-100"
   }, {
     "name" : "thread",
-    "value" : "8579@fv-az290-680.main(1)"
+    "value" : "8441@fv-az154-100.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -127,6 +127,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "cae2bcae6fbd1ef9.json",
+  "source" : "c5a60c72a2140772.json",
   "parameterValues" : [ ]
 }
