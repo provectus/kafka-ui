@@ -92,7 +92,7 @@ public class KafkaService {
   private final ClustersStorage clustersStorage;
   private final DeserializationService deserializationService;
   @Setter // used in tests
-  @Value("${kafka.admin-client-timeout:5000}")
+  @Value("${kafka.admin-client-timeout}")
   private int clientTimeout;
 
   public KafkaCluster getUpdatedCluster(KafkaCluster cluster, InternalTopic updatedTopic) {
