@@ -10,13 +10,19 @@ export interface VesionProps {
 }
 
 const Version: React.FC<VesionProps> = ({ tag, commit }) => {
-  const [latestTag, setLatestTag] = useState<string>('');
+  const [latestVersionInfo, setLatestVersionInfo] = useState({
+    outdated: false,
+    latestTag: '',
+  });
   useEffect(() => {
     if (tag) {
       fetch(GIT_REPO_LATEST_RELEASE_LINK)
         .then((response) => response.json())
         .then((data) => {
-          setLatestTag(data.tag_name);
+          setLatestVersionInfo({
+            outdated: compareVersions(tag, data.tag_name) === -1,
+            latestTag: data.tag_name,
+          });
         });
     }
   }, [tag]);
@@ -24,7 +30,8 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
     return null;
   }
 
-  const outdated = compareVersions(tag, latestTag) === -1;
+  const { outdated, latestTag } = latestVersionInfo;
+
   return (
     <div className="is-size-7 has-text-grey">
       <span className="has-text-grey-light mr-1">Version:</span>
