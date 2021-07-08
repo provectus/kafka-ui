@@ -22,21 +22,6 @@ describe('compareVersions function', () => {
     expect(compareVersions('10.1.1', '10.2.2')).toEqual(-1);
   });
 
-  it('four-segment versions', () => {
-    expect(compareVersions('1.0.0.0', '1')).toEqual(0);
-    expect(compareVersions('1.0.0.0', '1.0')).toEqual(0);
-    expect(compareVersions('1.0.0.0', '1.0.0')).toEqual(0);
-    expect(compareVersions('1.0.0.0', '1.0.0.0')).toEqual(0);
-    expect(compareVersions('1.2.3.4', '1.2.3.4')).toEqual(0);
-    expect(compareVersions('1.2.3.4', '1.2.3.04')).toEqual(0);
-    expect(compareVersions('v1.2.3.4', '01.2.3.4')).toEqual(0);
-
-    expect(compareVersions('1.2.3.4', '1.2.3.5')).toEqual(-1);
-    expect(compareVersions('1.2.3.5', '1.2.3.4')).toEqual(1);
-    expect(compareVersions('1.0.0.0-alpha', '1.0.0-alpha')).toEqual(0);
-    expect(compareVersions('1.0.0.0-alpha', '1.0.0.0-beta')).toEqual(0);
-  });
-
   it('different number of digits in same group', () => {
     expect(compareVersions('11.0.10', '11.0.2')).toEqual(1);
     expect(compareVersions('11.0.2', '11.0.10')).toEqual(-1);
