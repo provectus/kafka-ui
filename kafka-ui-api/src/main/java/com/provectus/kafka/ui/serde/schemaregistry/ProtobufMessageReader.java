@@ -1,11 +1,8 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
-import com.google.common.base.Preconditions;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
-import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
@@ -33,18 +30,14 @@ public class ProtobufMessageReader extends MessageReader<Message> {
   }
 
   @Override
-  protected Message read(ParsedInputObject value, ParsedSchema schema) {
-    if (!value.isJsonObject()) {
-      throw new ValidationException("Input should be json object");
-    }
-
+  protected Message read(String value, ParsedSchema schema) {
     ProtobufSchema protobufSchema = (ProtobufSchema) schema;
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {
-      JsonFormat.parser().merge(value.jsonForSerializing(), builder);
+      JsonFormat.parser().merge(value, builder);
       return builder.build();
     } catch (Throwable e) {
-      throw new RuntimeException("Failed to merge record for topic " + topic, e);
+      throw new RuntimeException("Failed to serialize record for topic " + topic, e);
     }
   }
 

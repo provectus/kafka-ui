@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
-import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.serde.ParsedInputObject;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
@@ -11,7 +9,6 @@ import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientExcept
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import java.io.IOException;
 import java.util.Map;
-import lombok.SneakyThrows;
 import org.apache.kafka.common.serialization.Serializer;
 
 public class AvroMessageReader extends MessageReader<Object> {
@@ -31,17 +28,12 @@ public class AvroMessageReader extends MessageReader<Object> {
     return serializer;
   }
 
-  @SneakyThrows
   @Override
-  protected Object read(ParsedInputObject value, ParsedSchema schema) {
-    if (!value.isJsonObject()) {
-      throw new ValidationException(
-          "Currently only json object can be passed as input when using avro schema");
-    }
+  protected Object read(String value, ParsedSchema schema) {
     try {
-      return AvroSchemaUtils.toObject(value.jsonForSerializing(), (AvroSchema) schema);
+      return AvroSchemaUtils.toObject(value, (AvroSchema) schema);
     } catch (Throwable e) {
-      throw new RuntimeException("Failed to merge record for topic " + topic, e);
+      throw new RuntimeException("Failed to serialize record for topic " + topic, e);
     }
 
   }

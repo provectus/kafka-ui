@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 public class StringMessageFormatter implements MessageFormatter {
 
   @Override
-  public Object format(String topic, byte[] value) {
+  public String format(String topic, byte[] value) {
     return new String(value, StandardCharsets.UTF_8);
   }
 }

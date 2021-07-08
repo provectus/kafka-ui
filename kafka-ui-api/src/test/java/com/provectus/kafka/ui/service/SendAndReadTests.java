@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -21,6 +21,8 @@ import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,11 +62,10 @@ public class SendAndReadTests extends AbstractBaseTest {
           + "}"
   );
 
-  private static final Map<String, Object> AVRO_SCHEMA_1_JSON_RECORD
-      = toJsonArg("{ \"field1\":\"testStr\", \"field2\": 123 }");
+  private static final String AVRO_SCHEMA_1_JSON_RECORD
+      = "{ \"field1\":\"testStr\", \"field2\": 123 }";
 
-  private static final Map<String, Object> AVRO_SCHEMA_2_JSON_RECORD
-      = toJsonArg("{ \"f1\": 111, \"f2\": \"testStr\" }");
+  private static final String AVRO_SCHEMA_2_JSON_RECORD = "{ \"f1\": 111, \"f2\": \"testStr\" }";
 
   private static final ProtobufSchema PROTOBUF_SCHEMA = new ProtobufSchema(
       "syntax = \"proto3\";\n"
@@ -77,8 +78,8 @@ public class SendAndReadTests extends AbstractBaseTest {
           + "\n"
   );
 
-  private static final Map<String, Object> PROTOBUF_SCHEMA_JSON_RECORD
-      = toJsonArg("{ \"f1\" : \"test str\", \"f2\" : 123 }");
+  private static final String PROTOBUF_SCHEMA_JSON_RECORD
+      = "{ \"f1\" : \"test str\", \"f2\" : 123 }";
 
   @Autowired
   private ClusterService clusterService;
@@ -105,12 +106,12 @@ public class SendAndReadTests extends AbstractBaseTest {
     new SendAndReadSpec()
         .withMsgToSend(
             new CreateTopicMessage()
-                .key(Map.of("f1", 1, "f2", "testKey"))
-                .content(Map.of("f1", 2, "f2", "testVal"))
+                .key("{ \"f1\": 111, \"f2\": \"testStr1\" }")
+                .content("{ \"f1\": 222, \"f2\": \"testStr2\" }")
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo(Map.of("f1", 1, "f2", "testKey"));
-          assertThat(polled.getContent()).isEqualTo(Map.of("f1", 2, "f2", "testVal"));
+          assertThat(polled.getKey()).isEqualTo("{ \"f1\": 111, \"f2\": \"testStr1\" }");
+          assertThat(polled.getContent()).isEqualTo("{ \"f1\": 222, \"f2\": \"testStr2\" }");
         });
   }
 
@@ -119,15 +120,12 @@ public class SendAndReadTests extends AbstractBaseTest {
     new SendAndReadSpec()
         .withMsgToSend(
             new CreateTopicMessage()
-                .key(123)
-                .content(234.56)
+                .key("123")
+                .content("234.56")
         )
         .doAssert(polled -> {
-          // all non-object arguments will be serialized and returned as string
-          assertThat(polled.getKey()).isInstanceOf(String.class);
           assertThat(polled.getKey()).isEqualTo("123");
-          assertThat(polled.getContent()).isInstanceOf(String.class);
-          assertThat((String) polled.getContent()).startsWith("234.56");
+          assertThat(polled.getContent()).isEqualTo("234.56");
         });
   }
 
@@ -170,8 +168,8 @@ public class SendAndReadTests extends AbstractBaseTest {
                 .content(AVRO_SCHEMA_2_JSON_RECORD)
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
-          assertThat(polled.getContent()).isEqualTo(AVRO_SCHEMA_2_JSON_RECORD);
+          assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
+          assertJsonEqual(polled.getContent(), AVRO_SCHEMA_2_JSON_RECORD);
         });
   }
 
@@ -186,7 +184,7 @@ public class SendAndReadTests extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
-          assertThat(polled.getContent()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
+          assertJsonEqual(polled.getContent(), AVRO_SCHEMA_1_JSON_RECORD);
         });
   }
 
@@ -200,7 +198,7 @@ public class SendAndReadTests extends AbstractBaseTest {
                 .content("testVal")
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
+          assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
           assertThat(polled.getContent()).isEqualTo("testVal");
         });
   }
@@ -216,7 +214,7 @@ public class SendAndReadTests extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
-          assertThat(polled.getContent()).isEqualTo(PROTOBUF_SCHEMA_JSON_RECORD);
+          assertJsonEqual(polled.getContent(), PROTOBUF_SCHEMA_JSON_RECORD);
         });
   }
 
@@ -232,8 +230,21 @@ public class SendAndReadTests extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertThat(polled.getKey()).isNull();
-          assertThat(polled.getContent()).isEqualTo(AVRO_SCHEMA_2_JSON_RECORD);
+          assertJsonEqual(polled.getContent(), AVRO_SCHEMA_2_JSON_RECORD);
         });
+  }
+
+  @Test
+  void valueWithAvroSchemaShouldThrowExceptionArgIsNotValidJsonObject() {
+    assertThatThrownBy(() -> {
+      new SendAndReadSpec()
+          .withValueSchema(AVRO_SCHEMA_2)
+          .withMsgToSend(
+              new CreateTopicMessage()
+                  .content("not a json object")
+          )
+          .doAssert(polled -> Assertions.fail());
+    }).hasMessageContaining("Failed to serialize record");
   }
 
   @Test
@@ -247,7 +258,7 @@ public class SendAndReadTests extends AbstractBaseTest {
                 .content(null)
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
+          assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
           assertThat(polled.getContent()).isNull();
         });
   }
@@ -263,15 +274,29 @@ public class SendAndReadTests extends AbstractBaseTest {
                 .content(PROTOBUF_SCHEMA_JSON_RECORD)
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo(AVRO_SCHEMA_1_JSON_RECORD);
-          assertThat(polled.getContent()).isEqualTo(PROTOBUF_SCHEMA_JSON_RECORD);
+          assertJsonEqual(polled.getKey(), AVRO_SCHEMA_1_JSON_RECORD);
+          assertJsonEqual(polled.getContent(), PROTOBUF_SCHEMA_JSON_RECORD);
         });
   }
 
+  @Test
+  void valueWithProtoSchemaShouldThrowExceptionArgIsNotValidJsonObject() {
+    assertThatThrownBy(() -> {
+      new SendAndReadSpec()
+          .withValueSchema(PROTOBUF_SCHEMA)
+          .withMsgToSend(
+              new CreateTopicMessage()
+                  .content("not a json object")
+          )
+          .doAssert(polled -> Assertions.fail());
+    }).hasMessageContaining("Failed to serialize record");
+  }
+
+
   @SneakyThrows
-  private static Map<String, Object> toJsonArg(String json) {
-    return new ObjectMapper().readValue(json, new TypeReference<Map<String, Object>>() {
-    });
+  private void assertJsonEqual(String actual, String expected) {
+    var mapper = new ObjectMapper();
+    assertThat(mapper.readTree(actual)).isEqualTo(mapper.readTree(expected));
   }
 
   class SendAndReadSpec {

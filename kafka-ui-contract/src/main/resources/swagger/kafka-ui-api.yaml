@@ -1552,13 +1552,13 @@ components:
         partition:
           type: integer
         key:
-          type: object
+          type: string
         headers:
           type: object
           additionalProperties:
             type: string
         content:
-          type: object
+          type: string
 
     TopicMessageSchema:
       type: object
@@ -1607,13 +1607,13 @@ components:
             - CREATE_TIME
             - LOG_APPEND_TIME
         key:
-          type: object
+          type: string
         headers:
           type: object
           additionalProperties:
             type: string
         content:
-          type: object
+          type: string
       required:
         - partition
         - offset

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
-import com.provectus.kafka.ui.serde.ParsedInputObject;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
@@ -53,7 +52,6 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   @Nullable
   private final ProtobufMessageFormatter protobufFormatter;
 
-  private final JsonMessageFormatter jsonFormatter;
   private final StringMessageFormatter stringFormatter = new StringMessageFormatter();
   private final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
   private final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
@@ -72,16 +70,14 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     );
   }
 
-  public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster, ObjectMapper objectMapper) {
+  public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster) {
     this.cluster = cluster;
-    this.jsonFormatter = new JsonMessageFormatter(objectMapper);
-
     this.schemaRegistryClient = cluster.getSchemaRegistry() != null
         ? createSchemaRegistryClient(cluster)
         : null;
     if (schemaRegistryClient != null) {
-      this.avroFormatter = new AvroMessageFormatter(schemaRegistryClient, objectMapper);
-      this.protobufFormatter = new ProtobufMessageFormatter(schemaRegistryClient, objectMapper);
+      this.avroFormatter = new AvroMessageFormatter(schemaRegistryClient);
+      this.protobufFormatter = new ProtobufMessageFormatter(schemaRegistryClient);
     } else {
       this.avroFormatter = null;
       this.protobufFormatter = null;
@@ -104,10 +100,9 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  @SneakyThrows
   public ProducerRecord<byte[], byte[]> serialize(String topic,
-                                                  @Nullable ParsedInputObject key,
-                                                  @Nullable ParsedInputObject data,
+                                                  @Nullable String key,
+                                                  @Nullable String data,
                                                   @Nullable Integer partition) {
     final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
     final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
@@ -124,7 +119,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   @SneakyThrows
   private byte[] serialize(
-      Optional<SchemaMetadata> maybeSchema, String topic, ParsedInputObject value, boolean isKey) {
+      Optional<SchemaMetadata> maybeSchema, String topic, String value, boolean isKey) {
     if (maybeSchema.isPresent()) {
       final SchemaMetadata schema = maybeSchema.get();
 
@@ -134,13 +129,13 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
         reader = new AvroMessageReader(topic, isKey, schemaRegistryClient, schema);
       } else {
-        reader = new JsonMessageReader(topic, isKey, schemaRegistryClient, schema);
+        throw new IllegalStateException("Unsupported schema type: " + schema.getSchemaType());
       }
 
       return reader.read(value);
     } else {
-      // if no schema provided we treat input as string
-      return value.jsonForSerializing().getBytes();
+      // if no schema provided serialize input as raw string
+      return value.getBytes();
     }
   }
 
@@ -223,21 +218,14 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
             if (tryFormatter(avroFormatter, msg, isKey).isPresent()) {
               return avroFormatter;
             }
-          } else if (type.get().equals(MessageFormat.JSON.name())) {
-            if (tryFormatter(jsonFormatter, msg, isKey).isPresent()) {
-              return jsonFormatter;
-            }
+          } else {
+            throw new IllegalStateException("Unsupported schema type: " + type.get());
           }
         }
       } catch (Exception e) {
         log.warn("Failed to get Schema for topic {}", msg.topic(), e);
       }
     }
-
-    if (tryFormatter(jsonFormatter, msg, isKey).isPresent()) {
-      return jsonFormatter;
-    }
-
     return stringFormatter;
   }
 
@@ -247,7 +235,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       formatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get());
       return Optional.of(formatter);
     } catch (Throwable e) {
-      log.info("Failed to parse by {} from topic {}", formatter.getClass(), msg.topic(), e);
+      log.warn("Failed to parse by {} from topic {}", formatter.getClass(), msg.topic(), e);
     }
 
     return Optional.empty();

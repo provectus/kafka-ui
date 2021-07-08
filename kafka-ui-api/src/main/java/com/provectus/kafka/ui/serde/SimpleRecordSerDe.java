@@ -21,14 +21,14 @@ public class SimpleRecordSerDe implements RecordSerDe {
 
   @Override
   public ProducerRecord<byte[], byte[]> serialize(String topic,
-                                                  @Nullable ParsedInputObject key,
-                                                  @Nullable ParsedInputObject data,
+                                                  @Nullable String key,
+                                                  @Nullable String data,
                                                   @Nullable Integer partition) {
     return new ProducerRecord<>(
         topic,
         partition,
-        key != null ? key.jsonForSerializing().getBytes() : null,
-        data != null ? data.jsonForSerializing().getBytes() : null
+        key != null ? key.getBytes() : null,
+        data != null ? data.getBytes() : null
     );
   }
 

@@ -11,15 +11,15 @@ public interface RecordSerDe {
 
   @Value
   class DeserializedKeyValue {
-    @Nullable Object key;
-    @Nullable Object value;
+    @Nullable String key;
+    @Nullable String value;
   }
 
   DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg);
 
   ProducerRecord<byte[], byte[]> serialize(String topic,
-                                           @Nullable ParsedInputObject key,
-                                           @Nullable ParsedInputObject data,
+                                           @Nullable String key,
+                                           @Nullable String data,
                                            @Nullable Integer partition);
 
   TopicMessageSchema getTopicSchema(String topic);

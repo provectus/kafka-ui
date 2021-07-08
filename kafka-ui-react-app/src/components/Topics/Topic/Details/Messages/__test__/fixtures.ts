@@ -5,10 +5,10 @@ export const messages: TopicMessage[] = [
     partition: 1,
     offset: 2,
     timestamp: new Date(Date.UTC(1995, 5, 5)),
-    content: {
+    content: JSON.stringify({
       foo: 'bar',
       key: 'val',
-    },
+    }),
     key: '1',
   },
   {

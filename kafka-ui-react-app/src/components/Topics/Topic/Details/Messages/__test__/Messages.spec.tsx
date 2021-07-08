@@ -57,7 +57,7 @@ describe('Messages', () => {
                 partition: 1,
                 offset: 2,
                 timestamp: new Date('05-05-1994'),
-                content: [1, 2, 3],
+                content: '[1, 2, 3]',
               },
             ],
           })
@@ -74,7 +74,7 @@ describe('Messages', () => {
               partition: 1,
               offset: 2,
               timestamp: new Date('05-05-1994'),
-              content: [1, 2, 3],
+              content: '[1, 2, 3]',
             },
           ];
           const content = JSON.stringify(messages[0].content);
