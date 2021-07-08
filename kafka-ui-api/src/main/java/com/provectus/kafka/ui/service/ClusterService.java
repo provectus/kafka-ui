@@ -20,6 +20,8 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
+import com.provectus.kafka.ui.model.ReplicationFactorChange;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
@@ -107,7 +109,7 @@ public class ClusterService {
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
     var cluster = clustersStorage.getClusterByName(name)
         .orElseThrow(ClusterNotFoundException::new);
-    List<Topic> topics = cluster.getTopics().values().stream()
+    List<InternalTopic> topics = cluster.getTopics().values().stream()
         .filter(topic -> !topic.isInternal()
             || showInternal
             .map(i -> topic.isInternal() == i)
@@ -117,7 +119,6 @@ public class ClusterService {
                 .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
                 .orElse(true))
         .sorted(getComparatorForTopic(sortBy))
-        .map(clusterMapper::toTopic)
         .collect(Collectors.toList());
     var totalPages = (topics.size() / perPage)
         + (topics.size() % perPage == 0 ? 0 : 1);
@@ -127,6 +128,13 @@ public class ClusterService {
             topics.stream()
                 .skip(topicsToSkip)
                 .limit(perPage)
+                .map(t ->
+                    clusterMapper.toTopic(
+                        t.toBuilder().partitions(
+                          kafkaService.getTopicPartitions(cluster, t)
+                        ).build()
+                    )
+                )
                 .collect(Collectors.toList())
         );
   }
@@ -141,6 +149,8 @@ public class ClusterService {
         return Comparator.comparing(InternalTopic::getPartitionCount);
       case OUT_OF_SYNC_REPLICAS:
         return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
+      case REPLICATION_FACTOR:
+        return Comparator.comparing(InternalTopic::getReplicationFactor);
       case NAME:
       default:
         return defaultComparator;
@@ -269,6 +279,15 @@ public class ClusterService {
     return updatedCluster;
   }
 
+  public Mono<Cluster> updateCluster(String clusterName) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getUpdatedCluster(cluster)
+            .doOnNext(updatedCluster -> clustersStorage
+                .setKafkaCluster(updatedCluster.getName(), updatedCluster))
+            .map(clusterMapper::toCluster))
+        .orElse(Mono.error(new ClusterNotFoundException()));
+  }
+
   public Flux<TopicMessage> getMessages(String clusterName, String topicName,
                                         ConsumerPosition consumerPosition, String query,
                                         Integer limit) {
@@ -352,5 +371,19 @@ public class ClusterService {
     } else {
       return Mono.error(e);
     }
+  }
+
+  public Mono<ReplicationFactorChangeResponse> changeReplicationFactor(
+      String clusterName,
+      String topicName,
+      ReplicationFactorChange replicationFactorChange) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.changeReplicationFactor(cluster, topicName, replicationFactorChange)
+            .doOnNext(topic -> updateCluster(topic, cluster.getName(), cluster))
+            .map(t -> new ReplicationFactorChangeResponse()
+                .topicName(t.getName())
+                .totalReplicationFactor(t.getReplicationFactor())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName))));
   }
 }
