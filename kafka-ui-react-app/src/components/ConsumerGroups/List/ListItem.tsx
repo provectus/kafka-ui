@@ -14,6 +14,7 @@ const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   return (
     <tr className="is-clickable" onClick={goToConsumerGroupDetails}>
       <td>{consumerGroup.consumerGroupId}</td>
+      <td>{consumerGroup.state}</td>
       <td>{consumerGroup.numConsumers}</td>
       <td>{consumerGroup.numTopics}</td>
     </tr>

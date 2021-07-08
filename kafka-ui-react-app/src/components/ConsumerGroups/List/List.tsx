@@ -41,6 +41,7 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
               <thead>
                 <tr>
                   <th>Consumer group ID</th>
+                  <th>State</th>
                   <th>Num of consumers</th>
                   <th>Num of topics</th>
                 </tr>
