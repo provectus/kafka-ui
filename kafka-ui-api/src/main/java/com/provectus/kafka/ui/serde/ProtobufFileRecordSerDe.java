@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -68,7 +69,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
                                                   @Nullable String data,
                                                   @Nullable Integer partition) {
     if (data == null) {
-      return new ProducerRecord<>(topic, partition, key.getBytes(), null);
+      return new ProducerRecord<>(topic, partition, Objects.requireNonNull(key).getBytes(), null);
     }
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {
