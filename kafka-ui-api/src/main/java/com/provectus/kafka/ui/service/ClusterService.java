@@ -25,7 +25,6 @@ import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
-import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
@@ -37,24 +36,20 @@ import com.provectus.kafka.ui.util.ClusterUtil;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.DeleteConsumerGroupsResult;
-import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
@@ -190,46 +185,26 @@ public class ClusterService {
   public Mono<ConsumerGroupDetails> getConsumerGroupDetail(String clusterName,
                                                            String consumerGroupId) {
     var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
-
-    return kafkaService.getOrCreateAdminClient(cluster).map(ac ->
-        ac.getAdminClient().describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
-    ).flatMap(groups ->
-        kafkaService.groupMetadata(cluster, consumerGroupId)
-            .flatMap(offsets -> {
-              Map<TopicPartition, Long> endOffsets =
-                  kafkaService.topicPartitionsEndOffsets(cluster, offsets.keySet());
-              return ClusterUtil.toMono(groups).map(s ->
-                  Tuples.of(
-                      s.get(consumerGroupId),
-                      s.get(consumerGroupId).members().stream()
-                          .flatMap(c ->
-                              Stream.of(
-                                  ClusterUtil.convertToConsumerTopicPartitionDetails(
-                                      c, offsets, endOffsets, consumerGroupId
-                                  )
-                              )
-                          )
-                          .collect(Collectors.toList()).stream()
-                          .flatMap(t ->
-                              t.stream().flatMap(Stream::of)
-                          ).collect(Collectors.toList())
-                  )
-              );
-            }).map(c -> ClusterUtil.convertToConsumerGroupDetails(c.getT1(), c.getT2()))
+    return kafkaService.getConsumerGroups(
+        cluster,
+        Optional.empty(),
+        Collections.singletonList(consumerGroupId)
+    ).filter(groups -> !groups.isEmpty()).map(groups -> groups.get(0)).map(
+        ClusterUtil::convertToConsumerGroupDetails
     );
   }
 
   public Mono<List<ConsumerGroup>> getConsumerGroups(String clusterName) {
-    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
-        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-        .flatMap(kafkaService::getConsumerGroups);
+    return getConsumerGroups(clusterName, Optional.empty());
   }
 
-  public Mono<TopicConsumerGroups> getTopicConsumerGroupDetail(
-      String clusterName, String topicName) {
+  public Mono<List<ConsumerGroup>> getConsumerGroups(String clusterName, Optional<String> topic) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-        .flatMap(c -> kafkaService.getTopicConsumerGroups(c, topicName));
+        .flatMap(c -> kafkaService.getConsumerGroups(c, topic, Collections.emptyList()))
+        .map(c ->
+            c.stream().map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList())
+        );
   }
 
   public Flux<Broker> getBrokers(String clusterName) {

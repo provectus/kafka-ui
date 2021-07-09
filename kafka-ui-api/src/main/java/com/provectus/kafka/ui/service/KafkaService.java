@@ -1,12 +1,12 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
+import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSegmentSizeDto;
@@ -17,7 +17,6 @@ import com.provectus.kafka.ui.model.Metric;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.ReplicationFactorChange;
 import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.serde.DeserializationService;
@@ -51,7 +50,6 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
@@ -327,45 +325,59 @@ public class KafkaService {
         );
   }
 
-  public Mono<Collection<ConsumerGroupDescription>> getConsumerGroupsInternal(
+  public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
       KafkaCluster cluster) {
     return getOrCreateAdminClient(cluster).flatMap(ac ->
         ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all())
             .flatMap(s ->
-                ClusterUtil.toMono(
-                    ac.getAdminClient().describeConsumerGroups(
-                        s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList())
-                    ).all()
-                ).map(Map::values)
+                getConsumerGroupsInternal(
+                    cluster,
+                    s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList()))
+                )
+            );
+  }
+
+  public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
+      KafkaCluster cluster, List<String> groupIds) {
+
+    return getOrCreateAdminClient(cluster).flatMap(ac ->
+        ClusterUtil.toMono(
+            ac.getAdminClient().describeConsumerGroups(groupIds).all()
+        ).map(Map::values)
+    ).flatMap(descriptions ->
+        Flux.fromIterable(descriptions)
+            .parallel()
+            .flatMap(d ->
+                groupMetadata(cluster, d.groupId())
+                    .map(offsets -> ClusterUtil.convertToInternalConsumerGroup(d, offsets))
             )
+            .sequential()
+            .collectList()
     );
   }
 
-  public Mono<List<ConsumerGroup>> getConsumerGroups(KafkaCluster cluster) {
-    return getConsumerGroupsInternal(cluster)
-        .map(c -> c.stream().map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList()));
-  }
+  public Mono<List<InternalConsumerGroup>> getConsumerGroups(
+      KafkaCluster cluster, Optional<String> topic, List<String> groupIds) {
+    final Mono<List<InternalConsumerGroup>> consumerGroups;
 
-  public Mono<TopicConsumerGroups> getTopicConsumerGroups(KafkaCluster cluster, String topic) {
-    final Map<TopicPartition, Long> endOffsets = topicEndOffsets(cluster, topic);
+    if (groupIds.isEmpty()) {
+      consumerGroups = getConsumerGroupsInternal(cluster);
+    } else {
+      consumerGroups = getConsumerGroupsInternal(cluster, groupIds);
+    }
 
-    return getConsumerGroupsInternal(cluster)
-        .flatMapIterable(c ->
+    return consumerGroups.map(c ->
             c.stream()
                 .map(d -> ClusterUtil.filterConsumerGroupTopic(d, topic))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(d ->
-                    groupMetadata(cluster, d.groupId())
-                      .flatMapIterable(meta ->
-                          d.members().stream().flatMap(m ->
-                              ClusterUtil.convertToConsumerTopicPartitionDetails(
-                                  m, meta, endOffsets, d.groupId()
-                              ).stream()
-                          ).collect(Collectors.toList())
-                      )
-                ).collect(Collectors.toList())
-        ).flatMap(f -> f).collectList().map(l -> new TopicConsumerGroups().consumers(l));
+                .map(g ->
+                    g.toBuilder().endOffsets(
+                        topicPartitionsEndOffsets(cluster, g.getOffsets().keySet())
+                    ).build()
+                )
+                .collect(Collectors.toList())
+        );
   }
 
   public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster,
@@ -375,16 +387,6 @@ public class KafkaService {
             .listConsumerGroupOffsets(consumerGroupId)
             .partitionsToOffsetAndMetadata()
     ).flatMap(ClusterUtil::toMono);
-  }
-
-  public Map<TopicPartition, Long> topicEndOffsets(
-      KafkaCluster cluster, String topic) {
-    try (KafkaConsumer<Bytes, Bytes> consumer = createConsumer(cluster)) {
-      final List<TopicPartition> topicPartitions = consumer.partitionsFor(topic).stream()
-          .map(i -> new TopicPartition(i.topic(), i.partition()))
-          .collect(Collectors.toList());
-      return consumer.endOffsets(topicPartitions);
-    }
   }
 
   public Map<TopicPartition, Long> topicPartitionsEndOffsets(
