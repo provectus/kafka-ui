@@ -1,0 +1,21 @@
+[ {
+  "uid" : "b3303063d2011f1a",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1625854040746,
+    "stop" : 1625854041681,
+    "duration" : 935
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "b8c277b20f2e9cd3",
+  "name" : "should create a topic",
+  "time" : {
+    "start" : 1625854029561,
+    "stop" : 1625854040537,
+    "duration" : 10976
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]
