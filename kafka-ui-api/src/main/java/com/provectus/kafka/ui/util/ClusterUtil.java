@@ -215,9 +215,9 @@ public class ClusterUtil {
     topicMessage.setTimestampType(timestampType);
 
     topicMessage.setHeaders(headers);
-    Tuple2<String, Object> parsed = recordDeserializer.deserialize(consumerRecord);
-    topicMessage.setKey(parsed.getT1());
-    topicMessage.setContent(parsed.getT2());
+    var parsed = recordDeserializer.deserialize(consumerRecord);
+    topicMessage.setKey(parsed.getKey());
+    topicMessage.setContent(parsed.getValue());
 
     return topicMessage;
   }

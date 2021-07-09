@@ -1615,9 +1615,7 @@ components:
           additionalProperties:
             type: string
         content:
-          type: object
-      required:
-        - content
+          type: string
 
     TopicMessageSchema:
       type: object
@@ -1672,7 +1670,7 @@ components:
           additionalProperties:
             type: string
         content:
-          type: object
+          type: string
       required:
         - partition
         - offset

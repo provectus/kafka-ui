@@ -17,13 +17,15 @@ public class ClustersMetricsScheduler {
 
   private final MetricsUpdateService metricsUpdateService;
 
-  @Scheduled(fixedRate = 30000)
+  @Scheduled(fixedRateString = "${kafka.update-metrics-rate-millis:30000}")
   public void updateMetrics() {
     Flux.fromIterable(clustersStorage.getKafkaClustersMap().entrySet())
-        .subscribeOn(Schedulers.parallel())
+        .parallel()
+        .runOn(Schedulers.parallel())
         .map(Map.Entry::getValue)
         .flatMap(metricsUpdateService::updateMetrics)
         .doOnNext(s -> clustersStorage.setKafkaCluster(s.getName(), s))
-        .subscribe();
+        .then()
+        .block();
   }
 }

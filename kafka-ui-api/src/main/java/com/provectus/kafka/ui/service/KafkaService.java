@@ -68,6 +68,7 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.beans.factory.annotation.Value;
@@ -672,11 +673,14 @@ public class KafkaService {
     Properties properties = new Properties();
     properties.putAll(cluster.getProperties());
     properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
+    properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+    properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
-      final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(topic,
-          msg.getKey() != null ? msg.getKey().getBytes() : null,
-          msg.getContent().toString().getBytes(),
-          Optional.ofNullable(msg.getPartition())
+      final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
+          topic,
+          msg.getKey(),
+          msg.getContent(),
+          msg.getPartition()
       );
 
       CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();

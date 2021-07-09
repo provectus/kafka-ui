@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerMetrics;
@@ -350,6 +351,13 @@ public class ClusterService {
         .orElseThrow(ClusterNotFoundException::new);
     if (!cluster.getTopics().containsKey(topicName)) {
       throw new TopicNotFoundException();
+    }
+    if (msg.getKey() == null && msg.getContent() == null) {
+      throw new ValidationException("Invalid message: both key and value can't be null");
+    }
+    if (msg.getPartition() != null
+        && msg.getPartition() > cluster.getTopics().get(topicName).getPartitionCount() - 1) {
+      throw new ValidationException("Invalid partition");
     }
     return kafkaService.sendMessage(cluster, topicName, msg).then();
   }
