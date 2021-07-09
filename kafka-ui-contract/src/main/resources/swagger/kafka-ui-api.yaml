@@ -1614,8 +1614,7 @@ components:
           type: integer
           format: int64
       required:
-        - clusterId
-        - consumerGroupId
+        - groupId
 
     CreateTopicMessage:
       type: object

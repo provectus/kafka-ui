@@ -7,7 +7,6 @@ import {
   GetTopicMessagesRequest,
   ConsumerGroup,
   TopicColumnsToSort,
-  TopicConsumerGroups,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -42,7 +41,7 @@ export interface TopicFormCustomParams {
 
 export interface TopicWithDetailedInfo extends Topic, TopicDetails {
   config?: TopicConfig[];
-  consumerGroups?: TopicConsumerGroups;
+  consumerGroups?: ConsumerGroup[];
 }
 
 export interface TopicsState {

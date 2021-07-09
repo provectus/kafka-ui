@@ -98,7 +98,7 @@ describe('Thunks', () => {
   describe('fetchTopicConsumerGroups', () => {
     it('GET_TOPIC_CONSUMER_GROUPS__FAILURE', async () => {
       fetchMock.getOnce(
-        `api/clusters/${clusterName}/topics/${topicName}/consumergroups`,
+        `api/clusters/${clusterName}/topics/${topicName}/consumer-groups`,
         404
       );
       try {
@@ -116,7 +116,7 @@ describe('Thunks', () => {
 
     it('GET_TOPIC_CONSUMER_GROUPS__SUCCESS', async () => {
       fetchMock.getOnce(
-        `api/clusters/${clusterName}/topics/${topicName}/consumergroups`,
+        `api/clusters/${clusterName}/topics/${topicName}/consumer-groups`,
         200
       );
       try {
