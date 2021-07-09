@@ -2194,8 +2194,7 @@ components:
             items:
               type: string
         nodes:
-          type: array
-          items:
+          additionalProperties:
             $ref: '#/components/schemas/TopologyNode'
 
     SubTopologyNode:
@@ -2216,9 +2215,7 @@ components:
             topicsNumber:
               type: integer
             topology:
-              type: array
-              items:
-                $ref: '#/components/schemas/TopologyNode'
+              $ref: '#/components/schemas/TopologyGraph'
 
     GlobalTopology:
       type: object
