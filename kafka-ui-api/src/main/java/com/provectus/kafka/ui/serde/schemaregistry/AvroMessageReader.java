@@ -7,10 +7,9 @@ import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import java.io.IOException;
 import java.util.Map;
-
-import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import org.apache.kafka.common.serialization.Serializer;
 
 public class AvroMessageReader extends MessageReader<Object> {

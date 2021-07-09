@@ -84,23 +84,29 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   private static final JsonSchema JSON_SCHEMA = new JsonSchema(
       "{ "
-      + "  \"$schema\": \"http://json-schema.org/draft-07/schema#\", "
-      + "  \"$id\": \"http://example.com/myURI.schema.json\", "
-      + "  \"title\": \"TestRecord\","
-      + "  \"type\": \"object\","
-      + "  \"additionalProperties\": false,"
-      + "  \"properties\": {"
-      + "    \"f1\": {"
-      + "      \"type\": \"integer\""
-      + "    },"
-      + "    \"f2\": {"
-      + "      \"type\": \"string\""
-      + "    }"
-      + "  }"
-      + "}"
+          + "  \"$schema\": \"http://json-schema.org/draft-07/schema#\", "
+          + "  \"$id\": \"http://example.com/myURI.schema.json\", "
+          + "  \"title\": \"TestRecord\","
+          + "  \"type\": \"object\","
+          + "  \"additionalProperties\": false,"
+          + "  \"properties\": {"
+          + "    \"f1\": {"
+          + "      \"type\": \"integer\""
+          + "    },"
+          + "    \"f2\": {"
+          + "      \"type\": \"string\""
+          + "    },"
+          // it is important special case since there is code in KafkaJsonSchemaSerializer
+          // that checks fields with this name (it should be worked around)
+          + "    \"schema\": {"
+          + "      \"type\": \"string\""
+          + "    }"
+          + "  }"
+          + "}"
   );
 
-  private static final String JSON_SCHEMA_RECORD = "{ \"f1\": 12, \"f2\": \"testJsonSchema1\" }";
+  private static final String JSON_SCHEMA_RECORD
+      = "{ \"f1\": 12, \"f2\": \"testJsonSchema1\", \"schema\": \"some txt\" }";
 
   @Autowired
   private ClusterService clusterService;
