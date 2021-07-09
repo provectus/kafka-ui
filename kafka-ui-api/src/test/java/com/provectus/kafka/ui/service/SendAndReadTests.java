@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
+import io.confluent.kafka.schemaregistry.json.JsonSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.time.Duration;
 import java.util.Map;
@@ -21,7 +22,6 @@ import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,6 +80,27 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   private static final String PROTOBUF_SCHEMA_JSON_RECORD
       = "{ \"f1\" : \"test str\", \"f2\" : 123 }";
+
+
+  private static final JsonSchema JSON_SCHEMA = new JsonSchema(
+      "{ "
+      + "  \"$schema\": \"http://json-schema.org/draft-07/schema#\", "
+      + "  \"$id\": \"http://example.com/myURI.schema.json\", "
+      + "  \"title\": \"TestRecord\","
+      + "  \"type\": \"object\","
+      + "  \"additionalProperties\": false,"
+      + "  \"properties\": {"
+      + "    \"f1\": {"
+      + "      \"type\": \"integer\""
+      + "    },"
+      + "    \"f2\": {"
+      + "      \"type\": \"string\""
+      + "    }"
+      + "  }"
+      + "}"
+  );
+
+  private static final String JSON_SCHEMA_RECORD = "{ \"f1\": 12, \"f2\": \"testJsonSchema1\" }";
 
   @Autowired
   private ClusterService clusterService;
@@ -290,6 +311,37 @@ public class SendAndReadTests extends AbstractBaseTest {
           )
           .doAssert(polled -> Assertions.fail());
     }).hasMessageContaining("Failed to serialize record");
+  }
+
+  @Test
+  void keyWithProtoSchemaValueWithJsonSchema() {
+    new SendAndReadSpec()
+        .withKeySchema(PROTOBUF_SCHEMA)
+        .withValueSchema(JSON_SCHEMA)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key(PROTOBUF_SCHEMA_JSON_RECORD)
+                .content(JSON_SCHEMA_RECORD)
+        )
+        .doAssert(polled -> {
+          assertJsonEqual(polled.getKey(), PROTOBUF_SCHEMA_JSON_RECORD);
+          assertJsonEqual(polled.getContent(), JSON_SCHEMA_RECORD);
+        });
+  }
+
+  @Test
+  void keyWithJsonValueWithJsonSchemaKeyValueIsNull() {
+    new SendAndReadSpec()
+        .withKeySchema(JSON_SCHEMA)
+        .withValueSchema(JSON_SCHEMA)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key(JSON_SCHEMA_RECORD)
+        )
+        .doAssert(polled -> {
+          assertJsonEqual(polled.getKey(), JSON_SCHEMA_RECORD);
+          assertThat(polled.getContent()).isNull();
+        });
   }
 
 

@@ -16,6 +16,7 @@ import io.confluent.kafka.schemaregistry.client.CachedSchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
+import io.confluent.kafka.schemaregistry.json.JsonSchemaProvider;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import java.net.URI;
@@ -52,6 +53,9 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   @Nullable
   private final ProtobufMessageFormatter protobufFormatter;
 
+  @Nullable
+  private final JsonSchemaMessageFormatter jsonSchemaMessageFormatter;
+
   private final StringMessageFormatter stringFormatter = new StringMessageFormatter();
   private final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
   private final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
@@ -60,7 +64,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private static SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     Objects.requireNonNull(cluster.getSchemaRegistry());
     List<SchemaProvider> schemaProviders =
-        List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider());
+        List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
     //TODO add auth
     return new CachedSchemaRegistryClient(
         Collections.singletonList(cluster.getSchemaRegistry()),
@@ -78,9 +82,11 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     if (schemaRegistryClient != null) {
       this.avroFormatter = new AvroMessageFormatter(schemaRegistryClient);
       this.protobufFormatter = new ProtobufMessageFormatter(schemaRegistryClient);
+      this.jsonSchemaMessageFormatter = new JsonSchemaMessageFormatter(schemaRegistryClient);
     } else {
       this.avroFormatter = null;
       this.protobufFormatter = null;
+      this.jsonSchemaMessageFormatter = null;
     }
   }
 
@@ -128,6 +134,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
         reader = new ProtobufMessageReader(topic, isKey, schemaRegistryClient, schema);
       } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
         reader = new AvroMessageReader(topic, isKey, schemaRegistryClient, schema);
+      } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
+        reader = new JsonSchemaMessageReader(topic, isKey, schemaRegistryClient, schema);
       } else {
         throw new IllegalStateException("Unsupported schema type: " + schema.getSchemaType());
       }
@@ -217,6 +225,10 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
           } else if (type.get().equals(MessageFormat.AVRO.name())) {
             if (tryFormatter(avroFormatter, msg, isKey).isPresent()) {
               return avroFormatter;
+            }
+          } else if (type.get().equals(MessageFormat.JSON.name())) {
+            if (tryFormatter(jsonSchemaMessageFormatter, msg, isKey).isPresent()) {
+              return jsonSchemaMessageFormatter;
             }
           } else {
             throw new IllegalStateException("Unsupported schema type: " + type.get());
