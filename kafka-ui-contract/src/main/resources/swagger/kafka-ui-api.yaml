@@ -1251,33 +1251,30 @@ paths:
         404:
           description: Not found
 
-  /api/streamtopology:
+  /api/clusters/{clusterName}/streamtopology/{applicationId}:
     get:
       tags:
         - StreamTopology
       summary: get stream topology
       operationId: getStreamTopology
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GlobalTopology'
-
-  /api/streamtopology/dummy:
-    get:
-      tags:
-        - StreamTopology
-      summary: get dummy stream topology
-      operationId: getDummyStreamTopology
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/GlobalTopology'
+                $ref: '#/components/schemas/ProcessorTopology'
 
 components:
   schemas:
@@ -2127,26 +2124,26 @@ components:
         - totalPartitionsCount
         - topicName
 
-    TopologyNode:
+    TopologyNodeType:
+      type: string
+      enum:
+        - TOPIC
+        - SOURCE_PROCESSOR
+        - PROCESSOR
+        - SINK_PROCESSOR
+        - SUB_TOPOLOGY
+
+    GraphNode:
       type: object
       properties:
         name:
           type: string
         type:
-          type: string
-          enum:
-            - TOPIC
-            - SOURCE_CONNECTOR
-            - SINK_CONNECTOR
-            - SOURCE_PROCESSOR
-            - PROCESSOR
-            - SINK_PROCESSOR
-            - PROCESSOR_TOPOLOGY
-            - SUB_TOPOLOGY
+          $ref: '#/components/schemas/TopologyNodeType'
 
     TopicNode:
       allOf:
-        - $ref: '#/components/schemas/TopologyNode'
+        - $ref: '#/components/schemas/GraphNode'
         - type: object
           properties:
             inputMessagesNumber:
@@ -2158,7 +2155,7 @@ components:
 
     ProcessorNode:
       allOf:
-        - $ref: '#/components/schemas/TopologyNode'
+        - $ref: '#/components/schemas/GraphNode'
         - type: object
           properties:
             stores:
@@ -2168,7 +2165,7 @@ components:
 
     SourceProcessorNode:
       allOf:
-        - $ref: '#/components/schemas/TopologyNode'
+        - $ref: '#/components/schemas/GraphNode'
         - type: object
           properties:
             topics:
@@ -2178,7 +2175,7 @@ components:
 
     SinkProcessorNode:
       allOf:
-        - $ref: '#/components/schemas/TopologyNode'
+        - $ref: '#/components/schemas/GraphNode'
         - type: object
           properties:
             topic:
@@ -2195,30 +2192,22 @@ components:
               type: string
         nodes:
           additionalProperties:
-            $ref: '#/components/schemas/TopologyNode'
+            $ref: '#/components/schemas/GraphNode'
 
     SubTopologyNode:
       allOf:
-        - $ref: '#/components/schemas/TopologyNode'
+        - $ref: '#/components/schemas/GraphNode'
         - type: object
           properties:
             subTopology:
               $ref: '#/components/schemas/TopologyGraph'
 
-    ProcessorTopologyNode:
-      allOf:
-        - $ref: '#/components/schemas/TopologyNode'
-        - type: object
-          properties:
-            processorsNumber:
-              type: integer
-            topicsNumber:
-              type: integer
-            topology:
-              $ref: '#/components/schemas/TopologyGraph'
-
-    GlobalTopology:
+    ProcessorTopology:
       type: object
       properties:
+        processorsNumber:
+          type: integer
+        topicsNumber:
+          type: integer
         topology:
           $ref: '#/components/schemas/TopologyGraph'
