@@ -140,5 +140,5 @@ export const getIsTopicInternal = createSelector(
 export const getTopicConsumerGroups = createSelector(
   getTopicMap,
   getTopicName,
-  (topics, topicName) => topics[topicName].consumerGroups?.consumers || []
+  (topics, topicName) => topics[topicName].consumerGroups || []
 );
