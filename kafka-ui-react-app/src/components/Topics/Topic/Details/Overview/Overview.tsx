@@ -72,7 +72,7 @@ const Overview: React.FC<Props> = ({
             </tr>
           </thead>
           <tbody>
-            {partitions?.length !== 0 && partitions?.length !== undefined ? (
+            {partitions && partitions?.length > 0 ? (
               partitions?.map(({ partition, leader, offsetMin, offsetMax }) => (
                 <tr key={`partition-list-item-key-${partition}`}>
                   <td>{partition}</td>
@@ -107,7 +107,7 @@ const Overview: React.FC<Props> = ({
               ))
             ) : (
               <tr>
-                <td colSpan={10}>No active Overview</td>
+                <td colSpan={10}>No Partitions found</td>
               </tr>
             )}
           </tbody>
