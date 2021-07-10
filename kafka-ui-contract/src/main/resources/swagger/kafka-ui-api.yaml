@@ -2194,7 +2194,7 @@ components:
         - totalReplicationFactor
         - topicName
 
-    TopologyNodeType:
+    GraphNodeType:
       type: string
       enum:
         - TOPIC
@@ -2209,7 +2209,7 @@ components:
         name:
           type: string
         type:
-          $ref: '#/components/schemas/TopologyNodeType'
+          $ref: '#/components/schemas/GraphNodeType'
 
     TopicNode:
       allOf:
