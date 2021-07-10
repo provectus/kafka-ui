@@ -24,7 +24,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
 }) => {
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
-    (content as Record<string, string>) || ''
+    content || ''
   );
   return (
     <tr>

@@ -23,6 +23,7 @@ public class KafkaCluster {
   private final ServerStatus zookeeperStatus;
   private final InternalClusterMetrics metrics;
   private final Map<String, InternalTopic> topics;
+  private final List<Integer> brokers;
   private final Throwable lastKafkaException;
   private final Throwable lastZookeeperException;
   private final Path protobufFile;

@@ -5,8 +5,7 @@ import * as actions from 'redux/actions';
 const state: ConsumerGroupsState = {
   byID: {
     test: {
-      clusterId: 'local',
-      consumerGroupId: 'test',
+      groupId: 'test',
     },
   },
   allIDs: ['test'],

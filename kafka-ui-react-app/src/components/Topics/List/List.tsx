@@ -135,6 +135,8 @@ const List: React.FC<Props> = ({
                   orderBy={orderBy}
                   setOrderBy={setTopicsOrderBy}
                 />
+                <th>Number of messages</th>
+                <th>Size</th>
                 <th>Type</th>
                 <th> </th>
               </tr>

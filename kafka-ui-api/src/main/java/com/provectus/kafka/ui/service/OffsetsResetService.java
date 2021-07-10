@@ -9,6 +9,7 @@ import static org.apache.kafka.common.ConsumerGroupState.EMPTY;
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.HashMap;
@@ -78,20 +79,20 @@ public class OffsetsResetService {
   }
 
   private void checkGroupCondition(KafkaCluster cluster, String groupId) {
-    ConsumerGroupDescription description =
+    InternalConsumerGroup description =
         kafkaService.getConsumerGroupsInternal(cluster)
             .blockOptional()
             .stream()
             .flatMap(Collection::stream)
-            .filter(cgd -> cgd.groupId().equals(groupId))
+            .filter(cgd -> cgd.getGroupId().equals(groupId))
             .findAny()
             .orElseThrow(() -> new NotFoundException("Consumer group not found"));
 
-    if (!Set.of(DEAD, EMPTY).contains(description.state())) {
+    if (!Set.of(DEAD, EMPTY).contains(description.getState())) {
       throw new ValidationException(
           String.format(
               "Group's offsets can be reset only if group is inactive, but group is in %s state",
-              description.state()));
+              description.getState()));
     }
   }
 

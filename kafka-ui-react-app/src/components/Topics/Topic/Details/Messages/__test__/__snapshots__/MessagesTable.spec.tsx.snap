@@ -29,12 +29,7 @@ exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
     </thead>
     <tbody>
       <MessageItem
-        content={
-          Object {
-            "foo": "bar",
-            "key": "val",
-          }
-        }
+        content="{\\"foo\\":\\"bar\\",\\"key\\":\\"val\\"}"
         key="message-802310400000-2"
         messageKey="1"
         offset={2}

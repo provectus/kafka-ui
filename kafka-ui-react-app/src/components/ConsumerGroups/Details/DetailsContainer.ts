@@ -30,7 +30,6 @@ const mapStateToProps = (
   }: OwnProps
 ) => ({
   clusterName,
-  consumerGroupID,
   isFetched: getIsConsumerGroupDetailsFetched(state),
   isDeleted: getIsConsumerGroupsDeleted(state),
   ...getConsumerGroupByID(state, consumerGroupID),

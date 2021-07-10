@@ -31,6 +31,30 @@ paths:
                 items:
                   $ref: '#/components/schemas/Cluster'
 
+
+  /api/clusters/{clusterName}/cache:
+    post:
+      tags:
+        - Clusters
+      summary: updateClusterInfo
+      operationId: updateClusterInfo
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/brokers:
     get:
       tags:
@@ -287,6 +311,38 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicConfig'
 
+  /api/clusters/{clusterName}/topics/{topicName}/replications:
+    patch:
+      tags:
+        - Topics
+      summary: changeReplicationFactor
+      operationId: changeReplicationFactor
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplicationFactorChange'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplicationFactorChangeResponse'
+        404:
+          description: Not found
+
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
@@ -416,7 +472,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/TopicMessageSchema'
 
-  /api/clusters/{clusterName}/topics/{topicName}/consumergroups:
+  /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
       tags:
         - Consumer Groups
@@ -439,7 +495,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TopicConsumerGroups'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumerGroup'
+
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
@@ -486,7 +545,7 @@ paths:
         200:
           description: OK
 
-  /api/clusters/{clusterName}/consumerGroups:
+  /api/clusters/{clusterName}/consumer-groups:
     get:
       tags:
         - Consumer Groups
@@ -1426,6 +1485,7 @@ components:
         - NAME
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
+        - REPLICATION_FACTOR
 
     Topic:
       type: object
@@ -1548,28 +1608,38 @@ components:
       required:
         - id
 
+    ConsumerGroupState:
+      type: string
+      enum:
+        - UNKNOWN
+        - PREPARING_REBALANCE
+        - COMPLETING_REBALANCE
+        - STABLE
+        - DEAD
+        - EMPTY
+
     ConsumerGroup:
       type: object
       properties:
-        clusterId:
+        groupId:
           type: string
-        consumerGroupId:
-          type: string
-        numConsumers:
+        members:
           type: integer
-        numTopics:
+        topics:
           type: integer
         simple:
           type: boolean
         partitionAssignor:
           type: string
         state:
-          type: string
-        coordintor:
-          type: string
+          $ref: "#/components/schemas/ConsumerGroupState"
+        coordinator:
+          $ref: "#/components/schemas/Broker"
+        messagesBehind:
+          type: integer
+          format: int64
       required:
-        - clusterId
-        - consumerGroupId
+        - groupId
 
     CreateTopicMessage:
       type: object
@@ -1583,9 +1653,7 @@ components:
           additionalProperties:
             type: string
         content:
-          type: object
-      required:
-        - content
+          type: string
 
     TopicMessageSchema:
       type: object
@@ -1640,7 +1708,7 @@ components:
           additionalProperties:
             type: string
         content:
-          type: object
+          type: string
       required:
         - partition
         - offset
@@ -1683,16 +1751,10 @@ components:
         - offsetMax
         - offsetMin
 
-    ConsumerTopicPartitionDetail:
+    ConsumerGroupTopicPartition:
       type: object
       properties:
-        groupId:
-          type: string
-        consumerId:
-          type: string
         topic:
-          type: string
-        host:
           type: string
         partition:
           type: integer
@@ -1705,36 +1767,24 @@ components:
         messagesBehind:
           type: integer
           format: int64
+        consumerId:
+          type: string
+        host:
+          type: string
       required:
-        - consumerId
+        - topic
+        - partition
 
-    TopicConsumerGroups:
-      type: object
-      properties:
-        consumers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
 
     ConsumerGroupDetails:
-      type: object
-      properties:
-        consumerGroupId:
-          type: string
-        simple:
-          type: boolean
-        partitionAssignor:
-          type: string
-        state:
-          type: string
-        coordintor:
-          type: string
-        consumers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
-      required:
-        - consumerGroupId
+      allOf:
+        - $ref: '#/components/schemas/ConsumerGroup'
+        - type: object
+          properties:
+            partitions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumerGroupTopicPartition'
 
     Metric:
       type: object
@@ -2122,6 +2172,26 @@ components:
           type: string
       required:
         - totalPartitionsCount
+        - topicName
+
+    ReplicationFactorChange:
+      type: object
+      properties:
+        totalReplicationFactor:
+          type: integer
+          minimum: 1
+      required:
+        - totalReplicationFactor
+
+    ReplicationFactorChangeResponse:
+      type: object
+      properties:
+        totalReplicationFactor:
+          type: integer
+        topicName:
+          type: string
+      required:
+        - totalReplicationFactor
         - topicName
 
     TopologyNodeType:

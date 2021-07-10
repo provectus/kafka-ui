@@ -2,14 +2,16 @@ package com.provectus.kafka.ui.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryRecordSerDe;
+import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryAwareRecordSerDe;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
+@Log4j2
 @Component
 @RequiredArgsConstructor
 public class DeserializationService {
@@ -31,10 +33,12 @@ public class DeserializationService {
   private RecordSerDe createRecordDeserializerForCluster(KafkaCluster cluster) {
     try {
       if (cluster.getProtobufFile() != null) {
+        log.info("Using ProtobufFileRecordSerDe for cluster '{}'", cluster.getName());
         return new ProtobufFileRecordSerDe(cluster.getProtobufFile(),
             cluster.getProtobufMessageName(), objectMapper);
       } else {
-        return new SchemaRegistryRecordSerDe(cluster, objectMapper);
+        log.info("Using SchemaRegistryAwareRecordSerDe for cluster '{}'", cluster.getName());
+        return new SchemaRegistryAwareRecordSerDe(cluster);
       }
     } catch (Throwable e) {
       throw new RuntimeException("Can't init deserializer", e);

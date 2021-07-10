@@ -56,14 +56,14 @@ public abstract class AbstractBaseTest {
     public void initialize(@NotNull ConfigurableApplicationContext context) {
       System.setProperty("kafka.clusters.0.name", LOCAL);
       System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
-      System.setProperty("kafka.clusters.0.schemaRegistry", schemaRegistry.getTarget());
+      System.setProperty("kafka.clusters.0.schemaRegistry", schemaRegistry.getUrl());
       System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
 
       System.setProperty("kafka.clusters.1.name", SECOND_LOCAL);
       System.setProperty("kafka.clusters.1.readOnly", "true");
       System.setProperty("kafka.clusters.1.bootstrapServers", kafka.getBootstrapServers());
-      System.setProperty("kafka.clusters.1.schemaRegistry", schemaRegistry.getTarget());
+      System.setProperty("kafka.clusters.1.schemaRegistry", schemaRegistry.getUrl());
       System.setProperty("kafka.clusters.1.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.1.kafkaConnect.0.address", kafkaConnect.getTarget());
     }
