@@ -22,7 +22,6 @@ import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -263,15 +262,14 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void valueWithAvroSchemaShouldThrowExceptionArgIsNotValidJsonObject() {
-    assertThatThrownBy(() -> {
-      new SendAndReadSpec()
-          .withValueSchema(AVRO_SCHEMA_2)
-          .withMsgToSend(
-              new CreateTopicMessage()
-                  .content("not a json object")
-          )
-          .doAssert(polled -> Assertions.fail());
-    }).hasMessageContaining("Failed to serialize record");
+    new SendAndReadSpec()
+        .withValueSchema(AVRO_SCHEMA_2)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                // f2 has type object instead of string
+                .content("{ \"f1\": 111, \"f2\": {} }")
+        )
+        .assertSendThrowsException();
   }
 
   @Test
@@ -308,15 +306,13 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void valueWithProtoSchemaShouldThrowExceptionArgIsNotValidJsonObject() {
-    assertThatThrownBy(() -> {
-      new SendAndReadSpec()
-          .withValueSchema(PROTOBUF_SCHEMA)
-          .withMsgToSend(
-              new CreateTopicMessage()
-                  .content("not a json object")
-          )
-          .doAssert(polled -> Assertions.fail());
-    }).hasMessageContaining("Failed to serialize record");
+    new SendAndReadSpec()
+        .withValueSchema(PROTOBUF_SCHEMA)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                // f2 field has type object instead of int
+                .content("{ \"f1\" : \"test str\", \"f2\" : {} }"))
+        .assertSendThrowsException();
   }
 
   @Test
@@ -350,6 +346,18 @@ public class SendAndReadTests extends AbstractBaseTest {
         });
   }
 
+  @Test
+  void valueWithJsonSchemaThrowsExceptionIfArgIsNotValidJsonObject() {
+    new SendAndReadSpec()
+        .withValueSchema(JSON_SCHEMA)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                // 'f2' field has has type object instead of string
+                .content("{ \"f1\": 12, \"f2\": {}, \"schema\": \"some txt\" }")
+        )
+        .assertSendThrowsException();
+  }
+
 
   @SneakyThrows
   private void assertJsonEqual(String actual, String expected) {
@@ -378,7 +386,7 @@ public class SendAndReadTests extends AbstractBaseTest {
     }
 
     @SneakyThrows
-    public void doAssert(Consumer<TopicMessage> msgAssert) {
+    private String createTopicAndCreateSchemas() {
       Objects.requireNonNull(msgToSend);
       String topic = UUID.randomUUID().toString();
       createTopic(new NewTopic(topic, 1, (short) 1));
@@ -388,9 +396,23 @@ public class SendAndReadTests extends AbstractBaseTest {
       if (valueSchema != null) {
         schemaRegistry.schemaRegistryClient().register(topic + "-value", valueSchema);
       }
-
       // need to update to see new topic & schemas
       clustersMetricsScheduler.updateMetrics();
+      return topic;
+    }
+
+    public void assertSendThrowsException() {
+      String topic = createTopicAndCreateSchemas();
+      try {
+        assertThatThrownBy(() -> clusterService.sendMessage(LOCAL, topic, msgToSend).block());
+      } finally {
+        deleteTopic(topic);
+      }
+    }
+
+    @SneakyThrows
+    public void doAssert(Consumer<TopicMessage> msgAssert) {
+      String topic = createTopicAndCreateSchemas();
       try {
         clusterService.sendMessage(LOCAL, topic, msgToSend).block();
         TopicMessage polled = clusterService.getMessages(

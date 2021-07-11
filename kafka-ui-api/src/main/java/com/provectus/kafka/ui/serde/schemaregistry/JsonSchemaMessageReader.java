@@ -44,9 +44,14 @@ public class JsonSchemaMessageReader extends MessageReader<JsonNode> {
   @Override
   protected JsonNode read(String value, ParsedSchema schema) {
     try {
-      return MAPPER.readTree(value);
+      JsonNode json = MAPPER.readTree(value);
+      ((JsonSchema) schema).validate(json);
+      return json;
     } catch (JsonProcessingException e) {
       throw new ValidationException(String.format("'%s' is not valid json", value));
+    } catch (org.everit.json.schema.ValidationException e) {
+      throw new ValidationException(
+          String.format("'%s' does not fit schema: %s", value, e.getAllMessages()));
     }
   }
 
