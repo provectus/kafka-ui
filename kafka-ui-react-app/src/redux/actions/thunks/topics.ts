@@ -173,6 +173,16 @@ export const fetchTopicConfig =
     }
   };
 
+const topicReducer = (
+  result: TopicFormFormattedParams,
+  customParam: TopicConfig
+) => {
+  return {
+    ...result,
+    [customParam.name]: customParam.value,
+  };
+};
+
 const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
   const {
     name,
@@ -196,15 +206,7 @@ const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(
-        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
-          return {
-            ...result,
-            [customParam.name]: customParam.value,
-          };
-        },
-        {}
-      ),
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };
@@ -226,15 +228,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(
-        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
-          return {
-            ...result,
-            [customParam.name]: customParam.value,
-          };
-        },
-        {}
-      ),
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };

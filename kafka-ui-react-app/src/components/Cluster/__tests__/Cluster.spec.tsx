@@ -68,7 +68,7 @@ describe('Cluster', () => {
       expect(wrapper.exists('mock-Connect')).toBeFalsy();
     });
     it('renders Schemas if KAFKA_CONNECT is configured', async () => {
-      await store.dispatch(
+      store.dispatch(
         fetchClusterListAction.success([
           {
             ...onlineClusterPayload,

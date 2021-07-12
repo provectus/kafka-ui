@@ -16,8 +16,6 @@ export const getTopicMessages = (state: RootState) =>
   topicsState(state).messages;
 export const getTopicListTotalPages = (state: RootState) =>
   topicsState(state).totalPages;
-export const getTopicConsumerGroups = (state: RootState) =>
-  topicsState(state).consumerGroups;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
 const getTopicDetailsFetchingStatus =
@@ -137,4 +135,10 @@ export const getTopicsOrderBy = createSelector(
 export const getIsTopicInternal = createSelector(
   getTopicByName,
   ({ internal }) => !!internal
+);
+
+export const getTopicConsumerGroups = createSelector(
+  getTopicMap,
+  getTopicName,
+  (topics, topicName) => topics[topicName].consumerGroups || []
 );

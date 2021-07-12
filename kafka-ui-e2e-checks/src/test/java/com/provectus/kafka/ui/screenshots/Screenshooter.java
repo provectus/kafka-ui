@@ -38,6 +38,8 @@ public class Screenshooter {
       Boolean.parseBoolean(System.getProperty("SHOULD_SAVE_SCREENSHOTS_IF_NOT_EXIST", "true"));
   private static boolean TURN_OFF_SCREENSHOTS =
       Boolean.parseBoolean(System.getProperty("TURN_OFF_SCREENSHOTS", "false"));
+  private static boolean USE_LOCAL_BROWSER =
+          Boolean.parseBoolean(System.getProperty("USE_LOCAL_BROWSER", "false"));
 
   private File newFile(String name) {
     var file = new File(name);
@@ -58,7 +60,9 @@ public class Screenshooter {
 
   @SneakyThrows
   public void compareScreenshots(String name, boolean shouldUpdateScreenshotIfDiffer) {
-    if (TURN_OFF_SCREENSHOTS) {
+    if (TURN_OFF_SCREENSHOTS || USE_LOCAL_BROWSER) {
+      log.warn("compareScreenshots turned off due TURN_OFF_SCREENSHOTS || USE_LOCAL_BROWSER: %b || %b"
+              .formatted(TURN_OFF_SCREENSHOTS,USE_LOCAL_BROWSER));
       return;
     }
     if (!doesScreenshotExist(name)) {

@@ -3,20 +3,24 @@ package com.provectus.kafka.ui.util;
 import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
-import com.provectus.kafka.ui.deserialization.RecordDeserializer;
+import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
-import com.provectus.kafka.ui.model.ConsumerTopicPartitionDetail;
+import com.provectus.kafka.ui.model.ConsumerGroupState;
+import com.provectus.kafka.ui.model.ConsumerGroupTopicPartition;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
+import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.serde.RecordSerDe;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,8 +35,6 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.MemberAssignment;
-import org.apache.kafka.clients.admin.MemberDescription;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -43,6 +45,7 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 @Slf4j
 public class ClusterUtil {
@@ -71,57 +74,120 @@ public class ClusterUtil {
     }));
   }
 
-  public static ConsumerGroup convertToConsumerGroup(ConsumerGroupDescription c) {
-    ConsumerGroup consumerGroup = new ConsumerGroup();
-    consumerGroup.setConsumerGroupId(c.groupId());
-    consumerGroup.setNumConsumers(c.members().size());
-    int numTopics = c.members().stream()
-        .flatMap(m -> m.assignment().topicPartitions().stream().flatMap(t -> Stream.of(t.topic())))
-        .collect(Collectors.toSet()).size();
-    consumerGroup.setNumTopics(numTopics);
-    consumerGroup.setSimple(c.isSimpleConsumerGroup());
-    Optional.ofNullable(c.state())
-        .ifPresent(s -> consumerGroup.setState(s.name()));
-    Optional.ofNullable(c.coordinator())
-        .ifPresent(coord -> consumerGroup.setCoordintor(coord.host()));
-    consumerGroup.setPartitionAssignor(c.partitionAssignor());
+  public static InternalConsumerGroup convertToInternalConsumerGroup(
+      ConsumerGroupDescription description, Map<TopicPartition, OffsetAndMetadata> offsets) {
+
+    var builder = InternalConsumerGroup.builder();
+    builder.groupId(description.groupId());
+    builder.simple(description.isSimpleConsumerGroup());
+    builder.state(description.state());
+    builder.partitionAssignor(description.partitionAssignor());
+    builder.members(
+        description.members().stream()
+            .map(m ->
+                InternalConsumerGroup.InternalMember.builder()
+                  .assignment(m.assignment().topicPartitions())
+                  .clientId(m.clientId())
+                  .groupInstanceId(m.groupInstanceId().orElse(""))
+                  .consumerId(m.consumerId())
+                  .clientId(m.clientId())
+                  .host(m.host())
+                  .build()
+            ).collect(Collectors.toList())
+    );
+    builder.offsets(offsets);
+    Optional.ofNullable(description.coordinator()).ifPresent(builder::coordinator);
+    return builder.build();
+  }
+
+  public static ConsumerGroup convertToConsumerGroup(InternalConsumerGroup c) {
+    return convertToConsumerGroup(c, new ConsumerGroup());
+  }
+
+  public static <T extends ConsumerGroup> T convertToConsumerGroup(
+      InternalConsumerGroup c, T consumerGroup) {
+    consumerGroup.setGroupId(c.getGroupId());
+    consumerGroup.setMembers(c.getMembers().size());
+
+    int numTopics = Stream.concat(
+        c.getOffsets().keySet().stream().map(TopicPartition::topic),
+        c.getMembers().stream()
+            .flatMap(m -> m.getAssignment().stream().map(TopicPartition::topic))
+    ).collect(Collectors.toSet()).size();
+
+    long messagesBehind = c.getOffsets().entrySet().stream()
+        .mapToLong(e ->
+            Optional.ofNullable(c.getEndOffsets())
+              .map(o -> o.get(e.getKey()))
+              .map(o -> o - e.getValue().offset())
+              .orElse(0L)
+        ).sum();
+
+    consumerGroup.setMessagesBehind(messagesBehind);
+    consumerGroup.setTopics(numTopics);
+    consumerGroup.setSimple(c.isSimple());
+
+    Optional.ofNullable(c.getState())
+        .ifPresent(s -> consumerGroup.setState(mapConsumerGroupState(s)));
+    Optional.ofNullable(c.getCoordinator())
+        .ifPresent(cd -> consumerGroup.setCoordinator(mapCoordinator(cd)));
+
+    consumerGroup.setPartitionAssignor(c.getPartitionAssignor());
     return consumerGroup;
   }
 
-  public static ConsumerGroupDetails convertToConsumerGroupDetails(
-      ConsumerGroupDescription desc, List<ConsumerTopicPartitionDetail> consumers
-  ) {
-    return new ConsumerGroupDetails()
-        .consumers(consumers)
-        .consumerGroupId(desc.groupId())
-        .simple(desc.isSimpleConsumerGroup())
-        .coordintor(Optional.ofNullable(desc.coordinator()).map(Node::host).orElse(""))
-        .state(Optional.ofNullable(desc.state()).map(Enum::name).orElse(""))
-        .partitionAssignor(desc.partitionAssignor());
+  public static ConsumerGroupDetails convertToConsumerGroupDetails(InternalConsumerGroup g) {
+    final ConsumerGroupDetails details = convertToConsumerGroup(g, new ConsumerGroupDetails());
+    Map<TopicPartition, ConsumerGroupTopicPartition> partitionMap = new HashMap<>();
+
+    for (Map.Entry<TopicPartition, OffsetAndMetadata> entry : g.getOffsets().entrySet()) {
+      ConsumerGroupTopicPartition partition = new ConsumerGroupTopicPartition();
+      partition.setTopic(entry.getKey().topic());
+      partition.setPartition(entry.getKey().partition());
+      partition.setCurrentOffset(entry.getValue().offset());
+
+      final Optional<Long> endOffset = Optional.ofNullable(g.getEndOffsets())
+          .map(o -> o.get(entry.getKey()));
+
+      final Long behind = endOffset.map(o -> o - entry.getValue().offset())
+          .orElse(0L);
+
+      partition.setEndOffset(endOffset.orElse(0L));
+      partition.setMessagesBehind(behind);
+
+      partitionMap.put(entry.getKey(), partition);
+    }
+
+    for (InternalConsumerGroup.InternalMember member : g.getMembers()) {
+      for (TopicPartition topicPartition : member.getAssignment()) {
+        final ConsumerGroupTopicPartition partition = partitionMap.computeIfAbsent(topicPartition,
+            (tp) -> new ConsumerGroupTopicPartition()
+                .topic(tp.topic())
+                .partition(tp.partition())
+        );
+        partition.setHost(member.getHost());
+        partition.setConsumerId(member.getConsumerId());
+        partitionMap.put(topicPartition, partition);
+      }
+    }
+    details.setPartitions(new ArrayList<>(partitionMap.values()));
+    return details;
   }
 
-  public static List<ConsumerTopicPartitionDetail> convertToConsumerTopicPartitionDetails(
-      MemberDescription consumer,
-      Map<TopicPartition, OffsetAndMetadata> groupOffsets,
-      Map<TopicPartition, Long> endOffsets,
-      String groupId
-  ) {
-    return consumer.assignment().topicPartitions().stream()
-        .map(tp -> {
-          long currentOffset = Optional.ofNullable(groupOffsets.get(tp))
-              .map(OffsetAndMetadata::offset).orElse(0L);
-          long endOffset = Optional.ofNullable(endOffsets.get(tp)).orElse(0L);
-          ConsumerTopicPartitionDetail cd = new ConsumerTopicPartitionDetail();
-          cd.setGroupId(groupId);
-          cd.setConsumerId(consumer.consumerId());
-          cd.setHost(consumer.host());
-          cd.setTopic(tp.topic());
-          cd.setPartition(tp.partition());
-          cd.setCurrentOffset(currentOffset);
-          cd.setEndOffset(endOffset);
-          cd.setMessagesBehind(endOffset - currentOffset);
-          return cd;
-        }).collect(Collectors.toList());
+  private static Broker mapCoordinator(Node node) {
+    return new Broker().host(node.host()).id(node.id());
+  }
+
+  private static ConsumerGroupState mapConsumerGroupState(
+      org.apache.kafka.common.ConsumerGroupState state) {
+    switch (state) {
+      case DEAD: return ConsumerGroupState.DEAD;
+      case EMPTY: return ConsumerGroupState.EMPTY;
+      case STABLE: return ConsumerGroupState.STABLE;
+      case PREPARING_REBALANCE: return ConsumerGroupState.PREPARING_REBALANCE;
+      case COMPLETING_REBALANCE: return ConsumerGroupState.COMPLETING_REBALANCE;
+      default: return ConsumerGroupState.UNKNOWN;
+    }
   }
 
 
@@ -197,7 +263,7 @@ public class ClusterUtil {
   }
 
   public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
-                                               RecordDeserializer recordDeserializer) {
+                                               RecordSerDe recordDeserializer) {
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
         .forEachRemaining(header -> headers.put(header.key(), new String(header.value())));
@@ -212,12 +278,11 @@ public class ClusterUtil {
     topicMessage.setOffset(consumerRecord.offset());
     topicMessage.setTimestamp(timestamp);
     topicMessage.setTimestampType(timestampType);
-    if (consumerRecord.key() != null) {
-      topicMessage.setKey(consumerRecord.key().toString());
-    }
+
     topicMessage.setHeaders(headers);
-    Object parsedValue = recordDeserializer.deserialize(consumerRecord);
-    topicMessage.setContent(parsedValue);
+    var parsed = recordDeserializer.deserialize(consumerRecord);
+    topicMessage.setKey(parsed.getKey());
+    topicMessage.setContent(parsed.getValue());
 
     return topicMessage;
   }
@@ -237,23 +302,12 @@ public class ClusterUtil {
 
   public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(
       AdminClient adminClient) {
-    return ClusterUtil.toMono(adminClient.describeCluster().controller())
-        .map(Node::id)
-        .map(id -> Collections
-            .singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
-        .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
-        .flatMap(ClusterUtil::toMono)
+    return getClusterVersion(adminClient)
         .map(ClusterUtil::getSupportedUpdateFeature)
         .map(Collections::singleton);
   }
 
-  private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(
-      Map<ConfigResource, Config> configs) {
-    String version = configs.values().stream()
-        .map(Config::entries)
-        .flatMap(Collection::stream)
-        .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
-        .findFirst().orElseThrow().value();
+  private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(String version) {
     try {
       final String[] parts = version.split("\\.");
       if (parts.length > 2) {
@@ -268,48 +322,65 @@ public class ClusterUtil {
     }
   }
 
+  public static Mono<String> getClusterVersion(AdminClient adminClient) {
+    return ClusterUtil.toMono(adminClient.describeCluster().controller())
+        .map(Node::id)
+        .map(id -> Collections
+            .singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
+        .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
+        .flatMap(ClusterUtil::toMono)
+        .map(ClusterUtil::getClusterVersion);
+  }
+
+  public static String getClusterVersion(Map<ConfigResource, Config> configs) {
+    return configs.values().stream()
+        .map(Config::entries)
+        .flatMap(Collection::stream)
+        .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
+        .findFirst().orElseThrow().value();
+  }
+
+
   public static <T, R> Map<T, R> toSingleMap(Stream<Map<T, R>> streamOfMaps) {
     return streamOfMaps
         .reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
   }
 
-  public static Optional<ConsumerGroupDescription> filterConsumerGroupTopic(
-      ConsumerGroupDescription description, String topic) {
-    final List<MemberDescription> members = description.members().stream()
-        .map(m -> filterConsumerMemberTopic(m, topic))
-        .filter(m -> !m.assignment().topicPartitions().isEmpty())
-        .collect(Collectors.toList());
+  public static Optional<InternalConsumerGroup> filterConsumerGroupTopic(
+      InternalConsumerGroup consumerGroup, Optional<String> topic) {
 
-    if (!members.isEmpty()) {
+    final Map<TopicPartition, OffsetAndMetadata> offsets =
+        consumerGroup.getOffsets().entrySet().stream()
+            .filter(e -> topic.isEmpty() || e.getKey().topic().equals(topic.get()))
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                Map.Entry::getValue
+            ));
+
+    final Collection<InternalConsumerGroup.InternalMember> members =
+        consumerGroup.getMembers().stream()
+            .map(m -> filterConsumerMemberTopic(m, topic))
+            .filter(m -> !m.getAssignment().isEmpty())
+            .collect(Collectors.toList());
+
+    if (!members.isEmpty() || !offsets.isEmpty()) {
       return Optional.of(
-          new ConsumerGroupDescription(
-              description.groupId(),
-              description.isSimpleConsumerGroup(),
-              members,
-              description.partitionAssignor(),
-              description.state(),
-              description.coordinator()
-          )
+          consumerGroup.toBuilder()
+            .offsets(offsets)
+            .members(members)
+            .build()
       );
     } else {
       return Optional.empty();
     }
   }
 
-  public static MemberDescription filterConsumerMemberTopic(
-      MemberDescription description, String topic) {
-    final Set<TopicPartition> topicPartitions = description.assignment().topicPartitions()
-        .stream().filter(tp -> tp.topic().equals(topic))
+  public static InternalConsumerGroup.InternalMember filterConsumerMemberTopic(
+      InternalConsumerGroup.InternalMember member, Optional<String> topic) {
+    final Set<TopicPartition> topicPartitions = member.getAssignment()
+        .stream().filter(tp -> topic.isEmpty() || tp.topic().equals(topic.get()))
         .collect(Collectors.toSet());
-    MemberAssignment assignment = new MemberAssignment(topicPartitions);
-    return new MemberDescription(
-        description.consumerId(),
-        description.groupInstanceId(),
-        description.clientId(),
-        description.host(),
-        assignment
-    );
+    return member.toBuilder().assignment(topicPartitions).build();
   }
-
 }

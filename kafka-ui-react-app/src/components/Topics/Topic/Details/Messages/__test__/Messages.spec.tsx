@@ -57,7 +57,7 @@ describe('Messages', () => {
                 partition: 1,
                 offset: 2,
                 timestamp: new Date('05-05-1994'),
-                content: [1, 2, 3],
+                content: '[1, 2, 3]',
               },
             ],
           })
@@ -74,7 +74,7 @@ describe('Messages', () => {
               partition: 1,
               offset: 2,
               timestamp: new Date('05-05-1994'),
-              content: [1, 2, 3],
+              content: '[1, 2, 3]',
             },
           ];
           const content = JSON.stringify(messages[0].content);
@@ -146,6 +146,21 @@ describe('Messages', () => {
         );
 
         wrapper.find('[type="submit"]').simulate('click');
+        expect(mockedfetchTopicMessages).toHaveBeenCalled();
+      });
+    });
+
+    describe('Seek Direction', () => {
+      it('fetches topic messages', () => {
+        const mockedfetchTopicMessages = jest.fn();
+        const wrapper = mount(
+          setupWrapper({ fetchTopicMessages: mockedfetchTopicMessages })
+        );
+
+        wrapper.find('input[type="checkbox"]').simulate('change');
+        expect(mockedfetchTopicMessages).toHaveBeenCalled();
+
+        wrapper.find('input[type="checkbox"]').simulate('change');
         expect(mockedfetchTopicMessages).toHaveBeenCalled();
       });
     });

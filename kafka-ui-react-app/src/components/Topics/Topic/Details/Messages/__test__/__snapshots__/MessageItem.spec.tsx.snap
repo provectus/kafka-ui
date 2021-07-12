@@ -38,10 +38,7 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
     }
   >
     <MessageContent
-      message="{
-	\\"foo\\": \\"bar\\",
-	\\"key\\": \\"val\\"
-}"
+      message="\\"{\\\\\\"foo\\\\\\":\\\\\\"bar\\\\\\",\\\\\\"key\\\\\\":\\\\\\"val\\\\\\"}\\""
     />
   </td>
   <td

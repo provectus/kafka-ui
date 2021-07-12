@@ -21,9 +21,17 @@ const getConsumerGroupsListFetchingStatus = createFetchingSelector(
 const getConsumerGroupDetailsFetchingStatus = createFetchingSelector(
   'GET_CONSUMER_GROUP_DETAILS'
 );
+const getConsumerGroupDeletingStatus = createFetchingSelector(
+  'DELETE_CONSUMER_GROUP'
+);
 
 export const getIsConsumerGroupsListFetched = createSelector(
   getConsumerGroupsListFetchingStatus,
+  (status) => status === 'fetched'
+);
+
+export const getIsConsumerGroupsDeleted = createSelector(
+  getConsumerGroupDeletingStatus,
   (status) => status === 'fetched'
 );
 

@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.mapper.ClusterMapper;
@@ -31,22 +32,32 @@ class ClusterServiceTest {
   private ClusterService clusterService;
   @Mock
   private ClustersStorage clustersStorage;
+  @Mock
+  private KafkaService kafkaService;
 
   @Test
   public void shouldListFirst25Topics() {
     var topicName = UUID.randomUUID().toString();
 
+    final KafkaCluster cluster = KafkaCluster.builder()
+        .topics(
+            IntStream.rangeClosed(1, 100).boxed()
+                .map(Objects::toString)
+                .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
+                    .partitions(Map.of())
+                    .name(e)
+                    .build()))
+        )
+        .build();
+
     when(clustersStorage.getClusterByName(topicName))
-        .thenReturn(Optional.of(KafkaCluster.builder()
-            .topics(
-                IntStream.rangeClosed(1, 100).boxed()
-                    .map(Objects::toString)
-                    .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
-                        .partitions(Map.of())
-                        .name(e)
-                        .build()))
-            )
-            .build()));
+        .thenReturn(Optional.of(cluster));
+
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
 
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.empty(),
@@ -72,6 +83,13 @@ class ClusterServiceTest {
             )
             .build()));
 
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
+
+
     var topics = clusterService.getTopics(topicName, Optional.of(4), Optional.of(33),
         Optional.empty(), Optional.empty(), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(4);
@@ -94,6 +112,13 @@ class ClusterServiceTest {
                         .build()))
             )
             .build()));
+
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
+
 
     var topics = clusterService.getTopics(topicName, Optional.of(0), Optional.of(-1),
         Optional.empty(), Optional.empty(), Optional.empty());
@@ -118,6 +143,13 @@ class ClusterServiceTest {
                         .build()))
             )
             .build()));
+
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
+
 
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.of(true),
@@ -145,6 +177,13 @@ class ClusterServiceTest {
             )
             .build()));
 
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
+
+
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.of(true),
         Optional.empty(), Optional.empty());
@@ -169,6 +208,13 @@ class ClusterServiceTest {
                         .build()))
             )
             .build()));
+
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
+
 
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.empty(),
@@ -195,6 +241,13 @@ class ClusterServiceTest {
             )
             .build()));
 
+    when(
+        kafkaService.getTopicPartitions(any(), any())
+    ).thenReturn(
+        Map.of()
+    );
+
+
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.of(TopicColumnsToSort.TOTAL_PARTITIONS));
@@ -202,4 +255,5 @@ class ClusterServiceTest {
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getPartitionCount).isSorted();
   }
+
 }

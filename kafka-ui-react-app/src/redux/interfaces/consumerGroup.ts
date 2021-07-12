@@ -1,10 +1,8 @@
 import { ConsumerGroup, ConsumerGroupDetails } from 'generated-sources';
 
-export type ConsumerGroupID = ConsumerGroup['consumerGroupId'];
+export type ConsumerGroupID = ConsumerGroup['groupId'];
 
-export interface ConsumerGroupDetailedInfo
-  extends ConsumerGroup,
-    ConsumerGroupDetails {}
+export type ConsumerGroupDetailedInfo = ConsumerGroupDetails;
 
 export interface ConsumerGroupsState {
   byID: { [consumerGroupID: string]: ConsumerGroupDetailedInfo };

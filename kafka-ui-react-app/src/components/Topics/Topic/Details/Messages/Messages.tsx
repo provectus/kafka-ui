@@ -1,6 +1,6 @@
 import 'react-datepicker/dist/react-datepicker.css';
 import React, { useCallback, useEffect, useRef } from 'react';
-import { groupBy, map, concat, maxBy } from 'lodash';
+import { groupBy, map, concat, maxBy, minBy } from 'lodash';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -10,7 +10,12 @@ import {
   TopicMessageQueryParams,
   TopicName,
 } from 'redux/interfaces';
-import { TopicMessage, Partition, SeekType } from 'generated-sources';
+import {
+  TopicMessage,
+  Partition,
+  SeekType,
+  SeekDirection,
+} from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
 import MessagesTable from './MessagesTable';
@@ -50,8 +55,9 @@ const Messages: React.FC<Props> = ({
   fetchTopicMessages,
 }) => {
   const [searchQuery, setSearchQuery] = React.useState<string>('');
-  const [searchTimestamp, setSearchTimestamp] =
-    React.useState<Date | null>(null);
+  const [searchTimestamp, setSearchTimestamp] = React.useState<Date | null>(
+    null
+  );
   const [filterProps, setFilterProps] = React.useState<FilterProps[]>([]);
   const [selectedSeekType, setSelectedSeekType] = React.useState<SeekType>(
     SeekType.OFFSET
@@ -71,6 +77,8 @@ const Messages: React.FC<Props> = ({
       setQueryParams({ ...queryParams, ...query }),
     1000
   );
+  const [selectedSeekDirection, setSelectedSeekDirection] =
+    React.useState<SeekDirection>(SeekDirection.FORWARD);
 
   const prevSearchTimestamp = usePrevious(searchTimestamp);
 
@@ -81,7 +89,10 @@ const Messages: React.FC<Props> = ({
     }));
     const messageUniqs: FilterProps[] = map(
       groupBy(messages, 'partition'),
-      (v) => maxBy(v, 'offset')
+      (v) =>
+        selectedSeekDirection === SeekDirection.FORWARD
+          ? maxBy(v, 'offset')
+          : minBy(v, 'offset')
     ).map((v) => ({
       offset: v ? v.offset : 0,
       partition: v ? v.partition : 0,
@@ -194,6 +205,23 @@ const Messages: React.FC<Props> = ({
     );
   };
 
+  const toggleSeekDirection = () => {
+    const nextSeekDirectionValue =
+      selectedSeekDirection === SeekDirection.FORWARD
+        ? SeekDirection.BACKWARD
+        : SeekDirection.FORWARD;
+    setSelectedSeekDirection(nextSeekDirectionValue);
+
+    debouncedCallback({
+      seekDirection: nextSeekDirectionValue,
+    });
+
+    fetchTopicMessages(clusterName, topicName, {
+      ...queryParams,
+      seekDirection: nextSeekDirectionValue,
+    });
+  };
+
   if (!isFetched) {
     return <PageLoader />;
   }
@@ -270,7 +298,20 @@ const Messages: React.FC<Props> = ({
         </div>
       </div>
       <div className="columns">
-        <div className="column is-full" style={{ textAlign: 'right' }}>
+        <div className="column is-half">
+          <div className="field">
+            <input
+              id="switchRoundedDefault"
+              type="checkbox"
+              name="switchRoundedDefault"
+              className="switch is-rounded"
+              checked={selectedSeekDirection === SeekDirection.BACKWARD}
+              onChange={toggleSeekDirection}
+            />
+            <label htmlFor="switchRoundedDefault">Newest first</label>
+          </div>
+        </div>
+        <div className="column is-half" style={{ textAlign: 'right' }}>
           <input
             type="submit"
             className="button is-primary"
