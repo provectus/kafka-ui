@@ -1310,10 +1310,30 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/streamtopology/{applicationId}:
+  /api/clusters/{clusterName}/streamtopologies:
     get:
       tags:
-        - StreamTopology
+        - StreamTopologies
+      summary: get stream applications
+      operationId: getStreamApplications
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamApplications'
+
+  /api/clusters/{clusterName}/streamtopologies/{applicationId}:
+    get:
+      tags:
+        - StreamTopologies
       summary: get stream topology
       operationId: getStreamTopology
       parameters:
@@ -1326,7 +1346,7 @@ paths:
           in: path
           required: true
           schema:
-            type: integer
+            type: string
       responses:
         200:
           description: OK
@@ -2281,3 +2301,11 @@ components:
           type: integer
         topology:
           $ref: '#/components/schemas/TopologyGraph'
+
+    StreamApplications:
+      type: object
+      properties:
+        applicationIds:
+          type: array
+          items:
+            type: string
