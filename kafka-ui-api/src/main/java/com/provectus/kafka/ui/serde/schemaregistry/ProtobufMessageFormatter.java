@@ -4,7 +4,6 @@ import com.google.protobuf.Message;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaUtils;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufDeserializer;
-import java.util.Map;
 import lombok.SneakyThrows;
 
 public class ProtobufMessageFormatter implements MessageFormatter {
@@ -16,12 +15,9 @@ public class ProtobufMessageFormatter implements MessageFormatter {
 
   @Override
   @SneakyThrows
-  public Object format(String topic, byte[] value) {
-    if (value != null) {
-      final Message message = protobufDeserializer.deserialize(topic, value);
-      return ProtobufSchemaUtils.toJson(message);
-    } else {
-      return Map.of();
-    }
+  public String format(String topic, byte[] value) {
+    final Message message = protobufDeserializer.deserialize(topic, value);
+    byte[] jsonBytes = ProtobufSchemaUtils.toJson(message);
+    return new String(jsonBytes);
   }
 }

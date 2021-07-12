@@ -6,7 +6,7 @@ import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import {
   ConsumerGroup,
   ConsumerGroupDetails,
-  ConsumerTopicPartitionDetail,
+  ConsumerGroupTopicPartition,
 } from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -16,8 +16,7 @@ import ListItem from './ListItem';
 
 export interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
-  consumerGroupId: ConsumerGroupID;
-  consumers?: ConsumerTopicPartitionDetail[];
+  consumers?: ConsumerGroupTopicPartition[];
   isFetched: boolean;
   isDeleted: boolean;
   fetchConsumerGroupDetails: (
@@ -29,7 +28,7 @@ export interface Props extends ConsumerGroup, ConsumerGroupDetails {
 
 const Details: React.FC<Props> = ({
   clusterName,
-  consumerGroupId,
+  groupId,
   consumers,
   isFetched,
   isDeleted,
@@ -37,8 +36,8 @@ const Details: React.FC<Props> = ({
   deleteConsumerGroup,
 }) => {
   React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, consumerGroupId);
-  }, [fetchConsumerGroupDetails, clusterName, consumerGroupId]);
+    fetchConsumerGroupDetails(clusterName, groupId);
+  }, [fetchConsumerGroupDetails, clusterName, groupId]);
   const items = consumers || [];
   const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
     React.useState<boolean>(false);
@@ -46,7 +45,7 @@ const Details: React.FC<Props> = ({
 
   const onDelete = () => {
     setIsConfirmationModelVisible(false);
-    deleteConsumerGroup(clusterName, consumerGroupId);
+    deleteConsumerGroup(clusterName, groupId);
   };
   React.useEffect(() => {
     if (isDeleted) {
@@ -66,7 +65,7 @@ const Details: React.FC<Props> = ({
               },
             ]}
           >
-            {consumerGroupId}
+            {groupId}
           </Breadcrumb>
         </div>
       </div>

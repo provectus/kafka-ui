@@ -22,12 +22,12 @@ const updateConsumerGroupsList = (
       ...memo,
       byID: {
         ...memo.byID,
-        [consumerGroup.consumerGroupId]: {
-          ...memo.byID[consumerGroup.consumerGroupId],
+        [consumerGroup.groupId]: {
+          ...memo.byID[consumerGroup.groupId],
           ...consumerGroup,
         },
       },
-      allIDs: [...memo.allIDs, consumerGroup.consumerGroupId],
+      allIDs: [...memo.allIDs, consumerGroup.groupId],
     }),
     initialMemo
   );

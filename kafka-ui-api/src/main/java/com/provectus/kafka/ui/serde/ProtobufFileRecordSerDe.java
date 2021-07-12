@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.serde;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
@@ -14,16 +13,17 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
+import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
+//TODO: currently we assume that keys for this serde are always string - need to discuss if it is ok
 public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ProtobufSchema protobufSchema;
   private final ObjectMapper objectMapper;
@@ -42,33 +42,45 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public Tuple2<String, Object> deserialize(ConsumerRecord<Bytes, Bytes> msg) {
+  public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      final var message = DynamicMessage.parseFrom(
-          protobufSchema.toDescriptor(),
-          new ByteArrayInputStream(msg.value().get())
-      );
-      byte[] bytes = ProtobufSchemaUtils.toJson(message);
-      return Tuples.of(
-          msg.key() != null ? new String(msg.key().get()) : "",
-          parseJson(bytes)
+      return new DeserializedKeyValue(
+          msg.key() != null ? new String(msg.key().get()) : null,
+          msg.value() != null ? parse(msg.value().get()) : null
       );
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
   }
 
+  @SneakyThrows
+  private String parse(byte[] value) {
+    DynamicMessage protoMsg = DynamicMessage.parseFrom(
+        protobufSchema.toDescriptor(),
+        new ByteArrayInputStream(value)
+    );
+    byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
+    return new String(jsonFromProto);
+  }
+
   @Override
-  public ProducerRecord<byte[], byte[]> serialize(String topic, byte[] key, byte[] data,
-                                                  Optional<Integer> partition) {
+  public ProducerRecord<byte[], byte[]> serialize(String topic,
+                                                  @Nullable String key,
+                                                  @Nullable String data,
+                                                  @Nullable Integer partition) {
+    if (data == null) {
+      return new ProducerRecord<>(topic, partition, Objects.requireNonNull(key).getBytes(), null);
+    }
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {
-      JsonFormat.parser().merge(new String(data), builder);
+      JsonFormat.parser().merge(data, builder);
       final DynamicMessage message = builder.build();
-      return partition
-          .map(p -> new ProducerRecord<>(topic, p, key, message.toByteArray()))
-          .orElseGet(() -> new ProducerRecord<>(topic, key, message.toByteArray()));
-
+      return new ProducerRecord<>(
+          topic,
+          partition,
+          Optional.ofNullable(key).map(String::getBytes).orElse(null),
+          message.toByteArray()
+      );
     } catch (Throwable e) {
       throw new RuntimeException("Failed to merge record for topic " + topic, e);
     }
@@ -94,10 +106,5 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     return new TopicMessageSchema()
         .key(keySchema)
         .value(valueSchema);
-  }
-
-  private Object parseJson(byte[] bytes) throws IOException {
-    return objectMapper.readValue(bytes, new TypeReference<Map<String, Object>>() {
-    });
   }
 }

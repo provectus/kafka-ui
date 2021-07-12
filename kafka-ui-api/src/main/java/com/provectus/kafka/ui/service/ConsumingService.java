@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
@@ -14,7 +13,6 @@ import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -108,31 +106,8 @@ public class ConsumingService {
     if (StringUtils.isEmpty(query)) {
       return true;
     }
-
-    Object content = message.getContent();
-    JsonNode tree = objectMapper.valueToTree(content);
-    return treeContainsValue(tree, query);
-  }
-
-  private boolean treeContainsValue(JsonNode tree, String query) {
-    LinkedList<JsonNode> nodesForSearch = new LinkedList<>();
-    nodesForSearch.add(tree);
-
-    while (!nodesForSearch.isEmpty()) {
-      JsonNode node = nodesForSearch.removeFirst();
-
-      if (node.isContainerNode()) {
-        node.elements().forEachRemaining(nodesForSearch::add);
-        continue;
-      }
-
-      String nodeValue = node.asText();
-      if (nodeValue.contains(query)) {
-        return true;
-      }
-    }
-
-    return false;
+    return (StringUtils.isNotEmpty(message.getKey()) && message.getKey().contains(query))
+         || (StringUtils.isNotEmpty(message.getContent()) && message.getContent().contains(query));
   }
 
 }

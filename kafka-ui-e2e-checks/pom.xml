@@ -11,9 +11,11 @@
 
     <artifactId>kafka-ui-e2e-checks</artifactId>
     <properties>
+        <kafka-ui-contract>0.1.1-SNAPSHOT</kafka-ui-contract>
         <junit.version>5.7.0</junit.version>
         <aspectj.version>1.9.6</aspectj.version>
         <allure.version>2.13.7</allure.version>
+        <json-smart.version>1.1.1</json-smart.version>
         <testcontainers.version>1.15.2</testcontainers.version>
         <selenide.version>5.16.2</selenide.version>
         <assertj.version>3.17.1</assertj.version>
@@ -32,6 +34,11 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>${json-smart.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
@@ -140,6 +147,12 @@
             <groupId>io.qameta.allure.plugins</groupId>
             <artifactId>screen-diff-plugin</artifactId>
             <version>${allure.screendiff-plugin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.provectus</groupId>
+            <artifactId>kafka-ui-contract</artifactId>
+            <version>${kafka-ui-contract}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>

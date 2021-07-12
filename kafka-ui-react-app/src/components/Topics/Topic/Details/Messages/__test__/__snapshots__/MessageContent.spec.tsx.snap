@@ -2,7 +2,7 @@
 
 exports[`MessageContent when it is folded matches the snapshot 1`] = `
 <div
-  className="is-flex is-flex-direction-column is-align-items-center"
+  className="is-flex is-flex-direction-column"
 >
   <p
     className="has-content-overflow-ellipsis"
@@ -32,11 +32,10 @@ Amet officia eu veni...
 
 exports[`MessageContent when it is unfolded matches the snapshot 1`] = `
 <div
-  className="is-flex is-flex-direction-column is-align-items-center"
+  className="is-flex is-flex-direction-column"
 >
-  <JSONTree
-    collectionLimit={50}
-    data="{
+  <FullMessage
+    message="{
   \\"_id\\": \\"609fab8aed527f514f4e648d\\",
   \\"name\\": \\"in nostrud\\",
   \\"desc\\": \\"Dolore nostrud commodo magna velit ut magna voluptate sint aute. Excepteur aute culpa culpa dolor ipsum. Tempor est ut officia tempor laborum consectetur.
@@ -50,41 +49,6 @@ Cupidatat deserunt mollit tempor aliqua. Fugiat ullamco magna pariatur quis null
   \\"degreee\\": \\"master\\",
   \\"degreeeee\\": \\"bachelor\\"
 }"
-    getItemString={[Function]}
-    hideRoot={true}
-    invertTheme={true}
-    isCustomNode={[Function]}
-    keyPath={
-      Array [
-        "root",
-      ]
-    }
-    labelRenderer={[Function]}
-    postprocessValue={[Function]}
-    shouldExpandNode={[Function]}
-    theme={
-      Object {
-        "author": "seth wright (http://sethawright.com)",
-        "base00": "#1d1f21",
-        "base01": "#282a2e",
-        "base02": "#373b41",
-        "base03": "#969896",
-        "base04": "#b4b7b4",
-        "base05": "#c5c8c6",
-        "base06": "#e0e0e0",
-        "base07": "#ffffff",
-        "base08": "#CC342B",
-        "base09": "#F96A38",
-        "base0A": "#FBA922",
-        "base0B": "#198844",
-        "base0C": "#3971ED",
-        "base0D": "#3971ED",
-        "base0E": "#A36AC7",
-        "base0F": "#3971ED",
-        "scheme": "google",
-      }
-    }
-    valueRenderer={[Function]}
   />
 </div>
 `;

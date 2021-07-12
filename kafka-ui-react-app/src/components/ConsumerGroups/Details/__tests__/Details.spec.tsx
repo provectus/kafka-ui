@@ -15,15 +15,13 @@ describe('Details component', () => {
   const setupWrapper = (props?: Partial<Props>) => (
     <Details
       clusterName="local"
-      clusterId="local"
-      consumerGroupId="test"
+      groupId="test"
       isFetched
       isDeleted={false}
       fetchConsumerGroupDetails={jest.fn()}
       deleteConsumerGroup={jest.fn()}
       consumers={[
         {
-          groupId: 'messages-consumer',
           consumerId:
             'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0',
           topic: 'messages',
@@ -34,7 +32,6 @@ describe('Details component', () => {
           messagesBehind: 0,
         },
         {
-          groupId: 'messages-consumer',
           consumerId:
             'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d1',
           topic: 'messages',
