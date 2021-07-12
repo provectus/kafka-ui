@@ -7,6 +7,7 @@ import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.serializers.KafkaAvroSerializer;
+import io.confluent.kafka.serializers.KafkaAvroSerializerConfig;
 import java.io.IOException;
 import java.util.Map;
 import org.apache.kafka.common.serialization.Serializer;
@@ -23,8 +24,14 @@ public class AvroMessageReader extends MessageReader<Object> {
   @Override
   protected Serializer<Object> createSerializer(SchemaRegistryClient client) {
     var serializer = new KafkaAvroSerializer(client);
-    // need to call configure to set isKey property
-    serializer.configure(Map.of("schema.registry.url", "wontbeused"), isKey);
+    serializer.configure(
+        Map.of(
+            "schema.registry.url", "wontbeused",
+            KafkaAvroSerializerConfig.AUTO_REGISTER_SCHEMAS, false,
+            KafkaAvroSerializerConfig.USE_LATEST_VERSION, true
+        ),
+        isKey
+    );
     return serializer;
   }
 
