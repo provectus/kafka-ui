@@ -34,9 +34,11 @@ import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Flux;
 
 @Log4j2
+@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 class RecordEmitterTest extends AbstractBaseTest {
 
   static final int PARTITIONS = 5;

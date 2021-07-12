@@ -113,9 +113,9 @@ public class ConsumingService {
       return true;
     }
 
-    final TopicMessage topicMessage = message.getMessage();
-    return (StringUtils.isNotEmpty(topicMessage.getKey()) && topicMessage.getKey().contains(query))
-        || (StringUtils.isNotEmpty(topicMessage.getContent()) && topicMessage.getContent().contains(query));
+    final TopicMessage msg = message.getMessage();
+    return (StringUtils.isNotEmpty(msg.getKey()) && msg.getKey().contains(query))
+        || (StringUtils.isNotEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
 }

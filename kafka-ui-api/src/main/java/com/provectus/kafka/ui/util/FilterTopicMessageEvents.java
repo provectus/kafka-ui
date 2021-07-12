@@ -16,7 +16,7 @@ public class FilterTopicMessageEvents implements Predicate<TopicMessageEvent> {
   public boolean test(TopicMessageEvent event) {
     if (event.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE)) {
       final int i = processed.incrementAndGet();
-      if (i >= limit) {
+      if (i > limit) {
         return false;
       }
     }

@@ -156,9 +156,7 @@ public class ClusterService {
   public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
     return clustersStorage.getClusterByName(name)
         .flatMap(c ->
-            Optional.ofNullable(
-                c.getTopics().get(topicName)
-            ).map(
+            Optional.ofNullable(c.getTopics()).map(l -> l.get(topicName)).map(
                 t -> t.toBuilder().partitions(
                     kafkaService.getTopicPartitions(c, t)
                 ).build()
