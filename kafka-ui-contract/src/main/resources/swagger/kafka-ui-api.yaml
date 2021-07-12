@@ -1481,6 +1481,8 @@ components:
           type: integer
         underReplicatedPartitions:
           type: integer
+        cleanUpPolicy:
+          type: string
         partitions:
           type: array
           items:
