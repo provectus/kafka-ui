@@ -4,8 +4,10 @@ import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,8 +51,10 @@ public class BackwardRecordEmitter
       ) {
         sendPhase(sink, "Created consumer");
 
-        final Map<TopicPartition, Long> partitionsOffsets =
-            new TreeMap<>(offsetsSeek.getPartitionsOffsets(consumer));
+        SortedMap<TopicPartition, Long> partitionsOffsets =
+            new TreeMap<>(Comparator.comparingInt(TopicPartition::partition));
+        partitionsOffsets.putAll(offsetsSeek.getPartitionsOffsets(consumer));
+
         sendPhase(sink, "Requested partitions offsets");
         log.debug("partition offsets: {}", partitionsOffsets);
         var waitingOffsets =
