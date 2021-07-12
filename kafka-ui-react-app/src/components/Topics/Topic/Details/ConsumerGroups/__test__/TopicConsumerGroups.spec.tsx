@@ -40,7 +40,6 @@ describe('Details', () => {
         topicName={mockTopicName}
       />
     );
-
     expect(component.text()).toContain('No active consumer groups');
   });
 
