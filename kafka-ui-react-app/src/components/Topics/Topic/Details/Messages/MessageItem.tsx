@@ -24,7 +24,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
 }) => {
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
-    (content as Record<string, string>) || ''
+    content || ''
   );
   return (
     <tr>
@@ -33,7 +33,7 @@ const MessageItem: React.FC<MessageItemProp> = ({
       <td style={{ width: 150 }}>{offset}</td>
       <td style={{ width: 100 }}>{partition}</td>
       <td style={{ wordBreak: 'break-word' }}>
-        <MessageContent message={JSON.stringify(content, null, '\t')} />
+        {content && <MessageContent message={content} />}
       </td>
       <td className="has-text-right">
         <Dropdown

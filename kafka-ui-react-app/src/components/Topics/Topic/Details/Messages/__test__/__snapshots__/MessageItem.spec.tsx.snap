@@ -38,10 +38,7 @@ exports[`MessageItem when content is defined matches snapshot 1`] = `
     }
   >
     <MessageContent
-      message="{
-	\\"foo\\": \\"bar\\",
-	\\"key\\": \\"val\\"
-}"
+      message="{\\"foo\\":\\"bar\\",\\"key\\":\\"val\\"}"
     />
   </td>
   <td
@@ -110,9 +107,7 @@ exports[`MessageItem when content is undefined matches snapshot 1`] = `
         "wordBreak": "break-word",
       }
     }
-  >
-    <MessageContent />
-  </td>
+  />
   <td
     className="has-text-right"
   >

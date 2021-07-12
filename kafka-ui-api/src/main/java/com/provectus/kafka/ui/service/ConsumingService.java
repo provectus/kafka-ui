@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirection;
+import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
@@ -112,30 +113,9 @@ public class ConsumingService {
       return true;
     }
 
-    Object content = message.getMessage().getContent();
-    JsonNode tree = objectMapper.valueToTree(content);
-    return treeContainsValue(tree, query);
-  }
-
-  private boolean treeContainsValue(JsonNode tree, String query) {
-    LinkedList<JsonNode> nodesForSearch = new LinkedList<>();
-    nodesForSearch.add(tree);
-
-    while (!nodesForSearch.isEmpty()) {
-      JsonNode node = nodesForSearch.removeFirst();
-
-      if (node.isContainerNode()) {
-        node.elements().forEachRemaining(nodesForSearch::add);
-        continue;
-      }
-
-      String nodeValue = node.asText();
-      if (nodeValue.contains(query)) {
-        return true;
-      }
-    }
-
-    return false;
+    final TopicMessage topicMessage = message.getMessage();
+    return (StringUtils.isNotEmpty(topicMessage.getKey()) && topicMessage.getKey().contains(query))
+        || (StringUtils.isNotEmpty(topicMessage.getContent()) && topicMessage.getContent().contains(query));
   }
 
 }

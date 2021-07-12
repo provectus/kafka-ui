@@ -41,8 +41,11 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
               <thead>
                 <tr>
                   <th>Consumer group ID</th>
-                  <th>Num of consumers</th>
+                  <th>Num of members</th>
                   <th>Num of topics</th>
+                  <th>Messages behind</th>
+                  <th>Coordinator</th>
+                  <th>State</th>
                 </tr>
               </thead>
               <tbody>
@@ -50,11 +53,11 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
                   .filter(
                     (consumerGroup) =>
                       !searchText ||
-                      consumerGroup?.consumerGroupId?.indexOf(searchText) >= 0
+                      consumerGroup?.groupId?.indexOf(searchText) >= 0
                   )
                   .map((consumerGroup) => (
                     <ListItem
-                      key={consumerGroup.consumerGroupId}
+                      key={consumerGroup.groupId}
                       consumerGroup={consumerGroup}
                     />
                   ))}

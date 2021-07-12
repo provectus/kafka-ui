@@ -228,8 +228,8 @@ const Messages: React.FC<Props> = ({
 
   return (
     <div>
-      <div className="columns">
-        <div className="column is-one-fifth">
+      <div className="columns is-align-items-flex-end">
+        <div className="column is-3">
           <label className="label">Partitions</label>
           <MultiSelect
             options={partitions.map((p) => ({
@@ -242,7 +242,7 @@ const Messages: React.FC<Props> = ({
             labelledBy="Select partitions"
           />
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-2">
           <label className="label">Seek Type</label>
           <div className="select is-block">
             <select
@@ -256,7 +256,7 @@ const Messages: React.FC<Props> = ({
             </select>
           </div>
         </div>
-        <div className="column is-one-fifth">
+        <div className="column is-2">
           {selectedSeekType === SeekType.OFFSET ? (
             <>
               <label className="label">Offset</label>
@@ -284,7 +284,7 @@ const Messages: React.FC<Props> = ({
             </>
           )}
         </div>
-        <div className="column is-two-fifths">
+        <div className="column is-3">
           <label className="label">Search</label>
           <input
             id="searchText"
@@ -294,6 +294,13 @@ const Messages: React.FC<Props> = ({
             placeholder="Search"
             value={searchQuery}
             onChange={handleQueryChange}
+          />
+        </div>
+        <div className="column is-2">
+          <input
+            type="submit"
+            className="button is-primary is-fullwidth"
+            onClick={handleFiltersSubmit}
           />
         </div>
       </div>
@@ -310,13 +317,6 @@ const Messages: React.FC<Props> = ({
             />
             <label htmlFor="switchRoundedDefault">Newest first</label>
           </div>
-        </div>
-        <div className="column is-half" style={{ textAlign: 'right' }}>
-          <input
-            type="submit"
-            className="button is-primary"
-            onClick={handleFiltersSubmit}
-          />
         </div>
       </div>
       <MessagesTable messages={messages} onNext={onNext} />

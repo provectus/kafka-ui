@@ -9,11 +9,11 @@ import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerGroupOffsetsReset;
 import com.provectus.kafka.ui.model.PartitionOffset;
-import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.service.ClusterService;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.OffsetsResetService;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -56,11 +56,14 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<TopicConsumerGroups>> getTopicConsumerGroups(
+  public Mono<ResponseEntity<Flux<ConsumerGroup>>> getTopicConsumerGroups(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return clusterService.getTopicConsumerGroupDetail(clusterName, topicName)
-        .map(ResponseEntity::ok);
+    return clusterService.getConsumerGroups(clusterName, Optional.of(topicName))
+        .map(Flux::fromIterable)
+        .map(ResponseEntity::ok)
+        .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
+
 
   @Override
   public Mono<ResponseEntity<Void>> resetConsumerGroupOffsets(String clusterName, String group,

@@ -51,5 +51,7 @@ export const BYTES_IN_GB = 1_073_741_824;
 export const PER_PAGE = 25;
 
 export const GIT_REPO_LINK = 'https://github.com/provectus/kafka-ui';
+export const GIT_REPO_LATEST_RELEASE_LINK =
+  'https://api.github.com/repos/provectus/kafka-ui/releases/latest';
 export const GIT_TAG = process.env.REACT_APP_TAG;
 export const GIT_COMMIT = process.env.REACT_APP_COMMIT;

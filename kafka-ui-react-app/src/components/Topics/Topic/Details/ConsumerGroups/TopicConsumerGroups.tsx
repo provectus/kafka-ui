@@ -1,15 +1,13 @@
 import React from 'react';
-import {
-  Topic,
-  TopicDetails,
-  ConsumerTopicPartitionDetail,
-} from 'generated-sources';
+import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
+import ConsumerGroupStateTag from 'components/common/ConsumerGroupState/ConsumerGroupStateTag';
+import { useHistory } from 'react-router';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
-  consumerGroups: ConsumerTopicPartitionDetail[];
+  consumerGroups: ConsumerGroup[];
   fetchTopicConsumerGroups(
     clusterName: ClusterName,
     topicName: TopicName
@@ -26,31 +24,38 @@ const TopicConsumerGroups: React.FC<Props> = ({
     fetchTopicConsumerGroups(clusterName, topicName);
   }, []);
 
+  const history = useHistory();
+  function goToConsumerGroupDetails(consumer: ConsumerGroup) {
+    history.push(`consumer-groups/${consumer.groupId}`);
+  }
+
   return (
     <div className="box">
       {consumerGroups.length > 0 ? (
         <table className="table is-striped is-fullwidth">
           <thead>
             <tr>
-              <th>Group ID</th>
-              <th>Consumer ID</th>
-              <th>Host</th>
-              <th>Partition</th>
+              <th>Consumer group ID</th>
+              <th>Num of members</th>
               <th>Messages behind</th>
-              <th>Current offset</th>
-              <th>End offset</th>
+              <th>Coordinator</th>
+              <th>State</th>
             </tr>
           </thead>
           <tbody>
             {consumerGroups.map((consumer) => (
-              <tr key={consumer.consumerId}>
+              <tr
+                key={consumer.groupId}
+                className="is-clickable"
+                onClick={() => goToConsumerGroupDetails(consumer)}
+              >
                 <td>{consumer.groupId}</td>
-                <td>{consumer.consumerId}</td>
-                <td>{consumer.host}</td>
-                <td>{consumer.partition}</td>
+                <td>{consumer.members}</td>
                 <td>{consumer.messagesBehind}</td>
-                <td>{consumer.currentOffset}</td>
-                <td>{consumer.endOffset}</td>
+                <td>{consumer.coordinator?.id}</td>
+                <td>
+                  <ConsumerGroupStateTag state={consumer.state} />
+                </td>
               </tr>
             ))}
           </tbody>

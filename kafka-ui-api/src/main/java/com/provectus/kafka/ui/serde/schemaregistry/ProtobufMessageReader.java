@@ -9,7 +9,9 @@ import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializer;
+import io.confluent.kafka.serializers.protobuf.KafkaProtobufSerializerConfig;
 import java.io.IOException;
+import java.util.Map;
 import org.apache.kafka.common.serialization.Serializer;
 
 public class ProtobufMessageReader extends MessageReader<Message> {
@@ -22,18 +24,27 @@ public class ProtobufMessageReader extends MessageReader<Message> {
 
   @Override
   protected Serializer<Message> createSerializer(SchemaRegistryClient client) {
-    return new KafkaProtobufSerializer<>(client);
+    var serializer = new KafkaProtobufSerializer<>(client);
+    serializer.configure(
+        Map.of(
+            "schema.registry.url", "wontbeused",
+            KafkaProtobufSerializerConfig.AUTO_REGISTER_SCHEMAS, false,
+            KafkaProtobufSerializerConfig.USE_LATEST_VERSION, true
+        ),
+        isKey
+    );
+    return serializer;
   }
 
   @Override
-  protected Message read(byte[] value, ParsedSchema schema) {
+  protected Message read(String value, ParsedSchema schema) {
     ProtobufSchema protobufSchema = (ProtobufSchema) schema;
     DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
     try {
-      JsonFormat.parser().merge(new String(value), builder);
+      JsonFormat.parser().merge(value, builder);
       return builder.build();
     } catch (Throwable e) {
-      throw new RuntimeException("Failed to merge record for topic " + topic, e);
+      throw new RuntimeException("Failed to serialize record for topic " + topic, e);
     }
   }
 

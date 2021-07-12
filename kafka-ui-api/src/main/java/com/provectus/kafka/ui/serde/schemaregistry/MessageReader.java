@@ -11,7 +11,7 @@ public abstract class MessageReader<T> {
   protected final Serializer<T> serializer;
   protected final String topic;
   protected final boolean isKey;
-  private final ParsedSchema schema;
+  protected final ParsedSchema schema;
 
   protected MessageReader(String topic, boolean isKey, SchemaRegistryClient client,
                           SchemaMetadata schema) throws IOException, RestClientException {
@@ -23,10 +23,10 @@ public abstract class MessageReader<T> {
 
   protected abstract Serializer<T> createSerializer(SchemaRegistryClient client);
 
-  public byte[] read(byte[] value) {
+  public byte[] read(String value) {
     final T read = this.read(value, schema);
     return this.serializer.serialize(topic, read);
   }
 
-  protected abstract T read(byte[] value, ParsedSchema schema);
+  protected abstract T read(String value, ParsedSchema schema);
 }

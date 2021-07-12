@@ -16,7 +16,7 @@ const MessagesTable: React.FC<MessagesTableProp> = ({ messages, onNext }) => {
 
   return (
     <>
-      <table className="table is-fullwidth">
+      <table className="table is-fullwidth is-narrow">
         <thead>
           <tr>
             <th>Timestamp</th>
