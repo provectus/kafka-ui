@@ -1,0 +1,3 @@
+"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
+"passed","Mon Jul 12 16:53:03 GMT 2021","Mon Jul 12 16:53:04 GMT 2021","1035","","com.provectus.kafka.ui.SmokeTests","","com.provectus.kafka.ui.SmokeTests","mainPageLoads","main page should load",""
+"passed","Mon Jul 12 16:52:50 GMT 2021","Mon Jul 12 16:53:03 GMT 2021","13582","","com.provectus.kafka.ui.topics.TopicTests","","com.provectus.kafka.ui.topics.TopicTests","createTopic","should create a topic",""
