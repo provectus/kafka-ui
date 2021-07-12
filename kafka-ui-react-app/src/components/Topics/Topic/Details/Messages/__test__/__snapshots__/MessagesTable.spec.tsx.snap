@@ -3,7 +3,7 @@
 exports[`MessagesTable when topic contains messages matches snapshot 1`] = `
 <Fragment>
   <table
-    className="table is-fullwidth"
+    className="table is-fullwidth is-narrow"
   >
     <thead>
       <tr>
