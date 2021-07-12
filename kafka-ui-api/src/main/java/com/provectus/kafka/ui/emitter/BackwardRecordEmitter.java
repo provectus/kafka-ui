@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.log4j.Log4j2;
@@ -47,8 +48,9 @@ public class BackwardRecordEmitter
                )
       ) {
         sendPhase(sink, "Created consumer");
+
         final Map<TopicPartition, Long> partitionsOffsets =
-            offsetsSeek.getPartitionsOffsets(consumer);
+            new TreeMap<>(offsetsSeek.getPartitionsOffsets(consumer));
         sendPhase(sink, "Requested partitions offsets");
         log.debug("partition offsets: {}", partitionsOffsets);
         var waitingOffsets =
