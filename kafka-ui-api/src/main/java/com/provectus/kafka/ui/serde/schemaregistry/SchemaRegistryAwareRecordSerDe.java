@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
@@ -22,6 +23,7 @@ import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -66,11 +68,24 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     List<SchemaProvider> schemaProviders =
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
     //TODO add auth
+
+    Map<String, String> configs = new HashMap<>();
+    if (cluster.getSchemaRegistry().isBasicAuthEnabled()) {
+      configs.put("basic.auth.credentials.source", "USER_INFO");
+      String username = cluster.getSchemaRegistry().getUsername();
+      String password = cluster.getSchemaRegistry().getPassword();
+      if (username != null && password != null) {
+        configs.put("basic.auth.user.info", username + ":" + password);
+      } else {
+        throw new ValidationException("If basic authentication is enabled username and password must be specified");
+      }
+    }
+
     return new CachedSchemaRegistryClient(
-        Collections.singletonList(cluster.getSchemaRegistry()),
+        Collections.singletonList(cluster.getSchemaRegistry().getAddress()),
         CLIENT_IDENTITY_MAP_CAPACITY,
         schemaProviders,
-        Collections.emptyMap()
+        configs
     );
   }
 
@@ -181,7 +196,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry()).resolve(Integer.toString(schema.getId()));
+    URI basePath = new URI(cluster.getSchemaRegistry().getAddress())
+        .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = Objects.requireNonNull(schemaRegistryClient)
         .getSchemaById(schema.getId());
 

@@ -7,9 +7,11 @@ import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.DuplicateEntityException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
 import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.NewSchemaSubject;
 import com.provectus.kafka.ui.model.SchemaSubject;
@@ -25,6 +27,7 @@ import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -61,7 +64,8 @@ public class SchemaRegistryService {
   public Mono<String[]> getAllSubjectNames(String clusterName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.get()
-            .uri(cluster.getSchemaRegistry() + URL_SUBJECTS)
+            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECTS)
+            .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .bodyToMono(String[].class)
             .doOnError(log::error)
@@ -77,7 +81,8 @@ public class SchemaRegistryService {
   private Flux<Integer> getSubjectVersions(String clusterName, String schemaName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.get()
-            .uri(cluster.getSchemaRegistry() + URL_SUBJECT_VERSIONS, schemaName)
+            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT_VERSIONS, schemaName)
+            .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName))
@@ -99,7 +104,9 @@ public class SchemaRegistryService {
                                                String version) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.get()
-            .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, schemaName, version)
+            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT_BY_VERSION,
+                schemaName, version)
+            .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
@@ -140,7 +147,9 @@ public class SchemaRegistryService {
                                                          String version) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.delete()
-            .uri(cluster.getSchemaRegistry() + URL_SUBJECT_BY_VERSION, schemaName, version)
+            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT_BY_VERSION,
+                schemaName, version)
+            .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
@@ -152,7 +161,8 @@ public class SchemaRegistryService {
                                                                 String schemaName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.delete()
-            .uri(cluster.getSchemaRegistry() + URL_SUBJECT, schemaName)
+            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT, schemaName)
+            .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName))
@@ -177,8 +187,8 @@ public class SchemaRegistryService {
           return clustersStorage.getClusterByName(clusterName)
               .map(KafkaCluster::getSchemaRegistry)
               .map(
-                  schemaRegistryUrl -> checkSchemaOnDuplicate(subject, newSchema, schemaRegistryUrl)
-                      .flatMap(s -> submitNewSchema(subject, newSchema, schemaRegistryUrl))
+                  schemaRegistry -> checkSchemaOnDuplicate(subject, newSchema, schemaRegistry)
+                      .flatMap(s -> submitNewSchema(subject, newSchema, schemaRegistry))
                       .flatMap(resp -> getLatestSchemaVersionBySubject(clusterName, subject))
               )
               .orElse(Mono.error(ClusterNotFoundException::new));
@@ -188,9 +198,10 @@ public class SchemaRegistryService {
   @NotNull
   private Mono<SubjectIdResponse> submitNewSchema(String subject,
                                                   Mono<InternalNewSchema> newSchemaSubject,
-                                                  String schemaRegistryUrl) {
+                                                  InternalSchemaRegistry schemaRegistry) {
     return webClient.post()
-        .uri(schemaRegistryUrl + URL_SUBJECT_VERSIONS, subject)
+        .uri(schemaRegistry.getAddress() + URL_SUBJECT_VERSIONS, subject)
+        .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers))
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
         .retrieve()
@@ -202,9 +213,10 @@ public class SchemaRegistryService {
   @NotNull
   private Mono<SchemaSubject> checkSchemaOnDuplicate(String subject,
                                                      Mono<InternalNewSchema> newSchemaSubject,
-                                                     String schemaRegistryUrl) {
+                                                     InternalSchemaRegistry schemaRegistry) {
     return webClient.post()
-        .uri(schemaRegistryUrl + URL_SUBJECT, subject)
+        .uri(schemaRegistry.getAddress() + URL_SUBJECT, subject)
+        .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers))
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
         .retrieve()
@@ -234,7 +246,8 @@ public class SchemaRegistryService {
         .map(cluster -> {
           String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
           return webClient.put()
-              .uri(cluster.getSchemaRegistry() + configEndpoint, schemaName)
+              .uri(cluster.getSchemaRegistry().getAddress() + configEndpoint, schemaName)
+              .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
               .contentType(MediaType.APPLICATION_JSON)
               .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevel.class))
               .retrieve()
@@ -255,7 +268,8 @@ public class SchemaRegistryService {
         .map(cluster -> {
           String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
           return webClient.get()
-              .uri(cluster.getSchemaRegistry() + configEndpoint, schemaName)
+              .uri(cluster.getSchemaRegistry().getAddress() + configEndpoint, schemaName)
+              .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
               .retrieve()
               .bodyToMono(InternalCompatibilityLevel.class)
               .map(mapper::toCompatibilityLevel)
@@ -277,8 +291,9 @@ public class SchemaRegistryService {
       String clusterName, String schemaName, Mono<NewSchemaSubject> newSchemaSubject) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.post()
-            .uri(cluster.getSchemaRegistry()
+            .uri(cluster.getSchemaRegistry().getAddress()
                 + "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
+            .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .contentType(MediaType.APPLICATION_JSON)
             .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
             .retrieve()
@@ -292,5 +307,22 @@ public class SchemaRegistryService {
 
   public String formatted(String str, Object... args) {
     return new Formatter().format(str, args).toString();
+  }
+
+  private void setBasicAuthIfEnabled(InternalSchemaRegistry schemaRegistry, HttpHeaders headers) {
+    if (schemaRegistry.isBasicAuthEnabled()) {
+      if (schemaRegistry.getUsername() != null && schemaRegistry.getPassword() != null) {
+        headers.setBasicAuth(
+            schemaRegistry.getUsername(),
+            schemaRegistry.getPassword()
+        );
+      } else {
+        throw new ValidationException("If basic authentication is enabled username and password must be specified");
+      }
+    }
+  }
+
+  private void setBasicAuthIfEnabled(KafkaCluster cluster, HttpHeaders headers) {
+    setBasicAuthIfEnabled(cluster.getSchemaRegistry(), headers);
   }
 }

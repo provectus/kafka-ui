@@ -19,7 +19,7 @@ public class ClustersProperties {
     String name;
     String bootstrapServers;
     String zookeeper;
-    String schemaRegistry;
+    SchemaRegistry schemaRegistry;
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
@@ -33,6 +33,14 @@ public class ClustersProperties {
   @Data
   public static class ConnectCluster {
     String name;
+    String address;
+  }
+
+  @Data
+  public static class SchemaRegistry {
+    boolean basicAuthEnabled = false;
+    String username;
+    String password;
     String address;
   }
 }
