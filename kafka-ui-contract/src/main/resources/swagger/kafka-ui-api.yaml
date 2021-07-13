@@ -1417,6 +1417,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BrokerDiskUsage'
+        version:
+          type: string
 
     BrokerDiskUsage:
       type: object
