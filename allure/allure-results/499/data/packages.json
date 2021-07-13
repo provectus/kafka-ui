@@ -1,0 +1,43 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "children" : [ {
+    "name" : "com.provectus.kafka.ui",
+    "children" : [ {
+      "name" : "topics.TopicTests",
+      "children" : [ {
+        "name" : "createTopic",
+        "uid" : "b3e8eba1e286cc9d",
+        "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
+        "status" : "passed",
+        "time" : {
+          "start" : 1626200442677,
+          "stop" : 1626200453657,
+          "duration" : 10980
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "topics.TopicTests"
+    }, {
+      "name" : "SmokeTests",
+      "children" : [ {
+        "name" : "mainPageLoads",
+        "uid" : "b5757c630edb121e",
+        "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
+        "status" : "passed",
+        "time" : {
+          "start" : 1626200453753,
+          "stop" : 1626200454579,
+          "duration" : 826
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "0611dfeb62e4f0d51bda6611ccbad1f8"
+    } ],
+    "uid" : "com.provectus.kafka.ui"
+  } ],
+  "name" : "packages"
+}
