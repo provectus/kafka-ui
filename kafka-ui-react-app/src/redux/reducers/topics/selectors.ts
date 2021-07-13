@@ -25,6 +25,8 @@ const getTopicMessagesFetchingStatus =
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
+const getTopicMessageSchemaFetchingStatus =
+  createFetchingSelector('GET_TOPIC_SCHEMA');
 
 export const getAreTopicsFetching = createSelector(
   getTopicListFetchingStatus,
@@ -63,6 +65,11 @@ export const getTopicCreated = createSelector(
 
 export const getTopicUpdated = createSelector(
   getTopicUpdateStatus,
+  (status) => status === 'fetched'
+);
+
+export const getTopicMessageSchemaFetched = createSelector(
+  getTopicMessageSchemaFetchingStatus,
   (status) => status === 'fetched'
 );
 
@@ -141,4 +148,9 @@ export const getTopicConsumerGroups = createSelector(
   getTopicMap,
   getTopicName,
   (topics, topicName) => topics[topicName].consumerGroups || []
+);
+
+export const getMessageSchemaByTopicName = createSelector(
+  getTopicByName,
+  (topic) => topic.messageSchema
 );
