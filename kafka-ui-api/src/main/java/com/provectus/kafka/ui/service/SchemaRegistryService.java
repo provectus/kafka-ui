@@ -317,7 +317,8 @@ public class SchemaRegistryService {
             schemaRegistry.getPassword()
         );
       } else {
-        throw new ValidationException("If basic authentication is enabled username and password must be specified");
+        throw new ValidationException(
+            "If basic authentication is enabled username and password must be specified");
       }
     }
   }

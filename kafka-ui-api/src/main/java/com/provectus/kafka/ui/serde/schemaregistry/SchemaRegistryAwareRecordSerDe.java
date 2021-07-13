@@ -77,7 +77,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       if (username != null && password != null) {
         configs.put("basic.auth.user.info", username + ":" + password);
       } else {
-        throw new ValidationException("If basic authentication is enabled username and password must be specified");
+        throw new ValidationException(
+            "If basic authentication is enabled username and password must be specified");
       }
     }
 
