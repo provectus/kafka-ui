@@ -3,6 +3,7 @@ import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import ConsumerGroupStateTag from 'components/common/ConsumerGroupState/ConsumerGroupStateTag';
 import { useHistory } from 'react-router';
+import { clusterConsumerGroupsPath } from 'lib/paths';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -26,7 +27,9 @@ const TopicConsumerGroups: React.FC<Props> = ({
 
   const history = useHistory();
   function goToConsumerGroupDetails(consumer: ConsumerGroup) {
-    history.push(`consumer-groups/${consumer.groupId}`);
+    history.push(
+      `${clusterConsumerGroupsPath(clusterName)}/${consumer.groupId}`
+    );
   }
 
   return (
