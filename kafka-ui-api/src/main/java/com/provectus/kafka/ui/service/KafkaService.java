@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
@@ -261,10 +262,12 @@ public class KafkaService {
               topicData.getReplicationFactor().shortValue());
           newTopic.configs(topicData.getConfigs());
           return createTopic(adminClient, newTopic).map(v -> topicData);
-        }).flatMap(
-          topicData ->
-              getTopicsData(adminClient, Collections.singleton(topicData.getName()))
-                  .next()
+        })
+        .onErrorResume(t -> Mono.error(new TopicMetadataException(t.getMessage())))
+        .flatMap(
+            topicData ->
+                getTopicsData(adminClient, Collections.singleton(topicData.getName()))
+                    .next()
         ).switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic")))
         .flatMap(t ->
             loadTopicsConfig(adminClient, Collections.singletonList(t.getName()))
