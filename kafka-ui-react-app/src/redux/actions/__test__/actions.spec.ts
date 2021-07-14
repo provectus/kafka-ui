@@ -122,9 +122,8 @@ describe('Actions', () => {
     });
 
     it('creates a SUCCESS action', () => {
-      expect(actions.clearMessagesTopicAction.success('topic')).toEqual({
+      expect(actions.clearMessagesTopicAction.success()).toEqual({
         type: 'CLEAR_TOPIC_MESSAGES__SUCCESS',
-        payload: 'topic',
       });
     });
 

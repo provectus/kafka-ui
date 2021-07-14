@@ -1,7 +1,6 @@
 import {
   Topic,
   TopicDetails,
-  TopicMessage,
   TopicConfig,
   TopicCreation,
   GetTopicMessagesRequest,
@@ -48,7 +47,6 @@ export interface TopicsState {
   byName: { [topicName: string]: TopicWithDetailedInfo };
   allNames: TopicName[];
   totalPages: number;
-  messages: TopicMessage[];
   search: string;
   orderBy: TopicColumnsToSort | null;
   consumerGroups: ConsumerGroup[];

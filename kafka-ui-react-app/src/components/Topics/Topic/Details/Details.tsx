@@ -15,7 +15,7 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
-import MessagesContainer from './Messages/MessagesContainer';
+import Messages from './Messages/Messages';
 import SettingsContainer from './Settings/SettingsContainer';
 
 interface Props extends Topic, TopicDetails {
@@ -126,7 +126,7 @@ const Details: React.FC<Props> = ({
         <Route
           exact
           path="/ui/clusters/:clusterName/topics/:topicName/messages"
-          component={MessagesContainer}
+          component={Messages}
         />
         <Route
           exact
