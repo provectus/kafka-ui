@@ -11,7 +11,7 @@ public abstract class MessageReader<T> {
   protected final Serializer<T> serializer;
   protected final String topic;
   protected final boolean isKey;
-  private final ParsedSchema schema;
+  protected final ParsedSchema schema;
 
   protected MessageReader(String topic, boolean isKey, SchemaRegistryClient client,
                           SchemaMetadata schema) throws IOException, RestClientException {

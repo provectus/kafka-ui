@@ -1,7 +1,6 @@
 import React from 'react';
-import JSONTree from 'react-json-tree';
 
-import theme from './theme';
+import FullMessage from './FullMessage';
 
 interface MessageContentProps {
   message: string;
@@ -9,25 +8,15 @@ interface MessageContentProps {
 
 const MessageContent: React.FC<MessageContentProps> = ({ message }) => {
   const [isFolded, setIsFolded] = React.useState(message.length > 250);
-  let fullMessage: Record<string, string> | string;
-  const cutMessage = `${message.slice(0, 250)}...`;
-  try {
-    fullMessage = JSON.parse(message);
-  } catch (e) {
-    fullMessage = message;
-  }
 
   return (
-    <div className="is-flex is-flex-direction-column is-align-items-center">
+    <div className="is-flex is-flex-direction-column">
       {isFolded ? (
-        <p className="has-content-overflow-ellipsis">{cutMessage}</p>
+        <p className="has-content-overflow-ellipsis">
+          {`${message.slice(0, 250)}...`}
+        </p>
       ) : (
-        <JSONTree
-          data={fullMessage}
-          theme={theme}
-          shouldExpandNode={() => true}
-          hideRoot
-        />
+        <FullMessage message={message} />
       )}
       {isFolded && (
         <button

@@ -16,7 +16,7 @@ import ListItem from './ListItem';
 
 export interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
-  consumers?: ConsumerGroupTopicPartition[];
+  partitions?: ConsumerGroupTopicPartition[];
   isFetched: boolean;
   isDeleted: boolean;
   fetchConsumerGroupDetails: (
@@ -29,7 +29,7 @@ export interface Props extends ConsumerGroup, ConsumerGroupDetails {
 const Details: React.FC<Props> = ({
   clusterName,
   groupId,
-  consumers,
+  partitions,
   isFetched,
   isDeleted,
   fetchConsumerGroupDetails,
@@ -38,7 +38,7 @@ const Details: React.FC<Props> = ({
   React.useEffect(() => {
     fetchConsumerGroupDetails(clusterName, groupId);
   }, [fetchConsumerGroupDetails, clusterName, groupId]);
-  const items = consumers || [];
+  const items = partitions || [];
   const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
     React.useState<boolean>(false);
   const history = useHistory();

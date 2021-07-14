@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.base;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
 import com.provectus.kafka.ui.steps.Steps;
@@ -27,6 +28,7 @@ public class BaseTest {
 
   protected Steps steps = Steps.INSTANCE;
   protected Pages pages = Pages.INSTANCE;
+  protected Helpers helpers = Helpers.INSTANCE;
 
   private Screenshooter screenshooter = new Screenshooter();
 
