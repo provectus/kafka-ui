@@ -22,18 +22,19 @@ const updateConsumerGroupsList = (
       ...memo,
       byID: {
         ...memo.byID,
-        [consumerGroup.consumerGroupId]: {
-          ...memo.byID[consumerGroup.consumerGroupId],
+        [consumerGroup.groupId]: {
+          ...memo.byID[consumerGroup.groupId],
           ...consumerGroup,
         },
       },
-      allIDs: [...memo.allIDs, consumerGroup.consumerGroupId],
+      allIDs: [...memo.allIDs, consumerGroup.groupId],
     }),
     initialMemo
   );
 };
 
 const reducer = (state = initialState, action: Action): ConsumerGroupsState => {
+  let newState;
   switch (action.type) {
     case getType(actions.fetchConsumerGroupsAction.success):
       return updateConsumerGroupsList(state, action.payload);
@@ -48,6 +49,11 @@ const reducer = (state = initialState, action: Action): ConsumerGroupsState => {
           },
         },
       };
+    case getType(actions.deleteConsumerGroupAction.success):
+      newState = { ...state };
+      delete newState.byID[action.payload];
+      newState.allIDs = newState.allIDs.filter((id) => id !== action.payload);
+      return newState;
     default:
       return state;
   }

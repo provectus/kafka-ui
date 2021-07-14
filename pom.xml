@@ -20,8 +20,8 @@
 		<org.projectlombok.version>1.18.10</org.projectlombok.version>
 		<git.revision>latest</git.revision>
 		<zkclient.version>0.11</zkclient.version>
-		<kafka-clients.version>2.4.0</kafka-clients.version>
-		<node.version>v14.15.4</node.version>
+		<kafka-clients.version>2.4.1</kafka-clients.version>
+		<node.version>v14.17.1</node.version>
 		<dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
 		<frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
 		<maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
@@ -61,7 +61,7 @@
 
 	<groupId>com.provectus</groupId>
 	<artifactId>kafka-ui</artifactId>
-	<version>0.0.11-SNAPSHOT</version>
+	<version>0.1.1-SNAPSHOT</version>
 	<name>kafka-ui</name>
 	<description>Kafka metrics for UI panel</description>
 </project>
