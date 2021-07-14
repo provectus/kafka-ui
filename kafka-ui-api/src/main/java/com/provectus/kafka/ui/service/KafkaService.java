@@ -159,6 +159,7 @@ public class KafkaService {
         .onlinePartitionCount(topicsMetrics.getOnlinePartitionCount())
         .offlinePartitionCount(topicsMetrics.getOfflinePartitionCount())
         .zooKeeperStatus(ClusterUtil.convertToIntServerStatus(zookeeperStatus))
+        .version(version)
         .build();
 
     return currentCluster.toBuilder()
