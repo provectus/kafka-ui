@@ -46,6 +46,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.AlterConfigOp;
@@ -260,7 +261,12 @@ public class KafkaService {
         topicData -> {
           NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(),
               topicData.getReplicationFactor().shortValue());
-          newTopic.configs(topicData.getConfigs());
+            var filteredConfigs = topicData.getConfigs()
+                    .entrySet()
+                    .stream()
+                    .filter(e -> StringUtils.isNotEmpty(e.getKey()))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+          newTopic.configs(filteredConfigs);
           return createTopic(adminClient, newTopic).map(v -> topicData);
         })
         .onErrorResume(t -> Mono.error(new TopicMetadataException(t.getMessage())))
