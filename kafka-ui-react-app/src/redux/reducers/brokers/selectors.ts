@@ -48,3 +48,8 @@ export const getDiskUsage = createSelector(
   brokersState,
   ({ diskUsage }) => diskUsage
 );
+
+export const getVersion = createSelector(
+  brokersState,
+  ({ version }) => version
+);
