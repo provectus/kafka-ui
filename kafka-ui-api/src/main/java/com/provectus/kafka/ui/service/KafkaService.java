@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
@@ -207,11 +208,12 @@ public class KafkaService {
       List<InternalTopic> topics, Map<String, List<InternalTopicConfig>> configs) {
     return topics.stream()
         .map(t -> t.toBuilder().topicConfigs(configs.get(t.getName())).build())
-        .map(t -> t.toBuilder().cleanUpPolicy(t.getTopicConfigs().stream()
-            .filter(config -> config.getName().equals("cleanup.policy"))
-            .findFirst()
-            .orElseGet(() -> InternalTopicConfig.builder().value(null).build())
-            .getValue()).build())
+        .map(t -> t.toBuilder().cleanUpPolicy(
+            CleanupPolicy.fromString(t.getTopicConfigs().stream()
+                .filter(config -> config.getName().equals("cleanup.policy"))
+                .findFirst()
+                .orElseGet(() -> InternalTopicConfig.builder().value("unknown").build())
+                .getValue())).build())
         .collect(Collectors.toMap(
             InternalTopic::getName,
             e -> e

@@ -1486,6 +1486,11 @@ components:
           type: integer
         cleanUpPolicy:
           type: string
+          enum:
+            - DELETE
+            - COMPACT
+            - COMPACT_DELETE
+            - UNKNOWN
         partitions:
           type: array
           items:
