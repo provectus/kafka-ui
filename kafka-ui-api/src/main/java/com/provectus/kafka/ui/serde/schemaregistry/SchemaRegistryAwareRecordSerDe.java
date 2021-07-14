@@ -65,25 +65,26 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   private static SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     Objects.requireNonNull(cluster.getSchemaRegistry());
+    Objects.requireNonNull(cluster.getSchemaRegistry().getUrl());
     List<SchemaProvider> schemaProviders =
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
-    //TODO add auth
 
     Map<String, String> configs = new HashMap<>();
-    if (cluster.getSchemaRegistry().isBasicAuthEnabled()) {
-      configs.put("basic.auth.credentials.source", "USER_INFO");
-      String username = cluster.getSchemaRegistry().getUsername();
-      String password = cluster.getSchemaRegistry().getPassword();
-      if (username != null && password != null) {
-        configs.put("basic.auth.user.info", username + ":" + password);
-      } else {
-        throw new ValidationException(
-            "If basic authentication is enabled username and password must be specified");
-      }
-    }
+    String username = cluster.getSchemaRegistry().getUsername();
+    String password = cluster.getSchemaRegistry().getPassword();
 
+    if (username != null && password != null) {
+      configs.put("basic.auth.credentials.source", "USER_INFO");
+      configs.put("basic.auth.user.info", username + ":" + password);
+    } else if (username != null) {
+      throw new ValidationException(
+          "You specified username but do not specified password");
+    } else if (password != null) {
+      throw new ValidationException(
+          "You specified password but do not specified username");
+    }
     return new CachedSchemaRegistryClient(
-        Collections.singletonList(cluster.getSchemaRegistry().getAddress()),
+        Collections.singletonList(cluster.getSchemaRegistry().getUrl()),
         CLIENT_IDENTITY_MAP_CAPACITY,
         schemaProviders,
         configs
@@ -197,7 +198,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry().getAddress())
+    URI basePath = new URI(cluster.getSchemaRegistry().getUrl())
         .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = Objects.requireNonNull(schemaRegistryClient)
         .getSchemaById(schema.getId());

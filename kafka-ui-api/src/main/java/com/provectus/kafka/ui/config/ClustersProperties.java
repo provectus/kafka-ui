@@ -38,9 +38,8 @@ public class ClustersProperties {
 
   @Data
   public static class SchemaRegistry {
-    boolean basicAuthEnabled = false;
     String username;
     String password;
-    String address;
+    String url;
   }
 }

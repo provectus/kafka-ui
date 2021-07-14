@@ -64,7 +64,7 @@ public class SchemaRegistryService {
   public Mono<String[]> getAllSubjectNames(String clusterName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.get()
-            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECTS)
+            .uri(cluster.getSchemaRegistry().getUrl() + URL_SUBJECTS)
             .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .bodyToMono(String[].class)
@@ -81,7 +81,7 @@ public class SchemaRegistryService {
   private Flux<Integer> getSubjectVersions(String clusterName, String schemaName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.get()
-            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT_VERSIONS, schemaName)
+            .uri(cluster.getSchemaRegistry().getUrl() + URL_SUBJECT_VERSIONS, schemaName)
             .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
@@ -104,7 +104,7 @@ public class SchemaRegistryService {
                                                String version) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.get()
-            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT_BY_VERSION,
+            .uri(cluster.getSchemaRegistry().getUrl() + URL_SUBJECT_BY_VERSION,
                 schemaName, version)
             .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
@@ -147,7 +147,7 @@ public class SchemaRegistryService {
                                                          String version) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.delete()
-            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT_BY_VERSION,
+            .uri(cluster.getSchemaRegistry().getUrl() + URL_SUBJECT_BY_VERSION,
                 schemaName, version)
             .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
@@ -161,7 +161,7 @@ public class SchemaRegistryService {
                                                                 String schemaName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.delete()
-            .uri(cluster.getSchemaRegistry().getAddress() + URL_SUBJECT, schemaName)
+            .uri(cluster.getSchemaRegistry().getUrl() + URL_SUBJECT, schemaName)
             .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
@@ -200,7 +200,7 @@ public class SchemaRegistryService {
                                                   Mono<InternalNewSchema> newSchemaSubject,
                                                   InternalSchemaRegistry schemaRegistry) {
     return webClient.post()
-        .uri(schemaRegistry.getAddress() + URL_SUBJECT_VERSIONS, subject)
+        .uri(schemaRegistry.getUrl() + URL_SUBJECT_VERSIONS, subject)
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers))
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
@@ -215,7 +215,7 @@ public class SchemaRegistryService {
                                                      Mono<InternalNewSchema> newSchemaSubject,
                                                      InternalSchemaRegistry schemaRegistry) {
     return webClient.post()
-        .uri(schemaRegistry.getAddress() + URL_SUBJECT, subject)
+        .uri(schemaRegistry.getUrl() + URL_SUBJECT, subject)
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers))
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
@@ -246,7 +246,7 @@ public class SchemaRegistryService {
         .map(cluster -> {
           String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
           return webClient.put()
-              .uri(cluster.getSchemaRegistry().getAddress() + configEndpoint, schemaName)
+              .uri(cluster.getSchemaRegistry().getUrl() + configEndpoint, schemaName)
               .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
               .contentType(MediaType.APPLICATION_JSON)
               .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevel.class))
@@ -268,7 +268,7 @@ public class SchemaRegistryService {
         .map(cluster -> {
           String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
           return webClient.get()
-              .uri(cluster.getSchemaRegistry().getAddress() + configEndpoint, schemaName)
+              .uri(cluster.getSchemaRegistry().getUrl() + configEndpoint, schemaName)
               .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
               .retrieve()
               .bodyToMono(InternalCompatibilityLevel.class)
@@ -291,7 +291,7 @@ public class SchemaRegistryService {
       String clusterName, String schemaName, Mono<NewSchemaSubject> newSchemaSubject) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> webClient.post()
-            .uri(cluster.getSchemaRegistry().getAddress()
+            .uri(cluster.getSchemaRegistry().getUrl()
                 + "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
             .headers(headers -> setBasicAuthIfEnabled(cluster, headers))
             .contentType(MediaType.APPLICATION_JSON)
@@ -310,16 +310,17 @@ public class SchemaRegistryService {
   }
 
   private void setBasicAuthIfEnabled(InternalSchemaRegistry schemaRegistry, HttpHeaders headers) {
-    if (schemaRegistry.isBasicAuthEnabled()) {
-      if (schemaRegistry.getUsername() != null && schemaRegistry.getPassword() != null) {
-        headers.setBasicAuth(
-            schemaRegistry.getUsername(),
-            schemaRegistry.getPassword()
-        );
-      } else {
-        throw new ValidationException(
-            "If basic authentication is enabled username and password must be specified");
-      }
+    if (schemaRegistry.getUsername() != null && schemaRegistry.getPassword() != null) {
+      headers.setBasicAuth(
+          schemaRegistry.getUsername(),
+          schemaRegistry.getPassword()
+      );
+    } else if (schemaRegistry.getUsername() != null) {
+      throw new ValidationException(
+          "You specified username but do not specified password");
+    } else if (schemaRegistry.getPassword() != null) {
+      throw new ValidationException(
+          "You specified password but do not specified username");
     }
   }
 
