@@ -332,9 +332,7 @@ export const fetchTopicConsumerGroups =
           ...state.byName,
           [topicName]: {
             ...state.byName[topicName],
-            consumerGroups: {
-              ...consumerGroups,
-            },
+            consumerGroups,
           },
         },
       };

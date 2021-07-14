@@ -20,7 +20,7 @@ describe('Details component', () => {
       isDeleted={false}
       fetchConsumerGroupDetails={jest.fn()}
       deleteConsumerGroup={jest.fn()}
-      consumers={[
+      partitions={[
         {
           consumerId:
             'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0',
