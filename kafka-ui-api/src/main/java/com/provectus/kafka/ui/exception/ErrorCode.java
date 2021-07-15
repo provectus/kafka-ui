@@ -17,7 +17,8 @@ public enum ErrorCode {
   CLUSTER_NOT_FOUND(4007, HttpStatus.NOT_FOUND),
   TOPIC_NOT_FOUND(4008, HttpStatus.NOT_FOUND),
   SCHEMA_NOT_FOUND(4009, HttpStatus.NOT_FOUND),
-  CONNECT_NOT_FOUND(4010, HttpStatus.NOT_FOUND);
+  CONNECT_NOT_FOUND(4010, HttpStatus.NOT_FOUND),
+  KSQLDB_NOT_FOUND(4011, HttpStatus.NOT_FOUND);
 
   static {
     // codes uniqueness check

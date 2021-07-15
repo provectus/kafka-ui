@@ -1056,6 +1056,31 @@ paths:
         200:
           description: OK
 
+  /api/clusters/{clusterName}/ksql:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsqlCommand
+      operationId: executeKsqlCommand
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
       tags:
@@ -1820,6 +1845,16 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
+
+    KsqlCommand:
+      type: object
+      properties:
+        ksql:
+          type: string
+        streamsProperties:
+          type: string
+      required:
+        - ksql
 
     FullConnectorInfo:
       type: object
