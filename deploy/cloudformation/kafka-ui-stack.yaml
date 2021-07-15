@@ -1,0 +1,198 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  CustomSubnetId:
+    Type: String
+    Default: ""
+    Description: If you do not have a default VPC, or want to use a different VPC, specify the ID of a subnet in which to place the instance used to customize your EC2 AMI. If not specified, a subnet from your default VPC will be used.
+  CustomSecurityGroupId:
+    Type: CommaDelimitedList
+    Default: ""
+    Description: Required if you specified a custom subnet ID. Comma-delimted list of one or more IDs of security groups belonging to the VPC to associate with the instance used to customize your EC2 AMI.
+  BuildInstanceType:
+    Type: CommaDelimitedList
+    Default: "t2.micro"
+    Description: Comma-delimited list of one or more instance types to select from when building the image. Image Builder will select a type based on availability. The supplied default is compatible with the AWS Free Tier.
+  RuntimeInstanceType:
+    Type: String
+    Default: "t2.medium"
+    Description: A instance type for UI for Apache Kafka EC2 instance.
+  LatestAmiId:
+    Type: 'AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>'
+    Default: '/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2'
+  Version:
+    Type: String
+    Default: "0.1.0"
+    Description: A version number of UI for Apache Kafka.
+  RuntimeConfiguration:
+    Type: CommaDelimitedList
+    Default: ""
+    Description: A runtime configuration for UI for Apache Kafka EC2 application.
+
+
+Conditions:
+  UseCustomSubnetId: !Not [ !Equals [ !Ref CustomSubnetId, "" ] ]
+
+Resources:
+
+  InstanceRole:
+    Type: AWS::IAM::Role
+    Metadata:
+      Comment: Role to be used by instance during image build.
+    Properties:
+      ManagedPolicyArns:
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/AmazonSSMManagedInstanceCore
+        - Fn::Sub: arn:${AWS::Partition}:iam::aws:policy/EC2InstanceProfileForImageBuilder
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action:
+              - sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+        Version: "2012-10-17"
+      Path: /executionServiceEC2Role/
+
+  InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: /executionServiceEC2Role/
+      Roles:
+        - Ref: InstanceRole
+
+  UIForApacheKafkaImageInfrastructureConfiguration:
+    Type: AWS::ImageBuilder::InfrastructureConfiguration
+    Properties:
+      Name: UIForApacheKafka-Image-Infrastructure-Configuration
+      InstanceProfileName:
+        Ref: InstanceProfile
+      InstanceTypes:
+        Ref: BuildInstanceType
+      SubnetId: !If [ UseCustomSubnetId, !Ref CustomSubnetId , !Ref "AWS::NoValue" ]
+      SecurityGroupIds:
+        - !If [ UseCustomSubnetId, !Ref CustomSecurityGroupId , !Ref "AWS::NoValue" ]
+
+  InstallUIForApacheKafkaComponent:
+    Type: AWS::ImageBuilder::Component
+    Properties:
+      Name: UIForApacheKafka
+      Version: 
+        Ref: Version
+      Description: Install the latest UI for Apache Kafka.
+      ChangeDescription: First version
+      Platform: Linux
+      Data: 
+        Fn::Sub:
+          - |
+            name: InstallUIForApacheKafka
+            description: Downloads and Installs the latest UI for Apache Kafka
+            schemaVersion: 1.0
+            constants:
+              - JarSource:
+                  type: string
+                  value: https://github.com/provectus/kafka-ui/releases/download/v${AppVersion}/kafka-ui-api-${AppVersion}.jar
+            phases:
+              - name: build
+                steps:
+                  - name: InstallFolder
+                    action: ExecuteBash
+                    inputs:
+                      commands:
+                        - echo "/opt/ui-for-apache-kafka"
+                  - name: CreateInstallFolder
+                    action: CreateFolder
+                    inputs:
+                      - path: '{{ build.InstallFolder.outputs.stdout }}/libs/'
+                      - path: '{{ build.InstallFolder.outputs.stdout }}/conf/'
+                  - name: DownloadInstallScript
+                    action: WebDownload
+                    inputs:
+                      - source: '{{ JarSource }}'
+                        destination: '{{ build.InstallFolder.outputs.stdout }}/libs/ui-for-apache-kafka.jar'
+                  - name: InstallJava
+                    action: ExecuteBash
+                    inputs:
+                      commands:
+                        - rpm --import https://yum.corretto.aws/corretto.key 
+                        - curl -L -o /etc/yum.repos.d/corretto.repo https://yum.corretto.aws/corretto.repo
+                        - yum install -y java-16-amazon-corretto-devel
+                  - name: CreatingService
+                    action: CreateFile
+                    inputs:
+                      - path: '{{ build.InstallFolder.outputs.stdout }}/conf/ui-for-apache-kafka-environment'
+                      - path: /etc/systemd/system/ui-for-apache-kafka.service
+                        content: |
+                          [Unit]
+                          Description=UI for Apache Kafka
+                          After=network.target
+                          StartLimitIntervalSec=0
+                          [Service]
+                          Type=simple
+                          Restart=always
+                          RestartSec=1
+                          EnvironmentFile={{ build.InstallFolder.outputs.stdout }}/conf/ui-for-apache-kafka-environment
+                          ExecStart=java -jar {{ build.InstallFolder.outputs.stdout }}/libs/ui-for-apache-kafka.jar
+                          [Install]
+                          WantedBy=multi-user.target
+                  - name: EnableService
+                    action: ExecuteBash
+                    inputs:
+                      commands:
+                        - systemctl enable ui-for-apache-kafka
+                  - name: SetEnvironmentVariable
+                    action: ExecuteBash
+                    inputs:
+                      commands:
+                        - systemctl enable ui-for-apache-kafka
+          - AppVersion:
+              Ref: Version
+
+  UIForApacheKafkaImageRecipe:
+    Type: AWS::ImageBuilder::ImageRecipe
+    Properties:
+      Name: UIForApacheKafka
+      Version: 
+        Ref: Version
+      ParentImage:
+        Ref: LatestAmiId
+      Components:
+        - ComponentArn:
+            Ref: InstallUIForApacheKafkaComponent
+
+  UIForApacheKafka:
+    Type: AWS::ImageBuilder::Image
+    Properties:
+      ImageRecipeArn:
+        Ref: UIForApacheKafkaImageRecipe
+      InfrastructureConfigurationArn:
+        Ref: UIForApacheKafkaImageInfrastructureConfiguration
+
+  UIForApacheKafkaParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Image Id for latest UI for Apache Kafka
+      Name: /images/UIForApacheKafka
+      Type: String
+      Value:
+        Fn::GetAtt: [UIForApacheKafka, ImageId]
+
+  UIForApacheKafkaInstance:
+    Type: AWS::EC2::Instance
+    Properties: 
+      IamInstanceProfile:
+        Ref: InstanceProfile
+      ImageId:
+        Fn::GetAtt: [UIForApacheKafka, ImageId]
+      InstanceType:
+        Ref: RuntimeInstanceType
+      SubnetId: !If [ UseCustomSubnetId, !Ref CustomSubnetId , !Ref "AWS::NoValue" ]
+      SecurityGroupIds:
+        - !If [ UseCustomSubnetId, !Ref CustomSecurityGroupId , !Ref "AWS::NoValue" ]
+      UserData: 
+        Fn::Sub:
+          - |
+            #! /bin/bash
+            echo -e "${Configuration}" > $IU_FOR_APACHE_KAFKA_HOME/conf/ui-for-apache-kafka-environment
+          - Configuration: !Join
+            - '\n'
+            - !Ref RuntimeConfiguration 
