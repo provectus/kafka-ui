@@ -16,7 +16,7 @@ public class ListTopicsStrategy extends KsqlStatementStrategy {
 
     @Override
     public boolean test(String sql) {
-        return sql.trim().toLowerCase().matches("list topics;");
+        return sql.trim().toLowerCase().matches("(list|show) topics;");
     }
 
     @Override

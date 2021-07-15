@@ -15,7 +15,6 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public final class KsqlClient {
   private final WebClient webClient;
-  private ObjectMapper objectMapper;
 
   public Mono<Object> execute(KsqlStatementStrategy ksqlStatement) {
     return webClient.post()

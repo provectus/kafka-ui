@@ -19,7 +19,7 @@ public class ListStreamsStrategy extends KsqlStatementStrategy {
 
     @Override
     public boolean test(String sql) {
-        return sql.trim().toLowerCase().matches("list streams;");
+        return sql.trim().toLowerCase().matches("(list|show) streams;");
     }
 
     @Override

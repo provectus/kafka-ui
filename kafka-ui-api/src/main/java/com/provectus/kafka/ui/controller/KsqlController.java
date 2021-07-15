@@ -21,6 +21,6 @@ public class KsqlController implements KsqlApi {
   public Mono<ResponseEntity<Object>> executeKsqlCommand(String clusterName,
                                                                Mono<KsqlCommand> ksqlCommand,
                                                                ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(ksqlService.getListStreams(clusterName, ksqlCommand)));
+    return Mono.just(ResponseEntity.ok(ksqlService.executeKsqlCommand(clusterName, ksqlCommand)));
   }
 }
