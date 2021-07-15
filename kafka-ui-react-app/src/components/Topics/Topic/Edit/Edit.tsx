@@ -13,7 +13,7 @@ import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
 
-import DangerZone from './DangerZone';
+import DangerZoneContainer from './DangerZoneContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -26,6 +26,11 @@ interface Props {
     clusterName: ClusterName,
     topicName: TopicName,
     form: TopicFormDataRaw
+  ) => void;
+  updateTopicPartitionsCount: (
+    clusterName: string,
+    topicname: string,
+    partitions: number
   ) => void;
 }
 
@@ -127,7 +132,7 @@ const Edit: React.FC<Props> = ({
         </FormProvider>
       </div>
       {topic && (
-        <DangerZone
+        <DangerZoneContainer
           defaultPartitions={defaultValues.partitions}
           defaultReplicationFactor={
             defaultValues.replicationFactor || DEFAULTS.replicationFactor

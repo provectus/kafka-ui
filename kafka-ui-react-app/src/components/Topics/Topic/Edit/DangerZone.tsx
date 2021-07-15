@@ -3,12 +3,34 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-const DangerZone = ({
-  defaultPartitions,
-  defaultReplicationFactor,
-}: {
+interface Props {
+  clusterName: string;
+  topicName: string;
   defaultPartitions: number;
   defaultReplicationFactor: number;
+  getTopicPartitionsCountIncreased: boolean;
+  getTopicReplicationFactorUpdated: boolean;
+  updateTopicPartitionsCount: (
+    clusterName: string,
+    topicname: string,
+    partitions: number
+  ) => void;
+  updateTopicReplicationFactor: (
+    clusterName: string,
+    topicname: string,
+    replicationFactor: number
+  ) => void;
+}
+
+const DangerZone: React.FC<Props> = ({
+  clusterName,
+  topicName,
+  defaultPartitions,
+  defaultReplicationFactor,
+  getTopicPartitionsCountIncreased,
+  getTopicReplicationFactorUpdated,
+  updateTopicPartitionsCount,
+  updateTopicReplicationFactor,
 }) => {
   const [isPartitionsConfirmationVisible, setIsPartitionsConfirmationVisible] =
     React.useState<boolean>(false);
@@ -26,6 +48,7 @@ const DangerZone = ({
     handleSubmit: handlePartitionsSubmit,
     formState: partitionsFormState,
     setError: setPartitionsError,
+    getValues: partitionsGetValues,
   } = useForm({
     defaultValues: {
       partitions,
@@ -36,6 +59,7 @@ const DangerZone = ({
     register: replicationFactorRegister,
     handleSubmit: handleКeplicationFactorSubmit,
     formState: replicationFactorFormState,
+    getValues: replicationFactorgetValues,
   } = useForm({
     defaultValues: {
       replicationFactor,
@@ -59,13 +83,31 @@ const DangerZone = ({
     setIsReplicationFactorConfirmationVisible(true);
   };
 
+  React.useEffect(() => {
+    if (getTopicPartitionsCountIncreased) {
+      setIsPartitionsConfirmationVisible(false);
+    }
+  }, [getTopicPartitionsCountIncreased]);
+
+  React.useEffect(() => {
+    if (getTopicReplicationFactorUpdated) {
+      setIsReplicationFactorConfirmationVisible(false);
+    }
+  }, [getTopicReplicationFactorUpdated]);
+
   const partitionsSubmit = () => {
-    // API call here
-    setIsPartitionsConfirmationVisible(false);
+    updateTopicPartitionsCount(
+      clusterName,
+      topicName,
+      partitionsGetValues('partitions')
+    );
   };
   const replicationFactorSubmit = () => {
-    // API call here
-    setIsReplicationFactorConfirmationVisible(false);
+    updateTopicReplicationFactor(
+      clusterName,
+      topicName,
+      replicationFactorgetValues('replicationFactor')
+    );
   };
   return (
     <div className="box">
@@ -87,7 +129,11 @@ const DangerZone = ({
             />
           </div>
           <div className="column is-flex is-align-items-flex-end">
-            <input type="submit" className="button is-danger" />
+            <input
+              type="submit"
+              className="button is-danger"
+              disabled={!partitionsFormState.isDirty}
+            />
           </div>
         </form>
         <p className="help is-danger mt-0 mb-4">
@@ -98,7 +144,8 @@ const DangerZone = ({
           onCancel={() => setIsPartitionsConfirmationVisible(false)}
           onConfirm={partitionsSubmit}
         >
-          Are you sure you want to increase the number of partitions?
+          Are you sure you want to increase the number of partitions? Do it only
+          if you 100% know what you are doing!
         </ConfirmationModal>
 
         <form
@@ -117,7 +164,11 @@ const DangerZone = ({
             />
           </div>
           <div className="column is-flex is-align-items-flex-end">
-            <input type="submit" className="button is-danger" />
+            <input
+              type="submit"
+              className="button is-danger"
+              disabled={!replicationFactorFormState.isDirty}
+            />
           </div>
         </form>
         <p className="help is-danger mt-0">
