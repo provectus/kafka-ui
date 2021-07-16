@@ -25,6 +25,9 @@ Set up UI for Apache Kafka with just a couple of easy commands to visualize your
 
 # Getting Started
 
+You could try with CloudFormation stack on your AWS account. This stack will create EC2 Image Builder and EC2 Instance with the application.
+[![Launch Stack](https://cdn.rawgit.com/buildkite/cloudformation-launch-stack-button-svg/master/launch-stack.svg)](https://console.aws.amazon.com/cloudformation/home#/stacks/new?stackName=ui-for-apache-kafka&templateURL=https://some/url) 
+
 To run UI for Apache Kafka, you can use a pre-built Docker image or build it locally.  
 
 ## Running From Docker Image
