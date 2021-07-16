@@ -6,10 +6,13 @@ import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
+import static com.provectus.kafka.ui.helpers.Utils.refreshUntil;
 
 public class MainPage {
 
   private static final long TIMEOUT = 25000;
+
+  public static final String path = "";
 
   @Step
   public MainPage shouldBeOnPage() {
@@ -18,24 +21,10 @@ public class MainPage {
     return this;
   }
 
-
-  private void refreshUntil(By by){
-    int i =0;
-    do
-    {
-      refresh();
-      i++;
-      sleep(2000);
-    } while(getElements(by).size()<1 && i!=20);
-    $(by).shouldBe(Condition.visible);
-  }
-
   @SneakyThrows
   public void shouldBeTopic(String topicName) {
     refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
   }
-
-
 
   public enum SideMenuOptions {
     BROKERS("Brokers"),
