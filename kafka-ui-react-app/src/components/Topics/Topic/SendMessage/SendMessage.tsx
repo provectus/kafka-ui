@@ -7,7 +7,8 @@ import {
 } from 'generated-sources';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import Ajv from 'ajv';
+import convertToYup from 'json-schema-yup-transformer';
+import { getFakeData } from 'yup-faker';
 
 interface Props {
   clusterName: string;
@@ -41,27 +42,31 @@ const SendMessage: React.FC<Props> = ({
     formState: { isSubmitting, isDirty },
     control,
   } = useForm({ mode: 'onChange' });
-  const ajv = new Ajv();
 
   React.useEffect(() => {
     fetchTopicMessageSchema(clusterName, topicName);
   }, []);
   React.useEffect(() => {
     if (schemaIsFetched && messageSchema) {
-      setKeyExampleValue(`{
-  "f1": -13831056,
-  "schema": "consequat",
-  "f2": "ullamco culpa mollit irure"
-}`);
-      setContentExampleValue(`{
-  "f1": -13831056,
-  "schema": "consequat",
-  "f2": "ullamco culpa mollit irure"
-}`);
+      const validateKey = convertToYup(JSON.parse(messageSchema.key.schema));
+      if (validateKey) {
+        setKeyExampleValue(
+          JSON.stringify(getFakeData(validateKey), null, '\t')
+        );
+      }
+
+      const validateContent = convertToYup(
+        JSON.parse(messageSchema.value.schema)
+      );
+      if (validateContent) {
+        setContentExampleValue(
+          JSON.stringify(getFakeData(validateContent), null, '\t')
+        );
+      }
     }
   }, [schemaIsFetched]);
 
-  const onSubmit = (data: {
+  const onSubmit = async (data: {
     key: string;
     content: string;
     headers: string;
@@ -73,33 +78,42 @@ const SendMessage: React.FC<Props> = ({
         const key = data.key || keyExampleValue;
         const content = data.content || contentExampleValue;
         const { partition } = data;
-        const headers = JSON.parse(data.headers);
+        const headers = data.headers ? JSON.parse(data.headers) : undefined;
 
-        const validateKey = ajv.compile(JSON.parse(messageSchema.key.schema));
-        const validateContent = ajv.compile(
+        const validateKey = convertToYup(JSON.parse(messageSchema.key.schema));
+        const validateContent = convertToYup(
           JSON.parse(messageSchema.value.schema)
         );
-        const keyIsValid = validateKey(JSON.parse(key));
-        const contentIsValid = validateContent(JSON.parse(content));
-        if (validateKey.errors) {
+        let keyIsValid = false;
+        let contentIsValid = false;
+
+        try {
+          await validateKey?.validate(JSON.parse(key));
+          keyIsValid = true;
+        } catch (err) {
           let errorString = '';
-          validateKey.errors.forEach((e) => {
-            errorString = `${errorString}-${e.schemaPath.replace('#', 'Key')} ${
-              e.message
-            }`;
+          err.errors.forEach((e: string) => {
+            errorString = errorString ? `${errorString}-Key ${e}` : `Key ${e}`;
           });
-          setSchemaErrorString((e) => `${e}-${errorString}`);
+          setSchemaErrorString((e) =>
+            e ? `${e}-${errorString}` : errorString
+          );
         }
-        if (validateContent.errors) {
+        try {
+          await validateContent?.validate(JSON.parse(content));
+          contentIsValid = true;
+        } catch (err) {
           let errorString = '';
-          validateContent.errors.forEach((e) => {
-            errorString = `${errorString}-${e.schemaPath.replace(
-              '#',
-              'Content'
-            )} ${e.message}`;
+          err.errors.forEach((e: string) => {
+            errorString = errorString
+              ? `${errorString}-Content ${e}`
+              : `Content ${e}`;
           });
-          setSchemaErrorString((e) => `${e}-${errorString}`);
+          setSchemaErrorString((e) =>
+            e ? `${e}-${errorString}` : errorString
+          );
         }
+
         if (keyIsValid && contentIsValid) {
           sendTopicMessage(clusterName, topicName, {
             key,
@@ -191,7 +205,9 @@ const SendMessage: React.FC<Props> = ({
             {schemaErrorString && (
               <div className="mb-4">
                 {schemaErrorString.split('-').map((e) => (
-                  <p className="help is-danger">{e}</p>
+                  <p className="help is-danger" key={e}>
+                    {e}
+                  </p>
                 ))}
               </div>
             )}
