@@ -3,13 +3,13 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 import React from 'react';
 import { useForm } from 'react-hook-form';
 
-interface Props {
+export interface Props {
   clusterName: string;
   topicName: string;
   defaultPartitions: number;
   defaultReplicationFactor: number;
-  getTopicPartitionsCountIncreased: boolean;
-  getTopicReplicationFactorUpdated: boolean;
+  partitionsCountIncreased: boolean;
+  replicationFactorUpdated: boolean;
   updateTopicPartitionsCount: (
     clusterName: string,
     topicname: string,
@@ -27,8 +27,8 @@ const DangerZone: React.FC<Props> = ({
   topicName,
   defaultPartitions,
   defaultReplicationFactor,
-  getTopicPartitionsCountIncreased,
-  getTopicReplicationFactorUpdated,
+  partitionsCountIncreased,
+  replicationFactorUpdated,
   updateTopicPartitionsCount,
   updateTopicReplicationFactor,
 }) => {
@@ -84,16 +84,16 @@ const DangerZone: React.FC<Props> = ({
   };
 
   React.useEffect(() => {
-    if (getTopicPartitionsCountIncreased) {
+    if (partitionsCountIncreased) {
       setIsPartitionsConfirmationVisible(false);
     }
-  }, [getTopicPartitionsCountIncreased]);
+  }, [partitionsCountIncreased]);
 
   React.useEffect(() => {
-    if (getTopicReplicationFactorUpdated) {
+    if (replicationFactorUpdated) {
       setIsReplicationFactorConfirmationVisible(false);
     }
-  }, [getTopicReplicationFactorUpdated]);
+  }, [replicationFactorUpdated]);
 
   const partitionsSubmit = () => {
     updateTopicPartitionsCount(

@@ -36,8 +36,8 @@ const mapStateToProps = (
   topicName,
   defaultPartitions,
   defaultReplicationFactor,
-  getTopicPartitionsCountIncreased: getTopicPartitionsCountIncreased(state),
-  getTopicReplicationFactorUpdated: getTopicReplicationFactorUpdated(state),
+  partitionsCountIncreased: getTopicPartitionsCountIncreased(state),
+  replicationFactorUpdated: getTopicReplicationFactorUpdated(state),
 });
 
 const mapDispatchToProps = {
