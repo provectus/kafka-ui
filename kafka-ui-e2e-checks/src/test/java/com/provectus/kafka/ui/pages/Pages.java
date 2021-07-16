@@ -8,12 +8,22 @@ public class Pages {
     public static Pages INSTANCE = new Pages();
 
     public MainPage mainPage = new MainPage();
+    public TopicPage topicPage = new TopicPage();
 
     private Pages goTo(String path) {
         Selenide.open(TestConfiguration.BASE_URL+path);
         return this;
     }
-    public Pages open() {
-       return goTo("");
+
+    public MainPage open() {
+       return openMainPage();
+    }
+
+    public MainPage openMainPage() {
+        return goTo(MainPage.path).mainPage;
+    }
+
+    public TopicPage openTopicPage() {
+        return goTo(TopicPage.path).topicPage;
     }
 }
