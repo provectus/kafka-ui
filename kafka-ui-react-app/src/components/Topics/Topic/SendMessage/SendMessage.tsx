@@ -9,6 +9,8 @@ import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import convertToYup from 'json-schema-yup-transformer';
 import { getFakeData } from 'yup-faker';
+import { useHistory } from 'react-router';
+import { clusterTopicMessagesPath } from 'lib/paths';
 
 interface Props {
   clusterName: string;
@@ -21,6 +23,8 @@ interface Props {
   ) => void;
   messageSchema: TopicMessageSchema | undefined;
   schemaIsFetched: boolean;
+  messageIsSent: boolean;
+  messageIsSending: boolean;
   partitions: Partition[];
 }
 
@@ -31,6 +35,8 @@ const SendMessage: React.FC<Props> = ({
   sendTopicMessage,
   messageSchema,
   schemaIsFetched,
+  messageIsSent,
+  messageIsSending,
   partitions,
 }) => {
   const [keyExampleValue, setKeyExampleValue] = React.useState('');
@@ -42,6 +48,7 @@ const SendMessage: React.FC<Props> = ({
     formState: { isSubmitting, isDirty },
     control,
   } = useForm({ mode: 'onChange' });
+  const history = useHistory();
 
   React.useEffect(() => {
     fetchTopicMessageSchema(clusterName, topicName);
@@ -65,6 +72,11 @@ const SendMessage: React.FC<Props> = ({
       }
     }
   }, [schemaIsFetched]);
+  React.useEffect(() => {
+    if (messageIsSent) {
+      history.push(clusterTopicMessagesPath(clusterName, topicName));
+    }
+  }, [messageIsSent]);
 
   const onSubmit = async (data: {
     key: string;
@@ -92,9 +104,18 @@ const SendMessage: React.FC<Props> = ({
           keyIsValid = true;
         } catch (err) {
           let errorString = '';
-          err.errors.forEach((e: string) => {
-            errorString = errorString ? `${errorString}-Key ${e}` : `Key ${e}`;
-          });
+          if (err.errors) {
+            err.errors.forEach((e: string) => {
+              errorString = errorString
+                ? `${errorString}-Key ${e}`
+                : `Key ${e}`;
+            });
+          } else {
+            errorString = errorString
+              ? `${errorString}-Key ${err.message}`
+              : `Key ${err.message}`;
+          }
+
           setSchemaErrorString((e) =>
             e ? `${e}-${errorString}` : errorString
           );
@@ -104,11 +125,18 @@ const SendMessage: React.FC<Props> = ({
           contentIsValid = true;
         } catch (err) {
           let errorString = '';
-          err.errors.forEach((e: string) => {
+          if (err.errors) {
+            err.errors.forEach((e: string) => {
+              errorString = errorString
+                ? `${errorString}-Content ${e}`
+                : `Content ${e}`;
+            });
+          } else {
             errorString = errorString
-              ? `${errorString}-Content ${e}`
-              : `Content ${e}`;
-          });
+              ? `${errorString}-Content ${err.message}`
+              : `Content ${err.message}`;
+          }
+
           setSchemaErrorString((e) =>
             e ? `${e}-${errorString}` : errorString
           );
@@ -123,8 +151,8 @@ const SendMessage: React.FC<Props> = ({
           });
         }
       }
-    } catch (e) {
-      // Somehow need to display JSON.parse errors
+    } catch (err) {
+      setSchemaErrorString((e) => (e ? `${e}-${err.message}` : err.message));
     }
   };
   return (
@@ -140,6 +168,7 @@ const SendMessage: React.FC<Props> = ({
                 <div className="select is-block">
                   <select
                     defaultValue={partitions[0].partition}
+                    disabled={isSubmitting || messageIsSending}
                     {...register('partition')}
                   >
                     {partitions.map((partition) => (
@@ -160,7 +189,7 @@ const SendMessage: React.FC<Props> = ({
                   name="key"
                   render={({ field: { name, onChange } }) => (
                     <JSONEditor
-                      readOnly={isSubmitting}
+                      readOnly={isSubmitting || messageIsSending}
                       defaultValue={keyExampleValue}
                       name={name}
                       onChange={onChange}
@@ -175,7 +204,7 @@ const SendMessage: React.FC<Props> = ({
                   name="content"
                   render={({ field: { name, onChange } }) => (
                     <JSONEditor
-                      readOnly={isSubmitting}
+                      readOnly={isSubmitting || messageIsSending}
                       defaultValue={contentExampleValue}
                       name={name}
                       onChange={onChange}
@@ -192,7 +221,7 @@ const SendMessage: React.FC<Props> = ({
                   name="headers"
                   render={({ field: { name, onChange } }) => (
                     <JSONEditor
-                      readOnly={isSubmitting}
+                      readOnly={isSubmitting || messageIsSending}
                       defaultValue="{}"
                       name={name}
                       onChange={onChange}
@@ -214,7 +243,7 @@ const SendMessage: React.FC<Props> = ({
             <button
               type="submit"
               className="button is-primary"
-              disabled={!isDirty || isSubmitting}
+              disabled={!isDirty || isSubmitting || messageIsSending}
             >
               Send
             </button>

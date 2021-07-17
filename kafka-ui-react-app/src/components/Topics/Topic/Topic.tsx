@@ -52,7 +52,9 @@ const Topic: React.FC<TopicProps> = ({
         <div className="level-item level-left">
           <Switch>
             <Route exact path={`${topicPageUrl}/message`}>
-              <Breadcrumb links={childBreadcrumbLinks}>Send Message</Breadcrumb>
+              <Breadcrumb links={childBreadcrumbLinks}>
+                Produce Message
+              </Breadcrumb>
             </Route>
             <Route exact path={`${topicPageUrl}/edit`}>
               <Breadcrumb links={childBreadcrumbLinks}>Edit</Breadcrumb>

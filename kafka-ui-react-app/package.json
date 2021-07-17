@@ -80,7 +80,6 @@
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.8",
     "@types/jest": "^26.0.21",
-    "@types/json-schema-faker": "^0.5.1",
     "@types/lodash": "^4.14.165",
     "@types/node": "^16.0.0",
     "@types/node-fetch": "^2.5.9",

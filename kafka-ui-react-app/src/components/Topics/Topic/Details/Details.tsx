@@ -107,7 +107,7 @@ const Details: React.FC<Props> = ({
                   to={clusterTopicSendMessagePath(clusterName, topicName)}
                   className="button"
                 >
-                  Send message
+                  Produce message
                 </Link>
 
                 <Link

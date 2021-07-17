@@ -9,8 +9,6 @@ import {
   TopicConfig,
   TopicColumnsToSort,
   ConsumerGroupsApi,
-  MessageSchemaSourceEnum,
-  TopicMessageSchema,
   CreateTopicMessage,
 } from 'generated-sources';
 import {
@@ -350,62 +348,10 @@ export const fetchTopicMessageSchema =
   async (dispatch) => {
     dispatch(actions.fetchTopicMessageSchemaAction.request());
     try {
-      const schema = await new Promise<TopicMessageSchema>((res) => {
-        setTimeout(() => {
-          res({
-            key: {
-              name: 'key',
-              source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-              schema: `{
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "$id": "http://example.com/myURI.schema.json",
-                "title": "TestRecord",
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "f1": {
-                    "type": "integer"
-                  },
-                  "f2": {
-                    "type": "string"
-                  },
-                  "schema": {
-                    "type": "string"
-                  }
-                }
-              }
-              `,
-            },
-            value: {
-              name: 'value',
-              source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-              schema: `{
-                "$schema": "http://json-schema.org/draft-07/schema#",
-                "$id": "http://example.com/myURI1.schema.json",
-                "title": "TestRecord",
-                "type": "object",
-                "additionalProperties": false,
-                "properties": {
-                  "f1": {
-                    "type": "integer"
-                  },
-                  "f2": {
-                    "type": "string"
-                  },
-                  "schema": {
-                    "type": "string"
-                  }
-                }
-              }
-              `,
-            },
-          });
-        }, 2000);
+      const schema = await messagesApiClient.getTopicSchema({
+        clusterName,
+        topicName,
       });
-      // const schema = await messagesApiClient.getTopicSchema({
-      //   clusterName,
-      //   topicName,
-      // });
       dispatch(
         actions.fetchTopicMessageSchemaAction.success({ topicName, schema })
       );
