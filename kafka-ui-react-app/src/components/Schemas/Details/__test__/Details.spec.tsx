@@ -49,6 +49,13 @@ describe('Details', () => {
         {...props}
       />
     );
+    describe('empty table', () => {
+      it('render empty table', () => {
+        const component = shallow(setupWrapper());
+        expect(component.find('td').text()).toEqual('No active Schema');
+      });
+    });
+
     describe('Initial state', () => {
       it('should call fetchSchemaVersions every render', () => {
         mount(

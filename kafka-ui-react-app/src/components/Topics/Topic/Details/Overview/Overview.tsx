@@ -102,6 +102,11 @@ const Overview: React.FC<Props> = ({
                 </td>
               </tr>
             ))}
+            {partitions?.length === 0 && (
+              <tr>
+                <td colSpan={10}>No Partitions found</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
