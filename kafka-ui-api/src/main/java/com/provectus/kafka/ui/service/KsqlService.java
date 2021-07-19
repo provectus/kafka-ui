@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.exception.KsqlDbNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommand;
+import com.provectus.kafka.ui.model.KsqlResponseTable;
 import com.provectus.kafka.ui.strategy.ksqlStatement.KsqlStatementStrategy;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class KsqlService {
   private final ClustersStorage clustersStorage;
   private final List<KsqlStatementStrategy> commandParamsStrategies;
 
-  public Mono<Object> executeKsqlCommand(String clusterName, Mono<KsqlCommand> ksqlCommand) {
+  public Mono<KsqlResponseTable> executeKsqlCommand(String clusterName, Mono<KsqlCommand> ksqlCommand) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
             .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
             .map(KafkaCluster::getKsqldbServer)

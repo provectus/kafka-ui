@@ -12,6 +12,7 @@ public enum Feature {
       .isPresent()
   ),
   SCHEMA_REGISTRY(cluster -> cluster.getSchemaRegistry() != null);
+  // TODO: add feature for FE app
 
   private final Predicate<KafkaCluster> isEnabled;
 

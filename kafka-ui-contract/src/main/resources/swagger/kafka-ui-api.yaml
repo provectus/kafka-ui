@@ -1079,7 +1079,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
+                $ref: '#/components/schemas/KsqlResponseTable'
 
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
@@ -1853,6 +1853,22 @@ components:
           type: string
         streamsProperties:
           type: string
+      required:
+        - ksql
+
+    KsqlResponseTable:
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
       required:
         - ksql
 
