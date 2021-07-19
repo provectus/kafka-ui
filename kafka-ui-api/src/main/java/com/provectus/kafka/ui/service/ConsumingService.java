@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
@@ -15,19 +14,18 @@ import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
@@ -114,8 +112,8 @@ public class ConsumingService {
     }
 
     final TopicMessage msg = message.getMessage();
-    return (StringUtils.isNotEmpty(msg.getKey()) && msg.getKey().contains(query))
-        || (StringUtils.isNotEmpty(msg.getContent()) && msg.getContent().contains(query));
+    return (!StringUtils.isEmpty(msg.getKey()) && msg.getKey().contains(query))
+        || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
 }
