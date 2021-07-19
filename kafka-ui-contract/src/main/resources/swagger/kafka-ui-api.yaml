@@ -1593,6 +1593,14 @@ components:
         - DEAD
         - EMPTY
 
+    MessageFormat:
+      type: string
+      enum:
+        - AVRO
+        - JSON
+        - PROTOBUF
+        - UNKNOWN
+
     ConsumerGroup:
       type: object
       properties:
@@ -1722,6 +1730,23 @@ components:
             type: string
         content:
           type: string
+        keyFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        valueFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        keySize:
+          type: integer
+          format: int64
+        valueSize:
+          type: integer
+          format: int64
+        keySchemaId:
+          type: string
+        valueSchemaId:
+          type: string
+        headersSize:
+          type: integer
+          format: int64
       required:
         - partition
         - offset

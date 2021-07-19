@@ -66,6 +66,9 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
@@ -678,12 +681,20 @@ public class KafkaService {
     properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
-      final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
+      ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
           msg.getKey(),
           msg.getContent(),
           msg.getPartition()
       );
+      if (msg.getHeaders() != null && !msg.getHeaders().isEmpty()) {
+        producerRecord = new ProducerRecord<>(
+            producerRecord.topic(),
+            producerRecord.partition(),
+            producerRecord.key(),
+            producerRecord.value(),
+            createHeaders(msg.getHeaders()));
+      }
 
       CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
       producer.send(producerRecord, (metadata, exception) -> {
@@ -695,6 +706,12 @@ public class KafkaService {
       });
       return Mono.fromFuture(cf);
     }
+  }
+
+  private Iterable<Header> createHeaders(Map<String, String> clientHeaders) {
+    RecordHeaders headers = new RecordHeaders();
+    clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
+    return headers;
   }
 
   private Mono<InternalTopic> increaseTopicPartitions(AdminClient adminClient,
