@@ -13,10 +13,10 @@ public class SimpleRecordSerDe implements RecordSerDe {
 
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
-    return new DeserializedKeyValue(
-        msg.key() != null ? new String(msg.key().get()) : null,
-        msg.value() != null ? new String(msg.value().get()) : null
-    );
+    String key = msg.key() != null ? new String(msg.key().get()) : null;
+    String value = msg.value() != null ? new String(msg.value().get()) : null;
+    Integer valueLength = msg.value() != null ? msg.value().get().length : null;
+    return new DeserializedKeyValue(key, value, null, valueLength, null);
   }
 
   @Override

@@ -25,13 +25,13 @@ class SchemaRegistryRecordDeserializerTest {
     var deserializedRecord = deserializer.deserialize(
         new ConsumerRecord<>("topic", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(value.getBytes())));
-    assertEquals(new DeserializedKeyValue("key", value), deserializedRecord);
+    assertEquals(new DeserializedKeyValue("key", value, null, 4, null), deserializedRecord);
   }
 
   @Test
   public void shouldDeserializeNullValueRecordToEmptyMap() {
     var deserializedRecord = deserializer
         .deserialize(new ConsumerRecord<>("topic", 1, 0, Bytes.wrap("key".getBytes()), null));
-    assertEquals(new DeserializedKeyValue("key", null), deserializedRecord);
+    assertEquals(new DeserializedKeyValue("key", null, null, null, null), deserializedRecord);
   }
 }

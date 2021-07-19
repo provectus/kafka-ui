@@ -283,6 +283,13 @@ public class ClusterUtil {
     var parsed = recordDeserializer.deserialize(consumerRecord);
     topicMessage.setKey(parsed.getKey());
     topicMessage.setContent(parsed.getValue());
+    topicMessage.setFormat(parsed.getFormat() != null
+            ? TopicMessage.FormatEnum.valueOf(parsed.getFormat().name())
+            : null);
+    topicMessage.setValueSize(parsed.getValueSize() != null
+            ? Long.valueOf(parsed.getValueSize())
+            : null);
+    topicMessage.setSchemaId(parsed.getSchemaId());
 
     return topicMessage;
   }

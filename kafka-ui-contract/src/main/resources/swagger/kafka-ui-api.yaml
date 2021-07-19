@@ -1686,6 +1686,17 @@ components:
             type: string
         content:
           type: string
+        format:
+          type: string
+          enum:
+            - AVRO
+            - JSON
+            - PROTOBUF
+        valueSize:
+          type: integer
+          format: int64
+        schemaId:
+          type: string
       required:
         - partition
         - offset

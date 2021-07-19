@@ -92,14 +92,22 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      return new DeserializedKeyValue(
-          msg.key() != null
+      String key = msg.key() != null
               ? getMessageFormatter(msg, true).format(msg.topic(), msg.key().get())
-              : null,
-          msg.value() != null
-              ? getMessageFormatter(msg, false).format(msg.topic(), msg.value().get())
-              : null
-      );
+              : null;
+      String value = null;
+      MessageFormat format = null;
+      String schemaId = null;
+      Integer valueLength = null;
+      if (msg.value() != null) {
+        MessageFormatter messageFormatter = getMessageFormatter(msg, false);
+        value = messageFormatter.format(msg.topic(), msg.value().get());
+        format = messageFormatter.getFormat();
+        schemaId = getValueSchemaId(msg.value()).map(String::valueOf).orElse(null);
+        valueLength = msg.value().get().length;
+      }
+
+      return new DeserializedKeyValue(key, value, format, valueLength, schemaId);
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
@@ -268,6 +276,11 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       }
     }
     return result;
+  }
+
+  private Optional<Integer> getValueSchemaId(Bytes value) {
+    ByteBuffer buffer = ByteBuffer.wrap(value.get());
+    return buffer.get() == 0 ? Optional.of(buffer.getInt()) : Optional.empty();
   }
 
   @SneakyThrows

@@ -358,6 +358,58 @@ public class SendAndReadTests extends AbstractBaseTest {
         .assertSendThrowsException();
   }
 
+  @Test
+  void topicMessageMetadataAvro() {
+    new SendAndReadSpec()
+        .withValueSchema(AVRO_SCHEMA_1)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key("testKey")
+                .content(AVRO_SCHEMA_1_JSON_RECORD)
+        )
+        .doAssert(polled -> {
+          assertThat(polled.getKey()).isEqualTo("testKey");
+          assertJsonEqual(polled.getContent(), AVRO_SCHEMA_1_JSON_RECORD);
+          assertThat(polled.getValueSize()).isEqualTo(15L);
+          assertThat(polled.getFormat()).isEqualTo(TopicMessage.FormatEnum.AVRO);
+          assertThat(polled.getSchemaId()).isNotEmpty();
+        });
+  }
+
+  @Test
+  void topicMessageMetadataProtobuf() {
+    new SendAndReadSpec()
+        .withValueSchema(PROTOBUF_SCHEMA)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key("testKey")
+                .content(PROTOBUF_SCHEMA_JSON_RECORD)
+        )
+        .doAssert(polled -> {
+          assertThat(polled.getKey()).isEqualTo("testKey");
+          assertJsonEqual(polled.getContent(), PROTOBUF_SCHEMA_JSON_RECORD);
+          assertThat(polled.getValueSize()).isEqualTo(18L);
+          assertThat(polled.getFormat()).isEqualTo(TopicMessage.FormatEnum.PROTOBUF);
+          assertThat(polled.getSchemaId()).isNotEmpty();
+        });
+  }
+
+  @Test
+  void topicMessageMetadataJson() {
+    new SendAndReadSpec()
+        .withValueSchema(JSON_SCHEMA)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key("testKey")
+                .content(JSON_SCHEMA_RECORD)
+        )
+        .doAssert(polled -> {
+          assertJsonEqual(polled.getContent(), JSON_SCHEMA_RECORD);
+          assertThat(polled.getFormat()).isEqualTo(TopicMessage.FormatEnum.JSON);
+          assertThat(polled.getSchemaId()).isNotEmpty();
+          assertThat(polled.getValueSize()).isEqualTo(57L);
+        });
+  }
 
   @SneakyThrows
   private void assertJsonEqual(String actual, String expected) {

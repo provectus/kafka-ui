@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.serde;
 
 import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import javax.annotation.Nullable;
 import lombok.Value;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,6 +14,9 @@ public interface RecordSerDe {
   class DeserializedKeyValue {
     @Nullable String key;
     @Nullable String value;
+    @Nullable MessageFormat format;
+    @Nullable Integer valueSize;
+    @Nullable String schemaId;
   }
 
   DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg);
