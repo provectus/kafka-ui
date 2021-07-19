@@ -3,10 +3,14 @@ package com.provectus.kafka.ui.topics;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.pages.MainPage;
 import lombok.SneakyThrows;
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+
+import static com.codeborne.selenide.Selenide.$;
 
 public class TopicTests extends BaseTest {
 
@@ -43,11 +47,18 @@ public class TopicTests extends BaseTest {
                 .shouldBeOnPage()
                 .openTopic(NEW_TOPIC)
                 .openEditSettings()
-                .changeCleanupPolicy("Compact")
+                .changeCleanupPolicy("compact")
                 .changeTimeToRetainValue("604800001")
                 .changeMaxSizeOnDisk("20 GB")
                 .changeMaxMessageBytes("1000020")
                 .submitSettingChanges();
+        pages.reloadPage();
+        pages.openTopicsListPage()
+                .openTopic(NEW_TOPIC)
+                .openEditSettings();
+
+        String cleanupPolicy =  $(By.name("cleanupPolicy")).getSelectedValue();
+        Assert.assertEquals("compact", cleanupPolicy);
     }
 
 }

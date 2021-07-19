@@ -8,7 +8,7 @@ public class Pages {
     public static Pages INSTANCE = new Pages();
 
     public MainPage mainPage = new MainPage();
-    public TopicPage topicPage = new TopicPage();
+    public TopicsListPage topicsListPage = new TopicsListPage();
 
     private Pages goTo(String path) {
         Selenide.open(TestConfiguration.BASE_URL+path);
@@ -23,7 +23,12 @@ public class Pages {
         return goTo(MainPage.path).mainPage;
     }
 
-    public TopicPage openTopicPage() {
-        return goTo(TopicPage.path).topicPage;
+    public TopicsListPage openTopicsListPage() {
+        return goTo(TopicsListPage.path).topicsListPage;
+    }
+
+    public Pages reloadPage() {
+        Selenide.refresh();
+        return this;
     }
 }

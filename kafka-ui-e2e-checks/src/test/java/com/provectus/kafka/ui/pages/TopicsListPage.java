@@ -34,7 +34,7 @@ public class TopicsListPage {
     @SneakyThrows
     public TopicsListPage changeCleanupPolicy(String cleanupPolicyValue) {
         $(By.name("cleanupPolicy")).click();
-        $(By.xpath("//select/option[text() = '%s']".formatted(cleanupPolicyValue))).click();
+        $(By.xpath("//select/option[@value = '%s']".formatted(cleanupPolicyValue))).click();
         return this;
     }
 
