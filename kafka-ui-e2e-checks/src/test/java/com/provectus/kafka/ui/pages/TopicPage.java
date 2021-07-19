@@ -30,4 +30,39 @@ public class TopicPage {
         $(By.xpath("//a[@class=\"button\" and text()='Edit settings']")).click();
         return this;
     }
+
+    @SneakyThrows
+    public TopicPage changeCleanupPolicy(String cleanupPolicyValue) {
+        $(By.name("cleanupPolicy")).click();
+        $(By.xpath("//select/option[text() = '%s']".formatted(cleanupPolicyValue))).click();
+        return this;
+    }
+
+    @SneakyThrows
+    public TopicPage changeTimeToRetainValue(String timeToRetainValue) {
+        $(By.id("timeToRetain")).clear();
+        $(By.id("timeToRetain")).sendKeys(String.valueOf(timeToRetainValue));
+        return this;
+    }
+
+    @SneakyThrows
+    public TopicPage changeMaxSizeOnDisk(String maxSizeOnDisk) {
+        $(By.name("retentionBytes")).click();
+        $(By.xpath("//select/option[text() = '%s']".formatted(maxSizeOnDisk))).click();
+        return this;
+    }
+
+    @SneakyThrows
+    public TopicPage changeMaxMessageBytes(String maxMessageBytes) {
+        $(By.name("maxMessageBytes")).clear();
+        $(By.name("maxMessageBytes")).sendKeys(String.valueOf(maxMessageBytes));
+        return this;
+    }
+
+    @SneakyThrows
+    public TopicPage submitSettingChanges() {
+        $(By.xpath("//input[@type='submit']")).click();
+        return this;
+    }
+
 }

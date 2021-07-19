@@ -31,7 +31,7 @@ public class TopicTests extends BaseTest {
     void createTopic(){
         pages.open()
                 .shouldBeOnPage()
-                .goToSideMenu("secondLocal", MainPage.SideMenuOptions.TOPICS)
+                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
                 .shouldBeTopic(NEW_TOPIC);
     }
 
@@ -42,7 +42,12 @@ public class TopicTests extends BaseTest {
         pages.openTopicPage()
                 .shouldBeOnPage()
                 .openTopic(NEW_TOPIC)
-                .openEditSettings();
+                .openEditSettings()
+                .changeCleanupPolicy("Compact")
+                .changeTimeToRetainValue("604800001")
+                .changeMaxSizeOnDisk("20 GB")
+                .changeMaxMessageBytes("1000020")
+                .submitSettingChanges();
     }
 
 }
