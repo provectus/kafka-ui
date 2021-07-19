@@ -14,6 +14,7 @@ import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.MessageFormat;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.serde.RecordSerDe;
@@ -283,13 +284,20 @@ public class ClusterUtil {
     var parsed = recordDeserializer.deserialize(consumerRecord);
     topicMessage.setKey(parsed.getKey());
     topicMessage.setContent(parsed.getValue());
-    topicMessage.setFormat(parsed.getFormat() != null
-            ? TopicMessage.FormatEnum.valueOf(parsed.getFormat().name())
+    topicMessage.setKeyFormat(parsed.getKeyFormat() != null
+            ? MessageFormat.valueOf(parsed.getKeyFormat().name())
             : null);
+    topicMessage.setValueFormat(parsed.getValueFormat() != null
+        ? MessageFormat.valueOf(parsed.getValueFormat().name())
+        : null);
+    topicMessage.setKeySize(parsed.getKeySize() != null
+        ? Long.valueOf(parsed.getKeySize())
+        : null);
     topicMessage.setValueSize(parsed.getValueSize() != null
             ? Long.valueOf(parsed.getValueSize())
             : null);
-    topicMessage.setSchemaId(parsed.getSchemaId());
+    topicMessage.setKeySchemaId(parsed.getKeySchemaId());
+    topicMessage.setValueSchemaId(parsed.getValueSchemaId());
 
     return topicMessage;
   }

@@ -92,22 +92,23 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      String key = msg.key() != null
-              ? getMessageFormatter(msg, true).format(msg.topic(), msg.key().get())
-              : null;
-      String value = null;
-      MessageFormat format = null;
-      String schemaId = null;
-      Integer valueLength = null;
+      var builder = DeserializedKeyValue.builder();
+      if (msg.key() != null) {
+        MessageFormatter messageFormatter = getMessageFormatter(msg, true);
+        builder.key(messageFormatter.format(msg.topic(), msg.key().get()));
+        builder.keyFormat(messageFormatter.getFormat());
+        builder.keySchemaId(getSchemaId(msg.key()).map(String::valueOf).orElse(null));
+        builder.keySize(msg.key().get().length);
+      }
       if (msg.value() != null) {
         MessageFormatter messageFormatter = getMessageFormatter(msg, false);
-        value = messageFormatter.format(msg.topic(), msg.value().get());
-        format = messageFormatter.getFormat();
-        schemaId = getValueSchemaId(msg.value()).map(String::valueOf).orElse(null);
-        valueLength = msg.value().get().length;
+        builder.value(messageFormatter.format(msg.topic(), msg.value().get()));
+        builder.valueFormat(messageFormatter.getFormat());
+        builder.valueSchemaId(getSchemaId(msg.value()).map(String::valueOf).orElse(null));
+        builder.valueSize(msg.value().get().length);
       }
 
-      return new DeserializedKeyValue(key, value, format, valueLength, schemaId);
+      return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
@@ -278,7 +279,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     return result;
   }
 
-  private Optional<Integer> getValueSchemaId(Bytes value) {
+  private Optional<Integer> getSchemaId(Bytes value) {
     ByteBuffer buffer = ByteBuffer.wrap(value.get());
     return buffer.get() == 0 ? Optional.of(buffer.getInt()) : Optional.empty();
   }

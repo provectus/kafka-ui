@@ -4,6 +4,6 @@ public interface MessageFormatter {
   String format(String topic, byte[] value);
 
   default MessageFormat getFormat() {
-    return null;
+    return MessageFormat.UNKNOWN;
   }
 }

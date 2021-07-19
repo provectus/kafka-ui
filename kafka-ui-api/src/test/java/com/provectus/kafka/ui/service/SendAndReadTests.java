@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
+import com.provectus.kafka.ui.model.MessageFormat;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
@@ -371,8 +372,8 @@ public class SendAndReadTests extends AbstractBaseTest {
           assertThat(polled.getKey()).isEqualTo("testKey");
           assertJsonEqual(polled.getContent(), AVRO_SCHEMA_1_JSON_RECORD);
           assertThat(polled.getValueSize()).isEqualTo(15L);
-          assertThat(polled.getFormat()).isEqualTo(TopicMessage.FormatEnum.AVRO);
-          assertThat(polled.getSchemaId()).isNotEmpty();
+          assertThat(polled.getValueFormat()).isEqualTo(MessageFormat.AVRO);
+          assertThat(polled.getValueSchemaId()).isNotEmpty();
         });
   }
 
@@ -389,8 +390,8 @@ public class SendAndReadTests extends AbstractBaseTest {
           assertThat(polled.getKey()).isEqualTo("testKey");
           assertJsonEqual(polled.getContent(), PROTOBUF_SCHEMA_JSON_RECORD);
           assertThat(polled.getValueSize()).isEqualTo(18L);
-          assertThat(polled.getFormat()).isEqualTo(TopicMessage.FormatEnum.PROTOBUF);
-          assertThat(polled.getSchemaId()).isNotEmpty();
+          assertThat(polled.getValueFormat()).isEqualTo(MessageFormat.PROTOBUF);
+          assertThat(polled.getValueSchemaId()).isNotEmpty();
         });
   }
 
@@ -405,8 +406,8 @@ public class SendAndReadTests extends AbstractBaseTest {
         )
         .doAssert(polled -> {
           assertJsonEqual(polled.getContent(), JSON_SCHEMA_RECORD);
-          assertThat(polled.getFormat()).isEqualTo(TopicMessage.FormatEnum.JSON);
-          assertThat(polled.getSchemaId()).isNotEmpty();
+          assertThat(polled.getValueFormat()).isEqualTo(MessageFormat.JSON);
+          assertThat(polled.getValueSchemaId()).isNotEmpty();
           assertThat(polled.getValueSize()).isEqualTo(57L);
         });
   }
