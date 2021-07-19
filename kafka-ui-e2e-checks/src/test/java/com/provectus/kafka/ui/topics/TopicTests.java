@@ -39,7 +39,7 @@ public class TopicTests extends BaseTest {
     @DisplayName("should update a topic")
     @Test
     void updateTopic(){
-        pages.openTopicPage()
+        pages.openTopicsListPage()
                 .shouldBeOnPage()
                 .openTopic(NEW_TOPIC)
                 .openEditSettings()
