@@ -124,6 +124,11 @@ const Details: React.FC<DetailsProps> = ({
                 {versions.map((version) => (
                   <SchemaVersion key={version.id} version={version} />
                 ))}
+                {versions.length === 0 && (
+                  <tr>
+                    <td colSpan={10}>No active Schema</td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

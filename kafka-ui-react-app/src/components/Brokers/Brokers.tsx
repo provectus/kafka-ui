@@ -27,6 +27,7 @@ const Brokers: React.FC<Props> = ({
   diskUsage,
   fetchClusterStats,
   fetchBrokers,
+  version,
 }) => {
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
 
@@ -55,6 +56,9 @@ const Brokers: React.FC<Props> = ({
           <span className={cx('tag', zkOnline ? 'is-success' : 'is-danger')}>
             {zkOnline ? 'Online' : 'Offline'}
           </span>
+        </Indicator>
+        <Indicator className="is-one-third" label="Version">
+          {version}
         </Indicator>
       </MetricsWrapper>
       <MetricsWrapper title="Partitions">

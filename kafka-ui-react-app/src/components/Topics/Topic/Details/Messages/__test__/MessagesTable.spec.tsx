@@ -18,9 +18,9 @@ describe('MessagesTable', () => {
   describe('when topic is empty', () => {
     it('renders table row with JSONEditor', () => {
       const wrapper = shallow(setupWrapper());
-      expect(wrapper.exists('table')).toBeFalsy();
-      expect(wrapper.exists('CustomParamButton')).toBeFalsy();
-      expect(wrapper.text()).toEqual('No messages at selected topic');
+      expect(wrapper.find('td').text()).toEqual(
+        'No messages at selected topic'
+      );
     });
 
     it('matches snapshot', () => {
