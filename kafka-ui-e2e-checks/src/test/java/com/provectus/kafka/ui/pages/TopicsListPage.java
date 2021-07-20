@@ -26,4 +26,11 @@ public class TopicsListPage {
         return this;
     }
 
+    @SneakyThrows
+    public TopicsListPage shouldBeDeleted(String topicName) {
+        refreshUntil(By.xpath("//div[contains(@class,'section')]//table"));
+        $(By.xpath("//a[text()='%s']".formatted(topicName))).shouldNotBe(Condition.visible);
+        return this;
+    }
+
 }

@@ -67,10 +67,24 @@ public class TopicTests extends BaseTest {
         TopicViewPage topicViewPage = pages.openTopicViewPage(path)
                 .openEditSettings();
 
-        Assertions.assertEquals(COMPACT_POLICY_VALUE, topicViewPage.cleanupPolicy.getSelectedValue());
+        Assertions.assertEquals(COMPACT_POLICY_VALUE,topicViewPage.cleanupPolicy.getSelectedValue());
         Assertions.assertEquals(UPDATED_TIME_TO_RETAIN_VALUE,topicViewPage.timeToRetain.getValue());
         Assertions.assertEquals(UPDATED_MAX_SIZE_ON_DISK,topicViewPage.maxSizeOnDisk.getSelectedText());
         Assertions.assertEquals(UPDATED_MAX_MESSAGE_BYTES,topicViewPage.maxMessageBytes.getValue());
+    }
+
+    @SneakyThrows
+    @DisplayName("should delete topic")
+    @Test
+    @Disabled
+    void deleteTopic(){
+        final String path = "ui/clusters/" + SECOND_LOCAL + "/topics/" + UPDATE_TOPIC;
+
+        pages.openTopicsListPage()
+                .shouldBeOnPage()
+                .openTopic(UPDATE_TOPIC);
+        pages.openTopicViewPage(path).clickDeleteTopicButton();
+        pages.openTopicsListPage().shouldBeDeleted(UPDATE_TOPIC);
     }
 
 }

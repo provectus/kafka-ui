@@ -20,6 +20,12 @@ public class TopicViewPage {
     }
 
     @SneakyThrows
+    public void  clickDeleteTopicButton() {
+        $(By.xpath("//*[text()='Delete Topic']")).click();
+        $(By.xpath("//*[text()='Confirm']")).click();
+    }
+
+    @SneakyThrows
     public TopicViewPage changeCleanupPolicy(String cleanupPolicyValue) {
         cleanupPolicy.click();
         $(By.xpath("//select/option[@value = '%s']".formatted(cleanupPolicyValue))).click();
