@@ -109,6 +109,7 @@ To read more please follow to [chart documentation](charts/kafka-ui/README.md)
 # Guides
 
 - [SSO configuration](guides/SSO.md)
+- [AWS IAM configuration](guides/AWS_IAM.md)
 
 ## Connecting to a Secure Broker
 
