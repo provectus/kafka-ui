@@ -1,3 +1,8 @@
 export interface LoaderState {
-  [key: string]: 'notFetched' | 'fetching' | 'fetched' | 'errorFetching';
+  [key: string]:
+    | 'notFetched'
+    | 'fetching'
+    | 'fetched'
+    | 'errorFetching'
+    | 'reset';
 }

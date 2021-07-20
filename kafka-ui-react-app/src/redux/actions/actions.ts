@@ -91,6 +91,8 @@ export const createTopicAction = createAsyncAction(
   'POST_TOPIC__FAILURE'
 )<undefined, TopicsState, { alert?: FailurePayload }>();
 
+export const resetTopicLoaderAction = createAction('POST_TOPIC__RESET')();
+
 export const updateTopicAction = createAsyncAction(
   'PATCH_TOPIC__REQUEST',
   'PATCH_TOPIC__SUCCESS',

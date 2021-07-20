@@ -4,12 +4,12 @@ export const initialState: LoaderState = {};
 
 const reducer = (state = initialState, action: Action): LoaderState => {
   const { type } = action;
-  const matches = /(.*)__(REQUEST|SUCCESS|FAILURE)$/.exec(type);
-
+  const matches = /(.*)__(REQUEST|SUCCESS|FAILURE|RESET)$/.exec(type);
   // not a *__REQUEST / *__SUCCESS /  *__FAILURE actions, so we ignore them
   if (!matches) return state;
 
   const [, requestName, requestState] = matches;
+  const { [requestName]: omit, ...nstate } = state;
 
   switch (requestState) {
     case 'REQUEST':
@@ -27,6 +27,8 @@ const reducer = (state = initialState, action: Action): LoaderState => {
         ...state,
         [requestName]: 'errorFetching',
       };
+    case 'RESET':
+      return nstate;
     default:
       return state;
   }
