@@ -1310,6 +1310,51 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/streamtopologies:
+    get:
+      tags:
+        - StreamTopologies
+      summary: get stream applications
+      operationId: getStreamApplications
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StreamApplications'
+
+  /api/clusters/{clusterName}/streamtopologies/{applicationId}:
+    get:
+      tags:
+        - StreamTopologies
+      summary: get stream topology
+      operationId: getStreamTopology
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProcessorTopology'
+
 components:
   schemas:
     ErrorResponse:
@@ -2177,3 +2222,99 @@ components:
       required:
         - totalReplicationFactor
         - topicName
+
+    GraphNodeType:
+      type: string
+      enum:
+        - TOPIC
+        - SOURCE_PROCESSOR
+        - PROCESSOR
+        - SINK_PROCESSOR
+        - SUB_TOPOLOGY
+
+    GraphNode:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          $ref: '#/components/schemas/GraphNodeType'
+
+    TopicNode:
+      allOf:
+        - $ref: '#/components/schemas/GraphNode'
+        - type: object
+          properties:
+            inputMessagesNumber:
+              type: integer
+            outputMessagesNumber:
+              type: integer
+            lag:
+              type: integer
+
+    ProcessorNode:
+      allOf:
+        - $ref: '#/components/schemas/GraphNode'
+        - type: object
+          properties:
+            stores:
+              type: array
+              items:
+                type: string
+
+    SourceProcessorNode:
+      allOf:
+        - $ref: '#/components/schemas/GraphNode'
+        - type: object
+          properties:
+            topics:
+              type: array
+              items:
+                type: string
+
+    SinkProcessorNode:
+      allOf:
+        - $ref: '#/components/schemas/GraphNode'
+        - type: object
+          properties:
+            topic:
+              type: string
+
+    TopologyGraph:
+      type: object
+      properties:
+        adjacency:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        nodes:
+          additionalProperties:
+            $ref: '#/components/schemas/GraphNode'
+
+    SubTopologyNode:
+      allOf:
+        - $ref: '#/components/schemas/GraphNode'
+        - type: object
+          properties:
+            subTopology:
+              $ref: '#/components/schemas/TopologyGraph'
+
+    ProcessorTopology:
+      type: object
+      properties:
+        processorsNumber:
+          type: integer
+        topicsNumber:
+          type: integer
+        topology:
+          $ref: '#/components/schemas/TopologyGraph'
+
+    StreamApplications:
+      type: object
+      properties:
+        applicationIds:
+          type: array
+          items:
+            type: string
