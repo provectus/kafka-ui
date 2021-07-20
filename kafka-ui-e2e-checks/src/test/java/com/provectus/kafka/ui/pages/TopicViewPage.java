@@ -1,11 +1,17 @@
 package com.provectus.kafka.ui.pages;
 
+import com.codeborne.selenide.SelenideElement;
 import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
 
 public class TopicViewPage {
+
+    public SelenideElement cleanupPolicy = $(By.name("cleanupPolicy"));
+    public SelenideElement timeToRetain = $(By.id("timeToRetain"));
+    public SelenideElement maxSizeOnDisk = $(By.name("retentionBytes"));
+    public SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
 
     @SneakyThrows
     public TopicViewPage openEditSettings() {
@@ -15,35 +21,34 @@ public class TopicViewPage {
 
     @SneakyThrows
     public TopicViewPage changeCleanupPolicy(String cleanupPolicyValue) {
-        $(By.name("cleanupPolicy")).click();
+        cleanupPolicy.click();
         $(By.xpath("//select/option[@value = '%s']".formatted(cleanupPolicyValue))).click();
         return this;
     }
 
     @SneakyThrows
     public TopicViewPage changeTimeToRetainValue(String timeToRetainValue) {
-        $(By.id("timeToRetain")).clear();
-        $(By.id("timeToRetain")).sendKeys(String.valueOf(timeToRetainValue));
+        timeToRetain.clear();
+        timeToRetain.sendKeys(String.valueOf(timeToRetainValue));
         return this;
     }
 
     @SneakyThrows
-    public TopicViewPage changeMaxSizeOnDisk(String maxSizeOnDisk) {
-        $(By.name("retentionBytes")).click();
-        $(By.xpath("//select/option[text() = '%s']".formatted(maxSizeOnDisk))).click();
+    public TopicViewPage changeMaxSizeOnDisk(String maxSizeOnDiskValue) {
+        maxSizeOnDisk.click();
+        $(By.xpath("//select/option[text() = '%s']".formatted(maxSizeOnDiskValue))).click();
         return this;
     }
 
     @SneakyThrows
-    public TopicViewPage changeMaxMessageBytes(String maxMessageBytes) {
-        $(By.name("maxMessageBytes")).clear();
-        $(By.name("maxMessageBytes")).sendKeys(String.valueOf(maxMessageBytes));
+    public TopicViewPage changeMaxMessageBytes(String maxMessageBytesValue) {
+        maxMessageBytes.clear();
+        maxMessageBytes.sendKeys(String.valueOf(maxMessageBytesValue));
         return this;
     }
 
     @SneakyThrows
-    public TopicViewPage submitSettingChanges() {
+    public void submitSettingChanges() {
         $(By.xpath("//input[@type='submit']")).click();
-        return this;
     }
 }

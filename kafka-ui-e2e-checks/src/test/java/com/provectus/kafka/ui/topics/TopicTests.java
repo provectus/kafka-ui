@@ -3,18 +3,22 @@ package com.provectus.kafka.ui.topics;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
+import com.provectus.kafka.ui.pages.TopicViewPage;
 import lombok.SneakyThrows;
-import org.junit.Assert;
 import org.junit.jupiter.api.*;
-import org.openqa.selenium.By;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Selenide.$;
 
 public class TopicTests extends BaseTest {
 
     public static final String UPDATE_TOPIC = "update-topic";
     public static final String NEW_TOPIC = "new-topic";
     public static final String SECOND_LOCAL = "secondLocal";
+    public static final String COMPACT_POLICY_VALUE = "compact";
+    public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
+    public static final String UPDATED_MAX_SIZE_ON_DISK = "20 GB";
+    public static final String UPDATED_MAX_MESSAGE_BYTES = "1000020";
 
     @BeforeAll
     @SneakyThrows
@@ -54,17 +58,19 @@ public class TopicTests extends BaseTest {
                 .openTopic(UPDATE_TOPIC);
         pages.openTopicViewPage(path)
                 .openEditSettings()
-                .changeCleanupPolicy("compact")
-                .changeTimeToRetainValue("604800001")
-                .changeMaxSizeOnDisk("20 GB")
-                .changeMaxMessageBytes("1000020")
+                .changeCleanupPolicy(COMPACT_POLICY_VALUE)
+                .changeTimeToRetainValue(UPDATED_TIME_TO_RETAIN_VALUE)
+                .changeMaxSizeOnDisk(UPDATED_MAX_SIZE_ON_DISK)
+                .changeMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .submitSettingChanges();
         pages.reloadPage();
-        pages.openTopicViewPage(path)
+        TopicViewPage topicViewPage = pages.openTopicViewPage(path)
                 .openEditSettings();
 
-        String cleanupPolicy =  $(By.name("cleanupPolicy")).getSelectedValue();
-        Assert.assertEquals("compact", cleanupPolicy);
+        Assertions.assertEquals(COMPACT_POLICY_VALUE, topicViewPage.cleanupPolicy.getSelectedValue());
+        Assertions.assertEquals(UPDATED_TIME_TO_RETAIN_VALUE,topicViewPage.timeToRetain.getValue());
+        Assertions.assertEquals(UPDATED_MAX_SIZE_ON_DISK,topicViewPage.maxSizeOnDisk.getSelectedText());
+        Assertions.assertEquals(UPDATED_MAX_MESSAGE_BYTES,topicViewPage.maxMessageBytes.getValue());
     }
 
 }
