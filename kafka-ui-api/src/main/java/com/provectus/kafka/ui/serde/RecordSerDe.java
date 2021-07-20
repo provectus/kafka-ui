@@ -22,6 +22,7 @@ public interface RecordSerDe {
     @Nullable Integer valueSize;
     @Nullable String keySchemaId;
     @Nullable String valueSchemaId;
+    @Nullable Integer headersSize;
   }
 
   DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
+import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -25,6 +26,7 @@ public class SimpleRecordSerDe implements RecordSerDe {
           .valueFormat(MessageFormat.UNKNOWN)
           .valueSize(msg.value().get().length);
     }
+    builder.headersSize(ConsumerRecordUtil.getHeadersSize(msg));
     return builder.build();
   }
 

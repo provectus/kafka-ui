@@ -285,8 +285,8 @@ public class ClusterUtil {
     topicMessage.setKey(parsed.getKey());
     topicMessage.setContent(parsed.getValue());
     topicMessage.setKeyFormat(parsed.getKeyFormat() != null
-            ? MessageFormat.valueOf(parsed.getKeyFormat().name())
-            : null);
+        ? MessageFormat.valueOf(parsed.getKeyFormat().name())
+        : null);
     topicMessage.setValueFormat(parsed.getValueFormat() != null
         ? MessageFormat.valueOf(parsed.getValueFormat().name())
         : null);
@@ -294,10 +294,13 @@ public class ClusterUtil {
         ? Long.valueOf(parsed.getKeySize())
         : null);
     topicMessage.setValueSize(parsed.getValueSize() != null
-            ? Long.valueOf(parsed.getValueSize())
-            : null);
+        ? Long.valueOf(parsed.getValueSize())
+        : null);
     topicMessage.setKeySchemaId(parsed.getKeySchemaId());
     topicMessage.setValueSchemaId(parsed.getValueSchemaId());
+    topicMessage.setHeadersSize(parsed.getHeadersSize() != null
+        ? Long.valueOf(parsed.getHeadersSize())
+        : null);
 
     return topicMessage;
   }

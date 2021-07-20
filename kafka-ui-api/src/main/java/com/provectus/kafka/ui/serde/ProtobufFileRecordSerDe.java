@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormatter;
+import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -57,6 +58,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         builder.valueFormat(MessageFormat.PROTOBUF);
         builder.valueSize(msg.value().get().length);
       }
+      builder.headersSize(ConsumerRecordUtil.getHeadersSize(msg));
       return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);

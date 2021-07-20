@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
@@ -107,7 +108,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
         builder.valueSchemaId(getSchemaId(msg.value()).map(String::valueOf).orElse(null));
         builder.valueSize(msg.value().get().length);
       }
-
+      builder.headersSize(ConsumerRecordUtil.getHeadersSize(msg));
       return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);

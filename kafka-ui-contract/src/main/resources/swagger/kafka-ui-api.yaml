@@ -1708,6 +1708,9 @@ components:
           type: string
         valueSchemaId:
           type: string
+        headersSize:
+          type: integer
+          format: int64
       required:
         - partition
         - offset
