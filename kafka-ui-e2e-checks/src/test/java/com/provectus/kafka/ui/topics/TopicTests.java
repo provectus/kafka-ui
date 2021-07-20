@@ -1,52 +1,58 @@
 package com.provectus.kafka.ui.topics;
 
 import com.provectus.kafka.ui.base.BaseTest;
+import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import lombok.SneakyThrows;
 import org.junit.Assert;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
 
 public class TopicTests extends BaseTest {
 
+    public static final String UPDATE_TOPIC = "update-topic";
     public static final String NEW_TOPIC = "new-topic";
     public static final String SECOND_LOCAL = "secondLocal";
 
-    @BeforeEach
+    @BeforeAll
     @SneakyThrows
-    void beforeEach() {
-        helpers.apiHelper.createTopic(SECOND_LOCAL, NEW_TOPIC);
+    public static void beforeAll() {
+        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, UPDATE_TOPIC);
     }
 
-    @AfterEach
+    @AfterAll
     @SneakyThrows
-    void afterEach() {
-        helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
+    public static void afterAll() {
+        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, UPDATE_TOPIC);
     }
 
     @SneakyThrows
     @DisplayName("should create a topic")
     @Test
-    void createTopic(){
-        pages.open()
-                .shouldBeOnPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                .shouldBeTopic(NEW_TOPIC);
+    void createTopic() {
+        try {
+            helpers.apiHelper.createTopic(SECOND_LOCAL, NEW_TOPIC);
+            pages.open()
+                    .shouldBeOnPage()
+                    .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
+                    .shouldBeTopic(NEW_TOPIC);
+        } finally {
+            helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
+        }
     }
 
     @SneakyThrows
     @DisplayName("should update a topic")
     @Test
     void updateTopic(){
+        final String path = "ui/clusters/" + SECOND_LOCAL + "/topics/" + UPDATE_TOPIC;
+
         pages.openTopicsListPage()
                 .shouldBeOnPage()
-                .openTopic(NEW_TOPIC);
-        pages.openTopicViewPage()
+                .openTopic(UPDATE_TOPIC);
+        pages.openTopicViewPage(path)
                 .openEditSettings()
                 .changeCleanupPolicy("compact")
                 .changeTimeToRetainValue("604800001")
@@ -54,7 +60,7 @@ public class TopicTests extends BaseTest {
                 .changeMaxMessageBytes("1000020")
                 .submitSettingChanges();
         pages.reloadPage();
-        pages.openTopicViewPage()
+        pages.openTopicViewPage(path)
                 .openEditSettings();
 
         String cleanupPolicy =  $(By.name("cleanupPolicy")).getSelectedValue();

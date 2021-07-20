@@ -28,8 +28,8 @@ public class Pages {
         return goTo(TopicsListPage.path).topicsListPage;
     }
 
-    public TopicViewPage openTopicViewPage() {
-        return goTo(TopicViewPage.path).topicViewPage;
+    public TopicViewPage openTopicViewPage(String path) {
+        return goTo(path).topicViewPage;
     }
 
     public Pages reloadPage() {

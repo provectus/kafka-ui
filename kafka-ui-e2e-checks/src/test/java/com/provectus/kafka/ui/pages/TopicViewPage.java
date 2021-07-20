@@ -6,7 +6,6 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.$;
 
 public class TopicViewPage {
-    public static final String path = "ui/clusters/secondLocal/topics/new-topic";
 
     @SneakyThrows
     public TopicViewPage openEditSettings() {
