@@ -29,7 +29,7 @@ public class KsqlService {
             .flatMap(host -> getStatementStrategyForKsqlCommand(ksqlCommand)
                     .map(statement -> statement.host(host))
             )
-            .flatMap(statement -> ksqlClient.execute(statement));
+            .flatMap(ksqlClient::execute);
   }
 
   private Mono<KsqlStatementStrategy> getStatementStrategyForKsqlCommand(Mono<KsqlCommand> ksqlCommand) {
@@ -39,7 +39,6 @@ public class KsqlService {
                     .map(s -> s.ksqlCommand(command))
                     .findFirst())
             .flatMap(Mono::justOrEmpty)
-            // TODO: handle not parsed statements?
             .switchIfEmpty(Mono.error(new UnprocessableEntityException("Invalid sql")));
   }
 }

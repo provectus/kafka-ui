@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.strategy.ksqlStatement;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KsqlCommand;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import com.provectus.kafka.ui.model.Table;
@@ -48,7 +49,7 @@ public abstract class KsqlStatementStrategy {
             Table table = items.isArray() ? getTableFromArray(items) : getTableFromObject(items);
             return commandResponse.data(table);
         }
-        throw new InternalError("Invalid data format");
+        throw new UnprocessableEntityException("KSQL DB response mapping error");
     }
 
     protected KsqlCommandResponse serializeMessageResponse(JsonNode response, String path) {
@@ -58,8 +59,7 @@ public abstract class KsqlStatementStrategy {
             JsonNode item = first.path(path);
             return commandResponse.message(getMessageFromObject(item));
         }
-        // TODO: handle
-        throw new InternalError("Invalid data format");
+        throw new UnprocessableEntityException("KSQL DB response mapping error");
     }
 
     protected KsqlCommandResponse serializeQueryResponse(JsonNode response) {
@@ -74,7 +74,7 @@ public abstract class KsqlStatementStrategy {
         JsonNode headerRow = response.get(0);
         if (headerRow.isObject() && headerRow.size() > 0) {
             String schema = headerRow.get("header").get("schema").asText();
-            return Arrays.stream(schema.split(",")).map(s -> s.trim()).collect(Collectors.toList());
+            return Arrays.stream(schema.split(",")).map(String::trim).collect(Collectors.toList());
         }
         return new ArrayList<>();
     }
@@ -84,7 +84,7 @@ public abstract class KsqlStatementStrategy {
                 .filter(row -> row.has("row") && row.get("row").has("columns"))
                 .map(row -> row.get("row").get("columns"))
                 .map(cellNode -> getStreamForJsonArray(cellNode)
-                                .map(cell -> cell.asText())
+                                .map(JsonNode::asText)
                                 .collect(Collectors.toList())
                 )
                 .collect(Collectors.toList());
@@ -115,7 +115,7 @@ public abstract class KsqlStatementStrategy {
         if (node.isObject() && node.has("message")) {
             return node.get("message").asText();
         }
-        throw new InternalError("can't get message from empty object or array");
+        throw new UnprocessableEntityException("KSQL DB response mapping error");
     }
 
     private List<List<String>> getTableRows(JsonNode node, List<String> keys) {
@@ -131,8 +131,7 @@ public abstract class KsqlStatementStrategy {
         if (node.isArray() && node.size() > 0) {
             return StreamSupport.stream(node.spliterator(), false);
         }
-        // TODO: handle
-        throw new InternalError("not JsonArray or empty");
+        throw new UnprocessableEntityException("KSQL DB response mapping error");
     }
 
     private List<String> getJsonObjectKeys(JsonNode node) {
@@ -141,8 +140,7 @@ public abstract class KsqlStatementStrategy {
                     Spliterators.spliteratorUnknownSize(node.fieldNames(), Spliterator.ORDERED), false
             ).collect(Collectors.toList());
         }
-        // TODO: handle
-        throw new InternalError("Invalid data format");
+        throw new UnprocessableEntityException("KSQL DB response mapping error");
     }
 
     private List<String> getJsonObjectValues(JsonNode node) {

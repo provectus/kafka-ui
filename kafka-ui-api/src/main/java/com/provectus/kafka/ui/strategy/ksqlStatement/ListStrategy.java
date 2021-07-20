@@ -10,8 +10,8 @@ import java.util.Optional;
 @Component
 public class ListStrategy extends KsqlStatementStrategy {
     private final String requestPath = "/ksql";
-    private String responseValueKey = "";
     private final List<String> statements = List.of("functions", "topics", "streams", "tables");
+    private String responseValueKey = "";
 
     @Override
     public KsqlCommandResponse serializeResponse(JsonNode response) {
