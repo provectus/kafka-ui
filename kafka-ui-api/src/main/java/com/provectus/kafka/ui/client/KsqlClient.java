@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.client;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.model.KsqlResponseTable;
+import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import com.provectus.kafka.ui.strategy.ksqlStatement.KsqlStatementStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -20,7 +20,7 @@ public final class KsqlClient {
   private final WebClient webClient;
   private final ObjectMapper mapper;
 
-  public Mono<KsqlResponseTable> execute(KsqlStatementStrategy ksqlStatement) {
+  public Mono<KsqlCommandResponse> execute(KsqlStatementStrategy ksqlStatement) {
     return webClient.post()
       .uri(ksqlStatement.getUri())
       .accept(new MediaType("application","vnd.ksql.v1+json"))
