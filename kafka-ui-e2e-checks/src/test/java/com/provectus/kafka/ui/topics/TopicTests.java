@@ -9,11 +9,14 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.provectus.kafka.ui.helpers.Utils.waitForSelectedValue;
+
 
 public class TopicTests extends BaseTest {
 
-    public static final String UPDATE_TOPIC = "update-topic";
     public static final String NEW_TOPIC = "new-topic";
+    public static final String UPDATE_TOPIC = "update-topic";
+    public static final String DELETE_TOPIC = "delete-topic";
     public static final String SECOND_LOCAL = "secondLocal";
     public static final String COMPACT_POLICY_VALUE = "compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
@@ -24,12 +27,14 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, UPDATE_TOPIC);
+        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, DELETE_TOPIC);
     }
 
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, UPDATE_TOPIC);
+        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, DELETE_TOPIC);
     }
 
     @SneakyThrows
@@ -67,7 +72,8 @@ public class TopicTests extends BaseTest {
         TopicViewPage topicViewPage = pages.openTopicViewPage(path)
                 .openEditSettings();
 
-        Assertions.assertEquals(COMPACT_POLICY_VALUE,topicViewPage.cleanupPolicy.getSelectedValue());
+        waitForSelectedValue(topicViewPage.cleanupPolicy, COMPACT_POLICY_VALUE);
+
         Assertions.assertEquals(UPDATED_TIME_TO_RETAIN_VALUE,topicViewPage.timeToRetain.getValue());
         Assertions.assertEquals(UPDATED_MAX_SIZE_ON_DISK,topicViewPage.maxSizeOnDisk.getSelectedText());
         Assertions.assertEquals(UPDATED_MAX_MESSAGE_BYTES,topicViewPage.maxMessageBytes.getValue());
@@ -78,13 +84,13 @@ public class TopicTests extends BaseTest {
     @Test
     @Disabled
     void deleteTopic(){
-        final String path = "ui/clusters/" + SECOND_LOCAL + "/topics/" + UPDATE_TOPIC;
+        final String path = "ui/clusters/" + SECOND_LOCAL + "/topics/" + DELETE_TOPIC;
 
         pages.openTopicsListPage()
                 .shouldBeOnPage()
-                .openTopic(UPDATE_TOPIC);
+                .openTopic(DELETE_TOPIC);
         pages.openTopicViewPage(path).clickDeleteTopicButton();
-        pages.openTopicsListPage().shouldBeDeleted(UPDATE_TOPIC);
+        pages.openTopicsListPage().shouldBeDeleted(DELETE_TOPIC);
     }
 
 }
