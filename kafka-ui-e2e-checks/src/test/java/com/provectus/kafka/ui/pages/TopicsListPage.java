@@ -25,44 +25,5 @@ public class TopicsListPage {
                 .click();
         return this;
     }
-    @SneakyThrows
-    public TopicsListPage openEditSettings() {
-        $(By.xpath("//a[@class=\"button\" and text()='Edit settings']")).click();
-        return this;
-    }
-
-    @SneakyThrows
-    public TopicsListPage changeCleanupPolicy(String cleanupPolicyValue) {
-        $(By.name("cleanupPolicy")).click();
-        $(By.xpath("//select/option[@value = '%s']".formatted(cleanupPolicyValue))).click();
-        return this;
-    }
-
-    @SneakyThrows
-    public TopicsListPage changeTimeToRetainValue(String timeToRetainValue) {
-        $(By.id("timeToRetain")).clear();
-        $(By.id("timeToRetain")).sendKeys(String.valueOf(timeToRetainValue));
-        return this;
-    }
-
-    @SneakyThrows
-    public TopicsListPage changeMaxSizeOnDisk(String maxSizeOnDisk) {
-        $(By.name("retentionBytes")).click();
-        $(By.xpath("//select/option[text() = '%s']".formatted(maxSizeOnDisk))).click();
-        return this;
-    }
-
-    @SneakyThrows
-    public TopicsListPage changeMaxMessageBytes(String maxMessageBytes) {
-        $(By.name("maxMessageBytes")).clear();
-        $(By.name("maxMessageBytes")).sendKeys(String.valueOf(maxMessageBytes));
-        return this;
-    }
-
-    @SneakyThrows
-    public TopicsListPage submitSettingChanges() {
-        $(By.xpath("//input[@type='submit']")).click();
-        return this;
-    }
 
 }

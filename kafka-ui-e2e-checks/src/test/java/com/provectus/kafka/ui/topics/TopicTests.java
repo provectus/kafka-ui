@@ -45,7 +45,8 @@ public class TopicTests extends BaseTest {
     void updateTopic(){
         pages.openTopicsListPage()
                 .shouldBeOnPage()
-                .openTopic(NEW_TOPIC)
+                .openTopic(NEW_TOPIC);
+        pages.openTopicViewPage()
                 .openEditSettings()
                 .changeCleanupPolicy("compact")
                 .changeTimeToRetainValue("604800001")
@@ -53,8 +54,7 @@ public class TopicTests extends BaseTest {
                 .changeMaxMessageBytes("1000020")
                 .submitSettingChanges();
         pages.reloadPage();
-        pages.openTopicsListPage()
-                .openTopic(NEW_TOPIC)
+        pages.openTopicViewPage()
                 .openEditSettings();
 
         String cleanupPolicy =  $(By.name("cleanupPolicy")).getSelectedValue();
