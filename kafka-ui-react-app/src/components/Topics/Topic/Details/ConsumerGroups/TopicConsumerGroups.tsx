@@ -34,38 +34,39 @@ const TopicConsumerGroups: React.FC<Props> = ({
 
   return (
     <div className="box">
-      {consumerGroups.length > 0 ? (
-        <table className="table is-striped is-fullwidth">
-          <thead>
-            <tr>
-              <th>Consumer group ID</th>
-              <th>Num of members</th>
-              <th>Messages behind</th>
-              <th>Coordinator</th>
-              <th>State</th>
+      <table className="table is-striped is-fullwidth">
+        <thead>
+          <tr>
+            <th>Consumer group ID</th>
+            <th>Num of members</th>
+            <th>Messages behind</th>
+            <th>Coordinator</th>
+            <th>State</th>
+          </tr>
+        </thead>
+        <tbody>
+          {consumerGroups.map((consumer) => (
+            <tr
+              key={consumer.groupId}
+              className="is-clickable"
+              onClick={() => goToConsumerGroupDetails(consumer)}
+            >
+              <td>{consumer.groupId}</td>
+              <td>{consumer.members}</td>
+              <td>{consumer.messagesBehind}</td>
+              <td>{consumer.coordinator?.id}</td>
+              <td>
+                <ConsumerGroupStateTag state={consumer.state} />
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {consumerGroups.map((consumer) => (
-              <tr
-                key={consumer.groupId}
-                className="is-clickable"
-                onClick={() => goToConsumerGroupDetails(consumer)}
-              >
-                <td>{consumer.groupId}</td>
-                <td>{consumer.members}</td>
-                <td>{consumer.messagesBehind}</td>
-                <td>{consumer.coordinator?.id}</td>
-                <td>
-                  <ConsumerGroupStateTag state={consumer.state} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      ) : (
-        'No active consumer groups'
-      )}
+          ))}
+          {consumerGroups.length === 0 && (
+            <tr>
+              <td colSpan={10}>No active consumer groups</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };
