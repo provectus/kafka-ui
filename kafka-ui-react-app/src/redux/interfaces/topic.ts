@@ -6,6 +6,8 @@ import {
   GetTopicMessagesRequest,
   ConsumerGroup,
   TopicColumnsToSort,
+  TopicMessage,
+  TopicMessageConsuming,
 } from 'generated-sources';
 
 export type TopicName = Topic['name'];
@@ -64,4 +66,10 @@ export interface TopicFormDataRaw {
   retentionBytes: number;
   maxMessageBytes: number;
   customParams: TopicFormCustomParams;
+}
+
+export interface TopicMessagesState {
+  messages: TopicMessage[];
+  phase?: string;
+  meta: TopicMessageConsuming;
 }

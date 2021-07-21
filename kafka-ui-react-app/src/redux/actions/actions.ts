@@ -22,6 +22,8 @@ import {
   FullConnectorInfo,
   Connect,
   Task,
+  TopicMessage,
+  TopicMessageConsuming,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -246,3 +248,16 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
+
+export const addTopicMessage =
+  createAction('ADD_TOPIC_MESSAGE')<TopicMessage>();
+
+export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
+
+export const updateTopicMessagesPhase = createAction(
+  'UPDATE_TOPIC_MESSAGES_PHASE'
+)<string>();
+
+export const updateTopicMessagesMeta = createAction(
+  'UPDATE_TOPIC_MESSAGES_META'
+)<TopicMessageConsuming>();

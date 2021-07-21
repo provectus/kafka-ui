@@ -2,7 +2,7 @@ import { ActionType } from 'typesafe-actions';
 import { ThunkAction } from 'redux-thunk';
 import * as actions from 'redux/actions/actions';
 
-import { TopicsState } from './topic';
+import { TopicMessagesState, TopicsState } from './topic';
 import { ClusterState } from './cluster';
 import { BrokersState } from './broker';
 import { LoaderState } from './loader';
@@ -22,6 +22,7 @@ export * from './connect';
 
 export interface RootState {
   topics: TopicsState;
+  topicMessages: TopicMessagesState;
   clusters: ClusterState;
   brokers: BrokersState;
   consumerGroups: ConsumerGroupsState;
