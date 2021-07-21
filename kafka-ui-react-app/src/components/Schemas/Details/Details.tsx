@@ -90,7 +90,7 @@ const Details: React.FC<DetailsProps> = ({
                     type="button"
                     to={clusterSchemaSchemaEditPath(clusterName, subject)}
                   >
-                    Update Schema
+                    Edit Schema
                   </Link>
                   <button
                     className="button is-danger"
