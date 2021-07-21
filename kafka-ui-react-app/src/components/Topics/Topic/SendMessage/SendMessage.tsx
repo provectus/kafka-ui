@@ -12,7 +12,7 @@ import { getFakeData } from 'yup-faker';
 import { useHistory } from 'react-router';
 import { clusterTopicMessagesPath } from 'lib/paths';
 
-interface Props {
+export interface Props {
   clusterName: string;
   topicName: string;
   fetchTopicMessageSchema: (clusterName: string, topicName: string) => void;
@@ -172,7 +172,10 @@ const SendMessage: React.FC<Props> = ({
                     {...register('partition')}
                   >
                     {partitions.map((partition) => (
-                      <option key={partition.partition}>
+                      <option
+                        key={partition.partition}
+                        value={partition.partition}
+                      >
                         {partition.partition}
                       </option>
                     ))}
