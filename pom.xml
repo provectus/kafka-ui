@@ -17,7 +17,7 @@
 		<spring-boot.version>2.2.4.RELEASE</spring-boot.version>
 		<jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
 		<org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
-		<org.projectlombok.version>1.18.20</org.projectlombok.version>
+		<org.projectlombok.version>1.18.10</org.projectlombok.version>
 		<git.revision>latest</git.revision>
 		<zkclient.version>0.11</zkclient.version>
 		<kafka-clients.version>2.4.1</kafka-clients.version>
