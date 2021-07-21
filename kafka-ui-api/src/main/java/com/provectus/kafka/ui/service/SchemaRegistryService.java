@@ -14,6 +14,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.NewSchemaSubject;
 import com.provectus.kafka.ui.model.SchemaSubject;
 import com.provectus.kafka.ui.model.SchemaType;
+import com.provectus.kafka.ui.model.schemaregistry.ErrorResponse;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
@@ -195,7 +196,8 @@ public class SchemaRegistryService {
         .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
         .retrieve()
         .onStatus(UNPROCESSABLE_ENTITY::equals,
-            r -> Mono.error(new UnprocessableEntityException("Invalid params")))
+            r -> r.bodyToMono(ErrorResponse.class)
+                .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SubjectIdResponse.class);
   }
 
@@ -210,7 +212,8 @@ public class SchemaRegistryService {
         .retrieve()
         .onStatus(NOT_FOUND::equals, res -> Mono.empty())
         .onStatus(UNPROCESSABLE_ENTITY::equals,
-            r -> Mono.error(new UnprocessableEntityException("Invalid params")))
+            r -> r.bodyToMono(ErrorResponse.class)
+                .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SchemaSubject.class)
         .filter(s -> Objects.isNull(s.getId()))
         .switchIfEmpty(Mono.error(new DuplicateEntityException("Such schema already exists")));
