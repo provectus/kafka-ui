@@ -9,6 +9,7 @@ import {
   TopicConfig,
   TopicColumnsToSort,
   ConsumerGroupsApi,
+  CreateTopicMessage,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
@@ -339,5 +340,59 @@ export const fetchTopicConsumerGroups =
       dispatch(actions.fetchTopicConsumerGroupsAction.success(newState));
     } catch (e) {
       dispatch(actions.fetchTopicConsumerGroupsAction.failure());
+    }
+  };
+
+export const fetchTopicMessageSchema =
+  (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.fetchTopicMessageSchemaAction.request());
+    try {
+      const schema = await messagesApiClient.getTopicSchema({
+        clusterName,
+        topicName,
+      });
+      dispatch(
+        actions.fetchTopicMessageSchemaAction.success({ topicName, schema })
+      );
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['topic', topicName].join('-'),
+        title: `Topic Schema ${topicName}`,
+        response,
+      };
+      dispatch(actions.fetchTopicMessageSchemaAction.failure({ alert }));
+    }
+  };
+
+export const sendTopicMessage =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    payload: CreateTopicMessage
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.sendTopicMessageAction.request());
+    try {
+      await messagesApiClient.sendTopicMessages({
+        clusterName,
+        topicName,
+        createTopicMessage: {
+          key: payload.key,
+          content: payload.content,
+          headers: payload.headers,
+          partition: payload.partition,
+        },
+      });
+      dispatch(actions.sendTopicMessageAction.success());
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['topic', topicName].join('-'),
+        title: `Topic Message ${topicName}`,
+        response,
+      };
+      dispatch(actions.sendTopicMessageAction.failure({ alert }));
     }
   };

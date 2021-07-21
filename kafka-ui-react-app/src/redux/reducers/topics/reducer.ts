@@ -2,6 +2,7 @@ import { TopicMessage } from 'generated-sources';
 import { Action, TopicsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
+import * as _ from 'lodash';
 
 export const initialState: TopicsState = {
   byName: {},
@@ -26,7 +27,7 @@ const transformTopicMessages = (
       try {
         parsedContent =
           typeof content !== 'object' ? JSON.parse(content) : content;
-      } catch (_) {
+      } catch (err) {
         // do nothing
       }
     }
@@ -74,6 +75,15 @@ const reducer = (state = initialState, action: Action): TopicsState => {
         ...state,
         orderBy: action.payload,
       };
+    }
+    case getType(actions.fetchTopicMessageSchemaAction.success): {
+      const { topicName, schema } = action.payload;
+      const newState = _.cloneDeep(state);
+      newState.byName[topicName] = {
+        ...newState.byName[topicName],
+        messageSchema: schema,
+      };
+      return newState;
     }
     default:
       return state;

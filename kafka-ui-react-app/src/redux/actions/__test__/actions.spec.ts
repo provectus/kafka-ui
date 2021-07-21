@@ -3,7 +3,11 @@ import {
   schemaVersionsPayload,
 } from 'redux/reducers/schemas/__test__/fixtures';
 import * as actions from 'redux/actions';
-import { TopicColumnsToSort } from 'generated-sources';
+import {
+  MessageSchemaSourceEnum,
+  TopicColumnsToSort,
+  TopicMessageSchema,
+} from 'generated-sources';
 import { FailurePayload } from 'redux/interfaces';
 
 import { mockTopicsState } from './fixtures';
@@ -199,6 +203,91 @@ describe('Actions', () => {
       expect(actions.deleteConsumerGroupAction.failure({ alert })).toEqual({
         type: 'DELETE_CONSUMER_GROUP__FAILURE',
         payload: { alert },
+      });
+    });
+  });
+
+  describe('sending messages', () => {
+    describe('fetchTopicMessageSchemaAction', () => {
+      it('creates GET_TOPIC_SCHEMA__REQUEST', () => {
+        expect(actions.fetchTopicMessageSchemaAction.request()).toEqual({
+          type: 'GET_TOPIC_SCHEMA__REQUEST',
+        });
+      });
+      it('creates GET_TOPIC_SCHEMA__SUCCESS', () => {
+        const messageSchema: TopicMessageSchema = {
+          key: {
+            name: 'key',
+            source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+            schema: `{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "http://example.com/myURI.schema.json",
+        "title": "TestRecord",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "f1": {
+            "type": "integer"
+          },
+          "f2": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string"
+          }
+        }
+        }
+        `,
+          },
+          value: {
+            name: 'value',
+            source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+            schema: `{
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "http://example.com/myURI1.schema.json",
+        "title": "TestRecord",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "f1": {
+            "type": "integer"
+          },
+          "f2": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string"
+          }
+        }
+        }
+        `,
+          },
+        };
+        expect(
+          actions.fetchTopicMessageSchemaAction.success({
+            topicName: 'test',
+            schema: messageSchema,
+          })
+        ).toEqual({
+          type: 'GET_TOPIC_SCHEMA__SUCCESS',
+          payload: {
+            topicName: 'test',
+            schema: messageSchema,
+          },
+        });
+      });
+
+      it('creates GET_TOPIC_SCHEMA__FAILURE', () => {
+        const alert: FailurePayload = {
+          subject: ['message-chema', 'test'].join('-'),
+          title: `Message Schema Test`,
+        };
+        expect(
+          actions.fetchTopicMessageSchemaAction.failure({ alert })
+        ).toEqual({
+          type: 'GET_TOPIC_SCHEMA__FAILURE',
+          payload: { alert },
+        });
       });
     });
   });

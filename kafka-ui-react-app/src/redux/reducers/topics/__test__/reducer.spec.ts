@@ -1,10 +1,11 @@
-import { TopicColumnsToSort } from 'generated-sources';
+import { MessageSchemaSourceEnum, TopicColumnsToSort } from 'generated-sources';
 import {
   deleteTopicAction,
   clearMessagesTopicAction,
   setTopicsSearchAction,
   setTopicsOrderByAction,
   fetchTopicConsumerGroupsAction,
+  fetchTopicMessageSchemaAction,
 } from 'redux/actions';
 import reducer from 'redux/reducers/topics/reducer';
 
@@ -13,7 +14,56 @@ const topic = {
   id: 'id',
 };
 
-const state = {
+const messageSchema = {
+  key: {
+    name: 'key',
+    source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+    schema: `{
+"$schema": "http://json-schema.org/draft-07/schema#",
+"$id": "http://example.com/myURI.schema.json",
+"title": "TestRecord",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "f1": {
+    "type": "integer"
+  },
+  "f2": {
+    "type": "string"
+  },
+  "schema": {
+    "type": "string"
+  }
+}
+}
+`,
+  },
+  value: {
+    name: 'value',
+    source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+    schema: `{
+"$schema": "http://json-schema.org/draft-07/schema#",
+"$id": "http://example.com/myURI1.schema.json",
+"title": "TestRecord",
+"type": "object",
+"additionalProperties": false,
+"properties": {
+  "f1": {
+    "type": "integer"
+  },
+  "f2": {
+    "type": "string"
+  },
+  "schema": {
+    "type": "string"
+  }
+}
+}
+`,
+  },
+};
+
+let state = {
   byName: {
     [topic.name]: topic,
   },
@@ -68,6 +118,33 @@ describe('topics reducer', () => {
       expect(
         reducer(state, fetchTopicConsumerGroupsAction.success(state))
       ).toEqual(state);
+    });
+  });
+
+  describe('message sending', () => {
+    it('adds message shema after fetching it', () => {
+      state = {
+        byName: {
+          [topic.name]: topic,
+        },
+        allNames: [topic.name],
+        messages: [],
+        totalPages: 1,
+        search: '',
+        orderBy: null,
+        consumerGroups: [],
+      };
+      expect(
+        reducer(
+          state,
+          fetchTopicMessageSchemaAction.success({
+            topicName: 'topic',
+            schema: messageSchema,
+          })
+        ).byName
+      ).toEqual({
+        [topic.name]: { ...topic, messageSchema },
+      });
     });
   });
 });
