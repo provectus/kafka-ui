@@ -70,7 +70,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
           onCancel={[Function]}
           onConfirm={[Function]}
         >
-          Are you sure want to remove
+          Are you sure want to remove 
           <b>
             test
           </b>
@@ -210,7 +210,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
           onCancel={[Function]}
           onConfirm={[Function]}
         >
-          Are you sure want to remove
+          Are you sure want to remove 
           <b>
             test
           </b>
@@ -353,7 +353,7 @@ exports[`Details View when page with schema versions loaded when versions are em
           onCancel={[Function]}
           onConfirm={[Function]}
         >
-          Are you sure want to remove
+          Are you sure want to remove 
           <b>
             test
           </b>
