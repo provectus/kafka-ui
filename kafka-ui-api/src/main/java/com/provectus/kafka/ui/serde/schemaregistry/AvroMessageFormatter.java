@@ -20,4 +20,9 @@ public class AvroMessageFormatter implements MessageFormatter {
     byte[] jsonBytes = AvroSchemaUtils.toJson(avroRecord);
     return new String(jsonBytes);
   }
+
+  @Override
+  public MessageFormat getFormat() {
+    return MessageFormat.AVRO;
+  }
 }
