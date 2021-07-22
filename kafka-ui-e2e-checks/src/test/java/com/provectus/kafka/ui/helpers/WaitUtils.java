@@ -25,7 +25,7 @@ public class WaitUtils {
             refresh();
             i++;
             sleep(2000);
-        } while (!selectedValue.equals(element.getSelectedValue()) && i != 10);
+        } while (!selectedValue.equals(element.getSelectedValue()) && i != 20);
         Assertions.assertEquals(element.getSelectedValue(), selectedValue);
     }
 }
