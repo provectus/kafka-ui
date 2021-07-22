@@ -8,8 +8,8 @@ public class Pages {
     public static Pages INSTANCE = new Pages();
 
     public MainPage mainPage = new MainPage();
-    public TopicsListPage topicsListPage = new TopicsListPage();
-    public TopicViewPage topicViewPage = new TopicViewPage();
+    public TopicsList topicsList = new TopicsList();
+    public TopicView topicView = new TopicView();
 
     private Pages goTo(String path) {
         Selenide.open(TestConfiguration.BASE_URL+path);
@@ -24,8 +24,8 @@ public class Pages {
         return goTo(MainPage.path).mainPage;
     }
 
-    public TopicsListPage openTopicsListPage() {
-        return goTo(TopicsListPage.path).topicsListPage;
+    public TopicsList openTopicsList() {
+        return goTo(TopicsList.path).topicsList;
     }
 
     public TopicViewPage openTopicViewPage(String path) {

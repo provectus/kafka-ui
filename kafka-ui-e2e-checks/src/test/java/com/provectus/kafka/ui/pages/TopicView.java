@@ -14,7 +14,7 @@ public class TopicViewPage {
     public SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
 
     @SneakyThrows
-    public TopicViewPage openEditSettings() {
+    public TopicView openEditSettings() {
         $(By.xpath("//a[@class=\"button\" and text()='Edit settings']")).click();
         return this;
     }
@@ -26,28 +26,28 @@ public class TopicViewPage {
     }
 
     @SneakyThrows
-    public TopicViewPage changeCleanupPolicy(String cleanupPolicyValue) {
+    public TopicView changeCleanupPolicy(String cleanupPolicyValue) {
         cleanupPolicy.click();
         $(By.xpath("//select/option[@value = '%s']".formatted(cleanupPolicyValue))).click();
         return this;
     }
 
     @SneakyThrows
-    public TopicViewPage changeTimeToRetainValue(String timeToRetainValue) {
+    public TopicView changeTimeToRetainValue(String timeToRetainValue) {
         timeToRetain.clear();
         timeToRetain.sendKeys(String.valueOf(timeToRetainValue));
         return this;
     }
 
     @SneakyThrows
-    public TopicViewPage changeMaxSizeOnDisk(String maxSizeOnDiskValue) {
+    public TopicView changeMaxSizeOnDisk(String maxSizeOnDiskValue) {
         maxSizeOnDisk.click();
         $(By.xpath("//select/option[text() = '%s']".formatted(maxSizeOnDiskValue))).click();
         return this;
     }
 
     @SneakyThrows
-    public TopicViewPage changeMaxMessageBytes(String maxMessageBytesValue) {
+    public TopicView changeMaxMessageBytes(String maxMessageBytesValue) {
         maxMessageBytes.clear();
         maxMessageBytes.sendKeys(String.valueOf(maxMessageBytesValue));
         return this;

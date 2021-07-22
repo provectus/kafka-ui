@@ -6,13 +6,13 @@ import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.provectus.kafka.ui.helpers.Utils.refreshUntil;
+import static com.provectus.kafka.ui.helpers.WaitUtils.refreshUntil;
 
-public class TopicsListPage {
+public class TopicsList {
     public static final String path = "ui/clusters/secondLocal/topics";
 
     @Step
-    public TopicsListPage shouldBeOnPage() {
+    public TopicsList isOnPage() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
         $(By.xpath("//span[text()='All Topics']")).shouldBe(Condition.visible);
         return this;
@@ -27,7 +27,7 @@ public class TopicsListPage {
     }
 
     @SneakyThrows
-    public TopicsListPage shouldBeDeleted(String topicName) {
+    public TopicsList isDeleted(String topicName) {
         refreshUntil(By.xpath("//div[contains(@class,'section')]//table"));
         $(By.xpath("//a[text()='%s']".formatted(topicName))).shouldNotBe(Condition.visible);
         return this;

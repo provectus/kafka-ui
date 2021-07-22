@@ -13,7 +13,7 @@ public class SmokeTests extends BaseTest {
     @Issue("380")
     void mainPageLoads() {
         pages.open()
-                .shouldBeOnPage();
+                .isOnPage();
         compareScreenshots("main");
     }
 

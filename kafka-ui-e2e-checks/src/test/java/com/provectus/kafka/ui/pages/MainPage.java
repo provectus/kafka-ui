@@ -6,7 +6,7 @@ import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.helpers.Utils.refreshUntil;
+import static com.provectus.kafka.ui.helpers.WaitUtils.refreshUntil;
 
 public class MainPage {
 
@@ -15,14 +15,14 @@ public class MainPage {
   public static final String path = "";
 
   @Step
-  public MainPage shouldBeOnPage() {
+  public MainPage isOnPage() {
     $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
     $(By.xpath("//h5[text()='Clusters']")).shouldBe(Condition.visible);
     return this;
   }
 
   @SneakyThrows
-  public void shouldBeTopic(String topicName) {
+  public void isTopic(String topicName) {
     refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
   }
 

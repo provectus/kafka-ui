@@ -8,7 +8,7 @@ import org.openqa.selenium.By;
 import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Selenide.$;
 
-public class Utils {
+public class WaitUtils {
     public static void refreshUntil(By by) {
         int i = 0;
         do {

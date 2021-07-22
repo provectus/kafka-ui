@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.topics;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.TopicViewPage;
+import com.provectus.kafka.ui.pages.TopicView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
@@ -16,7 +16,7 @@ public class TopicTests extends BaseTest {
 
     public static final String NEW_TOPIC = "new-topic";
     public static final String UPDATE_TOPIC = "update-topic";
-    public static final String DELETE_TOPIC = "delete-topic";
+    public static final String TOPIC_TO_DELETE = "delete-topic";
     public static final String SECOND_LOCAL = "secondLocal";
     public static final String COMPACT_POLICY_VALUE = "compact";
     public static final String UPDATED_TIME_TO_RETAIN_VALUE = "604800001";
@@ -27,14 +27,14 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, UPDATE_TOPIC);
-        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, DELETE_TOPIC);
+        Helpers.INSTANCE.apiHelper.createTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
     }
 
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
         Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, UPDATE_TOPIC);
-        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, DELETE_TOPIC);
+        Helpers.INSTANCE.apiHelper.deleteTopic(SECOND_LOCAL, TOPIC_TO_DELETE);
     }
 
     @SneakyThrows
@@ -44,9 +44,9 @@ public class TopicTests extends BaseTest {
         try {
             helpers.apiHelper.createTopic(SECOND_LOCAL, NEW_TOPIC);
             pages.open()
-                    .shouldBeOnPage()
+                    .isOnPage()
                     .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                    .shouldBeTopic(NEW_TOPIC);
+                    .isTopic(NEW_TOPIC);
         } finally {
             helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
         }
