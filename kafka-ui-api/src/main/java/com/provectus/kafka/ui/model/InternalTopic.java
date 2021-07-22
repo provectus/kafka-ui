@@ -14,6 +14,7 @@ public class InternalTopic {
   private final Map<Integer, InternalPartition> partitions;
   private final List<InternalTopicConfig> topicConfigs;
 
+  private final CleanupPolicy cleanUpPolicy;
   private final int replicas;
   private final int partitionCount;
   private final int inSyncReplicas;
