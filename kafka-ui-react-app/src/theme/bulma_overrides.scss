@@ -6,10 +6,8 @@
     white-space: nowrap;
   }
 
-  &-margin {
-    &-right {
-      margin-right: 10px;
-    }
+  &-text-nowrap {
+    white-space: nowrap;
   }
 
   &-content-overflow-ellipsis {
@@ -54,6 +52,11 @@
       color: #cc0f35;
     }
   }
+}
+
+.is-family-code {
+  font-size: .9rem;
+  line-height: 1.5em;
 }
 
 @keyframes fadein {

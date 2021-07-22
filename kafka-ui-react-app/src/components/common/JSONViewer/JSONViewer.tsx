@@ -4,22 +4,22 @@ import JSONTree from 'react-json-tree';
 import theme from './theme';
 
 interface FullMessageProps {
-  message: string;
+  data: string;
 }
 
-const FullMessage: React.FC<FullMessageProps> = ({ message }) => {
+const JSONViewer: React.FC<FullMessageProps> = ({ data }) => {
   try {
     return (
       <JSONTree
-        data={JSON.parse(message)}
+        data={JSON.parse(data)}
         theme={theme}
         shouldExpandNode={() => true}
         hideRoot
       />
     );
   } catch (e) {
-    return <p>{JSON.stringify(message)}</p>;
+    return <p>{JSON.stringify(data)}</p>;
   }
 };
 
-export default FullMessage;
+export default JSONViewer;
