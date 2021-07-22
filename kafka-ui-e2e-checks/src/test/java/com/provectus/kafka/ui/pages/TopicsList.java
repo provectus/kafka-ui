@@ -10,7 +10,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.provectus.kafka.ui.helpers.WaitUtils.refreshUntil;
 
 public class TopicsList {
-    public static final String path = "ui/clusters/secondLocal/topics";
+    public static final String path = "ui/clusters/%s/topics";
 
     @Step
     public TopicsList isOnPage() {

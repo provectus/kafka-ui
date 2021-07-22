@@ -57,7 +57,7 @@ public class TopicTests extends BaseTest {
     @DisplayName("should update a topic")
     @Test
     void updateTopic() {
-        pages.openTopicsList()
+        pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(UPDATE_TOPIC);
         pages.openTopicView(SECOND_LOCAL, UPDATE_TOPIC)
@@ -84,11 +84,11 @@ public class TopicTests extends BaseTest {
     @Disabled
     void deleteTopic(){
 
-        pages.openTopicsList()
+        pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_DELETE);
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE).clickDeleteTopicButton();
-        pages.openTopicsList().isDeleted(TOPIC_TO_DELETE);
+        pages.openTopicsList(SECOND_LOCAL).isDeleted(TOPIC_TO_DELETE);
     }
 
 }

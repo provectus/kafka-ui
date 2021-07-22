@@ -24,8 +24,8 @@ public class Pages {
         return goTo(MainPage.path).mainPage;
     }
 
-    public TopicsList openTopicsList() {
-        return goTo(TopicsList.path).topicsList;
+    public TopicsList openTopicsList(String clusterName) {
+        return goTo(TopicsList.path.formatted(clusterName)).topicsList;
     }
 
     public TopicView openTopicView(String clusterName, String topicName) {
