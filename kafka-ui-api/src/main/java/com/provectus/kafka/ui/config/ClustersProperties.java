@@ -19,7 +19,8 @@ public class ClustersProperties {
     String name;
     String bootstrapServers;
     String zookeeper;
-    SchemaRegistry schemaRegistry;
+    String schemaRegistry;
+    SchemaRegistryAuth schemaRegistryAuth;
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
@@ -37,9 +38,8 @@ public class ClustersProperties {
   }
 
   @Data
-  public static class SchemaRegistry {
+  public static class SchemaRegistryAuth {
     String username;
     String password;
-    String url;
   }
 }
