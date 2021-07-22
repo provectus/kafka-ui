@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.Condition;
+import com.provectus.kafka.ui.helpers.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import org.openqa.selenium.By;
@@ -19,8 +20,9 @@ public class TopicsList {
     }
 
     @SneakyThrows
-    public TopicsListPage openTopic(String topicName) {
-        refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
+    public TopicsList openTopic(String topicName) {
+        WaitUtils.refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']"
+                .formatted(topicName)));
         $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)))
                 .click();
         return this;

@@ -28,12 +28,8 @@ public class Pages {
         return goTo(TopicsList.path).topicsList;
     }
 
-    public TopicViewPage openTopicViewPage(String path) {
-        return goTo(path).topicViewPage;
+    public TopicView openTopicView(String clusterName, String topicName) {
+        return goTo(TopicView.path.formatted(clusterName, topicName)).topicView;
     }
 
-    public Pages reloadPage() {
-        Selenide.refresh();
-        return this;
-    }
 }

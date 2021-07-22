@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.topics;
 
+import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.helpers.WaitUtils;
@@ -10,7 +11,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.provectus.kafka.ui.helpers.Utils.waitForSelectedValue;
 
 
 public class TopicTests extends BaseTest {
@@ -56,21 +56,19 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update a topic")
     @Test
-    void updateTopic(){
-        final String path = "ui/clusters/" + SECOND_LOCAL + "/topics/" + UPDATE_TOPIC;
-
-        pages.openTopicsListPage()
-                .shouldBeOnPage()
+    void updateTopic() {
+        pages.openTopicsList()
+                .isOnPage()
                 .openTopic(UPDATE_TOPIC);
-        pages.openTopicViewPage(path)
+        pages.openTopicView(SECOND_LOCAL, UPDATE_TOPIC)
                 .openEditSettings()
                 .changeCleanupPolicy(COMPACT_POLICY_VALUE)
                 .changeTimeToRetainValue(UPDATED_TIME_TO_RETAIN_VALUE)
                 .changeMaxSizeOnDisk(UPDATED_MAX_SIZE_ON_DISK)
                 .changeMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .submitSettingChanges();
-        pages.reloadPage();
-        TopicViewPage topicViewPage = pages.openTopicViewPage(path)
+        Selenide.refresh();
+        TopicView topicView = pages.openTopicView(SECOND_LOCAL, UPDATE_TOPIC)
                 .openEditSettings();
 
         WaitUtils.waitForSelectedValue(topicView.getCleanupPolicy(), COMPACT_POLICY_VALUE);
@@ -85,13 +83,12 @@ public class TopicTests extends BaseTest {
     @Test
     @Disabled
     void deleteTopic(){
-        final String path = "ui/clusters/" + SECOND_LOCAL + "/topics/" + DELETE_TOPIC;
 
-        pages.openTopicsListPage()
-                .shouldBeOnPage()
-                .openTopic(DELETE_TOPIC);
-        pages.openTopicViewPage(path).clickDeleteTopicButton();
-        pages.openTopicsListPage().shouldBeDeleted(DELETE_TOPIC);
+        pages.openTopicsList()
+                .isOnPage()
+                .openTopic(TOPIC_TO_DELETE);
+        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE).clickDeleteTopicButton();
+        pages.openTopicsList().isDeleted(TOPIC_TO_DELETE);
     }
 
 }
