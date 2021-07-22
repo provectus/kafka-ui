@@ -12,7 +12,7 @@ public class MainPage {
 
   private static final long TIMEOUT = 25000;
 
-  public static final String path = "";
+  protected static final String path = "";
 
   @Step
   public MainPage isOnPage() {
