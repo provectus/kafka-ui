@@ -2,16 +2,17 @@ package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.SelenideElement;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 
-import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.*;
 
-public class TopicViewPage {
-
-    public SelenideElement cleanupPolicy = $(By.name("cleanupPolicy"));
-    public SelenideElement timeToRetain = $(By.id("timeToRetain"));
-    public SelenideElement maxSizeOnDisk = $(By.name("retentionBytes"));
-    public SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
+public class TopicView {
+    static final String path = "ui/clusters/%s/topics/%s";
+    private SelenideElement cleanupPolicy = $(By.name("cleanupPolicy"));
+    private SelenideElement timeToRetain = $(By.id("timeToRetain"));
+    private SelenideElement maxSizeOnDisk = $(By.name("retentionBytes"));
+    private SelenideElement maxMessageBytes = $(By.name("maxMessageBytes"));
 
     @SneakyThrows
     public TopicView openEditSettings() {
@@ -56,5 +57,21 @@ public class TopicViewPage {
     @SneakyThrows
     public void submitSettingChanges() {
         $(By.xpath("//input[@type='submit']")).click();
+    }
+
+    public SelenideElement getCleanupPolicy() {
+        return cleanupPolicy;
+    }
+
+    public SelenideElement getTimeToRetain() {
+        return timeToRetain;
+    }
+
+    public SelenideElement getMaxSizeOnDisk() {
+        return maxSizeOnDisk;
+    }
+
+    public SelenideElement getMaxMessageBytes() {
+        return maxMessageBytes;
     }
 }

@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.topics;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
+import com.provectus.kafka.ui.helpers.WaitUtils;
 import com.provectus.kafka.ui.pages.MainPage;
 import com.provectus.kafka.ui.pages.TopicView;
 import lombok.SneakyThrows;
@@ -72,11 +73,11 @@ public class TopicTests extends BaseTest {
         TopicViewPage topicViewPage = pages.openTopicViewPage(path)
                 .openEditSettings();
 
-        waitForSelectedValue(topicViewPage.cleanupPolicy, COMPACT_POLICY_VALUE);
+        WaitUtils.waitForSelectedValue(topicView.getCleanupPolicy(), COMPACT_POLICY_VALUE);
 
-        Assertions.assertEquals(UPDATED_TIME_TO_RETAIN_VALUE,topicViewPage.timeToRetain.getValue());
-        Assertions.assertEquals(UPDATED_MAX_SIZE_ON_DISK,topicViewPage.maxSizeOnDisk.getSelectedText());
-        Assertions.assertEquals(UPDATED_MAX_MESSAGE_BYTES,topicViewPage.maxMessageBytes.getValue());
+        Assertions.assertEquals(UPDATED_TIME_TO_RETAIN_VALUE, topicView.getTimeToRetain().getValue());
+        Assertions.assertEquals(UPDATED_MAX_SIZE_ON_DISK, topicView.getMaxSizeOnDisk().getSelectedText());
+        Assertions.assertEquals(UPDATED_MAX_MESSAGE_BYTES, topicView.getMaxMessageBytes().getValue());
     }
 
     @SneakyThrows
