@@ -20,4 +20,9 @@ public class ProtobufMessageFormatter implements MessageFormatter {
     byte[] jsonBytes = ProtobufSchemaUtils.toJson(message);
     return new String(jsonBytes);
   }
+
+  @Override
+  public MessageFormat getFormat() {
+    return MessageFormat.PROTOBUF;
+  }
 }
