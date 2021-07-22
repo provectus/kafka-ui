@@ -20,7 +20,7 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: { name, internal, partitions, segmentSize },
+  topic: { name, internal, partitions, segmentSize, replicationFactor },
   deleteTopic,
   clusterName,
   clearTopicMessages,
@@ -75,6 +75,7 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
+      <td>{replicationFactor}</td>
       <td>{numberOfMessages}</td>
       <td>
         <BytesFormatted value={segmentSize} />

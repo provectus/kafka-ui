@@ -1,0 +1,66 @@
+---
+version: '2'
+services:
+
+  zookeeper1:
+    image: confluentinc/cp-zookeeper:5.2.4
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2182:2181
+
+  kafka1:
+    image: confluentinc/cp-kafka:5.2.4
+    depends_on:
+      - zookeeper1
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      JMX_PORT: 9998
+      KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9998
+    ports:
+      - 9093:9093
+      - 9998:9998 
+
+  schemaregistry1:
+    image: confluentinc/cp-schema-registry:5.5.0
+    ports:
+      - 18085:8085
+    depends_on:
+      - zookeeper1
+      - kafka1
+    volumes:
+      - ./jaas:/conf
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: PLAINTEXT://kafka1:29092
+      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: zookeeper1:2181
+      SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: PLAINTEXT
+      SCHEMA_REGISTRY_HOST_NAME: schemaregistry1
+      SCHEMA_REGISTRY_LISTENERS: http://schemaregistry1:8085
+
+      # Default credentials: admin/letmein
+      SCHEMA_REGISTRY_AUTHENTICATION_METHOD: BASIC
+      SCHEMA_REGISTRY_AUTHENTICATION_REALM: SchemaRegistryProps
+      SCHEMA_REGISTRY_AUTHENTICATION_ROLES: admin
+      SCHEMA_REGISTRY_OPTS: -Djava.security.auth.login.config=/conf/schema_registry.jaas
+
+      SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "http"
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: INFO
+      SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
+
+  kafka-init-topics:
+    image: confluentinc/cp-kafka:5.2.4
+    volumes:
+       - ./message.json:/data/message.json
+    depends_on:
+      - kafka1
+    command: "bash -c 'echo Waiting for Kafka to be ready... && \
+               cub kafka-ready -b kafka1:29092 1 30 && \
+               kafka-topics --create --topic second.users --partitions 3 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
+               kafka-topics --create --topic second.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
+               kafka-console-producer --broker-list kafka1:29092 -topic second.users < /data/message.json'"

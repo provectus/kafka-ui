@@ -23,6 +23,12 @@ exports[`ClusterWidget when cluster is offline matches snapshot 1`] = `
       <tbody>
         <tr>
           <th>
+            Version
+          </th>
+          <td />
+        </tr>
+        <tr>
+          <th>
             Brokers
           </th>
           <td>
@@ -100,6 +106,12 @@ exports[`ClusterWidget when cluster is online matches snapshot 1`] = `
       className="table is-fullwidth"
     >
       <tbody>
+        <tr>
+          <th>
+            Version
+          </th>
+          <td />
+        </tr>
         <tr>
           <th>
             Brokers
