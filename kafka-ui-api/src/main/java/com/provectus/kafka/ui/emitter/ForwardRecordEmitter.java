@@ -1,9 +1,11 @@
 package com.provectus.kafka.ui.emitter;
 
+import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.function.Supplier;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -11,33 +13,43 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
-@RequiredArgsConstructor
 @Log4j2
 public class ForwardRecordEmitter
-    implements java.util.function.Consumer<FluxSink<ConsumerRecord<Bytes, Bytes>>> {
+    extends AbstractEmitter
+    implements java.util.function.Consumer<FluxSink<TopicMessageEvent>> {
 
   private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final OffsetsSeek offsetsSeek;
 
+  public ForwardRecordEmitter(
+      Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier,
+      OffsetsSeek offsetsSeek,
+      RecordSerDe recordDeserializer) {
+    super(recordDeserializer);
+    this.consumerSupplier = consumerSupplier;
+    this.offsetsSeek = offsetsSeek;
+  }
+
   @Override
-  public void accept(FluxSink<ConsumerRecord<Bytes, Bytes>> sink) {
+  public void accept(FluxSink<TopicMessageEvent> sink) {
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
+      sendPhase(sink, "Assigning partitions");
       var waitingOffsets = offsetsSeek.assignAndSeek(consumer);
       while (!sink.isCancelled() && !waitingOffsets.endReached()) {
-        ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
+        sendPhase(sink, "Polling");
+        ConsumerRecords<Bytes, Bytes> records = poll(sink, consumer);
         log.info("{} records polled", records.count());
 
         for (ConsumerRecord<Bytes, Bytes> msg : records) {
           if (!sink.isCancelled() && !waitingOffsets.endReached()) {
-            sink.next(msg);
+            sendMessage(sink, msg);
             waitingOffsets.markPolled(msg);
           } else {
             break;
           }
         }
-
       }
       sink.complete();
       log.info("Polling finished");

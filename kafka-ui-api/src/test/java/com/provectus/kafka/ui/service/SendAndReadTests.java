@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageEvent;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
@@ -24,7 +25,9 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
+@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 public class SendAndReadTests extends AbstractBaseTest {
 
   private static final AvroSchema AVRO_SCHEMA_1 = new AvroSchema(
@@ -396,8 +399,10 @@ public class SendAndReadTests extends AbstractBaseTest {
       if (valueSchema != null) {
         schemaRegistry.schemaRegistryClient().register(topic + "-value", valueSchema);
       }
+
       // need to update to see new topic & schemas
       clustersMetricsScheduler.updateMetrics();
+
       return topic;
     }
 
@@ -425,7 +430,9 @@ public class SendAndReadTests extends AbstractBaseTest {
             ),
             null,
             1
-        ).blockLast(Duration.ofSeconds(5));
+        ).filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+            .map(TopicMessageEvent::getMessage)
+            .blockLast(Duration.ofSeconds(5000));
 
         assertThat(polled).isNotNull();
         assertThat(polled.getPartition()).isEqualTo(0);

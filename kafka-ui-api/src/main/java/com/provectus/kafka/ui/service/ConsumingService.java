@@ -7,9 +7,10 @@ import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.ClusterUtil;
+import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.Collection;
@@ -19,13 +20,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
@@ -43,32 +43,34 @@ public class ConsumingService {
   private final DeserializationService deserializationService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  public Flux<TopicMessage> loadMessages(KafkaCluster cluster, String topic,
-                                         ConsumerPosition consumerPosition, String query,
-                                         Integer limit) {
+  public Flux<TopicMessageEvent> loadMessages(KafkaCluster cluster, String topic,
+                                              ConsumerPosition consumerPosition, String query,
+                                              Integer limit) {
     int recordsLimit = Optional.ofNullable(limit)
         .map(s -> Math.min(s, MAX_RECORD_LIMIT))
         .orElse(DEFAULT_RECORD_LIMIT);
 
-    java.util.function.Consumer<? super FluxSink<ConsumerRecord<Bytes, Bytes>>> emitter;
+    java.util.function.Consumer<? super FluxSink<TopicMessageEvent>> emitter;
+    RecordSerDe recordDeserializer =
+        deserializationService.getRecordDeserializerForCluster(cluster);
     if (consumerPosition.getSeekDirection().equals(SeekDirection.FORWARD)) {
       emitter = new ForwardRecordEmitter(
           () -> kafkaService.createConsumer(cluster),
-          new OffsetsSeekForward(topic, consumerPosition)
+          new OffsetsSeekForward(topic, consumerPosition),
+          recordDeserializer
       );
     } else {
       emitter = new BackwardRecordEmitter(
           (Map<String, Object> props) -> kafkaService.createConsumer(cluster, props),
-          new OffsetsSeekBackward(topic, consumerPosition, recordsLimit)
+          new OffsetsSeekBackward(topic, consumerPosition, recordsLimit),
+          recordDeserializer
       );
     }
-    RecordSerDe recordDeserializer =
-        deserializationService.getRecordDeserializerForCluster(cluster);
     return Flux.create(emitter)
-        .subscribeOn(Schedulers.boundedElastic())
-        .map(r -> ClusterUtil.mapToTopicMessage(r, recordDeserializer))
         .filter(m -> filterTopicMessage(m, query))
-        .limitRequest(recordsLimit);
+        .takeWhile(new FilterTopicMessageEvents(recordsLimit))
+        .subscribeOn(Schedulers.elastic())
+        .share();
   }
 
   public Mono<Map<TopicPartition, Long>> offsetsForDeletion(KafkaCluster cluster, String topicName,
@@ -102,12 +104,16 @@ public class ConsumingService {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private boolean filterTopicMessage(TopicMessage message, String query) {
-    if (StringUtils.isEmpty(query)) {
+  private boolean filterTopicMessage(TopicMessageEvent message, String query) {
+    log.info("filter");
+    if (StringUtils.isEmpty(query)
+        || !message.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE)) {
       return true;
     }
-    return (StringUtils.isNotEmpty(message.getKey()) && message.getKey().contains(query))
-         || (StringUtils.isNotEmpty(message.getContent()) && message.getContent().contains(query));
+
+    final TopicMessage msg = message.getMessage();
+    return (!StringUtils.isEmpty(msg.getKey()) && msg.getKey().contains(query))
+        || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
 }
