@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @Service
 @RequiredArgsConstructor
 @Log4j2
-public final class KsqlClient {
+public class KsqlClient {
     private final WebClient webClient;
     private final ObjectMapper mapper;
 

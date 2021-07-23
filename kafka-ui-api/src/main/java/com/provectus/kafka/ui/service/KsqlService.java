@@ -25,7 +25,10 @@ public class KsqlService {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
             .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
             .map(KafkaCluster::getKsqldbServer)
-            .switchIfEmpty(Mono.error(KsqlDbNotFoundException::new))
+            .onErrorResume(e -> {
+              Throwable throwable = e instanceof ClusterNotFoundException ? e : new KsqlDbNotFoundException();
+              return Mono.error(throwable);
+            })
             .flatMap(host -> getStatementStrategyForKsqlCommand(ksqlCommand)
                     .map(statement -> statement.host(host))
             )

@@ -12,7 +12,6 @@ public class DescribeStrategy extends KsqlStatementStrategy {
 
     @Override
     public KsqlCommandResponse serializeResponse(JsonNode response) {
-        System.out.println(response);
         return serializeTableResponse(response, responseValueKey);
     }
 

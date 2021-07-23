@@ -10,7 +10,6 @@ public class SelectStrategy extends KsqlStatementStrategy {
 
     @Override
     public KsqlCommandResponse serializeResponse(JsonNode response) {
-        System.out.println(response);
         return serializeQueryResponse(response);
     }
 
@@ -18,7 +17,6 @@ public class SelectStrategy extends KsqlStatementStrategy {
     protected String getRequestPath() {
         return requestPath;
     }
-
 
     @Override
     protected String getTestRegExp() {

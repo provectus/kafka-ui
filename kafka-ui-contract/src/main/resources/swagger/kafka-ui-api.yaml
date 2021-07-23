@@ -1206,6 +1206,7 @@ components:
             enum:
               - SCHEMA_REGISTRY
               - KAFKA_CONNECT
+              - KSQL_DB
       required:
         - id
         - name

@@ -63,16 +63,19 @@ public abstract class KsqlStatementStrategy {
     }
 
     protected KsqlCommandResponse serializeQueryResponse(JsonNode response) {
-        KsqlCommandResponse commandResponse = new KsqlCommandResponse();
-        Table table = (new Table())
-                .headers(getQueryResponseHeader(response))
-                .rows(getQueryResponseRows(response));
-        return commandResponse.data(table);
+        if (response.isArray() && response.size() > 0) {
+            KsqlCommandResponse commandResponse = new KsqlCommandResponse();
+            Table table = (new Table())
+                    .headers(getQueryResponseHeader(response))
+                    .rows(getQueryResponseRows(response));
+            return commandResponse.data(table);
+        }
+        throw new UnprocessableEntityException("KSQL DB response mapping error");
     }
 
     private List<String> getQueryResponseHeader(JsonNode response) {
         JsonNode headerRow = response.get(0);
-        if (headerRow.isObject() && headerRow.size() > 0) {
+        if (headerRow.isObject() && headerRow.has("header")) {
             String schema = headerRow.get("header").get("schema").asText();
             return Arrays.stream(schema.split(",")).map(String::trim).collect(Collectors.toList());
         }
