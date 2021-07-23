@@ -1,4 +1,9 @@
-package com.provectus.kafka.ui.strategy.ksqlStatement;
+package com.provectus.kafka.ui.strategy.ksql.statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,17 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-class TerminateStrategyTest {
+class CreateStrategyTest {
+  private final ObjectMapper mapper = new ObjectMapper();
   private KsqlStatementStrategy ksqlStatementStrategy;
-  private ObjectMapper mapper = new ObjectMapper();
 
   @BeforeEach
   public void setUp() {
-    ksqlStatementStrategy = new TerminateStrategy();
+    ksqlStatementStrategy = new CreateStrategy();
   }
 
   @Test
@@ -31,18 +33,31 @@ class TerminateStrategyTest {
 
   @Test
   public void shouldReturnTrueInTest() {
-    assertTrue(ksqlStatementStrategy.test("terminate query_id;"));
+    assertTrue(ksqlStatementStrategy.test("CREATE STREAM stream WITH (KAFKA_TOPIC='topic');"));
+    assertTrue(ksqlStatementStrategy.test("CREATE STREAM stream" +
+        " AS SELECT users.id AS userid FROM users EMIT CHANGES;"
+    ));
+    assertTrue(ksqlStatementStrategy.test(
+        "CREATE TABLE table (id VARCHAR) WITH (KAFKA_TOPIC='table');"
+    ));
+    assertTrue(ksqlStatementStrategy.test(
+        "CREATE TABLE pageviews_regions WITH (KEY_FORMAT='JSON')" +
+            "  AS SELECT gender, COUNT(*) AS numbers" +
+            "  FROM pageviews EMIT CHANGES;"
+    ));
   }
 
   @Test
   public void shouldReturnFalseInTest() {
     assertFalse(ksqlStatementStrategy.test("show streams;"));
-    assertFalse(ksqlStatementStrategy.test("create table test;"));
+    assertFalse(ksqlStatementStrategy.test("show tables;"));
+    assertFalse(ksqlStatementStrategy.test("CREATE TABLE test;"));
+    assertFalse(ksqlStatementStrategy.test("CREATE STREAM test;"));
   }
 
   @Test
   public void shouldSerializeResponse() {
-    String message = "query terminated.";
+    String message = "updated successful";
     JsonNode node = getResponseWithMessage(message);
     KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
     assertThat(serializedResponse.getMessage()).isEqualTo(message);

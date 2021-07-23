@@ -1,25 +1,26 @@
-package com.provectus.kafka.ui.strategy.ksqlStatement;
+package com.provectus.kafka.ui.strategy.ksql.statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import com.provectus.kafka.ui.model.Table;
+import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
 class DescribeStrategyTest {
+  private final ObjectMapper mapper = new ObjectMapper();
   private KsqlStatementStrategy ksqlStatementStrategy;
-  private ObjectMapper mapper = new ObjectMapper();
 
   @BeforeEach
   public void setUp() {

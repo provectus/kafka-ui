@@ -1,5 +1,11 @@
 package com.provectus.kafka.ui.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.provectus.kafka.ui.client.KsqlClient;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.KsqlDbNotFoundException;
@@ -7,8 +13,10 @@ import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommand;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.strategy.ksqlStatement.KsqlStatementStrategy;
-import com.provectus.kafka.ui.strategy.ksqlStatement.ShowStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.KsqlStatementStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.ShowStrategy;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,13 +25,6 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class KsqlServiceTest {

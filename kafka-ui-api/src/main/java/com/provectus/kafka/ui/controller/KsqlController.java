@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.KsqlApi;
 import com.provectus.kafka.ui.model.KsqlCommand;
-
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import com.provectus.kafka.ui.service.KsqlService;
 import lombok.RequiredArgsConstructor;

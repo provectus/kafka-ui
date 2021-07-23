@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.strategy.ksqlStatement.KsqlStatementStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.KsqlStatementStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;

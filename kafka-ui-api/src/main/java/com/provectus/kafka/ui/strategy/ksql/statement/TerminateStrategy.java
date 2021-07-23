@@ -1,16 +1,17 @@
-package com.provectus.kafka.ui.strategy.ksqlStatement;
+package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SelectStrategy extends KsqlStatementStrategy {
-  private final String requestPath = "/query";
+public class TerminateStrategy extends KsqlStatementStrategy {
+  private final String requestPath = "/ksql";
+  private final String responseValueKey = "commandStatus";
 
   @Override
   public KsqlCommandResponse serializeResponse(JsonNode response) {
-    return serializeQueryResponse(response);
+    return serializeMessageResponse(response, responseValueKey);
   }
 
   @Override
@@ -20,6 +21,6 @@ public class SelectStrategy extends KsqlStatementStrategy {
 
   @Override
   protected String getTestRegExp() {
-    return "select (.*) from (.*);";
+    return "terminate (.*);";
   }
 }

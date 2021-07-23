@@ -1,4 +1,9 @@
-package com.provectus.kafka.ui.strategy.ksqlStatement;
+package com.provectus.kafka.ui.strategy.ksql.statement;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,17 +15,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-class DropStrategyTest {
+class TerminateStrategyTest {
+  private final ObjectMapper mapper = new ObjectMapper();
   private KsqlStatementStrategy ksqlStatementStrategy;
-  private ObjectMapper mapper = new ObjectMapper();
 
   @BeforeEach
   public void setUp() {
-    ksqlStatementStrategy = new DropStrategy();
+    ksqlStatementStrategy = new TerminateStrategy();
   }
 
   @Test
@@ -31,21 +33,18 @@ class DropStrategyTest {
 
   @Test
   public void shouldReturnTrueInTest() {
-    assertTrue(ksqlStatementStrategy.test("drop table table1;"));
-    assertTrue(ksqlStatementStrategy.test("drop stream stream2;"));
+    assertTrue(ksqlStatementStrategy.test("terminate query_id;"));
   }
 
   @Test
   public void shouldReturnFalseInTest() {
     assertFalse(ksqlStatementStrategy.test("show streams;"));
-    assertFalse(ksqlStatementStrategy.test("show tables;"));
     assertFalse(ksqlStatementStrategy.test("create table test;"));
-    assertFalse(ksqlStatementStrategy.test("create stream test;"));
   }
 
   @Test
   public void shouldSerializeResponse() {
-    String message = "updated successful";
+    String message = "query terminated.";
     JsonNode node = getResponseWithMessage(message);
     KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
     assertThat(serializedResponse.getMessage()).isEqualTo(message);

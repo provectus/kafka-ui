@@ -1,18 +1,16 @@
-package com.provectus.kafka.ui.strategy.ksqlStatement;
+package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import org.springframework.stereotype.Component;
 
-
 @Component
-public class CreateStrategy extends KsqlStatementStrategy {
-  private final String requestPath = "/ksql";
-  private final String responseValueKey = "commandStatus";
+public class SelectStrategy extends KsqlStatementStrategy {
+  private final String requestPath = "/query";
 
   @Override
   public KsqlCommandResponse serializeResponse(JsonNode response) {
-    return serializeMessageResponse(response, responseValueKey);
+    return serializeQueryResponse(response);
   }
 
   @Override
@@ -22,6 +20,6 @@ public class CreateStrategy extends KsqlStatementStrategy {
 
   @Override
   protected String getTestRegExp() {
-    return "create (table|stream)(.*)(with|as select(.*)from)(.*);";
+    return "select (.*) from (.*);";
   }
 }

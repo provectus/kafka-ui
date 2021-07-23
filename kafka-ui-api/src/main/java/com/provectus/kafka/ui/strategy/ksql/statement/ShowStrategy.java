@@ -1,16 +1,16 @@
-package com.provectus.kafka.ui.strategy.ksqlStatement;
+package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
 
 @Component
-public class ListStrategy extends KsqlStatementStrategy {
+public class ShowStrategy extends KsqlStatementStrategy {
   private final String requestPath = "/ksql";
-  private final List<String> statements = List.of("functions", "topics", "streams", "tables");
+  private final List<String> statements =
+      List.of("functions", "topics", "streams", "tables", "queries", "properties");
   private String responseValueKey = "";
 
   @Override
@@ -41,10 +41,11 @@ public class ListStrategy extends KsqlStatementStrategy {
   }
 
   private String getTestRegExp(String key) {
-    return "list " + key + ";";
+    return "show " + key + ";";
   }
 
   private void setResponseValueKey(String path) {
     responseValueKey = path;
   }
+
 }
