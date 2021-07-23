@@ -20,6 +20,7 @@ public class ClustersProperties {
     String bootstrapServers;
     String zookeeper;
     String schemaRegistry;
+    String ksqldbServer;
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
