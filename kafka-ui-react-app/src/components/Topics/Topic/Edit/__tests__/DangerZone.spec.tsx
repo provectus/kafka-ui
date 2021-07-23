@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import React from 'react';
 import DangerZone, { Props } from 'components/Topics/Topic/Edit/DangerZone';
 
@@ -20,5 +20,15 @@ describe('DangerZone', () => {
   it('is rendered properly', () => {
     const component = shallow(setupWrapper());
     expect(component).toMatchSnapshot();
+  });
+
+  it('calls on submit', () => {
+    const component = mount(setupWrapper());
+    component
+      .find('input')
+      .at(0)
+      .simulate('change', { target: { value: 4 } });
+    component.update();
+    console.log(component.debug());
   });
 });
