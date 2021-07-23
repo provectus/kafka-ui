@@ -15,6 +15,7 @@ import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -49,6 +50,7 @@ public interface ClusterMapper {
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
+  @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage",
@@ -63,6 +65,24 @@ public interface ClusterMapper {
   Topic toTopic(InternalTopic topic);
 
   Partition toPartition(InternalPartition topic);
+
+  default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
+    if (clusterProperties == null) {
+      return null;
+    }
+
+    InternalSchemaRegistry.InternalSchemaRegistryBuilder internalSchemaRegistry =
+        InternalSchemaRegistry.builder();
+
+    internalSchemaRegistry.url(clusterProperties.getSchemaRegistry());
+
+    if (clusterProperties.getSchemaRegistryAuth() != null) {
+      internalSchemaRegistry.username(clusterProperties.getSchemaRegistryAuth().getUsername());
+      internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
+    }
+
+    return internalSchemaRegistry.build();
+  }
 
   TopicDetails toTopicDetails(InternalTopic topic);
 

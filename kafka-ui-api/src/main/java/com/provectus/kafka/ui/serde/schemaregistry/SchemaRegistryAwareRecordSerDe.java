@@ -1,6 +1,11 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
+
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE;
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
@@ -22,6 +27,7 @@ import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -63,14 +69,29 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   private static SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     Objects.requireNonNull(cluster.getSchemaRegistry());
+    Objects.requireNonNull(cluster.getSchemaRegistry().getUrl());
     List<SchemaProvider> schemaProviders =
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
-    //TODO add auth
+
+    Map<String, String> configs = new HashMap<>();
+    String username = cluster.getSchemaRegistry().getUsername();
+    String password = cluster.getSchemaRegistry().getPassword();
+
+    if (username != null && password != null) {
+      configs.put(BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
+      configs.put(USER_INFO_CONFIG, username + ":" + password);
+    } else if (username != null) {
+      throw new ValidationException(
+          "You specified username but do not specified password");
+    } else if (password != null) {
+      throw new ValidationException(
+          "You specified password but do not specified username");
+    }
     return new CachedSchemaRegistryClient(
-        Collections.singletonList(cluster.getSchemaRegistry()),
+        Collections.singletonList(cluster.getSchemaRegistry().getUrl()),
         CLIENT_IDENTITY_MAP_CAPACITY,
         schemaProviders,
-        Collections.emptyMap()
+        configs
     );
   }
 
@@ -181,7 +202,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry()).resolve(Integer.toString(schema.getId()));
+    URI basePath = new URI(cluster.getSchemaRegistry().getUrl())
+        .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = Objects.requireNonNull(schemaRegistryClient)
         .getSchemaById(schema.getId());
 

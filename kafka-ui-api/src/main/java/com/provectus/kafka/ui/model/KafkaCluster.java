@@ -15,7 +15,7 @@ public class KafkaCluster {
   private final Integer jmxPort;
   private final String bootstrapServers;
   private final String zookeeper;
-  private final String schemaRegistry;
+  private final InternalSchemaRegistry schemaRegistry;
   private final List<KafkaConnectCluster> kafkaConnect;
   private final String schemaNameTemplate;
   private final String keySchemaNameTemplate;
