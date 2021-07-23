@@ -6,21 +6,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TerminateStrategy extends KsqlStatementStrategy {
-    private final String requestPath = "/ksql";
-    private final String responseValueKey = "commandStatus";
+  private final String requestPath = "/ksql";
+  private final String responseValueKey = "commandStatus";
 
-    @Override
-    public KsqlCommandResponse serializeResponse(JsonNode response) {
-        return serializeMessageResponse(response, responseValueKey);
-    }
+  @Override
+  public KsqlCommandResponse serializeResponse(JsonNode response) {
+    return serializeMessageResponse(response, responseValueKey);
+  }
 
-    @Override
-    protected String getRequestPath() {
-        return requestPath;
-    }
+  @Override
+  protected String getRequestPath() {
+    return requestPath;
+  }
 
-    @Override
-    protected String getTestRegExp() {
-        return "terminate (.*);";
-    }
+  @Override
+  protected String getTestRegExp() {
+    return "terminate (.*);";
+  }
 }

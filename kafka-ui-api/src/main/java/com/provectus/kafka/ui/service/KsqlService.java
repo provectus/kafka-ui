@@ -21,27 +21,30 @@ public class KsqlService {
   private final ClustersStorage clustersStorage;
   private final List<KsqlStatementStrategy> ksqlStatementStrategies;
 
-  public Mono<KsqlCommandResponse> executeKsqlCommand(String clusterName, Mono<KsqlCommand> ksqlCommand) {
+  public Mono<KsqlCommandResponse> executeKsqlCommand(String clusterName,
+                                                      Mono<KsqlCommand> ksqlCommand) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
-            .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-            .map(KafkaCluster::getKsqldbServer)
-            .onErrorResume(e -> {
-              Throwable throwable = e instanceof ClusterNotFoundException ? e : new KsqlDbNotFoundException();
-              return Mono.error(throwable);
-            })
-            .flatMap(host -> getStatementStrategyForKsqlCommand(ksqlCommand)
-                    .map(statement -> statement.host(host))
-            )
-            .flatMap(ksqlClient::execute);
+        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+        .map(KafkaCluster::getKsqldbServer)
+        .onErrorResume(e -> {
+          Throwable throwable =
+              e instanceof ClusterNotFoundException ? e : new KsqlDbNotFoundException();
+          return Mono.error(throwable);
+        })
+        .flatMap(host -> getStatementStrategyForKsqlCommand(ksqlCommand)
+            .map(statement -> statement.host(host))
+        )
+        .flatMap(ksqlClient::execute);
   }
 
-  private Mono<KsqlStatementStrategy> getStatementStrategyForKsqlCommand(Mono<KsqlCommand> ksqlCommand) {
+  private Mono<KsqlStatementStrategy> getStatementStrategyForKsqlCommand(
+      Mono<KsqlCommand> ksqlCommand) {
     return ksqlCommand
-            .map(command -> ksqlStatementStrategies.stream()
-                    .filter(s -> s.test(command.getKsql()))
-                    .map(s -> s.ksqlCommand(command))
-                    .findFirst())
-            .flatMap(Mono::justOrEmpty)
-            .switchIfEmpty(Mono.error(new UnprocessableEntityException("Invalid sql")));
+        .map(command -> ksqlStatementStrategies.stream()
+            .filter(s -> s.test(command.getKsql()))
+            .map(s -> s.ksqlCommand(command))
+            .findFirst())
+        .flatMap(Mono::justOrEmpty)
+        .switchIfEmpty(Mono.error(new UnprocessableEntityException("Invalid sql")));
   }
 }

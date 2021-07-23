@@ -18,55 +18,56 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
 class ExplainStrategyTest {
-    private KsqlStatementStrategy ksqlStatementStrategy;
-    private ObjectMapper mapper = new ObjectMapper();
+  private KsqlStatementStrategy ksqlStatementStrategy;
+  private ObjectMapper mapper = new ObjectMapper();
 
-    @BeforeEach
-    public void setUp() {
-        ksqlStatementStrategy = new ExplainStrategy();
-    }
+  @BeforeEach
+  public void setUp() {
+    ksqlStatementStrategy = new ExplainStrategy();
+  }
 
-    @Test
-    public void shouldReturnUri() {
-        ksqlStatementStrategy.host("ksqldb-server:8088");
-        assertThat(ksqlStatementStrategy.getUri()).isEqualTo("ksqldb-server:8088/ksql");
-    }
+  @Test
+  public void shouldReturnUri() {
+    ksqlStatementStrategy.host("ksqldb-server:8088");
+    assertThat(ksqlStatementStrategy.getUri()).isEqualTo("ksqldb-server:8088/ksql");
+  }
 
-    @Test
-    public void shouldReturnTrueInTest() {
-        assertTrue(ksqlStatementStrategy.test("explain users_query_id;"));
-    }
+  @Test
+  public void shouldReturnTrueInTest() {
+    assertTrue(ksqlStatementStrategy.test("explain users_query_id;"));
+  }
 
-    @Test
-    public void shouldReturnFalseInTest() {
-        assertFalse(ksqlStatementStrategy.test("show queries;"));
-    }
+  @Test
+  public void shouldReturnFalseInTest() {
+    assertFalse(ksqlStatementStrategy.test("show queries;"));
+  }
 
-    @Test
-    public void shouldSerializeResponse() {
-        JsonNode node = getResponseWithObjectNode();
-        KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
-        Table table = serializedResponse.getData();
-        assertThat(table.getHeaders()).isEqualTo(List.of("key", "value"));
-        assertThat(table.getRows()).isEqualTo(List.of(List.of("name", "kafka")));
-    }
+  @Test
+  public void shouldSerializeResponse() {
+    JsonNode node = getResponseWithObjectNode();
+    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    Table table = serializedResponse.getData();
+    assertThat(table.getHeaders()).isEqualTo(List.of("key", "value"));
+    assertThat(table.getRows()).isEqualTo(List.of(List.of("name", "kafka")));
+  }
 
-    @Test
-    public void shouldSerializeWithException() {
-        JsonNode sourceDescriptionNode = mapper.createObjectNode().put("sourceDescription", "nodeWithMessage");
-        JsonNode node = mapper.createArrayNode().add(mapper.valueToTree(sourceDescriptionNode));
-        Exception exception = assertThrows(
-                UnprocessableEntityException.class,
-                () -> ksqlStatementStrategy.serializeResponse(node)
-        );
+  @Test
+  public void shouldSerializeWithException() {
+    JsonNode sourceDescriptionNode =
+        mapper.createObjectNode().put("sourceDescription", "nodeWithMessage");
+    JsonNode node = mapper.createArrayNode().add(mapper.valueToTree(sourceDescriptionNode));
+    Exception exception = assertThrows(
+        UnprocessableEntityException.class,
+        () -> ksqlStatementStrategy.serializeResponse(node)
+    );
 
-        assertThat(exception.getMessage()).isEqualTo("KSQL DB response mapping error");
-    }
+    assertThat(exception.getMessage()).isEqualTo("KSQL DB response mapping error");
+  }
 
-    @SneakyThrows
-    private JsonNode getResponseWithObjectNode() {
-        JsonNode nodeWithMessage = mapper.createObjectNode().put("name", "kafka");
-        JsonNode nodeWithResponse = mapper.createObjectNode().set("queryDescription", nodeWithMessage);
-        return mapper.createArrayNode().add(mapper.valueToTree(nodeWithResponse));
-    }
+  @SneakyThrows
+  private JsonNode getResponseWithObjectNode() {
+    JsonNode nodeWithMessage = mapper.createObjectNode().put("name", "kafka");
+    JsonNode nodeWithResponse = mapper.createObjectNode().set("queryDescription", nodeWithMessage);
+    return mapper.createArrayNode().add(mapper.valueToTree(nodeWithResponse));
+  }
 }

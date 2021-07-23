@@ -6,20 +6,20 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class SelectStrategy extends KsqlStatementStrategy {
-    private final String requestPath = "/query";
+  private final String requestPath = "/query";
 
-    @Override
-    public KsqlCommandResponse serializeResponse(JsonNode response) {
-        return serializeQueryResponse(response);
-    }
+  @Override
+  public KsqlCommandResponse serializeResponse(JsonNode response) {
+    return serializeQueryResponse(response);
+  }
 
-    @Override
-    protected String getRequestPath() {
-        return requestPath;
-    }
+  @Override
+  protected String getRequestPath() {
+    return requestPath;
+  }
 
-    @Override
-    protected String getTestRegExp() {
-        return "select (.*) from (.*);";
-    }
+  @Override
+  protected String getTestRegExp() {
+    return "select (.*) from (.*);";
+  }
 }

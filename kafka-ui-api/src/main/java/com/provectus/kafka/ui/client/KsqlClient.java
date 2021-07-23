@@ -20,31 +20,31 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Log4j2
 public class KsqlClient {
-    private final WebClient webClient;
-    private final ObjectMapper mapper;
+  private final WebClient webClient;
+  private final ObjectMapper mapper;
 
-    public Mono<KsqlCommandResponse> execute(KsqlStatementStrategy ksqlStatement) {
-        return webClient.post()
-                .uri(ksqlStatement.getUri())
-                .accept(new MediaType("application", "vnd.ksql.v1+json"))
-                .body(BodyInserters.fromValue(ksqlStatement.getKsqlCommand()))
-                .retrieve()
-                .onStatus(HttpStatus::isError, this::getErrorMessage)
-                .bodyToMono(byte[].class)
-                .map(this::toJson)
-                .map(ksqlStatement::serializeResponse);
-    }
+  public Mono<KsqlCommandResponse> execute(KsqlStatementStrategy ksqlStatement) {
+    return webClient.post()
+        .uri(ksqlStatement.getUri())
+        .accept(new MediaType("application", "vnd.ksql.v1+json"))
+        .body(BodyInserters.fromValue(ksqlStatement.getKsqlCommand()))
+        .retrieve()
+        .onStatus(HttpStatus::isError, this::getErrorMessage)
+        .bodyToMono(byte[].class)
+        .map(this::toJson)
+        .map(ksqlStatement::serializeResponse);
+  }
 
-    private Mono<Throwable> getErrorMessage(ClientResponse response) {
-        return response
-                .bodyToMono(byte[].class)
-                .map(this::toJson)
-                .map(jsonNode -> jsonNode.get("message").asText())
-                .flatMap(error -> Mono.error(new UnprocessableEntityException(error)));
-    }
+  private Mono<Throwable> getErrorMessage(ClientResponse response) {
+    return response
+        .bodyToMono(byte[].class)
+        .map(this::toJson)
+        .map(jsonNode -> jsonNode.get("message").asText())
+        .flatMap(error -> Mono.error(new UnprocessableEntityException(error)));
+  }
 
-    @SneakyThrows
-    private JsonNode toJson(byte[] content) {
-        return this.mapper.readTree(content);
-    }
+  @SneakyThrows
+  private JsonNode toJson(byte[] content) {
+    return this.mapper.readTree(content);
+  }
 }

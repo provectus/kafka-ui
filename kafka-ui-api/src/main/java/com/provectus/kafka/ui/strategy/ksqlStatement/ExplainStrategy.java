@@ -6,21 +6,21 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ExplainStrategy extends KsqlStatementStrategy {
-    private final String requestPath = "/ksql";
-    private final String responseValueKey = "queryDescription";
+  private final String requestPath = "/ksql";
+  private final String responseValueKey = "queryDescription";
 
-    @Override
-    public KsqlCommandResponse serializeResponse(JsonNode response) {
-        return serializeTableResponse(response, responseValueKey);
-    }
+  @Override
+  public KsqlCommandResponse serializeResponse(JsonNode response) {
+    return serializeTableResponse(response, responseValueKey);
+  }
 
-    @Override
-    protected String getRequestPath() {
-        return requestPath;
-    }
+  @Override
+  protected String getRequestPath() {
+    return requestPath;
+  }
 
-    @Override
-    protected String getTestRegExp() {
-        return "explain (.*);";
-    }
+  @Override
+  protected String getTestRegExp() {
+    return "explain (.*);";
+  }
 }
