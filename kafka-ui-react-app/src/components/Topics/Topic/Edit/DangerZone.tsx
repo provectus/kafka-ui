@@ -118,10 +118,13 @@ const DangerZone: React.FC<Props> = ({
           className="columns mb-0"
         >
           <div className="column is-three-quarters">
-            <label className="label">Number of partitions *</label>
+            <label className="label" htmlFor="partitions">
+              Number of partitions *
+            </label>
             <input
               className="input"
               type="number"
+              id="partitions"
               placeholder="Number of partitions"
               {...partitionsRegister('partitions', {
                 required: 'Partiotions are required',
@@ -133,6 +136,7 @@ const DangerZone: React.FC<Props> = ({
               type="submit"
               className="button is-danger"
               disabled={!partitionsFormState.isDirty}
+              data-testid="partitionsSubmit"
             />
           </div>
         </form>
@@ -153,8 +157,11 @@ const DangerZone: React.FC<Props> = ({
           className="columns"
         >
           <div className="column is-three-quarters">
-            <label className="label">Replication Factor *</label>
+            <label className="label" htmlFor="replicationFactor">
+              Replication Factor *
+            </label>
             <input
+              id="replicationFactor"
               className="input"
               type="number"
               placeholder="Replication Factor"
@@ -168,6 +175,7 @@ const DangerZone: React.FC<Props> = ({
               type="submit"
               className="button is-danger"
               disabled={!replicationFactorFormState.isDirty}
+              data-testid="replicationFactorSubmit"
             />
           </div>
         </form>

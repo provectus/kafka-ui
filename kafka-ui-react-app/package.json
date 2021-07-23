@@ -8,6 +8,7 @@
     "@hookform/error-message": "^2.0.0",
     "@hookform/resolvers": "^2.5.1",
     "@rooks/use-outside-click-ref": "^4.10.1",
+    "@testing-library/react": "^12.0.0",
     "ace-builds": "^1.4.12",
     "bulma": "^0.9.3",
     "bulma-switch": "^2.0.0",
@@ -73,7 +74,7 @@
   "devDependencies": {
     "@jest/types": "^27.0.6",
     "@openapitools/openapi-generator-cli": "^2.3.5",
-    "@testing-library/jest-dom": "^5.11.10",
+    "@testing-library/jest-dom": "^5.14.1",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.8",
     "@types/jest": "^26.0.21",
