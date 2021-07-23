@@ -34,16 +34,16 @@ class CreateStrategyTest {
   @Test
   public void shouldReturnTrueInTest() {
     assertTrue(ksqlStatementStrategy.test("CREATE STREAM stream WITH (KAFKA_TOPIC='topic');"));
-    assertTrue(ksqlStatementStrategy.test("CREATE STREAM stream" +
-        " AS SELECT users.id AS userid FROM users EMIT CHANGES;"
+    assertTrue(ksqlStatementStrategy.test("CREATE STREAM stream"
+        + " AS SELECT users.id AS userid FROM users EMIT CHANGES;"
     ));
     assertTrue(ksqlStatementStrategy.test(
         "CREATE TABLE table (id VARCHAR) WITH (KAFKA_TOPIC='table');"
     ));
     assertTrue(ksqlStatementStrategy.test(
-        "CREATE TABLE pageviews_regions WITH (KEY_FORMAT='JSON')" +
-            "  AS SELECT gender, COUNT(*) AS numbers" +
-            "  FROM pageviews EMIT CHANGES;"
+        "CREATE TABLE pageviews_regions WITH (KEY_FORMAT='JSON')"
+            + "  AS SELECT gender, COUNT(*) AS numbers"
+            + "  FROM pageviews EMIT CHANGES;"
     ));
   }
 
