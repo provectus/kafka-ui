@@ -1,5 +1,9 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
+
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE;
+import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -74,8 +78,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     String password = cluster.getSchemaRegistry().getPassword();
 
     if (username != null && password != null) {
-      configs.put("basic.auth.credentials.source", "USER_INFO");
-      configs.put("basic.auth.user.info", username + ":" + password);
+      configs.put(BASIC_AUTH_CREDENTIALS_SOURCE, "USER_INFO");
+      configs.put(USER_INFO_CONFIG, username + ":" + password);
     } else if (username != null) {
       throw new ValidationException(
           "You specified username but do not specified password");
