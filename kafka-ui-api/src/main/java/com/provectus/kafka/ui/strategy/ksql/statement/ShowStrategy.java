@@ -7,10 +7,11 @@ import java.util.Optional;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ShowStrategy extends KsqlStatementStrategy {
-  private final String requestPath = "/ksql";
-  private final List<String> statements =
+public class ShowStrategy extends BaseStrategy {
+  private final List<String> showStatements =
       List.of("functions", "topics", "streams", "tables", "queries", "properties");
+  private final List<String> listStatements =
+      List.of("functions", "topics", "streams", "tables");
   private String responseValueKey = "";
 
   @Override
@@ -19,14 +20,9 @@ public class ShowStrategy extends KsqlStatementStrategy {
   }
 
   @Override
-  protected String getRequestPath() {
-    return requestPath;
-  }
-
-  @Override
   public boolean test(String sql) {
-    Optional<String> statement = statements.stream()
-        .filter(s -> sql.trim().toLowerCase().matches(getTestRegExp(s)))
+    Optional<String> statement = showStatements.stream()
+        .filter(s -> testSql(sql, getShowRegExp(s)) || testSql(sql, getListRegExp(s)))
         .findFirst();
     if (statement.isPresent()) {
       setResponseValueKey(statement.get());
@@ -36,16 +32,31 @@ public class ShowStrategy extends KsqlStatementStrategy {
   }
 
   @Override
+  protected String getRequestPath() {
+    return BaseStrategy.ksqlRequestPath;
+  }
+
+  @Override
   protected String getTestRegExp() {
     return "";
   }
 
-  private String getTestRegExp(String key) {
+  protected String getShowRegExp(String key) {
     return "show " + key + ";";
+  }
+
+  protected String getListRegExp(String key) {
+    if (listStatements.contains(key)) {
+      return "list " + key + ";";
+    }
+    return "";
   }
 
   private void setResponseValueKey(String path) {
     responseValueKey = path;
   }
 
+  private boolean testSql(String sql, String pattern) {
+    return sql.trim().toLowerCase().matches(pattern);
+  }
 }

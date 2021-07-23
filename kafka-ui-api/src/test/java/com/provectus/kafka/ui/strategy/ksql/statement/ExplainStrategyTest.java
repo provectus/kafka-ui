@@ -20,46 +20,46 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class ExplainStrategyTest {
   private final ObjectMapper mapper = new ObjectMapper();
-  private KsqlStatementStrategy ksqlStatementStrategy;
+  private ExplainStrategy strategy;
 
   @BeforeEach
-  public void setUp() {
-    ksqlStatementStrategy = new ExplainStrategy();
+  void setUp() {
+    strategy = new ExplainStrategy();
   }
 
   @Test
-  public void shouldReturnUri() {
-    ksqlStatementStrategy.host("ksqldb-server:8088");
-    assertThat(ksqlStatementStrategy.getUri()).isEqualTo("ksqldb-server:8088/ksql");
+  void shouldReturnUri() {
+    strategy.host("ksqldb-server:8088");
+    assertThat(strategy.getUri()).isEqualTo("ksqldb-server:8088/ksql");
   }
 
   @Test
-  public void shouldReturnTrueInTest() {
-    assertTrue(ksqlStatementStrategy.test("explain users_query_id;"));
+  void shouldReturnTrueInTest() {
+    assertTrue(strategy.test("explain users_query_id;"));
   }
 
   @Test
-  public void shouldReturnFalseInTest() {
-    assertFalse(ksqlStatementStrategy.test("show queries;"));
+  void shouldReturnFalseInTest() {
+    assertFalse(strategy.test("show queries;"));
   }
 
   @Test
-  public void shouldSerializeResponse() {
+  void shouldSerializeResponse() {
     JsonNode node = getResponseWithObjectNode();
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("key", "value"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("name", "kafka")));
   }
 
   @Test
-  public void shouldSerializeWithException() {
+  void shouldSerializeWithException() {
     JsonNode sourceDescriptionNode =
         mapper.createObjectNode().put("sourceDescription", "nodeWithMessage");
     JsonNode node = mapper.createArrayNode().add(mapper.valueToTree(sourceDescriptionNode));
     Exception exception = assertThrows(
         UnprocessableEntityException.class,
-        () -> ksqlStatementStrategy.serializeResponse(node)
+        () -> strategy.serializeResponse(node)
     );
 
     assertThat(exception.getMessage()).isEqualTo("KSQL DB response mapping error");

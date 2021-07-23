@@ -15,7 +15,10 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-public abstract class KsqlStatementStrategy {
+public abstract class BaseStrategy {
+  protected static final String ksqlRequestPath = "/ksql";
+  protected static final String queryRequestPath = "/query";
+  private static final String mappingExceptionMessage = "KSQL DB response mapping error";
   protected String host = null;
   protected KsqlCommand ksqlCommand = null;
 
@@ -23,14 +26,14 @@ public abstract class KsqlStatementStrategy {
     if (this.host != null) {
       return this.host + this.getRequestPath();
     }
-    return null;
+    throw new UnprocessableEntityException("Strategy doesn't have host");
   }
 
   public boolean test(String sql) {
     return sql.trim().toLowerCase().matches(getTestRegExp());
   }
 
-  public KsqlStatementStrategy host(String host) {
+  public BaseStrategy host(String host) {
     this.host = host;
     return this;
   }
@@ -39,7 +42,7 @@ public abstract class KsqlStatementStrategy {
     return ksqlCommand;
   }
 
-  public KsqlStatementStrategy ksqlCommand(KsqlCommand ksqlCommand) {
+  public BaseStrategy ksqlCommand(KsqlCommand ksqlCommand) {
     this.ksqlCommand = ksqlCommand;
     return this;
   }
@@ -52,7 +55,7 @@ public abstract class KsqlStatementStrategy {
       Table table = items.isArray() ? getTableFromArray(items) : getTableFromObject(items);
       return commandResponse.data(table);
     }
-    throw new UnprocessableEntityException("KSQL DB response mapping error");
+    throw new UnprocessableEntityException(mappingExceptionMessage);
   }
 
   protected KsqlCommandResponse serializeMessageResponse(JsonNode response, String path) {
@@ -62,7 +65,7 @@ public abstract class KsqlStatementStrategy {
       JsonNode item = first.path(path);
       return commandResponse.message(getMessageFromObject(item));
     }
-    throw new UnprocessableEntityException("KSQL DB response mapping error");
+    throw new UnprocessableEntityException(mappingExceptionMessage);
   }
 
   protected KsqlCommandResponse serializeQueryResponse(JsonNode response) {
@@ -73,7 +76,7 @@ public abstract class KsqlStatementStrategy {
           .rows(getQueryResponseRows(response));
       return commandResponse.data(table);
     }
-    throw new UnprocessableEntityException("KSQL DB response mapping error");
+    throw new UnprocessableEntityException(mappingExceptionMessage);
   }
 
   private List<String> getQueryResponseHeader(JsonNode response) {
@@ -121,7 +124,7 @@ public abstract class KsqlStatementStrategy {
     if (node.isObject() && node.has("message")) {
       return node.get("message").asText();
     }
-    throw new UnprocessableEntityException("KSQL DB response mapping error");
+    throw new UnprocessableEntityException(mappingExceptionMessage);
   }
 
   private List<List<String>> getTableRows(JsonNode node, List<String> keys) {
@@ -137,7 +140,7 @@ public abstract class KsqlStatementStrategy {
     if (node.isArray() && node.size() > 0) {
       return StreamSupport.stream(node.spliterator(), false);
     }
-    throw new UnprocessableEntityException("KSQL DB response mapping error");
+    throw new UnprocessableEntityException(mappingExceptionMessage);
   }
 
   private List<String> getJsonObjectKeys(JsonNode node) {
@@ -146,7 +149,7 @@ public abstract class KsqlStatementStrategy {
           Spliterators.spliteratorUnknownSize(node.fieldNames(), Spliterator.ORDERED), false
       ).collect(Collectors.toList());
     }
-    throw new UnprocessableEntityException("KSQL DB response mapping error");
+    throw new UnprocessableEntityException(mappingExceptionMessage);
   }
 
   private List<String> getJsonObjectValues(JsonNode node) {

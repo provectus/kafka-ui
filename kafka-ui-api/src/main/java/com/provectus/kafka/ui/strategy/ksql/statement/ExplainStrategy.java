@@ -5,9 +5,8 @@ import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExplainStrategy extends KsqlStatementStrategy {
-  private final String requestPath = "/ksql";
-  private final String responseValueKey = "queryDescription";
+public class ExplainStrategy extends BaseStrategy {
+  private static final String responseValueKey = "queryDescription";
 
   @Override
   public KsqlCommandResponse serializeResponse(JsonNode response) {
@@ -16,7 +15,7 @@ public class ExplainStrategy extends KsqlStatementStrategy {
 
   @Override
   protected String getRequestPath() {
-    return requestPath;
+    return BaseStrategy.ksqlRequestPath;
   }
 
   @Override

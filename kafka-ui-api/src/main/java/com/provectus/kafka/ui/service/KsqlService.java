@@ -7,7 +7,7 @@ import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommand;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.strategy.ksql.statement.KsqlStatementStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 public class KsqlService {
   private final KsqlClient ksqlClient;
   private final ClustersStorage clustersStorage;
-  private final List<KsqlStatementStrategy> ksqlStatementStrategies;
+  private final List<BaseStrategy> ksqlStatementStrategies;
 
   public Mono<KsqlCommandResponse> executeKsqlCommand(String clusterName,
                                                       Mono<KsqlCommand> ksqlCommand) {
@@ -36,7 +36,7 @@ public class KsqlService {
         .flatMap(ksqlClient::execute);
   }
 
-  private Mono<KsqlStatementStrategy> getStatementStrategyForKsqlCommand(
+  private Mono<BaseStrategy> getStatementStrategyForKsqlCommand(
       Mono<KsqlCommand> ksqlCommand) {
     return ksqlCommand
         .map(command -> ksqlStatementStrategies.stream()

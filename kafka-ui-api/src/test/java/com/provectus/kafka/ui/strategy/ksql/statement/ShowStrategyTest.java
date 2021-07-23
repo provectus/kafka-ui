@@ -19,107 +19,107 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class ShowStrategyTest {
-  private KsqlStatementStrategy ksqlStatementStrategy;
   private final ObjectMapper mapper = new ObjectMapper();
+  private ShowStrategy strategy;
 
   @BeforeEach
-  public void setUp() {
-    ksqlStatementStrategy = new ShowStrategy();
+  void setUp() {
+    strategy = new ShowStrategy();
   }
 
   @Test
-  public void shouldReturnUri() {
-    ksqlStatementStrategy.host("ksqldb-server:8088");
-    assertThat(ksqlStatementStrategy.getUri()).isEqualTo("ksqldb-server:8088/ksql");
+  void shouldReturnUri() {
+    strategy.host("ksqldb-server:8088");
+    assertThat(strategy.getUri()).isEqualTo("ksqldb-server:8088/ksql");
   }
 
   @Test
-  public void shouldReturnTrueInTest() {
-    assertTrue(ksqlStatementStrategy.test("SHOW STREAMS;"));
-    assertTrue(ksqlStatementStrategy.test("SHOW TABLES;"));
-    assertTrue(ksqlStatementStrategy.test("SHOW TOPICS;"));
-    assertTrue(ksqlStatementStrategy.test("SHOW QUERIES;"));
-    assertTrue(ksqlStatementStrategy.test("SHOW PROPERTIES;"));
-    assertTrue(ksqlStatementStrategy.test("SHOW FUNCTIONS;"));
+  void shouldReturnTrueInTest() {
+    assertTrue(strategy.test("SHOW STREAMS;"));
+    assertTrue(strategy.test("SHOW TABLES;"));
+    assertTrue(strategy.test("SHOW TOPICS;"));
+    assertTrue(strategy.test("SHOW QUERIES;"));
+    assertTrue(strategy.test("SHOW PROPERTIES;"));
+    assertTrue(strategy.test("SHOW FUNCTIONS;"));
+    assertTrue(strategy.test("LIST STREAMS;"));
+    assertTrue(strategy.test("LIST TABLES;"));
+    assertTrue(strategy.test("LIST TOPICS;"));
+    assertTrue(strategy.test("LIST FUNCTIONS;"));
   }
 
   @Test
-  public void shouldReturnFalseInTest() {
-    assertFalse(ksqlStatementStrategy.test("LIST STREAMS;"));
-    assertFalse(ksqlStatementStrategy.test("LIST TABLES;"));
-    assertFalse(ksqlStatementStrategy.test("LIST TOPICS;"));
-    assertFalse(ksqlStatementStrategy.test("LIST QUERIES;"));
-    assertFalse(ksqlStatementStrategy.test("LIST PROPERTIES;"));
-    assertFalse(ksqlStatementStrategy.test("LIST FUNCTIONS;"));
+  void shouldReturnFalseInTest() {
+    assertFalse(strategy.test("LIST QUERIES;"));
+    assertFalse(strategy.test("LIST PROPERTIES;"));
   }
 
   @Test
-  public void shouldSerializeStreamsResponse() {
+  void shouldSerializeStreamsResponse() {
     JsonNode node = getResponseWithData("streams");
-    ksqlStatementStrategy.test("show streams;");
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    strategy.test("show streams;");
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
 
   @Test
-  public void shouldSerializeTablesResponse() {
+  void shouldSerializeTablesResponse() {
     JsonNode node = getResponseWithData("tables");
-    ksqlStatementStrategy.test("show tables;");
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    strategy.test("show tables;");
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
 
   @Test
-  public void shouldSerializeTopicsResponse() {
+  void shouldSerializeTopicsResponse() {
     JsonNode node = getResponseWithData("topics");
-    ksqlStatementStrategy.test("show topics;");
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    strategy.test("show topics;");
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
 
   @Test
-  public void shouldSerializePropertiesResponse() {
+  void shouldSerializePropertiesResponse() {
     JsonNode node = getResponseWithData("properties");
-    ksqlStatementStrategy.test("show properties;");
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    strategy.test("show properties;");
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
 
   @Test
-  public void shouldSerializeFunctionsResponse() {
+  void shouldSerializeFunctionsResponse() {
     JsonNode node = getResponseWithData("functions");
-    ksqlStatementStrategy.test("show functions;");
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    strategy.test("show functions;");
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
 
   @Test
-  public void shouldSerializeQueriesResponse() {
+  void shouldSerializeQueriesResponse() {
     JsonNode node = getResponseWithData("queries");
-    ksqlStatementStrategy.test("show queries;");
-    KsqlCommandResponse serializedResponse = ksqlStatementStrategy.serializeResponse(node);
+    strategy.test("show queries;");
+    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
     Table table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
 
   @Test
-  public void shouldSerializeWithException() {
+  void shouldSerializeWithException() {
     JsonNode node = getResponseWithData("streams");
-    ksqlStatementStrategy.test("show tables;");
+    strategy.test("show tables;");
     Exception exception = assertThrows(
         UnprocessableEntityException.class,
-        () -> ksqlStatementStrategy.serializeResponse(node)
+        () -> strategy.serializeResponse(node)
     );
 
     assertThat(exception.getMessage()).isEqualTo("KSQL DB response mapping error");

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.strategy.ksql.statement.KsqlStatementStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -23,7 +23,7 @@ public class KsqlClient {
   private final WebClient webClient;
   private final ObjectMapper mapper;
 
-  public Mono<KsqlCommandResponse> execute(KsqlStatementStrategy ksqlStatement) {
+  public Mono<KsqlCommandResponse> execute(BaseStrategy ksqlStatement) {
     return webClient.post()
         .uri(ksqlStatement.getUri())
         .accept(new MediaType("application", "vnd.ksql.v1+json"))

@@ -13,7 +13,7 @@ import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommand;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.strategy.ksql.statement.KsqlStatementStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import com.provectus.kafka.ui.strategy.ksql.statement.ShowStrategy;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ import reactor.test.StepVerifier;
 @ExtendWith(MockitoExtension.class)
 class KsqlServiceTest {
   private KsqlService ksqlService;
-  private KsqlStatementStrategy ksqlStatementStrategy;
+  private BaseStrategy baseStrategy;
 
   @Mock
   private ClustersStorage clustersStorage;
@@ -39,16 +39,16 @@ class KsqlServiceTest {
 
   @BeforeEach
   public void setUp() {
-    this.ksqlStatementStrategy = new ShowStrategy();
+    this.baseStrategy = new ShowStrategy();
     this.ksqlService = new KsqlService(
         this.ksqlClient,
         this.clustersStorage,
-        List.of(ksqlStatementStrategy)
+        List.of(baseStrategy)
     );
   }
 
   @Test
-  public void shouldThrowClusterNotFoundExceptionOnExecuteKsqlCommand() {
+  void shouldThrowClusterNotFoundExceptionOnExecuteKsqlCommand() {
     String clusterName = "test";
     KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
     when(clustersStorage.getClusterByName(clusterName)).thenReturn(Optional.ofNullable(null));
@@ -58,7 +58,7 @@ class KsqlServiceTest {
   }
 
   @Test
-  public void shouldThrowKsqlDbNotFoundExceptionOnExecuteKsqlCommand() {
+  void shouldThrowKsqlDbNotFoundExceptionOnExecuteKsqlCommand() {
     String clusterName = "test";
     KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
@@ -71,7 +71,7 @@ class KsqlServiceTest {
   }
 
   @Test
-  public void shouldThrowUnprocessableEntityExceptionOnExecuteKsqlCommand() {
+  void shouldThrowUnprocessableEntityExceptionOnExecuteKsqlCommand() {
     String clusterName = "test";
     KsqlCommand command =
         (new KsqlCommand()).ksql("CREATE STREAM users WITH (KAFKA_TOPIC='users');");
@@ -88,7 +88,7 @@ class KsqlServiceTest {
   }
 
   @Test
-  public void shouldSetHostToStrategy() {
+  void shouldSetHostToStrategy() {
     String clusterName = "test";
     String host = "localhost:8088";
     KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
@@ -100,11 +100,11 @@ class KsqlServiceTest {
     when(ksqlClient.execute(any())).thenReturn(Mono.just(new KsqlCommandResponse()));
 
     ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
-    assertThat(ksqlStatementStrategy.getUri()).isEqualTo(host + "/ksql");
+    assertThat(baseStrategy.getUri()).isEqualTo(host + "/ksql");
   }
 
   @Test
-  public void shouldCallClientAndReturnResponse() {
+  void shouldCallClientAndReturnResponse() {
     String clusterName = "test";
     KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
@@ -117,7 +117,7 @@ class KsqlServiceTest {
 
     KsqlCommandResponse receivedResponse =
         ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
-    verify(ksqlClient, times(1)).execute(ksqlStatementStrategy);
+    verify(ksqlClient, times(1)).execute(baseStrategy);
     assertThat(receivedResponse).isEqualTo(response);
 
   }
