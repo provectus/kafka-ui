@@ -341,3 +341,55 @@ export const fetchTopicConsumerGroups =
       dispatch(actions.fetchTopicConsumerGroupsAction.failure());
     }
   };
+
+export const updateTopicPartitionsCount =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    partitions: number
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.updateTopicPartitionsCountAction.request());
+    try {
+      await topicsApiClient.increaseTopicPartitions({
+        clusterName,
+        topicName,
+        partitionsIncrease: { totalPartitionsCount: partitions },
+      });
+      dispatch(actions.updateTopicPartitionsCountAction.success());
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['topic-partitions', topicName].join('-'),
+        title: `Topic ${topicName} partitions count increase failed`,
+        response,
+      };
+      dispatch(actions.updateTopicPartitionsCountAction.failure({ alert }));
+    }
+  };
+
+export const updateTopicReplicationFactor =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    replicationFactor: number
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.updateTopicReplicationFactorAction.request());
+    try {
+      await topicsApiClient.changeReplicationFactor({
+        clusterName,
+        topicName,
+        replicationFactorChange: { totalReplicationFactor: replicationFactor },
+      });
+      dispatch(actions.updateTopicReplicationFactorAction.success());
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['topic-replication-factor', topicName].join('-'),
+        title: `Topic ${topicName} replication factor change failed`,
+        response,
+      };
+      dispatch(actions.updateTopicReplicationFactorAction.failure({ alert }));
+    }
+  };

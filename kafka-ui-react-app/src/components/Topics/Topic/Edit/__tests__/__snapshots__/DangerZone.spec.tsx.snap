@@ -1,0 +1,109 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DangerZone is rendered properly 1`] = `
+<div
+  className="box"
+>
+  <h4
+    className="title is-5 has-text-danger mb-5"
+  >
+    Danger Zone
+  </h4>
+  <div
+    className="is-flex is-flex-direction-column"
+  >
+    <form
+      className="columns mb-0"
+      onSubmit={[Function]}
+    >
+      <div
+        className="column is-three-quarters"
+      >
+        <label
+          className="label"
+        >
+          Number of partitions *
+        </label>
+        <input
+          className="input"
+          name="partitions"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Number of partitions"
+          type="number"
+        />
+      </div>
+      <div
+        className="column is-flex is-align-items-flex-end"
+      >
+        <input
+          className="button is-danger"
+          disabled={true}
+          type="submit"
+        />
+      </div>
+    </form>
+    <p
+      className="help is-danger mt-0 mb-4"
+    >
+      <Component
+        errors={Object {}}
+        name="partitions"
+      />
+    </p>
+    <ConfirmationModal
+      isOpen={false}
+      onCancel={[Function]}
+      onConfirm={[Function]}
+    >
+      Are you sure you want to increase the number of partitions? Do it only if you 100% know what you are doing!
+    </ConfirmationModal>
+    <form
+      className="columns"
+      onSubmit={[Function]}
+    >
+      <div
+        className="column is-three-quarters"
+      >
+        <label
+          className="label"
+        >
+          Replication Factor *
+        </label>
+        <input
+          className="input"
+          name="replicationFactor"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Replication Factor"
+          type="number"
+        />
+      </div>
+      <div
+        className="column is-flex is-align-items-flex-end"
+      >
+        <input
+          className="button is-danger"
+          disabled={true}
+          type="submit"
+        />
+      </div>
+    </form>
+    <p
+      className="help is-danger mt-0"
+    >
+      <Component
+        errors={Object {}}
+        name="replicationFactor"
+      />
+    </p>
+    <ConfirmationModal
+      isOpen={false}
+      onCancel={[Function]}
+      onConfirm={[Function]}
+    >
+      Are you sure you want to update the replication factor?
+    </ConfirmationModal>
+  </div>
+</div>
+`;
