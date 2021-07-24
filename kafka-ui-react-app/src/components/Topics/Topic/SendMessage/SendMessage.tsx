@@ -12,6 +12,8 @@ import { getFakeData } from 'yup-faker';
 import { useHistory } from 'react-router';
 import { clusterTopicMessagesPath } from 'lib/paths';
 
+import validateMessage from './validateMessage';
+
 export interface Props {
   clusterName: string;
   topicName: string;
@@ -84,75 +86,26 @@ const SendMessage: React.FC<Props> = ({
     headers: string;
     partition: number;
   }) => {
-    setSchemaErrorString('');
-    try {
-      if (messageSchema) {
-        const key = data.key || keyExampleValue;
-        const content = data.content || contentExampleValue;
-        const { partition } = data;
-        const headers = data.headers ? JSON.parse(data.headers) : undefined;
+    if (messageSchema) {
+      const key = data.key || keyExampleValue;
+      const content = data.content || contentExampleValue;
+      const { partition } = data;
+      const headers = data.headers ? JSON.parse(data.headers) : undefined;
+      const messageIsValid = await validateMessage(
+        key,
+        content,
+        messageSchema,
+        setSchemaErrorString
+      );
 
-        const validateKey = convertToYup(JSON.parse(messageSchema.key.schema));
-        const validateContent = convertToYup(
-          JSON.parse(messageSchema.value.schema)
-        );
-        let keyIsValid = false;
-        let contentIsValid = false;
-
-        try {
-          await validateKey?.validate(JSON.parse(key));
-          keyIsValid = true;
-        } catch (err) {
-          let errorString = '';
-          if (err.errors) {
-            err.errors.forEach((e: string) => {
-              errorString = errorString
-                ? `${errorString}-Key ${e}`
-                : `Key ${e}`;
-            });
-          } else {
-            errorString = errorString
-              ? `${errorString}-Key ${err.message}`
-              : `Key ${err.message}`;
-          }
-
-          setSchemaErrorString((e) =>
-            e ? `${e}-${errorString}` : errorString
-          );
-        }
-        try {
-          await validateContent?.validate(JSON.parse(content));
-          contentIsValid = true;
-        } catch (err) {
-          let errorString = '';
-          if (err.errors) {
-            err.errors.forEach((e: string) => {
-              errorString = errorString
-                ? `${errorString}-Content ${e}`
-                : `Content ${e}`;
-            });
-          } else {
-            errorString = errorString
-              ? `${errorString}-Content ${err.message}`
-              : `Content ${err.message}`;
-          }
-
-          setSchemaErrorString((e) =>
-            e ? `${e}-${errorString}` : errorString
-          );
-        }
-
-        if (keyIsValid && contentIsValid) {
-          sendTopicMessage(clusterName, topicName, {
-            key,
-            content,
-            headers,
-            partition,
-          });
-        }
+      if (messageIsValid) {
+        sendTopicMessage(clusterName, topicName, {
+          key,
+          content,
+          headers,
+          partition,
+        });
       }
-    } catch (err) {
-      setSchemaErrorString((e) => (e ? `${e}-${err.message}` : err.message));
     }
   };
   return (
