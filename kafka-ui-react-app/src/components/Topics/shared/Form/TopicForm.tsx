@@ -32,7 +32,7 @@ const TopicForm: React.FC<Props> = ({
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
           <div className="columns">
-            <div className="column is-three-quarters">
+            <div className={`column ${isEditing ? '' : 'is-three-quarters'}`}>
               <label className="label">Topic Name *</label>
               <input
                 className="input"
@@ -52,26 +52,28 @@ const TopicForm: React.FC<Props> = ({
               </p>
             </div>
 
-            <div className="column">
-              <label className="label">Number of partitions *</label>
-              <input
-                className="input"
-                type="number"
-                placeholder="Number of partitions"
-                defaultValue="1"
-                {...register('partitions', {
-                  required: 'Number of partitions is required.',
-                })}
-              />
-              <p className="help is-danger">
-                <ErrorMessage errors={errors} name="partitions" />
-              </p>
-            </div>
+            {!isEditing && (
+              <div className="column">
+                <label className="label">Number of partitions *</label>
+                <input
+                  className="input"
+                  type="number"
+                  placeholder="Number of partitions"
+                  defaultValue="1"
+                  {...register('partitions', {
+                    required: 'Number of partitions is required.',
+                  })}
+                />
+                <p className="help is-danger">
+                  <ErrorMessage errors={errors} name="partitions" />
+                </p>
+              </div>
+            )}
           </div>
         </fieldset>
 
         <div className="columns">
-          <fieldset disabled={isEditing}>
+          {!isEditing && (
             <div className="column">
               <label className="label">Replication Factor *</label>
               <input
@@ -87,7 +89,7 @@ const TopicForm: React.FC<Props> = ({
                 <ErrorMessage errors={errors} name="replicationFactor" />
               </p>
             </div>
-          </fieldset>
+          )}
 
           <div className="column">
             <label className="label">Min In Sync Replicas *</label>
