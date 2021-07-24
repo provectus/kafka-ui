@@ -53,6 +53,28 @@ paths:
         500:
           description: Internal server error
 
+  /connectors/filtered:
+    get:
+      tags:
+        - KafkaConnectClient
+      summary: get filtered connectors from Kafka Connect service
+      operationId: getFilteredConnectors
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Connector'
+
   /connectors/{connectorName}:
     get:
       tags:
