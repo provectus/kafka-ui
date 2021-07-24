@@ -12,6 +12,7 @@ import {
   getOutOfSyncReplicasCount,
   getUnderReplicatedPartitionCount,
   getDiskUsage,
+  getVersion,
 } from 'redux/reducers/brokers/selectors';
 import Brokers from 'components/Brokers/Brokers';
 
@@ -26,6 +27,7 @@ const mapStateToProps = (state: RootState) => ({
   outOfSyncReplicasCount: getOutOfSyncReplicasCount(state),
   underReplicatedPartitionCount: getUnderReplicatedPartitionCount(state),
   diskUsage: getDiskUsage(state),
+  version: getVersion(state),
 });
 
 const mapDispatchToProps = {

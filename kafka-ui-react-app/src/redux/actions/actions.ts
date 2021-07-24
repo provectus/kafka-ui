@@ -270,3 +270,15 @@ export const sendTopicMessageAction = createAsyncAction(
   'SEND_TOPIC_MESSAGE__SUCCESS',
   'SEND_TOPIC_MESSAGE__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
+
+export const updateTopicPartitionsCountAction = createAsyncAction(
+  'UPDATE_PARTITIONS__REQUEST',
+  'UPDATE_PARTITIONS__SUCCESS',
+  'UPDATE_PARTITIONS__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const updateTopicReplicationFactorAction = createAsyncAction(
+  'UPDATE_REPLICATION_FACTOR__REQUEST',
+  'UPDATE_REPLICATION_FACTOR__SUCCESS',
+  'UPDATE_REPLICATION_FACTOR__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();

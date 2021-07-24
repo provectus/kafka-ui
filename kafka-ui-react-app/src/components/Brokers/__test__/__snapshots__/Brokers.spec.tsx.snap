@@ -69,6 +69,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
       onlinePartitionCount={0}
       outOfSyncReplicasCount={0}
       underReplicatedPartitionCount={0}
+      version="1"
       zooKeeperStatus={0}
     >
       <div
@@ -175,6 +176,29 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         Offline
                       </span>
+                    </p>
+                  </div>
+                </div>
+              </Indicator>
+              <Indicator
+                className="is-one-third"
+                label="Version"
+              >
+                <div
+                  className="level-item is-one-third"
+                >
+                  <div
+                    title="Version"
+                  >
+                    <p
+                      className="heading"
+                    >
+                      Version
+                    </p>
+                    <p
+                      className="title has-text-centered"
+                    >
+                      1
                     </p>
                   </div>
                 </div>
@@ -400,6 +424,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
       onlinePartitionCount={64}
       outOfSyncReplicasCount={0}
       underReplicatedPartitionCount={0}
+      version="1"
       zooKeeperStatus={1}
     >
       <div
@@ -506,6 +531,29 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         Online
                       </span>
+                    </p>
+                  </div>
+                </div>
+              </Indicator>
+              <Indicator
+                className="is-one-third"
+                label="Version"
+              >
+                <div
+                  className="level-item is-one-third"
+                >
+                  <div
+                    title="Version"
+                  >
+                    <p
+                      className="heading"
+                    >
+                      Version
+                    </p>
+                    <p
+                      className="title has-text-centered"
+                    >
+                      1
                     </p>
                   </div>
                 </div>

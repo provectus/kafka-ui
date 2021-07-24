@@ -27,4 +27,5 @@ public class InternalClusterMetrics {
   private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
   private final List<Metric> metrics;
   private final int zooKeeperStatus;
+  private final String version;
 }

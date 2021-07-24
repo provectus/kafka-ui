@@ -96,6 +96,11 @@ const Details: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan={10}>No active consumer groups</td>
+                </tr>
+              )}
               {items.map((consumer) => (
                 <ListItem
                   key={consumer.consumerId}
