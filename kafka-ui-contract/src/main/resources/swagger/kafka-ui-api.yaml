@@ -1717,8 +1717,44 @@ components:
           type: string
         defaultValue:
           type: string
+        source:
+          type: string
+          enum:
+            - DYNAMIC_TOPIC_CONFIG
+            - DYNAMIC_BROKER_LOGGER_CONFIG
+            - DYNAMIC_BROKER_CONFIG
+            - DYNAMIC_DEFAULT_BROKER_CONFIG
+            - STATIC_BROKER_CONFIG
+            - DEFAULT_CONFIG
+            - UNKNOWN
+        isSensitive:
+          type: boolean
+        isReadOnly:
+          type: boolean
+        synonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigSynonym"
       required:
         - name
+
+    ConfigSynonym:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        source:
+          type: string
+          enum:
+            - DYNAMIC_TOPIC_CONFIG
+            - DYNAMIC_BROKER_LOGGER_CONFIG
+            - DYNAMIC_BROKER_CONFIG
+            - DYNAMIC_DEFAULT_BROKER_CONFIG
+            - STATIC_BROKER_CONFIG
+            - DEFAULT_CONFIG
+            - UNKNOWN
 
     TopicCreation:
       type: object

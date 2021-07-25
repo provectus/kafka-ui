@@ -6,8 +6,8 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.api.model.TopicConfig;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -163,5 +163,29 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .exchange()
         .expectStatus()
         .isNotFound();
+  }
+
+  @Test
+  public void shouldRetrieveConfig() {
+    var topicName = UUID.randomUUID().toString();
+
+    webTestClient.post()
+            .uri("/api/clusters/{clusterName}/topics", LOCAL)
+            .bodyValue(new TopicCreation()
+                    .name(topicName)
+                    .partitions(1)
+                    .replicationFactor(1)
+                    .configs(Map.of())
+            )
+            .exchange()
+            .expectStatus()
+            .isOk();
+
+    WebTestClient.ListBodySpec result = webTestClient.get()
+            .uri("/api/clusters/{clusterName}/topics/{topicName}/config", LOCAL, topicName)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBodyList(TopicConfig.class);
   }
 }
