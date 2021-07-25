@@ -445,6 +445,5 @@ export const updateTopicReplicationFactor =
         response,
       };
       dispatch(actions.updateTopicReplicationFactorAction.failure({ alert }));
-
     }
   };

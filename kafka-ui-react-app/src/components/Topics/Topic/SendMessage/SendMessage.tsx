@@ -117,9 +117,12 @@ const SendMessage: React.FC<Props> = ({
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="columns">
               <div className="column is-one-third">
-                <label className="label">Partition</label>
+                <label className="label" htmlFor="select">
+                  Partition
+                </label>
                 <div className="select is-block">
                   <select
+                    id="select"
                     defaultValue={partitions[0].partition}
                     disabled={isSubmitting || messageIsSending}
                     {...register('partition')}

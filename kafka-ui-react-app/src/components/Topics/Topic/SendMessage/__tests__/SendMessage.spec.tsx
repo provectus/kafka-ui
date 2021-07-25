@@ -2,8 +2,8 @@ import React from 'react';
 import SendMessage, {
   Props,
 } from 'components/Topics/Topic/SendMessage/SendMessage';
-import { mount, shallow } from 'enzyme';
 import { MessageSchemaSourceEnum } from 'generated-sources';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 const mockConvertToYup = jest
   .fn()
@@ -107,25 +107,33 @@ const setupWrapper = (props?: Partial<Props>) => (
 );
 
 describe('SendMessage', () => {
-  it('is rendered properly', () => {
-    const component = shallow(setupWrapper());
-    expect(component).toMatchSnapshot();
-  });
-
-  it('calls fetchTopicMessageSchema', () => {
+  it('calls fetchTopicMessageSchema on first render', () => {
     const fetchTopicMessageSchemaMock = jest.fn();
-    mount(
+    render(
       setupWrapper({ fetchTopicMessageSchema: fetchTopicMessageSchemaMock })
     );
     expect(fetchTopicMessageSchemaMock).toHaveBeenCalledTimes(1);
   });
 
   describe('when schema is fetched', () => {
-    it('adds fake data as default value', () => {
+    it('calls sendTopicMessage on submit', async () => {
       jest.mock('json-schema-yup-transformer', () => mockConvertToYup);
-      const component = mount(setupWrapper({ schemaIsFetched: true }));
-      expect(component.find('JSONEditor').at(0)).toMatchSnapshot();
-      expect(component.find('JSONEditor').at(1)).toMatchSnapshot();
+      jest.mock('../validateMessage', () => jest.fn().mockReturnValue(true));
+      const mockSendTopicMessage = jest.fn();
+      render(
+        setupWrapper({
+          schemaIsFetched: true,
+          sendTopicMessage: mockSendTopicMessage,
+        })
+      );
+      const select = await screen.findByLabelText('Partition');
+      fireEvent.change(select, {
+        target: { value: 2 },
+      });
+      await waitFor(async () => {
+        fireEvent.click(await screen.findByText('Send'));
+        expect(mockSendTopicMessage).toHaveBeenCalledTimes(1);
+      });
     });
   });
 });

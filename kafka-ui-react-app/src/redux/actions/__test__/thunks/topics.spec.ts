@@ -136,7 +136,7 @@ describe('Thunks', () => {
     });
   });
 
-describe('fetchTopicMessageSchema', () => {
+  describe('fetchTopicMessageSchema', () => {
     it('creates GET_TOPIC_SCHEMA__FAILURE', async () => {
       fetchMock.getOnce(
         `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
@@ -354,4 +354,3 @@ describe('fetchTopicMessageSchema', () => {
     });
   });
 });
-
