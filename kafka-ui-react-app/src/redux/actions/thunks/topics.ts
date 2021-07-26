@@ -173,6 +173,16 @@ export const fetchTopicConfig =
     }
   };
 
+const topicReducer = (
+  result: TopicFormFormattedParams,
+  customParam: TopicConfig
+) => {
+  return {
+    ...result,
+    [customParam.name]: customParam.value,
+  };
+};
+
 const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
   const {
     name,
@@ -196,15 +206,7 @@ const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(
-        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
-          return {
-            ...result,
-            [customParam.name]: customParam.value,
-          };
-        },
-        {}
-      ),
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };
@@ -226,15 +228,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
       'min.insync.replicas': minInSyncReplicas,
-      ...Object.values(customParams || {}).reduce(
-        (result: TopicFormFormattedParams, customParam: TopicConfig) => {
-          return {
-            ...result,
-            [customParam.name]: customParam.value,
-          };
-        },
-        {}
-      ),
+      ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
 };
@@ -338,14 +332,64 @@ export const fetchTopicConsumerGroups =
           ...state.byName,
           [topicName]: {
             ...state.byName[topicName],
-            consumerGroups: {
-              ...consumerGroups,
-            },
+            consumerGroups,
           },
         },
       };
       dispatch(actions.fetchTopicConsumerGroupsAction.success(newState));
     } catch (e) {
       dispatch(actions.fetchTopicConsumerGroupsAction.failure());
+    }
+  };
+
+export const updateTopicPartitionsCount =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    partitions: number
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.updateTopicPartitionsCountAction.request());
+    try {
+      await topicsApiClient.increaseTopicPartitions({
+        clusterName,
+        topicName,
+        partitionsIncrease: { totalPartitionsCount: partitions },
+      });
+      dispatch(actions.updateTopicPartitionsCountAction.success());
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['topic-partitions', topicName].join('-'),
+        title: `Topic ${topicName} partitions count increase failed`,
+        response,
+      };
+      dispatch(actions.updateTopicPartitionsCountAction.failure({ alert }));
+    }
+  };
+
+export const updateTopicReplicationFactor =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    replicationFactor: number
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.updateTopicReplicationFactorAction.request());
+    try {
+      await topicsApiClient.changeReplicationFactor({
+        clusterName,
+        topicName,
+        replicationFactorChange: { totalReplicationFactor: replicationFactor },
+      });
+      dispatch(actions.updateTopicReplicationFactorAction.success());
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['topic-replication-factor', topicName].join('-'),
+        title: `Topic ${topicName} replication factor change failed`,
+        response,
+      };
+      dispatch(actions.updateTopicReplicationFactorAction.failure({ alert }));
     }
   };

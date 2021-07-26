@@ -38,5 +38,20 @@ describe('Overview', () => {
 
       expect(component.exists('Dropdown')).toBeTruthy();
     });
+
+    it('does not render Partitions', () => {
+      const componentEmpty = shallow(
+        <Overview
+          name={mockTopicName}
+          partitions={[]}
+          internal={mockInternal}
+          clusterName={mockClusterName}
+          topicName={mockTopicName}
+          clearTopicMessages={mockClearTopicMessages}
+        />
+      );
+
+      expect(componentEmpty.find('td').text()).toEqual('No Partitions found');
+    });
   });
 });

@@ -119,6 +119,12 @@ export const fetchConsumerGroupDetailsAction = createAsyncAction(
   undefined
 >();
 
+export const deleteConsumerGroupAction = createAsyncAction(
+  'DELETE_CONSUMER_GROUP__REQUEST',
+  'DELETE_CONSUMER_GROUP__SUCCESS',
+  'DELETE_CONSUMER_GROUP__FAILURE'
+)<undefined, ConsumerGroupID, { alert?: FailurePayload }>();
+
 export const fetchSchemasByClusterNameAction = createAsyncAction(
   'GET_CLUSTER_SCHEMAS__REQUEST',
   'GET_CLUSTER_SCHEMAS__SUCCESS',
@@ -247,3 +253,15 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
+
+export const updateTopicPartitionsCountAction = createAsyncAction(
+  'UPDATE_PARTITIONS__REQUEST',
+  'UPDATE_PARTITIONS__SUCCESS',
+  'UPDATE_PARTITIONS__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const updateTopicReplicationFactorAction = createAsyncAction(
+  'UPDATE_REPLICATION_FACTOR__REQUEST',
+  'UPDATE_REPLICATION_FACTOR__SUCCESS',
+  'UPDATE_REPLICATION_FACTOR__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();

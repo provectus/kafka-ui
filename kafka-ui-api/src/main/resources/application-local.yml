@@ -1,8 +1,7 @@
 kafka:
   clusters:
-    -
-      name: local
-      bootstrapServers: localhost:9092
+    - name: local
+      bootstrapServers: localhost:9093
       zookeeper: localhost:2181
       schemaRegistry: http://localhost:8081
       ksqldbServer: http://localhost:8088
@@ -10,16 +9,16 @@ kafka:
         - name: first
           address: http://localhost:8083
       jmxPort: 9997
-    -
-      name: secondLocal
-      bootstrapServers: localhost:9093
-      zookeeper: localhost:2182
-      schemaRegistry: http://localhost:18085
-      kafkaConnect:
-        - name: first
-          address: http://localhost:8083
-      jmxPort: 9998
-      read-only: true
+  #    -
+  #      name: secondLocal
+  #      bootstrapServers: localhost:9093
+  #      zookeeper: localhost:2182
+  #      schemaRegistry: http://localhost:18085
+  #      kafkaConnect:
+  #        - name: first
+  #          address: http://localhost:8083
+  #      jmxPort: 9998
+  #      read-only: true
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000

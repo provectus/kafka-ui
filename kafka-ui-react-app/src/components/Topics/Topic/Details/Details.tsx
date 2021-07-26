@@ -14,7 +14,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 
 import OverviewContainer from './Overview/OverviewContainer';
-import TopicConsumerGroupsContainer from './ConsumerGroups/ConsumerGroupsContainer';
+import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 

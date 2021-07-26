@@ -4,7 +4,7 @@
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>0.0.11-SNAPSHOT</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -48,6 +48,29 @@
                         <artifactId>openapi-generator-maven-plugin</artifactId>
                         <version>${openapi-generator-maven-plugin.version}</version>
                         <executions>
+                            <execution>
+                                <id>generate-kafka-ui-client</id>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <inputSpec>${project.basedir}/src/main/resources/swagger/kafka-ui-api.yaml
+                                    </inputSpec>
+                                    <output>${project.build.directory}/generated-sources/kafka-ui-client</output>
+                                    <generatorName>java</generatorName>
+                                    <generateApiTests>false</generateApiTests>
+                                    <generateModelTests>false</generateModelTests>
+                                    <configOptions>
+                                        <modelPackage>com.provectus.kafka.ui.api.model</modelPackage>
+                                        <apiPackage>com.provectus.kafka.ui.api.api</apiPackage>
+                                        <sourceFolder>kafka-ui-client</sourceFolder>
+                                        <asyncNative>true</asyncNative>
+                                        <library>webclient</library>
+                                        <useBeanValidation>true</useBeanValidation>
+                                        <dateLibrary>java8</dateLibrary>
+                                    </configOptions>
+                                </configuration>
+                            </execution>
                             <execution>
                                 <id>generate-backend-api</id>
                                 <goals>

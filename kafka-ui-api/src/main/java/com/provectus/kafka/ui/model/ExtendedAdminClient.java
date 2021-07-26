@@ -15,6 +15,7 @@ public class ExtendedAdminClient {
   private final Set<SupportedFeature> supportedFeatures;
 
   public static Mono<ExtendedAdminClient> extendedAdminClient(AdminClient adminClient) {
+
     return ClusterUtil.getSupportedFeatures(adminClient)
         .map(s -> new ExtendedAdminClient(adminClient, s));
   }

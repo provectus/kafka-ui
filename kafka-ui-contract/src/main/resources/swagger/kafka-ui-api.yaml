@@ -31,6 +31,30 @@ paths:
                 items:
                   $ref: '#/components/schemas/Cluster'
 
+
+  /api/clusters/{clusterName}/cache:
+    post:
+      tags:
+        - Clusters
+      summary: updateClusterInfo
+      operationId: updateClusterInfo
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cluster'
+        404:
+          description: Not found
+
+
   /api/clusters/{clusterName}/brokers:
     get:
       tags:
@@ -287,6 +311,38 @@ paths:
                 items:
                   $ref: '#/components/schemas/TopicConfig'
 
+  /api/clusters/{clusterName}/topics/{topicName}/replications:
+    patch:
+      tags:
+        - Topics
+      summary: changeReplicationFactor
+      operationId: changeReplicationFactor
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReplicationFactorChange'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReplicationFactorChangeResponse'
+        404:
+          description: Not found
+
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
@@ -314,7 +370,7 @@ paths:
             type: array
             items:
               type: string
-          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timstamp in millis] for specifying timestamps
+          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timestamp in millis] for specifying timestamps
         - name: limit
           in: query
           schema:
@@ -323,6 +379,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: seekDirection
+          in: query
+          schema:
+            $ref: "#/components/schemas/SeekDirection"
       responses:
         200:
           description: OK
@@ -360,8 +420,59 @@ paths:
           description: OK
         404:
           description: Not found
+    post:
+      tags:
+        - Messages
+      summary: sendTopicMessages
+      operationId: sendTopicMessages
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTopicMessage'
+      responses:
+        200:
+          description: OK
+        404:
+          description: Not found
 
-  /api/clusters/{clusterName}/topics/{topicName}/consumergroups:
+  /api/clusters/{clusterName}/topics/{topicName}/messages/schema:
+    get:
+      tags:
+        - Messages
+      summary: getTopicSchema
+      operationId: getTopicSchema
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TopicMessageSchema'
+
+  /api/clusters/{clusterName}/topics/{topicName}/consumer-groups:
     get:
       tags:
         - Consumer Groups
@@ -384,7 +495,10 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/TopicConsumerGroups'
+                type: array
+                items:
+                  $ref: '#/components/schemas/ConsumerGroup'
+
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
@@ -411,7 +525,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConsumerGroupDetails'
 
-  /api/clusters/{clusterName}/consumerGroups:
+    delete:
+      tags:
+        - Consumer Groups
+      summary: Delete Consumer Group by ID
+      operationId: deleteConsumerGroup
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+
+  /api/clusters/{clusterName}/consumer-groups:
     get:
       tags:
         - Consumer Groups
@@ -432,6 +566,32 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
+
+  /api/clusters/{clusterName}/consumer-groups/{id}/offsets:
+    post:
+      tags:
+        - Consumer Groups
+      summary: resets consumer group offsets
+      operationId: resetConsumerGroupOffsets
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConsumerGroupOffsetsReset'
+      responses:
+        200:
+          description: OK
 
   /api/clusters/{clusterName}/schemas:
     post:
@@ -1143,6 +1303,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/ConnectorPluginConfigValidationResponse'
 
+  /api/clusters/{clusterName}/topics/{topicName}/partitions:
+    patch:
+      tags:
+        - Topics
+      summary: increaseTopicPartitions
+      operationId: increaseTopicPartitions
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartitionsIncrease'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PartitionsIncreaseResponse'
+        404:
+          description: Not found
+
 components:
   schemas:
     ErrorResponse:
@@ -1199,6 +1391,8 @@ components:
           type: number
         readOnly:
           type: boolean
+        version:
+          type: string
         features:
           type: array
           items:
@@ -1249,6 +1443,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BrokerDiskUsage'
+        version:
+          type: string
 
     BrokerDiskUsage:
       type: object
@@ -1292,6 +1488,7 @@ components:
         - NAME
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
+        - REPLICATION_FACTOR
 
     Topic:
       type: object
@@ -1315,6 +1512,13 @@ components:
           type: integer
         underReplicatedPartitions:
           type: integer
+        cleanUpPolicy:
+          type: string
+          enum:
+            - DELETE
+            - COMPACT
+            - COMPACT_DELETE
+            - UNKNOWN
         partitions:
           type: array
           items:
@@ -1414,28 +1618,81 @@ components:
       required:
         - id
 
+    ConsumerGroupState:
+      type: string
+      enum:
+        - UNKNOWN
+        - PREPARING_REBALANCE
+        - COMPLETING_REBALANCE
+        - STABLE
+        - DEAD
+        - EMPTY
+
     ConsumerGroup:
       type: object
       properties:
-        clusterId:
+        groupId:
           type: string
-        consumerGroupId:
-            type: string
-        numConsumers:
-            type: integer
-        numTopics:
-            type: integer
+        members:
+          type: integer
+        topics:
+          type: integer
         simple:
           type: boolean
         partitionAssignor:
           type: string
         state:
+          $ref: "#/components/schemas/ConsumerGroupState"
+        coordinator:
+          $ref: "#/components/schemas/Broker"
+        messagesBehind:
+          type: integer
+          format: int64
+      required:
+        - groupId
+
+    CreateTopicMessage:
+      type: object
+      properties:
+        partition:
+          type: integer
+        key:
           type: string
-        coordintor:
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        content:
+          type: string
+
+    TopicMessageSchema:
+      type: object
+      properties:
+        key:
+          $ref: "#/components/schemas/MessageSchema"
+        value:
+          $ref: "#/components/schemas/MessageSchema"
+      required:
+        - key
+        - value
+
+    MessageSchema:
+      type: object
+      properties:
+        name:
+          type: string
+        source:
+          type: string
+          enum:
+            - SOURCE_SCHEMA_REGISTRY
+            - SOURCE_PROTO_FILE
+            - SOURCE_UNKNOWN
+        schema:
           type: string
       required:
-        - clusterId
-        - consumerGroupId
+        - name
+        - source
+        - schema
 
     TopicMessage:
       type: object
@@ -1461,7 +1718,7 @@ components:
           additionalProperties:
             type: string
         content:
-          type: object
+          type: string
       required:
         - partition
         - offset
@@ -1473,6 +1730,13 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
+
+    SeekDirection:
+      type: string
+      enum:
+        - FORWARD
+        - BACKWARD
+      default: FORWARD
 
     Partition:
       type: object
@@ -1497,16 +1761,10 @@ components:
         - offsetMax
         - offsetMin
 
-    ConsumerTopicPartitionDetail:
+    ConsumerGroupTopicPartition:
       type: object
       properties:
-        groupId:
-          type: string
-        consumerId:
-          type: string
         topic:
-          type: string
-        host:
           type: string
         partition:
           type: integer
@@ -1519,36 +1777,24 @@ components:
         messagesBehind:
           type: integer
           format: int64
+        consumerId:
+          type: string
+        host:
+          type: string
       required:
-        - consumerId
+        - topic
+        - partition
 
-    TopicConsumerGroups:
-      type: object
-      properties:
-        consumers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
 
     ConsumerGroupDetails:
-      type: object
-      properties:
-        consumerGroupId:
-          type: string
-        simple:
-         type: boolean
-        partitionAssignor:
-          type: string
-        state:
-          type: string
-        coordintor:
-          type: string
-        consumers:
-          type: array
-          items:
-            $ref: '#/components/schemas/ConsumerTopicPartitionDetail'
-      required:
-        - consumerGroupId
+      allOf:
+        - $ref: '#/components/schemas/ConsumerGroup'
+        - type: object
+          properties:
+            partitions:
+              type: array
+              items:
+                $ref: '#/components/schemas/ConsumerGroupTopicPartition'
 
     Metric:
       type: object
@@ -1705,6 +1951,51 @@ components:
       enum:
         - SOURCE
         - SINK
+
+    ConsumerGroupOffsetsReset:
+      type: object
+      properties:
+        topic:
+          type: string
+        resetType:
+          $ref: '#/components/schemas/ConsumerGroupOffsetsResetType'
+        partitions:
+          type: array
+          items:
+            type: integer
+          description: list of target partitions, all partitions will be used if it is not set or empty
+        resetToTimestamp:
+          type: integer
+          format: int64
+          description: should be set if resetType is TIMESTAMP
+        partitionsOffsets:
+          type: array
+          items:
+            $ref: '#/components/schemas/PartitionOffset'
+          description: List of partition offsets to reset to, should be set when resetType is OFFSET
+      required:
+        - topic
+        - resetType
+
+    PartitionOffset:
+      type: object
+      properties:
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+      required:
+        - partition
+        - offset
+
+    ConsumerGroupOffsetsResetType:
+      type: string
+      enum:
+        - EARLIEST
+        - LATEST
+        - TIMESTAMP
+        - OFFSET
 
     TaskStatus:
       type: object
@@ -1909,3 +2200,43 @@ components:
         - name
         - connect
         - status
+
+    PartitionsIncrease:
+      type: object
+      properties:
+        totalPartitionsCount:
+          type: integer
+          minimum: 1
+      required:
+        - totalPartitionsCount
+
+    PartitionsIncreaseResponse:
+      type: object
+      properties:
+        totalPartitionsCount:
+          type: integer
+        topicName:
+          type: string
+      required:
+        - totalPartitionsCount
+        - topicName
+
+    ReplicationFactorChange:
+      type: object
+      properties:
+        totalReplicationFactor:
+          type: integer
+          minimum: 1
+      required:
+        - totalReplicationFactor
+
+    ReplicationFactorChangeResponse:
+      type: object
+      properties:
+        totalReplicationFactor:
+          type: integer
+        topicName:
+          type: string
+      required:
+        - totalReplicationFactor
+        - topicName

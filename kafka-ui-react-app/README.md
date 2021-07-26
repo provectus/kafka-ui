@@ -1,4 +1,4 @@
-# Kafka-UI
+# UI for Apache Kafka
 UI for Apache Kafka management
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=provectus_kafka-ui_frontend&metric=alert_status)](https://sonarcloud.io/dashboard?id=provectus_kafka-ui_frontend)
@@ -16,7 +16,7 @@ UI for Apache Kafka management
 
 Have to be run from root directory.
 
-Start Kafka UI with your Kafka clusters:
+Start UI for Apache Kafka with your Kafka clusters:
 ```sh
 docker-compose -f ./docker/kafka-ui.yaml up
 ```
@@ -24,6 +24,16 @@ docker-compose -f ./docker/kafka-ui.yaml up
 Go to react app folder
 ```sh
 cd ./kafka-ui-react-app
+```
+
+Install Husky
+```
+npm install -g husky
+```
+
+Install dependencies
+```
+npm install
 ```
 
 Generate API clients from OpenAPI document

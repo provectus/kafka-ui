@@ -1,7 +1,10 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerMetrics;
@@ -11,44 +14,54 @@ import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.ConsumerGroup;
 import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.CreateTopicMessage;
+import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.PartitionsIncrease;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
+import com.provectus.kafka.ui.model.ReplicationFactorChange;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
 import com.provectus.kafka.ui.model.TopicConfig;
-import com.provectus.kafka.ui.model.TopicConsumerGroups;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
+import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.clients.admin.DeleteConsumerGroupsResult;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuples;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class ClusterService {
-  private static final Integer DEFAULT_PAGE_SIZE = 20;
+  private static final Integer DEFAULT_PAGE_SIZE = 25;
 
   private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
   private final KafkaService kafkaService;
   private final ConsumingService consumingService;
+  private final DeserializationService deserializationService;
 
   public List<Cluster> getClusters() {
     return clustersStorage.getKafkaClusters()
@@ -91,7 +104,7 @@ public class ClusterService {
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
     var cluster = clustersStorage.getClusterByName(name)
         .orElseThrow(ClusterNotFoundException::new);
-    List<Topic> topics = cluster.getTopics().values().stream()
+    List<InternalTopic> topics = cluster.getTopics().values().stream()
         .filter(topic -> !topic.isInternal()
             || showInternal
             .map(i -> topic.isInternal() == i)
@@ -101,7 +114,6 @@ public class ClusterService {
                 .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
                 .orElse(true))
         .sorted(getComparatorForTopic(sortBy))
-        .map(clusterMapper::toTopic)
         .collect(Collectors.toList());
     var totalPages = (topics.size() / perPage)
         + (topics.size() % perPage == 0 ? 0 : 1);
@@ -111,6 +123,13 @@ public class ClusterService {
             topics.stream()
                 .skip(topicsToSkip)
                 .limit(perPage)
+                .map(t ->
+                    clusterMapper.toTopic(
+                        t.toBuilder().partitions(
+                          kafkaService.getTopicPartitions(cluster, t)
+                        ).build()
+                    )
+                )
                 .collect(Collectors.toList())
         );
   }
@@ -125,6 +144,8 @@ public class ClusterService {
         return Comparator.comparing(InternalTopic::getPartitionCount);
       case OUT_OF_SYNC_REPLICAS:
         return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
+      case REPLICATION_FACTOR:
+        return Comparator.comparing(InternalTopic::getReplicationFactor);
       case NAME:
       default:
         return defaultComparator;
@@ -164,46 +185,26 @@ public class ClusterService {
   public Mono<ConsumerGroupDetails> getConsumerGroupDetail(String clusterName,
                                                            String consumerGroupId) {
     var cluster = clustersStorage.getClusterByName(clusterName).orElseThrow(Throwable::new);
-
-    return kafkaService.getOrCreateAdminClient(cluster).map(ac ->
-        ac.getAdminClient().describeConsumerGroups(Collections.singletonList(consumerGroupId)).all()
-    ).flatMap(groups ->
-        kafkaService.groupMetadata(cluster, consumerGroupId)
-            .flatMap(offsets -> {
-              Map<TopicPartition, Long> endOffsets =
-                  kafkaService.topicPartitionsEndOffsets(cluster, offsets.keySet());
-              return ClusterUtil.toMono(groups).map(s ->
-                  Tuples.of(
-                      s.get(consumerGroupId),
-                      s.get(consumerGroupId).members().stream()
-                          .flatMap(c ->
-                              Stream.of(
-                                  ClusterUtil.convertToConsumerTopicPartitionDetails(
-                                      c, offsets, endOffsets, consumerGroupId
-                                  )
-                              )
-                          )
-                          .collect(Collectors.toList()).stream()
-                          .flatMap(t ->
-                              t.stream().flatMap(Stream::of)
-                          ).collect(Collectors.toList())
-                  )
-              );
-            }).map(c -> ClusterUtil.convertToConsumerGroupDetails(c.getT1(), c.getT2()))
+    return kafkaService.getConsumerGroups(
+        cluster,
+        Optional.empty(),
+        Collections.singletonList(consumerGroupId)
+    ).filter(groups -> !groups.isEmpty()).map(groups -> groups.get(0)).map(
+        ClusterUtil::convertToConsumerGroupDetails
     );
   }
 
   public Mono<List<ConsumerGroup>> getConsumerGroups(String clusterName) {
-    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
-        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-        .flatMap(kafkaService::getConsumerGroups);
+    return getConsumerGroups(clusterName, Optional.empty());
   }
 
-  public Mono<TopicConsumerGroups> getTopicConsumerGroupDetail(
-      String clusterName, String topicName) {
+  public Mono<List<ConsumerGroup>> getConsumerGroups(String clusterName, Optional<String> topic) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-        .flatMap(c -> kafkaService.getTopicConsumerGroups(c, topicName));
+        .flatMap(c -> kafkaService.getConsumerGroups(c, topic, Collections.emptyList()))
+        .map(c ->
+            c.stream().map(ClusterUtil::convertToConsumerGroup).collect(Collectors.toList())
+        );
   }
 
   public Flux<Broker> getBrokers(String clusterName) {
@@ -253,6 +254,15 @@ public class ClusterService {
     return updatedCluster;
   }
 
+  public Mono<Cluster> updateCluster(String clusterName) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getUpdatedCluster(cluster)
+            .doOnNext(updatedCluster -> clustersStorage
+                .setKafkaCluster(updatedCluster.getName(), updatedCluster))
+            .map(clusterMapper::toCluster))
+        .orElse(Mono.error(new ClusterNotFoundException()));
+  }
+
   public Flux<TopicMessage> getMessages(String clusterName, String topicName,
                                         ConsumerPosition consumerPosition, String query,
                                         Integer limit) {
@@ -272,5 +282,83 @@ public class ClusterService {
         .flatMap(offsets -> kafkaService.deleteTopicMessages(cluster, offsets));
   }
 
+  public Mono<PartitionsIncreaseResponse> increaseTopicPartitions(
+      String clusterName,
+      String topicName,
+      PartitionsIncrease partitionsIncrease) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.increaseTopicPartitions(cluster, topicName, partitionsIncrease)
+            .doOnNext(t -> updateCluster(t, cluster.getName(), cluster))
+            .map(t -> new PartitionsIncreaseResponse()
+                .topicName(t.getName())
+                .totalPartitionsCount(t.getPartitionCount())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName)
+        )));
+  }
 
+  public Mono<Void> deleteConsumerGroupById(String clusterName,
+                                            String groupId) {
+    return clustersStorage.getClusterByName(clusterName)
+        .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
+            .map(ExtendedAdminClient::getAdminClient)
+            .map(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)))
+            .map(DeleteConsumerGroupsResult::all)
+            .flatMap(ClusterUtil::toMono)
+            .onErrorResume(this::reThrowCustomException)
+        )
+        .orElse(Mono.empty());
+  }
+
+  public TopicMessageSchema getTopicSchema(String clusterName, String topicName) {
+    var cluster = clustersStorage.getClusterByName(clusterName)
+        .orElseThrow(ClusterNotFoundException::new);
+    if (!cluster.getTopics().containsKey(topicName)) {
+      throw new TopicNotFoundException();
+    }
+    return deserializationService
+        .getRecordDeserializerForCluster(cluster)
+        .getTopicSchema(topicName);
+  }
+
+  public Mono<Void> sendMessage(String clusterName, String topicName, CreateTopicMessage msg) {
+    var cluster = clustersStorage.getClusterByName(clusterName)
+        .orElseThrow(ClusterNotFoundException::new);
+    if (!cluster.getTopics().containsKey(topicName)) {
+      throw new TopicNotFoundException();
+    }
+    if (msg.getKey() == null && msg.getContent() == null) {
+      throw new ValidationException("Invalid message: both key and value can't be null");
+    }
+    if (msg.getPartition() != null
+        && msg.getPartition() > cluster.getTopics().get(topicName).getPartitionCount() - 1) {
+      throw new ValidationException("Invalid partition");
+    }
+    return kafkaService.sendMessage(cluster, topicName, msg).then();
+  }
+
+  @NotNull
+  private Mono<Void> reThrowCustomException(Throwable e) {
+    if (e instanceof GroupIdNotFoundException) {
+      return Mono.error(new NotFoundException("The group id does not exist"));
+    } else if (e instanceof GroupNotEmptyException) {
+      return Mono.error(new IllegalEntityStateException("The group is not empty"));
+    } else {
+      return Mono.error(e);
+    }
+  }
+
+  public Mono<ReplicationFactorChangeResponse> changeReplicationFactor(
+      String clusterName,
+      String topicName,
+      ReplicationFactorChange replicationFactorChange) {
+    return clustersStorage.getClusterByName(clusterName).map(cluster ->
+        kafkaService.changeReplicationFactor(cluster, topicName, replicationFactorChange)
+            .doOnNext(topic -> updateCluster(topic, cluster.getName(), cluster))
+            .map(t -> new ReplicationFactorChangeResponse()
+                .topicName(t.getName())
+                .totalReplicationFactor(t.getReplicationFactor())))
+        .orElse(Mono.error(new ClusterNotFoundException(
+            String.format("No cluster for name '%s'", clusterName))));
+  }
 }

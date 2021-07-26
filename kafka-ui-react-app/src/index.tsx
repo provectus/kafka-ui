@@ -6,12 +6,13 @@ import * as serviceWorker from 'serviceWorker';
 import configureStore from 'redux/store/configureStore';
 import AppContainer from 'components/AppContainer';
 import 'theme/index.scss';
+import 'lib/constants';
 
 const store = configureStore();
 
 ReactDOM.render(
   <Provider store={store}>
-    <BrowserRouter>
+    <BrowserRouter basename={window.basePath || '/'}>
       <AppContainer />
     </BrowserRouter>
   </Provider>,

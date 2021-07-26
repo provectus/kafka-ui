@@ -20,8 +20,10 @@ public class ClustersProperties {
     String bootstrapServers;
     String zookeeper;
     String schemaRegistry;
+    SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
     String schemaNameTemplate = "%s-value";
+    String keySchemaNameTemplate = "%s-key";
     String protobufFile;
     String protobufMessageName;
     List<ConnectCluster> kafkaConnect;
@@ -34,5 +36,11 @@ public class ClustersProperties {
   public static class ConnectCluster {
     String name;
     String address;
+  }
+
+  @Data
+  public static class SchemaRegistryAuth {
+    String username;
+    String password;
   }
 }

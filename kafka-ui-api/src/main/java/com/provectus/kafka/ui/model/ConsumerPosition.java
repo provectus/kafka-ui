@@ -2,11 +2,11 @@ package com.provectus.kafka.ui.model;
 
 import java.util.Map;
 import lombok.Value;
+import org.apache.kafka.common.TopicPartition;
 
 @Value
 public class ConsumerPosition {
-
-  private SeekType seekType;
-  private Map<Integer, Long> seekTo;
-
+  SeekType seekType;
+  Map<TopicPartition, Long> seekTo;
+  SeekDirection seekDirection;
 }

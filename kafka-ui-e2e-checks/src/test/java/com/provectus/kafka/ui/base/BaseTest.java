@@ -2,12 +2,15 @@ package com.provectus.kafka.ui.base;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
+import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
+import com.provectus.kafka.ui.steps.Steps;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -16,15 +19,16 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.utility.DockerImageName;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
-
-import static com.codeborne.selenide.Selenide.closeWebDriver;
 
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 
+  protected Steps steps = Steps.INSTANCE;
   protected Pages pages = Pages.INSTANCE;
+  protected Helpers helpers = Helpers.INSTANCE;
 
   private Screenshooter screenshooter = new Screenshooter();
 
@@ -48,9 +52,15 @@ public class BaseTest {
               "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 
   static {
-    if (new File("./.env").exists()) {
-      Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
+    if (!new File("./.env").exists()) {
+      try {
+        FileUtils.copyFile(new File(".env.example"), new File(".env"));
+      } catch (IOException e) {
+        log.error("couldn't copy .env.example to .env. Please add .env");
+        e.printStackTrace();
+      }
     }
+    Dotenv.load().entries().forEach(env -> System.setProperty(env.getKey(), env.getValue()));
     if (TestConfiguration.CLEAR_REPORTS_DIR) {
       clearReports();
     }
@@ -59,8 +69,8 @@ public class BaseTest {
 
   @AfterAll
   public static void afterAll() {
-    closeWebDriver();
-    selenoid.close();
+//    closeWebDriver();
+//    selenoid.close();
   }
 
   @SneakyThrows
@@ -86,6 +96,7 @@ public class BaseTest {
     Configuration.baseUrl = TestConfiguration.BASE_URL;
     Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
     var capabilities = new DesiredCapabilities();
+//    DesiredCapabilities capabilities = DesiredCapabilities.chrome();
     capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
     Configuration.browserCapabilities = capabilities;
 

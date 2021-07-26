@@ -206,6 +206,15 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                   </th>
                 </ListHeaderCell>
                 <th>
+                  Replication Factor
+                </th>
+                <th>
+                  Number of messages
+                </th>
+                <th>
+                  Size
+                </th>
+                <th>
                   Type
                 </th>
                 <th>
