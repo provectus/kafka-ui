@@ -804,10 +804,8 @@ public class KafkaService {
           try {
             return result.all().get();
           } catch (InterruptedException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
           } catch (ExecutionException e) {
-            e.printStackTrace();
             throw new RuntimeException(e.getCause());
           }
         }))
