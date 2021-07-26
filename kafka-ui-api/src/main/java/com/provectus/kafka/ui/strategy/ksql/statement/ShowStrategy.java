@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ShowStrategy extends BaseStrategy {
-  private final List<String> showStatements =
+  private static final List<String> SHOW_STATEMENTS =
       List.of("functions", "topics", "streams", "tables", "queries", "properties");
-  private final List<String> listStatements =
+  private static final List<String> LIST_STATEMENTS =
       List.of("functions", "topics", "streams", "tables");
   private String responseValueKey = "";
 
@@ -21,7 +21,7 @@ public class ShowStrategy extends BaseStrategy {
 
   @Override
   public boolean test(String sql) {
-    Optional<String> statement = showStatements.stream()
+    Optional<String> statement = SHOW_STATEMENTS.stream()
         .filter(s -> testSql(sql, getShowRegExp(s)) || testSql(sql, getListRegExp(s)))
         .findFirst();
     if (statement.isPresent()) {
@@ -29,11 +29,6 @@ public class ShowStrategy extends BaseStrategy {
       return true;
     }
     return false;
-  }
-
-  @Override
-  protected String getRequestPath() {
-    return BaseStrategy.ksqlRequestPath;
   }
 
   @Override
@@ -46,7 +41,7 @@ public class ShowStrategy extends BaseStrategy {
   }
 
   protected String getListRegExp(String key) {
-    if (listStatements.contains(key)) {
+    if (LIST_STATEMENTS.contains(key)) {
       return "list " + key + ";";
     }
     return "";

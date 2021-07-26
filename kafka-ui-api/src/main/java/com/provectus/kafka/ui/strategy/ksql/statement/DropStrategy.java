@@ -6,16 +6,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class DropStrategy extends BaseStrategy {
-  private static final String responseValueKey = "commandStatus";
+  private static final String RESPONSE_VALUE_KEY = "commandStatus";
 
   @Override
   public KsqlCommandResponse serializeResponse(JsonNode response) {
-    return serializeMessageResponse(response, responseValueKey);
-  }
-
-  @Override
-  protected String getRequestPath() {
-    return BaseStrategy.ksqlRequestPath;
+    return serializeMessageResponse(response, RESPONSE_VALUE_KEY);
   }
 
   @Override

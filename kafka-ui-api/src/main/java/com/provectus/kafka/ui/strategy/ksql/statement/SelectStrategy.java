@@ -14,7 +14,7 @@ public class SelectStrategy extends BaseStrategy {
 
   @Override
   protected String getRequestPath() {
-    return BaseStrategy.queryRequestPath;
+    return BaseStrategy.QUERY_REQUEST_PATH;
   }
 
   @Override
