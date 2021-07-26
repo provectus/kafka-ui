@@ -15,8 +15,8 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
-import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
+import MessagesContainer from './Messages/MessagesContainer';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
