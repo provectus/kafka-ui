@@ -29,11 +29,9 @@ class SchemaRegistryRecordDeserializerTest {
     DeserializedKeyValue expected = DeserializedKeyValue.builder()
         .key("key")
         .keyFormat(MessageFormat.UNKNOWN)
-        .keySize(3)
         .value(value)
         .valueFormat(MessageFormat.UNKNOWN)
-        .valueSize(4)
-        .headersSize(0).build();
+        .build();
     assertEquals(expected, deserializedRecord);
   }
 
@@ -44,8 +42,7 @@ class SchemaRegistryRecordDeserializerTest {
     DeserializedKeyValue expected = DeserializedKeyValue.builder()
         .key("key")
         .keyFormat(MessageFormat.UNKNOWN)
-        .keySize(3)
-        .headersSize(0).build();
+        .build();
     assertEquals(expected, deserializedRecord);
   }
 }

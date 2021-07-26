@@ -18,15 +18,12 @@ public class SimpleRecordSerDe implements RecordSerDe {
     var builder = DeserializedKeyValue.builder();
     if (msg.key() != null) {
       builder.key(new String(msg.key().get()))
-          .keyFormat(MessageFormat.UNKNOWN)
-          .keySize(msg.key().get().length);
+          .keyFormat(MessageFormat.UNKNOWN);
     }
     if (msg.value() != null) {
       builder.value(new String(msg.value().get()))
-          .valueFormat(MessageFormat.UNKNOWN)
-          .valueSize(msg.value().get().length);
+          .valueFormat(MessageFormat.UNKNOWN);
     }
-    builder.headersSize(ConsumerRecordUtil.getHeadersSize(msg));
     return builder.build();
   }
 

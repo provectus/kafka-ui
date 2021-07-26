@@ -699,14 +699,12 @@ public class KafkaService {
           msg.getContent(),
           msg.getPartition()
       );
-      if (msg.getHeaders() != null && !msg.getHeaders().isEmpty()) {
-        producerRecord = new ProducerRecord<>(
-            producerRecord.topic(),
-            producerRecord.partition(),
-            producerRecord.key(),
-            producerRecord.value(),
-            createHeaders(msg.getHeaders()));
-      }
+      producerRecord = new ProducerRecord<>(
+          producerRecord.topic(),
+          producerRecord.partition(),
+          producerRecord.key(),
+          producerRecord.value(),
+          createHeaders(msg.getHeaders()));
 
       CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
       producer.send(producerRecord, (metadata, exception) -> {
@@ -721,6 +719,9 @@ public class KafkaService {
   }
 
   private Iterable<Header> createHeaders(Map<String, String> clientHeaders) {
+    if (clientHeaders == null) {
+      return null;
+    }
     RecordHeaders headers = new RecordHeaders();
     clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
     return headers;

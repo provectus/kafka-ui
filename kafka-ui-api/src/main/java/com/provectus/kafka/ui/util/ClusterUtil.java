@@ -290,17 +290,11 @@ public class ClusterUtil {
     topicMessage.setValueFormat(parsed.getValueFormat() != null
         ? MessageFormat.valueOf(parsed.getValueFormat().name())
         : null);
-    topicMessage.setKeySize(parsed.getKeySize() != null
-        ? Long.valueOf(parsed.getKeySize())
-        : null);
-    topicMessage.setValueSize(parsed.getValueSize() != null
-        ? Long.valueOf(parsed.getValueSize())
-        : null);
+    topicMessage.setKeySize(ConsumerRecordUtil.getKeySize(consumerRecord));
+    topicMessage.setValueSize(ConsumerRecordUtil.getValueSize(consumerRecord));
     topicMessage.setKeySchemaId(parsed.getKeySchemaId());
     topicMessage.setValueSchemaId(parsed.getValueSchemaId());
-    topicMessage.setHeadersSize(parsed.getHeadersSize() != null
-        ? Long.valueOf(parsed.getHeadersSize())
-        : null);
+    topicMessage.setHeadersSize(ConsumerRecordUtil.getHeadersSize(consumerRecord));
 
     return topicMessage;
   }

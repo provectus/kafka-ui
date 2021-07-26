@@ -18,11 +18,8 @@ public interface RecordSerDe {
     @Nullable String value;
     @Nullable MessageFormat keyFormat;
     @Nullable MessageFormat valueFormat;
-    @Nullable Integer keySize;
-    @Nullable Integer valueSize;
     @Nullable String keySchemaId;
     @Nullable String valueSchemaId;
-    @Nullable Integer headersSize;
   }
 
   DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg);

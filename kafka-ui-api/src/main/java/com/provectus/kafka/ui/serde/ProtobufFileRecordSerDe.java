@@ -51,14 +51,11 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
       if (msg.key() != null) {
         builder.key(new String(msg.key().get()));
         builder.keyFormat(MessageFormat.UNKNOWN);
-        builder.keySize(msg.key().get().length);
       }
       if (msg.value() != null) {
         builder.value(parse(msg.value().get()));
         builder.valueFormat(MessageFormat.PROTOBUF);
-        builder.valueSize(msg.value().get().length);
       }
-      builder.headersSize(ConsumerRecordUtil.getHeadersSize(msg));
       return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
