@@ -96,7 +96,10 @@ public class KafkaService {
   private int clientTimeout;
 
   public KafkaCluster getUpdatedCluster(KafkaCluster cluster, InternalTopic updatedTopic) {
-    final Map<String, InternalTopic> topics = new HashMap<>(cluster.getTopics());
+    final Map<String, InternalTopic> topics =
+        Optional.ofNullable(cluster.getTopics()).map(
+            t -> new HashMap<>(cluster.getTopics())
+        ).orElse(new HashMap<>());
     topics.put(updatedTopic.getName(), updatedTopic);
     return cluster.toBuilder().topics(topics).build();
   }
