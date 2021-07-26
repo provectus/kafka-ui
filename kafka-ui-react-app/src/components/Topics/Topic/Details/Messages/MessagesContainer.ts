@@ -1,12 +1,20 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState, TopicName } from 'redux/interfaces';
-import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { fetchTopicMessages } from 'redux/actions';
+import { Action, ClusterName, RootState, TopicName } from 'redux/interfaces';
+import { withRouter, RouteComponentProps } from 'react-router-dom';
+import { ThunkDispatch } from 'redux-thunk';
 import {
-  getIsTopicMessagesFetched,
-  getPartitionsByTopicName,
-  getTopicMessages,
-} from 'redux/reducers/topics/selectors';
+  addTopicMessage,
+  resetTopicMessages,
+  updateTopicMessagesMeta,
+  updateTopicMessagesPhase,
+} from 'redux/actions';
+import { TopicMessage, TopicMessageConsuming } from 'generated-sources';
+import {
+  getTopicMessges,
+  getTopicMessgesMeta,
+  getTopicMessgesPhase,
+} from 'redux/reducers/topicMessages/selectors';
+import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 
 import Messages from './Messages';
 
@@ -27,14 +35,28 @@ const mapStateToProps = (
 ) => ({
   clusterName,
   topicName,
-  isFetched: getIsTopicMessagesFetched(state),
-  messages: getTopicMessages(state),
+  messages: getTopicMessges(state),
+  phaseMessage: getTopicMessgesPhase(state),
   partitions: getPartitionsByTopicName(state, topicName),
+  meta: getTopicMessgesMeta(state),
 });
 
-const mapDispatchToProps = {
-  fetchTopicMessages,
-};
+const mapDispatchToProps = (
+  dispatch: ThunkDispatch<RootState, undefined, Action>
+) => ({
+  addMessage: (message: TopicMessage) => {
+    dispatch(addTopicMessage(message));
+  },
+  resetMessages: () => {
+    dispatch(resetTopicMessages());
+  },
+  updatePhase: (phase: string) => {
+    dispatch(updateTopicMessagesPhase(phase));
+  },
+  updateMeta: (meta: TopicMessageConsuming) => {
+    dispatch(updateTopicMessagesMeta(meta));
+  },
+});
 
 export default withRouter(
   connect(mapStateToProps, mapDispatchToProps)(Messages)
