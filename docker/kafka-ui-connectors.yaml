@@ -115,7 +115,10 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:6.0.1
+    build:
+      context: ./kafka-connect
+      args:
+        image: confluentinc/cp-kafka-connect:6.0.1
     ports:
       - 8083:8083
     depends_on:
@@ -164,7 +167,7 @@ services:
       POSTGRES_PASSWORD: '12345'
 
   create-connectors:
-    image: tutum/curl
+    image: ellerbrock/alpine-bash-curl-ssl
     depends_on:
       - postgres-db
       - kafka-connect0
