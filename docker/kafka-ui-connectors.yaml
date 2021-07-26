@@ -167,7 +167,7 @@ services:
       POSTGRES_PASSWORD: '12345'
 
   create-connectors:
-    image: tutum/curl
+    image: ellerbrock/alpine-bash-curl-ssl
     depends_on:
       - postgres-db
       - kafka-connect0
