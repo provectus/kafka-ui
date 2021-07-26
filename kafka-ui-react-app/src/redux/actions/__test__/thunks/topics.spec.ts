@@ -3,6 +3,8 @@ import * as actions from 'redux/actions/actions';
 import * as thunks from 'redux/actions/thunks';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 import { mockTopicsState } from 'redux/actions/__test__/fixtures';
+import { FailurePayload } from 'redux/interfaces';
+import { getResponse } from 'lib/errorHandling';
 
 const store = mockStoreCreator;
 
@@ -128,6 +130,84 @@ describe('Thunks', () => {
         expect(store.getActions()).toEqual([
           actions.fetchTopicConsumerGroupsAction.request(),
           actions.fetchTopicConsumerGroupsAction.success(mockTopicsState),
+        ]);
+      }
+    });
+  });
+
+  describe('increasing partitions count', () => {
+    it('calls updateTopicPartitionsCountAction.success on success', async () => {
+      fetchMock.patchOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/partitions`,
+        { totalPartitionsCount: 4, topicName }
+      );
+      await store.dispatch(
+        thunks.updateTopicPartitionsCount(clusterName, topicName, 4)
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateTopicPartitionsCountAction.request(),
+        actions.updateTopicPartitionsCountAction.success(),
+      ]);
+    });
+
+    it('calls updateTopicPartitionsCountAction.failure on failure', async () => {
+      fetchMock.patchOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/partitions`,
+        404
+      );
+      try {
+        await store.dispatch(
+          thunks.updateTopicPartitionsCount(clusterName, topicName, 4)
+        );
+      } catch (error) {
+        const response = await getResponse(error);
+        const alert: FailurePayload = {
+          subject: ['topic-partitions', topicName].join('-'),
+          title: `Topic ${topicName} partitions count increase failed`,
+          response,
+        };
+        expect(store.getActions()).toEqual([
+          actions.updateTopicPartitionsCountAction.request(),
+          actions.updateTopicPartitionsCountAction.failure({ alert }),
+        ]);
+      }
+    });
+  });
+
+  describe('updating replication factor', () => {
+    it('calls updateTopicReplicationFactorAction.success on success', async () => {
+      fetchMock.patchOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/replications`,
+        { totalReplicationFactor: 4, topicName }
+      );
+      await store.dispatch(
+        thunks.updateTopicReplicationFactor(clusterName, topicName, 4)
+      );
+      expect(store.getActions()).toEqual([
+        actions.updateTopicReplicationFactorAction.request(),
+        actions.updateTopicReplicationFactorAction.success(),
+      ]);
+    });
+
+    it('calls updateTopicReplicationFactorAction.failure on failure', async () => {
+      fetchMock.patchOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/replications`,
+        404
+      );
+      try {
+        await store.dispatch(
+          thunks.updateTopicReplicationFactor(clusterName, topicName, 4)
+        );
+      } catch (error) {
+        const response = await getResponse(error);
+        const alert: FailurePayload = {
+          subject: ['topic-replication-factor', topicName].join('-'),
+          title: `Topic ${topicName} replication factor change failed`,
+          response,
+        };
+        expect(store.getActions()).toEqual([
+          actions.updateTopicReplicationFactorAction.request(),
+          actions.updateTopicReplicationFactorAction.failure({ alert }),
         ]);
       }
     });

@@ -13,6 +13,8 @@ import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
 
+import DangerZoneContainer from './DangerZoneContainer';
+
 interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
@@ -24,6 +26,11 @@ interface Props {
     clusterName: ClusterName,
     topicName: TopicName,
     form: TopicFormDataRaw
+  ) => void;
+  updateTopicPartitionsCount: (
+    clusterName: string,
+    topicname: string,
+    partitions: number
   ) => void;
 }
 
@@ -112,17 +119,26 @@ const Edit: React.FC<Props> = ({
   };
 
   return (
-    <div className="box">
-      {/* eslint-disable-next-line react/jsx-props-no-spreading */}
-      <FormProvider {...methods}>
-        <TopicForm
-          topicName={topicName}
-          config={config}
-          isSubmitting={isSubmitting}
-          isEditing
-          onSubmit={methods.handleSubmit(onSubmit)}
+    <div>
+      <div className="box">
+        <FormProvider {...methods}>
+          <TopicForm
+            topicName={topicName}
+            config={config}
+            isSubmitting={isSubmitting}
+            isEditing
+            onSubmit={methods.handleSubmit(onSubmit)}
+          />
+        </FormProvider>
+      </div>
+      {topic && (
+        <DangerZoneContainer
+          defaultPartitions={defaultValues.partitions}
+          defaultReplicationFactor={
+            defaultValues.replicationFactor || DEFAULTS.replicationFactor
+          }
         />
-      </FormProvider>
+      )}
     </div>
   );
 };

@@ -18,6 +18,7 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
     bytesOutPerSec,
     onlinePartitionCount,
     readOnly,
+    version,
   },
 }) => (
   <div className="column is-full-modile is-6">
@@ -38,6 +39,10 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
 
       <table className="table is-fullwidth">
         <tbody>
+          <tr>
+            <th>Version</th>
+            <td>{version}</td>
+          </tr>
           <tr>
             <th>Brokers</th>
             <td>
