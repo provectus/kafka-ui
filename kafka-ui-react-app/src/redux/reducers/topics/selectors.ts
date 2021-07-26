@@ -22,6 +22,11 @@ const getTopicDetailsFetchingStatus =
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
+const getPartitionsCountIncreaseStatus =
+  createFetchingSelector('UPDATE_PARTITIONS');
+const getReplicationFactorUpdateStatus = createFetchingSelector(
+  'UPDATE_REPLICATION_FACTOR'
+);
 
 export const getAreTopicsFetching = createSelector(
   getTopicListFetchingStatus,
@@ -55,6 +60,16 @@ export const getTopicCreated = createSelector(
 
 export const getTopicUpdated = createSelector(
   getTopicUpdateStatus,
+  (status) => status === 'fetched'
+);
+
+export const getTopicPartitionsCountIncreased = createSelector(
+  getPartitionsCountIncreaseStatus,
+  (status) => status === 'fetched'
+);
+
+export const getTopicReplicationFactorUpdated = createSelector(
+  getReplicationFactorUpdateStatus,
   (status) => status === 'fetched'
 );
 
