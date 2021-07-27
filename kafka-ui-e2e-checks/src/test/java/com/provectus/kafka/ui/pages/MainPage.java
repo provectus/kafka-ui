@@ -1,19 +1,26 @@
 package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Selenide;
+import com.provectus.kafka.ui.base.TestConfiguration;
+import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
+import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.*;
-import static com.provectus.kafka.ui.helpers.WaitUtils.refreshUntil;
 
+@ExtensionMethod({WaitUtils.class})
 public class MainPage {
 
-  private static final long TIMEOUT = 25000;
+  private static final String path = "";
 
-  protected static final String path = "";
-
+  @Step
+  public MainPage goTo(){
+    Selenide.open(TestConfiguration.BASE_URL+path);
+    return this;
+  }
   @Step
   public MainPage isOnPage() {
     $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
@@ -22,8 +29,8 @@ public class MainPage {
   }
 
   @SneakyThrows
-  public void isTopic(String topicName) {
-    refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)));
+  public void topicIsVisible(String topicName) {
+    By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)).refreshUntil(Condition.visible);
   }
 
   public enum SideMenuOptions {

@@ -1,16 +1,25 @@
 package com.provectus.kafka.ui.pages;
 
 import com.codeborne.selenide.Condition;
-import com.provectus.kafka.ui.helpers.WaitUtils;
+import com.codeborne.selenide.Selenide;
+import com.provectus.kafka.ui.base.TestConfiguration;
+import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
+import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
-import static com.provectus.kafka.ui.helpers.WaitUtils.refreshUntil;
 
+@ExtensionMethod(WaitUtils.class)
 public class TopicsList {
-    public static final String path = "ui/clusters/%s/topics";
+    private static final String path = "ui/clusters/%s/topics";
+
+    @Step
+    public TopicsList goTo(String cluster) {
+        Selenide.open(TestConfiguration.BASE_URL+path.formatted(cluster));
+        return this;
+    }
 
     @Step
     public TopicsList isOnPage() {
@@ -21,8 +30,8 @@ public class TopicsList {
 
     @SneakyThrows
     public TopicsList openTopic(String topicName) {
-        WaitUtils.refreshUntil(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']"
-                .formatted(topicName)));
+        By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']"
+                .formatted(topicName)).refreshUntil(Condition.visible);
         $(By.xpath("//div[contains(@class,'section')]//table//a[text()='%s']".formatted(topicName)))
                 .click();
         return this;
@@ -30,7 +39,7 @@ public class TopicsList {
 
     @SneakyThrows
     public TopicsList isDeleted(String topicName) {
-        refreshUntil(By.xpath("//div[contains(@class,'section')]//table"));
+        By.xpath("//div[contains(@class,'section')]//table").refreshUntil(Condition.visible);
         $(By.xpath("//a[text()='%s']".formatted(topicName))).shouldNotBe(Condition.visible);
         return this;
     }
