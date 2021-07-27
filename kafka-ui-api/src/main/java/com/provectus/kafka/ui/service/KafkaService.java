@@ -2,6 +2,8 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdateResult;
 import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
@@ -41,7 +43,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +55,6 @@ import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeLogDirsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -69,7 +69,9 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.ApiException;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
@@ -906,6 +908,35 @@ public class KafkaService {
     return result;
   }
 
+  public Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
+                                                           Mono<BrokerLogdirUpdate> brokerLogDir) {
+    return brokerLogDir.flatMap(
+        b -> updateBrokerLogDir(getOrCreateAdminClient(cluster), b, broker)
+    );
+  }
 
+  private Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(Mono<ExtendedAdminClient> adminMono,
+                                                      BrokerLogdirUpdate b,
+                                                      Integer broker) {
 
+    Map<TopicPartitionReplica, String> req = Map.of(
+        new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
+        b.getLogDir());
+    return adminMono
+        .map(admin -> admin.getAdminClient().alterReplicaLogDirs(req))
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
+        .then(Mono.just(result(BrokerLogdirUpdateResult.StatusEnum.OK, null)))
+        .onErrorResume(ApiException.class, (ApiException e) -> {
+          log.error("Error during updating log dirs", e);
+          return Mono.just(result(BrokerLogdirUpdateResult.StatusEnum.ERROR, e.getMessage()));
+        });
+  }
+
+  private BrokerLogdirUpdateResult result(BrokerLogdirUpdateResult.StatusEnum status,
+                                          String errorMessage) {
+    BrokerLogdirUpdateResult result = new BrokerLogdirUpdateResult();
+    result.setStatus(status);
+    result.setErrorMessage(errorMessage);
+    return result;
+  }
 }

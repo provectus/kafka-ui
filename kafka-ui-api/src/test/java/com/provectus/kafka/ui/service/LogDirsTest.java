@@ -3,9 +3,12 @@ package com.provectus.kafka.ui.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdateResult;
 import com.provectus.kafka.ui.model.BrokerTopicLogdirs;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -81,5 +84,27 @@ public class LogDirsTest extends AbstractBaseTest {
         .getResponseBody();
 
     assertThat(dirs).isEmpty();
+  }
+
+  @Test
+  public void testChangeDirToWrongDir() {
+    BrokerLogdirUpdate bru = new BrokerLogdirUpdate();
+    BrokerLogdirUpdateResult dirs = webTestClient.patch()
+        .uri("/api/clusters/{clusterName}/brokers/{id}/logDirs", LOCAL, 1)
+        .bodyValue(Map.of(
+            "topic", "asdf",
+            "partition", "0",
+            "logDir", "/asdf/as"
+            )
+        )
+        .exchange()
+        .expectStatus().isOk()
+        .expectBody(BrokerLogdirUpdateResult.class)
+        .returnResult()
+        .getResponseBody();
+
+    assertThat(dirs.getStatus()).isEqualTo(BrokerLogdirUpdateResult.StatusEnum.ERROR);
+    assertThat(dirs.getErrorMessage())
+        .isEqualTo("The user-specified log directory is not found in the broker config.");
   }
 }
