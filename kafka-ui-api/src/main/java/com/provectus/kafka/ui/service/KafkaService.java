@@ -800,16 +800,7 @@ public class KafkaService {
           }
           return admin.getAdminClient().describeLogDirs(brokers);
         })
-        .flatMap(result -> Mono.fromSupplier(() -> {
-          try {
-            return result.all().get();
-          } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new RuntimeException(e);
-          } catch (ExecutionException e) {
-            throw new RuntimeException(e.getCause());
-          }
-        }))
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
         .onErrorResume(TimeoutException.class, (TimeoutException e) -> {
           log.error("Error during fetching log dirs", e);
           return Mono.just(new HashMap<>());
