@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.helpers;
+package com.provectus.kafka.ui.extensions;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
@@ -9,14 +9,14 @@ import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.Selenide.$;
 
 public class WaitUtils {
-    public static void refreshUntil(By by) {
+    public static void refreshUntil(By by, Condition condition) {
         int i = 0;
         do {
             refresh();
             i++;
             sleep(2000);
-        } while (getElements(by).size() < 1 && i != 20);
-        $(by).shouldBe(Condition.visible);
+        } while ($$(by).size() < 1 && i != 20);
+        $(by).shouldBe(condition);
     }
 
     public static void waitForSelectedValue(SelenideElement element, String selectedValue) {

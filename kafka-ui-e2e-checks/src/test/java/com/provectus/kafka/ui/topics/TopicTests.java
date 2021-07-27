@@ -3,14 +3,11 @@ package com.provectus.kafka.ui.topics;
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
-import com.provectus.kafka.ui.helpers.WaitUtils;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.TopicView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 
 
 public class TopicTests extends BaseTest {
@@ -47,7 +44,7 @@ public class TopicTests extends BaseTest {
             pages.open()
                     .isOnPage()
                     .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                    .isTopic(NEW_TOPIC);
+                    .topicIsVisible(NEW_TOPIC);
         } finally {
             helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
         }
@@ -68,21 +65,20 @@ public class TopicTests extends BaseTest {
                 .changeMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .submitSettingChanges();
         Selenide.refresh();
-        TopicView topicView = pages.openTopicView(SECOND_LOCAL, UPDATE_TOPIC)
-                .openEditSettings();
-
-        WaitUtils.waitForSelectedValue(topicView.getCleanupPolicy(), COMPACT_POLICY_VALUE);
-
-        Assertions.assertEquals(UPDATED_TIME_TO_RETAIN_VALUE, topicView.getTimeToRetain().getValue());
-        Assertions.assertEquals(UPDATED_MAX_SIZE_ON_DISK, topicView.getMaxSizeOnDisk().getSelectedText());
-        Assertions.assertEquals(UPDATED_MAX_MESSAGE_BYTES, topicView.getMaxMessageBytes().getValue());
+        pages.openTopicView(SECOND_LOCAL, UPDATE_TOPIC)
+                .openEditSettings()
+        // Assertions
+                .cleanupPolicyIs(COMPACT_POLICY_VALUE)
+                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
+                .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
+                .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
     }
 
     @SneakyThrows
     @DisplayName("should delete topic")
     @Test
     @Disabled
-    void deleteTopic(){
+    void deleteTopic() {
 
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
