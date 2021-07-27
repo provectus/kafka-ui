@@ -142,6 +142,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/BrokerMetrics'
 
+  /api/clusters/{clusterName}/brokers/logdirs:
+    get:
+      tags:
+        - Brokers
+      summary: getAllBrokersLogdirs
+      operationId: getAllBrokersLogdirs
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: broker
+          in: query
+          description: array of broker ids
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrokersLogdirs'
+
+
   /api/clusters/{clusterName}/topics:
     get:
       tags:
@@ -1446,6 +1477,30 @@ components:
           items:
             $ref: '#/components/schemas/Metric'
 
+    BrokerLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        error:
+          type: string
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicLogdirs'
+
+    BrokersLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        error:
+          type: string
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerTopicLogdirs'
+
     TopicsResponse:
       type: object
       properties:
@@ -1785,6 +1840,46 @@ components:
           type: string
           additionalProperties:
             type: number
+
+    TopicLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicPartitionLogdir'
+
+    BrokerTopicLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerTopicPartitionLogdir'
+
+    TopicPartitionLogdir:
+      type: object
+      properties:
+        partition:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        offsetLag:
+          type: integer
+          format: int64
+
+    BrokerTopicPartitionLogdir:
+      allOf:
+        - $ref: '#/components/schemas/TopicPartitionLogdir'
+        - type: object
+          properties:
+            broker:
+              type: integer
 
     SchemaSubject:
       type: object
