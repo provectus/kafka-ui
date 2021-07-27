@@ -17,4 +17,9 @@ public class JsonSchemaMessageFormatter implements MessageFormatter {
     JsonNode json = jsonSchemaDeserializer.deserialize(topic, value);
     return json.toString();
   }
+
+  @Override
+  public MessageFormat getFormat() {
+    return MessageFormat.JSON;
+  }
 }
