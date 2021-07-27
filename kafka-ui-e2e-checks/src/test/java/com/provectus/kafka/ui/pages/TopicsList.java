@@ -38,7 +38,7 @@ public class TopicsList {
     }
 
     @SneakyThrows
-    public TopicsList isDeleted(String topicName) {
+    public TopicsList isNotVisible(String topicName) {
         By.xpath("//div[contains(@class,'section')]//table").refreshUntil(Condition.visible);
         $(By.xpath("//a[text()='%s']".formatted(topicName))).shouldNotBe(Condition.visible);
         return this;
