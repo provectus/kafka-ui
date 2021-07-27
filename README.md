@@ -120,6 +120,8 @@ To be continued
 
 # Configuration
 
+We have a plenty of docker-compose files as examples. Please check them out in ``docker`` directory.
+
 ## Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
