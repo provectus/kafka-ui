@@ -1247,6 +1247,31 @@ paths:
         200:
           description: OK
 
+  /api/clusters/{clusterName}/ksql:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsqlCommand
+      operationId: executeKsqlCommand
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsqlCommandResponse'
+
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
       tags:
@@ -1406,6 +1431,7 @@ components:
             enum:
               - SCHEMA_REGISTRY
               - KAFKA_CONNECT
+              - KSQL_DB
       required:
         - id
         - name
@@ -2206,6 +2232,43 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
+
+    KsqlCommand:
+      type: object
+      properties:
+        ksql:
+          type: string
+        streamsProperties:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - ksql
+
+    KsqlCommandResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Table'
+        message:
+          type: string
+
+    Table:
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      required:
+        - headers
+        - rows
 
     FullConnectorInfo:
       type: object
