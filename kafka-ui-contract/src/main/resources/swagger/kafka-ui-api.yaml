@@ -142,6 +142,37 @@ paths:
               schema:
                 $ref: '#/components/schemas/BrokerMetrics'
 
+  /api/clusters/{clusterName}/brokers/logdirs:
+    get:
+      tags:
+        - Brokers
+      summary: getAllBrokersLogdirs
+      operationId: getAllBrokersLogdirs
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: broker
+          in: query
+          description: array of broker ids
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrokersLogdirs'
+
+
   /api/clusters/{clusterName}/topics:
     get:
       tags:
@@ -1216,6 +1247,31 @@ paths:
         200:
           description: OK
 
+  /api/clusters/{clusterName}/ksql:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsqlCommand
+      operationId: executeKsqlCommand
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsqlCommandResponse'
+
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
       tags:
@@ -1375,6 +1431,7 @@ components:
             enum:
               - SCHEMA_REGISTRY
               - KAFKA_CONNECT
+              - KSQL_DB
       required:
         - id
         - name
@@ -1445,6 +1502,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Metric'
+
+    BrokerLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        error:
+          type: string
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicLogdirs'
+
+    BrokersLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        error:
+          type: string
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerTopicLogdirs'
 
     TopicsResponse:
       type: object
@@ -1786,6 +1867,46 @@ components:
           additionalProperties:
             type: number
 
+    TopicLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicPartitionLogdir'
+
+    BrokerTopicLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerTopicPartitionLogdir'
+
+    TopicPartitionLogdir:
+      type: object
+      properties:
+        partition:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        offsetLag:
+          type: integer
+          format: int64
+
+    BrokerTopicPartitionLogdir:
+      allOf:
+        - $ref: '#/components/schemas/TopicPartitionLogdir'
+        - type: object
+          properties:
+            broker:
+              type: integer
+
     SchemaSubject:
       type: object
       properties:
@@ -2111,6 +2232,43 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
+
+    KsqlCommand:
+      type: object
+      properties:
+        ksql:
+          type: string
+        streamsProperties:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - ksql
+
+    KsqlCommandResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Table'
+        message:
+          type: string
+
+    Table:
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      required:
+        - headers
+        - rows
 
     FullConnectorInfo:
       type: object

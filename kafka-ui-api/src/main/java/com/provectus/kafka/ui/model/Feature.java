@@ -11,6 +11,7 @@ public enum Feature {
       .filter(Predicate.not(List::isEmpty))
       .isPresent()
   ),
+  KSQL_DB(cluster -> cluster.getKsqldbServer() != null),
   SCHEMA_REGISTRY(cluster -> cluster.getSchemaRegistry() != null);
 
   private final Predicate<KafkaCluster> isEnabled;
