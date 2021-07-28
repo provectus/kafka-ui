@@ -98,7 +98,7 @@ public class LogDirsTest extends AbstractBaseTest {
             )
         )
         .exchange()
-        .expectStatus().isOk()
+        .expectStatus().isBadRequest()
         .expectBody(BrokerLogdirUpdateResult.class)
         .returnResult()
         .getResponseBody();
