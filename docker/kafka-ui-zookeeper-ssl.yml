@@ -24,12 +24,12 @@ services:
       KAFKA_CLUSTERS_0_SCHEMAREGISTRY: http://schemaregistry0:8085
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_NAME: first
       KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS: http://kafka-connect0:8083
-      ZOOKEEPER_CLIENTCNXNSOCKET: org.apache.zookeeper.ClientCnxnSocketNetty
-      ZOOKEEPER_CLIENT_SECURE: 'true'
-      ZOOKEEPER_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.zookeeper.keystore.jks
-      ZOOKEEPER_SSL_KEYSTORE_PASSWORD: 12345678
-      ZOOKEEPER_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.zookeeper.truststore.jks
-      ZOOKEEPER_SSL_TRUSTSTORE_PASSWORD: 12345678
+      ZOOKEEPER_CLUSTERS_0_CLIENTCNXNSOCKET: org.apache.zookeeper.ClientCnxnSocketNetty
+      ZOOKEEPER_CLUSTERS_0_CLIENT_SECURE: 'true'
+      ZOOKEEPER_CLUSTERS_0_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.zookeeper.keystore.jks
+      ZOOKEEPER_CLUSTERS_0_SSL_KEYSTORE_PASSWORD: 12345678
+      ZOOKEEPER_CLUSTERS_0_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.zookeeper.truststore.jks
+      ZOOKEEPER_CLUSTERS_0_SSL_TRUSTSTORE_PASSWORD: 12345678
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
