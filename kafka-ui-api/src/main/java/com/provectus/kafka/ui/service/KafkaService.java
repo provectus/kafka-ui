@@ -41,6 +41,7 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,7 @@ import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
+import org.apache.kafka.clients.admin.DescribeLogDirsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -68,6 +70,8 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.TimeoutException;
+import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
@@ -783,6 +787,23 @@ public class KafkaService {
           return changeReplicationFactor(ac.getAdminClient(), topicName,
               getPartitionsReassignments(cluster, topicName,
                   replicationFactorChange));
+        });
+  }
+
+  public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(
+      KafkaCluster cluster, List<Integer> reqBrokers) {
+    return getOrCreateAdminClient(cluster)
+        .map(admin -> {
+          List<Integer> brokers = new ArrayList<>(cluster.getBrokers());
+          if (reqBrokers != null && !reqBrokers.isEmpty()) {
+            brokers.retainAll(reqBrokers);
+          }
+          return admin.getAdminClient().describeLogDirs(brokers);
+        })
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
+        .onErrorResume(TimeoutException.class, (TimeoutException e) -> {
+          log.error("Error during fetching log dirs", e);
+          return Mono.just(new HashMap<>());
         });
   }
 
