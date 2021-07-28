@@ -48,6 +48,8 @@ public class BrokersController implements BrokersApi {
   public Mono<ResponseEntity<BrokerLogdirUpdateResult>> updateBrokerTopicPartitionLogDir(
       String clusterName, Integer id, Mono<BrokerLogdirUpdate> brokerLogdir,
       ServerWebExchange exchange) {
-    return clusterService.updateBrokerLogDir(clusterName, id, brokerLogdir).map(ResponseEntity::ok);
+    return brokerLogdir
+        .flatMap(bld -> clusterService.updateBrokerLogDir(clusterName, id, bld))
+        .map(ResponseEntity::ok);
   }
 }

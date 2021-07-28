@@ -909,20 +909,19 @@ public class KafkaService {
   }
 
   public Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
-                                                           Mono<BrokerLogdirUpdate> brokerLogDir) {
-    return brokerLogDir.flatMap(
-        b -> updateBrokerLogDir(getOrCreateAdminClient(cluster), b, broker)
-    );
+                                                           BrokerLogdirUpdate brokerLogDir) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
   }
 
-  private Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(Mono<ExtendedAdminClient> adminMono,
-                                                      BrokerLogdirUpdate b,
-                                                      Integer broker) {
+  private Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(ExtendedAdminClient adminMono,
+                                                            BrokerLogdirUpdate b,
+                                                            Integer broker) {
 
     Map<TopicPartitionReplica, String> req = Map.of(
         new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
         b.getLogDir());
-    return adminMono
+    return Mono.just(adminMono)
         .map(admin -> admin.getAdminClient().alterReplicaLogDirs(req))
         .flatMap(result -> ClusterUtil.toMono(result.all()))
         .then(Mono.just(result(BrokerLogdirUpdateResult.StatusEnum.OK, null)))

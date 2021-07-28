@@ -375,7 +375,7 @@ public class ClusterService {
   }
 
   public Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(
-      String clusterName, Integer id, Mono<BrokerLogdirUpdate> brokerLogDir) {
+      String clusterName, Integer id, BrokerLogdirUpdate brokerLogDir) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .flatMap(c -> kafkaService.updateBrokerLogDir(c, id, brokerLogDir));
   }
