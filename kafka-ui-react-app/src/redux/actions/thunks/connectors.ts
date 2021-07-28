@@ -48,7 +48,7 @@ export const fetchConnectors =
   async (dispatch) => {
     if (!silent) dispatch(actions.fetchConnectorsAction.request());
     try {
-      const connectors = await kafkaConnectApiClient.getFilteredConnectors({
+      const connectors = await kafkaConnectApiClient.getAllConnectors({
         clusterName,
         search,
       });

@@ -85,7 +85,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   public void shouldFilterByNameConnectors() {
     webTestClient.get()
             .uri(
-                    "/api/clusters/{clusterName}/connectors/filtered?search={search}",
+                    "/api/clusters/{clusterName}/connectors?search={search}",
                     LOCAL,
                     connectorName.split("-")[1])
             .exchange()
@@ -99,7 +99,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   public void shouldFilterByStatusConnectors() {
     webTestClient.get()
             .uri(
-                    "/api/clusters/{clusterName}/connectors/filtered?search={search}",
+                    "/api/clusters/{clusterName}/connectors?search={search}",
                     LOCAL,
                     "running")
             .exchange()
@@ -113,7 +113,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   public void shouldFilterByTypeConnectors() {
     webTestClient.get()
             .uri(
-                    "/api/clusters/{clusterName}/connectors/filtered?search={search}",
+                    "/api/clusters/{clusterName}/connectors?search={search}",
                     LOCAL,
                     "sink")
             .exchange()
@@ -127,7 +127,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   public void shouldNotFilterConnectors() {
     webTestClient.get()
             .uri(
-                    "/api/clusters/{clusterName}/connectors/filtered?search={search}",
+                    "/api/clusters/{clusterName}/connectors?search={search}",
                     LOCAL,
                     "something-else")
             .exchange()

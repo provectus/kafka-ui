@@ -58,7 +58,7 @@ describe('Thunks', () => {
   describe('fetchConnectors', () => {
     it('creates GET_CONNECTORS__SUCCESS when fetching connectors', async () => {
       fetchMock.getOnce(
-        `/api/clusters/${clusterName}/connectors/filtered`,
+        `/api/clusters/${clusterName}/connectors`,
         connectorsServerPayload,
         { query: { search: '' } }
       );
@@ -71,7 +71,7 @@ describe('Thunks', () => {
 
     it('creates GET_CONNECTORS__SUCCESS when fetching connectors in silent mode', async () => {
       fetchMock.getOnce(
-        `/api/clusters/${clusterName}/connectors/filtered`,
+        `/api/clusters/${clusterName}/connectors`,
         connectorsServerPayload,
         { query: { search: '' } }
       );
@@ -85,11 +85,9 @@ describe('Thunks', () => {
     });
 
     it('creates GET_CONNECTORS__FAILURE', async () => {
-      fetchMock.getOnce(
-        `/api/clusters/${clusterName}/connectors/filtered`,
-        404,
-        { query: { search: '' } }
-      );
+      fetchMock.getOnce(`/api/clusters/${clusterName}/connectors`, 404, {
+        query: { search: '' },
+      });
       await store.dispatch(thunks.fetchConnectors(clusterName));
       expect(store.getActions()).toEqual([
         actions.fetchConnectorsAction.request(),

@@ -55,7 +55,7 @@ public class KafkaConnectService {
     );
   }
 
-  public Flux<FullConnectorInfo> getAllConnectors(String clusterName) {
+  public Flux<FullConnectorInfo> getAllConnectors(final String clusterName, final String search) {
     return getConnects(clusterName)
         .flatMapMany(Function.identity())
         .flatMap(connect -> getConnectorNames(clusterName, connect))
@@ -90,20 +90,17 @@ public class KafkaConnectService {
                   .build()
               );
         })
-        .map(kafkaConnectMapper::fullConnectorInfoFromTuple);
-  }
-
-  public Flux<FullConnectorInfo> getFilteredConnectors(final String clusterName,
-                                                       final String search) {
-    return getAllConnectors(clusterName).filter(matchesSearchTerm(search));
+        .map(kafkaConnectMapper::fullConnectorInfoFromTuple)
+        .filter(matchesSearchTerm(search));
   }
 
   private Predicate<FullConnectorInfo> matchesSearchTerm(final String search) {
     return (connector) -> getSearchValues(connector)
                 .anyMatch(value -> value.contains(
                         StringUtils.defaultString(
-                                search.toUpperCase(),
-                                StringUtils.EMPTY)));
+                                search,
+                                StringUtils.EMPTY)
+                                .toUpperCase()));
   }
 
   private Stream<String> getSearchValues(FullConnectorInfo fullConnectorInfo) {
@@ -142,7 +139,7 @@ public class KafkaConnectService {
   public Flux<String> getConnectors(String clusterName, String connectName) {
     return getConnectAddress(clusterName, connectName)
         .flatMapMany(connect ->
-            KafkaConnectClients.withBaseUrl(connect).getConnectors()
+            KafkaConnectClients.withBaseUrl(connect).getConnectors(null)
                 .doOnError(log::error)
         );
   }

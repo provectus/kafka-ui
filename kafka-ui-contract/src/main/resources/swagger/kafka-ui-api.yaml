@@ -1040,30 +1040,8 @@ paths:
     get:
       tags:
         - Kafka Connect
-      summary: get all kafka connectors
-      operationId: getAllConnectors
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/FullConnectorInfo'
-
-  /api/clusters/{clusterName}/connectors/filtered:
-    get:
-      tags:
-        - Kafka Connect
       summary: get filtered kafka connectors
-      operationId: getFilteredConnectors
+      operationId: getAllConnectors
       parameters:
         - name: clusterName
           in: path
