@@ -4,58 +4,93 @@ import {
   Partition,
   SeekDirection,
   SeekType,
+  TopicMessage,
   TopicMessageConsuming,
+  TopicMessageEvent,
+  TopicMessageEventTypeEnum,
 } from 'generated-sources';
 import * as React from 'react';
 import { omitBy } from 'lodash';
+import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { TopicName, ClusterName } from 'redux/interfaces';
 
-import { filterOptions } from './utils';
+import {
+  filterOptions,
+  getOffsetFromSeekToParam,
+  getSelectedPartitionsFromSeekToParam,
+  getTimestampFromSeekToParam,
+} from './utils';
 
-export type Query = Record<string, string | string[] | number>;
+type Query = Record<string, string | string[] | number>;
 
 export interface FiltersProps {
+  clusterName: ClusterName;
+  topicName: TopicName;
+  phaseMessage?: string;
   partitions: Partition[];
   meta: TopicMessageConsuming;
-  phase?: string;
-  isFetching: boolean;
-  onSubmit(query: Query): void;
+  addMessage(message: TopicMessage): void;
+  resetMessages(): void;
+  updatePhase(phase: string): void;
+  updateMeta(meta: TopicMessageConsuming): void;
 }
 
 const PER_PAGE = 100;
 
 const Filters: React.FC<FiltersProps> = ({
+  clusterName,
+  topicName,
   partitions,
-  phase,
+  phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
-  isFetching,
-  onSubmit,
+  addMessage,
+  resetMessages,
+  updatePhase,
+  updateMeta,
 }) => {
-  const [attempt, setAttempt] = React.useState(0);
+  const location = useLocation();
+  const history = useHistory();
+
+  const source = React.useRef<EventSource | null>(null);
+
+  const searchParams = React.useMemo(
+    () => new URLSearchParams(location.search),
+    [location]
+  );
+
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
-    partitions.map(({ partition }) => ({
-      value: partition,
-      label: partition.toString(),
-    }))
+    getSelectedPartitionsFromSeekToParam(searchParams, partitions)
   );
-  const [seekType, setSeekType] = React.useState<SeekType>(SeekType.OFFSET);
-  const [offset, setOffset] = React.useState<string>('');
-  const [timestamp, setTimestamp] = React.useState<Date | null>(null);
-  const [query, setQuery] = React.useState<string>('');
+
+  const [attempt, setAttempt] = React.useState(0);
+  const [seekType, setSeekType] = React.useState<SeekType>(
+    (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
+  );
+  const [offset, setOffset] = React.useState<string>(
+    getOffsetFromSeekToParam(searchParams)
+  );
+
+  const [timestamp, setTimestamp] = React.useState<Date | null>(
+    getTimestampFromSeekToParam(searchParams)
+  );
+  const [query, setQuery] = React.useState<string>(searchParams.get('q') || '');
   const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
-    SeekDirection.FORWARD
+    (searchParams.get('seekDirection') as SeekDirection) ||
+      SeekDirection.FORWARD
   );
+
+  const [isFetching, setIsFetching] = React.useState(false);
+
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
   );
 
   const isSubmitDisabled = React.useMemo(() => {
-    if (isFetching) return true;
-
     if (isSeekTypeControlVisible) {
       return seekType === SeekType.TIMESTAMP && !timestamp;
     }
@@ -74,14 +109,6 @@ const Filters: React.FC<FiltersProps> = ({
       ),
     [partitions]
   );
-
-  const toggleSeekDirection = () => {
-    const nextSeekDirectionValue =
-      seekDirection === SeekDirection.FORWARD
-        ? SeekDirection.BACKWARD
-        : SeekDirection.FORWARD;
-    setSeekDirection(nextSeekDirectionValue);
-  };
 
   const handleFiltersSubmit = () => {
     setAttempt(attempt + 1);
@@ -115,8 +142,82 @@ const Filters: React.FC<FiltersProps> = ({
       });
     }
 
-    onSubmit(omitBy(props, (v) => v === undefined || v === ''));
+    const newProps = omitBy(props, (v) => v === undefined || v === '');
+    const qs = Object.keys(newProps)
+      .map((key) => `${key}=${newProps[key]}`)
+      .join('&');
+
+    history.push({
+      search: `?${qs}`,
+    });
   };
+
+  const toggleSeekDirection = () => {
+    const nextSeekDirectionValue =
+      seekDirection === SeekDirection.FORWARD
+        ? SeekDirection.BACKWARD
+        : SeekDirection.FORWARD;
+    setSeekDirection(nextSeekDirectionValue);
+  };
+
+  const handleSSECancel = () => {
+    if (!source.current) return;
+
+    setIsFetching(false);
+    source.current.close();
+  };
+
+  // eslint-disable-next-line consistent-return
+  React.useEffect(() => {
+    if (location.search.length !== 0) {
+      const url = `/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
+      const sse = new EventSource(url);
+
+      source.current = sse;
+      setIsFetching(true);
+
+      sse.onopen = () => {
+        resetMessages();
+      };
+      sse.onmessage = ({ data }) => {
+        const { type, message, phase, consuming }: TopicMessageEvent =
+          JSON.parse(data);
+
+        switch (type) {
+          case TopicMessageEventTypeEnum.MESSAGE:
+            if (message) addMessage(message);
+            break;
+          case TopicMessageEventTypeEnum.PHASE:
+            if (phase?.name) updatePhase(phase.name);
+            break;
+          case TopicMessageEventTypeEnum.CONSUMING:
+            if (consuming) updateMeta(consuming);
+            break;
+          default:
+        }
+      };
+
+      sse.onerror = () => {
+        setIsFetching(false);
+        sse.close();
+      };
+
+      return () => {
+        setIsFetching(false);
+        sse.close();
+      };
+    }
+  }, [clusterName, topicName, location]);
+
+  React.useEffect(() => {
+    if (location.search.length === 0) {
+      handleFiltersSubmit();
+    }
+  }, [location]);
+
+  React.useEffect(() => {
+    handleFiltersSubmit();
+  }, [seekDirection]);
 
   return (
     <>
@@ -194,12 +295,23 @@ const Filters: React.FC<FiltersProps> = ({
           />
         </div>
         <div className="column is-2">
-          <input
-            type="submit"
-            className="button is-primary is-fullwidth"
-            disabled={isSubmitDisabled}
-            onClick={handleFiltersSubmit}
-          />
+          {isFetching ? (
+            <button
+              type="button"
+              className="button is-primary is-fullwidth"
+              disabled={isSubmitDisabled}
+              onClick={handleSSECancel}
+            >
+              Cancel
+            </button>
+          ) : (
+            <input
+              type="submit"
+              className="button is-primary is-fullwidth"
+              disabled={isSubmitDisabled}
+              onClick={handleFiltersSubmit}
+            />
+          )}
         </div>
       </div>
       <div className="columns">
@@ -218,9 +330,7 @@ const Filters: React.FC<FiltersProps> = ({
         </div>
         <div className="column is-half">
           <div className="tags is-justify-content-flex-end">
-            <div className={`tag is-white ${!isFetching && 'is-hidden'}`}>
-              {phase}
-            </div>
+            <div className="tag is-white">{isFetching && phaseMessage}</div>
             <div className="tag is-info" title="Elapsed Time">
               <span className="icon">
                 <i className="fas fa-clock" />

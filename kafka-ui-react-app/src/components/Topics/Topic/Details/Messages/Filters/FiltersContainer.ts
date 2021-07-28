@@ -10,13 +10,12 @@ import {
 } from 'redux/actions';
 import { TopicMessage, TopicMessageConsuming } from 'generated-sources';
 import {
-  getTopicMessges,
   getTopicMessgesMeta,
   getTopicMessgesPhase,
 } from 'redux/reducers/topicMessages/selectors';
 import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 
-import Messages from './Messages';
+import Filters from './Filters';
 
 interface RouteProps {
   clusterName: ClusterName;
@@ -35,7 +34,6 @@ const mapStateToProps = (
 ) => ({
   clusterName,
   topicName,
-  messages: getTopicMessges(state),
   phaseMessage: getTopicMessgesPhase(state),
   partitions: getPartitionsByTopicName(state, topicName),
   meta: getTopicMessgesMeta(state),
@@ -59,5 +57,5 @@ const mapDispatchToProps = (
 });
 
 export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(Messages)
+  connect(mapStateToProps, mapDispatchToProps)(Filters)
 );
