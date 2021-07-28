@@ -6,9 +6,11 @@ import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.BrokerMetrics;
+import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
@@ -63,6 +65,7 @@ public class ClusterService {
   private final KafkaService kafkaService;
   private final ConsumingService consumingService;
   private final DeserializationService deserializationService;
+  private final DescribeLogDirsMapper describeLogDirsMapper;
 
   public List<Cluster> getClusters() {
     return clustersStorage.getKafkaClusters()
@@ -368,5 +371,12 @@ public class ClusterService {
                 .totalReplicationFactor(t.getReplicationFactor())))
         .orElse(Mono.error(new ClusterNotFoundException(
             String.format("No cluster for name '%s'", clusterName))));
+  }
+
+  public Flux<BrokersLogdirs> getAllBrokersLogdirs(String clusterName, List<Integer> brokers) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .flatMap(c -> kafkaService.getClusterLogDirs(c, brokers))
+        .map(describeLogDirsMapper::toBrokerLogDirsList)
+        .flatMapMany(Flux::fromIterable);
   }
 }
