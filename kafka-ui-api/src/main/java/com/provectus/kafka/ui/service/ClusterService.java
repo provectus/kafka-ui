@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Broker;
+import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.ClusterMetrics;
@@ -218,6 +219,13 @@ public class ClusterService {
               return broker;
             }).collect(Collectors.toList())))
         .flatMapMany(Flux::fromIterable);
+  }
+
+  public Mono<List<BrokerConfig>> getBrokerConfig(String clusterName, Integer brokerId) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+        .flatMap(c -> kafkaService.getBrokerConfigs(c, brokerId))
+        .map(c -> c.stream().map(clusterMapper::toBrokerConfig).collect(Collectors.toList()));
   }
 
   @SneakyThrows

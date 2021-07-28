@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.mapper;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.BrokerDiskUsage;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
@@ -8,8 +9,11 @@ import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
 import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.ConfigSource;
+import com.provectus.kafka.ui.model.ConfigSynonym;
 import com.provectus.kafka.ui.model.Connect;
 import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
@@ -33,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -61,6 +66,25 @@ public interface ClusterMapper {
   ClusterMetrics toClusterMetrics(InternalClusterMetrics metrics);
 
   BrokerMetrics toBrokerMetrics(InternalBrokerMetrics metrics);
+
+  @Mapping(target = "isSensitive", source = "sensitive")
+  @Mapping(target = "isReadOnly", source = "readOnly")
+  BrokerConfig toBrokerConfig(InternalBrokerConfig config);
+
+  default ConfigSynonym toConfigSynonym(ConfigEntry.ConfigSynonym config) {
+    if (config == null) {
+      return null;
+    }
+
+    ConfigSynonym configSynonym = new ConfigSynonym();
+    configSynonym.setName(config.name());
+    configSynonym.setValue(config.value());
+    if (config.source() != null) {
+      configSynonym.setSource(ConfigSource.valueOf(config.source().name()));
+    }
+
+    return configSynonym;
+  }
 
   Topic toTopic(InternalTopic topic);
 
