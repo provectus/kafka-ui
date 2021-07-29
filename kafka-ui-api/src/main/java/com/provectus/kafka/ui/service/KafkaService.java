@@ -1,9 +1,12 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
+import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
@@ -44,7 +47,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +60,6 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
-import org.apache.kafka.clients.admin.DescribeLogDirsResult;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -73,8 +74,11 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
@@ -940,6 +944,26 @@ public class KafkaService {
     return result;
   }
 
+  public Mono<Void> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
+                                                           BrokerLogdirUpdate brokerLogDir) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
+  }
 
+  private Mono<Void> updateBrokerLogDir(ExtendedAdminClient adminMono,
+                                        BrokerLogdirUpdate b,
+                                        Integer broker) {
 
+    Map<TopicPartitionReplica, String> req = Map.of(
+        new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
+        b.getLogDir());
+    return Mono.just(adminMono)
+        .map(admin -> admin.getAdminClient().alterReplicaLogDirs(req))
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
+        .onErrorResume(UnknownTopicOrPartitionException.class,
+            e -> Mono.error(new TopicOrPartitionNotFoundException()))
+        .onErrorResume(LogDirNotFoundException.class,
+            e -> Mono.error(new LogDirNotFoundApiException()))
+        .doOnError(log::error);
+  }
 }

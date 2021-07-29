@@ -201,6 +201,31 @@ paths:
                 items:
                   $ref: '#/components/schemas/BrokersLogdirs'
 
+  /api/clusters/{clusterName}/brokers/{id}/logdirs:
+    patch:
+      tags:
+        - Brokers
+      summary: updateBrokerTopicPartitionLogDir
+      operationId: updateBrokerTopicPartitionLogDir
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrokerLogdirUpdate'
+      responses:
+        200:
+          description: OK
 
   /api/clusters/{clusterName}/topics:
     get:
@@ -1701,6 +1726,16 @@ components:
           type: string
       required:
         - id
+
+    BrokerLogdirUpdate:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+        logDir:
+          type: string
 
     ConsumerGroupState:
       type: string
