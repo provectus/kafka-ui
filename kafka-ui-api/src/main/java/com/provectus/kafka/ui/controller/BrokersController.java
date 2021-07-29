@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.BrokersApi;
 import com.provectus.kafka.ui.model.Broker;
+import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.service.ClusterService;
@@ -40,5 +41,14 @@ public class BrokersController implements BrokersApi {
                                                                          ServerWebExchange exchange
   ) {
     return Mono.just(ResponseEntity.ok(clusterService.getAllBrokersLogdirs(clusterName, brokers)));
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<BrokerConfig>>> getBrokerConfig(String clusterName, Integer id,
+                                                                  ServerWebExchange exchange) {
+    return clusterService.getBrokerConfig(clusterName, id)
+        .map(Flux::fromIterable)
+        .map(ResponseEntity::ok)
+        .onErrorReturn(ResponseEntity.notFound().build());
   }
 }
