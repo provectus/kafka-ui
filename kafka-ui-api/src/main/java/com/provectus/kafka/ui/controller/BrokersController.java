@@ -3,14 +3,12 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.BrokersApi;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdateResult;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -46,13 +44,11 @@ public class BrokersController implements BrokersApi {
   }
 
   @Override
-  public Mono<ResponseEntity<BrokerLogdirUpdateResult>> updateBrokerTopicPartitionLogDir(
+  public Mono<ResponseEntity<Void>> updateBrokerTopicPartitionLogDir(
       String clusterName, Integer id, Mono<BrokerLogdirUpdate> brokerLogdir,
       ServerWebExchange exchange) {
     return brokerLogdir
         .flatMap(bld -> clusterService.updateBrokerLogDir(clusterName, id, bld))
-        .map(r -> r.getStatus() == BrokerLogdirUpdateResult.StatusEnum.OK
-            ? ResponseEntity.ok(r)
-            : new ResponseEntity<>(r, HttpStatus.BAD_REQUEST));
+        .map(ResponseEntity::ok);
   }
 }

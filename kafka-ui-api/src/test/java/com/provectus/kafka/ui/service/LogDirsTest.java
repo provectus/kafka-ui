@@ -3,10 +3,12 @@ package com.provectus.kafka.ui.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
+import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdateResult;
 import com.provectus.kafka.ui.model.BrokerTopicLogdirs;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
+import com.provectus.kafka.ui.model.ErrorResponse;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -88,23 +90,38 @@ public class LogDirsTest extends AbstractBaseTest {
 
   @Test
   public void testChangeDirToWrongDir() {
-    BrokerLogdirUpdate bru = new BrokerLogdirUpdate();
-    BrokerLogdirUpdateResult dirs = webTestClient.patch()
-        .uri("/api/clusters/{clusterName}/brokers/{id}/logDirs", LOCAL, 1)
+    ErrorResponse dirs = webTestClient.patch()
+        .uri("/api/clusters/{clusterName}/brokers/{id}/logdirs", LOCAL, 1)
         .bodyValue(Map.of(
-            "topic", "asdf",
+            "topic", "__consumer_offsets",
             "partition", "0",
             "logDir", "/asdf/as"
             )
         )
         .exchange()
         .expectStatus().isBadRequest()
-        .expectBody(BrokerLogdirUpdateResult.class)
+        .expectBody(ErrorResponse.class)
         .returnResult()
         .getResponseBody();
 
-    assertThat(dirs.getStatus()).isEqualTo(BrokerLogdirUpdateResult.StatusEnum.ERROR);
-    assertThat(dirs.getErrorMessage())
-        .isEqualTo("The user-specified log directory is not found in the broker config.");
+    assertThat(dirs.getMessage())
+        .isEqualTo(new LogDirNotFoundApiException().getMessage());
+
+    dirs = webTestClient.patch()
+        .uri("/api/clusters/{clusterName}/brokers/{id}/logdirs", LOCAL, 1)
+        .bodyValue(Map.of(
+            "topic", "asdf",
+            "partition", "0",
+            "logDir", "/var/lib/kafka/data"
+            )
+        )
+        .exchange()
+        .expectStatus().isBadRequest()
+        .expectBody(ErrorResponse.class)
+        .returnResult()
+        .getResponseBody();
+
+    assertThat(dirs.getMessage())
+        .isEqualTo(new TopicOrPartitionNotFoundException().getMessage());
   }
 }

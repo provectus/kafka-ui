@@ -172,7 +172,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/BrokersLogdirs'
 
-  /api/clusters/{clusterName}/brokers/{id}/logDirs:
+  /api/clusters/{clusterName}/brokers/{id}/logdirs:
     patch:
       tags:
         - Brokers
@@ -197,10 +197,6 @@ paths:
       responses:
         200:
           description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/BrokerLogdirUpdateResult'
 
   /api/clusters/{clusterName}/topics:
     get:
@@ -1710,17 +1706,6 @@ components:
         partition:
           type: integer
         logDir:
-          type: string
-
-    BrokerLogdirUpdateResult:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-            - OK
-            - ERROR
-        errorMessage:
           type: string
 
     ConsumerGroupState:

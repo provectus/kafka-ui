@@ -1,9 +1,10 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
+import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdateResult;
 import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
@@ -71,8 +72,9 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.config.ConfigResource;
-import org.apache.kafka.common.errors.ApiException;
+import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
@@ -908,15 +910,15 @@ public class KafkaService {
     return result;
   }
 
-  public Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
+  public Mono<Void> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
                                                            BrokerLogdirUpdate brokerLogDir) {
     return getOrCreateAdminClient(cluster)
         .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
   }
 
-  private Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(ExtendedAdminClient adminMono,
-                                                            BrokerLogdirUpdate b,
-                                                            Integer broker) {
+  private Mono<Void> updateBrokerLogDir(ExtendedAdminClient adminMono,
+                                        BrokerLogdirUpdate b,
+                                        Integer broker) {
 
     Map<TopicPartitionReplica, String> req = Map.of(
         new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
@@ -924,18 +926,10 @@ public class KafkaService {
     return Mono.just(adminMono)
         .map(admin -> admin.getAdminClient().alterReplicaLogDirs(req))
         .flatMap(result -> ClusterUtil.toMono(result.all()))
-        .then(Mono.just(result(BrokerLogdirUpdateResult.StatusEnum.OK, null)))
-        .onErrorResume(ApiException.class, (ApiException e) -> {
-          log.error("Error during updating log dirs", e);
-          return Mono.just(result(BrokerLogdirUpdateResult.StatusEnum.ERROR, e.getMessage()));
-        });
-  }
-
-  private BrokerLogdirUpdateResult result(BrokerLogdirUpdateResult.StatusEnum status,
-                                          String errorMessage) {
-    BrokerLogdirUpdateResult result = new BrokerLogdirUpdateResult();
-    result.setStatus(status);
-    result.setErrorMessage(errorMessage);
-    return result;
+        .onErrorResume(UnknownTopicOrPartitionException.class,
+            e -> Mono.error(new TopicOrPartitionNotFoundException()))
+        .onErrorResume(LogDirNotFoundException.class,
+            e -> Mono.error(new LogDirNotFoundApiException()))
+        .doOnError(log::error);
   }
 }

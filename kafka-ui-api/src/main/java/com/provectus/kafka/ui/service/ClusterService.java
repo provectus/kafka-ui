@@ -9,7 +9,6 @@ import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdateResult;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.model.Cluster;
@@ -374,7 +373,7 @@ public class ClusterService {
         .flatMapMany(Flux::fromIterable);
   }
 
-  public Mono<BrokerLogdirUpdateResult> updateBrokerLogDir(
+  public Mono<Void> updateBrokerLogDir(
       String clusterName, Integer id, BrokerLogdirUpdate brokerLogDir) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .flatMap(c -> kafkaService.updateBrokerLogDir(c, id, brokerLogDir));
