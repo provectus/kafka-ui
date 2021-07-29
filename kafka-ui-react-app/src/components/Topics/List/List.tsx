@@ -139,6 +139,7 @@ const List: React.FC<Props> = ({
                 <th>Number of messages</th>
                 <th>Size</th>
                 <th>Type</th>
+                <th>Clean Up Policy</th>
                 <th> </th>
               </tr>
             </thead>

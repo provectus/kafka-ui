@@ -23,6 +23,7 @@ import {
   FullConnectorInfo,
   Connect,
   Task,
+  TopicMessageSchema,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -253,6 +254,22 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
+
+export const fetchTopicMessageSchemaAction = createAsyncAction(
+  'GET_TOPIC_SCHEMA__REQUEST',
+  'GET_TOPIC_SCHEMA__SUCCESS',
+  'GET_TOPIC_SCHEMA__FAILURE'
+)<
+  undefined,
+  { topicName: string; schema: TopicMessageSchema },
+  { alert?: FailurePayload }
+>();
+
+export const sendTopicMessageAction = createAsyncAction(
+  'SEND_TOPIC_MESSAGE__REQUEST',
+  'SEND_TOPIC_MESSAGE__SUCCESS',
+  'SEND_TOPIC_MESSAGE__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
 
 export const updateTopicPartitionsCountAction = createAsyncAction(
   'UPDATE_PARTITIONS__REQUEST',
