@@ -41,6 +41,9 @@ public interface KafkaConnectMapper {
         .map(TaskStatus::getState)
         .filter(ConnectorTaskStatus.FAILED::equals)
         .count();
+    if (tasks.size() != 0 && failedTasksCount == tasks.size()) {
+      connector.getStatus().setState(ConnectorTaskStatus.FAILED);
+    }
     return new FullConnectorInfo()
         .connect(connector.getConnect())
         .name(connector.getName())
