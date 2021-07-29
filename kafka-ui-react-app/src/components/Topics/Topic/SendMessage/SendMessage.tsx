@@ -108,108 +108,103 @@ const SendMessage: React.FC<Props> = ({
       }
     }
   };
-  return (
-    <>
-      {!keyExampleValue && !contentExampleValue ? (
-        <PageLoader />
-      ) : (
-        <div className="box">
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="columns">
-              <div className="column is-one-third">
-                <label className="label" htmlFor="select">
-                  Partition
-                </label>
-                <div className="select is-block">
-                  <select
-                    id="select"
-                    defaultValue={partitions[0].partition}
-                    disabled={isSubmitting || messageIsSending}
-                    {...register('partition')}
-                  >
-                    {partitions.map((partition) => (
-                      <option
-                        key={partition.partition}
-                        value={partition.partition}
-                      >
-                        {partition.partition}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-            </div>
 
-            <div className="columns">
-              <div className="column is-one-half">
-                <label className="label">Key</label>
-                <Controller
-                  control={control}
-                  name="key"
-                  render={({ field: { name, onChange } }) => (
-                    <JSONEditor
-                      readOnly={isSubmitting || messageIsSending}
-                      defaultValue={keyExampleValue}
-                      name={name}
-                      onChange={onChange}
-                    />
-                  )}
-                />
-              </div>
-              <div className="column is-one-half">
-                <label className="label">Content</label>
-                <Controller
-                  control={control}
-                  name="content"
-                  render={({ field: { name, onChange } }) => (
-                    <JSONEditor
-                      readOnly={isSubmitting || messageIsSending}
-                      defaultValue={contentExampleValue}
-                      name={name}
-                      onChange={onChange}
-                    />
-                  )}
-                />
-              </div>
-            </div>
-            <div className="columns">
-              <div className="column">
-                <label className="label">Headers</label>
-                <Controller
-                  control={control}
-                  name="headers"
-                  render={({ field: { name, onChange } }) => (
-                    <JSONEditor
-                      readOnly={isSubmitting || messageIsSending}
-                      defaultValue="{}"
-                      name={name}
-                      onChange={onChange}
-                      height="200px"
-                    />
-                  )}
-                />
-              </div>
-            </div>
-            {schemaErrorString && (
-              <div className="mb-4">
-                {schemaErrorString.split('-').map((e) => (
-                  <p className="help is-danger" key={e}>
-                    {e}
-                  </p>
+  if (!keyExampleValue && !contentExampleValue) {
+    return <PageLoader />;
+  }
+  return (
+    <div className="box">
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <div className="columns">
+          <div className="column is-one-third">
+            <label className="label" htmlFor="select">
+              Partition
+            </label>
+            <div className="select is-block">
+              <select
+                id="select"
+                defaultValue={partitions[0].partition}
+                disabled={isSubmitting || messageIsSending}
+                {...register('partition')}
+              >
+                {partitions.map((partition) => (
+                  <option key={partition.partition} value={partition.partition}>
+                    {partition.partition}
+                  </option>
                 ))}
-              </div>
-            )}
-            <button
-              type="submit"
-              className="button is-primary"
-              disabled={!isDirty || isSubmitting || messageIsSending}
-            >
-              Send
-            </button>
-          </form>
+              </select>
+            </div>
+          </div>
         </div>
-      )}
-    </>
+
+        <div className="columns">
+          <div className="column is-one-half">
+            <label className="label">Key</label>
+            <Controller
+              control={control}
+              name="key"
+              render={({ field: { name, onChange } }) => (
+                <JSONEditor
+                  readOnly={isSubmitting || messageIsSending}
+                  defaultValue={keyExampleValue}
+                  name={name}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </div>
+          <div className="column is-one-half">
+            <label className="label">Content</label>
+            <Controller
+              control={control}
+              name="content"
+              render={({ field: { name, onChange } }) => (
+                <JSONEditor
+                  readOnly={isSubmitting || messageIsSending}
+                  defaultValue={contentExampleValue}
+                  name={name}
+                  onChange={onChange}
+                />
+              )}
+            />
+          </div>
+        </div>
+        <div className="columns">
+          <div className="column">
+            <label className="label">Headers</label>
+            <Controller
+              control={control}
+              name="headers"
+              render={({ field: { name, onChange } }) => (
+                <JSONEditor
+                  readOnly={isSubmitting || messageIsSending}
+                  defaultValue="{}"
+                  name={name}
+                  onChange={onChange}
+                  height="200px"
+                />
+              )}
+            />
+          </div>
+        </div>
+        {schemaErrorString && (
+          <div className="mb-4">
+            {schemaErrorString.split('-').map((err) => (
+              <p className="help is-danger" key={err}>
+                {err}
+              </p>
+            ))}
+          </div>
+        )}
+        <button
+          type="submit"
+          className="button is-primary"
+          disabled={!isDirty || isSubmitting || messageIsSending}
+        >
+          Send
+        </button>
+      </form>
+    </div>
   );
 };
 
