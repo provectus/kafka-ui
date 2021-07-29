@@ -71,7 +71,7 @@ const MessagesTable: React.FC = () => {
         search: `?${searchParams.toString()}`,
       });
     }
-  }, [searchParams, history]);
+  }, [searchParams, history, messages]);
 
   return (
     <>
