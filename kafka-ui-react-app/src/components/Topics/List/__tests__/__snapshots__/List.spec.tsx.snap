@@ -218,6 +218,9 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                   Type
                 </th>
                 <th>
+                  Clean Up Policy
+                </th>
+                <th>
                    
                 </th>
               </tr>
