@@ -9,7 +9,6 @@ import {
 } from 'redux/actions';
 import {
   getTopicList,
-  getExternalTopicList,
   getAreTopicsFetching,
   getTopicListTotalPages,
   getTopicsSearch,
@@ -21,7 +20,6 @@ import List from './List';
 const mapStateToProps = (state: RootState) => ({
   areTopicsFetching: getAreTopicsFetching(state),
   topics: getTopicList(state),
-  externalTopics: getExternalTopicList(state),
   totalPages: getTopicListTotalPages(state),
   search: getTopicsSearch(state),
   orderBy: getTopicsOrderBy(state),

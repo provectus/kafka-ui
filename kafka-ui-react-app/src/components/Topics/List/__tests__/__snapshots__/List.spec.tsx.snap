@@ -28,8 +28,28 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
       areTopicsFetching={false}
       clearTopicMessages={[MockFunction]}
       deleteTopic={[MockFunction]}
-      externalTopics={Array []}
-      fetchTopicsList={[MockFunction]}
+      fetchTopicsList={
+        [MockFunction] {
+          "calls": Array [
+            Array [
+              Object {
+                "clusterName": undefined,
+                "orderBy": undefined,
+                "page": undefined,
+                "perPage": undefined,
+                "search": "",
+                "showInternal": true,
+              },
+            ],
+          ],
+          "results": Array [
+            Object {
+              "type": "return",
+              "value": undefined,
+            },
+          ],
+        }
+      }
       orderBy={null}
       search=""
       setTopicsOrderBy={[MockFunction]}
@@ -89,7 +109,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               className="column"
             >
               <Search
-                handleSearch={[Function]}
+                handleSearch={[MockFunction]}
                 placeholder="Search by Topic Name"
                 value=""
               >

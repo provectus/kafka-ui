@@ -109,6 +109,7 @@
     "eslint-plugin-react-hooks": "^4.2.0",
     "esprint": "^3.1.0",
     "fetch-mock-jest": "^1.5.1",
+    "history": "^5.0.0",
     "husky": "^7.0.0",
     "jest-sonar-reporter": "^2.0.0",
     "lint-staged": "^11.0.0",

@@ -112,10 +112,6 @@ export const getTopicList = createSelector(
   }
 );
 
-export const getExternalTopicList = createSelector(getTopicList, (topics) =>
-  topics.filter(({ internal }) => !internal)
-);
-
 const getTopicName = (_: RootState, topicName: TopicName) => topicName;
 
 export const getTopicByName = createSelector(
