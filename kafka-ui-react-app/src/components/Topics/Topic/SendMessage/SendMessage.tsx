@@ -43,6 +43,7 @@ const SendMessage: React.FC<Props> = ({
 }) => {
   const [keyExampleValue, setKeyExampleValue] = React.useState('');
   const [contentExampleValue, setContentExampleValue] = React.useState('');
+  const [schemaIsReady, setSchemaIsReady] = React.useState(false);
   const [schemaErrorString, setSchemaErrorString] = React.useState('');
   const {
     register,
@@ -62,6 +63,7 @@ const SendMessage: React.FC<Props> = ({
         setKeyExampleValue(
           JSON.stringify(getFakeData(validateKey), null, '\t')
         );
+        setSchemaIsReady(true);
       }
 
       const validateContent = convertToYup(
@@ -71,6 +73,11 @@ const SendMessage: React.FC<Props> = ({
         setContentExampleValue(
           JSON.stringify(getFakeData(validateContent), null, '\t')
         );
+        setSchemaIsReady(true);
+      }
+
+      if (!validateKey && !validateContent) {
+        setSchemaIsReady(true);
       }
     }
   }, [schemaIsFetched]);
@@ -109,7 +116,7 @@ const SendMessage: React.FC<Props> = ({
     }
   };
 
-  if (!keyExampleValue && !contentExampleValue) {
+  if (!schemaIsReady) {
     return <PageLoader />;
   }
   return (
