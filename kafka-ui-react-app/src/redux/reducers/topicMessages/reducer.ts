@@ -10,6 +10,7 @@ export const initialState: TopicMessagesState = {
     messagesConsumed: 0,
     isCancelled: false,
   },
+  isFetching: false,
 };
 
 const reducer = (state = initialState, action: Action): TopicMessagesState => {
@@ -31,6 +32,11 @@ const reducer = (state = initialState, action: Action): TopicMessagesState => {
       return {
         ...state,
         meta: action.payload,
+      };
+    case getType(actions.setTopicMessagesFetchingStatus):
+      return {
+        ...state,
+        isFetching: action.payload,
       };
     default:
       return state;

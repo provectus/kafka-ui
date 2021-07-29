@@ -254,6 +254,10 @@ export const addTopicMessage =
 
 export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
 
+export const setTopicMessagesFetchingStatus = createAction(
+  'SET_TOPIC_MESSAGES_FETCHING_STATUS'
+)<boolean>();
+
 export const updateTopicMessagesPhase = createAction(
   'UPDATE_TOPIC_MESSAGES_PHASE'
 )<string>();

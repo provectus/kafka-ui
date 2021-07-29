@@ -7,11 +7,13 @@ import {
   resetTopicMessages,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
+  setTopicMessagesFetchingStatus,
 } from 'redux/actions';
 import { TopicMessage, TopicMessageConsuming } from 'generated-sources';
 import {
   getTopicMessgesMeta,
   getTopicMessgesPhase,
+  getIsTopicMessagesFetching,
 } from 'redux/reducers/topicMessages/selectors';
 import { getPartitionsByTopicName } from 'redux/reducers/topics/selectors';
 
@@ -37,6 +39,7 @@ const mapStateToProps = (
   phaseMessage: getTopicMessgesPhase(state),
   partitions: getPartitionsByTopicName(state, topicName),
   meta: getTopicMessgesMeta(state),
+  isFetching: getIsTopicMessagesFetching(state),
 });
 
 const mapDispatchToProps = (
@@ -53,6 +56,9 @@ const mapDispatchToProps = (
   },
   updateMeta: (meta: TopicMessageConsuming) => {
     dispatch(updateTopicMessagesMeta(meta));
+  },
+  setIsFetching: (status: boolean) => {
+    dispatch(setTopicMessagesFetchingStatus(status));
   },
 });
 

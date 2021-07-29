@@ -1,3 +1,4 @@
+import PageLoader from 'components/common/PageLoader/PageLoader';
 import CustomParamButton from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
 import {
   Partition,
@@ -10,7 +11,10 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { getTopicMessges } from 'redux/reducers/topicMessages/selectors';
+import {
+  getTopicMessges,
+  getIsTopicMessagesFetching,
+} from 'redux/reducers/topicMessages/selectors';
 
 import Message from './Message';
 
@@ -37,6 +41,7 @@ const MessagesTable: React.FC = () => {
   );
 
   const messages = useSelector(getTopicMessges);
+  const isFetching = useSelector(getIsTopicMessagesFetching);
 
   const handleNextClick = React.useCallback(() => {
     const seekTo = searchParams.get('seekTo');
@@ -99,7 +104,14 @@ const MessagesTable: React.FC = () => {
               message={message}
             />
           ))}
-          {messages.length === 0 && (
+          {isFetching && (
+            <tr>
+              <td colSpan={10}>
+                <PageLoader />
+              </td>
+            </tr>
+          )}
+          {messages.length === 0 && !isFetching && (
             <tr>
               <td colSpan={10}>No messages found</td>
             </tr>

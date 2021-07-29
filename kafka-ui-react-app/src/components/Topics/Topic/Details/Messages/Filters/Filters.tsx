@@ -33,10 +33,12 @@ export interface FiltersProps {
   phaseMessage?: string;
   partitions: Partition[];
   meta: TopicMessageConsuming;
+  isFetching: boolean;
   addMessage(message: TopicMessage): void;
   resetMessages(): void;
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
+  setIsFetching(status: boolean): void;
 }
 
 const PER_PAGE = 100;
@@ -47,10 +49,12 @@ const Filters: React.FC<FiltersProps> = ({
   partitions,
   phaseMessage,
   meta: { elapsedMs, bytesConsumed, messagesConsumed },
+  isFetching,
   addMessage,
   resetMessages,
   updatePhase,
   updateMeta,
+  setIsFetching,
 }) => {
   const location = useLocation();
   const history = useHistory();
@@ -82,8 +86,6 @@ const Filters: React.FC<FiltersProps> = ({
     (searchParams.get('seekDirection') as SeekDirection) ||
       SeekDirection.FORWARD
   );
-
-  const [isFetching, setIsFetching] = React.useState(false);
 
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
@@ -178,6 +180,7 @@ const Filters: React.FC<FiltersProps> = ({
 
       sse.onopen = () => {
         resetMessages();
+        setIsFetching(true);
       };
       sse.onmessage = ({ data }) => {
         const { type, message, phase, consuming }: TopicMessageEvent =
