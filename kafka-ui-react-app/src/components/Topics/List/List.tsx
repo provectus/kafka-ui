@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router';
 import {
   TopicWithDetailedInfo,
   ClusterName,
@@ -8,22 +9,21 @@ import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { Link, useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
-import { FetchTopicsListParams } from 'redux/actions';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
-import { TopicColumnsToSort } from 'generated-sources';
+import { GetTopicsRequest, TopicColumnsToSort } from 'generated-sources';
 import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
 import Search from 'components/common/Search/Search';
+import { PER_PAGE } from 'lib/constants';
 
 import ListItem from './ListItem';
 
-interface Props {
+export interface TopicsListProps {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
-  externalTopics: TopicWithDetailedInfo[];
   totalPages: number;
-  fetchTopicsList(props: FetchTopicsListParams): void;
+  fetchTopicsList(props: GetTopicsRequest): void;
   deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
   clearTopicMessages(
     topicName: TopicName,
@@ -36,10 +36,9 @@ interface Props {
   setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
 }
 
-const List: React.FC<Props> = ({
+const List: React.FC<TopicsListProps> = ({
   areTopicsFetching,
   topics,
-  externalTopics,
   totalPages,
   fetchTopicsList,
   deleteTopic,
@@ -51,7 +50,9 @@ const List: React.FC<Props> = ({
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
-  const { page, perPage } = usePagination();
+  const { page, perPage, pathname } = usePagination();
+  const [showInternal, setShowInternal] = React.useState<boolean>(true);
+  const history = useHistory();
 
   React.useEffect(() => {
     fetchTopicsList({
@@ -60,18 +61,22 @@ const List: React.FC<Props> = ({
       perPage,
       orderBy: orderBy || undefined,
       search,
+      showInternal,
     });
-  }, [fetchTopicsList, clusterName, page, perPage, orderBy, search]);
-
-  const [showInternal, setShowInternal] = React.useState<boolean>(true);
+  }, [
+    fetchTopicsList,
+    clusterName,
+    page,
+    perPage,
+    orderBy,
+    search,
+    showInternal,
+  ]);
 
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
+    history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
   }, [showInternal]);
-
-  const handleSearch = (value: string) => setTopicsSearch(value);
-
-  const items = showInternal ? topics : externalTopics;
 
   return (
     <div className="section">
@@ -93,7 +98,7 @@ const List: React.FC<Props> = ({
           </div>
           <div className="column">
             <Search
-              handleSearch={handleSearch}
+              handleSearch={setTopicsSearch}
               placeholder="Search by Topic Name"
               value={search}
             />
@@ -144,7 +149,7 @@ const List: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
-              {items.map((topic) => (
+              {topics.map((topic) => (
                 <ListItem
                   clusterName={clusterName}
                   key={topic.name}
@@ -153,7 +158,7 @@ const List: React.FC<Props> = ({
                   clearTopicMessages={clearTopicMessages}
                 />
               ))}
-              {items.length === 0 && (
+              {topics.length === 0 && (
                 <tr>
                   <td colSpan={10}>No topics found</td>
                 </tr>

@@ -7,9 +7,9 @@ import {
   TopicCreation,
   TopicUpdate,
   TopicConfig,
-  TopicColumnsToSort,
   ConsumerGroupsApi,
   CreateTopicMessage,
+  GetTopicsRequest,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
@@ -32,17 +32,8 @@ export const topicConsumerGroupsApiClient = new ConsumerGroupsApi(
   apiClientConf
 );
 
-export interface FetchTopicsListParams {
-  clusterName: ClusterName;
-  page?: number;
-  perPage?: number;
-  showInternal?: boolean;
-  search?: string;
-  orderBy?: TopicColumnsToSort;
-}
-
 export const fetchTopicsList =
-  (params: FetchTopicsListParams): PromiseThunkResult =>
+  (params: GetTopicsRequest): PromiseThunkResult =>
   async (dispatch, getState) => {
     dispatch(actions.fetchTopicsListAction.request());
     try {
