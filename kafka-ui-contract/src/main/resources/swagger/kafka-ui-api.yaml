@@ -106,6 +106,37 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/brokers/{id}/configs/{name}:
+    put:
+      tags:
+        - Brokers
+      summary: updateBrokerConfigByName
+      operationId: updateBrokerConfigByName
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrokerConfigItem'
+      responses:
+        200:
+          description: OK
+
   /api/clusters/{clusterName}/metrics:
     get:
       tags:
@@ -2399,6 +2430,12 @@ components:
       required:
         - totalReplicationFactor
         - topicName
+
+    BrokerConfigItem:
+      type: object
+      properties:
+        value:
+          type: string
 
     BrokerConfig:
       type: object

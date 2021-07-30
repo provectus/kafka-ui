@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.BrokerTopicLogdirs;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.model.ErrorResponse;

@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.BrokersApi;
 import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.BrokerConfig;
+import com.provectus.kafka.ui.model.BrokerConfigItem;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
@@ -59,6 +60,18 @@ public class BrokersController implements BrokersApi {
       ServerWebExchange exchange) {
     return brokerLogdir
         .flatMap(bld -> clusterService.updateBrokerLogDir(clusterName, id, bld))
+        .map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Void>> updateBrokerConfigByName(String clusterName,
+                                                             Integer id,
+                                                             String name,
+                                                             Mono<BrokerConfigItem> brokerConfig,
+                                                             ServerWebExchange exchange) {
+    return brokerConfig
+        .flatMap(bci -> clusterService.updateBrokerConfigByName(
+            clusterName, id, name, bci.getValue()))
         .map(ResponseEntity::ok);
   }
 }
