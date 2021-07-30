@@ -159,8 +159,9 @@ public class KafkaService {
     ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
     Throwable zookeeperException = null;
     try {
-      zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster) ? ServerStatus.ONLINE :
-          ServerStatus.OFFLINE;
+      zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster)
+              ? ServerStatus.ONLINE
+              : ServerStatus.OFFLINE;
     } catch (Throwable e) {
       zookeeperException = e;
     }
