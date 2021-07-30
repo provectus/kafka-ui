@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.InvalidRequestApiException;
 import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
@@ -76,6 +77,7 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
@@ -964,6 +966,29 @@ public class KafkaService {
             e -> Mono.error(new TopicOrPartitionNotFoundException()))
         .onErrorResume(LogDirNotFoundException.class,
             e -> Mono.error(new LogDirNotFoundApiException()))
+        .doOnError(log::error);
+  }
+
+  public Mono<Void> updateBrokerConfigByName(KafkaCluster cluster,
+                                             Integer broker,
+                                             String name,
+                                             String value) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> updateBrokerConfigByName(ac, broker, name, value));
+  }
+
+  private Mono<Void> updateBrokerConfigByName(ExtendedAdminClient admin,
+                                              Integer broker,
+                                              String name,
+                                              String value) {
+    ConfigResource cr = new ConfigResource(ConfigResource.Type.BROKER, String.valueOf(broker));
+    AlterConfigOp op = new AlterConfigOp(new ConfigEntry(name, value), AlterConfigOp.OpType.SET);
+
+    return Mono.just(admin)
+        .map(a -> a.getAdminClient().incrementalAlterConfigs(Map.of(cr, List.of(op))))
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
+        .onErrorResume(InvalidRequestException.class,
+            e -> Mono.error(new InvalidRequestApiException(e.getMessage())))
         .doOnError(log::error);
   }
 }
