@@ -35,6 +35,7 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -91,7 +92,8 @@ public interface ClusterMapper {
   Partition toPartition(InternalPartition topic);
 
   default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
-    if (clusterProperties == null) {
+    if (clusterProperties == null
+        || clusterProperties.getSchemaRegistry() == null) {
       return null;
     }
 
