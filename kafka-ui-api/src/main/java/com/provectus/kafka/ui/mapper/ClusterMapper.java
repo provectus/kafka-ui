@@ -93,7 +93,7 @@ public interface ClusterMapper {
 
   default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
     if (clusterProperties == null
-        || Objects.isNull(clusterProperties.getSchemaRegistry())) {
+        || clusterProperties.getSchemaRegistry() == null) {
       return null;
     }
 
