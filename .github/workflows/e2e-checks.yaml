@@ -3,6 +3,9 @@ on:
   pull_request:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
+      - 'kafka-ui-api/**'
+      - 'kafka-ui-contract/**'
+      - 'kafka-ui-react-app/**'
       - 'kafka-ui-e2e-checks/**'
 jobs:
   build:
