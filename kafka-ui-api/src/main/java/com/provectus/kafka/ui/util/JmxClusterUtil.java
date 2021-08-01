@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.util;
 
+import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.model.Metric;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -31,14 +32,16 @@ public class JmxClusterUtil {
   private static final String JMX_SERVICE_TYPE = "jmxrmi";
   private static final String KAFKA_SERVER_PARAM = "kafka.server";
   private static final String NAME_METRIC_FIELD = "name";
-  private final KeyedObjectPool<String, JMXConnector> pool;
+  private final KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
   @SneakyThrows
-  public List<Metric> getJmxMetrics(int jmxPort, String jmxHost) {
-    String jmxUrl = JMX_URL + jmxHost + ":" + jmxPort + "/" + JMX_SERVICE_TYPE;
+  public List<Metric> getJmxMetrics(String host, int port, String username, String password) {
+    String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
+    final var connectionInfo = new JmxConnectionInfo(jmxUrl, new String[]{username, password});
+    // TODO how to get creds here?
     JMXConnector srv;
     try {
-      srv = pool.borrowObject(jmxUrl);
+      srv = pool.borrowObject(connectionInfo);
     } catch (Exception e) {
       log.error("Cannot get JMX connector for the pool due to: ", e);
       return Collections.emptyList();
@@ -59,7 +62,7 @@ public class JmxClusterUtil {
         metric.setValue(getJmxMetric(jmxMetric.getCanonicalName(), msc));
         result.add(metric);
       }
-      pool.returnObject(jmxUrl, srv);
+      pool.returnObject(connectionInfo, srv);
     } catch (Exception e) {
       log.error("Cannot get jmxMetricsNames, {}", jmxUrl, e);
       closeConnectionExceptionally(jmxUrl, srv);
@@ -84,7 +87,7 @@ public class JmxClusterUtil {
 
   private void closeConnectionExceptionally(String url, JMXConnector srv) {
     try {
-      pool.invalidateObject(url, srv);
+      pool.invalidateObject(new JmxConnectionInfo(url), srv);
     } catch (Exception e) {
       log.error("Cannot invalidate object in pool, {}", url);
     }
