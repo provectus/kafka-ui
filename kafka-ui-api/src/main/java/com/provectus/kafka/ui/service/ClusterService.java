@@ -225,11 +225,11 @@ public class ClusterService {
         .flatMapMany(Flux::fromIterable);
   }
 
-  public Mono<List<BrokerConfig>> getBrokerConfig(String clusterName, Integer brokerId) {
+  public Flux<BrokerConfig> getBrokerConfig(String clusterName, Integer brokerId) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-        .flatMap(c -> kafkaService.getBrokerConfigs(c, brokerId))
-        .map(c -> c.stream().map(clusterMapper::toBrokerConfig).collect(Collectors.toList()));
+        .flatMapMany(c -> kafkaService.getBrokersConfig(c, brokerId))
+        .map(clusterMapper::toBrokerConfig);
   }
 
   @SneakyThrows
@@ -248,8 +248,15 @@ public class ClusterService {
         .orElseThrow(ClusterNotFoundException::new);
     var topic = getTopicDetails(clusterName, topicName)
         .orElseThrow(TopicNotFoundException::new);
-    return kafkaService.deleteTopic(cluster, topic.getName())
-        .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
+    return kafkaService.getBrokerConfigMap(cluster, cluster.getBrokers().get(0))
+        .flatMap(configMap -> {
+          if (configMap.get("delete.topic.enable").getValue().equals(Boolean.toString(true))) {
+            return kafkaService.deleteTopic(cluster, topic.getName())
+                .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
+          } else {
+            return Mono.error(new ValidationException("Topic deletion restricted"));
+          }
+        });
   }
 
   private KafkaCluster updateCluster(InternalTopic topic, String clusterName,

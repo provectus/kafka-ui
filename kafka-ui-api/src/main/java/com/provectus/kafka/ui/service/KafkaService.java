@@ -345,40 +345,57 @@ public class KafkaService {
                     .collect(Collectors.toList()))));
   }
 
-  private Mono<Map<String, List<InternalBrokerConfig>>> loadBrokersConfig(
-      AdminClient adminClient, List<Integer> brokersIds) {
+  private Mono<Map<Integer, List<ConfigEntry>>> loadBrokersConfig(
+      KafkaCluster cluster, List<Integer> brokersIds) {
     List<ConfigResource> resources = brokersIds.stream()
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
         .collect(Collectors.toList());
 
-    return ClusterUtil.toMono(adminClient.describeConfigs(resources,
-        new DescribeConfigsOptions().includeSynonyms(true)).all())
-        .map(configs ->
-            configs.entrySet().stream().collect(Collectors.toMap(
-                c -> c.getKey().name(),
-                c -> c.getValue().entries().stream()
-                    .map(ClusterUtil::mapToInternalBrokerConfig)
-                    .collect(Collectors.toList()))));
+    return getOrCreateAdminClient(cluster)
+        .map(ExtendedAdminClient::getAdminClient)
+        .flatMap(adminClient ->
+            ClusterUtil.toMono(adminClient.describeConfigs(resources,
+                new DescribeConfigsOptions().includeSynonyms(true)).all())
+                .map(config -> config.entrySet().stream()
+                    .collect(Collectors.toMap(
+                        c -> Integer.valueOf(c.getKey().name()),
+                        c -> new ArrayList<>(c.getValue().entries())))));
   }
 
-  private Mono<List<InternalBrokerConfig>> loadBrokersConfig(
-      AdminClient adminClient, Integer brokerId) {
-    return loadBrokersConfig(adminClient, Collections.singletonList(brokerId))
+  private Mono<List<ConfigEntry>> loadBrokersConfig(
+      KafkaCluster cluster, Integer brokerId) {
+    return loadBrokersConfig(cluster, Collections.singletonList(brokerId))
         .map(map -> map.values().stream()
             .findFirst()
             .orElseThrow(() -> new IllegalEntityStateException(
-                String.format("Config for broker %s not found", brokerId))));
+                String.format("Config for broker %s not found", brokerId)))
+        );
   }
 
-  public Mono<List<InternalBrokerConfig>> getBrokerConfigs(KafkaCluster cluster, Integer brokerId) {
-    return getOrCreateAdminClient(cluster)
-        .flatMap(adminClient -> {
-          if (!cluster.getBrokers().contains(brokerId)) {
-            return Mono.error(
-                new NotFoundException(String.format("Broker with id %s not found", brokerId)));
-          }
-          return loadBrokersConfig(adminClient.getAdminClient(), brokerId);
-        });
+  /**
+   * Get broker config map (Config name, Config)
+   * */
+  public Mono<Map<String, InternalBrokerConfig>> getBrokerConfigMap(KafkaCluster cluster, Integer brokerId) {
+    return loadBrokersConfig(cluster, brokerId)
+        .map(list -> list.stream()
+            .collect(Collectors.toMap(
+                ConfigEntry::name,
+                ClusterUtil::mapToInternalBrokerConfig)));
+  }
+
+  /**
+   * Get broker config list
+   * */
+  public Flux<InternalBrokerConfig> getBrokersConfig(KafkaCluster cluster, Integer brokerId) {
+    if (!cluster.getBrokers().contains(brokerId)) {
+      return Flux.error(
+          new NotFoundException(String.format("Broker with id %s not found", brokerId)));
+    }
+    return loadBrokersConfig(cluster, brokerId)
+        .map(list -> list.stream()
+            .map(ClusterUtil::mapToInternalBrokerConfig)
+            .collect(Collectors.toList()))
+        .flatMapMany(Flux::fromIterable);
   }
 
   public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
