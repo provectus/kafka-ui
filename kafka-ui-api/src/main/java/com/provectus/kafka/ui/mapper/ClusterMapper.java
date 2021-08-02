@@ -35,7 +35,6 @@ import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;

@@ -1,13 +1,14 @@
 package com.provectus.kafka.ui;
 
+import com.provectus.kafka.ui.api.model.TopicConfig;
 import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
-import com.provectus.kafka.ui.api.model.TopicConfig;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -127,6 +128,12 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .exchange()
         .expectStatus()
         .isNotFound();
+
+    webTestClient.get()
+        .uri("/api/clusters/{clusterName}/topics/{topicName}/config", LOCAL, topicName)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
   }
 
   @Test
@@ -154,8 +161,6 @@ public class KafkaConsumerTests extends AbstractBaseTest {
 
   @Test
   public void shouldReturn404ForNonExistingBroker() {
-    var topicName = UUID.randomUUID().toString();
-
     webTestClient.get()
         .uri("/api/clusters/{clusterName}/brokers/{id}/configs",
             LOCAL,
@@ -166,7 +171,7 @@ public class KafkaConsumerTests extends AbstractBaseTest {
   }
 
   @Test
-  public void shouldRetrieveConfig() {
+  public void shouldRetrieveTopicConfig() {
     var topicName = UUID.randomUUID().toString();
 
     webTestClient.post()
@@ -181,11 +186,20 @@ public class KafkaConsumerTests extends AbstractBaseTest {
             .expectStatus()
             .isOk();
 
-    WebTestClient.ListBodySpec result = webTestClient.get()
+    List<TopicConfig> configs = webTestClient.get()
             .uri("/api/clusters/{clusterName}/topics/{topicName}/config", LOCAL, topicName)
             .exchange()
             .expectStatus()
             .isOk()
-            .expectBodyList(TopicConfig.class);
+            .expectBodyList(TopicConfig.class)
+            .returnResult()
+            .getResponseBody();
+
+    assert configs != null;
+    assert !configs.isEmpty();
+    Assertions.assertNotEquals(null, configs.get(0).getName());
+    Assertions.assertNotEquals(null, configs.get(0).getIsReadOnly());
+    Assertions.assertNotEquals(null, configs.get(0).getIsSensitive());
+    Assertions.assertNotEquals(null, configs.get(0).getSource());
   }
 }
