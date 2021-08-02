@@ -1729,10 +1729,6 @@ components:
             $ref: "#/components/schemas/ConfigSynonym"
       required:
         - name
-        - value
-        - source
-        - isSensitive
-        - isReadOnly
 
     TopicCreation:
       type: object
