@@ -1,10 +1,17 @@
 package com.provectus.kafka.ui.service;
 
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.InvalidRequestApiException;
+import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
+import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
+import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
@@ -41,7 +48,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -54,7 +60,7 @@ import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeLogDirsResult;
+import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -69,8 +75,12 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.InvalidRequestException;
+import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
@@ -149,8 +159,9 @@ public class KafkaService {
     ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
     Throwable zookeeperException = null;
     try {
-      zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster) ? ServerStatus.ONLINE :
-          ServerStatus.OFFLINE;
+      zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster)
+              ? ServerStatus.ONLINE
+              : ServerStatus.OFFLINE;
     } catch (Throwable e) {
       zookeeperException = e;
     }
@@ -328,17 +339,47 @@ public class KafkaService {
 
     return ClusterUtil.toMono(adminClient.describeConfigs(resources).all())
         .map(configs ->
-            configs.entrySet().stream().map(
-                c -> Tuples.of(
-                    c.getKey().name(),
-                    c.getValue().entries().stream().map(ClusterUtil::mapToInternalTopicConfig)
-                        .collect(Collectors.toList())
-                )
-            ).collect(Collectors.toMap(
-                Tuple2::getT1,
-                Tuple2::getT2
-            ))
-        );
+            configs.entrySet().stream().collect(Collectors.toMap(
+                c -> c.getKey().name(),
+                c -> c.getValue().entries().stream()
+                    .map(ClusterUtil::mapToInternalTopicConfig)
+                    .collect(Collectors.toList()))));
+  }
+
+  private Mono<Map<String, List<InternalBrokerConfig>>> loadBrokersConfig(
+      AdminClient adminClient, List<Integer> brokersIds) {
+    List<ConfigResource> resources = brokersIds.stream()
+        .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
+        .collect(Collectors.toList());
+
+    return ClusterUtil.toMono(adminClient.describeConfigs(resources,
+        new DescribeConfigsOptions().includeSynonyms(true)).all())
+        .map(configs ->
+            configs.entrySet().stream().collect(Collectors.toMap(
+                c -> c.getKey().name(),
+                c -> c.getValue().entries().stream()
+                    .map(ClusterUtil::mapToInternalBrokerConfig)
+                    .collect(Collectors.toList()))));
+  }
+
+  private Mono<List<InternalBrokerConfig>> loadBrokersConfig(
+      AdminClient adminClient, Integer brokerId) {
+    return loadBrokersConfig(adminClient, Collections.singletonList(brokerId))
+        .map(map -> map.values().stream()
+            .findFirst()
+            .orElseThrow(() -> new IllegalEntityStateException(
+                String.format("Config for broker %s not found", brokerId))));
+  }
+
+  public Mono<List<InternalBrokerConfig>> getBrokerConfigs(KafkaCluster cluster, Integer brokerId) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(adminClient -> {
+          if (!cluster.getBrokers().contains(brokerId)) {
+            return Mono.error(
+                new NotFoundException(String.format("Broker with id %s not found", brokerId)));
+          }
+          return loadBrokersConfig(adminClient.getAdminClient(), brokerId);
+        });
   }
 
   public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
@@ -906,6 +947,49 @@ public class KafkaService {
     return result;
   }
 
+  public Mono<Void> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
+                                                           BrokerLogdirUpdate brokerLogDir) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
+  }
 
+  private Mono<Void> updateBrokerLogDir(ExtendedAdminClient adminMono,
+                                        BrokerLogdirUpdate b,
+                                        Integer broker) {
 
+    Map<TopicPartitionReplica, String> req = Map.of(
+        new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
+        b.getLogDir());
+    return Mono.just(adminMono)
+        .map(admin -> admin.getAdminClient().alterReplicaLogDirs(req))
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
+        .onErrorResume(UnknownTopicOrPartitionException.class,
+            e -> Mono.error(new TopicOrPartitionNotFoundException()))
+        .onErrorResume(LogDirNotFoundException.class,
+            e -> Mono.error(new LogDirNotFoundApiException()))
+        .doOnError(log::error);
+  }
+
+  public Mono<Void> updateBrokerConfigByName(KafkaCluster cluster,
+                                             Integer broker,
+                                             String name,
+                                             String value) {
+    return getOrCreateAdminClient(cluster)
+        .flatMap(ac -> updateBrokerConfigByName(ac, broker, name, value));
+  }
+
+  private Mono<Void> updateBrokerConfigByName(ExtendedAdminClient admin,
+                                              Integer broker,
+                                              String name,
+                                              String value) {
+    ConfigResource cr = new ConfigResource(ConfigResource.Type.BROKER, String.valueOf(broker));
+    AlterConfigOp op = new AlterConfigOp(new ConfigEntry(name, value), AlterConfigOp.OpType.SET);
+
+    return Mono.just(admin)
+        .map(a -> a.getAdminClient().incrementalAlterConfigs(Map.of(cr, List.of(op))))
+        .flatMap(result -> ClusterUtil.toMono(result.all()))
+        .onErrorResume(InvalidRequestException.class,
+            e -> Mono.error(new InvalidRequestApiException(e.getMessage())))
+        .doOnError(log::error);
+  }
 }

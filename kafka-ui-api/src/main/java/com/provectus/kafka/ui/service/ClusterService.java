@@ -8,6 +8,8 @@ import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
 import com.provectus.kafka.ui.model.Broker;
+import com.provectus.kafka.ui.model.BrokerConfig;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.model.Cluster;
@@ -223,6 +225,13 @@ public class ClusterService {
         .flatMapMany(Flux::fromIterable);
   }
 
+  public Mono<List<BrokerConfig>> getBrokerConfig(String clusterName, Integer brokerId) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+        .flatMap(c -> kafkaService.getBrokerConfigs(c, brokerId))
+        .map(c -> c.stream().map(clusterMapper::toBrokerConfig).collect(Collectors.toList()));
+  }
+
   @SneakyThrows
   public Mono<Topic> updateTopic(String clusterName, String topicName,
                                  Mono<TopicUpdate> topicUpdate) {
@@ -370,5 +379,19 @@ public class ClusterService {
         .flatMap(c -> kafkaService.getClusterLogDirs(c, brokers))
         .map(describeLogDirsMapper::toBrokerLogDirsList)
         .flatMapMany(Flux::fromIterable);
+  }
+
+  public Mono<Void> updateBrokerLogDir(
+      String clusterName, Integer id, BrokerLogdirUpdate brokerLogDir) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .flatMap(c -> kafkaService.updateBrokerLogDir(c, id, brokerLogDir));
+  }
+
+  public Mono<Void> updateBrokerConfigByName(String clusterName,
+                                             Integer id,
+                                             String name,
+                                             String value) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .flatMap(c -> kafkaService.updateBrokerConfigByName(c, id, name, value));
   }
 }

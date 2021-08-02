@@ -4,7 +4,6 @@ on:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
       - 'kafka-ui-api/**'
-      - 'kafka-ui-e2e-checks/**'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,14 +16,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
       - uses: actions/checkout@v2
-      - name: Set the values
-        id: step_one
-        run: |
-           cat "./kafka-ui-e2e-checks/.env.ci" >> "./kafka-ui-e2e-checks/.env"
-      - name: pull docker
-        id: step_four
-        run: |
-          docker pull selenoid/vnc:chrome_86.0
       - name: compose app
         id: step_five
         run: |
@@ -44,29 +35,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
-      - name: Generate allure report
-        uses: simple-elf/allure-report-action@master
-        if: always()
-        id: allure-report
-        with:
-          allure_results: ./kafka-ui-e2e-checks/allure-results
-          gh_pages: allure-results
-          allure_report: allure-report
-          subfolder: allure-results
-      - name: Deploy allure report to Github Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-history
-          publish_branch: gh-pages
-          destination_dir: ./allure
-      - name: Post the link to allure report
-        if: always()
-        uses: Sibz/github-status-action@v1
-        with:
-          authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'Test report'
-          state: 'success'
-          sha: ${{ github.event.pull_request.head.sha  || github.sha }}
-          target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}

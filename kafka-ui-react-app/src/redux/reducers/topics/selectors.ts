@@ -25,6 +25,10 @@ const getTopicMessagesFetchingStatus =
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
+const getTopicMessageSchemaFetchingStatus =
+  createFetchingSelector('GET_TOPIC_SCHEMA');
+const getTopicMessageSendingStatus =
+  createFetchingSelector('SEND_TOPIC_MESSAGE');
 const getPartitionsCountIncreaseStatus =
   createFetchingSelector('UPDATE_PARTITIONS');
 const getReplicationFactorUpdateStatus = createFetchingSelector(
@@ -71,6 +75,21 @@ export const getTopicUpdated = createSelector(
   (status) => status === 'fetched'
 );
 
+export const getTopicMessageSchemaFetched = createSelector(
+  getTopicMessageSchemaFetchingStatus,
+  (status) => status === 'fetched'
+);
+
+export const getTopicMessageSent = createSelector(
+  getTopicMessageSendingStatus,
+  (status) => status === 'fetched'
+);
+
+export const getTopicMessageSending = createSelector(
+  getTopicMessageSendingStatus,
+  (status) => status === 'fetching'
+);
+
 export const getTopicPartitionsCountIncreased = createSelector(
   getPartitionsCountIncreaseStatus,
   (status) => status === 'fetched'
@@ -91,10 +110,6 @@ export const getTopicList = createSelector(
     }
     return allNames.map((name) => byName[name]);
   }
-);
-
-export const getExternalTopicList = createSelector(getTopicList, (topics) =>
-  topics.filter(({ internal }) => !internal)
 );
 
 const getTopicName = (_: RootState, topicName: TopicName) => topicName;
@@ -156,4 +171,9 @@ export const getTopicConsumerGroups = createSelector(
   getTopicMap,
   getTopicName,
   (topics, topicName) => topics[topicName].consumerGroups || []
+);
+
+export const getMessageSchemaByTopicName = createSelector(
+  getTopicByName,
+  (topic) => topic.messageSchema
 );
