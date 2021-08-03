@@ -1040,12 +1040,17 @@ paths:
     get:
       tags:
         - Kafka Connect
-      summary: get all kafka connectors
+      summary: get filtered kafka connectors
       operationId: getAllConnectors
       parameters:
         - name: clusterName
           in: path
           required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
           schema:
             type: string
       responses:

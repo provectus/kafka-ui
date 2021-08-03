@@ -3,12 +3,14 @@ import { RootState } from 'redux/interfaces';
 import {
   fetchConnects,
   fetchConnectors,
+  setConnectorSearch,
 } from 'redux/actions/thunks/connectors';
 import {
   getConnects,
   getConnectors,
   getAreConnectsFetching,
   getAreConnectorsFetching,
+  getConnectorSearch,
 } from 'redux/reducers/connect/selectors';
 import List from 'components/Connect/List/List';
 
@@ -17,11 +19,13 @@ const mapStateToProps = (state: RootState) => ({
   areConnectorsFetching: getAreConnectorsFetching(state),
   connects: getConnects(state),
   connectors: getConnectors(state),
+  search: getConnectorSearch(state),
 });
 
 const mapDispatchToProps = {
   fetchConnects,
   fetchConnectors,
+  setConnectorSearch,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

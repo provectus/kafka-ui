@@ -23,10 +23,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -52,7 +55,7 @@ public class KafkaConnectService {
     );
   }
 
-  public Flux<FullConnectorInfo> getAllConnectors(String clusterName) {
+  public Flux<FullConnectorInfo> getAllConnectors(final String clusterName, final String search) {
     return getConnects(clusterName)
         .flatMapMany(Function.identity())
         .flatMap(connect -> getConnectorNames(clusterName, connect))
@@ -87,7 +90,25 @@ public class KafkaConnectService {
                   .build()
               );
         })
-        .map(kafkaConnectMapper::fullConnectorInfoFromTuple);
+        .map(kafkaConnectMapper::fullConnectorInfoFromTuple)
+        .filter(matchesSearchTerm(search));
+  }
+
+  private Predicate<FullConnectorInfo> matchesSearchTerm(final String search) {
+    return (connector) -> getSearchValues(connector)
+                .anyMatch(value -> value.contains(
+                        StringUtils.defaultString(
+                                search,
+                                StringUtils.EMPTY)
+                                .toUpperCase()));
+  }
+
+  private Stream<String> getSearchValues(FullConnectorInfo fullConnectorInfo) {
+    return Stream.of(
+                fullConnectorInfo.getName(),
+                fullConnectorInfo.getStatus().getState().getValue(),
+                fullConnectorInfo.getType().getValue())
+                .map(String::toUpperCase);
   }
 
   private Mono<ConnectorTopics> getConnectorTopics(String clusterName, String connectClusterName,
@@ -118,7 +139,7 @@ public class KafkaConnectService {
   public Flux<String> getConnectors(String clusterName, String connectName) {
     return getConnectAddress(clusterName, connectName)
         .flatMapMany(connect ->
-            KafkaConnectClients.withBaseUrl(connect).getConnectors()
+            KafkaConnectClients.withBaseUrl(connect).getConnectors(null)
                 .doOnError(log::error)
         );
   }
