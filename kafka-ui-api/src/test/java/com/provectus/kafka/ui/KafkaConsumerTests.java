@@ -151,12 +151,13 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .returnResult()
         .getResponseBody();
 
-    assert configs != null;
+    Assertions.assertNotNull(configs);
     assert !configs.isEmpty();
-    Assertions.assertNotEquals(null, configs.get(0).getName());
-    Assertions.assertNotEquals(null, configs.get(0).getIsReadOnly());
-    Assertions.assertNotEquals(null, configs.get(0).getIsSensitive());
-    Assertions.assertNotEquals(null, configs.get(0).getSource());
+    Assertions.assertNotNull(configs.get(0).getName());
+    Assertions.assertNotNull(configs.get(0).getIsReadOnly());
+    Assertions.assertNotNull(configs.get(0).getIsSensitive());
+    Assertions.assertNotNull(configs.get(0).getSource());
+    Assertions.assertNotNull(configs.get(0).getSynonyms());
   }
 
   @Test
@@ -195,11 +196,12 @@ public class KafkaConsumerTests extends AbstractBaseTest {
             .returnResult()
             .getResponseBody();
 
-    assert configs != null;
+    Assertions.assertNotNull(configs);
     assert !configs.isEmpty();
-    Assertions.assertNotEquals(null, configs.get(0).getName());
-    Assertions.assertNotEquals(null, configs.get(0).getIsReadOnly());
-    Assertions.assertNotEquals(null, configs.get(0).getIsSensitive());
-    Assertions.assertNotEquals(null, configs.get(0).getSource());
+    Assertions.assertNotNull(configs.get(0).getName());
+    Assertions.assertNotNull(configs.get(0).getIsReadOnly());
+    Assertions.assertNotNull(configs.get(0).getIsSensitive());
+    Assertions.assertNotNull(configs.get(0).getSource());
+    Assertions.assertNotNull(configs.get(0).getSynonyms());
   }
 }
