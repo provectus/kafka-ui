@@ -27,6 +27,43 @@ jobs:
         id: step_four
         run: |
           docker pull selenoid/vnc:chrome_86.0
+      - name: Build with Maven
+        id: build app
+        run: |
+          mvn clean package -Pprod ${{ github.event.inputs.extraMavenOptions }}
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo ::set-output name=version::${VERSION}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Login to DockerHub
+        if: github.ref == 'refs/heads/master'
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        id: docker_build_and_push
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: kafka-ui-api
+          push: false
+          tags: |
+            provectuslabs/kafka-ui:${{ steps.build.outputs.version }}
+            provectuslabs/kafka-ui:dev
+          build-args: |
+            JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
       - name: compose app
         id: step_five
         run: |
