@@ -195,7 +195,11 @@ public class ClusterUtil {
   public static InternalTopicConfig mapToInternalTopicConfig(ConfigEntry configEntry) {
     InternalTopicConfig.InternalTopicConfigBuilder builder = InternalTopicConfig.builder()
         .name(configEntry.name())
-        .value(configEntry.value());
+        .value(configEntry.value())
+        .source(configEntry.source())
+        .isReadOnly(configEntry.isReadOnly())
+        .isSensitive(configEntry.isSensitive())
+        .synonyms(configEntry.synonyms());
     if (configEntry.name().equals(MESSAGE_FORMAT_VERSION_CONFIG)) {
       builder.defaultValue(configEntry.value());
     } else {

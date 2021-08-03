@@ -1722,6 +1722,16 @@ components:
           type: string
         defaultValue:
           type: string
+        source:
+          $ref: "#/components/schemas/ConfigSource"
+        isSensitive:
+          type: boolean
+        isReadOnly:
+          type: boolean
+        synonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigSynonym"
       required:
         - name
 

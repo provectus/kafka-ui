@@ -337,7 +337,8 @@ public class KafkaService {
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
         .collect(Collectors.toList());
 
-    return ClusterUtil.toMono(adminClient.describeConfigs(resources).all())
+    return ClusterUtil.toMono(adminClient.describeConfigs(resources,
+                    new DescribeConfigsOptions().includeSynonyms(true)).all())
         .map(configs ->
             configs.entrySet().stream().collect(Collectors.toMap(
                 c -> c.getKey().name(),
