@@ -1,0 +1,39 @@
+{
+  "uid" : "98d3104e051c652961429bf95fa0b5d6",
+  "children" : [ {
+    "name" : "com.provectus.kafka.ui.topics.TopicTests",
+    "children" : [ {
+      "name" : " topic tests",
+      "uid" : "d9e8d299961c1acd",
+      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
+      "status" : "broken",
+      "time" : {
+        "start" : 1627999362100,
+        "stop" : 1627999362100,
+        "duration" : 0
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "fc854a7ac86496a8bb197a9f990b4d4a"
+  }, {
+    "name" : "com.provectus.kafka.ui.SmokeTests",
+    "children" : [ {
+      "name" : "main page should load",
+      "uid" : "fca8f9ba3cc6b2cc",
+      "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
+      "status" : "broken",
+      "time" : {
+        "start" : 1627999362385,
+        "stop" : 1627999366057,
+        "duration" : 3672
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "69fdc287dff659537c8bf8784f0eea66"
+  } ],
+  "name" : "suites"
+}
