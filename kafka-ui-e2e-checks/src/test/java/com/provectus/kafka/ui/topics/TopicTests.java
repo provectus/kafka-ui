@@ -85,6 +85,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_TO_DELETE);
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE).clickDeleteTopicButton();
         pages.openTopicsList(SECOND_LOCAL).isNotVisible(TOPIC_TO_DELETE);
+        
     }
 
 }
