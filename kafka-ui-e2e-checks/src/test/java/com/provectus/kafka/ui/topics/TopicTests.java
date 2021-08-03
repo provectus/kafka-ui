@@ -84,6 +84,7 @@ public class TopicTests extends BaseTest {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_DELETE);
+        Selenide.refresh();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE).clickDeleteTopicButton();
         pages.openTopicsList(SECOND_LOCAL).isNotVisible(TOPIC_TO_DELETE);
         
