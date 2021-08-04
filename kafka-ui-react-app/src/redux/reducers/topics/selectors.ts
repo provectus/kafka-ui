@@ -6,22 +6,19 @@ import {
   TopicConfigByName,
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
-import { Partition } from 'generated-sources';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
 
 const getAllNames = (state: RootState) => topicsState(state).allNames;
 const getTopicMap = (state: RootState) => topicsState(state).byName;
-export const getTopicMessages = (state: RootState) =>
-  topicsState(state).messages;
+
 export const getTopicListTotalPages = (state: RootState) =>
   topicsState(state).totalPages;
 
 const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
 const getTopicDetailsFetchingStatus =
   createFetchingSelector('GET_TOPIC_DETAILS');
-const getTopicMessagesFetchingStatus =
-  createFetchingSelector('GET_TOPIC_MESSAGES');
+
 const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
 const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
@@ -52,11 +49,6 @@ export const getIsTopicDetailsFetching = createSelector(
 
 export const getIsTopicDetailsFetched = createSelector(
   getTopicDetailsFetchingStatus,
-  (status) => status === 'fetched'
-);
-
-export const getIsTopicMessagesFetched = createSelector(
-  getTopicMessagesFetchingStatus,
   (status) => status === 'fetched'
 );
 
@@ -123,7 +115,7 @@ export const getTopicByName = createSelector(
 export const getPartitionsByTopicName = createSelector(
   getTopicMap,
   getTopicName,
-  (topics, topicName) => topics[topicName].partitions as Partition[]
+  (topics, topicName) => topics[topicName]?.partitions || []
 );
 
 export const getFullTopic = createSelector(getTopicByName, (topic) =>

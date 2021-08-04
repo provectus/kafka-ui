@@ -122,6 +122,8 @@ public interface ClusterMapper {
     return result;
   }
 
+  @Mapping(target = "isReadOnly", source = "readOnly")
+  @Mapping(target = "isSensitive", source = "sensitive")
   TopicConfig toTopicConfig(InternalTopicConfig topic);
 
   Replica toReplica(InternalReplica replica);

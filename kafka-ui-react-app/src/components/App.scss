@@ -2,6 +2,8 @@ $header-height: 52px;
 $navbar-width: 250px;
 
 .Layout {
+  min-width: 1200px;
+
   &__header {
     box-shadow: 0 0.46875rem 2.1875rem rgba(4,9,20,0.03),
       0 0.9375rem 1.40625rem rgba(4,9,20,0.03),
@@ -63,6 +65,8 @@ $navbar-width: 250px;
 
 @media screen and (max-width: 1023px) {
   .Layout {
+    min-width: initial;
+
     &__container {
       margin-left: initial;
       margin-top: 1.5rem;

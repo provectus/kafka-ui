@@ -5,6 +5,7 @@ interface Props {
   className: string;
   type: 'fa-plus' | 'fa-minus' | 'fa-chevron-right';
   btnText?: string;
+  disabled?: boolean;
 }
 
 const CustomParamButton: React.FC<Props> = ({

@@ -57,7 +57,7 @@ describe('Thunks', () => {
       await store.dispatch(thunks.clearTopicMessages(clusterName, topicName));
       expect(store.getActions()).toEqual([
         actions.clearMessagesTopicAction.request(),
-        actions.clearMessagesTopicAction.success(topicName),
+        actions.clearMessagesTopicAction.success(),
       ]);
     });
 
@@ -73,26 +73,6 @@ describe('Thunks', () => {
         expect(store.getActions()).toEqual([
           actions.clearMessagesTopicAction.request(),
           actions.clearMessagesTopicAction.failure({}),
-        ]);
-      }
-    });
-  });
-
-  describe('fetchTopicMessages', () => {
-    it('creates GET_TOPIC_MESSAGES__FAILURE when deleting existing messages', async () => {
-      fetchMock.getOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        404
-      );
-      try {
-        await store.dispatch(
-          thunks.fetchTopicMessages(clusterName, topicName, {})
-        );
-      } catch (error) {
-        expect(error.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.fetchTopicMessagesAction.request(),
-          actions.fetchTopicMessagesAction.failure(),
         ]);
       }
     });

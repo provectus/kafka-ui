@@ -20,6 +20,12 @@ paths:
         - KafkaConnectClient
       summary: get all connectors from Kafka Connect service
       operationId: getConnectors
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: OK

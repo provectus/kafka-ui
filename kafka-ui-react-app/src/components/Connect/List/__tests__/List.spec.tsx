@@ -31,6 +31,7 @@ describe('Connectors List', () => {
   describe('View', () => {
     const fetchConnects = jest.fn();
     const fetchConnectors = jest.fn();
+    const setConnectorSearch = jest.fn();
     const setupComponent = (
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
@@ -44,6 +45,8 @@ describe('Connectors List', () => {
             connects={[]}
             fetchConnects={fetchConnects}
             fetchConnectors={fetchConnectors}
+            search=""
+            setConnectorSearch={setConnectorSearch}
             {...props}
           />
         </ClusterContext.Provider>
