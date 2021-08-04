@@ -32,6 +32,7 @@ import com.provectus.kafka.ui.model.TopicConfig;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
@@ -160,9 +161,7 @@ public class ClusterService {
   public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
     return clustersStorage.getClusterByName(name)
         .flatMap(c ->
-            Optional.ofNullable(
-                c.getTopics().get(topicName)
-            ).map(
+            Optional.ofNullable(c.getTopics()).map(l -> l.get(topicName)).map(
                 t -> t.toBuilder().partitions(
                     kafkaService.getTopicPartitions(c, t)
                 ).build()
@@ -275,7 +274,7 @@ public class ClusterService {
         .orElse(Mono.error(new ClusterNotFoundException()));
   }
 
-  public Flux<TopicMessage> getMessages(String clusterName, String topicName,
+  public Flux<TopicMessageEvent> getMessages(String clusterName, String topicName,
                                         ConsumerPosition consumerPosition, String query,
                                         Integer limit) {
     return clustersStorage.getClusterByName(clusterName)

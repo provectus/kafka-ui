@@ -9,6 +9,10 @@ import {
   TopicMessageSchema,
 } from 'generated-sources';
 import { FailurePayload } from 'redux/interfaces';
+import {
+  topicMessagePayload,
+  topicMessagesMetaPayload,
+} from 'redux/reducers/topicMessages/__test__/fixtures';
 
 import { mockTopicsState } from './fixtures';
 
@@ -126,9 +130,8 @@ describe('Actions', () => {
     });
 
     it('creates a SUCCESS action', () => {
-      expect(actions.clearMessagesTopicAction.success('topic')).toEqual({
+      expect(actions.clearMessagesTopicAction.success()).toEqual({
         type: 'CLEAR_TOPIC_MESSAGES__SUCCESS',
-        payload: 'topic',
       });
     });
 
@@ -204,6 +207,37 @@ describe('Actions', () => {
         type: 'DELETE_CONSUMER_GROUP__FAILURE',
         payload: { alert },
       });
+    });
+  });
+
+  describe('topic messages', () => {
+    it('creates ADD_TOPIC_MESSAGE', () => {
+      expect(actions.addTopicMessage(topicMessagePayload)).toEqual({
+        type: 'ADD_TOPIC_MESSAGE',
+        payload: topicMessagePayload,
+      });
+    });
+
+    it('creates RESET_TOPIC_MESSAGES', () => {
+      expect(actions.resetTopicMessages()).toEqual({
+        type: 'RESET_TOPIC_MESSAGES',
+      });
+    });
+
+    it('creates UPDATE_TOPIC_MESSAGES_PHASE', () => {
+      expect(actions.updateTopicMessagesPhase('Polling')).toEqual({
+        type: 'UPDATE_TOPIC_MESSAGES_PHASE',
+        payload: 'Polling',
+      });
+    });
+
+    it('creates UPDATE_TOPIC_MESSAGES_META', () => {
+      expect(actions.updateTopicMessagesMeta(topicMessagesMetaPayload)).toEqual(
+        {
+          type: 'UPDATE_TOPIC_MESSAGES_META',
+          payload: topicMessagesMetaPayload,
+        }
+      );
     });
   });
 

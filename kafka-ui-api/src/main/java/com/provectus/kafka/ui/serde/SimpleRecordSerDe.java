@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.serde;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
+import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -13,10 +15,16 @@ public class SimpleRecordSerDe implements RecordSerDe {
 
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
-    return new DeserializedKeyValue(
-        msg.key() != null ? new String(msg.key().get()) : null,
-        msg.value() != null ? new String(msg.value().get()) : null
-    );
+    var builder = DeserializedKeyValue.builder();
+    if (msg.key() != null) {
+      builder.key(new String(msg.key().get()))
+          .keyFormat(MessageFormat.UNKNOWN);
+    }
+    if (msg.value() != null) {
+      builder.value(new String(msg.value().get()))
+          .valueFormat(MessageFormat.UNKNOWN);
+    }
+    return builder.build();
   }
 
   @Override

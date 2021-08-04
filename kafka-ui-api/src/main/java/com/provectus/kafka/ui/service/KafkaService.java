@@ -81,6 +81,9 @@ import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.apache.kafka.common.serialization.BytesDeserializer;
@@ -110,7 +113,10 @@ public class KafkaService {
   private int clientTimeout;
 
   public KafkaCluster getUpdatedCluster(KafkaCluster cluster, InternalTopic updatedTopic) {
-    final Map<String, InternalTopic> topics = new HashMap<>(cluster.getTopics());
+    final Map<String, InternalTopic> topics =
+        Optional.ofNullable(cluster.getTopics()).map(
+            t -> new HashMap<>(cluster.getTopics())
+        ).orElse(new HashMap<>());
     topics.put(updatedTopic.getName(), updatedTopic);
     return cluster.toBuilder().topics(topics).build();
   }
@@ -160,8 +166,8 @@ public class KafkaService {
     Throwable zookeeperException = null;
     try {
       zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster)
-              ? ServerStatus.ONLINE
-              : ServerStatus.OFFLINE;
+          ? ServerStatus.ONLINE
+          : ServerStatus.OFFLINE;
     } catch (Throwable e) {
       zookeeperException = e;
     }
@@ -338,7 +344,7 @@ public class KafkaService {
         .collect(Collectors.toList());
 
     return ClusterUtil.toMono(adminClient.describeConfigs(resources,
-                    new DescribeConfigsOptions().includeSynonyms(true)).all())
+        new DescribeConfigsOptions().includeSynonyms(true)).all())
         .map(configs ->
             configs.entrySet().stream().collect(Collectors.toMap(
                 c -> c.getKey().name(),
@@ -391,8 +397,8 @@ public class KafkaService {
                 getConsumerGroupsInternal(
                     cluster,
                     s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList()))
-                )
-            );
+            )
+    );
   }
 
   public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
@@ -425,17 +431,17 @@ public class KafkaService {
     }
 
     return consumerGroups.map(c ->
-            c.stream()
-                .map(d -> ClusterUtil.filterConsumerGroupTopic(d, topic))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(g ->
-                    g.toBuilder().endOffsets(
-                        topicPartitionsEndOffsets(cluster, g.getOffsets().keySet())
-                    ).build()
-                )
-                .collect(Collectors.toList())
-        );
+        c.stream()
+            .map(d -> ClusterUtil.filterConsumerGroupTopic(d, topic))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(g ->
+                g.toBuilder().endOffsets(
+                    topicPartitionsEndOffsets(cluster, g.getOffsets().keySet())
+                ).build()
+            )
+            .collect(Collectors.toList())
+    );
   }
 
   public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster,
@@ -736,12 +742,18 @@ public class KafkaService {
     properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
-      final ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
+      ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
           msg.getKey(),
           msg.getContent(),
           msg.getPartition()
       );
+      producerRecord = new ProducerRecord<>(
+          producerRecord.topic(),
+          producerRecord.partition(),
+          producerRecord.key(),
+          producerRecord.value(),
+          createHeaders(msg.getHeaders()));
 
       CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
       producer.send(producerRecord, (metadata, exception) -> {
@@ -753,6 +765,15 @@ public class KafkaService {
       });
       return Mono.fromFuture(cf);
     }
+  }
+
+  private Iterable<Header> createHeaders(Map<String, String> clientHeaders) {
+    if (clientHeaders == null) {
+      return null;
+    }
+    RecordHeaders headers = new RecordHeaders();
+    clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
+    return headers;
   }
 
   private Mono<InternalTopic> increaseTopicPartitions(AdminClient adminClient,
@@ -949,7 +970,7 @@ public class KafkaService {
   }
 
   public Mono<Void> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
-                                                           BrokerLogdirUpdate brokerLogDir) {
+                                       BrokerLogdirUpdate brokerLogDir) {
     return getOrCreateAdminClient(cluster)
         .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
   }

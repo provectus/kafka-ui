@@ -30,10 +30,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Service
 @Log4j2
@@ -59,7 +60,7 @@ public class KafkaConnectService {
     return getConnects(clusterName)
         .flatMapMany(Function.identity())
         .flatMap(connect -> getConnectorNames(clusterName, connect))
-        .flatMap(pair -> getConnector(clusterName, pair.getLeft(), pair.getRight()))
+        .flatMap(pair -> getConnector(clusterName, pair.getT1(), pair.getT2()))
         .flatMap(connector ->
             getConnectorConfig(clusterName, connector.getConnect(), connector.getName())
                 .map(config -> InternalConnectInfo.builder()
@@ -96,19 +97,19 @@ public class KafkaConnectService {
 
   private Predicate<FullConnectorInfo> matchesSearchTerm(final String search) {
     return (connector) -> getSearchValues(connector)
-                .anyMatch(value -> value.contains(
-                        StringUtils.defaultString(
-                                search,
-                                StringUtils.EMPTY)
-                                .toUpperCase()));
+        .anyMatch(value -> value.contains(
+            StringUtils.defaultString(
+                search,
+                StringUtils.EMPTY)
+                .toUpperCase()));
   }
 
   private Stream<String> getSearchValues(FullConnectorInfo fullConnectorInfo) {
     return Stream.of(
-                fullConnectorInfo.getName(),
-                fullConnectorInfo.getStatus().getState().getValue(),
-                fullConnectorInfo.getType().getValue())
-                .map(String::toUpperCase);
+        fullConnectorInfo.getName(),
+        fullConnectorInfo.getStatus().getState().getValue(),
+        fullConnectorInfo.getType().getValue())
+        .map(String::toUpperCase);
   }
 
   private Mono<ConnectorTopics> getConnectorTopics(String clusterName, String connectClusterName,
@@ -121,13 +122,13 @@ public class KafkaConnectService {
         );
   }
 
-  private Flux<Pair<String, String>> getConnectorNames(String clusterName, Connect connect) {
+  private Flux<Tuple2<String, String>> getConnectorNames(String clusterName, Connect connect) {
     return getConnectors(clusterName, connect.getName())
         .collectList().map(e -> e.get(0))
         // for some reason `getConnectors` method returns the response as a single string
         .map(this::parseToList)
         .flatMapMany(Flux::fromIterable)
-        .map(connector -> Pair.of(connect.getName(), connector));
+        .map(connector -> Tuples.of(connect.getName(), connector));
   }
 
   @SneakyThrows

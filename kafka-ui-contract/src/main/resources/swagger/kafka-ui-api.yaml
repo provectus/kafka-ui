@@ -503,11 +503,11 @@ paths:
         200:
           description: OK
           content:
-            application/json:
+            text/event-stream:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TopicMessage'
+                  $ref: '#/components/schemas/TopicMessageEvent'
     delete:
       tags:
         - Messages
@@ -1793,6 +1793,14 @@ components:
         - DEAD
         - EMPTY
 
+    MessageFormat:
+      type: string
+      enum:
+        - AVRO
+        - JSON
+        - PROTOBUF
+        - UNKNOWN
+
     ConsumerGroup:
       type: object
       properties:
@@ -1859,6 +1867,44 @@ components:
         - source
         - schema
 
+    TopicMessageEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - PHASE
+            - MESSAGE
+            - CONSUMING
+            - DONE
+        message:
+          $ref: "#/components/schemas/TopicMessage"
+        phase:
+          $ref: "#/components/schemas/TopicMessagePhase"
+        consuming:
+          $ref: "#/components/schemas/TopicMessageConsuming"
+
+    TopicMessagePhase:
+      type: object
+      properties:
+        name:
+          type: string
+
+    TopicMessageConsuming:
+      type: object
+      properties:
+        bytesConsumed:
+          type: integer
+          format: int64
+        elapsedMs:
+          type: integer
+          format: int64
+        isCancelled:
+          type: boolean
+        messagesConsumed:
+          type: integer
+
+
     TopicMessage:
       type: object
       properties:
@@ -1884,6 +1930,23 @@ components:
             type: string
         content:
           type: string
+        keyFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        valueFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        keySize:
+          type: integer
+          format: int64
+        valueSize:
+          type: integer
+          format: int64
+        keySchemaId:
+          type: string
+        valueSchemaId:
+          type: string
+        headersSize:
+          type: integer
+          format: int64
       required:
         - partition
         - offset

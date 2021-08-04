@@ -87,9 +87,7 @@ describe('topics reducer', () => {
     });
 
     it('delete topic messages on CLEAR_TOPIC_MESSAGES__SUCCESS', () => {
-      expect(
-        reducer(state, clearMessagesTopicAction.success(topic.name))
-      ).toEqual(state);
+      expect(reducer(state, clearMessagesTopicAction.success())).toEqual(state);
     });
   });
 
