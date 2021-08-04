@@ -12,32 +12,6 @@ export const initialState: TopicsState = {
   consumerGroups: [],
 };
 
-const transformTopicMessages = (
-  state: TopicsState,
-  messages: TopicMessage[]
-): TopicsState => ({
-  ...state,
-  messages: messages.map((mes) => {
-    const { content } = mes;
-    let parsedContent = content;
-
-    if (content) {
-      try {
-        parsedContent =
-          typeof content !== 'object' ? JSON.parse(content) : content;
-      } catch (err) {
-        // do nothing
-      }
-    }
-
-    return {
-      ...mes,
-      content: parsedContent,
-    };
-  }),
-});
-
-
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case getType(actions.fetchTopicsListAction.success):
