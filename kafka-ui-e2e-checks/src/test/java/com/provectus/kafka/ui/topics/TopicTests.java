@@ -57,6 +57,7 @@ public class TopicTests extends BaseTest {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_UPDATE);
+        Selenide.refresh();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
                 .changeCleanupPolicy(COMPACT_POLICY_VALUE)
@@ -64,6 +65,7 @@ public class TopicTests extends BaseTest {
                 .changeMaxSizeOnDisk(UPDATED_MAX_SIZE_ON_DISK)
                 .changeMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
                 .submitSettingChanges();
+
         Selenide.refresh();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
@@ -72,7 +74,6 @@ public class TopicTests extends BaseTest {
                 .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
                 .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
                 .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
-        Selenide.refresh();
         Selenide.refresh();
     }
 
