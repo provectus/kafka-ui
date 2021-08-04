@@ -239,6 +239,7 @@ describe('Actions', () => {
         }
       );
     });
+  });
 
   describe('sending messages', () => {
     describe('fetchTopicMessageSchemaAction', () => {
