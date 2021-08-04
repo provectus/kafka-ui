@@ -1517,6 +1517,7 @@ components:
               - SCHEMA_REGISTRY
               - KAFKA_CONNECT
               - KSQL_DB
+              - TOPIC_DELETION
       required:
         - id
         - name

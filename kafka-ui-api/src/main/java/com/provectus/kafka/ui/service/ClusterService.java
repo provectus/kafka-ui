@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.util.Constants.DELETE_TOPIC_ENABLE;
+
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
@@ -64,6 +66,8 @@ public class ClusterService {
   private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
   private final KafkaService kafkaService;
+  private final AdminClientService adminClientService;
+  private final BrokerService brokerService;
   private final ConsumingService consumingService;
   private final DeserializationService deserializationService;
   private final DescribeLogDirsMapper describeLogDirsMapper;
@@ -213,22 +217,15 @@ public class ClusterService {
   }
 
   public Flux<Broker> getBrokers(String clusterName) {
-    return kafkaService
-        .getOrCreateAdminClient(clustersStorage.getClusterByName(clusterName).orElseThrow())
-        .flatMap(client -> ClusterUtil.toMono(client.getAdminClient().describeCluster().nodes())
-            .map(n -> n.stream().map(node -> {
-              Broker broker = new Broker();
-              broker.setId(node.id());
-              broker.setHost(node.host());
-              return broker;
-            }).collect(Collectors.toList())))
-        .flatMapMany(Flux::fromIterable);
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+        .flatMapMany(brokerService::getBrokers);
   }
 
   public Flux<BrokerConfig> getBrokerConfig(String clusterName, Integer brokerId) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
-        .flatMapMany(c -> kafkaService.getBrokersConfig(c, brokerId))
+        .flatMapMany(c -> brokerService.getBrokersConfig(c, brokerId))
         .map(clusterMapper::toBrokerConfig);
   }
 
@@ -248,9 +245,9 @@ public class ClusterService {
         .orElseThrow(ClusterNotFoundException::new);
     var topic = getTopicDetails(clusterName, topicName)
         .orElseThrow(TopicNotFoundException::new);
-    return kafkaService.getBrokerConfigMap(cluster, cluster.getBrokers().get(0))
+    return brokerService.getBrokerConfigMap(cluster, cluster.getBrokers().get(0))
         .flatMap(configMap -> {
-          if (configMap.get("delete.topic.enable").getValue().equals(Boolean.toString(true))) {
+          if (Boolean.parseBoolean(configMap.get(DELETE_TOPIC_ENABLE).getValue())) {
             return kafkaService.deleteTopic(cluster, topic.getName())
                 .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
           } else {
@@ -319,7 +316,7 @@ public class ClusterService {
   public Mono<Void> deleteConsumerGroupById(String clusterName,
                                             String groupId) {
     return clustersStorage.getClusterByName(clusterName)
-        .map(cluster -> kafkaService.getOrCreateAdminClient(cluster)
+        .map(cluster -> adminClientService.getOrCreateAdminClient(cluster)
             .map(ExtendedAdminClient::getAdminClient)
             .map(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)))
             .map(DeleteConsumerGroupsResult::all)
