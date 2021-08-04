@@ -23,11 +23,11 @@ exports[`CustomParamSelect matches snapshot 1`] = `
     className="select is-block"
   >
     <select
-      defaultValue="my_custom_param"
       disabled={true}
       name="1[name]"
       onBlur={[Function]}
       onChange={[Function]}
+      value="my_custom_param"
     >
       <option
         value=""

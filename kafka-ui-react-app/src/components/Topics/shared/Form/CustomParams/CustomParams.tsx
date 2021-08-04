@@ -67,7 +67,17 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
   };
 
   const onFieldNameChange = (index: string, name: string) => {
-    formCustomParams.byIndex[index].name = name;
+    remove(existingFields, (el) => el === formCustomParams.byIndex[index].name);
+    setFormCustomParams({
+      ...formCustomParams,
+      byIndex: {
+        ...formCustomParams.byIndex,
+        [index]: {
+          ...formCustomParams.byIndex[index],
+          name,
+        },
+      },
+    });
     existingFields.push(name);
   };
 

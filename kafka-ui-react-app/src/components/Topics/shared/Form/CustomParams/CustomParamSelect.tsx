@@ -25,6 +25,7 @@ const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
     register,
     getValues,
     trigger,
+    setValue,
     formState: { errors },
   } = useFormContext();
   const optInputName = `${index}[name]`;
@@ -46,6 +47,7 @@ const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
 
   const onChange =
     (inputName: string) => (event: React.ChangeEvent<HTMLSelectElement>) => {
+      setValue(inputName, event.target.value);
       trigger(inputName);
       onNameChange(index, event.target.value);
     };
@@ -61,7 +63,7 @@ const CustomParamSelect: React.FC<CustomParamSelectProps> = ({
           })}
           onChange={onChange(optInputName)}
           disabled={isDisabled}
-          defaultValue={name}
+          value={name}
         >
           <option value="">Select</option>
           {Object.keys(TOPIC_CUSTOM_PARAMS).map((opt) => (

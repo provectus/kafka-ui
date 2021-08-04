@@ -41,6 +41,7 @@ const CustomParamValue: React.FC<Props> = ({
         placeholder="Value"
         {...register(valInputName, {
           required: 'Value is required.',
+          shouldUnregister: true,
         })}
         defaultValue={defaultValue}
         autoComplete="off"
