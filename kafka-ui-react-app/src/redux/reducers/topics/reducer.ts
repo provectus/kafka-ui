@@ -1,6 +1,7 @@
 import { Action, TopicsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
+import * as _ from 'lodash';
 
 export const initialState: TopicsState = {
   byName: {},
@@ -10,6 +11,32 @@ export const initialState: TopicsState = {
   orderBy: null,
   consumerGroups: [],
 };
+
+const transformTopicMessages = (
+  state: TopicsState,
+  messages: TopicMessage[]
+): TopicsState => ({
+  ...state,
+  messages: messages.map((mes) => {
+    const { content } = mes;
+    let parsedContent = content;
+
+    if (content) {
+      try {
+        parsedContent =
+          typeof content !== 'object' ? JSON.parse(content) : content;
+      } catch (err) {
+        // do nothing
+      }
+    }
+
+    return {
+      ...mes,
+      content: parsedContent,
+    };
+  }),
+});
+
 
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
@@ -39,6 +66,15 @@ const reducer = (state = initialState, action: Action): TopicsState => {
         ...state,
         orderBy: action.payload,
       };
+    }
+    case getType(actions.fetchTopicMessageSchemaAction.success): {
+      const { topicName, schema } = action.payload;
+      const newState = _.cloneDeep(state);
+      newState.byName[topicName] = {
+        ...newState.byName[topicName],
+        messageSchema: schema,
+      };
+      return newState;
     }
     default:
       return state;

@@ -7,8 +7,9 @@ import {
   TopicCreation,
   TopicUpdate,
   TopicConfig,
-  TopicColumnsToSort,
   ConsumerGroupsApi,
+  CreateTopicMessage,
+  GetTopicsRequest,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
@@ -30,17 +31,8 @@ export const topicConsumerGroupsApiClient = new ConsumerGroupsApi(
   apiClientConf
 );
 
-export interface FetchTopicsListParams {
-  clusterName: ClusterName;
-  page?: number;
-  perPage?: number;
-  showInternal?: boolean;
-  search?: string;
-  orderBy?: TopicColumnsToSort;
-}
-
 export const fetchTopicsList =
-  (params: FetchTopicsListParams): PromiseThunkResult =>
+  (params: GetTopicsRequest): PromiseThunkResult =>
   async (dispatch, getState) => {
     dispatch(actions.fetchTopicsListAction.request());
     try {
@@ -320,6 +312,59 @@ export const fetchTopicConsumerGroups =
     }
   };
 
+export const fetchTopicMessageSchema =
+  (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.fetchTopicMessageSchemaAction.request());
+    try {
+      const schema = await messagesApiClient.getTopicSchema({
+        clusterName,
+        topicName,
+      });
+      dispatch(
+        actions.fetchTopicMessageSchemaAction.success({ topicName, schema })
+      );
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['topic', topicName].join('-'),
+        title: `Topic Schema ${topicName}`,
+        response,
+      };
+      dispatch(actions.fetchTopicMessageSchemaAction.failure({ alert }));
+    }
+  };
+
+export const sendTopicMessage =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    payload: CreateTopicMessage
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.sendTopicMessageAction.request());
+    try {
+      await messagesApiClient.sendTopicMessages({
+        clusterName,
+        topicName,
+        createTopicMessage: {
+          key: payload.key,
+          content: payload.content,
+          headers: payload.headers,
+          partition: payload.partition,
+        },
+      });
+      dispatch(actions.sendTopicMessageAction.success());
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['topic', topicName].join('-'),
+        title: `Topic Message ${topicName}`,
+        response,
+      };
+      dispatch(actions.sendTopicMessageAction.failure({ alert }));
+    }
+  };
 export const updateTopicPartitionsCount =
   (
     clusterName: ClusterName,

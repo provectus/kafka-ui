@@ -3,12 +3,15 @@ package com.provectus.kafka.ui;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.http.MediaType.TEXT_EVENT_STREAM;
 
+import com.provectus.kafka.ui.api.model.TopicConfig;
+import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Stream;
@@ -141,5 +144,80 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .exchange()
         .expectStatus()
         .isNotFound();
+
+    webTestClient.get()
+        .uri("/api/clusters/{clusterName}/topics/{topicName}/config", LOCAL, topicName)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
+  }
+
+  @Test
+  public void shouldReturnConfigsForBroker() {
+    var topicName = UUID.randomUUID().toString();
+
+    List<BrokerConfig> configs = webTestClient.get()
+        .uri("/api/clusters/{clusterName}/brokers/{id}/configs",
+            LOCAL,
+            1)
+        .exchange()
+        .expectStatus()
+        .isOk()
+        .expectBodyList(BrokerConfig.class)
+        .returnResult()
+        .getResponseBody();
+
+    Assertions.assertNotNull(configs);
+    assert !configs.isEmpty();
+    Assertions.assertNotNull(configs.get(0).getName());
+    Assertions.assertNotNull(configs.get(0).getIsReadOnly());
+    Assertions.assertNotNull(configs.get(0).getIsSensitive());
+    Assertions.assertNotNull(configs.get(0).getSource());
+    Assertions.assertNotNull(configs.get(0).getSynonyms());
+  }
+
+  @Test
+  public void shouldReturn404ForNonExistingBroker() {
+    webTestClient.get()
+        .uri("/api/clusters/{clusterName}/brokers/{id}/configs",
+            LOCAL,
+            0)
+        .exchange()
+        .expectStatus()
+        .isNotFound();
+  }
+
+  @Test
+  public void shouldRetrieveTopicConfig() {
+    var topicName = UUID.randomUUID().toString();
+
+    webTestClient.post()
+            .uri("/api/clusters/{clusterName}/topics", LOCAL)
+            .bodyValue(new TopicCreation()
+                    .name(topicName)
+                    .partitions(1)
+                    .replicationFactor(1)
+                    .configs(Map.of())
+            )
+            .exchange()
+            .expectStatus()
+            .isOk();
+
+    List<TopicConfig> configs = webTestClient.get()
+            .uri("/api/clusters/{clusterName}/topics/{topicName}/config", LOCAL, topicName)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBodyList(TopicConfig.class)
+            .returnResult()
+            .getResponseBody();
+
+    Assertions.assertNotNull(configs);
+    assert !configs.isEmpty();
+    Assertions.assertNotNull(configs.get(0).getName());
+    Assertions.assertNotNull(configs.get(0).getIsReadOnly());
+    Assertions.assertNotNull(configs.get(0).getIsSensitive());
+    Assertions.assertNotNull(configs.get(0).getSource());
+    Assertions.assertNotNull(configs.get(0).getSynonyms());
   }
 }
