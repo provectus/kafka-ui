@@ -1,0 +1,27 @@
+---
+version: '3.8'
+services:
+  traefik:
+    restart: always
+    image: traefik:v2.4
+    container_name: traefik
+    command:
+      - --api.insecure=true
+      - --providers.file.directory=/etc/traefik
+      - --providers.file.watch=true
+      - --entrypoints.web.address=:80
+      - --log.level=debug
+    ports:
+      - 80:80
+    volumes:
+      - ./traefik:/etc/traefik
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8082:8080
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      SERVER_SERVLET_CONTEXT_PATH: /kafka-ui

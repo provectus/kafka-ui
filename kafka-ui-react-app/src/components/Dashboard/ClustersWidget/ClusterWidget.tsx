@@ -25,15 +25,13 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
     <div className="box">
       <div className="title is-6 has-text-overflow-ellipsis">
         <div
-          className={`tag has-margin-right ${
+          className={`tag mr-2 ${
             status === ServerStatus.ONLINE ? 'is-success' : 'is-danger'
           }`}
         >
           {status}
         </div>
-        {readOnly && (
-          <div className="tag has-margin-right is-info is-light">readonly</div>
-        )}
+        {readOnly && <div className="tag mr-2 is-info is-light">readonly</div>}
         {name}
       </div>
 

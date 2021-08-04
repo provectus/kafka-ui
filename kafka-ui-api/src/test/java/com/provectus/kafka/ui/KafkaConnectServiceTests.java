@@ -71,6 +71,73 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   }
 
   @Test
+  public void shouldListAllConnectors() {
+    webTestClient.get()
+            .uri("/api/clusters/{clusterName}/connectors", LOCAL)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldFilterByNameConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    connectorName.split("-")[1])
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldFilterByStatusConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    "running")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldFilterByTypeConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    "sink")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldNotFilterConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    "something-else")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .doesNotExist();
+  }
+
+  @Test
   public void shouldListConnectors() {
     webTestClient.get()
         .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)

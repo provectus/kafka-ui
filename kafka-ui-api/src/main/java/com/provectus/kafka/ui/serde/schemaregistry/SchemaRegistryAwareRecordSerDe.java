@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
@@ -114,14 +115,28 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      return new DeserializedKeyValue(
-          msg.key() != null
-              ? getMessageFormatter(msg, true).format(msg.topic(), msg.key().get())
-              : null,
-          msg.value() != null
-              ? getMessageFormatter(msg, false).format(msg.topic(), msg.value().get())
-              : null
-      );
+      var builder = DeserializedKeyValue.builder();
+      if (msg.key() != null) {
+        MessageFormatter messageFormatter = getMessageFormatter(msg, true);
+        builder.key(messageFormatter.format(msg.topic(), msg.key().get()));
+        builder.keyFormat(messageFormatter.getFormat());
+        builder.keySchemaId(
+            getSchemaId(msg.key(), messageFormatter.getFormat())
+                .map(String::valueOf)
+                .orElse(null)
+        );
+      }
+      if (msg.value() != null) {
+        MessageFormatter messageFormatter = getMessageFormatter(msg, false);
+        builder.value(messageFormatter.format(msg.topic(), msg.value().get()));
+        builder.valueFormat(messageFormatter.getFormat());
+        builder.valueSchemaId(
+            getSchemaId(msg.value(), messageFormatter.getFormat())
+                .map(String::valueOf)
+                .orElse(null)
+        );
+      }
+      return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
@@ -291,6 +306,16 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       }
     }
     return result;
+  }
+
+  private Optional<Integer> getSchemaId(Bytes value, MessageFormat format) {
+    if (format != MessageFormat.AVRO
+        && format != MessageFormat.PROTOBUF
+        && format != MessageFormat.JSON) {
+      return Optional.empty();
+    }
+    ByteBuffer buffer = ByteBuffer.wrap(value.get());
+    return buffer.get() == 0 ? Optional.of(buffer.getInt()) : Optional.empty();
   }
 
   @SneakyThrows
