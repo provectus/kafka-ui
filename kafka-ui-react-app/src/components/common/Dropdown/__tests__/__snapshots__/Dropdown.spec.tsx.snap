@@ -15,7 +15,7 @@ exports[`Dropdown matches snapshot 1`] = `
       <button
         aria-controls="dropdown-menu"
         aria-haspopup="true"
-        className="button is-small"
+        className="button is-small is-link"
         onClick={[Function]}
         type="button"
       >

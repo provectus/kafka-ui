@@ -20,7 +20,14 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: { name, internal, partitions, segmentSize },
+  topic: {
+    name,
+    internal,
+    partitions,
+    segmentSize,
+    replicationFactor,
+    cleanUpPolicy,
+  },
   deleteTopic,
   clusterName,
   clearTopicMessages,
@@ -75,6 +82,7 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
+      <td>{replicationFactor}</td>
       <td>{numberOfMessages}</td>
       <td>
         <BytesFormatted value={segmentSize} />
@@ -83,6 +91,9 @@ const ListItem: React.FC<ListItemProps> = ({
         <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
           {internal ? 'Internal' : 'External'}
         </div>
+      </td>
+      <td>
+        <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
       </td>
       <td className="topic-action-block">
         {!internal && !isReadOnly ? (

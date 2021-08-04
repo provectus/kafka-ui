@@ -1,19 +1,27 @@
 package com.provectus.kafka.ui.pages;
 
-import com.codeborne.selenide.Selenide;
-import com.provectus.kafka.ui.base.TestConfiguration;
-
 public class Pages {
 
     public static Pages INSTANCE = new Pages();
 
     public MainPage mainPage = new MainPage();
+    public TopicsList topicsList = new TopicsList();
+    public TopicView topicView = new TopicView();
 
-    private Pages goTo(String path) {
-        Selenide.open(TestConfiguration.BASE_URL+path);
-        return this;
+    public MainPage open() {
+       return openMainPage();
     }
-    public Pages open() {
-       return goTo("");
+
+    public MainPage openMainPage() {
+        return mainPage.goTo();
     }
+
+    public TopicsList openTopicsList(String clusterName) {
+        return topicsList.goTo(clusterName);
+    }
+
+    public TopicView openTopicView(String clusterName, String topicName) {
+        return topicView.goTo(clusterName, topicName);
+    }
+
 }

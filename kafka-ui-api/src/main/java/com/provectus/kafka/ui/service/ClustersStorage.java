@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -34,6 +35,7 @@ public class ClustersStorage {
       kafkaClusters.put(
           clusterProperties.getName(),
           cluster.toBuilder()
+              .topics(new HashMap<>())
               .features(Feature.getEnabledFeatures(cluster))
               .build()
       );

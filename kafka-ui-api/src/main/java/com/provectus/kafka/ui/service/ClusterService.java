@@ -6,8 +6,12 @@ import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
 import com.provectus.kafka.ui.model.Broker;
+import com.provectus.kafka.ui.model.BrokerConfig;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.BrokerMetrics;
+import com.provectus.kafka.ui.model.BrokersLogdirs;
 import com.provectus.kafka.ui.model.Cluster;
 import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
@@ -28,6 +32,7 @@ import com.provectus.kafka.ui.model.TopicConfig;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.model.TopicUpdate;
 import com.provectus.kafka.ui.model.TopicsResponse;
@@ -62,6 +67,7 @@ public class ClusterService {
   private final KafkaService kafkaService;
   private final ConsumingService consumingService;
   private final DeserializationService deserializationService;
+  private final DescribeLogDirsMapper describeLogDirsMapper;
 
   public List<Cluster> getClusters() {
     return clustersStorage.getKafkaClusters()
@@ -155,9 +161,7 @@ public class ClusterService {
   public Optional<TopicDetails> getTopicDetails(String name, String topicName) {
     return clustersStorage.getClusterByName(name)
         .flatMap(c ->
-            Optional.ofNullable(
-                c.getTopics().get(topicName)
-            ).map(
+            Optional.ofNullable(c.getTopics()).map(l -> l.get(topicName)).map(
                 t -> t.toBuilder().partitions(
                     kafkaService.getTopicPartitions(c, t)
                 ).build()
@@ -220,6 +224,13 @@ public class ClusterService {
         .flatMapMany(Flux::fromIterable);
   }
 
+  public Mono<List<BrokerConfig>> getBrokerConfig(String clusterName, Integer brokerId) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+        .flatMap(c -> kafkaService.getBrokerConfigs(c, brokerId))
+        .map(c -> c.stream().map(clusterMapper::toBrokerConfig).collect(Collectors.toList()));
+  }
+
   @SneakyThrows
   public Mono<Topic> updateTopic(String clusterName, String topicName,
                                  Mono<TopicUpdate> topicUpdate) {
@@ -263,7 +274,7 @@ public class ClusterService {
         .orElse(Mono.error(new ClusterNotFoundException()));
   }
 
-  public Flux<TopicMessage> getMessages(String clusterName, String topicName,
+  public Flux<TopicMessageEvent> getMessages(String clusterName, String topicName,
                                         ConsumerPosition consumerPosition, String query,
                                         Integer limit) {
     return clustersStorage.getClusterByName(clusterName)
@@ -360,5 +371,26 @@ public class ClusterService {
                 .totalReplicationFactor(t.getReplicationFactor())))
         .orElse(Mono.error(new ClusterNotFoundException(
             String.format("No cluster for name '%s'", clusterName))));
+  }
+
+  public Flux<BrokersLogdirs> getAllBrokersLogdirs(String clusterName, List<Integer> brokers) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .flatMap(c -> kafkaService.getClusterLogDirs(c, brokers))
+        .map(describeLogDirsMapper::toBrokerLogDirsList)
+        .flatMapMany(Flux::fromIterable);
+  }
+
+  public Mono<Void> updateBrokerLogDir(
+      String clusterName, Integer id, BrokerLogdirUpdate brokerLogDir) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .flatMap(c -> kafkaService.updateBrokerLogDir(c, id, brokerLogDir));
+  }
+
+  public Mono<Void> updateBrokerConfigByName(String clusterName,
+                                             Integer id,
+                                             String name,
+                                             String value) {
+    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
+        .flatMap(c -> kafkaService.updateBrokerConfigByName(c, id, name, value));
   }
 }

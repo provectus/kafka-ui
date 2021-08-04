@@ -40,8 +40,7 @@ describe('Details', () => {
         topicName={mockTopicName}
       />
     );
-
-    expect(component.exists('.table')).toBeFalsy();
+    expect(component.find('td').text()).toEqual('No active consumer groups');
   });
 
   it('render ConsumerGroups in Topic', () => {
@@ -54,7 +53,6 @@ describe('Details', () => {
         topicName={mockTopicName}
       />
     );
-
-    expect(component.exists('.table')).toBeTruthy();
+    expect(component.exists('tbody')).toBeTruthy();
   });
 });

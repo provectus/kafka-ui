@@ -30,6 +30,7 @@ const Overview: React.FC<Props> = ({
   segmentCount,
   clusterName,
   topicName,
+  cleanUpPolicy,
   clearTopicMessages,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
@@ -59,6 +60,9 @@ const Overview: React.FC<Props> = ({
           <BytesFormatted value={segmentSize} />
         </Indicator>
         <Indicator label="Segment count">{segmentCount}</Indicator>
+        <Indicator label="Clean Up Policy">
+          <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
+        </Indicator>
       </MetricsWrapper>
       <div className="box">
         <table className="table is-striped is-fullwidth">
@@ -102,6 +106,11 @@ const Overview: React.FC<Props> = ({
                 </td>
               </tr>
             ))}
+            {partitions?.length === 0 && (
+              <tr>
+                <td colSpan={10}>No Partitions found</td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

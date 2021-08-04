@@ -13,7 +13,6 @@ import {
   ClusterMetrics,
   Broker,
   BrokerMetrics,
-  TopicMessage,
   ConsumerGroup,
   ConsumerGroupDetails,
   SchemaSubject,
@@ -23,6 +22,9 @@ import {
   FullConnectorInfo,
   Connect,
   Task,
+  TopicMessage,
+  TopicMessageConsuming,
+  TopicMessageSchema,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -61,17 +63,11 @@ export const fetchTopicsListAction = createAsyncAction(
   'GET_TOPICS__FAILURE'
 )<undefined, TopicsState, undefined>();
 
-export const fetchTopicMessagesAction = createAsyncAction(
-  'GET_TOPIC_MESSAGES__REQUEST',
-  'GET_TOPIC_MESSAGES__SUCCESS',
-  'GET_TOPIC_MESSAGES__FAILURE'
-)<undefined, TopicMessage[], undefined>();
-
 export const clearMessagesTopicAction = createAsyncAction(
   'CLEAR_TOPIC_MESSAGES__REQUEST',
   'CLEAR_TOPIC_MESSAGES__SUCCESS',
   'CLEAR_TOPIC_MESSAGES__FAILURE'
-)<undefined, TopicName, { alert?: FailurePayload }>();
+)<undefined, undefined, { alert?: FailurePayload }>();
 
 export const fetchTopicDetailsAction = createAsyncAction(
   'GET_TOPIC_DETAILS__REQUEST',
@@ -253,3 +249,48 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__SUCCESS',
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
+
+export const addTopicMessage =
+  createAction('ADD_TOPIC_MESSAGE')<TopicMessage>();
+
+export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
+
+export const setTopicMessagesFetchingStatus = createAction(
+  'SET_TOPIC_MESSAGES_FETCHING_STATUS'
+)<boolean>();
+
+export const updateTopicMessagesPhase = createAction(
+  'UPDATE_TOPIC_MESSAGES_PHASE'
+)<string>();
+
+export const updateTopicMessagesMeta = createAction(
+  'UPDATE_TOPIC_MESSAGES_META'
+)<TopicMessageConsuming>();
+
+export const fetchTopicMessageSchemaAction = createAsyncAction(
+  'GET_TOPIC_SCHEMA__REQUEST',
+  'GET_TOPIC_SCHEMA__SUCCESS',
+  'GET_TOPIC_SCHEMA__FAILURE'
+)<
+  undefined,
+  { topicName: string; schema: TopicMessageSchema },
+  { alert?: FailurePayload }
+>();
+
+export const sendTopicMessageAction = createAsyncAction(
+  'SEND_TOPIC_MESSAGE__REQUEST',
+  'SEND_TOPIC_MESSAGE__SUCCESS',
+  'SEND_TOPIC_MESSAGE__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const updateTopicPartitionsCountAction = createAsyncAction(
+  'UPDATE_PARTITIONS__REQUEST',
+  'UPDATE_PARTITIONS__SUCCESS',
+  'UPDATE_PARTITIONS__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const updateTopicReplicationFactorAction = createAsyncAction(
+  'UPDATE_REPLICATION_FACTOR__REQUEST',
+  'UPDATE_REPLICATION_FACTOR__SUCCESS',
+  'UPDATE_REPLICATION_FACTOR__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();

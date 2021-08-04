@@ -5,6 +5,9 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
+import com.provectus.kafka.ui.serde.schemaregistry.MessageFormatter;
+import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -44,10 +47,16 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      return new DeserializedKeyValue(
-          msg.key() != null ? new String(msg.key().get()) : null,
-          msg.value() != null ? parse(msg.value().get()) : null
-      );
+      var builder = DeserializedKeyValue.builder();
+      if (msg.key() != null) {
+        builder.key(new String(msg.key().get()));
+        builder.keyFormat(MessageFormat.UNKNOWN);
+      }
+      if (msg.value() != null) {
+        builder.value(parse(msg.value().get()));
+        builder.valueFormat(MessageFormat.PROTOBUF);
+      }
+      return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }

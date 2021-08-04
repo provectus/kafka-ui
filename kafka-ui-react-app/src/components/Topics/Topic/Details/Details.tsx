@@ -9,14 +9,15 @@ import {
   clusterTopicsPath,
   clusterTopicConsumerGroupsPath,
   clusterTopicEditPath,
+  clusterTopicSendMessagePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
-import MessagesContainer from './Messages/MessagesContainer';
 import SettingsContainer from './Settings/SettingsContainer';
+import Messages from './Messages/Messages';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -103,6 +104,13 @@ const Details: React.FC<Props> = ({
                 </button>
 
                 <Link
+                  to={clusterTopicSendMessagePath(clusterName, topicName)}
+                  className="button"
+                >
+                  Produce message
+                </Link>
+
+                <Link
                   to={clusterTopicEditPath(clusterName, topicName)}
                   className="button"
                 >
@@ -126,7 +134,7 @@ const Details: React.FC<Props> = ({
         <Route
           exact
           path="/ui/clusters/:clusterName/topics/:topicName/messages"
-          component={MessagesContainer}
+          component={Messages}
         />
         <Route
           exact

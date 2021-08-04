@@ -1,0 +1,531 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DangerZone calls updateTopicPartitionsCount 1`] = `
+<body>
+  <div>
+    <div
+      class="box"
+    >
+      <h4
+        class="title is-5 has-text-danger mb-5"
+      >
+        Danger Zone
+      </h4>
+      <div
+        class="is-flex is-flex-direction-column"
+      >
+        <form
+          class="columns mb-0"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="partitions"
+            >
+              Number of partitions *
+            </label>
+            <input
+              class="input"
+              id="partitions"
+              name="partitions"
+              placeholder="Number of partitions"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="partitionsSubmit"
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0 mb-4"
+        />
+        <form
+          class="columns"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="replicationFactor"
+            >
+              Replication Factor *
+            </label>
+            <input
+              class="input"
+              id="replicationFactor"
+              name="replicationFactor"
+              placeholder="Replication Factor"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="replicationFactorSubmit"
+              disabled=""
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`DangerZone calls updateTopicPartitionsCount 2`] = `
+<body>
+  <div>
+    <div
+      class="box"
+    >
+      <h4
+        class="title is-5 has-text-danger mb-5"
+      >
+        Danger Zone
+      </h4>
+      <div
+        class="is-flex is-flex-direction-column"
+      >
+        <form
+          class="columns mb-0"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="partitions"
+            >
+              Number of partitions *
+            </label>
+            <input
+              class="input"
+              id="partitions"
+              name="partitions"
+              placeholder="Number of partitions"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="partitionsSubmit"
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0 mb-4"
+        />
+        <div
+          class="modal is-active"
+        >
+          <div
+            aria-hidden="true"
+            class="modal-background"
+          />
+          <div
+            class="modal-card"
+          >
+            <header
+              class="modal-card-head"
+            >
+              <p
+                class="modal-card-title"
+              >
+                Confirm the action
+              </p>
+              <button
+                aria-label="close"
+                class="delete"
+                type="button"
+              />
+            </header>
+            <section
+              class="modal-card-body"
+            >
+              Are you sure you want to increase the number of partitions? Do it only if you 100% know what you are doing!
+            </section>
+            <footer
+              class="modal-card-foot is-justify-content-flex-end"
+            >
+              <button
+                class="button is-danger"
+                type="button"
+              >
+                Confirm
+              </button>
+              <button
+                class="button"
+                type="button"
+              >
+                Cancel
+              </button>
+            </footer>
+          </div>
+        </div>
+        <form
+          class="columns"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="replicationFactor"
+            >
+              Replication Factor *
+            </label>
+            <input
+              class="input"
+              id="replicationFactor"
+              name="replicationFactor"
+              placeholder="Replication Factor"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="replicationFactorSubmit"
+              disabled=""
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`DangerZone calls updateTopicReplicationFactor 1`] = `
+<body>
+  <div>
+    <div
+      class="box"
+    >
+      <h4
+        class="title is-5 has-text-danger mb-5"
+      >
+        Danger Zone
+      </h4>
+      <div
+        class="is-flex is-flex-direction-column"
+      >
+        <form
+          class="columns mb-0"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="partitions"
+            >
+              Number of partitions *
+            </label>
+            <input
+              class="input"
+              id="partitions"
+              name="partitions"
+              placeholder="Number of partitions"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="partitionsSubmit"
+              disabled=""
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0 mb-4"
+        />
+        <form
+          class="columns"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="replicationFactor"
+            >
+              Replication Factor *
+            </label>
+            <input
+              class="input"
+              id="replicationFactor"
+              name="replicationFactor"
+              placeholder="Replication Factor"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="replicationFactorSubmit"
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`DangerZone calls updateTopicReplicationFactor 2`] = `
+<body>
+  <div>
+    <div
+      class="box"
+    >
+      <h4
+        class="title is-5 has-text-danger mb-5"
+      >
+        Danger Zone
+      </h4>
+      <div
+        class="is-flex is-flex-direction-column"
+      >
+        <form
+          class="columns mb-0"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="partitions"
+            >
+              Number of partitions *
+            </label>
+            <input
+              class="input"
+              id="partitions"
+              name="partitions"
+              placeholder="Number of partitions"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="partitionsSubmit"
+              disabled=""
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0 mb-4"
+        />
+        <form
+          class="columns"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="replicationFactor"
+            >
+              Replication Factor *
+            </label>
+            <input
+              class="input"
+              id="replicationFactor"
+              name="replicationFactor"
+              placeholder="Replication Factor"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="replicationFactorSubmit"
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0"
+        />
+        <div
+          class="modal is-active"
+        >
+          <div
+            aria-hidden="true"
+            class="modal-background"
+          />
+          <div
+            class="modal-card"
+          >
+            <header
+              class="modal-card-head"
+            >
+              <p
+                class="modal-card-title"
+              >
+                Confirm the action
+              </p>
+              <button
+                aria-label="close"
+                class="delete"
+                type="button"
+              />
+            </header>
+            <section
+              class="modal-card-body"
+            >
+              Are you sure you want to update the replication factor?
+            </section>
+            <footer
+              class="modal-card-foot is-justify-content-flex-end"
+            >
+              <button
+                class="button is-danger"
+                type="button"
+              >
+                Confirm
+              </button>
+              <button
+                class="button"
+                type="button"
+              >
+                Cancel
+              </button>
+            </footer>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`DangerZone is rendered properly 1`] = `
+<body>
+  <div>
+    <div
+      class="box"
+    >
+      <h4
+        class="title is-5 has-text-danger mb-5"
+      >
+        Danger Zone
+      </h4>
+      <div
+        class="is-flex is-flex-direction-column"
+      >
+        <form
+          class="columns mb-0"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="partitions"
+            >
+              Number of partitions *
+            </label>
+            <input
+              class="input"
+              id="partitions"
+              name="partitions"
+              placeholder="Number of partitions"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="partitionsSubmit"
+              disabled=""
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0 mb-4"
+        />
+        <form
+          class="columns"
+        >
+          <div
+            class="column is-three-quarters"
+          >
+            <label
+              class="label"
+              for="replicationFactor"
+            >
+              Replication Factor *
+            </label>
+            <input
+              class="input"
+              id="replicationFactor"
+              name="replicationFactor"
+              placeholder="Replication Factor"
+              type="number"
+            />
+          </div>
+          <div
+            class="column is-flex is-align-items-flex-end"
+          >
+            <input
+              class="button is-danger"
+              data-testid="replicationFactorSubmit"
+              disabled=""
+              type="submit"
+            />
+          </div>
+        </form>
+        <p
+          class="help is-danger mt-0"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;

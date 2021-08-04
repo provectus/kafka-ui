@@ -12,6 +12,7 @@ export const initialState: ConnectState = {
     tasks: [],
     config: null,
   },
+  search: '',
 };
 
 const reducer = (state = initialState, action: Action): ConnectState => {
