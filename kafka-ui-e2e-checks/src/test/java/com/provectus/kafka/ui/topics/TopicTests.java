@@ -44,7 +44,7 @@ public class TopicTests extends BaseTest {
             pages.open()
                     .isOnPage()
                     .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
-                    .topicIsVisible(NEW_TOPIC);
+                    .topicIsVisible(TOPIC_TO_UPDATE);
         } finally {
             helpers.apiHelper.deleteTopic(SECOND_LOCAL, NEW_TOPIC);
         }
@@ -67,11 +67,11 @@ public class TopicTests extends BaseTest {
                 .submitSettingChanges();
 
         Selenide.refresh();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
+        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE)
                 .openEditSettings()
         // Assertions
                 .cleanupPolicyIs(COMPACT_POLICY_VALUE)
-                .timeToRetainIs(UPDATED_TIME_TO_RETAIN_VALUE)
+                .timeToRetainIs("543424334")
                 .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
                 .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
     }
