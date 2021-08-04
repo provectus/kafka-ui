@@ -73,6 +73,7 @@ public class TopicTests extends BaseTest {
                 .maxSizeOnDiskIs(UPDATED_MAX_SIZE_ON_DISK)
                 .maxMessageBytesIs(UPDATED_MAX_MESSAGE_BYTES);
         Selenide.refresh();
+        Selenide.refresh();
     }
 
     @SneakyThrows
