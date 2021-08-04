@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{steps.build.outputs.version}}
     steps:
       - name: Cache local Maven repository
         uses: actions/cache@v2
