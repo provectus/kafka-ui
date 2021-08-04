@@ -1,5 +1,5 @@
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
-import { filterOptions } from 'components/Topics/Topic/Details/Messages/utils';
+import { filterOptions } from 'components/Topics/Topic/Details/Messages/Filters/utils';
 
 const options: Option[] = [
   {

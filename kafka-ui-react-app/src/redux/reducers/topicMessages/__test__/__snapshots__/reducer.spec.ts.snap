@@ -2,6 +2,7 @@
 
 exports[`TopicMessages reducer Adds new message 1`] = `
 Object {
+  "isFetching": false,
   "messages": Array [
     Object {
       "content": "{\\"host\\":\\"schemaregistry1\\",\\"port\\":8085,\\"master_eligibility\\":true,\\"scheme\\":\\"http\\",\\"version\\":1}",

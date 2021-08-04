@@ -18,3 +18,8 @@ export const getTopicMessgesMeta = createSelector(
   topicMessagesState,
   ({ meta }) => meta
 );
+
+export const getIsTopicMessagesFetching = createSelector(
+  topicMessagesState,
+  ({ isFetching }) => isFetching
+);
