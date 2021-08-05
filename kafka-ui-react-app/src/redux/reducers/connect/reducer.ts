@@ -2,7 +2,7 @@ import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import { ConnectState } from 'redux/interfaces/connect';
 import { Action } from 'redux/interfaces';
-import {ConnectorState, ConnectorTaskStatus} from 'generated-sources';
+import { ConnectorState, ConnectorTaskStatus } from 'generated-sources';
 
 export const initialState: ConnectState = {
   connects: [],

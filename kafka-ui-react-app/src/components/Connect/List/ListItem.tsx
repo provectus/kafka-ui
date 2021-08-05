@@ -10,7 +10,7 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import ConnectorStatusTag from "components/Connect/ConnectorStatusTag";
+import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
 
 export interface ListItemProps {
   clusterName: ClusterName;

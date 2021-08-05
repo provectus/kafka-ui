@@ -1,6 +1,7 @@
 import {
   Connect,
-  Connector, ConnectorState,
+  Connector,
+  ConnectorState,
   ConnectorTaskStatus,
   ConnectorType,
   FullConnectorInfo,

@@ -1,5 +1,5 @@
 import cx from 'classnames';
-import {ConnectorState, ConnectorTaskStatus} from 'generated-sources';
+import { ConnectorState } from 'generated-sources';
 import React from 'react';
 
 export interface StatusTagProps {
@@ -11,7 +11,8 @@ const ConnectorStatusTag: React.FC<StatusTagProps> = ({ status }) => {
     'is-success': status === ConnectorState.RUNNING,
     'is-light': status === ConnectorState.PAUSED,
     'is-warning': status === ConnectorState.UNASSIGNED,
-    'is-danger': status === ConnectorState.FAILED || status === ConnectorState.TASK_FAILED,
+    'is-danger':
+      status === ConnectorState.FAILED || status === ConnectorState.TASK_FAILED,
   });
 
   return <span className={classNames}>{status}</span>;

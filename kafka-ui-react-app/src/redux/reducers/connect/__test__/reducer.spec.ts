@@ -1,4 +1,4 @@
-import {ConnectorState, ConnectorTaskStatus} from 'generated-sources';
+import { ConnectorState, ConnectorTaskStatus } from 'generated-sources';
 import {
   fetchConnectorsAction,
   fetchConnectorAction,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
-import ConnectorStatusTag from "components/Connect/ConnectorStatusTag";
+import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
 
 export interface OverviewProps {
   connector: Connector | null;

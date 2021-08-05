@@ -8,7 +8,7 @@ import ActionsContainer from 'components/Connect/Details/Actions/ActionsContaine
 import Actions, {
   ActionsProps,
 } from 'components/Connect/Details/Actions/Actions';
-import {ConnectorState, ConnectorTaskStatus} from 'generated-sources';
+import { ConnectorState } from 'generated-sources';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
 
 const mockHistoryPush = jest.fn();
