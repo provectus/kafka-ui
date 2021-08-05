@@ -10,8 +10,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{steps.build.outputs.version}}
     steps:
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -37,8 +35,6 @@ jobs:
         id: build_app
         run: |
           mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-          echo ::set-output name=version::${VERSION}
       - name: compose app
         id: step_five
         run: |
