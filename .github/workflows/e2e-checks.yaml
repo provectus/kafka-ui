@@ -20,11 +20,11 @@ jobs:
             ${{ runner.os }}-maven-
       - uses: actions/checkout@v2
       - name: Set the values
-        id: step_one
+        id: set_env_values
         run: |
           cat "./kafka-ui-e2e-checks/.env.ci" >> "./kafka-ui-e2e-checks/.env"
       - name: pull docker
-        id: step_four
+        id: pull_selenoid
         run: |
           docker pull selenoid/vnc:chrome_86.0
       - name: Set up JDK 1.13
@@ -36,14 +36,14 @@ jobs:
         run: |
           mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
-        id: step_five
+        id: compose_app
         run: |
           docker-compose -f ./docker/kafka-ui.yaml up -d
-      - name: Build and analyze
+      - name: e2e run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -pl '!kafka-ui-api' test -Pprod
+        run: mvn -pl '!kafka-ui-api,!kafka-ui-contract' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
         if: always()
