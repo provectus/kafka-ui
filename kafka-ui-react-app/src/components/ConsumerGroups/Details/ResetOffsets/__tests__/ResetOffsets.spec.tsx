@@ -71,6 +71,18 @@ const setupWrapper = (props?: Partial<Props>) => (
   </StaticRouter>
 );
 
+const selectresetTypeAndPartitions = async (resetType: string) => {
+  fireEvent.change(screen.getByLabelText('Reset Type'), {
+    target: { value: resetType },
+  });
+  await waitFor(() => {
+    fireEvent.click(screen.getByText('Select...'));
+  });
+  await waitFor(() => {
+    fireEvent.click(screen.getByText('Partition #0'));
+  });
+};
+
 describe('ResetOffsets', () => {
   describe('on initial render', () => {
     const component = render(setupWrapper());
@@ -88,10 +100,7 @@ describe('ResetOffsets', () => {
             resetConsumerGroupOffsets: mockResetConsumerGroupOffsets,
           })
         );
-        fireEvent.click(screen.getByText('Select...'));
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Select All'));
-        });
+        await selectresetTypeAndPartitions('EARLIEST');
         await waitFor(() => {
           fireEvent.click(screen.getByText('Submit'));
         });
@@ -100,12 +109,8 @@ describe('ResetOffsets', () => {
           'testCluster',
           'testGroup',
           {
-            partitions: [1, 0],
+            partitions: [0],
             partitionsOffsets: [
-              {
-                offset: undefined,
-                partition: 1,
-              },
               {
                 offset: undefined,
                 partition: 0,
@@ -126,15 +131,7 @@ describe('ResetOffsets', () => {
             resetConsumerGroupOffsets: mockResetConsumerGroupOffsets,
           })
         );
-        fireEvent.change(screen.getByLabelText('Reset Type'), {
-          target: { value: 'LATEST' },
-        });
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Select...'));
-        });
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Partition #0'));
-        });
+        await selectresetTypeAndPartitions('LATEST');
         await waitFor(() => {
           fireEvent.click(screen.getByText('Submit'));
         });
@@ -165,17 +162,9 @@ describe('ResetOffsets', () => {
             resetConsumerGroupOffsets: mockResetConsumerGroupOffsets,
           })
         );
-        fireEvent.change(screen.getByLabelText('Reset Type'), {
-          target: { value: 'OFFSET' },
-        });
+        await selectresetTypeAndPartitions('OFFSET');
         await waitFor(() => {
-          fireEvent.click(screen.getByText('Select...'));
-        });
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Partition #1'));
-        });
-        await waitFor(() => {
-          fireEvent.change(screen.getAllByLabelText('Partition #1')[1], {
+          fireEvent.change(screen.getAllByLabelText('Partition #0')[1], {
             target: { value: '10' },
           });
         });
@@ -187,11 +176,11 @@ describe('ResetOffsets', () => {
           'testCluster',
           'testGroup',
           {
-            partitions: [1],
+            partitions: [0],
             partitionsOffsets: [
               {
                 offset: '10',
-                partition: 1,
+                partition: 0,
               },
             ],
             resetType: 'OFFSET',
@@ -205,15 +194,7 @@ describe('ResetOffsets', () => {
       it('adds error to the page when the input is left empty', async () => {
         const mockResetConsumerGroupOffsets = jest.fn();
         render(setupWrapper());
-        fireEvent.change(screen.getByLabelText('Reset Type'), {
-          target: { value: 'TIMESTAMP' },
-        });
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Select...'));
-        });
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Partition #1'));
-        });
+        await selectresetTypeAndPartitions('TIMESTAMP');
         await waitFor(() => {
           fireEvent.click(screen.getByText('Submit'));
         });
