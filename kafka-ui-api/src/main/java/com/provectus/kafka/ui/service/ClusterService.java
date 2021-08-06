@@ -22,6 +22,7 @@ import com.provectus.kafka.ui.model.ConsumerGroupDetails;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
+import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.PartitionsIncrease;
@@ -244,15 +245,12 @@ public class ClusterService {
         .orElseThrow(ClusterNotFoundException::new);
     var topic = getTopicDetails(clusterName, topicName)
         .orElseThrow(TopicNotFoundException::new);
-    return brokerService.getBrokerConfigMap(cluster, cluster.getBrokers().get(0))
-        .flatMap(configMap -> {
-          if (Boolean.parseBoolean(configMap.get(DELETE_TOPIC_ENABLE).getValue())) {
-            return kafkaService.deleteTopic(cluster, topic.getName())
-                .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
-          } else {
-            return Mono.error(new ValidationException("Topic deletion restricted"));
-          }
-        });
+    if (cluster.getFeatures().contains(Feature.TOPIC_DELETION)) {
+      return kafkaService.deleteTopic(cluster, topic.getName())
+          .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
+    } else {
+      return Mono.error(new ValidationException("Topic deletion restricted"));
+    }
   }
 
   private KafkaCluster updateCluster(InternalTopic topic, String clusterName,

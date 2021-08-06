@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.model.Broker;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Map;
+import org.apache.kafka.common.Node;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -34,4 +35,12 @@ public interface BrokerService {
    * @return Flux of Broker
    */
   Flux<Broker> getBrokers(KafkaCluster cluster);
+
+  /**
+   * Get cluster controller node.
+   *
+   * @param cluster - cluster
+   * @return Controller node
+   */
+  Mono<Node> getController(KafkaCluster cluster);
 }

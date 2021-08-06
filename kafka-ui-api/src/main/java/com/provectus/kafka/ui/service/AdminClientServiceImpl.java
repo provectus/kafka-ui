@@ -23,6 +23,7 @@ public class AdminClientServiceImpl implements AdminClientService {
   @Value("${kafka.admin-client-timeout}")
   private int clientTimeout;
 
+  @Override
   public Mono<ExtendedAdminClient> getOrCreateAdminClient(KafkaCluster cluster) {
     return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
         .switchIfEmpty(createAdminClient(cluster))

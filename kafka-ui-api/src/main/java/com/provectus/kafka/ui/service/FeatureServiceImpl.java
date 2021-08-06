@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.kafka.common.Node;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +20,7 @@ public class FeatureServiceImpl implements FeatureService {
 
   private final BrokerService brokerService;
 
+  @Override
   public List<Feature> getAvailableFeatures(KafkaCluster cluster) {
     List<Feature> features = new ArrayList<>();
 
@@ -44,8 +46,9 @@ public class FeatureServiceImpl implements FeatureService {
   }
 
   private boolean topicDeletionCheck(KafkaCluster cluster) {
-    return brokerService.getBrokers(cluster).next()
-        .flatMap(broker -> brokerService.getBrokerConfigMap(cluster, broker.getId()))
+    return brokerService.getController(cluster)
+        .map(Node::id)
+        .flatMap(broker -> brokerService.getBrokerConfigMap(cluster, broker))
         .map(config -> {
           if (config != null && config.get(DELETE_TOPIC_ENABLE) != null) {
             return Boolean.parseBoolean(config.get(DELETE_TOPIC_ENABLE).getValue());

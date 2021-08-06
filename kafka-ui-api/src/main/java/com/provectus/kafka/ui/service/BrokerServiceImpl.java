@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
+import org.apache.kafka.common.Node;
 import org.apache.kafka.common.config.ConfigResource;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -55,6 +56,7 @@ public class BrokerServiceImpl implements BrokerService {
         );
   }
 
+  @Override
   public Mono<Map<String, InternalBrokerConfig>> getBrokerConfigMap(KafkaCluster cluster,
                                                                     Integer brokerId) {
     return loadBrokersConfig(cluster, brokerId)
@@ -64,6 +66,7 @@ public class BrokerServiceImpl implements BrokerService {
                 ClusterUtil::mapToInternalBrokerConfig)));
   }
 
+  @Override
   public Flux<InternalBrokerConfig> getBrokersConfig(KafkaCluster cluster, Integer brokerId) {
     if (!cluster.getBrokers().contains(brokerId)) {
       return Flux.error(
@@ -76,6 +79,7 @@ public class BrokerServiceImpl implements BrokerService {
         .flatMapMany(Flux::fromIterable);
   }
 
+  @Override
   public Flux<Broker> getBrokers(KafkaCluster cluster) {
     return adminClientService
         .getOrCreateAdminClient(cluster)
@@ -87,5 +91,13 @@ public class BrokerServiceImpl implements BrokerService {
               return broker;
             }).collect(Collectors.toList())))
         .flatMapMany(Flux::fromIterable);
+  }
+
+  @Override
+  public Mono<Node> getController(KafkaCluster cluster) {
+    return adminClientService
+        .getOrCreateAdminClient(cluster)
+        .map(ExtendedAdminClient::getAdminClient)
+        .flatMap(adminClient -> ClusterUtil.toMono(adminClient.describeCluster().controller()));
   }
 }
