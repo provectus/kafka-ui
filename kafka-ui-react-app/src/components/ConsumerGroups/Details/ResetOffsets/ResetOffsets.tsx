@@ -280,10 +280,14 @@ const ResetOffsets: React.FC<Props> = ({
                   <label className="label">Offsets</label>
                   {fields.map((field, index) => (
                     <div key={field.id} className="mb-2">
-                      <label className="subtitle is-6">
+                      <label
+                        className="subtitle is-6"
+                        htmlFor={`partitionsOffsets.${index}.offset`}
+                      >
                         Partition #{field.partition}
                       </label>
                       <input
+                        id={`partitionsOffsets.${index}.offset`}
                         type="number"
                         className="input"
                         {...register(

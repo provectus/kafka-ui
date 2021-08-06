@@ -1,7 +1,6 @@
 import {
   ConsumerGroupsApi,
   Configuration,
-  ConsumerGroupState,
   ConsumerGroupOffsetsResetType,
 } from 'generated-sources';
 import {
