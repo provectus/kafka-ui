@@ -22,37 +22,9 @@ export const fetchConsumerGroupsList =
   async (dispatch) => {
     dispatch(actions.fetchConsumerGroupsAction.request());
     try {
-      // const consumerGroups = await consumerGroupsApiClient.getConsumerGroups({
-      //   clusterName,
-      // });
-      const consumerGroups = [
-        {
-          groupId: 'amazon.msk.canary.group.broker-1',
-          members: 0,
-          topics: 1,
-          simple: false,
-          partitionAssignor: '',
-          state: ConsumerGroupState.DEAD,
-          coordinator: {
-            id: 2,
-            host: 'b-2.kad-msk.st2jzq.c6.kafka.eu-west-1.amazonaws.com',
-          },
-          messagesBehind: 0,
-        },
-        {
-          groupId: 'amazon.msk.canary.group.broker-2',
-          members: 0,
-          topics: 1,
-          simple: false,
-          partitionAssignor: '',
-          state: ConsumerGroupState.EMPTY,
-          coordinator: {
-            id: 1,
-            host: 'b-1.kad-msk.st2jzq.c6.kafka.eu-west-1.amazonaws.com',
-          },
-          messagesBehind: 0,
-        },
-      ];
+      const consumerGroups = await consumerGroupsApiClient.getConsumerGroups({
+        clusterName,
+      });
       dispatch(actions.fetchConsumerGroupsAction.success(consumerGroups));
     } catch (e) {
       const response = await getResponse(e);
@@ -73,62 +45,11 @@ export const fetchConsumerGroupDetails =
   async (dispatch) => {
     dispatch(actions.fetchConsumerGroupDetailsAction.request());
     try {
-      // const consumerGroupDetails =
-      //   await consumerGroupsApiClient.getConsumerGroup({
-      //     clusterName,
-      //     id: consumerGroupID,
-      //   });
-      const consumerGroupDetails = {
-        groupId: 'amazon.msk.canary.group.broker-1',
-        members: 0,
-        topics: 2,
-        simple: false,
-        partitionAssignor: '',
-        state: ConsumerGroupState.EMPTY,
-        coordinator: {
-          id: 2,
-          host: 'b-2.kad-msk.st2jzq.c6.kafka.eu-west-1.amazonaws.com',
-        },
-        messagesBehind: 0,
-        partitions: [
-          {
-            topic: '__amazon_msk_canary',
-            partition: 1,
-            currentOffset: 0,
-            endOffset: 0,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-          {
-            topic: '__amazon_msk_canary',
-            partition: 0,
-            currentOffset: 56932,
-            endOffset: 56932,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-          {
-            topic: 'other_topic',
-            partition: 3,
-            currentOffset: 56932,
-            endOffset: 56932,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-          {
-            topic: 'other_topic',
-            partition: 4,
-            currentOffset: 56932,
-            endOffset: 56932,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-        ],
-      };
+      const consumerGroupDetails =
+        await consumerGroupsApiClient.getConsumerGroup({
+          clusterName,
+          id: consumerGroupID,
+        });
       dispatch(
         actions.fetchConsumerGroupDetailsAction.success({
           consumerGroupID,
