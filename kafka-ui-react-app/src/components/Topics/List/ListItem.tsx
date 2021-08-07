@@ -11,6 +11,9 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { getClustersFeatures } from 'redux/reducers/clusters/selectors';
+import { ClusterFeaturesEnum } from 'generated-sources';
+import { useSelector } from 'react-redux';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -33,6 +36,10 @@ const ListItem: React.FC<ListItemProps> = ({
   clearTopicMessages,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
+  const features = useSelector(getClustersFeatures(clusterName));
+  const hasKafkaTopicDeletion = features.includes(
+    ClusterFeaturesEnum.TOPIC_DELETION
+  );
 
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
@@ -110,11 +117,13 @@ const ListItem: React.FC<ListItemProps> = ({
                 <DropdownItem onClick={clearTopicMessagesHandler}>
                   <span className="has-text-danger">Clear Messages</span>
                 </DropdownItem>
-                <DropdownItem
-                  onClick={() => setDeleteTopicConfirmationVisible(true)}
-                >
-                  <span className="has-text-danger">Remove Topic</span>
-                </DropdownItem>
+                {hasKafkaTopicDeletion ? (
+                  <DropdownItem
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  >
+                    <span className="has-text-danger">Remove Topic</span>
+                  </DropdownItem>
+                ) : null}
               </Dropdown>
             </div>
             <ConfirmationModal

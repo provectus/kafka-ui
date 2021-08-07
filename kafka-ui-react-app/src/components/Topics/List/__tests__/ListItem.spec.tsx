@@ -16,6 +16,11 @@ jest.mock(
   () => 'mock-ConfirmationModal'
 );
 
+jest.mock('react-redux', () => ({
+  ...jest.requireActual('react-redux'),
+  useSelector: () => ['TOPIC_DELETION'],
+}));
+
 describe('ListItem', () => {
   const setupComponent = (props: Partial<ListItemProps> = {}) => (
     <ListItem
