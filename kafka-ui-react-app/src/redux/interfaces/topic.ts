@@ -1,12 +1,13 @@
 import {
   Topic,
   TopicDetails,
-  TopicMessage,
   TopicConfig,
   TopicCreation,
   GetTopicMessagesRequest,
   ConsumerGroup,
   TopicColumnsToSort,
+  TopicMessage,
+  TopicMessageConsuming,
   TopicMessageSchema,
 } from 'generated-sources';
 
@@ -50,7 +51,6 @@ export interface TopicsState {
   byName: { [topicName: string]: TopicWithDetailedInfo };
   allNames: TopicName[];
   totalPages: number;
-  messages: TopicMessage[];
   search: string;
   orderBy: TopicColumnsToSort | null;
   consumerGroups: ConsumerGroup[];
@@ -68,4 +68,11 @@ export interface TopicFormDataRaw {
   retentionBytes: number;
   maxMessageBytes: number;
   customParams: TopicFormCustomParams;
+}
+
+export interface TopicMessagesState {
+  messages: TopicMessage[];
+  phase?: string;
+  meta: TopicMessageConsuming;
+  isFetching: boolean;
 }

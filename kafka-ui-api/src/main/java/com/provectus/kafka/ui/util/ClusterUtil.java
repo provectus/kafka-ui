@@ -15,6 +15,7 @@ import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.MessageFormat;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.serde.RecordSerDe;
@@ -195,7 +196,11 @@ public class ClusterUtil {
   public static InternalTopicConfig mapToInternalTopicConfig(ConfigEntry configEntry) {
     InternalTopicConfig.InternalTopicConfigBuilder builder = InternalTopicConfig.builder()
         .name(configEntry.name())
-        .value(configEntry.value());
+        .value(configEntry.value())
+        .source(configEntry.source())
+        .isReadOnly(configEntry.isReadOnly())
+        .isSensitive(configEntry.isSensitive())
+        .synonyms(configEntry.synonyms());
     if (configEntry.name().equals(MESSAGE_FORMAT_VERSION_CONFIG)) {
       builder.defaultValue(configEntry.value());
     } else {
@@ -295,6 +300,17 @@ public class ClusterUtil {
     var parsed = recordDeserializer.deserialize(consumerRecord);
     topicMessage.setKey(parsed.getKey());
     topicMessage.setContent(parsed.getValue());
+    topicMessage.setKeyFormat(parsed.getKeyFormat() != null
+        ? MessageFormat.valueOf(parsed.getKeyFormat().name())
+        : null);
+    topicMessage.setValueFormat(parsed.getValueFormat() != null
+        ? MessageFormat.valueOf(parsed.getValueFormat().name())
+        : null);
+    topicMessage.setKeySize(ConsumerRecordUtil.getKeySize(consumerRecord));
+    topicMessage.setValueSize(ConsumerRecordUtil.getValueSize(consumerRecord));
+    topicMessage.setKeySchemaId(parsed.getKeySchemaId());
+    topicMessage.setValueSchemaId(parsed.getValueSchemaId());
+    topicMessage.setHeadersSize(ConsumerRecordUtil.getHeadersSize(consumerRecord));
 
     return topicMessage;
   }

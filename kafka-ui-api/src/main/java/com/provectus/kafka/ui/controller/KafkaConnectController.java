@@ -63,12 +63,14 @@ public class KafkaConnectController implements KafkaConnectApi {
         .map(ResponseEntity::ok);
   }
 
+
   @Override
   public Mono<ResponseEntity<Flux<FullConnectorInfo>>> getAllConnectors(
       String clusterName,
+      String search,
       ServerWebExchange exchange
   ) {
-    return Mono.just(ResponseEntity.ok(kafkaConnectService.getAllConnectors(clusterName)));
+    return Mono.just(ResponseEntity.ok(kafkaConnectService.getAllConnectors(clusterName, search)));
   }
 
   @Override

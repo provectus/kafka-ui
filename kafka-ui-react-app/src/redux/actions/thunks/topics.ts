@@ -15,7 +15,6 @@ import {
   PromiseThunkResult,
   ClusterName,
   TopicName,
-  TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
   TopicsState,
@@ -62,27 +61,6 @@ export const fetchTopicsList =
       dispatch(actions.fetchTopicsListAction.failure());
     }
   };
-
-export const fetchTopicMessages =
-  (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    queryParams: Partial<TopicMessageQueryParams>
-  ): PromiseThunkResult =>
-  async (dispatch) => {
-    dispatch(actions.fetchTopicMessagesAction.request());
-    try {
-      const messages = await messagesApiClient.getTopicMessages({
-        clusterName,
-        topicName,
-        ...queryParams,
-      });
-      dispatch(actions.fetchTopicMessagesAction.success(messages));
-    } catch (e) {
-      dispatch(actions.fetchTopicMessagesAction.failure());
-    }
-  };
-
 export const clearTopicMessages =
   (
     clusterName: ClusterName,
@@ -97,7 +75,7 @@ export const clearTopicMessages =
         topicName,
         partitions,
       });
-      dispatch(actions.clearMessagesTopicAction.success(topicName));
+      dispatch(actions.clearMessagesTopicAction.success());
     } catch (e) {
       const response = await getResponse(e);
       const alert: FailurePayload = {

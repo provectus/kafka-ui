@@ -6,9 +6,11 @@ import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.InternalTopic;
+import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.Topic;
 import com.provectus.kafka.ui.model.TopicColumnsToSort;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,6 +18,7 @@ import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mapstruct.factory.Mappers;
@@ -254,6 +257,47 @@ class ClusterServiceTest {
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(Topic::getPartitionCount).isSorted();
+  }
+
+  @Test
+  public void shouldRetrieveTopicConfigs() {
+    var topicName = UUID.randomUUID().toString();
+
+    when(clustersStorage.getClusterByName(topicName))
+        .thenReturn(Optional.of(KafkaCluster.builder()
+            .topics(
+                IntStream.rangeClosed(1, 100).boxed()
+                    .map(Objects::toString)
+                    .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
+                        .name(e)
+                        .topicConfigs(
+                            List.of(InternalTopicConfig.builder()
+                                .name("testName")
+                                .value("testValue")
+                                .defaultValue("testDefaultValue")
+                                .source(ConfigEntry.ConfigSource.DEFAULT_CONFIG)
+                                .isReadOnly(true)
+                                .isSensitive(true)
+                                .synonyms(List.of())
+                                .build()
+                            )
+                        )
+                        .build()))
+            )
+            .build()));
+
+    var configs = clusterService.getTopicConfigs(topicName, "1");
+    var topicConfig = configs.isPresent() ? configs.get().get(0) : null;
+
+    assertThat(configs.isPresent()).isTrue();
+    assertThat(topicConfig.getName()).isEqualTo("testName");
+    assertThat(topicConfig.getValue()).isEqualTo("testValue");
+    assertThat(topicConfig.getDefaultValue()).isEqualTo("testDefaultValue");
+    assertThat(topicConfig.getSource().getValue())
+            .isEqualTo(ConfigEntry.ConfigSource.DEFAULT_CONFIG.name());
+    assertThat(topicConfig.getSynonyms()).isNotNull();
+    assertThat(topicConfig.getIsReadOnly()).isTrue();
+    assertThat(topicConfig.getIsSensitive()).isTrue();
   }
 
 }

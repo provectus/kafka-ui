@@ -12,6 +12,7 @@ import {
   ConnectName,
   ConnectorConfig,
   ConnectorName,
+  ConnectorSearch,
   FailurePayload,
   PromiseThunkResult,
 } from 'redux/interfaces';
@@ -39,12 +40,17 @@ export const fetchConnects =
   };
 
 export const fetchConnectors =
-  (clusterName: ClusterName, silent = false): PromiseThunkResult<void> =>
+  (
+    clusterName: ClusterName,
+    search = '',
+    silent = false
+  ): PromiseThunkResult<void> =>
   async (dispatch) => {
     if (!silent) dispatch(actions.fetchConnectorsAction.request());
     try {
       const connectors = await kafkaConnectApiClient.getAllConnectors({
         clusterName,
+        search,
       });
       dispatch(actions.fetchConnectorsAction.success({ connectors }));
     } catch (error) {
@@ -127,7 +133,7 @@ export const deleteConnector =
         connectorName,
       });
       dispatch(actions.deleteConnectorAction.success({ connectorName }));
-      dispatch(fetchConnectors(clusterName, true));
+      dispatch(fetchConnectors(clusterName, '', true));
     } catch (error) {
       const response = await getResponse(error);
       const alert: FailurePayload = {
@@ -338,3 +344,14 @@ export const updateConnectorConfig =
     }
     return undefined;
   };
+
+export const setConnectorSearch = (
+  connectorSearch: ConnectorSearch,
+  silent = false
+): PromiseThunkResult<void> => {
+  return fetchConnectors(
+    connectorSearch.clusterName,
+    connectorSearch.search,
+    silent
+  );
+};
