@@ -201,8 +201,8 @@ describe('List', () => {
       const buttonIndex = action === 'deleteTopics' ? 0 : 1;
       const confirmationText =
         action === 'deleteTopics'
-          ? 'Are you sure want to remove selected topics?'
-          : 'Are you sure want to purge messages of selected topics?';
+          ? 'Are you sure you want to remove selected topics?'
+          : 'Are you sure you want to purge messages of selected topics?';
       const mockFn =
         action === 'deleteTopics' ? mockDeleteTopics : mockClearTopicsMessages;
       getCheckboxInput(0).simulate('change');

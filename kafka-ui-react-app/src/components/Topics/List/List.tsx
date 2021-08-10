@@ -195,8 +195,8 @@ const List: React.FC<TopicsListProps> = ({
                 }
               >
                 {confirmationModal === 'deleteTopics'
-                  ? 'Are you sure want to remove selected topics?'
-                  : 'Are you sure want to purge messages of selected topics?'}
+                  ? 'Are you sure you want to remove selected topics?'
+                  : 'Are you sure you want to purge messages of selected topics?'}
               </ConfirmationModal>
             </>
           )}
