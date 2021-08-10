@@ -276,9 +276,9 @@ public class ClusterService {
 
   public Flux<TopicMessageEvent> getMessages(String clusterName, String topicName,
                                         ConsumerPosition consumerPosition, String query,
-                                        Integer limit) {
+                                        Integer limit, String jsFilterFn) {
     return clustersStorage.getClusterByName(clusterName)
-        .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit))
+        .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit, jsFilterFn))
         .orElse(Flux.empty());
   }
 

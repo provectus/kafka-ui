@@ -499,6 +499,11 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/SeekDirection"
+        - name: jsFilterFn
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: OK

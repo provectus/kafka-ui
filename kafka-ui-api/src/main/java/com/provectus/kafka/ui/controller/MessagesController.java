@@ -44,11 +44,11 @@ public class MessagesController implements MessagesApi {
   public Mono<ResponseEntity<Flux<TopicMessageEvent>>> getTopicMessages(
       String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo,
       @Valid Integer limit, @Valid String q, @Valid SeekDirection seekDirection,
-      ServerWebExchange exchange) {
+      @Valid String jsFilterFn, ServerWebExchange exchange) {
     return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
         .map(position ->
             ResponseEntity.ok(
-                clusterService.getMessages(clusterName, topicName, position, q, limit)
+                clusterService.getMessages(clusterName, topicName, position, q, limit, jsFilterFn)
             )
         );
   }
