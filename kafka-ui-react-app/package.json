@@ -26,7 +26,7 @@
     "react-ace": "^9.4.3",
     "react-datepicker": "^4.2.0",
     "react-dom": "^17.0.1",
-    "react-hook-form": "7.6.9",
+    "react-hook-form": "7.12.2",
     "react-json-tree": "^0.15.0",
     "react-multi-select-component": "^4.0.6",
     "react-redux": "^7.2.2",
