@@ -6,7 +6,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@hookform/error-message": "^2.0.0",
-    "@hookform/resolvers": "^2.5.1",
+    "@hookform/resolvers": "^2.7.1",
     "@rooks/use-outside-click-ref": "^4.10.1",
     "@testing-library/react": "^12.0.0",
     "@types/eventsource": "^1.1.6",
