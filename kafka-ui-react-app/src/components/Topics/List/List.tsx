@@ -12,6 +12,7 @@ import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { GetTopicsRequest, TopicColumnsToSort } from 'generated-sources';
 import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
 import Search from 'components/common/Search/Search';
@@ -25,6 +26,8 @@ export interface TopicsListProps {
   totalPages: number;
   fetchTopicsList(props: GetTopicsRequest): void;
   deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
+  deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
+  clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
   clearTopicMessages(
     topicName: TopicName,
     clusterName: ClusterName,
@@ -42,7 +45,9 @@ const List: React.FC<TopicsListProps> = ({
   totalPages,
   fetchTopicsList,
   deleteTopic,
+  deleteTopics,
   clearTopicMessages,
+  clearTopicsMessages,
   search,
   orderBy,
   setTopicsSearch,
@@ -77,6 +82,45 @@ const List: React.FC<TopicsListProps> = ({
     setShowInternal(!showInternal);
     history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
   }, [showInternal]);
+
+  const [confirmationModal, setConfirmationModal] = React.useState<
+    '' | 'deleteTopics' | 'purgeMessages'
+  >('');
+
+  const closeConfirmationModal = () => {
+    setConfirmationModal('');
+  };
+
+  const [selectedTopics, setSelectedTopics] = React.useState<Set<string>>(
+    new Set()
+  );
+
+  const clearSelectedTopics = () => {
+    setSelectedTopics(new Set());
+  };
+
+  const toggleTopicSelected = (topicName: string) => {
+    setSelectedTopics((prevState) => {
+      const newState = new Set(prevState);
+      if (newState.has(topicName)) {
+        newState.delete(topicName);
+      } else {
+        newState.add(topicName);
+      }
+      return newState;
+    });
+  };
+
+  const deleteTopicsHandler = React.useCallback(() => {
+    deleteTopics(clusterName, Array.from(selectedTopics));
+    closeConfirmationModal();
+    clearSelectedTopics();
+  }, [clusterName, selectedTopics]);
+  const purgeMessagesHandler = React.useCallback(() => {
+    clearTopicsMessages(clusterName, Array.from(selectedTopics));
+    closeConfirmationModal();
+    clearSelectedTopics();
+  }, [clusterName, selectedTopics]);
 
   return (
     <div className="section">
@@ -119,9 +163,47 @@ const List: React.FC<TopicsListProps> = ({
         <PageLoader />
       ) : (
         <div className="box">
+          {selectedTopics.size > 0 && (
+            <>
+              <div className="buttons">
+                <button
+                  type="button"
+                  className="button is-danger"
+                  onClick={() => {
+                    setConfirmationModal('deleteTopics');
+                  }}
+                >
+                  Delete selected topics
+                </button>
+                <button
+                  type="button"
+                  className="button is-danger"
+                  onClick={() => {
+                    setConfirmationModal('purgeMessages');
+                  }}
+                >
+                  Purge messages of selected topics
+                </button>
+              </div>
+              <ConfirmationModal
+                isOpen={confirmationModal !== ''}
+                onCancel={closeConfirmationModal}
+                onConfirm={
+                  confirmationModal === 'deleteTopics'
+                    ? deleteTopicsHandler
+                    : purgeMessagesHandler
+                }
+              >
+                {confirmationModal === 'deleteTopics'
+                  ? 'Are you sure you want to remove selected topics?'
+                  : 'Are you sure you want to purge messages of selected topics?'}
+              </ConfirmationModal>
+            </>
+          )}
           <table className="table is-fullwidth">
             <thead>
               <tr>
+                <th> </th>
                 <SortableColumnHeader
                   value={TopicColumnsToSort.NAME}
                   title="Topic Name"
@@ -154,6 +236,8 @@ const List: React.FC<TopicsListProps> = ({
                   clusterName={clusterName}
                   key={topic.name}
                   topic={topic}
+                  selected={selectedTopics.has(topic.name)}
+                  toggleTopicSelected={toggleTopicSelected}
                   deleteTopic={deleteTopic}
                   clearTopicMessages={clearTopicMessages}
                 />
