@@ -1,24 +1,4 @@
 {
-  "61d3874fc5d35b85b0cd7942ccda45ef" : {
-    "statistic" : {
-      "failed" : 0,
-      "broken" : 0,
-      "skipped" : 0,
-      "passed" : 1,
-      "unknown" : 0,
-      "total" : 1
-    },
-    "items" : [ {
-      "uid" : "ee5bb5ea7d5a3200",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/63//#testresult/ee5bb5ea7d5a3200",
-      "status" : "passed",
-      "time" : {
-        "start" : 1628576439453,
-        "stop" : 1628576442490,
-        "duration" : 3037
-      }
-    } ]
-  },
   "ea70dde018ebf76aa3fe91bebe21405" : {
     "statistic" : {
       "failed" : 0,
@@ -29,13 +9,33 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "3d22f4a84597b8d7",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/63//#testresult/3d22f4a84597b8d7",
+      "uid" : "8b692e5de30b9ba0",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/64//#testresult/8b692e5de30b9ba0",
       "status" : "passed",
       "time" : {
-        "start" : 1628576392996,
-        "stop" : 1628576439438,
-        "duration" : 46442
+        "start" : 1628595203012,
+        "stop" : 1628595249728,
+        "duration" : 46716
+      }
+    } ]
+  },
+  "61d3874fc5d35b85b0cd7942ccda45ef" : {
+    "statistic" : {
+      "failed" : 0,
+      "broken" : 0,
+      "skipped" : 0,
+      "passed" : 1,
+      "unknown" : 0,
+      "total" : 1
+    },
+    "items" : [ {
+      "uid" : "6c23745b74c12c98",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/64//#testresult/6c23745b74c12c98",
+      "status" : "passed",
+      "time" : {
+        "start" : 1628595249758,
+        "stop" : 1628595253640,
+        "duration" : 3882
       }
     } ]
   },
@@ -49,13 +49,13 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "1e55e3cb0ad7b7d7",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/63//#testresult/1e55e3cb0ad7b7d7",
+      "uid" : "4bc741440cb24aa5",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/64//#testresult/4bc741440cb24aa5",
       "status" : "skipped",
       "statusDetails" : "void com.provectus.kafka.ui.topics.TopicTests.deleteTopic() is @Disabled",
       "time" : {
-        "start" : 1628576392969,
-        "stop" : 1628576392970,
+        "start" : 1628595202929,
+        "stop" : 1628595202930,
         "duration" : 1
       }
     } ]
@@ -70,13 +70,13 @@
       "total" : 1
     },
     "items" : [ {
-      "uid" : "51be8a6d6e137ad2",
-      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/63//#testresult/51be8a6d6e137ad2",
+      "uid" : "de4e9ae983ab266b",
+      "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/64//#testresult/de4e9ae983ab266b",
       "status" : "passed",
       "time" : {
-        "start" : 1628576442610,
-        "stop" : 1628576443521,
-        "duration" : 911
+        "start" : 1628595253844,
+        "stop" : 1628595255247,
+        "duration" : 1403
       }
     } ]
   }
