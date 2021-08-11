@@ -12,18 +12,13 @@ export const ksqlDbApiClient = new KsqlApi(apiClientConf);
 
 const transformKsqlResponse = (
   rawTable: Required<KsqlTable>
-): Dictionary<string>[] => {
-  const { headers, rows } = rawTable;
-
-  const transformedRows = rows.map((row) =>
+): Dictionary<string>[] =>
+  rawTable.rows.map((row) =>
     row.reduce((res, acc, index) => {
-      res[headers[index]] = acc;
+      res[rawTable.headers[index]] = acc;
       return res;
     }, {} as Dictionary<string>)
   );
-
-  return transformedRows;
-};
 
 const getTables = (clusterName: ClusterName) =>
   ksqlDbApiClient.executeKsqlCommand({
