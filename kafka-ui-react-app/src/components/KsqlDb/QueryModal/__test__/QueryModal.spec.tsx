@@ -26,7 +26,7 @@ describe('QueryModal', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
     expect(wrapper.exists(QueryModal)).toBeTruthy();
     expect(wrapper.exists('.modal.is-active')).toBeTruthy();
-    expect(wrapper.find('li').length).toEqual(2);
+    expect(wrapper.find('li').length).toEqual(4);
     expect(wrapper.find('.modal-card-foot button').length).toEqual(1);
   });
   it('renders modal with header', () => {
