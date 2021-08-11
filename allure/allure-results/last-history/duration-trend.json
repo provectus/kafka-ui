@@ -1,8 +1,3 @@
 [ {
-  "buildOrder" : 90,
-  "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/90/",
-  "reportName" : "Allure Report with history",
-  "data" : {
-    "duration" : 115253
-  }
+  "data" : { }
 } ]
