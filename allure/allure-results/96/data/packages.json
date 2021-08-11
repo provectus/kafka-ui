@@ -6,12 +6,12 @@
       "name" : "topics.TopicTests",
       "children" : [ {
         "name" : "deleteTopic",
-        "uid" : "aace5e7c096f987b",
+        "uid" : "6ad58b45c0e23b47",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "skipped",
         "time" : {
-          "start" : 1628690472989,
-          "stop" : 1628690472990,
+          "start" : 1628690566833,
+          "stop" : 1628690566834,
           "duration" : 1
         },
         "flaky" : false,
@@ -19,26 +19,26 @@
         "parameters" : [ ]
       }, {
         "name" : "updateTopic",
-        "uid" : "eb50a72bec7a53e0",
+        "uid" : "dee3a7fae61e9325",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1628690473087,
-          "stop" : 1628690520022,
-          "duration" : 46935
+          "start" : 1628690566896,
+          "stop" : 1628690614982,
+          "duration" : 48086
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       }, {
         "name" : "createTopic",
-        "uid" : "612e899026562093",
+        "uid" : "796bf345ba8d9762",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1628690520071,
-          "stop" : 1628690523651,
-          "duration" : 3580
+          "start" : 1628690614998,
+          "stop" : 1628690618235,
+          "duration" : 3237
         },
         "flaky" : false,
         "newFailed" : false,
@@ -49,13 +49,13 @@
       "name" : "SmokeTests",
       "children" : [ {
         "name" : "mainPageLoads",
-        "uid" : "7c5b755dcd649b29",
+        "uid" : "dd9ed49c62f57ea1",
         "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
         "status" : "passed",
         "time" : {
-          "start" : 1628690523760,
-          "stop" : 1628690524703,
-          "duration" : 943
+          "start" : 1628690618366,
+          "stop" : 1628690619496,
+          "duration" : 1130
         },
         "flaky" : false,
         "newFailed" : false,
