@@ -23,4 +23,9 @@ public class ConnectorsList {
         $(By.xpath("//span[text()='All Connectors']")).shouldBe(Condition.visible);
         return this;
     }
+
+    @Step
+    public void clickCreateConnectorButton() {
+        $(By.xpath("//a[text()='Create Connector']")).click();
+    }
 }
