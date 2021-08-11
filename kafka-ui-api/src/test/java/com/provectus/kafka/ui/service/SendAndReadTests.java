@@ -2,9 +2,12 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.MessageFormat;
@@ -17,16 +20,19 @@ import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.time.Duration;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import reactor.core.publisher.Flux;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 public class SendAndReadTests extends AbstractBaseTest {
@@ -430,6 +436,124 @@ public class SendAndReadTests extends AbstractBaseTest {
         });
   }
 
+  @Test
+  void getMessagesWithEmptyJsFilterFn() {
+    new SendAndReadSpec()
+        .withMsgToSend(new CreateTopicMessage().key("test-key"))
+        .doAssert(polled -> { assertThat(polled.getKey()).isEqualTo("test-key"); });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForKey() {
+    String filterFn = "function filter(key, content, headers, offset, partition) " +
+        "{ return key.indexOf('key') != -1; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().key("key1"),
+        new CreateTopicMessage().key("key2"),
+        new CreateTopicMessage().key("test")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getKey()).isEqualTo("key1");
+          assertThat(polled.get(1).getKey()).isEqualTo("key2");
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForContent() {
+    String filterFn = "function filter(key, content, headers, offset, partition) " +
+        "{ return content.length > 4; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().content("kafka"),
+        new CreateTopicMessage().content("ui"),
+        new CreateTopicMessage().content("tests")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getContent()).isEqualTo("kafka");
+          assertThat(polled.get(1).getContent()).isEqualTo("tests");
+        });
+  }  @Test
+
+  void getMessagesWithJsFilterFnForHeaders() {
+    String filterFn = "function filter(key, content, headers, offset, partition) " +
+        "{ return headers.value > 10; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().content("1").headers(Map.of("value", "1")),
+        new CreateTopicMessage().content("1").headers(Map.of("value", "20")),
+        new CreateTopicMessage().content("1").headers(Map.of("value", "110"))
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getHeaders()).isEqualTo(Map.of("value", "20"));
+          assertThat(polled.get(1).getHeaders()).isEqualTo(Map.of("value", "110"));
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForOffset() {
+    String filterFn = "function filter(key, content, headers, offset, partition) " +
+        "{ return offset > 0; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().key("key1"),
+        new CreateTopicMessage().key("key2"),
+        new CreateTopicMessage().key("key3")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getOffset()).isEqualTo(1L);
+          assertThat(polled.get(1).getOffset()).isEqualTo(2L);
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForPartitions() {
+    String filterFn = "function filter(key, content, headers, offset, partition) " +
+        "{ return partition == 0; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().key("key1"),
+        new CreateTopicMessage().key("key2")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getPartition()).isEqualTo(0);
+          assertThat(polled.get(1).getPartition()).isEqualTo(0);
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnWithException() {
+    String filterFn = "function filter(key, content, headers, offset, partition) " +
+        "{ return key.content.headers; }";
+    CreateTopicMessage messages = new CreateTopicMessage().key("key1");
+    Exception exception = assertThrows(
+        UnprocessableEntityException.class,
+        () -> new SendAndReadSpec()
+            .withJsFilterFn(filterFn)
+            .withMsgToSend(messages)
+            .doAssert(polled -> assertNull(polled))
+    );
+
+    assertThat(exception.getMessage()).contains(
+        "function filter(key, content, headers, offset, partition) { return offset != 0; }"
+    );
+  }
+
   @SneakyThrows
   private void assertJsonEqual(String actual, String expected) {
     var mapper = new ObjectMapper();
@@ -437,11 +561,17 @@ public class SendAndReadTests extends AbstractBaseTest {
   }
 
   class SendAndReadSpec {
-    CreateTopicMessage msgToSend;
+    List<CreateTopicMessage> msgToSend;
     ParsedSchema keySchema;
     ParsedSchema valueSchema;
+    String jsFilterFn;
 
     public SendAndReadSpec withMsgToSend(CreateTopicMessage msg) {
+      this.msgToSend = List.of(msg);
+      return this;
+    }
+
+    public SendAndReadSpec withMsgToSend(List<CreateTopicMessage> msg) {
       this.msgToSend = msg;
       return this;
     }
@@ -453,6 +583,11 @@ public class SendAndReadTests extends AbstractBaseTest {
 
     public SendAndReadSpec withValueSchema(ParsedSchema valueSchema) {
       this.valueSchema = valueSchema;
+      return this;
+    }
+
+    public SendAndReadSpec withJsFilterFn(String filterFn) {
+      this.jsFilterFn = filterFn;
       return this;
     }
 
@@ -477,7 +612,7 @@ public class SendAndReadTests extends AbstractBaseTest {
     public void assertSendThrowsException() {
       String topic = createTopicAndCreateSchemas();
       try {
-        assertThatThrownBy(() -> clusterService.sendMessage(LOCAL, topic, msgToSend).block());
+        assertThatThrownBy(() -> clusterService.sendMessage(LOCAL, topic, msgToSend.get(0)).block());
       } finally {
         deleteTopic(topic);
       }
@@ -487,20 +622,7 @@ public class SendAndReadTests extends AbstractBaseTest {
     public void doAssert(Consumer<TopicMessage> msgAssert) {
       String topic = createTopicAndCreateSchemas();
       try {
-        clusterService.sendMessage(LOCAL, topic, msgToSend).block();
-        TopicMessage polled = clusterService.getMessages(
-            LOCAL,
-            topic,
-            new ConsumerPosition(
-                SeekType.BEGINNING,
-                Map.of(new TopicPartition(topic, 0), 0L),
-                SeekDirection.FORWARD
-            ),
-            null,
-            1
-        ).filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-            .map(TopicMessageEvent::getMessage)
-            .blockLast(Duration.ofSeconds(5000));
+        TopicMessage polled = this.pollTopicMessage(topic).blockLast(Duration.ofSeconds(5000));
 
         assertThat(polled).isNotNull();
         assertThat(polled.getPartition()).isEqualTo(0);
@@ -510,6 +632,40 @@ public class SendAndReadTests extends AbstractBaseTest {
         deleteTopic(topic);
       }
     }
-  }
 
+    @SneakyThrows
+    public void doAssertForList(Consumer<List<TopicMessage>> msgAssert) {
+      String topic = createTopicAndCreateSchemas();
+      try {
+        List<TopicMessage> polled = this.pollTopicMessage(topic).collectList().block();
+
+        assertThat(polled).isNotNull();
+        msgAssert.accept(polled);
+      } finally {
+        deleteTopic(topic);
+      }
+    }
+
+    @SneakyThrows
+    private Flux<TopicMessage> pollTopicMessage(String topic) {
+      Flux.concat(msgToSend.stream()
+          .map(msg -> clusterService.sendMessage(LOCAL, topic, msg))
+          .collect(Collectors.toList())
+      ).blockLast(Duration.ofSeconds(5000));
+      return clusterService.getMessages(
+          LOCAL,
+          topic,
+          new ConsumerPosition(
+              SeekType.BEGINNING,
+              Map.of(new TopicPartition(topic, 0), 0L),
+              SeekDirection.FORWARD
+          ),
+          null,
+          msgToSend.size(),
+          jsFilterFn
+      )
+          .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+          .map(TopicMessageEvent::getMessage);
+    }
+  }
 }
