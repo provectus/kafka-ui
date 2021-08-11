@@ -1,6 +1,6 @@
 import React from 'react';
 import List from 'components/KsqlDb/List/List';
-import { mount, shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
