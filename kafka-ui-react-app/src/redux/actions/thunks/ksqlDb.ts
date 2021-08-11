@@ -1,5 +1,9 @@
 import { Configuration, KsqlApi, Table as KsqlTable } from 'generated-sources';
-import { PromiseThunkResult, ClusterName } from 'redux/interfaces';
+import {
+  PromiseThunkResult,
+  ClusterName,
+  FailurePayload,
+} from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
 
@@ -48,6 +52,11 @@ export const fetchKsqlDbTables =
         })
       );
     } catch (e) {
-      dispatch(actions.fetchKsqlDbTablesAction.failure({}));
+      const alert: FailurePayload = {
+        subject: 'ksqlDb',
+        title: `Failed to fetch tables and streams`,
+        response: e,
+      };
+      dispatch(actions.fetchKsqlDbTablesAction.failure({ alert }));
     }
   };
