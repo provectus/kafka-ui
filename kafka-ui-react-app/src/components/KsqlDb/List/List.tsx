@@ -71,26 +71,24 @@ const List: FC = () => {
         {fetching ? (
           <PageLoader />
         ) : (
-          <div className="box">
-            <table className="table is-fullwidth">
-              <thead>
-                <tr>
-                  {headers.map(({ Header, accessor }) => (
-                    <th key={accessor}>{Header}</th>
+          <table className="table is-fullwidth">
+            <thead>
+              <tr>
+                {headers.map(({ Header, accessor }) => (
+                  <th key={accessor}>{Header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.name}>
+                  {headers.map(({ accessor }) => (
+                    <td key={accessor}>{row[accessor]}</td>
                   ))}
                 </tr>
-              </thead>
-              <tbody>
-                {rows.map((row) => (
-                  <tr key={row.name}>
-                    {headers.map(({ accessor }) => (
-                      <td key={accessor}>{row[accessor]}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </>
