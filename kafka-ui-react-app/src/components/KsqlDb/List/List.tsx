@@ -87,6 +87,11 @@ const List: FC = () => {
                   ))}
                 </tr>
               ))}
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={headers.length}>No tables or streams found</td>
+                </tr>
+              )}
             </tbody>
           </table>
         )}
