@@ -18,7 +18,7 @@ const headers = [
 
 const List: FC = () => {
   const dispatch = useDispatch();
-  const [isModalShown, setIsShow] = useState(false);
+  const [isModalShown, setIsModalShow] = useState(false);
 
   const { clusterName } = useParams<{ clusterName: string }>();
 
@@ -30,7 +30,7 @@ const List: FC = () => {
   }, []);
 
   const toggleShown = useCallback(() => {
-    setIsShow((prevState) => !prevState);
+    setIsModalShow((prevState) => !prevState);
   }, []);
 
   return (
