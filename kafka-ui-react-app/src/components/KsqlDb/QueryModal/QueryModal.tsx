@@ -9,7 +9,7 @@ import Tabs from 'components/common/Tabs/Tabs';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import { isEmpty } from 'lodash';
 
-interface QueryModalProps {
+export interface QueryModalProps {
   isOpen?: boolean;
   onSubmit?(): void;
   onCancel(): void;
