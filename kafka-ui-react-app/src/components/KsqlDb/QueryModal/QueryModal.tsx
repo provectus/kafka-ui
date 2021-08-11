@@ -3,7 +3,6 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 import yup from 'lib/yupExtended';
 import { Controller, useForm } from 'react-hook-form';
-import { KsqlCommand } from 'generated-sources';
 import { ksqlDbApiClient } from 'redux/actions/thunks/ksqlDb';
 import Tabs from 'components/common/Tabs/Tabs';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
@@ -17,10 +16,14 @@ export interface QueryModalProps {
   isConfirming?: boolean;
 }
 
-type FormValues = KsqlCommand;
+type FormValues = {
+  ksql: string;
+  streamsProperties: string;
+};
 
 const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
+  streamProperties: yup.string().optional(),
 });
 
 const TABS_INITIAL_PAGE = 0;
@@ -46,13 +49,17 @@ const QueryModal: FC<QueryModalProps> = ({
     resolver: yupResolver(validationSchema),
     defaultValues: {
       ksql: '',
+      streamsProperties: '',
     },
   });
 
   const submitHandler = useCallback(async (values: FormValues) => {
     const response = await ksqlDbApiClient.executeKsqlCommand({
       clusterName,
-      ksqlCommand: values,
+      ksqlCommand: {
+        ...values,
+        streamsProperties: JSON.parse(values.streamsProperties),
+      },
     });
     setResult(response);
     onSubmit?.();
@@ -95,16 +102,30 @@ const QueryModal: FC<QueryModalProps> = ({
             onChange={handleTabsIndexChange}
           >
             <div>
-              <div className="control">
-                <Controller
-                  control={control}
-                  name="ksql"
-                  render={({ field }) => (
-                    <SQLEditor {...field} readOnly={isSubmitting} />
-                  )}
-                />
-              </div>
-
+              <Tabs
+                tabs={['KSQL', 'Additional Params']}
+                defaultSelectedIndex={Number(!isEmpty(result))}
+                onChange={handleTabsIndexChange}
+              >
+                <div className="control">
+                  <Controller
+                    control={control}
+                    name="ksql"
+                    render={({ field }) => (
+                      <SQLEditor {...field} readOnly={isSubmitting} />
+                    )}
+                  />
+                </div>
+                <div className="control">
+                  <Controller
+                    control={control}
+                    name="streamsProperties"
+                    render={({ field }) => (
+                      <JSONEditor {...field} readOnly={isSubmitting} />
+                    )}
+                  />
+                </div>
+              </Tabs>
               <button
                 type="submit"
                 className="button is-primary mt-2"
