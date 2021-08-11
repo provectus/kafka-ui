@@ -4,7 +4,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
-export const brokersApiClient = new KsqlApi(apiClientConf);
+export const ksqlDbApiClient = new KsqlApi(apiClientConf);
 
 const transformKsqlResponse = (
   rawTable: Required<KsqlTable>
@@ -23,13 +23,13 @@ const transformKsqlResponse = (
 };
 
 const getTables = (clusterName: ClusterName) =>
-  brokersApiClient.executeKsqlCommand({
+  ksqlDbApiClient.executeKsqlCommand({
     clusterName,
     ksqlCommand: { ksql: 'SHOW TABLES;' },
   });
 
 const getStreams = (clusterName: ClusterName) =>
-  brokersApiClient.executeKsqlCommand({
+  ksqlDbApiClient.executeKsqlCommand({
     clusterName,
     ksqlCommand: { ksql: 'SHOW STREAMS;' },
   });

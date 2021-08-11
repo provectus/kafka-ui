@@ -1,25 +1,12 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import SQLEditor from 'components/common/SQLEditor/SQLEditor';
-import yup from 'lib/yupExtended';
 import React, { FC, useEffect, useCallback, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { fetchKsqlDbTables } from 'redux/actions/thunks/ksqlDb';
-import { connects } from 'redux/reducers/connect/__test__/fixtures';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-
-const validationSchema = yup.object({
-  query: yup.string().trim().required(),
-});
-
-type FormValues = {
-  query: string;
-};
+import QueryModal from 'components/KsqlDb/QueryModal/QueryModal';
 
 const headers = [
   { Header: 'Type', accessor: 'type' },
@@ -32,16 +19,7 @@ const headers = [
 const List: FC = () => {
   const dispatch = useDispatch();
   const [isModalShown, setIsShow] = useState(false);
-  const {
-    control,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
-    mode: 'onTouched',
-    resolver: yupResolver(validationSchema),
-    defaultValues: {
-      query: '',
-    },
-  });
+
   const { clusterName } = useParams<{ clusterName: string }>();
 
   const { rows, fetching, tablesCount, streamsCount } =
@@ -57,22 +35,11 @@ const List: FC = () => {
 
   return (
     <>
-      <ConfirmationModal
-        title="Execute a query"
+      <QueryModal
+        clusterName={clusterName}
         isOpen={isModalShown}
-        onConfirm={toggleShown}
         onCancel={toggleShown}
-      >
-        <div className="control">
-          <Controller
-            control={control}
-            name="query"
-            render={({ field }) => (
-              <SQLEditor {...field} readOnly={isSubmitting} />
-            )}
-          />
-        </div>
-      </ConfirmationModal>
+      />
       <MetricsWrapper wrapperClassName="is-justify-content-space-between">
         <div className="column is-flex m-0 p-0">
           <Indicator
