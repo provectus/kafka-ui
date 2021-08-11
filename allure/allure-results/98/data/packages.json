@@ -6,12 +6,12 @@
       "name" : "topics.TopicTests",
       "children" : [ {
         "name" : "deleteTopic",
-        "uid" : "6ad58b45c0e23b47",
+        "uid" : "a6cbc48ba81d28be",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "skipped",
         "time" : {
-          "start" : 1628690566833,
-          "stop" : 1628690566834,
+          "start" : 1628690574315,
+          "stop" : 1628690574316,
           "duration" : 1
         },
         "flaky" : false,
@@ -19,26 +19,26 @@
         "parameters" : [ ]
       }, {
         "name" : "updateTopic",
-        "uid" : "dee3a7fae61e9325",
+        "uid" : "4fb11705bbeea91e",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1628690566896,
-          "stop" : 1628690614982,
-          "duration" : 48086
+          "start" : 1628690574378,
+          "stop" : 1628690618687,
+          "duration" : 44309
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       }, {
         "name" : "createTopic",
-        "uid" : "796bf345ba8d9762",
+        "uid" : "8ba633211120f443",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1628690614998,
-          "stop" : 1628690618235,
-          "duration" : 3237
+          "start" : 1628690618704,
+          "stop" : 1628690623432,
+          "duration" : 4728
         },
         "flaky" : false,
         "newFailed" : false,
@@ -49,13 +49,13 @@
       "name" : "SmokeTests",
       "children" : [ {
         "name" : "mainPageLoads",
-        "uid" : "dd9ed49c62f57ea1",
+        "uid" : "128422109f135b7b",
         "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
         "status" : "passed",
         "time" : {
-          "start" : 1628690618366,
-          "stop" : 1628690619496,
-          "duration" : 1130
+          "start" : 1628690623607,
+          "stop" : 1628690624595,
+          "duration" : 988
         },
         "flaky" : false,
         "newFailed" : false,
