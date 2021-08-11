@@ -10,6 +10,7 @@ import schemas from './schemas/reducer';
 import connect from './connect/reducer';
 import loader from './loader/reducer';
 import alerts from './alerts/reducer';
+import ksqlDb from './ksqlDb/reducer';
 
 export default combineReducers<RootState>({
   topics,
@@ -21,4 +22,5 @@ export default combineReducers<RootState>({
   connect,
   loader,
   alerts,
+  ksqlDb,
 });

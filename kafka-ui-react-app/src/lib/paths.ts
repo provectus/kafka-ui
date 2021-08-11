@@ -111,3 +111,7 @@ export const clusterConnectConnectorConfigPath = (
     connectName,
     connectorName
   )}/config`;
+
+// KsqlDb
+export const clusterKsqlDbPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/ksql-db`;

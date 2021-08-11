@@ -294,3 +294,19 @@ export const updateTopicReplicationFactorAction = createAsyncAction(
   'UPDATE_REPLICATION_FACTOR__SUCCESS',
   'UPDATE_REPLICATION_FACTOR__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
+
+export const sendKsqlDbCommandAction = createAsyncAction(
+  'SEND_KSQL_DB_COMMAND__REQUEST',
+  'SEND_KSQL_DB_COMMAND__SUCCESS',
+  'SEND_KSQL_DB_COMMAND__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const fetchKsqlDbTablesAction = createAsyncAction(
+  'GET_KSQL_DB_TABLES__REQUEST',
+  'GET_KSQL_DB_TABLES__SUCCESS',
+  'GET_KSQL_DB_TABLES__FAILURE'
+)<
+  undefined,
+  { headers: string[]; rows: Record<string, string>[] },
+  { alert?: FailurePayload }
+>();
