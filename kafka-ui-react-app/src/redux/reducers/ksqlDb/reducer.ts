@@ -4,8 +4,8 @@ import * as actions from 'redux/actions';
 import { KsqlState } from 'redux/interfaces/ksqlDb';
 
 export const initialState: KsqlState = {
-  headers: [],
-  rows: [],
+  streams: [],
+  tables: [],
 };
 
 const reducer = (state = initialState, action: Action): KsqlState => {

@@ -6,39 +6,48 @@ import * as actions from 'redux/actions/actions';
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const brokersApiClient = new KsqlApi(apiClientConf);
 
-const transformKsqlTablesResponse = (
+const transformKsqlResponse = (
   rawTable: Required<KsqlTable>
-): Record<string, string>[] => {
+): Dictionary<string>[] => {
   const { headers, rows } = rawTable;
 
-  const tables = rows.map((row) => {
-    const objectRow: Record<string, string> = {};
+  const transformedRows = rows.map((row) => {
+    const objectRow: Dictionary<string> = {};
     row.forEach((_, index) => {
       objectRow[headers[index]] = row[index];
     });
     return objectRow;
   });
 
-  return tables;
+  return transformedRows;
 };
+
+const getTables = (clusterName: ClusterName) =>
+  brokersApiClient.executeKsqlCommand({
+    clusterName,
+    ksqlCommand: { ksql: 'SHOW TABLES;' },
+  });
+
+const getStreams = (clusterName: ClusterName) =>
+  brokersApiClient.executeKsqlCommand({
+    clusterName,
+    ksqlCommand: { ksql: 'SHOW STREAMS;' },
+  });
 
 export const fetchKsqlDbTables =
   (clusterName: ClusterName): PromiseThunkResult =>
   async (dispatch) => {
     dispatch(actions.fetchKsqlDbTablesAction.request());
     try {
-      const payload = await brokersApiClient.executeKsqlCommand({
-        clusterName,
-        ksqlCommand: { ksql: 'SHOW TABLES;' },
-      });
-      if (payload.data) {
-        dispatch(
-          actions.fetchKsqlDbTablesAction.success({
-            headers: payload.data.headers,
-            rows: transformKsqlTablesResponse(payload.data),
-          })
-        );
-      }
+      const tables = await getTables(clusterName);
+      const streams = await getStreams(clusterName);
+
+      dispatch(
+        actions.fetchKsqlDbTablesAction.success({
+          tables: tables.data ? transformKsqlResponse(tables.data) : [],
+          streams: streams.data ? transformKsqlResponse(streams.data) : [],
+        })
+      );
     } catch (e) {
       dispatch(actions.fetchKsqlDbTablesAction.failure({}));
     }

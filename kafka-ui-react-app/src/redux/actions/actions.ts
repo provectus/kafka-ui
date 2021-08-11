@@ -302,11 +302,14 @@ export const sendKsqlDbCommandAction = createAsyncAction(
 )<undefined, undefined, { alert?: FailurePayload }>();
 
 export const fetchKsqlDbTablesAction = createAsyncAction(
-  'GET_KSQL_DB_TABLES__REQUEST',
-  'GET_KSQL_DB_TABLES__SUCCESS',
-  'GET_KSQL_DB_TABLES__FAILURE'
+  'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
+  'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
+  'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE'
 )<
   undefined,
-  { headers: string[]; rows: Record<string, string>[] },
+  {
+    tables: Dictionary<string>[];
+    streams: Dictionary<string>[];
+  },
   { alert?: FailurePayload }
 >();

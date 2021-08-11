@@ -6,6 +6,6 @@ export interface KsqlTables {
 }
 
 export interface KsqlState {
-  headers: string[];
-  rows: Record<string, string>[];
+  tables: Record<string, string>[];
+  streams: Record<string, string>[];
 }

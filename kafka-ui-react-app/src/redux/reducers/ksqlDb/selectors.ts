@@ -5,15 +5,17 @@ import { KsqlState } from 'redux/interfaces/ksqlDb';
 
 const consumerGroupsState = ({ ksqlDb }: RootState): KsqlState => ksqlDb;
 
-const getConsumerGroupsListFetchingStatus =
-  createFetchingSelector('GET_KSQL_DB_TABLES');
+const getConsumerGroupsListFetchingStatus = createFetchingSelector(
+  'GET_KSQL_DB_TABLES_AND_STREAMS'
+);
 
 export const getKsqlDbTables = createSelector(
   [consumerGroupsState, getConsumerGroupsListFetchingStatus],
   (state, status) => ({
-    rows: state.rows,
-    headers: state.headers,
+    rows: [...state.streams, ...state.tables],
     fetched: status === 'fetched',
     fetching: status === 'fetching' || status === 'notFetched',
+    tablesCount: state.tables.length,
+    streamsCount: state.streams.length,
   })
 );
