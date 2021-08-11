@@ -11,13 +11,12 @@ const transformKsqlResponse = (
 ): Dictionary<string>[] => {
   const { headers, rows } = rawTable;
 
-  const transformedRows = rows.map((row) => {
-    const objectRow: Dictionary<string> = {};
-    row.forEach((_, index) => {
-      objectRow[headers[index]] = row[index];
-    });
-    return objectRow;
-  });
+  const transformedRows = rows.map((row) =>
+    row.reduce((res, acc, index) => {
+      res[headers[index]] = acc;
+      return res;
+    }, {} as Dictionary<string>)
+  );
 
   return transformedRows;
 };
