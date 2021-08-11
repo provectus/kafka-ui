@@ -1,22 +1,20 @@
 import { shallow } from 'enzyme';
 import React from 'react';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 
 describe('JSONEditor component', () => {
   it('matches the snapshot', () => {
-    const component = shallow(<JSONEditor value="{}" name="name" />);
+    const component = shallow(<SQLEditor value="" name="name" />);
     expect(component).toMatchSnapshot();
   });
 
   it('matches the snapshot with fixed height', () => {
-    const component = shallow(
-      <JSONEditor value="{}" name="name" isFixedHeight />
-    );
+    const component = shallow(<SQLEditor value="" name="name" isFixedHeight />);
     expect(component).toMatchSnapshot();
   });
 
   it('matches the snapshot with fixed height with no value', () => {
-    const component = shallow(<JSONEditor name="name" isFixedHeight />);
+    const component = shallow(<SQLEditor name="name" isFixedHeight />);
     expect(component).toMatchSnapshot();
   });
 });
