@@ -1,0 +1,26 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "500 Internal Server Error from POST http://localhost:8080/api/clusters/secondLocal/topics",
+      "children" : [ {
+        "name" : " topic tests",
+        "uid" : "8061433f3ae6c7e1",
+        "parentUid" : "0e2d805f7a127ce60a1460746a94adb9",
+        "status" : "broken",
+        "time" : {
+          "start" : 1628709260888,
+          "stop" : 1628709260889,
+          "duration" : 1
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "0e2d805f7a127ce60a1460746a94adb9"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
