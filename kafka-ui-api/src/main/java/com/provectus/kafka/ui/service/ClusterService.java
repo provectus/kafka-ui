@@ -278,7 +278,8 @@ public class ClusterService {
                                         ConsumerPosition consumerPosition, String query,
                                         Integer limit, String jsFilterFn) {
     return clustersStorage.getClusterByName(clusterName)
-        .map(c -> consumingService.loadMessages(c, topicName, consumerPosition, query, limit, jsFilterFn))
+        .map(c -> consumingService.loadMessages(
+            c, topicName, consumerPosition, query, limit, jsFilterFn))
         .orElse(Flux.empty());
   }
 

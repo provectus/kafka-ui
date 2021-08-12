@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,6 +28,7 @@ import java.util.stream.Collectors;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -440,13 +440,13 @@ public class SendAndReadTests extends AbstractBaseTest {
   void getMessagesWithEmptyJsFilterFn() {
     new SendAndReadSpec()
         .withMsgToSend(new CreateTopicMessage().key("test-key"))
-        .doAssert(polled -> { assertThat(polled.getKey()).isEqualTo("test-key"); });
+        .doAssert(polled -> assertThat(polled.getKey()).isEqualTo("test-key"));
   }
 
   @Test
   void getMessagesWithJsFilterFnForKey() {
-    String filterFn = "function filter(key, content, headers, offset, partition) " +
-        "{ return key.indexOf('key') != -1; }";
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return key.indexOf('key') != -1; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key1"),
         new CreateTopicMessage().key("key2"),
@@ -464,8 +464,8 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForContent() {
-    String filterFn = "function filter(key, content, headers, offset, partition) " +
-        "{ return content.length > 4; }";
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return content.length > 4; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().content("kafka"),
         new CreateTopicMessage().content("ui"),
@@ -479,11 +479,12 @@ public class SendAndReadTests extends AbstractBaseTest {
           assertThat(polled.get(0).getContent()).isEqualTo("kafka");
           assertThat(polled.get(1).getContent()).isEqualTo("tests");
         });
-  }  @Test
+  }
 
+  @Test
   void getMessagesWithJsFilterFnForHeaders() {
-    String filterFn = "function filter(key, content, headers, offset, partition) " +
-        "{ return headers.value > 10; }";
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return headers.value > 10; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().content("1").headers(Map.of("value", "1")),
         new CreateTopicMessage().content("1").headers(Map.of("value", "20")),
@@ -501,8 +502,8 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForOffset() {
-    String filterFn = "function filter(key, content, headers, offset, partition) " +
-        "{ return offset > 0; }";
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return offset > 0; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key1"),
         new CreateTopicMessage().key("key2"),
@@ -520,8 +521,8 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForPartitions() {
-    String filterFn = "function filter(key, content, headers, offset, partition) " +
-        "{ return partition == 0; }";
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return partition == 0; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key1"),
         new CreateTopicMessage().key("key2")
@@ -538,15 +539,15 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnWithException() {
-    String filterFn = "function filter(key, content, headers, offset, partition) " +
-        "{ return key.content.headers; }";
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return key.content.headers; }";
     CreateTopicMessage messages = new CreateTopicMessage().key("key1");
     Exception exception = assertThrows(
         UnprocessableEntityException.class,
         () -> new SendAndReadSpec()
             .withJsFilterFn(filterFn)
             .withMsgToSend(messages)
-            .doAssert(polled -> assertNull(polled))
+            .doAssert(Assertions::assertNull)
     );
 
     assertThat(exception.getMessage()).contains(
@@ -576,8 +577,8 @@ public class SendAndReadTests extends AbstractBaseTest {
       return this;
     }
 
-    public SendAndReadSpec withKeySchema(ParsedSchema keyScheam) {
-      this.keySchema = keyScheam;
+    public SendAndReadSpec withKeySchema(ParsedSchema keySchema) {
+      this.keySchema = keySchema;
       return this;
     }
 
@@ -612,7 +613,8 @@ public class SendAndReadTests extends AbstractBaseTest {
     public void assertSendThrowsException() {
       String topic = createTopicAndCreateSchemas();
       try {
-        assertThatThrownBy(() -> clusterService.sendMessage(LOCAL, topic, msgToSend.get(0)).block());
+        assertThatThrownBy(
+            () -> clusterService.sendMessage(LOCAL, topic, msgToSend.get(0)).block());
       } finally {
         deleteTopic(topic);
       }

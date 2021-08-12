@@ -48,6 +48,25 @@ public class ConsumingService {
   private final DeserializationService deserializationService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
+  /**
+   * returns end offsets for partitions where start offset != end offsets.
+   * This is useful when we need to verify that partition is not empty.
+   */
+  public static Map<TopicPartition, Long> significantOffsets(Consumer<?, ?> consumer,
+                                                             String topicName,
+                                                             Collection<Integer>
+                                                                 partitionsToInclude) {
+    var partitions = consumer.partitionsFor(topicName).stream()
+        .filter(p -> partitionsToInclude.isEmpty() || partitionsToInclude.contains(p.partition()))
+        .map(p -> new TopicPartition(topicName, p.partition()))
+        .collect(Collectors.toList());
+    var beginningOffsets = consumer.beginningOffsets(partitions);
+    var endOffsets = consumer.endOffsets(partitions);
+    return endOffsets.entrySet().stream()
+        .filter(entry -> !beginningOffsets.get(entry.getKey()).equals(entry.getValue()))
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+  }
+
   public Flux<TopicMessageEvent> loadMessages(KafkaCluster cluster, String topic,
                                               ConsumerPosition consumerPosition, String query,
                                               Integer limit, String jsFilterFn) {
@@ -91,25 +110,6 @@ public class ConsumingService {
     });
   }
 
-  /**
-   * returns end offsets for partitions where start offset != end offsets.
-   * This is useful when we need to verify that partition is not empty.
-   */
-  public static Map<TopicPartition, Long> significantOffsets(Consumer<?, ?> consumer,
-                                                              String topicName,
-                                                              Collection<Integer>
-                                                                  partitionsToInclude) {
-    var partitions = consumer.partitionsFor(topicName).stream()
-        .filter(p -> partitionsToInclude.isEmpty() || partitionsToInclude.contains(p.partition()))
-        .map(p -> new TopicPartition(topicName, p.partition()))
-        .collect(Collectors.toList());
-    var beginningOffsets = consumer.beginningOffsets(partitions);
-    var endOffsets = consumer.endOffsets(partitions);
-    return endOffsets.entrySet().stream()
-        .filter(entry -> !beginningOffsets.get(entry.getKey()).equals(entry.getValue()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-  }
-
   private boolean filterTopicMessage(TopicMessageEvent message, String query) {
     log.info("filter");
     if (StringUtils.isEmpty(query)
@@ -123,8 +123,12 @@ public class ConsumingService {
   }
 
   private boolean jsFilterTopicMessageEvent(TopicMessageEvent messageEvent, String jsFilterFn) {
-    if (StringUtils.isEmpty(jsFilterFn)) return true;
-    if (messageEvent.getMessage() == null) return false;
+    if (StringUtils.isEmpty(jsFilterFn)) {
+      return true;
+    }
+    if (messageEvent.getMessage() == null) {
+      return false;
+    }
 
     final TopicMessage message = messageEvent.getMessage();
     final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
@@ -134,11 +138,11 @@ public class ConsumingService {
       engine.eval(jsFilterFn);
       Object result = invocable.invokeFunction("filter", message.getKey(),
           message.getContent(), message.getHeaders(), message.getOffset(), message.getPartition());
-      return result.toString() == "true";
+      return result.toString().equals("true");
     } catch (NoSuchMethodException | ScriptException e) {
       String errorMessage = e.getMessage();
-      String tip = ". Example of filter function: " +
-          "\"function filter(key, content, headers, offset, partition) { return offset != 0; }\"";
+      String tip = ". Example of filter function: "
+          + "\"function filter(key, content, headers, offset, partition) { return offset != 0; }\"";
       throw new UnprocessableEntityException(errorMessage + tip);
     }
   }
