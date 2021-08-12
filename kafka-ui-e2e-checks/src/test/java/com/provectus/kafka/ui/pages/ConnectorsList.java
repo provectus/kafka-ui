@@ -4,6 +4,7 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import io.qameta.allure.Step;
+import lombok.SneakyThrows;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Selenide.$;
@@ -27,5 +28,12 @@ public class ConnectorsList {
     @Step
     public void clickCreateConnectorButton() {
         $(By.xpath("//a[text()='Create Connector']")).click();
+    }
+
+    @SneakyThrows
+    public ConnectorsList openConnector(String connectorName) {
+        $(By.xpath("//*/tr/td[1]/a[text()='%s']".formatted(connectorName)))
+                .click();
+        return this;
     }
 }
