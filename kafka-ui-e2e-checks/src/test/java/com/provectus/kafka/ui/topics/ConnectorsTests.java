@@ -9,6 +9,8 @@ import static com.provectus.kafka.ui.topics.TopicTests.SECOND_LOCAL;
 
 public class ConnectorsTests extends BaseTest {
 
+    public static final String SOURCE_CONNECTOR = "source_postgres_activities";
+
     @SneakyThrows
     @DisplayName("should create a connector")
     @Test
@@ -16,5 +18,16 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsList(SECOND_LOCAL)
                 .isOnPage()
                 .clickCreateConnectorButton();
+    }
+    //tbd
+    @SneakyThrows
+    @DisplayName("should update a connector")
+    @Test
+    void updateConnector() {
+        pages.openConnectorsList(SECOND_LOCAL)
+                .isOnPage()
+                .openConnector(SOURCE_CONNECTOR);
+        pages.openConnectorsView(SECOND_LOCAL,SOURCE_CONNECTOR)
+                .openEditConfig();
     }
 }
