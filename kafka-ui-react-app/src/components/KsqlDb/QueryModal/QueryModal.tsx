@@ -23,7 +23,6 @@ type FormValues = {
 
 const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
-  streamProperties: yup.string().optional(),
 });
 
 const TABS_INITIAL_PAGE = 0;
@@ -58,7 +57,9 @@ const QueryModal: FC<QueryModalProps> = ({
       clusterName,
       ksqlCommand: {
         ...values,
-        streamsProperties: JSON.parse(values.streamsProperties),
+        streamsProperties: values.streamsProperties
+          ? JSON.parse(values.streamsProperties)
+          : undefined,
       },
     });
     setResult(response);
