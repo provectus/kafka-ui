@@ -1,12 +1,13 @@
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import React, { FC, useEffect, useCallback, useState } from 'react';
+import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { fetchKsqlDbTables } from 'redux/actions/thunks/ksqlDb';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-import QueryModal from 'components/KsqlDb/QueryModal/QueryModal';
+import { Link } from 'react-router-dom';
+import { clusterKsqlDbQueryPath } from 'lib/paths';
 
 const headers = [
   { Header: 'Type', accessor: 'type' },
@@ -18,7 +19,6 @@ const headers = [
 
 const List: FC = () => {
   const dispatch = useDispatch();
-  const [isModalShown, setIsModalShow] = useState(false);
 
   const { clusterName } = useParams<{ clusterName: string }>();
 
@@ -29,17 +29,8 @@ const List: FC = () => {
     dispatch(fetchKsqlDbTables(clusterName));
   }, []);
 
-  const toggleShown = useCallback(() => {
-    setIsModalShow((prevState) => !prevState);
-  }, []);
-
   return (
     <>
-      <QueryModal
-        clusterName={clusterName}
-        isOpen={isModalShown}
-        onCancel={toggleShown}
-      />
       <MetricsWrapper wrapperClassName="is-justify-content-space-between">
         <div className="column is-flex m-0 p-0">
           <Indicator
@@ -59,13 +50,12 @@ const List: FC = () => {
             {streamsCount}
           </Indicator>
         </div>
-        <button
-          type="button"
+        <Link
+          to={clusterKsqlDbQueryPath(clusterName)}
           className="button is-primary"
-          onClick={toggleShown}
         >
-          Execute a query
-        </button>
+          Execute ksql
+        </Link>
       </MetricsWrapper>
       <div className="box">
         {fetching ? (

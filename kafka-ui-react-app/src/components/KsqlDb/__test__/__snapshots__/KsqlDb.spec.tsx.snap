@@ -34,24 +34,7 @@ exports[`KsqlDb Component Brokers matches snapshot 1`] = `
       <div
         className="section"
       >
-        <Breadcrumb>
-          <nav
-            aria-label="breadcrumbs"
-            className="breadcrumb"
-          >
-            <ul>
-              <li
-                className="is-active"
-              >
-                <span
-                  className=""
-                >
-                  KSQLDB
-                </span>
-              </li>
-            </ul>
-          </nav>
-        </Breadcrumb>
+        <Switch />
         <Switch />
       </div>
     </KsqlDb>
