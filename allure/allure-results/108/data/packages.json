@@ -6,12 +6,12 @@
       "name" : "topics.TopicTests",
       "children" : [ {
         "name" : "deleteTopic",
-        "uid" : "d38ed4e659337c09",
+        "uid" : "b228ce0ae3ac8274",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "skipped",
         "time" : {
-          "start" : 1628761662896,
-          "stop" : 1628761662897,
+          "start" : 1628762352309,
+          "stop" : 1628762352310,
           "duration" : 1
         },
         "flaky" : false,
@@ -19,26 +19,26 @@
         "parameters" : [ ]
       }, {
         "name" : "updateTopic",
-        "uid" : "3adb24efb72d9db2",
+        "uid" : "cfedefa6e11f0308",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1628761662963,
-          "stop" : 1628761709613,
-          "duration" : 46650
+          "start" : 1628762352355,
+          "stop" : 1628762373748,
+          "duration" : 21393
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       }, {
         "name" : "createTopic",
-        "uid" : "77a509f550bdcd43",
+        "uid" : "ef43490600aee492",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1628761709633,
-          "stop" : 1628761713164,
-          "duration" : 3531
+          "start" : 1628762373776,
+          "stop" : 1628762377358,
+          "duration" : 3582
         },
         "flaky" : false,
         "newFailed" : false,
@@ -49,13 +49,13 @@
       "name" : "SmokeTests",
       "children" : [ {
         "name" : "mainPageLoads",
-        "uid" : "b79a0c7fdf2a3dc",
+        "uid" : "99f828d21c75ad99",
         "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
         "status" : "passed",
         "time" : {
-          "start" : 1628761713346,
-          "stop" : 1628761714292,
-          "duration" : 946
+          "start" : 1628762377536,
+          "stop" : 1628762378752,
+          "duration" : 1216
         },
         "flaky" : false,
         "newFailed" : false,
