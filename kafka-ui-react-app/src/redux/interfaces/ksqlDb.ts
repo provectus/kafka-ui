@@ -1,3 +1,5 @@
+import { KsqlCommandResponse } from 'generated-sources';
+
 export interface KsqlTables {
   data: {
     headers: string[];
@@ -8,4 +10,5 @@ export interface KsqlTables {
 export interface KsqlState {
   tables: Dictionary<string>[];
   streams: Dictionary<string>[];
+  executionResult: KsqlCommandResponse | null;
 }

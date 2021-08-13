@@ -3,7 +3,7 @@ import reducer, { initialState } from 'redux/reducers/ksqlDb/reducer';
 
 import { fetchKsqlDbTablesPayload } from './fixtures';
 
-describe('TopicMessages reducer', () => {
+describe('KsqlDb reducer', () => {
   it('returns the initial state', () => {
     expect(reducer(undefined, fetchKsqlDbTablesAction.request())).toEqual(
       initialState

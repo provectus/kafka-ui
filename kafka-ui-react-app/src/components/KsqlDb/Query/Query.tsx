@@ -1,13 +1,15 @@
-import React, { useCallback, useState, FC } from 'react';
+import React, { useCallback, useEffect, FC } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 import yup from 'lib/yupExtended';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router';
-import { ksqlDbApiClient } from 'redux/actions/thunks/ksqlDb';
-import { KsqlCommandResponse } from 'generated-sources';
+import { executeKsql } from 'redux/actions/thunks/ksqlDb';
 import ResultRenderer from 'components/KsqlDb/Query/ResultRenderer';
+import { useDispatch, useSelector } from 'react-redux';
+import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
+import { resetExecutionResult } from 'redux/actions';
 
 type FormValues = {
   ksql: string;
@@ -18,18 +20,21 @@ const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
 });
 
-const RESULT_INITIAL_VALUE = {};
-
 const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
-  const [result, setResult] =
-    useState<KsqlCommandResponse>(RESULT_INITIAL_VALUE);
+  const dispatch = useDispatch();
 
-  const {
-    handleSubmit,
-    control,
-    formState: { isSubmitting },
-  } = useForm<FormValues>({
+  const { executionResult, fetching } = useSelector(getKsqlExecution);
+
+  const reset = () => {
+    dispatch(resetExecutionResult());
+  };
+
+  useEffect(() => {
+    return reset;
+  }, []);
+
+  const { handleSubmit, control } = useForm<FormValues>({
     mode: 'onTouched',
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -39,16 +44,17 @@ const Query: FC = () => {
   });
 
   const submitHandler = useCallback(async (values: FormValues) => {
-    const response = await ksqlDbApiClient.executeKsqlCommand({
-      clusterName,
-      ksqlCommand: {
-        ...values,
-        streamsProperties: values.streamsProperties
-          ? JSON.parse(values.streamsProperties)
-          : undefined,
-      },
-    });
-    setResult(response);
+    dispatch(
+      executeKsql({
+        clusterName,
+        ksqlCommand: {
+          ...values,
+          streamsProperties: values.streamsProperties
+            ? JSON.parse(values.streamsProperties)
+            : undefined,
+        },
+      })
+    );
   }, []);
 
   return (
@@ -62,7 +68,7 @@ const Query: FC = () => {
                 control={control}
                 name="ksql"
                 render={({ field }) => (
-                  <SQLEditor {...field} readOnly={isSubmitting} />
+                  <SQLEditor {...field} readOnly={fetching} />
                 )}
               />
             </div>
@@ -72,17 +78,35 @@ const Query: FC = () => {
                 control={control}
                 name="streamsProperties"
                 render={({ field }) => (
-                  <JSONEditor {...field} readOnly={isSubmitting} />
+                  <JSONEditor {...field} readOnly={fetching} />
                 )}
               />
             </div>
           </div>
-          <button className="button is-primary" type="submit">
-            Execute
-          </button>
+          <div className="columns">
+            <div className="column is-flex-grow-0">
+              <button
+                className="button is-primary"
+                type="submit"
+                disabled={fetching}
+              >
+                Execute
+              </button>
+            </div>
+            <div className="column is-flex-grow-0">
+              <button
+                className="button is-danger"
+                type="button"
+                disabled={!executionResult}
+                onClick={reset}
+              >
+                Clear
+              </button>
+            </div>
+          </div>
         </form>
       </div>
-      <ResultRenderer result={result} />
+      <ResultRenderer result={executionResult} />
     </>
   );
 };

@@ -25,6 +25,7 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
+  KsqlCommandResponse,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -307,3 +308,11 @@ export const fetchKsqlDbTablesAction = createAsyncAction(
   },
   { alert?: FailurePayload }
 >();
+
+export const executeKsqlAction = createAsyncAction(
+  'EXECUTE_KSQL__REQUEST',
+  'EXECUTE_KSQL__SUCCESS',
+  'EXECUTE_KSQL__FAILURE'
+)<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
+
+export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();

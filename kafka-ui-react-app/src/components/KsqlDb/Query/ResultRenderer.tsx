@@ -1,11 +1,10 @@
 import React from 'react';
-import { isEqual } from 'lodash';
 import { KsqlCommandResponse, Table } from 'generated-sources';
 
-const ResultRenderer: React.FC<{ result: KsqlCommandResponse }> = ({
+const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   result,
 }) => {
-  if (isEqual(result, {})) return null;
+  if (!result) return null;
 
   const isMessage = !!result.message;
 

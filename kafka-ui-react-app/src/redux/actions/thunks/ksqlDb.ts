@@ -1,4 +1,9 @@
-import { Configuration, KsqlApi, Table as KsqlTable } from 'generated-sources';
+import {
+  Configuration,
+  ExecuteKsqlCommandRequest,
+  KsqlApi,
+  Table as KsqlTable,
+} from 'generated-sources';
 import {
   PromiseThunkResult,
   ClusterName,
@@ -53,5 +58,23 @@ export const fetchKsqlDbTables =
         response: e,
       };
       dispatch(actions.fetchKsqlDbTablesAction.failure({ alert }));
+    }
+  };
+
+export const executeKsql =
+  (params: ExecuteKsqlCommandRequest): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.executeKsqlAction.request());
+    try {
+      const response = await ksqlDbApiClient.executeKsqlCommand(params);
+
+      dispatch(actions.executeKsqlAction.success(response));
+    } catch (e) {
+      const alert: FailurePayload = {
+        subject: 'ksql execution',
+        title: `Failed to execute command ${params.ksqlCommand?.ksql}`,
+        response: e,
+      };
+      dispatch(actions.executeKsqlAction.failure({ alert }));
     }
   };

@@ -6,6 +6,7 @@ import { KsqlState } from 'redux/interfaces/ksqlDb';
 export const initialState: KsqlState = {
   streams: [],
   tables: [],
+  executionResult: null,
 };
 
 const reducer = (state = initialState, action: Action): KsqlState => {
@@ -14,6 +15,16 @@ const reducer = (state = initialState, action: Action): KsqlState => {
       return {
         ...state,
         ...action.payload,
+      };
+    case getType(actions.executeKsqlAction.success):
+      return {
+        ...state,
+        executionResult: action.payload,
+      };
+    case getType(actions.resetExecutionResult):
+      return {
+        ...state,
+        executionResult: null,
       };
     default:
       return state;
