@@ -1,6 +1,7 @@
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import ListItem from 'components/KsqlDb/List/ListItem';
 import React, { FC, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
@@ -16,6 +17,8 @@ const headers = [
   { Header: 'Key Format', accessor: 'keyFormat' },
   { Header: 'Value Format', accessor: 'valueFormat' },
 ];
+
+const accessors = headers.map((header) => header.accessor);
 
 const List: FC = () => {
   const dispatch = useDispatch();
@@ -64,6 +67,7 @@ const List: FC = () => {
           <table className="table is-fullwidth">
             <thead>
               <tr>
+                <th> </th>
                 {headers.map(({ Header, accessor }) => (
                   <th key={accessor}>{Header}</th>
                 ))}
@@ -71,11 +75,7 @@ const List: FC = () => {
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.name}>
-                  {headers.map(({ accessor }) => (
-                    <td key={accessor}>{row[accessor]}</td>
-                  ))}
-                </tr>
+                <ListItem key={row.name} accessors={accessors} data={row} />
               ))}
               {rows.length === 0 && (
                 <tr>
