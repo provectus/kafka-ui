@@ -11,8 +11,8 @@ public class ConnectorsView {
     private static final String path = "ui/clusters/%s/connects/first/connectors/%s";
 
     @Step
-    public ConnectorsView goTo(String cluster, String connector){
-        Selenide.open(TestConfiguration.BASE_URL+path.formatted(cluster,connector));
+    public ConnectorsView goTo(String cluster, String connector) {
+        Selenide.open(TestConfiguration.BASE_URL + path.formatted(cluster, connector));
         return this;
     }
 
@@ -24,6 +24,12 @@ public class ConnectorsView {
     @Step
     public void submitConfigChanges() {
         $(By.xpath("//input[@type='submit']")).click();
+    }
+
+    @Step
+    public void clickDeleteButton() {
+        $(By.xpath("//span[text()='Delete']")).click();
+        $(By.xpath("//button[text()='Confirm']")).click();
     }
 
 }

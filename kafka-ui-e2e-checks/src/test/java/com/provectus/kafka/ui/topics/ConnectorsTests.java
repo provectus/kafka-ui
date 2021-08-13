@@ -30,4 +30,16 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsView(SECOND_LOCAL,SOURCE_CONNECTOR)
                 .openEditConfig();
     }
+
+    @SneakyThrows
+    @DisplayName("should delete connector")
+    @Test
+    void deleteConnector() {
+        pages.openConnectorsList(SECOND_LOCAL)
+                .isOnPage()
+                .openConnector(SOURCE_CONNECTOR);
+        pages.openConnectorsView(SECOND_LOCAL,SOURCE_CONNECTOR)
+                .clickDeleteButton();
+        pages.openConnectorsList(SECOND_LOCAL).isNotVisible(SOURCE_CONNECTOR);
+    }
 }
