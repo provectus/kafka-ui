@@ -37,7 +37,7 @@ public class StreamTopologyService {
   public StreamApplications getTopologyApplications(String clusterName) {
     final var streamApplications = new StreamApplications();
     final var applicationIds = Optional.ofNullable(clusterStreamApps.get(clusterName))
-        .map(Map::values)
+        .map(Map::keySet)
         .map(ArrayList::new)
         .orElseThrow(ClusterNotFoundException::new);
     return streamApplications.applicationIds(applicationIds);
@@ -58,6 +58,7 @@ public class StreamTopologyService {
     try {
       return topologyParser.parse(topologyString);
     } catch (InvalidStreamTopologyString e) {
+      log.error("cannot parse stream topology", e);
       throw new StreamTopologyParsingException(String
           .format("cannot parse stream topology <clusterName %s>, <applicationId %s>",
               clusterName, applicationId));
