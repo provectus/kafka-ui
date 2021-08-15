@@ -82,7 +82,7 @@ public class StreamTopologyParser {
         } else {
           hasNext = false;
         }
-      };
+      }
     }
     return processorTopology;
   }
@@ -157,16 +157,18 @@ public class StreamTopologyParser {
     final var stringFromNodeName =
         topologyString.substring(subTopologyLeftIndex).strip();
 
-    if (stringFromNodeName.startsWith(SOURCE.value)) {
+    if (stringFromNodeName.startsWith(SUB_TOPOLOGY.value)) {
+      return Optional.of(ParsingRes.of(null, subTopologyLeftIndex));
+    } else if (stringFromNodeName.startsWith(SOURCE.value)) {
       return Optional.of(parseSource(topologyString, subTopologyLeftIndex));
     } else if (stringFromNodeName.startsWith(PROCESSOR.value)) {
       return Optional.of(parseProcessor(topologyString, subTopologyLeftIndex));
     } else if (stringFromNodeName.startsWith(SINK.value)) {
       return Optional.of(parseSink(topologyString, subTopologyLeftIndex));
     } else if (stringFromNodeName.startsWith(PREVIOUS.value)) {
-      return Optional.ofNullable(parsePrevious(topologyString, subTopologyLeftIndex));
+      return Optional.of(parsePrevious(topologyString, subTopologyLeftIndex));
     } else {
-      return Optional.of(ParsingRes.of(null, subTopologyLeftIndex));
+      return Optional.empty();
     }
   }
 
@@ -224,11 +226,9 @@ public class StreamTopologyParser {
     final int afterPrevious =
         parserHelper.indexAfterStringOrThrow(topologyString, PREVIOUS.value, fromIndex);
     final int afterLineBreak = parserHelper.indexAfterString(topologyString, "\n", afterPrevious);
-    if (afterLineBreak == -1) {
-      return null;
-    } else {
-      return ParsingRes.of(null, afterLineBreak);
-    }
+    return afterLineBreak == -1
+        ? ParsingRes.of(null, afterPrevious)
+        : ParsingRes.of(null, afterLineBreak);
   }
 
   enum TopologyLiterals {
