@@ -61,7 +61,7 @@ public class StreamTopologyParser {
 
       int subTopologyLeftIndex = parsedSubTopology.endIndex;
       boolean hasNext = true;
-      do {
+      while (hasNext) {
         final var resultOpt =
             parseSubTopologyNode(topologyString, subTopologyLeftIndex);
 
@@ -82,7 +82,7 @@ public class StreamTopologyParser {
         } else {
           hasNext = false;
         }
-      } while (hasNext);
+      };
     }
     return processorTopology;
   }
