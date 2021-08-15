@@ -8,6 +8,9 @@ kafka:
         - name: first
           address: http://localhost:8083
       jmxPort: 9997
+      streamApplications:
+        - applicationId:
+          topologyUrl:
   #    -
   #      name: secondLocal
   #      bootstrapServers: localhost:9093

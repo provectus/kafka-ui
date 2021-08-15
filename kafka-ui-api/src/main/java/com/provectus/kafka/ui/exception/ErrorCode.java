@@ -19,7 +19,8 @@ public enum ErrorCode {
   CLUSTER_NOT_FOUND(4007, HttpStatus.NOT_FOUND),
   TOPIC_NOT_FOUND(4008, HttpStatus.NOT_FOUND),
   SCHEMA_NOT_FOUND(4009, HttpStatus.NOT_FOUND),
-  CONNECT_NOT_FOUND(4010, HttpStatus.NOT_FOUND);
+  CONNECT_NOT_FOUND(4010, HttpStatus.NOT_FOUND),
+  INVALID_STREAM_TOPOLOGY_STRING(4011, HttpStatus.UNPROCESSABLE_ENTITY);
 
   static {
     // codes uniqueness check
