@@ -59,7 +59,7 @@ public class StreamTopologyService {
       return topologyParser.parse(topologyString);
     } catch (InvalidStreamTopologyString e) {
       throw new StreamTopologyParsingException(String
-          .format("cannot parse stream topology <clusterName %s>, <applicationId %s",
+          .format("cannot parse stream topology <clusterName %s>, <applicationId %s>",
               clusterName, applicationId));
     }
   }
