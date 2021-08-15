@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.StreamTopologyParsingException;
 import com.provectus.kafka.ui.model.ProcessorTopology;
 import com.provectus.kafka.ui.model.StreamApplications;
+import com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Optional;

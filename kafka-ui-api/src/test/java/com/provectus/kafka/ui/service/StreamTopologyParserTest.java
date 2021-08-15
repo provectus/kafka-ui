@@ -3,10 +3,13 @@ package com.provectus.kafka.ui.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.provectus.kafka.ui.exception.InvalidStreamTopologyString;
+import com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser;
+import com.provectus.kafka.ui.service.topology.parser.StreamTopologyParserHelper;
 import org.junit.jupiter.api.Test;
 
 class StreamTopologyParserTest {
-  private final StreamTopologyParser parser = new StreamTopologyParser();
+  private final StreamTopologyParser parser =
+      new StreamTopologyParser(new StreamTopologyParserHelper());
 
   @Test
   void edgeCasesTest() {

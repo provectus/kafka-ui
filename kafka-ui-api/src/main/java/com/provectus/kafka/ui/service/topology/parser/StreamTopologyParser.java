@@ -1,15 +1,16 @@
-package com.provectus.kafka.ui.service;
+package com.provectus.kafka.ui.service.topology.parser;
 
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.NEXT;
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.PREVIOUS;
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.PROCESSOR;
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.SINK;
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.SOURCE;
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.SUB_TOPOLOGY;
-import static com.provectus.kafka.ui.service.StreamTopologyParser.TopologyLiterals.TOPIC;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.NEXT;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.PREVIOUS;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.PROCESSOR;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.SINK;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.SOURCE;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.SUB_TOPOLOGY;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.TOPIC;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParserHelper.NodeAdjacencyPair;
+import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParserHelper.ParsingRes;
 
 import com.provectus.kafka.ui.exception.InvalidStreamTopologyString;
-import com.provectus.kafka.ui.model.GraphNode;
 import com.provectus.kafka.ui.model.GraphNodeType;
 import com.provectus.kafka.ui.model.ProcessorNode;
 import com.provectus.kafka.ui.model.ProcessorTopology;
@@ -19,17 +20,18 @@ import com.provectus.kafka.ui.model.SubTopologyNode;
 import com.provectus.kafka.ui.model.TopicNode;
 import com.provectus.kafka.ui.model.TopologyGraph;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
+@RequiredArgsConstructor
 public class StreamTopologyParser {
+  private final StreamTopologyParserHelper parserHelper;
+
   public ProcessorTopology parse(final String topologyString) {
     if (StringUtils.isEmpty(topologyString)) {
       throw new InvalidStreamTopologyString("topology string is empty");
@@ -141,7 +143,8 @@ public class StreamTopologyParser {
       throw new InvalidStreamTopologyString(
           String.format("Cannot find %s constant in string", SUB_TOPOLOGY.value));
     }
-    var parsedName = parseOrThrow(topologyString, SUB_TOPOLOGY.value, topologyLeftIndex, "\n");
+    var parsedName =
+        parserHelper.parseOrThrow(topologyString, SUB_TOPOLOGY.value, topologyLeftIndex, "\n");
 
     final var subTopologyNode = new SubTopologyNode();
     subTopologyNode.setName(parsedName.value);
@@ -169,11 +172,11 @@ public class StreamTopologyParser {
 
   private ParsingRes<NodeAdjacencyPair> parseSource(String topologyString, int fromIndex) {
     final var parsedSourceName =
-        parseOrThrow(topologyString, SOURCE.value, fromIndex, "(");
+        parserHelper.parseOrThrow(topologyString, SOURCE.value, fromIndex, "(");
     final var parsedTopics =
-        parseArrayOrThrow(topologyString, "[", parsedSourceName.endIndex, "]");
+        parserHelper.parseArrayOrThrow(topologyString, "[", parsedSourceName.endIndex, "]");
     final var nextReferences =
-        parseArrayOrThrow(topologyString, NEXT.value, parsedTopics.endIndex, "\n");
+        parserHelper.parseArrayOrThrow(topologyString, NEXT.value, parsedTopics.endIndex, "\n");
 
     final var sourceProcessorNode = new SourceProcessorNode();
     sourceProcessorNode.setName(parsedSourceName.value);
@@ -186,11 +189,11 @@ public class StreamTopologyParser {
 
   private ParsingRes<NodeAdjacencyPair> parseProcessor(String topologyString, int fromIndex) {
     final var parsedProcessorName =
-        parseOrThrow(topologyString, PROCESSOR.value, fromIndex, "(");
+        parserHelper.parseOrThrow(topologyString, PROCESSOR.value, fromIndex, "(");
     final var parsedStores =
-        parseArrayOrThrow(topologyString, "[", parsedProcessorName.endIndex, "]");
+        parserHelper.parseArrayOrThrow(topologyString, "[", parsedProcessorName.endIndex, "]");
     final var nextReferences =
-        parseArrayOrThrow(topologyString, NEXT.value, parsedStores.endIndex, "\n");
+        parserHelper.parseArrayOrThrow(topologyString, NEXT.value, parsedStores.endIndex, "\n");
 
     final var processorNode = new ProcessorNode();
     processorNode.setName(parsedProcessorName.value);
@@ -203,9 +206,9 @@ public class StreamTopologyParser {
 
   private ParsingRes<NodeAdjacencyPair> parseSink(String topologyString, int fromIndex) {
     final var parsedSinkName =
-        parseOrThrow(topologyString, SINK.value, fromIndex, "(");
+        parserHelper.parseOrThrow(topologyString, SINK.value, fromIndex, "(");
     final var parsedTopic =
-        parseOrThrow(topologyString, TOPIC.value, parsedSinkName.endIndex, ")");
+        parserHelper.parseOrThrow(topologyString, TOPIC.value, parsedSinkName.endIndex, ")");
 
     final var sinkNode = new SinkProcessorNode();
     sinkNode.setName(parsedSinkName.value);
@@ -219,79 +222,12 @@ public class StreamTopologyParser {
   private ParsingRes<NodeAdjacencyPair> parsePrevious(String topologyString,
                                                       int fromIndex) {
     final int afterPrevious =
-        indexAfterStringOrThrow(topologyString, PREVIOUS.value, fromIndex);
-    final int afterLineBreak = indexAfterString(topologyString, "\n", afterPrevious);
+        parserHelper.indexAfterStringOrThrow(topologyString, PREVIOUS.value, fromIndex);
+    final int afterLineBreak = parserHelper.indexAfterString(topologyString, "\n", afterPrevious);
     if (afterLineBreak == -1) {
       return null;
     } else {
       return ParsingRes.of(null, afterLineBreak);
-    }
-  }
-
-  private ParsingRes<String> parseOrThrow(String topologyString, String after, int fromIndex,
-                                          String before) {
-    final int beginIndex = indexAfterStringOrThrow(topologyString, after, fromIndex);
-    final int endIndex = indexOfOrThrow(topologyString, before, beginIndex);
-    final var result = topologyString.substring(beginIndex, endIndex).strip();
-    return ParsingRes.of(result, endIndex);
-  }
-
-  private ParsingRes<List<String>> parseArrayOrThrow(String topologyString, String after,
-                                                     int fromIndex,
-                                                     String before) {
-    final int listBegin = indexAfterStringOrThrow(topologyString, after, fromIndex);
-    final int listEnd = indexOfOrThrow(topologyString, before, listBegin);
-    final var parsedList =
-        Arrays.stream(topologyString.substring(listBegin, listEnd).split(","))
-            .map(String::strip)
-            .collect(Collectors.toList());
-    return ParsingRes.of(parsedList, listEnd);
-  }
-
-  private int indexAfterString(String topologyString, String str, int fromIndex) {
-    final int index = topologyString.indexOf(str, fromIndex);
-    return index == -1 ? index : index + str.length();
-  }
-
-  private int indexAfterStringOrThrow(String topologyString, String str, int fromIndex) {
-    final int index = indexOfOrThrow(topologyString, str, fromIndex);
-    return index + str.length();
-  }
-
-  private int indexOfOrThrow(String topologyString, String str, int fromIndex) {
-    final int index = topologyString.indexOf(str, fromIndex);
-    if (fromIndex == -1 || fromIndex >= topologyString.length() || index == -1) {
-      throw new InvalidStreamTopologyString(
-          String.format("cannot find string %s in topology string", str));
-    }
-    return index;
-  }
-
-  private static class NodeAdjacencyPair {
-    GraphNode node;
-    List<String> adjacencyList;
-
-    static NodeAdjacencyPair of(GraphNode node, List<String> adjacencyList) {
-      final var pair = new NodeAdjacencyPair();
-      pair.node = node;
-      pair.adjacencyList = adjacencyList;
-      return pair;
-    }
-  }
-
-  private static class ParsingRes<T> {
-    T value;
-    Integer endIndex;
-
-    static <T> ParsingRes<T> of(T res, int endIndex) {
-      final var parsingRes = new ParsingRes<T>();
-      parsingRes.value = res;
-      parsingRes.endIndex = endIndex;
-      return parsingRes;
-    }
-
-    boolean isEmpty() {
-      return value == null && endIndex == null;
     }
   }
 
