@@ -65,22 +65,23 @@ public class StreamTopologyParser {
         final var resultOpt =
             parseSubTopologyNode(topologyString, subTopologyLeftIndex);
 
-        endOfFile = resultOpt.map(ParsingRes::isEmpty).orElse(Boolean.TRUE);
-        if (!endOfFile) {
-          resultOpt.map(result -> result.value).ifPresent(
-              res -> putParsedNode(processorTopology, subTopologyGraph, parsedSubTopology.value,
-                  res)
-          );
-          final var endIndex = resultOpt.map(res -> res.endIndex)
-              .orElseThrow(() -> new IllegalArgumentException("endIndex is empty"));
+        endOfFile =
+            resultOpt.map(res -> Boolean.FALSE).orElse(Boolean.TRUE);
+        if (endOfFile) {
+          hasNext = false;
+        } else {
+          resultOpt
+              .map(res -> res.value)
+              .ifPresent(res ->
+                  putParsedNode(processorTopology, subTopologyGraph, parsedSubTopology.value, res)
+              );
+          final var endIndex = resultOpt.map(res -> res.endIndex).orElse(null);
           if (subTopologyLeftIndex == endIndex) {
             hasNext = false;
             topologyLeftIndex = endIndex;
           } else {
             subTopologyLeftIndex = endIndex;
           }
-        } else {
-          hasNext = false;
         }
       }
     }

@@ -62,17 +62,19 @@ public class StreamTopologyParserHelper {
 
   static class ParsingRes<T> {
     T value;
-    Integer endIndex;
+    int endIndex;
 
-    static <T> ParsingRes<T> of(T res, int endIndex) {
+    private ParsingRes() {
+    }
+
+    static <T> ParsingRes<T> of(T res, Integer endIndex) {
+      if (endIndex == null) {
+        throw new IllegalArgumentException("endIndex cannot be null");
+      }
       final var parsingRes = new ParsingRes<T>();
       parsingRes.value = res;
       parsingRes.endIndex = endIndex;
       return parsingRes;
-    }
-
-    boolean isEmpty() {
-      return value == null && endIndex == null;
     }
   }
 }
