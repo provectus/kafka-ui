@@ -1,5 +1,3 @@
-import { KsqlCommandResponse } from 'generated-sources';
-
 export const fetchKsqlDbTablesPayload: {
   tables: Dictionary<string>[];
   streams: Dictionary<string>[];
@@ -42,7 +40,7 @@ export const fetchKsqlDbTablesPayload: {
   ],
 };
 
-export const ksqlCommandResponse: KsqlCommandResponse = {
+export const ksqlCommandResponse = {
   data: {
     headers: [
       'type',

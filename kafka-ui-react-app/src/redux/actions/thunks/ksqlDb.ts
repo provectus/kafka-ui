@@ -11,11 +11,12 @@ import {
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
+import { getResponse } from 'lib/errorHandling';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const ksqlDbApiClient = new KsqlApi(apiClientConf);
 
-const transformKsqlResponse = (
+export const transformKsqlResponse = (
   rawTable: Required<KsqlTable>
 ): Dictionary<string>[] =>
   rawTable.rows.map((row) =>
@@ -51,12 +52,14 @@ export const fetchKsqlDbTables =
           streams: streams.data ? transformKsqlResponse(streams.data) : [],
         })
       );
-    } catch (e) {
+    } catch (error) {
+      const response = await getResponse(error);
       const alert: FailurePayload = {
         subject: 'ksqlDb',
         title: `Failed to fetch tables and streams`,
-        response: e,
+        response,
       };
+
       dispatch(actions.fetchKsqlDbTablesAction.failure({ alert }));
     }
   };
@@ -69,12 +72,14 @@ export const executeKsql =
       const response = await ksqlDbApiClient.executeKsqlCommand(params);
 
       dispatch(actions.executeKsqlAction.success(response));
-    } catch (e) {
+    } catch (error) {
+      const response = await getResponse(error);
       const alert: FailurePayload = {
         subject: 'ksql execution',
         title: `Failed to execute command ${params.ksqlCommand?.ksql}`,
-        response: e,
+        response,
       };
+
       dispatch(actions.executeKsqlAction.failure({ alert }));
     }
   };
