@@ -6,6 +6,8 @@ import { ConsumerGroupState } from 'generated-sources';
 import React from 'react';
 import { StaticRouter } from 'react-router';
 
+import { expectedOutputs } from './fixtures';
+
 const setupWrapper = (props?: Partial<Props>) => (
   <StaticRouter>
     <ResetOffsets
@@ -108,17 +110,7 @@ describe('ResetOffsets', () => {
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
           'testCluster',
           'testGroup',
-          {
-            partitions: [0],
-            partitionsOffsets: [
-              {
-                offset: undefined,
-                partition: 0,
-              },
-            ],
-            resetType: 'EARLIEST',
-            topic: '__amazon_msk_canary',
-          }
+          expectedOutputs.EARLIEST
         );
       });
     });
@@ -139,17 +131,7 @@ describe('ResetOffsets', () => {
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
           'testCluster',
           'testGroup',
-          {
-            partitions: [0],
-            partitionsOffsets: [
-              {
-                offset: undefined,
-                partition: 0,
-              },
-            ],
-            resetType: 'LATEST',
-            topic: '__amazon_msk_canary',
-          }
+          expectedOutputs.LATEST
         );
       });
     });
@@ -175,17 +157,7 @@ describe('ResetOffsets', () => {
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
           'testCluster',
           'testGroup',
-          {
-            partitions: [0],
-            partitionsOffsets: [
-              {
-                offset: '10',
-                partition: 0,
-              },
-            ],
-            resetType: 'OFFSET',
-            topic: '__amazon_msk_canary',
-          }
+          expectedOutputs.OFFSET
         );
       });
     });
