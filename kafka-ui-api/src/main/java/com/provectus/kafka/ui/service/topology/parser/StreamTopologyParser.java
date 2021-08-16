@@ -41,10 +41,7 @@ public class StreamTopologyParser {
     processorTopology.setProcessorsNumber(0);
     processorTopology.setTopicsNumber(0);
 
-    final var topologyGraph = new TopologyGraph();
-    topologyGraph.setAdjacency(new LinkedHashMap<>());
-    topologyGraph.setNodes(new LinkedHashMap<>());
-
+    final TopologyGraph topologyGraph = getTopologyGraph();
     processorTopology.setTopology(topologyGraph);
 
     int topologyLeftIndex = 0;
@@ -54,9 +51,7 @@ public class StreamTopologyParser {
       final var parsedSubTopology =
           parseSubTopology(topologyString, topologyLeftIndex);
 
-      final var subTopologyGraph = new TopologyGraph();
-      subTopologyGraph.setAdjacency(new LinkedHashMap<>());
-      subTopologyGraph.setNodes(new LinkedHashMap<>());
+      final TopologyGraph subTopologyGraph = getTopologyGraph();
       parsedSubTopology.value.setSubTopology(subTopologyGraph);
 
       int subTopologyLeftIndex = parsedSubTopology.endIndex;
@@ -86,6 +81,13 @@ public class StreamTopologyParser {
       }
     }
     return processorTopology;
+  }
+
+  private TopologyGraph getTopologyGraph() {
+    final var topologyGraph = new TopologyGraph();
+    topologyGraph.setAdjacency(new LinkedHashMap<>());
+    topologyGraph.setNodes(new LinkedHashMap<>());
+    return topologyGraph;
   }
 
   private void putParsedNode(ProcessorTopology processorTopology, TopologyGraph subTopologyGraph,
