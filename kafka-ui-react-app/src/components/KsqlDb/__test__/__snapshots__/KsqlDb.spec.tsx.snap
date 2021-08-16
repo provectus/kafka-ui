@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`KsqlDb Component Brokers matches snapshot 1`] = `
+exports[`KsqlDb Component KsqlDb matches snapshot 1`] = `
 <StaticRouter
   context={Object {}}
   location={

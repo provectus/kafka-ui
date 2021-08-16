@@ -6,7 +6,7 @@ import { StaticRouter } from 'react-router';
 describe('KsqlDb Component', () => {
   const pathname = `ui/clusters/local/ksql-db`;
 
-  describe('Brokers', () => {
+  describe('KsqlDb', () => {
     const setupComponent = () => (
       <StaticRouter location={{ pathname }} context={{}}>
         <KsqlDb />

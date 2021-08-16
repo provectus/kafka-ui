@@ -1,3 +1,5 @@
+import { KsqlCommandResponse } from 'generated-sources';
+
 export const fetchKsqlDbTablesPayload: {
   tables: Dictionary<string>[];
   streams: Dictionary<string>[];
@@ -38,4 +40,28 @@ export const fetchKsqlDbTablesPayload: {
       isWindowed: 'false',
     },
   ],
+};
+
+export const ksqlCommandResponse: KsqlCommandResponse = {
+  data: {
+    headers: [
+      'type',
+      'name',
+      'topic',
+      'keyFormat',
+      'valueFormat',
+      'isWindowed',
+    ],
+    rows: [
+      [
+        'STREAM',
+        'KSQL_PROCESSING_LOG',
+        'default_ksql_processing_log',
+        'KAFKA',
+        'JSON',
+        'false',
+      ],
+      ['STREAM', 'PAGEVIEWS', 'pageviews', 'KAFKA', 'AVRO', 'false'],
+    ],
+  },
 };
