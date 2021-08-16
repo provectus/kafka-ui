@@ -69,6 +69,13 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
         className="level-item level-right buttons"
       >
         <button
+          className="button"
+          onClick={[Function]}
+          type="button"
+        >
+          Reset offsets
+        </button>
+        <button
           className="button is-danger"
           onClick={[Function]}
           type="button"

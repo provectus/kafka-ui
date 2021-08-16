@@ -20,6 +20,14 @@ export const clusterBrokersPath = (clusterName: ClusterName) =>
 // Consumer Groups
 export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/consumer-groups`;
+export const clusterConsumerGroupDetailsPath = (
+  clusterName: ClusterName,
+  groupId: string
+) => `${clusterPath(clusterName)}/consumer-groups/${groupId}`;
+export const clusterConsumerGroupResetOffsetsPath = (
+  clusterName: ClusterName,
+  groupId: string
+) => `${clusterPath(clusterName)}/consumer-groups/${groupId}/reset-offsets`;
 
 // Schemas
 export const clusterSchemasPath = (clusterName: ClusterName) =>

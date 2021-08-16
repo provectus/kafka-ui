@@ -103,7 +103,7 @@ export const fetchConsumerGroupsAction = createAsyncAction(
   'GET_CONSUMER_GROUPS__REQUEST',
   'GET_CONSUMER_GROUPS__SUCCESS',
   'GET_CONSUMER_GROUPS__FAILURE'
-)<undefined, ConsumerGroup[], undefined>();
+)<undefined, ConsumerGroup[], { alert?: FailurePayload }>();
 
 export const fetchConsumerGroupDetailsAction = createAsyncAction(
   'GET_CONSUMER_GROUP_DETAILS__REQUEST',
@@ -112,7 +112,7 @@ export const fetchConsumerGroupDetailsAction = createAsyncAction(
 )<
   undefined,
   { consumerGroupID: ConsumerGroupID; details: ConsumerGroupDetails },
-  undefined
+  { alert?: FailurePayload }
 >();
 
 export const deleteConsumerGroupAction = createAsyncAction(
@@ -293,4 +293,10 @@ export const updateTopicReplicationFactorAction = createAsyncAction(
   'UPDATE_REPLICATION_FACTOR__REQUEST',
   'UPDATE_REPLICATION_FACTOR__SUCCESS',
   'UPDATE_REPLICATION_FACTOR__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const resetConsumerGroupOffsetsAction = createAsyncAction(
+  'RESET_OFFSETS__REQUEST',
+  'RESET_OFFSETS__SUCCESS',
+  'RESET_OFFSETS__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
