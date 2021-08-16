@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class StreamTopologyParserHelper {
@@ -24,6 +25,7 @@ public class StreamTopologyParserHelper {
     final int listEnd = indexOfOrThrow(topologyString, before, listBegin);
     final var parsedList =
         Arrays.stream(topologyString.substring(listBegin, listEnd).split(","))
+            .filter(StringUtils::hasText)
             .map(String::strip)
             .collect(Collectors.toList());
     return ParsingRes.of(parsedList, listEnd);

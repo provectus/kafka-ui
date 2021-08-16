@@ -1,47 +1,35 @@
 Topologies:
    Sub-topology: 0
-    Source: KSTREAM-SOURCE-0000000000 (topics: [input-topic-one])
-      --> KSTREAM-KEY-SELECT-0000000002
-    Processor: KSTREAM-KEY-SELECT-0000000002 (stores: [])
-      --> KSTREAM-KEY-SELECT-0000000002-repartition-filter
+    Source: KSTREAM-SOURCE-0000000000 (topics: [inputTopic])
+      --> KSTREAM-KEY-SELECT-0000000001
+    Processor: KSTREAM-KEY-SELECT-0000000001 (stores: [])
+      --> count-repartition-filter
       <-- KSTREAM-SOURCE-0000000000
-    Processor: KSTREAM-KEY-SELECT-0000000002-repartition-filter (stores: [])
-      --> KSTREAM-KEY-SELECT-0000000002-repartition-sink
-      <-- KSTREAM-KEY-SELECT-0000000002
-    Sink: KSTREAM-KEY-SELECT-0000000002-repartition-sink (topic: KSTREAM-KEY-SELECT-0000000002-repartition)
-      <-- KSTREAM-KEY-SELECT-0000000002-repartition-filter
+    Processor: count-repartition-filter (stores: [])
+      --> count-repartition-sink
+      <-- KSTREAM-KEY-SELECT-0000000001
+    Sink: count-repartition-sink (topic: count-repartition)
+      <-- count-repartition-filter
 
   Sub-topology: 1
-    Source: KSTREAM-SOURCE-0000000001 (topics: [input-topic-two])
-      --> KSTREAM-KEY-SELECT-0000000003
-    Processor: KSTREAM-KEY-SELECT-0000000003 (stores: [])
-      --> KSTREAM-KEY-SELECT-0000000003-repartition-filter
-      <-- KSTREAM-SOURCE-0000000001
-    Processor: KSTREAM-KEY-SELECT-0000000003-repartition-filter (stores: [])
-      --> KSTREAM-KEY-SELECT-0000000003-repartition-sink
-      <-- KSTREAM-KEY-SELECT-0000000003
-    Sink: KSTREAM-KEY-SELECT-0000000003-repartition-sink (topic: KSTREAM-KEY-SELECT-0000000003-repartition)
-      <-- KSTREAM-KEY-SELECT-0000000003-repartition-filter
+    Source: count-repartition-source (topics: [count-repartition])
+      --> KSTREAM-AGGREGATE-0000000002, KSTREAM-AGGREGATE-0000000008
+    Processor: KSTREAM-AGGREGATE-0000000002 (stores: [count-store])
+      --> KTABLE-TOSTREAM-0000000006
+      <-- count-repartition-source
+    Processor: KSTREAM-AGGREGATE-0000000008 (stores: [windowed-count-store])
+      --> KTABLE-TOSTREAM-0000000012
+      <-- count-repartition-source
+    Processor: KTABLE-TOSTREAM-0000000006 (stores: [])
+      --> KSTREAM-SINK-0000000007
+      <-- KSTREAM-AGGREGATE-0000000002
+    Processor: KTABLE-TOSTREAM-0000000012 (stores: [])
+      --> KSTREAM-SINK-0000000013
+      <-- KSTREAM-AGGREGATE-0000000008
+    Sink: KSTREAM-SINK-0000000007 (topic: count-topic)
+      <-- KTABLE-TOSTREAM-0000000006
+    Sink: KSTREAM-SINK-0000000013 (topic: windowed-count)
+      <-- KTABLE-TOSTREAM-0000000012
 
-  Sub-topology: 2
-    Source: KSTREAM-KEY-SELECT-0000000002-repartition-source (topics: [KSTREAM-KEY-SELECT-0000000002-repartition])
-      --> KSTREAM-WINDOWED-0000000010
-    Source: KSTREAM-KEY-SELECT-0000000003-repartition-source (topics: [KSTREAM-KEY-SELECT-0000000003-repartition])
-      --> KSTREAM-WINDOWED-0000000011
-    Processor: KSTREAM-WINDOWED-0000000010 (stores: [KSTREAM-JOINTHIS-0000000012-store])
-      --> KSTREAM-JOINTHIS-0000000012
-      <-- KSTREAM-KEY-SELECT-0000000002-repartition-source
-    Processor: KSTREAM-WINDOWED-0000000011 (stores: [KSTREAM-JOINOTHER-0000000013-store])
-      --> KSTREAM-JOINOTHER-0000000013
-      <-- KSTREAM-KEY-SELECT-0000000003-repartition-source
-    Processor: KSTREAM-JOINOTHER-0000000013 (stores: [KSTREAM-JOINTHIS-0000000012-store])
-      --> KSTREAM-MERGE-0000000014
-      <-- KSTREAM-WINDOWED-0000000011
-    Processor: KSTREAM-JOINTHIS-0000000012 (stores: [KSTREAM-JOINOTHER-0000000013-store])
-      --> KSTREAM-MERGE-0000000014
-      <-- KSTREAM-WINDOWED-0000000010
-    Processor: KSTREAM-MERGE-0000000014 (stores: [])
-      --> KSTREAM-SINK-0000000015
-      <-- KSTREAM-JOINTHIS-0000000012, KSTREAM-JOINOTHER-0000000013
-    Sink: KSTREAM-SINK-0000000015 (topic: joined-output)
-      <-- KSTREAM-MERGE-0000000014
+
+
