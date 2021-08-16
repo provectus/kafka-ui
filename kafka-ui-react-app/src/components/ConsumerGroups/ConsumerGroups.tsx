@@ -5,6 +5,8 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import DetailsContainer from 'components/ConsumerGroups/Details/DetailsContainer';
 import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 
+import ResetOffsetsContainer from './Details/ResetOffsets/ResetOffsetsContainer';
+
 interface Props {
   clusterName: ClusterName;
   isFetched: boolean;
@@ -29,8 +31,13 @@ const ConsumerGroups: React.FC<Props> = ({
           component={ListContainer}
         />
         <Route
+          exact
           path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
           component={DetailsContainer}
+        />
+        <Route
+          path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
+          component={ResetOffsetsContainer}
         />
       </Switch>
     );

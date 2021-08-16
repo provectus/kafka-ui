@@ -1,0 +1,184 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ResetOffsets on initial render matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="section"
+    >
+      <div
+        class="level"
+      >
+        <div
+          class="level-item level-left"
+        >
+          <nav
+            aria-label="breadcrumbs"
+            class="breadcrumb"
+          >
+            <ul>
+              <li>
+                <a
+                  href="/ui/clusters/testCluster/consumer-groups"
+                >
+                  All Consumer Groups
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/ui/clusters/testCluster/consumer-groups/testGroup"
+                >
+                  testGroup
+                </a>
+              </li>
+              <li
+                class="is-active"
+              >
+                <span
+                  class=""
+                >
+                  Reset Offsets
+                </span>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div
+        class="box"
+      >
+        <form>
+          <div
+            class="columns"
+          >
+            <div
+              class="column is-one-third"
+            >
+              <label
+                class="label"
+                for="topic"
+              >
+                Topic
+              </label>
+              <div
+                class="select"
+              >
+                <select
+                  id="topic"
+                  name="topic"
+                >
+                  <option
+                    value="__amazon_msk_canary"
+                  >
+                    __amazon_msk_canary
+                  </option>
+                  <option
+                    value="other_topic"
+                  >
+                    other_topic
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div
+              class="column is-one-third"
+            >
+              <label
+                class="label"
+                for="resetType"
+              >
+                Reset Type
+              </label>
+              <div
+                class="select"
+              >
+                <select
+                  id="resetType"
+                  name="resetType"
+                >
+                  <option
+                    value="EARLIEST"
+                  >
+                    EARLIEST
+                  </option>
+                  <option
+                    value="LATEST"
+                  >
+                    LATEST
+                  </option>
+                  <option
+                    value="TIMESTAMP"
+                  >
+                    TIMESTAMP
+                  </option>
+                  <option
+                    value="OFFSET"
+                  >
+                    OFFSET
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div
+              class="column is-one-third"
+            >
+              <label
+                class="label"
+              >
+                Partitions
+              </label>
+              <div
+                class="select"
+              >
+                <div
+                  class="rmsc multi-select"
+                >
+                  <div
+                    aria-labelledby="Select partitions"
+                    aria-readonly="true"
+                    class="dropdown-container"
+                    tabindex="0"
+                  >
+                    <div
+                      class="dropdown-heading"
+                    >
+                      <div
+                        class="dropdown-heading-value"
+                      >
+                        <span
+                          class="gray"
+                        >
+                          Select...
+                        </span>
+                      </div>
+                      <svg
+                        class="dropdown-heading-dropdown-arrow gray"
+                        fill="none"
+                        height="24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        width="24"
+                      >
+                        <path
+                          d="M6 9L12 15 18 9"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <button
+            class="button is-primary"
+            disabled=""
+            type="submit"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+`;
