@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`KsqlDb reducer Adds new message 1`] = `
+exports[`KsqlDb reducer Fetches tables and streams 1`] = `
 Object {
   "executionResult": null,
   "streams": Array [
@@ -39,5 +39,13 @@ Object {
       "valueFormat": "AVRO",
     },
   ],
+}
+`;
+
+exports[`KsqlDb reducer Resets execution result 1`] = `
+Object {
+  "executionResult": null,
+  "streams": Array [],
+  "tables": Array [],
 }
 `;
