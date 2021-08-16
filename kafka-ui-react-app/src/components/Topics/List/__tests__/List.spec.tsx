@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import { Router } from 'react-router-dom';
+import { Route, Router } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 import ClusterContext, {
   ContextProps,
 } from 'components/contexts/ClusterContext';
@@ -8,6 +9,13 @@ import List, { TopicsListProps } from 'components/Topics/List/List';
 import { createMemoryHistory } from 'history';
 import { StaticRouter } from 'react-router';
 import Search from 'components/common/Search/Search';
+import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
+
+jest.mock(
+  'components/common/ConfirmationModal/ConfirmationModal',
+  () => 'mock-ConfirmationModal'
+);
 
 describe('List', () => {
   const setupComponent = (props: Partial<TopicsListProps> = {}) => (
@@ -17,6 +25,8 @@ describe('List', () => {
       totalPages={1}
       fetchTopicsList={jest.fn()}
       deleteTopic={jest.fn()}
+      deleteTopics={jest.fn()}
+      clearTopicsMessages={jest.fn()}
       clearTopicMessages={jest.fn()}
       search=""
       orderBy={null}
@@ -121,6 +131,132 @@ describe('List', () => {
       toggle.simulate('change');
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+    });
+  });
+
+  describe('when some list items are selected', () => {
+    const mockDeleteTopics = jest.fn();
+    const mockClearTopicsMessages = jest.fn();
+    jest.useFakeTimers();
+    const pathname = '/ui/clusters/local/topics';
+    const component = mount(
+      <StaticRouter location={{ pathname }}>
+        <Route path="/ui/clusters/:clusterName">
+          <ClusterContext.Provider
+            value={{
+              isReadOnly: false,
+              hasKafkaConnectConfigured: true,
+              hasSchemaRegistryConfigured: true,
+            }}
+          >
+            {setupComponent({
+              topics: [
+                externalTopicPayload,
+                { ...externalTopicPayload, name: 'external.topic2' },
+              ],
+              deleteTopics: mockDeleteTopics,
+              clearTopicsMessages: mockClearTopicsMessages,
+            })}
+          </ClusterContext.Provider>
+        </Route>
+      </StaticRouter>
+    );
+    const getCheckboxInput = (at: number) =>
+      component.find('ListItem').at(at).find('input[type="checkbox"]').at(0);
+
+    const getConfirmationModal = () =>
+      component.find('mock-ConfirmationModal').at(0);
+
+    it('renders delete/purge buttons', () => {
+      expect(getCheckboxInput(0).props().checked).toBeFalsy();
+      expect(getCheckboxInput(1).props().checked).toBeFalsy();
+      expect(component.find('.buttons').length).toEqual(0);
+
+      // check first item
+      getCheckboxInput(0).simulate('change');
+      expect(getCheckboxInput(0).props().checked).toBeTruthy();
+      expect(getCheckboxInput(1).props().checked).toBeFalsy();
+      expect(component.find('.buttons').length).toEqual(1);
+
+      // check second item
+      getCheckboxInput(1).simulate('change');
+      expect(getCheckboxInput(0).props().checked).toBeTruthy();
+      expect(getCheckboxInput(1).props().checked).toBeTruthy();
+      expect(component.find('.buttons').length).toEqual(1);
+
+      // uncheck second item
+      getCheckboxInput(1).simulate('change');
+      expect(getCheckboxInput(0).props().checked).toBeTruthy();
+      expect(getCheckboxInput(1).props().checked).toBeFalsy();
+      expect(component.find('.buttons').length).toEqual(1);
+
+      // uncheck first item
+      getCheckboxInput(0).simulate('change');
+      expect(getCheckboxInput(0).props().checked).toBeFalsy();
+      expect(getCheckboxInput(1).props().checked).toBeFalsy();
+      expect(component.find('.buttons').length).toEqual(0);
+    });
+
+    const checkActionButtonClick = async (action: string) => {
+      const buttonIndex = action === 'deleteTopics' ? 0 : 1;
+      const confirmationText =
+        action === 'deleteTopics'
+          ? 'Are you sure you want to remove selected topics?'
+          : 'Are you sure you want to purge messages of selected topics?';
+      const mockFn =
+        action === 'deleteTopics' ? mockDeleteTopics : mockClearTopicsMessages;
+      getCheckboxInput(0).simulate('change');
+      getCheckboxInput(1).simulate('change');
+      let modal = getConfirmationModal();
+      expect(modal.prop('isOpen')).toBeFalsy();
+      component
+        .find('.buttons')
+        .find('button')
+        .at(buttonIndex)
+        .simulate('click');
+      expect(modal.text()).toEqual(confirmationText);
+      modal = getConfirmationModal();
+      expect(modal.prop('isOpen')).toBeTruthy();
+      await act(async () => {
+        (modal.props() as ConfirmationModalProps).onConfirm();
+      });
+      component.update();
+      expect(getConfirmationModal().prop('isOpen')).toBeFalsy();
+      expect(getCheckboxInput(0).props().checked).toBeFalsy();
+      expect(getCheckboxInput(1).props().checked).toBeFalsy();
+      expect(component.find('.buttons').length).toEqual(0);
+      expect(mockFn).toBeCalledTimes(1);
+      expect(mockFn).toBeCalledWith('local', [
+        externalTopicPayload.name,
+        'external.topic2',
+      ]);
+    };
+
+    it('triggers the deleteTopics when clicked on the delete button', async () => {
+      await checkActionButtonClick('deleteTopics');
+    });
+
+    it('triggers the clearTopicsMessages when clicked on the clear button', async () => {
+      await checkActionButtonClick('clearTopicsMessages');
+    });
+
+    it('closes ConfirmationModal when clicked on the cancel button', async () => {
+      getCheckboxInput(0).simulate('change');
+      getCheckboxInput(1).simulate('change');
+      let modal = getConfirmationModal();
+      expect(modal.prop('isOpen')).toBeFalsy();
+      component.find('.buttons').find('button').at(0).simulate('click');
+      modal = getConfirmationModal();
+      expect(modal.prop('isOpen')).toBeTruthy();
+      await act(async () => {
+        (modal.props() as ConfirmationModalProps).onCancel();
+      });
+      component.update();
+      expect(getConfirmationModal().prop('isOpen')).toBeFalsy();
+      expect(getCheckboxInput(0).props().checked).toBeTruthy();
+      expect(getCheckboxInput(1).props().checked).toBeTruthy();
+      expect(component.find('.buttons').length).toEqual(1);
+      expect(mockDeleteTopics).toBeCalledTimes(0);
     });
   });
 });

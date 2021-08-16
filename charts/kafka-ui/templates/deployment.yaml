@@ -13,10 +13,12 @@ spec:
       {{- include "kafka-ui.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
+      {{- with .Values.podAnnotations }}
+          {{- toYaml . | nindent 8 }}
+      {{- end }}
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
       labels:
         {{- include "kafka-ui.selectorLabels" . | nindent 8 }}
     spec:
