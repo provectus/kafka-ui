@@ -62,7 +62,7 @@ describe('Details component', () => {
         const component = mount(
           <StaticRouter>{setupWrapper({ deleteConsumerGroup })}</StaticRouter>
         );
-        component.find('button').at(0).simulate('click');
+        component.find('button').at(1).simulate('click');
         component.update();
         component
           .find('ConfirmationModal')
@@ -78,7 +78,7 @@ describe('Details component', () => {
           const component = mount(
             <StaticRouter>{setupWrapper({ deleteConsumerGroup })}</StaticRouter>
           );
-          component.find('button').at(0).simulate('click');
+          component.find('button').at(1).simulate('click');
           component.update();
           component
             .find('ConfirmationModal')
