@@ -4,12 +4,12 @@
     "name" : "com.provectus.kafka.ui.topics.TopicTests",
     "children" : [ {
       "name" : "should delete topic",
-      "uid" : "650e4ea8657942e9",
+      "uid" : "ec5a50975ee44884",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "skipped",
       "time" : {
-        "start" : 1629282193085,
-        "stop" : 1629282193086,
+        "start" : 1629306737371,
+        "stop" : 1629306737372,
         "duration" : 1
       },
       "flaky" : false,
@@ -17,26 +17,26 @@
       "parameters" : [ ]
     }, {
       "name" : "should update a topic",
-      "uid" : "dd4f6e57f4563801",
+      "uid" : "b64e56451167bad8",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1629282193152,
-        "stop" : 1629282241493,
-        "duration" : 48341
+        "start" : 1629306737436,
+        "stop" : 1629306758967,
+        "duration" : 21531
       },
       "flaky" : false,
       "newFailed" : false,
       "parameters" : [ ]
     }, {
       "name" : "should create a topic",
-      "uid" : "49d0f38b06621505",
+      "uid" : "bd37c852e2ba0377",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1629282241546,
-        "stop" : 1629282245062,
-        "duration" : 3516
+        "start" : 1629306759006,
+        "stop" : 1629306762781,
+        "duration" : 3775
       },
       "flaky" : false,
       "newFailed" : false,
@@ -47,13 +47,13 @@
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "bce1490875ddba87",
+      "uid" : "cdf554718733a85",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1629282245244,
-        "stop" : 1629282246270,
-        "duration" : 1026
+        "start" : 1629306762974,
+        "stop" : 1629306764127,
+        "duration" : 1153
       },
       "flaky" : false,
       "newFailed" : false,
