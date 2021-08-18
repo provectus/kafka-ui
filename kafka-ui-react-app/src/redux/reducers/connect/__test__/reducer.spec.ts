@@ -1,4 +1,4 @@
-import { ConnectorTaskStatus } from 'generated-sources';
+import { ConnectorState, ConnectorTaskStatus } from 'generated-sources';
 import {
   fetchConnectorsAction,
   fetchConnectorAction,
@@ -23,7 +23,7 @@ const runningConnectorState = {
       ...connector,
       status: {
         ...connector.status,
-        state: ConnectorTaskStatus.RUNNING,
+        state: ConnectorState.RUNNING,
       },
     },
     tasks: tasks.map((task) => ({
@@ -44,7 +44,7 @@ const pausedConnectorState = {
       ...connector,
       status: {
         ...connector.status,
-        state: ConnectorTaskStatus.PAUSED,
+        state: ConnectorState.PAUSED,
       },
     },
     tasks: tasks.map((task) => ({
