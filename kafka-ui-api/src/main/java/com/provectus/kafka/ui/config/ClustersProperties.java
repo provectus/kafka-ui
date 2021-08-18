@@ -34,7 +34,7 @@ public class ClustersProperties {
     int jmxPort;
     Properties properties;
     boolean readOnly = false;
-    List<StreamApplication> streamApplications;
+    List<StreamApplication> streamApplications = new ArrayList<>();
   }
 
   @Data
