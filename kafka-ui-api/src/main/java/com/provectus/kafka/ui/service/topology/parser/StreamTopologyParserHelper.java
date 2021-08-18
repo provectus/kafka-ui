@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service.topology.parser;
 
 import com.provectus.kafka.ui.exception.InvalidStreamTopologyString;
-import com.provectus.kafka.ui.model.GraphNode;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -10,56 +9,52 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class StreamTopologyParserHelper {
-  ParsingRes<String> parseOrThrow(String topologyString, String after, int fromIndex,
-                                  String before) {
-    final int beginIndex = indexAfterStringOrThrow(topologyString, after, fromIndex);
-    final int endIndex = indexOfOrThrow(topologyString, before, beginIndex);
-    final var result = topologyString.substring(beginIndex, endIndex).strip();
+  ParsingRes<String> parseOrThrow(String s, String after, int fromIndex, String before) {
+    final int beginIndex = indexAfterStringOrThrow(s, after, fromIndex);
+    final int endIndex = indexOfOrThrow(s, before, beginIndex);
+    final var result = s.substring(beginIndex, endIndex).strip();
     return ParsingRes.of(result, endIndex);
   }
 
-  ParsingRes<List<String>> parseArrayOrThrow(String topologyString, String after,
-                                             int fromIndex,
-                                             String before) {
-    final int listBegin = indexAfterStringOrThrow(topologyString, after, fromIndex);
-    final int listEnd = indexOfOrThrow(topologyString, before, listBegin);
+  ParsingRes<String> parseOrThrow(String s, String after) {
+    final int beginIndex = indexAfterStringOrThrow(s, after, 0);
+    final var result = s.substring(beginIndex).strip();
+    return ParsingRes.of(result, s.length());
+  }
+
+  List<String> parseArrayOrThrow(String s, String after, int fromIndex, String before) {
+    final int listBegin = indexAfterStringOrThrow(s, after, fromIndex);
+    final int listEnd = indexOfOrThrow(s, before, listBegin);
+    return getArrayResult(s, listBegin, listEnd);
+  }
+
+  List<String> parseArrayOrThrow(String s, String after) {
+    final int listBegin = indexAfterStringOrThrow(s, after, 0);
+    final int listEnd = s.length();
+    return getArrayResult(s, listBegin, listEnd);
+  }
+
+  private List<String> getArrayResult(String s, int listBegin, int listEnd) {
     final var parsedList =
-        Arrays.stream(topologyString.substring(listBegin, listEnd).split(","))
+        Arrays.stream(s.substring(listBegin, listEnd).split(","))
             .filter(StringUtils::hasText)
             .map(String::strip)
             .collect(Collectors.toList());
-    return ParsingRes.of(parsedList, listEnd);
+    return parsedList;
   }
 
-  int indexAfterString(String topologyString, String str, int fromIndex) {
-    final int index = topologyString.indexOf(str, fromIndex);
-    return index == -1 ? index : index + str.length();
-  }
-
-  int indexAfterStringOrThrow(String topologyString, String str, int fromIndex) {
-    final int index = indexOfOrThrow(topologyString, str, fromIndex);
+  int indexAfterStringOrThrow(String s, String str, int fromIndex) {
+    final int index = indexOfOrThrow(s, str, fromIndex);
     return index + str.length();
   }
 
-  private int indexOfOrThrow(String topologyString, String str, int fromIndex) {
-    final int index = topologyString.indexOf(str, fromIndex);
-    if (fromIndex == -1 || fromIndex >= topologyString.length() || index == -1) {
+  private int indexOfOrThrow(String s, String str, int fromIndex) {
+    final int index = s.indexOf(str, fromIndex);
+    if (fromIndex == -1 || fromIndex >= s.length() || index == -1) {
       throw new InvalidStreamTopologyString(
           String.format("cannot find string %s in topology string", str));
     }
     return index;
-  }
-
-  static class NodeAdjacencyPair {
-    GraphNode node;
-    List<String> adjacencyList;
-
-    static NodeAdjacencyPair of(GraphNode node, List<String> adjacencyList) {
-      final var pair = new NodeAdjacencyPair();
-      pair.node = node;
-      pair.adjacencyList = adjacencyList;
-      return pair;
-    }
   }
 
   static class ParsingRes<T> {

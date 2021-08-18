@@ -36,7 +36,12 @@ class StreamTopologyParserTest {
     assertThrows(InvalidStreamTopologyString.class, () -> parser.parse(null));
     assertThrows(InvalidStreamTopologyString.class, () -> parser.parse("invalid topology"));
     assertThrows(InvalidStreamTopologyString.class,
-        () -> parser.parse("Topologies:\n" + "   Sub-topology: 0"));
+        () -> parser.parse("Topologies:\n" +
+            "    Source: KSTREAM-SOURCE-0000000000 (topics: [inputTopic])\n" +
+            "      --> KSTREAM-KEY-SELECT-0000000001\n" +
+            "    Processor: KSTREAM-KEY-SELECT-0000000001 (stores: [])\n" +
+            "      --> count-repartition-filter\n" +
+            "      <-- KSTREAM-SOURCE-0000000000"));
     assertThrows(InvalidStreamTopologyString.class,
         () -> parser.parse(
             "Topologies:\n" +
