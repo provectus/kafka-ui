@@ -29,8 +29,9 @@ public class ConnectorsList {
     }
 
     @Step
-    public void clickCreateConnectorButton() {
+    public ConnectorCreateView clickCreateConnectorButton() {
         $(By.xpath("//a[text()='Create Connector']")).click();
+        return new ConnectorCreateView();
     }
 
     @SneakyThrows
