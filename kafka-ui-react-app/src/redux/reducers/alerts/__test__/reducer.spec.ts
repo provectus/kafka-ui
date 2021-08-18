@@ -8,7 +8,7 @@ jest.mock('lodash', () => ({
   now: () => 1234567890,
 }));
 
-describe('Clusters reducer', () => {
+describe('Alerts reducer', () => {
   it('does not create error alert', () => {
     expect(reducer(undefined, createTopicAction.failure({}))).toEqual({});
   });

@@ -2,7 +2,7 @@ import { ActionType } from 'typesafe-actions';
 import { ThunkAction } from 'redux-thunk';
 import * as actions from 'redux/actions/actions';
 
-import { TopicsState } from './topic';
+import { TopicMessagesState, TopicsState } from './topic';
 import { ClusterState } from './cluster';
 import { BrokersState } from './broker';
 import { LoaderState } from './loader';
@@ -10,6 +10,7 @@ import { ConsumerGroupsState } from './consumerGroup';
 import { SchemasState } from './schema';
 import { AlertsState } from './alerts';
 import { ConnectState } from './connect';
+import { KsqlState } from './ksqlDb';
 
 export * from './topic';
 export * from './cluster';
@@ -22,6 +23,7 @@ export * from './connect';
 
 export interface RootState {
   topics: TopicsState;
+  topicMessages: TopicMessagesState;
   clusters: ClusterState;
   brokers: BrokersState;
   consumerGroups: ConsumerGroupsState;
@@ -29,6 +31,7 @@ export interface RootState {
   connect: ConnectState;
   loader: LoaderState;
   alerts: AlertsState;
+  ksqlDb: KsqlState;
 }
 
 export type Action = ActionType<typeof actions>;

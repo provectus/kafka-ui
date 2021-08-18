@@ -7,14 +7,14 @@ import {
   TopicCreation,
   TopicUpdate,
   TopicConfig,
-  TopicColumnsToSort,
   ConsumerGroupsApi,
+  CreateTopicMessage,
+  GetTopicsRequest,
 } from 'generated-sources';
 import {
   PromiseThunkResult,
   ClusterName,
   TopicName,
-  TopicMessageQueryParams,
   TopicFormFormattedParams,
   TopicFormDataRaw,
   TopicsState,
@@ -31,17 +31,8 @@ export const topicConsumerGroupsApiClient = new ConsumerGroupsApi(
   apiClientConf
 );
 
-export interface FetchTopicsListParams {
-  clusterName: ClusterName;
-  page?: number;
-  perPage?: number;
-  showInternal?: boolean;
-  search?: string;
-  orderBy?: TopicColumnsToSort;
-}
-
 export const fetchTopicsList =
-  (params: FetchTopicsListParams): PromiseThunkResult =>
+  (params: GetTopicsRequest): PromiseThunkResult =>
   async (dispatch, getState) => {
     dispatch(actions.fetchTopicsListAction.request());
     try {
@@ -70,27 +61,6 @@ export const fetchTopicsList =
       dispatch(actions.fetchTopicsListAction.failure());
     }
   };
-
-export const fetchTopicMessages =
-  (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    queryParams: Partial<TopicMessageQueryParams>
-  ): PromiseThunkResult =>
-  async (dispatch) => {
-    dispatch(actions.fetchTopicMessagesAction.request());
-    try {
-      const messages = await messagesApiClient.getTopicMessages({
-        clusterName,
-        topicName,
-        ...queryParams,
-      });
-      dispatch(actions.fetchTopicMessagesAction.success(messages));
-    } catch (e) {
-      dispatch(actions.fetchTopicMessagesAction.failure());
-    }
-  };
-
 export const clearTopicMessages =
   (
     clusterName: ClusterName,
@@ -105,7 +75,7 @@ export const clearTopicMessages =
         topicName,
         partitions,
       });
-      dispatch(actions.clearMessagesTopicAction.success(topicName));
+      dispatch(actions.clearMessagesTopicAction.success());
     } catch (e) {
       const response = await getResponse(e);
       const alert: FailurePayload = {
@@ -115,6 +85,14 @@ export const clearTopicMessages =
       };
       dispatch(actions.clearMessagesTopicAction.failure({ alert }));
     }
+  };
+
+export const clearTopicsMessages =
+  (clusterName: ClusterName, topicsName: TopicName[]): PromiseThunkResult =>
+  async (dispatch) => {
+    topicsName.forEach((topicName) => {
+      dispatch(clearTopicMessages(clusterName, topicName));
+    });
   };
 
 export const fetchTopicDetails =
@@ -315,6 +293,14 @@ export const deleteTopic =
     }
   };
 
+export const deleteTopics =
+  (clusterName: ClusterName, topicsName: TopicName[]): PromiseThunkResult =>
+  async (dispatch) => {
+    topicsName.forEach((topicName) => {
+      dispatch(deleteTopic(clusterName, topicName));
+    });
+  };
+
 export const fetchTopicConsumerGroups =
   (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
   async (dispatch, getState) => {
@@ -332,14 +318,117 @@ export const fetchTopicConsumerGroups =
           ...state.byName,
           [topicName]: {
             ...state.byName[topicName],
-            consumerGroups: {
-              ...consumerGroups,
-            },
+            consumerGroups,
           },
         },
       };
       dispatch(actions.fetchTopicConsumerGroupsAction.success(newState));
     } catch (e) {
       dispatch(actions.fetchTopicConsumerGroupsAction.failure());
+    }
+  };
+
+export const fetchTopicMessageSchema =
+  (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.fetchTopicMessageSchemaAction.request());
+    try {
+      const schema = await messagesApiClient.getTopicSchema({
+        clusterName,
+        topicName,
+      });
+      dispatch(
+        actions.fetchTopicMessageSchemaAction.success({ topicName, schema })
+      );
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['topic', topicName].join('-'),
+        title: `Topic Schema ${topicName}`,
+        response,
+      };
+      dispatch(actions.fetchTopicMessageSchemaAction.failure({ alert }));
+    }
+  };
+
+export const sendTopicMessage =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    payload: CreateTopicMessage
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.sendTopicMessageAction.request());
+    try {
+      await messagesApiClient.sendTopicMessages({
+        clusterName,
+        topicName,
+        createTopicMessage: {
+          key: payload.key,
+          content: payload.content,
+          headers: payload.headers,
+          partition: payload.partition,
+        },
+      });
+      dispatch(actions.sendTopicMessageAction.success());
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['topic', topicName].join('-'),
+        title: `Topic Message ${topicName}`,
+        response,
+      };
+      dispatch(actions.sendTopicMessageAction.failure({ alert }));
+    }
+  };
+export const updateTopicPartitionsCount =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    partitions: number
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.updateTopicPartitionsCountAction.request());
+    try {
+      await topicsApiClient.increaseTopicPartitions({
+        clusterName,
+        topicName,
+        partitionsIncrease: { totalPartitionsCount: partitions },
+      });
+      dispatch(actions.updateTopicPartitionsCountAction.success());
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['topic-partitions', topicName].join('-'),
+        title: `Topic ${topicName} partitions count increase failed`,
+        response,
+      };
+      dispatch(actions.updateTopicPartitionsCountAction.failure({ alert }));
+    }
+  };
+
+export const updateTopicReplicationFactor =
+  (
+    clusterName: ClusterName,
+    topicName: TopicName,
+    replicationFactor: number
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.updateTopicReplicationFactorAction.request());
+    try {
+      await topicsApiClient.changeReplicationFactor({
+        clusterName,
+        topicName,
+        replicationFactorChange: { totalReplicationFactor: replicationFactor },
+      });
+      dispatch(actions.updateTopicReplicationFactorAction.success());
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['topic-replication-factor', topicName].join('-'),
+        title: `Topic ${topicName} replication factor change failed`,
+        response,
+      };
+      dispatch(actions.updateTopicReplicationFactorAction.failure({ alert }));
     }
   };

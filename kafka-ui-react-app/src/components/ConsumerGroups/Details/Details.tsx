@@ -1,7 +1,10 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterConsumerGroupsPath } from 'lib/paths';
+import {
+  clusterConsumerGroupResetOffsetsPath,
+  clusterConsumerGroupsPath,
+} from 'lib/paths';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import {
   ConsumerGroup,
@@ -16,7 +19,7 @@ import ListItem from './ListItem';
 
 export interface Props extends ConsumerGroup, ConsumerGroupDetails {
   clusterName: ClusterName;
-  consumers?: ConsumerGroupTopicPartition[];
+  partitions?: ConsumerGroupTopicPartition[];
   isFetched: boolean;
   isDeleted: boolean;
   fetchConsumerGroupDetails: (
@@ -29,7 +32,7 @@ export interface Props extends ConsumerGroup, ConsumerGroupDetails {
 const Details: React.FC<Props> = ({
   clusterName,
   groupId,
-  consumers,
+  partitions,
   isFetched,
   isDeleted,
   fetchConsumerGroupDetails,
@@ -38,7 +41,7 @@ const Details: React.FC<Props> = ({
   React.useEffect(() => {
     fetchConsumerGroupDetails(clusterName, groupId);
   }, [fetchConsumerGroupDetails, clusterName, groupId]);
-  const items = consumers || [];
+  const items = partitions || [];
   const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
     React.useState<boolean>(false);
   const history = useHistory();
@@ -52,6 +55,10 @@ const Details: React.FC<Props> = ({
       history.push(clusterConsumerGroupsPath(clusterName));
     }
   }, [isDeleted]);
+
+  const onResetOffsets = () => {
+    history.push(clusterConsumerGroupResetOffsetsPath(clusterName, groupId));
+  };
 
   return (
     <div className="section">
@@ -74,6 +81,9 @@ const Details: React.FC<Props> = ({
         <div className="box">
           <div className="level">
             <div className="level-item level-right buttons">
+              <button type="button" className="button" onClick={onResetOffsets}>
+                Reset offsets
+              </button>
               <button
                 type="button"
                 className="button is-danger"
@@ -96,6 +106,11 @@ const Details: React.FC<Props> = ({
               </tr>
             </thead>
             <tbody>
+              {items.length === 0 && (
+                <tr>
+                  <td colSpan={10}>No active consumer groups</td>
+                </tr>
+              )}
               {items.map((consumer) => (
                 <ListItem
                   key={consumer.consumerId}

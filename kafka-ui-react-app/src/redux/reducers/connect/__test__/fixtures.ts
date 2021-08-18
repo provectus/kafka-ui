@@ -1,6 +1,7 @@
 import {
   Connect,
   Connector,
+  ConnectorState,
   ConnectorTaskStatus,
   ConnectorType,
   FullConnectorInfo,
@@ -49,7 +50,7 @@ export const connectors: FullConnectorInfo[] = [
     type: ConnectorType.SOURCE,
     topics: ['test-topic'],
     status: {
-      state: ConnectorTaskStatus.RUNNING,
+      state: ConnectorState.RUNNING,
     },
     tasksCount: 2,
     failedTasksCount: 0,
@@ -61,7 +62,7 @@ export const connectors: FullConnectorInfo[] = [
     type: ConnectorType.SINK,
     topics: ['test-topic'],
     status: {
-      state: ConnectorTaskStatus.FAILED,
+      state: ConnectorState.FAILED,
     },
     tasksCount: 3,
     failedTasksCount: 1,
@@ -90,7 +91,7 @@ export const connector: Connector = {
   name: 'hdfs-source-connector',
   type: ConnectorType.SOURCE,
   status: {
-    state: ConnectorTaskStatus.RUNNING,
+    state: ConnectorState.RUNNING,
     workerId: 'kafka-connect0:8083',
   },
   config: {

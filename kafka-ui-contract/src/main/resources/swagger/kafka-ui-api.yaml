@@ -77,6 +77,66 @@ paths:
                 items:
                   $ref: '#/components/schemas/Broker'
 
+  /api/clusters/{clusterName}/brokers/{id}/configs:
+    get:
+      tags:
+        - Brokers
+      summary: getBrokerConfig
+      operationId: getBrokerConfig
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrokerConfig'
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/brokers/{id}/configs/{name}:
+    put:
+      tags:
+        - Brokers
+      summary: updateBrokerConfigByName
+      operationId: updateBrokerConfigByName
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrokerConfigItem'
+      responses:
+        200:
+          description: OK
+
   /api/clusters/{clusterName}/metrics:
     get:
       tags:
@@ -141,6 +201,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/BrokerMetrics'
+
+  /api/clusters/{clusterName}/brokers/logdirs:
+    get:
+      tags:
+        - Brokers
+      summary: getAllBrokersLogdirs
+      operationId: getAllBrokersLogdirs
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: broker
+          in: query
+          description: array of broker ids
+          required: false
+          schema:
+            type: array
+            items:
+              type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrokersLogdirs'
+
+  /api/clusters/{clusterName}/brokers/{id}/logdirs:
+    patch:
+      tags:
+        - Brokers
+      summary: updateBrokerTopicPartitionLogDir
+      operationId: updateBrokerTopicPartitionLogDir
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrokerLogdirUpdate'
+      responses:
+        200:
+          description: OK
 
   /api/clusters/{clusterName}/topics:
     get:
@@ -387,11 +503,11 @@ paths:
         200:
           description: OK
           content:
-            application/json:
+            text/event-stream:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TopicMessage'
+                  $ref: '#/components/schemas/TopicMessageEvent'
     delete:
       tags:
         - Messages
@@ -924,12 +1040,17 @@ paths:
     get:
       tags:
         - Kafka Connect
-      summary: get all kafka connectors
+      summary: get filtered kafka connectors
       operationId: getAllConnectors
       parameters:
         - name: clusterName
           in: path
           required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
           schema:
             type: string
       responses:
@@ -1216,6 +1337,31 @@ paths:
         200:
           description: OK
 
+  /api/clusters/{clusterName}/ksql:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsqlCommand
+      operationId: executeKsqlCommand
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsqlCommandResponse'
+
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
       tags:
@@ -1420,6 +1566,7 @@ components:
             enum:
               - SCHEMA_REGISTRY
               - KAFKA_CONNECT
+              - KSQL_DB
       required:
         - id
         - name
@@ -1462,6 +1609,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/BrokerDiskUsage'
+        version:
+          type: string
 
     BrokerDiskUsage:
       type: object
@@ -1488,6 +1637,30 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Metric'
+
+    BrokerLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        error:
+          type: string
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicLogdirs'
+
+    BrokersLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        error:
+          type: string
+        topics:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerTopicLogdirs'
 
     TopicsResponse:
       type: object
@@ -1529,6 +1702,13 @@ components:
           type: integer
         underReplicatedPartitions:
           type: integer
+        cleanUpPolicy:
+          type: string
+          enum:
+            - DELETE
+            - COMPACT
+            - COMPACT_DELETE
+            - UNKNOWN
         partitions:
           type: array
           items:
@@ -1587,6 +1767,16 @@ components:
           type: string
         defaultValue:
           type: string
+        source:
+          $ref: "#/components/schemas/ConfigSource"
+        isSensitive:
+          type: boolean
+        isReadOnly:
+          type: boolean
+        synonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigSynonym"
       required:
         - name
 
@@ -1628,6 +1818,16 @@ components:
       required:
         - id
 
+    BrokerLogdirUpdate:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+        logDir:
+          type: string
+
     ConsumerGroupState:
       type: string
       enum:
@@ -1637,6 +1837,14 @@ components:
         - STABLE
         - DEAD
         - EMPTY
+
+    MessageFormat:
+      type: string
+      enum:
+        - AVRO
+        - JSON
+        - PROTOBUF
+        - UNKNOWN
 
     ConsumerGroup:
       type: object
@@ -1704,6 +1912,44 @@ components:
         - source
         - schema
 
+    TopicMessageEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - PHASE
+            - MESSAGE
+            - CONSUMING
+            - DONE
+        message:
+          $ref: "#/components/schemas/TopicMessage"
+        phase:
+          $ref: "#/components/schemas/TopicMessagePhase"
+        consuming:
+          $ref: "#/components/schemas/TopicMessageConsuming"
+
+    TopicMessagePhase:
+      type: object
+      properties:
+        name:
+          type: string
+
+    TopicMessageConsuming:
+      type: object
+      properties:
+        bytesConsumed:
+          type: integer
+          format: int64
+        elapsedMs:
+          type: integer
+          format: int64
+        isCancelled:
+          type: boolean
+        messagesConsumed:
+          type: integer
+
+
     TopicMessage:
       type: object
       properties:
@@ -1729,6 +1975,23 @@ components:
             type: string
         content:
           type: string
+        keyFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        valueFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        keySize:
+          type: integer
+          format: int64
+        valueSize:
+          type: integer
+          format: int64
+        keySchemaId:
+          type: string
+        valueSchemaId:
+          type: string
+        headersSize:
+          type: integer
+          format: int64
       required:
         - partition
         - offset
@@ -1821,6 +2084,46 @@ components:
           type: string
           additionalProperties:
             type: number
+
+    TopicLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/TopicPartitionLogdir'
+
+    BrokerTopicLogdirs:
+      type: object
+      properties:
+        name:
+          type: string
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/BrokerTopicPartitionLogdir'
+
+    TopicPartitionLogdir:
+      type: object
+      properties:
+        partition:
+          type: integer
+        size:
+          type: integer
+          format: int64
+        offsetLag:
+          type: integer
+          format: int64
+
+    BrokerTopicPartitionLogdir:
+      allOf:
+        - $ref: '#/components/schemas/TopicPartitionLogdir'
+        - type: object
+          properties:
+            broker:
+              type: integer
 
     SchemaSubject:
       type: object
@@ -2027,7 +2330,7 @@ components:
       type: object
       properties:
         state:
-          $ref: '#/components/schemas/ConnectorTaskStatus'
+          $ref: '#/components/schemas/ConnectorState'
         worker_id:
           type: string
       required:
@@ -2040,6 +2343,15 @@ components:
         - FAILED
         - PAUSED
         - UNASSIGNED
+
+    ConnectorState:
+      type: string
+      enum:
+        - RUNNING
+        - FAILED
+        - PAUSED
+        - UNASSIGNED
+        - TASK_FAILED
 
     ConnectorAction:
       type: string
@@ -2148,6 +2460,43 @@ components:
           items:
             $ref: '#/components/schemas/ConnectorPluginConfig'
 
+    KsqlCommand:
+      type: object
+      properties:
+        ksql:
+          type: string
+        streamsProperties:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - ksql
+
+    KsqlCommandResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Table'
+        message:
+          type: string
+
+    Table:
+      type: object
+      properties:
+        headers:
+          type: array
+          items:
+            type: string
+        rows:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+      required:
+        - headers
+        - rows
+
     FullConnectorInfo:
       type: object
       properties:
@@ -2213,6 +2562,57 @@ components:
       required:
         - totalReplicationFactor
         - topicName
+
+    BrokerConfigItem:
+      type: object
+      properties:
+        value:
+          type: string
+
+    BrokerConfig:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        source:
+          $ref: '#/components/schemas/ConfigSource'
+        isSensitive:
+          type: boolean
+        isReadOnly:
+          type: boolean
+        synonyms:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigSynonym'
+      required:
+        - name
+        - value
+        - source
+        - isSensitive
+        - isReadOnly
+
+    ConfigSource:
+      type: string
+      enum:
+        - DYNAMIC_TOPIC_CONFIG
+        - DYNAMIC_BROKER_LOGGER_CONFIG
+        - DYNAMIC_BROKER_CONFIG
+        - DYNAMIC_DEFAULT_BROKER_CONFIG
+        - STATIC_BROKER_CONFIG
+        - DEFAULT_CONFIG
+        - UNKNOWN
+
+    ConfigSynonym:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        source:
+          $ref: '#/components/schemas/ConfigSource'
 
     GraphNodeType:
       type: string

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Connect, FullConnectorInfo } from 'generated-sources';
-import { ClusterName } from 'redux/interfaces';
+import { ClusterName, ConnectorSearch } from 'redux/interfaces';
 import { clusterConnectorNewPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import Search from 'components/common/Search/Search';
 
 import ListItem from './ListItem';
 
@@ -17,6 +18,8 @@ export interface ListProps {
   connects: Connect[];
   fetchConnects(clusterName: ClusterName): void;
   fetchConnectors(clusterName: ClusterName): void;
+  search: string;
+  setConnectorSearch(value: ConnectorSearch): void;
 }
 
 const List: React.FC<ListProps> = ({
@@ -26,6 +29,8 @@ const List: React.FC<ListProps> = ({
   areConnectorsFetching,
   fetchConnects,
   fetchConnectors,
+  search,
+  setConnectorSearch,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
@@ -34,6 +39,12 @@ const List: React.FC<ListProps> = ({
     fetchConnects(clusterName);
     fetchConnectors(clusterName);
   }, [fetchConnects, fetchConnectors, clusterName]);
+
+  const handleSearch = (value: string) =>
+    setConnectorSearch({
+      clusterName,
+      search: value,
+    });
 
   return (
     <>
@@ -46,6 +57,14 @@ const List: React.FC<ListProps> = ({
         >
           {connects.length}
         </Indicator>
+
+        <div className="column">
+          <Search
+            handleSearch={handleSearch}
+            placeholder="Search by Connect Name, Status or Type"
+            value={search}
+          />
+        </div>
 
         {!isReadOnly && (
           <div className="level-item level-right">

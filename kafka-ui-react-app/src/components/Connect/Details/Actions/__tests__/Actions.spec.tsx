@@ -8,7 +8,7 @@ import ActionsContainer from 'components/Connect/Details/Actions/ActionsContaine
 import Actions, {
   ActionsProps,
 } from 'components/Connect/Details/Actions/Actions';
-import { ConnectorTaskStatus } from 'generated-sources';
+import { ConnectorState } from 'generated-sources';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
 
 const mockHistoryPush = jest.fn();
@@ -45,7 +45,7 @@ describe('Actions', () => {
         <Actions
           deleteConnector={jest.fn()}
           isConnectorDeleting={false}
-          connectorStatus={ConnectorTaskStatus.RUNNING}
+          connectorStatus={ConnectorState.RUNNING}
           restartConnector={jest.fn()}
           pauseConnector={jest.fn()}
           resumeConnector={jest.fn()}
@@ -62,21 +62,21 @@ describe('Actions', () => {
 
     it('matches snapshot when paused', () => {
       const wrapper = create(
-        setupWrapper({ connectorStatus: ConnectorTaskStatus.PAUSED })
+        setupWrapper({ connectorStatus: ConnectorState.PAUSED })
       );
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
     it('matches snapshot when failed', () => {
       const wrapper = create(
-        setupWrapper({ connectorStatus: ConnectorTaskStatus.FAILED })
+        setupWrapper({ connectorStatus: ConnectorState.FAILED })
       );
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
     it('matches snapshot when unassigned', () => {
       const wrapper = create(
-        setupWrapper({ connectorStatus: ConnectorTaskStatus.UNASSIGNED })
+        setupWrapper({ connectorStatus: ConnectorState.UNASSIGNED })
       );
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
@@ -157,7 +157,7 @@ describe('Actions', () => {
       const pauseConnector = jest.fn();
       const wrapper = mount(
         setupWrapper({
-          connectorStatus: ConnectorTaskStatus.RUNNING,
+          connectorStatus: ConnectorState.RUNNING,
           pauseConnector,
         })
       );
@@ -174,7 +174,7 @@ describe('Actions', () => {
       const resumeConnector = jest.fn();
       const wrapper = mount(
         setupWrapper({
-          connectorStatus: ConnectorTaskStatus.PAUSED,
+          connectorStatus: ConnectorState.PAUSED,
           resumeConnector,
         })
       );

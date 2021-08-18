@@ -18,26 +18,29 @@ const ClusterWidget: React.FC<ClusterWidgetProps> = ({
     bytesOutPerSec,
     onlinePartitionCount,
     readOnly,
+    version,
   },
 }) => (
   <div className="column is-full-modile is-6">
     <div className="box">
       <div className="title is-6 has-text-overflow-ellipsis">
         <div
-          className={`tag has-margin-right ${
+          className={`tag mr-2 ${
             status === ServerStatus.ONLINE ? 'is-success' : 'is-danger'
           }`}
         >
           {status}
         </div>
-        {readOnly && (
-          <div className="tag has-margin-right is-info is-light">readonly</div>
-        )}
+        {readOnly && <div className="tag mr-2 is-info is-light">readonly</div>}
         {name}
       </div>
 
       <table className="table is-fullwidth">
         <tbody>
+          <tr>
+            <th>Version</th>
+            <td>{version}</td>
+          </tr>
           <tr>
             <th>Brokers</th>
             <td>

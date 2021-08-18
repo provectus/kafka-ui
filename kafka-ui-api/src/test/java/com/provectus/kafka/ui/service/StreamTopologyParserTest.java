@@ -36,21 +36,21 @@ class StreamTopologyParserTest {
     assertThrows(InvalidStreamTopologyString.class, () -> parser.parse(null));
     assertThrows(InvalidStreamTopologyString.class, () -> parser.parse("invalid topology"));
     assertThrows(InvalidStreamTopologyString.class,
-        () -> parser.parse("Topologies:\n" +
-            "    Source: KSTREAM-SOURCE-0000000000 (topics: [inputTopic])\n" +
-            "      --> KSTREAM-KEY-SELECT-0000000001\n" +
-            "    Processor: KSTREAM-KEY-SELECT-0000000001 (stores: [])\n" +
-            "      --> count-repartition-filter\n" +
-            "      <-- KSTREAM-SOURCE-0000000000"));
+        () -> parser.parse("Topologies:\n"
+            + "    Source: KSTREAM-SOURCE-0000000000 (topics: [inputTopic])\n"
+            + "      --> KSTREAM-KEY-SELECT-0000000001\n"
+            + "    Processor: KSTREAM-KEY-SELECT-0000000001 (stores: [])\n"
+            + "      --> count-repartition-filter\n"
+            + "      <-- KSTREAM-SOURCE-0000000000"));
     assertThrows(InvalidStreamTopologyString.class,
         () -> parser.parse(
-            "Topologies:\n" +
-                "    Processor: KSTREAM-KEY-SELECT-0000000002 (stores: [])\n" +
-                "      --> KSTREAM-KEY-SELECT-0000000002-repartition-filter\n" +
-                "      <-- KSTREAM-SOURCE-0000000000\n" +
-                "    Processor: KSTREAM-KEY-SELECT-0000000002-repartition-filter (stores: [])\n" +
-                "      --> KSTREAM-KEY-SELECT-0000000002-repartition-sink\n" +
-                "      <-- KSTREAM-KEY-SELECT-0000000002"));
+            "Topologies:\n"
+                + "    Processor: KSTREAM-KEY-SELECT-0000000002 (stores: [])\n"
+                + "      --> KSTREAM-KEY-SELECT-0000000002-repartition-filter\n"
+                + "      <-- KSTREAM-SOURCE-0000000000\n"
+                + "    Processor: KSTREAM-KEY-SELECT-0000000002-repartition-filter (stores: [])\n"
+                + "      --> KSTREAM-KEY-SELECT-0000000002-repartition-sink\n"
+                + "      <-- KSTREAM-KEY-SELECT-0000000002"));
   }
 
   @Test

@@ -20,7 +20,7 @@ describe('Details component', () => {
       isDeleted={false}
       fetchConsumerGroupDetails={jest.fn()}
       deleteConsumerGroup={jest.fn()}
-      consumers={[
+      partitions={[
         {
           consumerId:
             'consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0',
@@ -62,7 +62,7 @@ describe('Details component', () => {
         const component = mount(
           <StaticRouter>{setupWrapper({ deleteConsumerGroup })}</StaticRouter>
         );
-        component.find('button').at(0).simulate('click');
+        component.find('button').at(1).simulate('click');
         component.update();
         component
           .find('ConfirmationModal')
@@ -78,7 +78,7 @@ describe('Details component', () => {
           const component = mount(
             <StaticRouter>{setupWrapper({ deleteConsumerGroup })}</StaticRouter>
           );
-          component.find('button').at(0).simulate('click');
+          component.find('button').at(1).simulate('click');
           component.update();
           component
             .find('ConfirmationModal')

@@ -56,7 +56,7 @@ exports[`Details View Initial state matches snapshot 1`] = `
           to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
-          Update Schema
+          Edit Schema
         </Link>
         <button
           className="button is-danger"
@@ -110,7 +110,15 @@ exports[`Details View Initial state matches snapshot 1`] = `
           </th>
         </tr>
       </thead>
-      <tbody />
+      <tbody>
+        <tr>
+          <td
+            colSpan={10}
+          >
+            No active Schema
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>
@@ -196,7 +204,7 @@ exports[`Details View when page with schema versions loaded when schema has vers
           to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
-          Update Schema
+          Edit Schema
         </Link>
         <button
           className="button is-danger"
@@ -339,7 +347,7 @@ exports[`Details View when page with schema versions loaded when versions are em
           to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
         >
-          Update Schema
+          Edit Schema
         </Link>
         <button
           className="button is-danger"
@@ -393,7 +401,15 @@ exports[`Details View when page with schema versions loaded when versions are em
           </th>
         </tr>
       </thead>
-      <tbody />
+      <tbody>
+        <tr>
+          <td
+            colSpan={10}
+          >
+            No active Schema
+          </td>
+        </tr>
+      </tbody>
     </table>
   </div>
 </div>

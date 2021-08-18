@@ -24,11 +24,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class StreamTopologyParser {
   private final StreamTopologyParserHelper parserHelper;
 
@@ -128,6 +130,9 @@ public class StreamTopologyParser {
           putTopicNode(processorTopology, topologyGraph, sink.getTopic());
           topologyGraph.getAdjacency().get(subTopologyNode.getName()).add(sink.getTopic());
         }
+        break;
+      default:
+        log.warn("unknown topology node type");
         break;
     }
   }

@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.mapper;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
+import com.provectus.kafka.ui.model.BrokerConfig;
 import com.provectus.kafka.ui.model.BrokerDiskUsage;
 import com.provectus.kafka.ui.model.BrokerMetrics;
 import com.provectus.kafka.ui.model.Cluster;
@@ -8,13 +9,17 @@ import com.provectus.kafka.ui.model.ClusterMetrics;
 import com.provectus.kafka.ui.model.ClusterStats;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
 import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.ConfigSource;
+import com.provectus.kafka.ui.model.ConfigSynonym;
 import com.provectus.kafka.ui.model.Connect;
 import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -32,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -49,6 +55,7 @@ public interface ClusterMapper {
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
+  @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
   @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage",
@@ -60,9 +67,47 @@ public interface ClusterMapper {
 
   BrokerMetrics toBrokerMetrics(InternalBrokerMetrics metrics);
 
+  @Mapping(target = "isSensitive", source = "sensitive")
+  @Mapping(target = "isReadOnly", source = "readOnly")
+  BrokerConfig toBrokerConfig(InternalBrokerConfig config);
+
+  default ConfigSynonym toConfigSynonym(ConfigEntry.ConfigSynonym config) {
+    if (config == null) {
+      return null;
+    }
+
+    ConfigSynonym configSynonym = new ConfigSynonym();
+    configSynonym.setName(config.name());
+    configSynonym.setValue(config.value());
+    if (config.source() != null) {
+      configSynonym.setSource(ConfigSource.valueOf(config.source().name()));
+    }
+
+    return configSynonym;
+  }
+
   Topic toTopic(InternalTopic topic);
 
   Partition toPartition(InternalPartition topic);
+
+  default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
+    if (clusterProperties == null
+        || clusterProperties.getSchemaRegistry() == null) {
+      return null;
+    }
+
+    InternalSchemaRegistry.InternalSchemaRegistryBuilder internalSchemaRegistry =
+        InternalSchemaRegistry.builder();
+
+    internalSchemaRegistry.url(clusterProperties.getSchemaRegistry());
+
+    if (clusterProperties.getSchemaRegistryAuth() != null) {
+      internalSchemaRegistry.username(clusterProperties.getSchemaRegistryAuth().getUsername());
+      internalSchemaRegistry.password(clusterProperties.getSchemaRegistryAuth().getPassword());
+    }
+
+    return internalSchemaRegistry.build();
+  }
 
   TopicDetails toTopicDetails(InternalTopic topic);
 
@@ -77,6 +122,8 @@ public interface ClusterMapper {
     return result;
   }
 
+  @Mapping(target = "isReadOnly", source = "readOnly")
+  @Mapping(target = "isSensitive", source = "sensitive")
   TopicConfig toTopicConfig(InternalTopicConfig topic);
 
   Replica toReplica(InternalReplica replica);
