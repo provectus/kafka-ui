@@ -37,5 +37,4 @@ const ListItem: React.FC<Props> = ({ accessors, data }) => {
   );
 };
 
-ListItem.displayName = 'ListItem';
 export default ListItem;

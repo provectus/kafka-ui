@@ -58,6 +58,4 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   );
 };
 
-ResultRenderer.displayName = 'ResultRenderer';
-
 export default ResultRenderer;

@@ -27,6 +27,4 @@ const Breadcrumbs: React.FC = () => {
   return <Breadcrumb links={links}>Query</Breadcrumb>;
 };
 
-Breadcrumbs.displayName = 'Breadcrumbs';
-
 export default Breadcrumbs;

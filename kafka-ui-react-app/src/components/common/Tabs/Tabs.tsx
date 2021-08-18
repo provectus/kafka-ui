@@ -52,6 +52,4 @@ const Tabs: React.FC<TabsProps> = ({
   );
 };
 
-Tabs.displayName = 'Tabs';
-
 export default Tabs;

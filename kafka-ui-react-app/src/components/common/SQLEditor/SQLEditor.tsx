@@ -31,6 +31,4 @@ const SQLEditor = React.forwardRef<ReactAce | null, SQLEditorProps>(
   }
 );
 
-SQLEditor.displayName = 'SQLEditor';
-
 export default SQLEditor;

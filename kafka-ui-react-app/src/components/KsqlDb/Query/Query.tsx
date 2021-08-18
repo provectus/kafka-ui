@@ -26,9 +26,9 @@ const Query: FC = () => {
 
   const { executionResult, fetching } = useSelector(getKsqlExecution);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     dispatch(resetExecutionResult());
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     return reset;
@@ -110,7 +110,5 @@ const Query: FC = () => {
     </>
   );
 };
-
-Query.displayName = 'Query';
 
 export default Query;
