@@ -54,6 +54,7 @@ const New: React.FC<Props> = () => {
         title: `Schema ${data.name}`,
         response,
       };
+
       dispatch(createTopicAction.failure({ alert }));
     }
   };

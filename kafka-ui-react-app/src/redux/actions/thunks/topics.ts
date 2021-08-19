@@ -211,40 +211,6 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
   };
 };
 
-export const createTopic =
-  (clusterName: ClusterName, form: TopicFormDataRaw): PromiseThunkResult =>
-  async (dispatch, getState) => {
-    dispatch(actions.createTopicAction.request());
-    try {
-      const topic: Topic = await topicsApiClient.createTopic({
-        clusterName,
-        topicCreation: formatTopicCreation(form),
-      });
-
-      const state = getState().topics;
-      const newState = {
-        ...state,
-        byName: {
-          ...state.byName,
-          [topic.name]: {
-            ...topic,
-          },
-        },
-        allNames: [...state.allNames, topic.name],
-      };
-
-      dispatch(actions.createTopicAction.success(newState));
-    } catch (error) {
-      const response = await getResponse(error);
-      const alert: FailurePayload = {
-        subject: ['schema', form.name].join('-'),
-        title: `Schema ${form.name}`,
-        response,
-      };
-      dispatch(actions.createTopicAction.failure({ alert }));
-    }
-  };
-
 export const updateTopic =
   (
     clusterName: ClusterName,
