@@ -1,9 +1,9 @@
 import React from 'react';
 import {
   ClusterName,
-  TopicName,
   TopicFormDataRaw,
   FailurePayload,
+  TopicName,
 } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
@@ -22,18 +22,14 @@ interface RouterParams {
   clusterName: ClusterName;
 }
 
-interface Props {
-  redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => void;
-}
-
-const New: React.FC<Props> = () => {
+const New: React.FC = () => {
   const methods = useForm<TopicFormDataRaw>();
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
   const dispatch = useDispatch();
 
   const redirectToTopicPath = React.useCallback(
-    (topicName) => {
+    (topicName: TopicName) => {
       history.push(clusterTopicPath(clusterName, topicName));
     },
     [clusterName]
