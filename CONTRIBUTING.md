@@ -28,3 +28,17 @@ Here's a list of good examples:<br/>
 `issues/123`<br/>
 `feature/feature_name`<br/>
 `bugfix/fix_thing`<br/>
+
+### Code style
+
+There's a file called `checkstyle.xml` in project root under `etc` directory.<br/>
+You can import it into IntelliJ IDEA via checkstyle plugin. 
+
+### Naming conventions
+
+REST paths should be **lowercase** and consist of just **plural** nouns.<br/>
+Also, multiple words in a single path segment should be divided by a hyphen symbol (`-`).<br/>
+
+Query variable names should be formatted in `camelCase`.
+
+Model names should consist of just **plural** nouns and should be formatted in `camelCase` as well.
