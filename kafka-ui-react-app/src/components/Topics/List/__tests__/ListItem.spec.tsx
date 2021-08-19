@@ -10,6 +10,7 @@ import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
 const mockDelete = jest.fn();
 const clusterName = 'local';
 const mockDeleteMessages = jest.fn();
+const mockToggleTopicSelected = jest.fn();
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -23,6 +24,8 @@ describe('ListItem', () => {
       deleteTopic={mockDelete}
       clusterName={clusterName}
       clearTopicMessages={mockDeleteMessages}
+      selected={false}
+      toggleTopicSelected={mockToggleTopicSelected}
       {...props}
     />
   );
@@ -73,6 +76,18 @@ describe('ListItem', () => {
     expect(wrapper.find('.tag.is-light').text()).toEqual('Internal');
   });
 
+  it('renders without checkbox for internal topic', () => {
+    const wrapper = mount(
+      <StaticRouter>
+        <table>
+          <tbody>{setupComponent()}</tbody>
+        </table>
+      </StaticRouter>
+    );
+
+    expect(wrapper.find('td').at(0).html()).toEqual('<td></td>');
+  });
+
   it('renders correct tags for external topic', () => {
     const wrapper = mount(
       <StaticRouter>
@@ -83,6 +98,28 @@ describe('ListItem', () => {
     );
 
     expect(wrapper.find('.tag.is-primary').text()).toEqual('External');
+  });
+
+  it('renders with checkbox for external topic', () => {
+    const wrapper = mount(
+      <StaticRouter>
+        <table>
+          <tbody>{setupComponent({ topic: externalTopicPayload })}</tbody>
+        </table>
+      </StaticRouter>
+    );
+
+    expect(wrapper.find('td').at(0).html()).toEqual(
+      '<td><input type="checkbox"></td>'
+    );
+  });
+
+  it('triggers the toggleTopicSelected when clicked on the checkbox input', () => {
+    const wrapper = shallow(setupComponent({ topic: externalTopicPayload }));
+    expect(wrapper.exists('input')).toBeTruthy();
+    wrapper.find('input[type="checkbox"]').at(0).simulate('change');
+    expect(mockToggleTopicSelected).toBeCalledTimes(1);
+    expect(mockToggleTopicSelected).toBeCalledWith(externalTopicPayload.name);
   });
 
   it('renders correct out of sync replicas number', () => {
@@ -98,6 +135,6 @@ describe('ListItem', () => {
       </StaticRouter>
     );
 
-    expect(wrapper.find('td').at(2).text()).toEqual('0');
+    expect(wrapper.find('td').at(3).text()).toEqual('0');
   });
 });

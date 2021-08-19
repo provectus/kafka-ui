@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.client.KafkaConnectClients;
 import com.provectus.kafka.ui.connect.model.ConnectorTopics;
+import com.provectus.kafka.ui.connect.model.TaskStatus;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ConnectNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
@@ -13,6 +14,7 @@ import com.provectus.kafka.ui.model.Connector;
 import com.provectus.kafka.ui.model.ConnectorAction;
 import com.provectus.kafka.ui.model.ConnectorPlugin;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponse;
+import com.provectus.kafka.ui.model.ConnectorState;
 import com.provectus.kafka.ui.model.FullConnectorInfo;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
@@ -23,14 +25,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Service
 @Log4j2
@@ -52,11 +58,11 @@ public class KafkaConnectService {
     );
   }
 
-  public Flux<FullConnectorInfo> getAllConnectors(String clusterName) {
+  public Flux<FullConnectorInfo> getAllConnectors(final String clusterName, final String search) {
     return getConnects(clusterName)
         .flatMapMany(Function.identity())
         .flatMap(connect -> getConnectorNames(clusterName, connect))
-        .flatMap(pair -> getConnector(clusterName, pair.getLeft(), pair.getRight()))
+        .flatMap(pair -> getConnector(clusterName, pair.getT1(), pair.getT2()))
         .flatMap(connector ->
             getConnectorConfig(clusterName, connector.getConnect(), connector.getName())
                 .map(config -> InternalConnectInfo.builder()
@@ -87,7 +93,25 @@ public class KafkaConnectService {
                   .build()
               );
         })
-        .map(kafkaConnectMapper::fullConnectorInfoFromTuple);
+        .map(kafkaConnectMapper::fullConnectorInfoFromTuple)
+        .filter(matchesSearchTerm(search));
+  }
+
+  private Predicate<FullConnectorInfo> matchesSearchTerm(final String search) {
+    return (connector) -> getSearchValues(connector)
+        .anyMatch(value -> value.contains(
+            StringUtils.defaultString(
+                search,
+                StringUtils.EMPTY)
+                .toUpperCase()));
+  }
+
+  private Stream<String> getSearchValues(FullConnectorInfo fullConnectorInfo) {
+    return Stream.of(
+        fullConnectorInfo.getName(),
+        fullConnectorInfo.getStatus().getState().getValue(),
+        fullConnectorInfo.getType().getValue())
+        .map(String::toUpperCase);
   }
 
   private Mono<ConnectorTopics> getConnectorTopics(String clusterName, String connectClusterName,
@@ -100,13 +124,13 @@ public class KafkaConnectService {
         );
   }
 
-  private Flux<Pair<String, String>> getConnectorNames(String clusterName, Connect connect) {
+  private Flux<Tuple2<String, String>> getConnectorNames(String clusterName, Connect connect) {
     return getConnectors(clusterName, connect.getName())
         .collectList().map(e -> e.get(0))
         // for some reason `getConnectors` method returns the response as a single string
         .map(this::parseToList)
         .flatMapMany(Flux::fromIterable)
-        .map(connector -> Pair.of(connect.getName(), connector));
+        .map(connector -> Tuples.of(connect.getName(), connector));
   }
 
   @SneakyThrows
@@ -118,7 +142,7 @@ public class KafkaConnectService {
   public Flux<String> getConnectors(String clusterName, String connectName) {
     return getConnectAddress(clusterName, connectName)
         .flatMapMany(connect ->
-            KafkaConnectClients.withBaseUrl(connect).getConnectors()
+            KafkaConnectClients.withBaseUrl(connect).getConnectors(null)
                 .doOnError(log::error)
         );
   }
@@ -139,23 +163,32 @@ public class KafkaConnectService {
   public Mono<Connector> getConnector(String clusterName, String connectName,
                                       String connectorName) {
     return getConnectAddress(clusterName, connectName)
-        .flatMap(connect ->
-            KafkaConnectClients.withBaseUrl(connect).getConnector(connectorName)
-                .map(kafkaConnectMapper::fromClient)
-                .flatMap(connector ->
-                    KafkaConnectClients.withBaseUrl(connect).getConnectorStatus(connector.getName())
-                        .map(connectorStatus -> {
-                          var status = connectorStatus.getConnector();
-                          connector.status(kafkaConnectMapper.fromClient(status));
-                          return (Connector) new Connector()
-                              .connect(connectName)
-                              .status(kafkaConnectMapper.fromClient(status))
-                              .type(connector.getType())
-                              .tasks(connector.getTasks())
-                              .name(connector.getName())
-                              .config(connector.getConfig());
-                        })
-                )
+        .flatMap(connect -> KafkaConnectClients.withBaseUrl(connect).getConnector(connectorName)
+            .map(kafkaConnectMapper::fromClient)
+            .flatMap(connector ->
+                KafkaConnectClients.withBaseUrl(connect).getConnectorStatus(connector.getName())
+                    .map(connectorStatus -> {
+                      var status = connectorStatus.getConnector();
+                      Connector result = (Connector) new Connector()
+                          .connect(connectName)
+                          .status(kafkaConnectMapper.fromClient(status))
+                          .type(connector.getType())
+                          .tasks(connector.getTasks())
+                          .name(connector.getName())
+                          .config(connector.getConfig());
+
+                      if (connectorStatus.getTasks() != null) {
+                        boolean isAnyTaskFailed = connectorStatus.getTasks().stream()
+                            .map(TaskStatus::getState)
+                            .anyMatch(TaskStatus.StateEnum.FAILED::equals);
+
+                        if (isAnyTaskFailed) {
+                          result.getStatus().state(ConnectorState.TASK_FAILED);
+                        }
+                      }
+                      return result;
+                    })
+            )
         );
   }
 

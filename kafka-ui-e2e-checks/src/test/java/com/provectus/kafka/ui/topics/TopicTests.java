@@ -57,6 +57,7 @@ public class TopicTests extends BaseTest {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_UPDATE);
+        Selenide.refresh();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
                 .changeCleanupPolicy(COMPACT_POLICY_VALUE)
@@ -85,6 +86,7 @@ public class TopicTests extends BaseTest {
                 .openTopic(TOPIC_TO_DELETE);
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE).clickDeleteTopicButton();
         pages.openTopicsList(SECOND_LOCAL).isNotVisible(TOPIC_TO_DELETE);
+        
     }
 
 }

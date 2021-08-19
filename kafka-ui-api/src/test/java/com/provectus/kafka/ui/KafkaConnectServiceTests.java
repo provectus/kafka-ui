@@ -8,8 +8,8 @@ import com.provectus.kafka.ui.model.ConnectorPlugin;
 import com.provectus.kafka.ui.model.ConnectorPluginConfig;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponse;
 import com.provectus.kafka.ui.model.ConnectorPluginConfigValue;
+import com.provectus.kafka.ui.model.ConnectorState;
 import com.provectus.kafka.ui.model.ConnectorStatus;
-import com.provectus.kafka.ui.model.ConnectorTaskStatus;
 import com.provectus.kafka.ui.model.ConnectorType;
 import com.provectus.kafka.ui.model.NewConnector;
 import com.provectus.kafka.ui.model.TaskId;
@@ -71,6 +71,73 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   }
 
   @Test
+  public void shouldListAllConnectors() {
+    webTestClient.get()
+            .uri("/api/clusters/{clusterName}/connectors", LOCAL)
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldFilterByNameConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    connectorName.split("-")[1])
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldFilterByStatusConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    "running")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldFilterByTypeConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    "sink")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .exists();
+  }
+
+  @Test
+  public void shouldNotFilterConnectors() {
+    webTestClient.get()
+            .uri(
+                    "/api/clusters/{clusterName}/connectors?search={search}",
+                    LOCAL,
+                    "something-else")
+            .exchange()
+            .expectStatus().isOk()
+            .expectBody()
+            .jsonPath(String.format("$[?(@.name == '%s')]", connectorName))
+            .doesNotExist();
+  }
+
+  @Test
   public void shouldListConnectors() {
     webTestClient.get()
         .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
@@ -104,7 +171,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
     Connector expected = (Connector) new Connector()
         .connect(connectName)
         .status(new ConnectorStatus()
-            .state(ConnectorTaskStatus.RUNNING)
+            .state(ConnectorState.RUNNING)
             .workerId("kafka-connect:8083"))
         .tasks(List.of(new TaskId()
             .connector(connectorName)

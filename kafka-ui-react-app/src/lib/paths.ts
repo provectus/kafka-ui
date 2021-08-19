@@ -20,6 +20,14 @@ export const clusterBrokersPath = (clusterName: ClusterName) =>
 // Consumer Groups
 export const clusterConsumerGroupsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/consumer-groups`;
+export const clusterConsumerGroupDetailsPath = (
+  clusterName: ClusterName,
+  groupId: string
+) => `${clusterPath(clusterName)}/consumer-groups/${groupId}`;
+export const clusterConsumerGroupResetOffsetsPath = (
+  clusterName: ClusterName,
+  groupId: string
+) => `${clusterPath(clusterName)}/consumer-groups/${groupId}/reset-offsets`;
 
 // Schemas
 export const clusterSchemasPath = (clusterName: ClusterName) =>
@@ -60,6 +68,10 @@ export const clusterTopicConsumerGroupsPath = (
   clusterName: ClusterName,
   topicName: TopicName
 ) => `${clusterTopicsPath(clusterName)}/${topicName}/consumergroups`;
+export const clusterTopicSendMessagePath = (
+  clusterName: ClusterName,
+  topicName: TopicName
+) => `${clusterTopicsPath(clusterName)}/${topicName}/message`;
 
 // Kafka Connect
 export const clusterConnectsPath = (clusterName: ClusterName) =>
@@ -107,3 +119,11 @@ export const clusterConnectConnectorConfigPath = (
     connectName,
     connectorName
   )}/config`;
+
+// KsqlDb
+export const clusterKsqlDbPath = (clusterName: ClusterName = ':clusterName') =>
+  `${clusterPath(clusterName)}/ksql-db`;
+
+export const clusterKsqlDbQueryPath = (
+  clusterName: ClusterName = ':clusterName'
+) => `${clusterPath(clusterName)}/ksql-db/query`;

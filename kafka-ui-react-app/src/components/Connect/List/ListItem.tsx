@@ -10,7 +10,7 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import StatusTag from 'components/Connect/StatusTag';
+import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
 
 export interface ListItemProps {
   clusterName: ClusterName;
@@ -72,7 +72,7 @@ const ListItem: React.FC<ListItemProps> = ({
           ))}
         </div>
       </td>
-      <td>{status && <StatusTag status={status.state} />}</td>
+      <td>{status && <ConnectorStatusTag status={status.state} />}</td>
       <td>
         {runningTasks && (
           <span

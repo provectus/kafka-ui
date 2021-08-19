@@ -7,6 +7,8 @@ import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
 import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
+import SendMessageContainer from './SendMessage/SendMessageContainer';
+
 interface RouterParams {
   clusterName: ClusterName;
   topicName: TopicName;
@@ -49,6 +51,11 @@ const Topic: React.FC<TopicProps> = ({
       <div className="level">
         <div className="level-item level-left">
           <Switch>
+            <Route exact path={`${topicPageUrl}/message`}>
+              <Breadcrumb links={childBreadcrumbLinks}>
+                Produce Message
+              </Breadcrumb>
+            </Route>
             <Route exact path={`${topicPageUrl}/edit`}>
               <Breadcrumb links={childBreadcrumbLinks}>Edit</Breadcrumb>
             </Route>
@@ -66,6 +73,11 @@ const Topic: React.FC<TopicProps> = ({
             exact
             path="/ui/clusters/:clusterName/topics/:topicName/edit"
             component={EditContainer}
+          />
+          <Route
+            exact
+            path="/ui/clusters/:clusterName/topics/:topicName/message"
+            component={SendMessageContainer}
           />
           <Route
             path="/ui/clusters/:clusterName/topics/:topicName"

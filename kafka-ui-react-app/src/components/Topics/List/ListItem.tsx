@@ -14,13 +14,24 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
+  selected: boolean;
+  toggleTopicSelected(topicName: TopicName): void;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
   clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: { name, internal, partitions, segmentSize, replicationFactor },
+  topic: {
+    name,
+    internal,
+    partitions,
+    segmentSize,
+    replicationFactor,
+    cleanUpPolicy,
+  },
+  selected,
+  toggleTopicSelected,
   deleteTopic,
   clusterName,
   clearTopicMessages,
@@ -63,6 +74,17 @@ const ListItem: React.FC<ListItemProps> = ({
 
   return (
     <tr>
+      <td>
+        {!internal && (
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => {
+              toggleTopicSelected(name);
+            }}
+          />
+        )}
+      </td>
       <td className="has-text-overflow-ellipsis">
         <NavLink
           exact
@@ -84,6 +106,9 @@ const ListItem: React.FC<ListItemProps> = ({
         <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
           {internal ? 'Internal' : 'External'}
         </div>
+      </td>
+      <td>
+        <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
       </td>
       <td className="topic-action-block">
         {!internal && !isReadOnly ? (

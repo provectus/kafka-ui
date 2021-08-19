@@ -77,6 +77,66 @@ paths:
                 items:
                   $ref: '#/components/schemas/Broker'
 
+  /api/clusters/{clusterName}/brokers/{id}/configs:
+    get:
+      tags:
+        - Brokers
+      summary: getBrokerConfig
+      operationId: getBrokerConfig
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrokerConfig'
+        404:
+          description: Not found
+
+  /api/clusters/{clusterName}/brokers/{id}/configs/{name}:
+    put:
+      tags:
+        - Brokers
+      summary: updateBrokerConfigByName
+      operationId: updateBrokerConfigByName
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrokerConfigItem'
+      responses:
+        200:
+          description: OK
+
   /api/clusters/{clusterName}/metrics:
     get:
       tags:
@@ -172,6 +232,31 @@ paths:
                 items:
                   $ref: '#/components/schemas/BrokersLogdirs'
 
+  /api/clusters/{clusterName}/brokers/{id}/logdirs:
+    patch:
+      tags:
+        - Brokers
+      summary: updateBrokerTopicPartitionLogDir
+      operationId: updateBrokerTopicPartitionLogDir
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrokerLogdirUpdate'
+      responses:
+        200:
+          description: OK
 
   /api/clusters/{clusterName}/topics:
     get:
@@ -418,11 +503,11 @@ paths:
         200:
           description: OK
           content:
-            application/json:
+            text/event-stream:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/TopicMessage'
+                  $ref: '#/components/schemas/TopicMessageEvent'
     delete:
       tags:
         - Messages
@@ -955,12 +1040,17 @@ paths:
     get:
       tags:
         - Kafka Connect
-      summary: get all kafka connectors
+      summary: get filtered kafka connectors
       operationId: getAllConnectors
       parameters:
         - name: clusterName
           in: path
           required: true
+          schema:
+            type: string
+        - name: search
+          in: query
+          required: false
           schema:
             type: string
       responses:
@@ -1632,6 +1722,16 @@ components:
           type: string
         defaultValue:
           type: string
+        source:
+          $ref: "#/components/schemas/ConfigSource"
+        isSensitive:
+          type: boolean
+        isReadOnly:
+          type: boolean
+        synonyms:
+          type: array
+          items:
+            $ref: "#/components/schemas/ConfigSynonym"
       required:
         - name
 
@@ -1673,6 +1773,16 @@ components:
       required:
         - id
 
+    BrokerLogdirUpdate:
+      type: object
+      properties:
+        topic:
+          type: string
+        partition:
+          type: integer
+        logDir:
+          type: string
+
     ConsumerGroupState:
       type: string
       enum:
@@ -1682,6 +1792,14 @@ components:
         - STABLE
         - DEAD
         - EMPTY
+
+    MessageFormat:
+      type: string
+      enum:
+        - AVRO
+        - JSON
+        - PROTOBUF
+        - UNKNOWN
 
     ConsumerGroup:
       type: object
@@ -1749,6 +1867,44 @@ components:
         - source
         - schema
 
+    TopicMessageEvent:
+      type: object
+      properties:
+        type:
+          type: string
+          enum:
+            - PHASE
+            - MESSAGE
+            - CONSUMING
+            - DONE
+        message:
+          $ref: "#/components/schemas/TopicMessage"
+        phase:
+          $ref: "#/components/schemas/TopicMessagePhase"
+        consuming:
+          $ref: "#/components/schemas/TopicMessageConsuming"
+
+    TopicMessagePhase:
+      type: object
+      properties:
+        name:
+          type: string
+
+    TopicMessageConsuming:
+      type: object
+      properties:
+        bytesConsumed:
+          type: integer
+          format: int64
+        elapsedMs:
+          type: integer
+          format: int64
+        isCancelled:
+          type: boolean
+        messagesConsumed:
+          type: integer
+
+
     TopicMessage:
       type: object
       properties:
@@ -1774,6 +1930,23 @@ components:
             type: string
         content:
           type: string
+        keyFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        valueFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        keySize:
+          type: integer
+          format: int64
+        valueSize:
+          type: integer
+          format: int64
+        keySchemaId:
+          type: string
+        valueSchemaId:
+          type: string
+        headersSize:
+          type: integer
+          format: int64
       required:
         - partition
         - offset
@@ -2112,7 +2285,7 @@ components:
       type: object
       properties:
         state:
-          $ref: '#/components/schemas/ConnectorTaskStatus'
+          $ref: '#/components/schemas/ConnectorState'
         worker_id:
           type: string
       required:
@@ -2125,6 +2298,15 @@ components:
         - FAILED
         - PAUSED
         - UNASSIGNED
+
+    ConnectorState:
+      type: string
+      enum:
+        - RUNNING
+        - FAILED
+        - PAUSED
+        - UNASSIGNED
+        - TASK_FAILED
 
     ConnectorAction:
       type: string
@@ -2335,3 +2517,54 @@ components:
       required:
         - totalReplicationFactor
         - topicName
+
+    BrokerConfigItem:
+      type: object
+      properties:
+        value:
+          type: string
+
+    BrokerConfig:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        source:
+          $ref: '#/components/schemas/ConfigSource'
+        isSensitive:
+          type: boolean
+        isReadOnly:
+          type: boolean
+        synonyms:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConfigSynonym'
+      required:
+        - name
+        - value
+        - source
+        - isSensitive
+        - isReadOnly
+
+    ConfigSource:
+      type: string
+      enum:
+        - DYNAMIC_TOPIC_CONFIG
+        - DYNAMIC_BROKER_LOGGER_CONFIG
+        - DYNAMIC_BROKER_CONFIG
+        - DYNAMIC_DEFAULT_BROKER_CONFIG
+        - STATIC_BROKER_CONFIG
+        - DEFAULT_CONFIG
+        - UNKNOWN
+
+    ConfigSynonym:
+      type: object
+      properties:
+        name:
+          type: string
+        value:
+          type: string
+        source:
+          $ref: '#/components/schemas/ConfigSource'
