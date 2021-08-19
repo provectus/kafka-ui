@@ -161,7 +161,7 @@ const topicReducer = (
   };
 };
 
-const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
+export const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
   const {
     name,
     partitions,
