@@ -96,7 +96,7 @@ const Details: React.FC<Props> = ({
                 >
                   Clear All Messages
                 </button>
-                {isTopicDeletionAllowed ? (
+                {isTopicDeletionAllowed && (
                   <button
                     className="button is-danger"
                     type="button"
@@ -104,7 +104,7 @@ const Details: React.FC<Props> = ({
                   >
                     Delete Topic
                   </button>
-                ) : null}
+                )}
 
                 <Link
                   to={clusterTopicSendMessagePath(clusterName, topicName)}

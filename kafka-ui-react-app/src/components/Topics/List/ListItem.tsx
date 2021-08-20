@@ -126,13 +126,13 @@ const ListItem: React.FC<ListItemProps> = ({
                 <DropdownItem onClick={clearTopicMessagesHandler}>
                   <span className="has-text-danger">Clear Messages</span>
                 </DropdownItem>
-                {isTopicDeletionAllowed ? (
+                {isTopicDeletionAllowed && (
                   <DropdownItem
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
                   >
                     <span className="has-text-danger">Remove Topic</span>
                   </DropdownItem>
-                ) : null}
+                )}
               </Dropdown>
             </div>
             <ConfirmationModal
