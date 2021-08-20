@@ -11,6 +11,7 @@ import {
   clusterConnectorsPath,
   clusterConnectsPath,
   clusterConsumerGroupsPath,
+  clusterKsqlDbPath,
   clusterSchemasPath,
   clusterTopicsPath,
 } from 'lib/paths';
@@ -20,6 +21,7 @@ import Connect from 'components/Connect/Connect';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BrokersContainer from 'components/Brokers/BrokersContainer';
 import ConsumersGroupsContainer from 'components/ConsumerGroups/ConsumersGroupsContainer';
+import KsqlDb from 'components/KsqlDb/KsqlDb';
 
 const Cluster: React.FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
@@ -35,6 +37,8 @@ const Cluster: React.FC = () => {
   const isTopicDeletionAllowed = features.includes(
     ClusterFeaturesEnum.TOPIC_DELETION
   );
+  const hasKsqlDbConfigured = features.includes(ClusterFeaturesEnum.KSQL_DB);
+
 
   const contextValue = React.useMemo(
     () => ({
@@ -75,6 +79,9 @@ const Cluster: React.FC = () => {
             path={clusterConnectorsPath(':clusterName')}
             component={Connect}
           />
+        )}
+        {hasKsqlDbConfigured && (
+          <Route path={clusterKsqlDbPath(':clusterName')} component={KsqlDb} />
         )}
         <Redirect
           from="/ui/clusters/:clusterName"

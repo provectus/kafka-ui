@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.provectus.kafka.ui.model.KsqlCommand;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +35,15 @@ public class ShowStrategy extends BaseStrategy {
   @Override
   protected String getTestRegExp() {
     return "";
+  }
+
+  @Override
+  public BaseStrategy ksqlCommand(KsqlCommand ksqlCommand) {
+    // return new instance to avoid conflicts for parallel requests
+    ShowStrategy clone = new ShowStrategy();
+    clone.setResponseValueKey(responseValueKey);
+    clone.ksqlCommand = ksqlCommand;
+    return clone;
   }
 
   protected String getShowRegExp(String key) {

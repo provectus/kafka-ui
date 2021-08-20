@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory, useParams } from 'react-router-dom';
-import { ConnectorTaskStatus } from 'generated-sources';
+import { ConnectorState } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorEditPath,
@@ -21,7 +21,7 @@ export interface ActionsProps {
     connectorName: ConnectorName
   ): Promise<void>;
   isConnectorDeleting: boolean;
-  connectorStatus?: ConnectorTaskStatus;
+  connectorStatus?: ConnectorState;
   restartConnector(
     clusterName: ClusterName,
     connectName: ConnectName,
@@ -79,7 +79,7 @@ const Actions: React.FC<ActionsProps> = ({
 
   return (
     <div className="buttons">
-      {connectorStatus === ConnectorTaskStatus.RUNNING && (
+      {connectorStatus === ConnectorState.RUNNING && (
         <button
           type="button"
           className="button"
@@ -93,7 +93,7 @@ const Actions: React.FC<ActionsProps> = ({
         </button>
       )}
 
-      {connectorStatus === ConnectorTaskStatus.PAUSED && (
+      {connectorStatus === ConnectorState.PAUSED && (
         <button
           type="button"
           className="button"

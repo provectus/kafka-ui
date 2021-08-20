@@ -10,6 +10,7 @@ import { ConsumerGroupsState } from './consumerGroup';
 import { SchemasState } from './schema';
 import { AlertsState } from './alerts';
 import { ConnectState } from './connect';
+import { KsqlState } from './ksqlDb';
 
 export * from './topic';
 export * from './cluster';
@@ -30,6 +31,7 @@ export interface RootState {
   connect: ConnectState;
   loader: LoaderState;
   alerts: AlertsState;
+  ksqlDb: KsqlState;
 }
 
 export type Action = ActionType<typeof actions>;

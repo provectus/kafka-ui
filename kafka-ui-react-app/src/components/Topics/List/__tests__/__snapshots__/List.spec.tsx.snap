@@ -27,7 +27,9 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
     <List
       areTopicsFetching={false}
       clearTopicMessages={[MockFunction]}
+      clearTopicsMessages={[MockFunction]}
       deleteTopic={[MockFunction]}
+      deleteTopics={[MockFunction]}
       fetchTopicsList={
         [MockFunction] {
           "calls": Array [
@@ -165,6 +167,9 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
           >
             <thead>
               <tr>
+                <th>
+                   
+                </th>
                 <ListHeaderCell
                   orderBy={null}
                   setOrderBy={[MockFunction]}

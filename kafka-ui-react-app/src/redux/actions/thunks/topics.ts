@@ -87,6 +87,14 @@ export const clearTopicMessages =
     }
   };
 
+export const clearTopicsMessages =
+  (clusterName: ClusterName, topicsName: TopicName[]): PromiseThunkResult =>
+  async (dispatch) => {
+    topicsName.forEach((topicName) => {
+      dispatch(clearTopicMessages(clusterName, topicName));
+    });
+  };
+
 export const fetchTopicDetails =
   (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
   async (dispatch, getState) => {
@@ -283,6 +291,14 @@ export const deleteTopic =
     } catch (e) {
       dispatch(actions.deleteTopicAction.failure());
     }
+  };
+
+export const deleteTopics =
+  (clusterName: ClusterName, topicsName: TopicName[]): PromiseThunkResult =>
+  async (dispatch) => {
+    topicsName.forEach((topicName) => {
+      dispatch(deleteTopic(clusterName, topicName));
+    });
   };
 
 export const fetchTopicConsumerGroups =
