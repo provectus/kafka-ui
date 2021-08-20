@@ -1,8 +1,7 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { ClusterFeaturesEnum, Topic, TopicDetails } from 'generated-sources';
+import { Topic, TopicDetails } from 'generated-sources';
 import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import {
   clusterTopicSettingsPath,
   clusterTopicPath,
@@ -14,7 +13,6 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { getClustersFeatures } from 'redux/reducers/clusters/selectors';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -37,7 +35,8 @@ const Details: React.FC<Props> = ({
   clearTopicMessages,
 }) => {
   const history = useHistory();
-  const { isReadOnly } = React.useContext(ClusterContext);
+  const { isReadOnly, isTopicDeletionAllowed } =
+    React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
@@ -48,11 +47,6 @@ const Details: React.FC<Props> = ({
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
   }, [clusterName, topicName]);
-
-  const features = useSelector(getClustersFeatures(clusterName));
-  const hasKafkaTopicDeletion = features.includes(
-    ClusterFeaturesEnum.TOPIC_DELETION
-  );
 
   return (
     <div className="box">
@@ -102,7 +96,7 @@ const Details: React.FC<Props> = ({
                 >
                   Clear All Messages
                 </button>
-                {hasKafkaTopicDeletion ? (
+                {isTopicDeletionAllowed ? (
                   <button
                     className="button is-danger"
                     type="button"

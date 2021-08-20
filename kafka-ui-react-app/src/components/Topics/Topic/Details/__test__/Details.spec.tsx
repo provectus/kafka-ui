@@ -29,6 +29,7 @@ describe('Details', () => {
                 isReadOnly: true,
                 hasKafkaConnectConfigured: true,
                 hasSchemaRegistryConfigured: true,
+                isTopicDeletionAllowed: true,
               }}
             >
               <Details
@@ -58,6 +59,7 @@ describe('Details', () => {
                 isReadOnly: false,
                 hasKafkaConnectConfigured: true,
                 hasSchemaRegistryConfigured: true,
+                isTopicDeletionAllowed: true,
               }}
             >
               <Details
