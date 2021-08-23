@@ -365,7 +365,7 @@ public class ClusterUtil {
         .map(Config::entries)
         .flatMap(Collection::stream)
         .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
-        .findFirst().orElseThrow().value();
+        .findFirst().map(ConfigEntry::value).orElse("1.0-UNKNOWN");
   }
 
 
