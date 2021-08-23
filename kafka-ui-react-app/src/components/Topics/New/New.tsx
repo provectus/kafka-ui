@@ -1,9 +1,9 @@
 import React from 'react';
 import {
   ClusterName,
-  TopicFormDataRaw,
-  FailurePayload,
   TopicName,
+  TopicFormData,
+  FailurePayload,
 } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
@@ -23,7 +23,7 @@ interface RouterParams {
 }
 
 const New: React.FC = () => {
-  const methods = useForm<TopicFormDataRaw>();
+  const methods = useForm<TopicFormData>();
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const New: React.FC = () => {
     [clusterName]
   );
 
-  const onSubmit = async (data: TopicFormDataRaw) => {
+  const onSubmit = async (data: TopicFormData) => {
     try {
       await topicsApiClient.createTopic({
         clusterName,
