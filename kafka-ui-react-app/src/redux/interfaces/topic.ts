@@ -70,6 +70,21 @@ export interface TopicFormDataRaw {
   customParams: TopicFormCustomParams;
 }
 
+export interface TopicFormData {
+  name: string;
+  partitions: number;
+  replicationFactor: number;
+  minInSyncReplicas: number;
+  cleanupPolicy: string;
+  retentionMs: number;
+  retentionBytes: number;
+  maxMessageBytes: number;
+  customParams: {
+    name: string;
+    value: string;
+  }[];
+}
+
 export interface TopicMessagesState {
   messages: TopicMessage[];
   phase?: string;

@@ -19,6 +19,7 @@ import {
   TopicFormDataRaw,
   TopicsState,
   FailurePayload,
+  TopicFormData,
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
@@ -161,7 +162,7 @@ const topicReducer = (
   };
 };
 
-const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
+const formatTopicCreation = (form: TopicFormData): TopicCreation => {
   const {
     name,
     partitions,
@@ -180,10 +181,10 @@ const formatTopicCreation = (form: TopicFormDataRaw): TopicCreation => {
     replicationFactor,
     configs: {
       'cleanup.policy': cleanupPolicy,
-      'retention.ms': retentionMs,
-      'retention.bytes': retentionBytes,
-      'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInSyncReplicas,
+      'retention.ms': retentionMs.toString(),
+      'retention.bytes': retentionBytes.toString(),
+      'max.message.bytes': maxMessageBytes.toString(),
+      'min.insync.replicas': minInSyncReplicas.toString(),
       ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
@@ -212,7 +213,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
 };
 
 export const createTopic =
-  (clusterName: ClusterName, form: TopicFormDataRaw): PromiseThunkResult =>
+  (clusterName: ClusterName, form: TopicFormData): PromiseThunkResult =>
   async (dispatch, getState) => {
     dispatch(actions.createTopicAction.request());
     try {
