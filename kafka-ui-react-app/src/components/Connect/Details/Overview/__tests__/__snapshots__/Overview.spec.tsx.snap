@@ -37,9 +37,11 @@ exports[`Overview view matches snapshot 1`] = `
           State
         </th>
         <td>
-          <mock-StatusTag
-            status="RUNNING"
-          />
+          <span
+            className="tag is-success"
+          >
+            RUNNING
+          </span>
         </td>
       </tr>
       <tr>

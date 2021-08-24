@@ -2285,7 +2285,7 @@ components:
       type: object
       properties:
         state:
-          $ref: '#/components/schemas/ConnectorTaskStatus'
+          $ref: '#/components/schemas/ConnectorState'
         worker_id:
           type: string
       required:
@@ -2298,6 +2298,15 @@ components:
         - FAILED
         - PAUSED
         - UNASSIGNED
+
+    ConnectorState:
+      type: string
+      enum:
+        - RUNNING
+        - FAILED
+        - PAUSED
+        - UNASSIGNED
+        - TASK_FAILED
 
     ConnectorAction:
       type: string

@@ -8,6 +8,7 @@ import {
   clusterSchemasPath,
   clusterConnectorsPath,
   clusterConnectsPath,
+  clusterKsqlDbPath,
 } from 'lib/paths';
 
 import DefaultClusterIcon from './DefaultClusterIcon';
@@ -89,6 +90,17 @@ const ClusterMenu: React.FC<Props> = ({
                 }
               >
                 Kafka Connect
+              </NavLink>
+            </li>
+          )}
+          {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (
+            <li>
+              <NavLink
+                to={clusterKsqlDbPath(name)}
+                activeClassName="is-active"
+                title="KSQL DB"
+              >
+                KSQL DB
               </NavLink>
             </li>
           )}

@@ -4,7 +4,7 @@ import {
   ClusterName,
   TopicName,
   Action,
-  TopicFormDataRaw,
+  TopicFormData,
 } from 'redux/interfaces';
 import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { createTopic, createTopicAction } from 'redux/actions';
@@ -36,7 +36,7 @@ const mapDispatchToProps = (
   dispatch: ThunkDispatch<RootState, undefined, Action>,
   { history }: OwnProps
 ) => ({
-  createTopic: (clusterName: ClusterName, form: TopicFormDataRaw) => {
+  createTopic: (clusterName: ClusterName, form: TopicFormData) => {
     dispatch(createTopic(clusterName, form));
   },
   redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => {

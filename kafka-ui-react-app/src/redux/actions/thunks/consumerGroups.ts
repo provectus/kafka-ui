@@ -1,4 +1,8 @@
-import { ConsumerGroupsApi, Configuration } from 'generated-sources';
+import {
+  ConsumerGroupsApi,
+  Configuration,
+  ConsumerGroupOffsetsResetType,
+} from 'generated-sources';
 import {
   ConsumerGroupID,
   PromiseThunkResult,
@@ -22,7 +26,13 @@ export const fetchConsumerGroupsList =
       });
       dispatch(actions.fetchConsumerGroupsAction.success(consumerGroups));
     } catch (e) {
-      dispatch(actions.fetchConsumerGroupsAction.failure());
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['consumer-groups', clusterName].join('-'),
+        title: `Consumer Gropups`,
+        response,
+      };
+      dispatch(actions.fetchConsumerGroupsAction.failure({ alert }));
     }
   };
 
@@ -46,7 +56,13 @@ export const fetchConsumerGroupDetails =
         })
       );
     } catch (e) {
-      dispatch(actions.fetchConsumerGroupDetailsAction.failure());
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['consumer-group', consumerGroupID].join('-'),
+        title: `Consumer Gropup ${consumerGroupID}`,
+        response,
+      };
+      dispatch(actions.fetchConsumerGroupDetailsAction.failure({ alert }));
     }
   };
 
@@ -71,5 +87,46 @@ export const deleteConsumerGroup =
         response,
       };
       dispatch(actions.deleteConsumerGroupAction.failure({ alert }));
+    }
+  };
+
+export const resetConsumerGroupOffsets =
+  (
+    clusterName: ClusterName,
+    consumerGroupID: ConsumerGroupID,
+    requestBody: {
+      topic: string;
+      resetType: ConsumerGroupOffsetsResetType;
+      partitionsOffsets?: { offset: string; partition: number }[];
+      resetToTimestamp?: Date;
+      partitions: number[];
+    }
+  ): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.resetConsumerGroupOffsetsAction.request());
+    try {
+      await consumerGroupsApiClient.resetConsumerGroupOffsets({
+        clusterName,
+        id: consumerGroupID,
+        consumerGroupOffsetsReset: {
+          topic: requestBody.topic,
+          resetType: requestBody.resetType,
+          partitions: requestBody.partitions,
+          partitionsOffsets: requestBody.partitionsOffsets?.map((offset) => ({
+            ...offset,
+            offset: +offset.offset,
+          })),
+          resetToTimestamp: requestBody.resetToTimestamp?.getTime(),
+        },
+      });
+      dispatch(actions.resetConsumerGroupOffsetsAction.success());
+    } catch (e) {
+      const response = await getResponse(e);
+      const alert: FailurePayload = {
+        subject: ['consumer-group', consumerGroupID].join('-'),
+        title: `Consumer Gropup ${consumerGroupID}`,
+        response,
+      };
+      dispatch(actions.resetConsumerGroupOffsetsAction.failure({ alert }));
     }
   };
