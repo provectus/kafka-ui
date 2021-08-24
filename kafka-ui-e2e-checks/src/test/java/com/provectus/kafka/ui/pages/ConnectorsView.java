@@ -31,5 +31,4 @@ public class ConnectorsView {
         $(By.xpath("//span[text()='Delete']")).click();
         $(By.xpath("//button[text()='Confirm']")).click();
     }
-
 }

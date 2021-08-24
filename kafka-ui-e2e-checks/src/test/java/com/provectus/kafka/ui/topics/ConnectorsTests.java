@@ -24,7 +24,8 @@ public class ConnectorsTests extends BaseTest {
                 .setConnectorConfig(
                         SINK_CONNECTOR,
                         FileUtils.getResourceAsString("sink_activities.json")
-                );
+                )
+                .connectorIsVisible();
     }
     //tbd
     @SneakyThrows
