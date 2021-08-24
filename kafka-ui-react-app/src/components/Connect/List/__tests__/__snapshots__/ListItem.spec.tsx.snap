@@ -132,7 +132,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                 </div>
               </td>
               <td>
-                <StatusTag
+                <ConnectorStatusTag
                   status="RUNNING"
                 >
                   <span
@@ -140,7 +140,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                   >
                     RUNNING
                   </span>
-                </StatusTag>
+                </ConnectorStatusTag>
               </td>
               <td>
                 <span

@@ -13,6 +13,7 @@ import {
   topicMessagePayload,
   topicMessagesMetaPayload,
 } from 'redux/reducers/topicMessages/__test__/fixtures';
+import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
 
 import { mockTopicsState } from './fixtures';
 
@@ -323,6 +324,28 @@ describe('Actions', () => {
           payload: { alert },
         });
       });
+    });
+  });
+});
+
+describe('ksqlDb', () => {
+  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST', () => {
+    expect(actions.fetchKsqlDbTablesAction.request()).toEqual({
+      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
+    });
+  });
+  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS', () => {
+    expect(
+      actions.fetchKsqlDbTablesAction.success(fetchKsqlDbTablesPayload)
+    ).toEqual({
+      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
+      payload: fetchKsqlDbTablesPayload,
+    });
+  });
+  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE', () => {
+    expect(actions.fetchKsqlDbTablesAction.failure({})).toEqual({
+      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE',
+      payload: {},
     });
   });
 });

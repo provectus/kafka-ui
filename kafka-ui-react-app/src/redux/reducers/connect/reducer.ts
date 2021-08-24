@@ -2,7 +2,7 @@ import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import { ConnectState } from 'redux/interfaces/connect';
 import { Action } from 'redux/interfaces';
-import { ConnectorTaskStatus } from 'generated-sources';
+import { ConnectorState, ConnectorTaskStatus } from 'generated-sources';
 
 export const initialState: ConnectState = {
   connects: [],
@@ -53,7 +53,7 @@ const reducer = (state = initialState, action: Action): ConnectState => {
                 ...state.currentConnector.connector,
                 status: {
                   ...state.currentConnector.connector?.status,
-                  state: ConnectorTaskStatus.PAUSED,
+                  state: ConnectorState.PAUSED,
                 },
               }
             : null,
@@ -76,7 +76,7 @@ const reducer = (state = initialState, action: Action): ConnectState => {
                 ...state.currentConnector.connector,
                 status: {
                   ...state.currentConnector.connector?.status,
-                  state: ConnectorTaskStatus.RUNNING,
+                  state: ConnectorState.RUNNING,
                 },
               }
             : null,
