@@ -39,6 +39,7 @@ describe('Details', () => {
                 isInternal={mockInternalTopicPayload}
                 deleteTopic={mockDelete}
                 clearTopicMessages={mockClearTopicMessages}
+                isDeleted={false}
               />
             </ClusterContext.Provider>
           </StaticRouter>
@@ -69,6 +70,7 @@ describe('Details', () => {
                 isInternal={mockExternalTopicPayload}
                 deleteTopic={mockDelete}
                 clearTopicMessages={mockClearTopicMessages}
+                isDeleted={false}
               />
             </ClusterContext.Provider>
           </StaticRouter>
