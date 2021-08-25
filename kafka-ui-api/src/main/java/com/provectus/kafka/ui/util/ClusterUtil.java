@@ -319,15 +319,18 @@ public class ClusterUtil {
     return topicMessage;
   }
 
-  public static TopicMessage toTopicMessage(InternalTopicMessage m) {
+  public static TopicMessage toTopicMessage(InternalTopicMessage message) {
+    InternalTopicMessageImpl m = (InternalTopicMessageImpl) message;
     return new TopicMessage()
         .partition(m.getPartition())
         .offset(m.getOffset())
         .timestamp(m.getTimestamp())
         .timestampType(m.getTimestampType())
         .headers(m.getHeaders())
-        .key(m.getKey() != null ? m.getKey().toString() : null)
-        .content(m.getContent() != null ? m.getContent().toString() : null)
+        .key(m.getKey() != null ? JsonNodeUtil.getJsonNodeValueAsString(m.getKey()) : null)
+        .content(m.getContent() != null
+            ? JsonNodeUtil.getJsonNodeValueAsString(m.getContent())
+            : null)
         .keyFormat(m.getKeyFormat())
         .valueFormat(m.getValueFormat())
         .keySize(m.getKeySize())

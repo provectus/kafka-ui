@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import com.provectus.kafka.ui.serde.schemaregistry.SchemaRegistryAwareRecordSerDe;
+import com.provectus.kafka.ui.util.JsonNodeUtil;
+import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.utils.Bytes;
@@ -32,9 +34,9 @@ class SchemaRegistryRecordDeserializerTest {
         new ConsumerRecord<>("topic", 1, 0, Bytes.wrap(key.getBytes()),
             Bytes.wrap(value.getBytes())));
     DeserializedKeyValue expected = DeserializedKeyValue.builder()
-        .key(objectMapper.readTree(key))
+        .key(JsonNodeUtil.toJsonNode(key.getBytes()))
         .keyFormat(MessageFormat.UNKNOWN)
-        .value(objectMapper.readTree(value))
+        .value(JsonNodeUtil.toJsonNode(value.getBytes()))
         .valueFormat(MessageFormat.UNKNOWN)
         .build();
     assertEquals(expected, deserializedRecord);
@@ -47,7 +49,7 @@ class SchemaRegistryRecordDeserializerTest {
     var deserializedRecord = deserializer
         .deserialize(new ConsumerRecord<>("topic", 1, 0, Bytes.wrap(key.getBytes()), null));
     DeserializedKeyValue expected = DeserializedKeyValue.builder()
-        .key(objectMapper.readTree(key))
+        .key(JsonNodeUtil.toJsonNode(key.getBytes()))
         .keyFormat(MessageFormat.UNKNOWN)
         .build();
     assertEquals(expected, deserializedRecord);

@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
@@ -9,10 +10,10 @@ import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
-import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serde.SimpleRecordSerDe;
+import com.provectus.kafka.ui.util.JsonNodeUtil;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.io.Serializable;
@@ -136,7 +137,7 @@ class RecordEmitterTest extends AbstractBaseTest {
         .limitRequest(Long.MAX_VALUE)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .collect(Collectors.toList())
         .block();
 
@@ -148,7 +149,7 @@ class RecordEmitterTest extends AbstractBaseTest {
         .limitRequest(Long.MAX_VALUE)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .collect(Collectors.toList())
         .block();
 
@@ -185,7 +186,7 @@ class RecordEmitterTest extends AbstractBaseTest {
         .limitRequest(Long.MAX_VALUE)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .collect(Collectors.toList())
         .block();
 
@@ -206,7 +207,7 @@ class RecordEmitterTest extends AbstractBaseTest {
         .limitRequest(Long.MAX_VALUE)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .collect(Collectors.toList())
         .block();
 
@@ -246,7 +247,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     var polledValues = Flux.create(forwardEmitter)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
         .block();
@@ -261,7 +262,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     polledValues = Flux.create(backwardEmitter)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
         .block();
@@ -294,7 +295,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     var polledValues = Flux.create(backwardEmitter)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .limitRequest(numMessages)
         .collect(Collectors.toList())
         .block();
@@ -327,7 +328,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     var polledValues = Flux.create(backwardEmitter)
         .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .map(InternalTopicMessageEvent::getMessage)
-        .map(m -> m.getContent().toString())
+        .map(m -> JsonNodeUtil.getJsonNodeValueAsString((JsonNode) m.getContent()))
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
         .block();

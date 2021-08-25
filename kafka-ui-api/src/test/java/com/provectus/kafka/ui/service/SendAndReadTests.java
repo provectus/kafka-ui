@@ -147,8 +147,8 @@ public class SendAndReadTests extends AbstractBaseTest {
                 .content("{ \"f1\": 222, \"f2\": \"testStr2\" }")
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo("{ \"f1\": 111, \"f2\": \"testStr1\" }");
-          assertThat(polled.getContent()).isEqualTo("{ \"f1\": 222, \"f2\": \"testStr2\" }");
+          assertThat(polled.getKey()).isEqualTo("{\"f1\":111,\"f2\":\"testStr1\"}");
+          assertThat(polled.getContent()).isEqualTo("{\"f1\":222,\"f2\":\"testStr2\"}");
         });
   }
 

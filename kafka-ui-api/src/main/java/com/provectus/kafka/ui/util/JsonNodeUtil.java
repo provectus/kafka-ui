@@ -62,8 +62,19 @@ public class JsonNodeUtil {
       return (T) toMap(node);
     } else if (node.isArray()) {
       return (T) toList(node);
+    } else if (node.isTextual()) {
+      return (T) node.textValue();
     }
     return (T) node.toString();
+  }
+
+  public static String getJsonNodeValueAsString(JsonNode node) {
+    if (node == null) {
+      return "null";
+    } else if (node.isTextual()) {
+      return node.textValue();
+    }
+    return node.toString();
   }
 
   public static Stream<JsonNode> getStreamForJsonArray(JsonNode node) {
@@ -78,7 +89,7 @@ public class JsonNodeUtil {
     try {
       node = objectMapper.readTree(value);
     } catch (IOException e) {
-      node = new TextNode(value.toString());
+      node = new TextNode(new String(value));
     }
     return node;
   }
