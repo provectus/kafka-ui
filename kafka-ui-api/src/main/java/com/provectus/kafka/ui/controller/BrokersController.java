@@ -48,10 +48,7 @@ public class BrokersController implements BrokersApi {
   @Override
   public Mono<ResponseEntity<Flux<BrokerConfig>>> getBrokerConfig(String clusterName, Integer id,
                                                                   ServerWebExchange exchange) {
-    return clusterService.getBrokerConfig(clusterName, id)
-        .map(Flux::fromIterable)
-        .map(ResponseEntity::ok)
-        .onErrorReturn(ResponseEntity.notFound().build());
+    return Mono.just(ResponseEntity.ok(clusterService.getBrokerConfig(clusterName, id)));
   }
 
   @Override

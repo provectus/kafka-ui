@@ -35,7 +35,8 @@ const Details: React.FC<Props> = ({
   clearTopicMessages,
 }) => {
   const history = useHistory();
-  const { isReadOnly } = React.useContext(ClusterContext);
+  const { isReadOnly, isTopicDeletionAllowed } =
+    React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
@@ -95,13 +96,15 @@ const Details: React.FC<Props> = ({
                 >
                   Clear All Messages
                 </button>
-                <button
-                  className="button is-danger"
-                  type="button"
-                  onClick={() => setDeleteTopicConfirmationVisible(true)}
-                >
-                  Delete Topic
-                </button>
+                {isTopicDeletionAllowed && (
+                  <button
+                    className="button is-danger"
+                    type="button"
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  >
+                    Delete Topic
+                  </button>
+                )}
 
                 <Link
                   to={clusterTopicSendMessagePath(clusterName, topicName)}

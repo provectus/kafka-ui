@@ -50,6 +50,7 @@ describe('List', () => {
             isReadOnly: true,
             hasKafkaConnectConfigured: true,
             hasSchemaRegistryConfigured: true,
+            isTopicDeletionAllowed: true,
             ...contextProps,
           }}
         >
@@ -90,6 +91,7 @@ describe('List', () => {
               isReadOnly: false,
               hasKafkaConnectConfigured: true,
               hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
             }}
           >
             {setupComponent()}
@@ -147,6 +149,7 @@ describe('List', () => {
               isReadOnly: false,
               hasKafkaConnectConfigured: true,
               hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
             }}
           >
             {setupComponent({

@@ -36,7 +36,8 @@ const ListItem: React.FC<ListItemProps> = ({
   clusterName,
   clearTopicMessages,
 }) => {
-  const { isReadOnly } = React.useContext(ClusterContext);
+  const { isReadOnly, isTopicDeletionAllowed } =
+    React.useContext(ClusterContext);
 
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
@@ -125,11 +126,13 @@ const ListItem: React.FC<ListItemProps> = ({
                 <DropdownItem onClick={clearTopicMessagesHandler}>
                   <span className="has-text-danger">Clear Messages</span>
                 </DropdownItem>
-                <DropdownItem
-                  onClick={() => setDeleteTopicConfirmationVisible(true)}
-                >
-                  <span className="has-text-danger">Remove Topic</span>
-                </DropdownItem>
+                {isTopicDeletionAllowed && (
+                  <DropdownItem
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  >
+                    <span className="has-text-danger">Remove Topic</span>
+                  </DropdownItem>
+                )}
               </Dropdown>
             </div>
             <ConfirmationModal

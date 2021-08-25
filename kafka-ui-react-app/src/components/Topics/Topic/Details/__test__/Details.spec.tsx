@@ -7,6 +7,10 @@ import {
   internalTopicPayload,
   externalTopicPayload,
 } from 'redux/reducers/topics/__test__/fixtures';
+import { Provider } from 'react-redux';
+import configureStore from 'redux/store/configureStore';
+
+const store = configureStore();
 
 describe('Details', () => {
   const mockDelete = jest.fn();
@@ -18,24 +22,27 @@ describe('Details', () => {
   describe('when it has readonly flag', () => {
     it('does not render the Action button a Topic', () => {
       const component = mount(
-        <StaticRouter>
-          <ClusterContext.Provider
-            value={{
-              isReadOnly: true,
-              hasKafkaConnectConfigured: true,
-              hasSchemaRegistryConfigured: true,
-            }}
-          >
-            <Details
-              clusterName={mockClusterName}
-              topicName={internalTopicPayload.name}
-              name={internalTopicPayload.name}
-              isInternal={mockInternalTopicPayload}
-              deleteTopic={mockDelete}
-              clearTopicMessages={mockClearTopicMessages}
-            />
-          </ClusterContext.Provider>
-        </StaticRouter>
+        <Provider store={store}>
+          <StaticRouter>
+            <ClusterContext.Provider
+              value={{
+                isReadOnly: true,
+                hasKafkaConnectConfigured: true,
+                hasSchemaRegistryConfigured: true,
+                isTopicDeletionAllowed: true,
+              }}
+            >
+              <Details
+                clusterName={mockClusterName}
+                topicName={internalTopicPayload.name}
+                name={internalTopicPayload.name}
+                isInternal={mockInternalTopicPayload}
+                deleteTopic={mockDelete}
+                clearTopicMessages={mockClearTopicMessages}
+              />
+            </ClusterContext.Provider>
+          </StaticRouter>
+        </Provider>
       );
 
       expect(component.exists('button')).toBeFalsy();
@@ -45,24 +52,27 @@ describe('Details', () => {
   describe('when it does not have readonly flag', () => {
     it('renders the Action button a Topic', () => {
       const component = mount(
-        <StaticRouter>
-          <ClusterContext.Provider
-            value={{
-              isReadOnly: false,
-              hasKafkaConnectConfigured: true,
-              hasSchemaRegistryConfigured: true,
-            }}
-          >
-            <Details
-              clusterName={mockClusterName}
-              topicName={internalTopicPayload.name}
-              name={internalTopicPayload.name}
-              isInternal={mockExternalTopicPayload}
-              deleteTopic={mockDelete}
-              clearTopicMessages={mockClearTopicMessages}
-            />
-          </ClusterContext.Provider>
-        </StaticRouter>
+        <Provider store={store}>
+          <StaticRouter>
+            <ClusterContext.Provider
+              value={{
+                isReadOnly: false,
+                hasKafkaConnectConfigured: true,
+                hasSchemaRegistryConfigured: true,
+                isTopicDeletionAllowed: true,
+              }}
+            >
+              <Details
+                clusterName={mockClusterName}
+                topicName={internalTopicPayload.name}
+                name={internalTopicPayload.name}
+                isInternal={mockExternalTopicPayload}
+                deleteTopic={mockDelete}
+                clearTopicMessages={mockClearTopicMessages}
+              />
+            </ClusterContext.Provider>
+          </StaticRouter>
+        </Provider>
       );
 
       expect(component.exists('button')).toBeTruthy();

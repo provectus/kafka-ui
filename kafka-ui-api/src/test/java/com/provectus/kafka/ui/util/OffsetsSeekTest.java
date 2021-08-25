@@ -43,7 +43,7 @@ class OffsetsSeekTest {
         tp2, 0L,
         tp3, 25L
     ));
-    consumer.addEndOffsets(Map.of(
+    consumer.updateEndOffsets(Map.of(
         tp0, 0L,
         tp1, 10L,
         tp2, 20L,
