@@ -149,6 +149,7 @@ describe('List', () => {
               isReadOnly: false,
               hasKafkaConnectConfigured: true,
               hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
             }}
           >
             {setupComponent({

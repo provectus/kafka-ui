@@ -39,7 +39,6 @@ const Cluster: React.FC = () => {
   );
   const hasKsqlDbConfigured = features.includes(ClusterFeaturesEnum.KSQL_DB);
 
-
   const contextValue = React.useMemo(
     () => ({
       isReadOnly,
