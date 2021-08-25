@@ -1,7 +1,10 @@
 package com.provectus.kafka.ui.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
@@ -14,6 +17,7 @@ import java.util.stream.StreamSupport;
 public class JsonNodeUtil {
   private final static String NOT_OBJECT_EXCEPTION_MESSAGE = "JsonNode isn't Object";
   private final static String NOT_ARRAY_EXCEPTION_MESSAGE = "JsonNode isn't Array";
+  private final static ObjectMapper objectMapper = new ObjectMapper();
 
   public static Map<String, String> toMap(JsonNode node) {
     if (node.isObject()) {
@@ -52,7 +56,9 @@ public class JsonNodeUtil {
   }
 
   public static <T> T getJsonNodeValue(JsonNode node) {
-    if (node.isObject()) {
+    if (node == null) {
+      return null;
+    } else if (node.isObject()) {
       return (T) toMap(node);
     } else if (node.isArray()) {
       return (T) toList(node);
@@ -65,5 +71,15 @@ public class JsonNodeUtil {
       return StreamSupport.stream(node.spliterator(), false);
     }
     throw new UnprocessableEntityException(NOT_ARRAY_EXCEPTION_MESSAGE);
+  }
+
+  public static JsonNode toJsonNode(byte[] value) {
+    JsonNode node;
+    try {
+      node = objectMapper.readTree(value);
+    } catch (IOException e) {
+      node = new TextNode(value.toString());
+    }
+    return node;
   }
 }

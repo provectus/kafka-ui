@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormatter;
 import com.provectus.kafka.ui.util.ConsumerRecordUtil;
+import com.provectus.kafka.ui.util.JsonNodeUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -50,7 +51,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     try {
       var builder = DeserializedKeyValue.builder();
       if (msg.key() != null) {
-        builder.key(objectMapper.readTree(msg.key().get()));
+        builder.key(JsonNodeUtil.toJsonNode(msg.key().get()));
         builder.keyFormat(MessageFormat.UNKNOWN);
       }
       if (msg.value() != null) {
@@ -70,7 +71,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         new ByteArrayInputStream(value)
     );
     byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
-    return objectMapper.readTree(jsonFromProto);
+    return JsonNodeUtil.toJsonNode(jsonFromProto);
   }
 
   @Override

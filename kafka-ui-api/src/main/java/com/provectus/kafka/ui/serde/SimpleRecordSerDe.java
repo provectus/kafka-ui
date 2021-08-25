@@ -1,10 +1,12 @@
 package com.provectus.kafka.ui.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import com.provectus.kafka.ui.util.ConsumerRecordUtil;
+import com.provectus.kafka.ui.util.JsonNodeUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
@@ -20,11 +22,11 @@ public class SimpleRecordSerDe implements RecordSerDe {
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     var builder = DeserializedKeyValue.builder();
     if (msg.key() != null) {
-      builder.key(objectMapper.readTree(msg.key().get()))
+      builder.key(JsonNodeUtil.toJsonNode(msg.key().get()))
           .keyFormat(MessageFormat.UNKNOWN);
     }
     if (msg.value() != null) {
-      builder.value(objectMapper.readTree(msg.value().get()))
+      builder.value(JsonNodeUtil.toJsonNode(msg.value().get()))
           .valueFormat(MessageFormat.UNKNOWN);
     }
     return builder.build();
