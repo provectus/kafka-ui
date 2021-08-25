@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  ClusterName,
-  TopicName,
-  TopicFormData,
-  FailurePayload,
-} from 'redux/interfaces';
+import { ClusterName, TopicFormData, FailurePayload } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
@@ -28,13 +23,6 @@ const New: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
 
-  const redirectToTopicPath = React.useCallback(
-    (topicName: TopicName) => {
-      history.push(clusterTopicPath(clusterName, topicName));
-    },
-    [clusterName]
-  );
-
   const onSubmit = async (data: TopicFormData) => {
     try {
       await topicsApiClient.createTopic({
@@ -42,7 +30,7 @@ const New: React.FC = () => {
         topicCreation: formatTopicCreation(data),
       });
 
-      redirectToTopicPath(data.name);
+      history.push(clusterTopicPath(clusterName, data.name));
     } catch (error) {
       const response = await getResponse(error);
       const alert: FailurePayload = {
