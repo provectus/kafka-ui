@@ -1,40 +1,46 @@
 import React from 'react';
-import { ClusterName, TopicName, TopicFormData } from 'redux/interfaces';
+import { ClusterName, TopicFormData, FailurePayload } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterTopicsPath } from 'lib/paths';
+import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
+import {
+  formatTopicCreation,
+  topicsApiClient,
+  createTopicAction,
+} from 'redux/actions';
+import { useDispatch } from 'react-redux';
+import { getResponse } from 'lib/errorHandling';
+import { useHistory, useParams } from 'react-router';
 
-interface Props {
+interface RouterParams {
   clusterName: ClusterName;
-  isTopicCreated: boolean;
-  createTopic: (clusterName: ClusterName, form: TopicFormData) => void;
-  redirectToTopicPath: (clusterName: ClusterName, topicName: TopicName) => void;
-  resetUploadedState: () => void;
 }
 
-const New: React.FC<Props> = ({
-  clusterName,
-  isTopicCreated,
-  createTopic,
-  redirectToTopicPath,
-}) => {
+const New: React.FC = () => {
   const methods = useForm<TopicFormData>();
-  const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    if (isSubmitting && isTopicCreated) {
-      const { name } = methods.getValues();
-      redirectToTopicPath(clusterName, name);
-    }
-  }, [isSubmitting, isTopicCreated, redirectToTopicPath, clusterName, methods]);
+  const { clusterName } = useParams<RouterParams>();
+  const history = useHistory();
+  const dispatch = useDispatch();
 
   const onSubmit = async (data: TopicFormData) => {
-    // TODO: need to fix loader. After success loading the first time, we won't wait for creation any more, because state is
-    // loaded, and we will try to get entity immediately after pressing the button, and we will receive null
-    // going to object page on the second creation. Setting of isSubmitting after createTopic is a workaround, need to tweak loader logic
-    createTopic(clusterName, data);
-    setIsSubmitting(true); // Keep this action after createTopic to prevent redirect before create.
+    try {
+      await topicsApiClient.createTopic({
+        clusterName,
+        topicCreation: formatTopicCreation(data),
+      });
+
+      history.push(clusterTopicPath(clusterName, data.name));
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: ['schema', data.name].join('-'),
+        title: `Schema ${data.name}`,
+        response,
+      };
+
+      dispatch(createTopicAction.failure({ alert }));
+    }
   };
 
   return (
@@ -52,10 +58,9 @@ const New: React.FC<Props> = ({
       </div>
 
       <div className="box">
-        {/* eslint-disable react/jsx-props-no-spreading */}
         <FormProvider {...methods}>
           <TopicForm
-            isSubmitting={isSubmitting}
+            isSubmitting={methods.formState.isSubmitting}
             onSubmit={methods.handleSubmit(onSubmit)}
           />
         </FormProvider>
