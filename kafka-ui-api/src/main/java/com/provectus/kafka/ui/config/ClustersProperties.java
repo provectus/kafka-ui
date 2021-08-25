@@ -30,6 +30,7 @@ public class ClustersProperties {
     int jmxPort;
     Properties properties;
     boolean readOnly = false;
+    boolean disableLogDirsCollection = false;
   }
 
   @Data
