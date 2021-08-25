@@ -1,9 +1,9 @@
 kafka:
   clusters:
     - name: local
-      bootstrapServers: localhost:9093
+      bootstrapServers: localhost:9092
       zookeeper: localhost:2181
-      schemaRegistry: http://localhost:8081
+      schemaRegistry: http://localhost:8085
       ksqldbServer: http://localhost:8088
       kafkaConnect:
         - name: first
