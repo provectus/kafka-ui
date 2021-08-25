@@ -69,8 +69,8 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-west-1
+          aws-region: eu-central-1
 
       - name: Restart service with the AWS CLI
         run: |
-          aws --region eu-west-1 ecs update-service --cluster kad-ecs --service kad-ecs-kafka-ui --force-new-deployment
+          aws --region eu-central-1 ecs update-service --cluster kad-ecs --service kad-ecs-kafka-ui --force-new-deployment
