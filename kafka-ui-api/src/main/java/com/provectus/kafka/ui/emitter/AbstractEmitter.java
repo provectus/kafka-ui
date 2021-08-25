@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.emitter;
 
 import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageConsuming;
-import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.model.TopicMessagePhase;
 import com.provectus.kafka.ui.serde.RecordSerDe;

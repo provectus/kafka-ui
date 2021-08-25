@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.util.JsonNodeUtil;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
@@ -11,7 +10,6 @@ import org.apache.avro.generic.GenericRecord;
 
 public class AvroMessageFormatter implements MessageFormatter {
   private final KafkaAvroDeserializer avroDeserializer;
-  private final ObjectMapper objectMapper = new ObjectMapper();
 
   public AvroMessageFormatter(SchemaRegistryClient client) {
     this.avroDeserializer = new KafkaAvroDeserializer(client);

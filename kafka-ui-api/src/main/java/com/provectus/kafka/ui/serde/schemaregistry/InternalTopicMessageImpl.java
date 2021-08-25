@@ -2,8 +2,9 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.provectus.kafka.ui.model.InternalTopicMessage;
 
-public class InternalTopicMessageImpl extends com.provectus.kafka.ui.model.InternalTopicMessage {
+public class InternalTopicMessageImpl extends InternalTopicMessage {
   @JsonProperty("key")
   private JsonNode key;
 

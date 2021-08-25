@@ -343,13 +343,13 @@ public class ClusterUtil {
   public static TopicMessageEvent toTopicMessageEvent(InternalTopicMessageEvent internalEvent) {
     TopicMessageEvent event = new TopicMessageEvent().type(internalEvent.getType());
     if (internalEvent.getPhase() != null) {
-     event.setPhase(internalEvent.getPhase());
+      event.setPhase(internalEvent.getPhase());
     }
     if (internalEvent.getMessage() != null) {
-     event.setMessage(ClusterUtil.toTopicMessage(internalEvent.getMessage()));
+      event.setMessage(ClusterUtil.toTopicMessage(internalEvent.getMessage()));
     }
     if (internalEvent.getConsuming() != null) {
-     event.setConsuming(internalEvent.getConsuming());
+      event.setConsuming(internalEvent.getConsuming());
     }
     return event;
   }

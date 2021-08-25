@@ -127,7 +127,8 @@ public class ConsumingService {
         || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
-  private boolean jsFilterTopicMessageEvent(InternalTopicMessageEvent messageEvent, String jsFilterFn) {
+  private boolean jsFilterTopicMessageEvent(InternalTopicMessageEvent messageEvent,
+                                            String jsFilterFn) {
     if (StringUtils.isEmpty(jsFilterFn)) {
       return true;
     }

@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -479,6 +480,82 @@ public class SendAndReadTests extends AbstractBaseTest {
           assertThat(polled.size()).isEqualTo(2);
           assertThat(polled.get(0).getContent()).isEqualTo("kafka");
           assertThat(polled.get(1).getContent()).isEqualTo("tests");
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForObjectKey() {
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return key.value > 100; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().key("{\"value\":10}"),
+        new CreateTopicMessage().key("{\"value\":110}"),
+        new CreateTopicMessage().key("{\"value\":1110}")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getKey()).isEqualTo("{\"value\":110}");
+          assertThat(polled.get(1).getKey()).isEqualTo("{\"value\":1110}");
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForObjectContent() {
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return content.value > 100; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().content("{\"value\":10}"),
+        new CreateTopicMessage().content("{\"value\":110}"),
+        new CreateTopicMessage().content("{\"value\":1110}")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertThat(polled.get(0).getContent()).isEqualTo("{\"value\":110}");
+          assertThat(polled.get(1).getContent()).isEqualTo("{\"value\":1110}");
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForNullContent() {
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return content === null; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().key("key"),
+        new CreateTopicMessage().key("key"),
+        new CreateTopicMessage().content("content")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertNull(polled.get(0).getContent());
+          assertNull(polled.get(1).getContent());
+        });
+  }
+
+  @Test
+  void getMessagesWithJsFilterFnForNullKey() {
+    String filterFn = "function filter(key, content, headers, offset, partition) "
+        + "{ return key === null; }";
+    List<CreateTopicMessage> messages = List.of(
+        new CreateTopicMessage().content("value"),
+        new CreateTopicMessage().key("key"),
+        new CreateTopicMessage().content("value")
+    );
+    new SendAndReadSpec()
+        .withJsFilterFn(filterFn)
+        .withMsgToSend(messages)
+        .doAssertForList(polled -> {
+          assertThat(polled.size()).isEqualTo(2);
+          assertNull(polled.get(0).getKey());
+          assertNull(polled.get(1).getKey());
         });
   }
 

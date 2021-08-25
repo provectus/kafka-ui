@@ -15,9 +15,9 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class JsonNodeUtil {
-  private final static String NOT_OBJECT_EXCEPTION_MESSAGE = "JsonNode isn't Object";
-  private final static String NOT_ARRAY_EXCEPTION_MESSAGE = "JsonNode isn't Array";
-  private final static ObjectMapper objectMapper = new ObjectMapper();
+  private static final String NOT_OBJECT_EXCEPTION_MESSAGE = "JsonNode isn't Object";
+  private static final String NOT_ARRAY_EXCEPTION_MESSAGE = "JsonNode isn't Array";
+  private static final ObjectMapper MAPPER = new ObjectMapper();
 
   public static Map<String, String> toMap(JsonNode node) {
     if (node.isObject()) {
@@ -87,7 +87,7 @@ public class JsonNodeUtil {
   public static JsonNode toJsonNode(byte[] value) {
     JsonNode node;
     try {
-      node = objectMapper.readTree(value);
+      node = MAPPER.readTree(value);
     } catch (IOException e) {
       node = new TextNode(new String(value));
     }
