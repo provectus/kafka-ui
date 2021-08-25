@@ -6,13 +6,13 @@
       "name" : "expected: <compact> but was: <delete>",
       "children" : [ {
         "name" : "should update a topic",
-        "uid" : "53836444d6c33bb1",
+        "uid" : "2f741d28fc93f5da",
         "parentUid" : "1d14cfecac1625276cce25aaf8bfdbeb",
         "status" : "failed",
         "time" : {
-          "start" : 1629893536307,
-          "stop" : 1629893646530,
-          "duration" : 110223
+          "start" : 1629894138791,
+          "stop" : 1629894248984,
+          "duration" : 110193
         },
         "flaky" : false,
         "newFailed" : false,
