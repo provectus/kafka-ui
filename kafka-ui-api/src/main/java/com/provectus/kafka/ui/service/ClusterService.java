@@ -247,7 +247,7 @@ public class ClusterService {
         .orElseThrow(TopicNotFoundException::new);
     if (cluster.getFeatures().contains(Feature.TOPIC_DELETION)) {
       return kafkaService.deleteTopic(cluster, topic.getName())
-          .doOnNext(t -> updateCluster(topicName, clusterName, cluster));
+          .doOnSuccess(t -> updateCluster(topicName, clusterName, cluster));
     } else {
       return Mono.error(new ValidationException("Topic deletion restricted"));
     }
@@ -315,9 +315,11 @@ public class ClusterService {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> adminClientService.getOrCreateAdminClient(cluster)
             .map(ExtendedAdminClient::getAdminClient)
-            .map(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)))
-            .map(DeleteConsumerGroupsResult::all)
-            .flatMap(ClusterUtil::toMono)
+            .flatMap(adminClient ->
+                ClusterUtil.toMono(
+                    adminClient.deleteConsumerGroups(List.of(groupId)).all()
+                )
+            )
             .onErrorResume(this::reThrowCustomException)
         )
         .orElse(Mono.empty());
