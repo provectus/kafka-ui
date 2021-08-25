@@ -1,10 +1,9 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeek;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.function.Supplier;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -16,7 +15,7 @@ import reactor.core.publisher.FluxSink;
 @Log4j2
 public class ForwardRecordEmitter
     extends AbstractEmitter
-    implements java.util.function.Consumer<FluxSink<TopicMessageEvent>> {
+    implements java.util.function.Consumer<FluxSink<InternalTopicMessageEvent>> {
 
   private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
@@ -33,7 +32,7 @@ public class ForwardRecordEmitter
   }
 
   @Override
-  public void accept(FluxSink<TopicMessageEvent> sink) {
+  public void accept(FluxSink<InternalTopicMessageEvent> sink) {
     try (KafkaConsumer<Bytes, Bytes> consumer = consumerSupplier.get()) {
       sendPhase(sink, "Assigning partitions");
       var waitingOffsets = offsetsSeek.assignAndSeek(consumer);

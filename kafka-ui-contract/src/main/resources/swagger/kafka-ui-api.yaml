@@ -1872,18 +1872,33 @@ components:
         - source
         - schema
 
+    TopicMessageEventType:
+      type: string
+      enum:
+        - PHASE
+        - MESSAGE
+        - CONSUMING
+        - DONE
+
     TopicMessageEvent:
       type: object
       properties:
         type:
-          type: string
-          enum:
-            - PHASE
-            - MESSAGE
-            - CONSUMING
-            - DONE
+          $ref: "#/components/schemas/TopicMessageEventType"
         message:
           $ref: "#/components/schemas/TopicMessage"
+        phase:
+          $ref: "#/components/schemas/TopicMessagePhase"
+        consuming:
+          $ref: "#/components/schemas/TopicMessageConsuming"
+
+    InternalTopicMessageEvent:
+      type: object
+      properties:
+        type:
+          $ref: "#/components/schemas/TopicMessageEventType"
+        message:
+          $ref: "#/components/schemas/InternalTopicMessage"
         phase:
           $ref: "#/components/schemas/TopicMessagePhase"
         consuming:
@@ -1922,11 +1937,7 @@ components:
           type: string
           format: date-time
         timestampType:
-          type: string
-          enum:
-            - NO_TIMESTAMP_TYPE
-            - CREATE_TIME
-            - LOG_APPEND_TIME
+          $ref: "#/components/schemas/TopicMessageTimestampType"
         key:
           type: string
         headers:
@@ -1935,6 +1946,56 @@ components:
             type: string
         content:
           type: string
+        keyFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        valueFormat:
+          $ref: "#/components/schemas/MessageFormat"
+        keySize:
+          type: integer
+          format: int64
+        valueSize:
+          type: integer
+          format: int64
+        keySchemaId:
+          type: string
+        valueSchemaId:
+          type: string
+        headersSize:
+          type: integer
+          format: int64
+      required:
+        - partition
+        - offset
+        - timestamp
+
+    TopicMessageTimestampType:
+      type: string
+      enum:
+        - NO_TIMESTAMP_TYPE
+        - CREATE_TIME
+        - LOG_APPEND_TIME
+
+    InternalTopicMessage:
+      type: object
+      properties:
+        partition:
+          type: integer
+        offset:
+          type: integer
+          format: int64
+        timestamp:
+          type: string
+          format: date-time
+        timestampType:
+          $ref: "#/components/schemas/TopicMessageTimestampType"
+        key:
+          type: object
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        content:
+          type: object
         keyFormat:
           $ref: "#/components/schemas/MessageFormat"
         valueFormat:

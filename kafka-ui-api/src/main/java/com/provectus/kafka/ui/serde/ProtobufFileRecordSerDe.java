@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.serde;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
@@ -49,7 +50,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     try {
       var builder = DeserializedKeyValue.builder();
       if (msg.key() != null) {
-        builder.key(new String(msg.key().get()));
+        builder.key(objectMapper.readTree(msg.key().get()));
         builder.keyFormat(MessageFormat.UNKNOWN);
       }
       if (msg.value() != null) {
@@ -63,13 +64,13 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   @SneakyThrows
-  private String parse(byte[] value) {
+  private JsonNode parse(byte[] value) {
     DynamicMessage protoMsg = DynamicMessage.parseFrom(
         protobufSchema.toDescriptor(),
         new ByteArrayInputStream(value)
     );
     byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
-    return new String(jsonFromProto);
+    return objectMapper.readTree(jsonFromProto);
   }
 
   @Override

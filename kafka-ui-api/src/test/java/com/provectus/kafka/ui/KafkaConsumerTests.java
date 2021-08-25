@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
 import com.provectus.kafka.ui.model.TopicCreation;
 import com.provectus.kafka.ui.model.TopicDetails;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +63,7 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .returnResult()
         .getResponseBody()
         .stream()
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .count();
 
     assertThat(count).isEqualTo(4);
@@ -82,7 +83,7 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .returnResult()
         .getResponseBody()
         .stream()
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
         .count();
 
     assertThat(count).isZero();

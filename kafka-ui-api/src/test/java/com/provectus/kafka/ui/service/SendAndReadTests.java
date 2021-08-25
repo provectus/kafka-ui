@@ -14,6 +14,7 @@ import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventType;
 import io.confluent.kafka.schemaregistry.ParsedSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
@@ -666,7 +667,7 @@ public class SendAndReadTests extends AbstractBaseTest {
           msgToSend.size(),
           jsFilterFn
       )
-          .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+          .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
           .map(TopicMessageEvent::getMessage);
     }
   }

@@ -15,10 +15,15 @@ import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.InternalTopicMessage;
+import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.MessageFormat;
 import com.provectus.kafka.ui.model.ServerStatus;
 import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageTimestampType;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serde.schemaregistry.InternalTopicMessageImpl;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -47,7 +52,6 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 
 @Slf4j
 public class ClusterUtil {
@@ -279,17 +283,17 @@ public class ClusterUtil {
     return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
   }
 
-  public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
-                                               RecordSerDe recordDeserializer) {
+  public static InternalTopicMessageImpl mapToInternalTopicMessage(
+      ConsumerRecord<Bytes, Bytes> consumerRecord, RecordSerDe recordDeserializer) {
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
         .forEachRemaining(header -> headers.put(header.key(), new String(header.value())));
 
-    TopicMessage topicMessage = new TopicMessage();
+    InternalTopicMessageImpl topicMessage = new InternalTopicMessageImpl();
 
     OffsetDateTime timestamp =
         OffsetDateTime.ofInstant(Instant.ofEpochMilli(consumerRecord.timestamp()), UTC_ZONE_ID);
-    TopicMessage.TimestampTypeEnum timestampType =
+    TopicMessageTimestampType timestampType =
         mapToTimestampType(consumerRecord.timestampType());
     topicMessage.setPartition(consumerRecord.partition());
     topicMessage.setOffset(consumerRecord.offset());
@@ -315,14 +319,46 @@ public class ClusterUtil {
     return topicMessage;
   }
 
-  private static TopicMessage.TimestampTypeEnum mapToTimestampType(TimestampType timestampType) {
+  public static TopicMessage toTopicMessage(InternalTopicMessage m) {
+    return new TopicMessage()
+        .partition(m.getPartition())
+        .offset(m.getOffset())
+        .timestamp(m.getTimestamp())
+        .timestampType(m.getTimestampType())
+        .headers(m.getHeaders())
+        .key(m.getKey().toString())
+        .content(m.getContent().toString())
+        .keyFormat(m.getKeyFormat())
+        .valueFormat(m.getValueFormat())
+        .keySize(m.getKeySize())
+        .valueSize(m.getValueSize())
+        .keySchemaId(m.getKeySchemaId())
+        .valueSchemaId(m.getValueSchemaId())
+        .headersSize(m.getHeadersSize());
+  }
+
+  public static TopicMessageEvent toTopicMessageEvent(InternalTopicMessageEvent internalEvent) {
+    TopicMessageEvent event = new TopicMessageEvent().type(internalEvent.getType());
+    if (internalEvent.getPhase() != null) {
+     event.setPhase(internalEvent.getPhase());
+    }
+    if (internalEvent.getMessage() != null) {
+     event.setMessage(ClusterUtil.toTopicMessage(internalEvent.getMessage()));
+    }
+    if (internalEvent.getConsuming() != null) {
+     event.setConsuming(internalEvent.getConsuming());
+    }
+    return event;
+  }
+
+  private static TopicMessageTimestampType mapToTimestampType(TimestampType timestampType) {
     switch (timestampType) {
       case CREATE_TIME:
-        return TopicMessage.TimestampTypeEnum.CREATE_TIME;
+        return TopicMessageTimestampType.CREATE_TIME;
       case LOG_APPEND_TIME:
-        return TopicMessage.TimestampTypeEnum.LOG_APPEND_TIME;
+        return TopicMessageTimestampType.LOG_APPEND_TIME;
       case NO_TIMESTAMP_TYPE:
-        return TopicMessage.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
+        return TopicMessageTimestampType.NO_TIMESTAMP_TYPE;
       default:
         throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
     }

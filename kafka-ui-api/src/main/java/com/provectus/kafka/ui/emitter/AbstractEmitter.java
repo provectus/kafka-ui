@@ -1,10 +1,12 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageConsuming;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.model.TopicMessagePhase;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serde.schemaregistry.InternalTopicMessageImpl;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import java.time.Duration;
 import java.time.Instant;
@@ -28,7 +30,7 @@ public abstract class AbstractEmitter {
   }
 
   protected ConsumerRecords<Bytes, Bytes> poll(
-      FluxSink<TopicMessageEvent> sink, Consumer<Bytes, Bytes> consumer) {
+      FluxSink<InternalTopicMessageEvent> sink, Consumer<Bytes, Bytes> consumer) {
     Instant start = Instant.now();
     ConsumerRecords<Bytes, Bytes> records = consumer.poll(POLL_TIMEOUT_MS);
     Instant finish = Instant.now();
@@ -36,25 +38,26 @@ public abstract class AbstractEmitter {
     return records;
   }
 
-  protected FluxSink<TopicMessageEvent> sendMessage(FluxSink<TopicMessageEvent> sink,
-                             ConsumerRecord<Bytes, Bytes> msg) {
-    final TopicMessage topicMessage = ClusterUtil.mapToTopicMessage(msg, recordDeserializer);
+  protected FluxSink<InternalTopicMessageEvent> sendMessage(
+      FluxSink<InternalTopicMessageEvent> sink, ConsumerRecord<Bytes, Bytes> msg) {
+    final InternalTopicMessageImpl
+        internalTopicMessage = ClusterUtil.mapToInternalTopicMessage(msg, recordDeserializer);
     return sink.next(
-        new TopicMessageEvent()
-            .type(TopicMessageEvent.TypeEnum.MESSAGE)
-            .message(topicMessage)
+        new InternalTopicMessageEvent()
+            .type(TopicMessageEventType.MESSAGE)
+            .message(internalTopicMessage)
     );
   }
 
-  protected void sendPhase(FluxSink<TopicMessageEvent> sink, String name) {
+  protected void sendPhase(FluxSink<InternalTopicMessageEvent> sink, String name) {
     sink.next(
-        new TopicMessageEvent()
-          .type(TopicMessageEvent.TypeEnum.PHASE)
+        new InternalTopicMessageEvent()
+          .type(TopicMessageEventType.PHASE)
           .phase(new TopicMessagePhase().name(name))
     );
   }
 
-  protected void sendConsuming(FluxSink<TopicMessageEvent> sink,
+  protected void sendConsuming(FluxSink<InternalTopicMessageEvent> sink,
                                ConsumerRecords<Bytes, Bytes> records,
                                long elapsed) {
     for (ConsumerRecord<Bytes, Bytes> record : records) {
@@ -73,8 +76,8 @@ public abstract class AbstractEmitter {
         .isCancelled(sink.isCancelled())
         .messagesConsumed(this.records);
     sink.next(
-        new TopicMessageEvent()
-            .type(TopicMessageEvent.TypeEnum.CONSUMING)
+        new InternalTopicMessageEvent()
+            .type(TopicMessageEventType.CONSUMING)
             .consuming(consuming)
     );
   }

@@ -2,6 +2,9 @@ package com.provectus.kafka.ui.config;
 
 import com.provectus.kafka.ui.util.JmxPoolFactory;
 import javax.management.remote.JMXConnector;
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
@@ -39,5 +42,15 @@ public class Config {
   @Bean
   public WebClient webClient() {
     return WebClient.create();
+  }
+
+  @Bean
+  public ScriptEngine jsEngine() {
+    return new ScriptEngineManager().getEngineByName("nashorn");
+  }
+
+  @Bean
+  public Invocable jsInvocable(ScriptEngine jsEngine) {
+    return (Invocable) jsEngine;
   }
 }

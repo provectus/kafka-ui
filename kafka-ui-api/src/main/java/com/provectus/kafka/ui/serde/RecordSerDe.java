@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.serde;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import javax.annotation.Nullable;
@@ -14,8 +15,8 @@ public interface RecordSerDe {
   @Value
   @Builder
   class DeserializedKeyValue {
-    @Nullable String key;
-    @Nullable String value;
+    @Nullable JsonNode key;
+    @Nullable JsonNode value;
     @Nullable MessageFormat keyFormat;
     @Nullable MessageFormat valueFormat;
     @Nullable String keySchemaId;

@@ -1,17 +1,21 @@
 package com.provectus.kafka.ui.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serde.schemaregistry.InternalTopicMessageImpl;
+import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
+import com.provectus.kafka.ui.util.JsonNodeUtil;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.Collection;
@@ -21,7 +25,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -46,7 +49,8 @@ public class ConsumingService {
 
   private final KafkaService kafkaService;
   private final DeserializationService deserializationService;
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ScriptEngine jsEngine;
+  private final Invocable jsInvocable;
 
   /**
    * returns end offsets for partitions where start offset != end offsets.
@@ -74,7 +78,7 @@ public class ConsumingService {
         .map(s -> Math.min(s, MAX_RECORD_LIMIT))
         .orElse(DEFAULT_RECORD_LIMIT);
 
-    java.util.function.Consumer<? super FluxSink<TopicMessageEvent>> emitter;
+    java.util.function.Consumer<? super FluxSink<InternalTopicMessageEvent>> emitter;
     RecordSerDe recordDeserializer =
         deserializationService.getRecordDeserializerForCluster(cluster);
     if (consumerPosition.getSeekDirection().equals(SeekDirection.FORWARD)) {
@@ -92,6 +96,7 @@ public class ConsumingService {
     }
     return Flux.create(emitter)
         .filter(event -> jsFilterTopicMessageEvent(event, jsFilterFn))
+        .map(ClusterUtil::toTopicMessageEvent)
         .filter(m -> filterTopicMessage(m, query))
         .takeWhile(new FilterTopicMessageEvents(recordsLimit))
         .subscribeOn(Schedulers.elastic())
@@ -113,7 +118,7 @@ public class ConsumingService {
   private boolean filterTopicMessage(TopicMessageEvent message, String query) {
     log.info("filter");
     if (StringUtils.isEmpty(query)
-        || !message.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE)) {
+        || !message.getType().equals(TopicMessageEventType.MESSAGE)) {
       return true;
     }
 
@@ -122,7 +127,7 @@ public class ConsumingService {
         || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
-  private boolean jsFilterTopicMessageEvent(TopicMessageEvent messageEvent, String jsFilterFn) {
+  private boolean jsFilterTopicMessageEvent(InternalTopicMessageEvent messageEvent, String jsFilterFn) {
     if (StringUtils.isEmpty(jsFilterFn)) {
       return true;
     }
@@ -130,14 +135,15 @@ public class ConsumingService {
       return false;
     }
 
-    final TopicMessage message = messageEvent.getMessage();
-    final ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-    final Invocable invocable = (Invocable) engine;
+    InternalTopicMessageImpl message = (InternalTopicMessageImpl) messageEvent.getMessage();
+
+    var key = JsonNodeUtil.getJsonNodeValue(message.getKey());
+    var content = JsonNodeUtil.getJsonNodeValue(message.getContent());
 
     try {
-      engine.eval(jsFilterFn);
-      Object result = invocable.invokeFunction("filter", message.getKey(),
-          message.getContent(), message.getHeaders(), message.getOffset(), message.getPartition());
+      jsEngine.eval(jsFilterFn);
+      Object result = jsInvocable.invokeFunction("filter", key, content,
+          message.getHeaders(), message.getOffset(), message.getPartition());
       return result.toString().equals("true");
     } catch (NoSuchMethodException | ScriptException e) {
       String errorMessage = e.getMessage();

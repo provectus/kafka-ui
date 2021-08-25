@@ -1,14 +1,14 @@
 import {
   TopicMessage,
   TopicMessageConsuming,
-  TopicMessageTimestampTypeEnum,
+  TopicMessageTimestampType,
 } from 'generated-sources';
 
 export const topicMessagePayload: TopicMessage = {
   partition: 29,
   offset: 14,
   timestamp: new Date('2021-07-21T23:25:14.865Z'),
-  timestampType: TopicMessageTimestampTypeEnum.CREATE_TIME,
+  timestampType: TopicMessageTimestampType.CREATE_TIME,
   key: 'schema-registry',
   headers: {},
   content:

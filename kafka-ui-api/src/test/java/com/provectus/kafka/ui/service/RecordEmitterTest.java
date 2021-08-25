@@ -6,9 +6,11 @@ import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.SeekDirection;
 import com.provectus.kafka.ui.model.SeekType;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serde.SimpleRecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
@@ -95,7 +97,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     Long polledValues = Flux.create(forwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventType.MESSAGE))
         .limitRequest(100)
         .count()
         .block();
@@ -103,7 +105,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     assertThat(polledValues).isZero();
 
     polledValues = Flux.create(backwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventType.MESSAGE))
         .limitRequest(100)
         .count()
         .block();
@@ -130,10 +132,10 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var polledValues = Flux.create(forwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventType.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -142,10 +144,10 @@ class RecordEmitterTest extends AbstractBaseTest {
         SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList()));
 
     polledValues = Flux.create(backwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventType.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -179,10 +181,10 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var polledValues = Flux.create(forwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventType.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -200,10 +202,10 @@ class RecordEmitterTest extends AbstractBaseTest {
         .collect(Collectors.toList());
 
     polledValues =  Flux.create(backwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventType.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -242,8 +244,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var polledValues = Flux.create(forwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
@@ -257,8 +259,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     assertThat(polledValues).containsExactlyInAnyOrderElementsOf(expectedValues);
 
     polledValues = Flux.create(backwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
@@ -290,8 +292,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var polledValues = Flux.create(backwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(numMessages)
         .collect(Collectors.toList())
@@ -323,8 +325,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var polledValues = Flux.create(backwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventType.MESSAGE))
+        .map(InternalTopicMessageEvent::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())

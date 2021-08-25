@@ -7,7 +7,7 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageEvent,
-  TopicMessageEventTypeEnum,
+  TopicMessageEventType,
 } from 'generated-sources';
 import * as React from 'react';
 import { omitBy } from 'lodash';
@@ -187,13 +187,13 @@ const Filters: React.FC<FiltersProps> = ({
           JSON.parse(data);
 
         switch (type) {
-          case TopicMessageEventTypeEnum.MESSAGE:
+          case TopicMessageEventType.MESSAGE:
             if (message) addMessage(message);
             break;
-          case TopicMessageEventTypeEnum.PHASE:
+          case TopicMessageEventType.PHASE:
             if (phase?.name) updatePhase(phase.name);
             break;
-          case TopicMessageEventTypeEnum.CONSUMING:
+          case TopicMessageEventType.CONSUMING:
             if (consuming) updateMeta(consuming);
             break;
           default:
