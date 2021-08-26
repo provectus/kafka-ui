@@ -17,7 +17,7 @@ const ListItem: React.FC<Props> = ({ accessors, data }) => {
       <tr>
         <td>
           <span
-            className="icon has-text-link is-size-7 is-small is-clickable"
+            className="icon has-text-link 8 is-small is-clickable"
             onClick={toggleIsOpen}
             aria-hidden
           >

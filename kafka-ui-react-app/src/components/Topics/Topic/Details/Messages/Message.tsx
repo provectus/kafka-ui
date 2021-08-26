@@ -56,7 +56,7 @@ const Message: React.FC<{ message: TopicMessage }> = ({
       <tr>
         <td>
           <span
-            className="icon has-text-link is-size-7 is-small is-clickable"
+            className="icon has-text-link is-size-8 is-small is-clickable"
             onClick={toggleIsOpen}
             aria-hidden
           >
