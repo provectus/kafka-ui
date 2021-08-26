@@ -156,7 +156,7 @@ const TopicForm: React.FC<Props> = ({
 
         <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
 
-        <input type="submit" className="button is-primary" />
+        <input type="submit" className="button is-primary" value="Send" />
       </fieldset>
     </form>
   );

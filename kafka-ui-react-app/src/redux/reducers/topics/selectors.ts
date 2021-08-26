@@ -156,7 +156,7 @@ export const getTopicsOrderBy = createSelector(
 
 export const getIsTopicInternal = createSelector(
   getTopicByName,
-  ({ internal }) => !!internal
+  (topic) => !!topic?.internal
 );
 
 export const getTopicConsumerGroups = createSelector(
