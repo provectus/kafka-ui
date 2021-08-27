@@ -1,11 +1,11 @@
 package com.provectus.kafka.ui.emitter;
 
+import com.provectus.kafka.ui.model.InternalTopicMessage;
 import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageConsuming;
 import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.model.TopicMessagePhase;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.serde.schemaregistry.InternalTopicMessageImpl;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import java.time.Duration;
 import java.time.Instant;
@@ -39,20 +39,22 @@ public abstract class AbstractEmitter {
 
   protected FluxSink<InternalTopicMessageEvent> sendMessage(
       FluxSink<InternalTopicMessageEvent> sink, ConsumerRecord<Bytes, Bytes> msg) {
-    final InternalTopicMessageImpl
+    final InternalTopicMessage
         internalTopicMessage = ClusterUtil.mapToInternalTopicMessage(msg, recordDeserializer);
     return sink.next(
-        new InternalTopicMessageEvent()
+        InternalTopicMessageEvent.builder()
             .type(TopicMessageEventType.MESSAGE)
             .message(internalTopicMessage)
+            .build()
     );
   }
 
   protected void sendPhase(FluxSink<InternalTopicMessageEvent> sink, String name) {
     sink.next(
-        new InternalTopicMessageEvent()
-          .type(TopicMessageEventType.PHASE)
-          .phase(new TopicMessagePhase().name(name))
+        InternalTopicMessageEvent.builder()
+            .type(TopicMessageEventType.PHASE)
+            .phase(new TopicMessagePhase().name(name))
+            .build()
     );
   }
 
@@ -75,9 +77,10 @@ public abstract class AbstractEmitter {
         .isCancelled(sink.isCancelled())
         .messagesConsumed(this.records);
     sink.next(
-        new InternalTopicMessageEvent()
+        InternalTopicMessageEvent.builder()
             .type(TopicMessageEventType.CONSUMING)
             .consuming(consuming)
+            .build()
     );
   }
 }

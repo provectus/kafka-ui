@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.InternalTopicMessage;
 import com.provectus.kafka.ui.model.InternalTopicMessageEvent;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SeekDirection;
@@ -12,7 +13,6 @@ import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageEventType;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.serde.schemaregistry.InternalTopicMessageImpl;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.JsonNodeUtil;
@@ -94,6 +94,9 @@ public class ConsumingService {
           recordDeserializer
       );
     }
+    if (!StringUtils.isEmpty(jsFilterFn)) {
+      evalJsFilterFn(jsFilterFn);
+    }
     return Flux.create(emitter)
         .filter(event -> jsFilterTopicMessageEvent(event, jsFilterFn))
         .map(ClusterUtil::toTopicMessageEvent)
@@ -127,30 +130,36 @@ public class ConsumingService {
         || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
+  private void evalJsFilterFn(String jsFilterFn) {
+    try {
+      jsEngine.eval(jsFilterFn);
+    } catch (ScriptException e) {
+      throw new UnprocessableEntityException(getMessageWithJsFilterFnTip(e.getMessage()));
+    }
+  }
+
   private boolean jsFilterTopicMessageEvent(InternalTopicMessageEvent messageEvent,
                                             String jsFilterFn) {
-    if (StringUtils.isEmpty(jsFilterFn)) {
+    if (StringUtils.isEmpty(jsFilterFn)
+        || !messageEvent.getType().equals(TopicMessageEventType.MESSAGE)) {
       return true;
     }
-    if (messageEvent.getMessage() == null) {
-      return false;
-    }
 
-    InternalTopicMessageImpl message = (InternalTopicMessageImpl) messageEvent.getMessage();
-
+    InternalTopicMessage message = messageEvent.getMessage();
     var key = JsonNodeUtil.getJsonNodeValue(message.getKey());
     var content = JsonNodeUtil.getJsonNodeValue(message.getContent());
 
     try {
-      jsEngine.eval(jsFilterFn);
       Object result = jsInvocable.invokeFunction("filter", key, content,
           message.getHeaders(), message.getOffset(), message.getPartition());
       return result.toString().equals("true");
     } catch (NoSuchMethodException | ScriptException e) {
-      String errorMessage = e.getMessage();
-      String tip = ". Example of filter function: "
-          + "\"function filter(key, content, headers, offset, partition) { return offset != 0; }\"";
-      throw new UnprocessableEntityException(errorMessage + tip);
+      throw new UnprocessableEntityException(getMessageWithJsFilterFnTip(e.getMessage()));
     }
+  }
+
+  private String getMessageWithJsFilterFnTip(String message) {
+    return message + ". Example of filter function: "
+        + "\"function filter(key, content, headers, offset, partition) { return offset != 0; }\"";
   }
 }

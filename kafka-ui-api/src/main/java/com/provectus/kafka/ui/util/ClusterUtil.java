@@ -23,7 +23,6 @@ import com.provectus.kafka.ui.model.TopicMessage;
 import com.provectus.kafka.ui.model.TopicMessageEvent;
 import com.provectus.kafka.ui.model.TopicMessageTimestampType;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.serde.schemaregistry.InternalTopicMessageImpl;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
@@ -283,44 +282,42 @@ public class ClusterUtil {
     return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
   }
 
-  public static InternalTopicMessageImpl mapToInternalTopicMessage(
+  public static InternalTopicMessage mapToInternalTopicMessage(
       ConsumerRecord<Bytes, Bytes> consumerRecord, RecordSerDe recordDeserializer) {
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
         .forEachRemaining(header -> headers.put(header.key(), new String(header.value())));
 
-    InternalTopicMessageImpl topicMessage = new InternalTopicMessageImpl();
 
     OffsetDateTime timestamp =
         OffsetDateTime.ofInstant(Instant.ofEpochMilli(consumerRecord.timestamp()), UTC_ZONE_ID);
     TopicMessageTimestampType timestampType =
         mapToTimestampType(consumerRecord.timestampType());
-    topicMessage.setPartition(consumerRecord.partition());
-    topicMessage.setOffset(consumerRecord.offset());
-    topicMessage.setTimestamp(timestamp);
-    topicMessage.setTimestampType(timestampType);
-
-    topicMessage.setHeaders(headers);
     var parsed = recordDeserializer.deserialize(consumerRecord);
-    topicMessage.setKey(parsed.getKey());
-    topicMessage.setContent(parsed.getValue());
-    topicMessage.setKeyFormat(parsed.getKeyFormat() != null
-        ? MessageFormat.valueOf(parsed.getKeyFormat().name())
-        : null);
-    topicMessage.setValueFormat(parsed.getValueFormat() != null
-        ? MessageFormat.valueOf(parsed.getValueFormat().name())
-        : null);
-    topicMessage.setKeySize(ConsumerRecordUtil.getKeySize(consumerRecord));
-    topicMessage.setValueSize(ConsumerRecordUtil.getValueSize(consumerRecord));
-    topicMessage.setKeySchemaId(parsed.getKeySchemaId());
-    topicMessage.setValueSchemaId(parsed.getValueSchemaId());
-    topicMessage.setHeadersSize(ConsumerRecordUtil.getHeadersSize(consumerRecord));
 
-    return topicMessage;
+    return InternalTopicMessage.builder()
+        .partition(consumerRecord.partition())
+        .offset(consumerRecord.offset())
+        .timestamp(timestamp)
+        .timestampType(timestampType)
+        .headers(headers)
+        .key(parsed.getKey())
+        .content(parsed.getValue())
+        .keyFormat(parsed.getKeyFormat() != null
+            ? MessageFormat.valueOf(parsed.getKeyFormat().name())
+            : null)
+        .valueFormat(parsed.getValueFormat() != null
+            ? MessageFormat.valueOf(parsed.getValueFormat().name())
+            : null)
+        .keySize(ConsumerRecordUtil.getKeySize(consumerRecord))
+        .valueSize(ConsumerRecordUtil.getValueSize(consumerRecord))
+        .keySchemaId(parsed.getKeySchemaId())
+        .valueSchemaId(parsed.getValueSchemaId())
+        .headersSize(ConsumerRecordUtil.getHeadersSize(consumerRecord))
+        .build();
   }
 
-  public static TopicMessage toTopicMessage(InternalTopicMessage message) {
-    InternalTopicMessageImpl m = (InternalTopicMessageImpl) message;
+  public static TopicMessage toTopicMessage(InternalTopicMessage m) {
     return new TopicMessage()
         .partition(m.getPartition())
         .offset(m.getOffset())
