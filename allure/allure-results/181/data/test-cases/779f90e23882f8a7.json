@@ -1,12 +1,12 @@
 {
-  "uid" : "e734645c5c182a83",
+  "uid" : "779f90e23882f8a7",
   "name" : "should create a topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.createTopic",
   "historyId" : "61d3874fc5d35b85b0cd7942ccda45ef",
   "time" : {
-    "start" : 1630069632951,
-    "stop" : 1630069636718,
-    "duration" : 3767
+    "start" : 1630069652425,
+    "stop" : 1630069655923,
+    "duration" : 3498
   },
   "description" : "",
   "status" : "passed",
@@ -19,101 +19,101 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1630069633069,
-        "stop" : 1630069633521,
-        "duration" : 452
+        "start" : 1630069652525,
+        "stop" : 1630069652938,
+        "duration" : 413
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1630069633070,
-          "stop" : 1630069633521,
-          "duration" : 451
+          "start" : 1630069652526,
+          "stop" : 1630069652938,
+          "duration" : 412
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 1,
+      "attachmentsCount" : 0
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1630069633521,
-        "stop" : 1630069634332,
-        "duration" : 811
+        "start" : 1630069652938,
+        "stop" : 1630069653579,
+        "duration" : 641
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1630069633521,
-          "stop" : 1630069633623,
-          "duration" : 102
+          "start" : 1630069652938,
+          "stop" : 1630069653049,
+          "duration" : 111
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1630069633623,
-          "stop" : 1630069634332,
-          "duration" : 709
+          "start" : 1630069653057,
+          "stop" : 1630069653579,
+          "duration" : 522
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 2,
-      "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 2,
+      "attachmentsCount" : 0
     }, {
       "name" : "goToSideMenu",
       "time" : {
-        "start" : 1630069634332,
-        "stop" : 1630069634532,
-        "duration" : 200
+        "start" : 1630069653579,
+        "stop" : 1630069653731,
+        "duration" : 152
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //aside//*[a[text()='secondLocal']]//a[text()='Topics']\") click()",
         "time" : {
-          "start" : 1630069634333,
-          "stop" : 1630069634532,
-          "duration" : 199
+          "start" : 1630069653579,
+          "stop" : 1630069653731,
+          "duration" : 152
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ {
@@ -123,40 +123,40 @@
         "name" : "option",
         "value" : "TOPICS"
       } ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 1,
+      "attachmentsCount" : 0
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='new-topic']\") should be(visible)",
       "time" : {
-        "start" : 1630069636575,
-        "stop" : 1630069636649,
-        "duration" : 74
+        "start" : 1630069655774,
+        "stop" : 1630069655858,
+        "duration" : 84
       },
       "status" : "passed",
       "steps" : [ ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 0,
-      "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : false
+      "hasContent" : false,
+      "stepsCount" : 0,
+      "attachmentsCount" : 0
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
-    "stepsCount" : 8,
-    "attachmentsCount" : 0,
     "shouldDisplayMessage" : false,
-    "hasContent" : true
+    "hasContent" : true,
+    "stepsCount" : 8,
+    "attachmentsCount" : 0
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az213-105"
+    "value" : "fv-az154-630"
   }, {
     "name" : "thread",
-    "value" : "5916@fv-az213-105.main(1)"
+    "value" : "6006@fv-az154-630.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -189,6 +189,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "e734645c5c182a83.json",
+  "source" : "779f90e23882f8a7.json",
   "parameterValues" : [ ]
 }
