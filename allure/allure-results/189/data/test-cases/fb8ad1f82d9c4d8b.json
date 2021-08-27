@@ -1,12 +1,12 @@
 {
-  "uid" : "dd90a2aab570f815",
+  "uid" : "fb8ad1f82d9c4d8b",
   "name" : "should create a topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.createTopic",
   "historyId" : "61d3874fc5d35b85b0cd7942ccda45ef",
   "time" : {
-    "start" : 1630069759185,
-    "stop" : 1630069763120,
-    "duration" : 3935
+    "start" : 1630069768525,
+    "stop" : 1630069771970,
+    "duration" : 3445
   },
   "description" : "",
   "status" : "passed",
@@ -19,17 +19,17 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1630069759307,
-        "stop" : 1630069759771,
-        "duration" : 464
+        "start" : 1630069768644,
+        "stop" : 1630069768942,
+        "duration" : 298
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1630069759309,
-          "stop" : 1630069759771,
-          "duration" : 462
+          "start" : 1630069768646,
+          "stop" : 1630069768942,
+          "duration" : 296
         },
         "status" : "passed",
         "steps" : [ ],
@@ -49,17 +49,17 @@
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1630069759771,
-        "stop" : 1630069760540,
-        "duration" : 769
+        "start" : 1630069768942,
+        "stop" : 1630069769509,
+        "duration" : 567
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1630069759771,
-          "stop" : 1630069759880,
-          "duration" : 109
+          "start" : 1630069768942,
+          "stop" : 1630069768996,
+          "duration" : 54
         },
         "status" : "passed",
         "steps" : [ ],
@@ -72,9 +72,9 @@
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1630069759880,
-          "stop" : 1630069760540,
-          "duration" : 660
+          "start" : 1630069768996,
+          "stop" : 1630069769509,
+          "duration" : 513
         },
         "status" : "passed",
         "steps" : [ ],
@@ -94,17 +94,17 @@
     }, {
       "name" : "goToSideMenu",
       "time" : {
-        "start" : 1630069760541,
-        "stop" : 1630069760778,
-        "duration" : 237
+        "start" : 1630069769509,
+        "stop" : 1630069769718,
+        "duration" : 209
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //aside//*[a[text()='secondLocal']]//a[text()='Topics']\") click()",
         "time" : {
-          "start" : 1630069760541,
-          "stop" : 1630069760778,
-          "duration" : 237
+          "start" : 1630069769509,
+          "stop" : 1630069769718,
+          "duration" : 209
         },
         "status" : "passed",
         "steps" : [ ],
@@ -130,9 +130,9 @@
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='new-topic']\") should be(visible)",
       "time" : {
-        "start" : 1630069762905,
-        "stop" : 1630069763024,
-        "duration" : 119
+        "start" : 1630069771836,
+        "stop" : 1630069771908,
+        "duration" : 72
       },
       "status" : "passed",
       "steps" : [ ],
@@ -153,10 +153,10 @@
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az216-348"
+    "value" : "fv-az213-105"
   }, {
     "name" : "thread",
-    "value" : "6030@fv-az216-348.main(1)"
+    "value" : "5981@fv-az213-105.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -189,6 +189,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "dd90a2aab570f815.json",
+  "source" : "fb8ad1f82d9c4d8b.json",
   "parameterValues" : [ ]
 }
