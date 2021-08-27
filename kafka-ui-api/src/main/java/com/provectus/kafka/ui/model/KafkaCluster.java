@@ -31,5 +31,6 @@ public class KafkaCluster {
   private final String protobufMessageName;
   private final Properties properties;
   private final Boolean readOnly;
+  private final Boolean disableLogDirsCollection;
   private final List<Feature> features;
 }
