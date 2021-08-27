@@ -72,11 +72,6 @@ export const getTopicMessageSchemaFetched = createSelector(
   (status) => status === 'fetched'
 );
 
-export const getTopicMessageSent = createSelector(
-  getTopicMessageSendingStatus,
-  (status) => status === 'fetched'
-);
-
 export const getTopicMessageSending = createSelector(
   getTopicMessageSendingStatus,
   (status) => status === 'fetching'
