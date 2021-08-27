@@ -3,10 +3,10 @@
   "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/179/",
   "reportName" : "Allure Report with history",
   "data" : {
-    "failed" : 1,
+    "failed" : 0,
     "broken" : 0,
     "skipped" : 1,
-    "passed" : 2,
+    "passed" : 3,
     "unknown" : 0,
     "total" : 4
   }

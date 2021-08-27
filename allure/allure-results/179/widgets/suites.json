@@ -4,10 +4,10 @@
     "uid" : "fc854a7ac86496a8bb197a9f990b4d4a",
     "name" : "com.provectus.kafka.ui.topics.TopicTests",
     "statistic" : {
-      "failed" : 1,
+      "failed" : 0,
       "broken" : 0,
       "skipped" : 1,
-      "passed" : 1,
+      "passed" : 2,
       "unknown" : 0,
       "total" : 3
     }
