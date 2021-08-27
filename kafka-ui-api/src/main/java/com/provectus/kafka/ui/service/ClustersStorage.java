@@ -22,7 +22,6 @@ public class ClustersStorage {
   private final ClustersProperties clusterProperties;
 
   private final ClusterMapper clusterMapper = Mappers.getMapper(ClusterMapper.class);
-  private final FeatureService featureService;
 
   @PostConstruct
   public void init() {
@@ -36,7 +35,6 @@ public class ClustersStorage {
           clusterProperties.getName(),
           cluster.toBuilder()
               .topics(new HashMap<>())
-              .features(featureService.getAvailableFeatures(cluster))
               .build()
       );
     }
