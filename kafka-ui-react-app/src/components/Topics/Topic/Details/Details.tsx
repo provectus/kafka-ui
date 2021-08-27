@@ -23,6 +23,7 @@ interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   isInternal: boolean;
+  isDeleted: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -31,6 +32,7 @@ const Details: React.FC<Props> = ({
   clusterName,
   topicName,
   isInternal,
+  isDeleted,
   deleteTopic,
   clearTopicMessages,
 }) => {
@@ -41,8 +43,12 @@ const Details: React.FC<Props> = ({
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
-    history.push(clusterTopicsPath(clusterName));
   }, [clusterName, topicName]);
+  React.useEffect(() => {
+    if (isDeleted) {
+      history.push(clusterTopicsPath(clusterName));
+    }
+  }, [isDeleted]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
