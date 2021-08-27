@@ -1,0 +1,69 @@
+{
+  "uid" : "83edc06c07f9ae9e47eb6dd1b683e4e2",
+  "children" : [ {
+    "name" : "com.provectus.kafka.ui",
+    "children" : [ {
+      "name" : "topics.TopicTests",
+      "children" : [ {
+        "name" : "deleteTopic",
+        "uid" : "a9d6d1e5becbb23",
+        "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
+        "status" : "skipped",
+        "time" : {
+          "start" : 1630053978926,
+          "stop" : 1630053978927,
+          "duration" : 1
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      }, {
+        "name" : "updateTopic",
+        "uid" : "a56d946a0c74f563",
+        "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
+        "status" : "failed",
+        "time" : {
+          "start" : 1630053979007,
+          "stop" : 1630054085037,
+          "duration" : 106030
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      }, {
+        "name" : "createTopic",
+        "uid" : "2207f5bfa460da27",
+        "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
+        "status" : "passed",
+        "time" : {
+          "start" : 1630054085061,
+          "stop" : 1630054088121,
+          "duration" : 3060
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "topics.TopicTests"
+    }, {
+      "name" : "SmokeTests",
+      "children" : [ {
+        "name" : "mainPageLoads",
+        "uid" : "405d72b616d4c58d",
+        "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
+        "status" : "passed",
+        "time" : {
+          "start" : 1630054088206,
+          "stop" : 1630054089069,
+          "duration" : 863
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "0611dfeb62e4f0d51bda6611ccbad1f8"
+    } ],
+    "uid" : "com.provectus.kafka.ui"
+  } ],
+  "name" : "packages"
+}
