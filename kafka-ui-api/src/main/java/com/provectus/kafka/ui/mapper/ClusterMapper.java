@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Named;
 
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
@@ -90,6 +91,7 @@ public interface ClusterMapper {
 
   Partition toPartition(InternalPartition topic);
 
+  @Named("setSchemaRegistry")
   default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
     if (clusterProperties == null
         || clusterProperties.getSchemaRegistry() == null) {
@@ -150,11 +152,13 @@ public interface ClusterMapper {
     return brokerDiskUsage;
   }
 
+  @Named("mapDiskUsage")
   default List<BrokerDiskUsage> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
     return brokers.entrySet().stream().map(e -> this.map(e.getKey(), e.getValue()))
         .collect(Collectors.toList());
   }
 
+  @Named("sumMetrics")
   default BigDecimal sumMetrics(Map<String, BigDecimal> metrics) {
     if (metrics != null) {
       return metrics.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -163,6 +167,7 @@ public interface ClusterMapper {
     }
   }
 
+  @Named("resolvePath")
   default Path resolvePath(String path) {
     if (path != null) {
       return Path.of(path);
@@ -171,6 +176,7 @@ public interface ClusterMapper {
     }
   }
 
+  @Named("setProperties")
   default Properties setProperties(Properties properties) {
     Properties copy = new Properties();
     if (properties != null) {
