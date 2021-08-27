@@ -97,112 +97,116 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           title="Uptime"
         >
           <div
-            className="box"
+            className="metrics-box"
           >
-            <h5
-              className="subtitle is-6"
-            >
-              Uptime
-            </h5>
             <div
-              className="level"
+              className="box"
             >
-              <Indicator
-                className="is-one-third"
-                label="Total Brokers"
+              <h5
+                className="subtitle is-6"
               >
-                <div
-                  className="level-item is-one-third"
+                Uptime
+              </h5>
+              <div
+                className="level"
+              >
+                <Indicator
+                  className="is-one-third"
+                  label="Total Brokers"
                 >
                   <div
-                    title="Total Brokers"
+                    className="level-item is-one-third"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Total Brokers"
                     >
-                      Total Brokers
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Active Controllers"
-              >
-                <div
-                  className="level-item is-one-third"
-                >
-                  <div
-                    title="Active Controllers"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Active Controllers
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Zookeeper Status"
-              >
-                <div
-                  className="level-item is-one-third"
-                >
-                  <div
-                    title="Zookeeper Status"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Zookeeper Status
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      <span
-                        className="tag is-danger"
+                      <p
+                        className="heading"
                       >
-                        Offline
-                      </span>
-                    </p>
+                        Total Brokers
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        0
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Version"
-              >
-                <div
-                  className="level-item is-one-third"
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Active Controllers"
                 >
                   <div
-                    title="Version"
+                    className="level-item is-one-third"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Active Controllers"
                     >
-                      Version
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      1
-                    </p>
+                      <p
+                        className="heading"
+                      >
+                        Active Controllers
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        0
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Zookeeper Status"
+                >
+                  <div
+                    className="level-item is-one-third"
+                  >
+                    <div
+                      title="Zookeeper Status"
+                    >
+                      <p
+                        className="heading"
+                      >
+                        Zookeeper Status
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        <span
+                          className="tag is-danger"
+                        >
+                          Offline
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Version"
+                >
+                  <div
+                    className="level-item is-one-third"
+                  >
+                    <div
+                      title="Version"
+                    >
+                      <p
+                        className="heading"
+                      >
+                        Version
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        1
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+              </div>
             </div>
           </div>
         </MetricsWrapper>
@@ -210,116 +214,120 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           title="Partitions"
         >
           <div
-            className="box"
+            className="metrics-box"
           >
-            <h5
-              className="subtitle is-6"
-            >
-              Partitions
-            </h5>
             <div
-              className="level"
+              className="box"
             >
-              <Indicator
-                label="Online"
+              <h5
+                className="subtitle is-6"
               >
-                <div
-                  className="level-item"
+                Partitions
+              </h5>
+              <div
+                className="level"
+              >
+                <Indicator
+                  label="Online"
                 >
                   <div
-                    title="Online"
+                    className="level-item"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Online"
                     >
-                      Online
-                    </p>
-                    <p
-                      className="title has-text-centered"
+                      <p
+                        className="heading"
+                      >
+                        Online
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        <span
+                          className=""
+                        >
+                          0
+                        </span>
+                        <span
+                          className="subtitle has-text-weight-light"
+                        >
+                           
+                          of
+                          0
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  label="URP"
+                  title="Under replicated partitions"
+                >
+                  <div
+                    className="level-item"
+                  >
+                    <div
+                      title="Under replicated partitions"
                     >
-                      <span
-                        className=""
+                      <p
+                        className="heading"
+                      >
+                        URP
+                      </p>
+                      <p
+                        className="title has-text-centered"
                       >
                         0
-                      </span>
-                      <span
-                        className="subtitle has-text-weight-light"
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  label="In Sync Replicas"
+                >
+                  <div
+                    className="level-item"
+                  >
+                    <div
+                      title="In Sync Replicas"
+                    >
+                      <p
+                        className="heading"
                       >
-                         
-                        of
+                        In Sync Replicas
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
                         0
-                      </span>
-                    </p>
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
-              <Indicator
-                label="URP"
-                title="Under replicated partitions"
-              >
-                <div
-                  className="level-item"
+                </Indicator>
+                <Indicator
+                  label="Out of Sync Replicas"
                 >
                   <div
-                    title="Under replicated partitions"
+                    className="level-item"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Out of Sync Replicas"
                     >
-                      URP
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
+                      <p
+                        className="heading"
+                      >
+                        Out of Sync Replicas
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        0
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
-              <Indicator
-                label="In Sync Replicas"
-              >
-                <div
-                  className="level-item"
-                >
-                  <div
-                    title="In Sync Replicas"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      In Sync Replicas
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                label="Out of Sync Replicas"
-              >
-                <div
-                  className="level-item"
-                >
-                  <div
-                    title="Out of Sync Replicas"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Out of Sync Replicas
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
+                </Indicator>
+              </div>
             </div>
           </div>
         </MetricsWrapper>
@@ -328,16 +336,20 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           title="Disk Usage"
         >
           <div
-            className="box"
+            className="metrics-box"
           >
-            <h5
-              className="subtitle is-6"
-            >
-              Disk Usage
-            </h5>
             <div
-              className="level level-multiline"
-            />
+              className="box"
+            >
+              <h5
+                className="subtitle is-6"
+              >
+                Disk Usage
+              </h5>
+              <div
+                className="level level-multiline"
+              />
+            </div>
           </div>
         </MetricsWrapper>
       </div>
@@ -452,112 +464,116 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           title="Uptime"
         >
           <div
-            className="box"
+            className="metrics-box"
           >
-            <h5
-              className="subtitle is-6"
-            >
-              Uptime
-            </h5>
             <div
-              className="level"
+              className="box"
             >
-              <Indicator
-                className="is-one-third"
-                label="Total Brokers"
+              <h5
+                className="subtitle is-6"
               >
-                <div
-                  className="level-item is-one-third"
+                Uptime
+              </h5>
+              <div
+                className="level"
+              >
+                <Indicator
+                  className="is-one-third"
+                  label="Total Brokers"
                 >
                   <div
-                    title="Total Brokers"
+                    className="level-item is-one-third"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Total Brokers"
                     >
-                      Total Brokers
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      1
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Active Controllers"
-              >
-                <div
-                  className="level-item is-one-third"
-                >
-                  <div
-                    title="Active Controllers"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Active Controllers
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      1
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Zookeeper Status"
-              >
-                <div
-                  className="level-item is-one-third"
-                >
-                  <div
-                    title="Zookeeper Status"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Zookeeper Status
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      <span
-                        className="tag is-success"
+                      <p
+                        className="heading"
                       >
-                        Online
-                      </span>
-                    </p>
+                        Total Brokers
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        1
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Version"
-              >
-                <div
-                  className="level-item is-one-third"
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Active Controllers"
                 >
                   <div
-                    title="Version"
+                    className="level-item is-one-third"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Active Controllers"
                     >
-                      Version
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      1
-                    </p>
+                      <p
+                        className="heading"
+                      >
+                        Active Controllers
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        1
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Zookeeper Status"
+                >
+                  <div
+                    className="level-item is-one-third"
+                  >
+                    <div
+                      title="Zookeeper Status"
+                    >
+                      <p
+                        className="heading"
+                      >
+                        Zookeeper Status
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        <span
+                          className="tag is-success"
+                        >
+                          Online
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Version"
+                >
+                  <div
+                    className="level-item is-one-third"
+                  >
+                    <div
+                      title="Version"
+                    >
+                      <p
+                        className="heading"
+                      >
+                        Version
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        1
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+              </div>
             </div>
           </div>
         </MetricsWrapper>
@@ -565,116 +581,120 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           title="Partitions"
         >
           <div
-            className="box"
+            className="metrics-box"
           >
-            <h5
-              className="subtitle is-6"
-            >
-              Partitions
-            </h5>
             <div
-              className="level"
+              className="box"
             >
-              <Indicator
-                label="Online"
+              <h5
+                className="subtitle is-6"
               >
-                <div
-                  className="level-item"
+                Partitions
+              </h5>
+              <div
+                className="level"
+              >
+                <Indicator
+                  label="Online"
                 >
                   <div
-                    title="Online"
+                    className="level-item"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Online"
                     >
-                      Online
-                    </p>
-                    <p
-                      className="title has-text-centered"
+                      <p
+                        className="heading"
+                      >
+                        Online
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        <span
+                          className=""
+                        >
+                          64
+                        </span>
+                        <span
+                          className="subtitle has-text-weight-light"
+                        >
+                           
+                          of
+                          64
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  label="URP"
+                  title="Under replicated partitions"
+                >
+                  <div
+                    className="level-item"
+                  >
+                    <div
+                      title="Under replicated partitions"
                     >
-                      <span
-                        className=""
+                      <p
+                        className="heading"
+                      >
+                        URP
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        0
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  label="In Sync Replicas"
+                >
+                  <div
+                    className="level-item"
+                  >
+                    <div
+                      title="In Sync Replicas"
+                    >
+                      <p
+                        className="heading"
+                      >
+                        In Sync Replicas
+                      </p>
+                      <p
+                        className="title has-text-centered"
                       >
                         64
-                      </span>
-                      <span
-                        className="subtitle has-text-weight-light"
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+                <Indicator
+                  label="Out of Sync Replicas"
+                >
+                  <div
+                    className="level-item"
+                  >
+                    <div
+                      title="Out of Sync Replicas"
+                    >
+                      <p
+                        className="heading"
                       >
-                         
-                        of
-                        64
-                      </span>
-                    </p>
+                        Out of Sync Replicas
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        0
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
-              <Indicator
-                label="URP"
-                title="Under replicated partitions"
-              >
-                <div
-                  className="level-item"
-                >
-                  <div
-                    title="Under replicated partitions"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      URP
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                label="In Sync Replicas"
-              >
-                <div
-                  className="level-item"
-                >
-                  <div
-                    title="In Sync Replicas"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      In Sync Replicas
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      64
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                label="Out of Sync Replicas"
-              >
-                <div
-                  className="level-item"
-                >
-                  <div
-                    title="Out of Sync Replicas"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Out of Sync Replicas
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      0
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
+                </Indicator>
+              </div>
             </div>
           </div>
         </MetricsWrapper>
@@ -683,92 +703,96 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           title="Disk Usage"
         >
           <div
-            className="box"
+            className="metrics-box"
           >
-            <h5
-              className="subtitle is-6"
-            >
-              Disk Usage
-            </h5>
             <div
-              className="level level-multiline"
+              className="box"
             >
-              <Indicator
-                className="is-one-third"
-                label="Broker"
+              <h5
+                className="subtitle is-6"
               >
-                <div
-                  className="level-item is-one-third"
+                Disk Usage
+              </h5>
+              <div
+                className="level level-multiline"
+              >
+                <Indicator
+                  className="is-one-third"
+                  label="Broker"
                 >
                   <div
-                    title="Broker"
+                    className="level-item is-one-third"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Broker"
                     >
-                      Broker
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      1
-                    </p>
-                  </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Segment Size"
-                title=""
-              >
-                <div
-                  className="level-item is-one-third"
-                >
-                  <div
-                    title="Segment Size"
-                  >
-                    <p
-                      className="heading"
-                    >
-                      Segment Size
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      <BytesFormatted
-                        value={60718}
+                      <p
+                        className="heading"
                       >
-                        <span>
-                          59KB
-                        </span>
-                      </BytesFormatted>
-                    </p>
+                        Broker
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        1
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
-              <Indicator
-                className="is-one-third"
-                label="Segment count"
-              >
-                <div
-                  className="level-item is-one-third"
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Segment Size"
+                  title=""
                 >
                   <div
-                    title="Segment count"
+                    className="level-item is-one-third"
                   >
-                    <p
-                      className="heading"
+                    <div
+                      title="Segment Size"
                     >
-                      Segment count
-                    </p>
-                    <p
-                      className="title has-text-centered"
-                    >
-                      64
-                    </p>
+                      <p
+                        className="heading"
+                      >
+                        Segment Size
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        <BytesFormatted
+                          value={60718}
+                        >
+                          <span>
+                            59KB
+                          </span>
+                        </BytesFormatted>
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Indicator>
+                </Indicator>
+                <Indicator
+                  className="is-one-third"
+                  label="Segment count"
+                >
+                  <div
+                    className="level-item is-one-third"
+                  >
+                    <div
+                      title="Segment count"
+                    >
+                      <p
+                        className="heading"
+                      >
+                        Segment count
+                      </p>
+                      <p
+                        className="title has-text-centered"
+                      >
+                        64
+                      </p>
+                    </div>
+                  </div>
+                </Indicator>
+              </div>
             </div>
           </div>
         </MetricsWrapper>

@@ -272,95 +272,99 @@ exports[`App view matches snapshot 1`] = `
                           </h5>
                           <MetricsWrapper>
                             <div
-                              className="box"
+                              className="metrics-box"
                             >
                               <div
-                                className="level"
+                                className="box"
                               >
-                                <Indicator
-                                  label="Online Clusters"
+                                <div
+                                  className="level"
                                 >
-                                  <div
-                                    className="level-item"
+                                  <Indicator
+                                    label="Online Clusters"
                                   >
                                     <div
-                                      title="Online Clusters"
+                                      className="level-item"
                                     >
-                                      <p
-                                        className="heading"
+                                      <div
+                                        title="Online Clusters"
                                       >
-                                        Online Clusters
-                                      </p>
-                                      <p
-                                        className="title has-text-centered"
-                                      >
-                                        <span
-                                          className="tag is-success"
+                                        <p
+                                          className="heading"
                                         >
-                                          0
-                                        </span>
-                                      </p>
-                                    </div>
-                                  </div>
-                                </Indicator>
-                                <Indicator
-                                  label="Offline Clusters"
-                                >
-                                  <div
-                                    className="level-item"
-                                  >
-                                    <div
-                                      title="Offline Clusters"
-                                    >
-                                      <p
-                                        className="heading"
-                                      >
-                                        Offline Clusters
-                                      </p>
-                                      <p
-                                        className="title has-text-centered"
-                                      >
-                                        <span
-                                          className="tag is-danger"
+                                          Online Clusters
+                                        </p>
+                                        <p
+                                          className="title has-text-centered"
                                         >
-                                          0
-                                        </span>
-                                      </p>
+                                          <span
+                                            className="tag is-success"
+                                          >
+                                            0
+                                          </span>
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                </Indicator>
-                                <Indicator
-                                  label="Hide online clusters"
-                                >
-                                  <div
-                                    className="level-item"
+                                  </Indicator>
+                                  <Indicator
+                                    label="Offline Clusters"
                                   >
                                     <div
-                                      title="Hide online clusters"
+                                      className="level-item"
                                     >
-                                      <p
-                                        className="heading"
+                                      <div
+                                        title="Offline Clusters"
                                       >
-                                        Hide online clusters
-                                      </p>
-                                      <p
-                                        className="title has-text-centered"
-                                      >
-                                        <input
-                                          checked={false}
-                                          className="switch is-rounded"
-                                          id="switchRoundedDefault"
-                                          name="switchRoundedDefault"
-                                          onChange={[Function]}
-                                          type="checkbox"
-                                        />
-                                        <label
-                                          htmlFor="switchRoundedDefault"
-                                        />
-                                      </p>
+                                        <p
+                                          className="heading"
+                                        >
+                                          Offline Clusters
+                                        </p>
+                                        <p
+                                          className="title has-text-centered"
+                                        >
+                                          <span
+                                            className="tag is-danger"
+                                          >
+                                            0
+                                          </span>
+                                        </p>
+                                      </div>
                                     </div>
-                                  </div>
-                                </Indicator>
+                                  </Indicator>
+                                  <Indicator
+                                    label="Hide online clusters"
+                                  >
+                                    <div
+                                      className="level-item"
+                                    >
+                                      <div
+                                        title="Hide online clusters"
+                                      >
+                                        <p
+                                          className="heading"
+                                        >
+                                          Hide online clusters
+                                        </p>
+                                        <p
+                                          className="title has-text-centered"
+                                        >
+                                          <input
+                                            checked={false}
+                                            className="switch is-rounded"
+                                            id="switchRoundedDefault"
+                                            name="switchRoundedDefault"
+                                            onChange={[Function]}
+                                            type="checkbox"
+                                          />
+                                          <label
+                                            htmlFor="switchRoundedDefault"
+                                          />
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </Indicator>
+                                </div>
                               </div>
                             </div>
                           </MetricsWrapper>
