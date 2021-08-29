@@ -162,6 +162,24 @@ exports[`App view matches snapshot 1`] = `
               onKeyDown={[Function]}
               tabIndex={-1}
             />
+            <Breadcrumb>
+              <nav
+                aria-label="breadcrumbs"
+                className="breadcrumb mb-2 pt-2"
+              >
+                <ul
+                  className="py-1 px-4 py-3"
+                >
+                  <li
+                    className="is-active is-size-4 has-text-weight-medium is-capitalized"
+                  >
+                    <span>
+                      Dashboard
+                    </span>
+                  </li>
+                </ul>
+              </nav>
+            </Breadcrumb>
             <Switch>
               <Route
                 component={[Function]}
@@ -231,32 +249,6 @@ exports[`App view matches snapshot 1`] = `
                   <div
                     className="section"
                   >
-                    <div
-                      className="level"
-                    >
-                      <div
-                        className="level-item level-left"
-                      >
-                        <Breadcrumb>
-                          <nav
-                            aria-label="breadcrumbs"
-                            className="breadcrumb"
-                          >
-                            <ul>
-                              <li
-                                className="is-active"
-                              >
-                                <span
-                                  className=""
-                                >
-                                  Dashboard
-                                </span>
-                              </li>
-                            </ul>
-                          </nav>
-                        </Breadcrumb>
-                      </div>
-                    </div>
                     <Connect(ClustersWidget)>
                       <ClustersWidget
                         clusters={Array []}
@@ -265,14 +257,9 @@ exports[`App view matches snapshot 1`] = `
                         onlineClusters={Array []}
                       >
                         <div>
-                          <h5
-                            className="title is-5"
-                          >
-                            Clusters
-                          </h5>
                           <MetricsWrapper>
                             <div
-                              className="metrics-box"
+                              className="metrics-box mb-2"
                             >
                               <div
                                 className="box"

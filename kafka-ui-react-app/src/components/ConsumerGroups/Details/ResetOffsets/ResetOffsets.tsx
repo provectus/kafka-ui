@@ -1,12 +1,8 @@
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import {
   ConsumerGroupDetails,
   ConsumerGroupOffsetsResetType,
 } from 'generated-sources';
-import {
-  clusterConsumerGroupsPath,
-  clusterConsumerGroupDetailsPath,
-} from 'lib/paths';
+import { clusterConsumerGroupDetailsPath } from 'lib/paths';
 import React from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 import { ClusterName, ConsumerGroupID } from 'redux/interfaces';
@@ -170,28 +166,6 @@ const ResetOffsets: React.FC<Props> = ({
 
   return (
     <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterConsumerGroupsPath(clusterName),
-                label: 'All Consumer Groups',
-              },
-              {
-                href: clusterConsumerGroupDetailsPath(
-                  clusterName,
-                  consumerGroupID
-                ),
-                label: consumerGroupID,
-              },
-            ]}
-          >
-            Reset Offsets
-          </Breadcrumb>
-        </div>
-      </div>
-
       <div className="box">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="columns">

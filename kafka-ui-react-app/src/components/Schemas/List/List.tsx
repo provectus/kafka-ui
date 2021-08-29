@@ -7,7 +7,6 @@ import { Link, useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
 
 import ListItem from './ListItem';
@@ -47,7 +46,6 @@ const List: React.FC<ListProps> = ({
 
   return (
     <div className="section">
-      <Breadcrumb>Schema Registry</Breadcrumb>
       <div className="box">
         <div className="level">
           {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (

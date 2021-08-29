@@ -14,7 +14,7 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>
         <NavLink
           exact
-          to={`schemas/${subject}/latest`}
+          to={`schemas/${subject}`}
           activeClassName="is-active"
           className="title is-6"
         >

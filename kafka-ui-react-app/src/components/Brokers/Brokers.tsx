@@ -5,7 +5,6 @@ import useInterval from 'lib/hooks/useInterval';
 import cx from 'classnames';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
 
@@ -44,7 +43,6 @@ const Brokers: React.FC<Props> = ({
 
   return (
     <div className="section">
-      <Breadcrumb>Brokers overview</Breadcrumb>
       <MetricsWrapper title="Uptime">
         <Indicator className="is-one-third" label="Total Brokers">
           {brokerCount}

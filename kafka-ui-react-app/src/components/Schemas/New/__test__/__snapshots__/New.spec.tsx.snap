@@ -5,7 +5,7 @@ exports[`New View matches snapshot 1`] = `
   context={Object {}}
   location={
     Object {
-      "pathname": "/ui/clusters/clusterName/schemas/create_new",
+      "pathname": "/ui/clusters/clusterName/schemas/create-new",
     }
   }
 >
@@ -21,7 +21,7 @@ exports[`New View matches snapshot 1`] = `
         "listen": [Function],
         "location": Object {
           "hash": "",
-          "pathname": "/ui/clusters/clusterName/schemas/create_new",
+          "pathname": "/ui/clusters/clusterName/schemas/create-new",
           "search": "",
         },
         "push": [Function],
@@ -36,60 +36,6 @@ exports[`New View matches snapshot 1`] = `
       <div
         className="section"
       >
-        <div
-          className="level"
-        >
-          <div
-            className="level-item level-left"
-          >
-            <Breadcrumb
-              links={
-                Array [
-                  Object {
-                    "href": "/ui/clusters/undefined/schemas",
-                    "label": "Schema Registry",
-                  },
-                ]
-              }
-            >
-              <nav
-                aria-label="breadcrumbs"
-                className="breadcrumb"
-              >
-                <ul>
-                  <li
-                    key="/ui/clusters/undefined/schemas"
-                  >
-                    <Link
-                      to="/ui/clusters/undefined/schemas"
-                    >
-                      <LinkAnchor
-                        href="/ui/clusters/undefined/schemas"
-                        navigate={[Function]}
-                      >
-                        <a
-                          href="/ui/clusters/undefined/schemas"
-                          onClick={[Function]}
-                        >
-                          Schema Registry
-                        </a>
-                      </LinkAnchor>
-                    </Link>
-                  </li>
-                  <li
-                    className="is-active"
-                  >
-                    <span
-                      className=""
-                    >
-                      New Schema
-                    </span>
-                  </li>
-                </ul>
-              </nav>
-            </Breadcrumb>
-          </div>
-        </div>
         <div
           className="box"
         >

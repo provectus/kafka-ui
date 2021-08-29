@@ -42,8 +42,6 @@ const ClustersWidget: React.FC<Props> = ({
 
   return (
     <div>
-      <h5 className="title is-5">Clusters</h5>
-
       <MetricsWrapper>
         <Indicator label="Online Clusters">
           <span className="tag is-success">{onlineClusters.length}</span>

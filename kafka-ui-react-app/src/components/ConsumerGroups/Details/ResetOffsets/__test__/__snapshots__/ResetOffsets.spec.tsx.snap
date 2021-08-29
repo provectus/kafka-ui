@@ -7,44 +7,6 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
       class="section"
     >
       <div
-        class="level"
-      >
-        <div
-          class="level-item level-left"
-        >
-          <nav
-            aria-label="breadcrumbs"
-            class="breadcrumb"
-          >
-            <ul>
-              <li>
-                <a
-                  href="/ui/clusters/testCluster/consumer-groups"
-                >
-                  All Consumer Groups
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/ui/clusters/testCluster/consumer-groups/testGroup"
-                >
-                  testGroup
-                </a>
-              </li>
-              <li
-                class="is-active"
-              >
-                <span
-                  class=""
-                >
-                  Reset Offsets
-                </span>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </div>
-      <div
         class="box"
       >
         <form>

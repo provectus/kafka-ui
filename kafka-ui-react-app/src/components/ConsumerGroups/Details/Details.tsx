@@ -1,6 +1,5 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import {
   clusterConsumerGroupResetOffsetsPath,
   clusterConsumerGroupsPath,
@@ -62,21 +61,6 @@ const Details: React.FC<Props> = ({
 
   return (
     <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterConsumerGroupsPath(clusterName),
-                label: 'All Consumer Groups',
-              },
-            ]}
-          >
-            {groupId}
-          </Breadcrumb>
-        </div>
-      </div>
-
       {isFetched ? (
         <div className="box">
           <div className="level">

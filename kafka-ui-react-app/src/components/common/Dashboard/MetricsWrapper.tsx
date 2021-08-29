@@ -14,7 +14,7 @@ const MetricsWrapper: React.FC<Props> = ({
   multiline,
 }) => {
   return (
-    <div className="metrics-box">
+    <div className="metrics-box mb-2">
       <div className={cx('box', wrapperClassName)}>
         {title && <h5 className="subtitle is-6">{title}</h5>}
         <div className={cx('level', multiline ? 'level-multiline' : '')}>

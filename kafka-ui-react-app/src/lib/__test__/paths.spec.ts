@@ -27,12 +27,12 @@ describe('Paths', () => {
   });
   it('clusterSchemaNewPath', () => {
     expect(paths.clusterSchemaNewPath('local')).toEqual(
-      '/ui/clusters/local/schemas/create_new'
+      '/ui/clusters/local/schemas/create-new'
     );
   });
   it('clusterSchemaPath', () => {
     expect(paths.clusterSchemaPath('local', 'schema123')).toEqual(
-      '/ui/clusters/local/schemas/schema123/latest'
+      '/ui/clusters/local/schemas/schema123'
     );
   });
 
@@ -43,7 +43,7 @@ describe('Paths', () => {
   });
   it('clusterTopicNewPath', () => {
     expect(paths.clusterTopicNewPath('local')).toEqual(
-      '/ui/clusters/local/topics/create_new'
+      '/ui/clusters/local/topics/create-new'
     );
   });
   it('clusterTopicPath', () => {

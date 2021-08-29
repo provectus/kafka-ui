@@ -5,30 +5,6 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
   className="section"
 >
   <div
-    className="level"
-  >
-    <div
-      className="level-item level-left"
-    >
-      <Breadcrumb
-        links={
-          Array [
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas",
-              "label": "Schema Registry",
-            },
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
-              "label": "Subject",
-            },
-          ]
-        }
-      >
-        Edit
-      </Breadcrumb>
-    </div>
-  </div>
-  <div
     className="box"
   >
     <form
@@ -294,30 +270,6 @@ exports[`Edit Component when schemas are not fetched matches the snapshot 1`] = 
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <div
-      className="level-item level-left"
-    >
-      <Breadcrumb
-        links={
-          Array [
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas",
-              "label": "Schema Registry",
-            },
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
-              "label": "Subject",
-            },
-          ]
-        }
-      >
-        Edit
-      </Breadcrumb>
-    </div>
-  </div>
   <PageLoader />
 </div>
 `;

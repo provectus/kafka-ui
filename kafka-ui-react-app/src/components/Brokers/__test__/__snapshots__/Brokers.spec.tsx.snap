@@ -75,29 +75,11 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
       <div
         className="section"
       >
-        <Breadcrumb>
-          <nav
-            aria-label="breadcrumbs"
-            className="breadcrumb"
-          >
-            <ul>
-              <li
-                className="is-active"
-              >
-                <span
-                  className=""
-                >
-                  Brokers overview
-                </span>
-              </li>
-            </ul>
-          </nav>
-        </Breadcrumb>
         <MetricsWrapper
           title="Uptime"
         >
           <div
-            className="metrics-box"
+            className="metrics-box mb-2"
           >
             <div
               className="box"
@@ -214,7 +196,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           title="Partitions"
         >
           <div
-            className="metrics-box"
+            className="metrics-box mb-2"
           >
             <div
               className="box"
@@ -336,7 +318,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           title="Disk Usage"
         >
           <div
-            className="metrics-box"
+            className="metrics-box mb-2"
           >
             <div
               className="box"
@@ -442,29 +424,11 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
       <div
         className="section"
       >
-        <Breadcrumb>
-          <nav
-            aria-label="breadcrumbs"
-            className="breadcrumb"
-          >
-            <ul>
-              <li
-                className="is-active"
-              >
-                <span
-                  className=""
-                >
-                  Brokers overview
-                </span>
-              </li>
-            </ul>
-          </nav>
-        </Breadcrumb>
         <MetricsWrapper
           title="Uptime"
         >
           <div
-            className="metrics-box"
+            className="metrics-box mb-2"
           >
             <div
               className="box"
@@ -581,7 +545,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           title="Partitions"
         >
           <div
-            className="metrics-box"
+            className="metrics-box mb-2"
           >
             <div
               className="box"
@@ -703,7 +667,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           title="Disk Usage"
         >
           <div
-            className="metrics-box"
+            className="metrics-box mb-2"
           >
             <div
               className="box"
