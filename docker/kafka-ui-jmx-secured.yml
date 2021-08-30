@@ -27,8 +27,11 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
         -Djavax.net.ssl.trustStore=/jmx/clienttruststore
         -Djavax.net.ssl.trustStorePassword=12345678
+        -Djavax.net.ssl.keyStore=/jmx/clientkeystore
+        -Djavax.net.ssl.keyStorePassword=12345678
     volumes:
-      - /tmp/jmx/clienttruststore:/jmx/clienttruststore
+      - ./jmx/clienttruststore:/jmx/clienttruststore
+      - ./jmx/clientkeystore:/jmx/clientkeystore
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:5.2.4
@@ -53,25 +56,28 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       JMX_PORT: 9997
+      # CHMOD 700 FOR JMXREMOTE.* FILES
       KAFKA_JMX_OPTS: >-
         -Dcom.sun.management.jmxremote
         -Dcom.sun.management.jmxremote.authenticate=true
         -Dcom.sun.management.jmxremote.ssl=true
-        -Djava.rmi.server.hostname=kafka0
-        -Dcom.sun.management.jmxremote.password.file=/jmx/jmxremote.password
-        -Dcom.sun.management.jmxremote.access.file=/jmx/jmxremote.access
+        -Dcom.sun.management.jmxremote.registry.ssl=true
         -Dcom.sun.management.jmxremote.ssl.need.client.auth=true
-        -Dcom.sun.management.jmxremote.rmi.port=9998
         -Djavax.net.ssl.keyStore=/jmx/serverkeystore
         -Djavax.net.ssl.keyStorePassword=12345678
         -Djavax.net.ssl.trustStore=/jmx/servertruststore
         -Djavax.net.ssl.trustStorePassword=12345678
-  #-Dcom.sun.management.jmxremote.registry.ssl=true
+        -Dcom.sun.management.jmxremote.password.file=/jmx/jmxremote.password
+        -Dcom.sun.management.jmxremote.access.file=/jmx/jmxremote.access
+        -Dcom.sun.management.jmxremote.rmi.port=9997
+        -Djava.rmi.server.hostname=kafka0
+        -Djava.rmi.server.logCalls=true
+#        -Djavax.net.debug=ssl:handshake
     volumes:
-    - /tmp/jmx/jmxremote.password:/jmx/jmxremote.password
-    - /tmp/jmx/jmxremote.access:/jmx/jmxremote.access
-    - /tmp/jmx/serverkeystore:/jmx/serverkeystore
-    - /tmp/jmx/servertruststore:/jmx/servertruststore
+    - ./jmx/serverkeystore:/jmx/serverkeystore
+    - ./jmx/servertruststore:/jmx/servertruststore
+    - ./jmx/jmxremote.password:/jmx/jmxremote.password
+    - ./jmx/jmxremote.access:/jmx/jmxremote.access
 
   schemaregistry0:
     image: confluentinc/cp-schema-registry:5.2.4

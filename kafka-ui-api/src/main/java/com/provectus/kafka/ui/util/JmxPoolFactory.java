@@ -7,7 +7,9 @@ import java.util.Map;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
+import javax.rmi.ssl.SslRMIClientSocketFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
@@ -18,7 +20,11 @@ public class JmxPoolFactory extends BaseKeyedPooledObjectFactory<JmxConnectionIn
   @Override
   public JMXConnector create(JmxConnectionInfo info) throws Exception {
     Map<String, Object> env = new HashMap<>();
-    env.put("jmx.remote.credentials", info.getCredentials());
+    if (StringUtils.isNotEmpty(info.getUsername()) && StringUtils.isNotEmpty(info.getPassword())) {
+      env.put("jmx.remote.credentials", new String[]{info.getUsername(), info.getPassword()});
+    }
+    env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+
     return JMXConnectorFactory.connect(new JMXServiceURL(info.getUrl()), env);
   }
 

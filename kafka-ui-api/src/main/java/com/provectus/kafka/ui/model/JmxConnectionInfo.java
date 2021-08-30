@@ -9,11 +9,12 @@ import lombok.RequiredArgsConstructor;
 public class JmxConnectionInfo {
 
   private final String url;
-  @EqualsAndHashCode.Exclude
-  private final String[] credentials;
+  private final String username;
+  private final String password;
 
   public JmxConnectionInfo(String url) {
     this.url = url;
-    this.credentials = null;
+    this.username = null;
+    this.password = null;
   }
 }

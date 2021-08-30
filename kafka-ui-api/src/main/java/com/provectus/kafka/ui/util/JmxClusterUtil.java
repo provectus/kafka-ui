@@ -21,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,10 +36,10 @@ public class JmxClusterUtil {
   private final KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
   @SneakyThrows
-  public List<Metric> getJmxMetrics(String host, int port, String username, String password) {
+  public List<Metric> getJmxMetrics(String host, int port,
+                                    @Nullable String username, @Nullable String password) {
     String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
-    final var connectionInfo = new JmxConnectionInfo(jmxUrl, new String[]{username, password});
-    // TODO how to get creds here?
+    final var connectionInfo = new JmxConnectionInfo(jmxUrl, username, password);
     JMXConnector srv;
     try {
       srv = pool.borrowObject(connectionInfo);
