@@ -1,11 +1,11 @@
 {
-  "uid" : "7e944ec01653a5e6",
+  "uid" : "8ae7ee80470b41a2",
   "name" : "should delete topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.deleteTopic",
   "historyId" : "68ea0c9be4a2b1282c1c0563a861c577",
   "time" : {
-    "start" : 1630332281243,
-    "stop" : 1630332281244,
+    "start" : 1630332921442,
+    "stop" : 1630332921443,
     "duration" : 1
   },
   "description" : "",
@@ -17,10 +17,10 @@
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az204-860"
+    "value" : "fv-az219-713"
   }, {
     "name" : "thread",
-    "value" : "6009@fv-az204-860.main(1)"
+    "value" : "6031@fv-az219-713.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -53,6 +53,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "7e944ec01653a5e6.json",
+  "source" : "8ae7ee80470b41a2.json",
   "parameterValues" : [ ]
 }
