@@ -7,7 +7,6 @@ import {
   getPartitionsByTopicName,
   getTopicMessageSchemaFetched,
   getTopicMessageSending,
-  getTopicMessageSent,
 } from 'redux/reducers/topics/selectors';
 
 import SendMessage from './SendMessage';
@@ -31,7 +30,6 @@ const mapStateToProps = (
   topicName,
   messageSchema: getMessageSchemaByTopicName(state, topicName),
   schemaIsFetched: getTopicMessageSchemaFetched(state),
-  messageIsSent: getTopicMessageSent(state),
   messageIsSending: getTopicMessageSending(state),
   partitions: getPartitionsByTopicName(state, topicName),
 });

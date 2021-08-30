@@ -72,7 +72,6 @@ const setupWrapper = (props?: Partial<Props>) => (
       },
     }}
     schemaIsFetched={false}
-    messageIsSent={false}
     messageIsSending={false}
     partitions={[
       {
