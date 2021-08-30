@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import java.util.List;
+import reactor.core.publisher.Flux;
 
 public interface FeatureService {
   /**
@@ -11,5 +11,5 @@ public interface FeatureService {
    * @param cluster - cluster
    * @return List of Feature
    */
-  List<Feature> getAvailableFeatures(KafkaCluster cluster);
+  Flux<Feature> getAvailableFeatures(KafkaCluster cluster);
 }

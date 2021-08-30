@@ -1,9 +1,7 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.InvalidRequestApiException;
 import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
-import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -11,7 +9,6 @@ import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
 import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessage;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
-import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
@@ -104,6 +101,8 @@ public class KafkaService {
   private final ClustersStorage clustersStorage;
   private final DeserializationService deserializationService;
   private final AdminClientService adminClientService;
+  private final FeatureService featureService;
+
 
   public KafkaCluster getUpdatedCluster(KafkaCluster cluster, InternalTopic updatedTopic) {
     final Map<String, InternalTopic> topics =
@@ -142,6 +141,9 @@ public class KafkaService {
                             ).map(segmentSizeDto -> buildFromData(cluster, version, segmentSizeDto))
                         )
             )
+        ).flatMap(
+            nc ->  featureService.getAvailableFeatures(cluster).collectList()
+                .map(f -> nc.toBuilder().features(f).build())
         ).doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e)
         ).onErrorResume(
