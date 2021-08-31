@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.topics;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.pages.ConnectorsView;
+import com.provectus.kafka.ui.helpers.Helpers;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,14 +12,18 @@ import static com.provectus.kafka.ui.topics.TopicTests.SECOND_LOCAL;
 
 public class ConnectorsTests extends BaseTest {
 
+    public static final String LOCAL = "local";
     public static final String SOURCE_CONNECTOR = "source_postgres_activities";
-    public static final String SINK_CONNECTOR = "sink_postgres_activities";
+    public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
+    public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
+    public static final String FIRST = "first";
 
     @SneakyThrows
     @DisplayName("should create a connector")
     @Test
     void createConnector() {
-        pages.openConnectorsList(SECOND_LOCAL)
+        Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
+        pages.openConnectorsList(LOCAL)
                 .isOnPage()
                 .clickCreateConnectorButton()
                 .setConnectorConfig(
@@ -26,6 +31,8 @@ public class ConnectorsTests extends BaseTest {
                         FileUtils.getResourceAsString("sink_activities.json")
                 )
                 .connectorIsVisible();
+        Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL,TOPIC_FOR_CONNECTOR);
+        Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
     }
     //tbd
     @SneakyThrows
