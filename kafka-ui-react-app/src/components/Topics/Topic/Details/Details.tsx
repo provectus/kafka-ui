@@ -26,7 +26,6 @@ interface Props extends Topic, TopicDetails {
   topicName: TopicName;
   isInternal: boolean;
   isDeleted: boolean;
-  fetchTopicsList: (params: GetTopicsRequest) => void;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -36,14 +35,9 @@ const Details: React.FC<Props> = ({
   topicName,
   isInternal,
   isDeleted,
-  fetchTopicsList,
   deleteTopic,
   clearTopicMessages,
 }) => {
-  React.useEffect(() => {
-    fetchTopicsList({ clusterName });
-  }, []);
-
   const history = useHistory();
   const dispatch = useDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =
