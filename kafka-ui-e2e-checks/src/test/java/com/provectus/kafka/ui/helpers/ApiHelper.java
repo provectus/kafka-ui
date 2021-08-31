@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import com.provectus.kafka.ui.api.*;
 import com.provectus.kafka.ui.api.model.*;
 import com.provectus.kafka.ui.api.api.TopicsApi;
+import com.provectus.kafka.ui.api.api.KafkaConnectApi;
 
 import java.util.List;
 
@@ -44,4 +45,16 @@ public class ApiHelper {
         topicApi().deleteTopic(clusterName,topicName).block();
     }
 
+    @SneakyThrows
+    private KafkaConnectApi connectorApi(){
+        ApiClient defaultClient = new ApiClient();
+        defaultClient.setBasePath(baseURL);
+        KafkaConnectApi connectorsApi = new KafkaConnectApi(defaultClient);
+        return connectorsApi;
+    }
+
+    @SneakyThrows
+    public void deleteConnector(String clusterName, String connectName, String connectorName) {
+        connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+    }
 }
