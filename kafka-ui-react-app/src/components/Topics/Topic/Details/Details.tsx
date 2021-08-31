@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { GetTopicsRequest, Topic, TopicDetails } from 'generated-sources';
+import { Topic, TopicDetails } from 'generated-sources';
 import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
 import {
   clusterTopicSettingsPath,
