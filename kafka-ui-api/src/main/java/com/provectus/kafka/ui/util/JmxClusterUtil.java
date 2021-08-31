@@ -36,10 +36,15 @@ public class JmxClusterUtil {
   private final KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
   @SneakyThrows
-  public List<Metric> getJmxMetrics(String host, int port,
+  public List<Metric> getJmxMetrics(String host, int port, boolean jmxSsl,
                                     @Nullable String username, @Nullable String password) {
     String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
-    final var connectionInfo = new JmxConnectionInfo(jmxUrl, username, password);
+    final var connectionInfo = JmxConnectionInfo.builder()
+            .url(jmxUrl)
+            .ssl(jmxSsl)
+            .username(username)
+            .password(password)
+            .build();
     JMXConnector srv;
     try {
       srv = pool.borrowObject(connectionInfo);

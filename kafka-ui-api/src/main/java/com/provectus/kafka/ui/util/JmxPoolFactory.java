@@ -23,7 +23,10 @@ public class JmxPoolFactory extends BaseKeyedPooledObjectFactory<JmxConnectionIn
     if (StringUtils.isNotEmpty(info.getUsername()) && StringUtils.isNotEmpty(info.getPassword())) {
       env.put("jmx.remote.credentials", new String[]{info.getUsername(), info.getPassword()});
     }
-    env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+
+    if (info.isSsl()) {
+      env.put("com.sun.jndi.rmi.factory.socket", new SslRMIClientSocketFactory());
+    }
 
     return JMXConnectorFactory.connect(new JMXServiceURL(info.getUrl()), env);
   }

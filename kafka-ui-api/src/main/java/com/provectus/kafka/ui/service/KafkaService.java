@@ -634,7 +634,7 @@ public class KafkaService {
     return clustersStorage.getClusterByName(clusterName)
         .filter(c -> c.getJmxPort() != null)
         .filter(c -> c.getJmxPort() > 0)
-        .map(c -> jmxClusterUtil.getJmxMetrics(node.host(), c.getJmxPort(),
+        .map(c -> jmxClusterUtil.getJmxMetrics(node.host(), c.getJmxPort(), c.isJmxSsl(),
                 c.getJmxUsername(), c.getJmxPassword()))
         .orElse(Collections.emptyList());
   }
