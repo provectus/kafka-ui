@@ -39,6 +39,7 @@ describe('Details', () => {
                 isInternal={mockInternalTopicPayload}
                 deleteTopic={mockDelete}
                 clearTopicMessages={mockClearTopicMessages}
+                fetchTopicsList={jest.fn()}
                 isDeleted={false}
               />
             </ClusterContext.Provider>
@@ -70,6 +71,7 @@ describe('Details', () => {
                 isInternal={mockExternalTopicPayload}
                 deleteTopic={mockDelete}
                 clearTopicMessages={mockClearTopicMessages}
+                fetchTopicsList={jest.fn()}
                 isDeleted={false}
               />
             </ClusterContext.Provider>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { Topic, TopicDetails } from 'generated-sources';
+import { GetTopicsRequest, Topic, TopicDetails } from 'generated-sources';
 import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
 import {
   clusterTopicSettingsPath,
@@ -13,6 +13,8 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import { useDispatch } from 'react-redux';
+import { deleteTopicAction } from 'redux/actions';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -24,6 +26,7 @@ interface Props extends Topic, TopicDetails {
   topicName: TopicName;
   isInternal: boolean;
   isDeleted: boolean;
+  fetchTopicsList: (params: GetTopicsRequest) => void;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -33,10 +36,16 @@ const Details: React.FC<Props> = ({
   topicName,
   isInternal,
   isDeleted,
+  fetchTopicsList,
   deleteTopic,
   clearTopicMessages,
 }) => {
+  React.useEffect(() => {
+    fetchTopicsList({ clusterName });
+  }, []);
+
   const history = useHistory();
+  const dispatch = useDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
@@ -44,8 +53,10 @@ const Details: React.FC<Props> = ({
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
   }, [clusterName, topicName]);
+
   React.useEffect(() => {
     if (isDeleted) {
+      dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
   }, [isDeleted]);
