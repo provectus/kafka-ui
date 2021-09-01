@@ -2,13 +2,10 @@ package com.provectus.kafka.ui.topics;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
-import com.provectus.kafka.ui.pages.ConnectorsView;
 import com.provectus.kafka.ui.helpers.Helpers;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static com.provectus.kafka.ui.topics.TopicTests.SECOND_LOCAL;
 
 public class ConnectorsTests extends BaseTest {
 
@@ -50,11 +47,15 @@ public class ConnectorsTests extends BaseTest {
     @DisplayName("should delete connector")
     @Test
     void deleteConnector() {
-        pages.openConnectorsList(SECOND_LOCAL)
+        Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
+        Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST, SINK_CONNECTOR,
+                FileUtils.getResourceAsString("create_connector_api_config.json"));
+        pages.openConnectorsList(LOCAL)
                 .isOnPage()
-                .openConnector(SOURCE_CONNECTOR);
-        pages.openConnectorsView(SECOND_LOCAL, SOURCE_CONNECTOR)
+                .openConnector(SINK_CONNECTOR);
+        pages.openConnectorsView(LOCAL, SINK_CONNECTOR)
                 .clickDeleteButton();
-        pages.openConnectorsList(SECOND_LOCAL).isNotVisible(SOURCE_CONNECTOR);
+        pages.openConnectorsList(LOCAL).isNotVisible(SINK_CONNECTOR);
+        Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
     }
 }
