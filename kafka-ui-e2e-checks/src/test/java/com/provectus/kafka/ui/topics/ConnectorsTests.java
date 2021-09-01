@@ -36,11 +36,18 @@ public class ConnectorsTests extends BaseTest {
     @DisplayName("should update a connector")
     @Test
     void updateConnector() {
-        pages.openConnectorsList(SECOND_LOCAL)
+        Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
+        Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_CONNECTOR,
+                FileUtils.getResourceAsString("message_content.json"), " ");
+        Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST, SINK_CONNECTOR,
+                FileUtils.getResourceAsString("create_connector_api_config.json"));
+        pages.openConnectorsList(LOCAL)
                 .isOnPage()
-                .openConnector(SOURCE_CONNECTOR);
-        pages.openConnectorsView(SECOND_LOCAL, SOURCE_CONNECTOR)
+                .openConnector(SINK_CONNECTOR);
+        pages.openConnectorsView(LOCAL, SINK_CONNECTOR)
                 .openEditConfig();
+         Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
+         Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
     }
 
     @SneakyThrows

@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.helpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.api.api.MessagesApi;
 import lombok.SneakyThrows;
 
 import com.provectus.kafka.ui.api.*;
@@ -68,5 +69,21 @@ public class ApiHelper {
         Map<String, Object> configMap = new ObjectMapper().readValue(configJson, HashMap.class);
         connector.setConfig(configMap);
         connectorApi().createConnector(clusterName, connectName, connector).block();
+    }
+
+    @SneakyThrows
+    private MessagesApi messageApi() {
+        ApiClient defaultClient = new ApiClient();
+        defaultClient.setBasePath(baseURL);
+        MessagesApi messagesApi = new MessagesApi(defaultClient);
+        return messagesApi;
+    }
+
+    @SneakyThrows
+    public void sendMessage(String clusterName, String topicName, String messageContentJson, String messageKey){
+        CreateTopicMessage createMessage = new CreateTopicMessage();
+        createMessage.setContent(messageContentJson);
+        createMessage.setKey(messageKey);
+        messageApi().sendTopicMessages(clusterName, topicName, createMessage).block();
     }
 }
