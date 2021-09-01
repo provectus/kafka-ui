@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.helpers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 
 import com.provectus.kafka.ui.api.*;
@@ -7,7 +8,9 @@ import com.provectus.kafka.ui.api.model.*;
 import com.provectus.kafka.ui.api.api.TopicsApi;
 import com.provectus.kafka.ui.api.api.KafkaConnectApi;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -56,5 +59,14 @@ public class ApiHelper {
     @SneakyThrows
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
         connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+    }
+
+    @SneakyThrows
+    public void createConnector(String clusterName, String connectName, String connectorName, String configJson) {
+        NewConnector connector = new NewConnector();
+        connector.setName(connectorName);
+        Map<String, Object> configMap = new ObjectMapper().readValue(configJson, HashMap.class);
+        connector.setConfig(configMap);
+        connectorApi().createConnector(clusterName, connectName, connector).block();
     }
 }
