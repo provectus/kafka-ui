@@ -11,7 +11,7 @@
 
     <artifactId>kafka-ui-e2e-checks</artifactId>
     <properties>
-        <kafka-ui-contract>0.1.1-SNAPSHOT</kafka-ui-contract>
+	<kafka-ui-contract>${project.version}</kafka-ui-contract>
         <junit.version>5.7.0</junit.version>
         <aspectj.version>1.9.6</aspectj.version>
         <allure.version>2.13.7</allure.version>
