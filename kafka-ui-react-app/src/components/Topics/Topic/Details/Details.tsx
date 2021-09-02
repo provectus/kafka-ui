@@ -13,6 +13,8 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import { useDispatch } from 'react-redux';
+import { deleteTopicAction } from 'redux/actions';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -37,6 +39,7 @@ const Details: React.FC<Props> = ({
   clearTopicMessages,
 }) => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
@@ -44,8 +47,10 @@ const Details: React.FC<Props> = ({
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
   }, [clusterName, topicName]);
+
   React.useEffect(() => {
     if (isDeleted) {
+      dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
   }, [isDeleted]);
