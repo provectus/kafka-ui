@@ -28,6 +28,9 @@ public class ClustersProperties {
     String protobufMessageName;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
+    boolean jmxSsl;
+    String jmxUsername;
+    String jmxPassword;
     Properties properties;
     boolean readOnly = false;
     boolean disableLogDirsCollection = false;
