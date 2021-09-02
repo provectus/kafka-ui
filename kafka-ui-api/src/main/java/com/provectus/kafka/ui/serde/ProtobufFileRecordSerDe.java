@@ -6,8 +6,6 @@ import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.model.MessageSchema;
 import com.provectus.kafka.ui.model.TopicMessageSchema;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
-import com.provectus.kafka.ui.serde.schemaregistry.MessageFormatter;
-import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -39,7 +37,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     this.protobufSchemaPath = protobufSchemaPath;
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
       this.protobufSchema = new ProtobufSchema(
-          lines.collect(Collectors.joining())
+          lines.collect(Collectors.joining("\n"))
       ).copy(messageName);
     }
   }
