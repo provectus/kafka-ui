@@ -1,18 +1,7 @@
 import styled from 'styled-components';
 
-export enum ButtonType {
-  PRIMARY = 'PRIMARY',
-  SECONDARY = 'SECONDARY',
-}
-
-export enum ButtonSize {
-  S = 'S',
-  M = 'M',
-  L = 'L',
-}
-
 const buttonStyles = {
-  PRIMARY: {
+  primary: {
     backgroundColor: {
       normal: '#4F4FFF',
       hover: '#1717CF',
@@ -25,7 +14,7 @@ const buttonStyles = {
       active: '#1414B8',
     },
   },
-  SECONDARY: {
+  secondary: {
     backgroundColor: {
       normal: '#F1F2F3',
       hover: '#E3E6E8',
@@ -51,8 +40,8 @@ const buttonStyles = {
 };
 
 interface Props {
-  buttonType: ButtonType;
-  buttonSize: ButtonSize;
+  buttonType: 'primary' | 'secondary';
+  buttonSize: 'S' | 'M' | 'L';
   isInverted?: boolean;
 }
 
