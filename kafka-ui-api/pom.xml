@@ -4,7 +4,7 @@
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>0.1.1-SNAPSHOT</version>
+        <version>0.2.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
