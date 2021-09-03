@@ -16,6 +16,9 @@ public class KafkaCluster {
   private final String name;
   private final String version;
   private final Integer jmxPort;
+  private final boolean jmxSsl;
+  private final String jmxUsername;
+  private final String jmxPassword;
   private final String bootstrapServers;
   private final String zookeeper;
   private final InternalSchemaRegistry schemaRegistry;
