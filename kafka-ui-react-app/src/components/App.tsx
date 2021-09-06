@@ -11,6 +11,8 @@ import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
 import Alert from 'components/Alert/Alert';
 import 'components/App.scss';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 export interface AppProps {
   isClusterListFetched?: boolean;
@@ -45,81 +47,83 @@ const App: React.FC<AppProps> = ({
   }, [fetchClustersList]);
 
   return (
-    <div
-      className={cx('Layout', { 'Layout--sidebarVisible': isSidebarVisible })}
-    >
-      <nav
-        className="navbar is-fixed-top is-white Layout__header"
-        role="navigation"
-        aria-label="main navigation"
+    <ThemeProvider theme={theme}>
+      <div
+        className={cx('Layout', { 'Layout--sidebarVisible': isSidebarVisible })}
       >
-        <div className="navbar-brand">
-          <div
-            className={cx('navbar-burger', 'ml-0', {
-              'is-active': isSidebarVisible,
-            })}
-            onClick={onBurgerClick}
-            onKeyDown={onBurgerClick}
-            role="button"
-            tabIndex={0}
-          >
-            <span />
-            <span />
-            <span />
+        <nav
+          className="navbar is-fixed-top is-white Layout__header"
+          role="navigation"
+          aria-label="main navigation"
+        >
+          <div className="navbar-brand">
+            <div
+              className={cx('navbar-burger', 'ml-0', {
+                'is-active': isSidebarVisible,
+              })}
+              onClick={onBurgerClick}
+              onKeyDown={onBurgerClick}
+              role="button"
+              tabIndex={0}
+            >
+              <span />
+              <span />
+              <span />
+            </div>
+
+            <a className="navbar-item title is-5 is-marginless" href="/ui">
+              UI for Apache Kafka
+            </a>
+
+            <div className="navbar-item">
+              <Version tag={GIT_TAG} commit={GIT_COMMIT} />
+            </div>
           </div>
+        </nav>
 
-          <a className="navbar-item title is-5 is-marginless" href="/ui">
-            UI for Apache Kafka
-          </a>
-
-          <div className="navbar-item">
-            <Version tag={GIT_TAG} commit={GIT_COMMIT} />
-          </div>
-        </div>
-      </nav>
-
-      <main className="Layout__container">
-        <div className="Layout__sidebar has-shadow has-background-white">
-          <Nav
-            clusters={clusters}
-            isClusterListFetched={isClusterListFetched}
-          />
-        </div>
-        <div
-          className="Layout__sidebarOverlay is-overlay"
-          onClick={closeSidebar}
-          onKeyDown={closeSidebar}
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-        {isClusterListFetched ? (
-          <Switch>
-            <Route
-              exact
-              path={['/', '/ui', '/ui/clusters']}
-              component={Dashboard}
+        <main className="Layout__container">
+          <div className="Layout__sidebar has-shadow has-background-white">
+            <Nav
+              clusters={clusters}
+              isClusterListFetched={isClusterListFetched}
             />
-            <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-          </Switch>
-        ) : (
-          <PageLoader fullHeight />
-        )}
-      </main>
-
-      <div className="Layout__alerts">
-        {alerts.map(({ id, type, title, message, response, createdAt }) => (
-          <Alert
-            key={id}
-            id={id}
-            type={type}
-            title={title}
-            message={message}
-            response={response}
-            createdAt={createdAt}
+          </div>
+          <div
+            className="Layout__sidebarOverlay is-overlay"
+            onClick={closeSidebar}
+            onKeyDown={closeSidebar}
+            tabIndex={-1}
+            aria-hidden="true"
           />
-        ))}
+          {isClusterListFetched ? (
+            <Switch>
+              <Route
+                exact
+                path={['/', '/ui', '/ui/clusters']}
+                component={Dashboard}
+              />
+              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
+            </Switch>
+          ) : (
+            <PageLoader fullHeight />
+          )}
+        </main>
+
+        <div className="Layout__alerts">
+          {alerts.map(({ id, type, title, message, response, createdAt }) => (
+            <Alert
+              key={id}
+              id={id}
+              type={type}
+              title={title}
+              message={message}
+              response={response}
+              createdAt={createdAt}
+            />
+          ))}
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 };
 
