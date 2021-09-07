@@ -34,7 +34,8 @@ public class KafkaCluster {
   private final Throwable lastKafkaException;
   private final Throwable lastZookeeperException;
   private final Path protobufFile;
-  private final Map<String, String> protobufMessageName;
+  private final String protobufMessageName;
+  private final Map<String, String> protobufMessageNameByTopic;
   private final Properties properties;
   private final Boolean readOnly;
   private final Boolean disableLogDirsCollection;

@@ -23,8 +23,8 @@ kafka:
   #      name: localUsingProtobufFile
   #      bootstrapServers: localhost:9092
   #      protobufFile: messages.proto
-  #      protobufMessageName:
-  #        _default: GenericMessage
+  #      protobufMessageName: GenericMessage
+  #      protobufMessageNameByTopic:
   #        input-topic: InputMessage
   #        output-topic: OutputMessage
   admin-client-timeout: 5000

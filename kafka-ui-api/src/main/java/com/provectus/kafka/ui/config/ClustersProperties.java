@@ -26,7 +26,8 @@ public class ClustersProperties {
     String schemaNameTemplate = "%s-value";
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
-    Map<String, String> protobufMessageName;
+    String protobufMessageName;
+    Map<String, String> protobufMessageNameByTopic;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
     boolean jmxSsl;

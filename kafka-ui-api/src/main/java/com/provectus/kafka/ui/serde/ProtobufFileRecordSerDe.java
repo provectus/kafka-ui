@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,7 +29,6 @@ import org.apache.kafka.common.utils.Bytes;
 
 //TODO: currently we assume that keys for this serde are always string - need to discuss if it is ok
 public class ProtobufFileRecordSerDe implements RecordSerDe {
-  public static final String TOPICS_DEFAULT_MESSAGE_NAME = "_default";
   private final ProtobufSchema protobufSchema;
   private final ObjectMapper objectMapper;
   private final Path protobufSchemaPath;
@@ -36,15 +36,15 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final Map<String, String> messageNameMap;
 
   public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
-                                 ObjectMapper objectMapper) throws IOException {
+                                 String defaultMessageName, ObjectMapper objectMapper)
+      throws IOException {
     this.objectMapper = objectMapper;
     this.protobufSchemaPath = protobufSchemaPath;
-    this.messageNameMap = messageNameMap;
+    this.messageNameMap = messageNameMap != null ? messageNameMap : Collections.emptyMap();
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
       var schema = new ProtobufSchema(
-              lines.collect(Collectors.joining("\n"))
+          lines.collect(Collectors.joining("\n"))
       );
-      var defaultMessageName = messageNameMap.get(TOPICS_DEFAULT_MESSAGE_NAME);
       if (defaultMessageName != null) {
         this.protobufSchema = schema.copy(defaultMessageName);
       } else {
@@ -97,7 +97,10 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     if (data == null) {
       return new ProducerRecord<>(topic, partition, Objects.requireNonNull(key).getBytes(), null);
     }
-    DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
+    var messageName = messageNameMap.get(topic);
+    DynamicMessage.Builder builder = messageName != null
+        ? protobufSchema.newMessageBuilder(messageName)
+        : protobufSchema.newMessageBuilder();
     try {
       JsonFormat.parser().merge(data, builder);
       final DynamicMessage message = builder.build();
