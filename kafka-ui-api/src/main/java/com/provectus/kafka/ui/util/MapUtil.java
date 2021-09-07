@@ -2,14 +2,13 @@ package com.provectus.kafka.ui.util;
 
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.apache.commons.lang3.math.NumberUtils;
 
 public class MapUtil {
 
   private MapUtil() {
   }
 
-  public static <K,V> Map<K,V> removeNullValues(Map<K,V> map) {
+  public static <K, V> Map<K, V> removeNullValues(Map<K, V> map) {
     return map.entrySet().stream()
         .filter(e -> e.getValue() != null)
         .collect(
