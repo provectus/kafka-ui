@@ -31,6 +31,7 @@ import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import com.provectus.kafka.ui.util.JmxMetricsName;
 import com.provectus.kafka.ui.util.JmxMetricsValueName;
+import com.provectus.kafka.ui.util.MapUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -396,7 +397,7 @@ public class KafkaService {
         ac.getAdminClient()
             .listConsumerGroupOffsets(consumerGroupId)
             .partitionsToOffsetAndMetadata()
-    ).flatMap(ClusterUtil::toMono);
+    ).flatMap(ClusterUtil::toMono).map(MapUtil::removeNullValues);
   }
 
   public Map<TopicPartition, Long> topicPartitionsEndOffsets(
