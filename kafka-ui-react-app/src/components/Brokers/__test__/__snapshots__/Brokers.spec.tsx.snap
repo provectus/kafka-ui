@@ -75,265 +75,258 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
       <div
         className="section"
       >
-        <MetricsWrapper
-          title="Uptime"
+        <div
+          className="metrics-box mb-2"
         >
-          <div
-            className="metrics-box mb-2"
+          <MetricsWrapper
+            title="Uptime"
+            wrapperClassName="is-flex-grow-1"
           >
             <div
-              className="box"
+              className="is-flex-grow-1"
             >
               <h5
-                className="subtitle is-6"
+                className="is-7 has-text-weight-medium mb-2"
               >
                 Uptime
               </h5>
               <div
-                className="level"
+                className="box"
               >
-                <Indicator
-                  className="is-one-third"
-                  label="Total Brokers"
+                <div
+                  className="level"
                 >
-                  <div
-                    className="level-item is-one-third"
+                  <Indicator
+                    className="is-one-third"
+                    label="Total Brokers"
                   >
                     <div
-                      title="Total Brokers"
+                      className="level-item is-one-third"
                     >
-                      <p
-                        className="heading"
-                      >
-                        Total Brokers
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Active Controllers"
-                >
-                  <div
-                    className="level-item is-one-third"
-                  >
-                    <div
-                      title="Active Controllers"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Active Controllers
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Zookeeper Status"
-                >
-                  <div
-                    className="level-item is-one-third"
-                  >
-                    <div
-                      title="Zookeeper Status"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Zookeeper Status
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        <span
-                          className="tag is-danger"
+                      <div>
+                        <p
+                          className="is-size-8"
                         >
-                          Offline
-                        </span>
-                      </p>
+                          Total Brokers
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          0
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Version"
-                >
-                  <div
-                    className="level-item is-one-third"
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Active Controllers"
                   >
                     <div
-                      title="Version"
+                      className="level-item is-one-third"
                     >
-                      <p
-                        className="heading"
-                      >
-                        Version
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        1
-                      </p>
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Active Controllers
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          0
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Zookeeper Status"
+                  >
+                    <div
+                      className="level-item is-one-third"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Zookeeper Status
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          <span
+                            className="tag is-danger"
+                          >
+                            Offline
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Version"
+                  >
+                    <div
+                      className="level-item is-one-third"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Version
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          1
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                </div>
               </div>
             </div>
-          </div>
-        </MetricsWrapper>
-        <MetricsWrapper
-          title="Partitions"
-        >
-          <div
-            className="metrics-box mb-2"
+          </MetricsWrapper>
+          <MetricsWrapper
+            title="Partitions"
+            wrapperClassName="is-flex-grow-1"
           >
             <div
-              className="box"
+              className="is-flex-grow-1"
             >
               <h5
-                className="subtitle is-6"
+                className="is-7 has-text-weight-medium mb-2"
               >
                 Partitions
               </h5>
               <div
-                className="level"
+                className="box"
               >
-                <Indicator
-                  label="Online"
+                <div
+                  className="level"
                 >
-                  <div
-                    className="level-item"
+                  <Indicator
+                    label="Online"
                   >
                     <div
-                      title="Online"
+                      className="level-item"
                     >
-                      <p
-                        className="heading"
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Online
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          <span
+                            className=""
+                          >
+                            0
+                          </span>
+                          <span
+                            className="has-text-weight-light"
+                          >
+                             
+                            of 
+                            0
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    label="URP"
+                    title="Under replicated partitions"
+                  >
+                    <div
+                      className="level-item"
+                    >
+                      <div
+                        title="Under replicated partitions"
                       >
-                        Online
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        <span
-                          className=""
+                        <p
+                          className="is-size-8"
+                        >
+                          URP
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
                         >
                           0
-                        </span>
-                        <span
-                          className="subtitle has-text-weight-light"
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    label="In Sync Replicas"
+                  >
+                    <div
+                      className="level-item"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
                         >
-                           
-                          of
+                          In Sync Replicas
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
                           0
-                        </span>
-                      </p>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  label="URP"
-                  title="Under replicated partitions"
-                >
-                  <div
-                    className="level-item"
+                  </Indicator>
+                  <Indicator
+                    label="Out of Sync Replicas"
                   >
                     <div
-                      title="Under replicated partitions"
+                      className="level-item"
                     >
-                      <p
-                        className="heading"
-                      >
-                        URP
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Out of Sync Replicas
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          0
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  label="In Sync Replicas"
-                >
-                  <div
-                    className="level-item"
-                  >
-                    <div
-                      title="In Sync Replicas"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        In Sync Replicas
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  label="Out of Sync Replicas"
-                >
-                  <div
-                    className="level-item"
-                  >
-                    <div
-                      title="Out of Sync Replicas"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Out of Sync Replicas
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
+                  </Indicator>
+                </div>
               </div>
             </div>
-          </div>
-        </MetricsWrapper>
-        <MetricsWrapper
-          multiline={true}
-          title="Disk Usage"
-        >
-          <div
-            className="metrics-box mb-2"
+          </MetricsWrapper>
+          <MetricsWrapper
+            multiline={true}
+            title="Disk Usage"
+            wrapperClassName="is-flex-grow-1"
           >
             <div
-              className="box"
+              className="is-flex-grow-1"
             >
               <h5
-                className="subtitle is-6"
+                className="is-7 has-text-weight-medium mb-2"
               >
                 Disk Usage
               </h5>
               <div
-                className="level level-multiline"
-              />
+                className="box"
+              >
+                <div
+                  className="level level-multiline"
+                />
+              </div>
             </div>
-          </div>
-        </MetricsWrapper>
+          </MetricsWrapper>
+        </div>
       </div>
     </Brokers>
   </Router>
@@ -424,342 +417,331 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
       <div
         className="section"
       >
-        <MetricsWrapper
-          title="Uptime"
+        <div
+          className="metrics-box mb-2"
         >
-          <div
-            className="metrics-box mb-2"
+          <MetricsWrapper
+            title="Uptime"
+            wrapperClassName="is-flex-grow-1"
           >
             <div
-              className="box"
+              className="is-flex-grow-1"
             >
               <h5
-                className="subtitle is-6"
+                className="is-7 has-text-weight-medium mb-2"
               >
                 Uptime
               </h5>
               <div
-                className="level"
+                className="box"
               >
-                <Indicator
-                  className="is-one-third"
-                  label="Total Brokers"
+                <div
+                  className="level"
                 >
-                  <div
-                    className="level-item is-one-third"
+                  <Indicator
+                    className="is-one-third"
+                    label="Total Brokers"
                   >
                     <div
-                      title="Total Brokers"
+                      className="level-item is-one-third"
                     >
-                      <p
-                        className="heading"
-                      >
-                        Total Brokers
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        1
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Active Controllers"
-                >
-                  <div
-                    className="level-item is-one-third"
-                  >
-                    <div
-                      title="Active Controllers"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Active Controllers
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        1
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Zookeeper Status"
-                >
-                  <div
-                    className="level-item is-one-third"
-                  >
-                    <div
-                      title="Zookeeper Status"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Zookeeper Status
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        <span
-                          className="tag is-success"
+                      <div>
+                        <p
+                          className="is-size-8"
                         >
-                          Online
-                        </span>
-                      </p>
+                          Total Brokers
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          1
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Version"
-                >
-                  <div
-                    className="level-item is-one-third"
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Active Controllers"
                   >
                     <div
-                      title="Version"
+                      className="level-item is-one-third"
                     >
-                      <p
-                        className="heading"
-                      >
-                        Version
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        1
-                      </p>
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Active Controllers
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          1
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Zookeeper Status"
+                  >
+                    <div
+                      className="level-item is-one-third"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Zookeeper Status
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          <span
+                            className="tag is-success"
+                          >
+                            Online
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Version"
+                  >
+                    <div
+                      className="level-item is-one-third"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Version
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          1
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                </div>
               </div>
             </div>
-          </div>
-        </MetricsWrapper>
-        <MetricsWrapper
-          title="Partitions"
-        >
-          <div
-            className="metrics-box mb-2"
+          </MetricsWrapper>
+          <MetricsWrapper
+            title="Partitions"
+            wrapperClassName="is-flex-grow-1"
           >
             <div
-              className="box"
+              className="is-flex-grow-1"
             >
               <h5
-                className="subtitle is-6"
+                className="is-7 has-text-weight-medium mb-2"
               >
                 Partitions
               </h5>
               <div
-                className="level"
+                className="box"
               >
-                <Indicator
-                  label="Online"
+                <div
+                  className="level"
                 >
-                  <div
-                    className="level-item"
+                  <Indicator
+                    label="Online"
                   >
                     <div
-                      title="Online"
+                      className="level-item"
                     >
-                      <p
-                        className="heading"
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Online
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          <span
+                            className=""
+                          >
+                            64
+                          </span>
+                          <span
+                            className="has-text-weight-light"
+                          >
+                             
+                            of 
+                            64
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    label="URP"
+                    title="Under replicated partitions"
+                  >
+                    <div
+                      className="level-item"
+                    >
+                      <div
+                        title="Under replicated partitions"
                       >
-                        Online
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        <span
-                          className=""
+                        <p
+                          className="is-size-8"
+                        >
+                          URP
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          0
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    label="In Sync Replicas"
+                  >
+                    <div
+                      className="level-item"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          In Sync Replicas
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
                         >
                           64
-                        </span>
-                        <span
-                          className="subtitle has-text-weight-light"
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                  <Indicator
+                    label="Out of Sync Replicas"
+                  >
+                    <div
+                      className="level-item"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
                         >
-                           
-                          of
-                          64
-                        </span>
-                      </p>
+                          Out of Sync Replicas
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          0
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  label="URP"
-                  title="Under replicated partitions"
-                >
-                  <div
-                    className="level-item"
-                  >
-                    <div
-                      title="Under replicated partitions"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        URP
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  label="In Sync Replicas"
-                >
-                  <div
-                    className="level-item"
-                  >
-                    <div
-                      title="In Sync Replicas"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        In Sync Replicas
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        64
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  label="Out of Sync Replicas"
-                >
-                  <div
-                    className="level-item"
-                  >
-                    <div
-                      title="Out of Sync Replicas"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Out of Sync Replicas
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        0
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
+                  </Indicator>
+                </div>
               </div>
             </div>
-          </div>
-        </MetricsWrapper>
-        <MetricsWrapper
-          multiline={true}
-          title="Disk Usage"
-        >
-          <div
-            className="metrics-box mb-2"
+          </MetricsWrapper>
+          <MetricsWrapper
+            multiline={true}
+            title="Disk Usage"
+            wrapperClassName="is-flex-grow-1"
           >
             <div
-              className="box"
+              className="is-flex-grow-1"
             >
               <h5
-                className="subtitle is-6"
+                className="is-7 has-text-weight-medium mb-2"
               >
                 Disk Usage
               </h5>
               <div
-                className="level level-multiline"
+                className="box"
               >
-                <Indicator
-                  className="is-one-third"
-                  label="Broker"
+                <div
+                  className="level level-multiline"
                 >
-                  <div
-                    className="level-item is-one-third"
+                  <Indicator
+                    className="is-one-third"
+                    label="Broker"
                   >
                     <div
-                      title="Broker"
+                      className="level-item is-one-third"
                     >
-                      <p
-                        className="heading"
-                      >
-                        Broker
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        1
-                      </p>
-                    </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Segment Size"
-                  title=""
-                >
-                  <div
-                    className="level-item is-one-third"
-                  >
-                    <div
-                      title="Segment Size"
-                    >
-                      <p
-                        className="heading"
-                      >
-                        Segment Size
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        <BytesFormatted
-                          value={60718}
+                      <div>
+                        <p
+                          className="is-size-8"
                         >
-                          <span>
-                            59KB
-                          </span>
-                        </BytesFormatted>
-                      </p>
+                          Broker
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          1
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
-                <Indicator
-                  className="is-one-third"
-                  label="Segment count"
-                >
-                  <div
-                    className="level-item is-one-third"
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Segment Size"
+                    title=""
                   >
                     <div
-                      title="Segment count"
+                      className="level-item is-one-third"
                     >
-                      <p
-                        className="heading"
+                      <div
+                        title=""
                       >
-                        Segment count
-                      </p>
-                      <p
-                        className="title has-text-centered"
-                      >
-                        64
-                      </p>
+                        <p
+                          className="is-size-8"
+                        >
+                          Segment Size
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          <BytesFormatted
+                            value={60718}
+                          >
+                            <span>
+                              59KB
+                            </span>
+                          </BytesFormatted>
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                </Indicator>
+                  </Indicator>
+                  <Indicator
+                    className="is-one-third"
+                    label="Segment count"
+                  >
+                    <div
+                      className="level-item is-one-third"
+                    >
+                      <div>
+                        <p
+                          className="is-size-8"
+                        >
+                          Segment count
+                        </p>
+                        <p
+                          className="is-size-6 has-text-weight-medium"
+                        >
+                          64
+                        </p>
+                      </div>
+                    </div>
+                  </Indicator>
+                </div>
               </div>
             </div>
-          </div>
-        </MetricsWrapper>
+          </MetricsWrapper>
+        </div>
       </div>
     </Brokers>
   </Router>

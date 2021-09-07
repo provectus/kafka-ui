@@ -14,11 +14,11 @@ describe('MetricsWrapper', () => {
 
   it('correctly renders children', () => {
     let component = shallow(<MetricsWrapper />);
-    expect(component.exists('.subtitle')).toBeFalsy();
+    expect(component.exists('.is-7')).toBeFalsy();
 
     const title = 'title';
     component = shallow(<MetricsWrapper title={title} />);
-    expect(component.exists('.subtitle')).toBeTruthy();
+    expect(component.exists('.is-7')).toBeTruthy();
     expect(component.text()).toEqual(title);
   });
 });

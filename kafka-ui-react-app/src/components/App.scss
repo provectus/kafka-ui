@@ -67,7 +67,7 @@ $navbar-height: 3.25rem;
 
     &__container {
       margin-left: initial;
-      margin-top: 1.5rem;
+      margin-top: 3.5rem;
     }
 
     &__sidebar {
@@ -93,12 +93,27 @@ $navbar-height: 3.25rem;
       }
     }
   }
+
+  .metrics-box {
+    flex-direction: column;
+  }
 }
 
 .metrics-box {
-  padding: 24px 16px;
+  padding: 1.5rem 1rem;
   background: #f1f2f3;
+
+  display: flex;
+  gap: 1rem;
   .box {
+    padding: 0;
     filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.1));
+
+    .level-item {
+      padding: 1rem;
+      &:not(:last-of-type) {
+        border-right: 1px solid #f1f2f3;
+      }
+    }
   }
 }

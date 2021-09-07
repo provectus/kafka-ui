@@ -168,7 +168,7 @@ exports[`App view matches snapshot 1`] = `
                 className="breadcrumb mb-2 pt-2"
               >
                 <ul
-                  className="py-1 px-4 py-3"
+                  className="py-3 px-4 py-3"
                 >
                   <li
                     className="is-active is-size-4 has-text-weight-medium is-capitalized"
@@ -257,104 +257,117 @@ exports[`App view matches snapshot 1`] = `
                         onlineClusters={Array []}
                       >
                         <div>
-                          <MetricsWrapper>
-                            <div
-                              className="metrics-box mb-2"
-                            >
-                              <div
-                                className="box"
-                              >
+                          <div
+                            className="metrics-box mb-2"
+                          >
+                            <MetricsWrapper>
+                              <div>
                                 <div
-                                  className="level"
+                                  className="box"
                                 >
-                                  <Indicator
-                                    label="Online Clusters"
+                                  <div
+                                    className="level"
                                   >
-                                    <div
-                                      className="level-item"
+                                    <Indicator
+                                      className="is-justify-content-start"
+                                      label={
+                                        <span
+                                          className="tag is-success"
+                                        >
+                                          Online
+                                        </span>
+                                      }
                                     >
                                       <div
-                                        title="Online Clusters"
+                                        className="level-item is-justify-content-start"
                                       >
-                                        <p
-                                          className="heading"
-                                        >
-                                          Online Clusters
-                                        </p>
-                                        <p
-                                          className="title has-text-centered"
-                                        >
-                                          <span
-                                            className="tag is-success"
+                                        <div>
+                                          <p
+                                            className="is-size-8"
                                           >
-                                            0
-                                          </span>
-                                        </p>
-                                      </div>
-                                    </div>
-                                  </Indicator>
-                                  <Indicator
-                                    label="Offline Clusters"
-                                  >
-                                    <div
-                                      className="level-item"
-                                    >
-                                      <div
-                                        title="Offline Clusters"
-                                      >
-                                        <p
-                                          className="heading"
-                                        >
-                                          Offline Clusters
-                                        </p>
-                                        <p
-                                          className="title has-text-centered"
-                                        >
-                                          <span
-                                            className="tag is-danger"
+                                            <span
+                                              className="tag is-success"
+                                            >
+                                              Online
+                                            </span>
+                                          </p>
+                                          <p
+                                            className="is-size-6 has-text-weight-medium"
                                           >
-                                            0
-                                          </span>
-                                        </p>
+                                            <span
+                                              data-testid="onlineCount"
+                                            >
+                                              0
+                                            </span>
+                                             
+                                            <span
+                                              className="has-text-grey-light is-size-8"
+                                            >
+                                              cluster
+                                            </span>
+                                          </p>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Indicator>
-                                  <Indicator
-                                    label="Hide online clusters"
-                                  >
-                                    <div
-                                      className="level-item"
+                                    </Indicator>
+                                    <Indicator
+                                      className="is-justify-content-start"
+                                      label={
+                                        <span
+                                          className="tag is-light"
+                                        >
+                                          Offline
+                                        </span>
+                                      }
                                     >
                                       <div
-                                        title="Hide online clusters"
+                                        className="level-item is-justify-content-start"
                                       >
-                                        <p
-                                          className="heading"
-                                        >
-                                          Hide online clusters
-                                        </p>
-                                        <p
-                                          className="title has-text-centered"
-                                        >
-                                          <input
-                                            checked={false}
-                                            className="switch is-rounded"
-                                            id="switchRoundedDefault"
-                                            name="switchRoundedDefault"
-                                            onChange={[Function]}
-                                            type="checkbox"
-                                          />
-                                          <label
-                                            htmlFor="switchRoundedDefault"
-                                          />
-                                        </p>
+                                        <div>
+                                          <p
+                                            className="is-size-8"
+                                          >
+                                            <span
+                                              className="tag is-light"
+                                            >
+                                              Offline
+                                            </span>
+                                          </p>
+                                          <p
+                                            className="is-size-6 has-text-weight-medium"
+                                          >
+                                            <span
+                                              data-testid="offlineCount"
+                                            >
+                                              0
+                                            </span>
+                                             
+                                            <span
+                                              className="has-text-grey-light is-size-8"
+                                            >
+                                              cluster
+                                            </span>
+                                          </p>
+                                        </div>
                                       </div>
-                                    </div>
-                                  </Indicator>
+                                    </Indicator>
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </MetricsWrapper>
+                            </MetricsWrapper>
+                          </div>
+                          <div>
+                            <input
+                              checked={false}
+                              className="switch is-rounded"
+                              id="switchRoundedDefault"
+                              name="switchRoundedDefault"
+                              onChange={[Function]}
+                              type="checkbox"
+                            />
+                            <label
+                              htmlFor="switchRoundedDefault"
+                            />
+                          </div>
                         </div>
                       </ClustersWidget>
                     </Connect(ClustersWidget)>

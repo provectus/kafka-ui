@@ -12,7 +12,7 @@ describe('ClustersWidgetContainer', () => {
     );
     it(' is empty when no online clusters', () => {
       const wrapper = mount(setupEmptyWrapper());
-      expect(wrapper.find('.is-success').text()).toBe('0');
+      expect(wrapper.find('[data-testid="onlineCount"]').text()).toBe('0');
     });
   });
 });

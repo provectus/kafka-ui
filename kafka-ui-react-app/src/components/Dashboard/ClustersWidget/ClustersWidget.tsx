@@ -42,26 +42,35 @@ const ClustersWidget: React.FC<Props> = ({
 
   return (
     <div>
-      <MetricsWrapper>
-        <Indicator label="Online Clusters">
-          <span className="tag is-success">{onlineClusters.length}</span>
-        </Indicator>
-        <Indicator label="Offline Clusters">
-          <span className="tag is-danger">{offlineClusters.length}</span>
-        </Indicator>
-        <Indicator label="Hide online clusters">
-          <input
-            type="checkbox"
-            className="switch is-rounded"
-            name="switchRoundedDefault"
-            id="switchRoundedDefault"
-            checked={showOfflineOnly}
-            onChange={handleSwitch}
-          />
-          <label htmlFor="switchRoundedDefault" />
-        </Indicator>
-      </MetricsWrapper>
-
+      <div className="metrics-box mb-2">
+        <MetricsWrapper>
+          <Indicator
+            label={<span className="tag is-success">Online</span>}
+            className="is-justify-content-start"
+          >
+            <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
+            <span className="has-text-grey-light is-size-8">cluster</span>
+          </Indicator>
+          <Indicator
+            label={<span className="tag is-light">Offline</span>}
+            className="is-justify-content-start"
+          >
+            <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
+            <span className="has-text-grey-light is-size-8">cluster</span>
+          </Indicator>
+        </MetricsWrapper>
+      </div>
+      <div>
+        <input
+          type="checkbox"
+          className="switch is-rounded"
+          name="switchRoundedDefault"
+          id="switchRoundedDefault"
+          checked={showOfflineOnly}
+          onChange={handleSwitch}
+        />
+        <label htmlFor="switchRoundedDefault" />
+      </div>
       {clusterList.map((chunkItem) => (
         <div className="columns" key={chunkItem.id}>
           {chunkItem.data.map((cluster) => (

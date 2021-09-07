@@ -45,7 +45,7 @@ const Breadcrumb: React.FC<Props> = () => {
 
   return (
     <nav className="breadcrumb mb-2 pt-2" aria-label="breadcrumbs">
-      <ul className={cn('py-1', 'px-4', { 'py-3': !links.length })}>
+      <ul className={cn('py-3', 'px-4', { 'py-3': !links.length })}>
         {links.slice(0, links.length - 1).map((link, index) => (
           <li key={link}>
             <Link to={getPathPredicate(index)}>{link}</Link>
