@@ -355,7 +355,9 @@ exports[`App view matches snapshot 1`] = `
                               </div>
                             </MetricsWrapper>
                           </div>
-                          <div>
+                          <div
+                            className="p-4"
+                          >
                             <input
                               checked={false}
                               className="switch is-rounded"
@@ -367,6 +369,11 @@ exports[`App view matches snapshot 1`] = `
                             <label
                               htmlFor="switchRoundedDefault"
                             />
+                            <span
+                              className="is-size-7"
+                            >
+                              Show only offline clusters
+                            </span>
                           </div>
                         </div>
                       </ClustersWidget>

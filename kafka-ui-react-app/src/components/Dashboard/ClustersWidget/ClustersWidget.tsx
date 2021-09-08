@@ -60,7 +60,7 @@ const ClustersWidget: React.FC<Props> = ({
           </Indicator>
         </MetricsWrapper>
       </div>
-      <div>
+      <div className="p-4">
         <input
           type="checkbox"
           className="switch is-rounded"
@@ -70,6 +70,7 @@ const ClustersWidget: React.FC<Props> = ({
           onChange={handleSwitch}
         />
         <label htmlFor="switchRoundedDefault" />
+        <span className="is-size-7">Show only offline clusters</span>
       </div>
       {clusterList.map((chunkItem) => (
         <div className="columns" key={chunkItem.id}>
