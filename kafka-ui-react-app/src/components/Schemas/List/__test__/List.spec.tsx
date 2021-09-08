@@ -66,7 +66,6 @@ describe('List', () => {
     describe('when fetching', () => {
       it('renders PageLoader', () => {
         const wrapper = mount(setupWrapper({ isFetching: true }));
-        expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeFalsy();
         expect(wrapper.exists('ListItem')).toBeFalsy();
         expect(wrapper.exists('PageLoader')).toBeTruthy();
@@ -76,7 +75,6 @@ describe('List', () => {
     describe('without schemas', () => {
       it('renders table heading without ListItem', () => {
         const wrapper = mount(setupWrapper({ isFetching: false }));
-        expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.exists('ListItem')).toBeFalsy();
       });
@@ -86,7 +84,6 @@ describe('List', () => {
       const wrapper = mount(setupWrapper({ isFetching: false, schemas }));
 
       it('renders table heading with ListItem', () => {
-        expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.find('ListItem').length).toEqual(3);
       });

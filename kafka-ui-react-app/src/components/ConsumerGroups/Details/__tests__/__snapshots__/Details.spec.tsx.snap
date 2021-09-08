@@ -4,26 +4,6 @@ exports[`Details component when consumer gruops are NOT fetched Matches the snap
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <div
-      className="level-item level-left"
-    >
-      <Breadcrumb
-        links={
-          Array [
-            Object {
-              "href": "/ui/clusters/local/consumer-groups",
-              "label": "All Consumer Groups",
-            },
-          ]
-        }
-      >
-        test
-      </Breadcrumb>
-    </div>
-  </div>
   <PageLoader />
   <ConfirmationModal
     isOpen={false}
@@ -39,26 +19,6 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <div
-      className="level-item level-left"
-    >
-      <Breadcrumb
-        links={
-          Array [
-            Object {
-              "href": "/ui/clusters/local/consumer-groups",
-              "label": "All Consumer Groups",
-            },
-          ]
-        }
-      >
-        test
-      </Breadcrumb>
-    </div>
-  </div>
   <div
     className="box"
   >

@@ -15,21 +15,7 @@ html {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: repeating-linear-gradient(
-      145deg,
-      rgba(0, 0, 0, 0.003),
-      rgba(0, 0, 0, 0.005) 5px,
-      rgba(0, 0, 0, 0) 5px,
-      rgba(0, 0, 0, 0) 10px
-    ),
-    repeating-linear-gradient(
-      -145deg,
-      rgba(0, 0, 0, 0.003),
-      rgba(0, 0, 0, 0.005) 5px,
-      rgba(0, 0, 0, 0) 5px,
-      rgba(0, 0, 0, 0) 10px
-    );
-  background-color: $light;
+  background-color: $white;
 }
 
 code {

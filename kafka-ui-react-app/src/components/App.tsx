@@ -10,7 +10,9 @@ import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
 import Alert from 'components/Alert/Alert';
+
 import 'components/App.scss';
+import Breadcrumb from './common/Breadcrumb/Breadcrumb';
 
 export interface AppProps {
   isClusterListFetched?: boolean;
@@ -93,14 +95,17 @@ const App: React.FC<AppProps> = ({
           aria-hidden="true"
         />
         {isClusterListFetched ? (
-          <Switch>
-            <Route
-              exact
-              path={['/', '/ui', '/ui/clusters']}
-              component={Dashboard}
-            />
-            <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-          </Switch>
+          <>
+            <Breadcrumb />
+            <Switch>
+              <Route
+                exact
+                path={['/', '/ui', '/ui/clusters']}
+                component={Dashboard}
+              />
+              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
+            </Switch>
+          </>
         ) : (
           <PageLoader fullHeight />
         )}

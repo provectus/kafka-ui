@@ -1,7 +1,6 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import { ConsumerGroup } from 'generated-sources';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 import ListItem from './ListItem';
 
@@ -19,8 +18,6 @@ const List: React.FC<Props> = ({ consumerGroups }) => {
 
   return (
     <div className="section">
-      <Breadcrumb>All Consumer Groups</Breadcrumb>
-
       <div className="box">
         <div>
           <div className="columns">

@@ -5,7 +5,6 @@ import {
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { Link, useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
@@ -124,7 +123,6 @@ const List: React.FC<TopicsListProps> = ({
 
   return (
     <div className="section">
-      <Breadcrumb>{showInternal ? `All Topics` : `External Topics`}</Breadcrumb>
       <div className="box">
         <div className="columns">
           <div className="column is-one-quarter is-align-items-center is-flex">
