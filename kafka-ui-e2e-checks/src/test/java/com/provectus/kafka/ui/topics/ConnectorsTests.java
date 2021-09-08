@@ -36,15 +36,19 @@ public class ConnectorsTests extends BaseTest {
     @DisplayName("should create a connector")
     @Test
     void createConnector() {
-        pages.openConnectorsList(LOCAL)
-                .isOnPage()
-                .clickCreateConnectorButton()
-                .setConnectorConfig(
-                        SINK_CONNECTOR,
-                        FileUtils.getResourceAsString("sink_activities.json")
-                )
-                .connectorIsVisible();
-        Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
+        try {
+            pages.openConnectorsList(LOCAL)
+                    .isOnPage()
+                    .clickCreateConnectorButton()
+                    .setConnectorConfig(
+                            SINK_CONNECTOR,
+                            FileUtils.getResourceAsString("sink_activities.json")
+                    )
+                    .connectorIsVisible();
+            pages.openConnectorsList(LOCAL).connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
+        } finally {
+            Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
+        }
     }
 
     @SneakyThrows
