@@ -17,13 +17,9 @@ public class ConnectorsView {
     }
 
     @Step
-    public void openEditConfig() {
+    public ConnectorUpdateView openEditConfig() {
         $(By.xpath("//a/span[text()='Edit config']")).click();
-    }
-
-    @Step
-    public void submitConfigChanges() {
-        $(By.xpath("//input[@type='submit']")).click();
+        return new ConnectorUpdateView();
     }
 
     @Step
