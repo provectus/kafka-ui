@@ -61,14 +61,15 @@ public class ConnectorsTests extends BaseTest {
         try {
             Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST,
                     CONNECTOR_FOR_UPDATE,
-                    FileUtils.getResourceAsString("update_connector_config.json"));
+                    FileUtils.getResourceAsString("create_connector_api_config.json"));
             pages.openConnectorsList(LOCAL)
                     .isOnPage()
                     .openConnector(CONNECTOR_FOR_UPDATE);
             pages.openConnectorsView(LOCAL, CONNECTOR_FOR_UPDATE)
                     .openEditConfig()
                     .updateConnectorConfig(
-                            FileUtils.getResourceAsString("create_connector_api_config.json"));
+                            FileUtils.getResourceAsString("update_connector_config.json"));
+            pages.openConnectorsList(LOCAL).connectorIsUpdatedInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATED_CONNECTOR);
         } finally {
             Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
         }
