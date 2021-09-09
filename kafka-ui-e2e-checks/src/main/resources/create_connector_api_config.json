@@ -4,7 +4,7 @@
 "connection.user": "dev_user",
 "connection.password": "12345",
 "topics": "topic_for_connector",
-"table.name.format": "sink_activities_e2e",
+"table.name.format": "sink_activities_e2e_test_connector_updating",
 "key.converter": "org.apache.kafka.connect.storage.StringConverter",
 "key.converter.schema.registry.url": "http://schemaregistry0:8085",
 "value.converter": "org.apache.kafka.connect.json.JsonConverter",
