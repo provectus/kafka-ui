@@ -4,16 +4,14 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.Helpers;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 public class ConnectorsTests extends BaseTest {
 
     public static final String LOCAL = "local";
     public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
     public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
+    public static final String TOPIC_FOR_UPDATED_CONNECTOR = "topic_for_update_connector";
     public static final String FIRST = "first";
     public static final String CONNECTOR_FOR_DELETE = "sink_postgres_activities_e2e_checks_for_delete";
     public static final String CONNECTOR_FOR_UPDATE = "sink_postgres_activities_e2e_checks_for_update";
@@ -23,13 +21,18 @@ public class ConnectorsTests extends BaseTest {
     public static void beforeAll() {
         Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
         Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_CONNECTOR,
-                FileUtils.getResourceAsString("message_content.json"), " ");
+                FileUtils.getResourceAsString("message_content_create_topic.json"), " ");
+        Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATED_CONNECTOR);
+        Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATED_CONNECTOR,
+                FileUtils.getResourceAsString("message_content_update_connector.json"), " ");
+
     }
 
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
-        Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
+      Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
+      Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATED_CONNECTOR);
     }
 
     @SneakyThrows
@@ -55,15 +58,20 @@ public class ConnectorsTests extends BaseTest {
     @DisplayName("should update a connector")
     @Test
     void updateConnector() {
-        Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST,
-                CONNECTOR_FOR_UPDATE,
-                FileUtils.getResourceAsString("create_connector_api_config.json"));
-        pages.openConnectorsList(LOCAL)
-                .isOnPage()
-                .openConnector(CONNECTOR_FOR_UPDATE);
-        pages.openConnectorsView(LOCAL, CONNECTOR_FOR_UPDATE)
-                .openEditConfig();
-         Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
+        try {
+            Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST,
+                    CONNECTOR_FOR_UPDATE,
+                    FileUtils.getResourceAsString("update_connector_config.json"));
+            pages.openConnectorsList(LOCAL)
+                    .isOnPage()
+                    .openConnector(CONNECTOR_FOR_UPDATE);
+            pages.openConnectorsView(LOCAL, CONNECTOR_FOR_UPDATE)
+                    .openEditConfig()
+                    .updateConnectorConfig(
+                            FileUtils.getResourceAsString("create_connector_api_config.json"));
+        } finally {
+            Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
+        }
     }
 
     @SneakyThrows
