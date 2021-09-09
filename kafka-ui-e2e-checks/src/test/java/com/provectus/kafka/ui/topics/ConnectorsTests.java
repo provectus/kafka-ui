@@ -23,17 +23,12 @@ public class ConnectorsTests extends BaseTest {
         Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
         Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_CONNECTOR,
                 FileUtils.getResourceAsString("message_content_create_topic.json"), " ");
-        Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATED_CONNECTOR);
-        Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATED_CONNECTOR,
-                FileUtils.getResourceAsString("message_content_update_connector.json"), " ");
-
     }
 
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
       Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
-      Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATED_CONNECTOR);
     }
 
     @SneakyThrows
@@ -60,6 +55,9 @@ public class ConnectorsTests extends BaseTest {
     @Test
     void updateConnector() {
         try {
+            Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
+            Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR,
+                    FileUtils.getResourceAsString("message_content_create_topic.json"), " ");
             Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST,
                     CONNECTOR_FOR_UPDATE,
                     FileUtils.getResourceAsString("create_connector_api_config.json"));
@@ -70,9 +68,10 @@ public class ConnectorsTests extends BaseTest {
                     .openEditConfig()
                     .updateConnectorConfig(
                             FileUtils.getResourceAsString("update_connector_config.json"));
-            pages.openConnectorsList(LOCAL).connectorIsUpdatedInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATED_CONNECTOR);
+            pages.openConnectorsList(LOCAL).connectorIsUpdatedInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
         } finally {
             Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
+            Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
         }
     }
 
