@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export interface Props {
-  liType: 'primary' | 'secondary';
+  liType: 'primary1';
   to?: string;
   activeClassName?: string;
   title?: string;
@@ -12,17 +12,18 @@ const StyledMenuItem = styled('li')<Props>`
   a {
     cursor: pointer;
     text-decoration: none;
-    color: #73848c;
     margin: 0px 0px;
     font-family: Inter, sans-serif;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
     line-height: 20px;
+    background: '#fff';
+    color: '#73848C';
 
     &.is-active {
-      background: #e3e6e8;
-      color: #171a1c;
+      background: '#E3E6E8';
+      color: '#171A1C';
     }
   }
 `;

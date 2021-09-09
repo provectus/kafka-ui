@@ -60,7 +60,7 @@ const ClusterMenu: React.FC<Props> = ({
           </li>
 
           <ClusterMenuItem
-            liType="primary"
+            liType="primary1"
             to={clusterTopicsPath(name)}
             activeClassName="is-active"
             title="Topics"
