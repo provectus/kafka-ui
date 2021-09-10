@@ -9,7 +9,14 @@ import static org.openqa.selenium.Keys.*;
 
 public class ConnectorUpdateView {
     @Step
-    public ConnectorUpdateView updateConnectorConfig(String configJson) throws InterruptedException {
+    public ConnectorUpdateView updateConnectorConfig(String configJson) {
+        String os = System.getProperty("os.name");
+        System.out.println(os);
+        if (os.equals("MacOS")){
+            $(".ace_text-input").sendKeys(COMMAND, "a");
+        }else{
+            $(".ace_text-input").sendKeys(CONTROL, "a");
+        }
         $(".ace_text-input").sendKeys(COMMAND, "a");
         $(".ace_text-input").sendKeys(Keys.BACK_SPACE);
         $(".ace_text-input").sendKeys(String.valueOf(configJson.toCharArray()));
