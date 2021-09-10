@@ -8,7 +8,7 @@ import {
 
 import ListContainer from './List/ListContainer';
 import TopicContainer from './Topic/TopicContainer';
-import NewContainer from './New/NewContainer';
+import New from './New/New';
 
 const Topics: React.FC = () => (
   <Switch>
@@ -17,11 +17,7 @@ const Topics: React.FC = () => (
       path={clusterTopicsPath(':clusterName')}
       component={ListContainer}
     />
-    <Route
-      exact
-      path={clusterTopicNewPath(':clusterName')}
-      component={NewContainer}
-    />
+    <Route exact path={clusterTopicNewPath(':clusterName')} component={New} />
     <Route
       path={clusterTopicPath(':clusterName', ':topicName')}
       component={TopicContainer}

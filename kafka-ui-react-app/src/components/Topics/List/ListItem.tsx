@@ -14,6 +14,8 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
+  selected: boolean;
+  toggleTopicSelected(topicName: TopicName): void;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
   clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
@@ -28,11 +30,14 @@ const ListItem: React.FC<ListItemProps> = ({
     replicationFactor,
     cleanUpPolicy,
   },
+  selected,
+  toggleTopicSelected,
   deleteTopic,
   clusterName,
   clearTopicMessages,
 }) => {
-  const { isReadOnly } = React.useContext(ClusterContext);
+  const { isReadOnly, isTopicDeletionAllowed } =
+    React.useContext(ClusterContext);
 
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
@@ -70,6 +75,19 @@ const ListItem: React.FC<ListItemProps> = ({
 
   return (
     <tr>
+      {!isReadOnly && (
+        <td>
+          {!internal && (
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => {
+                toggleTopicSelected(name);
+              }}
+            />
+          )}
+        </td>
+      )}
       <td className="has-text-overflow-ellipsis">
         <NavLink
           exact
@@ -110,11 +128,13 @@ const ListItem: React.FC<ListItemProps> = ({
                 <DropdownItem onClick={clearTopicMessagesHandler}>
                   <span className="has-text-danger">Clear Messages</span>
                 </DropdownItem>
-                <DropdownItem
-                  onClick={() => setDeleteTopicConfirmationVisible(true)}
-                >
-                  <span className="has-text-danger">Remove Topic</span>
-                </DropdownItem>
+                {isTopicDeletionAllowed && (
+                  <DropdownItem
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  >
+                    <span className="has-text-danger">Remove Topic</span>
+                  </DropdownItem>
+                )}
               </Dropdown>
             </div>
             <ConfirmationModal

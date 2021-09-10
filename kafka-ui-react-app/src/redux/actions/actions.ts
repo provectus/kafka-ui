@@ -25,6 +25,7 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
+  KsqlCommandResponse,
 } from 'generated-sources';
 
 export const fetchClusterStatsAction = createAsyncAction(
@@ -96,14 +97,15 @@ export const updateTopicAction = createAsyncAction(
 export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__REQUEST',
   'DELETE_TOPIC__SUCCESS',
-  'DELETE_TOPIC__FAILURE'
-)<undefined, TopicName, undefined>();
+  'DELETE_TOPIC__FAILURE',
+  'DELETE_TOPIC__CANCEL'
+)<undefined, TopicName, undefined, undefined>();
 
 export const fetchConsumerGroupsAction = createAsyncAction(
   'GET_CONSUMER_GROUPS__REQUEST',
   'GET_CONSUMER_GROUPS__SUCCESS',
   'GET_CONSUMER_GROUPS__FAILURE'
-)<undefined, ConsumerGroup[], undefined>();
+)<undefined, ConsumerGroup[], { alert?: FailurePayload }>();
 
 export const fetchConsumerGroupDetailsAction = createAsyncAction(
   'GET_CONSUMER_GROUP_DETAILS__REQUEST',
@@ -112,7 +114,7 @@ export const fetchConsumerGroupDetailsAction = createAsyncAction(
 )<
   undefined,
   { consumerGroupID: ConsumerGroupID; details: ConsumerGroupDetails },
-  undefined
+  { alert?: FailurePayload }
 >();
 
 export const deleteConsumerGroupAction = createAsyncAction(
@@ -293,4 +295,31 @@ export const updateTopicReplicationFactorAction = createAsyncAction(
   'UPDATE_REPLICATION_FACTOR__REQUEST',
   'UPDATE_REPLICATION_FACTOR__SUCCESS',
   'UPDATE_REPLICATION_FACTOR__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const fetchKsqlDbTablesAction = createAsyncAction(
+  'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
+  'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
+  'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE'
+)<
+  undefined,
+  {
+    tables: Dictionary<string>[];
+    streams: Dictionary<string>[];
+  },
+  { alert?: FailurePayload }
+>();
+
+export const executeKsqlAction = createAsyncAction(
+  'EXECUTE_KSQL__REQUEST',
+  'EXECUTE_KSQL__SUCCESS',
+  'EXECUTE_KSQL__FAILURE'
+)<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
+
+export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();
+
+export const resetConsumerGroupOffsetsAction = createAsyncAction(
+  'RESET_OFFSETS__REQUEST',
+  'RESET_OFFSETS__SUCCESS',
+  'RESET_OFFSETS__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();

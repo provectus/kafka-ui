@@ -14,6 +14,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KsqlCommand;
 import com.provectus.kafka.ui.model.KsqlCommandResponse;
 import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
+import com.provectus.kafka.ui.strategy.ksql.statement.DescribeStrategy;
 import com.provectus.kafka.ui.strategy.ksql.statement.ShowStrategy;
 import java.util.List;
 import java.util.Optional;
@@ -30,6 +31,7 @@ import reactor.test.StepVerifier;
 class KsqlServiceTest {
   private KsqlService ksqlService;
   private BaseStrategy baseStrategy;
+  private BaseStrategy alternativeStrategy;
 
   @Mock
   private ClustersStorage clustersStorage;
@@ -40,10 +42,11 @@ class KsqlServiceTest {
   @BeforeEach
   public void setUp() {
     this.baseStrategy = new ShowStrategy();
+    this.alternativeStrategy = new DescribeStrategy();
     this.ksqlService = new KsqlService(
         this.ksqlClient,
         this.clustersStorage,
-        List.of(baseStrategy)
+        List.of(baseStrategy, alternativeStrategy)
     );
   }
 
@@ -91,7 +94,7 @@ class KsqlServiceTest {
   void shouldSetHostToStrategy() {
     String clusterName = "test";
     String host = "localhost:8088";
-    KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
+    KsqlCommand command = (new KsqlCommand()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
 
     when(clustersStorage.getClusterByName(clusterName))
@@ -100,13 +103,13 @@ class KsqlServiceTest {
     when(ksqlClient.execute(any())).thenReturn(Mono.just(new KsqlCommandResponse()));
 
     ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
-    assertThat(baseStrategy.getUri()).isEqualTo(host + "/ksql");
+    assertThat(alternativeStrategy.getUri()).isEqualTo(host + "/ksql");
   }
 
   @Test
   void shouldCallClientAndReturnResponse() {
     String clusterName = "test";
-    KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
+    KsqlCommand command = (new KsqlCommand()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
     KsqlCommandResponse response = new KsqlCommandResponse().message("success");
 
@@ -117,7 +120,7 @@ class KsqlServiceTest {
 
     KsqlCommandResponse receivedResponse =
         ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
-    verify(ksqlClient, times(1)).execute(baseStrategy);
+    verify(ksqlClient, times(1)).execute(alternativeStrategy);
     assertThat(receivedResponse).isEqualTo(response);
 
   }

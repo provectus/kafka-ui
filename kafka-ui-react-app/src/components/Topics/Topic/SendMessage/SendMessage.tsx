@@ -25,7 +25,6 @@ export interface Props {
   ) => void;
   messageSchema: TopicMessageSchema | undefined;
   schemaIsFetched: boolean;
-  messageIsSent: boolean;
   messageIsSending: boolean;
   partitions: Partition[];
 }
@@ -37,7 +36,6 @@ const SendMessage: React.FC<Props> = ({
   sendTopicMessage,
   messageSchema,
   schemaIsFetched,
-  messageIsSent,
   messageIsSending,
   partitions,
 }) => {
@@ -81,11 +79,6 @@ const SendMessage: React.FC<Props> = ({
       }
     }
   }, [schemaIsFetched]);
-  React.useEffect(() => {
-    if (messageIsSent) {
-      history.push(clusterTopicMessagesPath(clusterName, topicName));
-    }
-  }, [messageIsSent]);
 
   const onSubmit = async (data: {
     key: string;
@@ -112,6 +105,7 @@ const SendMessage: React.FC<Props> = ({
           headers,
           partition,
         });
+        history.push(clusterTopicMessagesPath(clusterName, topicName));
       }
     }
   };

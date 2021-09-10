@@ -100,6 +100,7 @@ describe('List', () => {
               isReadOnly: true,
               hasKafkaConnectConfigured: true,
               hasSchemaRegistryConfigured: true,
+              isTopicDeletionAllowed: true,
             }}
           >
             {setupWrapper({ schemas: [] })}

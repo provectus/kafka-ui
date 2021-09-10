@@ -51,8 +51,11 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @BeforeEach
   void init() {
-    kafkaService = new KafkaService(null, null, null, null);
-    kafkaService.setClientTimeout(5_000);
+    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl();
+    BrokerService brokerService = new BrokerServiceImpl(adminClientService);
+    FeatureService featureService = new FeatureServiceImpl(brokerService);
+    adminClientService.setClientTimeout(5_000);
+    kafkaService = new KafkaService(null, null, null, null, adminClientService, featureService);
     offsetsResetService = new OffsetsResetService(kafkaService);
 
     createTopic(new NewTopic(topic, PARTITIONS, (short) 1));

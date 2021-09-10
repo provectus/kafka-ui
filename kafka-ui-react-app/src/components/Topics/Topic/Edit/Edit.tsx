@@ -5,6 +5,7 @@ import {
   TopicName,
   TopicConfigByName,
   TopicWithDetailedInfo,
+  TopicFormData,
 } from 'redux/interfaces';
 import { TopicConfig } from 'generated-sources';
 import { useForm, FormProvider } from 'react-hook-form';
@@ -63,6 +64,9 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
     name,
     partitions: topic.partitionCount || DEFAULTS.partitions,
     replicationFactor,
+    customParams: topic.config
+      ?.filter((el) => el.value !== el.defaultValue)
+      .map((el) => ({ name: el.name, value: el.value })),
     ...configs,
   };
 };
@@ -80,7 +84,7 @@ const Edit: React.FC<Props> = ({
 }) => {
   const defaultValues = topicParams(topic);
 
-  const methods = useForm<TopicFormDataRaw>({ defaultValues });
+  const methods = useForm<TopicFormData>({ defaultValues });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const history = useHistory();

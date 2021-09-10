@@ -1,7 +1,10 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterConsumerGroupsPath } from 'lib/paths';
+import {
+  clusterConsumerGroupResetOffsetsPath,
+  clusterConsumerGroupsPath,
+} from 'lib/paths';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
 import {
   ConsumerGroup,
@@ -11,6 +14,7 @@ import {
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useHistory } from 'react-router';
+import ClusterContext from 'components/contexts/ClusterContext';
 
 import ListItem from './ListItem';
 
@@ -42,6 +46,7 @@ const Details: React.FC<Props> = ({
   const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
     React.useState<boolean>(false);
   const history = useHistory();
+  const { isReadOnly } = React.useContext(ClusterContext);
 
   const onDelete = () => {
     setIsConfirmationModelVisible(false);
@@ -52,6 +57,10 @@ const Details: React.FC<Props> = ({
       history.push(clusterConsumerGroupsPath(clusterName));
     }
   }, [isDeleted]);
+
+  const onResetOffsets = () => {
+    history.push(clusterConsumerGroupResetOffsetsPath(clusterName, groupId));
+  };
 
   return (
     <div className="section">
@@ -72,17 +81,27 @@ const Details: React.FC<Props> = ({
 
       {isFetched ? (
         <div className="box">
-          <div className="level">
-            <div className="level-item level-right buttons">
-              <button
-                type="button"
-                className="button is-danger"
-                onClick={() => setIsConfirmationModelVisible(true)}
-              >
-                Delete consumer group
-              </button>
+          {!isReadOnly && (
+            <div className="level">
+              <div className="level-item level-right buttons">
+                <button
+                  type="button"
+                  className="button"
+                  onClick={onResetOffsets}
+                >
+                  Reset offsets
+                </button>
+                <button
+                  type="button"
+                  className="button is-danger"
+                  onClick={() => setIsConfirmationModelVisible(true)}
+                >
+                  Delete consumer group
+                </button>
+              </div>
             </div>
-          </div>
+          )}
+
           <table className="table is-striped is-fullwidth">
             <thead>
               <tr>

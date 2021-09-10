@@ -13,6 +13,8 @@ import {
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import { useDispatch } from 'react-redux';
+import { deleteTopicAction } from 'redux/actions';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -23,6 +25,7 @@ interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   isInternal: boolean;
+  isDeleted: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -31,17 +34,26 @@ const Details: React.FC<Props> = ({
   clusterName,
   topicName,
   isInternal,
+  isDeleted,
   deleteTopic,
   clearTopicMessages,
 }) => {
   const history = useHistory();
-  const { isReadOnly } = React.useContext(ClusterContext);
+  const dispatch = useDispatch();
+  const { isReadOnly, isTopicDeletionAllowed } =
+    React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
-    history.push(clusterTopicsPath(clusterName));
   }, [clusterName, topicName]);
+
+  React.useEffect(() => {
+    if (isDeleted) {
+      dispatch(deleteTopicAction.cancel());
+      history.push(clusterTopicsPath(clusterName));
+    }
+  }, [isDeleted]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
@@ -95,13 +107,15 @@ const Details: React.FC<Props> = ({
                 >
                   Clear All Messages
                 </button>
-                <button
-                  className="button is-danger"
-                  type="button"
-                  onClick={() => setDeleteTopicConfirmationVisible(true)}
-                >
-                  Delete Topic
-                </button>
+                {isTopicDeletionAllowed && (
+                  <button
+                    className="button is-danger"
+                    type="button"
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  >
+                    Delete Topic
+                  </button>
+                )}
 
                 <Link
                   to={clusterTopicSendMessagePath(clusterName, topicName)}
