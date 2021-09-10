@@ -41,7 +41,7 @@ public class ConnectorsTests extends BaseTest {
                     .clickCreateConnectorButton()
                     .setConnectorConfig(
                             SINK_CONNECTOR,
-                            FileUtils.getResourceAsString("sink_activities.json")
+                            FileUtils.getResourceAsString("config_for_create_connector.json")
                     )
                     .connectorIsVisible();
             pages.openConnectorsList(LOCAL).connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
@@ -60,14 +60,14 @@ public class ConnectorsTests extends BaseTest {
                     FileUtils.getResourceAsString("message_content_create_topic.json"), " ");
             Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST,
                     CONNECTOR_FOR_UPDATE,
-                    FileUtils.getResourceAsString("create_connector_api_config.json"));
+                    FileUtils.getResourceAsString("config_for_create_connector_via_api.json"));
             pages.openConnectorsList(LOCAL)
                     .isOnPage()
                     .openConnector(CONNECTOR_FOR_UPDATE);
             pages.openConnectorsView(LOCAL, CONNECTOR_FOR_UPDATE)
                     .openEditConfig()
                     .updateConnectorConfig(
-                            FileUtils.getResourceAsString("update_connector_config.json"));
+                            FileUtils.getResourceAsString("config_for_update_connector.json"));
             pages.openConnectorsList(LOCAL).connectorIsUpdatedInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
         } finally {
             Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
