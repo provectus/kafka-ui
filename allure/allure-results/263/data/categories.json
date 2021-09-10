@@ -1,0 +1,60 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "500 Internal Server Error from DELETE http://localhost:8080/api/clusters/local/connects/first/connectors/sink_postgres_activities_e2e_checks",
+      "children" : [ {
+        "name" : "should create a connector",
+        "uid" : "b8ae1d8db85d8734",
+        "parentUid" : "f54235a09d1779bae0a957765593dae8",
+        "status" : "broken",
+        "time" : {
+          "start" : 1631287116902,
+          "stop" : 1631287128735,
+          "duration" : 11833
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "f54235a09d1779bae0a957765593dae8"
+    }, {
+      "name" : "500 Internal Server Error from POST http://localhost:8080/api/clusters/local/connects/first/connectors",
+      "children" : [ {
+        "name" : "should delete connector",
+        "uid" : "3c192bdff4fa3c79",
+        "parentUid" : "c07f396d6aa9926c239e08c9513e6f61",
+        "status" : "broken",
+        "time" : {
+          "start" : 1631287128769,
+          "stop" : 1631287129108,
+          "duration" : 339
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "c07f396d6aa9926c239e08c9513e6f61"
+    }, {
+      "name" : "500 Internal Server Error from DELETE http://localhost:8080/api/clusters/local/connects/first/connectors/sink_postgres_activities_e2e_checks_for_update",
+      "children" : [ {
+        "name" : "should update a connector",
+        "uid" : "bb26897ab3b9d299",
+        "parentUid" : "da16ba7801366a35c92effa2d6d909c9",
+        "status" : "broken",
+        "time" : {
+          "start" : 1631287129123,
+          "stop" : 1631287129655,
+          "duration" : 532
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "da16ba7801366a35c92effa2d6d909c9"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
