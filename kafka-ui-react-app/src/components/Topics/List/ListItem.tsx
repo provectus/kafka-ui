@@ -75,17 +75,19 @@ const ListItem: React.FC<ListItemProps> = ({
 
   return (
     <tr>
-      <td>
-        {!internal && (
-          <input
-            type="checkbox"
-            checked={selected}
-            onChange={() => {
-              toggleTopicSelected(name);
-            }}
-          />
-        )}
-      </td>
+      {!isReadOnly && (
+        <td>
+          {!internal && (
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => {
+                toggleTopicSelected(name);
+              }}
+            />
+          )}
+        </td>
+      )}
       <td className="has-text-overflow-ellipsis">
         <NavLink
           exact
