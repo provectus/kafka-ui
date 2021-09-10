@@ -11,7 +11,7 @@ import {
   clusterKsqlDbPath,
 } from 'lib/paths';
 
-import { ClusterMenuItem } from './ClusterMenuItem/ClusterMenuItem';
+import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';
 import DefaultClusterIcon from './DefaultClusterIcon';
 import ClusterStatusIcon from './ClusterStatusIcon';
 
@@ -50,7 +50,7 @@ const ClusterMenu: React.FC<Props> = ({
             </NavLink>
           </li>
           <ClusterMenuItem
-            liType="primary1"
+            liType="primary"
             to={clusterTopicsPath(name)}
             activeClassName="is-active"
             title="Topics"

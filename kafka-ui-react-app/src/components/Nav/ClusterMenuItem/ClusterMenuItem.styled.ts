@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export interface Props {
-  liType: 'primary1';
+  liType: 'primary';
   to?: string;
   activeClassName?: string;
   title?: string;
