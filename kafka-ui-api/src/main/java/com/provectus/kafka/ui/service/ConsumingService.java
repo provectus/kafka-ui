@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
@@ -94,16 +95,15 @@ public class ConsumingService {
           recordDeserializer
       );
     }
-    if (!StringUtils.isEmpty(jsFilterFn)) {
-      evalJsFilterFn(jsFilterFn);
-    }
+    String filterFnName = declareJsFilterFn(jsFilterFn);
     return Flux.create(emitter)
-        .filter(event -> jsFilterTopicMessageEvent(event, jsFilterFn))
+        .filter(event -> jsFilterTopicMessageEvent(event, filterFnName))
         .map(ClusterUtil::toTopicMessageEvent)
         .filter(m -> filterTopicMessage(m, query))
         .takeWhile(new FilterTopicMessageEvents(recordsLimit))
         .subscribeOn(Schedulers.elastic())
-        .share();
+        .share()
+        .doFinally((s) -> removeJsFilterFn(filterFnName));
   }
 
   public Mono<Map<TopicPartition, Long>> offsetsForDeletion(KafkaCluster cluster, String topicName,
@@ -130,18 +130,32 @@ public class ConsumingService {
         || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }
 
-  private void evalJsFilterFn(String jsFilterFn) {
+  private String declareJsFilterFn(String jsFilterFn) {
     try {
-      jsEngine.eval(jsFilterFn);
+      if (!StringUtils.isEmpty(jsFilterFn)) {
+        String name = "fn" + UUID.randomUUID().toString().replace("-", "");
+        jsEngine.eval("var " + name + " = " + jsFilterFn);
+        return name;
+      }
+      return null;
+    } catch (ScriptException e) {
+      throw new UnprocessableEntityException(getMessageWithJsFilterFnTip(e.getMessage()));
+    }
+  }
+
+  private void removeJsFilterFn(String jsFilterFnName) {
+    try {
+      if (jsFilterFnName != null) {
+        jsEngine.eval(jsFilterFnName + " = undefined;");
+      }
     } catch (ScriptException e) {
       throw new UnprocessableEntityException(getMessageWithJsFilterFnTip(e.getMessage()));
     }
   }
 
   private boolean jsFilterTopicMessageEvent(InternalTopicMessageEvent messageEvent,
-                                            String jsFilterFn) {
-    if (StringUtils.isEmpty(jsFilterFn)
-        || !messageEvent.getType().equals(TopicMessageEventType.MESSAGE)) {
+                                            String filterFnName) {
+    if (filterFnName == null || !messageEvent.getType().equals(TopicMessageEventType.MESSAGE)) {
       return true;
     }
 
@@ -150,7 +164,7 @@ public class ConsumingService {
     var content = JsonNodeUtil.getJsonNodeValue(message.getContent());
 
     try {
-      Object result = jsInvocable.invokeFunction("filter", key, content,
+      Object result = jsInvocable.invokeFunction(filterFnName, key, content,
           message.getHeaders(), message.getOffset(), message.getPartition());
       return result.toString().equals("true");
     } catch (NoSuchMethodException | ScriptException e) {
@@ -160,6 +174,6 @@ public class ConsumingService {
 
   private String getMessageWithJsFilterFnTip(String message) {
     return message + ". Example of filter function: "
-        + "\"function filter(key, content, headers, offset, partition) { return offset != 0; }\"";
+        + "\"function(key, content, headers, offset, partition) { return offset != 0; }\"";
   }
 }

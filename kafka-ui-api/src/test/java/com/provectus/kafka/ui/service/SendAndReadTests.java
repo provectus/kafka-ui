@@ -447,7 +447,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForKey() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return key.indexOf('key') != -1; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key1"),
@@ -466,7 +466,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForContent() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return content.length > 4; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().content("kafka"),
@@ -485,7 +485,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForObjectKey() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return key.value > 100; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("{\"value\":10}"),
@@ -504,7 +504,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForObjectContent() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return content.value > 100; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().content("{\"value\":10}"),
@@ -523,7 +523,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForNullContent() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return content === null; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key"),
@@ -542,7 +542,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForNullKey() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return key === null; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().content("value"),
@@ -561,7 +561,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForHeaders() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return headers.value > 10; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().content("1").headers(Map.of("value", "1")),
@@ -580,7 +580,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForOffset() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return offset > 0; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key1"),
@@ -599,7 +599,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnForPartitions() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return partition == 0; }";
     List<CreateTopicMessage> messages = List.of(
         new CreateTopicMessage().key("key1"),
@@ -617,7 +617,7 @@ public class SendAndReadTests extends AbstractBaseTest {
 
   @Test
   void getMessagesWithJsFilterFnWithException() {
-    String filterFn = "function filter(key, content, headers, offset, partition) "
+    String filterFn = "function(key, content, headers, offset, partition) "
         + "{ return key.content.headers; }";
     CreateTopicMessage messages = new CreateTopicMessage().key("key1");
     Exception exception = assertThrows(
@@ -629,7 +629,7 @@ public class SendAndReadTests extends AbstractBaseTest {
     );
 
     assertThat(exception.getMessage()).contains(
-        "function filter(key, content, headers, offset, partition) { return offset != 0; }"
+        "function(key, content, headers, offset, partition) { return offset != 0; }"
     );
   }
 
