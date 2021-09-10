@@ -49,16 +49,6 @@ const ClusterMenu: React.FC<Props> = ({
               Brokers
             </NavLink>
           </li>
-          <li>
-            <NavLink
-              to={clusterTopicsPath(name)}
-              activeClassName="is-active"
-              title="Topics"
-            >
-              Topics
-            </NavLink>
-          </li>
-
           <ClusterMenuItem
             liType="primary1"
             to={clusterTopicsPath(name)}

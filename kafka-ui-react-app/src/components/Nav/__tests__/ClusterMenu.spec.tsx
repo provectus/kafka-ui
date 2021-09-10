@@ -18,7 +18,8 @@ describe('ClusterMenu', () => {
       onlineClusterPayload.name
     );
 
-    expect(wrapper.find('ul.menu-list ul > li').length).toEqual(3);
+    expect(wrapper.find('ul.menu-list ul > li').length).toEqual(2);
+    expect(wrapper.find('ul.menu-list ul StyledMenuItem').length).toEqual(1);
   });
 
   it('renders cluster menu with all enabled features', () => {
@@ -31,6 +32,7 @@ describe('ClusterMenu', () => {
         ],
       })
     );
-    expect(wrapper.find('ul.menu-list ul > li').length).toEqual(5);
+    expect(wrapper.find('ul.menu-list ul > li').length).toEqual(4);
+    expect(wrapper.find('ul.menu-list ul StyledMenuItem').length).toEqual(1);
   });
 });

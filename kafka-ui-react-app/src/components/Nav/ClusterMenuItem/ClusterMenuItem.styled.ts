@@ -28,4 +28,6 @@ const StyledMenuItem = styled('li')<Props>`
   }
 `;
 
+StyledMenuItem.displayName = 'StyledMenuItem';
+
 export default StyledMenuItem;
