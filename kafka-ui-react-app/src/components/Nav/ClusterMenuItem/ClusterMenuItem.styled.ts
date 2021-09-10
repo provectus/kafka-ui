@@ -13,17 +13,17 @@ const StyledMenuItem = styled('li')<Props>`
     cursor: pointer;
     text-decoration: none;
     margin: 0px 0px;
-    font-family: Inter, sans-serif;
+    font-family: 'Inter', sans-serif;
     font-style: normal;
     font-weight: normal;
     font-size: 14px;
     line-height: 20px;
-    background: '#fff';
-    color: '#73848C';
+    background: #fff;
+    color: #73848c;
 
     &.is-active {
-      background: '#E3E6E8';
-      color: '#171A1C';
+      background: #e3e6e8;
+      color: #171a1c;
     }
   }
 `;
