@@ -19,23 +19,26 @@ public class JsonNodeUtil {
   private static final String NOT_ARRAY_EXCEPTION_MESSAGE = "JsonNode isn't Array";
   private static final ObjectMapper MAPPER = new ObjectMapper();
 
-  public static Map<String, String> toMap(JsonNode node) {
+  public static <T> Map<String, T> toMap(JsonNode node) {
     if (node.isObject()) {
       List<String> keys = getJsonObjectKeys(node);
-      List<String> values = getJsonObjectValues(node);
       return IntStream.range(0, keys.size()).boxed()
-              .collect(Collectors.toMap(keys::get, values::get));
+          .collect(Collectors.toMap(
+              keys::get,
+              i -> (T) getJsonNodeValue(node.get(keys.get(i)))
+          ));
     }
     throw new UnprocessableEntityException(NOT_OBJECT_EXCEPTION_MESSAGE);
   }
 
-  public static List<String> toList(JsonNode node) {
+  public static <T> List<T> toList(JsonNode node) {
     if (node.isArray()) {
-      return getStreamForJsonArray(node).map(JsonNode::toString).collect(Collectors.toList());
+      return getStreamForJsonArray(node)
+          .map(n -> (T) getJsonNodeValue(n))
+          .collect(Collectors.toList());
     }
     throw new UnprocessableEntityException(NOT_OBJECT_EXCEPTION_MESSAGE);
   }
-
 
 
   public static List<String> getJsonObjectKeys(JsonNode node) {
@@ -47,9 +50,11 @@ public class JsonNodeUtil {
     throw new UnprocessableEntityException(NOT_OBJECT_EXCEPTION_MESSAGE);
   }
 
-  public static List<String> getJsonObjectValues(JsonNode node) {
+  public static <T> List<T> getJsonObjectValues(JsonNode node) {
     if (node.isObject()) {
-      return getJsonObjectKeys(node).stream().map(key -> node.get(key).asText())
+      return getJsonObjectKeys(node)
+          .stream()
+          .map(key -> (T) getJsonNodeValue(node.get(key)))
           .collect(Collectors.toList());
     }
     throw new UnprocessableEntityException(NOT_OBJECT_EXCEPTION_MESSAGE);
