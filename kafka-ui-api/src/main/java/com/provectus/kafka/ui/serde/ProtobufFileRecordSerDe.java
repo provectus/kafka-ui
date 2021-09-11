@@ -15,7 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -33,14 +33,14 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ObjectMapper objectMapper;
   private final Path protobufSchemaPath;
   private final ProtobufSchemaConverter schemaConverter = new ProtobufSchemaConverter();
-  private final Map<String, String> messageNameMap;
+  private final Map<String, Descriptor> messageDescriptorMap;
+  private final Descriptor defaultMessageDescriptor;
 
   public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
                                  String defaultMessageName, ObjectMapper objectMapper)
       throws IOException {
     this.objectMapper = objectMapper;
     this.protobufSchemaPath = protobufSchemaPath;
-    this.messageNameMap = messageNameMap != null ? messageNameMap : Collections.emptyMap();
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
       var schema = new ProtobufSchema(
           lines.collect(Collectors.joining("\n"))
@@ -50,6 +50,18 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
       } else {
         this.protobufSchema = schema;
       }
+      this.messageDescriptorMap = new HashMap<>();
+      if (messageNameMap != null) {
+        for (Map.Entry<String, String> entry : messageNameMap.entrySet()) {
+          var descriptor = Objects.requireNonNull(protobufSchema.toDescriptor(entry.getValue()),
+              "The given message type is not found in protobuf definition: "
+                  + entry.getValue());
+          messageDescriptorMap.put(entry.getKey(), descriptor);
+        }
+      }
+      defaultMessageDescriptor = Objects.requireNonNull(protobufSchema.toDescriptor(),
+          "The given message type is not found in protobuf definition: "
+              + defaultMessageName);
     }
   }
 
@@ -72,11 +84,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   private Descriptor getDescriptor(String topic) {
-    var messageName = messageNameMap.get(topic);
-    if (messageName != null) {
-      return protobufSchema.toDescriptor(messageName);
-    }
-    return protobufSchema.toDescriptor();
+    return messageDescriptorMap.getOrDefault(topic, defaultMessageDescriptor);
   }
 
   @SneakyThrows
@@ -97,10 +105,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     if (data == null) {
       return new ProducerRecord<>(topic, partition, Objects.requireNonNull(key).getBytes(), null);
     }
-    var messageName = messageNameMap.get(topic);
-    DynamicMessage.Builder builder = messageName != null
-        ? protobufSchema.newMessageBuilder(messageName)
-        : protobufSchema.newMessageBuilder();
+    DynamicMessage.Builder builder = DynamicMessage.newBuilder(getDescriptor(topic));
     try {
       JsonFormat.parser().merge(data, builder);
       final DynamicMessage message = builder.build();

@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.serde;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -87,5 +88,15 @@ class ProtobufFileRecordSerDeTest {
         .deserialize(new ConsumerRecord<>("a_random_topic", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(addressBookMessage)));
     assertTrue(msg.getValue().contains("user2@example.com"));
+  }
+
+  @Test
+  void testSerialize() throws IOException {
+    var messageNameMap = Map.of("topic1", "test.Person");
+    var serializer =
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook",
+            new ObjectMapper());
+    var serialized = serializer.serialize("topic1", "key1", "{\"name\":\"MyName\"}", 0);
+    assertNotNull(serialized.value());
   }
 }
