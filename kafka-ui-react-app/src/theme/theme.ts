@@ -74,6 +74,18 @@ const theme = {
       L: '16px',
     },
   },
+  secondaryTabStyles: {
+    backgroundColor: {
+      normal: Colors.neutral[0],
+      hover: Colors.neutral[5],
+      active: Colors.neutral[10],
+    },
+    color: {
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[90],
+    },
+  },
 };
 
 export default theme;

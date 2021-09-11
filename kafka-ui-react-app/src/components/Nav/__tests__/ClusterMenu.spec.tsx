@@ -1,9 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import ClusterMenu from 'components/Nav/ClusterMenu';
+import { mountWithTheme } from 'lib/testHelpers';
 
 describe('ClusterMenu', () => {
   const setupComponent = (cluster: Cluster) => (
@@ -13,7 +13,7 @@ describe('ClusterMenu', () => {
   );
 
   it('renders cluster menu without Kafka Connect & Schema Registry', () => {
-    const wrapper = mount(setupComponent(onlineClusterPayload));
+    const wrapper = mountWithTheme(setupComponent(onlineClusterPayload));
     expect(wrapper.find('ul.menu-list > li > NavLink').text()).toEqual(
       onlineClusterPayload.name
     );
@@ -23,7 +23,7 @@ describe('ClusterMenu', () => {
   });
 
   it('renders cluster menu with all enabled features', () => {
-    const wrapper = mount(
+    const wrapper = mountWithTheme(
       setupComponent({
         ...onlineClusterPayload,
         features: [

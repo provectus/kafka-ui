@@ -18,12 +18,19 @@ const StyledMenuItem = styled('li')<Props>`
     font-weight: normal;
     font-size: 14px;
     line-height: 20px;
-    background: #fff;
-    color: #73848c;
+    background: ${(props) =>
+      props.theme.secondaryTabStyles.backgroundColor.normal};
+    color: ${(props) => props.theme.secondaryTabStyles.color.normal};
 
+    &:hover {
+      background: ${(props) =>
+        props.theme.secondaryTabStyles.backgroundColor.hover};
+      color: ${(props) => props.theme.secondaryTabStyles.color.hover};
+    }
     &.is-active {
-      background: #e3e6e8;
-      color: #171a1c;
+      background: ${(props) =>
+        props.theme.secondaryTabStyles.backgroundColor.active};
+      color: ${(props) => props.theme.secondaryTabStyles.color.active};
     }
   }
 `;

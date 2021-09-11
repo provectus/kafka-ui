@@ -1,9 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import ClusterMenuItem, {
   Props as MenuItemProps,
 } from 'components/Nav/ClusterMenuItem/ClusterMenuItem';
+import { mountWithTheme } from 'lib/testHelpers';
 
 describe('ClusterMenuItem', () => {
   const setupComponent = (props: MenuItemProps) => (
@@ -13,7 +13,7 @@ describe('ClusterMenuItem', () => {
   );
 
   it('renders with NavLink', () => {
-    const wrapper = mount(
+    const wrapper = mountWithTheme(
       setupComponent({
         liType: 'primary',
         to: 'test-url',
@@ -23,7 +23,7 @@ describe('ClusterMenuItem', () => {
   });
 
   it('renders without NavLink', () => {
-    const wrapper = mount(
+    const wrapper = mountWithTheme(
       setupComponent({
         liType: 'primary',
       })
