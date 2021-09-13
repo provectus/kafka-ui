@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import ClusterMenuItem, {
-  Props as MenuItemProps,
+  MenuItemProps,
 } from 'components/Nav/ClusterMenuItem/ClusterMenuItem';
 
 describe('ClusterMenuItem', () => {

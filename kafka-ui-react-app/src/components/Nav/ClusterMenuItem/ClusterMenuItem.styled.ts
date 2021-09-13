@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export interface Props {
+export interface MenuItemProps {
   liType: 'primary';
   to?: string;
   activeClassName?: string;
@@ -8,7 +8,7 @@ export interface Props {
   isInverted?: boolean;
 }
 
-const StyledMenuItem = styled('li')<Props>`
+const StyledMenuItem = styled.li<MenuItemProps>`
   a {
     cursor: pointer;
     text-decoration: none;
