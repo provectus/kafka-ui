@@ -1,23 +1,19 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import ClusterMenuItem, {
   MenuItemProps,
 } from 'components/Nav/ClusterMenuItem/ClusterMenuItem';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { mountWithTheme } from 'lib/testHelpers';
 
 describe('ClusterMenuItem', () => {
   const setupComponent = (props: MenuItemProps) => (
-    <ThemeProvider theme={theme}>
-      <StaticRouter>
-        <ClusterMenuItem {...props} />
-      </StaticRouter>
-    </ThemeProvider>
+    <StaticRouter>
+      <ClusterMenuItem {...props} />
+    </StaticRouter>
   );
 
   it('renders with NavLink', () => {
-    const wrapper = mount(
+    const wrapper = mountWithTheme(
       setupComponent({
         liType: 'primary',
         to: 'test-url',
@@ -27,7 +23,7 @@ describe('ClusterMenuItem', () => {
   });
 
   it('renders without NavLink', () => {
-    const wrapper = mount(
+    const wrapper = mountWithTheme(
       setupComponent({
         liType: 'primary',
       })

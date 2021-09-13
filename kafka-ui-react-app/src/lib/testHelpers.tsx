@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import configureStore from 'redux/store/configureStore';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 interface TestRouterWrapperProps {
   pathname: string;
@@ -53,3 +55,11 @@ export const containerRendersView = (
     });
   });
 };
+
+export function mountWithTheme(child: ReactElement) {
+  return mount(child, {
+    wrappingComponent: ({ children }) => (
+      <ThemeProvider theme={theme}>{children}</ThemeProvider>
+    ),
+  });
+}

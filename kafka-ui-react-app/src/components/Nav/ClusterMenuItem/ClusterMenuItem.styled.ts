@@ -20,6 +20,10 @@ const StyledMenuItem = styled.li<MenuItemProps>`
           background-color: ${theme.liStyles[liType].backgroundColor.normal};
           color: ${theme.liStyles[liType].color.normal};
 
+          &.hover {
+            background-color: ${theme.liStyles[liType].backgroundColor.hover};
+            color: ${theme.liStyles[liType].color.hover};
+          }
           &.is-active {
             background-color: ${theme.liStyles[liType].backgroundColor.active};
             color: ${theme.liStyles[liType].color.active};
