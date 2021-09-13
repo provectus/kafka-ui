@@ -6,24 +6,26 @@ import static java.util.stream.Collectors.toSet;
 import static org.apache.kafka.common.ConsumerGroupState.DEAD;
 import static org.apache.kafka.common.ConsumerGroupState.EMPTY;
 
-import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Mono;
 
 /**
  * Implementation follows https://cwiki.apache.org/confluence/display/KAFKA/KIP-122%3A+Add+Reset+Consumer+Group+Offsets+tooling
@@ -37,63 +39,84 @@ public class OffsetsResetService {
 
   private final KafkaService kafkaService;
 
-  public void resetToEarliest(KafkaCluster cluster, String group, String topic,
-                              Collection<Integer> partitions) {
-    checkGroupCondition(cluster, group);
-    try (var consumer = getConsumer(cluster, group)) {
-      var targetPartitions = getTargetPartitions(consumer, topic, partitions);
-      var offsets = consumer.beginningOffsets(targetPartitions);
-      commitOffsets(consumer, offsets);
-    }
+  public Mono<Map<TopicPartition, OffsetAndMetadata>> resetToEarliest(
+      KafkaCluster cluster, String group, String topic, Collection<Integer> partitions) {
+    return checkGroupCondition(cluster, group)
+        .flatMap(g -> {
+          try (var consumer = getConsumer(cluster, group)) {
+            var targetPartitions = getTargetPartitions(consumer, topic, partitions);
+            var offsets = consumer.beginningOffsets(targetPartitions);
+            return commitOffsets(consumer, offsets);
+          }
+        });
   }
 
-  public void resetToLatest(KafkaCluster cluster, String group, String topic,
-                            Collection<Integer> partitions) {
-    checkGroupCondition(cluster, group);
-    try (var consumer = getConsumer(cluster, group)) {
-      var targetPartitions = getTargetPartitions(consumer, topic, partitions);
-      var offsets = consumer.endOffsets(targetPartitions);
-      commitOffsets(consumer, offsets);
-    }
+  public Mono<Map<TopicPartition, OffsetAndMetadata>> resetToLatest(
+      KafkaCluster cluster, String group, String topic, Collection<Integer> partitions) {
+    return checkGroupCondition(cluster, group).flatMap(
+        g -> {
+          try (var consumer = getConsumer(cluster, group)) {
+            var targetPartitions = getTargetPartitions(consumer, topic, partitions);
+            var offsets = consumer.endOffsets(targetPartitions);
+            return commitOffsets(consumer, offsets);
+          }
+        }
+    );
   }
 
-  public void resetToTimestamp(KafkaCluster cluster, String group, String topic,
-                               Collection<Integer> partitions, long targetTimestamp) {
-    checkGroupCondition(cluster, group);
-    try (var consumer = getConsumer(cluster, group)) {
-      var targetPartitions = getTargetPartitions(consumer, topic, partitions);
-      var offsets = offsetsByTimestamp(consumer, targetPartitions, targetTimestamp);
-      commitOffsets(consumer, offsets);
-    }
+  public Mono<Map<TopicPartition, OffsetAndMetadata>> resetToTimestamp(
+      KafkaCluster cluster, String group, String topic, Collection<Integer> partitions,
+      long targetTimestamp) {
+    return checkGroupCondition(cluster, group).flatMap(
+        g -> {
+          try (var consumer = getConsumer(cluster, group)) {
+            var targetPartitions = getTargetPartitions(consumer, topic, partitions);
+            var offsets = offsetsByTimestamp(consumer, targetPartitions, targetTimestamp);
+            return commitOffsets(consumer, offsets);
+          }
+        }
+    );
   }
 
-  public void resetToOffsets(KafkaCluster cluster, String group, String topic,
-                             Map<Integer, Long> targetOffsets) {
-    checkGroupCondition(cluster, group);
-    try (var consumer = getConsumer(cluster, group)) {
-      var offsets = targetOffsets.entrySet().stream()
-          .collect(toMap(e -> new TopicPartition(topic, e.getKey()), Map.Entry::getValue));
-      offsets = editOffsetsIfNeeded(consumer, offsets);
-      commitOffsets(consumer, offsets);
-    }
+  public Mono<Map<TopicPartition, OffsetAndMetadata>> resetToOffsets(
+      KafkaCluster cluster, String group, String topic, Map<Integer, Long> targetOffsets) {
+    return checkGroupCondition(cluster, group).flatMap(
+        g -> {
+          try (var consumer = getConsumer(cluster, group)) {
+            var offsets = targetOffsets.entrySet().stream()
+                .collect(toMap(e -> new TopicPartition(topic, e.getKey()), Map.Entry::getValue));
+            offsets = editOffsetsIfNeeded(consumer, offsets);
+            return commitOffsets(consumer, offsets);
+          }
+        }
+    );
   }
 
-  private void checkGroupCondition(KafkaCluster cluster, String groupId) {
-    InternalConsumerGroup description =
-        kafkaService.getConsumerGroupsInternal(cluster)
-            .blockOptional()
-            .stream()
-            .flatMap(Collection::stream)
-            .filter(cgd -> cgd.getGroupId().equals(groupId))
-            .findAny()
-            .orElseThrow(() -> new NotFoundException("Consumer group not found"));
-
-    if (!Set.of(DEAD, EMPTY).contains(description.getState())) {
-      throw new ValidationException(
-          String.format(
-              "Group's offsets can be reset only if group is inactive, but group is in %s state",
-              description.getState()));
-    }
+  private Mono<InternalConsumerGroup> checkGroupCondition(KafkaCluster cluster, String groupId) {
+    return kafkaService.getConsumerGroupsInternal(cluster, List.of(groupId))
+        .flatMap(l ->
+            l.stream()
+                .filter(c -> c.getGroupId().equals(groupId))
+                .findAny()
+                .map(Mono::just)
+                .orElse(Mono.error(new NotFoundException("Consumer group not found")))
+        ).flatMap(
+            g -> {
+              if (!Set.of(DEAD, EMPTY).contains(g.getState())) {
+                return Mono.error(
+                    new ValidationException(
+                        String.format(
+                            "Group's offsets can be reset only if group is inactive,"
+                                + " but group is in %s state",
+                            g.getState()
+                        )
+                    )
+                );
+              } else {
+                return Mono.just(g);
+              }
+            }
+        );
   }
 
   private Map<TopicPartition, Long> offsetsByTimestamp(Consumer<?, ?> consumer,
@@ -107,7 +130,10 @@ public class OffsetsResetService {
         .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset()));
 
     // for partitions where we didnt find offset by timestamp, we use end offsets
-    foundOffsets.putAll(consumer.endOffsets(Sets.difference(partitions, foundOffsets.keySet())));
+    Set<TopicPartition> endOffsets = new HashSet<>(partitions);
+    endOffsets.removeAll(foundOffsets.keySet());
+    foundOffsets.putAll(consumer.endOffsets(endOffsets));
+
     return foundOffsets;
   }
 
@@ -155,11 +181,22 @@ public class OffsetsResetService {
     return result;
   }
 
-  private void commitOffsets(Consumer<?, ?> consumer, Map<TopicPartition, Long> offsets) {
-    consumer.commitSync(
+  private Mono<Map<TopicPartition, OffsetAndMetadata>> commitOffsets(
+      Consumer<?, ?> consumer, Map<TopicPartition, Long> offsets
+  ) {
+    CompletableFuture<Map<TopicPartition, OffsetAndMetadata>> cf = new CompletableFuture<>();
+    consumer.commitAsync(
         offsets.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> new OffsetAndMetadata(e.getValue())))
+            .collect(toMap(Map.Entry::getKey, e -> new OffsetAndMetadata(e.getValue()))),
+        (o, e) -> {
+          if (e != null) {
+            cf.completeExceptionally(e);
+          } else {
+            cf.complete(o);
+          }
+        }
     );
+    return Mono.fromFuture(cf);
   }
 
   private Consumer<?, ?> getConsumer(KafkaCluster cluster, String groupId) {
