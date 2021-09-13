@@ -94,6 +94,18 @@ exports[`App view matches snapshot 1`] = `
                   },
                 },
               },
+              "liStyles": Object {
+                "primary": Object {
+                  "backgroundColor": Object {
+                    "active": "#E3E6E8",
+                    "normal": "#FFFFFF",
+                  },
+                  "color": Object {
+                    "active": "#171A1C",
+                    "normal": "#73848C",
+                  },
+                },
+              },
             }
           }
         >

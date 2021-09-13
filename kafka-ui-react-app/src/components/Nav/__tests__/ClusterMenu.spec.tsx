@@ -4,12 +4,16 @@ import { StaticRouter } from 'react-router';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import ClusterMenu from 'components/Nav/ClusterMenu';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('ClusterMenu', () => {
   const setupComponent = (cluster: Cluster) => (
-    <StaticRouter>
-      <ClusterMenu cluster={cluster} />
-    </StaticRouter>
+    <ThemeProvider theme={theme}>
+      <StaticRouter>
+        <ClusterMenu cluster={cluster} />
+      </StaticRouter>
+    </ThemeProvider>
   );
 
   it('renders cluster menu without Kafka Connect & Schema Registry', () => {

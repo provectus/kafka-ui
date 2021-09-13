@@ -4,12 +4,16 @@ import { StaticRouter } from 'react-router';
 import ClusterMenuItem, {
   MenuItemProps,
 } from 'components/Nav/ClusterMenuItem/ClusterMenuItem';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('ClusterMenuItem', () => {
   const setupComponent = (props: MenuItemProps) => (
-    <StaticRouter>
-      <ClusterMenuItem {...props} />
-    </StaticRouter>
+    <ThemeProvider theme={theme}>
+      <StaticRouter>
+        <ClusterMenuItem {...props} />
+      </StaticRouter>
+    </ThemeProvider>
   );
 
   it('renders with NavLink', () => {

@@ -74,6 +74,18 @@ const theme = {
       L: '16px',
     },
   },
+  liStyles: {
+    primary: {
+      backgroundColor: {
+        normal: Colors.neutral[0],
+        active: Colors.neutral[10],
+      },
+      color: {
+        normal: Colors.neutral[50],
+        active: Colors.neutral[90],
+      },
+    },
+  },
 };
 
 export default theme;

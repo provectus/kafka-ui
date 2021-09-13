@@ -1,12 +1,6 @@
 import styled from 'styled-components';
 
-export interface MenuItemProps {
-  liType: 'primary';
-  to?: string;
-  activeClassName?: string;
-  title?: string;
-  isInverted?: boolean;
-}
+import { MenuItemProps } from './ClusterMenuItem';
 
 const StyledMenuItem = styled.li<MenuItemProps>`
   a {
@@ -18,12 +12,14 @@ const StyledMenuItem = styled.li<MenuItemProps>`
     font-weight: normal;
     font-size: 14px;
     line-height: 20px;
-    background: #fff;
-    color: #73848c;
+    background-color: ${(props) =>
+      props.theme.liStyles[props.liType].backgroundColor.normal};
+    color: ${(props) => props.theme.liStyles[props.liType].color.normal};
 
     &.is-active {
-      background: #e3e6e8;
-      color: #171a1c;
+      background-color: ${(props) =>
+        props.theme.liStyles[props.liType].backgroundColor.active};
+      color: ${(props) => props.theme.liStyles[props.liType].color.active};
     }
   }
 `;
