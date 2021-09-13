@@ -8,16 +8,23 @@ export interface MenuItemProps {
   activeClassName?: string;
   title?: string;
   isInverted?: boolean;
+  isActive?: (match: unknown, location: Location) => boolean;
 }
 
 const ClusterMenuItem: React.FC<MenuItemProps> = (props) => {
-  const { to, activeClassName, title, children, liType, ...rest } = props;
+  const { to, activeClassName, title, children, liType, isActive, ...rest } =
+    props;
 
   if (to) {
     return (
-      <StyledMenuItem liType={liType} {...rest}>
-        <NavLink to={to} activeClassName={activeClassName} title={title}>
-          {children}
+      <StyledMenuItem to={to} liType={liType}>
+        <NavLink
+          to={to}
+          activeClassName={activeClassName}
+          title={title}
+          {...rest}
+        >
+          {children || title}
         </NavLink>
       </StyledMenuItem>
     );

@@ -40,70 +40,52 @@ const ClusterMenu: React.FC<Props> = ({
           <ClusterStatusIcon status={status} />
         </NavLink>
         <ul>
-          <li>
-            <NavLink
-              to={clusterBrokersPath(name)}
-              activeClassName="is-active"
-              title="Brokers"
-            >
-              Brokers
-            </NavLink>
-          </li>
+          <ClusterMenuItem
+            liType="primary"
+            to={clusterBrokersPath(name)}
+            activeClassName="is-active"
+            title="Brokers"
+          />
           <ClusterMenuItem
             liType="primary"
             to={clusterTopicsPath(name)}
             activeClassName="is-active"
             title="Topics"
-          >
-            Topics
-          </ClusterMenuItem>
-
-          <li>
-            <NavLink
-              to={clusterConsumerGroupsPath(name)}
-              activeClassName="is-active"
-              title="Consumers"
-            >
-              Consumers
-            </NavLink>
-          </li>
+          />
+          <ClusterMenuItem
+            liType="primary"
+            to={clusterConsumerGroupsPath(name)}
+            activeClassName="is-active"
+            title="Consumers"
+          />
 
           {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
-            <li>
-              <NavLink
-                to={clusterSchemasPath(name)}
-                activeClassName="is-active"
-                title="Schema Registry"
-              >
-                Schema Registry
-              </NavLink>
-            </li>
+            <ClusterMenuItem
+              liType="primary"
+              to={clusterSchemasPath(name)}
+              activeClassName="is-active"
+              title="Schema Registry"
+            />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_CONNECT) && (
-            <li>
-              <NavLink
-                to={clusterConnectorsPath(name)}
-                activeClassName="is-active"
-                title="Kafka Connect"
-                isActive={(_, location) =>
-                  location.pathname.startsWith(clusterConnectsPath(name)) ||
-                  location.pathname.startsWith(clusterConnectorsPath(name))
-                }
-              >
-                Kafka Connect
-              </NavLink>
-            </li>
+            <ClusterMenuItem
+              liType="primary"
+              to={clusterConnectorsPath(name)}
+              activeClassName="is-active"
+              title="Kafka Connect"
+              isActive={(_, location) =>
+                location.pathname.startsWith(clusterConnectsPath(name)) ||
+                location.pathname.startsWith(clusterConnectorsPath(name))
+              }
+            />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (
-            <li>
-              <NavLink
-                to={clusterKsqlDbPath(name)}
-                activeClassName="is-active"
-                title="KSQL DB"
-              >
-                KSQL DB
-              </NavLink>
-            </li>
+            <ClusterMenuItem
+              liType="primary"
+              to={clusterKsqlDbPath(name)}
+              activeClassName="is-active"
+              title="KSQL DB"
+            />
           )}
         </ul>
       </li>
