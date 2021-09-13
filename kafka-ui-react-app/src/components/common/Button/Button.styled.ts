@@ -1,12 +1,12 @@
-import styled from 'styled-components';
+import { styled } from 'lib/themedStyles';
 
-export interface Props {
+export interface ButtonProps {
   buttonType: 'primary' | 'secondary';
   buttonSize: 'S' | 'M' | 'L';
   isInverted?: boolean;
 }
 
-const StyledButton = styled('button')<Props>`
+const StyledButton = styled('button')<ButtonProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
