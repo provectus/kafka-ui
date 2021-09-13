@@ -7,8 +7,8 @@ import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MessageSchema;
-import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.model.MessageSchemaDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
@@ -185,7 +185,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public TopicMessageSchema getTopicSchema(String topic) {
+  public TopicMessageSchemaDTO getTopicSchema(String topic) {
     final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
     final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
 
@@ -195,21 +195,21 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     String sourceKeySchema = maybeKeySchema.map(this::convertSchema)
         .orElseGet(() -> JsonSchema.stringSchema().toJson(objectMapper));
 
-    final MessageSchema keySchema = new MessageSchema()
+    final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(maybeKeySchema.map(
             (s) -> schemaSubject(topic, true)
         ).orElse("unknown"))
-        .source(MessageSchema.SourceEnum.SCHEMA_REGISTRY)
+        .source(MessageSchemaDTO.SourceEnum.SCHEMA_REGISTRY)
         .schema(sourceKeySchema);
 
-    final MessageSchema valueSchema = new MessageSchema()
+    final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(maybeValueSchema.map(
             (s) -> schemaSubject(topic, false)
         ).orElse("unknown"))
-        .source(MessageSchema.SourceEnum.SCHEMA_REGISTRY)
+        .source(MessageSchemaDTO.SourceEnum.SCHEMA_REGISTRY)
         .schema(sourceValueSchema);
 
-    return new TopicMessageSchema()
+    return new TopicMessageSchemaDTO()
         .key(keySchema)
         .value(valueSchema);
   }

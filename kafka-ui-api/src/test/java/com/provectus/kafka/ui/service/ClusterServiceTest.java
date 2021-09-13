@@ -8,8 +8,8 @@ import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.Topic;
-import com.provectus.kafka.ui.model.TopicColumnsToSort;
+import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
+import com.provectus.kafka.ui.model.TopicDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -67,7 +67,7 @@ class ClusterServiceTest {
         Optional.empty(), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).map(Topic::getName).isSorted();
+    assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
   }
 
   @Test
@@ -97,7 +97,7 @@ class ClusterServiceTest {
         Optional.empty(), Optional.empty(), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(1)
-        .first().extracting(Topic::getName).isEqualTo("99");
+        .first().extracting(TopicDTO::getName).isEqualTo("99");
   }
 
   @Test
@@ -127,7 +127,7 @@ class ClusterServiceTest {
         Optional.empty(), Optional.empty(), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).map(Topic::getName).isSorted();
+    assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
   }
 
   @Test
@@ -159,7 +159,7 @@ class ClusterServiceTest {
         Optional.empty(), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).map(Topic::getName).isSorted();
+    assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
   }
 
 
@@ -192,7 +192,7 @@ class ClusterServiceTest {
         Optional.empty(), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).map(Topic::getName).isSorted();
+    assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
   }
 
 
@@ -224,7 +224,7 @@ class ClusterServiceTest {
         Optional.of("1"), Optional.empty());
     assertThat(topics.getPageCount()).isEqualTo(1);
     assertThat(topics.getTopics()).hasSize(20);
-    assertThat(topics.getTopics()).map(Topic::getName).isSorted();
+    assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
   }
 
   @Test
@@ -253,10 +253,10 @@ class ClusterServiceTest {
 
     var topics = clusterService.getTopics(topicName,
         Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.of(TopicColumnsToSort.TOTAL_PARTITIONS));
+        Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS));
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
-    assertThat(topics.getTopics()).map(Topic::getPartitionCount).isSorted();
+    assertThat(topics.getTopics()).map(TopicDTO::getPartitionCount).isSorted();
   }
 
   @Test

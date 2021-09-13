@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.provectus.kafka.ui.model.KsqlCommand;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
+import com.provectus.kafka.ui.model.KsqlCommandDTO;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
@@ -16,7 +16,7 @@ public class ShowStrategy extends BaseStrategy {
   private String responseValueKey = "";
 
   @Override
-  public KsqlCommandResponse serializeResponse(JsonNode response) {
+  public KsqlCommandResponseDTO serializeResponse(JsonNode response) {
     return serializeTableResponse(response, responseValueKey);
   }
 
@@ -38,7 +38,7 @@ public class ShowStrategy extends BaseStrategy {
   }
 
   @Override
-  public BaseStrategy ksqlCommand(KsqlCommand ksqlCommand) {
+  public BaseStrategy ksqlCommand(KsqlCommandDTO ksqlCommand) {
     // return new instance to avoid conflicts for parallel requests
     ShowStrategy clone = new ShowStrategy();
     clone.setResponseValueKey(responseValueKey);

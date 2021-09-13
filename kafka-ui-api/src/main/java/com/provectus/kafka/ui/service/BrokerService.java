@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.model.Broker;
+import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Map;
@@ -34,7 +34,7 @@ public interface BrokerService {
    * @param cluster - cluster
    * @return Flux of Broker
    */
-  Flux<Broker> getBrokers(KafkaCluster cluster);
+  Flux<BrokerDTO> getBrokers(KafkaCluster cluster);
 
   /**
    * Get cluster controller node.

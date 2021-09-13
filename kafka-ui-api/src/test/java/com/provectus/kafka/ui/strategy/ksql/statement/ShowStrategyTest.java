@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.model.Table;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
+import com.provectus.kafka.ui.model.TableDTO;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -57,8 +57,8 @@ class ShowStrategyTest {
   void shouldSerializeStreamsResponse() {
     JsonNode node = getResponseWithData("streams");
     strategy.test("show streams;");
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
@@ -67,8 +67,8 @@ class ShowStrategyTest {
   void shouldSerializeTablesResponse() {
     JsonNode node = getResponseWithData("tables");
     strategy.test("show tables;");
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
@@ -77,8 +77,8 @@ class ShowStrategyTest {
   void shouldSerializeTopicsResponse() {
     JsonNode node = getResponseWithData("topics");
     strategy.test("show topics;");
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
@@ -87,8 +87,8 @@ class ShowStrategyTest {
   void shouldSerializePropertiesResponse() {
     JsonNode node = getResponseWithData("properties");
     strategy.test("show properties;");
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
@@ -97,8 +97,8 @@ class ShowStrategyTest {
   void shouldSerializeFunctionsResponse() {
     JsonNode node = getResponseWithData("functions");
     strategy.test("show functions;");
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }
@@ -107,8 +107,8 @@ class ShowStrategyTest {
   void shouldSerializeQueriesResponse() {
     JsonNode node = getResponseWithData("queries");
     strategy.test("show queries;");
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("header"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("value")));
   }

@@ -1,10 +1,10 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.SchemasApi;
-import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
-import com.provectus.kafka.ui.model.CompatibilityLevel;
-import com.provectus.kafka.ui.model.NewSchemaSubject;
-import com.provectus.kafka.ui.model.SchemaSubject;
+import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
+import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
+import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,16 +23,16 @@ public class SchemasController implements SchemasApi {
   private final SchemaRegistryService schemaRegistryService;
 
   @Override
-  public Mono<ResponseEntity<CompatibilityCheckResponse>> checkSchemaCompatibility(
-      String clusterName, String subject, @Valid Mono<NewSchemaSubject> newSchemaSubject,
+  public Mono<ResponseEntity<CompatibilityCheckResponseDTO>> checkSchemaCompatibility(
+      String clusterName, String subject, @Valid Mono<NewSchemaSubjectDTO> newSchemaSubject,
       ServerWebExchange exchange) {
     return schemaRegistryService.checksSchemaCompatibility(clusterName, subject, newSchemaSubject)
         .map(ResponseEntity::ok);
   }
 
   @Override
-  public Mono<ResponseEntity<SchemaSubject>> createNewSchema(
-      String clusterName, @Valid Mono<NewSchemaSubject> newSchemaSubject,
+  public Mono<ResponseEntity<SchemaSubjectDTO>> createNewSchema(
+      String clusterName, @Valid Mono<NewSchemaSubjectDTO> newSchemaSubject,
       ServerWebExchange exchange) {
     return schemaRegistryService
         .registerNewSchema(clusterName, newSchemaSubject)
@@ -58,15 +58,15 @@ public class SchemasController implements SchemasApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<SchemaSubject>>> getAllVersionsBySubject(
+  public Mono<ResponseEntity<Flux<SchemaSubjectDTO>>> getAllVersionsBySubject(
       String clusterName, String subjectName, ServerWebExchange exchange) {
-    Flux<SchemaSubject> schemas =
+    Flux<SchemaSubjectDTO> schemas =
         schemaRegistryService.getAllVersionsBySubject(clusterName, subjectName);
     return Mono.just(ResponseEntity.ok(schemas));
   }
 
   @Override
-  public Mono<ResponseEntity<CompatibilityLevel>> getGlobalSchemaCompatibilityLevel(
+  public Mono<ResponseEntity<CompatibilityLevelDTO>> getGlobalSchemaCompatibilityLevel(
       String clusterName, ServerWebExchange exchange) {
     return schemaRegistryService.getGlobalSchemaCompatibilityLevel(clusterName)
         .map(ResponseEntity::ok)
@@ -74,29 +74,29 @@ public class SchemasController implements SchemasApi {
   }
 
   @Override
-  public Mono<ResponseEntity<SchemaSubject>> getLatestSchema(String clusterName, String subject,
+  public Mono<ResponseEntity<SchemaSubjectDTO>> getLatestSchema(String clusterName, String subject,
                                                              ServerWebExchange exchange) {
     return schemaRegistryService.getLatestSchemaVersionBySubject(clusterName, subject)
         .map(ResponseEntity::ok);
   }
 
   @Override
-  public Mono<ResponseEntity<SchemaSubject>> getSchemaByVersion(
+  public Mono<ResponseEntity<SchemaSubjectDTO>> getSchemaByVersion(
       String clusterName, String subject, Integer version, ServerWebExchange exchange) {
     return schemaRegistryService.getSchemaSubjectByVersion(clusterName, subject, version)
         .map(ResponseEntity::ok);
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<SchemaSubject>>> getSchemas(String clusterName,
+  public Mono<ResponseEntity<Flux<SchemaSubjectDTO>>> getSchemas(String clusterName,
                                                               ServerWebExchange exchange) {
-    Flux<SchemaSubject> subjects = schemaRegistryService.getAllLatestVersionSchemas(clusterName);
+    Flux<SchemaSubjectDTO> subjects = schemaRegistryService.getAllLatestVersionSchemas(clusterName);
     return Mono.just(ResponseEntity.ok(subjects));
   }
 
   @Override
   public Mono<ResponseEntity<Void>> updateGlobalSchemaCompatibilityLevel(
-      String clusterName, @Valid Mono<CompatibilityLevel> compatibilityLevel,
+      String clusterName, @Valid Mono<CompatibilityLevelDTO> compatibilityLevel,
       ServerWebExchange exchange) {
     log.info("Updating schema compatibility globally");
     return schemaRegistryService.updateSchemaCompatibility(clusterName, compatibilityLevel)
@@ -105,7 +105,7 @@ public class SchemasController implements SchemasApi {
 
   @Override
   public Mono<ResponseEntity<Void>> updateSchemaCompatibilityLevel(
-      String clusterName, String subject, @Valid Mono<CompatibilityLevel> compatibilityLevel,
+      String clusterName, String subject, @Valid Mono<CompatibilityLevelDTO> compatibilityLevel,
       ServerWebExchange exchange) {
     log.info("Updating schema compatibility for subject: {}", subject);
     return schemaRegistryService.updateSchemaCompatibility(clusterName, subject, compatibilityLevel)

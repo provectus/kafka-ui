@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.SeekType;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +29,7 @@ public abstract class OffsetsSeek {
   }
 
   public Map<TopicPartition, Long> getPartitionsOffsets(Consumer<Bytes, Bytes> consumer) {
-    SeekType seekType = consumerPosition.getSeekType();
+    SeekTypeDTO seekType = consumerPosition.getSeekType();
     List<TopicPartition> partitions = getRequestedPartitions(consumer);
     log.info("Positioning consumer for topic {} with {}", topic, consumerPosition);
     Map<TopicPartition, Long> offsets;

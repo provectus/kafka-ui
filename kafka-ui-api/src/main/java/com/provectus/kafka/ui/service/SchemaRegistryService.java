@@ -9,13 +9,13 @@ import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
-import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
-import com.provectus.kafka.ui.model.CompatibilityLevel;
+import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
+import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.NewSchemaSubject;
-import com.provectus.kafka.ui.model.SchemaSubject;
-import com.provectus.kafka.ui.model.SchemaType;
+import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import com.provectus.kafka.ui.model.schemaregistry.ErrorResponse;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
@@ -56,7 +56,7 @@ public class SchemaRegistryService {
   private final ClusterMapper mapper;
   private final WebClient webClient;
 
-  public Flux<SchemaSubject> getAllLatestVersionSchemas(String clusterName) {
+  public Flux<SchemaSubjectDTO> getAllLatestVersionSchemas(String clusterName) {
     var allSubjectNames = getAllSubjectNames(clusterName);
     return allSubjectNames
         .flatMapMany(Flux::fromArray)
@@ -76,7 +76,7 @@ public class SchemaRegistryService {
         .orElse(Mono.error(ClusterNotFoundException::new));
   }
 
-  public Flux<SchemaSubject> getAllVersionsBySubject(String clusterName, String subject) {
+  public Flux<SchemaSubjectDTO> getAllVersionsBySubject(String clusterName, String subject) {
     Flux<Integer> versions = getSubjectVersions(clusterName, subject);
     return versions.flatMap(version -> getSchemaSubjectByVersion(clusterName, subject, version));
   }
@@ -94,17 +94,17 @@ public class SchemaRegistryService {
         ).orElse(Flux.error(ClusterNotFoundException::new));
   }
 
-  public Mono<SchemaSubject> getSchemaSubjectByVersion(String clusterName, String schemaName,
+  public Mono<SchemaSubjectDTO> getSchemaSubjectByVersion(String clusterName, String schemaName,
                                                        Integer version) {
     return this.getSchemaSubject(clusterName, schemaName, String.valueOf(version));
   }
 
-  public Mono<SchemaSubject> getLatestSchemaVersionBySubject(String clusterName,
+  public Mono<SchemaSubjectDTO> getLatestSchemaVersionBySubject(String clusterName,
                                                              String schemaName) {
     return this.getSchemaSubject(clusterName, schemaName, LATEST);
   }
 
-  private Mono<SchemaSubject> getSchemaSubject(String clusterName, String schemaName,
+  private Mono<SchemaSubjectDTO> getSchemaSubject(String clusterName, String schemaName,
                                                String version) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> configuredWebClient(
@@ -114,11 +114,11 @@ public class SchemaRegistryService {
             .retrieve()
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
-            ).bodyToMono(SchemaSubject.class)
+            ).bodyToMono(SchemaSubjectDTO.class)
             .map(this::withSchemaType)
             .zipWith(getSchemaCompatibilityInfoOrGlobal(clusterName, schemaName))
             .map(tuple -> {
-              SchemaSubject schema = tuple.getT1();
+              SchemaSubjectDTO schema = tuple.getT1();
               String compatibilityLevel = tuple.getT2().getCompatibility().getValue();
               schema.setCompatibilityLevel(compatibilityLevel);
               return schema;
@@ -128,12 +128,12 @@ public class SchemaRegistryService {
   }
 
   /**
-   * If {@link SchemaSubject#getSchemaType()} is null, then AVRO, otherwise,
+   * If {@link SchemaSubjectDTO#getSchemaType()} is null, then AVRO, otherwise,
    * adds the schema type as is.
    */
   @NotNull
-  private SchemaSubject withSchemaType(SchemaSubject s) {
-    return s.schemaType(Optional.ofNullable(s.getSchemaType()).orElse(SchemaType.AVRO));
+  private SchemaSubjectDTO withSchemaType(SchemaSubjectDTO s) {
+    return s.schemaType(Optional.ofNullable(s.getSchemaType()).orElse(SchemaTypeDTO.AVRO));
   }
 
   public Mono<ResponseEntity<Void>> deleteSchemaSubjectByVersion(String clusterName,
@@ -180,12 +180,12 @@ public class SchemaRegistryService {
    * Checks whether the provided schema duplicates the previous or not, creates a new schema
    * and then returns the whole content by requesting its latest version.
    */
-  public Mono<SchemaSubject> registerNewSchema(String clusterName,
-                                               Mono<NewSchemaSubject> newSchemaSubject) {
+  public Mono<SchemaSubjectDTO> registerNewSchema(String clusterName,
+                                               Mono<NewSchemaSubjectDTO> newSchemaSubject) {
     return newSchemaSubject
         .flatMap(schema -> {
-          SchemaType schemaType =
-              SchemaType.AVRO == schema.getSchemaType() ? null : schema.getSchemaType();
+          SchemaTypeDTO schemaType =
+              SchemaTypeDTO.AVRO == schema.getSchemaType() ? null : schema.getSchemaType();
           Mono<InternalNewSchema> newSchema =
               Mono.just(new InternalNewSchema(schema.getSchema(), schemaType));
           String subject = schema.getSubject();
@@ -218,7 +218,7 @@ public class SchemaRegistryService {
   }
 
   @NotNull
-  private Mono<SchemaSubject> checkSchemaOnDuplicate(String subject,
+  private Mono<SchemaSubjectDTO> checkSchemaOnDuplicate(String subject,
                                                      Mono<InternalNewSchema> newSchemaSubject,
                                                      InternalSchemaRegistry schemaRegistry) {
     return configuredWebClient(
@@ -232,7 +232,7 @@ public class SchemaRegistryService {
         .onStatus(UNPROCESSABLE_ENTITY::equals,
             r -> r.bodyToMono(ErrorResponse.class)
                 .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
-        .bodyToMono(SchemaSubject.class)
+        .bodyToMono(SchemaSubjectDTO.class)
         .filter(s -> Objects.isNull(s.getId()))
         .switchIfEmpty(Mono.error(new DuplicateEntityException("Such schema already exists")));
   }
@@ -247,10 +247,10 @@ public class SchemaRegistryService {
    * Updates a compatibility level for a <code>schemaName</code>.
    *
    * @param schemaName is a schema subject name
-   * @see com.provectus.kafka.ui.model.CompatibilityLevel.CompatibilityEnum
+   * @see com.provectus.kafka.ui.model.CompatibilityLevelDTO.CompatibilityEnum
    */
   public Mono<Void> updateSchemaCompatibility(String clusterName, String schemaName,
-                                              Mono<CompatibilityLevel> compatibilityLevel) {
+                                              Mono<CompatibilityLevelDTO> compatibilityLevel) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> {
           String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
@@ -259,7 +259,7 @@ public class SchemaRegistryService {
               HttpMethod.PUT,
               configEndpoint, schemaName)
               .contentType(MediaType.APPLICATION_JSON)
-              .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevel.class))
+              .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevelDTO.class))
               .retrieve()
               .onStatus(NOT_FOUND::equals,
                   throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
@@ -268,11 +268,11 @@ public class SchemaRegistryService {
   }
 
   public Mono<Void> updateSchemaCompatibility(String clusterName,
-                                              Mono<CompatibilityLevel> compatibilityLevel) {
+                                              Mono<CompatibilityLevelDTO> compatibilityLevel) {
     return updateSchemaCompatibility(clusterName, null, compatibilityLevel);
   }
 
-  public Mono<CompatibilityLevel> getSchemaCompatibilityLevel(String clusterName,
+  public Mono<CompatibilityLevelDTO> getSchemaCompatibilityLevel(String clusterName,
                                                               String schemaName) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> {
@@ -288,25 +288,25 @@ public class SchemaRegistryService {
         }).orElse(Mono.empty());
   }
 
-  public Mono<CompatibilityLevel> getGlobalSchemaCompatibilityLevel(String clusterName) {
+  public Mono<CompatibilityLevelDTO> getGlobalSchemaCompatibilityLevel(String clusterName) {
     return this.getSchemaCompatibilityLevel(clusterName, null);
   }
 
-  private Mono<CompatibilityLevel> getSchemaCompatibilityInfoOrGlobal(String clusterName,
+  private Mono<CompatibilityLevelDTO> getSchemaCompatibilityInfoOrGlobal(String clusterName,
                                                                       String schemaName) {
     return this.getSchemaCompatibilityLevel(clusterName, schemaName)
         .switchIfEmpty(this.getGlobalSchemaCompatibilityLevel(clusterName));
   }
 
-  public Mono<CompatibilityCheckResponse> checksSchemaCompatibility(
-      String clusterName, String schemaName, Mono<NewSchemaSubject> newSchemaSubject) {
+  public Mono<CompatibilityCheckResponseDTO> checksSchemaCompatibility(
+      String clusterName, String schemaName, Mono<NewSchemaSubjectDTO> newSchemaSubject) {
     return clustersStorage.getClusterByName(clusterName)
         .map(cluster -> configuredWebClient(
             cluster,
             HttpMethod.POST,
             "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
             .contentType(MediaType.APPLICATION_JSON)
-            .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubject.class))
+            .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubjectDTO.class))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))

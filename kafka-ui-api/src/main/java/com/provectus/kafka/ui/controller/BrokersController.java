@@ -1,12 +1,12 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.BrokersApi;
-import com.provectus.kafka.ui.model.Broker;
-import com.provectus.kafka.ui.model.BrokerConfig;
-import com.provectus.kafka.ui.model.BrokerConfigItem;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
-import com.provectus.kafka.ui.model.BrokerMetrics;
-import com.provectus.kafka.ui.model.BrokersLogdirs;
+import com.provectus.kafka.ui.model.BrokerConfigDTO;
+import com.provectus.kafka.ui.model.BrokerConfigItemDTO;
+import com.provectus.kafka.ui.model.BrokerDTO;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
+import com.provectus.kafka.ui.model.BrokerMetricsDTO;
+import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class BrokersController implements BrokersApi {
   private final ClusterService clusterService;
 
   @Override
-  public Mono<ResponseEntity<BrokerMetrics>> getBrokersMetrics(String clusterName, Integer id,
+  public Mono<ResponseEntity<BrokerMetricsDTO>> getBrokersMetrics(String clusterName, Integer id,
                                                                ServerWebExchange exchange) {
     return clusterService.getBrokerMetrics(clusterName, id)
         .map(ResponseEntity::ok)
@@ -32,13 +32,13 @@ public class BrokersController implements BrokersApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<Broker>>> getBrokers(String clusterName,
+  public Mono<ResponseEntity<Flux<BrokerDTO>>> getBrokers(String clusterName,
                                                        ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(clusterService.getBrokers(clusterName)));
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<BrokersLogdirs>>> getAllBrokersLogdirs(String clusterName,
+  public Mono<ResponseEntity<Flux<BrokersLogdirsDTO>>> getAllBrokersLogdirs(String clusterName,
                                                                          List<Integer> brokers,
                                                                          ServerWebExchange exchange
   ) {
@@ -46,14 +46,14 @@ public class BrokersController implements BrokersApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<BrokerConfig>>> getBrokerConfig(String clusterName, Integer id,
+  public Mono<ResponseEntity<Flux<BrokerConfigDTO>>> getBrokerConfig(String clusterName, Integer id,
                                                                   ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(clusterService.getBrokerConfig(clusterName, id)));
   }
 
   @Override
   public Mono<ResponseEntity<Void>> updateBrokerTopicPartitionLogDir(
-      String clusterName, Integer id, Mono<BrokerLogdirUpdate> brokerLogdir,
+      String clusterName, Integer id, Mono<BrokerLogdirUpdateDTO> brokerLogdir,
       ServerWebExchange exchange) {
     return brokerLogdir
         .flatMap(bld -> clusterService.updateBrokerLogDir(clusterName, id, bld))
@@ -64,7 +64,7 @@ public class BrokersController implements BrokersApi {
   public Mono<ResponseEntity<Void>> updateBrokerConfigByName(String clusterName,
                                                              Integer id,
                                                              String name,
-                                                             Mono<BrokerConfigItem> brokerConfig,
+                                                             Mono<BrokerConfigItemDTO> brokerConfig,
                                                              ServerWebExchange exchange) {
     return brokerConfig
         .flatMap(bci -> clusterService.updateBrokerConfigByName(

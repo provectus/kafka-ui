@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.serde;
 
-import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import javax.annotation.Nullable;
 import lombok.Builder;
@@ -29,5 +29,5 @@ public interface RecordSerDe {
                                            @Nullable String data,
                                            @Nullable Integer partition);
 
-  TopicMessageSchema getTopicSchema(String topic);
+  TopicMessageSchemaDTO getTopicSchema(String topic);
 }

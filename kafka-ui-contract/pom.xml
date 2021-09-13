@@ -81,7 +81,7 @@
                                     </inputSpec>
                                     <output>${project.build.directory}/generated-sources/api</output>
                                     <generatorName>spring</generatorName>
-
+                                    <modelNameSuffix>DTO</modelNameSuffix>
                                     <configOptions>
                                         <modelPackage>com.provectus.kafka.ui.model</modelPackage>
                                         <apiPackage>com.provectus.kafka.ui.api</apiPackage>

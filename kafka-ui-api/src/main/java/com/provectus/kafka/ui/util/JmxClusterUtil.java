@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.util;
 
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
-import com.provectus.kafka.ui.model.Metric;
+import com.provectus.kafka.ui.model.MetricDTO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ public class JmxClusterUtil {
   private final KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
   @SneakyThrows
-  public List<Metric> getJmxMetrics(String host, int port, boolean jmxSsl,
+  public List<MetricDTO> getJmxMetrics(String host, int port, boolean jmxSsl,
                                     @Nullable String username, @Nullable String password) {
     String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
     final var connectionInfo = JmxConnectionInfo.builder()
@@ -53,7 +53,7 @@ public class JmxClusterUtil {
       return Collections.emptyList();
     }
 
-    List<Metric> result = new ArrayList<>();
+    List<MetricDTO> result = new ArrayList<>();
     try {
       MBeanServerConnection msc = srv.getMBeanServerConnection();
       var jmxMetrics = msc.queryNames(null, null).stream()
@@ -61,7 +61,7 @@ public class JmxClusterUtil {
           .collect(Collectors.toList());
       for (ObjectName jmxMetric : jmxMetrics) {
         final Hashtable<String, String> params = jmxMetric.getKeyPropertyList();
-        Metric metric = new Metric();
+        MetricDTO metric = new MetricDTO();
         metric.setName(params.get(NAME_METRIC_FIELD));
         metric.setCanonicalName(jmxMetric.getCanonicalName());
         metric.setParams(params);
@@ -99,8 +99,8 @@ public class JmxClusterUtil {
     }
   }
 
-  public Metric reduceJmxMetrics(Metric metric1, Metric metric2) {
-    var result = new Metric();
+  public MetricDTO reduceJmxMetrics(MetricDTO metric1, MetricDTO metric2) {
+    var result = new MetricDTO();
     Map<String, BigDecimal> value = Stream.concat(
         metric1.getValue().entrySet().stream(),
         metric2.getValue().entrySet().stream()
@@ -115,7 +115,7 @@ public class JmxClusterUtil {
     return result;
   }
 
-  private boolean isWellKnownMetric(Metric metric) {
+  private boolean isWellKnownMetric(MetricDTO metric) {
     final Optional<String> param =
         Optional.ofNullable(metric.getParams().get(NAME_METRIC_FIELD)).filter(p ->
             Arrays.stream(JmxMetricsName.values()).map(Enum::name)

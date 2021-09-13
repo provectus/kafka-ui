@@ -8,8 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.model.Table;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
+import com.provectus.kafka.ui.model.TableDTO;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,8 +48,8 @@ class DescribeStrategyTest {
   @Test
   void shouldSerializeResponse() {
     JsonNode node = getResponseWithObjectNode();
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
-    Table table = serializedResponse.getData();
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
+    TableDTO table = serializedResponse.getData();
     assertThat(table.getHeaders()).isEqualTo(List.of("key", "value"));
     assertThat(table.getRows()).isEqualTo(List.of(List.of("name", "kafka")));
   }
