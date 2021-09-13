@@ -35,7 +35,6 @@ exports[`KsqlDb Component KsqlDb matches snapshot 1`] = `
         className="section"
       >
         <Switch />
-        <Switch />
       </div>
     </KsqlDb>
   </Router>

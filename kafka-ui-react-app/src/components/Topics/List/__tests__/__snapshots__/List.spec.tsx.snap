@@ -62,24 +62,6 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
       <div
         className="section"
       >
-        <Breadcrumb>
-          <nav
-            aria-label="breadcrumbs"
-            className="breadcrumb"
-          >
-            <ul>
-              <li
-                className="is-active"
-              >
-                <span
-                  className=""
-                >
-                  All Topics
-                </span>
-              </li>
-            </ul>
-          </nav>
-        </Breadcrumb>
         <div
           className="box"
         >
@@ -140,16 +122,16 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
             >
               <Link
                 className="button is-primary"
-                to="/ui/clusters/undefined/topics/create_new"
+                to="/ui/clusters/undefined/topics/create-new"
               >
                 <LinkAnchor
                   className="button is-primary"
-                  href="/ui/clusters/undefined/topics/create_new"
+                  href="/ui/clusters/undefined/topics/create-new"
                   navigate={[Function]}
                 >
                   <a
                     className="button is-primary"
-                    href="/ui/clusters/undefined/topics/create_new"
+                    href="/ui/clusters/undefined/topics/create-new"
                     onClick={[Function]}
                   >
                     Add a Topic

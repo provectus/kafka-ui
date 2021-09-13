@@ -3,7 +3,7 @@ import cx from 'classnames';
 
 interface Props {
   fetching?: boolean;
-  label: string;
+  label: React.ReactNode;
   title?: string;
   className?: string;
 }
@@ -17,9 +17,9 @@ const Indicator: React.FC<Props> = ({
 }) => {
   return (
     <div className={cx('level-item', className)}>
-      <div title={title || label}>
-        <p className="heading">{label}</p>
-        <p className="title has-text-centered">
+      <div title={title}>
+        <p className="is-size-8">{label}</p>
+        <p className="is-size-6 has-text-weight-medium">
           {fetching ? (
             <span className="icon has-text-grey-light">
               <i className="fas fa-spinner fa-pulse" />

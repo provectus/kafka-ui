@@ -5,22 +5,6 @@ exports[`Details View Initial state matches snapshot 1`] = `
   className="section"
 >
   <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-        ]
-      }
-    >
-      test
-    </Breadcrumb>
-  </div>
-  <div
     className="box"
   >
     <div
@@ -128,22 +112,6 @@ exports[`Details View when page with schema versions is loading matches snapshot
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-        ]
-      }
-    >
-      test
-    </Breadcrumb>
-  </div>
   <PageLoader />
 </div>
 `;
@@ -152,22 +120,6 @@ exports[`Details View when page with schema versions loaded when schema has vers
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-        ]
-      }
-    >
-      test
-    </Breadcrumb>
-  </div>
   <div
     className="box"
   >
@@ -296,22 +248,6 @@ exports[`Details View when page with schema versions loaded when versions are em
   className="section"
 >
   <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-        ]
-      }
-    >
-      test
-    </Breadcrumb>
-  </div>
-  <div
     className="box"
   >
     <div
@@ -419,22 +355,6 @@ exports[`Details View when page with schemas are loading matches snapshot 1`] = 
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-        ]
-      }
-    >
-      test
-    </Breadcrumb>
-  </div>
   <PageLoader />
 </div>
 `;

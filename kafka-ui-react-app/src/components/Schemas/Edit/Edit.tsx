@@ -6,11 +6,10 @@ import {
   SchemaSubject,
   SchemaType,
 } from 'generated-sources';
-import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaPath } from 'lib/paths';
 import { ClusterName, NewSchemaSubjectRaw, SchemaName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 
 export interface EditProps {
   subject: SchemaName;
@@ -81,25 +80,6 @@ const Edit = ({
 
   return (
     <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterSchemasPath(clusterName),
-                label: 'Schema Registry',
-              },
-              {
-                href: clusterSchemaPath(clusterName, subject),
-                label: subject,
-              },
-            ]}
-          >
-            Edit
-          </Breadcrumb>
-        </div>
-      </div>
-
       {schemasAreFetched ? (
         <div className="box">
           <form

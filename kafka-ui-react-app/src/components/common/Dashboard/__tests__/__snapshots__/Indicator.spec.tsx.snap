@@ -12,12 +12,12 @@ exports[`Indicator matches the snapshot 1`] = `
       title="title"
     >
       <p
-        className="heading"
+        className="is-size-8"
       >
         label
       </p>
       <p
-        className="title has-text-centered"
+        className="is-size-6 has-text-weight-medium"
       >
         Child
       </p>

@@ -6,16 +6,6 @@ exports[`Connect matches snapshot 1`] = `
 >
   <Switch>
     <Route
-      component={[Function]}
-      path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName"
-    />
-    <Route
-      component={[Function]}
-      path="/ui/clusters/:clusterName/connectors"
-    />
-  </Switch>
-  <Switch>
-    <Route
       component={
         Object {
           "$$typeof": Symbol(react.memo),
@@ -30,7 +20,7 @@ exports[`Connect matches snapshot 1`] = `
     <Route
       component={[Function]}
       exact={true}
-      path="/ui/clusters/:clusterName/connectors/create_new"
+      path="/ui/clusters/:clusterName/connectors/create-new"
     />
     <Route
       component={[Function]}

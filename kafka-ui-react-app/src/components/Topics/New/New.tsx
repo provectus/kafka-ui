@@ -1,8 +1,7 @@
 import React from 'react';
 import { ClusterName, TopicFormData, FailurePayload } from 'redux/interfaces';
 import { useForm, FormProvider } from 'react-hook-form';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
+import { clusterTopicPath } from 'lib/paths';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import {
   formatTopicCreation,
@@ -45,18 +44,6 @@ const New: React.FC = () => {
 
   return (
     <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              { href: clusterTopicsPath(clusterName), label: 'All Topics' },
-            ]}
-          >
-            New Topic
-          </Breadcrumb>
-        </div>
-      </div>
-
       <div className="box">
         <FormProvider {...methods}>
           <TopicForm

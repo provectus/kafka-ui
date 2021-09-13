@@ -14,6 +14,8 @@ import 'components/App.scss';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
+import Breadcrumb from './common/Breadcrumb/Breadcrumb';
+
 export interface AppProps {
   isClusterListFetched?: boolean;
   alerts: Alerts;
@@ -96,14 +98,20 @@ const App: React.FC<AppProps> = ({
             aria-hidden="true"
           />
           {isClusterListFetched ? (
-            <Switch>
-              <Route
-                exact
-                path={['/', '/ui', '/ui/clusters']}
-                component={Dashboard}
-              />
-              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-            </Switch>
+            <>
+              <Breadcrumb />
+              <Switch>
+                <Route
+                  exact
+                  path={['/', '/ui', '/ui/clusters']}
+                  component={Dashboard}
+                />
+                <Route
+                  path="/ui/clusters/:clusterName"
+                  component={ClusterPage}
+                />
+              </Switch>
+            </>
           ) : (
             <PageLoader fullHeight />
           )}

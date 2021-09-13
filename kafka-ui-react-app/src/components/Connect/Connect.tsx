@@ -7,7 +7,6 @@ import {
   clusterConnectConnectorEditPath,
 } from 'lib/paths';
 
-import Breadcrumbs from './Breadcrumbs/Breadcrumbs';
 import ListContainer from './List/ListContainer';
 import NewContainer from './New/NewContainer';
 import DetailsContainer from './Details/DetailsContainer';
@@ -15,20 +14,6 @@ import EditContainer from './Edit/EditContainer';
 
 const Connect: React.FC = () => (
   <div className="section">
-    <Switch>
-      <Route
-        path={clusterConnectConnectorPath(
-          ':clusterName',
-          ':connectName',
-          ':connectorName'
-        )}
-        component={Breadcrumbs}
-      />
-      <Route
-        path={clusterConnectorsPath(':clusterName')}
-        component={Breadcrumbs}
-      />
-    </Switch>
     <Switch>
       <Route
         exact

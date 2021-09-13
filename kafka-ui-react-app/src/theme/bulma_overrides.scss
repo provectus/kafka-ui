@@ -14,6 +14,8 @@
     max-height: 73px;
     overflow: hidden;
     text-overflow: ellipsis;
+    background-color: #fff;
+
     background: -webkit-linear-gradient(
       90deg,
       rgba(0, 0, 0, 0.1) 0%,
@@ -84,4 +86,14 @@
 
 .is-size-8 {
   font-size: $size-8;
+}
+
+.box {
+  box-shadow: none;
+}
+
+.tag:not(body) {
+  font-size: 0.75rem;
+  height: 1.75em;
+  line-height: 1.75;
 }

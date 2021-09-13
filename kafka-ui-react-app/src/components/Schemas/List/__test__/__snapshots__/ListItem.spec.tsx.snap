@@ -44,7 +44,7 @@ exports[`ListItem matches snapshot 1`] = `
                 activeClassName="is-active"
                 className="title is-6"
                 exact={true}
-                to="schemas/test/latest"
+                to="schemas/test"
               >
                 <Link
                   aria-current={null}
@@ -52,7 +52,7 @@ exports[`ListItem matches snapshot 1`] = `
                   to={
                     Object {
                       "hash": "",
-                      "pathname": "/schemas/test/latest",
+                      "pathname": "/schemas/test",
                       "search": "",
                       "state": null,
                     }
@@ -61,13 +61,13 @@ exports[`ListItem matches snapshot 1`] = `
                   <LinkAnchor
                     aria-current={null}
                     className="title is-6"
-                    href="/schemas/test/latest"
+                    href="/schemas/test"
                     navigate={[Function]}
                   >
                     <a
                       aria-current={null}
                       className="title is-6"
-                      href="/schemas/test/latest"
+                      href="/schemas/test"
                       onClick={[Function]}
                     >
                       test

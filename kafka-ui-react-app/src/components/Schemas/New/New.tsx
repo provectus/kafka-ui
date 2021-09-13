@@ -2,8 +2,7 @@ import React from 'react';
 import { ClusterName, NewSchemaSubjectRaw } from 'redux/interfaces';
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubject, SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useHistory, useParams } from 'react-router';
@@ -42,21 +41,6 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
 
   return (
     <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterSchemasPath(clusterName),
-                label: 'Schema Registry',
-              },
-            ]}
-          >
-            New Schema
-          </Breadcrumb>
-        </div>
-      </div>
-
       <div className="box">
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
