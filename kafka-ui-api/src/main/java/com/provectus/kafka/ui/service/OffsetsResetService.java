@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.provectus.kafka.ui.util.ClusterUtil.toMono;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.kafka.common.ConsumerGroupState.DEAD;
@@ -8,7 +9,6 @@ import static org.apache.kafka.common.ConsumerGroupState.EMPTY;
 
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.HashMap;
@@ -16,9 +16,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CompletableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -38,6 +38,7 @@ import reactor.core.publisher.Mono;
 public class OffsetsResetService {
 
   private final KafkaService kafkaService;
+  private final AdminClientService adminClientService;
 
   public Mono<Map<TopicPartition, OffsetAndMetadata>> resetToEarliest(
       KafkaCluster cluster, String group, String topic, Collection<Integer> partitions) {
@@ -92,30 +93,32 @@ public class OffsetsResetService {
     );
   }
 
-  private Mono<InternalConsumerGroup> checkGroupCondition(KafkaCluster cluster, String groupId) {
-    return kafkaService.getConsumerGroupsInternal(cluster, List.of(groupId))
-        .flatMap(l ->
-            l.stream()
-                .filter(c -> c.getGroupId().equals(groupId))
-                .findAny()
-                .map(Mono::just)
-                .orElse(Mono.error(new NotFoundException("Consumer group not found")))
-        ).flatMap(
-            g -> {
-              if (!Set.of(DEAD, EMPTY).contains(g.getState())) {
-                return Mono.error(
-                    new ValidationException(
-                        String.format(
-                            "Group's offsets can be reset only if group is inactive,"
-                                + " but group is in %s state",
-                            g.getState()
+  private Mono<ConsumerGroupDescription> checkGroupCondition(KafkaCluster cluster, String groupId) {
+    return adminClientService.getOrCreateAdminClient(cluster)
+        .flatMap(ac ->
+            // we need to call listConsumerGroups() to check group existence, because
+            // describeConsumerGroups() will return consumer group even if it doesn't exist
+            toMono(ac.getAdminClient().listConsumerGroups().all())
+                .filter(cgs -> cgs.stream().anyMatch(g -> g.groupId().equals(groupId)))
+                .flatMap(cgs -> toMono(
+                    ac.getAdminClient().describeConsumerGroups(List.of(groupId)).all()))
+                .filter(cgs -> cgs.containsKey(groupId))
+                .map(cgs -> cgs.get(groupId))
+                .flatMap(cg -> {
+                  if (!Set.of(DEAD, EMPTY).contains(cg.state())) {
+                    return Mono.error(
+                        new ValidationException(
+                            String.format(
+                                "Group's offsets can be reset only if group is inactive,"
+                                    + " but group is in %s state",
+                                cg.state()
+                            )
                         )
-                    )
-                );
-              } else {
-                return Mono.just(g);
-              }
-            }
+                    );
+                  }
+                  return Mono.just(cg);
+                })
+                .switchIfEmpty(Mono.error(new NotFoundException("Consumer group not found")))
         );
   }
 
@@ -184,19 +187,10 @@ public class OffsetsResetService {
   private Mono<Map<TopicPartition, OffsetAndMetadata>> commitOffsets(
       Consumer<?, ?> consumer, Map<TopicPartition, Long> offsets
   ) {
-    CompletableFuture<Map<TopicPartition, OffsetAndMetadata>> cf = new CompletableFuture<>();
-    consumer.commitAsync(
-        offsets.entrySet().stream()
-            .collect(toMap(Map.Entry::getKey, e -> new OffsetAndMetadata(e.getValue()))),
-        (o, e) -> {
-          if (e != null) {
-            cf.completeExceptionally(e);
-          } else {
-            cf.complete(o);
-          }
-        }
-    );
-    return Mono.fromFuture(cf);
+    var toCommit = offsets.entrySet().stream()
+        .collect(toMap(Map.Entry::getKey, e -> new OffsetAndMetadata(e.getValue())));
+    consumer.commitSync(toCommit);
+    return Mono.just(toCommit);
   }
 
   private Consumer<?, ?> getConsumer(KafkaCluster cluster, String groupId) {
