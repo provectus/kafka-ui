@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import { styled } from 'lib/themedStyles';
 
 import { MenuItemProps } from './ClusterMenuItem';
 
