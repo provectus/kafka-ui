@@ -1,8 +1,10 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,13 +43,7 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
 
   private FieldSchema convertSchema(String name, Schema schema,
                                     Map<String, FieldSchema> definitions, boolean ref) {
-    if (!schema.isUnion() || (schema.getTypes().size() == 2 && schema.isNullable())) {
-      if (schema.isUnion()) {
-        final Optional<Schema> firstType =
-            schema.getTypes().stream().filter(t -> !t.getType().equals(Schema.Type.NULL))
-                .findFirst();
-        schema = firstType.orElseThrow();
-      }
+    if (!schema.isUnion()) {
       JsonType type = convertType(schema);
       switch (type.getType()) {
         case BOOLEAN:
@@ -68,18 +64,27 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
         default: throw new RuntimeException("Unknown type");
       }
     } else {
-      return new OneOfFieldSchema(
-          schema.getTypes().stream()
-              .map(typeSchema ->
-                  convertSchema(
-                      name + UUID.randomUUID().toString(),
-                      typeSchema,
-                      definitions,
-                      true
-                  )
-              ).collect(Collectors.toList())
-      );
+      return createUnionSchema(schema, definitions);
     }
+  }
+
+  private FieldSchema createUnionSchema(Schema schema, Map<String, FieldSchema> definitions) {
+    final Map<String, FieldSchema> fields = schema.getTypes().stream()
+        .filter(t -> !t.getType().equals(Schema.Type.NULL))
+        .map(f -> Tuples.of(
+            f.getType().getName().toLowerCase(Locale.ROOT),
+            convertSchema(
+                f.getType().getName().toLowerCase(Locale.ROOT),
+                f, definitions, true
+            )
+        )).collect(Collectors.toMap(
+            Tuple2::getT1,
+            Tuple2::getT2
+        ));
+
+    return new ObjectFieldSchema(
+        fields, Collections.emptyList()
+    );
   }
 
   private FieldSchema createObjectSchema(String name, Schema schema,
