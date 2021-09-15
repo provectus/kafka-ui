@@ -53,181 +53,215 @@ exports[`App view matches snapshot 1`] = `
         }
         isClusterListFetched={true}
       >
-        <div
-          className="Layout"
+        <Component
+          theme={
+            Object {
+              "buttonStyles": Object {
+                "fontSize": Object {
+                  "L": "16px",
+                  "M": "14px",
+                  "S": "14px",
+                },
+                "height": Object {
+                  "L": "40px",
+                  "M": "32px",
+                  "S": "24px",
+                },
+                "primary": Object {
+                  "backgroundColor": Object {
+                    "active": "#1414B8",
+                    "hover": "#1717CF",
+                    "normal": "#4F4FFF",
+                  },
+                  "color": "#FFFFFF",
+                  "invertedColors": Object {
+                    "active": "#1414B8",
+                    "hover": "#1717CF",
+                    "normal": "#4F4FFF",
+                  },
+                },
+                "secondary": Object {
+                  "backgroundColor": Object {
+                    "active": "#D5DADD",
+                    "hover": "#E3E6E8",
+                    "normal": "#F1F2F3",
+                  },
+                  "color": "#171A1C",
+                  "invertedColors": Object {
+                    "active": "#171A1C",
+                    "hover": "#454F54",
+                    "normal": "#73848C",
+                  },
+                },
+              },
+              "liStyles": Object {
+                "primary": Object {
+                  "backgroundColor": Object {
+                    "active": "#E3E6E8",
+                    "hover": "#F1F2F3",
+                    "normal": "#FFFFFF",
+                  },
+                  "color": Object {
+                    "active": "#171A1C",
+                    "hover": "#F1F2F3",
+                    "normal": "#73848C",
+                  },
+                },
+              },
+              "secondaryTabStyles": Object {
+                "backgroundColor": Object {
+                  "active": "#E3E6E8",
+                  "hover": "#F1F2F3",
+                  "normal": "#FFFFFF",
+                },
+                "color": Object {
+                  "active": "#171A1C",
+                  "hover": "#171A1C",
+                  "normal": "#73848C",
+                },
+              },
+            }
+          }
         >
-          <nav
-            aria-label="main navigation"
-            className="navbar is-fixed-top is-white Layout__header"
-            role="navigation"
+          <div
+            className="Layout"
           >
-            <div
-              className="navbar-brand"
+            <nav
+              aria-label="main navigation"
+              className="navbar is-fixed-top is-white Layout__header"
+              role="navigation"
             >
               <div
-                className="navbar-burger ml-0"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-                role="button"
-                tabIndex={0}
+                className="navbar-brand"
               >
-                <span />
-                <span />
-                <span />
-              </div>
-              <a
-                className="navbar-item title is-5 is-marginless"
-                href="/ui"
-              >
-                UI for Apache Kafka
-              </a>
-              <div
-                className="navbar-item"
-              >
-                <Version />
-              </div>
-            </div>
-          </nav>
-          <main
-            className="Layout__container"
-          >
-            <div
-              className="Layout__sidebar has-shadow has-background-white"
-            >
-              <Nav
-                clusters={Array []}
-                isClusterListFetched={true}
-              >
-                <aside
-                  className="menu has-shadow has-background-white"
+                <div
+                  className="navbar-burger ml-0"
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  role="button"
+                  tabIndex={0}
                 >
-                  <p
-                    className="menu-label"
+                  <span />
+                  <span />
+                  <span />
+                </div>
+                <a
+                  className="navbar-item title is-5 is-marginless"
+                  href="/ui"
+                >
+                  UI for Apache Kafka
+                </a>
+                <div
+                  className="navbar-item"
+                >
+                  <Version />
+                </div>
+              </div>
+            </nav>
+            <main
+              className="Layout__container"
+            >
+              <div
+                className="Layout__sidebar has-shadow has-background-white"
+              >
+                <Nav
+                  clusters={Array []}
+                  isClusterListFetched={true}
+                >
+                  <aside
+                    className="menu has-shadow has-background-white"
                   >
-                    General
-                  </p>
-                  <ul
-                    className="menu-list"
-                  >
-                    <li>
-                      <NavLink
-                        activeClassName="is-active"
-                        exact={true}
-                        title="Dashboard"
-                        to="/ui"
-                      >
-                        <Link
-                          aria-current={null}
+                    <p
+                      className="menu-label"
+                    >
+                      General
+                    </p>
+                    <ul
+                      className="menu-list"
+                    >
+                      <li>
+                        <NavLink
+                          activeClassName="is-active"
+                          exact={true}
                           title="Dashboard"
-                          to={
-                            Object {
-                              "hash": "",
-                              "pathname": "/ui",
-                              "search": "",
-                              "state": null,
-                            }
-                          }
+                          to="/ui"
                         >
-                          <LinkAnchor
+                          <Link
                             aria-current={null}
-                            href="/ui"
-                            navigate={[Function]}
                             title="Dashboard"
+                            to={
+                              Object {
+                                "hash": "",
+                                "pathname": "/ui",
+                                "search": "",
+                                "state": null,
+                              }
+                            }
                           >
-                            <a
+                            <LinkAnchor
                               aria-current={null}
                               href="/ui"
-                              onClick={[Function]}
+                              navigate={[Function]}
                               title="Dashboard"
                             >
-                              Dashboard
-                            </a>
-                          </LinkAnchor>
-                        </Link>
-                      </NavLink>
+                              <a
+                                aria-current={null}
+                                href="/ui"
+                                onClick={[Function]}
+                                title="Dashboard"
+                              >
+                                Dashboard
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </NavLink>
+                      </li>
+                    </ul>
+                    <p
+                      className="menu-label"
+                    >
+                      Clusters
+                    </p>
+                  </aside>
+                </Nav>
+              </div>
+              <div
+                aria-hidden="true"
+                className="Layout__sidebarOverlay is-overlay"
+                onClick={[Function]}
+                onKeyDown={[Function]}
+                tabIndex={-1}
+              />
+              <Breadcrumb>
+                <nav
+                  aria-label="breadcrumbs"
+                  className="breadcrumb mb-2 pt-2"
+                >
+                  <ul
+                    className="py-3 px-4 py-3"
+                  >
+                    <li
+                      className="is-active is-size-4 has-text-weight-medium is-capitalized"
+                    >
+                      <span>
+                        Dashboard
+                      </span>
                     </li>
                   </ul>
-                  <p
-                    className="menu-label"
-                  >
-                    Clusters
-                  </p>
-                </aside>
-              </Nav>
-            </div>
-            <div
-              aria-hidden="true"
-              className="Layout__sidebarOverlay is-overlay"
-              onClick={[Function]}
-              onKeyDown={[Function]}
-              tabIndex={-1}
-            />
-            <Breadcrumb>
-              <nav
-                aria-label="breadcrumbs"
-                className="breadcrumb mb-2 pt-2"
-              >
-                <ul
-                  className="py-3 px-4 py-3"
-                >
-                  <li
-                    className="is-active is-size-4 has-text-weight-medium is-capitalized"
-                  >
-                    <span>
-                      Dashboard
-                    </span>
-                  </li>
-                </ul>
-              </nav>
-            </Breadcrumb>
-            <Switch>
-              <Route
-                component={[Function]}
-                computedMatch={
-                  Object {
-                    "isExact": true,
-                    "params": Object {},
-                    "path": "/",
-                    "url": "/",
-                  }
-                }
-                exact={true}
-                location={
-                  Object {
-                    "hash": "",
-                    "pathname": "/",
-                    "search": "",
-                    "state": undefined,
-                  }
-                }
-                path={
-                  Array [
-                    "/",
-                    "/ui",
-                    "/ui/clusters",
-                  ]
-                }
-              >
-                <Dashboard
-                  history={
+                </nav>
+              </Breadcrumb>
+              <Switch>
+                <Route
+                  component={[Function]}
+                  computedMatch={
                     Object {
-                      "action": "POP",
-                      "block": [Function],
-                      "createHref": [Function],
-                      "go": [Function],
-                      "goBack": [Function],
-                      "goForward": [Function],
-                      "listen": [Function],
-                      "location": Object {
-                        "hash": "",
-                        "pathname": "/",
-                        "search": "",
-                        "state": undefined,
-                      },
-                      "push": [Function],
-                      "replace": [Function],
+                      "isExact": true,
+                      "params": Object {},
+                      "path": "/",
+                      "url": "/",
                     }
                   }
+                  exact={true}
                   location={
                     Object {
                       "hash": "",
@@ -236,157 +270,194 @@ exports[`App view matches snapshot 1`] = `
                       "state": undefined,
                     }
                   }
-                  match={
-                    Object {
-                      "isExact": true,
-                      "params": Object {},
-                      "path": "/",
-                      "url": "/",
-                    }
+                  path={
+                    Array [
+                      "/",
+                      "/ui",
+                      "/ui/clusters",
+                    ]
                   }
-                  staticContext={Object {}}
                 >
-                  <div
-                    className="section"
+                  <Dashboard
+                    history={
+                      Object {
+                        "action": "POP",
+                        "block": [Function],
+                        "createHref": [Function],
+                        "go": [Function],
+                        "goBack": [Function],
+                        "goForward": [Function],
+                        "listen": [Function],
+                        "location": Object {
+                          "hash": "",
+                          "pathname": "/",
+                          "search": "",
+                          "state": undefined,
+                        },
+                        "push": [Function],
+                        "replace": [Function],
+                      }
+                    }
+                    location={
+                      Object {
+                        "hash": "",
+                        "pathname": "/",
+                        "search": "",
+                        "state": undefined,
+                      }
+                    }
+                    match={
+                      Object {
+                        "isExact": true,
+                        "params": Object {},
+                        "path": "/",
+                        "url": "/",
+                      }
+                    }
+                    staticContext={Object {}}
                   >
-                    <Connect(ClustersWidget)>
-                      <ClustersWidget
-                        clusters={Array []}
-                        dispatch={[Function]}
-                        offlineClusters={Array []}
-                        onlineClusters={Array []}
-                      >
-                        <div>
-                          <div
-                            className="metrics-box mb-2"
-                          >
-                            <MetricsWrapper>
-                              <div>
-                                <div
-                                  className="box"
-                                >
+                    <div
+                      className="section"
+                    >
+                      <Connect(ClustersWidget)>
+                        <ClustersWidget
+                          clusters={Array []}
+                          dispatch={[Function]}
+                          offlineClusters={Array []}
+                          onlineClusters={Array []}
+                        >
+                          <div>
+                            <div
+                              className="metrics-box mb-2"
+                            >
+                              <MetricsWrapper>
+                                <div>
                                   <div
-                                    className="level"
+                                    className="box"
                                   >
-                                    <Indicator
-                                      className="is-justify-content-start"
-                                      label={
-                                        <span
-                                          className="tag is-success"
-                                        >
-                                          Online
-                                        </span>
-                                      }
+                                    <div
+                                      className="level"
                                     >
-                                      <div
-                                        className="level-item is-justify-content-start"
+                                      <Indicator
+                                        className="is-justify-content-start"
+                                        label={
+                                          <span
+                                            className="tag is-success"
+                                          >
+                                            Online
+                                          </span>
+                                        }
                                       >
-                                        <div>
-                                          <p
-                                            className="is-size-8"
-                                          >
-                                            <span
-                                              className="tag is-success"
-                                            >
-                                              Online
-                                            </span>
-                                          </p>
-                                          <p
-                                            className="is-size-6 has-text-weight-medium"
-                                          >
-                                            <span
-                                              data-testid="onlineCount"
-                                            >
-                                              0
-                                            </span>
-                                             
-                                            <span
-                                              className="has-text-grey-light is-size-8"
-                                            >
-                                              cluster
-                                            </span>
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </Indicator>
-                                    <Indicator
-                                      className="is-justify-content-start"
-                                      label={
-                                        <span
-                                          className="tag is-light"
+                                        <div
+                                          className="level-item is-justify-content-start"
                                         >
-                                          Offline
-                                        </span>
-                                      }
-                                    >
-                                      <div
-                                        className="level-item is-justify-content-start"
-                                      >
-                                        <div>
-                                          <p
-                                            className="is-size-8"
-                                          >
-                                            <span
-                                              className="tag is-light"
+                                          <div>
+                                            <p
+                                              className="is-size-8"
                                             >
-                                              Offline
-                                            </span>
-                                          </p>
-                                          <p
-                                            className="is-size-6 has-text-weight-medium"
-                                          >
-                                            <span
-                                              data-testid="offlineCount"
+                                              <span
+                                                className="tag is-success"
+                                              >
+                                                Online
+                                              </span>
+                                            </p>
+                                            <p
+                                              className="is-size-6 has-text-weight-medium"
                                             >
-                                              0
-                                            </span>
-                                             
-                                            <span
-                                              className="has-text-grey-light is-size-8"
-                                            >
-                                              cluster
-                                            </span>
-                                          </p>
+                                              <span
+                                                data-testid="onlineCount"
+                                              >
+                                                0
+                                              </span>
+                                               
+                                              <span
+                                                className="has-text-grey-light is-size-8"
+                                              >
+                                                cluster
+                                              </span>
+                                            </p>
+                                          </div>
                                         </div>
-                                      </div>
-                                    </Indicator>
+                                      </Indicator>
+                                      <Indicator
+                                        className="is-justify-content-start"
+                                        label={
+                                          <span
+                                            className="tag is-light"
+                                          >
+                                            Offline
+                                          </span>
+                                        }
+                                      >
+                                        <div
+                                          className="level-item is-justify-content-start"
+                                        >
+                                          <div>
+                                            <p
+                                              className="is-size-8"
+                                            >
+                                              <span
+                                                className="tag is-light"
+                                              >
+                                                Offline
+                                              </span>
+                                            </p>
+                                            <p
+                                              className="is-size-6 has-text-weight-medium"
+                                            >
+                                              <span
+                                                data-testid="offlineCount"
+                                              >
+                                                0
+                                              </span>
+                                               
+                                              <span
+                                                className="has-text-grey-light is-size-8"
+                                              >
+                                                cluster
+                                              </span>
+                                            </p>
+                                          </div>
+                                        </div>
+                                      </Indicator>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </MetricsWrapper>
-                          </div>
-                          <div
-                            className="p-4"
-                          >
-                            <input
-                              checked={false}
-                              className="switch is-rounded"
-                              id="switchRoundedDefault"
-                              name="switchRoundedDefault"
-                              onChange={[Function]}
-                              type="checkbox"
-                            />
-                            <label
-                              htmlFor="switchRoundedDefault"
-                            />
-                            <span
-                              className="is-size-7"
+                              </MetricsWrapper>
+                            </div>
+                            <div
+                              className="p-4"
                             >
-                              Show only offline clusters
-                            </span>
+                              <input
+                                checked={false}
+                                className="switch is-rounded"
+                                id="switchRoundedDefault"
+                                name="switchRoundedDefault"
+                                onChange={[Function]}
+                                type="checkbox"
+                              />
+                              <label
+                                htmlFor="switchRoundedDefault"
+                              />
+                              <span
+                                className="is-size-7"
+                              >
+                                Show only offline clusters
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </ClustersWidget>
-                    </Connect(ClustersWidget)>
-                  </div>
-                </Dashboard>
-              </Route>
-            </Switch>
-          </main>
-          <div
-            className="Layout__alerts"
-          />
-        </div>
+                        </ClustersWidget>
+                      </Connect(ClustersWidget)>
+                    </div>
+                  </Dashboard>
+                </Route>
+              </Switch>
+            </main>
+            <div
+              className="Layout__alerts"
+            />
+          </div>
+        </Component>
       </App>
     </Router>
   </StaticRouter>
