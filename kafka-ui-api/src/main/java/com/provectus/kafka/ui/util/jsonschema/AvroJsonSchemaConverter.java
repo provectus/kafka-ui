@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.avro.Schema;
 import reactor.util.function.Tuple2;
@@ -82,9 +80,7 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
             Tuple2::getT2
         ));
 
-    return new ObjectFieldSchema(
-        fields, Collections.emptyList()
-    );
+    return new ObjectFieldSchema(fields, Collections.emptyList(), true);
   }
 
   private FieldSchema createObjectSchema(String name, Schema schema,

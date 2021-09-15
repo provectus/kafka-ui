@@ -87,7 +87,7 @@ public class AvroJsonSchemaConverterTest {
         + "{\"$ref\":\"#/definitions/RecordInnerMessage\"}},"
         + "\"required\":[\"record\"],\"definitions\":"
         + "{\"RecordInnerMessage\":{\"type\":\"object\",\""
-        + "properties\":{\"long_text\":{\"type\":\"object\","
+        + "properties\":{\"long_text\":{\"type\":[\"object\", \"null\"],"
         + "\"properties\":{\"string\":{\"type\":\"string\"}}},"
         + "\"array\":{\"type\":\"array\",\"items\":{\"type\":\"string\"}},"
         + "\"id\":{\"type\":\"integer\"},\"text\":{\"type\":\"string\"},"
@@ -151,8 +151,8 @@ public class AvroJsonSchemaConverterTest {
         "{\"$id\":\"http://example.com/Message\","
         + "\"$schema\":\"https://json-schema.org/draft/2020-12/schema\","
         + "\"type\":\"object\",\"properties\":{\"text\":"
-        + "{\"type\":\"object\",\"properties\":{\"string\":"
-        + "{\"type\":\"string\"}}},\"value\":{\"type\":\"object\","
+        + "{\"type\":[\"object\", \"null\"],\"properties\":{\"string\":"
+        + "{\"type\":\"string\"}}},\"value\":{\"type\":[\"object\", \"null\"],"
         + "\"properties\":{\"string\":{\"type\":\"string\"},"
         + "\"long\":{\"type\":\"integer\"}}}}}";
 
