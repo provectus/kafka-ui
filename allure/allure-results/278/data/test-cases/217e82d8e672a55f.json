@@ -1,12 +1,12 @@
 {
-  "uid" : "b11bd57528361fb5",
+  "uid" : "217e82d8e672a55f",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1631690493268,
-    "stop" : 1631690502593,
-    "duration" : 9325
+    "start" : 1631691321172,
+    "stop" : 1631691332456,
+    "duration" : 11284
   },
   "description" : "",
   "status" : "passed",
@@ -19,17 +19,17 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1631690493346,
-        "stop" : 1631690500545,
-        "duration" : 7199
+        "start" : 1631691321241,
+        "stop" : 1631691330361,
+        "duration" : 9120
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1631690493361,
-          "stop" : 1631690500545,
-          "duration" : 7184
+          "start" : 1631691321249,
+          "stop" : 1631691330358,
+          "duration" : 9109
         },
         "status" : "passed",
         "steps" : [ ],
@@ -49,17 +49,17 @@
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1631690500545,
-        "stop" : 1631690502583,
-        "duration" : 2038
+        "start" : 1631691330362,
+        "stop" : 1631691332443,
+        "duration" : 2081
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1631690500547,
-          "stop" : 1631690501592,
-          "duration" : 1045
+          "start" : 1631691330364,
+          "stop" : 1631691331317,
+          "duration" : 953
         },
         "status" : "passed",
         "steps" : [ ],
@@ -72,9 +72,9 @@
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1631690501592,
-          "stop" : 1631690502583,
-          "duration" : 991
+          "start" : 1631691331317,
+          "stop" : 1631691332443,
+          "duration" : 1126
         },
         "status" : "passed",
         "steps" : [ ],
@@ -102,10 +102,10 @@
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az290-40"
+    "value" : "fv-az154-389"
   }, {
     "name" : "thread",
-    "value" : "5695@fv-az290-40.main(1)"
+    "value" : "5595@fv-az154-389.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -142,6 +142,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "b11bd57528361fb5.json",
+  "source" : "217e82d8e672a55f.json",
   "parameterValues" : [ ]
 }
