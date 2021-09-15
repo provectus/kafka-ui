@@ -103,7 +103,7 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .expectStatus()
         .isOk();
 
-    PartitionsIncreaseResponseDTO response = webTestClient.patch()
+    var r = webTestClient.patch()
         .uri("/api/clusters/{clusterName}/topics/{topicName}/partitions",
             LOCAL,
             topicName)
@@ -114,9 +114,9 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .expectStatus()
         .isOk()
         .expectBody(PartitionsIncreaseResponseDTO.class)
-        .returnResult()
-        .getResponseBody();
+        .returnResult();
 
+    PartitionsIncreaseResponseDTO response = r.getResponseBody();
     assert response != null;
     Assertions.assertEquals(10, response.getTotalPartitionsCount());
 
