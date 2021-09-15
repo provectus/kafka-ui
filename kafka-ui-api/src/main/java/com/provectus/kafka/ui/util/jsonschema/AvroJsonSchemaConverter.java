@@ -67,6 +67,10 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
   }
 
   private FieldSchema createUnionSchema(Schema schema, Map<String, FieldSchema> definitions) {
+
+    final boolean nullable = schema.getTypes().stream()
+        .anyMatch(t -> t.getType().equals(Schema.Type.NULL));
+
     final Map<String, FieldSchema> fields = schema.getTypes().stream()
         .filter(t -> !t.getType().equals(Schema.Type.NULL))
         .map(f -> Tuples.of(
@@ -80,7 +84,16 @@ public class AvroJsonSchemaConverter implements JsonSchemaConverter<Schema> {
             Tuple2::getT2
         ));
 
-    return new ObjectFieldSchema(fields, Collections.emptyList(), true);
+    if (nullable) {
+      return new OneOfFieldSchema(
+          List.of(
+             new SimpleFieldSchema(new SimpleJsonType(JsonType.Type.NULL)),
+             new ObjectFieldSchema(fields, Collections.emptyList())
+         )
+      );
+    } else {
+      return new ObjectFieldSchema(fields, Collections.emptyList());
+    }
   }
 
   private FieldSchema createObjectSchema(String name, Schema schema,
