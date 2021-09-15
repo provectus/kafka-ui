@@ -15,18 +15,11 @@ import reactor.util.function.Tuples;
 public class ObjectFieldSchema implements FieldSchema {
   private final Map<String, FieldSchema> properties;
   private final List<String> required;
-  private final boolean nullable;
 
   public ObjectFieldSchema(Map<String, FieldSchema> properties,
                            List<String> required) {
-    this(properties, required, false);
-  }
-
-  public ObjectFieldSchema(Map<String, FieldSchema> properties,
-                           List<String> required, boolean nullable) {
     this.properties = properties;
     this.required = required;
-    this.nullable = nullable;
   }
 
   public Map<String, FieldSchema> getProperties() {
@@ -46,18 +39,9 @@ public class ObjectFieldSchema implements FieldSchema {
             Tuple2::getT2
         ));
     final ObjectNode objectNode = mapper.createObjectNode();
-    if (this.nullable) {
-      objectNode.set(
-          "type",
-          mapper.createArrayNode()
-              .add(JsonType.Type.OBJECT.getName())
-              .add(JsonType.Type.NULL.getName())
-      );
-    } else {
-      objectNode.setAll(
-          new SimpleJsonType(JsonType.Type.OBJECT).toJsonNode(mapper)
-      );
-    }
+    objectNode.setAll(
+        new SimpleJsonType(JsonType.Type.OBJECT).toJsonNode(mapper)
+    );
     objectNode.set("properties", mapper.valueToTree(nodes));
     if (!required.isEmpty()) {
       objectNode.set("required", mapper.valueToTree(required));
