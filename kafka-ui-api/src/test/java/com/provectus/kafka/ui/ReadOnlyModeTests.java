@@ -61,19 +61,21 @@ public class ReadOnlyModeTests extends AbstractBaseTest {
             .name(topicName)
             .partitions(1)
             .replicationFactor(1)
-            .configs(Map.of())
         )
         .exchange()
         .expectStatus()
         .isOk();
+
     webTestClient.patch()
         .uri("/api/clusters/{clusterName}/topics/{topicName}", LOCAL, topicName)
         .bodyValue(new TopicUpdateDTO()
-            .configs(Map.of())
+            .configs(Map.of("cleanup.policy", "compact"))
         )
         .exchange()
         .expectStatus()
-        .isOk();
+        .isOk()
+        .expectBody()
+        .jsonPath("$.cleanUpPolicy").isEqualTo("COMPACT");
   }
 
   @Test
