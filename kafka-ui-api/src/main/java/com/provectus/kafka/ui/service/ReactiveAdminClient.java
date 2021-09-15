@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.service;
 
+import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
+
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +40,7 @@ import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
+
 
 @Log4j2
 @RequiredArgsConstructor
@@ -146,13 +150,13 @@ public class ReactiveAdminClient implements Closeable {
         try {
           sink.success(
               new ClusterDescription(
-                  r.controller().get(),
-                  r.clusterId().get(),
-                  r.nodes().get(),
-                  r.authorizedOperations().get()
+                  getUninterruptibly(r.controller()),
+                  getUninterruptibly(r.clusterId()),
+                  getUninterruptibly(r.nodes()),
+                  getUninterruptibly(r.authorizedOperations())
               )
           );
-        } catch (Exception e) {
+        } catch (ExecutionException e) {
           // should not be here
         }
       }
