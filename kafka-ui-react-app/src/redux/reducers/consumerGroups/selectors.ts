@@ -25,7 +25,7 @@ const getConsumerGroupDeletingStatus = createFetchingSelector(
   'DELETE_CONSUMER_GROUP'
 );
 
-const getOffsetResettingStatus = createFetchingSelector('RESET_OFFSET_GROUP');
+const getOffsetResettingStatus = createFetchingSelector('RESET_OFFSETS');
 
 export const getIsConsumerGroupsListFetched = createSelector(
   getConsumerGroupsListFetchingStatus,
