@@ -2256,7 +2256,6 @@ components:
           format: int64
       required:
         - partition
-        - offset
 
     ConsumerGroupOffsetsResetType:
       type: string
