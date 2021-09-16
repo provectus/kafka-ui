@@ -282,7 +282,7 @@ public class KafkaService {
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName)).then();
+    return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName));
   }
 
   @SneakyThrows
