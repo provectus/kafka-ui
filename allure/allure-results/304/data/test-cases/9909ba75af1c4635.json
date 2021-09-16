@@ -1,12 +1,12 @@
 {
-  "uid" : "d417c9ee48659a7b",
+  "uid" : "9909ba75af1c4635",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1631781771739,
-    "stop" : 1631781772582,
-    "duration" : 843
+    "start" : 1631781775083,
+    "stop" : 1631781776184,
+    "duration" : 1101
   },
   "description" : "",
   "status" : "passed",
@@ -19,93 +19,93 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1631781771744,
-        "stop" : 1631781772094,
-        "duration" : 350
+        "start" : 1631781775084,
+        "stop" : 1631781775567,
+        "duration" : 483
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1631781771744,
-          "stop" : 1631781772094,
-          "duration" : 350
+          "start" : 1631781775085,
+          "stop" : 1631781775567,
+          "duration" : 482
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 1,
+      "attachmentsCount" : 0
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1631781772094,
-        "stop" : 1631781772581,
-        "duration" : 487
+        "start" : 1631781775568,
+        "stop" : 1631781776183,
+        "duration" : 615
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1631781772094,
-          "stop" : 1631781772152,
-          "duration" : 58
+          "start" : 1631781775568,
+          "stop" : 1631781775604,
+          "duration" : 36
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1631781772152,
-          "stop" : 1631781772581,
-          "duration" : 429
+          "start" : 1631781775604,
+          "stop" : 1631781776183,
+          "duration" : 579
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0,
+        "attachmentsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 2,
-      "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 2,
+      "attachmentsCount" : 0
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
-    "stepsCount" : 5,
-    "attachmentsCount" : 0,
     "shouldDisplayMessage" : false,
-    "hasContent" : true
+    "hasContent" : true,
+    "stepsCount" : 5,
+    "attachmentsCount" : 0
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az290-487"
+    "value" : "fv-az201-444"
   }, {
     "name" : "thread",
-    "value" : "5704@fv-az290-487.main(1)"
+    "value" : "5772@fv-az201-444.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -142,6 +142,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "d417c9ee48659a7b.json",
+  "source" : "9909ba75af1c4635.json",
   "parameterValues" : [ ]
 }
