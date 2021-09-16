@@ -5,7 +5,7 @@ export const testSchema = {
     name: 'key',
     source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
     schema: `{
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "http://example.com/myURI.schema.json",
   "title": "TestRecord",
   "type": "object",
@@ -28,7 +28,7 @@ export const testSchema = {
     name: 'value',
     source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
     schema: `{
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "http://example.com/myURI1.schema.json",
   "title": "TestRecord",
   "type": "object",
