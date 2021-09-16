@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.provectus.kafka.ui.util.ClusterUtil.toMono;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.kafka.common.ConsumerGroupState.DEAD;
@@ -94,14 +93,13 @@ public class OffsetsResetService {
   }
 
   private Mono<ConsumerGroupDescription> checkGroupCondition(KafkaCluster cluster, String groupId) {
-    return adminClientService.getOrCreateAdminClient(cluster)
+    return adminClientService.get(cluster)
         .flatMap(ac ->
             // we need to call listConsumerGroups() to check group existence, because
             // describeConsumerGroups() will return consumer group even if it doesn't exist
-            toMono(ac.getAdminClient().listConsumerGroups().all())
-                .filter(cgs -> cgs.stream().anyMatch(g -> g.groupId().equals(groupId)))
-                .flatMap(cgs -> toMono(
-                    ac.getAdminClient().describeConsumerGroups(List.of(groupId)).all()))
+            ac.listConsumerGroups()
+                .filter(cgs -> cgs.stream().anyMatch(g -> g.equals(groupId)))
+                .flatMap(cgs -> ac.describeConsumerGroups(List.of(groupId)))
                 .filter(cgs -> cgs.containsKey(groupId))
                 .map(cgs -> cgs.get(groupId))
                 .flatMap(cg -> {
