@@ -47,7 +47,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -273,11 +272,8 @@ public class KafkaService {
             ).thenReturn(topicData)
         )
         .onErrorResume(t -> Mono.error(new TopicMetadataException(t.getMessage())))
-        .flatMap(
-            topicData ->
-                getTopicsData(adminClient, Collections.singleton(topicData.getName()))
-                    .next()
-        ).switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic!")));
+        .flatMap(topicData -> getUpdatedTopic(adminClient, topicData.getName()))
+        .switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic")));
   }
 
   public Mono<InternalTopic> createTopic(
@@ -383,9 +379,7 @@ public class KafkaService {
   }
 
   private Mono<InternalTopic> getUpdatedTopic(ReactiveAdminClient ac, String topicName) {
-    return getTopicsData(ac)
-        .map(s -> s.stream()
-            .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow());
+    return getTopicsData(ac, List.of(topicName)).next();
   }
 
   private InternalTopic mergeWithStats(InternalTopic topic,
@@ -684,7 +678,7 @@ public class KafkaService {
               NewPartitions.increaseTo(partitionsIncrease.getTotalPartitionsCount())
           );
           return ac.createPartitions(newPartitionsMap)
-              .then(getTopicsData(ac, List.of(topicName)).next());
+              .then(getUpdatedTopic(ac, topicName));
         });
   }
 
@@ -694,7 +688,7 @@ public class KafkaService {
       Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments
   ) {
     return adminClient.alterPartitionReassignments(reassignments)
-        .then(getTopicsData(adminClient, Collections.singleton(topicName)).next());
+        .then(getUpdatedTopic(adminClient, topicName));
   }
 
   /**
