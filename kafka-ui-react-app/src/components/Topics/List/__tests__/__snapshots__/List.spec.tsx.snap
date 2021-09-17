@@ -97,24 +97,47 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 placeholder="Search by Topic Name"
                 value=""
               >
-                <p
-                  className="control has-icons-left"
+                <Input
+                  defaultValue=""
+                  leftIcon="fas fa-search"
+                  onChange={[Function]}
+                  placeholder="Search by Topic Name"
+                  type="text"
                 >
-                  <input
-                    className="input"
-                    defaultValue=""
-                    onChange={[Function]}
-                    placeholder="Search by Topic Name"
-                    type="text"
-                  />
-                  <span
-                    className="icon is-small is-left"
+                  <div
+                    style={
+                      Object {
+                        "position": "relative",
+                      }
+                    }
                   >
-                    <i
+                    <styled.i
                       className="fas fa-search"
-                    />
-                  </span>
-                </p>
+                      inputSize="L"
+                      position="left"
+                    >
+                      <i
+                        className="sc-bdfBQB eVEGAa fas fa-search"
+                      />
+                    </styled.i>
+                    <styled.input
+                      defaultValue=""
+                      hasLeftIcon={true}
+                      inputSize="L"
+                      onChange={[Function]}
+                      placeholder="Search by Topic Name"
+                      type="text"
+                    >
+                      <input
+                        className="sc-gsTEea eQzZSW"
+                        defaultValue=""
+                        onChange={[Function]}
+                        placeholder="Search by Topic Name"
+                        type="text"
+                      />
+                    </styled.input>
+                  </div>
+                </Input>
               </Search>
             </div>
             <div

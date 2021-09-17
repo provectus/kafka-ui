@@ -6,7 +6,7 @@ import StyledInput from './Input.styled';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
-  name: string;
+  name?: string;
   hookFormOptions?: RegisterOptions;
   inputSize?: 'M' | 'L';
   leftIcon?: string;
@@ -23,7 +23,7 @@ const Input: React.FC<InputProps> = ({
   ...rest
 }) => {
   const size = inputSize || 'L'; // default size is L
-  const { register } = useFormContext();
+  const methods = useFormContext();
   return (
     <div
       style={{
@@ -33,13 +33,22 @@ const Input: React.FC<InputProps> = ({
       {leftIcon && (
         <StyledIcon className={leftIcon} position="left" inputSize={size} />
       )}
-      <StyledInput
-        className={className}
-        inputSize={size}
-        {...register(name, { ...hookFormOptions })}
-        hasLeftIcon={!!leftIcon}
-        {...rest}
-      />
+      {name ? (
+        <StyledInput
+          className={className}
+          inputSize={size}
+          {...methods.register(name, { ...hookFormOptions })}
+          hasLeftIcon={!!leftIcon}
+          {...rest}
+        />
+      ) : (
+        <StyledInput
+          className={className}
+          inputSize={size}
+          hasLeftIcon={!!leftIcon}
+          {...rest}
+        />
+      )}
       {rightIcon && (
         <StyledIcon className={rightIcon} position="right" inputSize={size} />
       )}
