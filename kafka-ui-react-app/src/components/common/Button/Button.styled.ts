@@ -6,7 +6,7 @@ export interface ButtonProps {
   isInverted?: boolean;
 }
 
-const StyledButton = styled('button')<ButtonProps>`
+const StyledButton = styled.button<ButtonProps>`
   display: flex;
   flex-direction: row;
   align-items: center;
