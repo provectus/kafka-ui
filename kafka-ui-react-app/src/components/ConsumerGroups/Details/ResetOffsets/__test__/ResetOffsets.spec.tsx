@@ -68,6 +68,7 @@ const setupWrapper = (props?: Partial<Props>) => (
       IsOffsetReset={false}
       fetchConsumerGroupDetails={jest.fn()}
       resetConsumerGroupOffsets={jest.fn()}
+      resetResettingStatus={jest.fn()}
       {...props}
     />
   </StaticRouter>
