@@ -34,6 +34,9 @@ const Cluster: React.FC = () => {
   const hasSchemaRegistryConfigured = features.includes(
     ClusterFeaturesEnum.SCHEMA_REGISTRY
   );
+  const isTopicDeletionAllowed = features.includes(
+    ClusterFeaturesEnum.TOPIC_DELETION
+  );
   const hasKsqlDbConfigured = features.includes(ClusterFeaturesEnum.KSQL_DB);
 
   const contextValue = React.useMemo(
@@ -41,6 +44,7 @@ const Cluster: React.FC = () => {
       isReadOnly,
       hasKafkaConnectConfigured,
       hasSchemaRegistryConfigured,
+      isTopicDeletionAllowed,
     }),
     [features]
   );

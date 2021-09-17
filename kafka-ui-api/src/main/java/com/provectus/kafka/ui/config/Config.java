@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.config;
 
+import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.util.JmxPoolFactory;
 import javax.management.remote.JMXConnector;
 import org.apache.commons.pool2.KeyedObjectPool;
@@ -14,9 +15,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class Config {
 
   @Bean
-  public KeyedObjectPool<String, JMXConnector> pool() {
-    GenericKeyedObjectPool<String, JMXConnector> pool =
-        new GenericKeyedObjectPool<>(new JmxPoolFactory());
+  public KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool() {
+    var pool = new GenericKeyedObjectPool<>(new JmxPoolFactory());
     pool.setConfig(poolConfig());
     return pool;
   }

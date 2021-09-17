@@ -6,7 +6,7 @@ import java.util.Arrays;
 public enum CleanupPolicy {
   DELETE("delete"),
   COMPACT("compact"),
-  COMPACT_DELETE("compact, delete"),
+  COMPACT_DELETE("compact,delete"),
   UNKNOWN("unknown");
 
   private final String cleanUpPolicy;
@@ -21,7 +21,7 @@ public enum CleanupPolicy {
 
   public static CleanupPolicy fromString(String string) {
     return Arrays.stream(CleanupPolicy.values())
-        .filter(v -> v.cleanUpPolicy.equals(string))
+        .filter(v -> v.cleanUpPolicy.equals(string.replace(" ", "")))
         .findFirst()
         .orElseThrow(() ->
             new IllegalEntityStateException("Unknown cleanup policy value: " + string));

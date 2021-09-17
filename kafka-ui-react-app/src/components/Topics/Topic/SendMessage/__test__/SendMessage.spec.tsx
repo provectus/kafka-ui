@@ -5,16 +5,13 @@ import SendMessage, {
 import { MessageSchemaSourceEnum } from 'generated-sources';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
-const mockConvertToYup = jest
-  .fn()
-  .mockReturnValue(() => ({ validate: () => true }));
-
-jest.mock('yup-faker', () => ({
-  getFakeData: () => ({
+jest.mock('json-schema-faker', () => ({
+  generate: () => ({
     f1: -93251214,
     schema: 'enim sit in fugiat dolor',
     f2: 'deserunt culpa sunt',
   }),
+  option: jest.fn(),
 }));
 
 const setupWrapper = (props?: Partial<Props>) => (
@@ -28,7 +25,7 @@ const setupWrapper = (props?: Partial<Props>) => (
         name: 'key',
         source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
         schema: `{
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "http://example.com/myURI.schema.json",
           "title": "TestRecord",
           "type": "object",
@@ -51,7 +48,7 @@ const setupWrapper = (props?: Partial<Props>) => (
         name: 'value',
         source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
         schema: `{
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "http://example.com/myURI1.schema.json",
           "title": "TestRecord",
           "type": "object",
@@ -72,7 +69,6 @@ const setupWrapper = (props?: Partial<Props>) => (
       },
     }}
     schemaIsFetched={false}
-    messageIsSent={false}
     messageIsSending={false}
     partitions={[
       {
@@ -117,7 +113,6 @@ describe('SendMessage', () => {
 
   describe('when schema is fetched', () => {
     it('calls sendTopicMessage on submit', async () => {
-      jest.mock('json-schema-yup-transformer', () => mockConvertToYup);
       jest.mock('../validateMessage', () => jest.fn().mockReturnValue(true));
       const mockSendTopicMessage = jest.fn();
       render(
