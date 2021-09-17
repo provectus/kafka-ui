@@ -90,7 +90,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
           "You specified password but do not specified username");
     }
     return new CachedSchemaRegistryClient(
-        Collections.singletonList(cluster.getSchemaRegistry().getUrl()),
+        cluster.getSchemaRegistry().getUrl(),
         CLIENT_IDENTITY_MAP_CAPACITY,
         schemaProviders,
         configs
@@ -218,7 +218,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry().getUrl())
+    URI basePath = new URI(cluster.getSchemaRegistry().getFirstUrl())
         .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = Objects.requireNonNull(schemaRegistryClient)
         .getSchemaById(schema.getId());
