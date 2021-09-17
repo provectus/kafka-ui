@@ -1,12 +1,12 @@
 {
-  "uid" : "9cd538550d659ec9",
+  "uid" : "cb915c6a8086e2",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1631879716752,
-    "stop" : 1631879717702,
-    "duration" : 950
+    "start" : 1631893966794,
+    "stop" : 1631893968273,
+    "duration" : 1479
   },
   "description" : "",
   "status" : "passed",
@@ -19,93 +19,93 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1631879716756,
-        "stop" : 1631879717114,
-        "duration" : 358
+        "start" : 1631893966797,
+        "stop" : 1631893967634,
+        "duration" : 837
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1631879716757,
-          "stop" : 1631879717114,
-          "duration" : 357
+          "start" : 1631893966797,
+          "stop" : 1631893967634,
+          "duration" : 837
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "stepsCount" : 0,
         "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false,
-        "stepsCount" : 0
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
+      "stepsCount" : 1,
       "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true,
-      "stepsCount" : 1
+      "hasContent" : true
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1631879717114,
-        "stop" : 1631879717701,
-        "duration" : 587
+        "start" : 1631893967634,
+        "stop" : 1631893968272,
+        "duration" : 638
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1631879717114,
-          "stop" : 1631879717189,
-          "duration" : 75
+          "start" : 1631893967634,
+          "stop" : 1631893967676,
+          "duration" : 42
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "stepsCount" : 0,
         "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false,
-        "stepsCount" : 0
+        "hasContent" : false
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1631879717190,
-          "stop" : 1631879717701,
-          "duration" : 511
+          "start" : 1631893967677,
+          "stop" : 1631893968272,
+          "duration" : 595
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "stepsCount" : 0,
         "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false,
-        "stepsCount" : 0
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
+      "stepsCount" : 2,
       "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true,
-      "stepsCount" : 2
+      "hasContent" : true
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
+    "stepsCount" : 5,
     "attachmentsCount" : 0,
     "shouldDisplayMessage" : false,
-    "hasContent" : true,
-    "stepsCount" : 5
+    "hasContent" : true
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az292-303"
+    "value" : "fv-az154-242"
   }, {
     "name" : "thread",
-    "value" : "6604@fv-az292-303.main(1)"
+    "value" : "6568@fv-az154-242.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -142,6 +142,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "9cd538550d659ec9.json",
+  "source" : "cb915c6a8086e2.json",
   "parameterValues" : [ ]
 }

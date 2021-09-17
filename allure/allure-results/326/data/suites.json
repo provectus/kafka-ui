@@ -4,12 +4,12 @@
     "name" : "com.provectus.kafka.ui.topics.TopicTests",
     "children" : [ {
       "name" : "should delete topic",
-      "uid" : "3911682dc00dc88b",
+      "uid" : "d6bb768961589ba2",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "skipped",
       "time" : {
-        "start" : 1631879674068,
-        "stop" : 1631879674069,
+        "start" : 1631893919746,
+        "stop" : 1631893919747,
         "duration" : 1
       },
       "flaky" : false,
@@ -17,26 +17,26 @@
       "parameters" : [ ]
     }, {
       "name" : "should update a topic",
-      "uid" : "112d66f15de73d81",
+      "uid" : "afc4b7cfb3dc3e08",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1631879674208,
-        "stop" : 1631879713265,
-        "duration" : 39057
+        "start" : 1631893919794,
+        "stop" : 1631893962399,
+        "duration" : 42605
       },
       "flaky" : false,
       "newFailed" : false,
       "parameters" : [ ]
     }, {
       "name" : "should create a topic",
-      "uid" : "21ba96b2024398bc",
+      "uid" : "9749b7a728ffb545",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1631879713279,
-        "stop" : 1631879716577,
-        "duration" : 3298
+        "start" : 1631893962451,
+        "stop" : 1631893966359,
+        "duration" : 3908
       },
       "flaky" : false,
       "newFailed" : false,
@@ -47,13 +47,13 @@
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "9cd538550d659ec9",
+      "uid" : "cb915c6a8086e2",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1631879716752,
-        "stop" : 1631879717702,
-        "duration" : 950
+        "start" : 1631893966794,
+        "stop" : 1631893968273,
+        "duration" : 1479
       },
       "flaky" : false,
       "newFailed" : false,
