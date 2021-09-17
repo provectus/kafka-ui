@@ -108,7 +108,7 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
               new ValidationException("Unknown resetType " + reset.getResetType())
           );
       }
-    }).map(o -> ResponseEntity.ok().build());
+    }).thenReturn(ResponseEntity.ok().build());
   }
 
 }

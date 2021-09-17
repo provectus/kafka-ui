@@ -1,6 +1,8 @@
 package com.provectus.kafka.ui.service;
 
 import static com.google.common.util.concurrent.Uninterruptibles.getUninterruptibly;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
@@ -23,12 +25,14 @@ import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
+import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -101,7 +105,7 @@ public class ReactiveAdminClient implements Closeable {
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
     List<ConfigResource> resources = topicNames.stream()
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
-        .collect(Collectors.toList());
+        .collect(toList());
 
     return toMono(
         client.describeConfigs(
@@ -109,7 +113,7 @@ public class ReactiveAdminClient implements Closeable {
             new DescribeConfigsOptions().includeSynonyms(true)
         ).all())
         .map(config -> config.entrySet().stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 c -> c.getKey().name(),
                 c -> new ArrayList<>(c.getValue().entries()))));
   }
@@ -117,10 +121,10 @@ public class ReactiveAdminClient implements Closeable {
   public Mono<Map<Integer, List<ConfigEntry>>> loadBrokersConfig(List<Integer> brokerIds) {
     List<ConfigResource> resources = brokerIds.stream()
         .map(brokerId -> new ConfigResource(ConfigResource.Type.BROKER, Integer.toString(brokerId)))
-        .collect(Collectors.toList());
+        .collect(toList());
     return toMono(client.describeConfigs(resources).all())
         .map(config -> config.entrySet().stream()
-            .collect(Collectors.toMap(
+            .collect(toMap(
                 c -> Integer.valueOf(c.getKey().name()),
                 c -> new ArrayList<>(c.getValue().entries()))));
   }
@@ -131,7 +135,7 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {
     return describeCluster()
-        .map(d -> d.getNodes().stream().map(Node::id).collect(Collectors.toList()))
+        .map(d -> d.getNodes().stream().map(Node::id).collect(toList()))
         .flatMap(this::describeLogDirs);
   }
 
@@ -215,7 +219,7 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<List<String>> listConsumerGroups() {
     return toMono(client.listConsumerGroups().all())
-        .map(lst -> lst.stream().map(g -> g.groupId()).collect(Collectors.toList()));
+        .map(lst -> lst.stream().map(ConsumerGroupListing::groupId).collect(toList()));
   }
 
   public Mono<Map<String, ConsumerGroupDescription>> describeConsumerGroups(List<String> groupIds) {
@@ -227,6 +231,41 @@ public class ReactiveAdminClient implements Closeable {
         .map(MapUtil::removeNullValues); //TODO check if this removal works
   }
 
+  public Mono<Void> alterConsumerGroupOffsets(String groupId, Map<TopicPartition, Long> offsets) {
+    return toMono(client.alterConsumerGroupOffsets(
+            groupId,
+            offsets.entrySet().stream()
+                .collect(toMap(Map.Entry::getKey, e -> new OffsetAndMetadata(e.getValue()))))
+        .all());
+  }
+
+  public Mono<Map<TopicPartition, Long>> listOffsets(String topic,
+                                                     OffsetSpec offsetSpec) {
+    return topicPartitions(topic).flatMap(tps -> listOffsets(tps, offsetSpec));
+  }
+
+  public Mono<Map<TopicPartition, Long>> listOffsets(Set<TopicPartition> partitions,
+                                                     OffsetSpec offsetSpec) {
+    return toMono(
+        client.listOffsets(partitions.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
+        .map(offsets -> offsets.entrySet()
+            .stream()
+            // filtering partitions for which offsets were not found
+            .filter(e -> e.getValue().offset() >= 0)
+            .collect(toMap(Map.Entry::getKey, e -> e.getValue().offset())));
+  }
+
+  private Mono<Set<TopicPartition>> topicPartitions(String topic) {
+    return toMono(client.describeTopics(List.of(topic)).all())
+        .map(r -> r.values().stream()
+            .findFirst()
+            .stream()
+            .flatMap(d -> d.partitions().stream())
+            .map(p -> new TopicPartition(topic, p.partition()))
+            .collect(Collectors.toSet())
+        );
+  }
+
   public Mono<Void> updateBrokerConfigByName(Integer brokerId, String name, String value) {
     ConfigResource cr = new ConfigResource(ConfigResource.Type.BROKER, String.valueOf(brokerId));
     AlterConfigOp op = new AlterConfigOp(new ConfigEntry(name, value), AlterConfigOp.OpType.SET);
@@ -236,7 +275,7 @@ public class ReactiveAdminClient implements Closeable {
   public Mono<Void> deleteRecords(Map<TopicPartition, Long> offsets) {
     var records = offsets.entrySet().stream()
         .map(entry -> Map.entry(entry.getKey(), RecordsToDelete.beforeOffset(entry.getValue())))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
     return toMono(client.deleteRecords(records).all());
   }
 
@@ -252,7 +291,7 @@ public class ReactiveAdminClient implements Closeable {
                     cfg.getKey(),
                     cfg.getValue()),
                 AlterConfigOp.OpType.SET)))
-        .collect(Collectors.toList());
+        .collect(toList());
     var topicResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
     return toMono(client.incrementalAlterConfigs(Map.of(topicResource, config)).all());
   }
@@ -261,7 +300,7 @@ public class ReactiveAdminClient implements Closeable {
   private Mono<Void> alterConfig(String topicName, Map<String, String> configs) {
     List<ConfigEntry> configEntries = configs.entrySet().stream()
         .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue())))
-        .collect(Collectors.toList());
+        .collect(toList());
     Config config = new Config(configEntries);
     var topicResource = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
     return toMono(client.alterConfigs(Map.of(topicResource, config)).all());
