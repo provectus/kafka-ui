@@ -9,6 +9,7 @@ import {
 import {
   fetchConsumerGroupDetails,
   resetConsumerGroupOffsets,
+  resetConsumerGroupOffsetsAction,
 } from 'redux/actions';
 
 import ResetOffsets from './ResetOffsets';
@@ -38,6 +39,7 @@ const mapStateToProps = (
 const mapDispatchToProps = {
   fetchConsumerGroupDetails,
   resetConsumerGroupOffsets,
+  resetResettingStatus: resetConsumerGroupOffsetsAction.cancel,
 };
 
 export default withRouter(

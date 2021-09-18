@@ -40,6 +40,7 @@ export interface Props {
       partitions: number[];
     }
   ): void;
+  resetResettingStatus: () => void;
 }
 
 interface FormType {
@@ -57,6 +58,7 @@ const ResetOffsets: React.FC<Props> = ({
   IsOffsetReset,
   fetchConsumerGroupDetails,
   resetConsumerGroupOffsets,
+  resetResettingStatus,
 }) => {
   React.useEffect(() => {
     fetchConsumerGroupDetails(clusterName, consumerGroupID);
@@ -158,6 +160,7 @@ const ResetOffsets: React.FC<Props> = ({
   const history = useHistory();
   React.useEffect(() => {
     if (IsOffsetReset) {
+      resetResettingStatus();
       history.push(
         clusterConsumerGroupDetailsPath(clusterName, consumerGroupID)
       );
