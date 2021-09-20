@@ -100,6 +100,20 @@ const theme = {
       active: Colors.neutral[90],
     },
   },
+  selectStyles: {
+    color: {
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[90],
+      disabled: Colors.neutral[30],
+    },
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      active: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+  },
 };
 
 export default theme;

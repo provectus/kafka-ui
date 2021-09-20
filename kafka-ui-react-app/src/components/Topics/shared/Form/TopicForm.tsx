@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
+import Select from 'components/common/Select/Select';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
@@ -111,11 +112,11 @@ const TopicForm: React.FC<Props> = ({
         <div className="columns">
           <div className="column is-one-third">
             <label className="label">Cleanup policy</label>
-            <div className="select is-block">
-              <select defaultValue="delete" {...register('cleanupPolicy')}>
+            <div className="is-block">
+              <Select defaultValue="delete" name="cleanupPolicy">
                 <option value="delete">Delete</option>
                 <option value="compact">Compact</option>
-              </select>
+              </Select>
             </div>
           </div>
 
@@ -125,14 +126,14 @@ const TopicForm: React.FC<Props> = ({
 
           <div className="column is-one-third">
             <label className="label">Max size on disk in GB</label>
-            <div className="select is-block">
-              <select defaultValue={-1} {...register('retentionBytes')}>
+            <div className="is-block">
+              <Select defaultValue={-1} name="retentionBytes">
                 <option value={-1}>Not Set</option>
                 <option value={BYTES_IN_GB}>1 GB</option>
                 <option value={BYTES_IN_GB * 10}>10 GB</option>
                 <option value={BYTES_IN_GB * 20}>20 GB</option>
                 <option value={BYTES_IN_GB * 50}>50 GB</option>
-              </select>
+              </Select>
             </div>
           </div>
         </div>
