@@ -281,9 +281,15 @@ public class ClusterUtil {
 
   public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
                                                RecordSerDe recordDeserializer) {
+
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
-        .forEachRemaining(header -> headers.put(header.key(), new String(header.value())));
+        .forEachRemaining(header ->
+            headers.put(
+                header.key(),
+                header.value() != null ? new String(header.value()) : null
+            )
+    );
 
     TopicMessage topicMessage = new TopicMessage();
 
@@ -365,7 +371,7 @@ public class ClusterUtil {
         .map(Config::entries)
         .flatMap(Collection::stream)
         .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
-        .findFirst().orElseThrow().value();
+        .findFirst().map(ConfigEntry::value).orElse("1.0-UNKNOWN");
   }
 
 

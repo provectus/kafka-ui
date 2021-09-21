@@ -1,9 +1,9 @@
 kafka:
   clusters:
     - name: local
-      bootstrapServers: localhost:9093
+      bootstrapServers: localhost:9092
       zookeeper: localhost:2181
-      schemaRegistry: http://localhost:8081
+      schemaRegistry: http://localhost:8085
       ksqldbServer: http://localhost:8088
       kafkaConnect:
         - name: first
@@ -19,6 +19,14 @@ kafka:
   #          address: http://localhost:8083
   #      jmxPort: 9998
   #      read-only: true
+  #    -
+  #      name: localUsingProtobufFile
+  #      bootstrapServers: localhost:9092
+  #      protobufFile: messages.proto
+  #      protobufMessageName: GenericMessage
+  #      protobufMessageNameByTopic:
+  #        input-topic: InputMessage
+  #        output-topic: OutputMessage
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000

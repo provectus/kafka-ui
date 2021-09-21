@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
-import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,7 +35,6 @@ public class ClustersStorage {
           clusterProperties.getName(),
           cluster.toBuilder()
               .topics(new HashMap<>())
-              .features(Feature.getEnabledFeatures(cluster))
               .build()
       );
     }

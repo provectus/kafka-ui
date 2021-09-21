@@ -31,6 +31,12 @@ const getPartitionsCountIncreaseStatus =
 const getReplicationFactorUpdateStatus = createFetchingSelector(
   'UPDATE_REPLICATION_FACTOR'
 );
+const getTopicDeletingStatus = createFetchingSelector('DELETE_TOPIC');
+
+export const getIsTopicDeleted = createSelector(
+  getTopicDeletingStatus,
+  (status) => status === 'fetched'
+);
 
 export const getAreTopicsFetching = createSelector(
   getTopicListFetchingStatus,
@@ -69,11 +75,6 @@ export const getTopicUpdated = createSelector(
 
 export const getTopicMessageSchemaFetched = createSelector(
   getTopicMessageSchemaFetchingStatus,
-  (status) => status === 'fetched'
-);
-
-export const getTopicMessageSent = createSelector(
-  getTopicMessageSendingStatus,
   (status) => status === 'fetched'
 );
 

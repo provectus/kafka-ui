@@ -201,7 +201,7 @@ const List: React.FC<TopicsListProps> = ({
           <table className="table is-fullwidth">
             <thead>
               <tr>
-                <TableHeaderCell />
+                {!isReadOnly && <TableHeaderCell />}
                 <TableHeaderCell
                   title="Topic Name"
                   orderValue={TopicColumnsToSort.NAME}

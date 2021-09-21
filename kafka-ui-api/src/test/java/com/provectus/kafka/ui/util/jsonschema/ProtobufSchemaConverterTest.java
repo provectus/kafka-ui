@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.util.jsonschema;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import java.net.URI;
@@ -11,7 +12,7 @@ import org.junit.jupiter.api.Test;
 public class ProtobufSchemaConverterTest {
 
   @Test
-  public void testSimpleProto() throws URISyntaxException {
+  public void testSimpleProto() throws URISyntaxException, JsonProcessingException {
 
     String proto = "syntax = \"proto3\";\n"
         + "package com.acme;\n"
@@ -49,7 +50,8 @@ public class ProtobufSchemaConverterTest {
         + "{\"type\":\"object\",\"properties\":"
         + "{\"optionalField\":{\"oneOf\":[{\"type\":\"string\"},"
         + "{\"type\":\"integer\"}]},\"other_id\":"
-        + "{\"type\":\"integer\"},\"order\":{\"enum\":[\"FIRST\",\"SECOND\"]}}}}}";
+        + "{\"type\":\"integer\"},\"order\":{\"enum\":[\"FIRST\",\"SECOND\"],"
+        + "\"type\":\"string\"}}}}}";
 
     ProtobufSchema protobufSchema = new ProtobufSchema(proto);
 
@@ -58,6 +60,13 @@ public class ProtobufSchemaConverterTest {
 
     final JsonSchema convert =
         converter.convert(basePath, protobufSchema.toDescriptor("MyRecord"));
-    Assertions.assertEquals(expected, convert.toJson(new ObjectMapper()));
+
+    ObjectMapper om = new ObjectMapper();
+    Assertions.assertEquals(
+        om.readTree(expected),
+        om.readTree(
+            convert.toJson(om)
+        )
+    );
   }
 }

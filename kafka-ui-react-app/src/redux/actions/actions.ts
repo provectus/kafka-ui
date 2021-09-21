@@ -97,8 +97,9 @@ export const updateTopicAction = createAsyncAction(
 export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__REQUEST',
   'DELETE_TOPIC__SUCCESS',
-  'DELETE_TOPIC__FAILURE'
-)<undefined, TopicName, undefined>();
+  'DELETE_TOPIC__FAILURE',
+  'DELETE_TOPIC__CANCEL'
+)<undefined, TopicName, undefined, undefined>();
 
 export const fetchConsumerGroupsAction = createAsyncAction(
   'GET_CONSUMER_GROUPS__REQUEST',
