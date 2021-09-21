@@ -1,36 +1,34 @@
+import { styled } from 'lib/themedStyles';
 import React from 'react';
 import { useFormContext, RegisterOptions } from 'react-hook-form';
 
 import LiveIcon from './LiveIcon.styled';
 import StyledSelect from './Select.styled';
 
-interface Props extends React.SelectHTMLAttributes<HTMLSelectElement> {
+export interface SelectProps
+  extends React.SelectHTMLAttributes<HTMLSelectElement> {
   name?: string;
   hookFormOptions?: RegisterOptions;
   selectSize?: 'M' | 'L';
   isLive?: boolean;
 }
 
-const Select: React.FC<Props> = ({
+const Select: React.FC<SelectProps> = ({
+  className,
   children,
-  selectSize,
+  selectSize = 'L',
   isLive,
   name,
   hookFormOptions,
   ...props
 }) => {
-  const size = selectSize || 'L'; // default size
   const methods = useFormContext();
   return (
-    <div
-      style={{
-        position: 'relative',
-      }}
-    >
-      {isLive && <LiveIcon selectSize={size} />}
+    <div className={className}>
+      {isLive && <LiveIcon selectSize={selectSize} />}
       {name ? (
         <StyledSelect
-          selectSize={size}
+          selectSize={selectSize}
           isLive={isLive}
           {...methods.register(name, { ...hookFormOptions })}
           {...props}
@@ -38,7 +36,7 @@ const Select: React.FC<Props> = ({
           {children}
         </StyledSelect>
       ) : (
-        <StyledSelect selectSize={size} isLive={isLive} {...props}>
+        <StyledSelect selectSize={selectSize} isLive={isLive} {...props}>
           {children}
         </StyledSelect>
       )}
@@ -46,4 +44,6 @@ const Select: React.FC<Props> = ({
   );
 };
 
-export default Select;
+export default styled(Select)`
+  position: relative;
+`;

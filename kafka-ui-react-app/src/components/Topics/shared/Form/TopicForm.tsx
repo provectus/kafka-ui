@@ -127,7 +127,7 @@ const TopicForm: React.FC<Props> = ({
           <div className="column is-one-third">
             <label className="label">Max size on disk in GB</label>
             <div className="is-block">
-              <Select defaultValue={-1} name="retentionBytes">
+              <Select defaultValue={-1} name="retentionBytes" isLive>
                 <option value={-1}>Not Set</option>
                 <option value={BYTES_IN_GB}>1 GB</option>
                 <option value={BYTES_IN_GB * 10}>10 GB</option>
