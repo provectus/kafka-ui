@@ -3,7 +3,6 @@ import React from 'react';
 
 interface Props {
   className?: string;
-  selectSize: 'M' | 'L';
 }
 
 const LiveIcon: React.FC<Props> = ({ className }) => {
@@ -27,5 +26,6 @@ export default styled(LiveIcon)`
   position: absolute;
   left: 12px;
   top: 50%;
-  transform: translateY(-36%);
+  transform: translateY(-50%);
+  line-height: 0;
 `;

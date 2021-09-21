@@ -23,7 +23,7 @@ const Select: React.FC<SelectProps> = ({
   const methods = useFormContext();
   return (
     <div className={className}>
-      {isLive && <LiveIcon selectSize={selectSize} />}
+      {isLive && <LiveIcon />}
       {name ? (
         <StyledSelect
           selectSize={selectSize}
