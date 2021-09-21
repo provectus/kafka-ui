@@ -121,7 +121,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                         position="left"
                       >
                         <i
-                          className="sc-bdfBQB eaUARU fas fa-search"
+                          className="sc-bdfBQB gNwdVP fas fa-search"
                         />
                       </styled.i>
                       <styled.input

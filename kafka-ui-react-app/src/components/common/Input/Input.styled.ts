@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-interface Props {
-  inputSize: 'M' | 'L';
+export interface StyledInputProps {
+  inputSize?: 'M' | 'L';
   hasLeftIcon: boolean;
 }
 
-const StyledInput = styled.input<Props>`
+const StyledInput = styled.input<StyledInputProps>`
   border: 1px ${Colors.neutral[30]} solid;
   border-radius: 4px;
   height: ${(props) => (props.inputSize === 'M' ? '32px' : '40px')};

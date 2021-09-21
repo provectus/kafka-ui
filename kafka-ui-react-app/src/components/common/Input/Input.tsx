@@ -3,13 +3,12 @@ import { useFormContext } from 'react-hook-form';
 import { styled } from 'lib/themedStyles';
 
 import StyledIcon from './InputIcon.styled';
-import StyledInput from './Input.styled';
+import StyledInput, { StyledInputProps } from './Input.styled';
 
 export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {
-  className?: string;
+  extends React.InputHTMLAttributes<HTMLInputElement>,
+    Omit<StyledInputProps, 'hasLeftIcon'> {
   name?: string;
-  inputSize?: 'M' | 'L';
   leftIcon?: string;
   rightIcon?: string;
 }

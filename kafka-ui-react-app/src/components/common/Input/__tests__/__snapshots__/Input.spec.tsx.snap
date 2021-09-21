@@ -7,13 +7,13 @@ exports[`Custom Input with icons matches the snapshot 1`] = `
       class="sc-dlfnuX gxtwfA"
     >
       <i
-        class="sc-bdfBQB eaUARU fas fa-address-book"
+        class="sc-bdfBQB gNwdVP fas fa-address-book"
       />
       <input
         class="sc-gsTEea eQzZSW sc-dlfnuX gxtwfA"
       />
       <i
-        class="sc-bdfBQB cVYUOQ fas fa-address-book"
+        class="sc-bdfBQB gJpiMQ fas fa-address-book"
       />
     </div>
   </div>

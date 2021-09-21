@@ -10,9 +10,10 @@ interface Props {
 const StyledIcon = styled.i<Props>`
   position: absolute;
   top: 50%;
-  transform: translate3d(0, -60%, 0);
+  line-height: 0;
   z-index: 1;
-  left: ${(props) => (props.position === 'left' ? '12px' : '97%')};
+  left: ${(props) => (props.position === 'left' ? '12px' : 'unset')};
+  right: ${(props) => (props.position === 'right' ? '15px' : 'unset')};
   height: 11px;
   width: 11px;
   color: ${Colors.neutral[70]};
