@@ -14,8 +14,7 @@ import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
-import yup from 'lib/yupExtended';
-import { TOPIC_NAME_VALIDATION_PATTERN } from 'lib/constants';
+import { topicFormValidationSchema } from 'lib/yupExtended';
 
 import DangerZoneContainer from './DangerZoneContainer';
 
@@ -46,29 +45,6 @@ const DEFAULTS = {
   retentionBytes: -1,
   maxMessageBytes: 1000012,
 };
-
-const validationSchema = yup.object().shape({
-  name: yup
-    .string()
-    .required()
-    .matches(
-      TOPIC_NAME_VALIDATION_PATTERN,
-      'Only alphanumeric, _, -, and . allowed'
-    ),
-  partitions: yup.number().required(),
-  replicationFactor: yup.number().required(),
-  minInSyncReplicas: yup.number().required(),
-  cleanupPolicy: yup.string().required(),
-  retentionMs: yup.number().min(-1, 'Must be greater than or equal to -1'),
-  retentionBytes: yup.number(),
-  maxMessageBytes: yup.number().required(),
-  customParams: yup.array().of(
-    yup.object().shape({
-      name: yup.string().required(),
-      value: yup.string().required(),
-    })
-  ),
-});
 
 const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
   if (!topic) {
@@ -112,7 +88,7 @@ const Edit: React.FC<Props> = ({
 
   const methods = useForm<TopicFormData>({
     defaultValues,
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(topicFormValidationSchema),
   });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
