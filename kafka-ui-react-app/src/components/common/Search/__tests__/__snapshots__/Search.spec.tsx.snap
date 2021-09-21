@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Search when placeholder is not provided matches the snapshot 1`] = `
-<Input
+<Styled(Input)
   defaultValue=""
   leftIcon="fas fa-search"
   onChange={[Function]}
@@ -11,7 +11,7 @@ exports[`Search when placeholder is not provided matches the snapshot 1`] = `
 `;
 
 exports[`Search when placeholder is provided matches the snapshot 1`] = `
-<Input
+<Styled(Input)
   defaultValue=""
   leftIcon="fas fa-search"
   onChange={[Function]}

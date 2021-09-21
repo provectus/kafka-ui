@@ -97,47 +97,53 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 placeholder="Search by Topic Name"
                 value=""
               >
-                <Input
+                <Styled(Input)
                   defaultValue=""
                   leftIcon="fas fa-search"
                   onChange={[Function]}
                   placeholder="Search by Topic Name"
                   type="text"
                 >
-                  <div
-                    style={
-                      Object {
-                        "position": "relative",
-                      }
-                    }
+                  <Input
+                    className="sc-dlfnuX gxtwfA"
+                    defaultValue=""
+                    leftIcon="fas fa-search"
+                    onChange={[Function]}
+                    placeholder="Search by Topic Name"
+                    type="text"
                   >
-                    <styled.i
-                      className="fas fa-search"
-                      inputSize="L"
-                      position="left"
+                    <div
+                      className="sc-dlfnuX gxtwfA"
                     >
-                      <i
-                        className="sc-bdfBQB eVEGAa fas fa-search"
-                      />
-                    </styled.i>
-                    <styled.input
-                      defaultValue=""
-                      hasLeftIcon={true}
-                      inputSize="L"
-                      onChange={[Function]}
-                      placeholder="Search by Topic Name"
-                      type="text"
-                    >
-                      <input
-                        className="sc-gsTEea eQzZSW"
+                      <styled.i
+                        className="fas fa-search"
+                        inputSize="L"
+                        position="left"
+                      >
+                        <i
+                          className="sc-bdfBQB eaUARU fas fa-search"
+                        />
+                      </styled.i>
+                      <styled.input
+                        className="sc-dlfnuX gxtwfA"
                         defaultValue=""
+                        hasLeftIcon={true}
+                        inputSize="L"
                         onChange={[Function]}
                         placeholder="Search by Topic Name"
                         type="text"
-                      />
-                    </styled.input>
-                  </div>
-                </Input>
+                      >
+                        <input
+                          className="sc-gsTEea eQzZSW sc-dlfnuX gxtwfA"
+                          defaultValue=""
+                          onChange={[Function]}
+                          placeholder="Search by Topic Name"
+                          type="text"
+                        />
+                      </styled.input>
+                    </div>
+                  </Input>
+                </Styled(Input)>
               </Search>
             </div>
             <div

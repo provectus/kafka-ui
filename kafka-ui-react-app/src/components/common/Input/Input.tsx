@@ -1,13 +1,14 @@
 import React from 'react';
-import { useFormContext, RegisterOptions } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
+import { styled } from 'lib/themedStyles';
 
 import StyledIcon from './InputIcon.styled';
 import StyledInput from './Input.styled';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
+  className?: string;
   name?: string;
-  hookFormOptions?: RegisterOptions;
   inputSize?: 'M' | 'L';
   leftIcon?: string;
   rightIcon?: string;
@@ -16,44 +17,50 @@ export interface InputProps
 const Input: React.FC<InputProps> = ({
   className,
   name,
-  hookFormOptions,
   leftIcon,
   rightIcon,
-  inputSize,
+  inputSize = 'L',
   ...rest
 }) => {
-  const size = inputSize || 'L'; // default size is L
   const methods = useFormContext();
   return (
-    <div
-      style={{
-        position: 'relative',
-      }}
-    >
+    <div className={className}>
       {leftIcon && (
-        <StyledIcon className={leftIcon} position="left" inputSize={size} />
+        <StyledIcon
+          className={leftIcon}
+          position="left"
+          inputSize={inputSize}
+        />
       )}
       {name ? (
         <StyledInput
           className={className}
-          inputSize={size}
-          {...methods.register(name, { ...hookFormOptions })}
+          inputSize={inputSize}
+          {...methods.register(name)}
           hasLeftIcon={!!leftIcon}
           {...rest}
         />
       ) : (
         <StyledInput
           className={className}
-          inputSize={size}
+          inputSize={inputSize}
           hasLeftIcon={!!leftIcon}
           {...rest}
         />
       )}
       {rightIcon && (
-        <StyledIcon className={rightIcon} position="right" inputSize={size} />
+        <StyledIcon
+          className={rightIcon}
+          position="right"
+          inputSize={inputSize}
+        />
       )}
     </div>
   );
 };
 
-export default Input;
+const InputWrapper = styled(Input)`
+  position: relative;
+`;
+
+export default InputWrapper;

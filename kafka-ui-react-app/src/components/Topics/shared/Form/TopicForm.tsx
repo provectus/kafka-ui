@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
+import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Input from 'components/common/Input/Input';
@@ -40,13 +40,6 @@ const TopicForm: React.FC<Props> = ({
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                hookFormOptions={{
-                  required: 'Topic Name is required.',
-                  pattern: {
-                    value: TOPIC_NAME_VALIDATION_PATTERN,
-                    message: 'Only alphanumeric, _, -, and . allowed',
-                  },
-                }}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="name" />
@@ -57,14 +50,10 @@ const TopicForm: React.FC<Props> = ({
               <div className="column">
                 <label className="label">Number of partitions *</label>
                 <Input
-                  className="input"
                   type="number"
                   placeholder="Number of partitions"
                   defaultValue="1"
                   name="partitions"
-                  hookFormOptions={{
-                    required: 'Number of partitions is required.',
-                  }}
                 />
                 <p className="help is-danger">
                   <ErrorMessage errors={errors} name="partitions" />
@@ -79,14 +68,10 @@ const TopicForm: React.FC<Props> = ({
             <div className="column">
               <label className="label">Replication Factor *</label>
               <Input
-                className="input"
                 type="number"
                 placeholder="Replication Factor"
                 defaultValue="1"
                 name="replicationFactor"
-                hookFormOptions={{
-                  required: 'Replication Factor is required.',
-                }}
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="replicationFactor" />
@@ -97,14 +82,10 @@ const TopicForm: React.FC<Props> = ({
           <div className="column">
             <label className="label">Min In Sync Replicas *</label>
             <Input
-              className="input"
               type="number"
               placeholder="Min In Sync Replicas"
               defaultValue="1"
               name="minInSyncReplicas"
-              hookFormOptions={{
-                required: 'Min In Sync Replicas is required.',
-              }}
             />
             <p className="help is-danger">
               <ErrorMessage errors={errors} name="minInSyncReplicas" />
@@ -145,13 +126,9 @@ const TopicForm: React.FC<Props> = ({
           <div className="column">
             <label className="label">Maximum message size in bytes *</label>
             <Input
-              className="input"
               type="number"
               defaultValue="1000012"
               name="maxMessageBytes"
-              hookFormOptions={{
-                required: 'Maximum message size in bytes is required',
-              }}
             />
             <p className="help is-danger">
               <ErrorMessage errors={errors} name="maxMessageBytes" />
@@ -162,8 +139,7 @@ const TopicForm: React.FC<Props> = ({
         <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
 
         <Button type="submit" buttonType="primary" buttonSize="L">
-          {' '}
-          Send{' '}
+          Send
         </Button>
       </fieldset>
     </form>

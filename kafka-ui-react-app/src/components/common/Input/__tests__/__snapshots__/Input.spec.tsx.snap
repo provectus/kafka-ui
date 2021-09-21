@@ -4,16 +4,16 @@ exports[`Custom Input with icons matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      style="position: relative;"
+      class="sc-dlfnuX gxtwfA"
     >
       <i
-        class="sc-bdfBQB eVEGAa fas fa-address-book"
+        class="sc-bdfBQB eaUARU fas fa-address-book"
       />
       <input
-        class="sc-gsTEea eQzZSW"
+        class="sc-gsTEea eQzZSW sc-dlfnuX gxtwfA"
       />
       <i
-        class="sc-bdfBQB hWCKJm fas fa-address-book"
+        class="sc-bdfBQB cVYUOQ fas fa-address-book"
       />
     </div>
   </div>
@@ -24,10 +24,10 @@ exports[`Custom Input with no icons matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      style="position: relative;"
+      class="sc-dlfnuX gxtwfA"
     >
       <input
-        class="sc-gsTEea QNjxA"
+        class="sc-gsTEea QNjxA sc-dlfnuX gxtwfA"
       />
     </div>
   </div>
