@@ -1,6 +1,6 @@
 import { styled } from 'lib/themedStyles';
 import React from 'react';
-import { useFormContext, RegisterOptions } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 
 import LiveIcon from './LiveIcon.styled';
 import StyledSelect from './Select.styled';
@@ -8,7 +8,6 @@ import StyledSelect from './Select.styled';
 export interface SelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
   name?: string;
-  hookFormOptions?: RegisterOptions;
   selectSize?: 'M' | 'L';
   isLive?: boolean;
 }
@@ -19,7 +18,6 @@ const Select: React.FC<SelectProps> = ({
   selectSize = 'L',
   isLive,
   name,
-  hookFormOptions,
   ...props
 }) => {
   const methods = useFormContext();
@@ -30,7 +28,7 @@ const Select: React.FC<SelectProps> = ({
         <StyledSelect
           selectSize={selectSize}
           isLive={isLive}
-          {...methods.register(name, { ...hookFormOptions })}
+          {...methods.register(name)}
           {...props}
         >
           {children}
