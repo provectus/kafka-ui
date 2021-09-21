@@ -13,7 +13,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { GetTopicsRequest, TopicColumnsToSort } from 'generated-sources';
-import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
 
@@ -201,31 +201,31 @@ const List: React.FC<TopicsListProps> = ({
           <table className="table is-fullwidth">
             <thead>
               <tr>
-                <th> </th>
-                <SortableColumnHeader
-                  value={TopicColumnsToSort.NAME}
+                <TableHeaderCell />
+                <TableHeaderCell
                   title="Topic Name"
+                  orderValue={TopicColumnsToSort.NAME}
                   orderBy={orderBy}
-                  setOrderBy={setTopicsOrderBy}
+                  onOrderBy={setTopicsOrderBy}
                 />
-                <SortableColumnHeader
-                  value={TopicColumnsToSort.TOTAL_PARTITIONS}
+                <TableHeaderCell
                   title="Total Partitions"
+                  orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
                   orderBy={orderBy}
-                  setOrderBy={setTopicsOrderBy}
+                  onOrderBy={setTopicsOrderBy}
                 />
-                <SortableColumnHeader
-                  value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+                <TableHeaderCell
                   title="Out of sync replicas"
+                  orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
                   orderBy={orderBy}
-                  setOrderBy={setTopicsOrderBy}
+                  onOrderBy={setTopicsOrderBy}
                 />
-                <th>Replication Factor</th>
-                <th>Number of messages</th>
-                <th>Size</th>
-                <th>Type</th>
-                <th>Clean Up Policy</th>
-                <th> </th>
+                <TableHeaderCell title="Replication Factor" />
+                <TableHeaderCell title="Number of messages" />
+                <TableHeaderCell title="Size" />
+                <TableHeaderCell title="Type" />
+                <TableHeaderCell title="Clean Up Policy" />
+                <TableHeaderCell />
               </tr>
             </thead>
             <tbody>

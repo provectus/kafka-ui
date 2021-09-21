@@ -88,6 +88,19 @@ const theme = {
       },
     },
   },
+  thStyles: {
+    primary: {
+      backgroundColor: {
+        normal: Colors.neutral[0],
+      },
+      color: {
+        normal: Colors.neutral[50],
+      },
+      previewColor: {
+        normal: Colors.brand[50],
+      },
+    },
+  },
   secondaryTabStyles: {
     backgroundColor: {
       normal: Colors.neutral[0],
