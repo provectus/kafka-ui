@@ -11,13 +11,17 @@ import {
 import { useDispatch } from 'react-redux';
 import { getResponse } from 'lib/errorHandling';
 import { useHistory, useParams } from 'react-router';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { topicFormValidationSchema } from 'lib/yupExtended';
 
 interface RouterParams {
   clusterName: ClusterName;
 }
 
 const New: React.FC = () => {
-  const methods = useForm<TopicFormData>();
+  const methods = useForm<TopicFormData>({
+    resolver: yupResolver(topicFormValidationSchema),
+  });
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
   const dispatch = useDispatch();

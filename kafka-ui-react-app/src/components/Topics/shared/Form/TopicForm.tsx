@@ -1,9 +1,11 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
+import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select from 'components/common/Select/Select';
+import Input from 'components/common/Input/Input';
+import { Button } from 'components/common/Button/Button';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
@@ -35,18 +37,10 @@ const TopicForm: React.FC<Props> = ({
           <div className="columns">
             <div className={`column ${isEditing ? '' : 'is-three-quarters'}`}>
               <label className="label">Topic Name *</label>
-              <input
-                className="input"
+              <Input
+                name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                {...register('name', {
-                  required: 'Topic Name is required.',
-                  pattern: {
-                    value: TOPIC_NAME_VALIDATION_PATTERN,
-                    message: 'Only alphanumeric, _, -, and . allowed',
-                  },
-                })}
-                autoComplete="off"
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="name" />
@@ -56,14 +50,11 @@ const TopicForm: React.FC<Props> = ({
             {!isEditing && (
               <div className="column">
                 <label className="label">Number of partitions *</label>
-                <input
-                  className="input"
+                <Input
                   type="number"
                   placeholder="Number of partitions"
                   defaultValue="1"
-                  {...register('partitions', {
-                    required: 'Number of partitions is required.',
-                  })}
+                  name="partitions"
                 />
                 <p className="help is-danger">
                   <ErrorMessage errors={errors} name="partitions" />
@@ -77,14 +68,11 @@ const TopicForm: React.FC<Props> = ({
           {!isEditing && (
             <div className="column">
               <label className="label">Replication Factor *</label>
-              <input
-                className="input"
+              <Input
                 type="number"
                 placeholder="Replication Factor"
                 defaultValue="1"
-                {...register('replicationFactor', {
-                  required: 'Replication Factor is required.',
-                })}
+                name="replicationFactor"
               />
               <p className="help is-danger">
                 <ErrorMessage errors={errors} name="replicationFactor" />
@@ -94,14 +82,11 @@ const TopicForm: React.FC<Props> = ({
 
           <div className="column">
             <label className="label">Min In Sync Replicas *</label>
-            <input
-              className="input"
+            <Input
               type="number"
               placeholder="Min In Sync Replicas"
               defaultValue="1"
-              {...register('minInSyncReplicas', {
-                required: 'Min In Sync Replicas is required.',
-              })}
+              name="minInSyncReplicas"
             />
             <p className="help is-danger">
               <ErrorMessage errors={errors} name="minInSyncReplicas" />
@@ -141,13 +126,10 @@ const TopicForm: React.FC<Props> = ({
         <div className="columns">
           <div className="column">
             <label className="label">Maximum message size in bytes *</label>
-            <input
-              className="input"
+            <Input
               type="number"
               defaultValue="1000012"
-              {...register('maxMessageBytes', {
-                required: 'Maximum message size in bytes is required',
-              })}
+              name="maxMessageBytes"
             />
             <p className="help is-danger">
               <ErrorMessage errors={errors} name="maxMessageBytes" />
@@ -157,7 +139,9 @@ const TopicForm: React.FC<Props> = ({
 
         <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
 
-        <input type="submit" className="button is-primary" value="Send" />
+        <Button type="submit" buttonType="primary" buttonSize="L">
+          Send
+        </Button>
       </fieldset>
     </form>
   );

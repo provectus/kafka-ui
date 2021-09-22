@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Input with icons matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-dlfnuX gxtwfA"
+    >
+      <i
+        class="sc-bdfBQB gNwdVP fas fa-address-book"
+      />
+      <input
+        class="sc-gsTEea eQzZSW sc-dlfnuX gxtwfA"
+      />
+      <i
+        class="sc-bdfBQB gJpiMQ fas fa-address-book"
+      />
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Custom Input with no icons matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-dlfnuX gxtwfA"
+    >
+      <input
+        class="sc-gsTEea QNjxA sc-dlfnuX gxtwfA"
+      />
+    </div>
+  </div>
+</body>
+`;
