@@ -4,16 +4,18 @@ import theme from 'theme/theme';
 import React from 'react';
 import { render } from '@testing-library/react';
 
-const setupWrapper = (props?: Partial<SelectProps>) => (
-  <ThemeProvider theme={theme}>
-    <Select name="test" {...props} />
-  </ThemeProvider>
-);
 jest.mock('react-hook-form', () => ({
   useFormContext: () => ({
     register: jest.fn(),
   }),
 }));
+
+const setupWrapper = (props?: Partial<SelectProps>) => (
+  <ThemeProvider theme={theme}>
+    <Select name="test" {...props} />
+  </ThemeProvider>
+);
+
 describe('Custom Select', () => {
   describe('when non-live', () => {
     it('matches the snapshot', () => {
