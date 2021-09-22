@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Select when live matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-dlfnuX gxtwfA"
+    >
+      <i
+        class="sc-bdfBQB ldVUdn"
+      >
+        <svg
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="8"
+            cy="8"
+            fill="#FAD1D1"
+            r="7"
+          />
+          <circle
+            cx="8"
+            cy="8"
+            fill="#E61A1A"
+            r="4"
+          />
+        </svg>
+      </i>
+      <select
+        class="sc-gsTEea kUMqVV"
+      />
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Custom Select when non-live matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-dlfnuX gxtwfA"
+    >
+      <select
+        class="sc-gsTEea hLKjxb"
+      />
+    </div>
+  </div>
+</body>
+`;
