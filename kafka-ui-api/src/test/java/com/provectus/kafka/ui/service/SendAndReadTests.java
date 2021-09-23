@@ -200,7 +200,7 @@ public class SendAndReadTests extends AbstractBaseTest {
   }
 
   @Test
-  void privimiveAvroSchema() {
+  void primitiveAvroSchemas() {
     new SendAndReadSpec()
         .withKeySchema(AVRO_SCHEMA_PRIMITIVE_STRING)
         .withValueSchema(AVRO_SCHEMA_PRIMITIVE_INT)

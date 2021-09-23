@@ -15,6 +15,8 @@ public class AvroMessageFormatter implements MessageFormatter {
   @Override
   @SneakyThrows
   public String format(String topic, byte[] value) {
+    // deserialized will have type, that depends on schema type (record or primitive),
+    // AvroSchemaUtils.toJson(...) method will take it into account
     Object deserialized = avroDeserializer.deserialize(topic, value);
     byte[] jsonBytes = AvroSchemaUtils.toJson(deserialized);
     return new String(jsonBytes);
