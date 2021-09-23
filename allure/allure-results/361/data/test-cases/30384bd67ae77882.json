@@ -1,12 +1,12 @@
 {
-  "uid" : "29c1e1a20b76545d",
+  "uid" : "30384bd67ae77882",
   "name" : "should create a topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.createTopic",
   "historyId" : "61d3874fc5d35b85b0cd7942ccda45ef",
   "time" : {
-    "start" : 1632398608202,
-    "stop" : 1632398612386,
-    "duration" : 4184
+    "start" : 1632419155669,
+    "stop" : 1632419159932,
+    "duration" : 4263
   },
   "description" : "",
   "status" : "passed",
@@ -19,101 +19,101 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1632398608309,
-        "stop" : 1632398608862,
-        "duration" : 553
+        "start" : 1632419155786,
+        "stop" : 1632419156601,
+        "duration" : 815
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1632398608310,
-          "stop" : 1632398608862,
-          "duration" : 552
+          "start" : 1632419155788,
+          "stop" : 1632419156601,
+          "duration" : 813
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "hasContent" : true,
       "stepsCount" : 1,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1632398608862,
-        "stop" : 1632398609816,
-        "duration" : 954
+        "start" : 1632419156601,
+        "stop" : 1632419157244,
+        "duration" : 643
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1632398608863,
-          "stop" : 1632398609017,
-          "duration" : 154
+          "start" : 1632419156602,
+          "stop" : 1632419156707,
+          "duration" : 105
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1632398609017,
-          "stop" : 1632398609816,
-          "duration" : 799
+          "start" : 1632419156707,
+          "stop" : 1632419157244,
+          "duration" : 537
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "hasContent" : true,
       "stepsCount" : 2,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
     }, {
       "name" : "goToSideMenu",
       "time" : {
-        "start" : 1632398609817,
-        "stop" : 1632398610072,
-        "duration" : 255
+        "start" : 1632419157244,
+        "stop" : 1632419157556,
+        "duration" : 312
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //aside//*[a[text()='secondLocal']]//a[text()='Topics']\") click()",
         "time" : {
-          "start" : 1632398609817,
-          "stop" : 1632398610072,
-          "duration" : 255
+          "start" : 1632419157244,
+          "stop" : 1632419157556,
+          "duration" : 312
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ {
@@ -123,32 +123,32 @@
         "name" : "option",
         "value" : "TOPICS"
       } ],
-      "hasContent" : true,
       "stepsCount" : 1,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='new-topic']\") should be(visible)",
       "time" : {
-        "start" : 1632398612190,
-        "stop" : 1632398612247,
-        "duration" : 57
+        "start" : 1632419159684,
+        "stop" : 1632419159793,
+        "duration" : 109
       },
       "status" : "passed",
       "steps" : [ ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "hasContent" : false,
       "stepsCount" : 0,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
-    "hasContent" : true,
     "stepsCount" : 8,
     "attachmentsCount" : 0,
-    "shouldDisplayMessage" : false
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
   },
   "afterStages" : [ ],
   "labels" : [ {
@@ -156,7 +156,7 @@
     "value" : "fv-az198-990"
   }, {
     "name" : "thread",
-    "value" : "5575@fv-az198-990.main(1)"
+    "value" : "5586@fv-az198-990.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -189,6 +189,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "29c1e1a20b76545d.json",
+  "source" : "30384bd67ae77882.json",
   "parameterValues" : [ ]
 }
