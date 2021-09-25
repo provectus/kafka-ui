@@ -6,9 +6,11 @@ import javax.management.remote.JMXConnector;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.export.MBeanExporter;
+import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
@@ -37,7 +39,10 @@ public class Config {
   }
 
   @Bean
-  public WebClient webClient() {
-    return WebClient.create();
+  public WebClient webClient(
+      @Value("${webclient.max-in-memory-buffer-size:20MB}") DataSize maxBuffSize) {
+    return WebClient.builder()
+        .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
+        .build();
   }
 }
