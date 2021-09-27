@@ -81,7 +81,7 @@
     "@testing-library/jest-dom": "^5.14.1",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.9",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.13",
     "@types/node-fetch": "^2.5.12",
