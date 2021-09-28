@@ -7,6 +7,7 @@ import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
+import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -42,65 +43,69 @@ const Brokers: React.FC<Props> = ({
   const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
 
   return (
-    <div className="section">
-      <div className="metrics-box mb-2">
-        <MetricsWrapper title="Uptime" wrapperClassName="is-flex-grow-1">
-          <Indicator className="is-one-third" label="Total Brokers">
-            {brokerCount}
-          </Indicator>
-          <Indicator className="is-one-third" label="Active Controllers">
-            {activeControllers}
-          </Indicator>
-          <Indicator className="is-one-third" label="Zookeeper Status">
-            <span className={cx('tag', zkOnline ? 'is-success' : 'is-danger')}>
-              {zkOnline ? 'Online' : 'Offline'}
-            </span>
-          </Indicator>
-          <Indicator className="is-one-third" label="Version">
-            {version}
-          </Indicator>
-        </MetricsWrapper>
-        <MetricsWrapper title="Partitions" wrapperClassName="is-flex-grow-1">
-          <Indicator label="Online">
-            <span
-              className={cx({ 'has-text-danger': offlinePartitionCount !== 0 })}
-            >
-              {onlinePartitionCount}
-            </span>
-            <span className="has-text-weight-light">
-              {' '}
-              of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
-            </span>
-          </Indicator>
-          <Indicator label="URP" title="Under replicated partitions">
-            {underReplicatedPartitionCount}
-          </Indicator>
-          <Indicator label="In Sync Replicas">{inSyncReplicasCount}</Indicator>
-          <Indicator label="Out of Sync Replicas">
-            {outOfSyncReplicasCount}
-          </Indicator>
-        </MetricsWrapper>
-        <MetricsWrapper
-          multiline
-          title="Disk Usage"
-          wrapperClassName="is-flex-grow-1"
-        >
-          {diskUsage?.map((brokerDiskUsage) => (
-            <React.Fragment key={brokerDiskUsage.brokerId}>
-              <Indicator className="is-one-third" label="Broker">
-                {brokerDiskUsage.brokerId}
-              </Indicator>
-              <Indicator className="is-one-third" label="Segment Size" title="">
-                <BytesFormatted value={brokerDiskUsage.segmentSize} />
-              </Indicator>
-              <Indicator className="is-one-third" label="Segment count">
-                {brokerDiskUsage.segmentCount}
-              </Indicator>
-            </React.Fragment>
-          ))}
-        </MetricsWrapper>
+    <>
+      <div className="section">
+        <div className="metrics-box mb-2 is-flex">
+          <MetricsWrapper title="Uptime">
+            <Indicator label="Total Brokers">{brokerCount}</Indicator>
+            <Indicator label="Active Controllers">
+              {activeControllers}
+            </Indicator>
+            <Indicator label="Zookeeper Status">
+              <TagStyled
+                text={zkOnline ? 'online' : 'offline'}
+                color={zkOnline ? 'green' : 'gray'}
+              />
+            </Indicator>
+            <Indicator label="Version">{version}</Indicator>
+          </MetricsWrapper>
+          <MetricsWrapper title="Partitions">
+            <Indicator label="Online">
+              <span
+                className={cx({
+                  'has-text-danger': offlinePartitionCount !== 0,
+                })}
+              >
+                {onlinePartitionCount}
+              </span>
+              <span className="has-text-weight-light">
+                {' '}
+                of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
+              </span>
+            </Indicator>
+            <Indicator label="URP" title="Under replicated partitions">
+              {underReplicatedPartitionCount}
+            </Indicator>
+            <Indicator label="In Sync Replicas">
+              {inSyncReplicasCount}
+            </Indicator>
+            <Indicator label="Out of Sync Replicas">
+              {outOfSyncReplicasCount}
+            </Indicator>
+          </MetricsWrapper>
+        </div>
       </div>
-    </div>
+      <table className="table is-fullwidth">
+        <thead>
+          <tr>
+            <th>Broker</th>
+            <th>Segment size (Mb)</th>
+            <th>Segment Count</th>
+          </tr>
+        </thead>
+        <tbody>
+          {diskUsage?.map((brokerDiskUsage) => (
+            <tr key={brokerDiskUsage.brokerId}>
+              <td>{brokerDiskUsage.brokerId}</td>
+              <td>
+                <BytesFormatted value={brokerDiskUsage.segmentSize} />
+              </td>
+              <td>{brokerDiskUsage.segmentCount}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </>
   );
 };
 

@@ -30,305 +30,410 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
     }
     staticContext={Object {}}
   >
-    <Brokers
-      activeControllers={0}
-      brokerCount={0}
-      fetchBrokers={
-        [MockFunction] {
-          "calls": Array [
-            Array [
-              undefined,
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
+    <Component
+      theme={
+        Object {
+          "buttonStyles": Object {
+            "fontSize": Object {
+              "L": "16px",
+              "M": "14px",
+              "S": "14px",
             },
-          ],
+            "height": Object {
+              "L": "40px",
+              "M": "32px",
+              "S": "24px",
+            },
+            "primary": Object {
+              "backgroundColor": Object {
+                "active": "#1414B8",
+                "hover": "#1717CF",
+                "normal": "#4F4FFF",
+              },
+              "color": "#FFFFFF",
+              "invertedColors": Object {
+                "active": "#1414B8",
+                "hover": "#1717CF",
+                "normal": "#4F4FFF",
+              },
+            },
+            "secondary": Object {
+              "backgroundColor": Object {
+                "active": "#D5DADD",
+                "hover": "#E3E6E8",
+                "normal": "#F1F2F3",
+              },
+              "color": "#171A1C",
+              "invertedColors": Object {
+                "active": "#171A1C",
+                "hover": "#454F54",
+                "normal": "#73848C",
+              },
+            },
+          },
+          "liStyles": Object {
+            "primary": Object {
+              "backgroundColor": Object {
+                "active": "#E3E6E8",
+                "hover": "#F1F2F3",
+                "normal": "#FFFFFF",
+              },
+              "color": Object {
+                "active": "#171A1C",
+                "hover": "#F1F2F3",
+                "normal": "#73848C",
+              },
+            },
+          },
+          "secondaryTabStyles": Object {
+            "backgroundColor": Object {
+              "active": "#E3E6E8",
+              "hover": "#F1F2F3",
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#171A1C",
+              "normal": "#73848C",
+            },
+          },
+          "selectStyles": Object {
+            "borderColor": Object {
+              "active": "#454F54",
+              "disabled": "#E3E6E8",
+              "hover": "#73848C",
+              "normal": "#ABB5BA",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "disabled": "#ABB5BA",
+              "hover": "#171A1C",
+              "normal": "#171A1C",
+            },
+          },
+          "tagStyles": Object {
+            "backgroundColor": Object {
+              "gray": "#E3E6E8",
+              "green": "#D6F5E0",
+              "yellow": "#FFEECC",
+            },
+            "color": "#171A1C",
+          },
         }
       }
-      fetchClusterStats={
-        [MockFunction] {
-          "calls": Array [
-            Array [
-              undefined,
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        }
-      }
-      inSyncReplicasCount={0}
-      isFetched={false}
-      offlinePartitionCount={0}
-      onlinePartitionCount={0}
-      outOfSyncReplicasCount={0}
-      underReplicatedPartitionCount={0}
-      version="1"
-      zooKeeperStatus={0}
     >
-      <div
-        className="section"
+      <Brokers
+        activeControllers={0}
+        brokerCount={0}
+        fetchBrokers={
+          [MockFunction] {
+            "calls": Array [
+              Array [
+                undefined,
+              ],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        fetchClusterStats={
+          [MockFunction] {
+            "calls": Array [
+              Array [
+                undefined,
+              ],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        inSyncReplicasCount={0}
+        isFetched={false}
+        offlinePartitionCount={0}
+        onlinePartitionCount={0}
+        outOfSyncReplicasCount={0}
+        underReplicatedPartitionCount={0}
+        version="1"
+        zooKeeperStatus={0}
       >
         <div
-          className="metrics-box mb-2"
+          className="section"
         >
-          <MetricsWrapper
-            title="Uptime"
-            wrapperClassName="is-flex-grow-1"
+          <div
+            className="metrics-box mb-2 is-flex"
           >
-            <div
-              className="is-flex-grow-1"
+            <Styled(MetricsWrapper)
+              title="Uptime"
             >
-              <h5
-                className="is-7 has-text-weight-medium mb-2"
-              >
-                Uptime
-              </h5>
-              <div
-                className="box"
+              <MetricsWrapper
+                className="sc-bdfBQB ewAWCQ"
+                title="Uptime"
               >
                 <div
-                  className="level"
+                  className="sc-bdfBQB ewAWCQ"
                 >
-                  <Indicator
-                    className="is-one-third"
-                    label="Total Brokers"
+                  <h5
+                    className="is-7 has-text-weight-medium mb-2"
                   >
-                    <div
-                      className="level-item is-one-third"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          Total Brokers
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Active Controllers"
+                    Uptime
+                  </h5>
+                  <div
+                    className="indicatorsWrapper"
                   >
-                    <div
-                      className="level-item is-one-third"
+                    <Styled(Indicator)
+                      label="Total Brokers"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Total Brokers"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Active Controllers
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Zookeeper Status"
-                  >
-                    <div
-                      className="level-item is-one-third"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Total Brokers
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Active Controllers"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Active Controllers"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Zookeeper Status
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          <span
-                            className="tag is-danger"
-                          >
-                            Offline
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Version"
-                  >
-                    <div
-                      className="level-item is-one-third"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Active Controllers
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Zookeeper Status"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Zookeeper Status"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Version
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Zookeeper Status
+                            </p>
+                            <Styled(Tag)
+                              color="gray"
+                              text="offline"
+                            >
+                              <Tag
+                                className="sc-dlfnuX gBFAcb"
+                                color="gray"
+                                text="offline"
+                              >
+                                <p
+                                  className="sc-dlfnuX gBFAcb"
+                                >
+                                  offline
+                                </p>
+                              </Tag>
+                            </Styled(Tag)>
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Version"
+                    >
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Version"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          1
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Version
+                            </p>
+                            1
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </MetricsWrapper>
-          <MetricsWrapper
-            title="Partitions"
-            wrapperClassName="is-flex-grow-1"
-          >
-            <div
-              className="is-flex-grow-1"
+              </MetricsWrapper>
+            </Styled(MetricsWrapper)>
+            <Styled(MetricsWrapper)
+              title="Partitions"
             >
-              <h5
-                className="is-7 has-text-weight-medium mb-2"
-              >
-                Partitions
-              </h5>
-              <div
-                className="box"
+              <MetricsWrapper
+                className="sc-bdfBQB ewAWCQ"
+                title="Partitions"
               >
                 <div
-                  className="level"
+                  className="sc-bdfBQB ewAWCQ"
                 >
-                  <Indicator
-                    label="Online"
+                  <h5
+                    className="is-7 has-text-weight-medium mb-2"
                   >
-                    <div
-                      className="level-item"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          Online
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          <span
-                            className=""
-                          >
-                            0
-                          </span>
-                          <span
-                            className="has-text-weight-light"
-                          >
-                             
-                            of 
-                            0
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    label="URP"
-                    title="Under replicated partitions"
+                    Partitions
+                  </h5>
+                  <div
+                    className="indicatorsWrapper"
                   >
-                    <div
-                      className="level-item"
+                    <Styled(Indicator)
+                      label="Online"
                     >
-                      <div
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Online"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
+                        >
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Online
+                            </p>
+                            <span
+                              className=""
+                            >
+                              0
+                            </span>
+                            <span
+                              className="has-text-weight-light"
+                            >
+                               
+                              of 
+                              0
+                            </span>
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="URP"
+                      title="Under replicated partitions"
+                    >
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="URP"
                         title="Under replicated partitions"
                       >
-                        <p
-                          className="is-size-8"
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          URP
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    label="In Sync Replicas"
-                  >
-                    <div
-                      className="level-item"
+                          <div
+                            title="Under replicated partitions"
+                          >
+                            <p
+                              className="is-size-8"
+                            >
+                              URP
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="In Sync Replicas"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="In Sync Replicas"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          In Sync Replicas
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    label="Out of Sync Replicas"
-                  >
-                    <div
-                      className="level-item"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              In Sync Replicas
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Out of Sync Replicas"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Out of Sync Replicas"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Out of Sync Replicas
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Out of Sync Replicas
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </MetricsWrapper>
-          <MetricsWrapper
-            multiline={true}
-            title="Disk Usage"
-            wrapperClassName="is-flex-grow-1"
-          >
-            <div
-              className="is-flex-grow-1"
-            >
-              <h5
-                className="is-7 has-text-weight-medium mb-2"
-              >
-                Disk Usage
-              </h5>
-              <div
-                className="box"
-              >
-                <div
-                  className="level level-multiline"
-                />
-              </div>
-            </div>
-          </MetricsWrapper>
+              </MetricsWrapper>
+            </Styled(MetricsWrapper)>
+          </div>
         </div>
-      </div>
-    </Brokers>
+        <table
+          className="table is-fullwidth"
+        >
+          <thead>
+            <tr>
+              <th>
+                Broker
+              </th>
+              <th>
+                Segment size (Mb)
+              </th>
+              <th>
+                Segment Count
+              </th>
+            </tr>
+          </thead>
+          <tbody />
+        </table>
+      </Brokers>
+    </Component>
   </Router>
 </StaticRouter>
 `;
@@ -363,387 +468,439 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
     }
     staticContext={Object {}}
   >
-    <Brokers
-      activeControllers={1}
-      brokerCount={1}
-      diskUsage={
-        Array [
-          Object {
-            "brokerId": 1,
-            "segmentCount": 64,
-            "segmentSize": 60718,
+    <Component
+      theme={
+        Object {
+          "buttonStyles": Object {
+            "fontSize": Object {
+              "L": "16px",
+              "M": "14px",
+              "S": "14px",
+            },
+            "height": Object {
+              "L": "40px",
+              "M": "32px",
+              "S": "24px",
+            },
+            "primary": Object {
+              "backgroundColor": Object {
+                "active": "#1414B8",
+                "hover": "#1717CF",
+                "normal": "#4F4FFF",
+              },
+              "color": "#FFFFFF",
+              "invertedColors": Object {
+                "active": "#1414B8",
+                "hover": "#1717CF",
+                "normal": "#4F4FFF",
+              },
+            },
+            "secondary": Object {
+              "backgroundColor": Object {
+                "active": "#D5DADD",
+                "hover": "#E3E6E8",
+                "normal": "#F1F2F3",
+              },
+              "color": "#171A1C",
+              "invertedColors": Object {
+                "active": "#171A1C",
+                "hover": "#454F54",
+                "normal": "#73848C",
+              },
+            },
           },
-        ]
-      }
-      fetchBrokers={
-        [MockFunction] {
-          "calls": Array [
-            Array [
-              undefined,
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
+          "liStyles": Object {
+            "primary": Object {
+              "backgroundColor": Object {
+                "active": "#E3E6E8",
+                "hover": "#F1F2F3",
+                "normal": "#FFFFFF",
+              },
+              "color": Object {
+                "active": "#171A1C",
+                "hover": "#F1F2F3",
+                "normal": "#73848C",
+              },
             },
-          ],
+          },
+          "secondaryTabStyles": Object {
+            "backgroundColor": Object {
+              "active": "#E3E6E8",
+              "hover": "#F1F2F3",
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#171A1C",
+              "normal": "#73848C",
+            },
+          },
+          "selectStyles": Object {
+            "borderColor": Object {
+              "active": "#454F54",
+              "disabled": "#E3E6E8",
+              "hover": "#73848C",
+              "normal": "#ABB5BA",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "disabled": "#ABB5BA",
+              "hover": "#171A1C",
+              "normal": "#171A1C",
+            },
+          },
+          "tagStyles": Object {
+            "backgroundColor": Object {
+              "gray": "#E3E6E8",
+              "green": "#D6F5E0",
+              "yellow": "#FFEECC",
+            },
+            "color": "#171A1C",
+          },
         }
       }
-      fetchClusterStats={
-        [MockFunction] {
-          "calls": Array [
-            Array [
-              undefined,
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
-            },
-          ],
-        }
-      }
-      inSyncReplicasCount={64}
-      isFetched={true}
-      offlinePartitionCount={0}
-      onlinePartitionCount={64}
-      outOfSyncReplicasCount={0}
-      underReplicatedPartitionCount={0}
-      version="1"
-      zooKeeperStatus={1}
     >
-      <div
-        className="section"
+      <Brokers
+        activeControllers={1}
+        brokerCount={1}
+        diskUsage={
+          Array [
+            Object {
+              "brokerId": 1,
+              "segmentCount": 64,
+              "segmentSize": 60718,
+            },
+          ]
+        }
+        fetchBrokers={
+          [MockFunction] {
+            "calls": Array [
+              Array [
+                undefined,
+              ],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        fetchClusterStats={
+          [MockFunction] {
+            "calls": Array [
+              Array [
+                undefined,
+              ],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        inSyncReplicasCount={64}
+        isFetched={true}
+        offlinePartitionCount={0}
+        onlinePartitionCount={64}
+        outOfSyncReplicasCount={0}
+        underReplicatedPartitionCount={0}
+        version="1"
+        zooKeeperStatus={1}
       >
         <div
-          className="metrics-box mb-2"
+          className="section"
         >
-          <MetricsWrapper
-            title="Uptime"
-            wrapperClassName="is-flex-grow-1"
+          <div
+            className="metrics-box mb-2 is-flex"
           >
-            <div
-              className="is-flex-grow-1"
+            <Styled(MetricsWrapper)
+              title="Uptime"
             >
-              <h5
-                className="is-7 has-text-weight-medium mb-2"
-              >
-                Uptime
-              </h5>
-              <div
-                className="box"
+              <MetricsWrapper
+                className="sc-bdfBQB ewAWCQ"
+                title="Uptime"
               >
                 <div
-                  className="level"
+                  className="sc-bdfBQB ewAWCQ"
                 >
-                  <Indicator
-                    className="is-one-third"
-                    label="Total Brokers"
+                  <h5
+                    className="is-7 has-text-weight-medium mb-2"
                   >
-                    <div
-                      className="level-item is-one-third"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          Total Brokers
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          1
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Active Controllers"
+                    Uptime
+                  </h5>
+                  <div
+                    className="indicatorsWrapper"
                   >
-                    <div
-                      className="level-item is-one-third"
+                    <Styled(Indicator)
+                      label="Total Brokers"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Total Brokers"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Active Controllers
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          1
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Zookeeper Status"
-                  >
-                    <div
-                      className="level-item is-one-third"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Total Brokers
+                            </p>
+                            1
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Active Controllers"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Active Controllers"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Zookeeper Status
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          <span
-                            className="tag is-success"
-                          >
-                            Online
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Version"
-                  >
-                    <div
-                      className="level-item is-one-third"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Active Controllers
+                            </p>
+                            1
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Zookeeper Status"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Zookeeper Status"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Version
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Zookeeper Status
+                            </p>
+                            <Styled(Tag)
+                              color="green"
+                              text="online"
+                            >
+                              <Tag
+                                className="sc-dlfnuX jmVcT"
+                                color="green"
+                                text="online"
+                              >
+                                <p
+                                  className="sc-dlfnuX jmVcT"
+                                >
+                                  online
+                                </p>
+                              </Tag>
+                            </Styled(Tag)>
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Version"
+                    >
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Version"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          1
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Version
+                            </p>
+                            1
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </MetricsWrapper>
-          <MetricsWrapper
-            title="Partitions"
-            wrapperClassName="is-flex-grow-1"
-          >
-            <div
-              className="is-flex-grow-1"
+              </MetricsWrapper>
+            </Styled(MetricsWrapper)>
+            <Styled(MetricsWrapper)
+              title="Partitions"
             >
-              <h5
-                className="is-7 has-text-weight-medium mb-2"
-              >
-                Partitions
-              </h5>
-              <div
-                className="box"
+              <MetricsWrapper
+                className="sc-bdfBQB ewAWCQ"
+                title="Partitions"
               >
                 <div
-                  className="level"
+                  className="sc-bdfBQB ewAWCQ"
                 >
-                  <Indicator
-                    label="Online"
+                  <h5
+                    className="is-7 has-text-weight-medium mb-2"
                   >
-                    <div
-                      className="level-item"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          Online
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          <span
-                            className=""
-                          >
-                            64
-                          </span>
-                          <span
-                            className="has-text-weight-light"
-                          >
-                             
-                            of 
-                            64
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    label="URP"
-                    title="Under replicated partitions"
+                    Partitions
+                  </h5>
+                  <div
+                    className="indicatorsWrapper"
                   >
-                    <div
-                      className="level-item"
+                    <Styled(Indicator)
+                      label="Online"
                     >
-                      <div
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Online"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
+                        >
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Online
+                            </p>
+                            <span
+                              className=""
+                            >
+                              64
+                            </span>
+                            <span
+                              className="has-text-weight-light"
+                            >
+                               
+                              of 
+                              64
+                            </span>
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="URP"
+                      title="Under replicated partitions"
+                    >
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="URP"
                         title="Under replicated partitions"
                       >
-                        <p
-                          className="is-size-8"
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          URP
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    label="In Sync Replicas"
-                  >
-                    <div
-                      className="level-item"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          In Sync Replicas
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          64
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    label="Out of Sync Replicas"
-                  >
-                    <div
-                      className="level-item"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          Out of Sync Replicas
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          0
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                </div>
-              </div>
-            </div>
-          </MetricsWrapper>
-          <MetricsWrapper
-            multiline={true}
-            title="Disk Usage"
-            wrapperClassName="is-flex-grow-1"
-          >
-            <div
-              className="is-flex-grow-1"
-            >
-              <h5
-                className="is-7 has-text-weight-medium mb-2"
-              >
-                Disk Usage
-              </h5>
-              <div
-                className="box"
-              >
-                <div
-                  className="level level-multiline"
-                >
-                  <Indicator
-                    className="is-one-third"
-                    label="Broker"
-                  >
-                    <div
-                      className="level-item is-one-third"
-                    >
-                      <div>
-                        <p
-                          className="is-size-8"
-                        >
-                          Broker
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          1
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Segment Size"
-                    title=""
-                  >
-                    <div
-                      className="level-item is-one-third"
-                    >
-                      <div
-                        title=""
-                      >
-                        <p
-                          className="is-size-8"
-                        >
-                          Segment Size
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
-                        >
-                          <BytesFormatted
-                            value={60718}
+                          <div
+                            title="Under replicated partitions"
                           >
-                            <span>
-                              59KB
-                            </span>
-                          </BytesFormatted>
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
-                  <Indicator
-                    className="is-one-third"
-                    label="Segment count"
-                  >
-                    <div
-                      className="level-item is-one-third"
+                            <p
+                              className="is-size-8"
+                            >
+                              URP
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="In Sync Replicas"
                     >
-                      <div>
-                        <p
-                          className="is-size-8"
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="In Sync Replicas"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          Segment count
-                        </p>
-                        <p
-                          className="is-size-6 has-text-weight-medium"
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              In Sync Replicas
+                            </p>
+                            64
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                    <Styled(Indicator)
+                      label="Out of Sync Replicas"
+                    >
+                      <Indicator
+                        className="sc-gsTEea fGiIVV"
+                        label="Out of Sync Replicas"
+                      >
+                        <div
+                          className="sc-gsTEea fGiIVV"
                         >
-                          64
-                        </p>
-                      </div>
-                    </div>
-                  </Indicator>
+                          <div>
+                            <p
+                              className="is-size-8"
+                            >
+                              Out of Sync Replicas
+                            </p>
+                            0
+                          </div>
+                        </div>
+                      </Indicator>
+                    </Styled(Indicator)>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </MetricsWrapper>
+              </MetricsWrapper>
+            </Styled(MetricsWrapper)>
+          </div>
         </div>
-      </div>
-    </Brokers>
+        <table
+          className="table is-fullwidth"
+        >
+          <thead>
+            <tr>
+              <th>
+                Broker
+              </th>
+              <th>
+                Segment size (Mb)
+              </th>
+              <th>
+                Segment Count
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              key="1"
+            >
+              <td>
+                1
+              </td>
+              <td>
+                <BytesFormatted
+                  value={60718}
+                >
+                  <span>
+                    59KB
+                  </span>
+                </BytesFormatted>
+              </td>
+              <td>
+                64
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </Brokers>
+    </Component>
   </Router>
 </StaticRouter>
 `;

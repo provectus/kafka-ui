@@ -1,23 +1,14 @@
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import React from 'react';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 
 describe('MetricsWrapper', () => {
-  it('correctly adds classes', () => {
-    const className = 'className';
-    const component = shallow(
-      <MetricsWrapper wrapperClassName={className} multiline />
-    );
-    expect(component.exists(`.${className}`)).toBeTruthy();
-    expect(component.exists('.level-multiline')).toBeTruthy();
-  });
-
   it('correctly renders children', () => {
-    let component = shallow(<MetricsWrapper />);
+    let component = mount(<MetricsWrapper />);
     expect(component.exists('.is-7')).toBeFalsy();
 
     const title = 'title';
-    component = shallow(<MetricsWrapper title={title} />);
+    component = mount(<MetricsWrapper title={title} />);
     expect(component.exists('.is-7')).toBeTruthy();
     expect(component.text()).toEqual(title);
   });
