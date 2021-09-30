@@ -5,16 +5,15 @@ import cx from 'classnames';
 
 export interface TableHeaderCellProps {
   title?: string;
-  thType?: 'primary';
   previewText?: string;
   onPreview?: () => void;
   orderBy?: TopicColumnsToSort | null;
   orderValue?: TopicColumnsToSort | null;
-  onOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
+  handleOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
 }
 
 const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
-  const { title, previewText, onPreview, orderBy, orderValue, onOrderBy } =
+  const { title, previewText, onPreview, orderBy, orderValue, handleOrderBy } =
     props;
 
   return (
@@ -37,8 +36,10 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
       {orderValue && (
         <span
           className="icon is-small is-clickable"
-          onClick={() => orderValue && onOrderBy && onOrderBy(orderValue)}
-          onKeyDown={() => onOrderBy}
+          onClick={() =>
+            orderValue && handleOrderBy && handleOrderBy(orderValue)
+          }
+          onKeyDown={() => handleOrderBy}
           role="button"
           tabIndex={0}
         >

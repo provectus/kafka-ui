@@ -119,6 +119,17 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
             },
             "color": "#171A1C",
           },
+          "thStyles": Object {
+            "backgroundColor": Object {
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "normal": "#73848C",
+            },
+            "previewColor": Object {
+              "normal": "#4F4FFF",
+            },
+          },
         }
       }
     >
@@ -556,6 +567,17 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               "yellow": "#FFEECC",
             },
             "color": "#171A1C",
+          },
+          "thStyles": Object {
+            "backgroundColor": Object {
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "normal": "#73848C",
+            },
+            "previewColor": Object {
+              "normal": "#4F4FFF",
+            },
           },
         }
       }

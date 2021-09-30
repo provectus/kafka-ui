@@ -1,4 +1,5 @@
 import { styled } from 'lib/themedStyles';
+import { Colors } from 'theme/theme';
 
 import { TableHeaderCellProps } from './TableHeaderCell';
 
@@ -13,7 +14,7 @@ const StyledTableHeaderCell = styled.th<TableHeaderCellProps>`
   }
 
   &.has-text-link-dark span {
-    color: #3850b7 !important;
+    color: ${Colors.brand[50]} !important;
   }
 
   span {
@@ -24,22 +25,13 @@ const StyledTableHeaderCell = styled.th<TableHeaderCellProps>`
     line-height: 16px;
     letter-spacing: 0em;
     text-align: left;
-    background: ${(props) =>
-      props.thType
-        ? props.theme.thStyles[props.thType].backgroundColor.normal
-        : props.theme.thStyles?.primary.backgroundColor.normal};
-    color: ${(props) =>
-      props.thType
-        ? props.theme.thStyles[props.thType].color.normal
-        : props.theme.thStyles?.primary.color.normal};
+    background: ${(props) => props.theme.thStyles.backgroundColor.normal};
+    color: ${(props) => props.theme.thStyles.color.normal};
 
     &.preview {
       margin-left: 8px;
       font-size: 14px;
-      color: ${(props) =>
-        props.thType
-          ? props.theme.thStyles[props.thType].previewColor.normal
-          : props.theme.thStyles?.primary.previewColor.normal};
+      color: ${(props) => props.theme.thStyles.previewColor.normal};
       cursor: pointer;
     }
 

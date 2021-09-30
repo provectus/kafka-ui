@@ -206,19 +206,19 @@ const List: React.FC<TopicsListProps> = ({
                   title="Topic Name"
                   orderValue={TopicColumnsToSort.NAME}
                   orderBy={orderBy}
-                  onOrderBy={setTopicsOrderBy}
+                  handleOrderBy={setTopicsOrderBy}
                 />
                 <TableHeaderCell
                   title="Total Partitions"
                   orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
                   orderBy={orderBy}
-                  onOrderBy={setTopicsOrderBy}
+                  handleOrderBy={setTopicsOrderBy}
                 />
                 <TableHeaderCell
                   title="Out of sync replicas"
                   orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
                   orderBy={orderBy}
-                  onOrderBy={setTopicsOrderBy}
+                  handleOrderBy={setTopicsOrderBy}
                 />
                 <TableHeaderCell title="Replication Factor" />
                 <TableHeaderCell title="Number of messages" />

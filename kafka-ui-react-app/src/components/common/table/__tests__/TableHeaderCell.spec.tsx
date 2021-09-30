@@ -57,7 +57,6 @@ describe('TableHeaderCell', () => {
     const wrapper = mountWithTheme(
       setupComponent({
         title: STUB_TITLE,
-        thType: 'primary',
       })
     );
 
