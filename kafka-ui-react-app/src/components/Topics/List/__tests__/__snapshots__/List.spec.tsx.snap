@@ -24,280 +24,532 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
     }
     staticContext={Object {}}
   >
-    <List
-      areTopicsFetching={false}
-      clearTopicMessages={[MockFunction]}
-      clearTopicsMessages={[MockFunction]}
-      deleteTopic={[MockFunction]}
-      deleteTopics={[MockFunction]}
-      fetchTopicsList={
-        [MockFunction] {
-          "calls": Array [
-            Array [
-              Object {
-                "clusterName": undefined,
-                "orderBy": undefined,
-                "page": undefined,
-                "perPage": undefined,
-                "search": "",
-                "showInternal": true,
-              },
-            ],
-          ],
-          "results": Array [
-            Object {
-              "type": "return",
-              "value": undefined,
+    <Component
+      theme={
+        Object {
+          "buttonStyles": Object {
+            "fontSize": Object {
+              "L": "16px",
+              "M": "14px",
+              "S": "14px",
             },
-          ],
+            "height": Object {
+              "L": "40px",
+              "M": "32px",
+              "S": "24px",
+            },
+            "primary": Object {
+              "backgroundColor": Object {
+                "active": "#1414B8",
+                "hover": "#1717CF",
+                "normal": "#4F4FFF",
+              },
+              "color": "#FFFFFF",
+              "invertedColors": Object {
+                "active": "#1414B8",
+                "hover": "#1717CF",
+                "normal": "#4F4FFF",
+              },
+            },
+            "secondary": Object {
+              "backgroundColor": Object {
+                "active": "#D5DADD",
+                "hover": "#E3E6E8",
+                "normal": "#F1F2F3",
+              },
+              "color": "#171A1C",
+              "invertedColors": Object {
+                "active": "#171A1C",
+                "hover": "#454F54",
+                "normal": "#73848C",
+              },
+            },
+          },
+          "liStyles": Object {
+            "primary": Object {
+              "backgroundColor": Object {
+                "active": "#E3E6E8",
+                "hover": "#F1F2F3",
+                "normal": "#FFFFFF",
+              },
+              "color": Object {
+                "active": "#171A1C",
+                "hover": "#F1F2F3",
+                "normal": "#73848C",
+              },
+            },
+          },
+          "secondaryTabStyles": Object {
+            "backgroundColor": Object {
+              "active": "#E3E6E8",
+              "hover": "#F1F2F3",
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#171A1C",
+              "normal": "#73848C",
+            },
+          },
+          "selectStyles": Object {
+            "borderColor": Object {
+              "active": "#454F54",
+              "disabled": "#E3E6E8",
+              "hover": "#73848C",
+              "normal": "#ABB5BA",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "disabled": "#ABB5BA",
+              "hover": "#171A1C",
+              "normal": "#171A1C",
+            },
+          },
+          "tagStyles": Object {
+            "backgroundColor": Object {
+              "gray": "#E3E6E8",
+              "green": "#D6F5E0",
+              "yellow": "#FFEECC",
+            },
+            "color": "#171A1C",
+          },
+          "thStyles": Object {
+            "backgroundColor": Object {
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "normal": "#73848C",
+            },
+            "previewColor": Object {
+              "normal": "#4F4FFF",
+            },
+          },
         }
       }
-      orderBy={null}
-      search=""
-      setTopicsOrderBy={[MockFunction]}
-      setTopicsSearch={[MockFunction]}
-      topics={Array []}
-      totalPages={1}
     >
-      <div
-        className="section"
+      <List
+        areTopicsFetching={false}
+        clearTopicMessages={[MockFunction]}
+        clearTopicsMessages={[MockFunction]}
+        deleteTopic={[MockFunction]}
+        deleteTopics={[MockFunction]}
+        fetchTopicsList={
+          [MockFunction] {
+            "calls": Array [
+              Array [
+                Object {
+                  "clusterName": undefined,
+                  "orderBy": undefined,
+                  "page": undefined,
+                  "perPage": undefined,
+                  "search": "",
+                  "showInternal": true,
+                },
+              ],
+            ],
+            "results": Array [
+              Object {
+                "type": "return",
+                "value": undefined,
+              },
+            ],
+          }
+        }
+        orderBy={null}
+        search=""
+        setTopicsOrderBy={[MockFunction]}
+        setTopicsSearch={[MockFunction]}
+        topics={Array []}
+        totalPages={1}
       >
         <div
-          className="box"
+          className="section"
         >
           <div
-            className="columns"
+            className="box"
           >
             <div
-              className="column is-one-quarter is-align-items-center is-flex"
+              className="columns"
             >
               <div
-                className="field"
+                className="column is-one-quarter is-align-items-center is-flex"
               >
-                <input
-                  checked={true}
-                  className="switch is-rounded"
-                  id="switchRoundedDefault"
-                  name="switchRoundedDefault"
-                  onChange={[Function]}
-                  type="checkbox"
-                />
-                <label
-                  htmlFor="switchRoundedDefault"
+                <div
+                  className="field"
                 >
-                  Show Internal Topics
-                </label>
+                  <input
+                    checked={true}
+                    className="switch is-rounded"
+                    id="switchRoundedDefault"
+                    name="switchRoundedDefault"
+                    onChange={[Function]}
+                    type="checkbox"
+                  />
+                  <label
+                    htmlFor="switchRoundedDefault"
+                  >
+                    Show Internal Topics
+                  </label>
+                </div>
               </div>
-            </div>
-            <div
-              className="column"
-            >
-              <Search
-                handleSearch={[MockFunction]}
-                placeholder="Search by Topic Name"
-                value=""
+              <div
+                className="column"
               >
-                <Styled(Input)
-                  defaultValue=""
-                  leftIcon="fas fa-search"
-                  onChange={[Function]}
+                <Search
+                  handleSearch={[MockFunction]}
                   placeholder="Search by Topic Name"
-                  type="text"
+                  value=""
                 >
-                  <Input
-                    className="sc-dlfnuX gxtwfA"
+                  <Styled(Input)
                     defaultValue=""
                     leftIcon="fas fa-search"
                     onChange={[Function]}
                     placeholder="Search by Topic Name"
                     type="text"
                   >
-                    <div
-                      className="sc-dlfnuX gxtwfA"
+                    <Input
+                      className="sc-hKgJUU hNtsdb"
+                      defaultValue=""
+                      leftIcon="fas fa-search"
+                      onChange={[Function]}
+                      placeholder="Search by Topic Name"
+                      type="text"
                     >
-                      <styled.i
-                        className="fas fa-search"
-                        inputSize="L"
-                        position="left"
+                      <div
+                        className="sc-hKgJUU hNtsdb"
                       >
-                        <i
-                          className="sc-bdfBQB gNwdVP fas fa-search"
-                        />
-                      </styled.i>
-                      <styled.input
-                        className="sc-dlfnuX gxtwfA"
-                        defaultValue=""
-                        hasLeftIcon={true}
-                        inputSize="L"
-                        onChange={[Function]}
-                        placeholder="Search by Topic Name"
-                        type="text"
-                      >
-                        <input
-                          className="sc-gsTEea eQzZSW sc-dlfnuX gxtwfA"
+                        <styled.i
+                          className="fas fa-search"
+                          inputSize="L"
+                          position="left"
+                        >
+                          <i
+                            className="sc-gsTEea gCPUjb fas fa-search"
+                          />
+                        </styled.i>
+                        <styled.input
+                          className="sc-hKgJUU hNtsdb"
                           defaultValue=""
+                          hasLeftIcon={true}
+                          inputSize="L"
                           onChange={[Function]}
                           placeholder="Search by Topic Name"
                           type="text"
-                        />
-                      </styled.input>
-                    </div>
-                  </Input>
-                </Styled(Input)>
-              </Search>
-            </div>
-            <div
-              className="column is-2 is-justify-content-flex-end is-flex"
-            >
-              <Link
-                className="button is-primary"
-                to="/ui/clusters/undefined/topics/create-new"
+                        >
+                          <input
+                            className="sc-dlfnuX yMnqm sc-hKgJUU hNtsdb"
+                            defaultValue=""
+                            onChange={[Function]}
+                            placeholder="Search by Topic Name"
+                            type="text"
+                          />
+                        </styled.input>
+                      </div>
+                    </Input>
+                  </Styled(Input)>
+                </Search>
+              </div>
+              <div
+                className="column is-2 is-justify-content-flex-end is-flex"
               >
-                <LinkAnchor
+                <Link
                   className="button is-primary"
-                  href="/ui/clusters/undefined/topics/create-new"
-                  navigate={[Function]}
+                  to="/ui/clusters/undefined/topics/create-new"
                 >
-                  <a
+                  <LinkAnchor
                     className="button is-primary"
                     href="/ui/clusters/undefined/topics/create-new"
-                    onClick={[Function]}
+                    navigate={[Function]}
                   >
-                    Add a Topic
-                  </a>
-                </LinkAnchor>
-              </Link>
+                    <a
+                      className="button is-primary"
+                      href="/ui/clusters/undefined/topics/create-new"
+                      onClick={[Function]}
+                    >
+                      Add a Topic
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          className="box"
-        >
-          <table
-            className="table is-fullwidth"
+          <div
+            className="box"
           >
-            <thead>
-              <tr>
-                <th>
-                   
-                </th>
-                <ListHeaderCell
-                  orderBy={null}
-                  setOrderBy={[MockFunction]}
-                  title="Topic Name"
-                  value="NAME"
-                >
-                  <th
-                    className="is-clickable"
-                    onClick={[Function]}
-                  >
-                    Topic Name
-                    <span
-                      className="icon is-small"
-                    >
-                      <i
-                        className="fas fa-sort"
-                      />
-                    </span>
-                  </th>
-                </ListHeaderCell>
-                <ListHeaderCell
-                  orderBy={null}
-                  setOrderBy={[MockFunction]}
-                  title="Total Partitions"
-                  value="TOTAL_PARTITIONS"
-                >
-                  <th
-                    className="is-clickable"
-                    onClick={[Function]}
-                  >
-                    Total Partitions
-                    <span
-                      className="icon is-small"
-                    >
-                      <i
-                        className="fas fa-sort"
-                      />
-                    </span>
-                  </th>
-                </ListHeaderCell>
-                <ListHeaderCell
-                  orderBy={null}
-                  setOrderBy={[MockFunction]}
-                  title="Out of sync replicas"
-                  value="OUT_OF_SYNC_REPLICAS"
-                >
-                  <th
-                    className="is-clickable"
-                    onClick={[Function]}
-                  >
-                    Out of sync replicas
-                    <span
-                      className="icon is-small"
-                    >
-                      <i
-                        className="fas fa-sort"
-                      />
-                    </span>
-                  </th>
-                </ListHeaderCell>
-                <th>
-                  Replication Factor
-                </th>
-                <th>
-                  Number of messages
-                </th>
-                <th>
-                  Size
-                </th>
-                <th>
-                  Type
-                </th>
-                <th>
-                  Clean Up Policy
-                </th>
-                <th>
-                   
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td
-                  colSpan={10}
-                >
-                  No topics found
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <Pagination
-            totalPages={1}
-          >
-            <nav
-              aria-label="pagination"
-              className="pagination is-small is-right"
-              role="navigation"
+            <table
+              className="table is-fullwidth"
             >
-              <button
-                className="pagination-previous"
-                disabled={true}
-                type="button"
+              <thead>
+                <tr>
+                  <TableHeaderCell>
+                    <styled.th
+                      className=""
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                      >
+                        <span
+                          className="title"
+                        />
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    handleOrderBy={[MockFunction]}
+                    orderBy={null}
+                    orderValue="NAME"
+                    title="Topic Name"
+                  >
+                    <styled.th
+                      className=""
+                      handleOrderBy={[MockFunction]}
+                      orderBy={null}
+                      orderValue="NAME"
+                      title="Topic Name"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Topic Name"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Topic Name
+                        </span>
+                        <span
+                          className="icon is-small is-clickable"
+                          onClick={[Function]}
+                          onKeyDown={[Function]}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <i
+                            className="fas fa-sort"
+                          />
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    handleOrderBy={[MockFunction]}
+                    orderBy={null}
+                    orderValue="TOTAL_PARTITIONS"
+                    title="Total Partitions"
+                  >
+                    <styled.th
+                      className=""
+                      handleOrderBy={[MockFunction]}
+                      orderBy={null}
+                      orderValue="TOTAL_PARTITIONS"
+                      title="Total Partitions"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Total Partitions"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Total Partitions
+                        </span>
+                        <span
+                          className="icon is-small is-clickable"
+                          onClick={[Function]}
+                          onKeyDown={[Function]}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <i
+                            className="fas fa-sort"
+                          />
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    handleOrderBy={[MockFunction]}
+                    orderBy={null}
+                    orderValue="OUT_OF_SYNC_REPLICAS"
+                    title="Out of sync replicas"
+                  >
+                    <styled.th
+                      className=""
+                      handleOrderBy={[MockFunction]}
+                      orderBy={null}
+                      orderValue="OUT_OF_SYNC_REPLICAS"
+                      title="Out of sync replicas"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Out of sync replicas"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Out of sync replicas
+                        </span>
+                        <span
+                          className="icon is-small is-clickable"
+                          onClick={[Function]}
+                          onKeyDown={[Function]}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <i
+                            className="fas fa-sort"
+                          />
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    title="Replication Factor"
+                  >
+                    <styled.th
+                      className=""
+                      title="Replication Factor"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Replication Factor"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Replication Factor
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    title="Number of messages"
+                  >
+                    <styled.th
+                      className=""
+                      title="Number of messages"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Number of messages"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Number of messages
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    title="Size"
+                  >
+                    <styled.th
+                      className=""
+                      title="Size"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Size"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Size
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    title="Type"
+                  >
+                    <styled.th
+                      className=""
+                      title="Type"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Type"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Type
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell
+                    title="Clean Up Policy"
+                  >
+                    <styled.th
+                      className=""
+                      title="Clean Up Policy"
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                        title="Clean Up Policy"
+                      >
+                        <span
+                          className="title"
+                        >
+                          Clean Up Policy
+                        </span>
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                  <TableHeaderCell>
+                    <styled.th
+                      className=""
+                    >
+                      <th
+                        className="sc-bdfBQB kGzlfS"
+                      >
+                        <span
+                          className="title"
+                        />
+                      </th>
+                    </styled.th>
+                  </TableHeaderCell>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td
+                    colSpan={10}
+                  >
+                    No topics found
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <Pagination
+              totalPages={1}
+            >
+              <nav
+                aria-label="pagination"
+                className="pagination is-small is-right"
+                role="navigation"
               >
-                Previous
-              </button>
-              <button
-                className="pagination-next"
-                disabled={true}
-                type="button"
-              >
-                Next page
-              </button>
-            </nav>
-          </Pagination>
+                <button
+                  className="pagination-previous"
+                  disabled={true}
+                  type="button"
+                >
+                  Previous
+                </button>
+                <button
+                  className="pagination-next"
+                  disabled={true}
+                  type="button"
+                >
+                  Next page
+                </button>
+              </nav>
+            </Pagination>
+          </div>
         </div>
-      </div>
-    </List>
+      </List>
+    </Component>
   </Router>
 </StaticRouter>
 `;

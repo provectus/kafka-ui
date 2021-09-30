@@ -11,6 +11,8 @@ import { StaticRouter } from 'react-router';
 import Search from 'components/common/Search/Search';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
+import theme from 'theme/theme';
+import { ThemeProvider } from 'styled-components';
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -19,21 +21,23 @@ jest.mock(
 
 describe('List', () => {
   const setupComponent = (props: Partial<TopicsListProps> = {}) => (
-    <List
-      areTopicsFetching={false}
-      topics={[]}
-      totalPages={1}
-      fetchTopicsList={jest.fn()}
-      deleteTopic={jest.fn()}
-      deleteTopics={jest.fn()}
-      clearTopicsMessages={jest.fn()}
-      clearTopicMessages={jest.fn()}
-      search=""
-      orderBy={null}
-      setTopicsSearch={jest.fn()}
-      setTopicsOrderBy={jest.fn()}
-      {...props}
-    />
+    <ThemeProvider theme={theme}>
+      <List
+        areTopicsFetching={false}
+        topics={[]}
+        totalPages={1}
+        fetchTopicsList={jest.fn()}
+        deleteTopic={jest.fn()}
+        deleteTopics={jest.fn()}
+        clearTopicsMessages={jest.fn()}
+        clearTopicMessages={jest.fn()}
+        search=""
+        orderBy={null}
+        setTopicsSearch={jest.fn()}
+        setTopicsOrderBy={jest.fn()}
+        {...props}
+      />
+    </ThemeProvider>
   );
 
   const historyMock = createMemoryHistory();

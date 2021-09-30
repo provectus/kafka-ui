@@ -142,6 +142,17 @@ exports[`App view matches snapshot 1`] = `
                 },
                 "color": "#171A1C",
               },
+              "thStyles": Object {
+                "backgroundColor": Object {
+                  "normal": "#FFFFFF",
+                },
+                "color": Object {
+                  "normal": "#73848C",
+                },
+                "previewColor": Object {
+                  "normal": "#4F4FFF",
+                },
+              },
             }
           }
         >
