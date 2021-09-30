@@ -53,18 +53,6 @@ describe('TableHeaderCell', () => {
     expect(wrapper.exists('i.fas.fa-sort')).toBeTruthy();
   });
 
-  it('renders with primary theme', () => {
-    const wrapper = mountWithTheme(
-      setupComponent({
-        title: STUB_TITLE,
-      })
-    );
-
-    const domNode = wrapper.find('span').at(0).getDOMNode();
-    const background = getComputedStyle(domNode).getPropertyValue('background');
-    expect(background).toBe('rgb(255, 255, 255)');
-  });
-
   it('renders with default (primary) theme', () => {
     const wrapper = mountWithTheme(
       setupComponent({
