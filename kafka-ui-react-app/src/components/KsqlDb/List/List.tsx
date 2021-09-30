@@ -34,7 +34,7 @@ const List: FC = () => {
 
   return (
     <>
-      <MetricsWrapper wrapperClassName="is-justify-content-space-between">
+      <MetricsWrapper>
         <div className="column is-flex m-0 p-0">
           <Indicator
             className="level-left is-one-third mr-3"

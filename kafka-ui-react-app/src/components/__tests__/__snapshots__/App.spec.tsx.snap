@@ -132,6 +132,27 @@ exports[`App view matches snapshot 1`] = `
                     "normal": "#4F4FFF",
                   },
                 },
+              "selectStyles": Object {
+                "borderColor": Object {
+                  "active": "#454F54",
+                  "disabled": "#E3E6E8",
+                  "hover": "#73848C",
+                  "normal": "#ABB5BA",
+                },
+                "color": Object {
+                  "active": "#171A1C",
+                  "disabled": "#ABB5BA",
+                  "hover": "#171A1C",
+                  "normal": "#171A1C",
+                },
+              },
+              "tagStyles": Object {
+                "backgroundColor": Object {
+                  "gray": "#E3E6E8",
+                  "green": "#D6F5E0",
+                  "yellow": "#FFEECC",
+                },
+                "color": "#171A1C",
               },
             }
           }
@@ -343,15 +364,17 @@ exports[`App view matches snapshot 1`] = `
                             <div
                               className="metrics-box mb-2"
                             >
-                              <MetricsWrapper>
-                                <div>
+                              <Styled(MetricsWrapper)>
+                                <MetricsWrapper
+                                  className="sc-gsTEea kVeHiA"
+                                >
                                   <div
-                                    className="box"
+                                    className="sc-gsTEea kVeHiA"
                                   >
                                     <div
-                                      className="level"
+                                      className="indicatorsWrapper"
                                     >
-                                      <Indicator
+                                      <Styled(Indicator)
                                         className="is-justify-content-start"
                                         label={
                                           <span
@@ -361,22 +384,29 @@ exports[`App view matches snapshot 1`] = `
                                           </span>
                                         }
                                       >
-                                        <div
-                                          className="level-item is-justify-content-start"
+                                        <Indicator
+                                          className="sc-dlfnuX YlPZR is-justify-content-start"
+                                          label={
+                                            <span
+                                              className="tag is-success"
+                                            >
+                                              Online
+                                            </span>
+                                          }
                                         >
-                                          <div>
-                                            <p
-                                              className="is-size-8"
-                                            >
-                                              <span
-                                                className="tag is-success"
+                                          <div
+                                            className="sc-dlfnuX YlPZR is-justify-content-start"
+                                          >
+                                            <div>
+                                              <p
+                                                className="is-size-8"
                                               >
-                                                Online
-                                              </span>
-                                            </p>
-                                            <p
-                                              className="is-size-6 has-text-weight-medium"
-                                            >
+                                                <span
+                                                  className="tag is-success"
+                                                >
+                                                  Online
+                                                </span>
+                                              </p>
                                               <span
                                                 data-testid="onlineCount"
                                               >
@@ -388,11 +418,11 @@ exports[`App view matches snapshot 1`] = `
                                               >
                                                 cluster
                                               </span>
-                                            </p>
+                                            </div>
                                           </div>
-                                        </div>
-                                      </Indicator>
-                                      <Indicator
+                                        </Indicator>
+                                      </Styled(Indicator)>
+                                      <Styled(Indicator)
                                         className="is-justify-content-start"
                                         label={
                                           <span
@@ -402,22 +432,29 @@ exports[`App view matches snapshot 1`] = `
                                           </span>
                                         }
                                       >
-                                        <div
-                                          className="level-item is-justify-content-start"
+                                        <Indicator
+                                          className="sc-dlfnuX YlPZR is-justify-content-start"
+                                          label={
+                                            <span
+                                              className="tag is-light"
+                                            >
+                                              Offline
+                                            </span>
+                                          }
                                         >
-                                          <div>
-                                            <p
-                                              className="is-size-8"
-                                            >
-                                              <span
-                                                className="tag is-light"
+                                          <div
+                                            className="sc-dlfnuX YlPZR is-justify-content-start"
+                                          >
+                                            <div>
+                                              <p
+                                                className="is-size-8"
                                               >
-                                                Offline
-                                              </span>
-                                            </p>
-                                            <p
-                                              className="is-size-6 has-text-weight-medium"
-                                            >
+                                                <span
+                                                  className="tag is-light"
+                                                >
+                                                  Offline
+                                                </span>
+                                              </p>
                                               <span
                                                 data-testid="offlineCount"
                                               >
@@ -429,14 +466,14 @@ exports[`App view matches snapshot 1`] = `
                                               >
                                                 cluster
                                               </span>
-                                            </p>
+                                            </div>
                                           </div>
-                                        </div>
-                                      </Indicator>
+                                        </Indicator>
+                                      </Styled(Indicator)>
                                     </div>
                                   </div>
-                                </div>
-                              </MetricsWrapper>
+                                </MetricsWrapper>
+                              </Styled(MetricsWrapper)>
                             </div>
                             <div
                               className="p-4"

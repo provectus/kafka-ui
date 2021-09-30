@@ -13,6 +13,8 @@ import { camelCase } from 'lodash';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { topicFormValidationSchema } from 'lib/yupExtended';
 
 import DangerZoneContainer from './DangerZoneContainer';
 
@@ -84,7 +86,10 @@ const Edit: React.FC<Props> = ({
 }) => {
   const defaultValues = topicParams(topic);
 
-  const methods = useForm<TopicFormData>({ defaultValues });
+  const methods = useForm<TopicFormData>({
+    defaultValues,
+    resolver: yupResolver(topicFormValidationSchema),
+  });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const history = useHistory();

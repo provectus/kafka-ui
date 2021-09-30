@@ -30,7 +30,7 @@ export const Colors = {
   red: {
     '50': '#E51A1A',
   },
-  orange: {
+  yellow: {
     '10': '#FFEECC',
   },
 };
@@ -112,6 +112,28 @@ const theme = {
       hover: Colors.neutral[90],
       active: Colors.neutral[90],
     },
+  },
+  selectStyles: {
+    color: {
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[90],
+      disabled: Colors.neutral[30],
+    },
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      active: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+  },
+  tagStyles: {
+    backgroundColor: {
+      green: Colors.green[10],
+      gray: Colors.neutral[10],
+      yellow: Colors.yellow[10],
+    },
+    color: Colors.neutral[90],
   },
 };
 

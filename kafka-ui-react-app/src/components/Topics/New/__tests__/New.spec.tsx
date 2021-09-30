@@ -8,6 +8,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
 import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const mockStore = configureStore();
 
@@ -26,7 +28,9 @@ describe('New', () => {
   const setupComponent = (history = historyMock, store = storeMock) => (
     <Router history={history}>
       <Provider store={store}>
-        <New />
+        <ThemeProvider theme={theme}>
+          <New />
+        </ThemeProvider>
       </Provider>
     </Router>
   );
@@ -39,7 +43,7 @@ describe('New', () => {
 
     await waitFor(async () => {
       fireEvent.click(await screen.findByText('Send'));
-      const errorText = await screen.findByText('Topic Name is required.');
+      const errorText = await screen.findByText('name is a required field');
       expect(mockedHistory.push).toBeCalledTimes(0);
       expect(errorText).toBeTruthy();
     });
