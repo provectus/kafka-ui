@@ -30,7 +30,7 @@ export const Colors = {
   red: {
     '50': '#E51A1A',
   },
-  orange: {
+  yellow: {
     '10': '#FFEECC',
   },
 };
@@ -113,6 +113,14 @@ const theme = {
       active: Colors.neutral[70],
       disabled: Colors.neutral[10],
     },
+  },
+  tagStyles: {
+    backgroundColor: {
+      green: Colors.green[10],
+      gray: Colors.neutral[10],
+      yellow: Colors.yellow[10],
+    },
+    color: Colors.neutral[90],
   },
 };
 

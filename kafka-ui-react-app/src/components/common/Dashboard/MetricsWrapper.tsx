@@ -1,28 +1,34 @@
 import React from 'react';
-import cx from 'classnames';
+import { styled } from 'lib/themedStyles';
 
 interface Props {
   title?: string;
-  wrapperClassName?: string;
-  multiline?: boolean;
+  className?: string;
 }
 
-const MetricsWrapper: React.FC<Props> = ({
-  title,
-  children,
-  wrapperClassName,
-  multiline,
-}) => {
+const MetricsWrapper: React.FC<Props> = ({ title, children, className }) => {
   return (
-    <div className={wrapperClassName}>
+    <div className={className}>
       {title && <h5 className="is-7 has-text-weight-medium mb-2">{title}</h5>}
-      <div className="box">
-        <div className={cx('level', multiline ? 'level-multiline' : '')}>
-          {children}
-        </div>
-      </div>
+      <div className="indicatorsWrapper">{children}</div>
     </div>
   );
 };
 
-export default MetricsWrapper;
+export default styled(MetricsWrapper)`
+  width: 100%;
+  overflow-y: scroll;
+  .indicatorsWrapper {
+    display: flex;
+    gap: 2px;
+    > * {
+      &:first-child {
+        border-radius: 8px 0px 0px 8px;
+      }
+      &:last-child {
+        border-radius: 0px 8px 8px 0px;
+        margin-right: 3px;
+      }
+    }
+  }
+`;

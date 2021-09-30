@@ -47,7 +47,9 @@ export const containerRendersView = (
       await act(async () => {
         wrapper = mount(
           <Provider store={store}>
-            <StaticRouter>{container}</StaticRouter>
+            <StaticRouter>
+              <ThemeProvider theme={theme}>{container}</ThemeProvider>
+            </StaticRouter>
           </Provider>
         );
       });

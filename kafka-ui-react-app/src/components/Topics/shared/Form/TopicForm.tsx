@@ -26,7 +26,6 @@ const TopicForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
 
