@@ -71,18 +71,16 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               },
             },
           },
-          "liStyles": Object {
-            "primary": Object {
-              "backgroundColor": Object {
-                "active": "#E3E6E8",
-                "hover": "#F1F2F3",
-                "normal": "#FFFFFF",
-              },
-              "color": Object {
-                "active": "#171A1C",
-                "hover": "#F1F2F3",
-                "normal": "#73848C",
-              },
+          "menuStyles": Object {
+            "backgroundColor": Object {
+              "active": "#E3E6E8",
+              "hover": "#F1F2F3",
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#73848C",
+              "normal": "#73848C",
             },
           },
           "secondaryTabStyles": Object {
@@ -520,18 +518,16 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               },
             },
           },
-          "liStyles": Object {
-            "primary": Object {
-              "backgroundColor": Object {
-                "active": "#E3E6E8",
-                "hover": "#F1F2F3",
-                "normal": "#FFFFFF",
-              },
-              "color": Object {
-                "active": "#171A1C",
-                "hover": "#F1F2F3",
-                "normal": "#73848C",
-              },
+          "menuStyles": Object {
+            "backgroundColor": Object {
+              "active": "#E3E6E8",
+              "hover": "#F1F2F3",
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#73848C",
+              "normal": "#73848C",
             },
           },
           "secondaryTabStyles": Object {

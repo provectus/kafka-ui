@@ -1,9 +1,10 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 import cx from 'classnames';
 import { Cluster } from 'generated-sources';
+import { styled } from 'lib/themedStyles';
 
 import ClusterMenu from './ClusterMenu';
+import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';
 
 interface Props {
   isClusterListFetched?: boolean;
@@ -16,16 +17,16 @@ const Nav: React.FC<Props> = ({
   clusters,
   className,
 }) => (
-  <aside className={cx('menu has-shadow has-background-white', className)}>
-    <p className="menu-label">General</p>
-    <ul className="menu-list">
-      <li>
-        <NavLink exact to="/ui" activeClassName="is-active" title="Dashboard">
-          Dashboard
-        </NavLink>
-      </li>
+  <aside className={cx('has-shadow has-background-white', className)}>
+    <ul>
+      <ClusterMenuItem
+        exact
+        to="/ui"
+        activeClassName="is-active"
+        title="Dashboard"
+        isTopLevel
+      />
     </ul>
-    <p className="menu-label">Clusters</p>
     {!isClusterListFetched && <div className="loader" />}
 
     {isClusterListFetched &&
@@ -35,4 +36,8 @@ const Nav: React.FC<Props> = ({
   </aside>
 );
 
-export default Nav;
+export default styled(Nav)`
+  > * {
+    padding-bottom: 4px;
+  }
+`;

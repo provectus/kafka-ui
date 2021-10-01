@@ -1,18 +1,19 @@
 import { styled } from 'lib/themedStyles';
 
-import { MenuItemProps } from './ClusterMenuItem';
-
-const StyledMenuItem = styled.li<MenuItemProps>`
+const StyledClusterTab = styled.li`
   font-size: 14px;
-  font-weight: ${(props) => (props.isTopLevel ? 500 : 'normal')};
-  height: 32px;
-  display: flex;
-  & a {
-    width: 100%;
+  font-weight: 500;
+
+  & .cluster-tab-wrapper {
     padding: 0.5em 0.75em;
     cursor: pointer;
     text-decoration: none;
     margin: 0px 0px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
     background-color: ${(props) =>
       props.theme.menuStyles.backgroundColor.normal};
     color: ${(props) => props.theme.menuStyles.color.normal};
@@ -22,14 +23,13 @@ const StyledMenuItem = styled.li<MenuItemProps>`
         props.theme.menuStyles.backgroundColor.hover};
       color: ${(props) => props.theme.menuStyles.color.hover};
     }
-    &.is-active {
-      background-color: ${(props) =>
-        props.theme.menuStyles.backgroundColor.active};
-      color: ${(props) => props.theme.menuStyles.color.active};
+
+    & .cluster-tab-l {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
   }
 `;
 
-StyledMenuItem.displayName = 'StyledMenuItem';
-
-export default StyledMenuItem;
+export default StyledClusterTab;

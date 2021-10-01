@@ -65,18 +65,16 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               },
             },
           },
-          "liStyles": Object {
-            "primary": Object {
-              "backgroundColor": Object {
-                "active": "#E3E6E8",
-                "hover": "#F1F2F3",
-                "normal": "#FFFFFF",
-              },
-              "color": Object {
-                "active": "#171A1C",
-                "hover": "#F1F2F3",
-                "normal": "#73848C",
-              },
+          "menuStyles": Object {
+            "backgroundColor": Object {
+              "active": "#E3E6E8",
+              "hover": "#F1F2F3",
+              "normal": "#FFFFFF",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#73848C",
+              "normal": "#73848C",
             },
           },
           "secondaryTabStyles": Object {

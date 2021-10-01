@@ -1,6 +1,5 @@
 import React from 'react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
-import { NavLink } from 'react-router-dom';
 import {
   clusterBrokersPath,
   clusterTopicsPath,
@@ -12,8 +11,8 @@ import {
 } from 'lib/paths';
 
 import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';
-import DefaultClusterIcon from './DefaultClusterIcon';
-import ClusterStatusIcon from './ClusterStatusIcon';
+import ClusterTab from './ClusterMenuItem/ClusterTab/ClusterTab';
+import ClusterMenuList from './ClusterMenuList/ClusterMenuList.styled';
 
 interface Props {
   cluster: Cluster;
@@ -26,34 +25,32 @@ const ClusterMenu: React.FC<Props> = ({
     (key) => features?.includes(key),
     [features]
   );
+  const [isOpen, setisOpen] = React.useState(true);
   return (
-    <ul className="menu-list">
-      <li>
-        <NavLink
-          exact
-          to={clusterBrokersPath(name)}
-          title={name}
-          className="has-text-overflow-ellipsis"
-        >
-          {defaultCluster && <DefaultClusterIcon />}
-          {name}
-          <ClusterStatusIcon status={status} />
-        </NavLink>
+    <ClusterMenuList>
+      <hr />
+      <ClusterTab
+        exact
+        to={clusterBrokersPath(name)}
+        title={name}
+        status={status}
+        defaultCluster={defaultCluster}
+        isOpen={isOpen}
+        toggleClusterMenu={() => setisOpen((prev) => !prev)}
+      />
+      {isOpen && (
         <ul>
           <ClusterMenuItem
-            liType="primary"
             to={clusterBrokersPath(name)}
             activeClassName="is-active"
             title="Brokers"
           />
           <ClusterMenuItem
-            liType="primary"
             to={clusterTopicsPath(name)}
             activeClassName="is-active"
             title="Topics"
           />
           <ClusterMenuItem
-            liType="primary"
             to={clusterConsumerGroupsPath(name)}
             activeClassName="is-active"
             title="Consumers"
@@ -61,7 +58,6 @@ const ClusterMenu: React.FC<Props> = ({
 
           {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
             <ClusterMenuItem
-              liType="primary"
               to={clusterSchemasPath(name)}
               activeClassName="is-active"
               title="Schema Registry"
@@ -69,7 +65,6 @@ const ClusterMenu: React.FC<Props> = ({
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_CONNECT) && (
             <ClusterMenuItem
-              liType="primary"
               to={clusterConnectorsPath(name)}
               activeClassName="is-active"
               title="Kafka Connect"
@@ -81,15 +76,14 @@ const ClusterMenu: React.FC<Props> = ({
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (
             <ClusterMenuItem
-              liType="primary"
               to={clusterKsqlDbPath(name)}
               activeClassName="is-active"
               title="KSQL DB"
             />
           )}
         </ul>
-      </li>
-    </ul>
+      )}
+    </ClusterMenuList>
   );
 };
 

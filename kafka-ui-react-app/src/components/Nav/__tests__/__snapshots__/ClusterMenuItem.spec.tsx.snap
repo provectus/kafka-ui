@@ -1,0 +1,69 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterMenuItem matches the snapshot 1`] = `
+<StaticRouter>
+  <Router
+    history={
+      Object {
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
+      }
+    }
+    staticContext={Object {}}
+  >
+    <ClusterMenuItem
+      to="/test"
+    >
+      <StyledMenuItem
+        to="/test"
+      >
+        <li
+          className="sc-bdfBQB lYvCt"
+          to="/test"
+        >
+          <NavLink
+            to="/test"
+          >
+            <Link
+              aria-current={null}
+              to={
+                Object {
+                  "hash": "",
+                  "pathname": "/test",
+                  "search": "",
+                  "state": null,
+                }
+              }
+            >
+              <LinkAnchor
+                aria-current={null}
+                href="/test"
+                navigate={[Function]}
+              >
+                <a
+                  aria-current={null}
+                  href="/test"
+                  onClick={[Function]}
+                />
+              </LinkAnchor>
+            </Link>
+          </NavLink>
+        </li>
+      </StyledMenuItem>
+    </ClusterMenuItem>
+  </Router>
+</StaticRouter>
+`;
