@@ -78,7 +78,6 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete topic")
     @Test
-    @Disabled
     void deleteTopic() {
 
         pages.openTopicsList(SECOND_LOCAL)
