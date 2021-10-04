@@ -11,7 +11,6 @@ describe('ClusterTab component', () => {
   const setupWrapper = (props?: Partial<ClusterTabProps>) => (
     <ThemeProvider theme={theme}>
       <ClusterTab
-        to="/test"
         status={ServerStatus.ONLINE}
         isOpen
         toggleClusterMenu={jest.fn()}
@@ -19,9 +18,18 @@ describe('ClusterTab component', () => {
       />
     </ThemeProvider>
   );
-  describe('with default props', () => {
+  describe('when online', () => {
     it('matches the snapshot', () => {
       const component = render(setupWrapper());
+      expect(component.baseElement).toMatchSnapshot();
+    });
+  });
+
+  describe('when offline', () => {
+    it('matches the snapshot', () => {
+      const component = render(
+        setupWrapper({ status: ServerStatus.OFFLINE, isOpen: false })
+      );
       expect(component.baseElement).toMatchSnapshot();
     });
   });

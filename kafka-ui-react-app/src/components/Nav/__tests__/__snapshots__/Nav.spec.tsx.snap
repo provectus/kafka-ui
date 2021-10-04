@@ -77,7 +77,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                 to="/ui"
               >
                 <li
-                  className="sc-bdfBQB heggTX"
+                  className="sc-bdfBQB dLgsMO"
                   to="/ui"
                 >
                   <NavLink
@@ -142,18 +142,16 @@ exports[`Nav renders ClusterMenu 1`] = `
                 <hr />
                 <ClusterTab
                   defaultCluster={true}
-                  exact={true}
                   isOpen={true}
                   status="online"
                   title="secondLocal"
-                  to="/ui/clusters/secondLocal/brokers"
                   toggleClusterMenu={[Function]}
                 >
                   <styled.li
                     onClick={[Function]}
                   >
                     <li
-                      className="sc-gsTEea jFoTvC"
+                      className="sc-gsTEea gCBqHr"
                       onClick={[Function]}
                     >
                       <div
@@ -172,9 +170,8 @@ exports[`Nav renders ClusterMenu 1`] = `
                                 data-fa-transform="rotate-340"
                                 style={
                                   Object {
-                                    "left": "-8px",
+                                    "color": "#A3A3F5",
                                     "position": "relative",
-                                    "top": "-4px",
                                     "width": ".6rem",
                                   }
                                 }
@@ -232,7 +229,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                       to="/ui/clusters/secondLocal/brokers"
                     >
                       <li
-                        className="sc-bdfBQB lYvCt"
+                        className="sc-bdfBQB khcYE"
                         to="/ui/clusters/secondLocal/brokers"
                       >
                         <NavLink
@@ -281,7 +278,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                       to="/ui/clusters/secondLocal/topics"
                     >
                       <li
-                        className="sc-bdfBQB lYvCt"
+                        className="sc-bdfBQB khcYE"
                         to="/ui/clusters/secondLocal/topics"
                       >
                         <NavLink
@@ -330,7 +327,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                       to="/ui/clusters/secondLocal/consumer-groups"
                     >
                       <li
-                        className="sc-bdfBQB lYvCt"
+                        className="sc-bdfBQB khcYE"
                         to="/ui/clusters/secondLocal/consumer-groups"
                       >
                         <NavLink

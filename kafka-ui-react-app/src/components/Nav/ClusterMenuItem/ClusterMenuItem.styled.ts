@@ -7,6 +7,7 @@ const StyledMenuItem = styled.li<MenuItemProps>`
   font-weight: ${(props) => (props.isTopLevel ? 500 : 'normal')};
   height: 32px;
   display: flex;
+  user-select: none;
   & a {
     width: 100%;
     padding: 0.5em 0.75em;

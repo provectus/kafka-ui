@@ -31,7 +31,7 @@ exports[`ClusterMenuItem matches the snapshot 1`] = `
         to="/test"
       >
         <li
-          className="sc-bdfBQB lYvCt"
+          className="sc-bdfBQB khcYE"
           to="/test"
         >
           <NavLink

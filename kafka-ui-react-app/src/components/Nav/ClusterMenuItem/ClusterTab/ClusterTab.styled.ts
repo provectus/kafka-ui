@@ -3,6 +3,7 @@ import { styled } from 'lib/themedStyles';
 const StyledClusterTab = styled.li`
   font-size: 14px;
   font-weight: 500;
+  user-select: none;
 
   & .cluster-tab-wrapper {
     padding: 0.5em 0.75em;

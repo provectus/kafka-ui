@@ -7,11 +7,7 @@ import DefaultClusterIcon from 'components/Nav/DefaultClusterIcon';
 import ClusterTabChevron from './ClusterTabChevron';
 
 export interface ClusterTabProps {
-  to: string;
-  activeClassName?: string;
   title?: string;
-  exact?: boolean;
-  isActive?: (match: unknown, location: Location) => boolean;
   status: ServerStatus;
   defaultCluster?: boolean;
   isOpen: boolean;

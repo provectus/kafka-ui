@@ -220,7 +220,7 @@ exports[`App view matches snapshot 1`] = `
                             to="/ui"
                           >
                             <li
-                              className="sc-bdfBQB heggTX"
+                              className="sc-bdfBQB dLgsMO"
                               to="/ui"
                             >
                               <NavLink

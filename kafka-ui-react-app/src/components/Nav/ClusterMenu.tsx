@@ -30,8 +30,6 @@ const ClusterMenu: React.FC<Props> = ({
     <ClusterMenuList>
       <hr />
       <ClusterTab
-        exact
-        to={clusterBrokersPath(name)}
         title={name}
         status={status}
         defaultCluster={defaultCluster}

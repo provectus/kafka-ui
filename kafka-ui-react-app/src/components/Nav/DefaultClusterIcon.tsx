@@ -1,11 +1,11 @@
 import React, { CSSProperties } from 'react';
+import { Colors } from 'theme/theme';
 
 const DefaultClusterIcon: React.FC = () => {
   const style: CSSProperties = {
     width: '.6rem',
-    left: '-8px',
-    top: '-4px',
     position: 'relative',
+    color: Colors.brand[20],
   };
 
   return (
