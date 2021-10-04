@@ -84,7 +84,7 @@
 
     <groupId>com.provectus</groupId>
     <artifactId>kafka-ui</artifactId>
-    <version>0.2.1-SNAPSHOT</version>
+    <version>0.2.1</version>
     <name>kafka-ui</name>
     <description>Kafka metrics for UI panel</description>
 </project>
