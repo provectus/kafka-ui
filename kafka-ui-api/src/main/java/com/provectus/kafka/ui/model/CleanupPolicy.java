@@ -8,7 +8,7 @@ import java.util.List;
 public enum CleanupPolicy {
   DELETE("delete"),
   COMPACT("compact"),
-  COMPACT_DELETE(Arrays.asList("compact,delete","delete,compact")),
+  COMPACT_DELETE(Arrays.asList("compact,delete", "delete,compact")),
   UNKNOWN("unknown");
 
   private final List<String> cleanUpPolicy;
