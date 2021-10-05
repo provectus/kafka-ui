@@ -3,29 +3,40 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 export interface MenuItemProps {
-  liType: 'primary';
-  to?: string;
+  to: string;
   activeClassName?: string;
   title?: string;
   isInverted?: boolean;
+  exact?: boolean;
+  isTopLevel?: boolean;
   isActive?: (match: unknown, location: Location) => boolean;
 }
 
 const ClusterMenuItem: React.FC<MenuItemProps> = (props) => {
-  const { to, activeClassName, title, children, liType, isActive, ...rest } =
-    props;
+  const {
+    to,
+    activeClassName,
+    title,
+    children,
+    isActive,
+    exact,
+    isTopLevel,
+    ...rest
+  } = props;
 
   if (to) {
     return (
-      <StyledMenuItem to={to} liType={liType}>
+      <StyledMenuItem to={to} isTopLevel={isTopLevel}>
         <NavLink
           to={to}
           activeClassName={activeClassName}
           title={title}
+          exact={exact}
           {...rest}
         >
-          {children || title}
+          {title}
         </NavLink>
+        {children}
       </StyledMenuItem>
     );
   }

@@ -1,21 +1,43 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ClusterStatusIcon matches snapshot 1`] = `
+exports[`ClusterStatusIcon when offline matches snapshot 1`] = `
+<ClusterStatusIcon
+  status="offline"
+>
+  <svg
+    fill="none"
+    height="4"
+    viewBox="0 0 4 4"
+    width="4"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="2"
+      cy="2"
+      fill="#E51A1A"
+      r="2"
+    />
+  </svg>
+</ClusterStatusIcon>
+`;
+
+exports[`ClusterStatusIcon when online matches snapshot 1`] = `
 <ClusterStatusIcon
   status="online"
 >
-  <span
-    className="tag is-success"
-    style={
-      Object {
-        "borderRadius": "5px",
-        "height": "10px",
-        "marginLeft": "7px",
-        "padding": 0,
-        "width": "10px",
-      }
-    }
-    title="online"
-  />
+  <svg
+    fill="none"
+    height="4"
+    viewBox="0 0 4 4"
+    width="4"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="2"
+      cy="2"
+      fill="#5CD685"
+      r="2"
+    />
+  </svg>
 </ClusterStatusIcon>
 `;

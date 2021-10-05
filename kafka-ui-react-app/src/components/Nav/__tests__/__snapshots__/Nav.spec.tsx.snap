@@ -1,48 +1,379 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Nav renders ClusterMenu 1`] = `
-<aside
-  className="menu has-shadow has-background-white"
->
-  <p
-    className="menu-label"
-  >
-    General
-  </p>
-  <ul
-    className="menu-list"
-  >
-    <li>
-      <NavLink
-        activeClassName="is-active"
-        exact={true}
-        title="Dashboard"
-        to="/ui"
-      >
-        Dashboard
-      </NavLink>
-    </li>
-  </ul>
-  <p
-    className="menu-label"
-  >
-    Clusters
-  </p>
-  <ClusterMenu
-    cluster={
+<StaticRouter>
+  <Router
+    history={
       Object {
-        "brokerCount": 1,
-        "bytesInPerSec": 1.55,
-        "bytesOutPerSec": 9.314,
-        "defaultCluster": true,
-        "features": Array [],
-        "name": "secondLocal",
-        "onlinePartitionCount": 6,
-        "status": "online",
-        "topicCount": 3,
+        "action": "POP",
+        "block": [Function],
+        "createHref": [Function],
+        "go": [Function],
+        "goBack": [Function],
+        "goForward": [Function],
+        "listen": [Function],
+        "location": Object {
+          "hash": "",
+          "pathname": "/",
+          "search": "",
+          "state": undefined,
+        },
+        "push": [Function],
+        "replace": [Function],
       }
     }
-    key="secondLocal"
-  />
-</aside>
+    staticContext={Object {}}
+  >
+    <Styled(Nav)
+      clusters={
+        Array [
+          Object {
+            "brokerCount": 1,
+            "bytesInPerSec": 1.55,
+            "bytesOutPerSec": 9.314,
+            "defaultCluster": true,
+            "features": Array [],
+            "name": "secondLocal",
+            "onlinePartitionCount": 6,
+            "status": "online",
+            "topicCount": 3,
+          },
+        ]
+      }
+      isClusterListFetched={true}
+    >
+      <Nav
+        className="sc-hKgJUU dAOeGn"
+        clusters={
+          Array [
+            Object {
+              "brokerCount": 1,
+              "bytesInPerSec": 1.55,
+              "bytesOutPerSec": 9.314,
+              "defaultCluster": true,
+              "features": Array [],
+              "name": "secondLocal",
+              "onlinePartitionCount": 6,
+              "status": "online",
+              "topicCount": 3,
+            },
+          ]
+        }
+        isClusterListFetched={true}
+      >
+        <aside
+          className="has-shadow has-background-white sc-hKgJUU dAOeGn"
+        >
+          <ul>
+            <ClusterMenuItem
+              activeClassName="is-active"
+              exact={true}
+              isTopLevel={true}
+              title="Dashboard"
+              to="/ui"
+            >
+              <StyledMenuItem
+                isTopLevel={true}
+                to="/ui"
+              >
+                <li
+                  className="sc-bdfBQB dLgsMO"
+                  to="/ui"
+                >
+                  <NavLink
+                    activeClassName="is-active"
+                    exact={true}
+                    title="Dashboard"
+                    to="/ui"
+                  >
+                    <Link
+                      aria-current={null}
+                      title="Dashboard"
+                      to={
+                        Object {
+                          "hash": "",
+                          "pathname": "/ui",
+                          "search": "",
+                          "state": null,
+                        }
+                      }
+                    >
+                      <LinkAnchor
+                        aria-current={null}
+                        href="/ui"
+                        navigate={[Function]}
+                        title="Dashboard"
+                      >
+                        <a
+                          aria-current={null}
+                          href="/ui"
+                          onClick={[Function]}
+                          title="Dashboard"
+                        >
+                          Dashboard
+                        </a>
+                      </LinkAnchor>
+                    </Link>
+                  </NavLink>
+                </li>
+              </StyledMenuItem>
+            </ClusterMenuItem>
+          </ul>
+          <ClusterMenu
+            cluster={
+              Object {
+                "brokerCount": 1,
+                "bytesInPerSec": 1.55,
+                "bytesOutPerSec": 9.314,
+                "defaultCluster": true,
+                "features": Array [],
+                "name": "secondLocal",
+                "onlinePartitionCount": 6,
+                "status": "online",
+                "topicCount": 3,
+              }
+            }
+            key="secondLocal"
+          >
+            <styled.ul>
+              <ul
+                className="sc-dlfnuX eaSOWX"
+              >
+                <hr />
+                <ClusterTab
+                  defaultCluster={true}
+                  isOpen={true}
+                  status="online"
+                  title="secondLocal"
+                  toggleClusterMenu={[Function]}
+                >
+                  <styled.li
+                    onClick={[Function]}
+                  >
+                    <li
+                      className="sc-gsTEea gCBqHr"
+                      onClick={[Function]}
+                    >
+                      <div
+                        className="cluster-tab-wrapper"
+                      >
+                        <div
+                          className="cluster-tab-l"
+                        >
+                          <DefaultClusterIcon>
+                            <span
+                              className="icon has-text-primary is-small"
+                              title="Default Cluster"
+                            >
+                              <i
+                                className="fas fa-thumbtack"
+                                data-fa-transform="rotate-340"
+                                style={
+                                  Object {
+                                    "color": "#A3A3F5",
+                                    "position": "relative",
+                                    "width": ".6rem",
+                                  }
+                                }
+                              />
+                            </span>
+                          </DefaultClusterIcon>
+                          secondLocal
+                          <ClusterStatusIcon
+                            status="online"
+                          >
+                            <svg
+                              fill="none"
+                              height="4"
+                              viewBox="0 0 4 4"
+                              width="4"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <circle
+                                cx="2"
+                                cy="2"
+                                fill="#5CD685"
+                                r="2"
+                              />
+                            </svg>
+                          </ClusterStatusIcon>
+                        </div>
+                        <ClusterTabChevron
+                          isOpen={true}
+                        >
+                          <svg
+                            className="cluster-tab-chevron"
+                            fill="none"
+                            height="6"
+                            viewBox="0 0 10 6"
+                            width="10"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M8.99988 5L4.99988 1L0.999878 5"
+                              stroke="#73848C"
+                            />
+                          </svg>
+                        </ClusterTabChevron>
+                      </div>
+                    </li>
+                  </styled.li>
+                </ClusterTab>
+                <ul>
+                  <ClusterMenuItem
+                    activeClassName="is-active"
+                    title="Brokers"
+                    to="/ui/clusters/secondLocal/brokers"
+                  >
+                    <StyledMenuItem
+                      to="/ui/clusters/secondLocal/brokers"
+                    >
+                      <li
+                        className="sc-bdfBQB khcYE"
+                        to="/ui/clusters/secondLocal/brokers"
+                      >
+                        <NavLink
+                          activeClassName="is-active"
+                          title="Brokers"
+                          to="/ui/clusters/secondLocal/brokers"
+                        >
+                          <Link
+                            aria-current={null}
+                            title="Brokers"
+                            to={
+                              Object {
+                                "hash": "",
+                                "pathname": "/ui/clusters/secondLocal/brokers",
+                                "search": "",
+                                "state": null,
+                              }
+                            }
+                          >
+                            <LinkAnchor
+                              aria-current={null}
+                              href="/ui/clusters/secondLocal/brokers"
+                              navigate={[Function]}
+                              title="Brokers"
+                            >
+                              <a
+                                aria-current={null}
+                                href="/ui/clusters/secondLocal/brokers"
+                                onClick={[Function]}
+                                title="Brokers"
+                              >
+                                Brokers
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </NavLink>
+                      </li>
+                    </StyledMenuItem>
+                  </ClusterMenuItem>
+                  <ClusterMenuItem
+                    activeClassName="is-active"
+                    title="Topics"
+                    to="/ui/clusters/secondLocal/topics"
+                  >
+                    <StyledMenuItem
+                      to="/ui/clusters/secondLocal/topics"
+                    >
+                      <li
+                        className="sc-bdfBQB khcYE"
+                        to="/ui/clusters/secondLocal/topics"
+                      >
+                        <NavLink
+                          activeClassName="is-active"
+                          title="Topics"
+                          to="/ui/clusters/secondLocal/topics"
+                        >
+                          <Link
+                            aria-current={null}
+                            title="Topics"
+                            to={
+                              Object {
+                                "hash": "",
+                                "pathname": "/ui/clusters/secondLocal/topics",
+                                "search": "",
+                                "state": null,
+                              }
+                            }
+                          >
+                            <LinkAnchor
+                              aria-current={null}
+                              href="/ui/clusters/secondLocal/topics"
+                              navigate={[Function]}
+                              title="Topics"
+                            >
+                              <a
+                                aria-current={null}
+                                href="/ui/clusters/secondLocal/topics"
+                                onClick={[Function]}
+                                title="Topics"
+                              >
+                                Topics
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </NavLink>
+                      </li>
+                    </StyledMenuItem>
+                  </ClusterMenuItem>
+                  <ClusterMenuItem
+                    activeClassName="is-active"
+                    title="Consumers"
+                    to="/ui/clusters/secondLocal/consumer-groups"
+                  >
+                    <StyledMenuItem
+                      to="/ui/clusters/secondLocal/consumer-groups"
+                    >
+                      <li
+                        className="sc-bdfBQB khcYE"
+                        to="/ui/clusters/secondLocal/consumer-groups"
+                      >
+                        <NavLink
+                          activeClassName="is-active"
+                          title="Consumers"
+                          to="/ui/clusters/secondLocal/consumer-groups"
+                        >
+                          <Link
+                            aria-current={null}
+                            title="Consumers"
+                            to={
+                              Object {
+                                "hash": "",
+                                "pathname": "/ui/clusters/secondLocal/consumer-groups",
+                                "search": "",
+                                "state": null,
+                              }
+                            }
+                          >
+                            <LinkAnchor
+                              aria-current={null}
+                              href="/ui/clusters/secondLocal/consumer-groups"
+                              navigate={[Function]}
+                              title="Consumers"
+                            >
+                              <a
+                                aria-current={null}
+                                href="/ui/clusters/secondLocal/consumer-groups"
+                                onClick={[Function]}
+                                title="Consumers"
+                              >
+                                Consumers
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </NavLink>
+                      </li>
+                    </StyledMenuItem>
+                  </ClusterMenuItem>
+                </ul>
+              </ul>
+            </styled.ul>
+          </ClusterMenu>
+        </aside>
+      </Nav>
+    </Styled(Nav)>
+  </Router>
+</StaticRouter>
 `;

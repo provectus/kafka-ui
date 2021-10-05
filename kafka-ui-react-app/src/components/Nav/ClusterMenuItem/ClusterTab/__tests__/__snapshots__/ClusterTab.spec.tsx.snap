@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ClusterTab component when offline matches the snapshot 1`] = `
+<body>
+  <div>
+    <li
+      class="sc-bdfBQB ibdTPX"
+    >
+      <div
+        class="cluster-tab-wrapper"
+      >
+        <div
+          class="cluster-tab-l"
+        >
+          <svg
+            fill="none"
+            height="4"
+            viewBox="0 0 4 4"
+            width="4"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="2"
+              cy="2"
+              fill="#E51A1A"
+              r="2"
+            />
+          </svg>
+        </div>
+        <svg
+          class="cluster-tab-chevron"
+          fill="none"
+          height="6"
+          viewBox="0 0 10 6"
+          width="10"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M1 1L5 5L9 1"
+            stroke="#73848C"
+          />
+        </svg>
+      </div>
+    </li>
+  </div>
+</body>
+`;
+
+exports[`ClusterTab component when online matches the snapshot 1`] = `
+<body>
+  <div>
+    <li
+      class="sc-bdfBQB ibdTPX"
+    >
+      <div
+        class="cluster-tab-wrapper"
+      >
+        <div
+          class="cluster-tab-l"
+        >
+          <svg
+            fill="none"
+            height="4"
+            viewBox="0 0 4 4"
+            width="4"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <circle
+              cx="2"
+              cy="2"
+              fill="#5CD685"
+              r="2"
+            />
+          </svg>
+        </div>
+        <svg
+          class="cluster-tab-chevron"
+          fill="none"
+          height="6"
+          viewBox="0 0 10 6"
+          width="10"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M8.99988 5L4.99988 1L0.999878 5"
+            stroke="#73848C"
+          />
+        </svg>
+      </div>
+    </li>
+  </div>
+</body>
+`;

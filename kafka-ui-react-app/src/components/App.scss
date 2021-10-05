@@ -1,4 +1,4 @@
-$navbar-width: 250px;
+$navbar-width: 201px;
 $navbar-height: 3.25rem;
 
 .Layout {
@@ -25,7 +25,7 @@ $navbar-height: 3.25rem;
     top: $navbar-height;
     left: 0;
     bottom: 0;
-    padding: 20px 20px;
+    padding: 8px 16px;
     overflow-y: scroll;
     transition: width 0.25s, opacity 0.25s, transform 0.25s,
       -webkit-transform 0.25s;

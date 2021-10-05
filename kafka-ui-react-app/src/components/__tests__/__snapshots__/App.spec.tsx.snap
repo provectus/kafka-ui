@@ -94,18 +94,16 @@ exports[`App view matches snapshot 1`] = `
                   },
                 },
               },
-              "liStyles": Object {
-                "primary": Object {
-                  "backgroundColor": Object {
-                    "active": "#E3E6E8",
-                    "hover": "#F1F2F3",
-                    "normal": "#FFFFFF",
-                  },
-                  "color": Object {
-                    "active": "#171A1C",
-                    "hover": "#F1F2F3",
-                    "normal": "#73848C",
-                  },
+              "menuStyles": Object {
+                "backgroundColor": Object {
+                  "active": "#E3E6E8",
+                  "hover": "#F1F2F3",
+                  "normal": "#FFFFFF",
+                },
+                "color": Object {
+                  "active": "#171A1C",
+                  "hover": "#73848C",
+                  "normal": "#73848C",
                 },
               },
               "secondaryTabStyles": Object {
@@ -197,66 +195,76 @@ exports[`App view matches snapshot 1`] = `
               <div
                 className="Layout__sidebar has-shadow has-background-white"
               >
-                <Nav
+                <Styled(Nav)
                   clusters={Array []}
                   isClusterListFetched={true}
                 >
-                  <aside
-                    className="menu has-shadow has-background-white"
+                  <Nav
+                    className="sc-hKgJUU dAOeGn"
+                    clusters={Array []}
+                    isClusterListFetched={true}
                   >
-                    <p
-                      className="menu-label"
+                    <aside
+                      className="has-shadow has-background-white sc-hKgJUU dAOeGn"
                     >
-                      General
-                    </p>
-                    <ul
-                      className="menu-list"
-                    >
-                      <li>
-                        <NavLink
+                      <ul>
+                        <ClusterMenuItem
                           activeClassName="is-active"
                           exact={true}
+                          isTopLevel={true}
                           title="Dashboard"
                           to="/ui"
                         >
-                          <Link
-                            aria-current={null}
-                            title="Dashboard"
-                            to={
-                              Object {
-                                "hash": "",
-                                "pathname": "/ui",
-                                "search": "",
-                                "state": null,
-                              }
-                            }
+                          <StyledMenuItem
+                            isTopLevel={true}
+                            to="/ui"
                           >
-                            <LinkAnchor
-                              aria-current={null}
-                              href="/ui"
-                              navigate={[Function]}
-                              title="Dashboard"
+                            <li
+                              className="sc-bdfBQB dLgsMO"
+                              to="/ui"
                             >
-                              <a
-                                aria-current={null}
-                                href="/ui"
-                                onClick={[Function]}
+                              <NavLink
+                                activeClassName="is-active"
+                                exact={true}
                                 title="Dashboard"
+                                to="/ui"
                               >
-                                Dashboard
-                              </a>
-                            </LinkAnchor>
-                          </Link>
-                        </NavLink>
-                      </li>
-                    </ul>
-                    <p
-                      className="menu-label"
-                    >
-                      Clusters
-                    </p>
-                  </aside>
-                </Nav>
+                                <Link
+                                  aria-current={null}
+                                  title="Dashboard"
+                                  to={
+                                    Object {
+                                      "hash": "",
+                                      "pathname": "/ui",
+                                      "search": "",
+                                      "state": null,
+                                    }
+                                  }
+                                >
+                                  <LinkAnchor
+                                    aria-current={null}
+                                    href="/ui"
+                                    navigate={[Function]}
+                                    title="Dashboard"
+                                  >
+                                    <a
+                                      aria-current={null}
+                                      href="/ui"
+                                      onClick={[Function]}
+                                      title="Dashboard"
+                                    >
+                                      Dashboard
+                                    </a>
+                                  </LinkAnchor>
+                                </Link>
+                              </NavLink>
+                            </li>
+                          </StyledMenuItem>
+                        </ClusterMenuItem>
+                      </ul>
+                    </aside>
+                  </Nav>
+                </Styled(Nav)>
               </div>
               <div
                 aria-hidden="true"
@@ -365,10 +373,10 @@ exports[`App view matches snapshot 1`] = `
                             >
                               <Styled(MetricsWrapper)>
                                 <MetricsWrapper
-                                  className="sc-gsTEea kVeHiA"
+                                  className="sc-eCstlR gOlRWK"
                                 >
                                   <div
-                                    className="sc-gsTEea kVeHiA"
+                                    className="sc-eCstlR gOlRWK"
                                   >
                                     <div
                                       className="indicatorsWrapper"
@@ -384,7 +392,7 @@ exports[`App view matches snapshot 1`] = `
                                         }
                                       >
                                         <Indicator
-                                          className="sc-dlfnuX YlPZR is-justify-content-start"
+                                          className="sc-jSgvzq fboFlT is-justify-content-start"
                                           label={
                                             <span
                                               className="tag is-success"
@@ -394,7 +402,7 @@ exports[`App view matches snapshot 1`] = `
                                           }
                                         >
                                           <div
-                                            className="sc-dlfnuX YlPZR is-justify-content-start"
+                                            className="sc-jSgvzq fboFlT is-justify-content-start"
                                           >
                                             <div>
                                               <p
@@ -432,7 +440,7 @@ exports[`App view matches snapshot 1`] = `
                                         }
                                       >
                                         <Indicator
-                                          className="sc-dlfnuX YlPZR is-justify-content-start"
+                                          className="sc-jSgvzq fboFlT is-justify-content-start"
                                           label={
                                             <span
                                               className="tag is-light"
@@ -442,7 +450,7 @@ exports[`App view matches snapshot 1`] = `
                                           }
                                         >
                                           <div
-                                            className="sc-dlfnuX YlPZR is-justify-content-start"
+                                            className="sc-jSgvzq fboFlT is-justify-content-start"
                                           >
                                             <div>
                                               <p

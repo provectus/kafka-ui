@@ -14,11 +14,11 @@ describe('ClusterMenu', () => {
 
   it('renders cluster menu without Kafka Connect & Schema Registry', () => {
     const wrapper = mountWithTheme(setupComponent(onlineClusterPayload));
-    expect(wrapper.find('ul.menu-list > li > NavLink').text()).toEqual(
+    expect(wrapper.find('ClusterTab').text()).toEqual(
       onlineClusterPayload.name
     );
 
-    expect(wrapper.find('ul.menu-list ul StyledMenuItem').length).toEqual(3);
+    expect(wrapper.find('ul ul StyledMenuItem').length).toEqual(3);
   });
 
   it('renders cluster menu with all enabled features', () => {
@@ -31,6 +31,6 @@ describe('ClusterMenu', () => {
         ],
       })
     );
-    expect(wrapper.find('ul.menu-list ul StyledMenuItem').length).toEqual(5);
+    expect(wrapper.find('ul ul StyledMenuItem').length).toEqual(5);
   });
 });
