@@ -17,7 +17,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -78,7 +77,7 @@ public class ReactiveAdminClient implements Closeable {
         : SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
   }
 
-  //TODO: discuss - maybe add exceptions formatting here
+  //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
   private static <T> Mono<T> toMono(KafkaFuture<T> future) {
     return Mono.create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
@@ -161,13 +160,12 @@ public class ReactiveAdminClient implements Closeable {
               )
           );
         } catch (ExecutionException e) {
-          // should not be here
+          // can't be here, because all futures already completed
         }
       }
     }));
   }
 
-  @SneakyThrows
   private static Mono<String> getClusterVersionImpl(AdminClient client) {
     return toMono(client.describeCluster().controller()).flatMap(controller ->
         toMono(client.describeConfigs(
@@ -228,7 +226,7 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Map<TopicPartition, OffsetAndMetadata>> listConsumerGroupOffsets(String groupId) {
     return toMono(client.listConsumerGroupOffsets(groupId).partitionsToOffsetAndMetadata())
-        .map(MapUtil::removeNullValues); //TODO check if this removal works
+        .map(MapUtil::removeNullValues);
   }
 
   public Mono<Void> alterConsumerGroupOffsets(String groupId, Map<TopicPartition, Long> offsets) {
