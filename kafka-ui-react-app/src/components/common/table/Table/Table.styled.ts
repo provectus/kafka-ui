@@ -15,9 +15,10 @@ const StyledTable = styled.table<Props>`
     font-weight: 400;
     padding: 8px 8px;
     color: ${Colors.neutral[90]};
+    vertical-align: middle;
   }
 
-  & tr {
+  & tbody > tr {
     &:hover {
       background-color: ${Colors.neutral[5]};
     }

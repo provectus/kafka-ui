@@ -427,7 +427,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           isFullwidth={true}
         >
           <table
-            className="sc-eCstlR dOMvQP"
+            className="sc-eCstlR eMabAx"
           >
             <thead>
               <tr>
@@ -935,7 +935,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           isFullwidth={true}
         >
           <table
-            className="sc-eCstlR dOMvQP"
+            className="sc-eCstlR eMabAx"
           >
             <thead>
               <tr>

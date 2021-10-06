@@ -278,7 +278,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               isFullwidth={true}
             >
               <table
-                className="sc-eCstlR dOMvQP"
+                className="sc-eCstlR eMabAx"
               >
                 <thead>
                   <tr>
