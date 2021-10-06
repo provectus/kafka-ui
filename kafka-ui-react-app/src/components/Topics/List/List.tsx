@@ -5,7 +5,7 @@ import {
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -17,6 +17,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
 import StyledTable from 'components/common/table/Table/Table.styled';
+import { Button } from 'components/common/Button/Button';
 
 import ListItem from './ListItem';
 
@@ -148,12 +149,14 @@ const List: React.FC<TopicsListProps> = ({
           </div>
           <div className="column is-2 is-justify-content-flex-end is-flex">
             {!isReadOnly && (
-              <Link
-                className="button is-primary"
+              <Button
+                buttonType="primary"
+                buttonSize="L"
+                isLink
                 to={clusterTopicNewPath(clusterName)}
               >
-                Add a Topic
-              </Link>
+                <i className="fas fa-plus" /> Add a Topic
+              </Button>
             )}
           </div>
         </div>

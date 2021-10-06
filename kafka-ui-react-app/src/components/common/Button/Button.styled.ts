@@ -54,6 +54,14 @@ const StyledButton = styled.button<ButtonProps>`
     opacity: 0.5;
     cursor: not-allowed;
   }
+
+  & a {
+    color: white;
+  }
+
+  & i {
+    margin-right: 7px;
+  }
 `;
 
 export default StyledButton;

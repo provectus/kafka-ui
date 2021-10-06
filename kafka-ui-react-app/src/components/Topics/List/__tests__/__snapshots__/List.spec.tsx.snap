@@ -250,24 +250,40 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               <div
                 className="column is-2 is-justify-content-flex-end is-flex"
               >
-                <Link
-                  className="button is-primary"
+                <Button
+                  buttonSize="L"
+                  buttonType="primary"
+                  isLink={true}
                   to="/ui/clusters/undefined/topics/create-new"
                 >
-                  <LinkAnchor
-                    className="button is-primary"
-                    href="/ui/clusters/undefined/topics/create-new"
-                    navigate={[Function]}
+                  <Link
+                    to="/ui/clusters/undefined/topics/create-new"
                   >
-                    <a
-                      className="button is-primary"
+                    <LinkAnchor
                       href="/ui/clusters/undefined/topics/create-new"
-                      onClick={[Function]}
+                      navigate={[Function]}
                     >
-                      Add a Topic
-                    </a>
-                  </LinkAnchor>
-                </Link>
+                      <a
+                        href="/ui/clusters/undefined/topics/create-new"
+                        onClick={[Function]}
+                      >
+                        <styled.button
+                          buttonSize="L"
+                          buttonType="primary"
+                        >
+                          <button
+                            className="sc-jSgvzq cIBMCN"
+                          >
+                            <i
+                              className="fas fa-plus"
+                            />
+                             Add a Topic
+                          </button>
+                        </styled.button>
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>
