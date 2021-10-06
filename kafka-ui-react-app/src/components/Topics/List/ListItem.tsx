@@ -11,6 +11,7 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { Colors } from 'theme/theme';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -93,7 +94,10 @@ const ListItem: React.FC<ListItemProps> = ({
           exact
           to={`topics/${name}`}
           activeClassName="is-active"
-          className="title is-6"
+          style={{
+            color: Colors.neutral[90],
+            fontWeight: 500,
+          }}
         >
           {name}
         </NavLink>

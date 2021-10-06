@@ -8,6 +8,8 @@ import Indicator from 'components/common/Dashboard/Indicator';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
 import TagStyled from 'components/common/Tag/Tag.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import StyledTable from 'components/common/table/Table/Table.styled';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -85,12 +87,12 @@ const Brokers: React.FC<Props> = ({
           </MetricsWrapper>
         </div>
       </div>
-      <table className="table is-fullwidth">
+      <StyledTable isFullwidth>
         <thead>
           <tr>
-            <th>Broker</th>
-            <th>Segment size (Mb)</th>
-            <th>Segment Count</th>
+            <TableHeaderCell title="Broker" />
+            <TableHeaderCell title="Segment size (Mb)" />
+            <TableHeaderCell title="Segment Count" />
           </tr>
         </thead>
         <tbody>
@@ -104,7 +106,7 @@ const Brokers: React.FC<Props> = ({
             </tr>
           ))}
         </tbody>
-      </table>
+      </StyledTable>
     </>
   );
 };

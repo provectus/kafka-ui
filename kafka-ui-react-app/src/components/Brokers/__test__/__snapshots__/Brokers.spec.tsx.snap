@@ -423,24 +423,76 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
             </Styled(MetricsWrapper)>
           </div>
         </div>
-        <table
-          className="table is-fullwidth"
+        <styled.table
+          isFullwidth={true}
         >
-          <thead>
-            <tr>
-              <th>
-                Broker
-              </th>
-              <th>
-                Segment size (Mb)
-              </th>
-              <th>
-                Segment Count
-              </th>
-            </tr>
-          </thead>
-          <tbody />
-        </table>
+          <table
+            className="sc-eCstlR dOMvQP"
+          >
+            <thead>
+              <tr>
+                <TableHeaderCell
+                  title="Broker"
+                >
+                  <styled.th
+                    className=""
+                    title="Broker"
+                  >
+                    <th
+                      className="sc-hKgJUU bdFlyV"
+                      title="Broker"
+                    >
+                      <span
+                        className="title"
+                      >
+                        Broker
+                      </span>
+                    </th>
+                  </styled.th>
+                </TableHeaderCell>
+                <TableHeaderCell
+                  title="Segment size (Mb)"
+                >
+                  <styled.th
+                    className=""
+                    title="Segment size (Mb)"
+                  >
+                    <th
+                      className="sc-hKgJUU bdFlyV"
+                      title="Segment size (Mb)"
+                    >
+                      <span
+                        className="title"
+                      >
+                        Segment size (Mb)
+                      </span>
+                    </th>
+                  </styled.th>
+                </TableHeaderCell>
+                <TableHeaderCell
+                  title="Segment Count"
+                >
+                  <styled.th
+                    className=""
+                    title="Segment Count"
+                  >
+                    <th
+                      className="sc-hKgJUU bdFlyV"
+                      title="Segment Count"
+                    >
+                      <span
+                        className="title"
+                      >
+                        Segment Count
+                      </span>
+                    </th>
+                  </styled.th>
+                </TableHeaderCell>
+              </tr>
+            </thead>
+            <tbody />
+          </table>
+        </styled.table>
       </Brokers>
     </Component>
   </Router>
@@ -879,44 +931,96 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
             </Styled(MetricsWrapper)>
           </div>
         </div>
-        <table
-          className="table is-fullwidth"
+        <styled.table
+          isFullwidth={true}
         >
-          <thead>
-            <tr>
-              <th>
-                Broker
-              </th>
-              <th>
-                Segment size (Mb)
-              </th>
-              <th>
-                Segment Count
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              key="1"
-            >
-              <td>
-                1
-              </td>
-              <td>
-                <BytesFormatted
-                  value={60718}
+          <table
+            className="sc-eCstlR dOMvQP"
+          >
+            <thead>
+              <tr>
+                <TableHeaderCell
+                  title="Broker"
                 >
-                  <span>
-                    59KB
-                  </span>
-                </BytesFormatted>
-              </td>
-              <td>
-                64
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  <styled.th
+                    className=""
+                    title="Broker"
+                  >
+                    <th
+                      className="sc-hKgJUU bdFlyV"
+                      title="Broker"
+                    >
+                      <span
+                        className="title"
+                      >
+                        Broker
+                      </span>
+                    </th>
+                  </styled.th>
+                </TableHeaderCell>
+                <TableHeaderCell
+                  title="Segment size (Mb)"
+                >
+                  <styled.th
+                    className=""
+                    title="Segment size (Mb)"
+                  >
+                    <th
+                      className="sc-hKgJUU bdFlyV"
+                      title="Segment size (Mb)"
+                    >
+                      <span
+                        className="title"
+                      >
+                        Segment size (Mb)
+                      </span>
+                    </th>
+                  </styled.th>
+                </TableHeaderCell>
+                <TableHeaderCell
+                  title="Segment Count"
+                >
+                  <styled.th
+                    className=""
+                    title="Segment Count"
+                  >
+                    <th
+                      className="sc-hKgJUU bdFlyV"
+                      title="Segment Count"
+                    >
+                      <span
+                        className="title"
+                      >
+                        Segment Count
+                      </span>
+                    </th>
+                  </styled.th>
+                </TableHeaderCell>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                key="1"
+              >
+                <td>
+                  1
+                </td>
+                <td>
+                  <BytesFormatted
+                    value={60718}
+                  >
+                    <span>
+                      59KB
+                    </span>
+                  </BytesFormatted>
+                </td>
+                <td>
+                  64
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </styled.table>
       </Brokers>
     </Component>
   </Router>

@@ -274,252 +274,256 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
           <div
             className="box"
           >
-            <table
-              className="table is-fullwidth"
+            <styled.table
+              isFullwidth={true}
             >
-              <thead>
-                <tr>
-                  <TableHeaderCell>
-                    <styled.th
-                      className=""
-                    >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+              <table
+                className="sc-eCstlR dOMvQP"
+              >
+                <thead>
+                  <tr>
+                    <TableHeaderCell>
+                      <styled.th
+                        className=""
                       >
-                        <span
-                          className="title"
-                        />
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    handleOrderBy={[MockFunction]}
-                    orderBy={null}
-                    orderValue="NAME"
-                    title="Topic Name"
-                  >
-                    <styled.th
-                      className=""
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                        >
+                          <span
+                            className="title"
+                          />
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       handleOrderBy={[MockFunction]}
                       orderBy={null}
                       orderValue="NAME"
                       title="Topic Name"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
+                        handleOrderBy={[MockFunction]}
+                        orderBy={null}
+                        orderValue="NAME"
                         title="Topic Name"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Topic Name"
                         >
-                          Topic Name
-                        </span>
-                        <span
-                          className="icon is-small is-clickable"
-                          onClick={[Function]}
-                          onKeyDown={[Function]}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <i
-                            className="fas fa-sort"
-                          />
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    handleOrderBy={[MockFunction]}
-                    orderBy={null}
-                    orderValue="TOTAL_PARTITIONS"
-                    title="Total Partitions"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Topic Name
+                          </span>
+                          <span
+                            className="icon is-small is-clickable"
+                            onClick={[Function]}
+                            onKeyDown={[Function]}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            <i
+                              className="fas fa-sort"
+                            />
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       handleOrderBy={[MockFunction]}
                       orderBy={null}
                       orderValue="TOTAL_PARTITIONS"
                       title="Total Partitions"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
+                        handleOrderBy={[MockFunction]}
+                        orderBy={null}
+                        orderValue="TOTAL_PARTITIONS"
                         title="Total Partitions"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Total Partitions"
                         >
-                          Total Partitions
-                        </span>
-                        <span
-                          className="icon is-small is-clickable"
-                          onClick={[Function]}
-                          onKeyDown={[Function]}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <i
-                            className="fas fa-sort"
-                          />
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    handleOrderBy={[MockFunction]}
-                    orderBy={null}
-                    orderValue="OUT_OF_SYNC_REPLICAS"
-                    title="Out of sync replicas"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Total Partitions
+                          </span>
+                          <span
+                            className="icon is-small is-clickable"
+                            onClick={[Function]}
+                            onKeyDown={[Function]}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            <i
+                              className="fas fa-sort"
+                            />
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       handleOrderBy={[MockFunction]}
                       orderBy={null}
                       orderValue="OUT_OF_SYNC_REPLICAS"
                       title="Out of sync replicas"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
+                        handleOrderBy={[MockFunction]}
+                        orderBy={null}
+                        orderValue="OUT_OF_SYNC_REPLICAS"
                         title="Out of sync replicas"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Out of sync replicas"
                         >
-                          Out of sync replicas
-                        </span>
-                        <span
-                          className="icon is-small is-clickable"
-                          onClick={[Function]}
-                          onKeyDown={[Function]}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <i
-                            className="fas fa-sort"
-                          />
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    title="Replication Factor"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Out of sync replicas
+                          </span>
+                          <span
+                            className="icon is-small is-clickable"
+                            onClick={[Function]}
+                            onKeyDown={[Function]}
+                            role="button"
+                            tabIndex={0}
+                          >
+                            <i
+                              className="fas fa-sort"
+                            />
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       title="Replication Factor"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
                         title="Replication Factor"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Replication Factor"
                         >
-                          Replication Factor
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    title="Number of messages"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Replication Factor
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       title="Number of messages"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
                         title="Number of messages"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Number of messages"
                         >
-                          Number of messages
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    title="Size"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Number of messages
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       title="Size"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
                         title="Size"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Size"
                         >
-                          Size
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    title="Type"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Size
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       title="Type"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
                         title="Type"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Type"
                         >
-                          Type
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell
-                    title="Clean Up Policy"
-                  >
-                    <styled.th
-                      className=""
+                          <span
+                            className="title"
+                          >
+                            Type
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell
                       title="Clean Up Policy"
                     >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                      <styled.th
+                        className=""
                         title="Clean Up Policy"
                       >
-                        <span
-                          className="title"
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                          title="Clean Up Policy"
                         >
-                          Clean Up Policy
-                        </span>
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                  <TableHeaderCell>
-                    <styled.th
-                      className=""
-                    >
-                      <th
-                        className="sc-bdfBQB kGzlfS"
+                          <span
+                            className="title"
+                          >
+                            Clean Up Policy
+                          </span>
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                    <TableHeaderCell>
+                      <styled.th
+                        className=""
                       >
-                        <span
-                          className="title"
-                        />
-                      </th>
-                    </styled.th>
-                  </TableHeaderCell>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td
-                    colSpan={10}
-                  >
-                    No topics found
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+                        <th
+                          className="sc-bdfBQB kGzlfS"
+                        >
+                          <span
+                            className="title"
+                          />
+                        </th>
+                      </styled.th>
+                    </TableHeaderCell>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      colSpan={10}
+                    >
+                      No topics found
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </styled.table>
             <Pagination
               totalPages={1}
             >
