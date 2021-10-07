@@ -19,13 +19,13 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 
 @Component
-@Slf4j
+@Log4j2
 @RequiredArgsConstructor
 public class JmxClusterUtil {
 

@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -49,7 +49,7 @@ import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
-@Slf4j
+@Log4j2
 public class ClusterUtil {
 
   private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
