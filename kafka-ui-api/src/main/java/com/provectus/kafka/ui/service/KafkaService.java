@@ -8,7 +8,6 @@ import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
 import com.provectus.kafka.ui.model.CleanupPolicy;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
-import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
@@ -31,7 +30,6 @@ import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
 import com.provectus.kafka.ui.util.JmxMetricsName;
 import com.provectus.kafka.ui.util.JmxMetricsValueName;
-import com.provectus.kafka.ui.util.MapUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -46,24 +44,13 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AlterConfigOp;
-import org.apache.kafka.clients.admin.Config;
-import org.apache.kafka.clients.admin.ConfigEntry;
-import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeConfigsOptions;
-import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -71,7 +58,6 @@ import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
-import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.InvalidRequestException;
 import org.apache.kafka.common.errors.LogDirNotFoundException;
 import org.apache.kafka.common.errors.TimeoutException;
@@ -95,8 +81,6 @@ import reactor.util.function.Tuples;
 @Log4j2
 public class KafkaService {
 
-  private static final ListTopicsOptions LIST_TOPICS_OPTIONS =
-      new ListTopicsOptions().listInternal(true);
   private final ZookeeperService zookeeperService;
   private final JmxClusterUtil jmxClusterUtil;
   private final ClustersStorage clustersStorage;
@@ -122,18 +106,17 @@ public class KafkaService {
 
   @SneakyThrows
   public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
-    return adminClientService.getOrCreateAdminClient(cluster)
+    return adminClientService.get(cluster)
         .flatMap(
-            ac -> ClusterUtil.getClusterVersion(ac.getAdminClient()).flatMap(
+            ac -> ac.getClusterVersion().flatMap(
                 version ->
-                    getClusterMetrics(ac.getAdminClient())
-                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac.getAdminClient()))
+                    getClusterMetrics(ac)
+                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac))
                         .flatMap(clusterMetrics ->
-                            getTopicsData(ac.getAdminClient()).flatMap(it -> {
+                            getTopicsData(ac).flatMap(it -> {
                                   if (cluster.getDisableLogDirsCollection() == null
                                       || !cluster.getDisableLogDirsCollection()) {
-                                    return updateSegmentMetrics(
-                                        ac.getAdminClient(), clusterMetrics, it
+                                    return updateSegmentMetrics(ac, clusterMetrics, it
                                     );
                                   } else {
                                     return emptySegmentMetrics(clusterMetrics, it);
@@ -250,16 +233,16 @@ public class KafkaService {
   }
 
   @SneakyThrows
-  private Mono<List<InternalTopic>> getTopicsData(AdminClient adminClient) {
-    return ClusterUtil.toMono(adminClient.listTopics(LIST_TOPICS_OPTIONS).names())
-        .flatMap(topics -> getTopicsData(adminClient, topics).collectList());
+  private Mono<List<InternalTopic>> getTopicsData(ReactiveAdminClient client) {
+    return client.listTopics(true)
+        .flatMap(topics -> getTopicsData(client, topics).collectList());
   }
 
-  private Flux<InternalTopic> getTopicsData(AdminClient adminClient, Collection<String> topics) {
+  private Flux<InternalTopic> getTopicsData(ReactiveAdminClient client, Collection<String> topics) {
     final Mono<Map<String, List<InternalTopicConfig>>> configsMono =
-        loadTopicsConfig(adminClient, topics);
+        loadTopicsConfig(client, topics);
 
-    return ClusterUtil.toMono(adminClient.describeTopics(topics).all())
+    return client.describeTopics(topics)
         .map(m -> m.values().stream()
             .map(ClusterUtil::mapToInternalTopic).collect(Collectors.toList()))
         .flatMap(internalTopics -> configsMono
@@ -268,104 +251,72 @@ public class KafkaService {
   }
 
 
-  private Mono<InternalClusterMetrics> getClusterMetrics(AdminClient client) {
-    return ClusterUtil.toMono(client.describeCluster().nodes())
-        .flatMap(brokers ->
-            ClusterUtil.toMono(client.describeCluster().controller()).map(
-                c -> {
-                  InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder =
-                      InternalClusterMetrics.builder();
-                  metricsBuilder.brokerCount(brokers.size()).activeControllers(c != null ? 1 : 0);
-                  return metricsBuilder.build();
-                }
-            )
-        );
+  private Mono<InternalClusterMetrics> getClusterMetrics(ReactiveAdminClient client) {
+    return client.describeCluster().map(desc ->
+        InternalClusterMetrics.builder()
+            .brokerCount(desc.getNodes().size())
+            .activeControllers(desc.getController() != null ? 1 : 0)
+            .build()
+    );
   }
 
   @SneakyThrows
-  private Mono<String> createTopic(AdminClient adminClient, NewTopic newTopic) {
-    return ClusterUtil.toMono(adminClient.createTopics(Collections.singletonList(newTopic)).all(),
-        newTopic.name());
-  }
-
-  @SneakyThrows
-  public Mono<InternalTopic> createTopic(AdminClient adminClient,
+  public Mono<InternalTopic> createTopic(ReactiveAdminClient adminClient,
                                          Mono<TopicCreationDTO> topicCreation) {
-    return topicCreation.flatMap(
-        topicData -> {
-          NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(),
-              topicData.getReplicationFactor().shortValue());
-          newTopic.configs(topicData.getConfigs());
-          return createTopic(adminClient, newTopic).map(v -> topicData);
-        })
+    return topicCreation.flatMap(topicData ->
+            adminClient.createTopic(
+                topicData.getName(),
+                topicData.getPartitions(),
+                topicData.getReplicationFactor().shortValue(),
+                topicData.getConfigs()
+            ).thenReturn(topicData)
+        )
         .onErrorResume(t -> Mono.error(new TopicMetadataException(t.getMessage())))
-        .flatMap(
-            topicData ->
-                getTopicsData(adminClient, Collections.singleton(topicData.getName()))
-                    .next()
-        ).switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic")));
+        .flatMap(topicData -> getUpdatedTopic(adminClient, topicData.getName()))
+        .switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic")));
   }
 
   public Mono<InternalTopic> createTopic(
       KafkaCluster cluster, Mono<TopicCreationDTO> topicCreation) {
-    return adminClientService.getOrCreateAdminClient(cluster)
-        .flatMap(ac -> createTopic(ac.getAdminClient(), topicCreation));
+    return adminClientService.get(cluster).flatMap(ac -> createTopic(ac, topicCreation));
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    return adminClientService.getOrCreateAdminClient(cluster)
-        .map(ExtendedAdminClient::getAdminClient)
-        .flatMap(adminClient ->
-                ClusterUtil.toMono(adminClient.deleteTopics(List.of(topicName)).all())
-        );
+    return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName));
   }
 
   @SneakyThrows
   private Mono<Map<String, List<InternalTopicConfig>>> loadTopicsConfig(
-      AdminClient adminClient, Collection<String> topicNames) {
-    List<ConfigResource> resources = topicNames.stream()
-        .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
-        .collect(Collectors.toList());
-
-    return ClusterUtil.toMono(adminClient.describeConfigs(resources,
-        new DescribeConfigsOptions().includeSynonyms(true)).all())
+      ReactiveAdminClient client, Collection<String> topicNames) {
+    return client.getTopicsConfig(topicNames)
         .map(configs ->
             configs.entrySet().stream().collect(Collectors.toMap(
-                c -> c.getKey().name(),
-                c -> c.getValue().entries().stream()
+                Map.Entry::getKey,
+                c -> c.getValue().stream()
                     .map(ClusterUtil::mapToInternalTopicConfig)
                     .collect(Collectors.toList()))));
   }
 
-  public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
-      KafkaCluster cluster) {
-    return adminClientService.getOrCreateAdminClient(cluster).flatMap(ac ->
-        ClusterUtil.toMono(ac.getAdminClient().listConsumerGroups().all())
-            .flatMap(s ->
-                getConsumerGroupsInternal(
-                    cluster,
-                    s.stream().map(ConsumerGroupListing::groupId).collect(Collectors.toList()))
-            )
-    );
+  public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(KafkaCluster cluster) {
+    return adminClientService.get(cluster).flatMap(ac ->
+        ac.listConsumerGroups()
+            .flatMap(groupIds -> getConsumerGroupsInternal(cluster, groupIds)));
   }
 
-  public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(
-      KafkaCluster cluster, List<String> groupIds) {
-
-    return adminClientService.getOrCreateAdminClient(cluster).flatMap(ac ->
-        ClusterUtil.toMono(
-            ac.getAdminClient().describeConsumerGroups(groupIds).all()
-        ).map(Map::values)
-    ).flatMap(descriptions ->
-        Flux.fromIterable(descriptions)
-            .parallel()
-            .flatMap(d ->
-                groupMetadata(cluster, d.groupId())
-                    .map(offsets -> ClusterUtil.convertToInternalConsumerGroup(d, offsets))
-            )
-            .sequential()
-            .collectList()
-    );
+  public Mono<List<InternalConsumerGroup>> getConsumerGroupsInternal(KafkaCluster cluster,
+                                                                     List<String> groupIds) {
+    return adminClientService.get(cluster).flatMap(ac ->
+        ac.describeConsumerGroups(groupIds)
+            .map(Map::values)
+            .flatMap(descriptions ->
+                Flux.fromIterable(descriptions)
+                    .parallel()
+                    .flatMap(d ->
+                        ac.listConsumerGroupOffsets(d.groupId())
+                            .map(offsets -> ClusterUtil.convertToInternalConsumerGroup(d, offsets))
+                    )
+                    .sequential()
+                    .collectList()));
   }
 
   public Mono<List<InternalConsumerGroup>> getConsumerGroups(
@@ -390,15 +341,6 @@ public class KafkaService {
             )
             .collect(Collectors.toList())
     );
-  }
-
-  public Mono<Map<TopicPartition, OffsetAndMetadata>> groupMetadata(KafkaCluster cluster,
-                                                                    String consumerGroupId) {
-    return adminClientService.getOrCreateAdminClient(cluster).map(ac ->
-        ac.getAdminClient()
-            .listConsumerGroupOffsets(consumerGroupId)
-            .partitionsToOffsetAndMetadata()
-    ).flatMap(ClusterUtil::toMono).map(MapUtil::removeNullValues);
   }
 
   public Map<TopicPartition, Long> topicPartitionsEndOffsets(
@@ -427,47 +369,17 @@ public class KafkaService {
   }
 
   @SneakyThrows
-  public Mono<InternalTopic> updateTopic(KafkaCluster cluster, String topicName,
+  public Mono<InternalTopic> updateTopic(KafkaCluster cluster,
+                                         String topicName,
                                          TopicUpdateDTO topicUpdate) {
-    ConfigResource topicCr = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
-    return adminClientService.getOrCreateAdminClient(cluster)
-        .flatMap(ac -> {
-          if (ac.getSupportedFeatures()
-              .contains(ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS)) {
-            return incrementalAlterConfig(topicUpdate, topicCr, ac)
-                .flatMap(c -> getUpdatedTopic(ac, topicName));
-          } else {
-            return alterConfig(topicUpdate, topicCr, ac)
-                .flatMap(c -> getUpdatedTopic(ac, topicName));
-          }
-        });
+    return adminClientService.get(cluster)
+        .flatMap(ac ->
+            ac.updateTopicConfig(topicName,
+                topicUpdate.getConfigs()).then(getUpdatedTopic(ac, topicName)));
   }
 
-  private Mono<InternalTopic> getUpdatedTopic(ExtendedAdminClient ac, String topicName) {
-    return getTopicsData(ac.getAdminClient())
-        .map(s -> s.stream()
-            .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow());
-  }
-
-  private Mono<String> incrementalAlterConfig(TopicUpdateDTO topicUpdate, ConfigResource topicCr,
-                                              ExtendedAdminClient ac) {
-    List<AlterConfigOp> listOp = topicUpdate.getConfigs().entrySet().stream()
-        .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()),
-            AlterConfigOp.OpType.SET))).collect(Collectors.toList());
-    return ClusterUtil.toMono(
-        ac.getAdminClient().incrementalAlterConfigs(Collections.singletonMap(topicCr, listOp))
-            .all(), topicCr.name());
-  }
-
-  @SuppressWarnings("deprecation")
-  private Mono<String> alterConfig(TopicUpdateDTO topicUpdate, ConfigResource topicCr,
-                                   ExtendedAdminClient ac) {
-    List<ConfigEntry> configEntries = topicUpdate.getConfigs().entrySet().stream()
-        .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue())))
-        .collect(Collectors.toList());
-    Config config = new Config(configEntries);
-    Map<ConfigResource, Config> map = Collections.singletonMap(topicCr, config);
-    return ClusterUtil.toMono(ac.getAdminClient().alterConfigs(map).all(), topicCr.name());
+  private Mono<InternalTopic> getUpdatedTopic(ReactiveAdminClient ac, String topicName) {
+    return getTopicsData(ac, List.of(topicName)).next();
   }
 
   private InternalTopic mergeWithStats(InternalTopic topic,
@@ -520,18 +432,12 @@ public class KafkaService {
     );
   }
 
-  private Mono<InternalSegmentSizeDto> updateSegmentMetrics(AdminClient ac,
+  private Mono<InternalSegmentSizeDto> updateSegmentMetrics(ReactiveAdminClient ac,
                                                             InternalClusterMetrics clusterMetrics,
                                                             List<InternalTopic> internalTopics) {
-    List<String> names =
-        internalTopics.stream().map(InternalTopic::getName).collect(Collectors.toList());
-    return ClusterUtil.toMono(ac.describeTopics(names).all()).flatMap(topic ->
-        ClusterUtil.toMono(ac.describeCluster().nodes()).flatMap(nodes ->
-
-            ClusterUtil.toMono(
-                ac.describeLogDirs(
-                    nodes.stream().map(Node::id).collect(Collectors.toList())).all()
-                ).map(log -> {
+    return ac.describeCluster().flatMap(
+        clusterDescription ->
+                ac.describeLogDirs().map(log -> {
                   final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
                       log.entrySet().stream().flatMap(b ->
                           b.getValue().entrySet().stream().flatMap(topicMap ->
@@ -598,7 +504,6 @@ public class KafkaService {
                       )
                       .internalTopicWithSegmentSize(resultTopics).build();
                 })
-        )
     );
   }
 
@@ -612,15 +517,15 @@ public class KafkaService {
   }
 
   private Mono<InternalClusterMetrics> fillJmxMetrics(InternalClusterMetrics internalClusterMetrics,
-                                                      String clusterName, AdminClient ac) {
+                                                      String clusterName, ReactiveAdminClient ac) {
     return fillBrokerMetrics(internalClusterMetrics, clusterName, ac)
         .map(this::calculateClusterMetrics);
   }
 
   private Mono<InternalClusterMetrics> fillBrokerMetrics(
-      InternalClusterMetrics internalClusterMetrics, String clusterName, AdminClient ac) {
-    return ClusterUtil.toMono(ac.describeCluster().nodes())
-        .flatMapIterable(nodes -> nodes)
+      InternalClusterMetrics internalClusterMetrics, String clusterName, ReactiveAdminClient ac) {
+    return ac.describeCluster()
+        .flatMapIterable(desc -> desc.getNodes())
         .map(broker ->
             Map.of(broker.id(), InternalBrokerMetrics.builder()
                 .metrics(getJmxMetric(clusterName, broker)).build())
@@ -699,14 +604,7 @@ public class KafkaService {
   }
 
   public Mono<Void> deleteTopicMessages(KafkaCluster cluster, Map<TopicPartition, Long> offsets) {
-    var records = offsets.entrySet().stream()
-        .map(entry -> Map.entry(entry.getKey(), RecordsToDelete.beforeOffset(entry.getValue())))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    return adminClientService.getOrCreateAdminClient(cluster)
-        .map(ExtendedAdminClient::getAdminClient)
-        .flatMap(ac ->
-            ClusterUtil.toMono(ac.deleteRecords(records).all())
-        );
+    return adminClientService.get(cluster).flatMap(ac -> ac.deleteRecords(offsets));
   }
 
   public Mono<RecordMetadata> sendMessage(KafkaCluster cluster, String topic,
@@ -754,19 +652,11 @@ public class KafkaService {
     return headers;
   }
 
-  private Mono<InternalTopic> increaseTopicPartitions(AdminClient adminClient,
-                                                      String topicName,
-                                                      Map<String, NewPartitions> newPartitionsMap
-  ) {
-    return ClusterUtil.toMono(adminClient.createPartitions(newPartitionsMap).all(), topicName)
-        .flatMap(topic -> getTopicsData(adminClient, Collections.singleton(topic)).next());
-  }
-
   public Mono<InternalTopic> increaseTopicPartitions(
       KafkaCluster cluster,
       String topicName,
       PartitionsIncreaseDTO partitionsIncrease) {
-    return adminClientService.getOrCreateAdminClient(cluster)
+    return adminClientService.get(cluster)
         .flatMap(ac -> {
           Integer actualCount = cluster.getTopics().get(topicName).getPartitionCount();
           Integer requestedCount = partitionsIncrease.getTotalPartitionsCount();
@@ -787,18 +677,18 @@ public class KafkaService {
               topicName,
               NewPartitions.increaseTo(partitionsIncrease.getTotalPartitionsCount())
           );
-          return increaseTopicPartitions(ac.getAdminClient(), topicName, newPartitionsMap);
+          return ac.createPartitions(newPartitionsMap)
+              .then(getUpdatedTopic(ac, topicName));
         });
   }
 
   private Mono<InternalTopic> changeReplicationFactor(
-      AdminClient adminClient,
+      ReactiveAdminClient adminClient,
       String topicName,
       Map<TopicPartition, Optional<NewPartitionReassignment>> reassignments
   ) {
-    return ClusterUtil.toMono(adminClient
-        .alterPartitionReassignments(reassignments).all(), topicName)
-        .flatMap(topic -> getTopicsData(adminClient, Collections.singleton(topic)).next());
+    return adminClient.alterPartitionReassignments(reassignments)
+        .then(getUpdatedTopic(adminClient, topicName));
   }
 
   /**
@@ -808,7 +698,7 @@ public class KafkaService {
       KafkaCluster cluster,
       String topicName,
       ReplicationFactorChangeDTO replicationFactorChange) {
-    return adminClientService.getOrCreateAdminClient(cluster)
+    return adminClientService.get(cluster)
         .flatMap(ac -> {
           Integer actual = cluster.getTopics().get(topicName).getReplicationFactor();
           Integer requested = replicationFactorChange.getTotalReplicationFactor();
@@ -825,7 +715,7 @@ public class KafkaService {
                     String.format("Requested replication factor %s more than brokers count %s.",
                         requested, brokersCount)));
           }
-          return changeReplicationFactor(ac.getAdminClient(), topicName,
+          return changeReplicationFactor(ac, topicName,
               getPartitionsReassignments(cluster, topicName,
                   replicationFactorChange));
         });
@@ -833,15 +723,14 @@ public class KafkaService {
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(
       KafkaCluster cluster, List<Integer> reqBrokers) {
-    return adminClientService.getOrCreateAdminClient(cluster)
-        .map(admin -> {
+    return adminClientService.get(cluster)
+        .flatMap(admin -> {
           List<Integer> brokers = new ArrayList<>(cluster.getBrokers());
           if (reqBrokers != null && !reqBrokers.isEmpty()) {
             brokers.retainAll(reqBrokers);
           }
-          return admin.getAdminClient().describeLogDirs(brokers);
+          return admin.describeLogDirs(brokers);
         })
-        .flatMap(result -> ClusterUtil.toMono(result.all()))
         .onErrorResume(TimeoutException.class, (TimeoutException e) -> {
           log.error("Error during fetching log dirs", e);
           return Mono.just(new HashMap<>());
@@ -949,20 +838,18 @@ public class KafkaService {
 
   public Mono<Void> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
                                        BrokerLogdirUpdateDTO brokerLogDir) {
-    return adminClientService.getOrCreateAdminClient(cluster)
+    return adminClientService.get(cluster)
         .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
   }
 
-  private Mono<Void> updateBrokerLogDir(ExtendedAdminClient adminMono,
+  private Mono<Void> updateBrokerLogDir(ReactiveAdminClient admin,
                                         BrokerLogdirUpdateDTO b,
                                         Integer broker) {
 
     Map<TopicPartitionReplica, String> req = Map.of(
         new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
         b.getLogDir());
-    return Mono.just(adminMono)
-        .map(admin -> admin.getAdminClient().alterReplicaLogDirs(req))
-        .flatMap(result -> ClusterUtil.toMono(result.all()))
+    return  admin.alterReplicaLogDirs(req)
         .onErrorResume(UnknownTopicOrPartitionException.class,
             e -> Mono.error(new TopicOrPartitionNotFoundException()))
         .onErrorResume(LogDirNotFoundException.class,
@@ -974,20 +861,8 @@ public class KafkaService {
                                              Integer broker,
                                              String name,
                                              String value) {
-    return adminClientService.getOrCreateAdminClient(cluster)
-        .flatMap(ac -> updateBrokerConfigByName(ac, broker, name, value));
-  }
-
-  private Mono<Void> updateBrokerConfigByName(ExtendedAdminClient admin,
-                                              Integer broker,
-                                              String name,
-                                              String value) {
-    ConfigResource cr = new ConfigResource(ConfigResource.Type.BROKER, String.valueOf(broker));
-    AlterConfigOp op = new AlterConfigOp(new ConfigEntry(name, value), AlterConfigOp.OpType.SET);
-
-    return Mono.just(admin)
-        .map(a -> a.getAdminClient().incrementalAlterConfigs(Map.of(cr, List.of(op))))
-        .flatMap(result -> ClusterUtil.toMono(result.all()))
+    return adminClientService.get(cluster)
+        .flatMap(ac -> ac.updateBrokerConfigByName(broker, name, value))
         .onErrorResume(InvalidRequestException.class,
             e -> Mono.error(new InvalidRequestApiException(e.getMessage())))
         .doOnError(log::error);

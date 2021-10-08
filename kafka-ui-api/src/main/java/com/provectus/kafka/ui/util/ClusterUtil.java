@@ -8,7 +8,6 @@ import com.provectus.kafka.ui.model.ConsumerGroupDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupStateDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupTopicPartitionDTO;
-import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalPartition;
@@ -24,7 +23,6 @@ import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,47 +31,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
-import reactor.core.publisher.Mono;
 
 @Log4j2
 public class ClusterUtil {
 
-  private static final String CLUSTER_VERSION_PARAM_KEY = "inter.broker.protocol.version";
-
   private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
-
-  public static <T> Mono<T> toMono(KafkaFuture<T> future) {
-    return Mono.create(sink -> future.whenComplete((res, ex) -> {
-      if (ex != null) {
-        sink.error(ex);
-      } else {
-        sink.success(res);
-      }
-    }));
-  }
-
-  public static Mono<String> toMono(KafkaFuture<Void> future, String topicName) {
-    return Mono.create(sink -> future.whenComplete((res, ex) -> {
-      if (ex != null) {
-        sink.error(ex);
-      } else {
-        sink.success(topicName);
-      }
-    }));
-  }
 
   public static InternalConsumerGroup convertToInternalConsumerGroup(
       ConsumerGroupDescription description, Map<TopicPartition, OffsetAndMetadata> offsets) {
@@ -332,46 +303,6 @@ public class ClusterUtil {
       default:
         throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
     }
-  }
-
-  public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(
-      AdminClient adminClient) {
-    return getClusterVersion(adminClient)
-        .map(ClusterUtil::getSupportedUpdateFeature)
-        .map(Collections::singleton);
-  }
-
-  private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(String version) {
-    try {
-      final String[] parts = version.split("\\.");
-      if (parts.length > 2) {
-        version = parts[0] + "." + parts[1];
-      }
-      return Float.parseFloat(version.split("-")[0]) <= 2.3f
-          ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS :
-          ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
-    } catch (Exception e) {
-      log.error("Conversion clusterVersion {} to float value failed", version);
-      throw e;
-    }
-  }
-
-  public static Mono<String> getClusterVersion(AdminClient adminClient) {
-    return ClusterUtil.toMono(adminClient.describeCluster().controller())
-        .map(Node::id)
-        .map(id -> Collections
-            .singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
-        .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
-        .flatMap(ClusterUtil::toMono)
-        .map(ClusterUtil::getClusterVersion);
-  }
-
-  public static String getClusterVersion(Map<ConfigResource, Config> configs) {
-    return configs.values().stream()
-        .map(Config::entries)
-        .flatMap(Collection::stream)
-        .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
-        .findFirst().map(ConfigEntry::value).orElse("1.0-UNKNOWN");
   }
 
 

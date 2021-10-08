@@ -19,7 +19,6 @@ import com.provectus.kafka.ui.model.ConsumerGroupDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
-import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -310,13 +309,8 @@ public class ClusterService {
   public Mono<Void> deleteConsumerGroupById(String clusterName,
                                             String groupId) {
     return clustersStorage.getClusterByName(clusterName)
-        .map(cluster -> adminClientService.getOrCreateAdminClient(cluster)
-            .map(ExtendedAdminClient::getAdminClient)
-            .flatMap(adminClient ->
-                ClusterUtil.toMono(
-                    adminClient.deleteConsumerGroups(List.of(groupId)).all()
-                )
-            )
+        .map(cluster -> adminClientService.get(cluster)
+            .flatMap(adminClient -> adminClient.deleteConsumerGroups(List.of(groupId)))
             .onErrorResume(this::reThrowCustomException)
         )
         .orElse(Mono.empty());
