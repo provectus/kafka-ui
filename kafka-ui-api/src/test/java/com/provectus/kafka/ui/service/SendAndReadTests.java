@@ -65,6 +65,13 @@ public class SendAndReadTests extends AbstractBaseTest {
           + "}"
   );
 
+  private static final AvroSchema AVRO_SCHEMA_PRIMITIVE_STRING =
+      new AvroSchema("{ \"type\": \"string\" }");
+
+  private static final AvroSchema AVRO_SCHEMA_PRIMITIVE_INT =
+      new AvroSchema("{ \"type\": \"int\" }");
+
+
   private static final String AVRO_SCHEMA_1_JSON_RECORD
       = "{ \"field1\":\"testStr\", \"field2\": 123 }";
 
@@ -184,6 +191,22 @@ public class SendAndReadTests extends AbstractBaseTest {
         .doAssert(polled -> {
           assertThat(polled.getKey()).isEqualTo("testKey");
           assertThat(polled.getContent()).isNull();
+        });
+  }
+
+  @Test
+  void primitiveAvroSchemas() {
+    new SendAndReadSpec()
+        .withKeySchema(AVRO_SCHEMA_PRIMITIVE_STRING)
+        .withValueSchema(AVRO_SCHEMA_PRIMITIVE_INT)
+        .withMsgToSend(
+            new CreateTopicMessage()
+                .key("\"some string\"")
+                .content("123")
+        )
+        .doAssert(polled -> {
+          assertThat(polled.getKey()).isEqualTo("\"some string\"");
+          assertThat(polled.getContent()).isEqualTo("123");
         });
   }
 

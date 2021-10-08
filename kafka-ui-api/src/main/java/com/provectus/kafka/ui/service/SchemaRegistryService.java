@@ -343,8 +343,9 @@ public class SchemaRegistryService {
   private WebClient.RequestBodySpec configuredWebClient(InternalSchemaRegistry schemaRegistry,
                                                         HttpMethod method, String uri,
                                                         Object... params) {
-    return webClient.method(method)
-        .uri(schemaRegistry.getUrl() + uri, params)
+    return webClient
+        .method(method)
+        .uri(schemaRegistry.getFirstUrl() + uri, params)
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
   }
 }

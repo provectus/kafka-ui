@@ -33,6 +33,8 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import java.math.BigDecimal;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -101,7 +103,11 @@ public interface ClusterMapper {
     InternalSchemaRegistry.InternalSchemaRegistryBuilder internalSchemaRegistry =
         InternalSchemaRegistry.builder();
 
-    internalSchemaRegistry.url(clusterProperties.getSchemaRegistry());
+    internalSchemaRegistry.url(
+        clusterProperties.getSchemaRegistry() != null
+            ? Arrays.asList(clusterProperties.getSchemaRegistry().split(","))
+            : Collections.emptyList()
+    );
 
     if (clusterProperties.getSchemaRegistryAuth() != null) {
       internalSchemaRegistry.username(clusterProperties.getSchemaRegistryAuth().getUsername());

@@ -30,7 +30,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.TopicDescription;
@@ -41,7 +41,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 
-@Slf4j
+@Log4j2
 public class ClusterUtil {
 
   private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
@@ -303,6 +303,46 @@ public class ClusterUtil {
       default:
         throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
     }
+  }
+
+  public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(
+      AdminClient adminClient) {
+    return getClusterVersion(adminClient)
+        .map(ClusterUtil::getSupportedUpdateFeature)
+        .map(Collections::singleton);
+  }
+
+  private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(String version) {
+    try {
+      final String[] parts = version.split("\\.");
+      if (parts.length > 2) {
+        version = parts[0] + "." + parts[1];
+      }
+      return Float.parseFloat(version.split("-")[0]) <= 2.3f
+          ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS :
+          ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
+    } catch (Exception e) {
+      log.error("Conversion clusterVersion {} to float value failed", version);
+      throw e;
+    }
+  }
+
+  public static Mono<String> getClusterVersion(AdminClient adminClient) {
+    return ClusterUtil.toMono(adminClient.describeCluster().controller())
+        .map(Node::id)
+        .map(id -> Collections
+            .singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
+        .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
+        .flatMap(ClusterUtil::toMono)
+        .map(ClusterUtil::getClusterVersion);
+  }
+
+  public static String getClusterVersion(Map<ConfigResource, Config> configs) {
+    return configs.values().stream()
+        .map(Config::entries)
+        .flatMap(Collection::stream)
+        .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
+        .findFirst().map(ConfigEntry::value).orElse("1.0-UNKNOWN");
   }
 
 
