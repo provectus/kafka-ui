@@ -476,44 +476,6 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                         </th>
                       </styled.th>
                     </TableHeaderCell>
-                    <TableHeaderCell
-                      title="Type"
-                    >
-                      <styled.th
-                        className=""
-                        title="Type"
-                      >
-                        <th
-                          className="sc-bdfBQB kGzlfS"
-                          title="Type"
-                        >
-                          <span
-                            className="title"
-                          >
-                            Type
-                          </span>
-                        </th>
-                      </styled.th>
-                    </TableHeaderCell>
-                    <TableHeaderCell
-                      title="Clean Up Policy"
-                    >
-                      <styled.th
-                        className=""
-                        title="Clean Up Policy"
-                      >
-                        <th
-                          className="sc-bdfBQB kGzlfS"
-                          title="Clean Up Policy"
-                        >
-                          <span
-                            className="title"
-                          >
-                            Clean Up Policy
-                          </span>
-                        </th>
-                      </styled.th>
-                    </TableHeaderCell>
                     <TableHeaderCell>
                       <styled.th
                         className=""

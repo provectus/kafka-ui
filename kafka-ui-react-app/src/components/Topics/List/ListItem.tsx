@@ -1,5 +1,4 @@
 import React from 'react';
-import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
 import {
   ClusterName,
@@ -12,6 +11,9 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Colors } from 'theme/theme';
+import TagStyled from 'components/common/Tag/Tag.styled';
+
+import VerticalElipsisIcon from './VerticalElipsisIcon';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -23,14 +25,7 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: {
-    name,
-    internal,
-    partitions,
-    segmentSize,
-    replicationFactor,
-    cleanUpPolicy,
-  },
+  topic: { name, internal, partitions, segmentSize, replicationFactor },
   selected,
   toggleTopicSelected,
   deleteTopic,
@@ -73,9 +68,13 @@ const ListItem: React.FC<ListItemProps> = ({
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
   }, [clusterName, name]);
+  const [vElipsisVisble, setVElipsisVisble] = React.useState(false);
 
   return (
-    <tr>
+    <tr
+      onMouseEnter={() => setVElipsisVisble(true)}
+      onMouseLeave={() => setVElipsisVisble(false)}
+    >
       {!isReadOnly && (
         <td>
           {!internal && (
@@ -89,7 +88,8 @@ const ListItem: React.FC<ListItemProps> = ({
           )}
         </td>
       )}
-      <td className="has-text-overflow-ellipsis">
+      <td className="has-text-overflow-ellipsis" style={{ width: '44%' }}>
+        {internal && <TagStyled text="IN" color="gray" />}
         <NavLink
           exact
           to={`topics/${name}`}
@@ -97,6 +97,7 @@ const ListItem: React.FC<ListItemProps> = ({
           style={{
             color: Colors.neutral[90],
             fontWeight: 500,
+            paddingLeft: internal ? '5px' : 0,
           }}
         >
           {name}
@@ -109,26 +110,11 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>
         <BytesFormatted value={segmentSize} />
       </td>
-      <td>
-        <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
-          {internal ? 'Internal' : 'External'}
-        </div>
-      </td>
-      <td>
-        <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
-      </td>
-      <td className="topic-action-block">
-        {!internal && !isReadOnly ? (
+      <td className="topic-action-block" style={{ width: '4%' }}>
+        {!internal && !isReadOnly && vElipsisVisble ? (
           <>
             <div className="has-text-right">
-              <Dropdown
-                label={
-                  <span className="icon">
-                    <i className="fas fa-cog" />
-                  </span>
-                }
-                right
-              >
+              <Dropdown label={<VerticalElipsisIcon />} right>
                 <DropdownItem onClick={clearTopicMessagesHandler}>
                   <span className="has-text-danger">Clear Messages</span>
                 </DropdownItem>

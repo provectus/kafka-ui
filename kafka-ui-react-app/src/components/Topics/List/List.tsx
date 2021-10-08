@@ -227,8 +227,6 @@ const List: React.FC<TopicsListProps> = ({
                 <TableHeaderCell title="Replication Factor" />
                 <TableHeaderCell title="Number of messages" />
                 <TableHeaderCell title="Size" />
-                <TableHeaderCell title="Type" />
-                <TableHeaderCell title="Clean Up Policy" />
                 <TableHeaderCell />
               </tr>
             </thead>
