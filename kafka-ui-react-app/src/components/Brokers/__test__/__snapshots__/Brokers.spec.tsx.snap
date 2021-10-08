@@ -83,6 +83,20 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               "normal": "#73848C",
             },
           },
+          "paginationStyles": Object {
+            "borderColor": Object {
+              "active": "#454F54",
+              "disabled": "#C7CED1",
+              "hover": "#73848C",
+              "normal": "#ABB5BA",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "disabled": "#C7CED1",
+              "hover": "#171A1C",
+              "normal": "#171A1C",
+            },
+          },
           "secondaryTabStyles": Object {
             "backgroundColor": Object {
               "active": "#E3E6E8",
@@ -176,6 +190,22 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
         <div
           className="section"
         >
+          <Styled(PageHeading)
+            text="Brokers"
+          >
+            <PageHeading
+              className="sc-jSgvzq ecKYXV"
+              text="Brokers"
+            >
+              <div
+                className="sc-jSgvzq ecKYXV"
+              >
+                <h1>
+                  Brokers
+                </h1>
+              </div>
+            </PageHeading>
+          </Styled(PageHeading)>
           <div
             className="metrics-box mb-2 is-flex"
           >
@@ -582,6 +612,20 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               "normal": "#73848C",
             },
           },
+          "paginationStyles": Object {
+            "borderColor": Object {
+              "active": "#454F54",
+              "disabled": "#C7CED1",
+              "hover": "#73848C",
+              "normal": "#ABB5BA",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "disabled": "#C7CED1",
+              "hover": "#171A1C",
+              "normal": "#171A1C",
+            },
+          },
           "secondaryTabStyles": Object {
             "backgroundColor": Object {
               "active": "#E3E6E8",
@@ -684,6 +728,22 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
         <div
           className="section"
         >
+          <Styled(PageHeading)
+            text="Brokers"
+          >
+            <PageHeading
+              className="sc-jSgvzq ecKYXV"
+              text="Brokers"
+            >
+              <div
+                className="sc-jSgvzq ecKYXV"
+              >
+                <h1>
+                  Brokers
+                </h1>
+              </div>
+            </PageHeading>
+          </Styled(PageHeading)>
           <div
             className="metrics-box mb-2 is-flex"
           >

@@ -10,6 +10,7 @@ import { useParams } from 'react-router';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import StyledTable from 'components/common/table/Table/Table.styled';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -47,6 +48,7 @@ const Brokers: React.FC<Props> = ({
   return (
     <>
       <div className="section">
+        <PageHeading text="Brokers" />
         <div className="metrics-box mb-2 is-flex">
           <MetricsWrapper title="Uptime">
             <Indicator label="Total Brokers">{brokerCount}</Indicator>

@@ -106,6 +106,20 @@ exports[`App view matches snapshot 1`] = `
                   "normal": "#73848C",
                 },
               },
+              "paginationStyles": Object {
+                "borderColor": Object {
+                  "active": "#454F54",
+                  "disabled": "#C7CED1",
+                  "hover": "#73848C",
+                  "normal": "#ABB5BA",
+                },
+                "color": Object {
+                  "active": "#171A1C",
+                  "disabled": "#C7CED1",
+                  "hover": "#171A1C",
+                  "normal": "#171A1C",
+                },
+              },
               "secondaryTabStyles": Object {
                 "backgroundColor": Object {
                   "active": "#E3E6E8",
@@ -275,7 +289,7 @@ exports[`App view matches snapshot 1`] = `
               />
               <Styled(Breadcrumb)>
                 <Breadcrumb
-                  className="sc-fFucqa hQJpT"
+                  className="sc-bkzYnD hfzGRt"
                 />
               </Styled(Breadcrumb)>
               <Switch>

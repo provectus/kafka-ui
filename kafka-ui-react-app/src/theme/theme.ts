@@ -131,6 +131,20 @@ const theme = {
     },
     color: Colors.neutral[90],
   },
+  paginationStyles: {
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      active: Colors.neutral[70],
+      disabled: Colors.neutral[20],
+    },
+    color: {
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[90],
+      disabled: Colors.neutral[20],
+    },
+  },
 };
 
 export default theme;

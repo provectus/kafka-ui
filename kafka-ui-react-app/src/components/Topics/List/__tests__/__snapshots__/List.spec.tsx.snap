@@ -77,6 +77,20 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               "normal": "#73848C",
             },
           },
+          "paginationStyles": Object {
+            "borderColor": Object {
+              "active": "#454F54",
+              "disabled": "#C7CED1",
+              "hover": "#73848C",
+              "normal": "#ABB5BA",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "disabled": "#C7CED1",
+              "hover": "#171A1C",
+              "normal": "#171A1C",
+            },
+          },
           "secondaryTabStyles": Object {
             "backgroundColor": Object {
               "active": "#E3E6E8",
@@ -162,7 +176,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
       >
         <List
           areTopicsFetching={false}
-          className="sc-pGacB bTemWF"
+          className="sc-jrAFXE gdSAQc"
           clearTopicMessages={[MockFunction]}
           clearTopicsMessages={[MockFunction]}
           deleteTopic={[MockFunction]}
@@ -197,18 +211,18 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
           totalPages={1}
         >
           <div
-            className="sc-pGacB bTemWF section"
+            className="sc-jrAFXE gdSAQc section"
           >
             <div>
               <Styled(PageHeading)
                 text="All Topics"
               >
                 <PageHeading
-                  className="sc-gKseQn ikTGPr"
+                  className="sc-iBPTik bdtxUL"
                   text="All Topics"
                 >
                   <div
-                    className="sc-gKseQn ikTGPr"
+                    className="sc-iBPTik bdtxUL"
                   >
                     <h1>
                       All Topics
@@ -235,7 +249,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                               buttonType="primary"
                             >
                               <button
-                                className="sc-jSgvzq eOOgEN"
+                                className="sc-gKseQn cmcyoH"
                               >
                                 <i
                                   className="fas fa-plus"
@@ -270,7 +284,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                       type="text"
                     >
                       <Input
-                        className="sc-hKgJUU hNtsdb"
+                        className="sc-eCstlR jXyqPy"
                         defaultValue=""
                         inputSize="M"
                         leftIcon="fas fa-search"
@@ -279,7 +293,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                         type="text"
                       >
                         <div
-                          className="sc-hKgJUU hNtsdb"
+                          className="sc-eCstlR jXyqPy"
                         >
                           <styled.i
                             className="fas fa-search"
@@ -287,11 +301,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                             position="left"
                           >
                             <i
-                              className="sc-gsTEea gCPUjb fas fa-search"
+                              className="sc-dlfnuX bDKLEr fas fa-search"
                             />
                           </styled.i>
                           <styled.input
-                            className="sc-hKgJUU hNtsdb"
+                            className="sc-eCstlR jXyqPy"
                             defaultValue=""
                             hasLeftIcon={true}
                             inputSize="M"
@@ -300,7 +314,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                             type="text"
                           >
                             <input
-                              className="sc-dlfnuX bGuKrf sc-hKgJUU hNtsdb"
+                              className="sc-hKgJUU dvfcmk sc-eCstlR jXyqPy"
                               defaultValue=""
                               onChange={[Function]}
                               placeholder="Search by Topic Name"
@@ -336,7 +350,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 isFullwidth={true}
               >
                 <table
-                  className="sc-eCstlR eMabAx"
+                  className="sc-jSgvzq iQDCdx"
                 >
                   <thead>
                     <tr>
@@ -345,7 +359,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           className=""
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                           >
                             <span
                               className="title"
@@ -367,7 +381,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Topic Name"
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                             title="Topic Name"
                           >
                             <span
@@ -403,7 +417,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Total Partitions"
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                             title="Total Partitions"
                           >
                             <span
@@ -439,7 +453,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Out of sync replicas"
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                             title="Out of sync replicas"
                           >
                             <span
@@ -469,7 +483,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Replication Factor"
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                             title="Replication Factor"
                           >
                             <span
@@ -488,7 +502,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Number of messages"
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                             title="Number of messages"
                           >
                             <span
@@ -507,7 +521,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Size"
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                             title="Size"
                           >
                             <span
@@ -523,7 +537,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           className=""
                         >
                           <th
-                            className="sc-bdfBQB kGzlfS"
+                            className="sc-gsTEea kCuAO"
                           >
                             <span
                               className="title"
@@ -547,26 +561,31 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               <Pagination
                 totalPages={1}
               >
-                <nav
+                <styled.nav
                   aria-label="pagination"
-                  className="pagination is-small is-right"
                   role="navigation"
                 >
-                  <button
-                    className="pagination-previous"
-                    disabled={true}
-                    type="button"
+                  <nav
+                    aria-label="pagination"
+                    className="sc-bdfBQB elLjzQ"
+                    role="navigation"
                   >
-                    Previous
-                  </button>
-                  <button
-                    className="pagination-next"
-                    disabled={true}
-                    type="button"
-                  >
-                    Next page
-                  </button>
-                </nav>
+                    <button
+                      className="pagination-btn"
+                      disabled={true}
+                      type="button"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      className="pagination-btn"
+                      disabled={true}
+                      type="button"
+                    >
+                      Next
+                    </button>
+                  </nav>
+                </styled.nav>
               </Pagination>
             </div>
           </div>
