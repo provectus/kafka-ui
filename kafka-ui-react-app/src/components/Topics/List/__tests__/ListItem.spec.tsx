@@ -45,40 +45,6 @@ describe('ListItem', () => {
     </StaticRouter>
   );
 
-  // it('triggers the deleting messages when clicked on the delete messages button', () => {
-  //   const component = mount(setupComponent({ topic: externalTopicPayload }));
-  //   expect(component.exists('.topic-action-block')).toBeTruthy();
-  //   component.simulate('mouseenter');
-  //   console.log(component.debug());
-  //   component.find('.dropdown-item').at(0).simulate('click');
-  //   expect(mockDeleteMessages).toBeCalledTimes(1);
-  //   expect(mockDeleteMessages).toBeCalledWith(
-  //     clusterName,
-  //     externalTopicPayload.name
-  //   );
-  // });
-
-  // it('triggers the deleteTopic when clicked on the delete button', () => {
-  //   const wrapper = mount(setupComponent({ topic: externalTopicPayload }));
-  //   expect(wrapper.exists('.topic-action-block')).toBeTruthy();
-  //   wrapper.find('.dropdown-item').at(1).simulate('click');
-  //   const modal = wrapper.find('mock-ConfirmationModal');
-  //   expect(modal.prop('isOpen')).toBeTruthy();
-  //   modal.simulate('confirm');
-  //   expect(mockDelete).toBeCalledTimes(1);
-  //   expect(mockDelete).toBeCalledWith(clusterName, externalTopicPayload.name);
-  // });
-
-  // it('closes ConfirmationModal when clicked on the cancel button', () => {
-  //   const wrapper = mount(setupComponent({ topic: externalTopicPayload }));
-  //   expect(wrapper.exists('.topic-action-block')).toBeTruthy();
-  //   wrapper.find('.dropdown-item').last().simulate('click');
-  //   expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeTruthy();
-  //   wrapper.find('mock-ConfirmationModal').simulate('cancel');
-  //   expect(mockDelete).toBeCalledTimes(0);
-  //   expect(wrapper.find('mock-ConfirmationModal').prop('isOpen')).toBeFalsy();
-  // });
-
   it('renders without checkbox for internal topic', () => {
     const wrapper = mount(setupComponent());
 
