@@ -273,24 +273,11 @@ exports[`App view matches snapshot 1`] = `
                 onKeyDown={[Function]}
                 tabIndex={-1}
               />
-              <Breadcrumb>
-                <nav
-                  aria-label="breadcrumbs"
-                  className="breadcrumb mb-2 pt-2"
-                >
-                  <ul
-                    className="py-3 px-4 py-3"
-                  >
-                    <li
-                      className="is-active is-size-4 has-text-weight-medium is-capitalized"
-                    >
-                      <span>
-                        Dashboard
-                      </span>
-                    </li>
-                  </ul>
-                </nav>
-              </Breadcrumb>
+              <Styled(Breadcrumb)>
+                <Breadcrumb
+                  className="sc-kstqJO drBOuN"
+                />
+              </Styled(Breadcrumb)>
               <Switch>
                 <Route
                   component={[Function]}
