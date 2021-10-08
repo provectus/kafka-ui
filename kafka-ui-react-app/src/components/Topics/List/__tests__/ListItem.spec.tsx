@@ -1,6 +1,6 @@
 import React from 'react';
 import { StaticRouter } from 'react-router';
-import { shallow, mount } from 'enzyme';
+import { mount } from 'enzyme';
 import {
   externalTopicPayload,
   internalTopicPayload,

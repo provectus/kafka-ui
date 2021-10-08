@@ -3,6 +3,7 @@
 exports[`Search when placeholder is not provided matches the snapshot 1`] = `
 <Styled(Input)
   defaultValue=""
+  inputSize="M"
   leftIcon="fas fa-search"
   onChange={[Function]}
   placeholder="Search"
@@ -13,6 +14,7 @@ exports[`Search when placeholder is not provided matches the snapshot 1`] = `
 exports[`Search when placeholder is provided matches the snapshot 1`] = `
 <Styled(Input)
   defaultValue=""
+  inputSize="M"
   leftIcon="fas fa-search"
   onChange={[Function]}
   placeholder="Search bt the Topic name"

@@ -275,7 +275,7 @@ exports[`App view matches snapshot 1`] = `
               />
               <Styled(Breadcrumb)>
                 <Breadcrumb
-                  className="sc-kstqJO drBOuN"
+                  className="sc-fFucqa hQJpT"
                 />
               </Styled(Breadcrumb)>
               <Switch>
