@@ -305,46 +305,6 @@ public class ClusterUtil {
     }
   }
 
-  public static Mono<Set<ExtendedAdminClient.SupportedFeature>> getSupportedFeatures(
-      AdminClient adminClient) {
-    return getClusterVersion(adminClient)
-        .map(ClusterUtil::getSupportedUpdateFeature)
-        .map(Collections::singleton);
-  }
-
-  private static ExtendedAdminClient.SupportedFeature getSupportedUpdateFeature(String version) {
-    try {
-      final String[] parts = version.split("\\.");
-      if (parts.length > 2) {
-        version = parts[0] + "." + parts[1];
-      }
-      return Float.parseFloat(version.split("-")[0]) <= 2.3f
-          ? ExtendedAdminClient.SupportedFeature.ALTER_CONFIGS :
-          ExtendedAdminClient.SupportedFeature.INCREMENTAL_ALTER_CONFIGS;
-    } catch (Exception e) {
-      log.error("Conversion clusterVersion {} to float value failed", version);
-      throw e;
-    }
-  }
-
-  public static Mono<String> getClusterVersion(AdminClient adminClient) {
-    return ClusterUtil.toMono(adminClient.describeCluster().controller())
-        .map(Node::id)
-        .map(id -> Collections
-            .singletonList(new ConfigResource(ConfigResource.Type.BROKER, id.toString())))
-        .map(brokerCR -> adminClient.describeConfigs(brokerCR).all())
-        .flatMap(ClusterUtil::toMono)
-        .map(ClusterUtil::getClusterVersion);
-  }
-
-  public static String getClusterVersion(Map<ConfigResource, Config> configs) {
-    return configs.values().stream()
-        .map(Config::entries)
-        .flatMap(Collection::stream)
-        .filter(entry -> entry.name().contains(CLUSTER_VERSION_PARAM_KEY))
-        .findFirst().map(ConfigEntry::value).orElse("1.0-UNKNOWN");
-  }
-
 
   public static <T, R> Map<T, R> toSingleMap(Stream<Map<T, R>> streamOfMaps) {
     return streamOfMaps

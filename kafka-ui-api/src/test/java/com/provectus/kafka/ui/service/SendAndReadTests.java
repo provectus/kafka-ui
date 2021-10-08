@@ -200,7 +200,7 @@ public class SendAndReadTests extends AbstractBaseTest {
         .withKeySchema(AVRO_SCHEMA_PRIMITIVE_STRING)
         .withValueSchema(AVRO_SCHEMA_PRIMITIVE_INT)
         .withMsgToSend(
-            new CreateTopicMessage()
+            new CreateTopicMessageDTO()
                 .key("\"some string\"")
                 .content("123")
         )
