@@ -19,9 +19,9 @@ import { PER_PAGE } from 'lib/constants';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { styled } from 'lib/themedStyles';
 
 import ListItem from './ListItem';
+import { ListWrapper } from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -40,7 +40,6 @@ export interface TopicsListProps {
   orderBy: TopicColumnsToSort | null;
   setTopicsSearch(search: string): void;
   setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
-  className?: string;
 }
 
 const List: React.FC<TopicsListProps> = ({
@@ -56,7 +55,6 @@ const List: React.FC<TopicsListProps> = ({
   orderBy,
   setTopicsSearch,
   setTopicsOrderBy,
-  className,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
@@ -128,7 +126,7 @@ const List: React.FC<TopicsListProps> = ({
   }, [clusterName, selectedTopics]);
 
   return (
-    <div className={`${className} section`}>
+    <ListWrapper className="section">
       <div>
         <PageHeading text="All Topics">
           {!isReadOnly && (
@@ -254,20 +252,8 @@ const List: React.FC<TopicsListProps> = ({
           <Pagination totalPages={totalPages} />
         </div>
       )}
-    </div>
+    </ListWrapper>
   );
 };
 
-export default styled(List)`
-  & .control-panel {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    margin: 8px 0px;
-    width: 100%;
-    gap: 16px;
-    & .topics-search {
-      width: 38%;
-    }
-  }
-`;
+export default List;

@@ -139,7 +139,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
         }
       }
     >
-      <Styled(List)
+      <List
         areTopicsFetching={false}
         clearTopicMessages={[MockFunction]}
         clearTopicsMessages={[MockFunction]}
@@ -174,41 +174,8 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
         topics={Array []}
         totalPages={1}
       >
-        <List
-          areTopicsFetching={false}
-          className="sc-jrAFXE gdSAQc"
-          clearTopicMessages={[MockFunction]}
-          clearTopicsMessages={[MockFunction]}
-          deleteTopic={[MockFunction]}
-          deleteTopics={[MockFunction]}
-          fetchTopicsList={
-            [MockFunction] {
-              "calls": Array [
-                Array [
-                  Object {
-                    "clusterName": undefined,
-                    "orderBy": undefined,
-                    "page": undefined,
-                    "perPage": undefined,
-                    "search": "",
-                    "showInternal": true,
-                  },
-                ],
-              ],
-              "results": Array [
-                Object {
-                  "type": "return",
-                  "value": undefined,
-                },
-              ],
-            }
-          }
-          orderBy={null}
-          search=""
-          setTopicsOrderBy={[MockFunction]}
-          setTopicsSearch={[MockFunction]}
-          topics={Array []}
-          totalPages={1}
+        <styled.div
+          className="section"
         >
           <div
             className="sc-jrAFXE gdSAQc section"
@@ -589,8 +556,8 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               </Pagination>
             </div>
           </div>
-        </List>
-      </Styled(List)>
+        </styled.div>
+      </List>
     </Component>
   </Router>
 </StaticRouter>

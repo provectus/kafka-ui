@@ -3,8 +3,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import cn from 'classnames';
 import { clusterPath } from 'lib/paths';
 import { capitalize } from 'lodash';
-import { styled } from 'lib/themedStyles';
-import { Colors } from 'theme/theme';
+
+import { BreadcrumbWrapper } from './Breadcrumb.styled';
 
 export interface BreadcrumbItem {
   label: string;
@@ -13,12 +13,11 @@ export interface BreadcrumbItem {
 
 interface Props {
   links?: BreadcrumbItem[];
-  className?: string;
 }
 
 const basePathEntriesLength = clusterPath(':clusterName').split('/').length;
 
-const Breadcrumb: React.FC<Props> = ({ className }) => {
+const Breadcrumb: React.FC<Props> = () => {
   const location = useLocation();
   const params = useParams();
   const pathParams = React.useMemo(() => Object.values(params), [params]);
@@ -50,7 +49,7 @@ const Breadcrumb: React.FC<Props> = ({ className }) => {
     return <></>;
   }
   return (
-    <ul className={className}>
+    <BreadcrumbWrapper>
       {links.slice(0, links.length - 1).map((link, index) => (
         <li key={link}>
           <Link to={getPathPredicate(index)}>{link}</Link>
@@ -63,20 +62,8 @@ const Breadcrumb: React.FC<Props> = ({ className }) => {
       >
         <span>{currentLink}</span>
       </li>
-    </ul>
+    </BreadcrumbWrapper>
   );
 };
 
-export default styled(Breadcrumb)`
-  display: flex;
-  padding-left: 16px;
-  padding-top: 1em;
-
-  font-size: 12px;
-
-  & li:not(:last-child)::after {
-    content: '/';
-    color: ${Colors.neutral[30]};
-    margin: 0 8px;
-  }
-`;
+export default Breadcrumb;

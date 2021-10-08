@@ -287,11 +287,7 @@ exports[`App view matches snapshot 1`] = `
                 onKeyDown={[Function]}
                 tabIndex={-1}
               />
-              <Styled(Breadcrumb)>
-                <Breadcrumb
-                  className="sc-bkzYnD hfzGRt"
-                />
-              </Styled(Breadcrumb)>
+              <Breadcrumb />
               <Switch>
                 <Route
                   component={[Function]}
