@@ -3,6 +3,8 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import cn from 'classnames';
 import { clusterPath } from 'lib/paths';
 import { capitalize } from 'lodash';
+import { styled } from 'lib/themedStyles';
+import { Colors } from 'theme/theme';
 
 export interface BreadcrumbItem {
   label: string;
@@ -11,11 +13,12 @@ export interface BreadcrumbItem {
 
 interface Props {
   links?: BreadcrumbItem[];
+  className?: string;
 }
 
 const basePathEntriesLength = clusterPath(':clusterName').split('/').length;
 
-const Breadcrumb: React.FC<Props> = () => {
+const Breadcrumb: React.FC<Props> = ({ className }) => {
   const location = useLocation();
   const params = useParams();
   const pathParams = React.useMemo(() => Object.values(params), [params]);
@@ -43,24 +46,37 @@ const Breadcrumb: React.FC<Props> = () => {
     [paths]
   );
 
+  if (links.length < 2) {
+    return <></>;
+  }
   return (
-    <nav className="breadcrumb mb-2 pt-2" aria-label="breadcrumbs">
-      <ul className={cn('py-3', 'px-4', { 'py-3': !links.length })}>
-        {links.slice(0, links.length - 1).map((link, index) => (
-          <li key={link}>
-            <Link to={getPathPredicate(index)}>{link}</Link>
-          </li>
-        ))}
-        <li
-          className={cn('is-active', {
-            'is-size-4 has-text-weight-medium is-capitalized': links.length < 2,
-          })}
-        >
-          <span>{currentLink}</span>
+    <ul className={className}>
+      {links.slice(0, links.length - 1).map((link, index) => (
+        <li key={link}>
+          <Link to={getPathPredicate(index)}>{link}</Link>
         </li>
-      </ul>
-    </nav>
+      ))}
+      <li
+        className={cn('is-active', {
+          'is-size-4 has-text-weight-medium is-capitalized': links.length < 2,
+        })}
+      >
+        <span>{currentLink}</span>
+      </li>
+    </ul>
   );
 };
 
-export default Breadcrumb;
+export default styled(Breadcrumb)`
+  display: flex;
+  padding-left: 16px;
+  padding-top: 1em;
+
+  font-size: 12px;
+
+  & li:not(:last-child)::after {
+    content: '/';
+    color: ${Colors.neutral[30]};
+    margin: 0 8px;
+  }
+`;
