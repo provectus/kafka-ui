@@ -18,6 +18,8 @@ import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import { Button } from 'components/common/Button/Button';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { styled } from 'lib/themedStyles';
 
 import ListItem from './ListItem';
 
@@ -38,6 +40,7 @@ export interface TopicsListProps {
   orderBy: TopicColumnsToSort | null;
   setTopicsSearch(search: string): void;
   setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
+  className?: string;
 }
 
 const List: React.FC<TopicsListProps> = ({
@@ -53,6 +56,7 @@ const List: React.FC<TopicsListProps> = ({
   orderBy,
   setTopicsSearch,
   setTopicsOrderBy,
+  className,
 }) => {
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
@@ -124,47 +128,45 @@ const List: React.FC<TopicsListProps> = ({
   }, [clusterName, selectedTopics]);
 
   return (
-    <div className="section">
-      <div className="box">
-        <div className="columns">
-          <div className="column is-one-quarter is-align-items-center is-flex">
-            <div className="field">
-              <input
-                id="switchRoundedDefault"
-                type="checkbox"
-                name="switchRoundedDefault"
-                className="switch is-rounded"
-                checked={showInternal}
-                onChange={handleSwitch}
-              />
-              <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
-            </div>
-          </div>
-          <div className="column">
+    <div className={`${className} section`}>
+      <div>
+        <PageHeading text="All Topics">
+          {!isReadOnly && (
+            <Button
+              buttonType="primary"
+              buttonSize="M"
+              isLink
+              to={clusterTopicNewPath(clusterName)}
+            >
+              <i className="fas fa-plus" /> Add a Topic
+            </Button>
+          )}
+        </PageHeading>
+        <div className="control-panel">
+          <div className="topics-search">
             <Search
               handleSearch={setTopicsSearch}
               placeholder="Search by Topic Name"
               value={search}
             />
           </div>
-          <div className="column is-2 is-justify-content-flex-end is-flex">
-            {!isReadOnly && (
-              <Button
-                buttonType="primary"
-                buttonSize="L"
-                isLink
-                to={clusterTopicNewPath(clusterName)}
-              >
-                <i className="fas fa-plus" /> Add a Topic
-              </Button>
-            )}
+          <div className="internal-topics-switch">
+            <input
+              id="switchRoundedDefault"
+              type="checkbox"
+              name="switchRoundedDefault"
+              className="switch is-rounded"
+              checked={showInternal}
+              onChange={handleSwitch}
+            />
+            <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
           </div>
         </div>
       </div>
       {areTopicsFetching ? (
         <PageLoader />
       ) : (
-        <div className="box">
+        <div>
           {selectedTopics.size > 0 && (
             <>
               <div className="buttons">
@@ -227,8 +229,6 @@ const List: React.FC<TopicsListProps> = ({
                 <TableHeaderCell title="Replication Factor" />
                 <TableHeaderCell title="Number of messages" />
                 <TableHeaderCell title="Size" />
-                <TableHeaderCell title="Type" />
-                <TableHeaderCell title="Clean Up Policy" />
                 <TableHeaderCell />
               </tr>
             </thead>
@@ -258,4 +258,16 @@ const List: React.FC<TopicsListProps> = ({
   );
 };
 
-export default List;
+export default styled(List)`
+  & .control-panel {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    margin: 8px 0px;
+    width: 100%;
+    gap: 16px;
+    & .topics-search {
+      width: 38%;
+    }
+  }
+`;

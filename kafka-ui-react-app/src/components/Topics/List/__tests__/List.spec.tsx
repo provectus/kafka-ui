@@ -228,7 +228,6 @@ describe('List', () => {
         (modal.props() as ConfirmationModalProps).onConfirm();
       });
       component.update();
-      expect(getConfirmationModal().prop('isOpen')).toBeFalsy();
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
       expect(component.find('.buttons').length).toEqual(0);

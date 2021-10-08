@@ -15,8 +15,6 @@ const StyledButton = styled.button<ButtonProps>`
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  margin-right: 0.5rem;
-  margin-bottom: 0.5rem;
 
   background: ${(props) =>
     props.isInverted

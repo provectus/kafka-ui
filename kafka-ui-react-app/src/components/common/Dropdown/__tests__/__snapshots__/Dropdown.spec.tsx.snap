@@ -12,15 +12,24 @@ exports[`Dropdown matches snapshot 1`] = `
     <div
       className="dropdown-trigger"
     >
-      <button
-        aria-controls="dropdown-menu"
-        aria-haspopup="true"
-        className="button is-small is-link"
+      <Styled(DropdownTrigger)
         onClick={[Function]}
-        type="button"
       >
-        My Test Label
-      </button>
+        <DropdownTrigger
+          className="sc-bdfBQB fjFNAo"
+          onClick={[Function]}
+        >
+          <button
+            aria-controls="dropdown-menu"
+            aria-haspopup="true"
+            className="sc-bdfBQB fjFNAo"
+            onClick={[Function]}
+            type="button"
+          >
+            My Test Label
+          </button>
+        </DropdownTrigger>
+      </Styled(DropdownTrigger)>
     </div>
     <div
       className="dropdown-menu"

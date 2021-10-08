@@ -173,21 +173,30 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                       <div
                         className="dropdown-trigger"
                       >
-                        <button
-                          aria-controls="dropdown-menu"
-                          aria-haspopup="true"
-                          className="button is-small is-link"
+                        <Styled(DropdownTrigger)
                           onClick={[Function]}
-                          type="button"
                         >
-                          <span
-                            className="icon"
+                          <DropdownTrigger
+                            className="sc-bdfBQB fjFNAo"
+                            onClick={[Function]}
                           >
-                            <i
-                              className="fas fa-cog"
-                            />
-                          </span>
-                        </button>
+                            <button
+                              aria-controls="dropdown-menu"
+                              aria-haspopup="true"
+                              className="sc-bdfBQB fjFNAo"
+                              onClick={[Function]}
+                              type="button"
+                            >
+                              <span
+                                className="icon"
+                              >
+                                <i
+                                  className="fas fa-cog"
+                                />
+                              </span>
+                            </button>
+                          </DropdownTrigger>
+                        </Styled(DropdownTrigger)>
                       </div>
                       <div
                         className="dropdown-menu"
