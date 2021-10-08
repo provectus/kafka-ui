@@ -5,9 +5,9 @@ import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.SeekDirection;
-import com.provectus.kafka.ui.model.TopicMessage;
-import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
+import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
@@ -43,17 +43,17 @@ public class ConsumingService {
   private final DeserializationService deserializationService;
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  public Flux<TopicMessageEvent> loadMessages(KafkaCluster cluster, String topic,
+  public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                               ConsumerPosition consumerPosition, String query,
                                               Integer limit) {
     int recordsLimit = Optional.ofNullable(limit)
         .map(s -> Math.min(s, MAX_RECORD_LIMIT))
         .orElse(DEFAULT_RECORD_LIMIT);
 
-    java.util.function.Consumer<? super FluxSink<TopicMessageEvent>> emitter;
+    java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     RecordSerDe recordDeserializer =
         deserializationService.getRecordDeserializerForCluster(cluster);
-    if (consumerPosition.getSeekDirection().equals(SeekDirection.FORWARD)) {
+    if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.FORWARD)) {
       emitter = new ForwardRecordEmitter(
           () -> kafkaService.createConsumer(cluster),
           new OffsetsSeekForward(topic, consumerPosition),
@@ -104,14 +104,14 @@ public class ConsumingService {
         .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
-  private boolean filterTopicMessage(TopicMessageEvent message, String query) {
+  private boolean filterTopicMessage(TopicMessageEventDTO message, String query) {
     log.info("filter");
     if (StringUtils.isEmpty(query)
-        || !message.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE)) {
+        || !message.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE)) {
       return true;
     }
 
-    final TopicMessage msg = message.getMessage();
+    final TopicMessageDTO msg = message.getMessage();
     return (!StringUtils.isEmpty(msg.getKey()) && msg.getKey().contains(query))
         || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
   }

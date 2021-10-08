@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.exception;
 
 import com.google.common.collect.Sets;
-import com.provectus.kafka.ui.model.ErrorResponse;
+import com.provectus.kafka.ui.model.ErrorResponseDTO;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -69,7 +69,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
   }
 
   private Mono<ServerResponse> renderDefault(Throwable throwable, ServerRequest request) {
-    var response = new ErrorResponse()
+    var response = new ErrorResponseDTO()
         .code(ErrorCode.UNEXPECTED.code())
         .message(coalesce(throwable.getMessage(), "Unexpected internal error"))
         .requestId(requestId(request))
@@ -82,7 +82,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
   private Mono<ServerResponse> render(CustomBaseException baseException, ServerRequest request) {
     ErrorCode errorCode = baseException.getErrorCode();
-    var response = new ErrorResponse()
+    var response = new ErrorResponseDTO()
         .code(errorCode.code())
         .message(coalesce(baseException.getMessage(), "Internal error"))
         .requestId(requestId(request))
@@ -100,7 +100,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
     var fieldsErrors = fieldErrorsMap.entrySet().stream()
         .map(e -> {
-          var err = new com.provectus.kafka.ui.model.FieldError();
+          var err = new com.provectus.kafka.ui.model.FieldErrorDTO();
           err.setFieldName(e.getKey());
           err.setRestrictions(List.copyOf(e.getValue()));
           return err;
@@ -110,7 +110,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         ? exception.getMessage()
         : "Fields validation failure";
 
-    var response = new ErrorResponse()
+    var response = new ErrorResponseDTO()
         .code(ErrorCode.BINDING_FAIL.code())
         .message(message)
         .requestId(requestId(request))
@@ -124,7 +124,7 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
 
   private Mono<ServerResponse> render(ResponseStatusException exception, ServerRequest request) {
     String msg = coalesce(exception.getReason(), exception.getMessage(), "Server error");
-    var response = new ErrorResponse()
+    var response = new ErrorResponseDTO()
         .code(ErrorCode.UNEXPECTED.code())
         .message(msg)
         .requestId(requestId(request))

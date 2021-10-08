@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.KsqlApi;
-import com.provectus.kafka.ui.model.KsqlCommand;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
+import com.provectus.kafka.ui.model.KsqlCommandDTO;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.service.KsqlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -18,8 +18,9 @@ public class KsqlController implements KsqlApi {
   private final KsqlService ksqlService;
 
   @Override
-  public Mono<ResponseEntity<KsqlCommandResponse>> executeKsqlCommand(String clusterName,
-                                                                      Mono<KsqlCommand> ksqlCommand,
+  public Mono<ResponseEntity<KsqlCommandResponseDTO>> executeKsqlCommand(String clusterName,
+                                                                      Mono<KsqlCommandDTO>
+                                                                          ksqlCommand,
                                                                       ServerWebExchange exchange) {
     return ksqlService.executeKsqlCommand(clusterName, ksqlCommand).map(ResponseEntity::ok);
   }

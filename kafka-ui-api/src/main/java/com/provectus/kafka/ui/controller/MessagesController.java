@@ -2,11 +2,11 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.CreateTopicMessage;
-import com.provectus.kafka.ui.model.SeekDirection;
-import com.provectus.kafka.ui.model.SeekType;
-import com.provectus.kafka.ui.model.TopicMessageEvent;
-import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
+import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.Collections;
 import java.util.List;
@@ -41,9 +41,9 @@ public class MessagesController implements MessagesApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<TopicMessageEvent>>> getTopicMessages(
-      String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo,
-      @Valid Integer limit, @Valid String q, @Valid SeekDirection seekDirection,
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(
+      String clusterName, String topicName, @Valid SeekTypeDTO seekType, @Valid List<String> seekTo,
+      @Valid Integer limit, @Valid String q, @Valid SeekDirectionDTO seekDirection,
       ServerWebExchange exchange) {
     return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
         .map(position ->
@@ -54,7 +54,7 @@ public class MessagesController implements MessagesApi {
   }
 
   @Override
-  public Mono<ResponseEntity<TopicMessageSchema>> getTopicSchema(
+  public Mono<ResponseEntity<TopicMessageSchemaDTO>> getTopicSchema(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return Mono.just(clusterService.getTopicSchema(clusterName, topicName))
         .map(ResponseEntity::ok);
@@ -62,7 +62,7 @@ public class MessagesController implements MessagesApi {
 
   @Override
   public Mono<ResponseEntity<Void>> sendTopicMessages(
-      String clusterName, String topicName, @Valid Mono<CreateTopicMessage> createTopicMessage,
+      String clusterName, String topicName, @Valid Mono<CreateTopicMessageDTO> createTopicMessage,
       ServerWebExchange exchange) {
     return createTopicMessage.flatMap(msg ->
         clusterService.sendMessage(clusterName, topicName, msg)
@@ -71,7 +71,8 @@ public class MessagesController implements MessagesApi {
 
 
   private Mono<ConsumerPosition> parseConsumerPosition(
-      String topicName, SeekType seekType, List<String> seekTo,  SeekDirection seekDirection) {
+      String topicName, SeekTypeDTO seekType, List<String> seekTo,
+      SeekDirectionDTO seekDirection) {
     return Mono.justOrEmpty(seekTo)
         .defaultIfEmpty(Collections.emptyList())
         .flatMapIterable(Function.identity())
@@ -88,7 +89,7 @@ public class MessagesController implements MessagesApi {
           );
         })
         .collectMap(Pair::getKey, Pair::getValue)
-        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING,
+        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekTypeDTO.BEGINNING,
             positions, seekDirection));
   }
 

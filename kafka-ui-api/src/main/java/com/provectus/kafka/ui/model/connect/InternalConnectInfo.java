@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.model.connect;
 
-import com.provectus.kafka.ui.model.Connector;
-import com.provectus.kafka.ui.model.Task;
+import com.provectus.kafka.ui.model.ConnectorDTO;
+import com.provectus.kafka.ui.model.TaskDTO;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -10,8 +10,8 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class InternalConnectInfo {
-  private final Connector connector;
+  private final ConnectorDTO connector;
   private final Map<String, Object> config;
-  private final List<Task> tasks;
+  private final List<TaskDTO> tasks;
   private final List<String> topics;
 }

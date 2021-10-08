@@ -11,8 +11,8 @@ import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.KsqlDbNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.KsqlCommand;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
+import com.provectus.kafka.ui.model.KsqlCommandDTO;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import com.provectus.kafka.ui.strategy.ksql.statement.DescribeStrategy;
 import com.provectus.kafka.ui.strategy.ksql.statement.ShowStrategy;
@@ -53,7 +53,7 @@ class KsqlServiceTest {
   @Test
   void shouldThrowClusterNotFoundExceptionOnExecuteKsqlCommand() {
     String clusterName = "test";
-    KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
+    KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("show streams;");
     when(clustersStorage.getClusterByName(clusterName)).thenReturn(Optional.ofNullable(null));
 
     StepVerifier.create(ksqlService.executeKsqlCommand(clusterName, Mono.just(command)))
@@ -63,7 +63,7 @@ class KsqlServiceTest {
   @Test
   void shouldThrowKsqlDbNotFoundExceptionOnExecuteKsqlCommand() {
     String clusterName = "test";
-    KsqlCommand command = (new KsqlCommand()).ksql("show streams;");
+    KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("show streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
     when(clustersStorage.getClusterByName(clusterName))
         .thenReturn(Optional.ofNullable(kafkaCluster));
@@ -76,8 +76,8 @@ class KsqlServiceTest {
   @Test
   void shouldThrowUnprocessableEntityExceptionOnExecuteKsqlCommand() {
     String clusterName = "test";
-    KsqlCommand command =
-        (new KsqlCommand()).ksql("CREATE STREAM users WITH (KAFKA_TOPIC='users');");
+    KsqlCommandDTO command =
+        (new KsqlCommandDTO()).ksql("CREATE STREAM users WITH (KAFKA_TOPIC='users');");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
     when(clustersStorage.getClusterByName(clusterName))
         .thenReturn(Optional.ofNullable(kafkaCluster));
@@ -94,13 +94,13 @@ class KsqlServiceTest {
   void shouldSetHostToStrategy() {
     String clusterName = "test";
     String host = "localhost:8088";
-    KsqlCommand command = (new KsqlCommand()).ksql("describe streams;");
+    KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
 
     when(clustersStorage.getClusterByName(clusterName))
         .thenReturn(Optional.ofNullable(kafkaCluster));
     when(kafkaCluster.getKsqldbServer()).thenReturn(host);
-    when(ksqlClient.execute(any())).thenReturn(Mono.just(new KsqlCommandResponse()));
+    when(ksqlClient.execute(any())).thenReturn(Mono.just(new KsqlCommandResponseDTO()));
 
     ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
     assertThat(alternativeStrategy.getUri()).isEqualTo(host + "/ksql");
@@ -109,16 +109,16 @@ class KsqlServiceTest {
   @Test
   void shouldCallClientAndReturnResponse() {
     String clusterName = "test";
-    KsqlCommand command = (new KsqlCommand()).ksql("describe streams;");
+    KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
-    KsqlCommandResponse response = new KsqlCommandResponse().message("success");
+    KsqlCommandResponseDTO response = new KsqlCommandResponseDTO().message("success");
 
     when(clustersStorage.getClusterByName(clusterName))
         .thenReturn(Optional.ofNullable(kafkaCluster));
     when(kafkaCluster.getKsqldbServer()).thenReturn("host");
     when(ksqlClient.execute(any())).thenReturn(Mono.just(response));
 
-    KsqlCommandResponse receivedResponse =
+    KsqlCommandResponseDTO receivedResponse =
         ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
     verify(ksqlClient, times(1)).execute(alternativeStrategy);
     assertThat(receivedResponse).isEqualTo(response);

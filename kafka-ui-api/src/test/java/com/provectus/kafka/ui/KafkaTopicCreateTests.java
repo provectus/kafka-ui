@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.model.TopicCreation;
+import com.provectus.kafka.ui.model.TopicCreationDTO;
 import java.util.UUID;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,11 +16,11 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 public class KafkaTopicCreateTests extends AbstractBaseTest {
   @Autowired
   private WebTestClient webTestClient;
-  private TopicCreation topicCreation;
+  private TopicCreationDTO topicCreation;
 
   @BeforeEach
   public void setUpBefore() {
-    this.topicCreation = new TopicCreation()
+    this.topicCreation = new TopicCreationDTO()
         .replicationFactor(1)
         .partitions(3)
         .name(UUID.randomUUID().toString());
@@ -38,7 +38,7 @@ public class KafkaTopicCreateTests extends AbstractBaseTest {
 
   @Test
   void shouldReturn400IfTopicAlreadyExists() {
-    TopicCreation topicCreation = new TopicCreation()
+    TopicCreationDTO topicCreation = new TopicCreationDTO()
         .replicationFactor(1)
         .partitions(3)
         .name(UUID.randomUUID().toString());

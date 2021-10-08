@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.emitter;
 
-import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import java.util.Collections;
@@ -23,7 +23,7 @@ import reactor.core.publisher.FluxSink;
 @Log4j2
 public class BackwardRecordEmitter
     extends AbstractEmitter
-    implements java.util.function.Consumer<FluxSink<TopicMessageEvent>> {
+    implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
 
   private final Function<Map<String, Object>, KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final OffsetsSeekBackward offsetsSeek;
@@ -38,7 +38,7 @@ public class BackwardRecordEmitter
   }
 
   @Override
-  public void accept(FluxSink<TopicMessageEvent> sink) {
+  public void accept(FluxSink<TopicMessageEventDTO> sink) {
     try (KafkaConsumer<Bytes, Bytes> configConsumer = consumerSupplier.apply(Map.of())) {
       final List<TopicPartition> requestedPartitions =
           offsetsSeek.getRequestedPartitions(configConsumer);

@@ -3,11 +3,11 @@ package com.provectus.kafka.ui.util;
 import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
 import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
-import com.provectus.kafka.ui.model.Broker;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ConsumerGroupDetails;
-import com.provectus.kafka.ui.model.ConsumerGroupState;
-import com.provectus.kafka.ui.model.ConsumerGroupTopicPartition;
+import com.provectus.kafka.ui.model.BrokerDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupStateDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupTopicPartitionDTO;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
@@ -15,9 +15,9 @@ import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
-import com.provectus.kafka.ui.model.MessageFormat;
-import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.TopicMessage;
+import com.provectus.kafka.ui.model.MessageFormatDTO;
+import com.provectus.kafka.ui.model.ServerStatusDTO;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import java.time.Instant;
 import java.time.OffsetDateTime;
@@ -47,7 +47,6 @@ import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
 
 @Log4j2
 public class ClusterUtil {
@@ -102,11 +101,11 @@ public class ClusterUtil {
     return builder.build();
   }
 
-  public static ConsumerGroup convertToConsumerGroup(InternalConsumerGroup c) {
-    return convertToConsumerGroup(c, new ConsumerGroup());
+  public static ConsumerGroupDTO convertToConsumerGroup(InternalConsumerGroup c) {
+    return convertToConsumerGroup(c, new ConsumerGroupDTO());
   }
 
-  public static <T extends ConsumerGroup> T convertToConsumerGroup(
+  public static <T extends ConsumerGroupDTO> T convertToConsumerGroup(
       InternalConsumerGroup c, T consumerGroup) {
     consumerGroup.setGroupId(c.getGroupId());
     consumerGroup.setMembers(c.getMembers().size());
@@ -138,12 +137,12 @@ public class ClusterUtil {
     return consumerGroup;
   }
 
-  public static ConsumerGroupDetails convertToConsumerGroupDetails(InternalConsumerGroup g) {
-    final ConsumerGroupDetails details = convertToConsumerGroup(g, new ConsumerGroupDetails());
-    Map<TopicPartition, ConsumerGroupTopicPartition> partitionMap = new HashMap<>();
+  public static ConsumerGroupDetailsDTO convertToConsumerGroupDetails(InternalConsumerGroup g) {
+    ConsumerGroupDetailsDTO details = convertToConsumerGroup(g, new ConsumerGroupDetailsDTO());
+    Map<TopicPartition, ConsumerGroupTopicPartitionDTO> partitionMap = new HashMap<>();
 
     for (Map.Entry<TopicPartition, OffsetAndMetadata> entry : g.getOffsets().entrySet()) {
-      ConsumerGroupTopicPartition partition = new ConsumerGroupTopicPartition();
+      ConsumerGroupTopicPartitionDTO partition = new ConsumerGroupTopicPartitionDTO();
       partition.setTopic(entry.getKey().topic());
       partition.setPartition(entry.getKey().partition());
       partition.setCurrentOffset(entry.getValue().offset());
@@ -162,8 +161,9 @@ public class ClusterUtil {
 
     for (InternalConsumerGroup.InternalMember member : g.getMembers()) {
       for (TopicPartition topicPartition : member.getAssignment()) {
-        final ConsumerGroupTopicPartition partition = partitionMap.computeIfAbsent(topicPartition,
-            (tp) -> new ConsumerGroupTopicPartition()
+        final ConsumerGroupTopicPartitionDTO partition = partitionMap.computeIfAbsent(
+            topicPartition,
+            (tp) -> new ConsumerGroupTopicPartitionDTO()
                 .topic(tp.topic())
                 .partition(tp.partition())
         );
@@ -176,19 +176,19 @@ public class ClusterUtil {
     return details;
   }
 
-  private static Broker mapCoordinator(Node node) {
-    return new Broker().host(node.host()).id(node.id());
+  private static BrokerDTO mapCoordinator(Node node) {
+    return new BrokerDTO().host(node.host()).id(node.id());
   }
 
-  private static ConsumerGroupState mapConsumerGroupState(
+  private static ConsumerGroupStateDTO mapConsumerGroupState(
       org.apache.kafka.common.ConsumerGroupState state) {
     switch (state) {
-      case DEAD: return ConsumerGroupState.DEAD;
-      case EMPTY: return ConsumerGroupState.EMPTY;
-      case STABLE: return ConsumerGroupState.STABLE;
-      case PREPARING_REBALANCE: return ConsumerGroupState.PREPARING_REBALANCE;
-      case COMPLETING_REBALANCE: return ConsumerGroupState.COMPLETING_REBALANCE;
-      default: return ConsumerGroupState.UNKNOWN;
+      case DEAD: return ConsumerGroupStateDTO.DEAD;
+      case EMPTY: return ConsumerGroupStateDTO.EMPTY;
+      case STABLE: return ConsumerGroupStateDTO.STABLE;
+      case PREPARING_REBALANCE: return ConsumerGroupStateDTO.PREPARING_REBALANCE;
+      case COMPLETING_REBALANCE: return ConsumerGroupStateDTO.COMPLETING_REBALANCE;
+      default: return ConsumerGroupStateDTO.UNKNOWN;
     }
   }
 
@@ -275,12 +275,12 @@ public class ClusterUtil {
     return topic.build();
   }
 
-  public static int convertToIntServerStatus(ServerStatus serverStatus) {
-    return serverStatus.equals(ServerStatus.ONLINE) ? 1 : 0;
+  public static int convertToIntServerStatus(ServerStatusDTO serverStatus) {
+    return serverStatus.equals(ServerStatusDTO.ONLINE) ? 1 : 0;
   }
 
-  public static TopicMessage mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
-                                               RecordSerDe recordDeserializer) {
+  public static TopicMessageDTO mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
+                                                  RecordSerDe recordDeserializer) {
 
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
@@ -291,11 +291,11 @@ public class ClusterUtil {
             )
     );
 
-    TopicMessage topicMessage = new TopicMessage();
+    TopicMessageDTO topicMessage = new TopicMessageDTO();
 
     OffsetDateTime timestamp =
         OffsetDateTime.ofInstant(Instant.ofEpochMilli(consumerRecord.timestamp()), UTC_ZONE_ID);
-    TopicMessage.TimestampTypeEnum timestampType =
+    TopicMessageDTO.TimestampTypeEnum timestampType =
         mapToTimestampType(consumerRecord.timestampType());
     topicMessage.setPartition(consumerRecord.partition());
     topicMessage.setOffset(consumerRecord.offset());
@@ -307,10 +307,10 @@ public class ClusterUtil {
     topicMessage.setKey(parsed.getKey());
     topicMessage.setContent(parsed.getValue());
     topicMessage.setKeyFormat(parsed.getKeyFormat() != null
-        ? MessageFormat.valueOf(parsed.getKeyFormat().name())
+        ? MessageFormatDTO.valueOf(parsed.getKeyFormat().name())
         : null);
     topicMessage.setValueFormat(parsed.getValueFormat() != null
-        ? MessageFormat.valueOf(parsed.getValueFormat().name())
+        ? MessageFormatDTO.valueOf(parsed.getValueFormat().name())
         : null);
     topicMessage.setKeySize(ConsumerRecordUtil.getKeySize(consumerRecord));
     topicMessage.setValueSize(ConsumerRecordUtil.getValueSize(consumerRecord));
@@ -321,14 +321,14 @@ public class ClusterUtil {
     return topicMessage;
   }
 
-  private static TopicMessage.TimestampTypeEnum mapToTimestampType(TimestampType timestampType) {
+  private static TopicMessageDTO.TimestampTypeEnum mapToTimestampType(TimestampType timestampType) {
     switch (timestampType) {
       case CREATE_TIME:
-        return TopicMessage.TimestampTypeEnum.CREATE_TIME;
+        return TopicMessageDTO.TimestampTypeEnum.CREATE_TIME;
       case LOG_APPEND_TIME:
-        return TopicMessage.TimestampTypeEnum.LOG_APPEND_TIME;
+        return TopicMessageDTO.TimestampTypeEnum.LOG_APPEND_TIME;
       case NO_TIMESTAMP_TYPE:
-        return TopicMessage.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
+        return TopicMessageDTO.TimestampTypeEnum.NO_TIMESTAMP_TYPE;
       default:
         throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
     }

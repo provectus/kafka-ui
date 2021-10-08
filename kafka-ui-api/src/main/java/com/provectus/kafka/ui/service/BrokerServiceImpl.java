@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import com.provectus.kafka.ui.exception.NotFoundException;
-import com.provectus.kafka.ui.model.Broker;
+import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -85,12 +85,12 @@ public class BrokerServiceImpl implements BrokerService {
   }
 
   @Override
-  public Flux<Broker> getBrokers(KafkaCluster cluster) {
+  public Flux<BrokerDTO> getBrokers(KafkaCluster cluster) {
     return adminClientService
         .getOrCreateAdminClient(cluster)
         .flatMap(client -> ClusterUtil.toMono(client.getAdminClient().describeCluster().nodes())
             .map(n -> n.stream().map(node -> {
-              Broker broker = new Broker();
+              BrokerDTO broker = new BrokerDTO();
               broker.setId(node.id());
               broker.setHost(node.host());
               return broker;

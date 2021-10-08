@@ -5,9 +5,9 @@ import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdate;
+import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
 import com.provectus.kafka.ui.model.CleanupPolicy;
-import com.provectus.kafka.ui.model.CreateTopicMessage;
+import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.ExtendedAdminClient;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
 import com.provectus.kafka.ui.model.InternalBrokerMetrics;
@@ -19,12 +19,12 @@ import com.provectus.kafka.ui.model.InternalSegmentSizeDto;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.Metric;
-import com.provectus.kafka.ui.model.PartitionsIncrease;
-import com.provectus.kafka.ui.model.ReplicationFactorChange;
-import com.provectus.kafka.ui.model.ServerStatus;
-import com.provectus.kafka.ui.model.TopicCreation;
-import com.provectus.kafka.ui.model.TopicUpdate;
+import com.provectus.kafka.ui.model.MetricDTO;
+import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
+import com.provectus.kafka.ui.model.ServerStatusDTO;
+import com.provectus.kafka.ui.model.TopicCreationDTO;
+import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.ClusterUtil;
@@ -149,7 +149,7 @@ public class KafkaService {
             log.error("Failed to collect cluster {} info", cluster.getName(), e)
         ).onErrorResume(
             e -> Mono.just(cluster.toBuilder()
-                .status(ServerStatus.OFFLINE)
+                .status(ServerStatusDTO.OFFLINE)
                 .lastKafkaException(e)
                 .build())
         );
@@ -168,12 +168,12 @@ public class KafkaService {
 
     InternalClusterMetrics topicsMetrics = collectTopicsMetrics(topics);
 
-    ServerStatus zookeeperStatus = ServerStatus.OFFLINE;
+    ServerStatusDTO zookeeperStatus = ServerStatusDTO.OFFLINE;
     Throwable zookeeperException = null;
     try {
       zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster)
-          ? ServerStatus.ONLINE
-          : ServerStatus.OFFLINE;
+          ? ServerStatusDTO.ONLINE
+          : ServerStatusDTO.OFFLINE;
     } catch (Throwable e) {
       zookeeperException = e;
     }
@@ -193,7 +193,7 @@ public class KafkaService {
 
     return currentCluster.toBuilder()
         .version(version)
-        .status(ServerStatus.ONLINE)
+        .status(ServerStatusDTO.ONLINE)
         .zookeeperStatus(zookeeperStatus)
         .lastZookeeperException(zookeeperException)
         .lastKafkaException(null)
@@ -290,7 +290,7 @@ public class KafkaService {
 
   @SneakyThrows
   public Mono<InternalTopic> createTopic(AdminClient adminClient,
-                                         Mono<TopicCreation> topicCreation) {
+                                         Mono<TopicCreationDTO> topicCreation) {
     return topicCreation.flatMap(
         topicData -> {
           NewTopic newTopic = new NewTopic(topicData.getName(), topicData.getPartitions(),
@@ -306,7 +306,8 @@ public class KafkaService {
         ).switchIfEmpty(Mono.error(new RuntimeException("Can't find created topic")));
   }
 
-  public Mono<InternalTopic> createTopic(KafkaCluster cluster, Mono<TopicCreation> topicCreation) {
+  public Mono<InternalTopic> createTopic(
+      KafkaCluster cluster, Mono<TopicCreationDTO> topicCreation) {
     return adminClientService.getOrCreateAdminClient(cluster)
         .flatMap(ac -> createTopic(ac.getAdminClient(), topicCreation));
   }
@@ -427,7 +428,7 @@ public class KafkaService {
 
   @SneakyThrows
   public Mono<InternalTopic> updateTopic(KafkaCluster cluster, String topicName,
-                                         TopicUpdate topicUpdate) {
+                                         TopicUpdateDTO topicUpdate) {
     ConfigResource topicCr = new ConfigResource(ConfigResource.Type.TOPIC, topicName);
     return adminClientService.getOrCreateAdminClient(cluster)
         .flatMap(ac -> {
@@ -448,7 +449,7 @@ public class KafkaService {
             .filter(t -> t.getName().equals(topicName)).findFirst().orElseThrow());
   }
 
-  private Mono<String> incrementalAlterConfig(TopicUpdate topicUpdate, ConfigResource topicCr,
+  private Mono<String> incrementalAlterConfig(TopicUpdateDTO topicUpdate, ConfigResource topicCr,
                                               ExtendedAdminClient ac) {
     List<AlterConfigOp> listOp = topicUpdate.getConfigs().entrySet().stream()
         .flatMap(cfg -> Stream.of(new AlterConfigOp(new ConfigEntry(cfg.getKey(), cfg.getValue()),
@@ -459,7 +460,7 @@ public class KafkaService {
   }
 
   @SuppressWarnings("deprecation")
-  private Mono<String> alterConfig(TopicUpdate topicUpdate, ConfigResource topicCr,
+  private Mono<String> alterConfig(TopicUpdateDTO topicUpdate, ConfigResource topicCr,
                                    ExtendedAdminClient ac) {
     List<ConfigEntry> configEntries = topicUpdate.getConfigs().entrySet().stream()
         .flatMap(cfg -> Stream.of(new ConfigEntry(cfg.getKey(), cfg.getValue())))
@@ -601,7 +602,7 @@ public class KafkaService {
     );
   }
 
-  public List<Metric> getJmxMetric(String clusterName, Node node) {
+  public List<MetricDTO> getJmxMetric(String clusterName, Node node) {
     return clustersStorage.getClusterByName(clusterName)
         .filter(c -> c.getJmxPort() != null)
         .filter(c -> c.getJmxPort() > 0)
@@ -631,11 +632,12 @@ public class KafkaService {
 
   private InternalClusterMetrics calculateClusterMetrics(
       InternalClusterMetrics internalClusterMetrics) {
-    final List<Metric> metrics = internalClusterMetrics.getInternalBrokerMetrics().values().stream()
+    final List<MetricDTO> metrics = internalClusterMetrics.getInternalBrokerMetrics().values()
+        .stream()
         .flatMap(b -> b.getMetrics().stream())
         .collect(
             Collectors.groupingBy(
-                Metric::getCanonicalName,
+                MetricDTO::getCanonicalName,
                 Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)
             )
         ).values().stream()
@@ -653,7 +655,8 @@ public class KafkaService {
     return metricsBuilder.build();
   }
 
-  private Map<String, BigDecimal> findTopicMetrics(List<Metric> metrics, JmxMetricsName metricsName,
+  private Map<String, BigDecimal> findTopicMetrics(List<MetricDTO> metrics,
+                                                   JmxMetricsName metricsName,
                                                    JmxMetricsValueName valueName) {
     return metrics.stream().filter(m -> metricsName.name().equals(m.getName()))
         .filter(m -> m.getParams().containsKey("topic"))
@@ -707,7 +710,7 @@ public class KafkaService {
   }
 
   public Mono<RecordMetadata> sendMessage(KafkaCluster cluster, String topic,
-                                          CreateTopicMessage msg) {
+                                          CreateTopicMessageDTO msg) {
     RecordSerDe serde =
         deserializationService.getRecordDeserializerForCluster(cluster);
 
@@ -762,7 +765,7 @@ public class KafkaService {
   public Mono<InternalTopic> increaseTopicPartitions(
       KafkaCluster cluster,
       String topicName,
-      PartitionsIncrease partitionsIncrease) {
+      PartitionsIncreaseDTO partitionsIncrease) {
     return adminClientService.getOrCreateAdminClient(cluster)
         .flatMap(ac -> {
           Integer actualCount = cluster.getTopics().get(topicName).getPartitionCount();
@@ -804,7 +807,7 @@ public class KafkaService {
   public Mono<InternalTopic> changeReplicationFactor(
       KafkaCluster cluster,
       String topicName,
-      ReplicationFactorChange replicationFactorChange) {
+      ReplicationFactorChangeDTO replicationFactorChange) {
     return adminClientService.getOrCreateAdminClient(cluster)
         .flatMap(ac -> {
           Integer actual = cluster.getTopics().get(topicName).getReplicationFactor();
@@ -848,7 +851,7 @@ public class KafkaService {
   private Map<TopicPartition, Optional<NewPartitionReassignment>> getPartitionsReassignments(
       KafkaCluster cluster,
       String topicName,
-      ReplicationFactorChange replicationFactorChange) {
+      ReplicationFactorChangeDTO replicationFactorChange) {
     // Current assignment map (Partition number -> List of brokers)
     Map<Integer, List<Integer>> currentAssignment = getCurrentAssignment(cluster, topicName);
     // Brokers map (Broker id -> count)
@@ -945,13 +948,13 @@ public class KafkaService {
   }
 
   public Mono<Void> updateBrokerLogDir(KafkaCluster cluster, Integer broker,
-                                       BrokerLogdirUpdate brokerLogDir) {
+                                       BrokerLogdirUpdateDTO brokerLogDir) {
     return adminClientService.getOrCreateAdminClient(cluster)
         .flatMap(ac -> updateBrokerLogDir(ac, brokerLogDir, broker));
   }
 
   private Mono<Void> updateBrokerLogDir(ExtendedAdminClient adminMono,
-                                        BrokerLogdirUpdate b,
+                                        BrokerLogdirUpdateDTO b,
                                         Integer broker) {
 
     Map<TopicPartitionReplica, String> req = Map.of(

@@ -1,17 +1,17 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.TopicsApi;
-import com.provectus.kafka.ui.model.PartitionsIncrease;
-import com.provectus.kafka.ui.model.PartitionsIncreaseResponse;
-import com.provectus.kafka.ui.model.ReplicationFactorChange;
-import com.provectus.kafka.ui.model.ReplicationFactorChangeResponse;
-import com.provectus.kafka.ui.model.Topic;
-import com.provectus.kafka.ui.model.TopicColumnsToSort;
-import com.provectus.kafka.ui.model.TopicConfig;
-import com.provectus.kafka.ui.model.TopicCreation;
-import com.provectus.kafka.ui.model.TopicDetails;
-import com.provectus.kafka.ui.model.TopicUpdate;
-import com.provectus.kafka.ui.model.TopicsResponse;
+import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
+import com.provectus.kafka.ui.model.TopicConfigDTO;
+import com.provectus.kafka.ui.model.TopicCreationDTO;
+import com.provectus.kafka.ui.model.TopicDTO;
+import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.model.TopicUpdateDTO;
+import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.service.ClusterService;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -31,8 +31,8 @@ public class TopicsController implements TopicsApi {
   private final ClusterService clusterService;
 
   @Override
-  public Mono<ResponseEntity<Topic>> createTopic(
-      String clusterName, @Valid Mono<TopicCreation> topicCreation, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<TopicDTO>> createTopic(
+      String clusterName, @Valid Mono<TopicCreationDTO> topicCreation, ServerWebExchange exchange) {
     return clusterService.createTopic(clusterName, topicCreation)
         .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
@@ -46,7 +46,7 @@ public class TopicsController implements TopicsApi {
 
 
   @Override
-  public Mono<ResponseEntity<Flux<TopicConfig>>> getTopicConfigs(
+  public Mono<ResponseEntity<Flux<TopicConfigDTO>>> getTopicConfigs(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return Mono.just(
         clusterService.getTopicConfigs(clusterName, topicName)
@@ -57,7 +57,7 @@ public class TopicsController implements TopicsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<TopicDetails>> getTopicDetails(
+  public Mono<ResponseEntity<TopicDetailsDTO>> getTopicDetails(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return Mono.just(
         clusterService.getTopicDetails(clusterName, topicName)
@@ -67,11 +67,11 @@ public class TopicsController implements TopicsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<TopicsResponse>> getTopics(String clusterName, @Valid Integer page,
+  public Mono<ResponseEntity<TopicsResponseDTO>> getTopics(String clusterName, @Valid Integer page,
                                                         @Valid Integer perPage,
                                                         @Valid Boolean showInternal,
                                                         @Valid String search,
-                                                        @Valid TopicColumnsToSort orderBy,
+                                                        @Valid TopicColumnsToSortDTO orderBy,
                                                         ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(clusterService
         .getTopics(
@@ -85,16 +85,16 @@ public class TopicsController implements TopicsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Topic>> updateTopic(
-      String clusterId, String topicName, @Valid Mono<TopicUpdate> topicUpdate,
+  public Mono<ResponseEntity<TopicDTO>> updateTopic(
+      String clusterId, String topicName, @Valid Mono<TopicUpdateDTO> topicUpdate,
       ServerWebExchange exchange) {
     return clusterService.updateTopic(clusterId, topicName, topicUpdate).map(ResponseEntity::ok);
   }
 
   @Override
-  public Mono<ResponseEntity<PartitionsIncreaseResponse>> increaseTopicPartitions(
+  public Mono<ResponseEntity<PartitionsIncreaseResponseDTO>> increaseTopicPartitions(
       String clusterName, String topicName,
-      Mono<PartitionsIncrease> partitionsIncrease,
+      Mono<PartitionsIncreaseDTO> partitionsIncrease,
       ServerWebExchange exchange) {
     return partitionsIncrease.flatMap(
         partitions -> clusterService.increaseTopicPartitions(clusterName, topicName, partitions))
@@ -102,8 +102,9 @@ public class TopicsController implements TopicsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<ReplicationFactorChangeResponse>> changeReplicationFactor(
-      String clusterName, String topicName, Mono<ReplicationFactorChange> replicationFactorChange,
+  public Mono<ResponseEntity<ReplicationFactorChangeResponseDTO>> changeReplicationFactor(
+      String clusterName, String topicName,
+      Mono<ReplicationFactorChangeDTO> replicationFactorChange,
       ServerWebExchange exchange) {
     return replicationFactorChange
         .flatMap(rfc -> clusterService.changeReplicationFactor(clusterName, topicName, rfc))
