@@ -1,17 +1,17 @@
 package com.provectus.kafka.ui.mapper;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.model.BrokerConfig;
-import com.provectus.kafka.ui.model.BrokerDiskUsage;
-import com.provectus.kafka.ui.model.BrokerMetrics;
-import com.provectus.kafka.ui.model.Cluster;
-import com.provectus.kafka.ui.model.ClusterMetrics;
-import com.provectus.kafka.ui.model.ClusterStats;
-import com.provectus.kafka.ui.model.CompatibilityCheckResponse;
-import com.provectus.kafka.ui.model.CompatibilityLevel;
-import com.provectus.kafka.ui.model.ConfigSource;
-import com.provectus.kafka.ui.model.ConfigSynonym;
-import com.provectus.kafka.ui.model.Connect;
+import com.provectus.kafka.ui.model.BrokerConfigDTO;
+import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
+import com.provectus.kafka.ui.model.BrokerMetricsDTO;
+import com.provectus.kafka.ui.model.ClusterDTO;
+import com.provectus.kafka.ui.model.ClusterMetricsDTO;
+import com.provectus.kafka.ui.model.ClusterStatsDTO;
+import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
+import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
+import com.provectus.kafka.ui.model.ConfigSourceDTO;
+import com.provectus.kafka.ui.model.ConfigSynonymDTO;
+import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
@@ -24,11 +24,11 @@ import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
-import com.provectus.kafka.ui.model.Partition;
-import com.provectus.kafka.ui.model.Replica;
-import com.provectus.kafka.ui.model.Topic;
-import com.provectus.kafka.ui.model.TopicConfig;
-import com.provectus.kafka.ui.model.TopicDetails;
+import com.provectus.kafka.ui.model.PartitionDTO;
+import com.provectus.kafka.ui.model.ReplicaDTO;
+import com.provectus.kafka.ui.model.TopicConfigDTO;
+import com.provectus.kafka.ui.model.TopicDTO;
+import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import java.math.BigDecimal;
@@ -54,7 +54,7 @@ public interface ClusterMapper {
       qualifiedByName = "sumMetrics")
   @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec",
       qualifiedByName = "sumMetrics")
-  Cluster toCluster(KafkaCluster cluster);
+  ClusterDTO toCluster(KafkaCluster cluster);
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
@@ -63,35 +63,35 @@ public interface ClusterMapper {
 
   @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage",
       qualifiedByName = "mapDiskUsage")
-  ClusterStats toClusterStats(InternalClusterMetrics metrics);
+  ClusterStatsDTO toClusterStats(InternalClusterMetrics metrics);
 
   @Mapping(target = "items", source = "metrics")
-  ClusterMetrics toClusterMetrics(InternalClusterMetrics metrics);
+  ClusterMetricsDTO toClusterMetrics(InternalClusterMetrics metrics);
 
-  BrokerMetrics toBrokerMetrics(InternalBrokerMetrics metrics);
+  BrokerMetricsDTO toBrokerMetrics(InternalBrokerMetrics metrics);
 
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")
-  BrokerConfig toBrokerConfig(InternalBrokerConfig config);
+  BrokerConfigDTO toBrokerConfig(InternalBrokerConfig config);
 
-  default ConfigSynonym toConfigSynonym(ConfigEntry.ConfigSynonym config) {
+  default ConfigSynonymDTO toConfigSynonym(ConfigEntry.ConfigSynonym config) {
     if (config == null) {
       return null;
     }
 
-    ConfigSynonym configSynonym = new ConfigSynonym();
+    ConfigSynonymDTO configSynonym = new ConfigSynonymDTO();
     configSynonym.setName(config.name());
     configSynonym.setValue(config.value());
     if (config.source() != null) {
-      configSynonym.setSource(ConfigSource.valueOf(config.source().name()));
+      configSynonym.setSource(ConfigSourceDTO.valueOf(config.source().name()));
     }
 
     return configSynonym;
   }
 
-  Topic toTopic(InternalTopic topic);
+  TopicDTO toTopic(InternalTopic topic);
 
-  Partition toPartition(InternalPartition topic);
+  PartitionDTO toPartition(InternalPartition topic);
 
   @Named("setSchemaRegistry")
   default InternalSchemaRegistry setSchemaRegistry(ClustersProperties.Cluster clusterProperties) {
@@ -117,10 +117,10 @@ public interface ClusterMapper {
     return internalSchemaRegistry.build();
   }
 
-  TopicDetails toTopicDetails(InternalTopic topic);
+  TopicDetailsDTO toTopicDetails(InternalTopic topic);
 
-  default TopicDetails toTopicDetails(InternalTopic topic, InternalClusterMetrics metrics) {
-    final TopicDetails result = toTopicDetails(topic);
+  default TopicDetailsDTO toTopicDetails(InternalTopic topic, InternalClusterMetrics metrics) {
+    final TopicDetailsDTO result = toTopicDetails(topic);
     result.setBytesInPerSec(
         metrics.getBytesInPerSec().get(topic.getName())
     );
@@ -132,26 +132,26 @@ public interface ClusterMapper {
 
   @Mapping(target = "isReadOnly", source = "readOnly")
   @Mapping(target = "isSensitive", source = "sensitive")
-  TopicConfig toTopicConfig(InternalTopicConfig topic);
+  TopicConfigDTO toTopicConfig(InternalTopicConfig topic);
 
-  Replica toReplica(InternalReplica replica);
+  ReplicaDTO toReplica(InternalReplica replica);
 
-  Connect toKafkaConnect(KafkaConnectCluster connect);
+  ConnectDTO toKafkaConnect(KafkaConnectCluster connect);
 
-  List<Cluster.FeaturesEnum> toFeaturesEnum(List<Feature> features);
+  List<ClusterDTO.FeaturesEnum> toFeaturesEnum(List<Feature> features);
 
   @Mapping(target = "isCompatible", source = "compatible")
-  CompatibilityCheckResponse toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
+  CompatibilityCheckResponseDTO toCompatibilityCheckResponse(InternalCompatibilityCheck dto);
 
   @Mapping(target = "compatibility", source = "compatibilityLevel")
-  CompatibilityLevel toCompatibilityLevel(InternalCompatibilityLevel dto);
+  CompatibilityLevelDTO toCompatibilityLevel(InternalCompatibilityLevel dto);
 
-  default List<Partition> map(Map<Integer, InternalPartition> map) {
+  default List<PartitionDTO> map(Map<Integer, InternalPartition> map) {
     return map.values().stream().map(this::toPartition).collect(Collectors.toList());
   }
 
-  default BrokerDiskUsage map(Integer id, InternalBrokerDiskUsage internalBrokerDiskUsage) {
-    final BrokerDiskUsage brokerDiskUsage = new BrokerDiskUsage();
+  default BrokerDiskUsageDTO map(Integer id, InternalBrokerDiskUsage internalBrokerDiskUsage) {
+    final BrokerDiskUsageDTO brokerDiskUsage = new BrokerDiskUsageDTO();
     brokerDiskUsage.setBrokerId(id);
     brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
     brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
@@ -159,7 +159,7 @@ public interface ClusterMapper {
   }
 
   @Named("mapDiskUsage")
-  default List<BrokerDiskUsage> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
+  default List<BrokerDiskUsageDTO> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
     return brokers.entrySet().stream().map(e -> this.map(e.getKey(), e.getValue()))
         .collect(Collectors.toList());
   }

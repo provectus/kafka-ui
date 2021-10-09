@@ -1,16 +1,17 @@
 package com.provectus.kafka.ui.model.schemaregistry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.provectus.kafka.ui.model.SchemaType;
+import com.provectus.kafka.ui.model.SchemaTypeDTO;
+import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import lombok.Data;
 
 @Data
 public class InternalNewSchema {
   private String schema;
   @JsonInclude(JsonInclude.Include.NON_NULL)
-  private SchemaType schemaType;
+  private SchemaTypeDTO schemaType;
 
-  public InternalNewSchema(String schema, SchemaType schemaType) {
+  public InternalNewSchema(String schema, SchemaTypeDTO schemaType) {
     this.schema = schema;
     this.schemaType = schemaType;
   }

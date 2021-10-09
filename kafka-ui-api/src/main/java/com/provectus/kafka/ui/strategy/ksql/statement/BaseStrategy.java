@@ -2,9 +2,9 @@ package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
-import com.provectus.kafka.ui.model.KsqlCommand;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
-import com.provectus.kafka.ui.model.Table;
+import com.provectus.kafka.ui.model.KsqlCommandDTO;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
+import com.provectus.kafka.ui.model.TableDTO;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,7 +20,7 @@ public abstract class BaseStrategy {
   protected static final String QUERY_REQUEST_PATH = "/query";
   private static final String MAPPING_EXCEPTION_ERROR = "KSQL DB response mapping error";
   protected String host = null;
-  protected KsqlCommand ksqlCommand = null;
+  protected KsqlCommandDTO ksqlCommand = null;
 
   public String getUri() {
     if (this.host != null) {
@@ -38,11 +38,11 @@ public abstract class BaseStrategy {
     return this;
   }
 
-  public KsqlCommand getKsqlCommand() {
+  public KsqlCommandDTO getKsqlCommand() {
     return ksqlCommand;
   }
 
-  public BaseStrategy ksqlCommand(KsqlCommand ksqlCommand) {
+  public BaseStrategy ksqlCommand(KsqlCommandDTO ksqlCommand) {
     this.ksqlCommand = ksqlCommand;
     return this;
   }
@@ -51,23 +51,23 @@ public abstract class BaseStrategy {
     return BaseStrategy.KSQL_REQUEST_PATH;
   }
 
-  protected KsqlCommandResponse serializeTableResponse(JsonNode response, String key) {
+  protected KsqlCommandResponseDTO serializeTableResponse(JsonNode response, String key) {
     JsonNode item = getResponseFirstItemValue(response, key);
-    Table table = item.isArray() ? getTableFromArray(item) : getTableFromObject(item);
-    return (new KsqlCommandResponse()).data(table);
+    TableDTO table = item.isArray() ? getTableFromArray(item) : getTableFromObject(item);
+    return (new KsqlCommandResponseDTO()).data(table);
   }
 
-  protected KsqlCommandResponse serializeMessageResponse(JsonNode response, String key) {
+  protected KsqlCommandResponseDTO serializeMessageResponse(JsonNode response, String key) {
     JsonNode item = getResponseFirstItemValue(response, key);
-    return (new KsqlCommandResponse()).message(getMessageFromObject(item));
+    return (new KsqlCommandResponseDTO()).message(getMessageFromObject(item));
   }
 
-  protected KsqlCommandResponse serializeQueryResponse(JsonNode response) {
+  protected KsqlCommandResponseDTO serializeQueryResponse(JsonNode response) {
     if (response.isArray() && response.size() > 0) {
-      Table table = (new Table())
+      TableDTO table = (new TableDTO())
           .headers(getQueryResponseHeader(response))
           .rows(getQueryResponseRows(response));
-      return (new KsqlCommandResponse()).data(table);
+      return (new KsqlCommandResponseDTO()).data(table);
     }
     throw new UnprocessableEntityException(MAPPING_EXCEPTION_ERROR);
   }
@@ -102,8 +102,8 @@ public abstract class BaseStrategy {
         .collect(Collectors.toList());
   }
 
-  private Table getTableFromArray(JsonNode node) {
-    Table table = new Table();
+  private TableDTO getTableFromArray(JsonNode node) {
+    TableDTO table = new TableDTO();
     table.headers(new ArrayList<>()).rows(new ArrayList<>());
     if (node.size() > 0) {
       List<String> keys = getJsonObjectKeys(node.get(0));
@@ -113,14 +113,14 @@ public abstract class BaseStrategy {
     return table;
   }
 
-  private Table getTableFromObject(JsonNode node) {
+  private TableDTO getTableFromObject(JsonNode node) {
     List<String> keys = getJsonObjectKeys(node);
     List<String> values = getJsonObjectValues(node);
     List<List<String>> rows = IntStream
         .range(0, keys.size())
         .mapToObj(i -> List.of(keys.get(i), values.get(i)))
         .collect(Collectors.toList());
-    return (new Table()).headers(List.of("key", "value")).rows(rows);
+    return (new TableDTO()).headers(List.of("key", "value")).rows(rows);
   }
 
   private String getMessageFromObject(JsonNode node) {
@@ -160,7 +160,7 @@ public abstract class BaseStrategy {
         .collect(Collectors.toList());
   }
 
-  public abstract KsqlCommandResponse serializeResponse(JsonNode response);
+  public abstract KsqlCommandResponseDTO serializeResponse(JsonNode response);
 
   protected abstract String getTestRegExp();
 }

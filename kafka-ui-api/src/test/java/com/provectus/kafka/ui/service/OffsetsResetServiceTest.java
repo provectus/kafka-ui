@@ -19,11 +19,13 @@ import java.util.stream.Stream;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.serialization.BytesSerializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterEach;
@@ -46,17 +48,13 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
   private final String groupId = "OffsetsResetServiceTestGroup-" + UUID.randomUUID();
   private final String topic = "OffsetsResetServiceTestTopic-" + UUID.randomUUID();
 
-  private KafkaService kafkaService;
   private OffsetsResetService offsetsResetService;
 
   @BeforeEach
   void init() {
     AdminClientServiceImpl adminClientService = new AdminClientServiceImpl();
-    BrokerService brokerService = new BrokerServiceImpl(adminClientService);
-    FeatureService featureService = new FeatureServiceImpl(brokerService);
     adminClientService.setClientTimeout(5_000);
-    kafkaService = new KafkaService(null, null, null, null, adminClientService, featureService);
-    offsetsResetService = new OffsetsResetService(kafkaService, adminClientService);
+    offsetsResetService = new OffsetsResetService(adminClientService);
 
     createTopic(new NewTopic(topic, PARTITIONS, (short) 1));
     createConsumerGroup();
@@ -228,7 +226,14 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
   }
 
   private Consumer<?, ?> groupConsumer() {
-    return kafkaService.createConsumer(CLUSTER, Map.of(ConsumerConfig.GROUP_ID_CONFIG, groupId));
+    Properties props = new Properties();
+    props.put(ConsumerConfig.CLIENT_ID_CONFIG, "kafka-ui-" + UUID.randomUUID());
+    props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, CLUSTER.getBootstrapServers());
+    props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
+    props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
+    props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+    props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
+    return new KafkaConsumer<>(props);
   }
 
 }

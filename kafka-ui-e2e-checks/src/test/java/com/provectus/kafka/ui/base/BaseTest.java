@@ -9,7 +9,7 @@ import com.provectus.kafka.ui.steps.Steps;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
@@ -22,7 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-@Slf4j
+@Log4j2
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
 public class BaseTest {
 

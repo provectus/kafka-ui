@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
-import com.provectus.kafka.ui.model.BrokerConfig;
+import com.provectus.kafka.ui.model.BrokerConfigDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +25,7 @@ public class ConfigTest extends AbstractBaseTest {
   public void testAlterConfig() throws Exception {
     String name = "background.threads";
 
-    Optional<BrokerConfig> bc = getConfig(name);
+    Optional<BrokerConfigDTO> bc = getConfig(name);
     assertThat(bc.isPresent()).isTrue();
     assertThat(bc.get().getValue()).isEqualTo("10");
 
@@ -42,7 +42,7 @@ public class ConfigTest extends AbstractBaseTest {
     // Without sleep it returns old config so we need to wait a little bit
     Thread.sleep(1000);
 
-    Optional<BrokerConfig> bcc = getConfig(name);
+    Optional<BrokerConfigDTO> bcc = getConfig(name);
     assertThat(bcc.isPresent()).isTrue();
     assertThat(bcc.get().getValue()).isEqualTo("5");
   }
@@ -62,12 +62,12 @@ public class ConfigTest extends AbstractBaseTest {
         .expectStatus().isBadRequest();
   }
 
-  private Optional<BrokerConfig> getConfig(String name) {
-    List<BrokerConfig> configs = webTestClient.get()
+  private Optional<BrokerConfigDTO> getConfig(String name) {
+    List<BrokerConfigDTO> configs = webTestClient.get()
         .uri("/api/clusters/{clusterName}/brokers/{id}/configs", LOCAL, 1)
         .exchange()
         .expectStatus().isOk()
-        .expectBody(new ParameterizedTypeReference<List<BrokerConfig>>() {
+        .expectBody(new ParameterizedTypeReference<List<BrokerConfigDTO>>() {
         })
         .returnResult()
         .getResponseBody();

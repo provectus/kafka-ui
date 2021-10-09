@@ -26,8 +26,8 @@ public class KafkaCluster {
   private final List<KafkaConnectCluster> kafkaConnect;
   private final String schemaNameTemplate;
   private final String keySchemaNameTemplate;
-  private final ServerStatus status;
-  private final ServerStatus zookeeperStatus;
+  private final ServerStatusDTO status;
+  private final ServerStatusDTO zookeeperStatus;
   private final InternalClusterMetrics metrics;
   private final Map<String, InternalTopic> topics;
   private final List<Integer> brokers;

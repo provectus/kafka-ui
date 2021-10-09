@@ -5,9 +5,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.exception.LogDirNotFoundApiException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
-import com.provectus.kafka.ui.model.BrokerTopicLogdirs;
-import com.provectus.kafka.ui.model.BrokersLogdirs;
-import com.provectus.kafka.ui.model.ErrorResponse;
+import com.provectus.kafka.ui.model.BrokerTopicLogdirsDTO;
+import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
+import com.provectus.kafka.ui.model.ErrorResponseDTO;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -26,21 +26,21 @@ public class LogDirsTest extends AbstractBaseTest {
 
   @Test
   public void testAllBrokers() {
-    List<BrokersLogdirs> dirs = webTestClient.get()
+    List<BrokersLogdirsDTO> dirs = webTestClient.get()
         .uri("/api/clusters/{clusterName}/brokers/logdirs", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBody(new ParameterizedTypeReference<List<BrokersLogdirs>>() {})
+        .expectBody(new ParameterizedTypeReference<List<BrokersLogdirsDTO>>() {})
         .returnResult()
         .getResponseBody();
 
     assertThat(dirs).hasSize(1);
-    BrokersLogdirs dir = dirs.get(0);
+    BrokersLogdirsDTO dir = dirs.get(0);
     assertThat(dir.getName()).isEqualTo("/var/lib/kafka/data");
     assertThat(dir.getTopics().stream().anyMatch(t -> t.getName().equals("__consumer_offsets")))
         .isTrue();
 
-    BrokerTopicLogdirs topic = dir.getTopics().stream()
+    BrokerTopicLogdirsDTO topic = dir.getTopics().stream()
         .filter(t -> t.getName().equals("__consumer_offsets"))
         .findAny().get();
 
@@ -51,21 +51,21 @@ public class LogDirsTest extends AbstractBaseTest {
 
   @Test
   public void testOneBrokers() {
-    List<BrokersLogdirs> dirs = webTestClient.get()
+    List<BrokersLogdirsDTO> dirs = webTestClient.get()
         .uri("/api/clusters/{clusterName}/brokers/logdirs?broker=1", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBody(new ParameterizedTypeReference<List<BrokersLogdirs>>() {})
+        .expectBody(new ParameterizedTypeReference<List<BrokersLogdirsDTO>>() {})
         .returnResult()
         .getResponseBody();
 
     assertThat(dirs).hasSize(1);
-    BrokersLogdirs dir = dirs.get(0);
+    BrokersLogdirsDTO dir = dirs.get(0);
     assertThat(dir.getName()).isEqualTo("/var/lib/kafka/data");
     assertThat(dir.getTopics().stream().anyMatch(t -> t.getName().equals("__consumer_offsets")))
         .isTrue();
 
-    BrokerTopicLogdirs topic = dir.getTopics().stream()
+    BrokerTopicLogdirsDTO topic = dir.getTopics().stream()
         .filter(t -> t.getName().equals("__consumer_offsets"))
         .findAny().get();
 
@@ -76,11 +76,11 @@ public class LogDirsTest extends AbstractBaseTest {
 
   @Test
   public void testWrongBrokers() {
-    List<BrokersLogdirs> dirs = webTestClient.get()
+    List<BrokersLogdirsDTO> dirs = webTestClient.get()
         .uri("/api/clusters/{clusterName}/brokers/logdirs?broker=2", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBody(new ParameterizedTypeReference<List<BrokersLogdirs>>() {})
+        .expectBody(new ParameterizedTypeReference<List<BrokersLogdirsDTO>>() {})
         .returnResult()
         .getResponseBody();
 
@@ -89,7 +89,7 @@ public class LogDirsTest extends AbstractBaseTest {
 
   @Test
   public void testChangeDirToWrongDir() {
-    ErrorResponse dirs = webTestClient.patch()
+    ErrorResponseDTO dirs = webTestClient.patch()
         .uri("/api/clusters/{clusterName}/brokers/{id}/logdirs", LOCAL, 1)
         .bodyValue(Map.of(
             "topic", "__consumer_offsets",
@@ -99,7 +99,7 @@ public class LogDirsTest extends AbstractBaseTest {
         )
         .exchange()
         .expectStatus().isBadRequest()
-        .expectBody(ErrorResponse.class)
+        .expectBody(ErrorResponseDTO.class)
         .returnResult()
         .getResponseBody();
 
@@ -116,7 +116,7 @@ public class LogDirsTest extends AbstractBaseTest {
         )
         .exchange()
         .expectStatus().isBadRequest()
-        .expectBody(ErrorResponse.class)
+        .expectBody(ErrorResponseDTO.class)
         .returnResult()
         .getResponseBody();
 

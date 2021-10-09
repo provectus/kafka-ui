@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.mapper;
 
-import com.provectus.kafka.ui.model.BrokerTopicLogdirs;
-import com.provectus.kafka.ui.model.BrokerTopicPartitionLogdir;
-import com.provectus.kafka.ui.model.BrokersLogdirs;
+import com.provectus.kafka.ui.model.BrokerTopicLogdirsDTO;
+import com.provectus.kafka.ui.model.BrokerTopicPartitionLogdirDTO;
+import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DescribeLogDirsMapper {
 
-  public List<BrokersLogdirs> toBrokerLogDirsList(
+  public List<BrokersLogdirsDTO> toBrokerLogDirsList(
       Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>> logDirsInfo) {
 
     return logDirsInfo.entrySet().stream().map(
@@ -24,9 +24,9 @@ public class DescribeLogDirsMapper {
     ).flatMap(Collection::stream).collect(Collectors.toList());
   }
 
-  private BrokersLogdirs toBrokerLogDirs(Integer broker, String dirName,
+  private BrokersLogdirsDTO toBrokerLogDirs(Integer broker, String dirName,
                                          DescribeLogDirsResponse.LogDirInfo logDirInfo) {
-    BrokersLogdirs result = new BrokersLogdirs();
+    BrokersLogdirsDTO result = new BrokersLogdirsDTO();
     result.setName(dirName);
     if (logDirInfo.error != null) {
       result.setError(logDirInfo.error.message());
@@ -39,10 +39,10 @@ public class DescribeLogDirsMapper {
     return result;
   }
 
-  private BrokerTopicLogdirs toTopicLogDirs(Integer broker, String name,
+  private BrokerTopicLogdirsDTO toTopicLogDirs(Integer broker, String name,
                                             List<Map.Entry<TopicPartition,
                                             DescribeLogDirsResponse.ReplicaInfo>> partitions) {
-    BrokerTopicLogdirs topic = new BrokerTopicLogdirs();
+    BrokerTopicLogdirsDTO topic = new BrokerTopicLogdirsDTO();
     topic.setName(name);
     topic.setPartitions(
         partitions.stream().map(
@@ -52,10 +52,10 @@ public class DescribeLogDirsMapper {
     return topic;
   }
 
-  private BrokerTopicPartitionLogdir topicPartitionLogDir(Integer broker, Integer partition,
+  private BrokerTopicPartitionLogdirDTO topicPartitionLogDir(Integer broker, Integer partition,
                                                           DescribeLogDirsResponse.ReplicaInfo
                                                               replicaInfo) {
-    BrokerTopicPartitionLogdir logDir = new BrokerTopicPartitionLogdir();
+    BrokerTopicPartitionLogdirDTO logDir = new BrokerTopicPartitionLogdirDTO();
     logDir.setBroker(broker);
     logDir.setPartition(partition);
     logDir.setSize(replicaInfo.size);
