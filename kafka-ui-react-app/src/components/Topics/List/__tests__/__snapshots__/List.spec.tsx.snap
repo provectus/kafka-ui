@@ -91,6 +91,18 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               "normal": "#171A1C",
             },
           },
+          "primaryTabStyles": Object {
+            "borderColor": Object {
+              "active": "#4F4FFF",
+              "hover": "transparent",
+              "normal": "transparent",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#171A1C",
+              "normal": "#73848C",
+            },
+          },
           "secondaryTabStyles": Object {
             "backgroundColor": Object {
               "active": "#E3E6E8",
@@ -317,7 +329,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 isFullwidth={true}
               >
                 <table
-                  className="sc-jSgvzq iQDCdx"
+                  className="sc-jSgvzq fmltrj"
                 >
                   <thead>
                     <tr>
@@ -326,7 +338,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           className=""
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                           >
                             <span
                               className="title"
@@ -348,7 +360,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Topic Name"
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                             title="Topic Name"
                           >
                             <span
@@ -384,7 +396,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Total Partitions"
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                             title="Total Partitions"
                           >
                             <span
@@ -420,7 +432,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Out of sync replicas"
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                             title="Out of sync replicas"
                           >
                             <span
@@ -450,7 +462,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Replication Factor"
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                             title="Replication Factor"
                           >
                             <span
@@ -469,7 +481,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Number of messages"
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                             title="Number of messages"
                           >
                             <span
@@ -488,7 +500,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           title="Size"
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                             title="Size"
                           >
                             <span
@@ -504,7 +516,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                           className=""
                         >
                           <th
-                            className="sc-gsTEea kCuAO"
+                            className="sc-gsTEea cXpshw"
                           >
                             <span
                               className="title"

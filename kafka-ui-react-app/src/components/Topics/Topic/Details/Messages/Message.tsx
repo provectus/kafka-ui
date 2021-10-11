@@ -5,6 +5,9 @@ import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import useDataSaver from 'lib/hooks/useDataSaver';
+import VerticalElipsisIcon from 'components/Topics/List/VerticalElipsisIcon';
+
+import MessageToggleIcon from './MessageToggleIcon';
 
 type Tab = 'key' | 'content' | 'headers';
 
@@ -55,43 +58,32 @@ const Message: React.FC<{ message: TopicMessage }> = ({
     <>
       <tr>
         <td>
-          <span
-            className="icon has-text-link is-size-8 is-small is-clickable"
-            onClick={toggleIsOpen}
-            aria-hidden
-          >
-            <i className={`fas fa-${isOpen ? 'minus' : 'plus'}`} />
+          <span className="is-clickable" onClick={toggleIsOpen} aria-hidden>
+            <MessageToggleIcon isOpen={isOpen} />
           </span>
         </td>
         <td>{offset}</td>
         <td>{partition}</td>
-        <td
-          className="has-text-overflow-ellipsis is-family-code"
-          style={{ width: 80, maxWidth: 250 }}
-          title={key}
-        >
-          {key}
-        </td>
         <td>
           <div className="tag">
             {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
           </div>
         </td>
         <td
+          style={{ maxWidth: 350, minWidth: 350 }}
           className="has-text-overflow-ellipsis is-family-code"
-          style={{ width: '100%', maxWidth: 0 }}
+          title={key}
+        >
+          {key}
+        </td>
+        <td
+          style={{ maxWidth: 350, minWidth: 350 }}
+          className="has-text-overflow-ellipsis is-family-code"
         >
           {content}
         </td>
         <td className="has-text-right">
-          <Dropdown
-            label={
-              <span className="icon">
-                <i className="fas fa-cog" />
-              </span>
-            }
-            right
-          >
+          <Dropdown label={<VerticalElipsisIcon />} right>
             <DropdownItem onClick={copyToClipboard}>
               Copy to clipboard
             </DropdownItem>

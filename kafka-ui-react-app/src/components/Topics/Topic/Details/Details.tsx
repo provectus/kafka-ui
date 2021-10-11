@@ -15,11 +15,14 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useDispatch } from 'react-redux';
 import { deleteTopicAction } from 'redux/actions';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Button } from 'components/common/Button/Button';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
+import Navbar from './Navigation/Navbar.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -60,43 +63,52 @@ const Details: React.FC<Props> = ({
   }, [clusterName, topicName]);
 
   return (
-    <div className="box">
-      <nav className="navbar" role="navigation">
-        <div className="navbar-start">
-          <NavLink
-            exact
-            to={clusterTopicPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active is-primary"
+    <div>
+      <PageHeading text={topicName}>
+        <Route
+          exact
+          path="/ui/clusters/:clusterName/topics/:topicName/messages"
+        >
+          <Button
+            buttonSize="M"
+            buttonType="primary"
+            isLink
+            to={clusterTopicSendMessagePath(clusterName, topicName)}
           >
-            Overview
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicMessagesPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Messages
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Consumers
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicSettingsPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Settings
-          </NavLink>
-        </div>
-        <div className="navbar-end">
+            Produce message
+          </Button>
+        </Route>
+      </PageHeading>
+      <Navbar role="navigation">
+        <NavLink
+          exact
+          to={clusterTopicPath(clusterName, topicName)}
+          activeClassName="is-active is-primary"
+        >
+          Overview
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterTopicMessagesPath(clusterName, topicName)}
+          activeClassName="is-active"
+        >
+          Messages
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
+          activeClassName="is-active"
+        >
+          Consumers
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterTopicSettingsPath(clusterName, topicName)}
+          activeClassName="is-active"
+        >
+          Settings
+        </NavLink>
+        {/* <div className="navbar-end">
           {!isReadOnly && !isInternal ? (
             <div className="buttons">
               <>
@@ -141,9 +153,8 @@ const Details: React.FC<Props> = ({
               </>
             </div>
           ) : null}
-        </div>
-      </nav>
-      <br />
+        </div> */}
+      </Navbar>
       <Switch>
         <Route
           exact

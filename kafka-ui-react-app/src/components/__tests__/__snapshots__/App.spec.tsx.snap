@@ -120,6 +120,18 @@ exports[`App view matches snapshot 1`] = `
                   "normal": "#171A1C",
                 },
               },
+              "primaryTabStyles": Object {
+                "borderColor": Object {
+                  "active": "#4F4FFF",
+                  "hover": "transparent",
+                  "normal": "transparent",
+                },
+                "color": Object {
+                  "active": "#171A1C",
+                  "hover": "#171A1C",
+                  "normal": "#73848C",
+                },
+              },
               "secondaryTabStyles": Object {
                 "backgroundColor": Object {
                   "active": "#E3E6E8",

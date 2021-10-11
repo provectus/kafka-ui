@@ -97,6 +97,18 @@ const theme = {
       normal: Colors.brand[50],
     },
   },
+  primaryTabStyles: {
+    color: {
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[90],
+      active: Colors.neutral[90],
+    },
+    borderColor: {
+      normal: 'transparent',
+      hover: 'transparent',
+      active: Colors.brand[50],
+    },
+  },
   secondaryTabStyles: {
     backgroundColor: {
       normal: Colors.neutral[0],

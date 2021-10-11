@@ -4,7 +4,7 @@ import FiltersContainer from './Filters/FiltersContainer';
 import MessagesTable from './MessagesTable';
 
 const Messages: React.FC = () => (
-  <div className="box">
+  <div>
     <FiltersContainer />
     <MessagesTable />
   </div>

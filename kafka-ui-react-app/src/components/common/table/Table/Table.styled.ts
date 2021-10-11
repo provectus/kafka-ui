@@ -13,7 +13,7 @@ const StyledTable = styled.table<Props>`
     border-top: 1px #f1f2f3 solid;
     font-size: 14px;
     font-weight: 400;
-    padding: 8px 8px;
+    padding: 8px 8px 8px 24px;
     color: ${Colors.neutral[90]};
     vertical-align: middle;
   }

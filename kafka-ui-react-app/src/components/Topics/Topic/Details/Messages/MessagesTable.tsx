@@ -1,4 +1,6 @@
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import CustomParamButton from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
 import {
   Partition,
@@ -80,16 +82,16 @@ const MessagesTable: React.FC = () => {
 
   return (
     <>
-      <table className="table is-fullwidth">
+      <StyledTable className="table is-fullwidth">
         <thead>
           <tr>
-            <th style={{ width: 40 }}> </th>
-            <th style={{ width: 70 }}>Offset</th>
-            <th style={{ width: 90 }}>Partition</th>
-            <th>Key</th>
-            <th style={{ width: 170 }}>Timestamp</th>
-            <th>Content</th>
-            <th> </th>
+            <TableHeaderCell> </TableHeaderCell>
+            <TableHeaderCell title="Offset" />
+            <TableHeaderCell title="Partition" />
+            <TableHeaderCell title="Timestamp" />
+            <TableHeaderCell title="Key" />
+            <TableHeaderCell title="Content" />
+            <TableHeaderCell> </TableHeaderCell>
           </tr>
         </thead>
         <tbody>
@@ -117,7 +119,7 @@ const MessagesTable: React.FC = () => {
             </tr>
           )}
         </tbody>
-      </table>
+      </StyledTable>
       <div className="columns">
         <div className="column is-full">
           <CustomParamButton
