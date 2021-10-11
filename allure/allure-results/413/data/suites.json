@@ -4,12 +4,12 @@
     "name" : "com.provectus.kafka.ui.topics.TopicTests",
     "children" : [ {
       "name" : "should delete topic",
-      "uid" : "b710f5e49d49ffd3",
+      "uid" : "b028cf2e0cbee983",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "skipped",
       "time" : {
-        "start" : 1633956053443,
-        "stop" : 1633956053444,
+        "start" : 1633956092429,
+        "stop" : 1633956092430,
         "duration" : 1
       },
       "flaky" : false,
@@ -17,26 +17,26 @@
       "parameters" : [ ]
     }, {
       "name" : "should update a topic",
-      "uid" : "7f1363f599d82886",
+      "uid" : "44239875af7e184b",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1633956053540,
-        "stop" : 1633956100312,
-        "duration" : 46772
+        "start" : 1633956092512,
+        "stop" : 1633956142078,
+        "duration" : 49566
       },
       "flaky" : false,
       "newFailed" : false,
       "parameters" : [ ]
     }, {
       "name" : "should create a topic",
-      "uid" : "b013e7c967f7b92b",
+      "uid" : "1d4d28c1fbb36e49",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1633956100359,
-        "stop" : 1633956109282,
-        "duration" : 8923
+        "start" : 1633956142096,
+        "stop" : 1633956146031,
+        "duration" : 3935
       },
       "flaky" : false,
       "newFailed" : false,
@@ -47,13 +47,13 @@
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "583fa69fce8d8b6c",
+      "uid" : "d3163547d923da05",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1633956109923,
-        "stop" : 1633956111828,
-        "duration" : 1905
+        "start" : 1633956146309,
+        "stop" : 1633956147441,
+        "duration" : 1132
       },
       "flaky" : false,
       "newFailed" : false,

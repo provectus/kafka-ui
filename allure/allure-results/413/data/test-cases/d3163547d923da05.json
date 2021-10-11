@@ -1,12 +1,12 @@
 {
-  "uid" : "583fa69fce8d8b6c",
+  "uid" : "d3163547d923da05",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1633956109923,
-    "stop" : 1633956111828,
-    "duration" : 1905
+    "start" : 1633956146309,
+    "stop" : 1633956147441,
+    "duration" : 1132
   },
   "description" : "",
   "status" : "passed",
@@ -19,93 +19,93 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1633956109930,
-        "stop" : 1633956111047,
-        "duration" : 1117
+        "start" : 1633956146310,
+        "stop" : 1633956146892,
+        "duration" : 582
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1633956109930,
-          "stop" : 1633956111047,
-          "duration" : 1117
+          "start" : 1633956146310,
+          "stop" : 1633956146892,
+          "duration" : 582
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
         "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 1,
       "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 1
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1633956111048,
-        "stop" : 1633956111827,
-        "duration" : 779
+        "start" : 1633956146892,
+        "stop" : 1633956147440,
+        "duration" : 548
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1633956111048,
-          "stop" : 1633956111173,
-          "duration" : 125
+          "start" : 1633956146892,
+          "stop" : 1633956146933,
+          "duration" : 41
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
         "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1633956111173,
-          "stop" : 1633956111827,
-          "duration" : 654
+          "start" : 1633956146933,
+          "stop" : 1633956147440,
+          "duration" : 507
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "stepsCount" : 0,
         "attachmentsCount" : 0,
         "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "hasContent" : false,
+        "stepsCount" : 0
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "stepsCount" : 2,
       "attachmentsCount" : 0,
       "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "hasContent" : true,
+      "stepsCount" : 2
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
-    "stepsCount" : 5,
     "attachmentsCount" : 0,
     "shouldDisplayMessage" : false,
-    "hasContent" : true
+    "hasContent" : true,
+    "stepsCount" : 5
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az213-193"
+    "value" : "fv-az219-254"
   }, {
     "name" : "thread",
-    "value" : "6244@fv-az213-193.main(1)"
+    "value" : "6296@fv-az219-254.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -142,6 +142,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "583fa69fce8d8b6c.json",
+  "source" : "d3163547d923da05.json",
   "parameterValues" : [ ]
 }
