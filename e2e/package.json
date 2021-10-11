@@ -1,0 +1,25 @@
+{
+  "name": "kafka-e2e-checks",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test --config=config/playwright.config.ts --workers 4",
+    "gen:sources": "rm -rf src/generated-sources && openapi-generator-cli generate"
+  },
+  "keywords": [],
+  "author": "marat chukmarov",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.2.22",
+    "nodemon": "^2.0.13"
+  },
+  "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.4.12",
+    "@playwright/test": "^1.15.2",
+    "chai": "^4.3.4",
+    "kafkajs": "^1.15.0",
+    "node-fetch": "^2.6.5",
+    "uuid": "^8.3.2"
+  }
+}
