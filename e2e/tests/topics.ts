@@ -8,7 +8,7 @@ test.describe('[topics]', () => {
     await page.is_on_page();
   });
 
-  test('created topic appears in UI', async ({ steps, topics }) => {
+  test.skip('created topic appears in UI', async ({ steps, topics }) => {
     test.slow();
     const new_topic_name =  await steps.create_topic();
     const page = await topics("local");
