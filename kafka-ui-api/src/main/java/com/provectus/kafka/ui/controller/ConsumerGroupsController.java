@@ -3,14 +3,12 @@ package com.provectus.kafka.ui.controller;
 import static java.util.stream.Collectors.toMap;
 
 import com.provectus.kafka.ui.api.ConsumerGroupsApi;
-import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerGroupDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupOffsetsResetDTO;
 import com.provectus.kafka.ui.model.PartitionOffsetDTO;
-import com.provectus.kafka.ui.service.ClusterService;
-import com.provectus.kafka.ui.service.ClustersStorage;
+import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.OffsetsResetService;
 import java.util.Map;
 import java.util.Optional;
@@ -26,22 +24,22 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-public class ConsumerGroupsController implements ConsumerGroupsApi {
-  private final ClusterService clusterService;
+public class ConsumerGroupsController extends AbstractController implements ConsumerGroupsApi {
+
+  private final ConsumerGroupService consumerGroupService;
   private final OffsetsResetService offsetsResetService;
-  private final ClustersStorage clustersStorage;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteConsumerGroup(String clusterName, String id,
                                                         ServerWebExchange exchange) {
-    return clusterService.deleteConsumerGroupById(clusterName, id)
+    return consumerGroupService.deleteConsumerGroupById(getCluster(clusterName), id)
         .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<ConsumerGroupDetailsDTO>> getConsumerGroup(
       String clusterName, String consumerGroupId, ServerWebExchange exchange) {
-    return clusterService.getConsumerGroupDetail(clusterName, consumerGroupId)
+    return consumerGroupService.getConsumerGroupDetail(getCluster(clusterName), consumerGroupId)
         .map(ResponseEntity::ok);
   }
 
@@ -49,7 +47,7 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
   @Override
   public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getConsumerGroups(String clusterName,
                                                                      ServerWebExchange exchange) {
-    return clusterService.getConsumerGroups(clusterName)
+    return consumerGroupService.getConsumerGroups(getCluster(clusterName))
         .map(Flux::fromIterable)
         .map(ResponseEntity::ok)
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
@@ -58,7 +56,8 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
   @Override
   public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getTopicConsumerGroups(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return clusterService.getConsumerGroups(clusterName, Optional.of(topicName))
+    return consumerGroupService.getConsumerGroups(
+        getCluster(clusterName), Optional.of(topicName))
         .map(Flux::fromIterable)
         .map(ResponseEntity::ok)
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
@@ -71,9 +70,7 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
                                                                   consumerGroupOffsetsReset,
                                                               ServerWebExchange exchange) {
     return consumerGroupOffsetsReset.flatMap(reset -> {
-      var cluster =
-          clustersStorage.getClusterByName(clusterName).orElseThrow(ClusterNotFoundException::new);
-
+      var cluster = getCluster(clusterName);
       switch (reset.getResetType()) {
         case EARLIEST:
           return offsetsResetService

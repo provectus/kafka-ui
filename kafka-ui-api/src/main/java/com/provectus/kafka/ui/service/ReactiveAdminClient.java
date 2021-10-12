@@ -4,6 +4,8 @@ import static com.google.common.util.concurrent.Uninterruptibles.getUninterrupti
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
@@ -40,6 +42,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
 
@@ -186,7 +190,11 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
-    return toMono(client.deleteConsumerGroups(groupIds).all());
+    return toMono(client.deleteConsumerGroups(groupIds).all())
+        .onErrorResume(GroupIdNotFoundException.class,
+            th -> Mono.error(new NotFoundException("The group id does not exist")))
+        .onErrorResume(GroupNotEmptyException.class,
+            th -> Mono.error(new IllegalEntityStateException("The group is not empty")));
   }
 
   public Mono<Void> createTopic(String name,

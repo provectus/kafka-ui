@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -14,21 +13,17 @@ import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
-import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
 @Service
@@ -39,9 +34,8 @@ public class ConsumingService {
   private static final int MAX_RECORD_LIMIT = 100;
   private static final int DEFAULT_RECORD_LIMIT = 20;
 
-  private final KafkaService kafkaService;
+  private final ConsumerGroupService consumerGroupService;
   private final DeserializationService deserializationService;
-  private final ObjectMapper objectMapper = new ObjectMapper();
 
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                               ConsumerPosition consumerPosition, String query,
@@ -55,13 +49,13 @@ public class ConsumingService {
         deserializationService.getRecordDeserializerForCluster(cluster);
     if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.FORWARD)) {
       emitter = new ForwardRecordEmitter(
-          () -> kafkaService.createConsumer(cluster),
+          () -> consumerGroupService.createConsumer(cluster),
           new OffsetsSeekForward(topic, consumerPosition),
           recordDeserializer
       );
     } else {
       emitter = new BackwardRecordEmitter(
-          (Map<String, Object> props) -> kafkaService.createConsumer(cluster, props),
+          (Map<String, Object> props) -> consumerGroupService.createConsumer(cluster, props),
           new OffsetsSeekBackward(topic, consumerPosition, recordsLimit),
           recordDeserializer
       );
@@ -71,18 +65,6 @@ public class ConsumingService {
         .takeWhile(new FilterTopicMessageEvents(recordsLimit))
         .subscribeOn(Schedulers.elastic())
         .share();
-  }
-
-  public Mono<Map<TopicPartition, Long>> offsetsForDeletion(KafkaCluster cluster, String topicName,
-                                                            List<Integer> partitionsToInclude) {
-    return Mono.fromSupplier(() -> {
-      try (KafkaConsumer<Bytes, Bytes> consumer = kafkaService.createConsumer(cluster)) {
-        return significantOffsets(consumer, topicName, partitionsToInclude);
-      } catch (Exception e) {
-        log.error("Error occurred while consuming records", e);
-        throw new RuntimeException(e);
-      }
-    });
   }
 
   /**
