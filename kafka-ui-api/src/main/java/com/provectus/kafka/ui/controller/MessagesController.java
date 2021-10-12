@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
-import com.provectus.kafka.ui.service.ConsumingService;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.TopicsService;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class MessagesController extends AbstractController implements MessagesApi {
   private final MessagesService messagesService;
-  private final ConsumingService consumingService;
   private final TopicsService topicsService;
 
   @Override
@@ -52,7 +50,7 @@ public class MessagesController extends AbstractController implements MessagesAp
     return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
         .map(position ->
             ResponseEntity.ok(
-                consumingService.loadMessages(
+                messagesService.loadMessages(
                     getCluster(clusterName), topicName, position, q, limit)
             )
         );

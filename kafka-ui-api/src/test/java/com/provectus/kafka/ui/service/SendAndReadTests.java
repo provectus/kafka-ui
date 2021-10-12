@@ -126,9 +126,6 @@ public class SendAndReadTests extends AbstractBaseTest {
   private MessagesService messagesService;
 
   @Autowired
-  private ConsumingService consumingService;
-
-  @Autowired
   private ClustersStorage clustersStorage;
 
   @Autowired
@@ -527,7 +524,7 @@ public class SendAndReadTests extends AbstractBaseTest {
       String topic = createTopicAndCreateSchemas();
       try {
         messagesService.sendMessage(targetCluster, topic, msgToSend).block();
-        TopicMessageDTO polled = consumingService.loadMessages(
+        TopicMessageDTO polled = messagesService.loadMessages(
                 targetCluster,
                 topic,
                 new ConsumerPosition(
