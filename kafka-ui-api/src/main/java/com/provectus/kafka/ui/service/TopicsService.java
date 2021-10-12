@@ -421,7 +421,7 @@ public class TopicsService {
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    getTopicDetails(cluster, topicName)
+    var topicDetails = getTopicDetails(cluster, topicName)
         .orElseThrow(TopicNotFoundException::new);
     if (cluster.getFeatures().contains(Feature.TOPIC_DELETION)) {
       return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName))

@@ -49,32 +49,27 @@ public class ClustersStorage {
     return Optional.ofNullable(kafkaClusters.get(clusterName));
   }
 
-  private KafkaCluster updateTopicInCluster(KafkaCluster cluster, InternalTopic updatedTopic) {
-    final Map<String, InternalTopic> topics =
-        Optional.ofNullable(cluster.getTopics()).map(
-            t -> new HashMap<>(cluster.getTopics())
-        ).orElse(new HashMap<>());
-    topics.put(updatedTopic.getName(), updatedTopic);
-    return cluster.toBuilder().topics(topics).build();
-  }
-
-  private KafkaCluster deleteTopicFromCluster(KafkaCluster cluster, String topicToDelete) {
-    final Map<String, InternalTopic> topics = new HashMap<>(cluster.getTopics());
-    topics.remove(topicToDelete);
-    return cluster.toBuilder().topics(topics).build();
-  }
-
   public KafkaCluster setKafkaCluster(String key, KafkaCluster kafkaCluster) {
     this.kafkaClusters.put(key, kafkaCluster);
     return kafkaCluster;
   }
 
-  public KafkaCluster topicDeleted(KafkaCluster cluster, String topic) {
-    return setKafkaCluster(cluster.getName(), deleteTopicFromCluster(cluster, topic));
+  public KafkaCluster topicDeleted(KafkaCluster cluster, String topicToDelete) {
+    var topics = Optional.ofNullable(cluster.getTopics())
+        .map(HashMap::new)
+        .orElseGet(HashMap::new);
+    topics.remove(topicToDelete);
+    var updatedCluster = cluster.toBuilder().topics(topics).build();
+    return setKafkaCluster(cluster.getName(), updatedCluster);
   }
 
-  public KafkaCluster topicUpdated(KafkaCluster cluster, InternalTopic topic) {
-    return setKafkaCluster(cluster.getName(), updateTopicInCluster(cluster, topic));
+  public KafkaCluster topicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
+    var topics = Optional.ofNullable(cluster.getTopics())
+        .map(HashMap::new)
+        .orElseGet(HashMap::new);
+    topics.put(updatedTopic.getName(), updatedTopic);
+    var updatedCluster = cluster.toBuilder().topics(topics).build();
+    return setKafkaCluster(cluster.getName(), updatedCluster);
   }
 
   public Map<String, KafkaCluster> getKafkaClustersMap() {
