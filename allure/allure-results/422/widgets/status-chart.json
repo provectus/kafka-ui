@@ -1,0 +1,41 @@
+[ {
+  "uid" : "c81f1b4ec390d761",
+  "name" : "should create a topic",
+  "time" : {
+    "start" : 1634070957063,
+    "stop" : 1634070960455,
+    "duration" : 3392
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "f70694220925193b",
+  "name" : "should update a topic",
+  "time" : {
+    "start" : 1634070846535,
+    "stop" : 1634070956987,
+    "duration" : 110452
+  },
+  "status" : "failed",
+  "severity" : "normal"
+}, {
+  "uid" : "3f216e4346c24705",
+  "name" : "should delete topic",
+  "time" : {
+    "start" : 1634070846454,
+    "stop" : 1634070846455,
+    "duration" : 1
+  },
+  "status" : "skipped",
+  "severity" : "normal"
+}, {
+  "uid" : "4ad3044ae3cec201",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1634070960708,
+    "stop" : 1634070961663,
+    "duration" : 955
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]
