@@ -5,10 +5,10 @@ import static java.util.stream.Collectors.toMap;
 import com.provectus.kafka.ui.api.ConsumerGroupsApi;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.model.ConsumerGroup;
-import com.provectus.kafka.ui.model.ConsumerGroupDetails;
-import com.provectus.kafka.ui.model.ConsumerGroupOffsetsReset;
-import com.provectus.kafka.ui.model.PartitionOffset;
+import com.provectus.kafka.ui.model.ConsumerGroupDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupOffsetsResetDTO;
+import com.provectus.kafka.ui.model.PartitionOffsetDTO;
 import com.provectus.kafka.ui.service.ClusterService;
 import com.provectus.kafka.ui.service.ClustersStorage;
 import com.provectus.kafka.ui.service.OffsetsResetService;
@@ -39,7 +39,7 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<ConsumerGroupDetails>> getConsumerGroup(
+  public Mono<ResponseEntity<ConsumerGroupDetailsDTO>> getConsumerGroup(
       String clusterName, String consumerGroupId, ServerWebExchange exchange) {
     return clusterService.getConsumerGroupDetail(clusterName, consumerGroupId)
         .map(ResponseEntity::ok);
@@ -47,7 +47,7 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
 
 
   @Override
-  public Mono<ResponseEntity<Flux<ConsumerGroup>>> getConsumerGroups(String clusterName,
+  public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getConsumerGroups(String clusterName,
                                                                      ServerWebExchange exchange) {
     return clusterService.getConsumerGroups(clusterName)
         .map(Flux::fromIterable)
@@ -56,7 +56,7 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<ConsumerGroup>>> getTopicConsumerGroups(
+  public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getTopicConsumerGroups(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return clusterService.getConsumerGroups(clusterName, Optional.of(topicName))
         .map(Flux::fromIterable)
@@ -67,45 +67,48 @@ public class ConsumerGroupsController implements ConsumerGroupsApi {
 
   @Override
   public Mono<ResponseEntity<Void>> resetConsumerGroupOffsets(String clusterName, String group,
-                                                              Mono<ConsumerGroupOffsetsReset>
+                                                              Mono<ConsumerGroupOffsetsResetDTO>
                                                                   consumerGroupOffsetsReset,
                                                               ServerWebExchange exchange) {
-    return consumerGroupOffsetsReset.map(reset -> {
+    return consumerGroupOffsetsReset.flatMap(reset -> {
       var cluster =
           clustersStorage.getClusterByName(clusterName).orElseThrow(ClusterNotFoundException::new);
 
       switch (reset.getResetType()) {
         case EARLIEST:
-          offsetsResetService
+          return offsetsResetService
               .resetToEarliest(cluster, group, reset.getTopic(), reset.getPartitions());
-          break;
         case LATEST:
-          offsetsResetService
+          return offsetsResetService
               .resetToLatest(cluster, group, reset.getTopic(), reset.getPartitions());
-          break;
         case TIMESTAMP:
           if (reset.getResetToTimestamp() == null) {
-            throw new ValidationException(
-                "resetToTimestamp is required when TIMESTAMP reset type used");
+            return Mono.error(
+                new ValidationException(
+                    "resetToTimestamp is required when TIMESTAMP reset type used"
+                )
+            );
           }
-          offsetsResetService
+          return offsetsResetService
               .resetToTimestamp(cluster, group, reset.getTopic(), reset.getPartitions(),
                   reset.getResetToTimestamp());
-          break;
         case OFFSET:
           if (CollectionUtils.isEmpty(reset.getPartitionsOffsets())) {
-            throw new ValidationException(
-                "partitionsOffsets is required when OFFSET reset type used");
+            return Mono.error(
+                new ValidationException(
+                    "partitionsOffsets is required when OFFSET reset type used"
+                )
+            );
           }
           Map<Integer, Long> offsets = reset.getPartitionsOffsets().stream()
-              .collect(toMap(PartitionOffset::getPartition, PartitionOffset::getOffset));
-          offsetsResetService.resetToOffsets(cluster, group, reset.getTopic(), offsets);
-          break;
+              .collect(toMap(PartitionOffsetDTO::getPartition, PartitionOffsetDTO::getOffset));
+          return offsetsResetService.resetToOffsets(cluster, group, reset.getTopic(), offsets);
         default:
-          throw new ValidationException("Unknown resetType " + reset.getResetType());
+          return Mono.error(
+              new ValidationException("Unknown resetType " + reset.getResetType())
+          );
       }
-      return ResponseEntity.ok().build();
-    });
+    }).thenReturn(ResponseEntity.ok().build());
   }
 
 }

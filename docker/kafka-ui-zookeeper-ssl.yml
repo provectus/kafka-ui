@@ -7,7 +7,6 @@ services:
     image: provectuslabs/kafka-ui:latest
     ports:
       - 8080:8080
-      - 5005:5005
     volumes:
       - /tmp/kafka/secrets/kafka.kafka1.keystore.jks:/etc/kafka/secrets/kafka.zookeeper.keystore.jks
       - /tmp/kafka/secrets/kafka.zookeeper.truststore.jks:/etc/kafka/secrets/kafka.zookeeper.truststore.jks

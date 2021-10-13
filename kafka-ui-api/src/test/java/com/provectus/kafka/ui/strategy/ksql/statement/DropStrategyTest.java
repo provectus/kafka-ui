@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class DropStrategyTest {
   void shouldSerializeResponse() {
     String message = "updated successful";
     JsonNode node = getResponseWithMessage(message);
-    KsqlCommandResponse serializedResponse = strategy.serializeResponse(node);
+    KsqlCommandResponseDTO serializedResponse = strategy.serializeResponse(node);
     assertThat(serializedResponse.getMessage()).isEqualTo(message);
 
   }

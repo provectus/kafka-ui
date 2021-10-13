@@ -97,8 +97,9 @@ export const updateTopicAction = createAsyncAction(
 export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__REQUEST',
   'DELETE_TOPIC__SUCCESS',
-  'DELETE_TOPIC__FAILURE'
-)<undefined, TopicName, undefined>();
+  'DELETE_TOPIC__FAILURE',
+  'DELETE_TOPIC__CANCEL'
+)<undefined, TopicName, undefined, undefined>();
 
 export const fetchConsumerGroupsAction = createAsyncAction(
   'GET_CONSUMER_GROUPS__REQUEST',
@@ -320,5 +321,6 @@ export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();
 export const resetConsumerGroupOffsetsAction = createAsyncAction(
   'RESET_OFFSETS__REQUEST',
   'RESET_OFFSETS__SUCCESS',
-  'RESET_OFFSETS__FAILURE'
-)<undefined, undefined, { alert?: FailurePayload }>();
+  'RESET_OFFSETS__FAILURE',
+  'RESET_OFFSETS__CANCEL'
+)<undefined, undefined, { alert?: FailurePayload }, undefined>();

@@ -1567,6 +1567,7 @@ components:
               - SCHEMA_REGISTRY
               - KAFKA_CONNECT
               - KSQL_DB
+              - TOPIC_DELETION
       required:
         - id
         - name
@@ -2300,7 +2301,6 @@ components:
           format: int64
       required:
         - partition
-        - offset
 
     ConsumerGroupOffsetsResetType:
       type: string

@@ -5,8 +5,8 @@ import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.KsqlDbNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.KsqlCommand;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
+import com.provectus.kafka.ui.model.KsqlCommandDTO;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +20,8 @@ public class KsqlService {
   private final ClustersStorage clustersStorage;
   private final List<BaseStrategy> ksqlStatementStrategies;
 
-  public Mono<KsqlCommandResponse> executeKsqlCommand(String clusterName,
-                                                      Mono<KsqlCommand> ksqlCommand) {
+  public Mono<KsqlCommandResponseDTO> executeKsqlCommand(String clusterName,
+                                                      Mono<KsqlCommandDTO> ksqlCommand) {
     return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
         .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
         .map(KafkaCluster::getKsqldbServer)
@@ -37,7 +37,7 @@ public class KsqlService {
   }
 
   private Mono<BaseStrategy> getStatementStrategyForKsqlCommand(
-      Mono<KsqlCommand> ksqlCommand) {
+      Mono<KsqlCommandDTO> ksqlCommand) {
     return ksqlCommand
         .map(command -> ksqlStatementStrategies.stream()
             .filter(s -> s.test(command.getKsql()))

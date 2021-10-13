@@ -1,6 +1,6 @@
 # Quick Start with docker-compose
 
-Envinronment variables documentation - [see usage](README.md#env_variables) 
+Environment variables documentation - [see usage](README.md#env_variables) 
 
 * Add a new service in docker-compose.yml
 

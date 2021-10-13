@@ -409,6 +409,8 @@ components:
             - UNASSIGNED
         worker_id:
           type: string
+        trace:
+          type: string
 
     ConnectorStatus:
       type: object
@@ -426,6 +428,8 @@ components:
                 - PAUSED
                 - UNASSIGNED
             worker_id:
+              type: string
+            trace:
               type: string
         tasks:
           type: array

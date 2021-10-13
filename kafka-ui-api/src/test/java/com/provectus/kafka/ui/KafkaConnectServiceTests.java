@@ -3,16 +3,16 @@ package com.provectus.kafka.ui;
 import static java.util.function.Predicate.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.provectus.kafka.ui.model.Connector;
-import com.provectus.kafka.ui.model.ConnectorPlugin;
-import com.provectus.kafka.ui.model.ConnectorPluginConfig;
-import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponse;
-import com.provectus.kafka.ui.model.ConnectorPluginConfigValue;
-import com.provectus.kafka.ui.model.ConnectorState;
-import com.provectus.kafka.ui.model.ConnectorStatus;
-import com.provectus.kafka.ui.model.ConnectorType;
-import com.provectus.kafka.ui.model.NewConnector;
-import com.provectus.kafka.ui.model.TaskId;
+import com.provectus.kafka.ui.model.ConnectorDTO;
+import com.provectus.kafka.ui.model.ConnectorPluginConfigDTO;
+import com.provectus.kafka.ui.model.ConnectorPluginConfigValidationResponseDTO;
+import com.provectus.kafka.ui.model.ConnectorPluginConfigValueDTO;
+import com.provectus.kafka.ui.model.ConnectorPluginDTO;
+import com.provectus.kafka.ui.model.ConnectorStateDTO;
+import com.provectus.kafka.ui.model.ConnectorStatusDTO;
+import com.provectus.kafka.ui.model.ConnectorTypeDTO;
+import com.provectus.kafka.ui.model.NewConnectorDTO;
+import com.provectus.kafka.ui.model.TaskIdDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -48,7 +48,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
   public void setUp() {
     webTestClient.post()
         .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
-        .bodyValue(new NewConnector()
+        .bodyValue(new NewConnectorDTO()
             .name(connectorName)
             .config(Map.of(
                 "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
@@ -168,15 +168,15 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
 
   @Test
   public void shouldRetrieveConnector() {
-    Connector expected = (Connector) new Connector()
+    ConnectorDTO expected = (ConnectorDTO) new ConnectorDTO()
         .connect(connectName)
-        .status(new ConnectorStatus()
-            .state(ConnectorState.RUNNING)
+        .status(new ConnectorStatusDTO()
+            .state(ConnectorStateDTO.RUNNING)
             .workerId("kafka-connect:8083"))
-        .tasks(List.of(new TaskId()
+        .tasks(List.of(new TaskIdDTO()
             .connector(connectorName)
             .task(0)))
-        .type(ConnectorType.SINK)
+        .type(ConnectorTypeDTO.SINK)
         .name(connectorName)
         .config(config);
     webTestClient.get()
@@ -184,7 +184,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
             connectName, connectorName)
         .exchange()
         .expectStatus().isOk()
-        .expectBody(Connector.class)
+        .expectBody(ConnectorDTO.class)
         .value(connector -> assertEquals(expected, connector));
   }
 
@@ -334,7 +334,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/connects/{connectName}/plugins", LOCAL, connectName)
         .exchange()
         .expectStatus().isOk()
-        .expectBodyList(ConnectorPlugin.class)
+        .expectBodyList(ConnectorPluginDTO.class)
         .value(plugins -> assertEquals(14, plugins.size()));
   }
 
@@ -355,7 +355,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
         )
         .exchange()
         .expectStatus().isOk()
-        .expectBody(ConnectorPluginConfigValidationResponse.class)
+        .expectBody(ConnectorPluginConfigValidationResponseDTO.class)
         .value(response -> assertEquals(0, response.getErrorCount()));
   }
 
@@ -376,12 +376,12 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
         )
         .exchange()
         .expectStatus().isOk()
-        .expectBody(ConnectorPluginConfigValidationResponse.class)
+        .expectBody(ConnectorPluginConfigValidationResponseDTO.class)
         .value(response -> {
           assertEquals(1, response.getErrorCount());
           var error = response.getConfigs().stream()
-              .map(ConnectorPluginConfig::getValue)
-              .map(ConnectorPluginConfigValue::getErrors)
+              .map(ConnectorPluginConfigDTO::getValue)
+              .map(ConnectorPluginConfigValueDTO::getErrors)
               .filter(not(List::isEmpty))
               .findFirst().get();
           assertEquals(

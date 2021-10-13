@@ -1,14 +1,17 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.model.SeekDirectionDTO.BACKWARD;
+import static com.provectus.kafka.ui.model.SeekDirectionDTO.FORWARD;
+import static com.provectus.kafka.ui.model.SeekTypeDTO.BEGINNING;
+import static com.provectus.kafka.ui.model.SeekTypeDTO.OFFSET;
+import static com.provectus.kafka.ui.model.SeekTypeDTO.TIMESTAMP;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.SeekDirection;
-import com.provectus.kafka.ui.model.SeekType;
-import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
 import com.provectus.kafka.ui.serde.SimpleRecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
@@ -29,6 +32,7 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterAll;
@@ -57,13 +61,21 @@ class RecordEmitterTest extends AbstractBaseTest {
         for (int i = 0; i < MSGS_PER_PARTITION; i++) {
           long ts = System.currentTimeMillis() + i;
           var value = "msg_" + partition + "_" + i;
-          var metadata =
-              producer.send(new ProducerRecord<>(TOPIC, partition, ts, null, value)).get();
-          SENT_RECORDS.add(new Record(
-              value,
-              new TopicPartition(metadata.topic(), metadata.partition()),
-              metadata.offset(),
-              ts)
+          var metadata = producer.send(
+              new ProducerRecord<>(
+                  TOPIC, partition, ts, null, value, List.of(
+                      new RecordHeader("name", null),
+                      new RecordHeader("name2", "value".getBytes())
+                  )
+              )
+          ).get();
+          SENT_RECORDS.add(
+              new Record(
+                  value,
+                  new TopicPartition(metadata.topic(), metadata.partition()),
+                  metadata.offset(),
+                  ts
+              )
           );
         }
       }
@@ -81,7 +93,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekForward(EMPTY_TOPIC,
-            new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD)
+            new ConsumerPosition(BEGINNING, Map.of(), FORWARD)
         ), new SimpleRecordSerDe()
     );
 
@@ -89,13 +101,13 @@ class RecordEmitterTest extends AbstractBaseTest {
         this::createConsumer,
         new OffsetsSeekBackward(
             EMPTY_TOPIC,
-            new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.BACKWARD),
+            new ConsumerPosition(BEGINNING, Map.of(), BACKWARD),
             100
         ), new SimpleRecordSerDe()
     );
 
     Long polledValues = Flux.create(forwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
         .limitRequest(100)
         .count()
         .block();
@@ -103,7 +115,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     assertThat(polledValues).isZero();
 
     polledValues = Flux.create(backwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
         .limitRequest(100)
         .count()
         .block();
@@ -117,23 +129,23 @@ class RecordEmitterTest extends AbstractBaseTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
-            new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD)
+            new ConsumerPosition(BEGINNING, Map.of(), FORWARD)
         ), new SimpleRecordSerDe()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekBackward(TOPIC,
-            new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD),
+            new ConsumerPosition(BEGINNING, Map.of(), FORWARD),
             PARTITIONS * MSGS_PER_PARTITION
         ), new SimpleRecordSerDe()
     );
 
     var polledValues = Flux.create(forwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -142,10 +154,10 @@ class RecordEmitterTest extends AbstractBaseTest {
         SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList()));
 
     polledValues = Flux.create(backwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -166,23 +178,23 @@ class RecordEmitterTest extends AbstractBaseTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
-            new ConsumerPosition(SeekType.OFFSET, targetOffsets, SeekDirection.FORWARD)
+            new ConsumerPosition(OFFSET, targetOffsets, FORWARD)
         ), new SimpleRecordSerDe()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekBackward(TOPIC,
-            new ConsumerPosition(SeekType.OFFSET, targetOffsets, SeekDirection.BACKWARD),
+            new ConsumerPosition(OFFSET, targetOffsets, BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
         ), new SimpleRecordSerDe()
     );
 
     var polledValues = Flux.create(forwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -200,10 +212,10 @@ class RecordEmitterTest extends AbstractBaseTest {
         .collect(Collectors.toList());
 
     polledValues =  Flux.create(backwardEmitter)
-        .filter(m -> m.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
+        .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
         .limitRequest(Long.MAX_VALUE)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .collect(Collectors.toList())
         .block();
@@ -229,21 +241,21 @@ class RecordEmitterTest extends AbstractBaseTest {
     var forwardEmitter = new ForwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekForward(TOPIC,
-            new ConsumerPosition(SeekType.TIMESTAMP, targetTimestamps, SeekDirection.FORWARD)
+            new ConsumerPosition(TIMESTAMP, targetTimestamps, FORWARD)
         ), new SimpleRecordSerDe()
     );
 
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekBackward(TOPIC,
-            new ConsumerPosition(SeekType.TIMESTAMP, targetTimestamps, SeekDirection.BACKWARD),
+            new ConsumerPosition(TIMESTAMP, targetTimestamps, BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
         ), new SimpleRecordSerDe()
     );
 
     var polledValues = Flux.create(forwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
@@ -257,8 +269,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     assertThat(polledValues).containsExactlyInAnyOrderElementsOf(expectedValues);
 
     polledValues = Flux.create(backwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())
@@ -284,14 +296,14 @@ class RecordEmitterTest extends AbstractBaseTest {
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekBackward(TOPIC,
-            new ConsumerPosition(SeekType.OFFSET, targetOffsets, SeekDirection.BACKWARD),
+            new ConsumerPosition(OFFSET, targetOffsets, BACKWARD),
             numMessages
         ), new SimpleRecordSerDe()
     );
 
     var polledValues = Flux.create(backwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(numMessages)
         .collect(Collectors.toList())
@@ -317,14 +329,14 @@ class RecordEmitterTest extends AbstractBaseTest {
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekBackward(TOPIC,
-            new ConsumerPosition(SeekType.OFFSET, offsets, SeekDirection.BACKWARD),
+            new ConsumerPosition(OFFSET, offsets, BACKWARD),
             100
         ), new SimpleRecordSerDe()
     );
 
     var polledValues = Flux.create(backwardEmitter)
-        .filter(e -> e.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE))
-        .map(TopicMessageEvent::getMessage)
+        .filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        .map(TopicMessageEventDTO::getMessage)
         .map(m -> m.getContent().toString())
         .limitRequest(Long.MAX_VALUE)
         .collect(Collectors.toList())

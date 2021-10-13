@@ -7,10 +7,9 @@ import {
 } from 'generated-sources';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import convertToYup from 'json-schema-yup-transformer';
-import { getFakeData } from 'yup-faker';
 import { useHistory } from 'react-router';
 import { clusterTopicMessagesPath } from 'lib/paths';
+import jsf from 'json-schema-faker';
 
 import validateMessage from './validateMessage';
 
@@ -25,7 +24,6 @@ export interface Props {
   ) => void;
   messageSchema: TopicMessageSchema | undefined;
   schemaIsFetched: boolean;
-  messageIsSent: boolean;
   messageIsSending: boolean;
   partitions: Partition[];
 }
@@ -37,14 +35,13 @@ const SendMessage: React.FC<Props> = ({
   sendTopicMessage,
   messageSchema,
   schemaIsFetched,
-  messageIsSent,
   messageIsSending,
   partitions,
 }) => {
   const [keyExampleValue, setKeyExampleValue] = React.useState('');
   const [contentExampleValue, setContentExampleValue] = React.useState('');
   const [schemaIsReady, setSchemaIsReady] = React.useState(false);
-  const [schemaErrorString, setSchemaErrorString] = React.useState('');
+  const [schemaErrors, setSchemaErrors] = React.useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -53,39 +50,31 @@ const SendMessage: React.FC<Props> = ({
   } = useForm({ mode: 'onChange' });
   const history = useHistory();
 
+  jsf.option('fillProperties', false);
+  jsf.option('alwaysFakeOptionals', true);
+
   React.useEffect(() => {
     fetchTopicMessageSchema(clusterName, topicName);
   }, []);
   React.useEffect(() => {
     if (schemaIsFetched && messageSchema) {
-      const validateKey = convertToYup(JSON.parse(messageSchema.key.schema));
-      if (validateKey) {
-        setKeyExampleValue(
-          JSON.stringify(getFakeData(validateKey), null, '\t')
-        );
-        setSchemaIsReady(true);
-      }
-
-      const validateContent = convertToYup(
-        JSON.parse(messageSchema.value.schema)
+      setKeyExampleValue(
+        JSON.stringify(
+          jsf.generate(JSON.parse(messageSchema.key.schema)),
+          null,
+          '\t'
+        )
       );
-      if (validateContent) {
-        setContentExampleValue(
-          JSON.stringify(getFakeData(validateContent), null, '\t')
-        );
-        setSchemaIsReady(true);
-      }
-
-      if (!validateKey && !validateContent) {
-        setSchemaIsReady(true);
-      }
+      setContentExampleValue(
+        JSON.stringify(
+          jsf.generate(JSON.parse(messageSchema.value.schema)),
+          null,
+          '\t'
+        )
+      );
+      setSchemaIsReady(true);
     }
   }, [schemaIsFetched]);
-  React.useEffect(() => {
-    if (messageIsSent) {
-      history.push(clusterTopicMessagesPath(clusterName, topicName));
-    }
-  }, [messageIsSent]);
 
   const onSubmit = async (data: {
     key: string;
@@ -102,7 +91,7 @@ const SendMessage: React.FC<Props> = ({
         key,
         content,
         messageSchema,
-        setSchemaErrorString
+        setSchemaErrors
       );
 
       if (messageIsValid) {
@@ -112,6 +101,7 @@ const SendMessage: React.FC<Props> = ({
           headers,
           partition,
         });
+        history.push(clusterTopicMessagesPath(clusterName, topicName));
       }
     }
   };
@@ -194,9 +184,9 @@ const SendMessage: React.FC<Props> = ({
             />
           </div>
         </div>
-        {schemaErrorString && (
+        {schemaErrors && (
           <div className="mb-4">
-            {schemaErrorString.split('-').map((err) => (
+            {schemaErrors.map((err) => (
               <p className="help is-danger" key={err}>
                 {err}
               </p>

@@ -12,13 +12,14 @@
     "@types/eventsource": "^1.1.6",
     "@types/yup": "^0.29.13",
     "ace-builds": "^1.4.12",
+    "ajv": "^8.6.3",
     "bulma": "^0.9.3",
     "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
     "dayjs": "^1.10.6",
     "eslint-import-resolver-node": "^0.3.5",
     "eslint-import-resolver-typescript": "^2.4.0",
-    "json-schema-yup-transformer": "^1.6.0",
+    "json-schema-faker": "^0.5.0-rcv.39",
     "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "pretty-ms": "^7.0.1",
@@ -38,8 +39,7 @@
     "typesafe-actions": "^5.1.0",
     "use-debounce": "^7.0.0",
     "uuid": "^8.3.1",
-    "yup": "^0.32.9",
-    "yup-faker": "^0.1.0"
+    "yup": "^0.32.9"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": [

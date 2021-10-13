@@ -4,9 +4,9 @@ export const initialState: LoaderState = {};
 
 const reducer = (state = initialState, action: Action): LoaderState => {
   const { type } = action;
-  const matches = /(.*)__(REQUEST|SUCCESS|FAILURE)$/.exec(type);
+  const matches = /(.*)__(REQUEST|SUCCESS|FAILURE|CANCEL)$/.exec(type);
 
-  // not a *__REQUEST / *__SUCCESS /  *__FAILURE actions, so we ignore them
+  // not a *__REQUEST / *__SUCCESS /  *__FAILURE /  *__CANCEL actions, so we ignore them
   if (!matches) return state;
 
   const [, requestName, requestState] = matches;
@@ -26,6 +26,11 @@ const reducer = (state = initialState, action: Action): LoaderState => {
       return {
         ...state,
         [requestName]: 'errorFetching',
+      };
+    case 'CANCEL':
+      return {
+        ...state,
+        [requestName]: 'notFetched',
       };
     default:
       return state;

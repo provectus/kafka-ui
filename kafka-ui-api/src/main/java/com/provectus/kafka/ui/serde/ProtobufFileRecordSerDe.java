@@ -1,13 +1,12 @@
 package com.provectus.kafka.ui.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
-import com.provectus.kafka.ui.model.MessageSchema;
-import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.model.MessageSchemaDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
-import com.provectus.kafka.ui.serde.schemaregistry.MessageFormatter;
-import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -16,6 +15,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,15 +33,35 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ObjectMapper objectMapper;
   private final Path protobufSchemaPath;
   private final ProtobufSchemaConverter schemaConverter = new ProtobufSchemaConverter();
+  private final Map<String, Descriptor> messageDescriptorMap;
+  private final Descriptor defaultMessageDescriptor;
 
-  public ProtobufFileRecordSerDe(Path protobufSchemaPath, String messageName,
-                                 ObjectMapper objectMapper) throws IOException {
+  public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
+                                 String defaultMessageName, ObjectMapper objectMapper)
+      throws IOException {
     this.objectMapper = objectMapper;
     this.protobufSchemaPath = protobufSchemaPath;
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
-      this.protobufSchema = new ProtobufSchema(
-          lines.collect(Collectors.joining())
-      ).copy(messageName);
+      var schema = new ProtobufSchema(
+          lines.collect(Collectors.joining("\n"))
+      );
+      if (defaultMessageName != null) {
+        this.protobufSchema = schema.copy(defaultMessageName);
+      } else {
+        this.protobufSchema = schema;
+      }
+      this.messageDescriptorMap = new HashMap<>();
+      if (messageNameMap != null) {
+        for (Map.Entry<String, String> entry : messageNameMap.entrySet()) {
+          var descriptor = Objects.requireNonNull(protobufSchema.toDescriptor(entry.getValue()),
+              "The given message type is not found in protobuf definition: "
+                  + entry.getValue());
+          messageDescriptorMap.put(entry.getKey(), descriptor);
+        }
+      }
+      defaultMessageDescriptor = Objects.requireNonNull(protobufSchema.toDescriptor(),
+          "The given message type is not found in protobuf definition: "
+              + defaultMessageName);
     }
   }
 
@@ -53,7 +74,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         builder.keyFormat(MessageFormat.UNKNOWN);
       }
       if (msg.value() != null) {
-        builder.value(parse(msg.value().get()));
+        builder.value(parse(msg.value().get(), getDescriptor(msg.topic())));
         builder.valueFormat(MessageFormat.PROTOBUF);
       }
       return builder.build();
@@ -62,11 +83,15 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     }
   }
 
+  private Descriptor getDescriptor(String topic) {
+    return messageDescriptorMap.getOrDefault(topic, defaultMessageDescriptor);
+  }
+
   @SneakyThrows
-  private String parse(byte[] value) {
+  private String parse(byte[] value, Descriptor descriptor) {
     DynamicMessage protoMsg = DynamicMessage.parseFrom(
-        protobufSchema.toDescriptor(),
-        new ByteArrayInputStream(value)
+            descriptor,
+            new ByteArrayInputStream(value)
     );
     byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
     return new String(jsonFromProto);
@@ -80,7 +105,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     if (data == null) {
       return new ProducerRecord<>(topic, partition, Objects.requireNonNull(key).getBytes(), null);
     }
-    DynamicMessage.Builder builder = protobufSchema.newMessageBuilder();
+    DynamicMessage.Builder builder = DynamicMessage.newBuilder(getDescriptor(topic));
     try {
       JsonFormat.parser().merge(data, builder);
       final DynamicMessage message = builder.build();
@@ -96,23 +121,23 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public TopicMessageSchema getTopicSchema(String topic) {
+  public TopicMessageSchemaDTO getTopicSchema(String topic) {
 
     final JsonSchema jsonSchema = schemaConverter.convert(
-        protobufSchemaPath.toUri(),
-        protobufSchema.toDescriptor()
+            protobufSchemaPath.toUri(),
+            getDescriptor(topic)
     );
-    final MessageSchema keySchema = new MessageSchema()
+    final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
-        .source(MessageSchema.SourceEnum.PROTO_FILE)
+        .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
         .schema(JsonSchema.stringSchema().toJson(objectMapper));
 
-    final MessageSchema valueSchema = new MessageSchema()
+    final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
-        .source(MessageSchema.SourceEnum.PROTO_FILE)
+        .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
         .schema(jsonSchema.toJson(objectMapper));
 
-    return new TopicMessageSchema()
+    return new TopicMessageSchemaDTO()
         .key(keySchema)
         .value(valueSchema);
   }

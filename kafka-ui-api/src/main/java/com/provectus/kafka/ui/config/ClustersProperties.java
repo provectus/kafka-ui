@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import lombok.Data;
 import lombok.Getter;
@@ -30,10 +31,15 @@ public class ClustersProperties {
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
     String protobufMessageName;
+    Map<String, String> protobufMessageNameByTopic;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
+    boolean jmxSsl;
+    String jmxUsername;
+    String jmxPassword;
     Properties properties;
     boolean readOnly = false;
+    boolean disableLogDirsCollection = false;
     List<StreamApplication> streamApplications = new ArrayList<>();
   }
 

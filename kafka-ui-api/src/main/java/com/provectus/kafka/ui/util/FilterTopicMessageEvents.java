@@ -1,10 +1,10 @@
 package com.provectus.kafka.ui.util;
 
-import com.provectus.kafka.ui.model.TopicMessageEvent;
+import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-public class FilterTopicMessageEvents implements Predicate<TopicMessageEvent> {
+public class FilterTopicMessageEvents implements Predicate<TopicMessageEventDTO> {
   private final AtomicInteger processed = new AtomicInteger();
   private final int limit;
 
@@ -13,8 +13,8 @@ public class FilterTopicMessageEvents implements Predicate<TopicMessageEvent> {
   }
 
   @Override
-  public boolean test(TopicMessageEvent event) {
-    if (event.getType().equals(TopicMessageEvent.TypeEnum.MESSAGE)) {
+  public boolean test(TopicMessageEventDTO event) {
+    if (event.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE)) {
       final int i = processed.incrementAndGet();
       if (i > limit) {
         return false;

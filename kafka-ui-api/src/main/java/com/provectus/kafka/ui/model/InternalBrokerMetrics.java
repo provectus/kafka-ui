@@ -7,5 +7,5 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class InternalBrokerMetrics {
-  private final List<Metric> metrics;
+  private final List<MetricDTO> metrics;
 }

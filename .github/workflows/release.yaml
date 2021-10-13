@@ -60,6 +60,7 @@ jobs:
         if: github.event.inputs.rebuild == 'v0.0.0'
         run: |
           mvn -q versions:set -DremoveSnapshot
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           git add .
           git commit -m "release ${VERSION}"
           git tag -f v${VERSION}

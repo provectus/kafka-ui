@@ -1,11 +1,6 @@
 import React from 'react';
-import { omit, reject, reduce, remove } from 'lodash';
-import { v4 } from 'uuid';
-import {
-  TopicFormCustomParams,
-  TopicConfigByName,
-  TopicConfigParams,
-} from 'redux/interfaces';
+import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import CustomParamButton from './CustomParamButton';
 import CustomParamField from './CustomParamField';
@@ -17,59 +12,13 @@ interface Props {
   config?: TopicConfigByName;
 }
 
-const existingFields: string[] = [];
-
-const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
-  const byIndex = config
-    ? reduce(
-        config.byName,
-        (result: TopicConfigParams, param, paramName) => ({
-          ...result,
-          [`${INDEX_PREFIX}.${new Date().getTime()}ts`]: {
-            name: paramName,
-            value: param.value,
-            id: v4(),
-          },
-        }),
-        {}
-      )
-    : {};
-
-  const [formCustomParams, setFormCustomParams] =
-    React.useState<TopicFormCustomParams>({
-      byIndex,
-      allIndexes: Object.keys(byIndex),
-    });
-
-  const onAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-
-    const newIndex = `${INDEX_PREFIX}.${new Date().getTime()}ts`;
-
-    setFormCustomParams({
-      ...formCustomParams,
-      byIndex: {
-        ...formCustomParams.byIndex,
-        [newIndex]: { name: '', value: '' },
-      },
-      allIndexes: [newIndex, ...formCustomParams.allIndexes],
-    });
-  };
-
-  const onRemove = (index: string) => {
-    const fieldName = formCustomParams.byIndex[index].name;
-    remove(existingFields, (el) => el === fieldName);
-    setFormCustomParams({
-      ...formCustomParams,
-      byIndex: omit(formCustomParams.byIndex, index),
-      allIndexes: reject(formCustomParams.allIndexes, (i) => i === index),
-    });
-  };
-
-  const onFieldNameChange = (index: string, name: string) => {
-    formCustomParams.byIndex[index].name = name;
-    existingFields.push(name);
-  };
+const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
+  const { control } = useFormContext<TopicFormData>();
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: INDEX_PREFIX,
+  });
+  const [existingFields, setExistingFields] = React.useState<string[]>([]);
 
   return (
     <>
@@ -78,22 +27,20 @@ const CustomParams: React.FC<Props> = ({ isSubmitting, config }) => {
           <CustomParamButton
             className="is-success"
             type="fa-plus"
-            onClick={onAdd}
+            onClick={() => append({ name: '', value: '' })}
             btnText="Add Custom Parameter"
           />
         </div>
       </div>
-
-      {formCustomParams.allIndexes.map((index) => (
+      {fields.map((field, idx) => (
         <CustomParamField
-          key={formCustomParams.byIndex[index].name}
-          index={index}
+          key={field.id}
+          field={field}
+          remove={remove}
+          index={idx}
           isDisabled={isSubmitting}
-          name={formCustomParams.byIndex[index].name}
-          defaultValue={formCustomParams.byIndex[index].value}
           existingFields={existingFields}
-          onNameChange={onFieldNameChange}
-          onRemove={onRemove}
+          setExistingFields={setExistingFields}
         />
       ))}
     </>

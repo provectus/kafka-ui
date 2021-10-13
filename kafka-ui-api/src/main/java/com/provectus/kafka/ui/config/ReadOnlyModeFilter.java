@@ -31,7 +31,7 @@ public class ReadOnlyModeFilter implements WebFilter {
       return chain.filter(exchange);
     }
 
-    var path = exchange.getRequest().getURI().getPath();
+    var path = exchange.getRequest().getPath().pathWithinApplication().value();
     var matcher = CLUSTER_NAME_REGEX.matcher(path);
     if (!matcher.find()) {
       return chain.filter(exchange);
