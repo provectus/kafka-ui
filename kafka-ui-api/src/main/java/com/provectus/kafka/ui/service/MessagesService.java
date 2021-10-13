@@ -43,6 +43,8 @@ import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import javax.annotation.Nullable;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -120,9 +122,9 @@ public class MessagesService {
     }
   }
 
-  private Iterable<Header> createHeaders(Map<String, String> clientHeaders) {
+  private Iterable<Header> createHeaders(@Nullable Map<String, String> clientHeaders) {
     if (clientHeaders == null) {
-      return null;
+      return new RecordHeaders();
     }
     RecordHeaders headers = new RecordHeaders();
     clientHeaders.forEach((k, v) -> headers.add(new RecordHeader(k, v.getBytes())));
@@ -179,7 +181,6 @@ public class MessagesService {
   }
 
   private boolean filterTopicMessage(TopicMessageEventDTO message, String query) {
-    log.info("filter");
     if (StringUtils.isEmpty(query)
         || !message.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE)) {
       return true;

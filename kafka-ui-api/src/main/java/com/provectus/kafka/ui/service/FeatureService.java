@@ -40,14 +40,14 @@ public class FeatureService {
     }
 
     features.add(
-        topicDeletionCheck(cluster)
+        isTopicDeletionEnabled(cluster)
             .flatMap(r -> r ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
     );
 
     return Flux.fromIterable(features).flatMap(m -> m);
   }
 
-  private Mono<Boolean> topicDeletionCheck(KafkaCluster cluster) {
+  private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster) {
     return brokerService.getController(cluster)
         .map(Node::id)
         .flatMap(broker -> brokerService.getBrokerConfigMap(cluster, broker))

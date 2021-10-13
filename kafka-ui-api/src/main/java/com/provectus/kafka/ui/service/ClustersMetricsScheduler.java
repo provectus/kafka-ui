@@ -25,7 +25,7 @@ public class ClustersMetricsScheduler {
         .map(Map.Entry::getValue)
         .flatMap(cluster -> {
           log.debug("Start getting metrics for kafkaCluster: {}", cluster.getName());
-          return metricsService.getUpdatedCluster(cluster);
+          return metricsService.updateClusterMetrics(cluster);
         })
         .doOnNext(s -> clustersStorage.setKafkaCluster(s.getName(), s))
         .then()

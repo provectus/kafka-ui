@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
@@ -39,19 +38,22 @@ public class MetricsService {
 
   private final ZookeeperService zookeeperService;
   private final JmxClusterUtil jmxClusterUtil;
-  private final ClustersStorage clustersStorage;
   private final AdminClientService adminClientService;
   private final FeatureService featureService;
   private final TopicsService topicsService;
 
-  @SneakyThrows
-  public Mono<KafkaCluster> getUpdatedCluster(KafkaCluster cluster) {
+  /**
+   * Updates cluster's metrics and topics structure.
+   * @param cluster to be updated
+   * @return cluster with up-to-date metrics and topics structure
+   */
+  public Mono<KafkaCluster> updateClusterMetrics(KafkaCluster cluster) {
     return adminClientService.get(cluster)
         .flatMap(
             ac -> ac.getClusterVersion().flatMap(
                 version ->
                     getClusterMetrics(ac)
-                        .flatMap(i -> fillJmxMetrics(i, cluster.getName(), ac))
+                        .flatMap(i -> fillJmxMetrics(i, cluster, ac))
                         .flatMap(clusterMetrics ->
                             topicsService.getTopicsData(ac).flatMap(it -> {
                                   if (cluster.getDisableLogDirsCollection() == null
@@ -66,7 +68,7 @@ public class MetricsService {
                         )
             )
         ).flatMap(
-            nc ->  featureService.getAvailableFeatures(cluster).collectList()
+            nc -> featureService.getAvailableFeatures(cluster).collectList()
                 .map(f -> nc.toBuilder().features(f).build())
         ).doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e)
@@ -290,8 +292,8 @@ public class MetricsService {
     );
   }
 
-  private List<MetricDTO> getJmxMetric(String clusterName, Node node) {
-    return clustersStorage.getClusterByName(clusterName)
+  private List<MetricDTO> getJmxMetric(KafkaCluster cluster, Node node) {
+    return Optional.of(cluster)
         .filter(c -> c.getJmxPort() != null)
         .filter(c -> c.getJmxPort() > 0)
         .map(c -> jmxClusterUtil.getJmxMetrics(node.host(), c.getJmxPort(), c.isJmxSsl(),
@@ -300,18 +302,19 @@ public class MetricsService {
   }
 
   private Mono<InternalClusterMetrics> fillJmxMetrics(InternalClusterMetrics internalClusterMetrics,
-                                                      String clusterName, ReactiveAdminClient ac) {
-    return fillBrokerMetrics(internalClusterMetrics, clusterName, ac)
+                                                      KafkaCluster cluster,
+                                                      ReactiveAdminClient ac) {
+    return fillBrokerMetrics(internalClusterMetrics, cluster, ac)
         .map(this::calculateClusterMetrics);
   }
 
   private Mono<InternalClusterMetrics> fillBrokerMetrics(
-      InternalClusterMetrics internalClusterMetrics, String clusterName, ReactiveAdminClient ac) {
+      InternalClusterMetrics internalClusterMetrics, KafkaCluster cluster, ReactiveAdminClient ac) {
     return ac.describeCluster()
-        .flatMapIterable(desc -> desc.getNodes())
+        .flatMapIterable(ReactiveAdminClient.ClusterDescription::getNodes)
         .map(broker ->
             Map.of(broker.id(), InternalBrokerMetrics.builder()
-                .metrics(getJmxMetric(clusterName, broker)).build())
+                .metrics(getJmxMetric(cluster, broker)).build())
         )
         .collectList()
         .map(s -> internalClusterMetrics.toBuilder()

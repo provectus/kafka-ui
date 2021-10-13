@@ -47,7 +47,7 @@ public class ClusterService {
 
   public Mono<ClusterDTO> updateCluster(String clusterName) {
     return clustersStorage.getClusterByName(clusterName)
-        .map(cluster -> metricsService.getUpdatedCluster(cluster)
+        .map(cluster -> metricsService.updateClusterMetrics(cluster)
             .doOnNext(updatedCluster -> clustersStorage
                 .setKafkaCluster(updatedCluster.getName(), updatedCluster))
             .map(clusterMapper::toCluster))

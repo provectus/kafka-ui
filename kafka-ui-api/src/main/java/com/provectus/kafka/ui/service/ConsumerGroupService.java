@@ -14,7 +14,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
@@ -96,7 +95,6 @@ public class ConsumerGroupService {
     }
   }
 
-  @SneakyThrows
   public Mono<ConsumerGroupDetailsDTO> getConsumerGroupDetail(KafkaCluster cluster,
                                                               String consumerGroupId) {
     return getConsumerGroups(
