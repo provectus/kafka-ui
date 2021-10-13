@@ -5,15 +5,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.InvalidStreamTopologyString;
-import com.provectus.kafka.ui.model.GraphNode;
-import com.provectus.kafka.ui.model.GraphNodeType;
-import com.provectus.kafka.ui.model.ProcessorNode;
-import com.provectus.kafka.ui.model.ProcessorTopology;
-import com.provectus.kafka.ui.model.SinkProcessorNode;
-import com.provectus.kafka.ui.model.SourceProcessorNode;
-import com.provectus.kafka.ui.model.SubTopologyNode;
-import com.provectus.kafka.ui.model.TopicNode;
-import com.provectus.kafka.ui.model.TopologyGraph;
+import com.provectus.kafka.ui.model.GraphNodeDTO;
+import com.provectus.kafka.ui.model.GraphNodeTypeDTO;
+import com.provectus.kafka.ui.model.ProcessorNodeDTO;
+import com.provectus.kafka.ui.model.ProcessorTopologyDTO;
+import com.provectus.kafka.ui.model.SinkProcessorNodeDTO;
+import com.provectus.kafka.ui.model.SourceProcessorNodeDTO;
+import com.provectus.kafka.ui.model.SubTopologyNodeDTO;
+import com.provectus.kafka.ui.model.TopicNodeDTO;
+import com.provectus.kafka.ui.model.TopologyGraphDTO;
 import com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser;
 import com.provectus.kafka.ui.service.topology.parser.StreamTopologyParserHelper;
 import java.io.IOException;
@@ -67,32 +67,32 @@ class StreamTopologyParserTest {
         prettyObjectWriter.writeValueAsString(actual));
   }
 
-  private ProcessorTopology getExpectedTestTopology() {
+  private ProcessorTopologyDTO getExpectedTestTopology() {
     // init topology objects
-    final ProcessorTopology processorTopology = new ProcessorTopology();
+    final ProcessorTopologyDTO processorTopology = new ProcessorTopologyDTO();
     processorTopology.setTopicsNumber(4);
     processorTopology.setProcessorsNumber(11);
 
-    final TopologyGraph topologyGraph = getTopologyGraph();
+    final TopologyGraphDTO topologyGraph = getTopologyGraph();
     processorTopology.setTopology(topologyGraph);
 
-    final SubTopologyNode subTopologyNode = new SubTopologyNode();
+    final SubTopologyNodeDTO subTopologyNode = new SubTopologyNodeDTO();
     subTopologyNode.setName("0");
-    subTopologyNode.setType(GraphNodeType.SUB_TOPOLOGY);
+    subTopologyNode.setType(GraphNodeTypeDTO.SUB_TOPOLOGY);
 
-    final TopologyGraph subTopologyGraph = getTopologyGraph();
+    final TopologyGraphDTO subTopologyGraph = getTopologyGraph();
     subTopologyNode.setSubTopology(subTopologyGraph);
 
-    final SubTopologyNode subTopologyNode1 = new SubTopologyNode();
+    final SubTopologyNodeDTO subTopologyNode1 = new SubTopologyNodeDTO();
     subTopologyNode1.setName("1");
-    subTopologyNode1.setType(GraphNodeType.SUB_TOPOLOGY);
+    subTopologyNode1.setType(GraphNodeTypeDTO.SUB_TOPOLOGY);
 
-    final TopologyGraph subTopologyGraph1 = getTopologyGraph();
+    final TopologyGraphDTO subTopologyGraph1 = getTopologyGraph();
     subTopologyNode1.setSubTopology(subTopologyGraph1);
 
     //init node objects
     // sub topology 0 nodes
-    final TopicNode topicNode = getTopicNode("inputTopic");
+    final TopicNodeDTO topicNode = getTopicNode("inputTopic");
     final var sub0_sourceProcessor =
         getSourceProcessorNode("KSTREAM-SOURCE-0000000000", List.of(topicNode.getName()));
     final var sub0_processor1 =
@@ -104,22 +104,22 @@ class StreamTopologyParserTest {
         getSinkProcessorNode("count-repartition-sink", sub0_sinkTopic.getName());
 
     // sub topology 1 nodes
-    final TopicNode topicNode1 = getTopicNode("count-repartition");
-    final SourceProcessorNode sub1_sourceProcessor =
+    final TopicNodeDTO topicNode1 = getTopicNode("count-repartition");
+    final SourceProcessorNodeDTO sub1_sourceProcessor =
         getSourceProcessorNode("count-repartition-source", List.of(topicNode1.getName()));
-    final ProcessorNode sub1_processor1 =
+    final ProcessorNodeDTO sub1_processor1 =
         getProcessorNode("KSTREAM-AGGREGATE-0000000002", List.of("count-store"));
-    final ProcessorNode sub1_processor2 =
+    final ProcessorNodeDTO sub1_processor2 =
         getProcessorNode("KSTREAM-AGGREGATE-0000000008", List.of("windowed-count-store"));
-    final ProcessorNode sub1_processor3 =
+    final ProcessorNodeDTO sub1_processor3 =
         getProcessorNode("KTABLE-TOSTREAM-0000000006", List.of());
-    final ProcessorNode sub1_processor4 =
+    final ProcessorNodeDTO sub1_processor4 =
         getProcessorNode("KTABLE-TOSTREAM-0000000012", List.of());
-    final TopicNode sub1_sinkTopic1 = getTopicNode("count-topic");
-    final TopicNode sub1_sinkTopic2 = getTopicNode("windowed-count");
-    final SinkProcessorNode sub1_sink =
+    final TopicNodeDTO sub1_sinkTopic1 = getTopicNode("count-topic");
+    final TopicNodeDTO sub1_sinkTopic2 = getTopicNode("windowed-count");
+    final SinkProcessorNodeDTO sub1_sink =
         getSinkProcessorNode("KSTREAM-SINK-0000000007", sub1_sinkTopic1.getName());
-    final SinkProcessorNode sub2_sink =
+    final SinkProcessorNodeDTO sub2_sink =
         getSinkProcessorNode("KSTREAM-SINK-0000000013", sub1_sinkTopic2.getName());
 
 
@@ -151,48 +151,48 @@ class StreamTopologyParserTest {
     return processorTopology;
   }
 
-  private void putNode(TopologyGraph subTopologyGraph,
-                       GraphNode node,
+  private void putNode(TopologyGraphDTO subTopologyGraph,
+                       GraphNodeDTO node,
                        List<String> adjItems) {
     subTopologyGraph.putNodesItem(node.getName(), node);
     subTopologyGraph.getAdjacency().putIfAbsent(node.getName(), new ArrayList<>());
     subTopologyGraph.getAdjacency().get(node.getName()).addAll(adjItems);
   }
 
-  private TopologyGraph getTopologyGraph() {
-    final TopologyGraph topologyGraph = new TopologyGraph();
+  private TopologyGraphDTO getTopologyGraph() {
+    final TopologyGraphDTO topologyGraph = new TopologyGraphDTO();
     topologyGraph.setNodes(new LinkedHashMap<>());
     topologyGraph.setAdjacency(new LinkedHashMap<>());
     return topologyGraph;
   }
 
-  private TopicNode getTopicNode(String name) {
-    final TopicNode topicNode = new TopicNode();
+  private TopicNodeDTO getTopicNode(String name) {
+    final TopicNodeDTO topicNode = new TopicNodeDTO();
     topicNode.setName(name);
-    topicNode.setType(GraphNodeType.TOPIC);
+    topicNode.setType(GraphNodeTypeDTO.TOPIC);
     return topicNode;
   }
 
-  private SourceProcessorNode getSourceProcessorNode(String name, List<String> topics) {
-    final var sourceProcessorNode = new SourceProcessorNode();
+  private SourceProcessorNodeDTO getSourceProcessorNode(String name, List<String> topics) {
+    final var sourceProcessorNode = new SourceProcessorNodeDTO();
     sourceProcessorNode.setName(name);
-    sourceProcessorNode.setType(GraphNodeType.SOURCE_PROCESSOR);
+    sourceProcessorNode.setType(GraphNodeTypeDTO.SOURCE_PROCESSOR);
     sourceProcessorNode.setTopics(topics);
     return sourceProcessorNode;
   }
 
-  private ProcessorNode getProcessorNode(String name, List<String> stores) {
-    final var processorNode = new ProcessorNode();
+  private ProcessorNodeDTO getProcessorNode(String name, List<String> stores) {
+    final var processorNode = new ProcessorNodeDTO();
     processorNode.setName(name);
-    processorNode.setType(GraphNodeType.PROCESSOR);
+    processorNode.setType(GraphNodeTypeDTO.PROCESSOR);
     processorNode.setStores(stores);
     return processorNode;
   }
 
-  private SinkProcessorNode getSinkProcessorNode(String name, String topic) {
-    final var sinkNode = new SinkProcessorNode();
+  private SinkProcessorNodeDTO getSinkProcessorNode(String name, String topic) {
+    final var sinkNode = new SinkProcessorNodeDTO();
     sinkNode.setName(name);
-    sinkNode.setType(GraphNodeType.SINK_PROCESSOR);
+    sinkNode.setType(GraphNodeTypeDTO.SINK_PROCESSOR);
     sinkNode.setTopic(topic);
     return sinkNode;
   }

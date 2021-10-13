@@ -7,8 +7,8 @@ import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.InvalidStreamTopologyString;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.StreamTopologyParsingException;
-import com.provectus.kafka.ui.model.ProcessorTopology;
-import com.provectus.kafka.ui.model.StreamApplications;
+import com.provectus.kafka.ui.model.ProcessorTopologyDTO;
+import com.provectus.kafka.ui.model.StreamApplicationsDTO;
 import com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser;
 import java.util.ArrayList;
 import java.util.Map;
@@ -34,8 +34,8 @@ public class StreamTopologyService {
     this.topologyParser = topologyParser;
   }
 
-  public StreamApplications getTopologyApplications(String clusterName) {
-    final var streamApplications = new StreamApplications();
+  public StreamApplicationsDTO getTopologyApplications(String clusterName) {
+    final var streamApplications = new StreamApplicationsDTO();
     final var applicationIds = Optional.ofNullable(clusterStreamApps.get(clusterName))
         .map(Map::keySet)
         .map(ArrayList::new)
@@ -43,7 +43,7 @@ public class StreamTopologyService {
     return streamApplications.applicationIds(applicationIds);
   }
 
-  public Mono<ProcessorTopology> getStreamTopology(String clusterName, String applicationId) {
+  public Mono<ProcessorTopologyDTO> getStreamTopology(String clusterName, String applicationId) {
     return Optional.ofNullable(clusterStreamApps.get(clusterName))
         .map(apps -> apps.get(applicationId))
         .map(this::getTopologyString)
@@ -53,7 +53,7 @@ public class StreamTopologyService {
         .orElseThrow(() -> new NotFoundException("Stream application not found"));
   }
 
-  private ProcessorTopology parseTopologyString(String topologyString, String clusterName,
+  private ProcessorTopologyDTO parseTopologyString(String topologyString, String clusterName,
                                                 String applicationId) {
     try {
       return topologyParser.parse(topologyString);

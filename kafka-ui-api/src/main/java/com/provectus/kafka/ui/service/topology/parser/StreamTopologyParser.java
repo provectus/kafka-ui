@@ -8,15 +8,15 @@ import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParse
 import static com.provectus.kafka.ui.service.topology.parser.StreamTopologyParser.TopologyLiterals.TOPIC;
 
 import com.provectus.kafka.ui.exception.InvalidStreamTopologyString;
-import com.provectus.kafka.ui.model.GraphNode;
-import com.provectus.kafka.ui.model.GraphNodeType;
-import com.provectus.kafka.ui.model.ProcessorNode;
-import com.provectus.kafka.ui.model.ProcessorTopology;
-import com.provectus.kafka.ui.model.SinkProcessorNode;
-import com.provectus.kafka.ui.model.SourceProcessorNode;
-import com.provectus.kafka.ui.model.SubTopologyNode;
-import com.provectus.kafka.ui.model.TopicNode;
-import com.provectus.kafka.ui.model.TopologyGraph;
+import com.provectus.kafka.ui.model.GraphNodeDTO;
+import com.provectus.kafka.ui.model.GraphNodeTypeDTO;
+import com.provectus.kafka.ui.model.ProcessorNodeDTO;
+import com.provectus.kafka.ui.model.ProcessorTopologyDTO;
+import com.provectus.kafka.ui.model.SinkProcessorNodeDTO;
+import com.provectus.kafka.ui.model.SourceProcessorNodeDTO;
+import com.provectus.kafka.ui.model.SubTopologyNodeDTO;
+import com.provectus.kafka.ui.model.TopicNodeDTO;
+import com.provectus.kafka.ui.model.TopologyGraphDTO;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -34,7 +34,7 @@ import org.springframework.util.StringUtils;
 public class StreamTopologyParser {
   private final StreamTopologyParserHelper parserHelper;
 
-  public ProcessorTopology parse(final String topologyString) {
+  public ProcessorTopologyDTO parse(final String topologyString) {
     if (StringUtils.isEmpty(topologyString)) {
       throw new InvalidStreamTopologyString("topology string is empty");
     }
@@ -48,11 +48,11 @@ public class StreamTopologyParser {
       throw new InvalidStreamTopologyString("topology string contains only one line");
     }
 
-    final var processorTopology = new ProcessorTopology();
+    final var processorTopology = new ProcessorTopologyDTO();
     processorTopology.setProcessorsNumber(0);
     processorTopology.setTopicsNumber(0);
     processorTopology.setTopology(getTopologyGraph());
-    SubTopologyNode subTopologyNode = null;
+    SubTopologyNodeDTO subTopologyNode = null;
 
     for (String line : topologyLines) {
       if (line.contains(SUB_TOPOLOGY.value)) {
@@ -91,15 +91,16 @@ public class StreamTopologyParser {
     throw new InvalidStreamTopologyString("cannot find node for adjacency");
   }
 
-  private TopologyGraph getTopologyGraph() {
-    final var topologyGraph = new TopologyGraph();
+  private TopologyGraphDTO getTopologyGraph() {
+    final var topologyGraph = new TopologyGraphDTO();
     topologyGraph.setAdjacency(new LinkedHashMap<>());
     topologyGraph.setNodes(new LinkedHashMap<>());
     return topologyGraph;
   }
 
-  private void putParsedNode(ProcessorTopology processorTopology, SubTopologyNode subTopologyNode,
-                             GraphNode node) {
+  private void putParsedNode(ProcessorTopologyDTO processorTopology,
+                             SubTopologyNodeDTO subTopologyNode,
+                             GraphNodeDTO node) {
     final var topologyGraph = processorTopology.getTopology();
     final var subTopologyGraph = subTopologyNode.getSubTopology();
     subTopologyGraph.putNodesItem(node.getName(), node);
@@ -108,7 +109,7 @@ public class StreamTopologyParser {
     switch (node.getType()) {
       case SOURCE_PROCESSOR:
         processorTopology.setProcessorsNumber(processorTopology.getProcessorsNumber() + 1);
-        var source = (SourceProcessorNode) node;
+        var source = (SourceProcessorNodeDTO) node;
         source.getTopics()
             .forEach(topic -> {
                   putTopicNode(processorTopology, topologyGraph, topic);
@@ -121,11 +122,12 @@ public class StreamTopologyParser {
         processorTopology.setProcessorsNumber(processorTopology.getProcessorsNumber() + 1);
         if (!topologyGraph.getNodes().containsKey(subTopologyNode.getName())) {
           topologyGraph.putNodesItem(subTopologyNode.getName(), subTopologyNode);
-          topologyGraph.getAdjacency().putIfAbsent(subTopologyNode.getName(), new ArrayList<>());
+          topologyGraph.getAdjacency()
+              .putIfAbsent(subTopologyNode.getName(), new ArrayList<>());
         }
 
-        if (GraphNodeType.SINK_PROCESSOR == node.getType()) {
-          var sink = (SinkProcessorNode) node;
+        if (GraphNodeTypeDTO.SINK_PROCESSOR == node.getType()) {
+          var sink = (SinkProcessorNodeDTO) node;
 
           putTopicNode(processorTopology, topologyGraph, sink.getTopic());
           topologyGraph.getAdjacency().get(subTopologyNode.getName()).add(sink.getTopic());
@@ -137,11 +139,12 @@ public class StreamTopologyParser {
     }
   }
 
-  private void putTopicNode(ProcessorTopology processorTopology, TopologyGraph topologyGraph,
+  private void putTopicNode(ProcessorTopologyDTO processorTopology,
+                            TopologyGraphDTO topologyGraph,
                             String topic) {
-    final var topicNode = new TopicNode();
+    final var topicNode = new TopicNodeDTO();
     topicNode.setName(topic);
-    topicNode.setType(GraphNodeType.TOPIC);
+    topicNode.setType(GraphNodeTypeDTO.TOPIC);
 
     if (!topologyGraph.getNodes().containsKey(topicNode.getName())) {
       processorTopology.setTopicsNumber(processorTopology.getTopicsNumber() + 1);
@@ -150,17 +153,17 @@ public class StreamTopologyParser {
     }
   }
 
-  private SubTopologyNode parseSubTopology(String topologyLine) {
+  private SubTopologyNodeDTO parseSubTopology(String topologyLine) {
     var parsedName =
         parserHelper.parseOrThrow(topologyLine, SUB_TOPOLOGY.value);
 
-    final var subTopologyNode = new SubTopologyNode();
+    final var subTopologyNode = new SubTopologyNodeDTO();
     subTopologyNode.setName(parsedName.value);
-    subTopologyNode.setType(GraphNodeType.SUB_TOPOLOGY);
+    subTopologyNode.setType(GraphNodeTypeDTO.SUB_TOPOLOGY);
     return subTopologyNode;
   }
 
-  private Optional<GraphNode> parseSubTopologyNode(String topologyLine) {
+  private Optional<GraphNodeDTO> parseSubTopologyNode(String topologyLine) {
     if (topologyLine.contains(SOURCE.value)) {
       return Optional.of(parseSource(topologyLine));
     } else if (topologyLine.contains(PROCESSOR.value)) {
@@ -172,42 +175,42 @@ public class StreamTopologyParser {
     }
   }
 
-  private GraphNode parseSource(String topologyLine) {
+  private GraphNodeDTO parseSource(String topologyLine) {
     final var parsedSourceName =
         parserHelper.parseOrThrow(topologyLine, SOURCE.value, 0, "(");
     final var parsedTopics =
         parserHelper.parseArrayOrThrow(topologyLine, "[", parsedSourceName.endIndex, "]");
 
-    final var sourceProcessorNode = new SourceProcessorNode();
+    final var sourceProcessorNode = new SourceProcessorNodeDTO();
     sourceProcessorNode.setName(parsedSourceName.value);
-    sourceProcessorNode.setType(GraphNodeType.SOURCE_PROCESSOR);
+    sourceProcessorNode.setType(GraphNodeTypeDTO.SOURCE_PROCESSOR);
     sourceProcessorNode.setTopics(parsedTopics);
     return sourceProcessorNode;
   }
 
-  private GraphNode parseProcessor(String topologyLine) {
+  private GraphNodeDTO parseProcessor(String topologyLine) {
     final var parsedProcessorName =
         parserHelper.parseOrThrow(topologyLine, PROCESSOR.value, 0, "(");
     final var parsedStores =
         parserHelper.parseArrayOrThrow(topologyLine, "[", parsedProcessorName.endIndex, "]");
 
-    final var processorNode = new ProcessorNode();
+    final var processorNode = new ProcessorNodeDTO();
     processorNode.setName(parsedProcessorName.value);
-    processorNode.setType(GraphNodeType.PROCESSOR);
+    processorNode.setType(GraphNodeTypeDTO.PROCESSOR);
     processorNode.setStores(parsedStores);
 
     return processorNode;
   }
 
-  private GraphNode parseSink(String topologyLine) {
+  private GraphNodeDTO parseSink(String topologyLine) {
     final var parsedSinkName =
         parserHelper.parseOrThrow(topologyLine, SINK.value, 0, "(");
     final var parsedTopic =
         parserHelper.parseOrThrow(topologyLine, TOPIC.value, parsedSinkName.endIndex, ")");
 
-    final var sinkNode = new SinkProcessorNode();
+    final var sinkNode = new SinkProcessorNodeDTO();
     sinkNode.setName(parsedSinkName.value);
-    sinkNode.setType(GraphNodeType.SINK_PROCESSOR);
+    sinkNode.setType(GraphNodeTypeDTO.SINK_PROCESSOR);
     sinkNode.setTopic(parsedTopic.value);
 
     return sinkNode;
