@@ -52,7 +52,12 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         isFixedHeight={true}
         name="schema"
         readOnly={true}
-        showGutter={false}
+        setOptions={
+          Object {
+            "maxLines": 40,
+            "showLineNumbers": false,
+          }
+        }
         value="{
 	\\"type\\": \\"record\\",
 	\\"name\\": \\"MyRecord1\\",

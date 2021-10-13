@@ -99,10 +99,31 @@ exports[`Details View Initial state matches snapshot 1`] = `
     >
       <thead>
         <tr>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 40,
+              }
+            }
+          >
+             
+          </th>
+          <th
+            style={
+              Object {
+                "width": 90,
+              }
+            }
+          >
             Version
           </th>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 170,
+              }
+            }
+          >
             ID
           </th>
           <th>
@@ -247,10 +268,31 @@ exports[`Details View when page with schema versions loaded when schema has vers
     >
       <thead>
         <tr>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 40,
+              }
+            }
+          >
+             
+          </th>
+          <th
+            style={
+              Object {
+                "width": 90,
+              }
+            }
+          >
             Version
           </th>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 170,
+              }
+            }
+          >
             ID
           </th>
           <th>
@@ -390,10 +432,31 @@ exports[`Details View when page with schema versions loaded when versions are em
     >
       <thead>
         <tr>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 40,
+              }
+            }
+          >
+             
+          </th>
+          <th
+            style={
+              Object {
+                "width": 90,
+              }
+            }
+          >
             Version
           </th>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 170,
+              }
+            }
+          >
             ID
           </th>
           <th>

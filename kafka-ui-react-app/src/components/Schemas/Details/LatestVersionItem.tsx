@@ -36,7 +36,10 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
           isFixedHeight
           name="schema"
           value={JSON.stringify(JSON.parse(schema), null, '\t')}
-          showGutter={false}
+          setOptions={{
+            showLineNumbers: false,
+            maxLines: 40,
+          }}
           readOnly
         />
       </div>
