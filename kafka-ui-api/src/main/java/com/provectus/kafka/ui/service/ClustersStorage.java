@@ -54,22 +54,22 @@ public class ClustersStorage {
     return kafkaCluster;
   }
 
-  public KafkaCluster topicDeleted(KafkaCluster cluster, String topicToDelete) {
+  public void onTopicDeleted(KafkaCluster cluster, String topicToDelete) {
     var topics = Optional.ofNullable(cluster.getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
     topics.remove(topicToDelete);
     var updatedCluster = cluster.toBuilder().topics(topics).build();
-    return setKafkaCluster(cluster.getName(), updatedCluster);
+    setKafkaCluster(cluster.getName(), updatedCluster);
   }
 
-  public KafkaCluster topicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
+  public void onTopicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
     var topics = Optional.ofNullable(cluster.getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
     topics.put(updatedTopic.getName(), updatedTopic);
     var updatedCluster = cluster.toBuilder().topics(topics).build();
-    return setKafkaCluster(cluster.getName(), updatedCluster);
+    setKafkaCluster(cluster.getName(), updatedCluster);
   }
 
   public Map<String, KafkaCluster> getKafkaClustersMap() {
