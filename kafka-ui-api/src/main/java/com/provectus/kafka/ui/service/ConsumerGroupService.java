@@ -76,7 +76,7 @@ public class ConsumerGroupService {
               groups.stream().flatMap(g -> g.getOffsets().keySet().stream())
                   .collect(Collectors.toSet());
 
-      return topicPartitionsEndOffsets(cluster, topicPartitions).map( offsets ->
+      return topicPartitionsEndOffsets(cluster, topicPartitions).map(offsets ->
           groups.stream().map(g -> {
             Map<TopicPartition, Long> offsetsCopy = new HashMap<>(offsets);
             offsetsCopy.keySet().retainAll(g.getOffsets().keySet());
