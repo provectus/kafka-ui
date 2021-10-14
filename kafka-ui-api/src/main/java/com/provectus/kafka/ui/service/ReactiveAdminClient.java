@@ -249,7 +249,7 @@ public class ReactiveAdminClient implements Closeable {
     return topicPartitions(topic).flatMap(tps -> listOffsets(tps, offsetSpec));
   }
 
-  public Mono<Map<TopicPartition, Long>> listOffsets(Set<TopicPartition> partitions,
+  public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicPartition> partitions,
                                                      OffsetSpec offsetSpec) {
     return toMono(
         client.listOffsets(partitions.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
