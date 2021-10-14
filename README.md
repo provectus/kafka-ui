@@ -2,6 +2,7 @@
 ------------------
 
 ![UI for Apache Kafka Price Free](images/free-open-source.svg)
+[![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 <em>UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
 
