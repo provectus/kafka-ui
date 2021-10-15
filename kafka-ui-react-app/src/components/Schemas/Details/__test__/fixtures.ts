@@ -1,6 +1,6 @@
 import { SchemaSubject, SchemaType } from 'generated-sources';
 
-export const schema: SchemaSubject = {
+export const jsonSchema: SchemaSubject = {
   subject: 'test',
   version: '1',
   id: 1,
@@ -8,6 +8,16 @@ export const schema: SchemaSubject = {
     '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
   compatibilityLevel: 'BACKWARD',
   schemaType: SchemaType.JSON,
+};
+
+export const protoSchema: SchemaSubject = {
+  subject: 'test_proto',
+  version: '1',
+  id: 2,
+  schema:
+    'syntax = "proto3";\npackage com.indeed;\n\nmessage MyRecord {\n  int32 id = 1;\n  string name = 2;\n}\n',
+  compatibilityLevel: 'BACKWARD',
+  schemaType: SchemaType.PROTOBUF,
 };
 
 export const versions: SchemaSubject[] = [
@@ -28,5 +38,14 @@ export const versions: SchemaSubject[] = [
       '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
     compatibilityLevel: 'BACKWARD',
     schemaType: SchemaType.JSON,
+  },
+  {
+    subject: 'test',
+    version: '3',
+    id: 3,
+    schema:
+      'syntax = "proto3";\npackage com.indeed;\n\nmessage MyRecord {\n  int32 id = 1;\n  string name = 2;\n}\n',
+    compatibilityLevel: 'BACKWARD',
+    schemaType: SchemaType.PROTOBUF,
   },
 ];

@@ -17,6 +17,7 @@ import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { TopicName, ClusterName } from 'redux/interfaces';
+import { BASE_PARAMS } from 'lib/constants';
 
 import {
   filterOptions,
@@ -172,7 +173,7 @@ const Filters: React.FC<FiltersProps> = ({
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search.length !== 0) {
-      const url = `/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
       const sse = new EventSource(url);
 
       source.current = sse;

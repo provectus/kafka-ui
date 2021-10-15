@@ -2,12 +2,13 @@ package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.CreateTopicMessage;
-import com.provectus.kafka.ui.model.SeekDirection;
-import com.provectus.kafka.ui.model.SeekType;
-import com.provectus.kafka.ui.model.TopicMessageEvent;
-import com.provectus.kafka.ui.model.TopicMessageSchema;
-import com.provectus.kafka.ui.service.ClusterService;
+import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
+import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
+import com.provectus.kafka.ui.model.TopicMessageEventDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
+import com.provectus.kafka.ui.service.MessagesService;
+import com.provectus.kafka.ui.service.TopicsService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -26,52 +27,55 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-public class MessagesController implements MessagesApi {
-  private final ClusterService clusterService;
+public class MessagesController extends AbstractController implements MessagesApi {
+  private final MessagesService messagesService;
+  private final TopicsService topicsService;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
       String clusterName, String topicName, @Valid List<Integer> partitions,
       ServerWebExchange exchange) {
-    return clusterService.deleteTopicMessages(
-        clusterName,
+    return messagesService.deleteTopicMessages(
+        getCluster(clusterName),
         topicName,
         Optional.ofNullable(partitions).orElse(List.of())
     ).map(ResponseEntity::ok);
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<TopicMessageEvent>>> getTopicMessages(
-      String clusterName, String topicName, @Valid SeekType seekType, @Valid List<String> seekTo,
-      @Valid Integer limit, @Valid String q, @Valid SeekDirection seekDirection,
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(
+      String clusterName, String topicName, @Valid SeekTypeDTO seekType, @Valid List<String> seekTo,
+      @Valid Integer limit, @Valid String q, @Valid SeekDirectionDTO seekDirection,
       ServerWebExchange exchange) {
     return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
         .map(position ->
             ResponseEntity.ok(
-                clusterService.getMessages(clusterName, topicName, position, q, limit)
+                messagesService.loadMessages(
+                    getCluster(clusterName), topicName, position, q, limit)
             )
         );
   }
 
   @Override
-  public Mono<ResponseEntity<TopicMessageSchema>> getTopicSchema(
+  public Mono<ResponseEntity<TopicMessageSchemaDTO>> getTopicSchema(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(clusterService.getTopicSchema(clusterName, topicName))
+    return Mono.just(topicsService.getTopicSchema(getCluster(clusterName), topicName))
         .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<Void>> sendTopicMessages(
-      String clusterName, String topicName, @Valid Mono<CreateTopicMessage> createTopicMessage,
+      String clusterName, String topicName, @Valid Mono<CreateTopicMessageDTO> createTopicMessage,
       ServerWebExchange exchange) {
     return createTopicMessage.flatMap(msg ->
-        clusterService.sendMessage(clusterName, topicName, msg)
+        messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
     ).map(ResponseEntity::ok);
   }
 
 
   private Mono<ConsumerPosition> parseConsumerPosition(
-      String topicName, SeekType seekType, List<String> seekTo,  SeekDirection seekDirection) {
+      String topicName, SeekTypeDTO seekType, List<String> seekTo,
+      SeekDirectionDTO seekDirection) {
     return Mono.justOrEmpty(seekTo)
         .defaultIfEmpty(Collections.emptyList())
         .flatMapIterable(Function.identity())
@@ -88,7 +92,7 @@ public class MessagesController implements MessagesApi {
           );
         })
         .collectMap(Pair::getKey, Pair::getValue)
-        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekType.BEGINNING,
+        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekTypeDTO.BEGINNING,
             positions, seekDirection));
   }
 

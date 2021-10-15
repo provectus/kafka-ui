@@ -1,14 +1,14 @@
 package com.provectus.kafka.ui.strategy.ksql.statement;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.provectus.kafka.ui.model.KsqlCommandResponse;
+import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SelectStrategy extends BaseStrategy {
 
   @Override
-  public KsqlCommandResponse serializeResponse(JsonNode response) {
+  public KsqlCommandResponseDTO serializeResponse(JsonNode response) {
     return serializeQueryResponse(response);
   }
 

@@ -19,6 +19,14 @@ kafka:
   #          address: http://localhost:8083
   #      jmxPort: 9998
   #      read-only: true
+  #    -
+  #      name: localUsingProtobufFile
+  #      bootstrapServers: localhost:9092
+  #      protobufFile: messages.proto
+  #      protobufMessageName: GenericMessage
+  #      protobufMessageNameByTopic:
+  #        input-topic: InputMessage
+  #        output-topic: OutputMessage
   admin-client-timeout: 5000
 zookeeper:
   connection-timeout: 1000

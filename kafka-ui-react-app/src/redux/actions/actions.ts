@@ -321,5 +321,6 @@ export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();
 export const resetConsumerGroupOffsetsAction = createAsyncAction(
   'RESET_OFFSETS__REQUEST',
   'RESET_OFFSETS__SUCCESS',
-  'RESET_OFFSETS__FAILURE'
-)<undefined, undefined, { alert?: FailurePayload }>();
+  'RESET_OFFSETS__FAILURE',
+  'RESET_OFFSETS__CANCEL'
+)<undefined, undefined, { alert?: FailurePayload }, undefined>();

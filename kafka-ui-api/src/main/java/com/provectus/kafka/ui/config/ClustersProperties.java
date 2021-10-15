@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -26,6 +27,7 @@ public class ClustersProperties {
     String keySchemaNameTemplate = "%s-key";
     String protobufFile;
     String protobufMessageName;
+    Map<String, String> protobufMessageNameByTopic;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
     boolean jmxSsl;

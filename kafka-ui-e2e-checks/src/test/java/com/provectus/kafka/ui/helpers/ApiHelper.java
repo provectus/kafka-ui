@@ -1,19 +1,15 @@
 package com.provectus.kafka.ui.helpers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.api.api.MessagesApi;
-import lombok.SneakyThrows;
-
-import com.provectus.kafka.ui.api.*;
-import com.provectus.kafka.ui.api.model.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.TopicsApi;
-import com.provectus.kafka.ui.api.api.KafkaConnectApi;
+import com.provectus.kafka.ui.api.model.TopicCreation;
+import lombok.SneakyThrows;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ApiHelper {
     int partitions = 1;
@@ -21,8 +17,7 @@ public class ApiHelper {
     String newTopic = "new-topic";
     String baseURL = "http://localhost:8080/";
 
-
-
+    import static org.junit.jupiter.api.Assertions.assertTrue;
 
     @SneakyThrows
     private TopicsApi topicApi(){

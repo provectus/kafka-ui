@@ -2,7 +2,10 @@ package com.provectus.kafka.ui.util.jsonschema;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.BooleanNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -36,7 +39,9 @@ public class ObjectFieldSchema implements FieldSchema {
             Tuple2::getT2
         ));
     final ObjectNode objectNode = mapper.createObjectNode();
-    objectNode.setAll(new SimpleJsonType(JsonType.Type.OBJECT).toJsonNode(mapper));
+    objectNode.setAll(
+        new SimpleJsonType(JsonType.Type.OBJECT).toJsonNode(mapper)
+    );
     objectNode.set("properties", mapper.valueToTree(nodes));
     if (!required.isEmpty()) {
       objectNode.set("required", mapper.valueToTree(required));

@@ -99,10 +99,31 @@ exports[`Details View Initial state matches snapshot 1`] = `
     >
       <thead>
         <tr>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 40,
+              }
+            }
+          >
+             
+          </th>
+          <th
+            style={
+              Object {
+                "width": 90,
+              }
+            }
+          >
             Version
           </th>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 170,
+              }
+            }
+          >
             ID
           </th>
           <th>
@@ -247,10 +268,31 @@ exports[`Details View when page with schema versions loaded when schema has vers
     >
       <thead>
         <tr>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 40,
+              }
+            }
+          >
+             
+          </th>
+          <th
+            style={
+              Object {
+                "width": 90,
+              }
+            }
+          >
             Version
           </th>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 170,
+              }
+            }
+          >
             ID
           </th>
           <th>
@@ -282,6 +324,26 @@ exports[`Details View when page with schema versions loaded when schema has vers
               "schemaType": "JSON",
               "subject": "test",
               "version": "2",
+            }
+          }
+        />
+        <SchemaVersion
+          key="3"
+          version={
+            Object {
+              "compatibilityLevel": "BACKWARD",
+              "id": 3,
+              "schema": "syntax = \\"proto3\\";
+package com.indeed;
+
+message MyRecord {
+  int32 id = 1;
+  string name = 2;
+}
+",
+              "schemaType": "PROTOBUF",
+              "subject": "test",
+              "version": "3",
             }
           }
         />
@@ -390,10 +452,31 @@ exports[`Details View when page with schema versions loaded when versions are em
     >
       <thead>
         <tr>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 40,
+              }
+            }
+          >
+             
+          </th>
+          <th
+            style={
+              Object {
+                "width": 90,
+              }
+            }
+          >
             Version
           </th>
-          <th>
+          <th
+            style={
+              Object {
+                "width": 170,
+              }
+            }
+          >
             ID
           </th>
           <th>
