@@ -327,6 +327,26 @@ exports[`Details View when page with schema versions loaded when schema has vers
             }
           }
         />
+        <SchemaVersion
+          key="3"
+          version={
+            Object {
+              "compatibilityLevel": "BACKWARD",
+              "id": 3,
+              "schema": "syntax = \\"proto3\\";
+package com.indeed;
+
+message MyRecord {
+  int32 id = 1;
+  string name = 2;
+}
+",
+              "schemaType": "PROTOBUF",
+              "subject": "test",
+              "version": "3",
+            }
+          }
+        />
       </tbody>
     </table>
   </div>

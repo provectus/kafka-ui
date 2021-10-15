@@ -35,7 +35,11 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
         <JSONEditor
           isFixedHeight
           name="schema"
-          value={JSON.stringify(JSON.parse(schema), null, '\t')}
+          value={
+            schema.trim().startsWith('{')
+              ? JSON.stringify(JSON.parse(schema), null, '\t')
+              : schema
+          }
           setOptions={{
             showLineNumbers: false,
             maxLines: 40,
