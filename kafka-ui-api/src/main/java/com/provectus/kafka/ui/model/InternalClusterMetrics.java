@@ -10,22 +10,31 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class InternalClusterMetrics {
-  private final int brokerCount;
+
+  //topic metrics
   private final int topicCount;
-  private final int activeControllers;
-  private final int uncleanLeaderElectionCount;
-  private final int onlinePartitionCount;
   private final int underReplicatedPartitionCount;
+  private final int onlinePartitionCount;
   private final int offlinePartitionCount;
   private final int inSyncReplicasCount;
   private final int outOfSyncReplicasCount;
-  private final Map<String, BigDecimal> bytesInPerSec;
-  private final Map<String, BigDecimal> bytesOutPerSec;
-  private final long segmentCount;
-  private final long segmentSize;
-  private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage;
-  private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
-  private final List<MetricDTO> metrics;
+  private final int uncleanLeaderElectionCount; // not used
+
   private final int zooKeeperStatus;
+
+  private final int brokerCount; //+
+  private final int activeControllers; //+
+
+  //desc log dir
+  private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage; // +  updateSegmentMetrics
+  private final long segmentCount; // +  updateSegmentMetrics
+  private final long segmentSize; // +  updateSegmentMetrics
+
+  // jmx+
+  private final Map<String, BigDecimal> bytesInPerSec; //+
+  private final Map<String, BigDecimal> bytesOutPerSec; //+
+  private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics; //+
+  private final List<MetricDTO> metrics; //+ calculateClusterMetrics
+
   private final String version;
 }

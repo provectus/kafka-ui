@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.model;
 
 import java.util.List;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -14,6 +15,8 @@ public class InternalPartition {
   private final int replicasCount;
   private final long offsetMin;
   private final long offsetMax;
+
+  // from log dir
   private final long segmentSize;
   private final long segmentCount;
 }

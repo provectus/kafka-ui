@@ -11,7 +11,6 @@ public class InternalTopic {
 
   private final String name;
   private final boolean internal;
-  private final Map<Integer, InternalPartition> partitions;
   private final List<InternalTopicConfig> topicConfigs;
 
   private final CleanupPolicy cleanUpPolicy;
@@ -20,6 +19,11 @@ public class InternalTopic {
   private final int inSyncReplicas;
   private final int replicationFactor;
   private final int underReplicatedPartitions;
+
+  // from log dir data
   private final long segmentSize;
   private final long segmentCount;
+  private final Map<Integer, InternalPartition> partitions;
+
+
 }

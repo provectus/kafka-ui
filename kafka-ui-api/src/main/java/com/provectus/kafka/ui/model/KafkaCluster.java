@@ -26,6 +26,15 @@ public class KafkaCluster {
   private final List<KafkaConnectCluster> kafkaConnect;
   private final String schemaNameTemplate;
   private final String keySchemaNameTemplate;
+  private final List<Feature> features;
+  private final Path protobufFile;
+  private final String protobufMessageName;
+  private final Map<String, String> protobufMessageNameByTopic;
+  private final Properties properties;
+  private final Boolean readOnly;
+  private final Boolean disableLogDirsCollection;
+
+  // state & metrics:
   private final ServerStatusDTO status;
   private final ServerStatusDTO zookeeperStatus;
   private final InternalClusterMetrics metrics;
@@ -33,11 +42,4 @@ public class KafkaCluster {
   private final List<Integer> brokers;
   private final Throwable lastKafkaException;
   private final Throwable lastZookeeperException;
-  private final Path protobufFile;
-  private final String protobufMessageName;
-  private final Map<String, String> protobufMessageNameByTopic;
-  private final Properties properties;
-  private final Boolean readOnly;
-  private final Boolean disableLogDirsCollection;
-  private final List<Feature> features;
 }
