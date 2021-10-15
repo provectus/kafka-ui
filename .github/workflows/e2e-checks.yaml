@@ -37,8 +37,8 @@ jobs:
           mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
+        # use the following command until #819 will be fixed
         run: |
-        #use the following command until #819 will be fixed
           docker-compose -f ./docker/kafka-ui-connectors.yaml up
       - name: e2e run
         env:
