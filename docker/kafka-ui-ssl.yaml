@@ -1,0 +1,54 @@
+---
+version: '3.4'
+services:
+kafka-ui:
+  container_name: kafka-ui
+  image: provectuslabs/kafka-ui:latest
+  ports:
+    - 8080:8080
+  depends_on:
+    - zookeeper0
+    - kafka0
+  environment:
+    KAFKA_CLUSTERS_0_NAME: local
+    KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
+    KAFKA_CLUSTERS_0_PROPERTIES_SSL_MECHANISM: PLAIN
+    KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:9092
+    KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
+    KAFKA_CLUSTER_0_SSL_KEYSTORE_LOCATION: /var/private/ssl/kafka.server.keystore.jks
+    KAFKA_CLUSTER_0_SSL_KEYSTORE_PASSWORD:  test1234
+    KAFKA_CLUSTER_0_SSL_TRUSTSTORE_LOCATION: /var/private/ssl/kafka.server.truststore.jks
+    KAFKA_CLUSTER_0_SSL_TRUSTSTORE_PASSWORD: test1234
+zookeeper0:
+   image: confluentinc/cp-zookeeper:5.2.4
+   environment:
+     ZOOKEEPER_CLIENT_PORT: 2181
+     ZOOKEEPER_TICK_TIME: 2000
+   ports:
+     - 2181:2181
+kafka0:
+  image: wurstmeister/kafka:latest
+  hostname: kafka
+  container_name: kafka0
+  depends_on:
+    - zookeeper0
+  ports:
+    - '9092:9092'
+  environment:
+    KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+    KAFKA_LISTENERS: SSL_PLAINTEXT://kafka:9092
+    KAFKA_ADVERTISED_LISTENERS: SSL_PLAINTEXT://kafka:9092
+    KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    ALLOW_PLAINTEXT_LISTENER: 'yes'
+    KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/jaas/kafka_server.conf"
+    KAFKA_AUTHORIZER_CLASS_NAME: kafka.security.auth.SimpleAclAuthorizer
+    KAFKA_INTER_BROKER_LISTENER_NAME: SSL_PLAINTEXT
+    KAFKA_SSL_ENABLED_MECHANISMS: PLAIN
+    KAFKA_SSL_MECHANISM_INTER_BROKER_PROTOCOL: PLAIN
+    KAFKA_SECURITY_PROTOCOL: SSL_PLAINTEXT
+    KAFKA_SUPER_USERS: User:admin,User:enzo
+    KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: 'true'
+  volumes:
+    - ./jaas:/etc/kafka/jaas
+ 
+

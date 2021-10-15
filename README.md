@@ -115,7 +115,8 @@ To read more please follow to [chart documentation](charts/kafka-ui/README.md)
 
 UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
 
-To be continued
+
+In the ``docker`` directory we have  kafka-ui-ssl.yaml as an example to configure SSL connections
 
 
 # Configuration
