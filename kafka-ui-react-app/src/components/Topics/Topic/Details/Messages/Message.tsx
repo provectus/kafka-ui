@@ -1,15 +1,13 @@
 import * as React from 'react';
 import dayjs from 'dayjs';
 import { TopicMessage } from 'generated-sources';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import useDataSaver from 'lib/hooks/useDataSaver';
 import VerticalElipsisIcon from 'components/Topics/List/VerticalElipsisIcon';
 
 import MessageToggleIcon from './MessageToggleIcon';
-
-type Tab = 'key' | 'content' | 'headers';
+import MessageContent from './MessageContent/MessageContent';
 
 const Message: React.FC<{ message: TopicMessage }> = ({
   message: {
@@ -23,40 +21,21 @@ const Message: React.FC<{ message: TopicMessage }> = ({
   },
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
-  const [activeTab, setActiveTab] = React.useState<Tab>('content');
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
     content || ''
   );
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
-  const handleKeyTabClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('key');
-  };
-  const handleContentTabClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('content');
-  };
-  const handleHeadersTabClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setActiveTab('headers');
-  };
 
-  const activeTabContent = () => {
-    switch (activeTab) {
-      case 'content':
-        return content;
-      case 'key':
-        return key;
-      default:
-        return JSON.stringify(headers);
-    }
-  };
+  const [vEllipsisOpen, setVEllipsisOpen] = React.useState(false);
 
   return (
     <>
-      <tr>
+      <tr
+        onMouseEnter={() => setVEllipsisOpen(true)}
+        onMouseLeave={() => setVEllipsisOpen(false)}
+      >
         <td>
           <span className="is-clickable" onClick={toggleIsOpen} aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
@@ -82,55 +61,25 @@ const Message: React.FC<{ message: TopicMessage }> = ({
         >
           {content}
         </td>
-        <td className="has-text-right">
-          <Dropdown label={<VerticalElipsisIcon />} right>
-            <DropdownItem onClick={copyToClipboard}>
-              Copy to clipboard
-            </DropdownItem>
-            <DropdownItem onClick={saveFile}>Save as a file</DropdownItem>
-          </Dropdown>
+        <td style={{ maxWidth: 40, minWidth: 40 }} className="has-text-right">
+          {vEllipsisOpen && (
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              <DropdownItem onClick={copyToClipboard}>
+                Copy to clipboard
+              </DropdownItem>
+              <DropdownItem onClick={saveFile}>Save as a file</DropdownItem>
+            </Dropdown>
+          )}
         </td>
       </tr>
       {isOpen && (
-        <tr className="has-background-light">
-          <td />
-          <td colSpan={3}>
-            <div className="title is-7">Timestamp Type</div>
-            <div className="subtitle is-7 is-spaced">{timestampType}</div>
-            <div className="title is-7">Timestamp</div>
-            <div className="subtitle is-7">{timestamp}</div>
-          </td>
-          <td colSpan={3} style={{ wordBreak: 'break-word' }}>
-            <nav className="panel has-background-white">
-              <p className="panel-tabs is-justify-content-start pl-5">
-                <a
-                  href="key"
-                  onClick={handleKeyTabClick}
-                  className={activeTab === 'key' ? 'is-active' : ''}
-                >
-                  Key
-                </a>
-                <a
-                  href="content"
-                  className={activeTab === 'content' ? 'is-active' : ''}
-                  onClick={handleContentTabClick}
-                >
-                  Content
-                </a>
-                <a
-                  href="headers"
-                  className={activeTab === 'headers' ? 'is-active' : ''}
-                  onClick={handleHeadersTabClick}
-                >
-                  Headers
-                </a>
-              </p>
-              <div className="panel-block is-family-code">
-                <JSONViewer data={activeTabContent() || ''} />
-              </div>
-            </nav>
-          </td>
-        </tr>
+        <MessageContent
+          messageKey={key}
+          messageContent={content}
+          headers={headers}
+          timestamp={timestamp}
+          timestampType={timestampType}
+        />
       )}
     </>
   );
