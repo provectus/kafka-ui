@@ -115,8 +115,9 @@ const Details: React.FC<DetailsProps> = ({
             <table className="table is-fullwidth">
               <thead>
                 <tr>
-                  <th>Version</th>
-                  <th>ID</th>
+                  <th style={{ width: 40 }}> </th>
+                  <th style={{ width: 90 }}>Version</th>
+                  <th style={{ width: 170 }}>ID</th>
                   <th>Schema</th>
                 </tr>
               </thead>
