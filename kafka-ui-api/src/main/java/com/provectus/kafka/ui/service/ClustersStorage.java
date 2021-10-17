@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
@@ -35,8 +36,11 @@ public class ClustersStorage {
       kafkaClusters.put(
           clusterProperties.getName(),
           cluster.toBuilder()
-              .topics(new HashMap<>())
-              .build()
+              .metrics(
+                  InternalClusterMetrics.builder()
+                      .topics(new HashMap<>())
+                      .build()
+              ).build()
       );
     }
   }
@@ -55,21 +59,27 @@ public class ClustersStorage {
   }
 
   public void onTopicDeleted(KafkaCluster cluster, String topicToDelete) {
-    var topics = Optional.ofNullable(cluster.getTopics())
+    var topics = Optional.ofNullable(cluster.getMetrics().getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
     topics.remove(topicToDelete);
-    var updatedCluster = cluster.toBuilder().topics(topics).build();
-    setKafkaCluster(cluster.getName(), updatedCluster);
+    var updatedMetrics = cluster.getMetrics().toBuilder()
+        .topics(topics).build();
+    onMetricsUpdated(cluster, updatedMetrics);
   }
 
   public void onTopicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
-    var topics = Optional.ofNullable(cluster.getTopics())
+    var topics = Optional.ofNullable(cluster.getMetrics().getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
     topics.put(updatedTopic.getName(), updatedTopic);
-    var updatedCluster = cluster.toBuilder().topics(topics).build();
-    setKafkaCluster(cluster.getName(), updatedCluster);
+    var updatedMetrics = cluster.getMetrics().toBuilder()
+        .topics(topics).build();
+    onMetricsUpdated(cluster, updatedMetrics);
+  }
+
+  private void onMetricsUpdated(KafkaCluster cluster, InternalClusterMetrics metrics) {
+    setKafkaCluster(cluster.getName(), cluster.toBuilder().metrics(metrics).build());
   }
 
   public Map<String, KafkaCluster> getKafkaClustersMap() {

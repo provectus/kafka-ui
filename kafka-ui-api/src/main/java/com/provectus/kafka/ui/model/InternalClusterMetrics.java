@@ -11,8 +11,23 @@ import lombok.Data;
 @Builder(toBuilder = true)
 public class InternalClusterMetrics {
 
-  //topic metrics
+  private final String version;
+
+  private final ServerStatusDTO status;
+  private final Throwable lastKafkaException;
+
+  private final int zooKeeperStatus; //TODO deprecate and use enum?
+  private final ServerStatusDTO zookeeperStatus;
+  private final Throwable lastZookeeperException;
+
+  private final int brokerCount;
+  private final List<Integer> brokers;
+  private final int activeControllers;
+
   private final int topicCount;
+  private final Map<String, InternalTopic> topics;
+
+  // partitions stats
   private final int underReplicatedPartitionCount;
   private final int onlinePartitionCount;
   private final int offlinePartitionCount;
@@ -20,21 +35,15 @@ public class InternalClusterMetrics {
   private final int outOfSyncReplicasCount;
   private final int uncleanLeaderElectionCount; // not used
 
-  private final int zooKeeperStatus;
+  // log dir stats
+  private final long segmentCount;
+  private final long segmentSize;
+  private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage;
 
-  private final int brokerCount; //+
-  private final int activeControllers; //+
+  // jmx
+  private final Map<String, BigDecimal> bytesInPerSec;
+  private final Map<String, BigDecimal> bytesOutPerSec;
+  private final Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
+  private final List<MetricDTO> metrics;
 
-  //desc log dir
-  private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage; // +  updateSegmentMetrics
-  private final long segmentCount; // +  updateSegmentMetrics
-  private final long segmentSize; // +  updateSegmentMetrics
-
-  // jmx+
-  private final Map<String, BigDecimal> bytesInPerSec; //+
-  private final Map<String, BigDecimal> bytesOutPerSec; //+
-  private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics; //+
-  private final List<MetricDTO> metrics; //+ calculateClusterMetrics
-
-  private final String version;
 }

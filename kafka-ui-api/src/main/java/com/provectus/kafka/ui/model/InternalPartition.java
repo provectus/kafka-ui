@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.model;
 
 import java.util.List;
-
 import lombok.Builder;
 import lombok.Data;
 

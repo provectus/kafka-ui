@@ -15,13 +15,13 @@ import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
-import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.PartitionDTO;
@@ -48,6 +48,8 @@ import org.mapstruct.Named;
 public interface ClusterMapper {
 
   @Mapping(target = "brokerCount", source = "metrics.brokerCount")
+  @Mapping(target = "status", source = "metrics.status")
+  @Mapping(target = "version", source = "metrics.version")
   @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
   @Mapping(target = "topicCount", source = "metrics.topicCount")
   @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec",
@@ -68,7 +70,7 @@ public interface ClusterMapper {
   @Mapping(target = "items", source = "metrics")
   ClusterMetricsDTO toClusterMetrics(InternalClusterMetrics metrics);
 
-  BrokerMetricsDTO toBrokerMetrics(InternalBrokerMetrics metrics);
+  BrokerMetricsDTO toBrokerMetrics(JmxBrokerMetrics metrics);
 
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")

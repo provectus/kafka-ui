@@ -35,11 +35,5 @@ public class KafkaCluster {
   private final Boolean disableLogDirsCollection;
 
   // state & metrics:
-  private final ServerStatusDTO status;
-  private final ServerStatusDTO zookeeperStatus;
   private final InternalClusterMetrics metrics;
-  private final Map<String, InternalTopic> topics;
-  private final List<Integer> brokers;
-  private final Throwable lastKafkaException;
-  private final Throwable lastZookeeperException;
 }

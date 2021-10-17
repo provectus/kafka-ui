@@ -2,14 +2,16 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ZooKeeperException;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.ServerStatusDTO;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
+import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -19,6 +21,22 @@ import org.springframework.util.StringUtils;
 public class ZookeeperService {
 
   private final Map<String, ZooKeeper> cachedZkClient = new ConcurrentHashMap<>();
+
+  @Value
+  public static class ZkStatus {
+    ServerStatusDTO status;
+    @Nullable
+    Throwable error;
+  }
+
+  public ZkStatus getZkStatus(KafkaCluster kafkaCluster) {
+    try {
+      boolean online = isZookeeperOnline(kafkaCluster);
+      return new ZkStatus(online ? ServerStatusDTO.ONLINE : ServerStatusDTO.OFFLINE, null);
+    } catch (Throwable th) {
+      return new ZkStatus(ServerStatusDTO.OFFLINE, th);
+    }
+  }
 
   public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
     var isConnected = false;
