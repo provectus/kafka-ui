@@ -1,0 +1,51 @@
+[ {
+  "uid" : "b2f60d8c50d7ffa",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1634574943250,
+    "stop" : 1634574944357,
+    "duration" : 1107
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "9a05f057a1b9d478",
+  "name" : "should update a topic with Produce Message",
+  "time" : {
+    "start" : 1634574887251,
+    "stop" : 1634574907787,
+    "duration" : 20536
+  },
+  "status" : "failed",
+  "severity" : "normal"
+}, {
+  "uid" : "beb3cc6d60a271bb",
+  "name" : "should create a topic",
+  "time" : {
+    "start" : 1634574939132,
+    "stop" : 1634574943068,
+    "duration" : 3936
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "892335d933dab24e",
+  "name" : "should delete topic",
+  "time" : {
+    "start" : 1634574887206,
+    "stop" : 1634574887207,
+    "duration" : 1
+  },
+  "status" : "skipped",
+  "severity" : "normal"
+}, {
+  "uid" : "682c06447af8f85b",
+  "name" : "should update a topic",
+  "time" : {
+    "start" : 1634574907906,
+    "stop" : 1634574939125,
+    "duration" : 31219
+  },
+  "status" : "passed",
+  "severity" : "normal"
+} ]
