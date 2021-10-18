@@ -35,12 +35,7 @@ public class ClustersStorage {
       KafkaCluster cluster = clusterMapper.toKafkaCluster(clusterProperties);
       kafkaClusters.put(
           clusterProperties.getName(),
-          cluster.toBuilder()
-              .metrics(
-                  InternalClusterMetrics.builder()
-                      .topics(new HashMap<>())
-                      .build()
-              ).build()
+          cluster.toBuilder().metrics(InternalClusterMetrics.empty()).build()
       );
     }
   }
@@ -63,9 +58,7 @@ public class ClustersStorage {
         .map(HashMap::new)
         .orElseGet(HashMap::new);
     topics.remove(topicToDelete);
-    var updatedMetrics = cluster.getMetrics().toBuilder()
-        .topics(topics).build();
-    onMetricsUpdated(cluster, updatedMetrics);
+    setUpdatedTopics(cluster, topics);
   }
 
   public void onTopicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
@@ -73,13 +66,19 @@ public class ClustersStorage {
         .map(HashMap::new)
         .orElseGet(HashMap::new);
     topics.put(updatedTopic.getName(), updatedTopic);
-    var updatedMetrics = cluster.getMetrics().toBuilder()
-        .topics(topics).build();
-    onMetricsUpdated(cluster, updatedMetrics);
+    setUpdatedTopics(cluster, topics);
   }
 
-  private void onMetricsUpdated(KafkaCluster cluster, InternalClusterMetrics metrics) {
-    setKafkaCluster(cluster.getName(), cluster.toBuilder().metrics(metrics).build());
+  private void setUpdatedTopics(KafkaCluster cluster, Map<String, InternalTopic> topics) {
+    setKafkaCluster(
+        cluster.getName(),
+        cluster.toBuilder()
+            .metrics(
+                cluster.getMetrics().toBuilder()
+                    .topics(topics)
+                    .build())
+            .build()
+    );
   }
 
   public Map<String, KafkaCluster> getKafkaClustersMap() {
