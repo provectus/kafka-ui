@@ -122,9 +122,16 @@ public class MetricsService {
       InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder,
       JmxMetrics jmxMetrics) {
     metricsBuilder.metrics(jmxMetrics.getMetrics());
-    metricsBuilder.bytesInPerSec(jmxMetrics.getBytesInPerSec());
-    metricsBuilder.bytesOutPerSec(jmxMetrics.getBytesOutPerSec());
     metricsBuilder.internalBrokerMetrics(jmxMetrics.getInternalBrokerMetrics());
+
+    metricsBuilder.topics(
+        metricsBuilder.build().getTopics().values().stream()
+            .map(t ->
+                t.withIoRates(
+                    jmxMetrics.getBytesInPerSec().get(t.getName()),
+                    jmxMetrics.getBytesOutPerSec().get(t.getName()))
+            ).collect(Collectors.toMap(InternalTopic::getName, t -> t))
+    );
   }
 
   private Mono<LogDirInfo> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {

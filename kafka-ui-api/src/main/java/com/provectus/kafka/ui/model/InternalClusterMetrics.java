@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.model;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -55,8 +54,6 @@ public class InternalClusterMetrics {
   private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage;
 
   // metrics from jmx
-  private final Map<String, BigDecimal> bytesInPerSec;
-  private final Map<String, BigDecimal> bytesOutPerSec;
   private final Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
   private final List<MetricDTO> metrics;
 

@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
@@ -21,12 +22,20 @@ public class InternalTopic {
   private final int underReplicatedPartitions;
   private final Map<Integer, InternalPartition> partitions;
 
+  // rates from jmx
+  private final BigDecimal bytesInPerSec;
+  private final BigDecimal bytesOutPerSec;
+
   // from log dir data
   private final long segmentSize;
   private final long segmentCount;
 
   public InternalTopic withSegmentStats(long segmentSize, long segmentCount) {
     return toBuilder().segmentSize(segmentSize).segmentCount(segmentCount).build();
+  }
+
+  public InternalTopic withIoRates(BigDecimal bytesInPerSec, BigDecimal bytesOutPerSec) {
+    return toBuilder().bytesInPerSec(bytesInPerSec).bytesOutPerSec(bytesOutPerSec).build();
   }
 
 }

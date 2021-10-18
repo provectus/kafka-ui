@@ -111,7 +111,7 @@ public class TopicsService {
   }
 
   public TopicDetailsDTO getTopicDetails(KafkaCluster cluster, String topicName) {
-    return clusterMapper.toTopicDetails(getTopic(cluster, topicName), cluster.getMetrics());
+    return clusterMapper.toTopicDetails(getTopic(cluster, topicName));
   }
 
   @SneakyThrows

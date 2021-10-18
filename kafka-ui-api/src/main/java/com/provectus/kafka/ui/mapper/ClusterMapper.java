@@ -121,17 +121,6 @@ public interface ClusterMapper {
 
   TopicDetailsDTO toTopicDetails(InternalTopic topic);
 
-  default TopicDetailsDTO toTopicDetails(InternalTopic topic, InternalClusterMetrics metrics) {
-    final TopicDetailsDTO result = toTopicDetails(topic);
-    result.setBytesInPerSec(
-        metrics.getBytesInPerSec().get(topic.getName())
-    );
-    result.setBytesOutPerSec(
-        metrics.getBytesOutPerSec().get(topic.getName())
-    );
-    return result;
-  }
-
   @Mapping(target = "isReadOnly", source = "readOnly")
   @Mapping(target = "isSensitive", source = "sensitive")
   TopicConfigDTO toTopicConfig(InternalTopicConfig topic);
