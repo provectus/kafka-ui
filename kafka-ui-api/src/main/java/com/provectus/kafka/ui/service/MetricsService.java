@@ -67,9 +67,9 @@ public class MetricsService {
                         (b, jmx) -> b.toBuilder().jmxMetrics(jmx).build())
                     .zipWith(topicsService.getTopicsData(ac),
                         (b, td) -> b.toBuilder().topicsData(td).build())
-                    .zipWith(logDir(cluster, ac),
+                    .zipWith(getLogDirInfo(cluster, ac),
                         (b, ldd) -> b.toBuilder().logDirResult(ldd).build())
-                    .zipWith(Mono.fromSupplier(() -> zookeeperService.getZkStatus(cluster)),
+                    .zipWith(zookeeperService.getZkStatus(cluster),
                         (b, status) -> b.toBuilder().zkStatus(status).build()))
                 .map(MetricsCollector::build)
         )
@@ -127,7 +127,7 @@ public class MetricsService {
     metricsBuilder.internalBrokerMetrics(jmxMetrics.getInternalBrokerMetrics());
   }
 
-  private Mono<LogDirInfo> logDir(KafkaCluster cluster, ReactiveAdminClient c) {
+  private Mono<LogDirInfo> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
     if (cluster.getDisableLogDirsCollection() == null || !cluster.getDisableLogDirsCollection()) {
       return c.describeLogDirs().map(LogDirInfo::new);
     }
@@ -203,9 +203,8 @@ public class MetricsService {
 
     private InternalTopic enrichTopicWithSegmentStats(InternalTopic topic) {
       LongSummaryStatistics stats = topicStats.get(topic.getName());
-      return topic.toBuilder()
-          .segmentSize(stats.getSum())
-          .segmentCount(stats.getCount())
+      return topic.withSegmentStats(stats.getSum(), stats.getCount())
+          .toBuilder()
           .partitions(
               topic.getPartitions().entrySet().stream().map(e ->
                   Tuples.of(e.getKey(),
@@ -218,10 +217,7 @@ public class MetricsService {
                                                               InternalPartition partition) {
       final LongSummaryStatistics stats =
           partitionsStats.get(new TopicPartition(topic, partition.getPartition()));
-      return partition.toBuilder()
-          .segmentSize(stats.getSum())
-          .segmentCount(stats.getCount())
-          .build();
+      return partition.withSegmentStats(stats.getSum(), stats.getCount());
     }
 
     private Map<Integer, InternalBrokerDiskUsage> getBrokersDiskUsage() {

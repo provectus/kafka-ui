@@ -14,6 +14,7 @@ import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -29,16 +30,16 @@ public class ZookeeperService {
     Throwable error;
   }
 
-  public ZkStatus getZkStatus(KafkaCluster kafkaCluster) {
-    try {
-      boolean online = isZookeeperOnline(kafkaCluster);
-      return new ZkStatus(online ? ServerStatusDTO.ONLINE : ServerStatusDTO.OFFLINE, null);
-    } catch (Throwable th) {
-      return new ZkStatus(ServerStatusDTO.OFFLINE, th);
-    }
+  public Mono<ZkStatus> getZkStatus(KafkaCluster kafkaCluster) {
+    return Mono.fromSupplier(() ->
+            new ZkStatus(
+                isZookeeperOnline(kafkaCluster)
+                    ? ServerStatusDTO.ONLINE
+                    : ServerStatusDTO.OFFLINE, null))
+        .onErrorResume(th -> Mono.just(new ZkStatus(ServerStatusDTO.OFFLINE, th)));
   }
 
-  public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
+  private boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
     var isConnected = false;
     if (StringUtils.hasText(kafkaCluster.getZookeeper())) {
       var zkClient = getOrCreateZkClient(kafkaCluster);

@@ -403,10 +403,11 @@ public class TopicsService {
       final Map<TopicPartition, Long> latest = consumer.endOffsets(tps);
 
       return tps.stream()
-          .map(tp -> partitions.get(tp.partition()).toBuilder()
-              .offsetMin(Optional.ofNullable(earliest.get(tp)).orElse(0L))
-              .offsetMax(Optional.ofNullable(latest.get(tp)).orElse(0L))
-              .build()
+          .map(tp -> partitions.get(tp.partition())
+              .withOffsets(
+                  earliest.getOrDefault(tp, -1L),
+                  latest.getOrDefault(tp, -1L)
+              )
           ).collect(Collectors.toMap(
               InternalPartition::getPartition,
               tp -> tp
@@ -435,7 +436,7 @@ public class TopicsService {
         .getTopicSchema(topicName);
   }
 
-  public InternalTopic getTopic(KafkaCluster c, String topicName) {
+  private InternalTopic getTopic(KafkaCluster c, String topicName) {
     var topic = c.getMetrics().getTopics().get(topicName);
     if (topic == null) {
       throw new TopicNotFoundException();

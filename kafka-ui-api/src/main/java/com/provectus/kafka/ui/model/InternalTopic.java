@@ -19,11 +19,14 @@ public class InternalTopic {
   private final int inSyncReplicas;
   private final int replicationFactor;
   private final int underReplicatedPartitions;
+  private final Map<Integer, InternalPartition> partitions;
 
   // from log dir data
   private final long segmentSize;
   private final long segmentCount;
-  private final Map<Integer, InternalPartition> partitions;
 
+  public InternalTopic withSegmentStats(long segmentSize, long segmentCount) {
+    return toBuilder().segmentSize(segmentSize).segmentCount(segmentCount).build();
+  }
 
 }
