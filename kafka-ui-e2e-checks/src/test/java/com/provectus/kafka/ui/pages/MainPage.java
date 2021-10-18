@@ -37,12 +37,27 @@ public class MainPage {
     BROKERS("Brokers"),
     TOPICS("Topics"),
     CONSUMERS("Consumers"),
-    SCHEMA_REGISTRY("Schema registry");
+    SCHEMA_REGISTRY("Schema Registry");
 
     String value;
 
     SideMenuOptions(String value) {
       this.value = value;
+    }
+  }
+
+  public enum SchemaType {
+    AVRO("AVRO"),
+    JSON("JSON"),
+    PROTOBUF("PROTOBUF");
+
+    String value;
+
+    SchemaType(String value) {
+      this.value = value;
+    }
+    public String getValue(){
+      return value;
     }
   }
 

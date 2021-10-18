@@ -40,6 +40,7 @@ public class TopicsList {
     @SneakyThrows
     public TopicsList isNotVisible(String topicName) {
         By.xpath("//div[contains(@class,'section')]//table").refreshUntil(Condition.visible);
+        Thread.sleep(10000);
         $(By.xpath("//a[text()='%s']".formatted(topicName))).shouldNotBe(Condition.visible);
         return this;
     }

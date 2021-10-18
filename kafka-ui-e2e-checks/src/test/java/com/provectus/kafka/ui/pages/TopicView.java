@@ -1,12 +1,16 @@
 package com.provectus.kafka.ui.pages;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
+import com.provectus.kafka.ui.helpers.Helpers;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
 
@@ -14,6 +18,7 @@ import static com.codeborne.selenide.Selenide.*;
 
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
+    private final Logger logger = LogManager.getLogger(this.getClass().getName());
     private static final String path = "ui/clusters/%s/topics/%s";
     private final SelenideElement cleanupPolicy = $(By.name("cleanupPolicy"));
     private final SelenideElement timeToRetain = $(By.id("timeToRetain"));
@@ -35,6 +40,13 @@ public class TopicView {
     public void  clickDeleteTopicButton() {
         $(By.xpath("//*[text()='Delete Topic']")).click();
         $(By.xpath("//*[text()='Confirm']")).click();
+    }
+
+    @SneakyThrows
+    public ProduceMessagePage clickOnButton(String buttonName) {
+        logger.info("clickOnButton == '{}'", buttonName);
+        $(By.xpath("//div[@class ='buttons']//*[text()='%s']".formatted(buttonName))).click();
+        return new ProduceMessagePage();
     }
 
     @SneakyThrows
@@ -89,4 +101,11 @@ public class TopicView {
         Assertions.assertEquals(bytes, maxMessageBytes.getValue());
         return this;
     }
-}
+
+
+
+    }
+
+
+
+

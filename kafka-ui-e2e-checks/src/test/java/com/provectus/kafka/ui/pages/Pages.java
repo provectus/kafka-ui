@@ -7,6 +7,8 @@ public class Pages {
     public MainPage mainPage = new MainPage();
     public TopicsList topicsList = new TopicsList();
     public TopicView topicView = new TopicView();
+    public ProduceMessagePage produceMessagePage = new ProduceMessagePage();
+    public SchemaRegistry schemaRegistry = new SchemaRegistry();
 
     public MainPage open() {
        return openMainPage();
@@ -23,5 +25,4 @@ public class Pages {
     public TopicView openTopicView(String clusterName, String topicName) {
         return topicView.goTo(clusterName, topicName);
     }
-
 }
