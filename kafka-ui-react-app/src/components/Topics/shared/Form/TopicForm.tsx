@@ -115,6 +115,7 @@ const TopicForm: React.FC<Props> = ({
               <select defaultValue="delete" {...register('cleanupPolicy')}>
                 <option value="delete">Delete</option>
                 <option value="compact">Compact</option>
+                <option value="compact,delete">Compact,Delete</option>
               </select>
             </div>
           </div>
