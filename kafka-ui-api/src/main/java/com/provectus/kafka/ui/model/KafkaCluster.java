@@ -34,6 +34,6 @@ public class KafkaCluster {
   private final Boolean readOnly;
   private final Boolean disableLogDirsCollection;
 
-  // state & metrics:
+  // state & metrics
   private final InternalClusterMetrics metrics;
 }

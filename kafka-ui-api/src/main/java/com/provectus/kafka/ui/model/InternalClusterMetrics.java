@@ -36,7 +36,8 @@ public class InternalClusterMetrics {
   private final Map<String, InternalTopic> topics;
 
   // zk stats
-  private final int zooKeeperStatus; //TODO deprecate and use enum?
+  @Deprecated //use 'zookeeperStatus' field with enum type insted
+  private final int zooKeeperStatus;
   private final ServerStatusDTO zookeeperStatus;
   private final Throwable lastZookeeperException;
 
