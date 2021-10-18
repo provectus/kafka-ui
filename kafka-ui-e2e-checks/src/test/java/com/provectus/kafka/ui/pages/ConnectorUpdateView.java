@@ -11,16 +11,12 @@ public class ConnectorUpdateView {
     @Step
     public ConnectorUpdateView updateConnectorConfig(String configJson) {
         String os = System.getProperty("os.name");
-        System.out.println(os);
-        if (os.equals("MacOS")){
-            $(".ace_text-input").sendKeys(COMMAND, "a");
-        }else{
-            $(".ace_text-input").sendKeys(CONTROL, "a");
-        }
-        $(".ace_text-input").sendKeys(COMMAND, "a");
+        Keys CMD = os.equals("MacOS") ? COMMAND : CONTROL;
+
+        $(".ace_text-input").sendKeys(CMD, "a");
         $(".ace_text-input").sendKeys(Keys.BACK_SPACE);
         $(".ace_text-input").sendKeys(String.valueOf(configJson.toCharArray()));
-        $(".ace_text-input").sendKeys(COMMAND, "a");
+        $(".ace_text-input").sendKeys(CMD, "a");
         $(".ace_text-input").sendKeys(SHIFT, TAB);
         $("div.ace_content").click();
         $(By.xpath("//input[@type='submit']")).click();

@@ -72,7 +72,7 @@ public class ConnectorsTests extends BaseTest {
                     .openEditConfig()
                     .updateConnectorConfig(
                             FileUtils.getResourceAsString("config_for_update_connector.json"));
-            pages.openConnectorsList(LOCAL).connectorIsUpdatedInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
+            pages.openConnectorsList(LOCAL).connectorIsVisibleInList(CONNECTOR_FOR_UPDATE, TOPIC_FOR_UPDATE_CONNECTOR);
     }
 
     @SneakyThrows
