@@ -95,7 +95,9 @@ const MessageContent: React.FC<Props> = ({
             <p className="metadata-label">Content</p>
             <span>
               <p className="metadata-value">
-                {isObject(JSON.parse(messageContent || '')) ? 'JSON' : 'Text'}
+                {isObject(messageContent && JSON.parse(messageContent))
+                  ? 'JSON'
+                  : 'Text'}
               </p>
               <p className="metadata-meta">
                 Size: <BytesFormatted value={contentSize} />
@@ -107,7 +109,9 @@ const MessageContent: React.FC<Props> = ({
             <p className="metadata-label">Key</p>
             <span>
               <p className="metadata-value">
-                {isObject(JSON.parse(messageKey || '')) ? 'JSON' : 'Text'}
+                {isObject(messageKey && JSON.parse(messageKey))
+                  ? 'JSON'
+                  : 'Text'}
               </p>
               <p className="metadata-meta">
                 Size: <BytesFormatted value={keySize} />
