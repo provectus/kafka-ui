@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.HashMap;
@@ -48,8 +49,27 @@ public class ClustersStorage {
     return Optional.ofNullable(kafkaClusters.get(clusterName));
   }
 
-  public void setKafkaCluster(String key, KafkaCluster kafkaCluster) {
+  public KafkaCluster setKafkaCluster(String key, KafkaCluster kafkaCluster) {
     this.kafkaClusters.put(key, kafkaCluster);
+    return kafkaCluster;
+  }
+
+  public void onTopicDeleted(KafkaCluster cluster, String topicToDelete) {
+    var topics = Optional.ofNullable(cluster.getTopics())
+        .map(HashMap::new)
+        .orElseGet(HashMap::new);
+    topics.remove(topicToDelete);
+    var updatedCluster = cluster.toBuilder().topics(topics).build();
+    setKafkaCluster(cluster.getName(), updatedCluster);
+  }
+
+  public void onTopicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
+    var topics = Optional.ofNullable(cluster.getTopics())
+        .map(HashMap::new)
+        .orElseGet(HashMap::new);
+    topics.put(updatedTopic.getName(), updatedTopic);
+    var updatedCluster = cluster.toBuilder().topics(topics).build();
+    setKafkaCluster(cluster.getName(), updatedCluster);
   }
 
   public Map<String, KafkaCluster> getKafkaClustersMap() {

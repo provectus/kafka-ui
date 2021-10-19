@@ -3,29 +3,34 @@
 exports[`SchemaVersion matches snapshot 1`] = `
 <tr>
   <td>
-    1
+    <span
+      aria-hidden={true}
+      className="icon has-text-link is-size-7 is-small is-clickable"
+      onClick={[Function]}
+    >
+      <i
+        className="fas fa-plus"
+      />
+    </span>
   </td>
   <td>
     1
   </td>
   <td>
-    <JSONEditor
-      isFixedHeight={true}
-      name="schema"
-      readOnly={true}
-      showGutter={false}
-      value="{
-	\\"type\\": \\"record\\",
-	\\"name\\": \\"MyRecord1\\",
-	\\"namespace\\": \\"com.mycompany\\",
-	\\"fields\\": [
-		{
-			\\"name\\": \\"id\\",
-			\\"type\\": \\"long\\"
-		}
-	]
-}"
-    />
+    1
+  </td>
+  <td
+    className="has-text-overflow-ellipsis is-family-code"
+    style={
+      Object {
+        "maxWidth": 0,
+        "width": "100%",
+      }
+    }
+  >
+    <span>
+      {"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}
+    </span>
   </td>
 </tr>
 `;

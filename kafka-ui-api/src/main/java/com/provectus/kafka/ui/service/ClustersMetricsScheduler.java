@@ -15,7 +15,7 @@ public class ClustersMetricsScheduler {
 
   private final ClustersStorage clustersStorage;
 
-  private final MetricsUpdateService metricsUpdateService;
+  private final MetricsService metricsService;
 
   @Scheduled(fixedRateString = "${kafka.update-metrics-rate-millis:30000}")
   public void updateMetrics() {
@@ -23,7 +23,10 @@ public class ClustersMetricsScheduler {
         .parallel()
         .runOn(Schedulers.parallel())
         .map(Map.Entry::getValue)
-        .flatMap(metricsUpdateService::updateMetrics)
+        .flatMap(cluster -> {
+          log.debug("Start getting metrics for kafkaCluster: {}", cluster.getName());
+          return metricsService.updateClusterMetrics(cluster);
+        })
         .doOnNext(s -> clustersStorage.setKafkaCluster(s.getName(), s))
         .then()
         .block();
