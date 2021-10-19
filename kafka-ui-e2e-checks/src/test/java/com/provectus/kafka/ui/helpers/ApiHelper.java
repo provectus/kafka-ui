@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.api.model.CreateTopicMessage;
 import com.provectus.kafka.ui.api.model.NewConnector;
 import com.provectus.kafka.ui.api.model.TopicCreation;
 import lombok.SneakyThrows;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +39,12 @@ public class ApiHelper {
 
     @SneakyThrows
     public void deleteTopic(String clusterName, String topicName) {
-        topicApi().deleteTopic(clusterName,topicName).block();
+        try {
+            topicApi().deleteTopic(clusterName, topicName).block();
+        } catch (WebClientResponseException ex) {
+            if (ex.getRawStatusCode() != 404)  // except already deleted
+                throw ex;
+        }
     }
 
     @SneakyThrows
@@ -51,7 +57,12 @@ public class ApiHelper {
 
     @SneakyThrows
     public void deleteConnector(String clusterName, String connectName, String connectorName) {
-        connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        try {
+            connectorApi().deleteConnector(clusterName, connectName, connectorName).block();
+        } catch (WebClientResponseException ex) {
+            if (ex.getRawStatusCode() != 404)
+                throw ex;
+        }
     }
 
     @SneakyThrows
