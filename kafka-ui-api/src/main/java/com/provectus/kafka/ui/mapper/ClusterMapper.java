@@ -148,6 +148,9 @@ public interface ClusterMapper {
 
   @Named("mapDiskUsage")
   default List<BrokerDiskUsageDTO> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
+    if (brokers == null) {
+      return null;
+    }
     return brokers.entrySet().stream().map(e -> this.map(e.getKey(), e.getValue()))
         .collect(Collectors.toList());
   }

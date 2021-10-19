@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.model;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
@@ -50,8 +51,7 @@ public class InternalClusterMetrics {
   private final int uncleanLeaderElectionCount; // not used
 
   // log dir stats
-  private final long segmentCount;
-  private final long segmentSize;
+  @Nullable // will be null if log dir collection disabled
   private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage;
 
   // metrics from jmx

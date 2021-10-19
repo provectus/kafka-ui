@@ -10,17 +10,19 @@ import lombok.Data;
 @Builder(toBuilder = true)
 public class InternalTopic {
 
+  // from TopicDescription
   private final String name;
   private final boolean internal;
-  private final List<InternalTopicConfig> topicConfigs;
-
-  private final CleanupPolicy cleanUpPolicy;
   private final int replicas;
   private final int partitionCount;
   private final int inSyncReplicas;
   private final int replicationFactor;
   private final int underReplicatedPartitions;
   private final Map<Integer, InternalPartition> partitions;
+
+  // topic configs
+  private final List<InternalTopicConfig> topicConfigs;
+  private final CleanupPolicy cleanUpPolicy;
 
   // rates from jmx
   private final BigDecimal bytesInPerSec;

@@ -20,8 +20,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -66,12 +66,12 @@ public class MetricsService {
                     )
                     .zipWith(jmxClusterUtil.getBrokerMetrics(cluster, description.getNodes()),
                         (b, jmx) -> b.toBuilder().jmxMetrics(jmx).build())
+                    .zipWith(zookeeperService.getZkStatus(cluster),
+                        (b, status) -> b.toBuilder().zkStatus(status).build()))
                     .zipWith(topicsService.getTopicsData(ac),
                         (b, td) -> b.toBuilder().topicsData(td).build())
                     .zipWith(getLogDirInfo(cluster, ac),
-                        (b, ldd) -> b.toBuilder().logDirResult(ldd).build())
-                    .zipWith(zookeeperService.getZkStatus(cluster),
-                        (b, status) -> b.toBuilder().zkStatus(status).build()))
+                        (b, ld) -> b.toBuilder().logDirResult(ld).build())
                 .map(MetricsCollector::build)
         )
         .doOnError(e ->
@@ -91,8 +91,7 @@ public class MetricsService {
     JmxMetrics jmxMetrics;
     List<InternalTopic> topicsData;
     ZkStatus zkStatus;
-    @Nullable
-    LogDirInfo logDirResult;
+    Optional<LogDirInfo> logDirResult; // empty if log dir collection disabled
 
     InternalClusterMetrics build() {
       var metricsBuilder = InternalClusterMetrics.builder();
@@ -112,9 +111,8 @@ public class MetricsService {
       fillTopicsMetrics(metricsBuilder, topicsData);
       fillJmxMetrics(metricsBuilder, jmxMetrics);
 
-      if (logDirResult != null) {
-        logDirResult.enrichWithLogDirInfo(metricsBuilder);
-      }
+      logDirResult.ifPresent(r -> r.enrichWithLogDirInfo(metricsBuilder));
+
       return metricsBuilder.build();
     }
   }
@@ -143,11 +141,11 @@ public class MetricsService {
     );
   }
 
-  private Mono<LogDirInfo> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
+  private Mono<Optional<LogDirInfo>> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
     if (cluster.getDisableLogDirsCollection() == null || !cluster.getDisableLogDirsCollection()) {
-      return c.describeLogDirs().map(LogDirInfo::new);
+      return c.describeLogDirs().map(LogDirInfo::new).map(Optional::of);
     }
-    return Mono.empty();
+    return Mono.just(Optional.empty());
   }
 
   private static void fillTopicsMetrics(
@@ -187,7 +185,6 @@ public class MetricsService {
     private final Map<TopicPartition, LongSummaryStatistics> partitionsStats;
     private final Map<String, LongSummaryStatistics> topicStats;
     private final Map<Integer, LongSummaryStatistics> brokerStats;
-    private final LongSummaryStatistics summaryStats;
 
     LogDirInfo(Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>> log) {
       final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
@@ -213,8 +210,6 @@ public class MetricsService {
           groupingBy(
               Tuple2::getT1,
               summarizingLong(Tuple3::getT3)));
-
-      summaryStats = topicPartitions.stream().collect(summarizingLong(Tuple3::getT3));
     }
 
     private InternalTopic enrichTopicWithSegmentStats(InternalTopic topic) {
@@ -256,8 +251,6 @@ public class MetricsService {
         InternalClusterMetrics.InternalClusterMetricsBuilder builder) {
       builder
           .topics(enrichTopics(builder.build().getTopics()))
-          .segmentSize(summaryStats.getSum())
-          .segmentCount(summaryStats.getCount())
           .internalBrokerDiskUsage(getBrokersDiskUsage());
     }
   }
