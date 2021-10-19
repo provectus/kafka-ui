@@ -1,12 +1,12 @@
 {
-  "uid" : "c71c457438eb7f1a",
+  "uid" : "a4d381917ccac0fd",
   "name" : "should update a topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.updateTopic",
   "historyId" : "ea70dde018ebf76aa3fe91bebe21405",
   "time" : {
-    "start" : 1634670143515,
-    "stop" : 1634670176558,
-    "duration" : 33043
+    "start" : 1634670182155,
+    "stop" : 1634670206850,
+    "duration" : 24695
   },
   "description" : "",
   "status" : "passed",
@@ -19,17 +19,17 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1634670143517,
-        "stop" : 1634670144144,
-        "duration" : 627
+        "start" : 1634670182159,
+        "stop" : 1634670182981,
+        "duration" : 822
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/ui/clusters/secondLocal/topics",
         "time" : {
-          "start" : 1634670143517,
-          "stop" : 1634670144144,
-          "duration" : 627
+          "start" : 1634670182159,
+          "stop" : 1634670182981,
+          "duration" : 822
         },
         "status" : "passed",
         "steps" : [ ],
@@ -52,17 +52,17 @@
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1634670144144,
-        "stop" : 1634670145404,
-        "duration" : 1260
+        "start" : 1634670182981,
+        "stop" : 1634670184181,
+        "duration" : 1200
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1634670144144,
-          "stop" : 1634670144488,
-          "duration" : 344
+          "start" : 1634670182981,
+          "stop" : 1634670183138,
+          "duration" : 157
         },
         "status" : "passed",
         "steps" : [ ],
@@ -75,9 +75,9 @@
       }, {
         "name" : "$(\"By.xpath: //span[text()='All Topics']\") should be(visible)",
         "time" : {
-          "start" : 1634670144489,
-          "stop" : 1634670145403,
-          "duration" : 914
+          "start" : 1634670183139,
+          "stop" : 1634670184181,
+          "duration" : 1042
         },
         "status" : "passed",
         "steps" : [ ],
@@ -97,9 +97,9 @@
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='topic-to-update']\") should be(visible)",
       "time" : {
-        "start" : 1634670147463,
-        "stop" : 1634670147540,
-        "duration" : 77
+        "start" : 1634670186229,
+        "stop" : 1634670186321,
+        "duration" : 92
       },
       "status" : "passed",
       "steps" : [ ],
@@ -112,9 +112,9 @@
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='topic-to-update']\") click()",
       "time" : {
-        "start" : 1634670147540,
-        "stop" : 1634670147829,
-        "duration" : 289
+        "start" : 1634670186321,
+        "stop" : 1634670186529,
+        "duration" : 208
       },
       "status" : "passed",
       "steps" : [ ],
@@ -127,17 +127,17 @@
     }, {
       "name" : "goTo",
       "time" : {
-        "start" : 1634670147898,
-        "stop" : 1634670149263,
-        "duration" : 1365
+        "start" : 1634670186608,
+        "stop" : 1634670188066,
+        "duration" : 1458
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/ui/clusters/secondLocal/topics/topic-to-update",
         "time" : {
-          "start" : 1634670147899,
-          "stop" : 1634670149263,
-          "duration" : 1364
+          "start" : 1634670186608,
+          "stop" : 1634670188066,
+          "duration" : 1458
         },
         "status" : "passed",
         "steps" : [ ],
@@ -163,9 +163,9 @@
     }, {
       "name" : "$(\"By.xpath: //a[@class=\"button\" and text()='Edit settings']\") click()",
       "time" : {
-        "start" : 1634670149263,
-        "stop" : 1634670150489,
-        "duration" : 1226
+        "start" : 1634670188067,
+        "stop" : 1634670189362,
+        "duration" : 1295
       },
       "status" : "passed",
       "steps" : [ ],
@@ -178,9 +178,9 @@
     }, {
       "name" : "$(\"By.name: cleanupPolicy\") click()",
       "time" : {
-        "start" : 1634670150489,
-        "stop" : 1634670151128,
-        "duration" : 639
+        "start" : 1634670189362,
+        "stop" : 1634670189807,
+        "duration" : 445
       },
       "status" : "passed",
       "steps" : [ ],
@@ -193,9 +193,9 @@
     }, {
       "name" : "$(\"By.xpath: //select/option[@value = 'compact']\") click()",
       "time" : {
-        "start" : 1634670151128,
-        "stop" : 1634670151323,
-        "duration" : 195
+        "start" : 1634670189808,
+        "stop" : 1634670190042,
+        "duration" : 234
       },
       "status" : "passed",
       "steps" : [ ],
@@ -208,9 +208,9 @@
     }, {
       "name" : "$(\"By.id: timeToRetain\") clear()",
       "time" : {
-        "start" : 1634670151323,
-        "stop" : 1634670151548,
-        "duration" : 225
+        "start" : 1634670190042,
+        "stop" : 1634670190373,
+        "duration" : 331
       },
       "status" : "passed",
       "steps" : [ ],
@@ -223,9 +223,9 @@
     }, {
       "name" : "$(\"By.id: timeToRetain\") send keys(604800001)",
       "time" : {
-        "start" : 1634670151548,
-        "stop" : 1634670151935,
-        "duration" : 387
+        "start" : 1634670190374,
+        "stop" : 1634670190776,
+        "duration" : 402
       },
       "status" : "passed",
       "steps" : [ ],
@@ -238,9 +238,9 @@
     }, {
       "name" : "$(\"By.name: retentionBytes\") click()",
       "time" : {
-        "start" : 1634670151936,
-        "stop" : 1634670152205,
-        "duration" : 269
+        "start" : 1634670190776,
+        "stop" : 1634670191032,
+        "duration" : 256
       },
       "status" : "passed",
       "steps" : [ ],
@@ -253,9 +253,9 @@
     }, {
       "name" : "$(\"By.xpath: //select/option[text() = '20 GB']\") click()",
       "time" : {
-        "start" : 1634670152205,
-        "stop" : 1634670152334,
-        "duration" : 129
+        "start" : 1634670191032,
+        "stop" : 1634670191192,
+        "duration" : 160
       },
       "status" : "passed",
       "steps" : [ ],
@@ -268,9 +268,9 @@
     }, {
       "name" : "$(\"By.name: maxMessageBytes\") clear()",
       "time" : {
-        "start" : 1634670152334,
-        "stop" : 1634670152484,
-        "duration" : 150
+        "start" : 1634670191192,
+        "stop" : 1634670191479,
+        "duration" : 287
       },
       "status" : "passed",
       "steps" : [ ],
@@ -283,9 +283,9 @@
     }, {
       "name" : "$(\"By.name: maxMessageBytes\") send keys(1000020)",
       "time" : {
-        "start" : 1634670152484,
-        "stop" : 1634670152657,
-        "duration" : 173
+        "start" : 1634670191479,
+        "stop" : 1634670191797,
+        "duration" : 318
       },
       "status" : "passed",
       "steps" : [ ],
@@ -298,9 +298,9 @@
     }, {
       "name" : "$(\"By.xpath: //input[@type='submit']\") click()",
       "time" : {
-        "start" : 1634670152657,
-        "stop" : 1634670153027,
-        "duration" : 370
+        "start" : 1634670191797,
+        "stop" : 1634670192371,
+        "duration" : 574
       },
       "status" : "passed",
       "steps" : [ ],
@@ -313,17 +313,17 @@
     }, {
       "name" : "goTo",
       "time" : {
-        "start" : 1634670153880,
-        "stop" : 1634670154534,
-        "duration" : 654
+        "start" : 1634670192444,
+        "stop" : 1634670194401,
+        "duration" : 1957
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/ui/clusters/secondLocal/topics/topic-to-update",
         "time" : {
-          "start" : 1634670153880,
-          "stop" : 1634670154534,
-          "duration" : 654
+          "start" : 1634670192444,
+          "stop" : 1634670194401,
+          "duration" : 1957
         },
         "status" : "passed",
         "steps" : [ ],
@@ -349,9 +349,9 @@
     }, {
       "name" : "$(\"By.xpath: //a[@class=\"button\" and text()='Edit settings']\") click()",
       "time" : {
-        "start" : 1634670154535,
-        "stop" : 1634670155932,
-        "duration" : 1397
+        "start" : 1634670194401,
+        "stop" : 1634670196285,
+        "duration" : 1884
       },
       "status" : "passed",
       "steps" : [ ],
@@ -364,17 +364,17 @@
     }, {
       "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
       "time" : {
-        "start" : 1634670158080,
-        "stop" : 1634670158243,
-        "duration" : 163
+        "start" : 1634670198348,
+        "stop" : 1634670198697,
+        "duration" : 349
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"<option id>\") get attribute(value)",
         "time" : {
-          "start" : 1634670158231,
-          "stop" : 1634670158243,
-          "duration" : 12
+          "start" : 1634670198657,
+          "stop" : 1634670198697,
+          "duration" : 40
         },
         "status" : "passed",
         "steps" : [ ],
@@ -394,17 +394,17 @@
     }, {
       "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
       "time" : {
-        "start" : 1634670160740,
-        "stop" : 1634670160841,
-        "duration" : 101
+        "start" : 1634670200768,
+        "stop" : 1634670201068,
+        "duration" : 300
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"<option id>\") get attribute(value)",
         "time" : {
-          "start" : 1634670160833,
-          "stop" : 1634670160841,
-          "duration" : 8
+          "start" : 1634670201031,
+          "stop" : 1634670201068,
+          "duration" : 37
         },
         "status" : "passed",
         "steps" : [ ],
@@ -424,227 +424,77 @@
     }, {
       "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
       "time" : {
-        "start" : 1634670162867,
-        "stop" : 1634670163033,
-        "duration" : 166
+        "start" : 1634670204160,
+        "stop" : 1634670204368,
+        "duration" : 208
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"<option id>\") get attribute(value)",
         "time" : {
-          "start" : 1634670163024,
-          "stop" : 1634670163033,
+          "start" : 1634670204348,
+          "stop" : 1634670204368,
+          "duration" : 20
+        },
+        "status" : "passed",
+        "steps" : [ ],
+        "attachments" : [ ],
+        "parameters" : [ ],
+        "stepsCount" : 0,
+        "attachmentsCount" : 0,
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
+      } ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 1,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
+      "time" : {
+        "start" : 1634670206396,
+        "stop" : 1634670206507,
+        "duration" : 111
+      },
+      "status" : "passed",
+      "steps" : [ {
+        "name" : "$(\"<option id>\") get attribute(value)",
+        "time" : {
+          "start" : 1634670206493,
+          "stop" : 1634670206507,
+          "duration" : 14
+        },
+        "status" : "passed",
+        "steps" : [ ],
+        "attachments" : [ ],
+        "parameters" : [ ],
+        "stepsCount" : 0,
+        "attachmentsCount" : 0,
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
+      } ],
+      "attachments" : [ ],
+      "parameters" : [ ],
+      "stepsCount" : 1,
+      "attachmentsCount" : 0,
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
+    }, {
+      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
+      "time" : {
+        "start" : 1634670206508,
+        "stop" : 1634670206610,
+        "duration" : 102
+      },
+      "status" : "passed",
+      "steps" : [ {
+        "name" : "$(\"<option id>\") get attribute(value)",
+        "time" : {
+          "start" : 1634670206601,
+          "stop" : 1634670206610,
           "duration" : 9
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670165044,
-        "stop" : 1634670165299,
-        "duration" : 255
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670165283,
-          "stop" : 1634670165299,
-          "duration" : 16
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670167338,
-        "stop" : 1634670167423,
-        "duration" : 85
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670167414,
-          "stop" : 1634670167423,
-          "duration" : 9
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670169440,
-        "stop" : 1634670169547,
-        "duration" : 107
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670169538,
-          "stop" : 1634670169547,
-          "duration" : 9
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670171867,
-        "stop" : 1634670172047,
-        "duration" : 180
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670172021,
-          "stop" : 1634670172047,
-          "duration" : 26
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670174067,
-        "stop" : 1634670174171,
-        "duration" : 104
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670174162,
-          "stop" : 1634670174171,
-          "duration" : 9
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670176184,
-        "stop" : 1634670176287,
-        "duration" : 103
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670176274,
-          "stop" : 1634670176287,
-          "duration" : 13
-        },
-        "status" : "passed",
-        "steps" : [ ],
-        "attachments" : [ ],
-        "parameters" : [ ],
-        "stepsCount" : 0,
-        "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
-      } ],
-      "attachments" : [ ],
-      "parameters" : [ ],
-      "stepsCount" : 1,
-      "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
-    }, {
-      "name" : "$(\"By.name: cleanupPolicy\") get selected value()",
-      "time" : {
-        "start" : 1634670176288,
-        "stop" : 1634670176359,
-        "duration" : 71
-      },
-      "status" : "passed",
-      "steps" : [ {
-        "name" : "$(\"<option id>\") get attribute(value)",
-        "time" : {
-          "start" : 1634670176349,
-          "stop" : 1634670176359,
-          "duration" : 10
         },
         "status" : "passed",
         "steps" : [ ],
@@ -664,9 +514,9 @@
     }, {
       "name" : "$(\"By.id: timeToRetain\") get value()",
       "time" : {
-        "start" : 1634670176367,
-        "stop" : 1634670176391,
-        "duration" : 24
+        "start" : 1634670206620,
+        "stop" : 1634670206664,
+        "duration" : 44
       },
       "status" : "passed",
       "steps" : [ ],
@@ -679,17 +529,17 @@
     }, {
       "name" : "$(\"By.name: retentionBytes\") get selected text()",
       "time" : {
-        "start" : 1634670176391,
-        "stop" : 1634670176533,
-        "duration" : 142
+        "start" : 1634670206664,
+        "stop" : 1634670206822,
+        "duration" : 158
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"<option id>\") get text()",
         "time" : {
-          "start" : 1634670176514,
-          "stop" : 1634670176533,
-          "duration" : 19
+          "start" : 1634670206801,
+          "stop" : 1634670206822,
+          "duration" : 21
         },
         "status" : "passed",
         "steps" : [ ],
@@ -709,9 +559,9 @@
     }, {
       "name" : "$(\"By.name: maxMessageBytes\") get value()",
       "time" : {
-        "start" : 1634670176533,
-        "stop" : 1634670176557,
-        "duration" : 24
+        "start" : 1634670206823,
+        "stop" : 1634670206849,
+        "duration" : 26
       },
       "status" : "passed",
       "steps" : [ ],
@@ -724,7 +574,7 @@
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
-    "stepsCount" : 46,
+    "stepsCount" : 36,
     "attachmentsCount" : 0,
     "shouldDisplayMessage" : false,
     "hasContent" : true
@@ -735,7 +585,7 @@
     "value" : "fv-az201-407"
   }, {
     "name" : "thread",
-    "value" : "6220@fv-az201-407.main(1)"
+    "value" : "6216@fv-az201-407.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -768,6 +618,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "c71c457438eb7f1a.json",
+  "source" : "a4d381917ccac0fd.json",
   "parameterValues" : [ ]
 }
