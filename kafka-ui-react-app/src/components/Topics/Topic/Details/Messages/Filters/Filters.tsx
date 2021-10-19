@@ -18,7 +18,11 @@ import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { TopicName, ClusterName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
+import Input from 'components/common/Input/Input';
+import Select from 'components/common/Select/Select';
+import { Button } from 'components/common/Button/Button';
 
+import { FiltersWrapper } from './Filters.styled';
 import {
   filterOptions,
   getOffsetFromSeekToParam,
@@ -155,11 +159,11 @@ const Filters: React.FC<FiltersProps> = ({
     });
   };
 
-  const toggleSeekDirection = () => {
+  const toggleSeekDirection = (val: string) => {
     const nextSeekDirectionValue =
-      seekDirection === SeekDirection.FORWARD
-        ? SeekDirection.BACKWARD
-        : SeekDirection.FORWARD;
+      val === SeekDirection.FORWARD
+        ? SeekDirection.FORWARD
+        : SeekDirection.BACKWARD;
     setSeekDirection(nextSeekDirectionValue);
   };
 
@@ -224,10 +228,53 @@ const Filters: React.FC<FiltersProps> = ({
   }, [seekDirection]);
 
   return (
-    <>
-      <div className="columns is-align-items-flex-end">
-        <div className="column is-3">
-          <label className="label">Partitions</label>
+    <FiltersWrapper>
+      <div className="filters-row-1">
+        <div className="filters-inputs">
+          <Input
+            inputSize="M"
+            id="searchText"
+            type="text"
+            leftIcon="fas fa-search"
+            placeholder="Search"
+            value={query}
+            onChange={({ target: { value } }) => setQuery(value)}
+          />
+          {isSeekTypeControlVisible && (
+            <div className="seek-type-selector-wrapper">
+              <Select
+                id="selectSeekType"
+                onChange={({ target: { value } }) =>
+                  setSeekType(value as SeekType)
+                }
+                value={seekType}
+                selectSize="M"
+              >
+                <option value={SeekType.OFFSET}>Offset</option>
+                <option value={SeekType.TIMESTAMP}>Timestamp</option>
+              </Select>
+              {seekType === SeekType.OFFSET ? (
+                <Input
+                  id="offset"
+                  type="text"
+                  inputSize="M"
+                  value={offset}
+                  className="offset-selector"
+                  onChange={({ target: { value } }) => setOffset(value)}
+                />
+              ) : (
+                <DatePicker
+                  selected={timestamp}
+                  onChange={(date: Date | null) => setTimestamp(date)}
+                  showTimeInput
+                  timeInputLabel="Time:"
+                  dateFormat="MMMM d, yyyy HH:mm"
+                  className="date-picker"
+                  placeholderText="Select timestamp"
+                />
+              )}
+            </div>
+          )}
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,
@@ -238,125 +285,60 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
           />
-        </div>
-        {isSeekTypeControlVisible && (
-          <>
-            <div className="column is-2">
-              <label className="label">Seek Type</label>
-              <div className="select is-block">
-                <select
-                  id="selectSeekType"
-                  name="selectSeekType"
-                  onChange={({ target: { value } }) =>
-                    setSeekType(value as SeekType)
-                  }
-                  value={seekType}
-                >
-                  <option value={SeekType.OFFSET}>Offset</option>
-                  <option value={SeekType.TIMESTAMP}>Timestamp</option>
-                </select>
-              </div>
-            </div>
-            <div className="column is-2">
-              {seekType === SeekType.OFFSET ? (
-                <>
-                  <label className="label">Offset</label>
-                  <input
-                    id="offset"
-                    name="offset"
-                    type="text"
-                    className="input"
-                    value={offset}
-                    onChange={({ target: { value } }) => setOffset(value)}
-                  />
-                </>
-              ) : (
-                <>
-                  <label className="label">Timestamp</label>
-                  <DatePicker
-                    selected={timestamp}
-                    onChange={(date: Date | null) => setTimestamp(date)}
-                    showTimeInput
-                    timeInputLabel="Time:"
-                    dateFormat="MMMM d, yyyy HH:mm"
-                    className="input"
-                  />
-                </>
-              )}
-            </div>
-          </>
-        )}
-        <div className="column is-3">
-          <label className="label">Search</label>
-          <input
-            id="searchText"
-            type="text"
-            name="searchText"
-            className="input"
-            placeholder="Search"
-            value={query}
-            onChange={({ target: { value } }) => setQuery(value)}
-          />
-        </div>
-        <div className="column is-2">
           {isFetching ? (
-            <button
+            <Button
               type="button"
-              className="button is-primary is-fullwidth"
+              buttonType="secondary"
+              buttonSize="M"
               disabled={isSubmitDisabled}
               onClick={handleSSECancel}
+              style={{ fontWeight: 500 }}
             >
               Cancel
-            </button>
+            </Button>
           ) : (
-            <input
+            <Button
               type="submit"
-              className="button is-primary is-fullwidth"
+              buttonType="secondary"
+              buttonSize="M"
               disabled={isSubmitDisabled}
               onClick={handleFiltersSubmit}
-            />
+              style={{ fontWeight: 500 }}
+            >
+              Submit
+            </Button>
           )}
         </div>
+        <Select
+          selectSize="M"
+          onChange={(e) => toggleSeekDirection(e.target.value)}
+        >
+          <option value={SeekDirection.FORWARD}>Latest first</option>
+          <option value={SeekDirection.BACKWARD}>Newest first</option>
+        </Select>
       </div>
-      <div className="columns">
-        <div className="column is-half">
-          <div className="field">
-            <input
-              id="switchRoundedDefault"
-              type="checkbox"
-              name="switchRoundedDefault"
-              className="switch is-rounded"
-              checked={seekDirection === SeekDirection.BACKWARD}
-              onChange={toggleSeekDirection}
-            />
-            <label htmlFor="switchRoundedDefault">Newest first</label>
-          </div>
+      <div className="filters-metrics">
+        <p style={{ fontSize: 14 }}>{isFetching && phaseMessage}</p>
+        <div className="metric" title="Elapsed Time">
+          <span className="metric-icon">
+            <i className="far fa-clock" />
+          </span>
+          <span>{Math.max(elapsedMs || 0, 0)} ms</span>
         </div>
-        <div className="column is-half">
-          <div className="tags is-justify-content-flex-end">
-            <div className="tag is-white">{isFetching && phaseMessage}</div>
-            <div className="tag is-info" title="Elapsed Time">
-              <span className="icon">
-                <i className="fas fa-clock" />
-              </span>
-              <span>{Math.max(elapsedMs || 0, 0)}ms</span>
-            </div>
-            <div className="tag is-info" title="Bytes Consumed">
-              <span className="icon">
-                <i className="fas fa-download" />
-              </span>
-              <BytesFormatted value={bytesConsumed} />
-            </div>
-            <div className="tag is-info" title="Messages Consumed">
-              <span className="icon">
-                <i className="fas fa-envelope" />
-              </span>
-              <span>{messagesConsumed}</span>
-            </div>
-          </div>
+        <div className="metric" title="Bytes Consumed">
+          <span className="metric-icon">
+            <i className="fas fa-arrow-down" />
+          </span>
+          <BytesFormatted value={bytesConsumed} />
+        </div>
+        <div className="metric" title="Messages Consumed">
+          <span className="metric-icon">
+            <i className="far fa-file-alt" />
+          </span>
+          <span>{messagesConsumed} messages</span>
         </div>
       </div>
-    </>
+    </FiltersWrapper>
   );
 };
 

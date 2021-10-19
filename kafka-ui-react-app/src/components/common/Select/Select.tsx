@@ -22,7 +22,7 @@ const Select: React.FC<SelectProps> = ({
 }) => {
   const methods = useFormContext();
   return (
-    <div className={className}>
+    <div className={`select-wrapper ${className}`}>
       {isLive && <LiveIcon />}
       {name ? (
         <StyledSelect
