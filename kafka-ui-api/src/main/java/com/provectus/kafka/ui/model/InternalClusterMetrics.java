@@ -37,7 +37,7 @@ public class InternalClusterMetrics {
   private final Map<String, InternalTopic> topics;
 
   // zk stats
-  @Deprecated //use 'zookeeperStatus' field with enum type insted
+  @Deprecated //use 'zookeeperStatus' field with enum type instead
   private final int zooKeeperStatus;
   private final ServerStatusDTO zookeeperStatus;
   private final Throwable lastZookeeperException;
@@ -48,7 +48,6 @@ public class InternalClusterMetrics {
   private final int offlinePartitionCount;
   private final int inSyncReplicasCount;
   private final int outOfSyncReplicasCount;
-  private final int uncleanLeaderElectionCount; // not used
 
   // log dir stats
   @Nullable // will be null if log dir collection disabled
