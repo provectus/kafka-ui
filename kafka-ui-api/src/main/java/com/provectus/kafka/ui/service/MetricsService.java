@@ -16,6 +16,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
@@ -123,6 +124,14 @@ public class MetricsService {
       JmxMetrics jmxMetrics) {
     metricsBuilder.metrics(jmxMetrics.getMetrics());
     metricsBuilder.internalBrokerMetrics(jmxMetrics.getInternalBrokerMetrics());
+
+    metricsBuilder.bytesInPerSec(
+        jmxMetrics.getBytesInPerSec().values().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+    metricsBuilder.bytesOutPerSec(
+        jmxMetrics.getBytesOutPerSec().values().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
 
     metricsBuilder.topics(
         metricsBuilder.build().getTopics().values().stream()

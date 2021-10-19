@@ -31,7 +31,6 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
-import java.math.BigDecimal;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -52,10 +51,8 @@ public interface ClusterMapper {
   @Mapping(target = "version", source = "metrics.version")
   @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
   @Mapping(target = "topicCount", source = "metrics.topicCount")
-  @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec",
-      qualifiedByName = "sumMetrics")
-  @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec",
-      qualifiedByName = "sumMetrics")
+  @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec")
+  @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec")
   ClusterDTO toCluster(KafkaCluster cluster);
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
@@ -153,15 +150,6 @@ public interface ClusterMapper {
   default List<BrokerDiskUsageDTO> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
     return brokers.entrySet().stream().map(e -> this.map(e.getKey(), e.getValue()))
         .collect(Collectors.toList());
-  }
-
-  @Named("sumMetrics")
-  default BigDecimal sumMetrics(Map<String, BigDecimal> metrics) {
-    if (metrics != null) {
-      return metrics.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-    } else {
-      return BigDecimal.ZERO;
-    }
   }
 
   @Named("resolvePath")
