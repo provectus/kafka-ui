@@ -29,7 +29,7 @@ export const fetchConsumerGroupsList =
       const response = await getResponse(e);
       const alert: FailurePayload = {
         subject: ['consumer-groups', clusterName].join('-'),
-        title: `Consumer Gropups`,
+        title: `Consumer Groups`,
         response,
       };
       dispatch(actions.fetchConsumerGroupsAction.failure({ alert }));

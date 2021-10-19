@@ -4,6 +4,8 @@ import static com.google.common.util.concurrent.Uninterruptibles.getUninterrupti
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
@@ -25,7 +27,6 @@ import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
@@ -41,6 +42,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
 
@@ -144,7 +147,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
-    var r = client.describeCluster(new DescribeClusterOptions().includeAuthorizedOperations(true));
+    var r = client.describeCluster();
     var all = KafkaFuture.allOf(r.nodes(), r.clusterId(), r.controller(), r.authorizedOperations());
     return Mono.create(sink -> all.whenComplete((res, ex) -> {
       if (ex != null) {
@@ -187,7 +190,11 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
-    return toMono(client.deleteConsumerGroups(groupIds).all());
+    return toMono(client.deleteConsumerGroups(groupIds).all())
+        .onErrorResume(GroupIdNotFoundException.class,
+            th -> Mono.error(new NotFoundException("The group id does not exist")))
+        .onErrorResume(GroupNotEmptyException.class,
+            th -> Mono.error(new IllegalEntityStateException("The group is not empty")));
   }
 
   public Mono<Void> createTopic(String name,
@@ -242,7 +249,7 @@ public class ReactiveAdminClient implements Closeable {
     return topicPartitions(topic).flatMap(tps -> listOffsets(tps, offsetSpec));
   }
 
-  public Mono<Map<TopicPartition, Long>> listOffsets(Set<TopicPartition> partitions,
+  public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicPartition> partitions,
                                                      OffsetSpec offsetSpec) {
     return toMono(
         client.listOffsets(partitions.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
