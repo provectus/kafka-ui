@@ -11,7 +11,7 @@ public class ConnectorUpdateView {
     @Step
     public ConnectorUpdateView updateConnectorConfig(String configJson) {
         String os = System.getProperty("os.name");
-        Keys CMD = os.equals("MacOS") ? COMMAND : CONTROL;
+        Keys CMD = os.equalsIgnoreCase("Mac OS X") ? COMMAND : CONTROL;
 
         $(".ace_text-input").sendKeys(CMD, "a");
         $(".ace_text-input").sendKeys(Keys.BACK_SPACE);
