@@ -111,7 +111,10 @@ public class TopicsService {
   }
 
   public TopicDetailsDTO getTopicDetails(KafkaCluster cluster, String topicName) {
-    return clusterMapper.toTopicDetails(getTopic(cluster, topicName));
+    var topic = getTopic(cluster, topicName);
+    var upToDatePartitions = getTopicPartitions(cluster, topic);
+    topic = topic.toBuilder().partitions(upToDatePartitions).build();
+    return clusterMapper.toTopicDetails(topic);
   }
 
   @SneakyThrows
