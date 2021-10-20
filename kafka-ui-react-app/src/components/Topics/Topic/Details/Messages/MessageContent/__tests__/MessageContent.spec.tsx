@@ -70,4 +70,19 @@ describe('MessageContent component', () => {
       });
     });
   });
+
+  describe('when switched to display the content', () => {
+    it('has a tab with is-active classname', async () => {
+      const component = render(setupWrapper());
+      const headersTab = await component.findByText('Headers');
+      fireEvent.click(headersTab);
+      await waitFor(async () => {
+        const contentTab = await component.findAllByText('Content');
+        fireEvent.click(contentTab[0]);
+        await waitFor(async () => {
+          expect(contentTab[0]).toHaveClass('is-active');
+        });
+      });
+    });
+  });
 });
