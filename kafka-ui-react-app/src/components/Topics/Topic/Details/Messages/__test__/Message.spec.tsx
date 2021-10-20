@@ -11,7 +11,7 @@ const setupWrapper = (props?: Partial<TopicMessage>) => (
           timestamp: new Date(0),
           timestampType: TopicMessageTimestampTypeEnum.CREATE_TIME,
           offset: 0,
-          key: '"test-key',
+          key: 'test-key',
           partition: 0,
           content: '{"data": "test"}',
           headers: { header: 'test' },
@@ -23,8 +23,11 @@ const setupWrapper = (props?: Partial<TopicMessage>) => (
 );
 
 describe('Message component', () => {
-  it('matches the snapshot', () => {
+  it('shows the data in the table row', async () => {
     const component = render(setupWrapper());
-    expect(component.baseElement).toMatchSnapshot();
+    const contentCell = await component.findByText('{"data": "test"}');
+    const keyCell = await component.findByText('test-key');
+    expect(contentCell).toBeTruthy();
+    expect(keyCell).toBeTruthy();
   });
 });
