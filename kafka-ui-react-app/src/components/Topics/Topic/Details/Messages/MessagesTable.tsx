@@ -1,18 +1,13 @@
+import { Button } from 'components/common/Button/Button';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import CustomParamButton from 'components/Topics/shared/Form/CustomParams/CustomParamButton';
-import {
-  Partition,
-  SeekDirection,
-  TopicMessage,
-  TopicMessageConsuming,
-} from 'generated-sources';
+import { SeekDirection, TopicMessage } from 'generated-sources';
+import { styled } from 'lib/themedStyles';
 import { compact, concat, groupBy, map, maxBy, minBy } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useHistory, useLocation } from 'react-router';
-import { ClusterName, TopicName } from 'redux/interfaces';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
@@ -20,18 +15,11 @@ import {
 
 import Message from './Message';
 
-export interface MessagesProps {
-  clusterName: ClusterName;
-  topicName: TopicName;
-  messages: TopicMessage[];
-  phaseMessage?: string;
-  partitions: Partition[];
-  meta: TopicMessageConsuming;
-  addMessage(message: TopicMessage): void;
-  resetMessages(): void;
-  updatePhase(phase: string): void;
-  updateMeta(meta: TopicMessageConsuming): void;
-}
+const MessagesPaginationWrapperStyled = styled.div`
+  padding: 16px;
+  display: flex;
+  justify-content: flex-end;
+`;
 
 const MessagesTable: React.FC = () => {
   const location = useLocation();
@@ -120,16 +108,11 @@ const MessagesTable: React.FC = () => {
           )}
         </tbody>
       </StyledTable>
-      <div className="columns">
-        <div className="column is-full">
-          <CustomParamButton
-            className="is-link is-pulled-right"
-            type="fa-chevron-right"
-            onClick={handleNextClick}
-            btnText="Next"
-          />
-        </div>
-      </div>
+      <MessagesPaginationWrapperStyled>
+        <Button buttonType="secondary" buttonSize="M" onClick={handleNextClick}>
+          Next
+        </Button>
+      </MessagesPaginationWrapperStyled>
     </>
   );
 };

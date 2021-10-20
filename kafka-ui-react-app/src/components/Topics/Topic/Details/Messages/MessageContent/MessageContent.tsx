@@ -9,7 +9,7 @@ import { MessageContentWrapper } from './MessageContent.styled';
 
 type Tab = 'key' | 'content' | 'headers';
 
-interface Props {
+export interface MessageContentProps {
   messageKey?: string;
   messageContent?: string;
   headers?: { [key: string]: string | undefined };
@@ -17,7 +17,7 @@ interface Props {
   timestampType?: TopicMessageTimestampTypeEnum;
 }
 
-const MessageContent: React.FC<Props> = ({
+const MessageContent: React.FC<MessageContentProps> = ({
   messageKey,
   messageContent,
   headers,
@@ -86,7 +86,7 @@ const MessageContent: React.FC<Props> = ({
           <span className="metadata">
             <p className="metadata-label">Timestamp</p>
             <span>
-              <p className="metadata-value">{timestamp}</p>
+              <p className="metadata-value">{timestamp?.toUTCString()}</p>
               <p className="metadata-meta">Timestamp type: {timestampType}</p>
             </span>
           </span>
