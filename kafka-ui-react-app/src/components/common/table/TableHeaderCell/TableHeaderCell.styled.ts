@@ -4,7 +4,7 @@ import { Colors } from 'theme/theme';
 import { TableHeaderCellProps } from './TableHeaderCell';
 
 const StyledTableHeaderCell = styled.th<TableHeaderCellProps>`
-  padding: 4px 8px !important;
+  padding: 4px 0 4px 24px !important;
   border-bottom-width: 1px !important;
   vertical-align: middle !important;
 

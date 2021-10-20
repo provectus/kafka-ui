@@ -1,0 +1,411 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Filters component matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-iBPTik jJxlZt"
+    >
+      <div
+        class="filters-row-1"
+      >
+        <div
+          class="filters-inputs"
+        >
+          <div
+            class="sc-dlfnuX gxtwfA"
+          >
+            <i
+              class="sc-bdfBQB gNwdVP fas fa-search"
+            />
+            <input
+              class="sc-gsTEea exLrMT sc-dlfnuX gxtwfA"
+              id="searchText"
+              placeholder="Search"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="seek-type-selector-wrapper"
+          >
+            <div
+              class="select-wrapper sc-jSgvzq hTFgyW"
+            >
+              <select
+                class="sc-eCstlR kuneef"
+                id="selectSeekType"
+              >
+                <option
+                  value="OFFSET"
+                >
+                  Offset
+                </option>
+                <option
+                  value="TIMESTAMP"
+                >
+                  Timestamp
+                </option>
+              </select>
+            </div>
+            <div
+              class="sc-dlfnuX gxtwfA offset-selector"
+            >
+              <input
+                class="sc-gsTEea kpJMyZ sc-dlfnuX gxtwfA offset-selector"
+                id="offset"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="rmsc multi-select"
+          >
+            <div
+              aria-labelledby="Select partitions"
+              aria-readonly="true"
+              class="dropdown-container"
+              tabindex="0"
+            >
+              <div
+                class="dropdown-heading"
+              >
+                <div
+                  class="dropdown-heading-value"
+                >
+                  <span>
+                    All items are selected.
+                  </span>
+                </div>
+                <button
+                  aria-label="Clear Selected"
+                  class="clear-selected-button"
+                  type="button"
+                >
+                  <svg
+                    class="dropdown-search-clear-icon gray"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    width="24"
+                  >
+                    <line
+                      x1="18"
+                      x2="6"
+                      y1="6"
+                      y2="18"
+                    />
+                    <line
+                      x1="6"
+                      x2="18"
+                      y1="6"
+                      y2="18"
+                    />
+                  </svg>
+                </button>
+                <svg
+                  class="dropdown-heading-dropdown-arrow gray"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="24"
+                >
+                  <path
+                    d="M6 9L12 15 18 9"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button
+            class="sc-gKseQn bMArfe"
+            style="font-weight: 500;"
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
+        <div
+          class="select-wrapper sc-jSgvzq hTFgyW"
+        >
+          <select
+            class="sc-eCstlR kuneef"
+          >
+            <option
+              value="FORWARD"
+            >
+              Latest first
+            </option>
+            <option
+              value="BACKWARD"
+            >
+              Newest first
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        class="filters-metrics"
+      >
+        <p
+          style="font-size: 14px;"
+        />
+        <div
+          class="metric"
+          title="Elapsed Time"
+        >
+          <span
+            class="metric-icon"
+          >
+            <i
+              class="far fa-clock"
+            />
+          </span>
+          <span>
+            0
+             ms
+          </span>
+        </div>
+        <div
+          class="metric"
+          title="Bytes Consumed"
+        >
+          <span
+            class="metric-icon"
+          >
+            <i
+              class="fas fa-arrow-down"
+            />
+          </span>
+          <span>
+            0Bytes
+          </span>
+        </div>
+        <div
+          class="metric"
+          title="Messages Consumed"
+        >
+          <span
+            class="metric-icon"
+          >
+            <i
+              class="far fa-file-alt"
+            />
+          </span>
+          <span>
+             messages
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Filters component when fetching matches the snapshot 1`] = `
+<body>
+  <div>
+    <div
+      class="sc-iBPTik jJxlZt"
+    >
+      <div
+        class="filters-row-1"
+      >
+        <div
+          class="filters-inputs"
+        >
+          <div
+            class="sc-dlfnuX gxtwfA"
+          >
+            <i
+              class="sc-bdfBQB gNwdVP fas fa-search"
+            />
+            <input
+              class="sc-gsTEea exLrMT sc-dlfnuX gxtwfA"
+              id="searchText"
+              placeholder="Search"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="seek-type-selector-wrapper"
+          >
+            <div
+              class="select-wrapper sc-jSgvzq hTFgyW"
+            >
+              <select
+                class="sc-eCstlR kuneef"
+                id="selectSeekType"
+              >
+                <option
+                  value="OFFSET"
+                >
+                  Offset
+                </option>
+                <option
+                  value="TIMESTAMP"
+                >
+                  Timestamp
+                </option>
+              </select>
+            </div>
+            <div
+              class="sc-dlfnuX gxtwfA offset-selector"
+            >
+              <input
+                class="sc-gsTEea kpJMyZ sc-dlfnuX gxtwfA offset-selector"
+                id="offset"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="rmsc multi-select"
+          >
+            <div
+              aria-labelledby="Select partitions"
+              aria-readonly="true"
+              class="dropdown-container"
+              tabindex="0"
+            >
+              <div
+                class="dropdown-heading"
+              >
+                <div
+                  class="dropdown-heading-value"
+                >
+                  <span>
+                    All items are selected.
+                  </span>
+                </div>
+                <button
+                  aria-label="Clear Selected"
+                  class="clear-selected-button"
+                  type="button"
+                >
+                  <svg
+                    class="dropdown-search-clear-icon gray"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    width="24"
+                  >
+                    <line
+                      x1="18"
+                      x2="6"
+                      y1="6"
+                      y2="18"
+                    />
+                    <line
+                      x1="6"
+                      x2="18"
+                      y1="6"
+                      y2="18"
+                    />
+                  </svg>
+                </button>
+                <svg
+                  class="dropdown-heading-dropdown-arrow gray"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="24"
+                >
+                  <path
+                    d="M6 9L12 15 18 9"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button
+            class="sc-gKseQn bMArfe"
+            style="font-weight: 500;"
+            type="button"
+          >
+            Cancel
+          </button>
+        </div>
+        <div
+          class="select-wrapper sc-jSgvzq hTFgyW"
+        >
+          <select
+            class="sc-eCstlR kuneef"
+          >
+            <option
+              value="FORWARD"
+            >
+              Latest first
+            </option>
+            <option
+              value="BACKWARD"
+            >
+              Newest first
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        class="filters-metrics"
+      >
+        <p
+          style="font-size: 14px;"
+        />
+        <div
+          class="metric"
+          title="Elapsed Time"
+        >
+          <span
+            class="metric-icon"
+          >
+            <i
+              class="far fa-clock"
+            />
+          </span>
+          <span>
+            0
+             ms
+          </span>
+        </div>
+        <div
+          class="metric"
+          title="Bytes Consumed"
+        >
+          <span
+            class="metric-icon"
+          >
+            <i
+              class="fas fa-arrow-down"
+            />
+          </span>
+          <span>
+            0Bytes
+          </span>
+        </div>
+        <div
+          class="metric"
+          title="Messages Consumed"
+        >
+          <span
+            class="metric-icon"
+          >
+            <i
+              class="far fa-file-alt"
+            />
+          </span>
+          <span>
+             messages
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

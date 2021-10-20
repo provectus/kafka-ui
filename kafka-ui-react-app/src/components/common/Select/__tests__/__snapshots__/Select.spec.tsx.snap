@@ -4,7 +4,7 @@ exports[`Custom Select when live matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-dlfnuX gxtwfA"
+      class="select-wrapper sc-dlfnuX gxtwfA"
     >
       <i
         class="sc-bdfBQB ldVUdn"
@@ -31,7 +31,7 @@ exports[`Custom Select when live matches the snapshot 1`] = `
         </svg>
       </i>
       <select
-        class="sc-gsTEea kUMqVV"
+        class="sc-gsTEea bYjroa"
       />
     </div>
   </div>
@@ -42,10 +42,10 @@ exports[`Custom Select when non-live matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-dlfnuX gxtwfA"
+      class="select-wrapper sc-dlfnuX gxtwfA"
     >
       <select
-        class="sc-gsTEea hLKjxb"
+        class="sc-gsTEea iMWDKo"
       />
     </div>
   </div>

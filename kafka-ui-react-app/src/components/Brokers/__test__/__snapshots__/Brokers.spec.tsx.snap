@@ -97,6 +97,18 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               "normal": "#171A1C",
             },
           },
+          "primaryTabStyles": Object {
+            "borderColor": Object {
+              "active": "#4F4FFF",
+              "hover": "transparent",
+              "normal": "transparent",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#171A1C",
+              "normal": "#73848C",
+            },
+          },
           "secondaryTabStyles": Object {
             "backgroundColor": Object {
               "active": "#E3E6E8",
@@ -457,7 +469,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           isFullwidth={true}
         >
           <table
-            className="sc-eCstlR eMabAx"
+            className="sc-eCstlR kaTGqX"
           >
             <thead>
               <tr>
@@ -469,7 +481,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                     title="Broker"
                   >
                     <th
-                      className="sc-hKgJUU bdFlyV"
+                      className="sc-hKgJUU kwoanP"
                       title="Broker"
                     >
                       <span
@@ -488,7 +500,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                     title="Segment size (Mb)"
                   >
                     <th
-                      className="sc-hKgJUU bdFlyV"
+                      className="sc-hKgJUU kwoanP"
                       title="Segment size (Mb)"
                     >
                       <span
@@ -507,7 +519,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                     title="Segment Count"
                   >
                     <th
-                      className="sc-hKgJUU bdFlyV"
+                      className="sc-hKgJUU kwoanP"
                       title="Segment Count"
                     >
                       <span
@@ -624,6 +636,18 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               "disabled": "#C7CED1",
               "hover": "#171A1C",
               "normal": "#171A1C",
+            },
+          },
+          "primaryTabStyles": Object {
+            "borderColor": Object {
+              "active": "#4F4FFF",
+              "hover": "transparent",
+              "normal": "transparent",
+            },
+            "color": Object {
+              "active": "#171A1C",
+              "hover": "#171A1C",
+              "normal": "#73848C",
             },
           },
           "secondaryTabStyles": Object {
@@ -995,7 +1019,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           isFullwidth={true}
         >
           <table
-            className="sc-eCstlR eMabAx"
+            className="sc-eCstlR kaTGqX"
           >
             <thead>
               <tr>
@@ -1007,7 +1031,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                     title="Broker"
                   >
                     <th
-                      className="sc-hKgJUU bdFlyV"
+                      className="sc-hKgJUU kwoanP"
                       title="Broker"
                     >
                       <span
@@ -1026,7 +1050,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                     title="Segment size (Mb)"
                   >
                     <th
-                      className="sc-hKgJUU bdFlyV"
+                      className="sc-hKgJUU kwoanP"
                       title="Segment size (Mb)"
                     >
                       <span
@@ -1045,7 +1069,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                     title="Segment Count"
                   >
                     <th
-                      className="sc-hKgJUU bdFlyV"
+                      className="sc-hKgJUU kwoanP"
                       title="Segment Count"
                     >
                       <span
