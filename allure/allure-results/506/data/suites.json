@@ -4,39 +4,39 @@
     "name" : "com.provectus.kafka.ui.topics.TopicTests",
     "children" : [ {
       "name" : "should delete topic",
-      "uid" : "ee70f5edff695fe5",
+      "uid" : "e4fd0d99d4b6222f",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "skipped",
       "time" : {
-        "start" : 1634735319450,
-        "stop" : 1634735319451,
-        "duration" : 1
+        "start" : 1634736403242,
+        "stop" : 1634736403242,
+        "duration" : 0
       },
       "flaky" : false,
       "newFailed" : false,
       "parameters" : [ ]
     }, {
       "name" : "should update a topic",
-      "uid" : "526f89fab92bf5f9",
+      "uid" : "271f94afd5d0fd43",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1634735319515,
-        "stop" : 1634735351009,
-        "duration" : 31494
+        "start" : 1634736403331,
+        "stop" : 1634736436453,
+        "duration" : 33122
       },
       "flaky" : false,
       "newFailed" : false,
       "parameters" : [ ]
     }, {
       "name" : "should create a topic",
-      "uid" : "7f2d426ddd1720a3",
+      "uid" : "50eec0f24a4c0374",
       "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
       "status" : "passed",
       "time" : {
-        "start" : 1634735351023,
-        "stop" : 1634735354329,
-        "duration" : 3306
+        "start" : 1634736436482,
+        "stop" : 1634736440469,
+        "duration" : 3987
       },
       "flaky" : false,
       "newFailed" : false,
@@ -47,13 +47,13 @@
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "64f4d5e023ad7cf1",
+      "uid" : "bbd3459c8f8302a4",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1634735354528,
-        "stop" : 1634735355466,
-        "duration" : 938
+        "start" : 1634736440688,
+        "stop" : 1634736441800,
+        "duration" : 1112
       },
       "flaky" : false,
       "newFailed" : false,
