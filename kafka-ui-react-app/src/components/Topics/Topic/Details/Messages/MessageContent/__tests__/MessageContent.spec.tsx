@@ -31,11 +31,6 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
 global.TextEncoder = TextEncoder;
 
 describe('MessageContent component', () => {
-  it('matches snapshot', () => {
-    const component = render(setupWrapper());
-    expect(component.baseElement).toMatchSnapshot();
-  });
-
   describe('when switched to display the key', () => {
     it('has a tab with is-active classname', async () => {
       const component = render(setupWrapper());
