@@ -98,7 +98,7 @@ const TopicForm: React.FC<Props> = ({
               type="number"
               placeholder="Min In Sync Replicas"
               defaultValue="1"
-              {...register('minInSyncReplicas', {
+              {...register('minInsyncReplicas', {
                 required: 'Min In Sync Replicas is required.',
               })}
             />
