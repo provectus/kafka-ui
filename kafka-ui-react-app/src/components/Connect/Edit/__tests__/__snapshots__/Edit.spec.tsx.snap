@@ -47,4 +47,59 @@ exports[`Edit view matches snapshot 1`] = `
 </div>
 `;
 
+exports[`Edit view matches snapshot when config has credentials 1`] = `
+Array [
+  <div
+    className="notification is-danger is-light"
+  >
+    Please replace ****** with the real credential values to avoid accidentally breaking your connector config!
+  </div>,
+  <div
+    className="box"
+  >
+    <form
+      onSubmit={[Function]}
+    >
+      <div
+        className="field"
+      >
+        <div
+          className="control"
+        >
+          <mock-JSONEditor
+            name="config"
+            onBlur={[Function]}
+            onChange={[Function]}
+            readOnly={false}
+            value="{
+	\\"connector.class\\": \\"FileStreamSource\\",
+	\\"tasks.max\\": \\"10\\",
+	\\"topic\\": \\"test-topic\\",
+	\\"file\\": \\"/some/file\\",
+	\\"password\\": \\"******\\"
+}"
+          />
+        </div>
+        <p
+          className="help is-danger"
+        />
+      </div>
+      <div
+        className="field"
+      >
+        <div
+          className="control"
+        >
+          <input
+            className="button is-primary"
+            disabled={true}
+            type="submit"
+          />
+        </div>
+      </div>
+    </form>
+  </div>,
+]
+`;
+
 exports[`Edit view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;
