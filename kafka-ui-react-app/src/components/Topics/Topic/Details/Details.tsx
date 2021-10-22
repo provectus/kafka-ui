@@ -173,7 +173,7 @@ const Details: React.FC<Props> = ({
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/consumergroups"
+          path="/ui/clusters/:clusterName/topics/:topicName/consumer-groups"
           component={TopicConsumerGroupsContainer}
         />
       </Switch>

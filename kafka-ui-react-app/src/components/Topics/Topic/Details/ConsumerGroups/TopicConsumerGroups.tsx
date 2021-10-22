@@ -1,9 +1,11 @@
 import React from 'react';
 import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import ConsumerGroupStateTag from 'components/common/ConsumerGroupState/ConsumerGroupStateTag';
 import { useHistory } from 'react-router';
 import { clusterConsumerGroupsPath } from 'lib/paths';
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -33,15 +35,15 @@ const TopicConsumerGroups: React.FC<Props> = ({
   }
 
   return (
-    <div className="box">
-      <table className="table is-striped is-fullwidth">
+    <div>
+      <StyledTable isFullwidth>
         <thead>
           <tr>
-            <th>Consumer group ID</th>
-            <th>Num of members</th>
-            <th>Messages behind</th>
-            <th>Coordinator</th>
-            <th>State</th>
+            <TableHeaderCell title="Consumer group ID" />
+            <TableHeaderCell title="Num of members" />
+            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Coordinator" />
+            <TableHeaderCell title="State" />
           </tr>
         </thead>
         <tbody>
@@ -51,12 +53,19 @@ const TopicConsumerGroups: React.FC<Props> = ({
               className="is-clickable"
               onClick={() => goToConsumerGroupDetails(consumer)}
             >
-              <td>{consumer.groupId}</td>
+              <td style={{ fontWeight: 500 }}>{consumer.groupId}</td>
               <td>{consumer.members}</td>
               <td>{consumer.messagesBehind}</td>
               <td>{consumer.coordinator?.id}</td>
               <td>
-                <ConsumerGroupStateTag state={consumer.state} />
+                {consumer.state && (
+                  <TagStyled
+                    color="yellow"
+                    text={`${consumer.state
+                      .charAt(0)
+                      .toUpperCase()}${consumer.state.slice(1).toLowerCase()}`}
+                  />
+                )}
               </td>
             </tr>
           ))}
@@ -66,7 +75,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
             </tr>
           )}
         </tbody>
-      </table>
+      </StyledTable>
     </div>
   );
 };
