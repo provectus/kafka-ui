@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.api.ApiClient;
 import com.provectus.kafka.ui.api.api.TopicsApi;
 import com.provectus.kafka.ui.api.model.TopicCreation;
 import lombok.SneakyThrows;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 public class ApiHelper {
     int partitions = 1;
@@ -35,7 +36,12 @@ public class ApiHelper {
 
     @SneakyThrows
     public void deleteTopic(String clusterName, String topicName) {
-        topicApi().deleteTopic(clusterName,topicName).block();
+        try {
+            topicApi().deleteTopic(clusterName, topicName).block();
+        } catch (WebClientResponseException ex) {
+            if (ex.getRawStatusCode() != 404)  // except already deleted
+                throw ex;
+        }
     }
 
 }
