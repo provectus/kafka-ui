@@ -1,3 +1,5 @@
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicConfig } from 'generated-sources';
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
@@ -46,13 +48,13 @@ const Settings: React.FC<Props> = ({
   }
 
   return (
-    <div className="box">
-      <table className="table is-striped is-fullwidth">
+    <div>
+      <StyledTable isFullwidth>
         <thead>
           <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Default Value</th>
+            <TableHeaderCell title="Key" />
+            <TableHeaderCell title="Value" />
+            <TableHeaderCell title="Default value" />
           </tr>
         </thead>
         <tbody>
@@ -60,7 +62,7 @@ const Settings: React.FC<Props> = ({
             <ConfigListItem key={item.name} config={item} />
           ))}
         </tbody>
-      </table>
+      </StyledTable>
     </div>
   );
 };

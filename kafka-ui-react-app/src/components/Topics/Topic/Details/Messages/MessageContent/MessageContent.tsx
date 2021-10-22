@@ -86,7 +86,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
           <span className="metadata">
             <p className="metadata-label">Timestamp</p>
             <span>
-              <p className="metadata-value">{timestamp?.toUTCString()}</p>
+              <p className="metadata-value">{timestamp?.toLocaleString()}</p>
               <p className="metadata-meta">Timestamp type: {timestampType}</p>
             </span>
           </span>

@@ -10,7 +10,7 @@ const theme = {
   base06: '#e0e0e0',
   base07: '#ffffff',
   base08: '#CC342B',
-  base09: '#F96A38',
+  base09: '#E51919',
   base0A: '#FBA922',
   base0B: '#29A352',
   base0C: '#3971ED',
