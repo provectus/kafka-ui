@@ -7,8 +7,11 @@ import { Cluster } from 'generated-sources';
 import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import { Colors } from 'theme/theme';
-
-import ClusterWidget from './ClusterWidget';
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { NavLink } from 'react-router-dom';
+import { clusterTopicsPath } from 'lib/paths';
 
 interface Props {
   clusters: Cluster[];
@@ -81,14 +84,39 @@ const ClustersWidget: React.FC<Props> = ({
           onChange={handleSwitch}
         />
         <label htmlFor="switchRoundedDefault" />
-        <span className="is-size-7">Show only offline clusters</span>
+        <span className="is-size-7">Only offline clusters</span>
       </div>
       {clusterList.map((chunkItem) => (
-        <div className="columns" key={chunkItem.id}>
+        <StyledTable key={chunkItem.id} isFullwidth>
+          <tr>
+            <TableHeaderCell title="Cluster name" />
+            <TableHeaderCell title="Version" />
+            <TableHeaderCell title="Brokers count" />
+            <TableHeaderCell title="Partitions" />
+            <TableHeaderCell title="Topics" />
+            <TableHeaderCell title="Production" />
+            <TableHeaderCell title="Consumption" />
+          </tr>
           {chunkItem.data.map((cluster) => (
-            <ClusterWidget cluster={cluster} key={cluster.name} />
+            <tr key={cluster.name}>
+              <td>{cluster.name}</td>
+              <td>{cluster.version}</td>
+              <td>{cluster.brokerCount}</td>
+              <td>{cluster.onlinePartitionCount}</td>
+              <td>
+                <NavLink to={clusterTopicsPath(cluster.name)}>
+                  {cluster.topicCount}
+                </NavLink>
+              </td>
+              <td>
+                <BytesFormatted value={cluster.bytesInPerSec} />
+              </td>
+              <td>
+                <BytesFormatted value={cluster.bytesOutPerSec} />
+              </td>
+            </tr>
           ))}
-        </div>
+        </StyledTable>
       ))}
     </div>
   );

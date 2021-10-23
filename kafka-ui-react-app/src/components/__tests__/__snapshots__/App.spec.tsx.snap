@@ -520,7 +520,7 @@ exports[`App view matches snapshot 1`] = `
                               <span
                                 className="is-size-7"
                               >
-                                Show only offline clusters
+                                Only offline clusters
                               </span>
                             </div>
                           </div>

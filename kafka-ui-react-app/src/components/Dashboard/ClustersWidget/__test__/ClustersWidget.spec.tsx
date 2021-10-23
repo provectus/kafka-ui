@@ -15,23 +15,15 @@ const component = () =>
 
 describe('ClustersWidget', () => {
   it('renders clusterWidget list', () => {
-    const clusterWidget = component().find('ClusterWidget');
-    expect(clusterWidget.length).toBe(2);
-  });
-
-  it('renders ClusterWidget', () => {
-    expect(component().exists('ClusterWidget')).toBeTruthy();
-  });
-
-  it('renders columns', () => {
-    expect(component().exists('.columns')).toBeTruthy();
+    const clusterWidget = component().find('tr');
+    expect(clusterWidget.length).toBe(3);
   });
 
   it('hides online cluster widgets', () => {
     const value = component();
     const input = value.find('input');
-    expect(value.find('ClusterWidget').length).toBe(2);
+    expect(value.find('tr').length).toBe(3);
     input.simulate('change', { target: { checked: true } });
-    expect(value.find('ClusterWidget').length).toBe(1);
+    expect(value.find('tr').length).toBe(2);
   });
 });
