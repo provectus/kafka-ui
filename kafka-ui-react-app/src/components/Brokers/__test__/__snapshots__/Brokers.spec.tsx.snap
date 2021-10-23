@@ -221,13 +221,10 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           <div
             className="metrics-box mb-2 is-flex"
           >
-            <Styled(MetricsWrapper)
+            <MetricsWrapper
               title="Uptime"
             >
-              <MetricsWrapper
-                className="sc-bdfBQB ewAWCQ"
-                title="Uptime"
-              >
+              <styled.div>
                 <div
                   className="sc-bdfBQB ewAWCQ"
                 >
@@ -239,64 +236,58 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                   <div
                     className="indicatorsWrapper"
                   >
-                    <Styled(Indicator)
+                    <Indicator
                       label="Total Brokers"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Total Brokers"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Total Brokers
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Active Controllers"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Active Controllers"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Active Controllers
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Zookeeper Status"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Zookeeper Status"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Zookeeper Status
-                            </p>
+                               
+                            </div>
                             <Styled(Tag)
                               color="gray"
                               text="offline"
@@ -315,40 +306,35 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                             </Styled(Tag)>
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Version"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Version"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Version
-                            </p>
+                               
+                            </div>
                             1
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
+                      </styled.div>
+                    </Indicator>
                   </div>
                 </div>
-              </MetricsWrapper>
-            </Styled(MetricsWrapper)>
-            <Styled(MetricsWrapper)
+              </styled.div>
+            </MetricsWrapper>
+            <MetricsWrapper
               title="Partitions"
             >
-              <MetricsWrapper
-                className="sc-bdfBQB ewAWCQ"
-                title="Partitions"
-              >
+              <styled.div>
                 <div
                   className="sc-bdfBQB ewAWCQ"
                 >
@@ -360,29 +346,50 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                   <div
                     className="indicatorsWrapper"
                   >
-                    <Styled(Indicator)
+                    <Indicator
+                      isAlert={true}
                       label="Online"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Online"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Online
-                            </p>
+                               
+                              <svg
+                                fill="none"
+                                height="4"
+                                viewBox="0 0 4 4"
+                                width="4"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle
+                                  cx="2"
+                                  cy="2"
+                                  fill="#E61A1A"
+                                  r="2"
+                                />
+                              </svg>
+                            </div>
                             <span
-                              className=""
+                              style={
+                                Object {
+                                  "color": "#E51A1A",
+                                }
+                              }
                             >
                               0
                             </span>
                             <span
-                              className="has-text-weight-light"
+                              style={
+                                Object {
+                                  "color": "#ABB5BA",
+                                }
+                              }
                             >
                                
                               of 
@@ -390,79 +397,72 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                             </span>
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="URP"
                       title="Under replicated partitions"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="URP"
-                        title="Under replicated partitions"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div
                             title="Under replicated partitions"
                           >
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               URP
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="In Sync Replicas"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="In Sync Replicas"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               In Sync Replicas
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Out of Sync Replicas"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Out of Sync Replicas"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Out of Sync Replicas
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
+                      </styled.div>
+                    </Indicator>
                   </div>
                 </div>
-              </MetricsWrapper>
-            </Styled(MetricsWrapper)>
+              </styled.div>
+            </MetricsWrapper>
           </div>
         </div>
         <styled.table
@@ -771,13 +771,10 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           <div
             className="metrics-box mb-2 is-flex"
           >
-            <Styled(MetricsWrapper)
+            <MetricsWrapper
               title="Uptime"
             >
-              <MetricsWrapper
-                className="sc-bdfBQB ewAWCQ"
-                title="Uptime"
-              >
+              <styled.div>
                 <div
                   className="sc-bdfBQB ewAWCQ"
                 >
@@ -789,64 +786,58 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                   <div
                     className="indicatorsWrapper"
                   >
-                    <Styled(Indicator)
+                    <Indicator
                       label="Total Brokers"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Total Brokers"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Total Brokers
-                            </p>
+                               
+                            </div>
                             1
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Active Controllers"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Active Controllers"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Active Controllers
-                            </p>
+                               
+                            </div>
                             1
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Zookeeper Status"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Zookeeper Status"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Zookeeper Status
-                            </p>
+                               
+                            </div>
                             <Styled(Tag)
                               color="green"
                               text="online"
@@ -865,40 +856,35 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                             </Styled(Tag)>
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Version"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Version"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Version
-                            </p>
+                               
+                            </div>
                             1
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
+                      </styled.div>
+                    </Indicator>
                   </div>
                 </div>
-              </MetricsWrapper>
-            </Styled(MetricsWrapper)>
-            <Styled(MetricsWrapper)
+              </styled.div>
+            </MetricsWrapper>
+            <MetricsWrapper
               title="Partitions"
             >
-              <MetricsWrapper
-                className="sc-bdfBQB ewAWCQ"
-                title="Partitions"
-              >
+              <styled.div>
                 <div
                   className="sc-bdfBQB ewAWCQ"
                 >
@@ -910,29 +896,50 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                   <div
                     className="indicatorsWrapper"
                   >
-                    <Styled(Indicator)
+                    <Indicator
+                      isAlert={true}
                       label="Online"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Online"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Online
-                            </p>
+                               
+                              <svg
+                                fill="none"
+                                height="4"
+                                viewBox="0 0 4 4"
+                                width="4"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <circle
+                                  cx="2"
+                                  cy="2"
+                                  fill="#E61A1A"
+                                  r="2"
+                                />
+                              </svg>
+                            </div>
                             <span
-                              className=""
+                              style={
+                                Object {
+                                  "color": "#E51A1A",
+                                }
+                              }
                             >
                               64
                             </span>
                             <span
-                              className="has-text-weight-light"
+                              style={
+                                Object {
+                                  "color": "#ABB5BA",
+                                }
+                              }
                             >
                                
                               of 
@@ -940,79 +947,72 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                             </span>
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="URP"
                       title="Under replicated partitions"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="URP"
-                        title="Under replicated partitions"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div
                             title="Under replicated partitions"
                           >
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               URP
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="In Sync Replicas"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="In Sync Replicas"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               In Sync Replicas
-                            </p>
+                               
+                            </div>
                             64
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
-                    <Styled(Indicator)
+                      </styled.div>
+                    </Indicator>
+                    <Indicator
                       label="Out of Sync Replicas"
                     >
-                      <Indicator
-                        className="sc-gsTEea fGiIVV"
-                        label="Out of Sync Replicas"
-                      >
+                      <styled.div>
                         <div
-                          className="sc-gsTEea fGiIVV"
+                          className="sc-gsTEea cvsrGp"
                         >
                           <div>
-                            <p
-                              className="is-size-8"
+                            <div
+                              className="indicator-label"
                             >
                               Out of Sync Replicas
-                            </p>
+                               
+                            </div>
                             0
                           </div>
                         </div>
-                      </Indicator>
-                    </Styled(Indicator)>
+                      </styled.div>
+                    </Indicator>
                   </div>
                 </div>
-              </MetricsWrapper>
-            </Styled(MetricsWrapper)>
+              </styled.div>
+            </MetricsWrapper>
           </div>
         </div>
         <styled.table

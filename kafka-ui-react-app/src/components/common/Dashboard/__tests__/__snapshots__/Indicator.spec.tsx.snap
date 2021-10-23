@@ -1,29 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Indicator matches the snapshot 1`] = `
-<Styled(Indicator)
+<Indicator
   label="label"
   title="title"
 >
-  <Indicator
-    className="sc-bdfBQB eGAtcZ"
-    label="label"
-    title="title"
-  >
+  <styled.div>
     <div
-      className="sc-bdfBQB eGAtcZ"
+      className="sc-bdfBQB VjToN"
     >
       <div
         title="title"
       >
-        <p
-          className="is-size-8"
+        <div
+          className="indicator-label"
         >
           label
-        </p>
+           
+        </div>
         Child
       </div>
     </div>
-  </Indicator>
-</Styled(Indicator)>
+  </styled.div>
+</Indicator>
 `;

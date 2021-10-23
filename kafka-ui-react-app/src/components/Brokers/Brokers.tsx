@@ -2,7 +2,6 @@ import React from 'react';
 import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
 import { ClusterStats } from 'generated-sources';
 import useInterval from 'lib/hooks/useInterval';
-import cx from 'classnames';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
@@ -11,6 +10,7 @@ import TagStyled from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Colors } from 'theme/theme';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -64,15 +64,19 @@ const Brokers: React.FC<Props> = ({
             <Indicator label="Version">{version}</Indicator>
           </MetricsWrapper>
           <MetricsWrapper title="Partitions">
-            <Indicator label="Online">
+            <Indicator label="Online" isAlert>
               <span
-                className={cx({
-                  'has-text-danger': offlinePartitionCount !== 0,
-                })}
+                style={{
+                  color: Colors.red[50],
+                }}
               >
                 {onlinePartitionCount}
               </span>
-              <span className="has-text-weight-light">
+              <span
+                style={{
+                  color: Colors.neutral[30],
+                }}
+              >
                 {' '}
                 of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
               </span>

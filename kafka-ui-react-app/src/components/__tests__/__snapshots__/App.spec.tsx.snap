@@ -377,120 +377,132 @@ exports[`App view matches snapshot 1`] = `
                           onlineClusters={Array []}
                         >
                           <div>
-                            <div
-                              className="metrics-box mb-2"
-                            >
-                              <Styled(MetricsWrapper)>
-                                <MetricsWrapper
-                                  className="sc-eCstlR gOlRWK"
-                                >
-                                  <div
-                                    className="sc-eCstlR gOlRWK"
-                                  >
+                            <styled.div>
+                              <div
+                                className="sc-gKseQn XXMOX"
+                              >
+                                <MetricsWrapper>
+                                  <styled.div>
                                     <div
-                                      className="indicatorsWrapper"
+                                      className="sc-eCstlR gOlRWK"
                                     >
-                                      <Styled(Indicator)
-                                        className="is-justify-content-start"
-                                        label={
-                                          <span
-                                            className="tag is-success"
-                                          >
-                                            Online
-                                          </span>
-                                        }
+                                      <div
+                                        className="indicatorsWrapper"
                                       >
                                         <Indicator
-                                          className="sc-jSgvzq fboFlT is-justify-content-start"
                                           label={
-                                            <span
-                                              className="tag is-success"
-                                            >
-                                              Online
-                                            </span>
+                                            <Styled(Tag)
+                                              color="green"
+                                              text="Online"
+                                            />
                                           }
                                         >
-                                          <div
-                                            className="sc-jSgvzq fboFlT is-justify-content-start"
-                                          >
-                                            <div>
-                                              <p
-                                                className="is-size-8"
-                                              >
-                                                <span
-                                                  className="tag is-success"
+                                          <styled.div>
+                                            <div
+                                              className="sc-jSgvzq BMRZr"
+                                            >
+                                              <div>
+                                                <div
+                                                  className="indicator-label"
                                                 >
-                                                  Online
+                                                  <Styled(Tag)
+                                                    color="green"
+                                                    text="Online"
+                                                  >
+                                                    <Tag
+                                                      className="sc-iBPTik chMDkL"
+                                                      color="green"
+                                                      text="Online"
+                                                    >
+                                                      <p
+                                                        className="sc-iBPTik chMDkL"
+                                                      >
+                                                        Online
+                                                      </p>
+                                                    </Tag>
+                                                  </Styled(Tag)>
+                                                   
+                                                </div>
+                                                <span
+                                                  data-testid="onlineCount"
+                                                >
+                                                  0
                                                 </span>
-                                              </p>
-                                              <span
-                                                data-testid="onlineCount"
-                                              >
-                                                0
-                                              </span>
-                                               
-                                              <span
-                                                className="has-text-grey-light is-size-8"
-                                              >
-                                                cluster
-                                              </span>
+                                                 
+                                                <span
+                                                  style={
+                                                    Object {
+                                                      "color": "#ABB5BA",
+                                                      "fontSize": 14,
+                                                    }
+                                                  }
+                                                >
+                                                  cluster
+                                                </span>
+                                              </div>
                                             </div>
-                                          </div>
+                                          </styled.div>
                                         </Indicator>
-                                      </Styled(Indicator)>
-                                      <Styled(Indicator)
-                                        className="is-justify-content-start"
-                                        label={
-                                          <span
-                                            className="tag is-light"
-                                          >
-                                            Offline
-                                          </span>
-                                        }
-                                      >
                                         <Indicator
-                                          className="sc-jSgvzq fboFlT is-justify-content-start"
                                           label={
-                                            <span
-                                              className="tag is-light"
-                                            >
-                                              Offline
-                                            </span>
+                                            <Styled(Tag)
+                                              color="gray"
+                                              text="Offline"
+                                            />
                                           }
                                         >
-                                          <div
-                                            className="sc-jSgvzq fboFlT is-justify-content-start"
-                                          >
-                                            <div>
-                                              <p
-                                                className="is-size-8"
-                                              >
-                                                <span
-                                                  className="tag is-light"
+                                          <styled.div>
+                                            <div
+                                              className="sc-jSgvzq BMRZr"
+                                            >
+                                              <div>
+                                                <div
+                                                  className="indicator-label"
                                                 >
-                                                  Offline
+                                                  <Styled(Tag)
+                                                    color="gray"
+                                                    text="Offline"
+                                                  >
+                                                    <Tag
+                                                      className="sc-iBPTik HCCUz"
+                                                      color="gray"
+                                                      text="Offline"
+                                                    >
+                                                      <p
+                                                        className="sc-iBPTik HCCUz"
+                                                      >
+                                                        Offline
+                                                      </p>
+                                                    </Tag>
+                                                  </Styled(Tag)>
+                                                   
+                                                </div>
+                                                <span
+                                                  data-testid="offlineCount"
+                                                >
+                                                  0
                                                 </span>
-                                              </p>
-                                              <span
-                                                data-testid="offlineCount"
-                                              >
-                                                0
-                                              </span>
-                                               
-                                              <span
-                                                className="has-text-grey-light is-size-8"
-                                              >
-                                                cluster
-                                              </span>
+                                                 
+                                                <span
+                                                  style={
+                                                    Object {
+                                                      "color": "#ABB5BA",
+                                                      "fontSize": 14,
+                                                    }
+                                                  }
+                                                >
+                                                  cluster
+                                                </span>
+                                              </div>
                                             </div>
-                                          </div>
+                                          </styled.div>
                                         </Indicator>
-                                      </Styled(Indicator)>
+                                      </div>
                                     </div>
-                                  </div>
+                                  </styled.div>
                                 </MetricsWrapper>
-                              </Styled(MetricsWrapper)>
-                            </div>
+                              </div>
+                            </styled.div>
                             <div
                               className="p-4"
                             >

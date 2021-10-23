@@ -10,6 +10,9 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import VerticalElipsisIcon from 'components/Topics/List/VerticalElipsisIcon';
+import { Colors } from 'theme/theme';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -40,35 +43,49 @@ const Overview: React.FC<Props> = ({
 
   return (
     <>
-      <div className="metrics-box mb-2 is-flex">
+      <MetricsContainerStyled>
         <MetricsWrapper>
           <Indicator label="Partitions">{partitionCount}</Indicator>
           <Indicator label="Replication Factor">{replicationFactor}</Indicator>
-          <Indicator label="URP" title="Under replicated partitions">
-            {underReplicatedPartitions}
+          <Indicator label="URP" title="Under replicated partitions" isAlert>
+            <div
+              style={{
+                color: Colors.red[50],
+              }}
+            >
+              {underReplicatedPartitions}
+            </div>
           </Indicator>
-          <Indicator label="In sync replicas">
-            {inSyncReplicas}
-            <span className="subtitle has-text-weight-light">
+          <Indicator label="In sync replicas" isAlert>
+            <div
+              style={{
+                color: Colors.red[50],
+                display: 'inline',
+              }}
+            >
+              {inSyncReplicas}
+            </div>
+            <span
+              style={{
+                color: Colors.neutral[30],
+              }}
+            >
               {' '}
-              of
-              {replicas}
+              of {replicas}
             </span>
           </Indicator>
           <Indicator label="Type">
-            <span className={`tag ${internal ? 'is-light' : 'is-primary'}`}>
-              {internal ? 'Internal' : 'External'}
-            </span>
+            <TagStyled text={internal ? 'Internal' : 'External'} color="gray" />
           </Indicator>
           <Indicator label="Segment Size" title="">
             <BytesFormatted value={segmentSize} />
           </Indicator>
           <Indicator label="Segment count">{segmentCount}</Indicator>
           <Indicator label="Clean Up Policy">
-            <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
+            <TagStyled text={cleanUpPolicy || 'Unknown'} color="gray" />
           </Indicator>
         </MetricsWrapper>
-      </div>
+      </MetricsContainerStyled>
       <div>
         <StyledTable isFullwidth>
           <thead>

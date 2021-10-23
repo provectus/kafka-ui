@@ -3,19 +3,9 @@ import { styled } from 'lib/themedStyles';
 
 interface Props {
   title?: string;
-  className?: string;
 }
 
-const MetricsWrapper: React.FC<Props> = ({ title, children, className }) => {
-  return (
-    <div className={className}>
-      {title && <h5 className="is-7 has-text-weight-medium mb-2">{title}</h5>}
-      <div className="indicatorsWrapper">{children}</div>
-    </div>
-  );
-};
-
-export default styled(MetricsWrapper)`
+const MetricsWrapperStyled = styled.div`
   width: 100%;
   overflow-y: scroll;
   .indicatorsWrapper {
@@ -32,3 +22,14 @@ export default styled(MetricsWrapper)`
     }
   }
 `;
+
+const MetricsWrapper: React.FC<Props> = ({ title, children }) => {
+  return (
+    <MetricsWrapperStyled>
+      {title && <h5 className="is-7 has-text-weight-medium mb-2">{title}</h5>}
+      <div className="indicatorsWrapper">{children}</div>
+    </MetricsWrapperStyled>
+  );
+};
+
+export default MetricsWrapper;

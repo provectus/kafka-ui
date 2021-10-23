@@ -36,20 +36,10 @@ const List: FC = () => {
     <>
       <MetricsWrapper>
         <div className="column is-flex m-0 p-0">
-          <Indicator
-            className="level-left is-one-third mr-3"
-            label="Tables"
-            title="Tables"
-            fetching={fetching}
-          >
+          <Indicator label="Tables" title="Tables" fetching={fetching}>
             {tablesCount}
           </Indicator>
-          <Indicator
-            className="level-left is-one-third ml-3"
-            label="Streams"
-            title="Streams"
-            fetching={fetching}
-          >
+          <Indicator label="Streams" title="Streams" fetching={fetching}>
             {streamsCount}
           </Indicator>
         </div>

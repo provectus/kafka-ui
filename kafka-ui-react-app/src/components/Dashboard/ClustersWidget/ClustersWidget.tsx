@@ -4,6 +4,9 @@ import { v4 } from 'uuid';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import { Cluster } from 'generated-sources';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import TagStyled from 'components/common/Tag/Tag.styled';
+import { Colors } from 'theme/theme';
 
 import ClusterWidget from './ClusterWidget';
 
@@ -42,24 +45,32 @@ const ClustersWidget: React.FC<Props> = ({
 
   return (
     <div>
-      <div className="metrics-box mb-2">
+      <MetricsContainerStyled>
         <MetricsWrapper>
-          <Indicator
-            label={<span className="tag is-success">Online</span>}
-            className="is-justify-content-start"
-          >
+          <Indicator label={<TagStyled text="Online" color="green" />}>
             <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
-            <span className="has-text-grey-light is-size-8">cluster</span>
+            <span
+              style={{
+                color: Colors.neutral[30],
+                fontSize: 14,
+              }}
+            >
+              cluster
+            </span>
           </Indicator>
-          <Indicator
-            label={<span className="tag is-light">Offline</span>}
-            className="is-justify-content-start"
-          >
+          <Indicator label={<TagStyled text="Offline" color="gray" />}>
             <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
-            <span className="has-text-grey-light is-size-8">cluster</span>
+            <span
+              style={{
+                color: Colors.neutral[30],
+                fontSize: 14,
+              }}
+            >
+              cluster
+            </span>
           </Indicator>
         </MetricsWrapper>
-      </div>
+      </MetricsContainerStyled>
       <div className="p-4">
         <input
           type="checkbox"

@@ -50,7 +50,6 @@ const List: React.FC<ListProps> = ({
     <>
       <MetricsWrapper>
         <Indicator
-          className="level-left is-one-third"
           label="Connects"
           title="Connects"
           fetching={areConnectsFetching}
