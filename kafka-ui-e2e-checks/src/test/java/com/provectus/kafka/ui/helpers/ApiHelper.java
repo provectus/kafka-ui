@@ -10,7 +10,6 @@ import com.provectus.kafka.ui.api.model.NewConnector;
 import com.provectus.kafka.ui.api.model.TopicCreation;
 import lombok.SneakyThrows;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,6 +45,14 @@ public class ApiHelper {
             if (ex.getRawStatusCode() != 404)  // except already deleted
                 throw ex;
         }
+    }
+
+    @SneakyThrows
+    private KafkaConnectApi connectorApi(){
+        ApiClient defaultClient = new ApiClient();
+        defaultClient.setBasePath(baseURL);
+        KafkaConnectApi connectorsApi = new KafkaConnectApi(defaultClient);
+        return connectorsApi;
     }
 
     @SneakyThrows
