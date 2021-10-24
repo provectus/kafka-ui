@@ -145,6 +145,14 @@ export const getTopicConfigByParamName = createSelector(
   }
 );
 
+export const getIsTopicDeletePolicy = createSelector(
+  getTopicByName,
+  (topic) => {
+    console.log(topic);
+    return topic?.cleanUpPolicy?.toString() === 'DELETE';
+  }
+);
+
 export const getTopicsSearch = createSelector(
   topicsState,
   (state) => state.search
