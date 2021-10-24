@@ -39,11 +39,11 @@ public class ConnectorsTests extends BaseTest {
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
-      Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
       Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
       Helpers.INSTANCE.apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
       Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
       Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
+      Helpers.INSTANCE.apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
     }
 
     @SneakyThrows
