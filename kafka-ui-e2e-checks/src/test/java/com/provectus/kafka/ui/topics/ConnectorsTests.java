@@ -30,7 +30,7 @@ public class ConnectorsTests extends BaseTest {
                 FileUtils.getResourceAsString("config_for_create_connector_via_api.json"));
         Helpers.INSTANCE.apiHelper.createTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
         Helpers.INSTANCE.apiHelper.sendMessage(LOCAL, TOPIC_FOR_DELETE_CONNECTOR,
-                FileUtils.getResourceAsString("message_content_create_topic.json.json"), " ");
+                FileUtils.getResourceAsString("message_content_create_topic.json"), " ");
         Helpers.INSTANCE.apiHelper.createConnector(LOCAL, FIRST,
                 CONNECTOR_FOR_DELETE,
                 FileUtils.getResourceAsString("delete_connector_config.json"));
