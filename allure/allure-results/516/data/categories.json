@@ -1,0 +1,47 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Product defects",
+    "children" : [ {
+      "name" : "expected: <compact> but was: <delete>",
+      "children" : [ {
+        "name" : "should update a topic",
+        "uid" : "4d67f7e7200a3bc",
+        "parentUid" : "1d14cfecac1625276cce25aaf8bfdbeb",
+        "status" : "failed",
+        "time" : {
+          "start" : 1635107165808,
+          "stop" : 1635107306908,
+          "duration" : 141100
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "1d14cfecac1625276cce25aaf8bfdbeb"
+    } ],
+    "uid" : "8fb3a91ba5aaf9de24cc8a92edc82b5d"
+  }, {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "500 Internal Server Error from POST http://localhost:8080/api/clusters/local/connects/first/connectors",
+      "children" : [ {
+        "name" : " connectors tests",
+        "uid" : "b99dd4e995a8f683",
+        "parentUid" : "c07f396d6aa9926c239e08c9513e6f61",
+        "status" : "broken",
+        "time" : {
+          "start" : 1635107314700,
+          "stop" : 1635107314700,
+          "duration" : 0
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "c07f396d6aa9926c239e08c9513e6f61"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
