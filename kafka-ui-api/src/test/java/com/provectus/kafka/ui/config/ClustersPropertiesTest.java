@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
-public class ClustersPropertiesTest {
+class ClustersPropertiesTest {
 
   @Test
   void clusterNamesShouldBeUniq() {
@@ -19,7 +19,7 @@ public class ClustersPropertiesTest {
     Collections.addAll(properties.getClusters(), c1, c2);
 
     assertThatThrownBy(properties::validateAndSetDefaults)
-        .hasMessageContaining("Application config isn't correct");
+        .hasMessageContaining("Application config isn't valid");
   }
 
   @Test
@@ -32,7 +32,7 @@ public class ClustersPropertiesTest {
     Collections.addAll(properties.getClusters(), c1, c2);
 
     assertThatThrownBy(properties::validateAndSetDefaults)
-        .hasMessageContaining("Application config isn't correct");
+        .hasMessageContaining("Application config isn't valid");
   }
 
   @Test

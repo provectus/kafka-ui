@@ -70,12 +70,12 @@ public class ClustersProperties {
     for (Cluster clusterProperties : clusters) {
       if (StringUtils.isEmpty(clusterProperties.getName())) {
         throw new IllegalStateException(
-            "Application config isn't correct. "
-                + "Cluster name should be provided when multiple clusters used");
+            "Application config isn't valid. "
+                + "Cluster names should be provided in case of multiple clusters present");
       }
       if (!clusterNames.add(clusterProperties.getName())) {
         throw new IllegalStateException(
-            "Application config isn't correct. Two clusters can't have the same name");
+            "Application config isn't valid. Two clusters can't have the same name");
       }
     }
   }
