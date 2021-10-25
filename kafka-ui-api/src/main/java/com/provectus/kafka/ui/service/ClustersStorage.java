@@ -28,10 +28,6 @@ public class ClustersStorage {
   @PostConstruct
   public void init() {
     for (ClustersProperties.Cluster clusterProperties : clusterProperties.getClusters()) {
-      if (kafkaClusters.get(clusterProperties.getName()) != null) {
-        throw new IllegalStateException(
-            "Application config isn't correct. Two clusters can't have the same name");
-      }
       KafkaCluster cluster = clusterMapper.toKafkaCluster(clusterProperties);
       kafkaClusters.put(
           clusterProperties.getName(),
@@ -53,7 +49,8 @@ public class ClustersStorage {
     return kafkaCluster;
   }
 
-  public void onTopicDeleted(KafkaCluster cluster, String topicToDelete) {
+  public void onTopicDeleted(String clusterName, String topicToDelete) {
+    var cluster = kafkaClusters.get(clusterName);
     var topics = Optional.ofNullable(cluster.getMetrics().getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
@@ -61,7 +58,8 @@ public class ClustersStorage {
     setUpdatedTopics(cluster, topics);
   }
 
-  public void onTopicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
+  public void onTopicUpdated(String clusterName, InternalTopic updatedTopic) {
+    var cluster = kafkaClusters.get(clusterName);
     var topics = Optional.ofNullable(cluster.getMetrics().getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);

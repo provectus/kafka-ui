@@ -162,7 +162,7 @@ public class TopicsService {
   public Mono<TopicDTO> createTopic(
       KafkaCluster cluster, Mono<TopicCreationDTO> topicCreation) {
     return adminClientService.get(cluster).flatMap(ac -> createTopic(ac, topicCreation))
-        .doOnNext(t -> clustersStorage.onTopicUpdated(cluster, t))
+        .doOnNext(t -> clustersStorage.onTopicUpdated(cluster.getName(), t))
         .map(clusterMapper::toTopic);
   }
 
@@ -199,7 +199,7 @@ public class TopicsService {
                                     Mono<TopicUpdateDTO> topicUpdate) {
     return topicUpdate
         .flatMap(t -> updateTopic(cl, topicName, t))
-        .doOnNext(t -> clustersStorage.onTopicUpdated(cl, t))
+        .doOnNext(t -> clustersStorage.onTopicUpdated(cl.getName(), t))
         .map(clusterMapper::toTopic);
   }
 
@@ -252,7 +252,7 @@ public class TopicsService {
               getPartitionsReassignments(cluster, topicName,
                   replicationFactorChange));
         })
-        .doOnNext(topic -> clustersStorage.onTopicUpdated(cluster, topic))
+        .doOnNext(topic -> clustersStorage.onTopicUpdated(cluster.getName(), topic))
         .map(t -> new ReplicationFactorChangeResponseDTO()
             .topicName(t.getName())
             .totalReplicationFactor(t.getReplicationFactor()));
@@ -385,7 +385,7 @@ public class TopicsService {
           return ac.createPartitions(newPartitionsMap)
               .then(getUpdatedTopic(ac, topicName));
         })
-        .doOnNext(t -> clustersStorage.onTopicUpdated(cluster, t))
+        .doOnNext(t -> clustersStorage.onTopicUpdated(cluster.getName(), t))
         .map(t -> new PartitionsIncreaseResponseDTO()
             .topicName(t.getName())
             .totalPartitionsCount(t.getPartitionCount()));
@@ -424,7 +424,7 @@ public class TopicsService {
     var topicDetails = getTopicDetails(cluster, topicName);
     if (cluster.getFeatures().contains(Feature.TOPIC_DELETION)) {
       return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName))
-          .doOnSuccess(t -> clustersStorage.onTopicDeleted(cluster, topicName));
+          .doOnSuccess(t -> clustersStorage.onTopicDeleted(cluster.getName(), topicName));
     } else {
       return Mono.error(new ValidationException("Topic deletion restricted"));
     }
