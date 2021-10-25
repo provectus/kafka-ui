@@ -27,10 +27,6 @@ public class ClustersStorage {
   @PostConstruct
   public void init() {
     for (ClustersProperties.Cluster clusterProperties : clusterProperties.getClusters()) {
-      if (kafkaClusters.get(clusterProperties.getName()) != null) {
-        throw new IllegalStateException(
-            "Application config isn't correct. Two clusters can't have the same name");
-      }
       KafkaCluster cluster = clusterMapper.toKafkaCluster(clusterProperties);
       kafkaClusters.put(
           clusterProperties.getName(),
