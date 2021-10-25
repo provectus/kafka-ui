@@ -12,7 +12,7 @@ interface Props {
   index: number;
   existingFields: string[];
   field: FieldArrayWithId<TopicFormData, 'customParams', 'id'>;
-  remove: (index?: number | number[] | undefined) => void;
+  remove: (index: number) => void;
   setExistingFields: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
