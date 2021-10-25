@@ -19,6 +19,12 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
     name: INDEX_PREFIX,
   });
   const [existingFields, setExistingFields] = React.useState<string[]>([]);
+  const removeField = (index: number): void => {
+    setExistingFields(
+      existingFields.filter((field) => field === fields[index].name)
+    );
+    remove(index);
+  };
 
   return (
     <>
@@ -36,7 +42,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
         <CustomParamField
           key={field.id}
           field={field}
-          remove={remove}
+          remove={removeField}
           index={idx}
           isDisabled={isSubmitting}
           existingFields={existingFields}
