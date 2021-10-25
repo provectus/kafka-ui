@@ -63,15 +63,17 @@ const CustomParamField: React.FC<Props> = ({
             defaultValue={field.name}
           >
             <option value="">Select</option>
-            {Object.keys(TOPIC_CUSTOM_PARAMS).map((opt) => (
-              <option
-                key={opt}
-                value={opt}
-                disabled={existingFields.includes(opt)}
-              >
-                {opt}
-              </option>
-            ))}
+            {Object.keys(TOPIC_CUSTOM_PARAMS)
+              .sort()
+              .map((opt) => (
+                <option
+                  key={opt}
+                  value={opt}
+                  disabled={existingFields.includes(opt)}
+                >
+                  {opt}
+                </option>
+              ))}
           </select>
           <p className="help is-danger">
             <ErrorMessage errors={errors} name={`customParams.${index}.name`} />
