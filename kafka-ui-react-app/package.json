@@ -84,7 +84,7 @@
     "@types/jest": "^26.0.24",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.13",
-    "@types/node-fetch": "^2.5.12",
+    "@types/node-fetch": "^3.0.3",
     "@types/react": "^17.0.16",
     "@types/react-datepicker": "^4.1.4",
     "@types/react-dom": "^17.0.9",
