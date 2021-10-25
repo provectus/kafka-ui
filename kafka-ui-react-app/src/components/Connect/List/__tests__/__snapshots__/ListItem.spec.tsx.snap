@@ -170,34 +170,36 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                     <div
                       className="dropdown is-right"
                     >
-                      <div
-                        className="dropdown-trigger"
-                      >
-                        <Styled(DropdownTrigger)
-                          onClick={[Function]}
+                      <styled.div>
+                        <div
+                          className="sc-gsTEea bcxnzQ"
                         >
-                          <DropdownTrigger
-                            className="sc-bdfBQB fjFNAo"
+                          <Styled(DropdownTrigger)
                             onClick={[Function]}
                           >
-                            <button
-                              aria-controls="dropdown-menu"
-                              aria-haspopup="true"
+                            <DropdownTrigger
                               className="sc-bdfBQB fjFNAo"
                               onClick={[Function]}
-                              type="button"
                             >
-                              <span
-                                className="icon"
+                              <button
+                                aria-controls="dropdown-menu"
+                                aria-haspopup="true"
+                                className="sc-bdfBQB fjFNAo"
+                                onClick={[Function]}
+                                type="button"
                               >
-                                <i
-                                  className="fas fa-cog"
-                                />
-                              </span>
-                            </button>
-                          </DropdownTrigger>
-                        </Styled(DropdownTrigger)>
-                      </div>
+                                <span
+                                  className="icon"
+                                >
+                                  <i
+                                    className="fas fa-cog"
+                                  />
+                                </span>
+                              </button>
+                            </DropdownTrigger>
+                          </Styled(DropdownTrigger)>
+                        </div>
+                      </styled.div>
                       <div
                         className="dropdown-menu"
                         id="dropdown-menu"

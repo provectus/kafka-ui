@@ -1,5 +1,6 @@
 import useOutsideClickRef from '@rooks/use-outside-click-ref';
 import cx from 'classnames';
+import { styled } from 'lib/themedStyles';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import DropdownTrigger from './DropdownTrigger';
@@ -9,6 +10,11 @@ export interface DropdownProps {
   right?: boolean;
   up?: boolean;
 }
+
+const DropdowTriggerWrapper = styled.div`
+  display: flex;
+  align-self: center;
+`;
 
 const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
   const [active, setActive] = useState<boolean>(false);
@@ -26,9 +32,9 @@ const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
   );
   return (
     <div className={classNames} ref={wrapperRef}>
-      <div className="dropdown-trigger">
+      <DropdowTriggerWrapper>
         <DropdownTrigger onClick={onClick}>{label}</DropdownTrigger>
-      </div>
+      </DropdowTriggerWrapper>
       <div className="dropdown-menu" id="dropdown-menu" role="menu">
         <div className="dropdown-content has-text-left">{children}</div>
       </div>
