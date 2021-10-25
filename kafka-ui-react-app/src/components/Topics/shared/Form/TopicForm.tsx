@@ -85,7 +85,7 @@ const TopicForm: React.FC<Props> = ({
               type="number"
               placeholder="Min In Sync Replicas"
               defaultValue="1"
-              name="minInSyncReplicas"
+              name="minInsyncReplicas"
             />
             <p className="help is-danger">
               <ErrorMessage errors={errors} name="minInSyncReplicas" />
@@ -100,6 +100,7 @@ const TopicForm: React.FC<Props> = ({
               <Select defaultValue="delete" name="cleanupPolicy">
                 <option value="delete">Delete</option>
                 <option value="compact">Compact</option>
+                <option value="compact,delete">Compact,Delete</option>
               </Select>
             </div>
           </div>
