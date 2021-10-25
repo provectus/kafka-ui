@@ -50,7 +50,8 @@ public class ClustersStorage {
     return kafkaCluster;
   }
 
-  public void onTopicDeleted(KafkaCluster cluster, String topicToDelete) {
+  public void onTopicDeleted(String clusterName, String topicToDelete) {
+    var cluster = kafkaClusters.get(clusterName);
     var topics = Optional.ofNullable(cluster.getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
@@ -59,7 +60,8 @@ public class ClustersStorage {
     setKafkaCluster(cluster.getName(), updatedCluster);
   }
 
-  public void onTopicUpdated(KafkaCluster cluster, InternalTopic updatedTopic) {
+  public void onTopicUpdated(String clusterName, InternalTopic updatedTopic) {
+    var cluster = kafkaClusters.get(clusterName);
     var topics = Optional.ofNullable(cluster.getTopics())
         .map(HashMap::new)
         .orElseGet(HashMap::new);
