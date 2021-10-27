@@ -1,7 +1,14 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { ConsumerGroup } from 'generated-sources';
-import ConsumerGroupStateTag from 'components/common/ConsumerGroupState/ConsumerGroupStateTag';
+import { styled } from 'lib/themedStyles';
+import TagStyled from 'components/common/Tag/Tag.styled';
+
+const ListItemWrappperStyled = styled.tr`
+  &:hover {
+    cursor: pointer;
+  }
+`;
 
 const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   consumerGroup,
@@ -13,16 +20,19 @@ const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   }
 
   return (
-    <tr className="is-clickable" onClick={goToConsumerGroupDetails}>
+    <ListItemWrappperStyled onClick={goToConsumerGroupDetails}>
       <td>{consumerGroup.groupId}</td>
       <td>{consumerGroup.members}</td>
       <td>{consumerGroup.topics}</td>
       <td>{consumerGroup.messagesBehind}</td>
       <td>{consumerGroup.coordinator?.id}</td>
       <td>
-        <ConsumerGroupStateTag state={consumerGroup.state} />
+        <TagStyled
+          color="yellow"
+          text={consumerGroup.state?.toString() || ''}
+        />
       </td>
-    </tr>
+    </ListItemWrappperStyled>
   );
 };
 

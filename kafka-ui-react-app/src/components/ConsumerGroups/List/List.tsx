@@ -1,72 +1,67 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import { ConsumerGroup } from 'generated-sources';
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import Search from 'components/common/Search/Search';
 
 import ListItem from './ListItem';
+import { ListWrapperStyled } from './List.styled';
 
-interface Props {
+export interface ListProps {
   clusterName: ClusterName;
   consumerGroups: ConsumerGroup[];
 }
 
-const List: React.FC<Props> = ({ consumerGroups }) => {
+const List: React.FC<ListProps> = ({ consumerGroups }) => {
   const [searchText, setSearchText] = React.useState<string>('');
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+  const handleInputChange = (search: string) => {
+    setSearchText(search);
   };
 
   return (
-    <div className="section">
-      <div className="box">
-        <div>
-          <div className="columns">
-            <div className="column is-half is-offset-half">
-              <input
-                id="searchText"
-                type="text"
-                name="searchText"
-                className="input"
-                placeholder="Search"
-                value={searchText}
-                onChange={handleInputChange}
-              />
-            </div>
-          </div>
-          <table className="table is-striped is-fullwidth is-hoverable">
-            <thead>
-              <tr>
-                <th>Consumer group ID</th>
-                <th>Num of members</th>
-                <th>Num of topics</th>
-                <th>Messages behind</th>
-                <th>Coordinator</th>
-                <th>State</th>
-              </tr>
-            </thead>
-            <tbody>
-              {consumerGroups
-                .filter(
-                  (consumerGroup) =>
-                    !searchText ||
-                    consumerGroup?.groupId?.indexOf(searchText) >= 0
-                )
-                .map((consumerGroup) => (
-                  <ListItem
-                    key={consumerGroup.groupId}
-                    consumerGroup={consumerGroup}
-                  />
-                ))}
-              {consumerGroups.length === 0 && (
-                <tr>
-                  <td colSpan={10}>No active consumer groups</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+    <ListWrapperStyled>
+      <PageHeading text="Consumers" />
+      <div className="search-wrapper">
+        <Search
+          placeholder="Search"
+          value={searchText}
+          handleSearch={handleInputChange}
+        />
       </div>
-    </div>
+      <StyledTable isFullwidth>
+        <thead>
+          <tr>
+            <TableHeaderCell title="Consumer group ID" />
+            <TableHeaderCell title="Num of members" />
+            <TableHeaderCell title="Num of topics" />
+            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Coordinator" />
+            <TableHeaderCell title="State" />
+          </tr>
+        </thead>
+        <tbody>
+          {consumerGroups
+            .filter(
+              (consumerGroup) =>
+                !searchText || consumerGroup?.groupId?.indexOf(searchText) >= 0
+            )
+            .map((consumerGroup) => (
+              <ListItem
+                key={consumerGroup.groupId}
+                consumerGroup={consumerGroup}
+              />
+            ))}
+          {consumerGroups.length === 0 && (
+            <tr>
+              <td colSpan={10}>No active consumer groups</td>
+            </tr>
+          )}
+        </tbody>
+      </StyledTable>
+    </ListWrapperStyled>
   );
 };
 
