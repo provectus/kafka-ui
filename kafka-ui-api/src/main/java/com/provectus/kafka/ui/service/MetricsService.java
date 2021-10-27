@@ -42,6 +42,7 @@ public class MetricsService {
   private final ZookeeperService zookeeperService;
   private final JmxClusterUtil jmxClusterUtil;
   private final AdminClientService adminClientService;
+  private final FeatureService featureService;
   private final TopicsService topicsService;
 
   /**
@@ -52,7 +53,9 @@ public class MetricsService {
    */
   public Mono<KafkaCluster> updateClusterMetrics(KafkaCluster cluster) {
     return getMetrics(cluster)
-        .map(m -> cluster.toBuilder().metrics(m).build());
+        .map(m -> cluster.toBuilder().metrics(m).build())
+        .zipWith(featureService.getAvailableFeatures(cluster),
+            (c, features) -> c.toBuilder().features(features).build());
   }
 
   private Mono<InternalClusterMetrics> getMetrics(KafkaCluster cluster) {
