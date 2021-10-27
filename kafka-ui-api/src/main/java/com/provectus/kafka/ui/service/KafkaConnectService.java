@@ -7,8 +7,8 @@ import com.provectus.kafka.ui.connect.model.ConnectorStatus;
 import com.provectus.kafka.ui.connect.model.ConnectorStatusConnector;
 import com.provectus.kafka.ui.connect.model.ConnectorTopics;
 import com.provectus.kafka.ui.connect.model.TaskStatus;
-import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ConnectNotFoundException;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.KafkaConnectMapper;
 import com.provectus.kafka.ui.model.ConnectDTO;
@@ -44,7 +44,6 @@ import reactor.util.function.Tuples;
 @Log4j2
 @RequiredArgsConstructor
 public class KafkaConnectService {
-  private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
   private final KafkaConnectMapper kafkaConnectMapper;
   private final ObjectMapper objectMapper;
@@ -63,7 +62,7 @@ public class KafkaConnectService {
                                                      final String search) {
     return getConnects(cluster)
         .flatMapMany(Function.identity())
-        .flatMap(connect -> getConnectorNames(cluster, connect))
+        .flatMap(connect -> getConnectorNames(cluster, connect.getName()))
         .flatMap(pair -> getConnector(cluster, pair.getT1(), pair.getT2()))
         .flatMap(connector ->
             getConnectorConfig(cluster, connector.getConnect(), connector.getName())
@@ -126,13 +125,13 @@ public class KafkaConnectService {
         );
   }
 
-  private Flux<Tuple2<String, String>> getConnectorNames(KafkaCluster cluster, ConnectDTO connect) {
-    return getConnectors(cluster, connect.getName())
+  private Flux<Tuple2<String, String>> getConnectorNames(KafkaCluster cluster, String connectName) {
+    return getConnectors(cluster, connectName)
         .collectList().map(e -> e.get(0))
         // for some reason `getConnectors` method returns the response as a single string
         .map(this::parseToList)
         .flatMapMany(Flux::fromIterable)
-        .map(connector -> Tuples.of(connect.getName(), connector));
+        .map(connector -> Tuples.of(connectName, connector));
   }
 
   @SneakyThrows
@@ -150,16 +149,30 @@ public class KafkaConnectService {
   }
 
   public Mono<ConnectorDTO> createConnector(KafkaCluster cluster, String connectName,
-                                         Mono<NewConnectorDTO> connector) {
+                                            Mono<NewConnectorDTO> connector) {
     return getConnectAddress(cluster, connectName)
-        .flatMap(connect ->
+        .flatMap(connectUrl ->
             connector
+                .flatMap(c -> connectorExists(cluster, connectName, c.getName())
+                    .map(exists -> {
+                      if (exists) {
+                        throw new ValidationException(
+                            String.format("Connector with name %s already exists", c.getName()));
+                      }
+                      return c;
+                    }))
                 .map(kafkaConnectMapper::toClient)
-                .flatMap(c ->
-                    KafkaConnectClients.withBaseUrl(connect).createConnector(c)
-                )
+                .flatMap(c -> KafkaConnectClients.withBaseUrl(connectUrl).createConnector(c))
                 .flatMap(c -> getConnector(cluster, connectName, c.getName()))
         );
+  }
+
+  private Mono<Boolean> connectorExists(KafkaCluster cluster, String connectName,
+                                        String connectorName) {
+    return getConnectorNames(cluster, connectName)
+        .map(Tuple2::getT2)
+        .collectList()
+        .map(connectorNames -> connectorNames.contains(connectorName));
   }
 
   public Mono<ConnectorDTO> getConnector(KafkaCluster cluster, String connectName,

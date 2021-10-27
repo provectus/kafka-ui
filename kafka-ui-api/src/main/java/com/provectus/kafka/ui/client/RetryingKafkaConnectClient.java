@@ -4,8 +4,9 @@ import com.provectus.kafka.ui.connect.ApiClient;
 import com.provectus.kafka.ui.connect.api.KafkaConnectClientApi;
 import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
-import com.provectus.kafka.ui.exception.RebalanceInProgressException;
+import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.log4j.Log4j2;
@@ -19,29 +20,32 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
+import reactor.util.retry.RetryBackoffSpec;
 
 @Log4j2
 public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
+  private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
   public RetryingKafkaConnectClient(String basePath) {
     super(new RetryingApiClient().setBasePath(basePath));
   }
 
+  private static Retry conflictCodeRetry() {
+    return RetryBackoffSpec
+        .fixedDelay(MAX_RETRIES, RETRIES_DELAY)
+        .filter(e -> e instanceof WebClientResponseException.Conflict)
+        .onRetryExhaustedThrow((spec, signal) ->
+            new KafkaConnectConflictReponseException(
+                (WebClientResponseException.Conflict) signal.failure()));
+  }
+
   private static <T> Mono<T> withRetryOnConflict(Mono<T> publisher) {
-    return publisher.retryWhen(
-            Retry.max(MAX_RETRIES).filter(e -> e instanceof WebClientResponseException.Conflict))
-        .onErrorResume(WebClientResponseException.Conflict.class,
-            e -> Mono.error(new RebalanceInProgressException()))
-        .doOnError(log::error);
+    return publisher.retryWhen(conflictCodeRetry());
   }
 
   private static <T> Flux<T> withRetryOnConflict(Flux<T> publisher) {
-    return publisher.retryWhen(
-            Retry.max(MAX_RETRIES).filter(e -> e instanceof WebClientResponseException.Conflict))
-        .onErrorResume(WebClientResponseException.Conflict.class,
-            e -> Mono.error(new RebalanceInProgressException()))
-        .doOnError(log::error);
+    return publisher.retryWhen(conflictCodeRetry());
   }
 
   private static <T> Mono<T> withBadRequestErrorHandling(Mono<T> publisher) {
