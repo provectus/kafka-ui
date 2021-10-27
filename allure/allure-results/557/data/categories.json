@@ -1,0 +1,26 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "'java.lang.String io.netty.util.internal.ObjectUtil.checkNonEmptyAfterTrim(java.lang.String, java.lang.String)'",
+      "children" : [ {
+        "name" : " topic tests",
+        "uid" : "fd794ec84a9f33fd",
+        "parentUid" : "2199a0241ac94f29f1e0c9cf1afafa8b",
+        "status" : "broken",
+        "time" : {
+          "start" : 1635341908296,
+          "stop" : 1635341908297,
+          "duration" : 1
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "2199a0241ac94f29f1e0c9cf1afafa8b"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
