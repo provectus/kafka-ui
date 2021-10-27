@@ -390,4 +390,22 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
           );
         });
   }
+
+  @Test
+  public void shouldReturn400WhenTryingToCreateConnectorWithExistingName() {
+    webTestClient.post()
+        .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
+        .bodyValue(new NewConnectorDTO()
+            .name(connectorName)
+            .config(Map.of(
+                "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                "tasks.max", "1",
+                "topics", "output-topic",
+                "file", "/tmp/test"
+            ))
+        )
+        .exchange()
+        .expectStatus()
+        .isBadRequest();
+  }
 }
