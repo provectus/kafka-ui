@@ -1,10 +1,17 @@
 package com.provectus.kafka.ui.util;
 
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.reducing;
+import static java.util.stream.Collectors.toList;
+
+import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MetricDTO;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -17,12 +24,19 @@ import javax.management.MBeanAttributeInfo;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnector;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.pool2.KeyedObjectPool;
+import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 @Component
 @Log4j2
@@ -35,8 +49,34 @@ public class JmxClusterUtil {
   private static final String NAME_METRIC_FIELD = "name";
   private final KeyedObjectPool<JmxConnectionInfo, JMXConnector> pool;
 
+  @Builder
+  @Value
+  public static class JmxMetrics {
+    Map<String, BigDecimal> bytesInPerSec;
+    Map<String, BigDecimal> bytesOutPerSec;
+    Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
+    List<MetricDTO> metrics;
+  }
+
+  public Mono<JmxMetrics> getBrokerMetrics(KafkaCluster cluster, Collection<Node> nodes) {
+    return Flux.fromIterable(nodes)
+        .map(n -> Map.entry(n.id(),
+            JmxBrokerMetrics.builder().metrics(getJmxMetric(cluster, n)).build()))
+        .collectMap(Map.Entry::getKey, Map.Entry::getValue)
+        .map(this::collectMetrics);
+  }
+
+  private List<MetricDTO> getJmxMetric(KafkaCluster cluster, Node node) {
+    return Optional.of(cluster)
+        .filter(c -> c.getJmxPort() != null)
+        .filter(c -> c.getJmxPort() > 0)
+        .map(c -> getJmxMetrics(node.host(), c.getJmxPort(), c.isJmxSsl(),
+            c.getJmxUsername(), c.getJmxPassword()))
+        .orElse(Collections.emptyList());
+  }
+
   @SneakyThrows
-  public List<MetricDTO> getJmxMetrics(String host, int port, boolean jmxSsl,
+  private List<MetricDTO> getJmxMetrics(String host, int port, boolean jmxSsl,
                                     @Nullable String username, @Nullable String password) {
     String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
     final var connectionInfo = JmxConnectionInfo.builder()
@@ -65,7 +105,7 @@ public class JmxClusterUtil {
         metric.setName(params.get(NAME_METRIC_FIELD));
         metric.setCanonicalName(jmxMetric.getCanonicalName());
         metric.setParams(params);
-        metric.setValue(getJmxMetric(jmxMetric.getCanonicalName(), msc));
+        metric.setValue(getJmxMetrics(jmxMetric.getCanonicalName(), msc));
         result.add(metric);
       }
       pool.returnObject(connectionInfo, srv);
@@ -76,9 +116,8 @@ public class JmxClusterUtil {
     return result;
   }
 
-
   @SneakyThrows
-  private Map<String, BigDecimal> getJmxMetric(String canonicalName, MBeanServerConnection msc) {
+  private Map<String, BigDecimal> getJmxMetrics(String canonicalName, MBeanServerConnection msc) {
     Map<String, BigDecimal> resultAttr = new HashMap<>();
     ObjectName name = new ObjectName(canonicalName);
     var attrNames = msc.getMBeanInfo(name).getAttributes();
@@ -89,6 +128,44 @@ public class JmxClusterUtil {
       }
     }
     return resultAttr;
+  }
+
+  private JmxMetrics collectMetrics(Map<Integer, JmxBrokerMetrics> perBrokerJmxMetrics) {
+    final List<MetricDTO> metrics = perBrokerJmxMetrics.values()
+        .stream()
+        .flatMap(b -> b.getMetrics().stream())
+        .collect(
+            groupingBy(
+                MetricDTO::getCanonicalName,
+                reducing(this::reduceJmxMetrics)
+            )
+        ).values().stream()
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(toList());
+    return JmxMetrics.builder()
+        .metrics(metrics)
+        .internalBrokerMetrics(perBrokerJmxMetrics)
+        .bytesInPerSec(findTopicMetrics(
+            metrics, JmxMetricsName.BytesInPerSec, JmxMetricsValueName.FiveMinuteRate))
+        .bytesOutPerSec(findTopicMetrics(
+            metrics, JmxMetricsName.BytesOutPerSec, JmxMetricsValueName.FiveMinuteRate))
+        .build();
+  }
+
+  private Map<String, BigDecimal> findTopicMetrics(List<MetricDTO> metrics,
+                                                   JmxMetricsName metricsName,
+                                                   JmxMetricsValueName valueName) {
+    return metrics.stream().filter(m -> metricsName.name().equals(m.getName()))
+        .filter(m -> m.getParams().containsKey("topic"))
+        .filter(m -> m.getValue().containsKey(valueName.name()))
+        .map(m -> Tuples.of(
+            m.getParams().get("topic"),
+            m.getValue().get(valueName.name())
+        )).collect(groupingBy(
+            Tuple2::getT1,
+            reducing(BigDecimal.ZERO, Tuple2::getT2, BigDecimal::add)
+        ));
   }
 
   private void closeConnectionExceptionally(String url, JMXConnector srv) {

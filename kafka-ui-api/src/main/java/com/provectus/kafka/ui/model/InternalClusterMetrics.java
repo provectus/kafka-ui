@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.model;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,22 +11,52 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class InternalClusterMetrics {
+
+  public static InternalClusterMetrics empty() {
+    return InternalClusterMetrics.builder()
+        .brokers(List.of())
+        .topics(Map.of())
+        .status(ServerStatusDTO.OFFLINE)
+        .zookeeperStatus(ServerStatusDTO.OFFLINE)
+        .internalBrokerMetrics(Map.of())
+        .metrics(List.of())
+        .version("unknown")
+        .build();
+  }
+
+  private final String version;
+
+  private final ServerStatusDTO status;
+  private final Throwable lastKafkaException;
+
   private final int brokerCount;
-  private final int topicCount;
   private final int activeControllers;
-  private final int uncleanLeaderElectionCount;
-  private final int onlinePartitionCount;
+  private final List<Integer> brokers;
+
+  private final int topicCount;
+  private final Map<String, InternalTopic> topics;
+
+  // zk stats
+  @Deprecated //use 'zookeeperStatus' field with enum type instead
+  private final int zooKeeperStatus;
+  private final ServerStatusDTO zookeeperStatus;
+  private final Throwable lastZookeeperException;
+
+  // partitions stats
   private final int underReplicatedPartitionCount;
+  private final int onlinePartitionCount;
   private final int offlinePartitionCount;
   private final int inSyncReplicasCount;
   private final int outOfSyncReplicasCount;
-  private final Map<String, BigDecimal> bytesInPerSec;
-  private final Map<String, BigDecimal> bytesOutPerSec;
-  private final long segmentCount;
-  private final long segmentSize;
+
+  // log dir stats
+  @Nullable // will be null if log dir collection disabled
   private final Map<Integer, InternalBrokerDiskUsage> internalBrokerDiskUsage;
-  private final Map<Integer, InternalBrokerMetrics> internalBrokerMetrics;
+
+  // metrics from jmx
+  private final BigDecimal bytesInPerSec;
+  private final BigDecimal bytesOutPerSec;
+  private final Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
   private final List<MetricDTO> metrics;
-  private final int zooKeeperStatus;
-  private final String version;
+
 }

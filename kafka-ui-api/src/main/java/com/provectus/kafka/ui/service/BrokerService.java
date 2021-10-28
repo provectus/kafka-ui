@@ -70,7 +70,7 @@ public class BrokerService {
   }
 
   private Flux<InternalBrokerConfig> getBrokersConfig(KafkaCluster cluster, Integer brokerId) {
-    if (!cluster.getBrokers().contains(brokerId)) {
+    if (!cluster.getMetrics().getBrokers().contains(brokerId)) {
       return Flux.error(
           new NotFoundException(String.format("Broker with id %s not found", brokerId)));
     }
@@ -139,7 +139,7 @@ public class BrokerService {
       KafkaCluster cluster, List<Integer> reqBrokers) {
     return adminClientService.get(cluster)
         .flatMap(admin -> {
-          List<Integer> brokers = new ArrayList<>(cluster.getBrokers());
+          List<Integer> brokers = new ArrayList<>(cluster.getMetrics().getBrokers());
           if (reqBrokers != null && !reqBrokers.isEmpty()) {
             brokers.retainAll(reqBrokers);
           }
