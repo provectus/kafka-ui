@@ -3,10 +3,12 @@ package com.provectus.kafka.ui.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.client.KafkaConnectClients;
+import com.provectus.kafka.ui.connect.model.ConnectorStatus;
+import com.provectus.kafka.ui.connect.model.ConnectorStatusConnector;
 import com.provectus.kafka.ui.connect.model.ConnectorTopics;
 import com.provectus.kafka.ui.connect.model.TaskStatus;
-import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ConnectNotFoundException;
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.KafkaConnectMapper;
 import com.provectus.kafka.ui.model.ConnectDTO;
@@ -32,6 +34,7 @@ import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -41,7 +44,6 @@ import reactor.util.function.Tuples;
 @Log4j2
 @RequiredArgsConstructor
 public class KafkaConnectService {
-  private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
   private final KafkaConnectMapper kafkaConnectMapper;
   private final ObjectMapper objectMapper;
@@ -60,7 +62,7 @@ public class KafkaConnectService {
                                                      final String search) {
     return getConnects(cluster)
         .flatMapMany(Function.identity())
-        .flatMap(connect -> getConnectorNames(cluster, connect))
+        .flatMap(connect -> getConnectorNames(cluster, connect.getName()))
         .flatMap(pair -> getConnector(cluster, pair.getT1(), pair.getT2()))
         .flatMap(connector ->
             getConnectorConfig(cluster, connector.getConnect(), connector.getName())
@@ -123,13 +125,13 @@ public class KafkaConnectService {
         );
   }
 
-  private Flux<Tuple2<String, String>> getConnectorNames(KafkaCluster cluster, ConnectDTO connect) {
-    return getConnectors(cluster, connect.getName())
+  private Flux<Tuple2<String, String>> getConnectorNames(KafkaCluster cluster, String connectName) {
+    return getConnectors(cluster, connectName)
         .collectList().map(e -> e.get(0))
         // for some reason `getConnectors` method returns the response as a single string
         .map(this::parseToList)
         .flatMapMany(Flux::fromIterable)
-        .map(connector -> Tuples.of(connect.getName(), connector));
+        .map(connector -> Tuples.of(connectName, connector));
   }
 
   @SneakyThrows
@@ -147,16 +149,30 @@ public class KafkaConnectService {
   }
 
   public Mono<ConnectorDTO> createConnector(KafkaCluster cluster, String connectName,
-                                         Mono<NewConnectorDTO> connector) {
+                                            Mono<NewConnectorDTO> connector) {
     return getConnectAddress(cluster, connectName)
-        .flatMap(connect ->
+        .flatMap(connectUrl ->
             connector
+                .flatMap(c -> connectorExists(cluster, connectName, c.getName())
+                    .map(exists -> {
+                      if (exists) {
+                        throw new ValidationException(
+                            String.format("Connector with name %s already exists", c.getName()));
+                      }
+                      return c;
+                    }))
                 .map(kafkaConnectMapper::toClient)
-                .flatMap(c ->
-                    KafkaConnectClients.withBaseUrl(connect).createConnector(c)
-                )
+                .flatMap(c -> KafkaConnectClients.withBaseUrl(connectUrl).createConnector(c))
                 .flatMap(c -> getConnector(cluster, connectName, c.getName()))
         );
+  }
+
+  private Mono<Boolean> connectorExists(KafkaCluster cluster, String connectName,
+                                        String connectorName) {
+    return getConnectorNames(cluster, connectName)
+        .map(Tuple2::getT2)
+        .collectList()
+        .map(connectorNames -> connectorNames.contains(connectorName));
   }
 
   public Mono<ConnectorDTO> getConnector(KafkaCluster cluster, String connectName,
@@ -166,6 +182,9 @@ public class KafkaConnectService {
             .map(kafkaConnectMapper::fromClient)
             .flatMap(connector ->
                 KafkaConnectClients.withBaseUrl(connect).getConnectorStatus(connector.getName())
+                    // status request can return 404 if tasks not assigned yet
+                    .onErrorResume(WebClientResponseException.NotFound.class,
+                        e -> emptyStatus(connectorName))
                     .map(connectorStatus -> {
                       var status = connectorStatus.getConnector();
                       ConnectorDTO result = (ConnectorDTO) new ConnectorDTO()
@@ -189,6 +208,14 @@ public class KafkaConnectService {
                     })
             )
         );
+  }
+
+  private Mono<ConnectorStatus> emptyStatus(String connectorName) {
+    return Mono.just(new ConnectorStatus()
+        .name(connectorName)
+        .tasks(List.of())
+        .connector(new ConnectorStatusConnector()
+            .state(ConnectorStatusConnector.StateEnum.UNASSIGNED)));
   }
 
   public Mono<Map<String, Object>> getConnectorConfig(KafkaCluster cluster, String connectName,
@@ -247,10 +274,12 @@ public class KafkaConnectService {
     return getConnectAddress(cluster, connectName)
         .flatMapMany(connect ->
             KafkaConnectClients.withBaseUrl(connect).getConnectorTasks(connectorName)
+                .onErrorResume(WebClientResponseException.NotFound.class, e -> Flux.empty())
                 .map(kafkaConnectMapper::fromClient)
                 .flatMap(task ->
                     KafkaConnectClients.withBaseUrl(connect)
                         .getConnectorTaskStatus(connectorName, task.getId().getTask())
+                        .onErrorResume(WebClientResponseException.NotFound.class, e -> Mono.empty())
                         .map(kafkaConnectMapper::fromClient)
                         .map(task::status)
                 )
@@ -284,12 +313,6 @@ public class KafkaConnectService {
             )
                 .map(kafkaConnectMapper::fromClient)
         );
-  }
-
-  private Mono<KafkaCluster> getCluster(String clusterName) {
-    return clustersStorage.getClusterByName(clusterName)
-        .map(Mono::just)
-        .orElse(Mono.error(ClusterNotFoundException::new));
   }
 
   private Mono<String> getConnectAddress(KafkaCluster cluster, String connectName) {
