@@ -4,9 +4,9 @@ import { TopicMessage } from 'generated-sources';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import useDataSaver from 'lib/hooks/useDataSaver';
-import VerticalElipsisIcon from 'components/Topics/List/VerticalElipsisIcon';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 
-import MessageToggleIcon from './MessageToggleIcon';
 import MessageContent from './MessageContent/MessageContent';
 
 const Message: React.FC<{ message: TopicMessage }> = ({

@@ -9,7 +9,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import VerticalElipsisIcon from 'components/Topics/List/VerticalElipsisIcon';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { Colors } from 'theme/theme';
 import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';

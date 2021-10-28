@@ -1,117 +1,323 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Details component when consumer gruops are NOT fetched Matches the snapshot 1`] = `
-<div
-  className="section"
+<ContextProvider
+  value={
+    Object {
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+      },
+      "paginationStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "gray": "#E3E6E8",
+          "green": "#D6F5E0",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
+    }
+  }
 >
-  <PageLoader />
-  <ConfirmationModal
-    isOpen={false}
-    onCancel={[Function]}
-    onConfirm={[Function]}
-  >
-    Are you sure you want to delete this consumer group?
-  </ConfirmationModal>
-</div>
+  <Details
+    clusterName="local"
+    deleteConsumerGroup={[MockFunction]}
+    fetchConsumerGroupDetails={[MockFunction]}
+    groupId="test"
+    isDeleted={false}
+    isFetched={false}
+    partitions={
+      Array [
+        Object {
+          "consumerId": "consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0",
+          "currentOffset": 394,
+          "endOffset": 394,
+          "host": "/172.31.9.153",
+          "messagesBehind": 0,
+          "partition": 6,
+          "topic": "messages",
+        },
+        Object {
+          "consumerId": "consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d1",
+          "currentOffset": 384,
+          "endOffset": 384,
+          "host": "/172.31.9.153",
+          "messagesBehind": 0,
+          "partition": 7,
+          "topic": "messages",
+        },
+      ]
+    }
+  />
+</ContextProvider>
 `;
 
 exports[`Details component when consumer gruops are fetched Matches the snapshot 1`] = `
-<div
-  className="section"
+<ContextProvider
+  value={
+    Object {
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+      },
+      "paginationStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "gray": "#E3E6E8",
+          "green": "#D6F5E0",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
+    }
+  }
 >
-  <div
-    className="box"
-  >
-    <div
-      className="level"
-    >
-      <div
-        className="level-item level-right buttons"
-      >
-        <button
-          className="button"
-          onClick={[Function]}
-          type="button"
-        >
-          Reset offsets
-        </button>
-        <button
-          className="button is-danger"
-          onClick={[Function]}
-          type="button"
-        >
-          Delete consumer group
-        </button>
-      </div>
-    </div>
-    <table
-      className="table is-striped is-fullwidth"
-    >
-      <thead>
-        <tr>
-          <th>
-            Consumer ID
-          </th>
-          <th>
-            Host
-          </th>
-          <th>
-            Topic
-          </th>
-          <th>
-            Partition
-          </th>
-          <th>
-            Messages behind
-          </th>
-          <th>
-            Current offset
-          </th>
-          <th>
-            End offset
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <ListItem
-          clusterName="local"
-          consumer={
-            Object {
-              "consumerId": "consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0",
-              "currentOffset": 394,
-              "endOffset": 394,
-              "host": "/172.31.9.153",
-              "messagesBehind": 0,
-              "partition": 6,
-              "topic": "messages",
-            }
-          }
-          key="consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0"
-        />
-        <ListItem
-          clusterName="local"
-          consumer={
-            Object {
-              "consumerId": "consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d1",
-              "currentOffset": 384,
-              "endOffset": 384,
-              "host": "/172.31.9.153",
-              "messagesBehind": 0,
-              "partition": 7,
-              "topic": "messages",
-            }
-          }
-          key="consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d1"
-        />
-      </tbody>
-    </table>
-  </div>
-  <ConfirmationModal
-    isOpen={false}
-    onCancel={[Function]}
-    onConfirm={[Function]}
-  >
-    Are you sure you want to delete this consumer group?
-  </ConfirmationModal>
-</div>
+  <Details
+    clusterName="local"
+    deleteConsumerGroup={[MockFunction]}
+    fetchConsumerGroupDetails={[MockFunction]}
+    groupId="test"
+    isDeleted={false}
+    isFetched={true}
+    partitions={
+      Array [
+        Object {
+          "consumerId": "consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d0",
+          "currentOffset": 394,
+          "endOffset": 394,
+          "host": "/172.31.9.153",
+          "messagesBehind": 0,
+          "partition": 6,
+          "topic": "messages",
+        },
+        Object {
+          "consumerId": "consumer-messages-consumer-1-122fbf98-643b-491d-8aec-c0641d2513d1",
+          "currentOffset": 384,
+          "endOffset": 384,
+          "host": "/172.31.9.153",
+          "messagesBehind": 0,
+          "partition": 7,
+          "topic": "messages",
+        },
+      ]
+    }
+  />
+</ContextProvider>
 `;

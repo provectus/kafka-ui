@@ -12,8 +12,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Colors } from 'theme/theme';
 import TagStyled from 'components/common/Tag/Tag.styled';
-
-import VerticalElipsisIcon from './VerticalElipsisIcon';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;

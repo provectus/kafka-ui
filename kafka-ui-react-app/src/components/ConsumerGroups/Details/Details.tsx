@@ -14,6 +14,18 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useHistory } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
+import Indicator from 'components/common/Dashboard/Indicator';
+import TagStyled from 'components/common/Tag/Tag.styled';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import { Colors } from 'theme/theme';
+import { groupBy } from 'lodash';
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import ListItem from './ListItem';
 
@@ -35,13 +47,16 @@ const Details: React.FC<Props> = ({
   partitions,
   isFetched,
   isDeleted,
+  state,
+  members,
+  topics,
+  coordinator,
   fetchConsumerGroupDetails,
   deleteConsumerGroup,
 }) => {
   React.useEffect(() => {
     fetchConsumerGroupDetails(clusterName, groupId);
   }, [fetchConsumerGroupDetails, clusterName, groupId]);
-  const items = partitions || [];
   const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
     React.useState<boolean>(false);
   const history = useHistory();
@@ -61,62 +76,62 @@ const Details: React.FC<Props> = ({
     history.push(clusterConsumerGroupResetOffsetsPath(clusterName, groupId));
   };
 
-  return (
-    <div className="section">
-      {isFetched ? (
-        <div className="box">
-          {!isReadOnly && (
-            <div className="level">
-              <div className="level-item level-right buttons">
-                <button
-                  type="button"
-                  className="button"
-                  onClick={onResetOffsets}
-                >
-                  Reset offsets
-                </button>
-                <button
-                  type="button"
-                  className="button is-danger"
-                  onClick={() => setIsConfirmationModelVisible(true)}
-                >
-                  Delete consumer group
-                </button>
-              </div>
-            </div>
-          )}
+  const partitionsByTopic = groupBy(partitions, 'topic');
 
-          <table className="table is-striped is-fullwidth">
-            <thead>
-              <tr>
-                <th>Consumer ID</th>
-                <th>Host</th>
-                <th>Topic</th>
-                <th>Partition</th>
-                <th>Messages behind</th>
-                <th>Current offset</th>
-                <th>End offset</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.length === 0 && (
-                <tr>
-                  <td colSpan={10}>No active consumer groups</td>
-                </tr>
-              )}
-              {items.map((consumer) => (
-                <ListItem
-                  key={consumer.consumerId}
-                  clusterName={clusterName}
-                  consumer={consumer}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <PageLoader />
-      )}
+  if (!isFetched) {
+    return <PageLoader />;
+  }
+
+  return (
+    <div>
+      <div>
+        <PageHeading text={groupId}>
+          {!isReadOnly && (
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              <DropdownItem onClick={onResetOffsets}>
+                Reset offsest
+              </DropdownItem>
+              <DropdownItem
+                style={{ color: Colors.red[50] }}
+                onClick={() => setIsConfirmationModelVisible(true)}
+              >
+                Delete consumer group
+              </DropdownItem>
+            </Dropdown>
+          )}
+        </PageHeading>
+      </div>
+      <MetricsContainerStyled>
+        <MetricsWrapper>
+          <Indicator label="State">
+            <TagStyled text={state || 'unknown'} color="yellow" />
+          </Indicator>
+          <Indicator label="Members">{members}</Indicator>
+          <Indicator label="Assigned topics">{topics}</Indicator>
+          <Indicator label="Assigned partitions">
+            {partitions?.length}
+          </Indicator>
+          <Indicator label="Coordinator ID">{coordinator?.id}</Indicator>
+        </MetricsWrapper>
+      </MetricsContainerStyled>
+      <StyledTable isFullwidth>
+        <thead>
+          <tr>
+            <TableHeaderCell> </TableHeaderCell>
+            <TableHeaderCell title="Topic" />
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(partitionsByTopic).map((key) => (
+            <ListItem
+              clusterName={clusterName}
+              consumers={partitionsByTopic[key]}
+              name={key}
+              key={key}
+            />
+          ))}
+        </tbody>
+      </StyledTable>
       <ConfirmationModal
         isOpen={isConfirmationModelVisible}
         onCancel={() => setIsConfirmationModelVisible(false)}

@@ -18,7 +18,7 @@ import { deleteTopicAction } from 'redux/actions';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import Dropdown from 'components/common/Dropdown/Dropdown';
-import VerticalElipsisIcon from 'components/Topics/List/VerticalElipsisIcon';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { styled } from 'lib/themedStyles';
 import { Colors } from 'theme/theme';
