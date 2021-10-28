@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces/cluster';
 import { clusterTopicPath } from 'lib/paths';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 
 import TopicContents from './TopicContents/TopicContents';
 import { ListItemWrapper } from './ListItem.styled';
@@ -20,13 +21,9 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
     <>
       <ListItemWrapper>
         <td className="toggle-button">
-          <span
-            className="is-clickable"
-            onClick={() => setIsOpen(!isOpen)}
-            aria-hidden
-          >
+          <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
-          </span>
+          </IconButtonWrapper>
         </td>
         <td>
           <Link className="topic-link" to={clusterTopicPath(clusterName, name)}>

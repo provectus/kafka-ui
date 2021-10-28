@@ -28,6 +28,7 @@ export const Colors = {
     '60': '#1414B8',
   },
   red: {
+    '10': '#FAD1D1',
     '50': '#E51A1A',
   },
   yellow: {

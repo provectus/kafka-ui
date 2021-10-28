@@ -29,7 +29,11 @@ describe('List', () => {
   };
   const component = mount(
     <ThemeProvider theme={theme}>
-      <ListItem consumerGroup={mockConsumerGroup} />
+      <table>
+        <tbody>
+          <ListItem consumerGroup={mockConsumerGroup} />
+        </tbody>
+      </table>
     </ThemeProvider>
   );
 

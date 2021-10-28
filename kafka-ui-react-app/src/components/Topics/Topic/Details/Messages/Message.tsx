@@ -6,6 +6,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import useDataSaver from 'lib/hooks/useDataSaver';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 
 import MessageContent from './MessageContent/MessageContent';
 
@@ -37,9 +38,9 @@ const Message: React.FC<{ message: TopicMessage }> = ({
         onMouseLeave={() => setVEllipsisOpen(false)}
       >
         <td>
-          <span className="is-clickable" onClick={toggleIsOpen} aria-hidden>
+          <IconButtonWrapper onClick={toggleIsOpen} aria-hidden>
             <MessageToggleIcon isOpen={isOpen} />
-          </span>
+          </IconButtonWrapper>
         </td>
         <td>{offset}</td>
         <td>{partition}</td>

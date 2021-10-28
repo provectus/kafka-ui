@@ -26,12 +26,11 @@ describe('Alert', () => {
 
   it('renders with initial props', () => {
     const wrapper = mount(setupComponent());
-    expect(wrapper.exists('.title.is-6')).toBeTruthy();
-    expect(wrapper.find('.title.is-6').text()).toEqual(title);
-    expect(wrapper.exists('.subtitle.is-6')).toBeTruthy();
-    expect(wrapper.find('.subtitle.is-6').text()).toEqual(message);
-    expect(wrapper.exists('button')).toBeTruthy();
-    expect(wrapper.exists('.is-flex')).toBeFalsy();
+    expect(wrapper.exists('.alert-title')).toBeTruthy();
+    expect(wrapper.find('.alert-title').text()).toEqual(title);
+    expect(wrapper.exists('.alert-message')).toBeTruthy();
+    expect(wrapper.find('.alert-message').text()).toEqual(message);
+    expect(wrapper.exists('span')).toBeTruthy();
   });
 
   it('renders alert with server side message', () => {
@@ -47,9 +46,9 @@ describe('Alert', () => {
         },
       })
     );
-    expect(wrapper.exists('.is-flex')).toBeTruthy();
-    expect(wrapper.find('.is-flex').text()).toEqual(
-      `${statusCode}${serverSideMessage}`
+    expect(wrapper.exists('.alert-server-response')).toBeTruthy();
+    expect(wrapper.find('.alert-server-response').text()).toEqual(
+      `${statusCode} ${serverSideMessage}`
     );
   });
 
@@ -64,9 +63,9 @@ describe('Alert', () => {
         },
       })
     );
-    expect(wrapper.exists('.is-flex')).toBeTruthy();
-    expect(wrapper.find('.is-flex').text()).toEqual(
-      `${statusCode}${httpStatusText}`
+    expect(wrapper.exists('.alert-server-response')).toBeTruthy();
+    expect(wrapper.find('.alert-server-response').text()).toEqual(
+      `${statusCode} ${httpStatusText}`
     );
   });
 
@@ -74,45 +73,11 @@ describe('Alert', () => {
     expect(mount(setupComponent())).toMatchSnapshot();
   });
 
-  describe('types', () => {
-    it('renders error', () => {
-      const wrapper = mount(setupComponent({ type: 'error' }));
-      expect(wrapper.exists('.notification.is-danger')).toBeTruthy();
-      expect(wrapper.exists('.notification.is-warning')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-info')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-success')).toBeFalsy();
-    });
-
-    it('renders warning', () => {
-      const wrapper = mount(setupComponent({ type: 'warning' }));
-      expect(wrapper.exists('.notification.is-warning')).toBeTruthy();
-      expect(wrapper.exists('.notification.is-danger')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-info')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-success')).toBeFalsy();
-    });
-
-    it('renders info', () => {
-      const wrapper = mount(setupComponent({ type: 'info' }));
-      expect(wrapper.exists('.notification.is-info')).toBeTruthy();
-      expect(wrapper.exists('.notification.is-warning')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-danger')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-success')).toBeFalsy();
-    });
-
-    it('renders success', () => {
-      const wrapper = mount(setupComponent({ type: 'success' }));
-      expect(wrapper.exists('.notification.is-success')).toBeTruthy();
-      expect(wrapper.exists('.notification.is-warning')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-info')).toBeFalsy();
-      expect(wrapper.exists('.notification.is-danger')).toBeFalsy();
-    });
-  });
-
   describe('dismiss', () => {
     it('handles dismiss callback', () => {
       jest.spyOn(actions, 'dismissAlert').mockImplementation(dismiss);
       const wrapper = mount(setupComponent());
-      wrapper.find('button').simulate('click');
+      wrapper.find('span').simulate('click');
       expect(dismiss).toHaveBeenCalledWith(id);
     });
   });
