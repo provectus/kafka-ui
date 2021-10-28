@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -43,16 +44,14 @@ class TopicsServiceTest {
 
   @Test
   public void shouldListFirst25Topics() {
-    final KafkaCluster cluster = KafkaCluster.builder()
-        .topics(
+    final KafkaCluster cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
                     .partitions(Map.of())
                     .name(e)
                     .build()))
-        )
-        .build();
+        );
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.empty(),
@@ -64,16 +63,14 @@ class TopicsServiceTest {
 
   @Test
   public void shouldCalculateCorrectPageCountForNonDivisiblePageSize() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
                     .partitions(Map.of())
                     .name(e)
                     .build()))
-        )
-        .build();
+        );
 
     var topics = topicsService.getTopics(cluster, Optional.of(4), Optional.of(33),
         Optional.empty(), Optional.empty(), Optional.empty());
@@ -84,17 +81,14 @@ class TopicsServiceTest {
 
   @Test
   public void shouldCorrectlyHandleNonPositivePageNumberAndPageSize() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
                     .partitions(Map.of())
                     .name(e)
                     .build()))
-        )
-        .build();
-
+        );
 
     var topics = topicsService.getTopics(cluster, Optional.of(0), Optional.of(-1),
         Optional.empty(), Optional.empty(), Optional.empty());
@@ -105,8 +99,7 @@ class TopicsServiceTest {
 
   @Test
   public void shouldListBotInternalAndNonInternalTopics() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
@@ -114,8 +107,7 @@ class TopicsServiceTest {
                     .name(e)
                     .internal(Integer.parseInt(e) % 10 == 0)
                     .build()))
-        )
-        .build();
+        );
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.of(true),
@@ -128,8 +120,7 @@ class TopicsServiceTest {
 
   @Test
   public void shouldListOnlyNonInternalTopics() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
@@ -137,8 +128,7 @@ class TopicsServiceTest {
                     .name(e)
                     .internal(Integer.parseInt(e) % 10 == 0)
                     .build()))
-        )
-        .build();
+        );
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.of(true),
@@ -151,16 +141,14 @@ class TopicsServiceTest {
 
   @Test
   public void shouldListOnlyTopicsContainingOne() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
                     .partitions(Map.of())
                     .name(e)
                     .build()))
-        )
-        .build();
+        );
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.empty(),
@@ -172,8 +160,7 @@ class TopicsServiceTest {
 
   @Test
   public void shouldListTopicsOrderedByPartitionsCount() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
@@ -181,8 +168,7 @@ class TopicsServiceTest {
                     .name(e)
                     .partitionCount(100 - Integer.parseInt(e))
                     .build()))
-        )
-        .build();
+        );
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.empty(),
@@ -194,8 +180,7 @@ class TopicsServiceTest {
 
   @Test
   public void shouldRetrieveTopicConfigs() {
-    var cluster = KafkaCluster.builder()
-        .topics(
+    var cluster = clusterWithTopics(
             IntStream.rangeClosed(1, 100).boxed()
                 .map(Objects::toString)
                 .collect(Collectors.toMap(Function.identity(), e -> InternalTopic.builder()
@@ -213,13 +198,12 @@ class TopicsServiceTest {
                         )
                     )
                     .build()))
-        )
-        .build();
+        );
 
-    var configs = topicsService.getTopicConfigs(cluster, "1");
-    var topicConfig = configs.isPresent() ? configs.get().get(0) : null;
+    var topicConfigs = topicsService.getTopicConfigs(cluster, "1");
+    assertThat(topicConfigs).hasSize(1);
 
-    assertThat(configs.isPresent()).isTrue();
+    var topicConfig = topicConfigs.get(0);
     assertThat(topicConfig.getName()).isEqualTo("testName");
     assertThat(topicConfig.getValue()).isEqualTo("testValue");
     assertThat(topicConfig.getDefaultValue()).isEqualTo("testDefaultValue");
@@ -228,6 +212,14 @@ class TopicsServiceTest {
     assertThat(topicConfig.getSynonyms()).isNotNull();
     assertThat(topicConfig.getIsReadOnly()).isTrue();
     assertThat(topicConfig.getIsSensitive()).isTrue();
+  }
+
+  private KafkaCluster clusterWithTopics(Map<String, InternalTopic> topics) {
+    return KafkaCluster.builder()
+        .metrics(InternalClusterMetrics.builder()
+            .topics(topics)
+            .build())
+        .build();
   }
 
 }
