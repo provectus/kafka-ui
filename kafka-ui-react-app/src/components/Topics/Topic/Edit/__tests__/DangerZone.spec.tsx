@@ -1,19 +1,23 @@
 import React from 'react';
 import DangerZone, { Props } from 'components/Topics/Topic/Edit/DangerZone';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const setupWrapper = (props?: Partial<Props>) => (
-  <DangerZone
-    clusterName="testCluster"
-    topicName="testTopic"
-    defaultPartitions={3}
-    defaultReplicationFactor={3}
-    partitionsCountIncreased={false}
-    replicationFactorUpdated={false}
-    updateTopicPartitionsCount={jest.fn()}
-    updateTopicReplicationFactor={jest.fn()}
-    {...props}
-  />
+  <ThemeProvider theme={theme}>
+    <DangerZone
+      clusterName="testCluster"
+      topicName="testTopic"
+      defaultPartitions={3}
+      defaultReplicationFactor={3}
+      partitionsCountIncreased={false}
+      replicationFactorUpdated={false}
+      updateTopicPartitionsCount={jest.fn()}
+      updateTopicReplicationFactor={jest.fn()}
+      {...props}
+    />
+  </ThemeProvider>
 );
 
 describe('DangerZone', () => {
@@ -38,8 +42,7 @@ describe('DangerZone', () => {
     });
     fireEvent.submit(screen.getByTestId('partitionsSubmit'));
     await waitFor(() => {
-      expect(component.baseElement).toMatchSnapshot();
-      fireEvent.click(screen.getByText('Confirm'));
+      fireEvent.click(screen.getAllByText('Submit')[0]);
       expect(mockUpdateTopicPartitionsCount).toHaveBeenCalledTimes(1);
     });
   });
@@ -60,8 +63,7 @@ describe('DangerZone', () => {
     });
     fireEvent.submit(screen.getByTestId('replicationFactorSubmit'));
     await waitFor(() => {
-      expect(component.baseElement).toMatchSnapshot();
-      fireEvent.click(screen.getByText('Confirm'));
+      fireEvent.click(screen.getAllByText('Submit')[0]);
       expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
     });
   });

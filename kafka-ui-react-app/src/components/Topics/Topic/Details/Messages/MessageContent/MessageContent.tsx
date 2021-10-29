@@ -49,6 +49,20 @@ const MessageContent: React.FC<MessageContentProps> = ({
   };
   const keySize = new TextEncoder().encode(messageKey).length;
   const contentSize = new TextEncoder().encode(messageContent).length;
+  const isContentJson = () => {
+    try {
+      return isObject(messageContent && JSON.parse(messageContent));
+    } catch {
+      return false;
+    }
+  };
+  const isKeyJson = () => {
+    try {
+      return isObject(messageKey && JSON.parse(messageKey));
+    } catch {
+      return false;
+    }
+  };
   return (
     <MessageContentWrapper>
       <td colSpan={5}>
@@ -95,9 +109,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <p className="metadata-label">Content</p>
             <span>
               <p className="metadata-value">
-                {isObject(messageContent && JSON.parse(messageContent))
-                  ? 'JSON'
-                  : 'Text'}
+                {isContentJson() ? 'JSON' : 'Text'}
               </p>
               <p className="metadata-meta">
                 Size: <BytesFormatted value={contentSize} />
@@ -108,11 +120,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
           <span className="metadata">
             <p className="metadata-label">Key</p>
             <span>
-              <p className="metadata-value">
-                {isObject(messageKey && JSON.parse(messageKey))
-                  ? 'JSON'
-                  : 'Text'}
-              </p>
+              <p className="metadata-value">{isKeyJson() ? 'JSON' : 'Text'}</p>
               <p className="metadata-meta">
                 Size: <BytesFormatted value={keySize} />
               </p>

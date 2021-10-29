@@ -126,15 +126,15 @@ const ListItem: React.FC<ListItemProps> = ({
                 )}
               </Dropdown>
             </div>
-            <ConfirmationModal
-              isOpen={isDeleteTopicConfirmationVisible}
-              onCancel={() => setDeleteTopicConfirmationVisible(false)}
-              onConfirm={deleteTopicHandler}
-            >
-              Are you sure want to remove <b>{name}</b> topic?
-            </ConfirmationModal>
           </>
         ) : null}
+        <ConfirmationModal
+          isOpen={isDeleteTopicConfirmationVisible}
+          onCancel={() => setDeleteTopicConfirmationVisible(false)}
+          onConfirm={deleteTopicHandler}
+        >
+          Are you sure want to remove <b>{name}</b> topic?
+        </ConfirmationModal>
       </td>
     </tr>
   );
