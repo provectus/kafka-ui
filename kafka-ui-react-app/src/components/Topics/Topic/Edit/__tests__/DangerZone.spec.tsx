@@ -28,7 +28,7 @@ describe('DangerZone', () => {
 
   it('calls updateTopicPartitionsCount', async () => {
     const mockUpdateTopicPartitionsCount = jest.fn();
-    const component = render(
+    render(
       setupWrapper({
         updateTopicPartitionsCount: mockUpdateTopicPartitionsCount,
       })
@@ -49,7 +49,7 @@ describe('DangerZone', () => {
 
   it('calls updateTopicReplicationFactor', async () => {
     const mockUpdateTopicReplicationFactor = jest.fn();
-    const component = render(
+    render(
       setupWrapper({
         updateTopicReplicationFactor: mockUpdateTopicReplicationFactor,
       })
