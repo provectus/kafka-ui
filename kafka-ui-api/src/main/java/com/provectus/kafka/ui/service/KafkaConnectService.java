@@ -170,9 +170,12 @@ public class KafkaConnectService {
                 KafkaConnectClients.withBaseUrl(connect).getConnectorStatus(connector.getName())
                     .map(connectorStatus -> {
                       var status = connectorStatus.getConnector();
-                      final Map<String, Object> obfuscatedConfig = new HashMap<>();
-                      connector.getConfig().forEach((key, value) ->
-                              obfuscatedConfig.put(key, kafkaConfigSanitizer.sanitize(key, value)));
+                      final Map<String, Object> obfuscatedConfig = connector.getConfig().entrySet()
+                          .stream()
+                          .collect(Collectors.toMap(
+                              Map.Entry::getKey,
+                              e -> kafkaConfigSanitizer.sanitize(e.getKey(), e.getValue())
+                          ));
                       ConnectorDTO result = (ConnectorDTO) new ConnectorDTO()
                           .connect(connectName)
                           .status(kafkaConnectMapper.fromClient(status))
