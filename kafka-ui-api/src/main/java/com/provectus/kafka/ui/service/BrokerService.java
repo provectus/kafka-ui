@@ -57,15 +57,6 @@ public class BrokerService {
                 String.format("Config for broker %s not found", brokerId))));
   }
 
-  public Mono<Map<String, InternalBrokerConfig>> getBrokerConfigMap(KafkaCluster cluster,
-                                                                    Integer brokerId) {
-    return loadBrokersConfig(cluster, brokerId)
-        .map(list -> list.stream()
-            .collect(Collectors.toMap(
-                ConfigEntry::name,
-                InternalBrokerConfig::from)));
-  }
-
   private Flux<InternalBrokerConfig> getBrokersConfig(KafkaCluster cluster, Integer brokerId) {
     if (metricsCache.get(cluster).getClusterDescription().getNodes()
         .stream().noneMatch(node -> node.id() == brokerId)) {

@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.service;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -10,9 +11,9 @@ import com.provectus.kafka.ui.serde.DeserializationService;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import com.provectus.kafka.ui.util.JmxClusterUtil;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
@@ -21,8 +22,6 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 import static java.util.stream.Collectors.*;
 
@@ -45,13 +44,13 @@ public class TopicsService {
                                            Optional<TopicColumnsToSortDTO> sortBy) {
     return adminClientService.get(cluster).flatMap(ac ->
       new Pagination(ac, metricsCache.get(cluster))
-          .getTopicsForPage(page, nullablePerPage, showInternal, search, sortBy)
+          .getTopics(page, nullablePerPage, showInternal, search, sortBy)
           .flatMap(t ->
-              loadTopics(cluster, t.getT1())
+              loadTopics(cluster, t.topics)
                   .map(topics ->
                       new TopicsResponseDTO()
                           .topics(topics.stream().map(clusterMapper::toTopic).collect(toList()))
-                          .pageCount(t.getT2()))));
+                          .pageCount(t.pageCount))));
   }
 
   private Mono<List<InternalTopic>> loadTopics(KafkaCluster c, List<String> topics) {
@@ -367,18 +366,24 @@ public class TopicsService {
         .getTopicSchema(topicName);
   }
 
+  @VisibleForTesting
   @Value
-  public static class Pagination {
+  static class Pagination {
     ReactiveAdminClient adminClient;
     MetricsCache.Metrics metrics;
 
-    // tuple: topics to render -> total pages count
-    Mono<Tuple2<List<String>, Integer>> getTopicsForPage(
-                                            Optional<Integer> page,
-                                            Optional<Integer> nullablePerPage,
-                                            Optional<Boolean> showInternal,
-                                            Optional<String> search,
-                                            Optional<TopicColumnsToSortDTO> sortBy) {
+    @Value
+    static class Paging {
+      List<String> topics;
+      int pageCount;
+    }
+
+    Mono<Paging> getTopics(
+        Optional<Integer> page,
+        Optional<Integer> nullablePerPage,
+        Optional<Boolean> showInternal,
+        Optional<String> search,
+        Optional<TopicColumnsToSortDTO> sortBy) {
       return geTopicsForPagination()
           .map(paginatingTopics -> {
             Predicate<Integer> positiveInt = i -> i > 0;
@@ -402,7 +407,7 @@ public class TopicsService {
                 .map(InternalTopic::getName)
                 .collect(toList());
 
-            return Tuples.of(topicsToRender, totalPages);
+            return new Paging(topicsToRender, totalPages);
           });
     }
 

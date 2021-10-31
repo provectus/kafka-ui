@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -152,6 +153,16 @@ public class ReactiveAdminClient implements Closeable {
     );
   }
 
+  /**
+   * Kafka API often returns Map responses with KafkaFuture values. If we do allOf()
+   * logic resulting Mono will be failing if any of Futures finished with error.
+   * In some situations it is not what we what, ex. we call describeTopics(List names) method and
+   * we getting UnknownTopicOrPartitionException for unknown topics and we what to just not put
+   * such topics in resulting map.
+   * <p/>
+   * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
+   * finished with <code>clazz</code> exception.
+   */
   private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
                                                            Class<? extends KafkaException> clazz) {
     if (values.isEmpty()) {
@@ -162,12 +173,12 @@ public class ReactiveAdminClient implements Closeable {
         .map(e -> toMono(e.getValue()).map(r -> Tuples.of(e.getKey(), r)))
         .collect(toList());
 
-    Mono<List<Tuple2<K, V>>> all = Mono.create(sink -> {
+    return Mono.create(sink -> {
       var finishedCnt = new AtomicInteger();
-      var results = Collections.synchronizedList(new ArrayList<Tuple2<K, V>>());
+      var results = new ConcurrentHashMap<K, V>();
       monos.forEach(mono -> mono.subscribe(
           r -> {
-            results.add(r);
+            results.put(r.getT1(), r.getT2());
             if (finishedCnt.incrementAndGet() == monos.size()) {
               sink.success(results);
             }
@@ -181,7 +192,6 @@ public class ReactiveAdminClient implements Closeable {
           }
       ));
     });
-    return all.map(lst -> lst.stream().collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2)));
   }
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {

@@ -53,12 +53,14 @@ public class InternalTopic {
     List<InternalPartition> partitions = topicDescription.partitions().stream().map(
             partition -> {
               var partitionDto = InternalPartition.builder();
-              partitionDto.leader(partition.leader().id());
+
+              partitionDto.leader(partition.leader() != null ? partition.leader().id() : null);
               partitionDto.partition(partition.partition());
               partitionDto.inSyncReplicasCount(partition.isr().size());
               partitionDto.replicasCount(partition.replicas().size());
               List<InternalReplica> replicas = partition.replicas().stream().map(
-                      r -> new InternalReplica(r.id(), partition.leader().id() != r.id(),
+                      r -> new InternalReplica(r.id(),
+                          partition.leader() != null && partition.leader().id() != r.id(),
                           partition.isr().contains(r)))
                   .collect(Collectors.toList());
               partitionDto.replicas(replicas);

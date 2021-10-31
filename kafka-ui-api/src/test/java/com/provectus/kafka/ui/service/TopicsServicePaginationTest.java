@@ -1,0 +1,164 @@
+package com.provectus.kafka.ui.service;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
+import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.common.TopicPartitionInfo;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import reactor.core.publisher.Mono;
+
+class TopicsServicePaginationTest {
+
+  private ReactiveAdminClient adminClient;
+  private MetricsCache.Metrics metricsCache;
+  private TopicsService.Pagination pagination;
+
+  private void init(Collection<TopicDescription> topicsInCache) {
+    adminClient = Mockito.mock(ReactiveAdminClient.class);
+    Mockito.when(adminClient.listTopics(true)).thenReturn(
+        Mono.just(
+            topicsInCache.stream().map(TopicDescription::name).collect(Collectors.toSet())));
+
+    metricsCache = MetricsCache.empty().toBuilder()
+        .topicDescriptions(
+            topicsInCache.stream().collect(Collectors.toMap(TopicDescription::name, d -> d)))
+        .build();
+
+    pagination = new TopicsService.Pagination(adminClient, metricsCache);
+  }
+
+  @Test
+  public void shouldListFirst25Topics() {
+    init(
+        IntStream.rangeClosed(1, 100).boxed()
+            .map(Objects::toString)
+            .map(name -> new TopicDescription(name, false, List.of()))
+            .collect(Collectors.toList())
+    );
+
+    var topics = pagination.getTopics(
+        Optional.empty(), Optional.empty(), Optional.empty(),
+        Optional.empty(), Optional.empty()).block();
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
+    assertThat(topics.getTopics()).isSorted();
+  }
+
+  @Test
+  public void shouldCalculateCorrectPageCountForNonDivisiblePageSize() {
+    init(
+        IntStream.rangeClosed(1, 100).boxed()
+            .map(Objects::toString)
+            .map(name -> new TopicDescription(name, false, List.of()))
+            .collect(Collectors.toList())
+    );
+
+    var topics = pagination.getTopics(Optional.of(4), Optional.of(33),
+        Optional.empty(), Optional.empty(), Optional.empty()).block();
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(1)
+        .first().isEqualTo("99");
+  }
+
+  @Test
+  public void shouldCorrectlyHandleNonPositivePageNumberAndPageSize() {
+    init(
+        IntStream.rangeClosed(1, 100).boxed()
+            .map(Objects::toString)
+            .map(name -> new TopicDescription(name, false, List.of()))
+            .collect(Collectors.toList())
+    );
+
+    var topics = pagination.getTopics(Optional.of(0), Optional.of(-1),
+        Optional.empty(), Optional.empty(), Optional.empty()).block();
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
+    assertThat(topics.getTopics()).isSorted();
+  }
+
+  @Test
+  public void shouldListBotInternalAndNonInternalTopics() {
+    init(
+        IntStream.rangeClosed(1, 100).boxed()
+            .map(Objects::toString)
+            .map(name -> new TopicDescription(name, Integer.parseInt(name) % 10 == 0, List.of()))
+            .collect(Collectors.toList())
+    );
+
+    var topics = pagination.getTopics(
+        Optional.empty(), Optional.empty(), Optional.of(true),
+        Optional.empty(), Optional.empty()).block();
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
+    assertThat(topics.getTopics()).isSorted();
+  }
+
+
+  @Test
+  public void shouldListOnlyNonInternalTopics() {
+    init(
+        IntStream.rangeClosed(1, 100).boxed()
+            .map(Objects::toString)
+            .map(name -> new TopicDescription(name, false, List.of()))
+            .collect(Collectors.toList())
+    );
+
+    var topics = pagination.getTopics(
+        Optional.empty(), Optional.empty(), Optional.of(true),
+        Optional.empty(), Optional.empty()).block();
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
+    assertThat(topics.getTopics()).isSorted();
+  }
+
+
+  @Test
+  public void shouldListOnlyTopicsContainingOne() {
+    init(
+        IntStream.rangeClosed(1, 100).boxed()
+            .map(Objects::toString)
+            .map(name -> new TopicDescription(name, false, List.of()))
+            .collect(Collectors.toList())
+    );
+
+    var topics = pagination.getTopics(
+        Optional.empty(), Optional.empty(), Optional.empty(),
+        Optional.of("1"), Optional.empty()).block();
+    assertThat(topics.getPageCount()).isEqualTo(1);
+    assertThat(topics.getTopics()).hasSize(20);
+    assertThat(topics.getTopics()).isSorted();
+  }
+
+  @Test
+  public void shouldListTopicsOrderedByPartitionsCount() {
+    List<TopicDescription> topicDescriptions = IntStream.rangeClosed(1, 100).boxed()
+        .map(i -> new TopicDescription(UUID.randomUUID().toString(), false,
+            IntStream.range(0, i)
+                .mapToObj(p ->
+                    new TopicPartitionInfo(p, null, List.of(), List.of()))
+                .collect(Collectors.toList())))
+        .collect(Collectors.toList());
+
+    init(topicDescriptions);
+
+    var topics = pagination.getTopics(
+        Optional.empty(), Optional.empty(), Optional.empty(),
+        Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS)).block();
+    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTopics()).hasSize(25);
+    assertThat(topics.getTopics()).containsExactlyElementsOf(
+        topicDescriptions.stream()
+            .map(TopicDescription::name)
+            .limit(25)
+            .collect(Collectors.toList()));
+  }
+
+}

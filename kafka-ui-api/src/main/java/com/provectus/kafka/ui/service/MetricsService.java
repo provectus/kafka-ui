@@ -36,7 +36,7 @@ public class MetricsService {
                         jmxClusterUtil.getBrokerMetrics(cluster, description.getNodes()),
                         zookeeperService.getZkStatus(cluster),
                         getLogDirInfo(cluster, ac),
-                        featureService.getAvailableFeatures(cluster),
+                        featureService.getAvailableFeatures(cluster, description.getController()),
                         loadTopicConfigs(cluster),
                         describeTopics(cluster)),
                     results ->
