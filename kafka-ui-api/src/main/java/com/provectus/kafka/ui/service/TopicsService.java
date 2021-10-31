@@ -64,7 +64,7 @@ public class TopicsService {
     Predicate<Integer> positiveInt = i -> i > 0;
     int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
     var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
-    List<InternalTopic> topics = cluster.getTopics().values().stream()
+    List<InternalTopic> topics = cluster.getMetrics().getTopics().values().stream()
         .filter(topic -> !topic.isInternal()
             || showInternal
             .map(i -> topic.isInternal() == i)
@@ -110,11 +110,11 @@ public class TopicsService {
     }
   }
 
-  public Optional<TopicDetailsDTO> getTopicDetails(KafkaCluster cluster, String topicName) {
-    return Optional.ofNullable(cluster.getTopics()).map(l -> l.get(topicName)).map(
-        t -> t.toBuilder().partitions(getTopicPartitions(cluster, t)
-        ).build()
-    ).map(t -> clusterMapper.toTopicDetails(t, cluster.getMetrics()));
+  public TopicDetailsDTO getTopicDetails(KafkaCluster cluster, String topicName) {
+    var topic = getTopic(cluster, topicName);
+    var upToDatePartitions = getTopicPartitions(cluster, topic);
+    topic = topic.toBuilder().partitions(upToDatePartitions).build();
+    return clusterMapper.toTopicDetails(topic);
   }
 
   @SneakyThrows
@@ -135,12 +135,11 @@ public class TopicsService {
         .flatMapMany(Flux::fromIterable);
   }
 
-  public Optional<List<TopicConfigDTO>> getTopicConfigs(KafkaCluster cluster, String topicName) {
-    return Optional.of(cluster)
-        .map(KafkaCluster::getTopics)
-        .map(t -> t.get(topicName))
-        .map(t -> t.getTopicConfigs().stream().map(clusterMapper::toTopicConfig)
-            .collect(Collectors.toList()));
+  public List<TopicConfigDTO> getTopicConfigs(KafkaCluster cluster, String topicName) {
+    var configs =  getTopic(cluster, topicName).getTopicConfigs();
+    return configs.stream()
+        .map(clusterMapper::toTopicConfig)
+        .collect(Collectors.toList());
   }
 
 
@@ -234,7 +233,7 @@ public class TopicsService {
       ReplicationFactorChangeDTO replicationFactorChange) {
     return adminClientService.get(cluster)
         .flatMap(ac -> {
-          Integer actual = cluster.getTopics().get(topicName).getReplicationFactor();
+          Integer actual = getTopic(cluster, topicName).getReplicationFactor();
           Integer requested = replicationFactorChange.getTotalReplicationFactor();
           Integer brokersCount = cluster.getMetrics().getBrokerCount();
 
@@ -267,7 +266,7 @@ public class TopicsService {
     Map<Integer, List<Integer>> currentAssignment = getCurrentAssignment(cluster, topicName);
     // Brokers map (Broker id -> count)
     Map<Integer, Integer> brokersUsage = getBrokersMap(cluster, currentAssignment);
-    int currentReplicationFactor = cluster.getTopics().get(topicName).getReplicationFactor();
+    int currentReplicationFactor = getTopic(cluster, topicName).getReplicationFactor();
 
     // If we should to increase Replication factor
     if (replicationFactorChange.getTotalReplicationFactor() > currentReplicationFactor) {
@@ -311,7 +310,7 @@ public class TopicsService {
         // while (partition replicas count != requested replication factor)
         for (Integer broker : brokersUsageList) {
           // Check is the broker the leader of partition
-          if (!cluster.getTopics().get(topicName).getPartitions().get(partition).getLeader()
+          if (!getTopic(cluster, topicName).getPartitions().get(partition).getLeader()
               .equals(broker)) {
             brokers.remove(broker);
             brokersUsage.merge(broker, -1, Integer::sum);
@@ -336,7 +335,7 @@ public class TopicsService {
   }
 
   private Map<Integer, List<Integer>> getCurrentAssignment(KafkaCluster cluster, String topicName) {
-    return cluster.getTopics().get(topicName).getPartitions().values().stream()
+    return getTopic(cluster, topicName).getPartitions().values().stream()
         .collect(Collectors.toMap(
             InternalPartition::getPartition,
             p -> p.getReplicas().stream()
@@ -347,7 +346,7 @@ public class TopicsService {
 
   private Map<Integer, Integer> getBrokersMap(KafkaCluster cluster,
                                               Map<Integer, List<Integer>> currentAssignment) {
-    Map<Integer, Integer> result = cluster.getBrokers().stream()
+    Map<Integer, Integer> result = cluster.getMetrics().getBrokers().stream()
         .collect(Collectors.toMap(
             c -> c,
             c -> 0
@@ -364,7 +363,7 @@ public class TopicsService {
       PartitionsIncreaseDTO partitionsIncrease) {
     return adminClientService.get(cluster)
         .flatMap(ac -> {
-          Integer actualCount = cluster.getTopics().get(topicName).getPartitionCount();
+          Integer actualCount = getTopic(cluster, topicName).getPartitionCount();
           Integer requestedCount = partitionsIncrease.getTotalPartitionsCount();
 
           if (requestedCount < actualCount) {
@@ -407,10 +406,11 @@ public class TopicsService {
       final Map<TopicPartition, Long> latest = consumer.endOffsets(tps);
 
       return tps.stream()
-          .map(tp -> partitions.get(tp.partition()).toBuilder()
-              .offsetMin(Optional.ofNullable(earliest.get(tp)).orElse(0L))
-              .offsetMax(Optional.ofNullable(latest.get(tp)).orElse(0L))
-              .build()
+          .map(tp -> partitions.get(tp.partition())
+              .withOffsets(
+                  earliest.getOrDefault(tp, -1L),
+                  latest.getOrDefault(tp, -1L)
+              )
           ).collect(Collectors.toMap(
               InternalPartition::getPartition,
               tp -> tp
@@ -421,8 +421,7 @@ public class TopicsService {
   }
 
   public Mono<Void> deleteTopic(KafkaCluster cluster, String topicName) {
-    var topicDetails = getTopicDetails(cluster, topicName)
-        .orElseThrow(TopicNotFoundException::new);
+    var topicDetails = getTopicDetails(cluster, topicName);
     if (cluster.getFeatures().contains(Feature.TOPIC_DELETION)) {
       return adminClientService.get(cluster).flatMap(c -> c.deleteTopic(topicName))
           .doOnSuccess(t -> clustersStorage.onTopicDeleted(cluster.getName(), topicName));
@@ -432,12 +431,20 @@ public class TopicsService {
   }
 
   public TopicMessageSchemaDTO getTopicSchema(KafkaCluster cluster, String topicName) {
-    if (!cluster.getTopics().containsKey(topicName)) {
+    if (!cluster.getMetrics().getTopics().containsKey(topicName)) {
       throw new TopicNotFoundException();
     }
     return deserializationService
         .getRecordDeserializerForCluster(cluster)
         .getTopicSchema(topicName);
+  }
+
+  private InternalTopic getTopic(KafkaCluster c, String topicName) {
+    var topic = c.getMetrics().getTopics().get(topicName);
+    if (topic == null) {
+      throw new TopicNotFoundException();
+    }
+    return topic;
   }
 
 }

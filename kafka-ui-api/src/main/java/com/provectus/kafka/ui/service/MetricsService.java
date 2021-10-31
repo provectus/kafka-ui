@@ -1,30 +1,33 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.service.ReactiveAdminClient.ClusterDescription;
+import static com.provectus.kafka.ui.service.ZookeeperService.ZkStatus;
+import static com.provectus.kafka.ui.util.JmxClusterUtil.JmxMetrics;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summarizingLong;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
-import com.provectus.kafka.ui.model.InternalBrokerMetrics;
 import com.provectus.kafka.ui.model.InternalClusterMetrics;
 import com.provectus.kafka.ui.model.InternalPartition;
-import com.provectus.kafka.ui.model.InternalSegmentSizeDto;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.model.MetricDTO;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
-import com.provectus.kafka.ui.util.JmxMetricsName;
-import com.provectus.kafka.ui.util.JmxMetricsValueName;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
@@ -44,91 +47,113 @@ public class MetricsService {
 
   /**
    * Updates cluster's metrics and topics structure.
+   *
    * @param cluster to be updated
    * @return cluster with up-to-date metrics and topics structure
    */
   public Mono<KafkaCluster> updateClusterMetrics(KafkaCluster cluster) {
-    return adminClientService.get(cluster)
-        .flatMap(
-            ac -> ac.getClusterVersion().flatMap(
-                version ->
-                    getClusterMetrics(ac)
-                        .flatMap(i -> fillJmxMetrics(i, cluster, ac))
-                        .flatMap(clusterMetrics ->
-                            topicsService.getTopicsData(ac).flatMap(it -> {
-                                  if (cluster.getDisableLogDirsCollection() == null
-                                      || !cluster.getDisableLogDirsCollection()) {
-                                    return updateSegmentMetrics(ac, clusterMetrics, it
-                                    );
-                                  } else {
-                                    return emptySegmentMetrics(clusterMetrics, it);
-                                  }
-                                }
-                            ).map(segmentSizeDto -> buildFromData(cluster, version, segmentSizeDto))
-                        )
-            )
-        ).flatMap(
-            nc -> featureService.getAvailableFeatures(cluster).collectList()
-                .map(f -> nc.toBuilder().features(f).build())
-        ).doOnError(e ->
+    return getMetrics(cluster)
+        .map(m -> cluster.toBuilder().metrics(m).build())
+        .zipWith(featureService.getAvailableFeatures(cluster),
+            (c, features) -> c.toBuilder().features(features).build());
+  }
+
+  private Mono<InternalClusterMetrics> getMetrics(KafkaCluster cluster) {
+    return adminClientService.get(cluster).flatMap(ac ->
+            ac.describeCluster().flatMap(
+                description -> Mono.just(
+                        MetricsCollector.builder()
+                            .clusterDescription(description)
+                            .version(ac.getVersion())
+                            .build()
+                    )
+                    .zipWith(jmxClusterUtil.getBrokerMetrics(cluster, description.getNodes()),
+                        (b, jmx) -> b.toBuilder().jmxMetrics(jmx).build())
+                    .zipWith(zookeeperService.getZkStatus(cluster),
+                        (b, status) -> b.toBuilder().zkStatus(status).build()))
+                    .zipWith(topicsService.getTopicsData(ac),
+                        (b, td) -> b.toBuilder().topicsData(td).build())
+                    .zipWith(getLogDirInfo(cluster, ac),
+                        (b, ld) -> b.toBuilder().logDirResult(ld).build())
+                .map(MetricsCollector::build)
+        )
+        .doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e)
         ).onErrorResume(
-            e -> Mono.just(cluster.toBuilder()
+            e -> Mono.just(cluster.getMetrics().toBuilder()
                 .status(ServerStatusDTO.OFFLINE)
                 .lastKafkaException(e)
                 .build())
         );
   }
 
-  private KafkaCluster buildFromData(KafkaCluster currentCluster,
-                                     String version,
-                                     InternalSegmentSizeDto segmentSizeDto) {
+  @Builder(toBuilder = true)
+  private static class MetricsCollector {
+    String version;
+    ClusterDescription clusterDescription;
+    JmxMetrics jmxMetrics;
+    List<InternalTopic> topicsData;
+    ZkStatus zkStatus;
+    Optional<LogDirInfo> logDirResult; // empty if log dir collection disabled
 
-    var topics = segmentSizeDto.getInternalTopicWithSegmentSize();
-    var brokersMetrics = segmentSizeDto.getClusterMetricsWithSegmentSize();
-    var brokersIds = new ArrayList<>(brokersMetrics.getInternalBrokerMetrics().keySet());
+    InternalClusterMetrics build() {
+      var metricsBuilder = InternalClusterMetrics.builder();
+      metricsBuilder.version(version);
+      metricsBuilder.status(ServerStatusDTO.ONLINE);
+      metricsBuilder.lastKafkaException(null);
 
-    InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder =
-        brokersMetrics.toBuilder();
+      metricsBuilder.zookeeperStatus(zkStatus.getStatus());
+      metricsBuilder.zooKeeperStatus(ClusterUtil.convertToIntServerStatus(zkStatus.getStatus()));
+      metricsBuilder.lastZookeeperException(zkStatus.getError());
 
-    InternalClusterMetrics topicsMetrics = collectTopicsMetrics(topics);
+      metricsBuilder.brokers(
+          clusterDescription.getNodes().stream().map(Node::id).collect(toList()));
+      metricsBuilder.brokerCount(clusterDescription.getNodes().size());
+      metricsBuilder.activeControllers(clusterDescription.getController() != null ? 1 : 0);
 
-    ServerStatusDTO zookeeperStatus = ServerStatusDTO.OFFLINE;
-    Throwable zookeeperException = null;
-    try {
-      zookeeperStatus = zookeeperService.isZookeeperOnline(currentCluster)
-          ? ServerStatusDTO.ONLINE
-          : ServerStatusDTO.OFFLINE;
-    } catch (Throwable e) {
-      zookeeperException = e;
+      fillTopicsMetrics(metricsBuilder, topicsData);
+      fillJmxMetrics(metricsBuilder, jmxMetrics);
+
+      logDirResult.ifPresent(r -> r.enrichWithLogDirInfo(metricsBuilder));
+
+      return metricsBuilder.build();
     }
-
-    InternalClusterMetrics clusterMetrics = metricsBuilder
-        .activeControllers(brokersMetrics.getActiveControllers())
-        .topicCount(topicsMetrics.getTopicCount())
-        .brokerCount(brokersMetrics.getBrokerCount())
-        .underReplicatedPartitionCount(topicsMetrics.getUnderReplicatedPartitionCount())
-        .inSyncReplicasCount(topicsMetrics.getInSyncReplicasCount())
-        .outOfSyncReplicasCount(topicsMetrics.getOutOfSyncReplicasCount())
-        .onlinePartitionCount(topicsMetrics.getOnlinePartitionCount())
-        .offlinePartitionCount(topicsMetrics.getOfflinePartitionCount())
-        .zooKeeperStatus(ClusterUtil.convertToIntServerStatus(zookeeperStatus))
-        .version(version)
-        .build();
-
-    return currentCluster.toBuilder()
-        .version(version)
-        .status(ServerStatusDTO.ONLINE)
-        .zookeeperStatus(zookeeperStatus)
-        .lastZookeeperException(zookeeperException)
-        .lastKafkaException(null)
-        .metrics(clusterMetrics)
-        .topics(topics)
-        .brokers(brokersIds)
-        .build();
   }
 
-  private InternalClusterMetrics collectTopicsMetrics(Map<String, InternalTopic> topics) {
+  private static void fillJmxMetrics(
+      InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder,
+      JmxMetrics jmxMetrics) {
+    metricsBuilder.metrics(jmxMetrics.getMetrics());
+    metricsBuilder.internalBrokerMetrics(jmxMetrics.getInternalBrokerMetrics());
+
+    metricsBuilder.bytesInPerSec(
+        jmxMetrics.getBytesInPerSec().values().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+    metricsBuilder.bytesOutPerSec(
+        jmxMetrics.getBytesOutPerSec().values().stream()
+            .reduce(BigDecimal.ZERO, BigDecimal::add));
+
+    metricsBuilder.topics(
+        metricsBuilder.build().getTopics().values().stream()
+            .map(t ->
+                t.withIoRates(
+                    jmxMetrics.getBytesInPerSec().get(t.getName()),
+                    jmxMetrics.getBytesOutPerSec().get(t.getName()))
+            ).collect(Collectors.toMap(InternalTopic::getName, t -> t))
+    );
+  }
+
+  private Mono<Optional<LogDirInfo>> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
+    if (cluster.getDisableLogDirsCollection() == null || !cluster.getDisableLogDirsCollection()) {
+      return c.describeLogDirs().map(LogDirInfo::new).map(Optional::of);
+    }
+    return Mono.just(Optional.empty());
+  }
+
+  private static void fillTopicsMetrics(
+      InternalClusterMetrics.InternalClusterMetricsBuilder builder,
+      List<InternalTopic> topics) {
 
     int underReplicatedPartitions = 0;
     int inSyncReplicasCount = 0;
@@ -136,7 +161,7 @@ public class MetricsService {
     int onlinePartitionCount = 0;
     int offlinePartitionCount = 0;
 
-    for (InternalTopic topic : topics.values()) {
+    for (InternalTopic topic : topics) {
       underReplicatedPartitions += topic.getUnderReplicatedPartitions();
       inSyncReplicasCount += topic.getInSyncReplicas();
       outOfSyncReplicasCount += (topic.getReplicas() - topic.getInSyncReplicas());
@@ -148,216 +173,88 @@ public class MetricsService {
               .sum();
     }
 
-    return InternalClusterMetrics.builder()
+    builder
         .underReplicatedPartitionCount(underReplicatedPartitions)
         .inSyncReplicasCount(inSyncReplicasCount)
         .outOfSyncReplicasCount(outOfSyncReplicasCount)
         .onlinePartitionCount(onlinePartitionCount)
         .offlinePartitionCount(offlinePartitionCount)
         .topicCount(topics.size())
-        .build();
+        .topics(topics.stream().collect(Collectors.toMap(InternalTopic::getName, t -> t)));
   }
 
-  private Mono<InternalClusterMetrics> getClusterMetrics(ReactiveAdminClient client) {
-    return client.describeCluster().map(desc ->
-        InternalClusterMetrics.builder()
-            .brokerCount(desc.getNodes().size())
-            .activeControllers(desc.getController() != null ? 1 : 0)
-            .build()
-    );
-  }
+  private static class LogDirInfo {
 
-  private InternalTopic mergeWithStats(InternalTopic topic,
-                                       Map<String, LongSummaryStatistics> topics,
-                                       Map<TopicPartition, LongSummaryStatistics> partitions) {
-    final LongSummaryStatistics stats = topics.get(topic.getName());
+    private final Map<TopicPartition, LongSummaryStatistics> partitionsStats;
+    private final Map<String, LongSummaryStatistics> topicStats;
+    private final Map<Integer, LongSummaryStatistics> brokerStats;
 
-    return topic.toBuilder()
-        .segmentSize(stats.getSum())
-        .segmentCount(stats.getCount())
-        .partitions(
-            topic.getPartitions().entrySet().stream().map(e ->
-                Tuples.of(e.getKey(), mergeWithStats(topic.getName(), e.getValue(), partitions))
-            ).collect(Collectors.toMap(
-                Tuple2::getT1,
-                Tuple2::getT2
-            ))
-        ).build();
-  }
+    LogDirInfo(Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>> log) {
+      final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
+          log.entrySet().stream().flatMap(b ->
+              b.getValue().entrySet().stream().flatMap(topicMap ->
+                  topicMap.getValue().replicaInfos.entrySet().stream()
+                      .map(e -> Tuples.of(b.getKey(), e.getKey(), e.getValue().size))
+              )
+          ).collect(toList());
 
-  private InternalPartition mergeWithStats(String topic, InternalPartition partition,
-                                           Map<TopicPartition, LongSummaryStatistics> partitions) {
-    final LongSummaryStatistics stats =
-        partitions.get(new TopicPartition(topic, partition.getPartition()));
-    return partition.toBuilder()
-        .segmentSize(stats.getSum())
-        .segmentCount(stats.getCount())
-        .build();
-  }
+      partitionsStats = topicPartitions.stream().collect(
+          groupingBy(
+              Tuple2::getT2,
+              summarizingLong(Tuple3::getT3)));
 
-  private Mono<InternalSegmentSizeDto> emptySegmentMetrics(InternalClusterMetrics clusterMetrics,
-                                                            List<InternalTopic> internalTopics) {
-    return Mono.just(
-        InternalSegmentSizeDto.builder()
-        .clusterMetricsWithSegmentSize(
-            clusterMetrics.toBuilder()
-                .segmentSize(0)
-                .segmentCount(0)
-                .internalBrokerDiskUsage(Collections.emptyMap())
-                .build()
-        )
-        .internalTopicWithSegmentSize(
-            internalTopics.stream().collect(
-                Collectors.toMap(
-                    InternalTopic::getName,
-                    i -> i
-                )
-            )
-        ).build()
-    );
-  }
+      topicStats =
+          topicPartitions.stream().collect(
+              groupingBy(
+                  t -> t.getT2().topic(),
+                  summarizingLong(Tuple3::getT3)));
 
-  private Mono<InternalSegmentSizeDto> updateSegmentMetrics(ReactiveAdminClient ac,
-                                                            InternalClusterMetrics clusterMetrics,
-                                                            List<InternalTopic> internalTopics) {
-    return ac.describeCluster().flatMap(
-        clusterDescription ->
-                ac.describeLogDirs().map(log -> {
-                  final List<Tuple3<Integer, TopicPartition, Long>> topicPartitions =
-                      log.entrySet().stream().flatMap(b ->
-                          b.getValue().entrySet().stream().flatMap(topicMap ->
-                              topicMap.getValue().replicaInfos.entrySet().stream()
-                                  .map(e -> Tuples.of(b.getKey(), e.getKey(), e.getValue().size))
-                          )
-                      ).collect(Collectors.toList());
+      brokerStats = topicPartitions.stream().collect(
+          groupingBy(
+              Tuple2::getT1,
+              summarizingLong(Tuple3::getT3)));
+    }
 
-                  final Map<TopicPartition, LongSummaryStatistics> partitionStats =
-                      topicPartitions.stream().collect(
-                          Collectors.groupingBy(
-                              Tuple2::getT2,
-                              Collectors.summarizingLong(Tuple3::getT3)
-                          )
-                      );
+    private InternalTopic enrichTopicWithSegmentStats(InternalTopic topic) {
+      LongSummaryStatistics stats = topicStats.get(topic.getName());
+      return topic.withSegmentStats(stats.getSum(), stats.getCount())
+          .toBuilder()
+          .partitions(
+              topic.getPartitions().entrySet().stream().map(e ->
+                  Tuples.of(e.getKey(),
+                      enrichPartitionWithSegmentsData(topic.getName(), e.getValue()))
+              ).collect(toMap(Tuple2::getT1, Tuple2::getT2))
+          ).build();
+    }
 
-                  final Map<String, LongSummaryStatistics> topicStats =
-                      topicPartitions.stream().collect(
-                          Collectors.groupingBy(
-                              t -> t.getT2().topic(),
-                              Collectors.summarizingLong(Tuple3::getT3)
-                          )
-                      );
+    private InternalPartition enrichPartitionWithSegmentsData(String topic,
+                                                              InternalPartition partition) {
+      final LongSummaryStatistics stats =
+          partitionsStats.get(new TopicPartition(topic, partition.getPartition()));
+      return partition.withSegmentStats(stats.getSum(), stats.getCount());
+    }
 
-                  final Map<Integer, LongSummaryStatistics> brokerStats =
-                      topicPartitions.stream().collect(
-                          Collectors.groupingBy(
-                              Tuple2::getT1,
-                              Collectors.summarizingLong(Tuple3::getT3)
-                          )
-                      );
+    private Map<Integer, InternalBrokerDiskUsage> getBrokersDiskUsage() {
+      return brokerStats.entrySet().stream().map(e ->
+          Tuples.of(e.getKey(), InternalBrokerDiskUsage.builder()
+              .segmentSize(e.getValue().getSum())
+              .segmentCount(e.getValue().getCount())
+              .build()
+          )
+      ).collect(toMap(Tuple2::getT1, Tuple2::getT2));
+    }
 
+    private Map<String, InternalTopic> enrichTopics(Map<String, InternalTopic> topics) {
+      return topics.values().stream()
+          .map(this::enrichTopicWithSegmentStats)
+          .collect(Collectors.toMap(InternalTopic::getName, t -> t));
+    }
 
-                  final LongSummaryStatistics summary =
-                      topicPartitions.stream().collect(Collectors.summarizingLong(Tuple3::getT3));
-
-
-                  final Map<String, InternalTopic> resultTopics = internalTopics.stream().map(e ->
-                      Tuples.of(e.getName(), mergeWithStats(e, topicStats, partitionStats))
-                  ).collect(Collectors.toMap(
-                      Tuple2::getT1,
-                      Tuple2::getT2
-                  ));
-
-                  final Map<Integer, InternalBrokerDiskUsage> resultBrokers =
-                      brokerStats.entrySet().stream().map(e ->
-                          Tuples.of(e.getKey(), InternalBrokerDiskUsage.builder()
-                              .segmentSize(e.getValue().getSum())
-                              .segmentCount(e.getValue().getCount())
-                              .build()
-                          )
-                      ).collect(Collectors.toMap(
-                          Tuple2::getT1,
-                          Tuple2::getT2
-                      ));
-
-                  return InternalSegmentSizeDto.builder()
-                      .clusterMetricsWithSegmentSize(
-                          clusterMetrics.toBuilder()
-                              .segmentSize(summary.getSum())
-                              .segmentCount(summary.getCount())
-                              .internalBrokerDiskUsage(resultBrokers)
-                              .build()
-                      )
-                      .internalTopicWithSegmentSize(resultTopics).build();
-                })
-    );
-  }
-
-  private List<MetricDTO> getJmxMetric(KafkaCluster cluster, Node node) {
-    return Optional.of(cluster)
-        .filter(c -> c.getJmxPort() != null)
-        .filter(c -> c.getJmxPort() > 0)
-        .map(c -> jmxClusterUtil.getJmxMetrics(node.host(), c.getJmxPort(), c.isJmxSsl(),
-                c.getJmxUsername(), c.getJmxPassword()))
-        .orElse(Collections.emptyList());
-  }
-
-  private Mono<InternalClusterMetrics> fillJmxMetrics(InternalClusterMetrics internalClusterMetrics,
-                                                      KafkaCluster cluster,
-                                                      ReactiveAdminClient ac) {
-    return fillBrokerMetrics(internalClusterMetrics, cluster, ac)
-        .map(this::calculateClusterMetrics);
-  }
-
-  private Mono<InternalClusterMetrics> fillBrokerMetrics(
-      InternalClusterMetrics internalClusterMetrics, KafkaCluster cluster, ReactiveAdminClient ac) {
-    return ac.describeCluster()
-        .flatMapIterable(ReactiveAdminClient.ClusterDescription::getNodes)
-        .map(broker ->
-            Map.of(broker.id(), InternalBrokerMetrics.builder()
-                .metrics(getJmxMetric(cluster, broker)).build())
-        )
-        .collectList()
-        .map(s -> internalClusterMetrics.toBuilder()
-            .internalBrokerMetrics(ClusterUtil.toSingleMap(s.stream())).build());
-  }
-
-  private InternalClusterMetrics calculateClusterMetrics(
-      InternalClusterMetrics internalClusterMetrics) {
-    final List<MetricDTO> metrics = internalClusterMetrics.getInternalBrokerMetrics().values()
-        .stream()
-        .flatMap(b -> b.getMetrics().stream())
-        .collect(
-            Collectors.groupingBy(
-                MetricDTO::getCanonicalName,
-                Collectors.reducing(jmxClusterUtil::reduceJmxMetrics)
-            )
-        ).values().stream()
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
-    final InternalClusterMetrics.InternalClusterMetricsBuilder metricsBuilder =
-        internalClusterMetrics.toBuilder().metrics(metrics);
-    metricsBuilder.bytesInPerSec(findTopicMetrics(
-        metrics, JmxMetricsName.BytesInPerSec, JmxMetricsValueName.FiveMinuteRate
-    ));
-    metricsBuilder.bytesOutPerSec(findTopicMetrics(
-        metrics, JmxMetricsName.BytesOutPerSec, JmxMetricsValueName.FiveMinuteRate
-    ));
-    return metricsBuilder.build();
-  }
-
-  private Map<String, BigDecimal> findTopicMetrics(List<MetricDTO> metrics,
-                                                   JmxMetricsName metricsName,
-                                                   JmxMetricsValueName valueName) {
-    return metrics.stream().filter(m -> metricsName.name().equals(m.getName()))
-        .filter(m -> m.getParams().containsKey("topic"))
-        .filter(m -> m.getValue().containsKey(valueName.name()))
-        .map(m -> Tuples.of(
-            m.getParams().get("topic"),
-            m.getValue().get(valueName.name())
-        )).collect(Collectors.groupingBy(
-            Tuple2::getT1,
-            Collectors.reducing(BigDecimal.ZERO, Tuple2::getT2, BigDecimal::add)
-        ));
+    public void enrichWithLogDirInfo(
+        InternalClusterMetrics.InternalClusterMetricsBuilder builder) {
+      builder
+          .topics(enrichTopics(builder.build().getTopics()))
+          .internalBrokerDiskUsage(getBrokersDiskUsage());
+    }
   }
 }

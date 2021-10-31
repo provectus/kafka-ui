@@ -58,7 +58,7 @@ public class MessagesService {
 
   public Mono<Void> deleteTopicMessages(KafkaCluster cluster, String topicName,
                                         List<Integer> partitionsToInclude) {
-    if (!cluster.getTopics().containsKey(topicName)) {
+    if (!cluster.getMetrics().getTopics().containsKey(topicName)) {
       throw new TopicNotFoundException();
     }
     return offsetsForDeletion(cluster, topicName, partitionsToInclude)
@@ -84,7 +84,8 @@ public class MessagesService {
       throw new ValidationException("Invalid message: both key and value can't be null");
     }
     if (msg.getPartition() != null
-        && msg.getPartition() > cluster.getTopics().get(topic).getPartitionCount() - 1) {
+        && msg.getPartition() > cluster.getMetrics().getTopics()
+          .get(topic).getPartitionCount() - 1) {
       throw new ValidationException("Invalid partition");
     }
     RecordSerDe serde =

@@ -16,10 +16,13 @@ const validateMessage = async (
       let contentIsValid = false;
 
       try {
-        const validateKey = keyAjv.compile(
-          JSON.parse(messageSchema.key.schema)
-        );
-        keyIsValid = validateKey(JSON.parse(key));
+        const keySchema = JSON.parse(messageSchema.key.schema);
+        const validateKey = keyAjv.compile(keySchema);
+        if (keySchema.type === 'string') {
+          keyIsValid = true;
+        } else {
+          keyIsValid = validateKey(JSON.parse(key));
+        }
         if (!keyIsValid) {
           const errorString: string[] = [];
           if (validateKey.errors) {
@@ -35,10 +38,13 @@ const validateMessage = async (
         setSchemaErrors((e) => [...e, `Key ${err.message}`]);
       }
       try {
-        const validateContent = contentAjv.compile(
-          JSON.parse(messageSchema.value.schema)
-        );
-        contentIsValid = validateContent(JSON.parse(content));
+        const contentSchema = JSON.parse(messageSchema.value.schema);
+        const validateContent = contentAjv.compile(contentSchema);
+        if (contentSchema.type === 'string') {
+          contentIsValid = true;
+        } else {
+          contentIsValid = validateContent(JSON.parse(content));
+        }
         if (!contentIsValid) {
           const errorString: string[] = [];
           if (validateContent.errors) {
@@ -54,12 +60,10 @@ const validateMessage = async (
         setSchemaErrors((e) => [...e, `Content ${err.message}`]);
       }
 
-      if (keyIsValid && contentIsValid) {
-        return true;
-      }
+      return keyIsValid && contentIsValid;
     }
   } catch (err) {
-    setSchemaErrors((e) => (e ? `${e}-${err.message}` : err.message));
+    setSchemaErrors((e) => [...e, err.message]);
   }
   return false;
 };
