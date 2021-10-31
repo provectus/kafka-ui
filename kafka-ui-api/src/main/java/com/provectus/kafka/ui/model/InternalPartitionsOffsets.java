@@ -2,11 +2,11 @@ package com.provectus.kafka.ui.model;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import java.util.Map;
+import java.util.Optional;
 import lombok.Value;
 import org.apache.kafka.common.TopicPartition;
 
-import java.util.Map;
-import java.util.Optional;
 
 public class InternalPartitionsOffsets {
 

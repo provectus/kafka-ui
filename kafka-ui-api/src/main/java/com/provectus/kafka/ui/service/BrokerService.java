@@ -13,7 +13,6 @@ import com.provectus.kafka.ui.model.BrokerMetricsDTO;
 import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.KafkaCluster;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -128,7 +127,8 @@ public class BrokerService {
       KafkaCluster cluster, List<Integer> reqBrokers) {
     return adminClientService.get(cluster)
         .flatMap(admin -> {
-          List<Integer> brokers = metricsCache.get(cluster).getClusterDescription().getNodes().stream()
+          List<Integer> brokers = metricsCache.get(cluster).getClusterDescription().getNodes()
+              .stream()
               .map(Node::id)
               .collect(Collectors.toList());
           if (reqBrokers != null && !reqBrokers.isEmpty()) {

@@ -1,19 +1,11 @@
 package com.provectus.kafka.ui.util;
 
-import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
-import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
-
 import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupStateDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupTopicPartitionDTO;
-import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
-import com.provectus.kafka.ui.model.InternalPartition;
-import com.provectus.kafka.ui.model.InternalReplica;
-import com.provectus.kafka.ui.model.InternalTopic;
-import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.MessageFormatDTO;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
@@ -24,18 +16,13 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.provectus.kafka.ui.service.MetricsService;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.Node;
@@ -43,7 +30,6 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 
-import javax.annotation.Nullable;
 
 @Log4j2
 public class ClusterUtil {

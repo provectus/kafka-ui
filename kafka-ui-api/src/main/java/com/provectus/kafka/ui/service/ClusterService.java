@@ -1,11 +1,13 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.mapper.ClusterMapper;
-import com.provectus.kafka.ui.model.*;
-
+import com.provectus.kafka.ui.model.ClusterDTO;
+import com.provectus.kafka.ui.model.ClusterMetricsDTO;
+import com.provectus.kafka.ui.model.ClusterStatsDTO;
+import com.provectus.kafka.ui.model.InternalClusterStats;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

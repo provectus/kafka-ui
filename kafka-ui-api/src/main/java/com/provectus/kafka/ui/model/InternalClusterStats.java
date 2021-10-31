@@ -2,11 +2,10 @@ package com.provectus.kafka.ui.model;
 
 import com.provectus.kafka.ui.service.MetricsCache;
 import com.provectus.kafka.ui.util.ClusterUtil;
-import lombok.Data;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Data;
 
 @Data
 public class InternalClusterStats {

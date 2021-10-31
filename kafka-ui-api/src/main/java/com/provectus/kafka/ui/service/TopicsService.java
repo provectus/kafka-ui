@@ -5,15 +5,36 @@ import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
-import com.provectus.kafka.ui.model.*;
+import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.InternalLogDirStats;
+import com.provectus.kafka.ui.model.InternalPartition;
+import com.provectus.kafka.ui.model.InternalPartitionsOffsets;
+import com.provectus.kafka.ui.model.InternalReplica;
+import com.provectus.kafka.ui.model.InternalTopic;
+import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
+import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
+import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
+import com.provectus.kafka.ui.model.TopicConfigDTO;
+import com.provectus.kafka.ui.model.TopicCreationDTO;
+import com.provectus.kafka.ui.model.TopicDTO;
+import com.provectus.kafka.ui.model.TopicDetailsDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
+import com.provectus.kafka.ui.model.TopicUpdateDTO;
+import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
-
-import java.util.*;
+import com.provectus.kafka.ui.util.JmxClusterUtil;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
-
-import com.provectus.kafka.ui.util.JmxClusterUtil;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
@@ -411,7 +432,8 @@ public class TopicsService {
           });
     }
 
-    private Comparator<InternalTopic> getComparatorForTopic(Optional<TopicColumnsToSortDTO> sortBy) {
+    private Comparator<InternalTopic> getComparatorForTopic(
+        Optional<TopicColumnsToSortDTO> sortBy) {
       var defaultComparator = Comparator.comparing(InternalTopic::getName);
       if (sortBy.isEmpty()) {
         return defaultComparator;

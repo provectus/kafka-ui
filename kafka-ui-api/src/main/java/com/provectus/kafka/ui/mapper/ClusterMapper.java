@@ -1,10 +1,37 @@
 package com.provectus.kafka.ui.mapper;
 
-import com.provectus.kafka.ui.api.model.ClusterStats;
 import com.provectus.kafka.ui.config.ClustersProperties;
-import com.provectus.kafka.ui.model.*;
+import com.provectus.kafka.ui.model.BrokerConfigDTO;
+import com.provectus.kafka.ui.model.BrokerDiskUsageDTO;
+import com.provectus.kafka.ui.model.BrokerMetricsDTO;
+import com.provectus.kafka.ui.model.ClusterDTO;
+import com.provectus.kafka.ui.model.ClusterMetricsDTO;
+import com.provectus.kafka.ui.model.ClusterStatsDTO;
+import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
+import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
+import com.provectus.kafka.ui.model.ConfigSourceDTO;
+import com.provectus.kafka.ui.model.ConfigSynonymDTO;
+import com.provectus.kafka.ui.model.ConnectDTO;
+import com.provectus.kafka.ui.model.Feature;
+import com.provectus.kafka.ui.model.InternalBrokerConfig;
+import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
+import com.provectus.kafka.ui.model.InternalClusterStats;
+import com.provectus.kafka.ui.model.InternalPartition;
+import com.provectus.kafka.ui.model.InternalReplica;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
+import com.provectus.kafka.ui.model.InternalTopic;
+import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.JmxBrokerMetrics;
+import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.KafkaConnectCluster;
+import com.provectus.kafka.ui.model.PartitionDTO;
+import com.provectus.kafka.ui.model.ReplicaDTO;
+import com.provectus.kafka.ui.model.TopicConfigDTO;
+import com.provectus.kafka.ui.model.TopicDTO;
+import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
+import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,8 +39,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
-
-import com.provectus.kafka.ui.util.JmxClusterUtil;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -31,7 +56,7 @@ public interface ClusterMapper {
 
   ClusterStatsDTO toClusterStats(InternalClusterStats metrics);
 
-  default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics){
+  default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics) {
     return new ClusterMetricsDTO().items(jmxMetrics.getMetrics());
   }
 

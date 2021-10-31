@@ -1,9 +1,10 @@
 package com.provectus.kafka.ui.model;
 
-import lombok.Data;
-import org.apache.kafka.clients.admin.TopicDescription;
 import java.util.Collection;
 import java.util.List;
+import lombok.Data;
+import org.apache.kafka.clients.admin.TopicDescription;
+
 
 @Data
 public class PartitionsStats {

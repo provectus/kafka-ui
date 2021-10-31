@@ -1,13 +1,13 @@
 package com.provectus.kafka.ui.model;
 
+import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
+import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.clients.admin.ConfigEntry;
 
-import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
-import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
 
 @Data
 @Builder

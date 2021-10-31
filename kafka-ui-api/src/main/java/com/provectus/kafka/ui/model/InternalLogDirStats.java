@@ -1,16 +1,19 @@
 package com.provectus.kafka.ui.model;
 
-import lombok.Getter;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.summarizingLong;
+import static java.util.stream.Collectors.toList;
+
+import java.util.List;
+import java.util.LongSummaryStatistics;
+import java.util.Map;
 import lombok.Value;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuple3;
 import reactor.util.function.Tuples;
-import java.util.List;
-import java.util.LongSummaryStatistics;
-import java.util.Map;
-import static java.util.stream.Collectors.*;
 
 @Value
 public class InternalLogDirStats {

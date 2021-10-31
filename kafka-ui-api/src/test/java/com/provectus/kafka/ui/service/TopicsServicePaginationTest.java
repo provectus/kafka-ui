@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -22,10 +23,9 @@ class TopicsServicePaginationTest {
   private TopicsService.Pagination pagination;
 
   private void init(Collection<TopicDescription> topicsInCache) {
-    adminClient = Mockito.mock(ReactiveAdminClient.class);
-    Mockito.when(adminClient.listTopics(true)).thenReturn(
-        Mono.just(
-            topicsInCache.stream().map(TopicDescription::name).collect(Collectors.toSet())));
+    adminClient = when(mock(ReactiveAdminClient.class).listTopics(true)).thenReturn(
+        Mono.just(topicsInCache.stream().map(TopicDescription::name).collect(Collectors.toSet()))
+    ).getMock();
 
     metricsCache = MetricsCache.empty().toBuilder()
         .topicDescriptions(

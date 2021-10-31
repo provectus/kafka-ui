@@ -1,12 +1,10 @@
 package com.provectus.kafka.ui.model;
 
+import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.provectus.kafka.ui.util.JmxClusterUtil;
 import lombok.Builder;
 import lombok.Data;
 import org.apache.kafka.clients.admin.ConfigEntry;
