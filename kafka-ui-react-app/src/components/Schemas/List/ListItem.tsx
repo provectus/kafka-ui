@@ -1,6 +1,7 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { NavLink } from 'react-router-dom';
+import { Colors } from 'theme/theme';
 
 export interface ListItemProps {
   subject: SchemaSubject;
@@ -13,18 +14,16 @@ const ListItem: React.FC<ListItemProps> = ({
     <tr>
       <td>
         <NavLink
+          style={{ fontWeight: 500, color: Colors.neutral[90] }}
           exact
           to={`schemas/${subject}`}
           activeClassName="is-active"
-          className="title is-6"
         >
           {subject}
         </NavLink>
       </td>
       <td>{version}</td>
-      <td>
-        <span className="tag is-link">{compatibilityLevel}</span>
-      </td>
+      <td>{compatibilityLevel}</td>
     </tr>
   );
 };

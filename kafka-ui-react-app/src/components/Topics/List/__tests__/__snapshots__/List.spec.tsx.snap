@@ -197,49 +197,51 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 text="All Topics"
               >
                 <PageHeading
-                  className="sc-iBPTik bdtxUL"
+                  className="sc-iBPTik ismCbO"
                   text="All Topics"
                 >
                   <div
-                    className="sc-iBPTik bdtxUL"
+                    className="sc-iBPTik ismCbO"
                   >
                     <h1>
                       All Topics
                     </h1>
-                    <Button
-                      buttonSize="M"
-                      buttonType="primary"
-                      isLink={true}
-                      to="/ui/clusters/undefined/topics/create-new"
-                    >
-                      <Link
+                    <div>
+                      <Button
+                        buttonSize="M"
+                        buttonType="primary"
+                        isLink={true}
                         to="/ui/clusters/undefined/topics/create-new"
                       >
-                        <LinkAnchor
-                          href="/ui/clusters/undefined/topics/create-new"
-                          navigate={[Function]}
+                        <Link
+                          to="/ui/clusters/undefined/topics/create-new"
                         >
-                          <a
+                          <LinkAnchor
                             href="/ui/clusters/undefined/topics/create-new"
-                            onClick={[Function]}
+                            navigate={[Function]}
                           >
-                            <styled.button
-                              buttonSize="M"
-                              buttonType="primary"
+                            <a
+                              href="/ui/clusters/undefined/topics/create-new"
+                              onClick={[Function]}
                             >
-                              <button
-                                className="sc-gKseQn cmcyoH"
+                              <styled.button
+                                buttonSize="M"
+                                buttonType="primary"
                               >
-                                <i
-                                  className="fas fa-plus"
-                                />
-                                 Add a Topic
-                              </button>
-                            </styled.button>
-                          </a>
-                        </LinkAnchor>
-                      </Link>
-                    </Button>
+                                <button
+                                  className="sc-gKseQn cmcyoH"
+                                >
+                                  <i
+                                    className="fas fa-plus"
+                                  />
+                                   Add a Topic
+                                </button>
+                              </styled.button>
+                            </a>
+                          </LinkAnchor>
+                        </Link>
+                      </Button>
+                    </div>
                   </div>
                 </PageHeading>
               </Styled(PageHeading)>

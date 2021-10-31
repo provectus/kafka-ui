@@ -88,34 +88,38 @@ const ClustersWidget: React.FC<Props> = ({
       </div>
       {clusterList.map((chunkItem) => (
         <StyledTable key={chunkItem.id} isFullwidth>
-          <tr>
-            <TableHeaderCell title="Cluster name" />
-            <TableHeaderCell title="Version" />
-            <TableHeaderCell title="Brokers count" />
-            <TableHeaderCell title="Partitions" />
-            <TableHeaderCell title="Topics" />
-            <TableHeaderCell title="Production" />
-            <TableHeaderCell title="Consumption" />
-          </tr>
-          {chunkItem.data.map((cluster) => (
-            <tr key={cluster.name}>
-              <td>{cluster.name}</td>
-              <td>{cluster.version}</td>
-              <td>{cluster.brokerCount}</td>
-              <td>{cluster.onlinePartitionCount}</td>
-              <td>
-                <NavLink to={clusterTopicsPath(cluster.name)}>
-                  {cluster.topicCount}
-                </NavLink>
-              </td>
-              <td>
-                <BytesFormatted value={cluster.bytesInPerSec} />
-              </td>
-              <td>
-                <BytesFormatted value={cluster.bytesOutPerSec} />
-              </td>
+          <thead>
+            <tr>
+              <TableHeaderCell title="Cluster name" />
+              <TableHeaderCell title="Version" />
+              <TableHeaderCell title="Brokers count" />
+              <TableHeaderCell title="Partitions" />
+              <TableHeaderCell title="Topics" />
+              <TableHeaderCell title="Production" />
+              <TableHeaderCell title="Consumption" />
             </tr>
-          ))}
+          </thead>
+          <tbody>
+            {chunkItem.data.map((cluster) => (
+              <tr key={cluster.name}>
+                <td>{cluster.name}</td>
+                <td>{cluster.version}</td>
+                <td>{cluster.brokerCount}</td>
+                <td>{cluster.onlinePartitionCount}</td>
+                <td>
+                  <NavLink to={clusterTopicsPath(cluster.name)}>
+                    {cluster.topicCount}
+                  </NavLink>
+                </td>
+                <td>
+                  <BytesFormatted value={cluster.bytesInPerSec} />
+                </td>
+                <td>
+                  <BytesFormatted value={cluster.bytesOutPerSec} />
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </StyledTable>
       ))}
     </div>

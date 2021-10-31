@@ -63,7 +63,7 @@ describe('Edit Component', () => {
         1
       );
       expect(component.find('Controller').length).toEqual(1);
-      expect(component.find('button').exists()).toBeTruthy();
+      expect(component.find('Button').exists()).toBeTruthy();
     });
     it('does not fetch them', () => {
       const mockFetch = jest.fn();

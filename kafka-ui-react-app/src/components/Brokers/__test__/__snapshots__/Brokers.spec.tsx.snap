@@ -206,15 +206,16 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
             text="Brokers"
           >
             <PageHeading
-              className="sc-jSgvzq ecKYXV"
+              className="sc-jSgvzq feAFzU"
               text="Brokers"
             >
               <div
-                className="sc-jSgvzq ecKYXV"
+                className="sc-jSgvzq feAFzU"
               >
                 <h1>
                   Brokers
                 </h1>
+                <div />
               </div>
             </PageHeading>
           </Styled(PageHeading)>
@@ -756,15 +757,16 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
             text="Brokers"
           >
             <PageHeading
-              className="sc-jSgvzq ecKYXV"
+              className="sc-jSgvzq feAFzU"
               text="Brokers"
             >
               <div
-                className="sc-jSgvzq ecKYXV"
+                className="sc-jSgvzq feAFzU"
               >
                 <h1>
                   Brokers
                 </h1>
+                <div />
               </div>
             </PageHeading>
           </Styled(PageHeading)>

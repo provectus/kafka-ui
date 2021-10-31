@@ -22,7 +22,7 @@ const JSONEditor = React.forwardRef<ReactAce | null, JSONEditorProps>(
         height={
           isFixedHeight
             ? `${(props.value?.split('\n').length || 32) * 16}px`
-            : '500px'
+            : '372px'
         }
         wrapEnabled
         {...rest}

@@ -10,7 +10,7 @@ const PageHeading: React.FC<Props> = ({ text, className, children }) => {
   return (
     <div className={className}>
       <h1>{text}</h1>
-      {children}
+      <div>{children}</div>
     </div>
   );
 };
@@ -27,5 +27,9 @@ export default styled(PageHeading)`
     font-weight: 500;
     line-height: 32px;
     color: #000;
+  }
+  & > div {
+    display: flex;
+    gap: 16px;
   }
 `;

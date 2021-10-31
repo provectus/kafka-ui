@@ -6,6 +6,8 @@ import configureStore from 'redux/store/configureStore';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Schemas/List/ListContainer';
 import List, { ListProps } from 'components/Schemas/List/List';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 import { schemas } from './fixtures';
 
@@ -28,17 +30,19 @@ describe('List', () => {
     const pathname = `/ui/clusters/clusterName/schemas`;
 
     const setupWrapper = (props: Partial<ListProps> = {}) => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <List
-          isFetching
-          fetchSchemasByClusterName={jest.fn()}
-          isGlobalSchemaCompatibilityLevelFetched
-          fetchGlobalSchemaCompatibilityLevel={jest.fn()}
-          updateGlobalSchemaCompatibilityLevel={jest.fn()}
-          schemas={[]}
-          {...props}
-        />
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <List
+            isFetching
+            fetchSchemasByClusterName={jest.fn()}
+            isGlobalSchemaCompatibilityLevelFetched
+            fetchGlobalSchemaCompatibilityLevel={jest.fn()}
+            updateGlobalSchemaCompatibilityLevel={jest.fn()}
+            schemas={[]}
+            {...props}
+          />
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     describe('Initial state', () => {

@@ -1,10 +1,13 @@
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces';
+
+import { GlobalSchemaSelectorWrapper } from './GlobalSchemaSelector.styled';
 
 export interface GlobalSchemaSelectorProps {
   globalSchemaCompatibilityLevel?: CompatibilityLevelCompatibilityEnum;
@@ -20,11 +23,7 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
 }) => {
   const { clusterName } = useParams<{ clusterName: string }>();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-  } = useForm();
+  const methods = useForm();
 
   const [
     isUpdateCompatibilityConfirmationVisible,
@@ -41,11 +40,12 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
   };
 
   return (
-    <div className="level-item">
-      <h5 className="is-5 mr-2">Global Compatibility Level: </h5>
-      <div className="select mr-2">
-        <select
-          {...register('compatibilityLevel')}
+    <FormProvider {...methods}>
+      <GlobalSchemaSelectorWrapper>
+        <h5 className="is-5 mr-2">Global Compatibility Level: </h5>
+        <Select
+          name="compatibilityLevel"
+          selectSize="M"
           defaultValue={globalSchemaCompatibilityLevel}
           onChange={() => setUpdateCompatibilityConfirmationVisible(true)}
         >
@@ -56,21 +56,21 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
               </option>
             )
           )}
-        </select>
-      </div>
-      <ConfirmationModal
-        isOpen={isUpdateCompatibilityConfirmationVisible}
-        onCancel={() => setUpdateCompatibilityConfirmationVisible(false)}
-        onConfirm={handleSubmit(onCompatibilityLevelUpdate)}
-      >
-        {isSubmitting ? (
-          <PageLoader />
-        ) : (
-          `Are you sure you want to update the global compatibility level?
+        </Select>
+        <ConfirmationModal
+          isOpen={isUpdateCompatibilityConfirmationVisible}
+          onCancel={() => setUpdateCompatibilityConfirmationVisible(false)}
+          onConfirm={methods.handleSubmit(onCompatibilityLevelUpdate)}
+        >
+          {methods.formState.isSubmitting ? (
+            <PageLoader />
+          ) : (
+            `Are you sure you want to update the global compatibility level?
                   This may affect the compatibility levels of the schemas.`
-        )}
-      </ConfirmationModal>
-    </div>
+          )}
+        </ConfirmationModal>
+      </GlobalSchemaSelectorWrapper>
+    </FormProvider>
   );
 };
 
