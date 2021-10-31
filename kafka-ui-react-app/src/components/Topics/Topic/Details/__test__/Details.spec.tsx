@@ -47,6 +47,7 @@ describe('Details', () => {
       );
 
       expect(component.exists('button')).toBeFalsy();
+      expect(component).toMatchSnapshot();
     });
   });
 });
