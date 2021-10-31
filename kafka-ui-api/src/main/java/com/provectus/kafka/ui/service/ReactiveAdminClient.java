@@ -127,17 +127,15 @@ public class ReactiveAdminClient implements Closeable {
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
         .collect(toList());
 
-    return (
-        toMonoWithExceptionFilter(
+    return toMonoWithExceptionFilter(
         client.describeConfigs(
             resources,
-            new DescribeConfigsOptions().includeSynonyms(true)
-        ).values(), UnknownTopicOrPartitionException.class)
-    )
-        .map(config -> config.entrySet().stream()
-            .collect(toMap(
-                c -> c.getKey().name(),
-                c -> new ArrayList<>(c.getValue().entries()))));
+            new DescribeConfigsOptions().includeSynonyms(true)).values(),
+        UnknownTopicOrPartitionException.class
+    ).map(config -> config.entrySet().stream()
+        .collect(toMap(
+            c -> c.getKey().name(),
+            c -> List.copyOf(c.getValue().entries()))));
   }
 
   public Mono<Map<Integer, List<ConfigEntry>>> loadBrokersConfig(List<Integer> brokerIds) {

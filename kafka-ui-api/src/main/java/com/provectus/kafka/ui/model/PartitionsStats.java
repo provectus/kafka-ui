@@ -5,7 +5,6 @@ import java.util.List;
 import lombok.Data;
 import org.apache.kafka.clients.admin.TopicDescription;
 
-
 @Data
 public class PartitionsStats {
 

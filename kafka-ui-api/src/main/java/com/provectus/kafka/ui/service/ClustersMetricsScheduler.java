@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service;
 
 import java.util.Map;
-import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,10 +17,7 @@ public class ClustersMetricsScheduler {
 
   private final MetricsService metricsService;
 
-  @PostConstruct
-  @Scheduled(
-      fixedRateString = "${kafka.update-metrics-rate-millis:30000}",
-      initialDelayString = "${kafka.update-metrics-rate-millis:30000}")
+  @Scheduled(fixedRateString = "${kafka.update-metrics-rate-millis:30000}")
   public void updateMetrics() {
     Flux.fromIterable(clustersStorage.getKafkaClustersMap().entrySet())
         .parallel()
