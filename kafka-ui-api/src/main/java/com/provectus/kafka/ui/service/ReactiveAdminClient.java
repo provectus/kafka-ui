@@ -9,13 +9,9 @@ import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -37,16 +33,16 @@ import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
-import org.apache.kafka.common.KafkaFuture;
-import org.apache.kafka.common.Node;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.TopicPartitionReplica;
+import org.apache.kafka.common.*;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 
 @Log4j2
@@ -112,16 +108,22 @@ public class ReactiveAdminClient implements Closeable {
     return version;
   }
 
+  public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig() {
+    return listTopics(true).flatMap(this::getTopicsConfig);
+  }
+
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
     List<ConfigResource> resources = topicNames.stream()
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
         .collect(toList());
 
-    return toMono(
+    return (
+        toMonoWithExceptionFilter(
         client.describeConfigs(
             resources,
             new DescribeConfigsOptions().includeSynonyms(true)
-        ).all())
+        ).values(), UnknownTopicOrPartitionException.class)
+    )
         .map(config -> config.entrySet().stream()
             .collect(toMap(
                 c -> c.getKey().name(),
@@ -139,8 +141,47 @@ public class ReactiveAdminClient implements Closeable {
                 c -> new ArrayList<>(c.getValue().entries()))));
   }
 
+  public Mono<Map<String, TopicDescription>> describeTopics() {
+    return listTopics(true).flatMap(this::describeTopics);
+  }
+
   public Mono<Map<String, TopicDescription>> describeTopics(Collection<String> topics) {
-    return toMono(client.describeTopics(topics).all());
+    return toMonoWithExceptionFilter(
+        client.describeTopics(topics).values(),
+        UnknownTopicOrPartitionException.class
+    );
+  }
+
+  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+                                                           Class<? extends KafkaException> clazz) {
+    if (values.isEmpty()) {
+      return Mono.just(Map.of());
+    }
+
+    List<Mono<Tuple2<K, V>>> monos = values.entrySet().stream()
+        .map(e -> toMono(e.getValue()).map(r -> Tuples.of(e.getKey(), r)))
+        .collect(toList());
+
+    Mono<List<Tuple2<K, V>>> all = Mono.create(sink -> {
+      var finishedCnt = new AtomicInteger();
+      var results = Collections.synchronizedList(new ArrayList<Tuple2<K, V>>());
+      monos.forEach(mono -> mono.subscribe(
+          r -> {
+            results.add(r);
+            if (finishedCnt.incrementAndGet() == monos.size()) {
+              sink.success(results);
+            }
+          },
+          th -> {
+            if (!th.getClass().isAssignableFrom(clazz)) {
+              sink.error(th);
+            } else if (finishedCnt.incrementAndGet() == monos.size()) {
+              sink.success(results);
+            }
+          }
+      ));
+    });
+    return all.map(lst -> lst.stream().collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2)));
   }
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {
@@ -191,10 +232,6 @@ public class ReactiveAdminClient implements Closeable {
                     .findFirst().map(ConfigEntry::value)
                     .orElse("1.0-UNKNOWN")
             )));
-  }
-
-  public Mono<String> getClusterVersion() {
-    return getClusterVersionImpl(client);
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {

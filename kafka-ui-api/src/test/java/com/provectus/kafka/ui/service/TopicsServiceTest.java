@@ -17,6 +17,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,7 +39,8 @@ class TopicsServiceTest {
   private ConsumerGroupService consumerGroupService;
   @Mock
   private ClustersStorage clustersStorage;
-
+  @Mock
+  private MetricsCache metricsCache;
   @Mock
   private DeserializationService deserializationService;
 
@@ -55,7 +57,7 @@ class TopicsServiceTest {
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.empty());
+        Optional.empty(), Optional.empty()).block();
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
@@ -73,7 +75,7 @@ class TopicsServiceTest {
         );
 
     var topics = topicsService.getTopics(cluster, Optional.of(4), Optional.of(33),
-        Optional.empty(), Optional.empty(), Optional.empty());
+        Optional.empty(), Optional.empty(), Optional.empty()).block();
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(1)
         .first().extracting(TopicDTO::getName).isEqualTo("99");
@@ -91,7 +93,7 @@ class TopicsServiceTest {
         );
 
     var topics = topicsService.getTopics(cluster, Optional.of(0), Optional.of(-1),
-        Optional.empty(), Optional.empty(), Optional.empty());
+        Optional.empty(), Optional.empty(), Optional.empty()).block();
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
@@ -111,7 +113,7 @@ class TopicsServiceTest {
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.of(true),
-        Optional.empty(), Optional.empty());
+        Optional.empty(), Optional.empty()).block();
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
@@ -132,7 +134,7 @@ class TopicsServiceTest {
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.of(true),
-        Optional.empty(), Optional.empty());
+        Optional.empty(), Optional.empty()).block();
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
@@ -152,7 +154,7 @@ class TopicsServiceTest {
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.of("1"), Optional.empty());
+        Optional.of("1"), Optional.empty()).block();
     assertThat(topics.getPageCount()).isEqualTo(1);
     assertThat(topics.getTopics()).hasSize(20);
     assertThat(topics.getTopics()).map(TopicDTO::getName).isSorted();
@@ -172,7 +174,7 @@ class TopicsServiceTest {
 
     var topics = topicsService.getTopics(cluster,
         Optional.empty(), Optional.empty(), Optional.empty(),
-        Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS));
+        Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS)).block();
     assertThat(topics.getPageCount()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).map(TopicDTO::getPartitionCount).isSorted();
@@ -200,7 +202,7 @@ class TopicsServiceTest {
                     .build()))
         );
 
-    var topicConfigs = topicsService.getTopicConfigs(cluster, "1");
+    var topicConfigs = topicsService.getTopicConfigs(cluster, "1").block();
     assertThat(topicConfigs).hasSize(1);
 
     var topicConfig = topicConfigs.get(0);
@@ -216,9 +218,6 @@ class TopicsServiceTest {
 
   private KafkaCluster clusterWithTopics(Map<String, InternalTopic> topics) {
     return KafkaCluster.builder()
-        .metrics(InternalClusterMetrics.builder()
-            .topics(topics)
-            .build())
         .build();
   }
 
