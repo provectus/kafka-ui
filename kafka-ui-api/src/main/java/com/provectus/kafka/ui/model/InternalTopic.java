@@ -48,37 +48,37 @@ public class InternalTopic {
     );
     topic.name(topicDescription.name());
 
-    List<InternalPartition> partitions = topicDescription.partitions().stream().map(
-            partition -> {
-              var partitionDto = InternalPartition.builder();
+    List<InternalPartition> partitions = topicDescription.partitions().stream()
+        .map(partition -> {
+          var partitionDto = InternalPartition.builder();
 
-              partitionDto.leader(partition.leader() != null ? partition.leader().id() : null);
-              partitionDto.partition(partition.partition());
-              partitionDto.inSyncReplicasCount(partition.isr().size());
-              partitionDto.replicasCount(partition.replicas().size());
-              List<InternalReplica> replicas = partition.replicas().stream().map(
-                      r -> new InternalReplica(r.id(),
-                          partition.leader() != null && partition.leader().id() != r.id(),
-                          partition.isr().contains(r)))
-                  .collect(Collectors.toList());
-              partitionDto.replicas(replicas);
+          partitionDto.leader(partition.leader() != null ? partition.leader().id() : null);
+          partitionDto.partition(partition.partition());
+          partitionDto.inSyncReplicasCount(partition.isr().size());
+          partitionDto.replicasCount(partition.replicas().size());
+          List<InternalReplica> replicas = partition.replicas().stream()
+              .map(r -> new InternalReplica(r.id(),
+                  partition.leader() != null && partition.leader().id() != r.id(),
+                  partition.isr().contains(r)))
+              .collect(Collectors.toList());
+          partitionDto.replicas(replicas);
 
-              partitionsOffsets.get(topicDescription.name(), partition.partition())
-                  .ifPresent(offsets -> {
-                    partitionDto.offsetMin(offsets.getEarliest());
-                    partitionDto.offsetMax(offsets.getLatest());
-                  });
+          partitionsOffsets.get(topicDescription.name(), partition.partition())
+              .ifPresent(offsets -> {
+                partitionDto.offsetMin(offsets.getEarliest());
+                partitionDto.offsetMax(offsets.getLatest());
+              });
 
-              var segmentStats =
-                  logDirInfo.getPartitionsStats().get(
-                      new TopicPartition(topicDescription.name(), partition.partition()));
-              if (segmentStats != null) {
-                partitionDto.segmentCount(segmentStats.getSegmentsCount());
-                partitionDto.segmentSize(segmentStats.getSegmentSize());
-              }
+          var segmentStats =
+              logDirInfo.getPartitionsStats().get(
+                  new TopicPartition(topicDescription.name(), partition.partition()));
+          if (segmentStats != null) {
+            partitionDto.segmentCount(segmentStats.getSegmentsCount());
+            partitionDto.segmentSize(segmentStats.getSegmentSize());
+          }
 
-              return partitionDto.build();
-            })
+          return partitionDto.build();
+        })
         .collect(Collectors.toList());
 
     topic.partitions(partitions.stream().collect(
