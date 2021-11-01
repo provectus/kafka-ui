@@ -4,7 +4,7 @@ import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
-import com.provectus.kafka.ui.model.InternalClusterStats;
+import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,14 +26,14 @@ public class ClusterService {
   public List<ClusterDTO> getClusters() {
     return clustersStorage.getKafkaClusters()
         .stream()
-        .map(c -> clusterMapper.toCluster(new InternalClusterStats(c, metricsCache.get(c))))
+        .map(c -> clusterMapper.toCluster(new InternalClusterState(c, metricsCache.get(c))))
         .collect(Collectors.toList());
   }
 
   public Mono<ClusterStatsDTO> getClusterStats(KafkaCluster cluster) {
     return Mono.justOrEmpty(
         clusterMapper.toClusterStats(
-            new InternalClusterStats(cluster, metricsCache.get(cluster)))
+            new InternalClusterState(cluster, metricsCache.get(cluster)))
     );
   }
 
@@ -45,6 +45,6 @@ public class ClusterService {
 
   public Mono<ClusterDTO> updateCluster(KafkaCluster cluster) {
     return metricsService.updateCache(cluster)
-        .map(metrics -> clusterMapper.toCluster(new InternalClusterStats(cluster, metrics)));
+        .map(metrics -> clusterMapper.toCluster(new InternalClusterState(cluster, metrics)));
   }
 }

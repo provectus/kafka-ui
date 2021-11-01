@@ -20,6 +20,8 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class FeatureService {
 
+  private static final String DELETE_TOPIC_ENABLED_SERVER_PROPERTY = "delete.topic.enable";
+
   private final AdminClientService adminClientService;
 
   public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
@@ -55,7 +57,7 @@ public class FeatureService {
         .map(config ->
             config.values().stream()
                 .flatMap(Collection::stream)
-                .filter(e -> e.name().equals("delete.topic.enable"))
+                .filter(e -> e.name().equals(DELETE_TOPIC_ENABLED_SERVER_PROPERTY))
                 .map(e -> Boolean.parseBoolean(e.value()))
                 .findFirst()
                 .orElse(false));

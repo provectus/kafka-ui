@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import lombok.Data;
 
 @Data
-public class InternalClusterStats {
+public class InternalClusterState {
   private String name;
   private ServerStatusDTO status;
   private Integer topicCount;
@@ -26,7 +26,7 @@ public class InternalClusterStats {
   private BigDecimal bytesInPerSec;
   private BigDecimal bytesOutPerSec;
 
-  public InternalClusterStats(KafkaCluster cluster, MetricsCache.Metrics metrics) {
+  public InternalClusterState(KafkaCluster cluster, MetricsCache.Metrics metrics) {
     name = cluster.getName();
     status = metrics.getStatus();
     topicCount = metrics.getTopicDescriptions().size();

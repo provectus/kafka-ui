@@ -15,7 +15,7 @@ import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
-import com.provectus.kafka.ui.model.InternalClusterStats;
+import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
@@ -47,14 +47,14 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
 
-  ClusterDTO toCluster(InternalClusterStats stats);
+  ClusterDTO toCluster(InternalClusterState clusterState);
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
-  ClusterStatsDTO toClusterStats(InternalClusterStats metrics);
+  ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
   default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics) {
     return new ClusterMetricsDTO().items(jmxMetrics.getMetrics());
