@@ -111,7 +111,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               className="column"
             >
               <Search
-                handleSearch={[MockFunction]}
+                handleSearch={[Function]}
                 placeholder="Search by Topic Name"
                 value=""
               >
