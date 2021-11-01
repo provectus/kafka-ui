@@ -126,7 +126,7 @@ const List: React.FC<TopicsListProps> = ({
       setTopicsSearch(searchString);
       history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
     },
-    [search]
+    [search, pathname, perPage]
   );
 
   return (
