@@ -45,10 +45,10 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toList())
     );
 
-    var topics = pagination.getTopics(
+    var topics = pagination.getPage(
         Optional.empty(), Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTotalPages()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).isSorted();
   }
@@ -62,9 +62,9 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toList())
     );
 
-    var topics = pagination.getTopics(Optional.of(4), Optional.of(33),
+    var topics = pagination.getPage(Optional.of(4), Optional.of(33),
         Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTotalPages()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(1)
         .first().isEqualTo("99");
   }
@@ -78,9 +78,9 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toList())
     );
 
-    var topics = pagination.getTopics(Optional.of(0), Optional.of(-1),
+    var topics = pagination.getPage(Optional.of(0), Optional.of(-1),
         Optional.empty(), Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTotalPages()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).isSorted();
   }
@@ -94,10 +94,10 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toList())
     );
 
-    var topics = pagination.getTopics(
+    var topics = pagination.getPage(
         Optional.empty(), Optional.empty(), Optional.of(true),
         Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTotalPages()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).isSorted();
   }
@@ -112,10 +112,10 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toList())
     );
 
-    var topics = pagination.getTopics(
+    var topics = pagination.getPage(
         Optional.empty(), Optional.empty(), Optional.of(true),
         Optional.empty(), Optional.empty()).block();
-    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTotalPages()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).isSorted();
   }
@@ -130,10 +130,10 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toList())
     );
 
-    var topics = pagination.getTopics(
+    var topics = pagination.getPage(
         Optional.empty(), Optional.empty(), Optional.empty(),
         Optional.of("1"), Optional.empty()).block();
-    assertThat(topics.getPageCount()).isEqualTo(1);
+    assertThat(topics.getTotalPages()).isEqualTo(1);
     assertThat(topics.getTopics()).hasSize(20);
     assertThat(topics.getTopics()).isSorted();
   }
@@ -150,10 +150,10 @@ class TopicsServicePaginationTest {
 
     init(topicDescriptions);
 
-    var topics = pagination.getTopics(
+    var topics = pagination.getPage(
         Optional.empty(), Optional.empty(), Optional.empty(),
         Optional.empty(), Optional.of(TopicColumnsToSortDTO.TOTAL_PARTITIONS)).block();
-    assertThat(topics.getPageCount()).isEqualTo(4);
+    assertThat(topics.getTotalPages()).isEqualTo(4);
     assertThat(topics.getTopics()).hasSize(25);
     assertThat(topics.getTopics()).containsExactlyElementsOf(
         topicDescriptions.stream()

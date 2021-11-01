@@ -63,20 +63,20 @@ public class TopicsService {
   private final MetricsCache metricsCache;
 
   public Mono<TopicsResponseDTO> getTopics(KafkaCluster cluster,
-                                           Optional<Integer> page,
+                                           Optional<Integer> pageNum,
                                            Optional<Integer> nullablePerPage,
                                            Optional<Boolean> showInternal,
                                            Optional<String> search,
                                            Optional<TopicColumnsToSortDTO> sortBy) {
     return adminClientService.get(cluster).flatMap(ac ->
       new Pagination(ac, metricsCache.get(cluster))
-          .getTopics(page, nullablePerPage, showInternal, search, sortBy)
-          .flatMap(t ->
-              loadTopics(cluster, t.topics)
+          .getPage(pageNum, nullablePerPage, showInternal, search, sortBy)
+          .flatMap(page ->
+              loadTopics(cluster, page.getTopics())
                   .map(topics ->
                       new TopicsResponseDTO()
                           .topics(topics.stream().map(clusterMapper::toTopic).collect(toList()))
-                          .pageCount(t.pageCount))));
+                          .pageCount(page.getTotalPages()))));
   }
 
   private Mono<List<InternalTopic>> loadTopics(KafkaCluster c, List<String> topics) {
@@ -399,13 +399,13 @@ public class TopicsService {
     MetricsCache.Metrics metrics;
 
     @Value
-    static class Paging {
+    static class Page {
       List<String> topics;
-      int pageCount;
+      int totalPages;
     }
 
-    Mono<Paging> getTopics(
-        Optional<Integer> page,
+    Mono<Page> getPage(
+        Optional<Integer> pageNum,
         Optional<Integer> nullablePerPage,
         Optional<Boolean> showInternal,
         Optional<String> search,
@@ -414,7 +414,7 @@ public class TopicsService {
           .map(paginatingTopics -> {
             Predicate<Integer> positiveInt = i -> i > 0;
             int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
-            var topicsToSkip = (page.filter(positiveInt).orElse(1) - 1) * perPage;
+            var topicsToSkip = (pageNum.filter(positiveInt).orElse(1) - 1) * perPage;
             List<InternalTopic> topics = paginatingTopics.stream()
                 .filter(topic -> !topic.isInternal()
                     || showInternal.map(i -> topic.isInternal() == i).orElse(true))
@@ -433,7 +433,7 @@ public class TopicsService {
                 .map(InternalTopic::getName)
                 .collect(toList());
 
-            return new Paging(topicsToRender, totalPages);
+            return new Page(topicsToRender, totalPages);
           });
     }
 
