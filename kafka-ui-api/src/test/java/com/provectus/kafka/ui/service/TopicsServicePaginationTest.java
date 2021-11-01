@@ -19,16 +19,15 @@ import reactor.core.publisher.Mono;
 
 class TopicsServicePaginationTest {
 
-  private ReactiveAdminClient adminClient;
-  private MetricsCache.Metrics metricsCache;
   private TopicsService.Pagination pagination;
 
   private void init(Collection<TopicDescription> topicsInCache) {
-    adminClient = when(mock(ReactiveAdminClient.class).listTopics(true)).thenReturn(
-        Mono.just(topicsInCache.stream().map(TopicDescription::name).collect(Collectors.toSet()))
-    ).getMock();
+    ReactiveAdminClient adminClient = when(mock(ReactiveAdminClient.class).listTopics(true))
+        .thenReturn(Mono.just(topicsInCache.stream().map(TopicDescription::name)
+            .collect(Collectors.toSet())))
+        .getMock();
 
-    metricsCache = MetricsCache.empty().toBuilder()
+    MetricsCache.Metrics metricsCache = MetricsCache.empty().toBuilder()
         .topicDescriptions(
             topicsInCache.stream().collect(Collectors.toMap(TopicDescription::name, d -> d)))
         .build();
