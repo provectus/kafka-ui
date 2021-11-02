@@ -113,7 +113,7 @@ const App: React.FC<AppProps> = ({
               </Switch>
             </>
           ) : (
-            <PageLoader fullHeight />
+            <PageLoader />
           )}
         </main>
 

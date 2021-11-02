@@ -2,35 +2,16 @@
 
 exports[`PageLoader matches the snapshot 1`] = `
 <PageLoader>
-  <section
-    className="hero is-halfheight"
-  >
+  <styled.div>
     <div
-      className="hero-body has-text-centered"
-      style={
-        Object {
-          "justifyContent": "center",
-        }
-      }
+      className="sc-gsTEea bVlHEY"
     >
-      <div
-        style={
-          Object {
-            "width": 300,
-          }
-        }
-      >
+      <styled.div>
         <div
-          className="subtitle"
-        >
-          Loading...
-        </div>
-        <progress
-          className="progress is-small is-primary is-inline-block"
-          max="100"
+          className="sc-bdfBQB iJLklD"
         />
-      </div>
+      </styled.div>
     </div>
-  </section>
+  </styled.div>
 </PageLoader>
 `;

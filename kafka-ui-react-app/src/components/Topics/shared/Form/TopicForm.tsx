@@ -88,7 +88,7 @@ const TopicForm: React.FC<Props> = ({
               name="minInsyncReplicas"
             />
             <p className="help is-danger">
-              <ErrorMessage errors={errors} name="minInSyncReplicas" />
+              <ErrorMessage errors={errors} name="minInsyncReplicas" />
             </p>
           </div>
         </div>

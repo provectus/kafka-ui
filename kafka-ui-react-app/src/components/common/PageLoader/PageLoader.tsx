@@ -1,30 +1,37 @@
 import React from 'react';
-import cx from 'classnames';
+import { styled } from 'lib/themedStyles';
+import { Colors } from 'theme/theme';
 
-interface Props {
-  fullHeight: boolean;
-}
+const LoaderStyled = styled.div`
+  border: 10px solid ${Colors.brand[50]};
+  border-bottom: 10px solid ${Colors.neutral[0]};
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  animation: spin 1.3s linear infinite;
 
-const PageLoader: React.FC<Partial<Props>> = ({ fullHeight }) => (
-  <section
-    className={cx(
-      'hero',
-      fullHeight ? 'is-fullheight-with-navbar' : 'is-halfheight'
-    )}
-  >
-    <div
-      className="hero-body has-text-centered"
-      style={{ justifyContent: 'center' }}
-    >
-      <div style={{ width: 300 }}>
-        <div className="subtitle">Loading...</div>
-        <progress
-          className="progress is-small is-primary is-inline-block"
-          max="100"
-        />
-      </div>
-    </div>
-  </section>
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+`;
+const LoaderWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 15%;
+  height: 100%;
+  width: 100%;
+`;
+
+const PageLoader: React.FC = () => (
+  <LoaderWrapper>
+    <LoaderStyled />
+  </LoaderWrapper>
 );
 
 export default PageLoader;

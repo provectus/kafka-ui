@@ -379,12 +379,12 @@ exports[`App view matches snapshot 1`] = `
                           <div>
                             <styled.div>
                               <div
-                                className="sc-gKseQn XXMOX"
+                                className="sc-fubCzh gEgcEC"
                               >
                                 <MetricsWrapper>
                                   <styled.div>
                                     <div
-                                      className="sc-eCstlR gOlRWK"
+                                      className="sc-gKseQn cAuLuo"
                                     >
                                       <div
                                         className="indicatorsWrapper"
@@ -399,7 +399,7 @@ exports[`App view matches snapshot 1`] = `
                                         >
                                           <styled.div>
                                             <div
-                                              className="sc-jSgvzq BMRZr"
+                                              className="sc-iBPTik gkwSit"
                                             >
                                               <div>
                                                 <div
@@ -410,12 +410,12 @@ exports[`App view matches snapshot 1`] = `
                                                     text="Online"
                                                   >
                                                     <Tag
-                                                      className="sc-iBPTik chMDkL"
+                                                      className="sc-pGacB xeofJ"
                                                       color="green"
                                                       text="Online"
                                                     >
                                                       <p
-                                                        className="sc-iBPTik chMDkL"
+                                                        className="sc-pGacB xeofJ"
                                                       >
                                                         Online
                                                       </p>
@@ -453,7 +453,7 @@ exports[`App view matches snapshot 1`] = `
                                         >
                                           <styled.div>
                                             <div
-                                              className="sc-jSgvzq BMRZr"
+                                              className="sc-iBPTik gkwSit"
                                             >
                                               <div>
                                                 <div
@@ -464,12 +464,12 @@ exports[`App view matches snapshot 1`] = `
                                                     text="Offline"
                                                   >
                                                     <Tag
-                                                      className="sc-iBPTik HCCUz"
+                                                      className="sc-pGacB ijPnzN"
                                                       color="gray"
                                                       text="Offline"
                                                     >
                                                       <p
-                                                        className="sc-iBPTik HCCUz"
+                                                        className="sc-pGacB ijPnzN"
                                                       >
                                                         Offline
                                                       </p>

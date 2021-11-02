@@ -11,6 +11,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import StyledTable from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Colors } from 'theme/theme';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -49,7 +50,7 @@ const Brokers: React.FC<Props> = ({
     <>
       <div className="section">
         <PageHeading text="Brokers" />
-        <div className="metrics-box mb-2 is-flex">
+        <MetricsContainerStyled>
           <MetricsWrapper title="Uptime">
             <Indicator label="Total Brokers">{brokerCount}</Indicator>
             <Indicator label="Active Controllers">
@@ -91,7 +92,7 @@ const Brokers: React.FC<Props> = ({
               {outOfSyncReplicasCount}
             </Indicator>
           </MetricsWrapper>
-        </div>
+        </MetricsContainerStyled>
       </div>
       <StyledTable isFullwidth>
         <thead>

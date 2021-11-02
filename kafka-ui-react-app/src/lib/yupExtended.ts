@@ -52,7 +52,7 @@ export const topicFormValidationSchema = yup.object().shape({
     ),
   partitions: yup.number().required(),
   replicationFactor: yup.number().required(),
-  minInSyncReplicas: yup.number().required(),
+  minInsyncReplicas: yup.number().required(),
   cleanupPolicy: yup.string().required(),
   retentionMs: yup.number().min(-1, 'Must be greater than or equal to -1'),
   retentionBytes: yup.number(),

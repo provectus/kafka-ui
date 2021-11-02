@@ -188,7 +188,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
                   <div>
                     <styled.div>
                       <div
-                        className="sc-hHfuMS kGgRzJ"
+                        className="sc-kfzBvY eZoHHS"
                       >
                         <Route
                           exact={true}
@@ -209,7 +209,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
               role="navigation"
             >
               <nav
-                className="sc-dIUeWJ ilUdqm"
+                className="sc-dmlqKv jogELr"
                 role="navigation"
               >
                 <NavLink

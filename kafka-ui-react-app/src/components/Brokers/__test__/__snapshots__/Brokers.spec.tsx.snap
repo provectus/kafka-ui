@@ -219,252 +219,254 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               </div>
             </PageHeading>
           </Styled(PageHeading)>
-          <div
-            className="metrics-box mb-2 is-flex"
-          >
-            <MetricsWrapper
-              title="Uptime"
+          <styled.div>
+            <div
+              className="sc-gKseQn XXMOX"
             >
-              <styled.div>
-                <div
-                  className="sc-bdfBQB ewAWCQ"
-                >
-                  <h5
-                    className="is-7 has-text-weight-medium mb-2"
-                  >
-                    Uptime
-                  </h5>
+              <MetricsWrapper
+                title="Uptime"
+              >
+                <styled.div>
                   <div
-                    className="indicatorsWrapper"
+                    className="sc-bdfBQB ewAWCQ"
                   >
-                    <Indicator
-                      label="Total Brokers"
+                    <h5
+                      className="is-7 has-text-weight-medium mb-2"
                     >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Total Brokers
-                               
+                      Uptime
+                    </h5>
+                    <div
+                      className="indicatorsWrapper"
+                    >
+                      <Indicator
+                        label="Total Brokers"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Total Brokers
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Active Controllers"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Active Controllers
-                               
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Active Controllers"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Active Controllers
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Zookeeper Status"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Zookeeper Status
-                               
-                            </div>
-                            <Styled(Tag)
-                              color="gray"
-                              text="offline"
-                            >
-                              <Tag
-                                className="sc-dlfnuX gTkaKb"
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Zookeeper Status"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Zookeeper Status
+                                 
+                              </div>
+                              <Styled(Tag)
                                 color="gray"
                                 text="offline"
                               >
-                                <p
+                                <Tag
                                   className="sc-dlfnuX gTkaKb"
+                                  color="gray"
+                                  text="offline"
                                 >
-                                  offline
-                                </p>
-                              </Tag>
-                            </Styled(Tag)>
-                          </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Version"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Version
-                               
+                                  <p
+                                    className="sc-dlfnuX gTkaKb"
+                                  >
+                                    offline
+                                  </p>
+                                </Tag>
+                              </Styled(Tag)>
                             </div>
-                            1
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                  </div>
-                </div>
-              </styled.div>
-            </MetricsWrapper>
-            <MetricsWrapper
-              title="Partitions"
-            >
-              <styled.div>
-                <div
-                  className="sc-bdfBQB ewAWCQ"
-                >
-                  <h5
-                    className="is-7 has-text-weight-medium mb-2"
-                  >
-                    Partitions
-                  </h5>
-                  <div
-                    className="indicatorsWrapper"
-                  >
-                    <Indicator
-                      isAlert={true}
-                      label="Online"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Online
-                               
-                              <svg
-                                fill="none"
-                                height="4"
-                                viewBox="0 0 4 4"
-                                width="4"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <circle
-                                  cx="2"
-                                  cy="2"
-                                  fill="#E61A1A"
-                                  r="2"
-                                />
-                              </svg>
-                            </div>
-                            <span
-                              style={
-                                Object {
-                                  "color": "#E51A1A",
-                                }
-                              }
-                            >
-                              0
-                            </span>
-                            <span
-                              style={
-                                Object {
-                                  "color": "#ABB5BA",
-                                }
-                              }
-                            >
-                               
-                              of 
-                              0
-                            </span>
-                          </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="URP"
-                      title="Under replicated partitions"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Version"
+                      >
+                        <styled.div>
                           <div
-                            title="Under replicated partitions"
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Version
+                                 
+                              </div>
+                              1
+                            </div>
+                          </div>
+                        </styled.div>
+                      </Indicator>
+                    </div>
+                  </div>
+                </styled.div>
+              </MetricsWrapper>
+              <MetricsWrapper
+                title="Partitions"
+              >
+                <styled.div>
+                  <div
+                    className="sc-bdfBQB ewAWCQ"
+                  >
+                    <h5
+                      className="is-7 has-text-weight-medium mb-2"
+                    >
+                      Partitions
+                    </h5>
+                    <div
+                      className="indicatorsWrapper"
+                    >
+                      <Indicator
+                        isAlert={true}
+                        label="Online"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Online
+                                 
+                                <svg
+                                  fill="none"
+                                  height="4"
+                                  viewBox="0 0 4 4"
+                                  width="4"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <circle
+                                    cx="2"
+                                    cy="2"
+                                    fill="#E61A1A"
+                                    r="2"
+                                  />
+                                </svg>
+                              </div>
+                              <span
+                                style={
+                                  Object {
+                                    "color": "#E51A1A",
+                                  }
+                                }
+                              >
+                                0
+                              </span>
+                              <span
+                                style={
+                                  Object {
+                                    "color": "#ABB5BA",
+                                  }
+                                }
+                              >
+                                 
+                                of 
+                                0
+                              </span>
+                            </div>
+                          </div>
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="URP"
+                        title="Under replicated partitions"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
                           >
                             <div
-                              className="indicator-label"
+                              title="Under replicated partitions"
                             >
-                              URP
-                               
+                              <div
+                                className="indicator-label"
+                              >
+                                URP
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="In Sync Replicas"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              In Sync Replicas
-                               
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="In Sync Replicas"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                In Sync Replicas
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Out of Sync Replicas"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Out of Sync Replicas
-                               
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Out of Sync Replicas"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Out of Sync Replicas
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
+                        </styled.div>
+                      </Indicator>
+                    </div>
                   </div>
-                </div>
-              </styled.div>
-            </MetricsWrapper>
-          </div>
+                </styled.div>
+              </MetricsWrapper>
+            </div>
+          </styled.div>
         </div>
         <styled.table
           isFullwidth={true}
@@ -770,252 +772,254 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               </div>
             </PageHeading>
           </Styled(PageHeading)>
-          <div
-            className="metrics-box mb-2 is-flex"
-          >
-            <MetricsWrapper
-              title="Uptime"
+          <styled.div>
+            <div
+              className="sc-gKseQn XXMOX"
             >
-              <styled.div>
-                <div
-                  className="sc-bdfBQB ewAWCQ"
-                >
-                  <h5
-                    className="is-7 has-text-weight-medium mb-2"
-                  >
-                    Uptime
-                  </h5>
+              <MetricsWrapper
+                title="Uptime"
+              >
+                <styled.div>
                   <div
-                    className="indicatorsWrapper"
+                    className="sc-bdfBQB ewAWCQ"
                   >
-                    <Indicator
-                      label="Total Brokers"
+                    <h5
+                      className="is-7 has-text-weight-medium mb-2"
                     >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Total Brokers
-                               
+                      Uptime
+                    </h5>
+                    <div
+                      className="indicatorsWrapper"
+                    >
+                      <Indicator
+                        label="Total Brokers"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Total Brokers
+                                 
+                              </div>
+                              1
                             </div>
-                            1
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Active Controllers"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Active Controllers
-                               
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Active Controllers"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Active Controllers
+                                 
+                              </div>
+                              1
                             </div>
-                            1
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Zookeeper Status"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Zookeeper Status
-                               
-                            </div>
-                            <Styled(Tag)
-                              color="green"
-                              text="online"
-                            >
-                              <Tag
-                                className="sc-dlfnuX gOWcUL"
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Zookeeper Status"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Zookeeper Status
+                                 
+                              </div>
+                              <Styled(Tag)
                                 color="green"
                                 text="online"
                               >
-                                <p
+                                <Tag
                                   className="sc-dlfnuX gOWcUL"
+                                  color="green"
+                                  text="online"
                                 >
-                                  online
-                                </p>
-                              </Tag>
-                            </Styled(Tag)>
-                          </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Version"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Version
-                               
+                                  <p
+                                    className="sc-dlfnuX gOWcUL"
+                                  >
+                                    online
+                                  </p>
+                                </Tag>
+                              </Styled(Tag)>
                             </div>
-                            1
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                  </div>
-                </div>
-              </styled.div>
-            </MetricsWrapper>
-            <MetricsWrapper
-              title="Partitions"
-            >
-              <styled.div>
-                <div
-                  className="sc-bdfBQB ewAWCQ"
-                >
-                  <h5
-                    className="is-7 has-text-weight-medium mb-2"
-                  >
-                    Partitions
-                  </h5>
-                  <div
-                    className="indicatorsWrapper"
-                  >
-                    <Indicator
-                      isAlert={true}
-                      label="Online"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Online
-                               
-                              <svg
-                                fill="none"
-                                height="4"
-                                viewBox="0 0 4 4"
-                                width="4"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <circle
-                                  cx="2"
-                                  cy="2"
-                                  fill="#E61A1A"
-                                  r="2"
-                                />
-                              </svg>
-                            </div>
-                            <span
-                              style={
-                                Object {
-                                  "color": "#E51A1A",
-                                }
-                              }
-                            >
-                              64
-                            </span>
-                            <span
-                              style={
-                                Object {
-                                  "color": "#ABB5BA",
-                                }
-                              }
-                            >
-                               
-                              of 
-                              64
-                            </span>
-                          </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="URP"
-                      title="Under replicated partitions"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Version"
+                      >
+                        <styled.div>
                           <div
-                            title="Under replicated partitions"
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Version
+                                 
+                              </div>
+                              1
+                            </div>
+                          </div>
+                        </styled.div>
+                      </Indicator>
+                    </div>
+                  </div>
+                </styled.div>
+              </MetricsWrapper>
+              <MetricsWrapper
+                title="Partitions"
+              >
+                <styled.div>
+                  <div
+                    className="sc-bdfBQB ewAWCQ"
+                  >
+                    <h5
+                      className="is-7 has-text-weight-medium mb-2"
+                    >
+                      Partitions
+                    </h5>
+                    <div
+                      className="indicatorsWrapper"
+                    >
+                      <Indicator
+                        isAlert={true}
+                        label="Online"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Online
+                                 
+                                <svg
+                                  fill="none"
+                                  height="4"
+                                  viewBox="0 0 4 4"
+                                  width="4"
+                                  xmlns="http://www.w3.org/2000/svg"
+                                >
+                                  <circle
+                                    cx="2"
+                                    cy="2"
+                                    fill="#E61A1A"
+                                    r="2"
+                                  />
+                                </svg>
+                              </div>
+                              <span
+                                style={
+                                  Object {
+                                    "color": "#E51A1A",
+                                  }
+                                }
+                              >
+                                64
+                              </span>
+                              <span
+                                style={
+                                  Object {
+                                    "color": "#ABB5BA",
+                                  }
+                                }
+                              >
+                                 
+                                of 
+                                64
+                              </span>
+                            </div>
+                          </div>
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="URP"
+                        title="Under replicated partitions"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
                           >
                             <div
-                              className="indicator-label"
+                              title="Under replicated partitions"
                             >
-                              URP
-                               
+                              <div
+                                className="indicator-label"
+                              >
+                                URP
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="In Sync Replicas"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              In Sync Replicas
-                               
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="In Sync Replicas"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                In Sync Replicas
+                                 
+                              </div>
+                              64
                             </div>
-                            64
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
-                    <Indicator
-                      label="Out of Sync Replicas"
-                    >
-                      <styled.div>
-                        <div
-                          className="sc-gsTEea cvsrGp"
-                        >
-                          <div>
-                            <div
-                              className="indicator-label"
-                            >
-                              Out of Sync Replicas
-                               
+                        </styled.div>
+                      </Indicator>
+                      <Indicator
+                        label="Out of Sync Replicas"
+                      >
+                        <styled.div>
+                          <div
+                            className="sc-gsTEea cvsrGp"
+                          >
+                            <div>
+                              <div
+                                className="indicator-label"
+                              >
+                                Out of Sync Replicas
+                                 
+                              </div>
+                              0
                             </div>
-                            0
                           </div>
-                        </div>
-                      </styled.div>
-                    </Indicator>
+                        </styled.div>
+                      </Indicator>
+                    </div>
                   </div>
-                </div>
-              </styled.div>
-            </MetricsWrapper>
-          </div>
+                </styled.div>
+              </MetricsWrapper>
+            </div>
+          </styled.div>
         </div>
         <styled.table
           isFullwidth={true}
