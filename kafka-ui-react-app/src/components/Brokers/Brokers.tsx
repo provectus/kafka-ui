@@ -57,10 +57,9 @@ const Brokers: React.FC<Props> = ({
               {activeControllers}
             </Indicator>
             <Indicator label="Zookeeper Status">
-              <TagStyled
-                text={zkOnline ? 'online' : 'offline'}
-                color={zkOnline ? 'green' : 'gray'}
-              />
+              <TagStyled color={zkOnline ? 'green' : 'gray'}>
+                {zkOnline ? 'online' : 'offline'}
+              </TagStyled>
             </Indicator>
             <Indicator label="Version">{version}</Indicator>
           </MetricsWrapper>

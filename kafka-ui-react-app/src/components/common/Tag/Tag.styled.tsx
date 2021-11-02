@@ -3,12 +3,11 @@ import React from 'react';
 
 interface Props {
   className?: string;
-  text: string;
   color: 'green' | 'gray' | 'yellow';
 }
 
-const Tag: React.FC<Props> = ({ text, className }) => {
-  return <p className={className}>{text}</p>;
+const Tag: React.FC<Props> = ({ className, children }) => {
+  return <p className={className}>{children}</p>;
 };
 
 export default styled(Tag)`

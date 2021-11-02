@@ -6,6 +6,8 @@ import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import configureStore from 'redux/store/configureStore';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const store = configureStore();
 
@@ -23,22 +25,22 @@ jest.mock(
 describe('Connectors ListItem', () => {
   const connector = connectors[0];
   const setupWrapper = (props: Partial<ListItemProps> = {}) => (
-    <Provider store={store}>
-      <BrowserRouter>
-        <table>
-          <tbody>
-            <ListItem clusterName="local" connector={connector} {...props} />
-          </tbody>
-        </table>
-      </BrowserRouter>
-    </Provider>
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <BrowserRouter>
+          <table>
+            <tbody>
+              <ListItem clusterName="local" connector={connector} {...props} />
+            </tbody>
+          </table>
+        </BrowserRouter>
+      </Provider>
+    </ThemeProvider>
   );
 
   it('renders item', () => {
     const wrapper = mount(setupWrapper());
-    expect(wrapper.find('td').at(6).find('.has-text-success').text()).toEqual(
-      '2 of 2'
-    );
+    expect(wrapper.find('td').at(6).text()).toEqual('2 of 2');
   });
 
   it('renders item with failed tasks', () => {
@@ -50,9 +52,7 @@ describe('Connectors ListItem', () => {
         },
       })
     );
-    expect(wrapper.find('td').at(6).find('.has-text-danger').text()).toEqual(
-      '1 of 2'
-    );
+    expect(wrapper.find('td').at(6).text()).toEqual('1 of 2');
   });
 
   it('does not render info about tasks if taksCount is undefined', () => {

@@ -37,11 +37,11 @@ exports[`Overview view matches snapshot 1`] = `
           State
         </th>
         <td>
-          <span
-            className="tag is-success"
+          <p
+            className="sc-bdfBQB bBorDH"
           >
             RUNNING
-          </span>
+          </p>
         </td>
       </tr>
       <tr>

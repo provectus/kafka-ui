@@ -8,7 +8,9 @@ export const ListItemWrapper = styled.tr`
   }
 
   & .topic-link {
-    color: ${Colors.neutral[90]};
-    font-weight: 500;
+    & > a {
+      color: ${Colors.neutral[90]};
+      font-weight: 500;
+    }
   }
 `;

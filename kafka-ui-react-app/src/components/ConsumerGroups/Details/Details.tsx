@@ -104,7 +104,7 @@ const Details: React.FC<Props> = ({
       <MetricsContainerStyled>
         <MetricsWrapper>
           <Indicator label="State">
-            <TagStyled text={state || 'unknown'} color="yellow" />
+            <TagStyled color="yellow">{state || 'unknown'}</TagStyled>
           </Indicator>
           <Indicator label="Members">{members}</Indicator>
           <Indicator label="Assigned topics">{topics}</Indicator>

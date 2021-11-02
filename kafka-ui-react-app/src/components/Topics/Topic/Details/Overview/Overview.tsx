@@ -75,14 +75,16 @@ const Overview: React.FC<Props> = ({
             </span>
           </Indicator>
           <Indicator label="Type">
-            <TagStyled text={internal ? 'Internal' : 'External'} color="gray" />
+            <TagStyled color="gray">
+              {internal ? 'Internal' : 'External'}
+            </TagStyled>
           </Indicator>
           <Indicator label="Segment Size" title="">
             <BytesFormatted value={segmentSize} />
           </Indicator>
           <Indicator label="Segment count">{segmentCount}</Indicator>
           <Indicator label="Clean Up Policy">
-            <TagStyled text={cleanUpPolicy || 'Unknown'} color="gray" />
+            <TagStyled color="gray">{cleanUpPolicy || 'Unknown'}</TagStyled>
           </Indicator>
         </MetricsWrapper>
       </MetricsContainerStyled>

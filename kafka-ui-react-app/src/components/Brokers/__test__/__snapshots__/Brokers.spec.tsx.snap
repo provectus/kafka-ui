@@ -292,12 +292,10 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                               </div>
                               <Styled(Tag)
                                 color="gray"
-                                text="offline"
                               >
                                 <Tag
                                   className="sc-dlfnuX gTkaKb"
                                   color="gray"
-                                  text="offline"
                                 >
                                   <p
                                     className="sc-dlfnuX gTkaKb"
@@ -845,12 +843,10 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                               </div>
                               <Styled(Tag)
                                 color="green"
-                                text="online"
                               >
                                 <Tag
                                   className="sc-dlfnuX gOWcUL"
                                   color="green"
-                                  text="online"
                                 >
                                   <p
                                     className="sc-dlfnuX gOWcUL"

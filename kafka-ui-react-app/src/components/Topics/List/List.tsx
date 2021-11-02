@@ -19,9 +19,9 @@ import { PER_PAGE } from 'lib/constants';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 
 import ListItem from './ListItem';
-import { ListWrapper } from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -133,7 +133,7 @@ const List: React.FC<TopicsListProps> = ({
   );
 
   return (
-    <ListWrapper className="section">
+    <div>
       <div>
         <PageHeading text="All Topics">
           {!isReadOnly && (
@@ -147,8 +147,8 @@ const List: React.FC<TopicsListProps> = ({
             </Button>
           )}
         </PageHeading>
-        <div className="control-panel">
-          <div className="topics-search">
+        <ControlPanelWrapper>
+          <div>
             <Search
               handleSearch={searchHandler}
               placeholder="Search by Topic Name"
@@ -166,7 +166,7 @@ const List: React.FC<TopicsListProps> = ({
             />
             <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
           </div>
-        </div>
+        </ControlPanelWrapper>
       </div>
       {areTopicsFetching ? (
         <PageLoader />
@@ -259,7 +259,7 @@ const List: React.FC<TopicsListProps> = ({
           <Pagination totalPages={totalPages} />
         </div>
       )}
-    </ListWrapper>
+    </div>
   );
 };
 

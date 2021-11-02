@@ -13,6 +13,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Colors } from 'theme/theme';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -87,8 +88,8 @@ const ListItem: React.FC<ListItemProps> = ({
           )}
         </td>
       )}
-      <td className="has-text-overflow-ellipsis" style={{ width: '44%' }}>
-        {internal && <TagStyled text="IN" color="gray" />}
+      <TableKeyLink style={{ width: '44%' }}>
+        {internal && <TagStyled color="gray">IN</TagStyled>}
         <NavLink
           exact
           to={`topics/${name}`}
@@ -101,7 +102,7 @@ const ListItem: React.FC<ListItemProps> = ({
         >
           {name}
         </NavLink>
-      </td>
+      </TableKeyLink>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
       <td>{replicationFactor}</td>

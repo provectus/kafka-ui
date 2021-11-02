@@ -5,9 +5,9 @@ import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 
 import ListItem from './ListItem';
-import { ListWrapperStyled } from './List.styled';
 
 export interface ListProps {
   clusterName: ClusterName;
@@ -22,15 +22,15 @@ const List: React.FC<ListProps> = ({ consumerGroups }) => {
   };
 
   return (
-    <ListWrapperStyled>
+    <div>
       <PageHeading text="Consumers" />
-      <div className="search-wrapper">
+      <ControlPanelWrapper>
         <Search
           placeholder="Search"
           value={searchText}
           handleSearch={handleInputChange}
         />
-      </div>
+      </ControlPanelWrapper>
       <StyledTable isFullwidth>
         <thead>
           <tr>
@@ -61,7 +61,7 @@ const List: React.FC<ListProps> = ({ consumerGroups }) => {
           )}
         </tbody>
       </StyledTable>
-    </ListWrapperStyled>
+    </div>
   );
 };
 

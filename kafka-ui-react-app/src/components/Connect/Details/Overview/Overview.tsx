@@ -1,6 +1,6 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
-import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
+import TagStyled from 'components/common/Tag/Tag.styled';
 
 export interface OverviewProps {
   connector: Connector | null;
@@ -38,7 +38,7 @@ const Overview: React.FC<OverviewProps> = ({
           <tr>
             <th>State</th>
             <td>
-              <ConnectorStatusTag status={connector.status.state} />
+              <TagStyled color="yellow">{connector.status.state}</TagStyled>
             </td>
           </tr>
           <tr>

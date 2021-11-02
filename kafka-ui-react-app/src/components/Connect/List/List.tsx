@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Connect, FullConnectorInfo } from 'generated-sources';
 import { ClusterName, ConnectorSearch } from 'redux/interfaces';
 import { clusterConnectorNewPath } from 'lib/paths';
@@ -8,6 +8,12 @@ import Indicator from 'components/common/Dashboard/Indicator';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Search from 'components/common/Search/Search';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Button } from 'components/common/Button/Button';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import StyledTable from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import ListItem from './ListItem';
 
@@ -48,49 +54,51 @@ const List: React.FC<ListProps> = ({
 
   return (
     <>
-      <MetricsWrapper>
-        <Indicator
-          label="Connects"
-          title="Connects"
-          fetching={areConnectsFetching}
-        >
-          {connects.length}
-        </Indicator>
-
-        <div className="column">
-          <Search
-            handleSearch={handleSearch}
-            placeholder="Search by Connect Name, Status or Type"
-            value={search}
-          />
-        </div>
-
+      <PageHeading text="Connectors">
         {!isReadOnly && (
-          <div className="level-item level-right">
-            <Link
-              className="button is-primary"
-              to={clusterConnectorNewPath(clusterName)}
-            >
-              Create Connector
-            </Link>
-          </div>
+          <Button
+            isLink
+            buttonType="primary"
+            buttonSize="M"
+            to={clusterConnectorNewPath(clusterName)}
+          >
+            Create Connector
+          </Button>
         )}
-      </MetricsWrapper>
+      </PageHeading>
+      <MetricsContainerStyled>
+        <MetricsWrapper>
+          <Indicator
+            label="Connects"
+            title="Connects"
+            fetching={areConnectsFetching}
+          >
+            {connects.length}
+          </Indicator>
+        </MetricsWrapper>
+      </MetricsContainerStyled>
+      <ControlPanelWrapper>
+        <Search
+          handleSearch={handleSearch}
+          placeholder="Search by Connect Name, Status or Type"
+          value={search}
+        />
+      </ControlPanelWrapper>
       {areConnectorsFetching ? (
         <PageLoader />
       ) : (
-        <div className="box">
-          <table className="table is-fullwidth">
+        <div>
+          <StyledTable isFullwidth>
             <thead>
               <tr>
-                <th>Name</th>
-                <th>Connect</th>
-                <th>Type</th>
-                <th>Plugin</th>
-                <th>Topics</th>
-                <th>Status</th>
-                <th>Running Tasks</th>
-                <th> </th>
+                <TableHeaderCell title="Name" />
+                <TableHeaderCell title="Connect" />
+                <TableHeaderCell title="Type" />
+                <TableHeaderCell title="Plugin" />
+                <TableHeaderCell title="Topics" />
+                <TableHeaderCell title="Status" />
+                <TableHeaderCell title="Running Tasks" />
+                <TableHeaderCell> </TableHeaderCell>
               </tr>
             </thead>
             <tbody>
@@ -109,7 +117,7 @@ const List: React.FC<ListProps> = ({
                 />
               ))}
             </tbody>
-          </table>
+          </StyledTable>
         </div>
       )}
     </>

@@ -6,6 +6,8 @@ import { clusterConnectConnectorPath } from 'lib/paths';
 import DetailsContainer from 'components/Connect/Details/DetailsContainer';
 import Details, { DetailsProps } from 'components/Connect/Details/Details';
 import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -43,20 +45,22 @@ describe('Details', () => {
     const connectorName = 'my-connector';
 
     const setupWrapper = (props: Partial<DetailsProps> = {}) => (
-      <TestRouterWrapper
-        pathname={pathname}
-        urlParams={{ clusterName, connectName, connectorName }}
-      >
-        <Details
-          fetchConnector={jest.fn()}
-          fetchTasks={jest.fn()}
-          isConnectorFetching={false}
-          areTasksFetching={false}
-          connector={connector}
-          tasks={tasks}
-          {...props}
-        />
-      </TestRouterWrapper>
+      <ThemeProvider theme={theme}>
+        <TestRouterWrapper
+          pathname={pathname}
+          urlParams={{ clusterName, connectName, connectorName }}
+        >
+          <Details
+            fetchConnector={jest.fn()}
+            fetchTasks={jest.fn()}
+            isConnectorFetching={false}
+            areTasksFetching={false}
+            connector={connector}
+            tasks={tasks}
+            {...props}
+          />
+        </TestRouterWrapper>
+      </ThemeProvider>
     );
 
     it('matches snapshot', () => {

@@ -59,12 +59,11 @@ const TopicConsumerGroups: React.FC<Props> = ({
               <td>{consumer.coordinator?.id}</td>
               <td>
                 {consumer.state && (
-                  <TagStyled
-                    color="yellow"
-                    text={`${consumer.state
-                      .charAt(0)
-                      .toUpperCase()}${consumer.state.slice(1).toLowerCase()}`}
-                  />
+                  <TagStyled color="yellow">{`${consumer.state
+                    .charAt(0)
+                    .toUpperCase()}${consumer.state
+                    .slice(1)
+                    .toLowerCase()}`}</TagStyled>
                 )}
               </td>
             </tr>

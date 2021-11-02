@@ -50,7 +50,7 @@ const ClustersWidget: React.FC<Props> = ({
     <div>
       <MetricsContainerStyled>
         <MetricsWrapper>
-          <Indicator label={<TagStyled text="Online" color="green" />}>
+          <Indicator label={<TagStyled color="green">Online</TagStyled>}>
             <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
             <span
               style={{
@@ -61,7 +61,7 @@ const ClustersWidget: React.FC<Props> = ({
               cluster
             </span>
           </Indicator>
-          <Indicator label={<TagStyled text="Offline" color="gray" />}>
+          <Indicator label={<TagStyled color="gray">Offline</TagStyled>}>
             <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
             <span
               style={{

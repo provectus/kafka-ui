@@ -5,6 +5,7 @@ import { ClusterName } from 'redux/interfaces/cluster';
 import { clusterTopicPath } from 'lib/paths';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 import TopicContents from './TopicContents/TopicContents';
 import { ListItemWrapper } from './ListItem.styled';
@@ -25,11 +26,9 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
             <MessageToggleIcon isOpen={isOpen} />
           </IconButtonWrapper>
         </td>
-        <td>
-          <Link className="topic-link" to={clusterTopicPath(clusterName, name)}>
-            {name}
-          </Link>
-        </td>
+        <TableKeyLink>
+          <Link to={clusterTopicPath(clusterName, name)}>{name}</Link>
+        </TableKeyLink>
       </ListItemWrapper>
       {isOpen && <TopicContents consumers={consumers} />}
     </>

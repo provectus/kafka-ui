@@ -393,8 +393,9 @@ exports[`App view matches snapshot 1`] = `
                                           label={
                                             <Styled(Tag)
                                               color="green"
-                                              text="Online"
-                                            />
+                                            >
+                                              Online
+                                            </Styled(Tag)>
                                           }
                                         >
                                           <styled.div>
@@ -407,12 +408,10 @@ exports[`App view matches snapshot 1`] = `
                                                 >
                                                   <Styled(Tag)
                                                     color="green"
-                                                    text="Online"
                                                   >
                                                     <Tag
                                                       className="sc-pGacB xeofJ"
                                                       color="green"
-                                                      text="Online"
                                                     >
                                                       <p
                                                         className="sc-pGacB xeofJ"
@@ -447,8 +446,9 @@ exports[`App view matches snapshot 1`] = `
                                           label={
                                             <Styled(Tag)
                                               color="gray"
-                                              text="Offline"
-                                            />
+                                            >
+                                              Offline
+                                            </Styled(Tag)>
                                           }
                                         >
                                           <styled.div>
@@ -461,12 +461,10 @@ exports[`App view matches snapshot 1`] = `
                                                 >
                                                   <Styled(Tag)
                                                     color="gray"
-                                                    text="Offline"
                                                   >
                                                     <Tag
                                                       className="sc-pGacB ijPnzN"
                                                       color="gray"
-                                                      text="Offline"
                                                     >
                                                       <p
                                                         className="sc-pGacB ijPnzN"
