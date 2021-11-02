@@ -7,8 +7,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { fetchKsqlDbTables } from 'redux/actions/thunks/ksqlDb';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
-import { Link } from 'react-router-dom';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import TableStyled from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { Button } from 'components/common/Button/Button';
 
 const headers = [
   { Header: 'Type', accessor: 'type' },
@@ -34,32 +38,36 @@ const List: FC = () => {
 
   return (
     <>
-      <MetricsWrapper>
-        <div className="column is-flex m-0 p-0">
+      <PageHeading text="KSQL DB">
+        <Button
+          isLink
+          to={clusterKsqlDbQueryPath(clusterName)}
+          buttonType="primary"
+          buttonSize="M"
+        >
+          Execute KSQL request
+        </Button>
+      </PageHeading>
+      <MetricsContainerStyled>
+        <MetricsWrapper>
           <Indicator label="Tables" title="Tables" fetching={fetching}>
             {tablesCount}
           </Indicator>
           <Indicator label="Streams" title="Streams" fetching={fetching}>
             {streamsCount}
           </Indicator>
-        </div>
-        <Link
-          to={clusterKsqlDbQueryPath(clusterName)}
-          className="button is-primary"
-        >
-          Execute ksql
-        </Link>
-      </MetricsWrapper>
-      <div className="box">
+        </MetricsWrapper>
+      </MetricsContainerStyled>
+      <div>
         {fetching ? (
           <PageLoader />
         ) : (
-          <table className="table is-fullwidth">
+          <TableStyled isFullwidth>
             <thead>
               <tr>
                 <th> </th>
                 {headers.map(({ Header, accessor }) => (
-                  <th key={accessor}>{Header}</th>
+                  <TableHeaderCell title={Header} key={accessor} />
                 ))}
               </tr>
             </thead>
@@ -69,11 +77,13 @@ const List: FC = () => {
               ))}
               {rows.length === 0 && (
                 <tr>
-                  <td colSpan={headers.length}>No tables or streams found</td>
+                  <td colSpan={headers.length + 1}>
+                    No tables or streams found
+                  </td>
                 </tr>
               )}
             </tbody>
-          </table>
+          </TableStyled>
         )}
       </div>
     </>

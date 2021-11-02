@@ -6,6 +6,8 @@ import configureStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { RootState } from 'redux/interfaces';
 import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const emptyPlaceholder = 'No tables or streams found';
 
@@ -28,11 +30,13 @@ describe('KsqlDb List', () => {
     const store = mockStore(initialState);
 
     const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <List />
-        </Provider>
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <Provider store={store}>
+            <List />
+          </Provider>
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     expect(
@@ -50,11 +54,13 @@ describe('KsqlDb List', () => {
     const store = mockStore(initialState);
 
     const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <List />
-        </Provider>
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <Provider store={store}>
+            <List />
+          </Provider>
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     // 2 streams, 2 tables and 1 head tr
