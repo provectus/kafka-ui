@@ -42,6 +42,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
           }
           setOptions={{
             showLineNumbers: false,
+            printMargin: false,
             maxLines: 40,
           }}
           readOnly

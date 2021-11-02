@@ -52,6 +52,13 @@ exports[`Details View Initial state matches snapshot 1`] = `
         className="level-right buttons"
       >
         <Link
+          className="button is-info"
+          to="/ui/clusters/testCluster/schemas/test/diff/1/1"
+          type="button"
+        >
+          Compare Versions
+        </Link>
+        <Link
           className="button is-warning"
           to="/ui/clusters/testCluster/schemas/test/edit"
           type="button"
@@ -220,6 +227,13 @@ exports[`Details View when page with schema versions loaded when schema has vers
       <div
         className="level-right buttons"
       >
+        <Link
+          className="button is-info"
+          to="/ui/clusters/testCluster/schemas/test/diff/1/2"
+          type="button"
+        >
+          Compare Versions
+        </Link>
         <Link
           className="button is-warning"
           to="/ui/clusters/testCluster/schemas/test/edit"
@@ -404,6 +418,13 @@ exports[`Details View when page with schema versions loaded when versions are em
       <div
         className="level-right buttons"
       >
+        <Link
+          className="button is-info"
+          to="/ui/clusters/testCluster/schemas/test/diff/1/1"
+          type="button"
+        >
+          Compare Versions
+        </Link>
         <Link
           className="button is-warning"
           to="/ui/clusters/testCluster/schemas/test/edit"

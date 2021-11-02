@@ -55,6 +55,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         setOptions={
           Object {
             "maxLines": 40,
+            "printMargin": false,
             "showLineNumbers": false,
           }
         }

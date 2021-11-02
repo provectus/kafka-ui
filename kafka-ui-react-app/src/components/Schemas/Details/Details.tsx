@@ -2,7 +2,11 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import { clusterSchemasPath, clusterSchemaSchemaEditPath } from 'lib/paths';
+import {
+  clusterSchemasPath,
+  clusterSchemaSchemaEditPath,
+  clusterSchemaSchemaDiffPath,
+} from 'lib/paths';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
 import { Link } from 'react-router-dom';
@@ -85,6 +89,20 @@ const Details: React.FC<DetailsProps> = ({
               </div>
               {!isReadOnly && (
                 <div className="level-right buttons">
+                  <Link
+                    className="button is-info"
+                    type="button"
+                    to={clusterSchemaSchemaDiffPath(
+                      clusterName,
+                      subject,
+                      schema.version,
+                      versions && versions.length > 1
+                        ? versions[1].version
+                        : schema.version
+                    )}
+                  >
+                    Compare Versions
+                  </Link>
                   <Link
                     className="button is-warning"
                     type="button"

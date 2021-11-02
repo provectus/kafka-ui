@@ -63,6 +63,12 @@ $navbar-width: 250px;
   z-index: 30 !important;
 }
 
+.codeMarker  {
+  background: #ffff99;
+  position: absolute;
+  z-index: 20;
+}
+
 @media screen and (max-width: 1023px) {
   .Layout {
     min-width: initial;

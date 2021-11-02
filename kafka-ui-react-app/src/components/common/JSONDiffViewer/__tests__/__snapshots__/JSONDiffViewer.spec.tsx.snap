@@ -1,0 +1,237 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`JSONEditor component matches the snapshot 1`] = `
+<DiffComponent
+  cursorStart={1}
+  editorProps={Object {}}
+  enableBasicAutocompletion={false}
+  enableLiveAutocompletion={false}
+  focus={false}
+  fontSize={12}
+  height="64px"
+  highlightActiveLine={true}
+  maxLines={Infinity}
+  minLines={null}
+  mode="json5"
+  name="name"
+  onChange={null}
+  onLoad={null}
+  onPaste={null}
+  onScroll={null}
+  orientation="beside"
+  readOnly={true}
+  scrollMargin={
+    Array [
+      0,
+      0,
+      0,
+      0,
+    ]
+  }
+  setOptions={Object {}}
+  showGutter={true}
+  showPrintMargin={false}
+  splits={2}
+  style={Object {}}
+  tabSize={2}
+  theme="textmate"
+  value={
+    Array [
+      "{
+}",
+      "{
+test: true
+}",
+    ]
+  }
+  width="100%"
+  wrapEnabled={true}
+/>
+`;
+
+exports[`JSONEditor component matches the snapshot with fixed height 1`] = `
+<DiffComponent
+  cursorStart={1}
+  editorProps={Object {}}
+  enableBasicAutocompletion={false}
+  enableLiveAutocompletion={false}
+  focus={false}
+  fontSize={12}
+  height="500px"
+  highlightActiveLine={true}
+  maxLines={Infinity}
+  minLines={null}
+  mode="json5"
+  name="name"
+  onChange={null}
+  onLoad={null}
+  onPaste={null}
+  onScroll={null}
+  orientation="beside"
+  readOnly={true}
+  scrollMargin={
+    Array [
+      0,
+      0,
+      0,
+      0,
+    ]
+  }
+  setOptions={Object {}}
+  showGutter={true}
+  showPrintMargin={false}
+  splits={2}
+  style={Object {}}
+  tabSize={2}
+  theme="textmate"
+  value={
+    Array [
+      "{
+}",
+      "{
+test: true
+}",
+    ]
+  }
+  width="100%"
+  wrapEnabled={true}
+/>
+`;
+
+exports[`JSONEditor component matches the snapshot with fixed height with no value 1`] = `
+<DiffComponent
+  cursorStart={1}
+  editorProps={Object {}}
+  enableBasicAutocompletion={false}
+  enableLiveAutocompletion={false}
+  focus={false}
+  fontSize={12}
+  height="500px"
+  highlightActiveLine={true}
+  maxLines={Infinity}
+  minLines={null}
+  mode="json5"
+  name="name"
+  onChange={null}
+  onLoad={null}
+  onPaste={null}
+  onScroll={null}
+  orientation="beside"
+  readOnly={true}
+  scrollMargin={
+    Array [
+      0,
+      0,
+      0,
+      0,
+    ]
+  }
+  setOptions={Object {}}
+  showGutter={true}
+  showPrintMargin={false}
+  splits={2}
+  style={Object {}}
+  tabSize={2}
+  theme="textmate"
+  value={
+    Array [
+      "",
+      "",
+    ]
+  }
+  width="100%"
+  wrapEnabled={true}
+/>
+`;
+
+exports[`JSONEditor component matches the snapshot without fixed height with no value 1`] = `
+<DiffComponent
+  cursorStart={1}
+  editorProps={Object {}}
+  enableBasicAutocompletion={false}
+  enableLiveAutocompletion={false}
+  focus={false}
+  fontSize={12}
+  height="500px"
+  highlightActiveLine={true}
+  maxLines={Infinity}
+  minLines={null}
+  mode="json5"
+  name="name"
+  onChange={null}
+  onLoad={null}
+  onPaste={null}
+  onScroll={null}
+  orientation="beside"
+  readOnly={true}
+  scrollMargin={
+    Array [
+      0,
+      0,
+      0,
+      0,
+    ]
+  }
+  setOptions={Object {}}
+  showGutter={true}
+  showPrintMargin={false}
+  splits={2}
+  style={Object {}}
+  tabSize={2}
+  theme="textmate"
+  value={
+    Array [
+      "",
+      "",
+    ]
+  }
+  width="100%"
+  wrapEnabled={true}
+/>
+`;
+
+exports[`JSONEditor component matches the snapshot without fixed height with one value 1`] = `
+<DiffComponent
+  cursorStart={1}
+  editorProps={Object {}}
+  enableBasicAutocompletion={false}
+  enableLiveAutocompletion={false}
+  focus={false}
+  fontSize={12}
+  height="500px"
+  highlightActiveLine={true}
+  maxLines={Infinity}
+  minLines={null}
+  mode="json5"
+  name="name"
+  onChange={null}
+  onLoad={null}
+  onPaste={null}
+  onScroll={null}
+  orientation="beside"
+  readOnly={true}
+  scrollMargin={
+    Array [
+      0,
+      0,
+      0,
+      0,
+    ]
+  }
+  setOptions={Object {}}
+  showGutter={true}
+  showPrintMargin={false}
+  splits={2}
+  style={Object {}}
+  tabSize={2}
+  theme="textmate"
+  value={
+    Array [
+      "{
+}",
+    ]
+  }
+  width="100%"
+  wrapEnabled={true}
+/>
+`;

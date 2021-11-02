@@ -4,12 +4,15 @@ import {
   clusterSchemaNewPath,
   clusterSchemaPath,
   clusterSchemasPath,
+  clusterSchemaSchemaEditPath,
+  clusterSchemaSchemaDiffPath,
 } from 'lib/paths';
 
 import ListContainer from './List/ListContainer';
 import DetailsContainer from './Details/DetailsContainer';
 import NewContainer from './New/NewContainer';
 import EditContainer from './Edit/EditContainer';
+import DiffContainer from './Diff/DiffContainer';
 
 const Schemas: React.FC = () => (
   <Switch>
@@ -30,8 +33,18 @@ const Schemas: React.FC = () => (
     />
     <Route
       exact
-      path="/ui/clusters/:clusterName/schemas/:subject/edit"
+      path={clusterSchemaSchemaEditPath(':clusterName', ':subject')}
       component={EditContainer}
+    />
+    <Route
+      exact
+      path={clusterSchemaSchemaDiffPath(
+        ':clusterName',
+        ':subject',
+        ':leftVersion?',
+        ':rightVersion?'
+      )}
+      component={DiffContainer}
     />
   </Switch>
 );

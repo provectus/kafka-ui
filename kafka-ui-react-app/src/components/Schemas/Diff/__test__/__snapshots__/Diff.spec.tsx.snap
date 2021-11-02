@@ -1,0 +1,510 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Diff View Initial state matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/testCluster/schemas",
+            "label": "Schema Registry",
+          },
+          Object {
+            "href": "/ui/clusters/testCluster/schemas/test/latest",
+            "label": "test",
+          },
+        ]
+      }
+    >
+      Compare Versions
+    </Breadcrumb>
+  </div>
+  <div
+    className="box tile is-ancestor is-vertical"
+  >
+    <div
+      className="tile"
+    >
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue=""
+            id="left-select"
+            onChange={[Function]}
+          />
+        </div>
+      </div>
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue=""
+            id="right-select"
+            onChange={[Function]}
+          />
+        </div>
+      </div>
+    </div>
+    <div
+      className="tile pt-5"
+    >
+      <JSONDiffViewer
+        isFixedHeight={false}
+        setOptions={
+          Object {
+            "autoScrollEditorIntoView": true,
+          }
+        }
+        value={
+          Array [
+            "",
+            "",
+          ]
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Diff View when page with schema versions is loading matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/testCluster/schemas",
+            "label": "Schema Registry",
+          },
+          Object {
+            "href": "/ui/clusters/testCluster/schemas/test/latest",
+            "label": "test",
+          },
+        ]
+      }
+    >
+      Compare Versions
+    </Breadcrumb>
+  </div>
+  <PageLoader />
+</div>
+`;
+
+exports[`Diff View when schema versions are loaded and no specified versions in path matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/testCluster/schemas",
+            "label": "Schema Registry",
+          },
+          Object {
+            "href": "/ui/clusters/testCluster/schemas/test/latest",
+            "label": "test",
+          },
+        ]
+      }
+    >
+      Compare Versions
+    </Breadcrumb>
+  </div>
+  <div
+    className="box tile is-ancestor is-vertical"
+  >
+    <div
+      className="tile"
+    >
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue=""
+            id="left-select"
+            onChange={[Function]}
+          >
+            <option
+              key="left-3"
+              value="3"
+            >
+              Version 3
+            </option>
+            <option
+              key="left-2"
+              value="2"
+            >
+              Version 2
+            </option>
+            <option
+              key="left-1"
+              value="1"
+            >
+              Version 1
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue=""
+            id="right-select"
+            onChange={[Function]}
+          >
+            <option
+              key="right-3"
+              value="3"
+            >
+              Version 3
+            </option>
+            <option
+              key="right-2"
+              value="2"
+            >
+              Version 2
+            </option>
+            <option
+              key="right-1"
+              value="1"
+            >
+              Version 1
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div
+      className="tile pt-5"
+    >
+      <JSONDiffViewer
+        isFixedHeight={false}
+        setOptions={
+          Object {
+            "autoScrollEditorIntoView": true,
+          }
+        }
+        value={
+          Array [
+            "syntax = \\"proto3\\";
+package com.indeed;
+
+message MyRecord {
+  int32 id = 1;
+  string name = 2;
+}
+",
+            "syntax = \\"proto3\\";
+package com.indeed;
+
+message MyRecord {
+  int32 id = 1;
+  string name = 2;
+}
+",
+          ]
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Diff View when schema versions are loaded and only one versions in path matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/testCluster/schemas",
+            "label": "Schema Registry",
+          },
+          Object {
+            "href": "/ui/clusters/testCluster/schemas/test/latest",
+            "label": "test",
+          },
+        ]
+      }
+    >
+      Compare Versions
+    </Breadcrumb>
+  </div>
+  <div
+    className="box tile is-ancestor is-vertical"
+  >
+    <div
+      className="tile"
+    >
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="1"
+            id="left-select"
+            onChange={[Function]}
+          >
+            <option
+              key="left-3"
+              value="3"
+            >
+              Version 3
+            </option>
+            <option
+              key="left-2"
+              value="2"
+            >
+              Version 2
+            </option>
+            <option
+              key="left-1"
+              value="1"
+            >
+              Version 1
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue=""
+            id="right-select"
+            onChange={[Function]}
+          >
+            <option
+              key="right-3"
+              value="3"
+            >
+              Version 3
+            </option>
+            <option
+              key="right-2"
+              value="2"
+            >
+              Version 2
+            </option>
+            <option
+              key="right-1"
+              value="1"
+            >
+              Version 1
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div
+      className="tile pt-5"
+    >
+      <JSONDiffViewer
+        isFixedHeight={false}
+        setOptions={
+          Object {
+            "autoScrollEditorIntoView": true,
+          }
+        }
+        value={
+          Array [
+            "{
+	\\"type\\": \\"record\\",
+	\\"name\\": \\"MyRecord1\\",
+	\\"namespace\\": \\"com.mycompany\\",
+	\\"fields\\": [
+		{
+			\\"name\\": \\"id\\",
+			\\"type\\": \\"long\\"
+		}
+	]
+}",
+            "syntax = \\"proto3\\";
+package com.indeed;
+
+message MyRecord {
+  int32 id = 1;
+  string name = 2;
+}
+",
+          ]
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Diff View when schema versions are loaded and two versions in path matches snapshot 1`] = `
+<div
+  className="section"
+>
+  <div
+    className="level"
+  >
+    <Breadcrumb
+      links={
+        Array [
+          Object {
+            "href": "/ui/clusters/testCluster/schemas",
+            "label": "Schema Registry",
+          },
+          Object {
+            "href": "/ui/clusters/testCluster/schemas/test/latest",
+            "label": "test",
+          },
+        ]
+      }
+    >
+      Compare Versions
+    </Breadcrumb>
+  </div>
+  <div
+    className="box tile is-ancestor is-vertical"
+  >
+    <div
+      className="tile"
+    >
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="1"
+            id="left-select"
+            onChange={[Function]}
+          >
+            <option
+              key="left-3"
+              value="3"
+            >
+              Version 3
+            </option>
+            <option
+              key="left-2"
+              value="2"
+            >
+              Version 2
+            </option>
+            <option
+              key="left-1"
+              value="1"
+            >
+              Version 1
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        className="tile is-6"
+      >
+        <div
+          className="select"
+        >
+          <select
+            defaultValue="2"
+            id="right-select"
+            onChange={[Function]}
+          >
+            <option
+              key="right-3"
+              value="3"
+            >
+              Version 3
+            </option>
+            <option
+              key="right-2"
+              value="2"
+            >
+              Version 2
+            </option>
+            <option
+              key="right-1"
+              value="1"
+            >
+              Version 1
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+    <div
+      className="tile pt-5"
+    >
+      <JSONDiffViewer
+        isFixedHeight={false}
+        setOptions={
+          Object {
+            "autoScrollEditorIntoView": true,
+          }
+        }
+        value={
+          Array [
+            "{
+	\\"type\\": \\"record\\",
+	\\"name\\": \\"MyRecord1\\",
+	\\"namespace\\": \\"com.mycompany\\",
+	\\"fields\\": [
+		{
+			\\"name\\": \\"id\\",
+			\\"type\\": \\"long\\"
+		}
+	]
+}",
+            "{
+	\\"type\\": \\"record\\",
+	\\"name\\": \\"MyRecord2\\",
+	\\"namespace\\": \\"com.mycompany\\",
+	\\"fields\\": [
+		{
+			\\"name\\": \\"id\\",
+			\\"type\\": \\"long\\"
+		}
+	]
+}",
+          ]
+        }
+      />
+    </div>
+  </div>
+</div>
+`;
