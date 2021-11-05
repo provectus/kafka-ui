@@ -6,9 +6,10 @@ export const TopicContentWrapper = styled.tr`
   & > td {
     padding: 16px !important;
   }
-  & .content-box {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-  }
+`;
+
+export const ContentBox = styled.div`
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
 `;

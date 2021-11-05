@@ -17,27 +17,27 @@ export const EditWrapper = styled.div`
       }
     }
 
-    & > .editors-wrapper {
-      display: flex;
-      gap: 16px;
-
-      & > * {
-        flex-grow: 1;
-        border: 1px solid #e3e6e8;
-        border-radius: 8px;
-        padding: 16px;
-        & > h4 {
-          font-weight: 500;
-          font-size: 16px;
-          line-height: 24px;
-          padding-bottom: 16px;
-        }
-      }
-    }
-
     & > button:last-child {
       width: 72px;
       align-self: center;
+    }
+  }
+`;
+
+export const EditorsWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+
+  & > * {
+    flex-grow: 1;
+    border: 1px solid #e3e6e8;
+    border-radius: 8px;
+    padding: 16px;
+    & > h4 {
+      font-weight: 500;
+      font-size: 16px;
+      line-height: 24px;
+      padding-bottom: 16px;
     }
   }
 `;

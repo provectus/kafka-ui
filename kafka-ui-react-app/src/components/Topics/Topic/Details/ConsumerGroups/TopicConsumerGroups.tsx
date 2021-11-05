@@ -1,11 +1,12 @@
 import React from 'react';
 import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
-import { useHistory } from 'react-router';
 import { clusterConsumerGroupsPath } from 'lib/paths';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import TagStyled from 'components/common/Tag/Tag.styled';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import { Link } from 'react-router-dom';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -27,13 +28,6 @@ const TopicConsumerGroups: React.FC<Props> = ({
     fetchTopicConsumerGroups(clusterName, topicName);
   }, []);
 
-  const history = useHistory();
-  function goToConsumerGroupDetails(consumer: ConsumerGroup) {
-    history.push(
-      `${clusterConsumerGroupsPath(clusterName)}/${consumer.groupId}`
-    );
-  }
-
   return (
     <div>
       <StyledTable isFullwidth>
@@ -48,12 +42,16 @@ const TopicConsumerGroups: React.FC<Props> = ({
         </thead>
         <tbody>
           {consumerGroups.map((consumer) => (
-            <tr
-              key={consumer.groupId}
-              className="is-clickable"
-              onClick={() => goToConsumerGroupDetails(consumer)}
-            >
-              <td style={{ fontWeight: 500 }}>{consumer.groupId}</td>
+            <tr key={consumer.groupId}>
+              <TableKeyLink>
+                <Link
+                  to={`${clusterConsumerGroupsPath(clusterName)}/${
+                    consumer.groupId
+                  }`}
+                >
+                  {consumer.groupId}
+                </Link>
+              </TableKeyLink>
               <td>{consumer.members}</td>
               <td>{consumer.messagesBehind}</td>
               <td>{consumer.coordinator?.id}</td>

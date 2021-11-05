@@ -4,13 +4,11 @@ exports[`Filters component matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-iBPTik jJxlZt"
+      class="sc-iBPTik dZQJlN"
     >
-      <div
-        class="filters-row-1"
-      >
+      <div>
         <div
-          class="filters-inputs"
+          class="sc-fubCzh hdDORc"
         >
           <div
             class="sc-dlfnuX gxtwfA"
@@ -27,7 +25,7 @@ exports[`Filters component matches the snapshot 1`] = `
             />
           </div>
           <div
-            class="seek-type-selector-wrapper"
+            class="sc-pGacB gClcpR"
           >
             <div
               class="select-wrapper sc-jSgvzq hTFgyW"
@@ -148,53 +146,53 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="filters-metrics"
+        class="sc-jrAFXE jxpOcQ"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="metric"
+          class="sc-kEjbQP dufThU"
           title="Elapsed Time"
         >
-          <span
-            class="metric-icon"
+          <div
+            class="sc-iqHYmW CqIes"
           >
             <i
               class="far fa-clock"
             />
-          </span>
+          </div>
           <span>
             0
              ms
           </span>
         </div>
         <div
-          class="metric"
+          class="sc-kEjbQP dufThU"
           title="Bytes Consumed"
         >
-          <span
-            class="metric-icon"
+          <div
+            class="sc-iqHYmW CqIes"
           >
             <i
               class="fas fa-arrow-down"
             />
-          </span>
+          </div>
           <span>
             0Bytes
           </span>
         </div>
         <div
-          class="metric"
+          class="sc-kEjbQP dufThU"
           title="Messages Consumed"
         >
-          <span
-            class="metric-icon"
+          <div
+            class="sc-iqHYmW CqIes"
           >
             <i
               class="far fa-file-alt"
             />
-          </span>
+          </div>
           <span>
              messages
           </span>
@@ -209,13 +207,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-iBPTik jJxlZt"
+      class="sc-iBPTik dZQJlN"
     >
-      <div
-        class="filters-row-1"
-      >
+      <div>
         <div
-          class="filters-inputs"
+          class="sc-fubCzh hdDORc"
         >
           <div
             class="sc-dlfnuX gxtwfA"
@@ -232,7 +228,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             />
           </div>
           <div
-            class="seek-type-selector-wrapper"
+            class="sc-pGacB gClcpR"
           >
             <div
               class="select-wrapper sc-jSgvzq hTFgyW"
@@ -353,53 +349,53 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="filters-metrics"
+        class="sc-jrAFXE jxpOcQ"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="metric"
+          class="sc-kEjbQP dufThU"
           title="Elapsed Time"
         >
-          <span
-            class="metric-icon"
+          <div
+            class="sc-iqHYmW CqIes"
           >
             <i
               class="far fa-clock"
             />
-          </span>
+          </div>
           <span>
             0
              ms
           </span>
         </div>
         <div
-          class="metric"
+          class="sc-kEjbQP dufThU"
           title="Bytes Consumed"
         >
-          <span
-            class="metric-icon"
+          <div
+            class="sc-iqHYmW CqIes"
           >
             <i
               class="fas fa-arrow-down"
             />
-          </span>
+          </div>
           <span>
             0Bytes
           </span>
         </div>
         <div
-          class="metric"
+          class="sc-kEjbQP dufThU"
           title="Messages Consumed"
         >
-          <span
-            class="metric-icon"
+          <div
+            class="sc-iqHYmW CqIes"
           >
             <i
               class="far fa-file-alt"
             />
-          </span>
+          </div>
           <span>
              messages
           </span>

@@ -12,7 +12,12 @@ import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { resetExecutionResult } from 'redux/actions';
 import { Button } from 'components/common/Button/Button';
 
-import { QueryWrapper } from './Query.styled';
+import {
+  KSQLButtons,
+  KSQLInputHeader,
+  KSQLInputsWrapper,
+  QueryWrapper,
+} from './Query.styled';
 
 type FormValues = {
   ksql: string;
@@ -64,9 +69,9 @@ const Query: FC = () => {
     <>
       <QueryWrapper>
         <form onSubmit={handleSubmit(submitHandler)}>
-          <div className="ksql-inputs-wrapper">
+          <KSQLInputsWrapper>
             <div>
-              <div className="ksql-input-header">
+              <KSQLInputHeader>
                 <label>KSQL</label>
                 <Button
                   onClick={() => setValue('ksql', '')}
@@ -76,7 +81,7 @@ const Query: FC = () => {
                 >
                   Clear
                 </Button>
-              </div>
+              </KSQLInputHeader>
               <Controller
                 control={control}
                 name="ksql"
@@ -86,7 +91,7 @@ const Query: FC = () => {
               />
             </div>
             <div>
-              <div className="ksql-input-header">
+              <KSQLInputHeader>
                 <label>Stream properties</label>
                 <Button
                   onClick={() => setValue('streamsProperties', '')}
@@ -96,7 +101,7 @@ const Query: FC = () => {
                 >
                   Clear
                 </Button>
-              </div>
+              </KSQLInputHeader>
               <Controller
                 control={control}
                 name="streamsProperties"
@@ -105,8 +110,8 @@ const Query: FC = () => {
                 )}
               />
             </div>
-          </div>
-          <div className="ksql-buttons">
+          </KSQLInputsWrapper>
+          <KSQLButtons>
             <Button
               buttonType="primary"
               buttonSize="M"
@@ -123,7 +128,7 @@ const Query: FC = () => {
             >
               Clear results
             </Button>
-          </div>
+          </KSQLButtons>
         </form>
       </QueryWrapper>
       <ResultRenderer result={executionResult} />

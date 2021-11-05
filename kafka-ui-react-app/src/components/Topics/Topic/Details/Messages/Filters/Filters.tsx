@@ -22,7 +22,14 @@ import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 
-import { FiltersWrapper } from './Filters.styled';
+import {
+  FilterInputs,
+  FiltersMetrics,
+  FiltersWrapper,
+  Metric,
+  MetricsIcon,
+  SeekTypeSelectorWrapper,
+} from './Filters.styled';
 import {
   filterOptions,
   getOffsetFromSeekToParam,
@@ -229,8 +236,8 @@ const Filters: React.FC<FiltersProps> = ({
 
   return (
     <FiltersWrapper>
-      <div className="filters-row-1">
-        <div className="filters-inputs">
+      <div>
+        <FilterInputs>
           <Input
             inputSize="M"
             id="searchText"
@@ -241,7 +248,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={({ target: { value } }) => setQuery(value)}
           />
           {isSeekTypeControlVisible && (
-            <div className="seek-type-selector-wrapper">
+            <SeekTypeSelectorWrapper>
               <Select
                 id="selectSeekType"
                 onChange={({ target: { value } }) =>
@@ -273,7 +280,7 @@ const Filters: React.FC<FiltersProps> = ({
                   placeholderText="Select timestamp"
                 />
               )}
-            </div>
+            </SeekTypeSelectorWrapper>
           )}
           <MultiSelect
             options={partitions.map((p) => ({
@@ -308,36 +315,37 @@ const Filters: React.FC<FiltersProps> = ({
               Submit
             </Button>
           )}
-        </div>
+        </FilterInputs>
         <Select
           selectSize="M"
           onChange={(e) => toggleSeekDirection(e.target.value)}
+          value={seekDirection}
         >
           <option value={SeekDirection.FORWARD}>Latest first</option>
           <option value={SeekDirection.BACKWARD}>Newest first</option>
         </Select>
       </div>
-      <div className="filters-metrics">
+      <FiltersMetrics>
         <p style={{ fontSize: 14 }}>{isFetching && phaseMessage}</p>
-        <div className="metric" title="Elapsed Time">
-          <span className="metric-icon">
+        <Metric title="Elapsed Time">
+          <MetricsIcon>
             <i className="far fa-clock" />
-          </span>
+          </MetricsIcon>
           <span>{Math.max(elapsedMs || 0, 0)} ms</span>
-        </div>
-        <div className="metric" title="Bytes Consumed">
-          <span className="metric-icon">
+        </Metric>
+        <Metric title="Bytes Consumed">
+          <MetricsIcon>
             <i className="fas fa-arrow-down" />
-          </span>
+          </MetricsIcon>
           <BytesFormatted value={bytesConsumed} />
-        </div>
-        <div className="metric" title="Messages Consumed">
-          <span className="metric-icon">
+        </Metric>
+        <Metric title="Messages Consumed">
+          <MetricsIcon>
             <i className="far fa-file-alt" />
-          </span>
+          </MetricsIcon>
           <span>{messagesConsumed} messages</span>
-        </div>
-      </div>
+        </Metric>
+      </FiltersMetrics>
     </FiltersWrapper>
   );
 };
