@@ -2,65 +2,123 @@
 
 exports[`Overview view matches snapshot 1`] = `
 <div
-  className="tile is-6"
+  className="sc-gsTEea flVlgT"
 >
-  <table
-    className="table is-fullwidth"
+  <div
+    className="sc-dlfnuX dFHFnR"
   >
-    <tbody>
-      <tr>
-        <th>
-          Worker
-        </th>
-        <td>
-          kafka-connect0:8083
-        </td>
-      </tr>
-      <tr>
-        <th>
-          Type
-        </th>
-        <td>
-          SOURCE
-        </td>
-      </tr>
-      <tr>
-        <th>
-          Class
-        </th>
-        <td>
-          FileStreamSource
-        </td>
-      </tr>
-      <tr>
-        <th>
-          State
-        </th>
-        <td>
-          <p
-            className="sc-bdfBQB bBorDH"
+    <div
+      className="indicatorsWrapper"
+    >
+      <div
+        className="sc-hKgJUU fxliYU"
+      >
+        <div>
+          <div
+            className="indicator-label"
           >
-            RUNNING
-          </p>
-        </td>
-      </tr>
-      <tr>
-        <th>
-          Tasks Running
-        </th>
-        <td>
-          10
-        </td>
-      </tr>
-      <tr>
-        <th>
-          Tasks Failed
-        </th>
-        <td>
-          2
-        </td>
-      </tr>
-    </tbody>
-  </table>
+            Worker
+             
+          </div>
+          <span>
+            kafka-connect0:8083
+          </span>
+        </div>
+      </div>
+      <div
+        className="sc-hKgJUU fxliYU"
+      >
+        <div>
+          <div
+            className="indicator-label"
+          >
+            Type
+             
+          </div>
+          <span>
+            SOURCE
+          </span>
+        </div>
+      </div>
+      <div
+        className="sc-hKgJUU fxliYU"
+      >
+        <div>
+          <div
+            className="indicator-label"
+          >
+            Class
+             
+          </div>
+          <span>
+            FileStreamSource
+          </span>
+        </div>
+      </div>
+      <div
+        className="sc-hKgJUU fxliYU"
+      >
+        <div>
+          <div
+            className="indicator-label"
+          >
+            State
+             
+          </div>
+          <span>
+            <p
+              className="sc-bdfBQB bBorDH"
+            >
+              RUNNING
+            </p>
+          </span>
+        </div>
+      </div>
+      <div
+        className="sc-hKgJUU fxliYU"
+      >
+        <div>
+          <div
+            className="indicator-label"
+          >
+            Tasks running
+             
+          </div>
+          <span>
+            10
+          </span>
+        </div>
+      </div>
+      <div
+        className="sc-hKgJUU fxliYU"
+      >
+        <div>
+          <div
+            className="indicator-label"
+          >
+            Tasks failed
+             
+            <svg
+              fill="none"
+              height="4"
+              viewBox="0 0 4 4"
+              width="4"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <circle
+                cx="2"
+                cy="2"
+                fill="#E61A1A"
+                r="2"
+              />
+            </svg>
+          </div>
+          <span>
+            2
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 `;

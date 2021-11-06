@@ -2,17 +2,15 @@
 
 exports[`Actions view matches snapshot 1`] = `
 <div
-  className="buttons"
+  className="sc-gsTEea fGTfUx"
 >
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-pause"
       />
@@ -22,14 +20,12 @@ exports[`Actions view matches snapshot 1`] = `
     </span>
   </button>
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-sync-alt"
       />
@@ -39,30 +35,31 @@ exports[`Actions view matches snapshot 1`] = `
     </span>
   </button>
   <a
-    className="button"
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
-    <span
-      className="icon"
+    <button
+      className="sc-bdfBQB gfDMZr"
+      disabled={false}
+      type="button"
     >
-      <i
-        className="fas fa-pencil-alt"
-      />
-    </span>
-    <span>
-      Edit config
-    </span>
+      <span>
+        <i
+          className="fas fa-pencil-alt"
+        />
+      </span>
+      <span>
+        Edit config
+      </span>
+    </button>
   </a>
   <button
-    className="button is-danger"
+    className="sc-bdfBQB cNPkMu"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="far fa-trash-alt"
       />
@@ -88,17 +85,15 @@ exports[`Actions view matches snapshot 1`] = `
 
 exports[`Actions view matches snapshot when deleting connector 1`] = `
 <div
-  className="buttons"
+  className="sc-gsTEea fGTfUx"
 >
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-pause"
       />
@@ -108,14 +103,12 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     </span>
   </button>
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-sync-alt"
       />
@@ -125,30 +118,31 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     </span>
   </button>
   <a
-    className="button"
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
-    <span
-      className="icon"
+    <button
+      className="sc-bdfBQB gfDMZr"
+      disabled={false}
+      type="button"
     >
-      <i
-        className="fas fa-pencil-alt"
-      />
-    </span>
-    <span>
-      Edit config
-    </span>
+      <span>
+        <i
+          className="fas fa-pencil-alt"
+        />
+      </span>
+      <span>
+        Edit config
+      </span>
+    </button>
   </a>
   <button
-    className="button is-danger"
+    className="sc-bdfBQB cNPkMu"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="far fa-trash-alt"
       />
@@ -174,17 +168,15 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
 
 exports[`Actions view matches snapshot when failed 1`] = `
 <div
-  className="buttons"
+  className="sc-gsTEea fGTfUx"
 >
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-sync-alt"
       />
@@ -194,30 +186,31 @@ exports[`Actions view matches snapshot when failed 1`] = `
     </span>
   </button>
   <a
-    className="button"
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
-    <span
-      className="icon"
+    <button
+      className="sc-bdfBQB gfDMZr"
+      disabled={false}
+      type="button"
     >
-      <i
-        className="fas fa-pencil-alt"
-      />
-    </span>
-    <span>
-      Edit config
-    </span>
+      <span>
+        <i
+          className="fas fa-pencil-alt"
+        />
+      </span>
+      <span>
+        Edit config
+      </span>
+    </button>
   </a>
   <button
-    className="button is-danger"
+    className="sc-bdfBQB cNPkMu"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="far fa-trash-alt"
       />
@@ -243,17 +236,15 @@ exports[`Actions view matches snapshot when failed 1`] = `
 
 exports[`Actions view matches snapshot when paused 1`] = `
 <div
-  className="buttons"
+  className="sc-gsTEea fGTfUx"
 >
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-play"
       />
@@ -263,14 +254,12 @@ exports[`Actions view matches snapshot when paused 1`] = `
     </span>
   </button>
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-sync-alt"
       />
@@ -280,30 +269,31 @@ exports[`Actions view matches snapshot when paused 1`] = `
     </span>
   </button>
   <a
-    className="button"
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
-    <span
-      className="icon"
+    <button
+      className="sc-bdfBQB gfDMZr"
+      disabled={false}
+      type="button"
     >
-      <i
-        className="fas fa-pencil-alt"
-      />
-    </span>
-    <span>
-      Edit config
-    </span>
+      <span>
+        <i
+          className="fas fa-pencil-alt"
+        />
+      </span>
+      <span>
+        Edit config
+      </span>
+    </button>
   </a>
   <button
-    className="button is-danger"
+    className="sc-bdfBQB cNPkMu"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="far fa-trash-alt"
       />
@@ -329,17 +319,15 @@ exports[`Actions view matches snapshot when paused 1`] = `
 
 exports[`Actions view matches snapshot when running connector action 1`] = `
 <div
-  className="buttons"
+  className="sc-gsTEea fGTfUx"
 >
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={true}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-pause"
       />
@@ -349,14 +337,12 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
     </span>
   </button>
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={true}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-sync-alt"
       />
@@ -365,31 +351,32 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
       Restart all tasks
     </span>
   </button>
-  <button
-    className="button"
-    disabled={true}
-    type="button"
+  <a
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    onClick={[Function]}
   >
-    <span
-      className="icon"
+    <button
+      className="sc-bdfBQB gfDMZr"
+      disabled={true}
+      type="button"
     >
-      <i
-        className="fas fa-edit"
-      />
-    </span>
-    <span>
-      Edit config
-    </span>
-  </button>
+      <span>
+        <i
+          className="fas fa-pencil-alt"
+        />
+      </span>
+      <span>
+        Edit config
+      </span>
+    </button>
+  </a>
   <button
-    className="button is-danger"
+    className="sc-bdfBQB cNPkMu"
     disabled={true}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="far fa-trash-alt"
       />
@@ -415,17 +402,15 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
 
 exports[`Actions view matches snapshot when unassigned 1`] = `
 <div
-  className="buttons"
+  className="sc-gsTEea fGTfUx"
 >
   <button
-    className="button"
+    className="sc-bdfBQB gfDMZr"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="fas fa-sync-alt"
       />
@@ -435,30 +420,31 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
     </span>
   </button>
   <a
-    className="button"
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
-    <span
-      className="icon"
+    <button
+      className="sc-bdfBQB gfDMZr"
+      disabled={false}
+      type="button"
     >
-      <i
-        className="fas fa-pencil-alt"
-      />
-    </span>
-    <span>
-      Edit config
-    </span>
+      <span>
+        <i
+          className="fas fa-pencil-alt"
+        />
+      </span>
+      <span>
+        Edit config
+      </span>
+    </button>
   </a>
   <button
-    className="button is-danger"
+    className="sc-bdfBQB cNPkMu"
     disabled={false}
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="icon"
-    >
+    <span>
       <i
         className="far fa-trash-alt"
       />

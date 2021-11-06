@@ -6,7 +6,6 @@ interface Props {
 }
 
 const MetricsWrapperStyled = styled.div`
-  width: 100%;
   overflow-y: scroll;
   .indicatorsWrapper {
     display: flex;

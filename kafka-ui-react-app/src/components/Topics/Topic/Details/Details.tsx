@@ -22,12 +22,12 @@ import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { styled } from 'lib/themedStyles';
 import { Colors } from 'theme/theme';
+import Navbar from 'components/common/Navigation/Navbar.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
-import Navbar from './Navigation/Navbar.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;

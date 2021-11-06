@@ -10,8 +10,6 @@ import { connector } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
-jest.mock('components/Connect/StatusTag', () => 'mock-StatusTag');
-
 describe('Overview', () => {
   containerRendersView(<OverviewContainer />, Overview);
 

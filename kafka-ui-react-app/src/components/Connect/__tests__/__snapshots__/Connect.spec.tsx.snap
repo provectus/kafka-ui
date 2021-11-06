@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Connect matches snapshot 1`] = `
-<div
-  className="section"
->
+<div>
   <Switch>
     <Route
       component={

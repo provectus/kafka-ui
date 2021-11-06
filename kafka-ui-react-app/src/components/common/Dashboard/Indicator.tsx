@@ -12,9 +12,8 @@ interface Props {
 const IndicatorWrapperStyled = styled.div`
   background-color: white;
   height: 68px;
-  width: 100%;
-  max-width: 170px;
-  min-width: 120px;
+  width: fit-content;
+  min-width: 150px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -59,7 +58,9 @@ const Indicator: React.FC<Props> = ({
             </svg>
           )}
         </div>
-        {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
+        <span>
+          {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
+        </span>
       </div>
     </IndicatorWrapperStyled>
   );

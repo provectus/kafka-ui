@@ -7,7 +7,7 @@ exports[`Indicator matches the snapshot 1`] = `
 >
   <styled.div>
     <div
-      className="sc-bdfBQB VjToN"
+      className="sc-bdfBQB cnqmAH"
     >
       <div
         title="title"
@@ -18,7 +18,9 @@ exports[`Indicator matches the snapshot 1`] = `
           label
            
         </div>
-        Child
+        <span>
+          Child
+        </span>
       </div>
     </div>
   </styled.div>
