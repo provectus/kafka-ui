@@ -1,7 +1,7 @@
 import { styled } from 'lib/themedStyles';
 import { Colors } from 'theme/theme';
 
-const InputLabel = styled.h3`
+const InputLabel = styled.label`
   font-weight: 500;
   font-size: 12px;
   line-height: 20px;

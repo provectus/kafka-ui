@@ -1,5 +1,7 @@
 import React from 'react';
-import DangerZone, { Props } from 'components/Topics/Topic/Edit/DangerZone';
+import DangerZone, {
+  Props,
+} from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
@@ -42,7 +44,7 @@ describe('DangerZone', () => {
     });
     fireEvent.submit(screen.getByTestId('partitionsSubmit'));
     await waitFor(() => {
-      fireEvent.click(screen.getAllByText('Submit')[0]);
+      fireEvent.click(screen.getAllByText('Submit')[1]);
       expect(mockUpdateTopicPartitionsCount).toHaveBeenCalledTimes(1);
     });
   });
@@ -63,7 +65,7 @@ describe('DangerZone', () => {
     });
     fireEvent.submit(screen.getByTestId('replicationFactorSubmit'));
     await waitFor(() => {
-      fireEvent.click(screen.getAllByText('Submit')[0]);
+      fireEvent.click(screen.getAllByText('Submit')[2]);
       expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
     });
   });
