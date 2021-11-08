@@ -2,7 +2,7 @@
 
 exports[`Tasks view matches snapshot 1`] = `
 <table
-  className="sc-bdfBQB iJpcfB"
+  className="sc-bdfBQB kCfgih"
 >
   <thead>
     <tr>
@@ -128,7 +128,7 @@ exports[`Tasks view matches snapshot when fetching tasks 1`] = `<mock-PageLoader
 
 exports[`Tasks view matches snapshot when no tasks 1`] = `
 <table
-  className="sc-bdfBQB iJpcfB"
+  className="sc-bdfBQB kCfgih"
 >
   <thead>
     <tr>
