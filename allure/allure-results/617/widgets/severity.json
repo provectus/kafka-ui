@@ -1,0 +1,21 @@
+[ {
+  "uid" : "8419aae9d091f3fd",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1636353979723,
+    "stop" : 1636353994952,
+    "duration" : 15229
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "a5a49042afd23c17",
+  "name" : " topic tests",
+  "time" : {
+    "start" : 1636353977820,
+    "stop" : 1636353977830,
+    "duration" : 10
+  },
+  "status" : "broken",
+  "severity" : "normal"
+} ]
