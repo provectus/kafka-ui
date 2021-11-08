@@ -7,8 +7,17 @@ import useDataSaver from 'lib/hooks/useDataSaver';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import { styled } from 'lib/themedStyles';
 
 import MessageContent from './MessageContent/MessageContent';
+
+const StyledDataCell = styled.td`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 350px;
+  min-width: 350px;
+`;
 
 const Message: React.FC<{ message: TopicMessage }> = ({
   message: {
@@ -45,24 +54,11 @@ const Message: React.FC<{ message: TopicMessage }> = ({
         <td>{offset}</td>
         <td>{partition}</td>
         <td>
-          <div className="tag">
-            {dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}
-          </div>
+          <div>{dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}</div>
         </td>
-        <td
-          style={{ maxWidth: 350, minWidth: 350 }}
-          className="has-text-overflow-ellipsis is-family-code"
-          title={key}
-        >
-          {key}
-        </td>
-        <td
-          style={{ maxWidth: 350, minWidth: 350 }}
-          className="has-text-overflow-ellipsis is-family-code"
-        >
-          {content}
-        </td>
-        <td style={{ maxWidth: 40, minWidth: 40 }} className="has-text-right">
+        <StyledDataCell title={key}>{key}</StyledDataCell>
+        <StyledDataCell>{content}</StyledDataCell>
+        <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem onClick={copyToClipboard}>

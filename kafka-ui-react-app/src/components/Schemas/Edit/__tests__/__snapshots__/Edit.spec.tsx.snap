@@ -201,12 +201,8 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           </Styled(Select)>
         </div>
       </div>
-      <div
-        className="editors-wrapper"
-      >
-        <div
-          className="editor-wrapper"
-        >
+      <styled.div>
+        <div>
           <h4>
             Latest schema
           </h4>
@@ -221,9 +217,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
 }"
           />
         </div>
-        <div
-          className="editor-wrapper"
-        >
+        <div>
           <h4>
             New schema
           </h4>
@@ -317,7 +311,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             render={[Function]}
           />
         </div>
-      </div>
+      </styled.div>
       <Button
         buttonSize="M"
         buttonType="primary"

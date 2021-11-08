@@ -24,7 +24,7 @@ const List: React.FC<ListProps> = ({ consumerGroups }) => {
   return (
     <div>
       <PageHeading text="Consumers" />
-      <ControlPanelWrapper>
+      <ControlPanelWrapper hasInput>
         <Search
           placeholder="Search"
           value={searchText}

@@ -240,9 +240,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                 </div>
               </PageHeading>
             </Styled(PageHeading)>
-            <styled.div>
+            <styled.div
+              hasInput={true}
+            >
               <div
-                className="sc-jrAFXE dqvGRN"
+                className="sc-jrAFXE fvZNpK"
               >
                 <div>
                   <Search
@@ -301,9 +303,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                     </Styled(Input)>
                   </Search>
                 </div>
-                <div
-                  className="internal-topics-switch"
-                >
+                <div>
                   <input
                     checked={true}
                     className="switch is-rounded"
@@ -326,7 +326,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               isFullwidth={true}
             >
               <table
-                className="sc-iBPTik iToyOJ"
+                className="sc-iBPTik fLblTN"
               >
                 <thead>
                   <tr>
@@ -543,7 +543,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               >
                 <nav
                   aria-label="pagination"
-                  className="sc-dlfnuX jVlOKc"
+                  className="sc-dlfnuX dQAJar"
                   role="navigation"
                 >
                   <button

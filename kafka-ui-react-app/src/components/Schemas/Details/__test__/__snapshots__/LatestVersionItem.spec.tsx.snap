@@ -21,44 +21,36 @@ exports[`LatestVersionItem matches snapshot 1`] = `
     />
   </div>
   <div
-    className="meta-data"
+    data-testid="meta-data"
   >
     <div>
-      <h3
-        className="meta-data-label"
-      >
+      <styled.h3>
         Latest version
-      </h3>
+      </styled.h3>
       <p>
         1
       </p>
     </div>
     <div>
-      <h3
-        className="meta-data-label"
-      >
+      <styled.h3>
         ID
-      </h3>
+      </styled.h3>
       <p>
         1
       </p>
     </div>
     <div>
-      <h3
-        className="meta-data-label"
-      >
+      <styled.h3>
         Subject
-      </h3>
+      </styled.h3>
       <p>
         test
       </p>
     </div>
     <div>
-      <h3
-        className="meta-data-label"
-      >
+      <styled.h3>
         Compatibility
-      </h3>
+      </styled.h3>
       <p>
         BACKWARD
       </p>
