@@ -1,7 +1,7 @@
 import React from 'react';
 import cx from 'classnames';
 import { Cluster } from 'generated-sources';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 import ClusterMenu from './ClusterMenu';
 import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';

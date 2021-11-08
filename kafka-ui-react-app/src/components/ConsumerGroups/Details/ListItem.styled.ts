@@ -1,4 +1,4 @@
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 export const ToggleButton = styled.td`
   padding: 8px 8px 8px 16px !important;

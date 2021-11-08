@@ -42,6 +42,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           },
         },
       },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+      },
       "menuStyles": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",

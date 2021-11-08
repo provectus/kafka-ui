@@ -1,6 +1,6 @@
 import useOutsideClickRef from '@rooks/use-outside-click-ref';
 import cx from 'classnames';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import DropdownTrigger from './DropdownTrigger';

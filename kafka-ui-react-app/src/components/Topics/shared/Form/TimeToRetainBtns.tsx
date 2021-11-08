@@ -1,6 +1,6 @@
 import React from 'react';
 import { MILLISECONDS_IN_DAY } from 'lib/constants';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 import TimeToRetainBtn from './TimeToRetainBtn';
 

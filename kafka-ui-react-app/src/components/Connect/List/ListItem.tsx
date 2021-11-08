@@ -13,7 +13,7 @@ import TagStyled from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { Colors } from 'theme/theme';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 export interface ListItemProps {
   clusterName: ClusterName;

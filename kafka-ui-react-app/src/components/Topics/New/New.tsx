@@ -14,7 +14,7 @@ import { useHistory, useParams } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 interface RouterParams {
   clusterName: ClusterName;

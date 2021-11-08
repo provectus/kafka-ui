@@ -11,7 +11,7 @@ import Select from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 interface Props {
   isDisabled: boolean;

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { MILLISECONDS_IN_WEEK } from 'lib/constants';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
 interface Props {

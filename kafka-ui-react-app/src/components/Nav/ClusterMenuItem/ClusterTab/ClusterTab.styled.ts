@@ -1,4 +1,4 @@
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 const StyledClusterTab = styled.li`
   font-size: 14px;

@@ -42,6 +42,11 @@ exports[`Details component when consumer gruops are NOT fetched Matches the snap
           },
         },
       },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+      },
       "menuStyles": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
@@ -202,6 +207,11 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
             "normal": "#73848C",
           },
         },
+      },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
       },
       "menuStyles": Object {
         "backgroundColor": Object {

@@ -7,7 +7,7 @@ import {
   clusterConnectorsPath,
 } from 'lib/paths';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import { Button } from 'components/common/Button/Button';
 
 interface RouterParams {

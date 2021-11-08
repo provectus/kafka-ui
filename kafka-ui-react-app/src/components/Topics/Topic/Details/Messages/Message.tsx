@@ -7,7 +7,7 @@ import useDataSaver from 'lib/hooks/useDataSaver';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 import MessageContent from './MessageContent/MessageContent';
 
