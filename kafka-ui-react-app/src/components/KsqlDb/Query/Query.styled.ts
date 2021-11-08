@@ -1,4 +1,4 @@
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 export const QueryWrapper = styled.div`
   padding: 16px;

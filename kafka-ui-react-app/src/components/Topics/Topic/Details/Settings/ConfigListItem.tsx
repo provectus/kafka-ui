@@ -1,5 +1,5 @@
 import { TopicConfig } from 'generated-sources';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import React from 'react';
 import { Colors } from 'theme/theme';
 

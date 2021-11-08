@@ -37,6 +37,11 @@ export const Colors = {
 };
 
 const theme = {
+  layout: {
+    minWidth: '1200px',
+    navBarWidth: '201px',
+    navBarHeight: '3.25rem',
+  },
   buttonStyles: {
     primary: {
       backgroundColor: {
@@ -159,5 +164,7 @@ const theme = {
     },
   },
 };
+
+export type ThemeType = typeof theme;
 
 export default theme;

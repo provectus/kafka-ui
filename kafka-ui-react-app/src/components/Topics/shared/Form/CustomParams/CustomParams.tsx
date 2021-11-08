@@ -2,7 +2,7 @@ import React from 'react';
 import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 import CustomParamField from './CustomParamField';
 

@@ -1,4 +1,4 @@
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 const ClusterMenuList = styled.ul`
   & hr {

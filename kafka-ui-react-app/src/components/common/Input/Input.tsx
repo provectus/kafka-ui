@@ -1,6 +1,6 @@
 import React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 import StyledIcon from './InputIcon.styled';
 import StyledInput, { StyledInputProps } from './Input.styled';

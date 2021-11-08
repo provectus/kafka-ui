@@ -1,4 +1,4 @@
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 const IconButtonWrapper = styled.span`
   height: 16px !important;

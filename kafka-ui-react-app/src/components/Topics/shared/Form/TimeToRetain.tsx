@@ -6,7 +6,7 @@ import { MILLISECONDS_IN_WEEK, MILLISECONDS_IN_SECOND } from 'lib/constants';
 import InputLabel from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
 import TimeToRetainBtns from './TimeToRetainBtns';

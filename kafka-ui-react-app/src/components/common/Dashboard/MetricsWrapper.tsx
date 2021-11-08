@@ -1,5 +1,5 @@
 import React from 'react';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 
 interface Props {
   title?: string;

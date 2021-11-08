@@ -1,4 +1,4 @@
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
 export const LatestVersionWrapper = styled.div`

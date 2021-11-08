@@ -16,7 +16,7 @@ import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';

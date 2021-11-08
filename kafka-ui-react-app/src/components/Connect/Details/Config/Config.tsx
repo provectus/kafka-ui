@@ -8,7 +8,7 @@ import {
 } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
 interface RouterParams {

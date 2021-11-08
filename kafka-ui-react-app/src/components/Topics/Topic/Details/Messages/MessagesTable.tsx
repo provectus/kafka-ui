@@ -3,7 +3,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { SeekDirection, TopicMessage } from 'generated-sources';
-import { styled } from 'lib/themedStyles';
+import styled from 'styled-components';
 import { compact, concat, groupBy, map, maxBy, minBy } from 'lodash';
 import React from 'react';
 import { useSelector } from 'react-redux';
