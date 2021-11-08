@@ -1,21 +1,23 @@
 package com.provectus.kafka.ui.config;
 
 import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.oauth2.client.oidc.web.server.logout.OidcClientInitiatedServerLogoutSuccessHandler;
+import org.springframework.security.oauth2.client.registration.ReactiveClientRegistrationRepository;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.util.ClassUtils;
 
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.enabled", havingValue = "true")
-@AllArgsConstructor
 public class OAuthSecurityConfig {
 
   public static final String REACTIVE_CLIENT_REGISTRATION_REPOSITORY_CLASSNAME =
@@ -41,9 +43,28 @@ public class OAuthSecurityConfig {
   };
 
   private final ApplicationContext context;
+  private final Boolean cognitoEnabled;
+  private final String clientId;
+  private final String logoutUrl;
+
+  public OAuthSecurityConfig(final ApplicationContext applicationContext,
+                             @Value("${auth.cognito.enabled}") final Boolean cognitoEnabled,
+                             @Value("${spring.security.oauth2.client.registration.cognito.client-id:}")
+                             final String clientId,
+                             @Value("${auth.cognito.logoutUrl:}") final String logoutUrl) {
+    this.context = applicationContext;
+    this.cognitoEnabled = cognitoEnabled;
+    this.clientId = clientId;
+    this.logoutUrl = logoutUrl;
+  }
 
   @Bean
-  public SecurityWebFilterChain configure(ServerHttpSecurity http) {
+  public SecurityWebFilterChain configure(ServerHttpSecurity http, final ReactiveClientRegistrationRepository repo) {
+
+    final ServerLogoutSuccessHandler logoutHandler = cognitoEnabled
+        ? new CognitoOidcLogoutSuccessHandler(logoutUrl, clientId)
+        : new OidcClientInitiatedServerLogoutSuccessHandler(repo);
+
     http.authorizeExchange()
         .pathMatchers(
             AUTH_WHITELIST
@@ -65,6 +86,10 @@ public class OAuthSecurityConfig {
           .authenticationSuccessHandler(handler);
     }
 
+    http
+        .logout()
+        .logoutSuccessHandler(logoutHandler);
+
     return http.csrf().disable().build();
   }
 
@@ -73,7 +98,8 @@ public class OAuthSecurityConfig {
       http
           .oauth2Login()
           .and()
-          .oauth2Client();
+          .oauth2Client()
+          .and().logout();
     }
 
     static boolean shouldConfigure(ApplicationContext context) {
