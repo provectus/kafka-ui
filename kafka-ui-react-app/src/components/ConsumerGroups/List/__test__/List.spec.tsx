@@ -3,38 +3,41 @@ import List, { ListProps } from 'components/ConsumerGroups/List/List';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { fireEvent, render, waitFor } from '@testing-library/react';
+import { StaticRouter } from 'react-router';
 
 const setupWrapper = (props?: Partial<ListProps>) => (
-  <ThemeProvider theme={theme}>
-    <List
-      consumerGroups={[
-        {
-          groupId: 'groupId1',
-          members: 0,
-          topics: 1,
-          simple: false,
-          partitionAssignor: '',
-          coordinator: {
-            id: 1,
-            host: 'host',
+  <StaticRouter>
+    <ThemeProvider theme={theme}>
+      <List
+        consumerGroups={[
+          {
+            groupId: 'groupId1',
+            members: 0,
+            topics: 1,
+            simple: false,
+            partitionAssignor: '',
+            coordinator: {
+              id: 1,
+              host: 'host',
+            },
           },
-        },
-        {
-          groupId: 'groupId2',
-          members: 0,
-          topics: 1,
-          simple: false,
-          partitionAssignor: '',
-          coordinator: {
-            id: 1,
-            host: 'host',
+          {
+            groupId: 'groupId2',
+            members: 0,
+            topics: 1,
+            simple: false,
+            partitionAssignor: '',
+            coordinator: {
+              id: 1,
+              host: 'host',
+            },
           },
-        },
-      ]}
-      clusterName="cluster"
-      {...props}
-    />
-  </ThemeProvider>
+        ]}
+        clusterName="cluster"
+        {...props}
+      />
+    </ThemeProvider>
+  </StaticRouter>
 );
 
 describe('List', () => {

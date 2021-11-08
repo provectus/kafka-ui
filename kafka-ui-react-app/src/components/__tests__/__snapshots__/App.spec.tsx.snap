@@ -366,9 +366,7 @@ exports[`App view matches snapshot 1`] = `
                     }
                     staticContext={Object {}}
                   >
-                    <div
-                      className="section"
-                    >
+                    <div>
                       <Connect(ClustersWidget)>
                         <ClustersWidget
                           clusters={Array []}
@@ -410,11 +408,11 @@ exports[`App view matches snapshot 1`] = `
                                                     color="green"
                                                   >
                                                     <Tag
-                                                      className="sc-pGacB xeofJ"
+                                                      className="sc-kEjbQP kcSPGN"
                                                       color="green"
                                                     >
                                                       <p
-                                                        className="sc-pGacB xeofJ"
+                                                        className="sc-kEjbQP kcSPGN"
                                                       >
                                                         Online
                                                       </p>
@@ -429,16 +427,13 @@ exports[`App view matches snapshot 1`] = `
                                                     0
                                                   </span>
                                                    
-                                                  <span
-                                                    style={
-                                                      Object {
-                                                        "color": "#ABB5BA",
-                                                        "fontSize": 14,
-                                                      }
-                                                    }
-                                                  >
-                                                    cluster
-                                                  </span>
+                                                  <styled.span>
+                                                    <span
+                                                      className="sc-pGacB dBjHDQ"
+                                                    >
+                                                      clusters
+                                                    </span>
+                                                  </styled.span>
                                                 </span>
                                               </div>
                                             </div>
@@ -465,11 +460,11 @@ exports[`App view matches snapshot 1`] = `
                                                     color="gray"
                                                   >
                                                     <Tag
-                                                      className="sc-pGacB ijPnzN"
+                                                      className="sc-kEjbQP eOlhnN"
                                                       color="gray"
                                                     >
                                                       <p
-                                                        className="sc-pGacB ijPnzN"
+                                                        className="sc-kEjbQP eOlhnN"
                                                       >
                                                         Offline
                                                       </p>
@@ -484,16 +479,13 @@ exports[`App view matches snapshot 1`] = `
                                                     0
                                                   </span>
                                                    
-                                                  <span
-                                                    style={
-                                                      Object {
-                                                        "color": "#ABB5BA",
-                                                        "fontSize": 14,
-                                                      }
-                                                    }
-                                                  >
-                                                    cluster
-                                                  </span>
+                                                  <styled.span>
+                                                    <span
+                                                      className="sc-pGacB dBjHDQ"
+                                                    >
+                                                      clusters
+                                                    </span>
+                                                  </styled.span>
                                                 </span>
                                               </div>
                                             </div>
@@ -516,12 +508,7 @@ exports[`App view matches snapshot 1`] = `
                                 onChange={[Function]}
                                 type="checkbox"
                               />
-                              <label
-                                htmlFor="switchRoundedDefault"
-                              />
-                              <span
-                                className="is-size-7"
-                              >
+                              <span>
                                 Only offline clusters
                               </span>
                             </div>

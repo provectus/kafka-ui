@@ -147,7 +147,7 @@ const List: React.FC<TopicsListProps> = ({
             </Button>
           )}
         </PageHeading>
-        <ControlPanelWrapper>
+        <ControlPanelWrapper hasInput>
           <div>
             <Search
               handleSearch={searchHandler}
@@ -155,7 +155,7 @@ const List: React.FC<TopicsListProps> = ({
               value={search}
             />
           </div>
-          <div className="internal-topics-switch">
+          <div>
             <input
               id="switchRoundedDefault"
               type="checkbox"
@@ -174,26 +174,26 @@ const List: React.FC<TopicsListProps> = ({
         <div>
           {selectedTopics.size > 0 && (
             <>
-              <div className="buttons">
-                <button
-                  type="button"
-                  className="button is-danger"
+              <ControlPanelWrapper data-testid="delete-buttons">
+                <Button
+                  buttonSize="M"
+                  buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('deleteTopics');
                   }}
                 >
                   Delete selected topics
-                </button>
-                <button
-                  type="button"
-                  className="button is-danger"
+                </Button>
+                <Button
+                  buttonSize="M"
+                  buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('purgeMessages');
                   }}
                 >
                   Purge messages of selected topics
-                </button>
-              </div>
+                </Button>
+              </ControlPanelWrapper>
               <ConfirmationModal
                 isOpen={confirmationModal !== ''}
                 onCancel={closeConfirmationModal}

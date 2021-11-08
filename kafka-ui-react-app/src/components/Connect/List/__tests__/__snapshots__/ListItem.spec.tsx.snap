@@ -189,7 +189,6 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                     className="sc-hKgJUU behyrW"
                   >
                     <NavLink
-                      activeClassName="is-active"
                       exact={true}
                       to="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
                     >
@@ -231,39 +230,41 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                   FileStreamSource
                 </td>
                 <td>
-                  <div
-                    className="is-flex is-flex-wrap-wrap"
-                  >
-                    <Styled(Tag)
-                      color="gray"
-                      key="test-topic"
+                  <styled.div>
+                    <div
+                      className="sc-eCstlR bMQArj"
                     >
-                      <Tag
-                        className="sc-dlfnuX gTkaKb"
+                      <Styled(Tag)
                         color="gray"
+                        key="test-topic"
                       >
-                        <p
+                        <Tag
                           className="sc-dlfnuX gTkaKb"
+                          color="gray"
                         >
-                          <Link
-                            to="/ui/clusters/local/topics/test-topic"
+                          <p
+                            className="sc-dlfnuX gTkaKb"
                           >
-                            <LinkAnchor
-                              href="/ui/clusters/local/topics/test-topic"
-                              navigate={[Function]}
+                            <Link
+                              to="/ui/clusters/local/topics/test-topic"
                             >
-                              <a
+                              <LinkAnchor
                                 href="/ui/clusters/local/topics/test-topic"
-                                onClick={[Function]}
+                                navigate={[Function]}
                               >
-                                test-topic
-                              </a>
-                            </LinkAnchor>
-                          </Link>
-                        </p>
-                      </Tag>
-                    </Styled(Tag)>
-                  </div>
+                                <a
+                                  href="/ui/clusters/local/topics/test-topic"
+                                  onClick={[Function]}
+                                >
+                                  test-topic
+                                </a>
+                              </LinkAnchor>
+                            </Link>
+                          </p>
+                        </Tag>
+                      </Styled(Tag)>
+                    </div>
+                  </styled.div>
                 </td>
                 <td>
                   <Styled(Tag)

@@ -12,44 +12,51 @@ export const MessageContentWrapper = styled.tr`
       padding-left: 1px;
     }
   }
-  & .content-box {
-    background-color: white;
-    padding: 24px;
-    height: 412px;
-  }
-  & .content-wrapper {
-    border-radius: 8px 0 0 8px;
-    & nav {
-      padding-bottom: 16px;
-    }
-    & .json-viewer-wrapper {
-      max-height: 316px;
-      width: 630px;
-      overflow-y: scroll;
-    }
-  }
-  & .metadata-wrapper {
-    border-radius: 0 8px 8px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+`;
 
-    & .metadata {
-      display: flex;
-      gap: 16px;
-    }
-    & .metadata-label {
-      color: ${Colors.neutral[50]};
-      font-size: 14px;
-      width: 80px;
-    }
-    & .metadata-value {
-      color: ${Colors.neutral[80]};
-      font-size: 14px;
-    }
-    & .metadata-meta {
-      color: ${Colors.neutral[30]};
-      font-size: 12px;
-    }
+export const JSONViewerWrapper = styled.div`
+  max-height: 316px;
+  width: 630px;
+  overflow-y: scroll;
+`;
+
+export const ContentBox = styled.div`
+  background-color: white;
+  padding: 24px;
+  height: 412px;
+  border-radius: 8px 0 0 8px;
+  & nav {
+    padding-bottom: 16px;
   }
+`;
+
+export const MetadataWrapper = styled.div`
+  background-color: white;
+  padding: 24px;
+  height: 412px;
+  border-radius: 0 8px 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+export const Metadata = styled.span`
+  display: flex;
+  gap: 16px;
+`;
+
+export const MetadataLabel = styled.p`
+  color: ${Colors.neutral[50]};
+  font-size: 14px;
+  width: 80px;
+`;
+
+export const MetadataValue = styled.p`
+  color: ${Colors.neutral[80]};
+  font-size: 14px;
+`;
+
+export const MetadataMeta = styled.p`
+  color: ${Colors.neutral[30]};
+  font-size: 12px;
 `;

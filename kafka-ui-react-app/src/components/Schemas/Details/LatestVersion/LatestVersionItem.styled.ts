@@ -35,11 +35,11 @@ export const LatestVersionWrapper = styled.div`
       display: flex;
       gap: 16px;
       padding-bottom: 16px;
-
-      & .meta-data-label {
-        color: ${Colors.neutral[50]};
-        width: 110px;
-      }
     }
   }
+`;
+
+export const MetaDataLabel = styled.h3`
+  color: ${Colors.neutral[50]};
+  width: 110px;
 `;

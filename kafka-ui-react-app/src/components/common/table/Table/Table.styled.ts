@@ -7,7 +7,6 @@ interface Props {
 
 const StyledTable = styled.table<Props>`
   width: ${(props) => (props.isFullwidth ? '100%' : 'auto')};
-  margin-bottom: 25px;
 
   & td {
     border-top: 1px #f1f2f3 solid;

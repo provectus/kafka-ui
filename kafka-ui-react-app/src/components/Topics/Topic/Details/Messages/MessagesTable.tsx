@@ -70,7 +70,7 @@ const MessagesTable: React.FC = () => {
 
   return (
     <>
-      <StyledTable className="table is-fullwidth">
+      <StyledTable isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell> </TableHeaderCell>

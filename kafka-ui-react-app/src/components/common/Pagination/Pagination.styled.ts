@@ -6,6 +6,7 @@ export const Wrapper = styled.nav`
   align-items: flex-end;
   padding: 0 16px;
   gap: 15px;
+  padding-top: 25px;
 
   & > ul {
     display: flex;

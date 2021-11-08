@@ -42,7 +42,7 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
   return (
     <FormProvider {...methods}>
       <GlobalSchemaSelectorWrapper>
-        <h5 className="is-5 mr-2">Global Compatibility Level: </h5>
+        <h5>Global Compatibility Level: </h5>
         <Select
           name="compatibilityLevel"
           selectSize="M"

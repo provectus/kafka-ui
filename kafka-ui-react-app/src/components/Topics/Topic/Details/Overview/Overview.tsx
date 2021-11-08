@@ -10,8 +10,11 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import { Colors } from 'theme/theme';
-import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import {
+  MetricsContainerStyled,
+  MetricsLightText,
+  MetricsRedText,
+} from 'components/common/Dashboard/MetricsContainer.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends Topic, TopicDetails {
@@ -48,31 +51,15 @@ const Overview: React.FC<Props> = ({
           <Indicator label="Partitions">{partitionCount}</Indicator>
           <Indicator label="Replication Factor">{replicationFactor}</Indicator>
           <Indicator label="URP" title="Under replicated partitions" isAlert>
-            <div
-              style={{
-                color: Colors.red[50],
-              }}
-            >
-              {underReplicatedPartitions}
-            </div>
+            <MetricsRedText>{underReplicatedPartitions}</MetricsRedText>
           </Indicator>
           <Indicator label="In sync replicas" isAlert>
-            <div
-              style={{
-                color: Colors.red[50],
-                display: 'inline',
-              }}
-            >
-              {inSyncReplicas}
-            </div>
-            <span
-              style={{
-                color: Colors.neutral[30],
-              }}
-            >
-              {' '}
-              of {replicas}
-            </span>
+            {inSyncReplicas && replicas && inSyncReplicas < replicas ? (
+              <MetricsRedText>{inSyncReplicas}</MetricsRedText>
+            ) : (
+              inSyncReplicas
+            )}
+            <MetricsLightText> of {replicas}</MetricsLightText>
           </Indicator>
           <Indicator label="Type">
             <TagStyled color="gray">
@@ -116,7 +103,7 @@ const Overview: React.FC<Props> = ({
                           ])
                         }
                       >
-                        <span className="has-text-danger">Clear Messages</span>
+                        <MetricsRedText>Clear Messages</MetricsRedText>
                       </DropdownItem>
                     </Dropdown>
                   ) : null}

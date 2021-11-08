@@ -10,8 +10,11 @@ import TagStyled from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { Colors } from 'theme/theme';
-import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import {
+  MetricsLightText,
+  MetricsContainerStyled,
+  MetricsRedText,
+} from 'components/common/Dashboard/MetricsContainer.styled';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -48,7 +51,7 @@ const Brokers: React.FC<Props> = ({
 
   return (
     <>
-      <div className="section">
+      <div>
         <PageHeading text="Brokers" />
         <MetricsContainerStyled>
           <MetricsWrapper title="Uptime">
@@ -65,21 +68,15 @@ const Brokers: React.FC<Props> = ({
           </MetricsWrapper>
           <MetricsWrapper title="Partitions">
             <Indicator label="Online" isAlert>
-              <span
-                style={{
-                  color: Colors.red[50],
-                }}
-              >
-                {onlinePartitionCount}
-              </span>
-              <span
-                style={{
-                  color: Colors.neutral[30],
-                }}
-              >
+              {offlinePartitionCount && offlinePartitionCount > 0 ? (
+                <MetricsRedText>{onlinePartitionCount}</MetricsRedText>
+              ) : (
+                onlinePartitionCount
+              )}
+              <MetricsLightText>
                 {' '}
                 of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
-              </span>
+              </MetricsLightText>
             </Indicator>
             <Indicator label="URP" title="Under replicated partitions">
               {underReplicatedPartitionCount}

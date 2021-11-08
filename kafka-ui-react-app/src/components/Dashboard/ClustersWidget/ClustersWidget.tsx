@@ -4,9 +4,11 @@ import { v4 } from 'uuid';
 import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
 import Indicator from 'components/common/Dashboard/Indicator';
 import { Cluster } from 'generated-sources';
-import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import {
+  MetricsLightText,
+  MetricsContainerStyled,
+} from 'components/common/Dashboard/MetricsContainer.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';
-import { Colors } from 'theme/theme';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
@@ -52,25 +54,11 @@ const ClustersWidget: React.FC<Props> = ({
         <MetricsWrapper>
           <Indicator label={<TagStyled color="green">Online</TagStyled>}>
             <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
-            <span
-              style={{
-                color: Colors.neutral[30],
-                fontSize: 14,
-              }}
-            >
-              cluster
-            </span>
+            <MetricsLightText>clusters</MetricsLightText>
           </Indicator>
           <Indicator label={<TagStyled color="gray">Offline</TagStyled>}>
             <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
-            <span
-              style={{
-                color: Colors.neutral[30],
-                fontSize: 14,
-              }}
-            >
-              cluster
-            </span>
+            <MetricsLightText>clusters</MetricsLightText>
           </Indicator>
         </MetricsWrapper>
       </MetricsContainerStyled>
@@ -83,8 +71,7 @@ const ClustersWidget: React.FC<Props> = ({
           checked={showOfflineOnly}
           onChange={handleSwitch}
         />
-        <label htmlFor="switchRoundedDefault" />
-        <span className="is-size-7">Only offline clusters</span>
+        <span>Only offline clusters</span>
       </div>
       {clusterList.map((chunkItem) => (
         <StyledTable key={chunkItem.id} isFullwidth>

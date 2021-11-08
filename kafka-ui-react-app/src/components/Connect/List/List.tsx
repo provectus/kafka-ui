@@ -77,7 +77,7 @@ const List: React.FC<ListProps> = ({
           </Indicator>
         </MetricsWrapper>
       </MetricsContainerStyled>
-      <ControlPanelWrapper>
+      <ControlPanelWrapper hasInput>
         <Search
           handleSearch={handleSearch}
           placeholder="Search by Connect Name, Status or Type"

@@ -39,10 +39,6 @@ describe('Brokers Component', () => {
         </ThemeProvider>
       </StaticRouter>
     );
-    it('renders section', () => {
-      const component = mount(setupEmptyComponent());
-      expect(component.exists('.section')).toBeTruthy();
-    });
 
     it('matches Brokers Empty snapshot', () => {
       expect(mount(setupEmptyComponent())).toMatchSnapshot();
