@@ -1,19 +1,19 @@
 [ {
-  "uid" : "be4378106b3fc4ce",
+  "uid" : "59aed6f8ea074c8f",
   "name" : "main page should load",
   "time" : {
-    "start" : 1636391555781,
-    "stop" : 1636391565903,
-    "duration" : 10122
+    "start" : 1636401611460,
+    "stop" : 1636401620610,
+    "duration" : 9150
   },
   "status" : "passed",
   "severity" : "normal"
 }, {
-  "uid" : "40fd31e4bc1598ea",
+  "uid" : "ac3bb2211cc4fbd8",
   "name" : " topic tests",
   "time" : {
-    "start" : 1636391554496,
-    "stop" : 1636391554497,
+    "start" : 1636401610258,
+    "stop" : 1636401610259,
     "duration" : 1
   },
   "status" : "broken",
