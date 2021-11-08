@@ -1,168 +1,594 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`New View matches snapshot 1`] = `
-<StaticRouter
-  context={Object {}}
-  location={
+<Component
+  theme={
     Object {
-      "pathname": "/ui/clusters/clusterName/schemas/create-new",
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+      },
+      "paginationStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "gray": "#E3E6E8",
+          "green": "#D6F5E0",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
     }
   }
 >
-  <Router
-    history={
+  <StaticRouter
+    context={Object {}}
+    location={
       Object {
-        "action": "POP",
-        "block": [Function],
-        "createHref": [Function],
-        "go": [Function],
-        "goBack": [Function],
-        "goForward": [Function],
-        "listen": [Function],
-        "location": Object {
-          "hash": "",
-          "pathname": "/ui/clusters/clusterName/schemas/create-new",
-          "search": "",
-        },
-        "push": [Function],
-        "replace": [Function],
+        "pathname": "/ui/clusters/clusterName/schemas/create-new",
       }
     }
-    staticContext={Object {}}
   >
-    <New
-      createSchema={[MockFunction]}
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/ui/clusters/clusterName/schemas/create-new",
+            "search": "",
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      staticContext={Object {}}
     >
-      <div
-        className="section"
+      <New
+        createSchema={[MockFunction]}
       >
-        <div
-          className="box"
+        <Component
+          clearErrors={[Function]}
+          control={
+            Object {
+              "controllerSubjectRef": Object {
+                "current": Re {
+                  "observers": Array [],
+                },
+              },
+              "defaultValuesRef": Object {
+                "current": Object {},
+              },
+              "fieldArrayDefaultValuesRef": Object {
+                "current": Object {},
+              },
+              "fieldArrayNamesRef": Object {
+                "current": Set {},
+              },
+              "fieldArraySubjectRef": Object {
+                "current": Re {
+                  "observers": Array [
+                    ke {
+                      "closed": false,
+                      "observer": Object {
+                        "next": [Function],
+                      },
+                    },
+                  ],
+                },
+              },
+              "fieldsRef": Object {
+                "current": Object {
+                  "schema": Object {
+                    "_f": Object {
+                      "mount": true,
+                      "name": "schema",
+                      "ref": <textarea
+                        class="sc-pGacB bSlNSy"
+                        name="schema"
+                      />,
+                      "required": "Schema is required.",
+                      "value": "",
+                    },
+                  },
+                  "schemaType": Object {
+                    "_f": Object {
+                      "mount": true,
+                      "name": "schemaType",
+                      "ref": <select
+                        class="sc-gKseQn gvIlsx"
+                        name="schemaType"
+                      >
+                        <option
+                          value="AVRO"
+                        >
+                          AVRO
+                        </option>
+                        <option
+                          value="JSON"
+                        >
+                          JSON
+                        </option>
+                        <option
+                          value="PROTOBUF"
+                        >
+                          PROTOBUF
+                        </option>
+                      </select>,
+                      "required": "Schema Type is required.",
+                      "value": "AVRO",
+                    },
+                  },
+                  "subject": Object {
+                    "_f": Object {
+                      "mount": true,
+                      "name": "subject",
+                      "pattern": Object {
+                        "message": "Only alphanumeric, _, -, and . allowed",
+                        "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
+                      },
+                      "ref": <input
+                        autocomplete="off"
+                        class="sc-dlfnuX bPecSV sc-eCstlR jXyqPy"
+                        name="subject"
+                        placeholder="Schema Name"
+                      />,
+                      "required": "Schema Name is required.",
+                      "value": "",
+                    },
+                  },
+                },
+              },
+              "fieldsWithValidationRef": Object {
+                "current": Object {
+                  "schema": true,
+                  "schemaType": true,
+                  "subject": true,
+                },
+              },
+              "formStateRef": Object {
+                "current": Object {
+                  "dirtyFields": Object {},
+                  "errors": Object {},
+                  "isDirty": false,
+                  "isSubmitSuccessful": false,
+                  "isSubmitted": false,
+                  "isSubmitting": false,
+                  "isValid": false,
+                  "isValidating": false,
+                  "submitCount": 0,
+                  "touchedFields": Object {},
+                },
+              },
+              "formStateSubjectRef": Object {
+                "current": Re {
+                  "observers": Array [
+                    ke {
+                      "closed": false,
+                      "observer": Object {
+                        "next": [Function],
+                      },
+                    },
+                  ],
+                },
+              },
+              "getIsDirty": [Function],
+              "inFieldArrayActionRef": Object {
+                "current": false,
+              },
+              "isWatchAllRef": Object {
+                "current": false,
+              },
+              "readFormStateRef": Object {
+                "current": Object {
+                  "dirtyFields": false,
+                  "errors": "all",
+                  "isDirty": "all",
+                  "isSubmitting": "all",
+                  "isValid": false,
+                  "isValidating": false,
+                  "touchedFields": false,
+                },
+              },
+              "register": [Function],
+              "shouldUnmount": undefined,
+              "unregister": [Function],
+              "validFieldsRef": Object {
+                "current": Object {},
+              },
+              "watchFieldsRef": Object {
+                "current": Set {},
+              },
+              "watchInternal": [Function],
+              "watchSubjectRef": Object {
+                "current": Re {
+                  "observers": Array [],
+                },
+              },
+            }
+          }
+          formState={
+            Object {
+              "dirtyFields": Object {},
+              "errors": Object {},
+              "isDirty": false,
+              "isSubmitSuccessful": false,
+              "isSubmitted": false,
+              "isSubmitting": false,
+              "isValid": false,
+              "isValidating": false,
+              "submitCount": 0,
+              "touchedFields": Object {},
+            }
+          }
+          getValues={[Function]}
+          handleSubmit={[Function]}
+          register={[Function]}
+          reset={[Function]}
+          setError={[Function]}
+          setFocus={[Function]}
+          setValue={[Function]}
+          trigger={[Function]}
+          unregister={[Function]}
+          watch={[Function]}
         >
-          <form
-            onSubmit={[Function]}
+          <Styled(PageHeading)
+            text="Create new schema"
           >
-            <div>
-              <div
-                className="field"
-              >
-                <label
-                  className="label"
-                >
-                  Subject *
-                </label>
-                <div
-                  className="control"
-                >
-                  <input
-                    autoComplete="off"
-                    className="input"
-                    disabled={false}
-                    name="subject"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                    placeholder="Schema Name"
-                  />
-                </div>
-                <p
-                  className="help is-danger"
-                >
-                  <Component
-                    errors={Object {}}
-                    name="subject"
-                  />
-                </p>
-              </div>
-              <div
-                className="field"
-              >
-                <label
-                  className="label"
-                >
-                  Schema *
-                </label>
-                <div
-                  className="control"
-                >
-                  <textarea
-                    className="textarea"
-                    disabled={false}
-                    name="schema"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                  />
-                </div>
-                <p
-                  className="help is-danger"
-                >
-                  <Component
-                    errors={Object {}}
-                    name="schema"
-                  />
-                </p>
-              </div>
-              <div
-                className="field"
-              >
-                <label
-                  className="label"
-                >
-                  Schema Type *
-                </label>
-                <div
-                  className="control select"
-                >
-                  <select
-                    disabled={false}
-                    name="schemaType"
-                    onBlur={[Function]}
-                    onChange={[Function]}
-                  >
-                    <option
-                      value="AVRO"
-                    >
-                      AVRO
-                    </option>
-                    <option
-                      value="JSON"
-                    >
-                      JSON
-                    </option>
-                    <option
-                      value="PROTOBUF"
-                    >
-                      PROTOBUF
-                    </option>
-                  </select>
-                </div>
-                <p
-                  className="help is-danger"
-                >
-                  <Component
-                    errors={Object {}}
-                    name="schemaType"
-                  />
-                </p>
-              </div>
-            </div>
-            <br />
-            <div
-              className="field"
+            <PageHeading
+              className="sc-jrAFXE hVcdFx"
+              text="Create new schema"
             >
               <div
-                className="control"
+                className="sc-jrAFXE hVcdFx"
               >
-                <input
-                  className="button is-primary"
+                <h1>
+                  Create new schema
+                </h1>
+                <div />
+              </div>
+            </PageHeading>
+          </Styled(PageHeading)>
+          <styled.form
+            onSubmit={[Function]}
+          >
+            <form
+              className="sc-kEjbQP eTqWi"
+              onSubmit={[Function]}
+            >
+              <div>
+                <styled.label>
+                  <label
+                    className="sc-bdfBQB eXWprc"
+                  >
+                    Subject *
+                  </label>
+                </styled.label>
+                <Styled(Input)
+                  autoComplete="off"
+                  disabled={false}
+                  hookFormOptions={
+                    Object {
+                      "pattern": Object {
+                        "message": "Only alphanumeric, _, -, and . allowed",
+                        "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
+                      },
+                      "required": "Schema Name is required.",
+                    }
+                  }
+                  inputSize="M"
+                  name="subject"
+                  placeholder="Schema Name"
+                >
+                  <Input
+                    autoComplete="off"
+                    className="sc-eCstlR jXyqPy"
+                    disabled={false}
+                    hookFormOptions={
+                      Object {
+                        "pattern": Object {
+                          "message": "Only alphanumeric, _, -, and . allowed",
+                          "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
+                        },
+                        "required": "Schema Name is required.",
+                      }
+                    }
+                    inputSize="M"
+                    name="subject"
+                    placeholder="Schema Name"
+                  >
+                    <div
+                      className="sc-eCstlR jXyqPy"
+                    >
+                      <styled.input
+                        autoComplete="off"
+                        className="sc-eCstlR jXyqPy"
+                        disabled={false}
+                        hasLeftIcon={false}
+                        inputSize="M"
+                        name="subject"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        placeholder="Schema Name"
+                      >
+                        <input
+                          autoComplete="off"
+                          className="sc-dlfnuX bPecSV sc-eCstlR jXyqPy"
+                          disabled={false}
+                          name="subject"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                          placeholder="Schema Name"
+                        />
+                      </styled.input>
+                    </div>
+                  </Input>
+                </Styled(Input)>
+                <styled.p>
+                  <p
+                    className="sc-hKgJUU gNOyDc"
+                  >
+                    <Component
+                      errors={Object {}}
+                      name="subject"
+                    />
+                  </p>
+                </styled.p>
+              </div>
+              <div>
+                <styled.label>
+                  <label
+                    className="sc-bdfBQB eXWprc"
+                  >
+                    Schema *
+                  </label>
+                </styled.label>
+                <styled.textarea
+                  disabled={false}
+                  name="schema"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                >
+                  <textarea
+                    className="sc-pGacB bSlNSy"
+                    disabled={false}
+                    name="schema"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                  />
+                </styled.textarea>
+                <styled.p>
+                  <p
+                    className="sc-hKgJUU gNOyDc"
+                  >
+                    <Component
+                      errors={Object {}}
+                      name="schema"
+                    />
+                  </p>
+                </styled.p>
+              </div>
+              <div>
+                <styled.label>
+                  <label
+                    className="sc-bdfBQB eXWprc"
+                  >
+                    Schema Type *
+                  </label>
+                </styled.label>
+                <Styled(Select)
+                  disabled={false}
+                  hookFormOptions={
+                    Object {
+                      "required": "Schema Type is required.",
+                    }
+                  }
+                  name="schemaType"
+                  selectSize="M"
+                >
+                  <Select
+                    className="sc-iBPTik bUenXA"
+                    disabled={false}
+                    hookFormOptions={
+                      Object {
+                        "required": "Schema Type is required.",
+                      }
+                    }
+                    name="schemaType"
+                    selectSize="M"
+                  >
+                    <div
+                      className="select-wrapper sc-iBPTik bUenXA"
+                    >
+                      <styled.select
+                        disabled={false}
+                        name="schemaType"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        selectSize="M"
+                      >
+                        <select
+                          className="sc-gKseQn gvIlsx"
+                          disabled={false}
+                          name="schemaType"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                        >
+                          <option
+                            value="AVRO"
+                          >
+                            AVRO
+                          </option>
+                          <option
+                            value="JSON"
+                          >
+                            JSON
+                          </option>
+                          <option
+                            value="PROTOBUF"
+                          >
+                            PROTOBUF
+                          </option>
+                        </select>
+                      </styled.select>
+                    </div>
+                  </Select>
+                </Styled(Select)>
+                <styled.p>
+                  <p
+                    className="sc-hKgJUU gNOyDc"
+                  >
+                    <Component
+                      errors={Object {}}
+                      name="schemaType"
+                    />
+                  </p>
+                </styled.p>
+              </div>
+              <Button
+                buttonSize="M"
+                buttonType="primary"
+                disabled={true}
+                type="submit"
+              >
+                <styled.button
+                  buttonSize="M"
+                  buttonType="primary"
                   disabled={true}
                   type="submit"
-                />
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </New>
-  </Router>
-</StaticRouter>
+                >
+                  <button
+                    className="sc-fubCzh hbnxtW"
+                    disabled={true}
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </styled.button>
+              </Button>
+            </form>
+          </styled.form>
+        </Component>
+      </New>
+    </Router>
+  </StaticRouter>
+</Component>
 `;
