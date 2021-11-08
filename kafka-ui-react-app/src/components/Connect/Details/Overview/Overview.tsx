@@ -1,6 +1,9 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
 import TagStyled from 'components/common/Tag/Tag.styled';
+import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
+import Indicator from 'components/common/Dashboard/Indicator';
 
 export interface OverviewProps {
   connector: Connector | null;
@@ -16,42 +19,26 @@ const Overview: React.FC<OverviewProps> = ({
   if (!connector) return null;
 
   return (
-    <div className="tile is-6">
-      <table className="table is-fullwidth">
-        <tbody>
-          {connector.status?.workerId && (
-            <tr>
-              <th>Worker</th>
-              <td>{connector.status.workerId}</td>
-            </tr>
-          )}
-          <tr>
-            <th>Type</th>
-            <td>{connector.type}</td>
-          </tr>
-          {connector.config['connector.class'] && (
-            <tr>
-              <th>Class</th>
-              <td>{connector.config['connector.class']}</td>
-            </tr>
-          )}
-          <tr>
-            <th>State</th>
-            <td>
-              <TagStyled color="yellow">{connector.status.state}</TagStyled>
-            </td>
-          </tr>
-          <tr>
-            <th>Tasks Running</th>
-            <td>{runningTasksCount}</td>
-          </tr>
-          <tr>
-            <th>Tasks Failed</th>
-            <td>{failedTasksCount}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <MetricsContainerStyled>
+      <MetricsWrapper>
+        {connector.status?.workerId && (
+          <Indicator label="Worker">{connector.status.workerId}</Indicator>
+        )}
+        <Indicator label="Type">{connector.type}</Indicator>
+        {connector.config['connector.class'] && (
+          <Indicator label="Class">
+            {connector.config['connector.class']}
+          </Indicator>
+        )}
+        <Indicator label="State">
+          <TagStyled color="yellow">{connector.status.state}</TagStyled>
+        </Indicator>
+        <Indicator label="Tasks running">{runningTasksCount}</Indicator>
+        <Indicator label="Tasks failed" isAlert>
+          {failedTasksCount}
+        </Indicator>
+      </MetricsWrapper>
+    </MetricsContainerStyled>
   );
 };
 

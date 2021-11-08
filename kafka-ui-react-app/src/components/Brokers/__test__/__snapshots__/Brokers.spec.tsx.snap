@@ -226,7 +226,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB ewAWCQ"
+                    className="sc-bdfBQB beSsiJ"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -241,7 +241,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -250,7 +250,9 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 Total Brokers
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -260,7 +262,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -269,7 +271,9 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 Active Controllers
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -279,7 +283,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -288,20 +292,22 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 Zookeeper Status
                                  
                               </div>
-                              <Styled(Tag)
-                                color="gray"
-                              >
-                                <Tag
-                                  className="sc-dlfnuX gTkaKb"
+                              <span>
+                                <Styled(Tag)
                                   color="gray"
                                 >
-                                  <p
+                                  <Tag
                                     className="sc-dlfnuX gTkaKb"
+                                    color="gray"
                                   >
-                                    offline
-                                  </p>
-                                </Tag>
-                              </Styled(Tag)>
+                                    <p
+                                      className="sc-dlfnuX gTkaKb"
+                                    >
+                                      offline
+                                    </p>
+                                  </Tag>
+                                </Styled(Tag)>
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -311,7 +317,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -320,7 +326,9 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 Version
                                  
                               </div>
-                              1
+                              <span>
+                                1
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -334,7 +342,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB ewAWCQ"
+                    className="sc-bdfBQB beSsiJ"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -350,7 +358,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -373,16 +381,18 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                   />
                                 </svg>
                               </div>
-                              0
-                              <styled.span>
-                                <span
-                                  className="sc-iBPTik btCWqK"
-                                >
-                                   
-                                  of 
-                                  0
-                                </span>
-                              </styled.span>
+                              <span>
+                                0
+                                <styled.span>
+                                  <span
+                                    className="sc-iBPTik btCWqK"
+                                  >
+                                     
+                                    of 
+                                    0
+                                  </span>
+                                </styled.span>
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -393,7 +403,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div
                               title="Under replicated partitions"
@@ -404,7 +414,9 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 URP
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -414,7 +426,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -423,7 +435,9 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 In Sync Replicas
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -433,7 +447,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -442,7 +456,9 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 Out of Sync Replicas
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -765,7 +781,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB ewAWCQ"
+                    className="sc-bdfBQB beSsiJ"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -780,7 +796,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -789,7 +805,9 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 Total Brokers
                                  
                               </div>
-                              1
+                              <span>
+                                1
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -799,7 +817,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -808,7 +826,9 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 Active Controllers
                                  
                               </div>
-                              1
+                              <span>
+                                1
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -818,7 +838,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -827,20 +847,22 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 Zookeeper Status
                                  
                               </div>
-                              <Styled(Tag)
-                                color="green"
-                              >
-                                <Tag
-                                  className="sc-dlfnuX gOWcUL"
+                              <span>
+                                <Styled(Tag)
                                   color="green"
                                 >
-                                  <p
+                                  <Tag
                                     className="sc-dlfnuX gOWcUL"
+                                    color="green"
                                   >
-                                    online
-                                  </p>
-                                </Tag>
-                              </Styled(Tag)>
+                                    <p
+                                      className="sc-dlfnuX gOWcUL"
+                                    >
+                                      online
+                                    </p>
+                                  </Tag>
+                                </Styled(Tag)>
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -850,7 +872,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -859,7 +881,9 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 Version
                                  
                               </div>
-                              1
+                              <span>
+                                1
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -873,7 +897,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB ewAWCQ"
+                    className="sc-bdfBQB beSsiJ"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -889,7 +913,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -912,16 +936,18 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                   />
                                 </svg>
                               </div>
-                              64
-                              <styled.span>
-                                <span
-                                  className="sc-iBPTik btCWqK"
-                                >
-                                   
-                                  of 
-                                  64
-                                </span>
-                              </styled.span>
+                              <span>
+                                64
+                                <styled.span>
+                                  <span
+                                    className="sc-iBPTik btCWqK"
+                                  >
+                                     
+                                    of 
+                                    64
+                                  </span>
+                                </styled.span>
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -932,7 +958,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div
                               title="Under replicated partitions"
@@ -943,7 +969,9 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 URP
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -953,7 +981,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -962,7 +990,9 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 In Sync Replicas
                                  
                               </div>
-                              64
+                              <span>
+                                64
+                              </span>
                             </div>
                           </div>
                         </styled.div>
@@ -972,7 +1002,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea cvsrGp"
+                            className="sc-gsTEea liOFnL"
                           >
                             <div>
                               <div
@@ -981,7 +1011,9 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 Out of Sync Replicas
                                  
                               </div>
-                              0
+                              <span>
+                                0
+                              </span>
                             </div>
                           </div>
                         </styled.div>

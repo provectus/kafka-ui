@@ -13,7 +13,7 @@ import DetailsContainer from './Details/DetailsContainer';
 import EditContainer from './Edit/EditContainer';
 
 const Connect: React.FC = () => (
-  <div className="section">
+  <div>
     <Switch>
       <Route
         exact

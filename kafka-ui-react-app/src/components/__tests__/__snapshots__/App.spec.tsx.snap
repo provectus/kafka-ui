@@ -382,7 +382,7 @@ exports[`App view matches snapshot 1`] = `
                                 <MetricsWrapper>
                                   <styled.div>
                                     <div
-                                      className="sc-gKseQn cAuLuo"
+                                      className="sc-gKseQn gnQrfd"
                                     >
                                       <div
                                         className="indicatorsWrapper"
@@ -398,7 +398,7 @@ exports[`App view matches snapshot 1`] = `
                                         >
                                           <styled.div>
                                             <div
-                                              className="sc-iBPTik gkwSit"
+                                              className="sc-iBPTik cqcUkT"
                                             >
                                               <div>
                                                 <div
@@ -420,19 +420,21 @@ exports[`App view matches snapshot 1`] = `
                                                   </Styled(Tag)>
                                                    
                                                 </div>
-                                                <span
-                                                  data-testid="onlineCount"
-                                                >
-                                                  0
-                                                </span>
-                                                 
-                                                <styled.span>
+                                                <span>
                                                   <span
-                                                    className="sc-pGacB dBjHDQ"
+                                                    data-testid="onlineCount"
                                                   >
-                                                    clusters
+                                                    0
                                                   </span>
-                                                </styled.span>
+                                                   
+                                                  <styled.span>
+                                                    <span
+                                                      className="sc-pGacB dBjHDQ"
+                                                    >
+                                                      clusters
+                                                    </span>
+                                                  </styled.span>
+                                                </span>
                                               </div>
                                             </div>
                                           </styled.div>
@@ -448,7 +450,7 @@ exports[`App view matches snapshot 1`] = `
                                         >
                                           <styled.div>
                                             <div
-                                              className="sc-iBPTik gkwSit"
+                                              className="sc-iBPTik cqcUkT"
                                             >
                                               <div>
                                                 <div
@@ -470,19 +472,21 @@ exports[`App view matches snapshot 1`] = `
                                                   </Styled(Tag)>
                                                    
                                                 </div>
-                                                <span
-                                                  data-testid="offlineCount"
-                                                >
-                                                  0
-                                                </span>
-                                                 
-                                                <styled.span>
+                                                <span>
                                                   <span
-                                                    className="sc-pGacB dBjHDQ"
+                                                    data-testid="offlineCount"
                                                   >
-                                                    clusters
+                                                    0
                                                   </span>
-                                                </styled.span>
+                                                   
+                                                  <styled.span>
+                                                    <span
+                                                      className="sc-pGacB dBjHDQ"
+                                                    >
+                                                      clusters
+                                                    </span>
+                                                  </styled.span>
+                                                </span>
                                               </div>
                                             </div>
                                           </styled.div>

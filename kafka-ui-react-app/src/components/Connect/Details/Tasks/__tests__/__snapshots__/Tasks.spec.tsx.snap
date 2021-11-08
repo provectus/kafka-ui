@@ -2,28 +2,56 @@
 
 exports[`Tasks view matches snapshot 1`] = `
 <table
-  className="table is-fullwidth"
+  className="sc-bdfBQB kCfgih"
 >
   <thead>
     <tr>
-      <th>
-        ID
-      </th>
-      <th>
-        Worker
-      </th>
-      <th>
-        State
-      </th>
-      <th>
-        Trace
-      </th>
-      <th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="ID"
+      >
         <span
-          className="is-pulled-right"
+          className="title"
         >
-          Restart
+          ID
         </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="Worker"
+      >
+        <span
+          className="title"
+        >
+          Worker
+        </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="State"
+      >
+        <span
+          className="title"
+        >
+          State
+        </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="Trace"
+      >
+        <span
+          className="title"
+        >
+          Trace
+        </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+      >
+        <span
+          className="title"
+        />
       </th>
     </tr>
   </thead>
@@ -100,28 +128,56 @@ exports[`Tasks view matches snapshot when fetching tasks 1`] = `<mock-PageLoader
 
 exports[`Tasks view matches snapshot when no tasks 1`] = `
 <table
-  className="table is-fullwidth"
+  className="sc-bdfBQB kCfgih"
 >
   <thead>
     <tr>
-      <th>
-        ID
-      </th>
-      <th>
-        Worker
-      </th>
-      <th>
-        State
-      </th>
-      <th>
-        Trace
-      </th>
-      <th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="ID"
+      >
         <span
-          className="is-pulled-right"
+          className="title"
         >
-          Restart
+          ID
         </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="Worker"
+      >
+        <span
+          className="title"
+        >
+          Worker
+        </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="State"
+      >
+        <span
+          className="title"
+        >
+          State
+        </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+        title="Trace"
+      >
+        <span
+          className="title"
+        >
+          Trace
+        </span>
+      </th>
+      <th
+        className="sc-gsTEea cXpshw"
+      >
+        <span
+          className="title"
+        />
       </th>
     </tr>
   </thead>

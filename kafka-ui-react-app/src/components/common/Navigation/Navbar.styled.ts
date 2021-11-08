@@ -3,7 +3,6 @@ import { Colors } from 'theme/theme';
 
 const Navbar = styled.nav`
   display: flex;
-  width: 100%;
   border-bottom: 1px ${Colors.neutral[10]} solid;
   & a {
     height: 40px;

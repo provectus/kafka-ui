@@ -1,47 +1,44 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Details view matches snapshot 1`] = `
-<div
-  className="box"
->
-  <nav
-    className="navbar mb-4"
-    role="navigation"
+<div>
+  <div
+    className="sc-gsTEea iWhJHm"
   >
-    <div
-      className="navbar-start tabs mb-0"
-    >
-      <a
-        aria-current="page"
-        className="navbar-item is-tab is-active"
-        href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector"
-        onClick={[Function]}
-        style={Object {}}
-      >
-        Overview
-      </a>
-      <a
-        aria-current={null}
-        className="navbar-item is-tab"
-        href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/tasks"
-        onClick={[Function]}
-      >
-        Tasks
-      </a>
-      <a
-        aria-current={null}
-        className="navbar-item is-tab"
-        href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/config"
-        onClick={[Function]}
-      >
-        Config
-      </a>
-    </div>
-    <div
-      className="navbar-end"
-    >
+    <h1>
+      my-connector
+    </h1>
+    <div>
       <mock-ActionsContainer />
     </div>
+  </div>
+  <nav
+    className="sc-bdfBQB dxWZBO"
+    role="navigation"
+  >
+    <a
+      aria-current="page"
+      className="is-active"
+      href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector"
+      onClick={[Function]}
+      style={Object {}}
+    >
+      Overview
+    </a>
+    <a
+      aria-current={null}
+      href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/tasks"
+      onClick={[Function]}
+    >
+      Tasks
+    </a>
+    <a
+      aria-current={null}
+      href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/config"
+      onClick={[Function]}
+    >
+      Config
+    </a>
   </nav>
   <mock-OverviewContainer
     history={
