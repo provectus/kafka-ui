@@ -4,83 +4,85 @@ exports[`DangerZone is rendered properly 1`] = `
 <body>
   <div>
     <div
-      class="box"
+      class="sc-iBPTik svruH"
     >
-      <h4
-        class="title is-5 has-text-danger mb-5"
+      <h1
+        class="sc-fubCzh jIQhgw"
       >
         Danger Zone
-      </h4>
-      <div
-        class="is-flex is-flex-direction-column"
-      >
+      </h1>
+      <div>
         <form
-          class="columns mb-0"
+          class="sc-pGacB ycXcd"
         >
-          <div
-            class="column is-three-quarters"
-          >
+          <div>
             <label
-              class="label"
+              class="sc-gKseQn ecXghg"
               for="partitions"
             >
               Number of partitions *
             </label>
-            <input
-              class="input"
-              id="partitions"
-              name="partitions"
-              placeholder="Number of partitions"
-              type="number"
-            />
+            <div
+              class="sc-jSgvzq hTFgyW"
+            >
+              <input
+                class="sc-hKgJUU fwJiJa sc-jSgvzq hTFgyW"
+                id="partitions"
+                name="partitions"
+                placeholder="Number of partitions"
+                type="number"
+              />
+            </div>
           </div>
-          <div
-            class="column is-flex is-align-items-flex-end"
-          >
-            <input
-              class="button is-danger"
+          <div>
+            <button
+              class="sc-bdfBQB gfDMZr"
               data-testid="partitionsSubmit"
               disabled=""
               type="submit"
-            />
+            >
+              Submit
+            </button>
           </div>
         </form>
         <p
-          class="help is-danger mt-0 mb-4"
+          class="sc-eCstlR hFlALZ"
         />
         <form
-          class="columns"
+          class="sc-pGacB ycXcd"
         >
-          <div
-            class="column is-three-quarters"
-          >
+          <div>
             <label
-              class="label"
+              class="sc-gKseQn ecXghg"
               for="replicationFactor"
             >
               Replication Factor *
             </label>
-            <input
-              class="input"
-              id="replicationFactor"
-              name="replicationFactor"
-              placeholder="Replication Factor"
-              type="number"
-            />
+            <div
+              class="sc-jSgvzq hTFgyW"
+            >
+              <input
+                class="sc-hKgJUU ipTcQr sc-jSgvzq hTFgyW"
+                id="replicationFactor"
+                name="replicationFactor"
+                placeholder="Replication Factor"
+                type="number"
+              />
+            </div>
           </div>
-          <div
-            class="column is-flex is-align-items-flex-end"
-          >
-            <input
-              class="button is-danger"
+          <div>
+            <button
+              class="sc-bdfBQB gfDMZr"
               data-testid="replicationFactorSubmit"
               disabled=""
               type="submit"
-            />
+            >
+              Submit
+            </button>
           </div>
         </form>
         <p
-          class="help is-danger mt-0"
+          class="sc-eCstlR hFlALZ"
         />
       </div>
     </div>

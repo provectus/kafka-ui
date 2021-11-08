@@ -4,20 +4,20 @@ exports[`Filters component matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-iBPTik dZQJlN"
+      class="sc-fubCzh gHORJs"
     >
       <div>
         <div
-          class="sc-fubCzh hdDORc"
+          class="sc-pGacB eRSVNn"
         >
           <div
-            class="sc-dlfnuX gxtwfA"
+            class="sc-hKgJUU hNtsdb"
           >
             <i
               class="sc-bdfBQB gNwdVP fas fa-search"
             />
             <input
-              class="sc-gsTEea exLrMT sc-dlfnuX gxtwfA"
+              class="sc-gsTEea exLrMT sc-hKgJUU hNtsdb"
               id="searchText"
               placeholder="Search"
               type="text"
@@ -25,13 +25,13 @@ exports[`Filters component matches the snapshot 1`] = `
             />
           </div>
           <div
-            class="sc-pGacB gClcpR"
+            class="sc-jrAFXE kATteI"
           >
             <div
-              class="select-wrapper sc-jSgvzq hTFgyW"
+              class="select-wrapper sc-gKseQn kBxyGw"
             >
               <select
-                class="sc-eCstlR kuneef"
+                class="sc-jSgvzq haAyUX"
                 id="selectSeekType"
               >
                 <option
@@ -47,10 +47,10 @@ exports[`Filters component matches the snapshot 1`] = `
               </select>
             </div>
             <div
-              class="sc-dlfnuX gxtwfA offset-selector"
+              class="sc-hKgJUU hNtsdb offset-selector"
             >
               <input
-                class="sc-gsTEea kpJMyZ sc-dlfnuX gxtwfA offset-selector"
+                class="sc-gsTEea kpJMyZ sc-hKgJUU hNtsdb offset-selector"
                 id="offset"
                 type="text"
                 value=""
@@ -119,7 +119,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="sc-gKseQn bMArfe"
+            class="sc-iBPTik dlEKnS"
             style="font-weight: 500;"
             type="submit"
           >
@@ -127,10 +127,10 @@ exports[`Filters component matches the snapshot 1`] = `
           </button>
         </div>
         <div
-          class="select-wrapper sc-jSgvzq hTFgyW"
+          class="select-wrapper sc-gKseQn kBxyGw"
         >
           <select
-            class="sc-eCstlR kuneef"
+            class="sc-jSgvzq haAyUX"
           >
             <option
               value="FORWARD"
@@ -146,17 +146,17 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="sc-jrAFXE jxpOcQ"
+        class="sc-kEjbQP joATfJ"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="sc-kEjbQP dufThU"
+          class="sc-iqHYmW lgmfQM"
           title="Elapsed Time"
         >
           <div
-            class="sc-iqHYmW CqIes"
+            class="sc-crrszt kcjOBt"
           >
             <i
               class="far fa-clock"
@@ -168,11 +168,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="sc-kEjbQP dufThU"
+          class="sc-iqHYmW lgmfQM"
           title="Bytes Consumed"
         >
           <div
-            class="sc-iqHYmW CqIes"
+            class="sc-crrszt kcjOBt"
           >
             <i
               class="fas fa-arrow-down"
@@ -183,11 +183,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="sc-kEjbQP dufThU"
+          class="sc-iqHYmW lgmfQM"
           title="Messages Consumed"
         >
           <div
-            class="sc-iqHYmW CqIes"
+            class="sc-crrszt kcjOBt"
           >
             <i
               class="far fa-file-alt"
@@ -207,20 +207,20 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-iBPTik dZQJlN"
+      class="sc-fubCzh gHORJs"
     >
       <div>
         <div
-          class="sc-fubCzh hdDORc"
+          class="sc-pGacB eRSVNn"
         >
           <div
-            class="sc-dlfnuX gxtwfA"
+            class="sc-hKgJUU hNtsdb"
           >
             <i
               class="sc-bdfBQB gNwdVP fas fa-search"
             />
             <input
-              class="sc-gsTEea exLrMT sc-dlfnuX gxtwfA"
+              class="sc-gsTEea exLrMT sc-hKgJUU hNtsdb"
               id="searchText"
               placeholder="Search"
               type="text"
@@ -228,13 +228,13 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             />
           </div>
           <div
-            class="sc-pGacB gClcpR"
+            class="sc-jrAFXE kATteI"
           >
             <div
-              class="select-wrapper sc-jSgvzq hTFgyW"
+              class="select-wrapper sc-gKseQn kBxyGw"
             >
               <select
-                class="sc-eCstlR kuneef"
+                class="sc-jSgvzq haAyUX"
                 id="selectSeekType"
               >
                 <option
@@ -250,10 +250,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
               </select>
             </div>
             <div
-              class="sc-dlfnuX gxtwfA offset-selector"
+              class="sc-hKgJUU hNtsdb offset-selector"
             >
               <input
-                class="sc-gsTEea kpJMyZ sc-dlfnuX gxtwfA offset-selector"
+                class="sc-gsTEea kpJMyZ sc-hKgJUU hNtsdb offset-selector"
                 id="offset"
                 type="text"
                 value=""
@@ -322,7 +322,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="sc-gKseQn bMArfe"
+            class="sc-iBPTik dlEKnS"
             style="font-weight: 500;"
             type="button"
           >
@@ -330,10 +330,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </button>
         </div>
         <div
-          class="select-wrapper sc-jSgvzq hTFgyW"
+          class="select-wrapper sc-gKseQn kBxyGw"
         >
           <select
-            class="sc-eCstlR kuneef"
+            class="sc-jSgvzq haAyUX"
           >
             <option
               value="FORWARD"
@@ -349,17 +349,17 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="sc-jrAFXE jxpOcQ"
+        class="sc-kEjbQP joATfJ"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="sc-kEjbQP dufThU"
+          class="sc-iqHYmW lgmfQM"
           title="Elapsed Time"
         >
           <div
-            class="sc-iqHYmW CqIes"
+            class="sc-crrszt kcjOBt"
           >
             <i
               class="far fa-clock"
@@ -371,11 +371,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="sc-kEjbQP dufThU"
+          class="sc-iqHYmW lgmfQM"
           title="Bytes Consumed"
         >
           <div
-            class="sc-iqHYmW CqIes"
+            class="sc-crrszt kcjOBt"
           >
             <i
               class="fas fa-arrow-down"
@@ -386,11 +386,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="sc-kEjbQP dufThU"
+          class="sc-iqHYmW lgmfQM"
           title="Messages Consumed"
         >
           <div
-            class="sc-iqHYmW CqIes"
+            class="sc-crrszt kcjOBt"
           >
             <i
               class="far fa-file-alt"

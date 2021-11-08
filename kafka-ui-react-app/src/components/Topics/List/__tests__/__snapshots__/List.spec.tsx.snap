@@ -192,11 +192,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               text="All Topics"
             >
               <PageHeading
-                className="sc-pGacB xxHjc"
+                className="sc-jrAFXE hVcdFx"
                 text="All Topics"
               >
                 <div
-                  className="sc-pGacB xxHjc"
+                  className="sc-jrAFXE hVcdFx"
                 >
                   <h1>
                     All Topics
@@ -224,7 +224,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                               buttonType="primary"
                             >
                               <button
-                                className="sc-fubCzh hbnxtW"
+                                className="sc-pGacB iXeugt"
                               >
                                 <i
                                   className="fas fa-plus"
@@ -244,7 +244,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               hasInput={true}
             >
               <div
-                className="sc-jrAFXE fvZNpK"
+                className="sc-kEjbQP dWGQHX"
               >
                 <div>
                   <Search
@@ -261,7 +261,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                       type="text"
                     >
                       <Input
-                        className="sc-gKseQn kBxyGw"
+                        className="sc-iBPTik bUenXA"
                         defaultValue=""
                         inputSize="M"
                         leftIcon="fas fa-search"
@@ -270,7 +270,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                         type="text"
                       >
                         <div
-                          className="sc-gKseQn kBxyGw"
+                          className="sc-iBPTik bUenXA"
                         >
                           <styled.i
                             className="fas fa-search"
@@ -282,7 +282,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                             />
                           </styled.i>
                           <styled.input
-                            className="sc-gKseQn kBxyGw"
+                            className="sc-iBPTik bUenXA"
                             defaultValue=""
                             hasLeftIcon={true}
                             inputSize="M"
@@ -291,7 +291,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                             type="text"
                           >
                             <input
-                              className="sc-jSgvzq BZWLZ sc-gKseQn kBxyGw"
+                              className="sc-jSgvzq BZWLZ sc-iBPTik bUenXA"
                               defaultValue=""
                               onChange={[Function]}
                               placeholder="Search by Topic Name"
@@ -326,7 +326,7 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               isFullwidth={true}
             >
               <table
-                className="sc-iBPTik fLblTN"
+                className="sc-fubCzh jRHsOw"
               >
                 <thead>
                   <tr>

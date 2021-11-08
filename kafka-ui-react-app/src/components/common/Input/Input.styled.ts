@@ -46,4 +46,9 @@ const StyledInput = styled.input<StyledInputProps>`
   }
 `;
 
+export const FormError = styled.p`
+  color: ${Colors.red[50]};
+  font-size: 12px;
+`;
+
 export default StyledInput;

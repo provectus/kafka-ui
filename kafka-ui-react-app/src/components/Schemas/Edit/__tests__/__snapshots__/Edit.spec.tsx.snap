@@ -118,9 +118,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
     >
       <div>
         <div>
-          <styled.h3>
+          <styled.label>
             Type
-          </styled.h3>
+          </styled.label>
           <Styled(Select)
             defaultValue="AVRO"
             disabled={false}
@@ -148,9 +148,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           </Styled(Select)>
         </div>
         <div>
-          <styled.h3>
+          <styled.label>
             Compatibility level
-          </styled.h3>
+          </styled.label>
           <Styled(Select)
             defaultValue="BACKWARD"
             disabled={false}

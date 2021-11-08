@@ -1,7 +1,17 @@
 import { ErrorMessage } from '@hookform/error-message';
+import { Button } from 'components/common/Button/Button';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import Input from 'components/common/Input/Input';
+import { FormError } from 'components/common/Input/Input.styled';
+import InputLabel from 'components/common/Input/InputLabel.styled';
 import React from 'react';
-import { useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
+
+import {
+  DagerZoneFormStyled,
+  DangerZoneTitleStyled,
+  DangerZoneWrapperStyled,
+} from './DangerZone.styled';
 
 export interface Props {
   clusterName: string;
@@ -43,24 +53,13 @@ const DangerZone: React.FC<Props> = ({
     defaultReplicationFactor
   );
 
-  const {
-    register: partitionsRegister,
-    handleSubmit: handlePartitionsSubmit,
-    formState: partitionsFormState,
-    setError: setPartitionsError,
-    getValues: partitionsGetValues,
-  } = useForm({
+  const partitionsMethods = useForm({
     defaultValues: {
       partitions,
     },
   });
 
-  const {
-    register: replicationFactorRegister,
-    handleSubmit: handleКeplicationFactorSubmit,
-    formState: replicationFactorFormState,
-    getValues: replicationFactorgetValues,
-  } = useForm({
+  const replicationFactorMethods = useForm({
     defaultValues: {
       replicationFactor,
     },
@@ -68,7 +67,7 @@ const DangerZone: React.FC<Props> = ({
 
   const validatePartitions = (data: { partitions: number }) => {
     if (data.partitions < defaultPartitions) {
-      setPartitionsError('partitions', {
+      partitionsMethods.setError('partitions', {
         type: 'manual',
         message: 'You can only increase the number of partitions!',
       });
@@ -99,50 +98,58 @@ const DangerZone: React.FC<Props> = ({
     updateTopicPartitionsCount(
       clusterName,
       topicName,
-      partitionsGetValues('partitions')
+      partitionsMethods.getValues('partitions')
     );
   };
   const replicationFactorSubmit = () => {
     updateTopicReplicationFactor(
       clusterName,
       topicName,
-      replicationFactorgetValues('replicationFactor')
+      replicationFactorMethods.getValues('replicationFactor')
     );
   };
   return (
-    <div className="box">
-      <h4 className="title is-5 has-text-danger mb-5">Danger Zone</h4>
-      <div className="is-flex is-flex-direction-column">
-        <form
-          onSubmit={handlePartitionsSubmit(validatePartitions)}
-          className="columns mb-0"
-        >
-          <div className="column is-three-quarters">
-            <label className="label" htmlFor="partitions">
-              Number of partitions *
-            </label>
-            <input
-              className="input"
-              type="number"
-              id="partitions"
-              placeholder="Number of partitions"
-              {...partitionsRegister('partitions', {
-                required: 'Partiotions are required',
-              })}
-            />
-          </div>
-          <div className="column is-flex is-align-items-flex-end">
-            <input
-              type="submit"
-              className="button is-danger"
-              disabled={!partitionsFormState.isDirty}
-              data-testid="partitionsSubmit"
-            />
-          </div>
-        </form>
-        <p className="help is-danger mt-0 mb-4">
-          <ErrorMessage errors={partitionsFormState.errors} name="partitions" />
-        </p>
+    <DangerZoneWrapperStyled>
+      <DangerZoneTitleStyled>Danger Zone</DangerZoneTitleStyled>
+      <div>
+        <FormProvider {...partitionsMethods}>
+          <DagerZoneFormStyled
+            onSubmit={partitionsMethods.handleSubmit(validatePartitions)}
+          >
+            <div>
+              <InputLabel htmlFor="partitions">
+                Number of partitions *
+              </InputLabel>
+              <Input
+                inputSize="M"
+                type="number"
+                id="partitions"
+                name="partitions"
+                hookFormOptions={{
+                  required: 'Partiotions are required',
+                }}
+                placeholder="Number of partitions"
+              />
+            </div>
+            <div>
+              <Button
+                buttonType="primary"
+                buttonSize="M"
+                type="submit"
+                disabled={!partitionsMethods.formState.isDirty}
+                data-testid="partitionsSubmit"
+              >
+                Submit
+              </Button>
+            </div>
+          </DagerZoneFormStyled>
+        </FormProvider>
+        <FormError>
+          <ErrorMessage
+            errors={partitionsMethods.formState.errors}
+            name="partitions"
+          />
+        </FormError>
         <ConfirmationModal
           isOpen={isPartitionsConfirmationVisible}
           onCancel={() => setIsPartitionsConfirmationVisible(false)}
@@ -152,39 +159,46 @@ const DangerZone: React.FC<Props> = ({
           if you 100% know what you are doing!
         </ConfirmationModal>
 
-        <form
-          onSubmit={handleКeplicationFactorSubmit(validateReplicationFactor)}
-          className="columns"
-        >
-          <div className="column is-three-quarters">
-            <label className="label" htmlFor="replicationFactor">
-              Replication Factor *
-            </label>
-            <input
-              id="replicationFactor"
-              className="input"
-              type="number"
-              placeholder="Replication Factor"
-              {...replicationFactorRegister('replicationFactor', {
-                required: 'Replication Factor are required',
-              })}
-            />
-          </div>
-          <div className="column is-flex is-align-items-flex-end">
-            <input
-              type="submit"
-              className="button is-danger"
-              disabled={!replicationFactorFormState.isDirty}
-              data-testid="replicationFactorSubmit"
-            />
-          </div>
-        </form>
-        <p className="help is-danger mt-0">
+        <FormProvider {...replicationFactorMethods}>
+          <DagerZoneFormStyled
+            onSubmit={replicationFactorMethods.handleSubmit(
+              validateReplicationFactor
+            )}
+          >
+            <div>
+              <InputLabel htmlFor="replicationFactor">
+                Replication Factor *
+              </InputLabel>
+              <Input
+                id="replicationFactor"
+                type="number"
+                placeholder="Replication Factor"
+                name="replicationFactor"
+                hookFormOptions={{
+                  required: 'Replication Factor are required',
+                }}
+              />
+            </div>
+            <div>
+              <Button
+                buttonType="primary"
+                buttonSize="M"
+                type="submit"
+                disabled={!replicationFactorMethods.formState.isDirty}
+                data-testid="replicationFactorSubmit"
+              >
+                Submit
+              </Button>
+            </div>
+          </DagerZoneFormStyled>
+        </FormProvider>
+
+        <FormError>
           <ErrorMessage
-            errors={replicationFactorFormState.errors}
+            errors={replicationFactorMethods.formState.errors}
             name="replicationFactor"
           />
-        </p>
+        </FormError>
         <ConfirmationModal
           isOpen={isReplicationFactorConfirmationVisible}
           onCancel={() => setIsReplicationFactorConfirmationVisible(false)}
@@ -193,7 +207,7 @@ const DangerZone: React.FC<Props> = ({
           Are you sure you want to update the replication factor?
         </ConfirmationModal>
       </div>
-    </div>
+    </DangerZoneWrapperStyled>
   );
 };
 
