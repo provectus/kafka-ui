@@ -1,92 +1,102 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`New view matches snapshot 1`] = `
-<form
-  className="sc-pGacB bnGMSd"
-  onSubmit={[Function]}
->
+Array [
   <div
-    className="field "
+    className="sc-pGacB xxHjc"
   >
-    <label
-      className="sc-bdfBQB eXWprc"
-    >
-      Connect *
-    </label>
+    <h1>
+      Create new connector
+    </h1>
+    <div />
+  </div>,
+  <form
+    className="sc-jrAFXE ivxRKk"
+    onSubmit={[Function]}
+  >
     <div
-      className="select-wrapper sc-hKgJUU hNtsdb"
+      className="field "
     >
-      <select
-        className="sc-dlfnuX gLyxwF"
-        disabled={false}
-        name="connectName"
-        onBlur={[Function]}
-        onChange={[Function]}
+      <label
+        className="sc-bdfBQB eXWprc"
       >
-        <option
-          value="first"
+        Connect *
+      </label>
+      <div
+        className="select-wrapper sc-hKgJUU hNtsdb"
+      >
+        <select
+          className="sc-dlfnuX gLyxwF"
+          disabled={false}
+          name="connectName"
+          onBlur={[Function]}
+          onChange={[Function]}
         >
-          first
-        </option>
-        <option
-          value="second"
-        >
-          second
-        </option>
-      </select>
-    </div>
-    <p
-      className="sc-jSgvzq ciVFIZ"
-    />
-  </div>
-  <div>
-    <label
-      className="sc-bdfBQB eXWprc"
-    >
-      Name *
-    </label>
-    <div
-      className="sc-iBPTik bUenXA"
-    >
-      <input
-        autoComplete="off"
-        className="sc-eCstlR dgJIsL sc-iBPTik bUenXA"
-        disabled={false}
-        name="name"
-        onBlur={[Function]}
-        onChange={[Function]}
-        placeholder="Connector Name"
+          <option
+            value="first"
+          >
+            first
+          </option>
+          <option
+            value="second"
+          >
+            second
+          </option>
+        </select>
+      </div>
+      <p
+        className="sc-jSgvzq ciVFIZ"
       />
     </div>
-    <p
-      className="sc-jSgvzq ciVFIZ"
-    />
-  </div>
-  <div>
-    <label
-      className="sc-bdfBQB eXWprc"
+    <div>
+      <label
+        className="sc-bdfBQB eXWprc"
+      >
+        Name *
+      </label>
+      <div
+        className="sc-iBPTik bUenXA"
+      >
+        <input
+          autoComplete="off"
+          className="sc-eCstlR dgJIsL sc-iBPTik bUenXA"
+          disabled={false}
+          name="name"
+          onBlur={[Function]}
+          onChange={[Function]}
+          placeholder="Connector Name"
+        />
+      </div>
+      <p
+        className="sc-jSgvzq ciVFIZ"
+      />
+    </div>
+    <div>
+      <label
+        className="sc-bdfBQB eXWprc"
+      >
+        Config *
+      </label>
+      <mock-JSONEditor
+        name="config"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={false}
+        value=""
+      />
+      <p
+        className="sc-jSgvzq ciVFIZ"
+      />
+    </div>
+    <button
+      className="sc-fubCzh hbnxtW"
+      disabled={true}
+      type="submit"
     >
-      Config *
-    </label>
-    <mock-JSONEditor
-      name="config"
-      onBlur={[Function]}
-      onChange={[Function]}
-      readOnly={false}
-      value=""
-    />
-    <p
-      className="sc-jSgvzq ciVFIZ"
-    />
-  </div>
-  <button
-    className="sc-fubCzh hbnxtW"
-    disabled={true}
-    type="submit"
-  >
-    Submit
-  </button>
-</form>
+      Submit
+    </button>
+  </form>,
+]
 `;
 
 exports[`New view matches snapshot when fetching connects 1`] = `<mock-PageLoader />`;

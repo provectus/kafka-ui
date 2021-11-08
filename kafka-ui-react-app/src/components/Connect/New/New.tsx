@@ -15,6 +15,7 @@ import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required(),
@@ -27,6 +28,7 @@ interface RouterParams {
 
 const NewConnectFormStyled = styled.form`
   padding: 16px;
+  padding-top: 0;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -122,6 +124,7 @@ const New: React.FC<NewProps> = ({
 
   return (
     <FormProvider {...methods}>
+      <PageHeading text="Create new connector" />
       <NewConnectFormStyled onSubmit={handleSubmit(onSubmit)}>
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>

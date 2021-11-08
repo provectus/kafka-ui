@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const ResetOffsetsStyledWrapper = styled.div`
   padding: 16px;
+  padding-top: 0;
 
   & > form {
     display: flex;

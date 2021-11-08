@@ -4,11 +4,19 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-kEjbQP gcCmdI"
+      class="sc-kEjbQP dZqZwU"
+    >
+      <h1>
+        Reset offsets
+      </h1>
+      <div />
+    </div>
+    <div
+      class="sc-iqHYmW hiwAsE"
     >
       <form>
         <div
-          class="sc-iqHYmW hDvZvx"
+          class="sc-crrszt jOFwJk"
         >
           <div>
             <label

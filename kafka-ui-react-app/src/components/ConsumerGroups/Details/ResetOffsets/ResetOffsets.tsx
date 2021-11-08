@@ -24,6 +24,7 @@ import InputLabel from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import {
   MainSelectorsWrapperStyled,
@@ -186,6 +187,7 @@ const ResetOffsets: React.FC<Props> = ({
 
   return (
     <FormProvider {...methods}>
+      <PageHeading text="Reset offsets" />
       <ResetOffsetsStyledWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <MainSelectorsWrapperStyled>
