@@ -3,7 +3,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 import React from 'react';
 
-import { TopicContentWrapper } from './TopicContent.styled';
+import { ContentBox, TopicContentWrapper } from './TopicContent.styled';
 
 interface Props {
   consumers: ConsumerGroupTopicPartition[];
@@ -13,7 +13,7 @@ const TopicContents: React.FC<Props> = ({ consumers }) => {
   return (
     <TopicContentWrapper>
       <td colSpan={3}>
-        <div className="content-box">
+        <ContentBox>
           <StyledTable isFullwidth>
             <thead>
               <tr>
@@ -38,7 +38,7 @@ const TopicContents: React.FC<Props> = ({ consumers }) => {
               ))}
             </tbody>
           </StyledTable>
-        </div>
+        </ContentBox>
       </td>
     </TopicContentWrapper>
   );

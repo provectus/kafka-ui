@@ -39,63 +39,42 @@ exports[`ListItem matches snapshot 1`] = `
           }
         >
           <tr>
-            <td>
-              <NavLink
-                activeClassName="is-active"
-                exact={true}
-                style={
-                  Object {
-                    "color": "#171A1C",
-                    "fontWeight": 500,
-                  }
-                }
-                to="schemas/test"
+            <styled.td>
+              <td
+                className="sc-bdfBQB cQKBWR"
               >
-                <Link
-                  aria-current={null}
-                  style={
-                    Object {
-                      "color": "#171A1C",
-                      "fontWeight": 500,
-                    }
-                  }
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/schemas/test",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                <NavLink
+                  exact={true}
+                  to="schemas/test"
                 >
-                  <LinkAnchor
+                  <Link
                     aria-current={null}
-                    href="/schemas/test"
-                    navigate={[Function]}
-                    style={
+                    to={
                       Object {
-                        "color": "#171A1C",
-                        "fontWeight": 500,
+                        "hash": "",
+                        "pathname": "/schemas/test",
+                        "search": "",
+                        "state": null,
                       }
                     }
                   >
-                    <a
+                    <LinkAnchor
                       aria-current={null}
                       href="/schemas/test"
-                      onClick={[Function]}
-                      style={
-                        Object {
-                          "color": "#171A1C",
-                          "fontWeight": 500,
-                        }
-                      }
+                      navigate={[Function]}
                     >
-                      test
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-            </td>
+                      <a
+                        aria-current={null}
+                        href="/schemas/test"
+                        onClick={[Function]}
+                      >
+                        test
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
+              </td>
+            </styled.td>
             <td>
               1
             </td>

@@ -2,7 +2,10 @@ import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 
-import { LatestVersionWrapper } from './LatestVersionItem.styled';
+import {
+  LatestVersionWrapper,
+  MetaDataLabel,
+} from './LatestVersionItem.styled';
 
 interface LatestVersionProps {
   schema: SchemaSubject;
@@ -22,21 +25,21 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
         }
       />
     </div>
-    <div className="meta-data">
+    <div data-testid="meta-data">
       <div>
-        <h3 className="meta-data-label">Latest version</h3>
+        <MetaDataLabel>Latest version</MetaDataLabel>
         <p>{version}</p>
       </div>
       <div>
-        <h3 className="meta-data-label">ID</h3>
+        <MetaDataLabel>ID</MetaDataLabel>
         <p>{id}</p>
       </div>
       <div>
-        <h3 className="meta-data-label">Subject</h3>
+        <MetaDataLabel>Subject</MetaDataLabel>
         <p>{subject}</p>
       </div>
       <div>
-        <h3 className="meta-data-label">Compatibility</h3>
+        <MetaDataLabel>Compatibility</MetaDataLabel>
         <p>{compatibilityLevel}</p>
       </div>
     </div>

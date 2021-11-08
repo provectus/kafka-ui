@@ -4,6 +4,8 @@ import { TopicConfig } from 'generated-sources';
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
 
+import ConfigListItem from './ConfigListItem';
+
 interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
@@ -11,26 +13,6 @@ interface Props {
   isFetched: boolean;
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
 }
-
-interface ListItemProps {
-  config: TopicConfig;
-}
-
-const ConfigListItem: React.FC<ListItemProps> = ({
-  config: { name, value, defaultValue },
-}) => {
-  const hasCustomValue = value !== defaultValue;
-
-  return (
-    <tr>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{name}</td>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{value}</td>
-      <td className="has-text-grey" title="Default Value">
-        {hasCustomValue && defaultValue}
-      </td>
-    </tr>
-  );
-};
 
 const Settings: React.FC<Props> = ({
   clusterName,

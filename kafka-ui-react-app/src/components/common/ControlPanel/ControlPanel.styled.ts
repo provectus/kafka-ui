@@ -1,6 +1,10 @@
 import { styled } from 'lib/themedStyles';
 
-export const ControlPanelWrapper = styled.div`
+interface Props {
+  hasInput?: boolean;
+}
+
+export const ControlPanelWrapper = styled.div<Props>`
   display: flex;
   align-items: center;
   padding: 0px 16px;
@@ -8,6 +12,6 @@ export const ControlPanelWrapper = styled.div`
   width: 100%;
   gap: 16px;
   & > *:first-child {
-    width: 38%;
+    width: ${(props) => (props.hasInput ? '38%' : 'auto')};
   }
 `;

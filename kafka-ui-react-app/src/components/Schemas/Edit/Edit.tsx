@@ -15,7 +15,7 @@ import { Button } from 'components/common/Button/Button';
 import InputLabel from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
-import { EditWrapper } from './Edit.styled';
+import { EditorsWrapper, EditWrapper } from './Edit.styled';
 
 export interface EditProps {
   subject: SchemaName;
@@ -127,8 +127,8 @@ const Edit = ({
                 </Select>
               </div>
             </div>
-            <div className="editors-wrapper">
-              <div className="editor-wrapper">
+            <EditorsWrapper>
+              <div>
                 <h4>Latest schema</h4>
                 <JSONEditor
                   isFixedHeight
@@ -139,7 +139,7 @@ const Edit = ({
                   highlightActiveLine={false}
                 />
               </div>
-              <div className="editor-wrapper">
+              <div>
                 <h4>New schema</h4>
                 <Controller
                   control={methods.control}
@@ -154,7 +154,7 @@ const Edit = ({
                   )}
                 />
               </div>
-            </div>
+            </EditorsWrapper>
             <Button
               buttonType="primary"
               buttonSize="M"

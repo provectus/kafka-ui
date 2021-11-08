@@ -10,3 +10,13 @@ export const MetricsContainerStyled = styled.div`
   margin-bottom: 0.5rem !important;
   display: flex !important;
 `;
+
+export const MetricsLightText = styled.span`
+  color: ${Colors.neutral[30]};
+  font-size: 14px;
+`;
+
+export const MetricsRedText = styled.span`
+  color: ${Colors.red[50]};
+  font-size: 14px;
+`;

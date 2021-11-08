@@ -13,11 +13,17 @@ import TagStyled from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { Colors } from 'theme/theme';
+import { styled } from 'lib/themedStyles';
 
 export interface ListItemProps {
   clusterName: ClusterName;
   connector: FullConnectorInfo;
 }
+
+const TopicTagsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const ListItem: React.FC<ListItemProps> = ({
   clusterName,
@@ -56,7 +62,6 @@ const ListItem: React.FC<ListItemProps> = ({
         <NavLink
           exact
           to={clusterConnectConnectorPath(clusterName, connect, name)}
-          activeClassName="is-active"
         >
           {name}
         </NavLink>
@@ -65,13 +70,13 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{type}</td>
       <td>{connectorClass}</td>
       <td>
-        <div className="is-flex is-flex-wrap-wrap">
+        <TopicTagsWrapper>
           {topics?.map((t) => (
             <TagStyled key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
             </TagStyled>
           ))}
-        </div>
+        </TopicTagsWrapper>
       </td>
       <td>{status && <TagStyled color="yellow">{status.state}</TagStyled>}</td>
       <td>

@@ -2,25 +2,25 @@ import { styled } from 'lib/themedStyles';
 
 export const QueryWrapper = styled.div`
   padding: 16px;
+`;
 
-  & .ksql-inputs-wrapper {
-    width: 100%;
-    display: flex;
-    gap: 24px;
+export const KSQLInputsWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  gap: 24px;
 
-    padding-bottom: 16px;
-    & > div {
-      flex-grow: 1;
-    }
+  padding-bottom: 16px;
+  & > div {
+    flex-grow: 1;
   }
+`;
 
-  & .ksql-input-header {
-    display: flex;
-    justify-content: space-between;
-  }
+export const KSQLInputHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
 
-  & .ksql-buttons {
-    display: flex;
-    gap: 16px;
-  }
+export const KSQLButtons = styled.div`
+  display: flex;
+  gap: 16px;
 `;

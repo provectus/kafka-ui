@@ -183,25 +183,30 @@ describe('List', () => {
       getCheckboxInput(0).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(1);
 
       // check second item
       getCheckboxInput(1).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeTruthy();
-      expect(component.find('.buttons').length).toEqual(1);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(1);
 
       // uncheck second item
       getCheckboxInput(1).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(1);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(1);
 
       // uncheck first item
       getCheckboxInput(0).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(0);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(0);
     });
 
     const checkActionButtonClick = async (action: string) => {
@@ -217,7 +222,7 @@ describe('List', () => {
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
       component
-        .find('.buttons')
+        .find('div[data-testid="delete-buttons"]')
         .find('button')
         .at(buttonIndex)
         .simulate('click');
@@ -230,7 +235,9 @@ describe('List', () => {
       component.update();
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(0);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(0);
       expect(mockFn).toBeCalledTimes(1);
       expect(mockFn).toBeCalledWith('local', [
         externalTopicPayload.name,
@@ -251,7 +258,11 @@ describe('List', () => {
       getCheckboxInput(1).simulate('change');
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
-      component.find('.buttons').find('button').at(0).simulate('click');
+      component
+        .find('div[data-testid="delete-buttons"]')
+        .find('button')
+        .at(0)
+        .simulate('click');
       modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeTruthy();
       await act(async () => {
@@ -261,7 +272,9 @@ describe('List', () => {
       expect(getConfirmationModal().prop('isOpen')).toBeFalsy();
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeTruthy();
-      expect(component.find('.buttons').length).toEqual(1);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(1);
       expect(mockDeleteTopics).toBeCalledTimes(0);
     });
   });

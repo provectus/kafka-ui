@@ -5,7 +5,16 @@ import SecondaryTabsStyles from 'components/common/Tabs/SecondaryTabs.styled';
 import { isObject } from 'lodash';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
-import { MessageContentWrapper } from './MessageContent.styled';
+import {
+  ContentBox,
+  JSONViewerWrapper,
+  MessageContentWrapper,
+  Metadata,
+  MetadataLabel,
+  MetadataMeta,
+  MetadataValue,
+  MetadataWrapper,
+} from './MessageContent.styled';
 
 type Tab = 'key' | 'content' | 'headers';
 
@@ -66,7 +75,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
   return (
     <MessageContentWrapper>
       <td colSpan={5}>
-        <div className="content-box content-wrapper">
+        <ContentBox>
           <SecondaryTabsStyles>
             <button
               type="button"
@@ -90,43 +99,41 @@ const MessageContent: React.FC<MessageContentProps> = ({
               Headers
             </button>
           </SecondaryTabsStyles>
-          <div className="json-viewer-wrapper">
+          <JSONViewerWrapper>
             <JSONViewer data={activeTabContent() || ''} />
-          </div>
-        </div>
+          </JSONViewerWrapper>
+        </ContentBox>
       </td>
       <td colSpan={2}>
-        <div className="content-box metadata-wrapper">
-          <span className="metadata">
-            <p className="metadata-label">Timestamp</p>
+        <MetadataWrapper>
+          <Metadata>
+            <MetadataLabel>Timestamp</MetadataLabel>
             <span>
-              <p className="metadata-value">{timestamp?.toLocaleString()}</p>
-              <p className="metadata-meta">Timestamp type: {timestampType}</p>
+              <MetadataValue>{timestamp?.toLocaleString()}</MetadataValue>
+              <MetadataMeta>Timestamp type: {timestampType}</MetadataMeta>
             </span>
-          </span>
+          </Metadata>
 
-          <span className="metadata">
-            <p className="metadata-label">Content</p>
+          <Metadata>
+            <MetadataLabel>Content</MetadataLabel>
             <span>
-              <p className="metadata-value">
-                {isContentJson() ? 'JSON' : 'Text'}
-              </p>
-              <p className="metadata-meta">
+              <MetadataValue>{isContentJson() ? 'JSON' : 'Text'}</MetadataValue>
+              <MetadataMeta>
                 Size: <BytesFormatted value={contentSize} />
-              </p>
+              </MetadataMeta>
             </span>
-          </span>
+          </Metadata>
 
-          <span className="metadata">
-            <p className="metadata-label">Key</p>
+          <Metadata>
+            <MetadataLabel>Key</MetadataLabel>
             <span>
-              <p className="metadata-value">{isKeyJson() ? 'JSON' : 'Text'}</p>
-              <p className="metadata-meta">
+              <MetadataValue>{isKeyJson() ? 'JSON' : 'Text'}</MetadataValue>
+              <MetadataMeta>
                 Size: <BytesFormatted value={keySize} />
-              </p>
+              </MetadataMeta>
             </span>
-          </span>
-        </div>
+          </Metadata>
+        </MetadataWrapper>
       </td>
     </MessageContentWrapper>
   );
