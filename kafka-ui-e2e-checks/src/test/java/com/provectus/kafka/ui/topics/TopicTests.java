@@ -26,8 +26,8 @@ public class TopicTests extends BaseTest {
     private static final String PATH_TO_AVRO = System.getProperty("user.dir") + "/src/test/resources/avro_msg_value.json";
     private static final String PATH_UNKNOWN_VALUE = System.getProperty("user.dir") + "/src/test/resources/unknown_value.json";
     private static final String PATH_TO_SCHEMA = System.getProperty("user.dir") + "/src/test/resources/schemaValue.json";
-    private static final String KEY_TO_PRODUCED_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
-    private static final String CONTENT_TO_PRODUCED_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
+    private static final String KEY_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/producedkey.txt";
+    private static final String CONTENT_TO_PRODUCE_MESSAGE = System.getProperty("user.dir") + "/src/test/resources/testData.txt";
     public static final String AVRO_MSG = "avro_msg_value";
     public static final String UNKNOWN = "unknown_value";
     public static final String VALUE = "schemaValue";
@@ -108,18 +108,18 @@ public class TopicTests extends BaseTest {
     }
 
     @SneakyThrows
-    @DisplayName("test")
+    @DisplayName("produce message")
     @Test
-    void producedMessage(){
+    void produceMessage(){
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_UPDATE);
         Selenide.refresh();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .clickOnButton("Produce message")
-                .setContentFiled(readFileAsString(CONTENT_TO_PRODUCED_MESSAGE))
-                .setKeyField(readFileAsString(KEY_TO_PRODUCED_MESSAGE))
+                .setContentFiled(readFileAsString(CONTENT_TO_PRODUCE_MESSAGE))
+                .setKeyField(readFileAsString(KEY_TO_PRODUCE_MESSAGE))
                 .submitProduceMessage()
-                .isMessageOnPage(readFileAsString(KEY_TO_PRODUCED_MESSAGE));
+                .isMessageOnPage(readFileAsString(KEY_TO_PRODUCE_MESSAGE));
     }
 }
