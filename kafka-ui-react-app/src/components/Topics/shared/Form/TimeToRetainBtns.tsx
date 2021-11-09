@@ -29,7 +29,7 @@ const TimeToRetainBtns: React.FC<Props> = ({ name }) => (
     <TimeToRetainBtn
       text="4w"
       inputName={name}
-      value={MILLISECONDS_IN_DAY * 7 * 24}
+      value={MILLISECONDS_IN_DAY * 7 * 4}
     />
   </div>
 );
