@@ -1,24 +1,32 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`New view matches snapshot 1`] = `
-<div
-  className="box"
->
+Array [
+  <div
+    className="sc-pGacB xxHjc"
+  >
+    <h1>
+      Create new connector
+    </h1>
+    <div />
+  </div>,
   <form
+    className="sc-jrAFXE ivxRKk"
     onSubmit={[Function]}
   >
     <div
       className="field "
     >
       <label
-        className="label"
+        className="sc-bdfBQB eXWprc"
       >
         Connect *
       </label>
       <div
-        className="control select"
+        className="select-wrapper sc-hKgJUU hNtsdb"
       >
         <select
+          className="sc-dlfnuX gLyxwF"
           disabled={false}
           name="connectName"
           onBlur={[Function]}
@@ -37,23 +45,21 @@ exports[`New view matches snapshot 1`] = `
         </select>
       </div>
       <p
-        className="help is-danger"
+        className="sc-jSgvzq ciVFIZ"
       />
     </div>
-    <div
-      className="field"
-    >
+    <div>
       <label
-        className="label"
+        className="sc-bdfBQB eXWprc"
       >
         Name *
       </label>
       <div
-        className="control"
+        className="sc-iBPTik bUenXA"
       >
         <input
           autoComplete="off"
-          className="input"
+          className="sc-eCstlR dgJIsL sc-iBPTik bUenXA"
           disabled={false}
           name="name"
           onBlur={[Function]}
@@ -62,47 +68,35 @@ exports[`New view matches snapshot 1`] = `
         />
       </div>
       <p
-        className="help is-danger"
+        className="sc-jSgvzq ciVFIZ"
       />
     </div>
-    <div
-      className="field"
-    >
+    <div>
       <label
-        className="label"
+        className="sc-bdfBQB eXWprc"
       >
         Config *
       </label>
-      <div
-        className="control"
-      >
-        <mock-JSONEditor
-          name="config"
-          onBlur={[Function]}
-          onChange={[Function]}
-          readOnly={false}
-          value=""
-        />
-      </div>
+      <mock-JSONEditor
+        name="config"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={false}
+        value=""
+      />
       <p
-        className="help is-danger"
+        className="sc-jSgvzq ciVFIZ"
       />
     </div>
-    <div
-      className="field"
+    <button
+      className="sc-fubCzh hbnxtW"
+      disabled={true}
+      type="submit"
     >
-      <div
-        className="control"
-      >
-        <input
-          className="button is-primary"
-          disabled={true}
-          type="submit"
-        />
-      </div>
-    </div>
-  </form>
-</div>
+      Submit
+    </button>
+  </form>,
+]
 `;
 
 exports[`New view matches snapshot when fetching connects 1`] = `<mock-PageLoader />`;
