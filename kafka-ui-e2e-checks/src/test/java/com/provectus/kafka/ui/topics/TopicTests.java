@@ -2,17 +2,12 @@ package com.provectus.kafka.ui.topics;
 
 import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.BaseTest;
-import com.provectus.kafka.ui.extensions.FileProcessor;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
-import com.provectus.kafka.ui.pages.ProduceMessagePage;
-import com.provectus.kafka.ui.pages.TopicView;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static com.provectus.kafka.ui.extensions.FileProcessor.readFileAsString;
 
 
 public class TopicTests extends BaseTest {
@@ -86,67 +81,13 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete topic")
     @Test
-    @Disabled
     void deleteTopic() {
-
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_DELETE);
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE).clickDeleteTopicButton();
-        pages.openTopicsList(SECOND_LOCAL).isNotVisible(TOPIC_TO_DELETE);
-        
+        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_DELETE)
+                .clickDeleteTopicButton()
+                .isOnTopicListPage()
+                .isNotVisible(TOPIC_TO_DELETE);
     }
-
-    @SneakyThrows
-    @DisplayName("should update a topic with Produce Message")
-    @Test
-    void updateTopicWithProduceMessage() {
-        String baseUrl = "http://localhost:8080/ui/clusters/secondLocal/topics/";
-        pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.clickCreateschema()
-                .setSubjectname("avro_msg_value").setSchemafield(readFileAsString(PATH_TO_AVRO))
-                .selectFromDropdown(MainPage.SchemaType.AVRO)
-                .clickSubmit()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.clickCreateschema()
-                .setSubjectname("unknown_value").setSchemafield(readFileAsString(PATH_UNKNOWN_VALUE))
-                .selectFromDropdown(MainPage.SchemaType.AVRO)
-                .clickSubmit()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-        pages.schemaRegistry.clickCreateschema()
-                .setSubjectname("schemaValue").setSchemafield(readFileAsString(PATH_TO_SCHEMA))
-                .selectFromDropdown(MainPage.SchemaType.AVRO)
-                .clickSubmit();
-
-        pages.openTopicsList(SECOND_LOCAL)
-                .isOnPage()
-                .openTopic(TOPIC_TO_UPDATE);
-        Selenide.refresh();
-        pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
-                .clickOnButton("Produce message")
-                .typeIntoContentFiled(readFileAsString(System.getProperty("user.dir") + "/src/test/resources/testData.txt"))
-                .typeIntoKeyFiled(readFileAsString(System.getProperty("user.dir") + "/src/test/resources/producedkey.txt"))
-                .submitProduceMessage(baseUrl + "topic-to-update/messages");
-                pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-                pages.schemaRegistry.openSchema("unknown_value").removeSchema();
-                pages.schemaRegistry.isNotVisible("unknown_value");
-                pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-                pages.schemaRegistry.openSchema("schemaValue").removeSchema();
-                pages.schemaRegistry.isNotVisible("schemaValue");
-                pages.openMainPage()
-                .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.SCHEMA_REGISTRY);
-                pages.schemaRegistry.openSchema("avro_msg_value").removeSchema();
-                pages.schemaRegistry.isNotVisible("avro_msg_value");
-
-
-
-
-
-
-
-    }
-
 }

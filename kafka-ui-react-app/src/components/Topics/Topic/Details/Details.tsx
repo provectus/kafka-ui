@@ -21,20 +21,22 @@ import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsCo
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
 
-interface Props extends Topic, TopicDetails {
+export interface DetailsProps extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   isInternal: boolean;
   isDeleted: boolean;
+  isDeletePolicy: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
 
-const Details: React.FC<Props> = ({
+const Details: React.FC<DetailsProps> = ({
   clusterName,
   topicName,
   isInternal,
   isDeleted,
+  isDeletePolicy,
   deleteTopic,
   clearTopicMessages,
 }) => {
@@ -100,13 +102,15 @@ const Details: React.FC<Props> = ({
           {!isReadOnly && !isInternal ? (
             <div className="buttons">
               <>
-                <button
-                  type="button"
-                  className="button is-danger"
-                  onClick={clearTopicMessagesHandler}
-                >
-                  Clear All Messages
-                </button>
+                {isDeletePolicy && (
+                  <button
+                    type="button"
+                    className="button is-danger"
+                    onClick={clearTopicMessagesHandler}
+                  >
+                    Clear All Messages
+                  </button>
+                )}
                 {isTopicDeletionAllowed && (
                   <button
                     className="button is-danger"

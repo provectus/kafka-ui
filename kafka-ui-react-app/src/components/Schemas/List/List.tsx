@@ -88,7 +88,10 @@ const List: React.FC<ListProps> = ({
                 </tr>
               )}
               {schemas.map((subject) => (
-                <ListItem key={subject.id} subject={subject} />
+                <ListItem
+                  key={[subject.id, subject.subject].join('-')}
+                  subject={subject}
+                />
               ))}
             </tbody>
           </table>

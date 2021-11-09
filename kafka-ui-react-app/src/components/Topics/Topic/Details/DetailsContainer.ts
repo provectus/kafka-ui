@@ -4,6 +4,7 @@ import { withRouter, RouteComponentProps } from 'react-router-dom';
 import { deleteTopic, clearTopicMessages } from 'redux/actions';
 import {
   getIsTopicDeleted,
+  getIsTopicDeletePolicy,
   getIsTopicInternal,
 } from 'redux/reducers/topics/selectors';
 
@@ -28,6 +29,7 @@ const mapStateToProps = (
   topicName,
   isInternal: getIsTopicInternal(state, topicName),
   isDeleted: getIsTopicDeleted(state),
+  isDeletePolicy: getIsTopicDeletePolicy(state, topicName),
 });
 
 const mapDispatchToProps = {

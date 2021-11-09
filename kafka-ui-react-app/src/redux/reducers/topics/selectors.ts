@@ -5,6 +5,7 @@ import {
   TopicsState,
   TopicConfigByName,
 } from 'redux/interfaces';
+import { TopicCleanUpPolicyEnum } from 'generated-sources';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
@@ -142,6 +143,13 @@ export const getTopicConfigByParamName = createSelector(
     }
 
     return byParamName;
+  }
+);
+
+export const getIsTopicDeletePolicy = createSelector(
+  getTopicByName,
+  (topic) => {
+    return topic?.cleanUpPolicy === TopicCleanUpPolicyEnum.DELETE;
   }
 );
 

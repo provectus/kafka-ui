@@ -30,6 +30,14 @@ public class TopicView {
         Selenide.open(TestConfiguration.BASE_URL+path.formatted(cluster,topic));
         return this;
     }
+
+    @Step
+    public TopicsList isOnTopicListPage() {
+        $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
+        $(By.xpath("//span[text()='All Topics']")).shouldBe(Condition.visible);
+        return new TopicsList();
+    }
+
     @SneakyThrows
     public TopicView openEditSettings() {
         $(By.xpath("//a[@class=\"button\" and text()='Edit settings']")).click();
@@ -37,9 +45,10 @@ public class TopicView {
     }
 
     @SneakyThrows
-    public void  clickDeleteTopicButton() {
+    public TopicView clickDeleteTopicButton() {
         $(By.xpath("//*[text()='Delete Topic']")).click();
         $(By.xpath("//*[text()='Confirm']")).click();
+        return this;
     }
 
     @SneakyThrows

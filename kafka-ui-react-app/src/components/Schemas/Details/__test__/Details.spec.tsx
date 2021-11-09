@@ -7,7 +7,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import DetailsContainer from 'components/Schemas/Details/DetailsContainer';
 import Details, { DetailsProps } from 'components/Schemas/Details/Details';
 
-import { schema, versions } from './fixtures';
+import { jsonSchema, versions } from './fixtures';
 
 const clusterName = 'testCluster';
 const fetchSchemaVersionsMock = jest.fn();
@@ -37,8 +37,8 @@ describe('Details', () => {
   describe('View', () => {
     const setupWrapper = (props: Partial<DetailsProps> = {}) => (
       <Details
-        subject={schema.subject}
-        schema={schema}
+        subject={jsonSchema.subject}
+        schema={jsonSchema}
         clusterName={clusterName}
         fetchSchemaVersions={fetchSchemaVersionsMock}
         deleteSchema={jest.fn()}
@@ -66,7 +66,7 @@ describe('Details', () => {
 
         expect(fetchSchemaVersionsMock).toHaveBeenCalledWith(
           clusterName,
-          schema.subject
+          jsonSchema.subject
         );
       });
 
@@ -114,7 +114,7 @@ describe('Details', () => {
           expect(wrapper.exists('LatestVersionItem')).toBeTruthy();
           expect(wrapper.exists('button')).toBeTruthy();
           expect(wrapper.exists('thead')).toBeTruthy();
-          expect(wrapper.find('SchemaVersion').length).toEqual(2);
+          expect(wrapper.find('SchemaVersion').length).toEqual(3);
         });
 
         it('matches snapshot', () => {

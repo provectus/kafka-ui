@@ -38,7 +38,7 @@ describe('Consumer Groups Thunks', () => {
       await store.dispatch(thunks.deleteConsumerGroup(clusterName, id));
       const alert: FailurePayload = {
         subject: ['consumer-group', id].join('-'),
-        title: `Consumer Gropup ${id}`,
+        title: `Consumer Group ${id}`,
         response: {
           body: undefined,
           status: 500,
@@ -99,7 +99,7 @@ describe('Consumer Groups Thunks', () => {
       );
       const alert: FailurePayload = {
         subject: ['consumer-group', id].join('-'),
-        title: `Consumer Gropup ${id}`,
+        title: `Consumer Group ${id}`,
         response: {
           body: undefined,
           status: 500,

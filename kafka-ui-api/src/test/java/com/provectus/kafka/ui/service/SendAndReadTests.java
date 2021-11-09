@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
+import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFormatDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
@@ -24,6 +25,7 @@ import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.common.TopicPartition;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -118,11 +120,21 @@ public class SendAndReadTests extends AbstractBaseTest {
   private static final String JSON_SCHEMA_RECORD
       = "{ \"f1\": 12, \"f2\": \"testJsonSchema1\", \"schema\": \"some txt\" }";
 
+  private KafkaCluster targetCluster;
+
   @Autowired
-  private ClusterService clusterService;
+  private MessagesService messagesService;
+
+  @Autowired
+  private ClustersStorage clustersStorage;
 
   @Autowired
   private ClustersMetricsScheduler clustersMetricsScheduler;
+
+  @BeforeEach
+  void init() {
+    targetCluster = clustersStorage.getClusterByName(LOCAL).get();
+  }
 
   @Test
   void noSchemaStringKeyStringValue() {
@@ -500,7 +512,8 @@ public class SendAndReadTests extends AbstractBaseTest {
     public void assertSendThrowsException() {
       String topic = createTopicAndCreateSchemas();
       try {
-        assertThatThrownBy(() -> clusterService.sendMessage(LOCAL, topic, msgToSend).block());
+        assertThatThrownBy(() ->
+            messagesService.sendMessage(targetCluster, topic, msgToSend).block());
       } finally {
         deleteTopic(topic);
       }
@@ -510,18 +523,18 @@ public class SendAndReadTests extends AbstractBaseTest {
     public void doAssert(Consumer<TopicMessageDTO> msgAssert) {
       String topic = createTopicAndCreateSchemas();
       try {
-        clusterService.sendMessage(LOCAL, topic, msgToSend).block();
-        TopicMessageDTO polled = clusterService.getMessages(
-            LOCAL,
-            topic,
-            new ConsumerPosition(
-                SeekTypeDTO.BEGINNING,
-                Map.of(new TopicPartition(topic, 0), 0L),
-                SeekDirectionDTO.FORWARD
-            ),
-            null,
-            1
-        ).filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
+        messagesService.sendMessage(targetCluster, topic, msgToSend).block();
+        TopicMessageDTO polled = messagesService.loadMessages(
+                targetCluster,
+                topic,
+                new ConsumerPosition(
+                    SeekTypeDTO.BEGINNING,
+                    Map.of(new TopicPartition(topic, 0), 0L),
+                    SeekDirectionDTO.FORWARD
+                ),
+                null,
+                1
+            ).filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
             .map(TopicMessageEventDTO::getMessage)
             .blockLast(Duration.ofSeconds(5000));
 

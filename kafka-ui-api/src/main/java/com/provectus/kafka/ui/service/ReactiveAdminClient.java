@@ -4,6 +4,8 @@ import static com.google.common.util.concurrent.Uninterruptibles.getUninterrupti
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
@@ -16,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
@@ -40,6 +43,8 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
 
@@ -55,6 +60,7 @@ public class ReactiveAdminClient implements Closeable {
 
   @Value
   public static class ClusterDescription {
+    @Nullable
     Node controller;
     String clusterId;
     Collection<Node> nodes;
@@ -66,6 +72,7 @@ public class ReactiveAdminClient implements Closeable {
         .map(ver ->
             new ReactiveAdminClient(
                 adminClient,
+                ver,
                 Set.of(getSupportedUpdateFeatureForVersion(ver))));
   }
 
@@ -90,6 +97,7 @@ public class ReactiveAdminClient implements Closeable {
   //---------------------------------------------------------------------------------
 
   private final AdminClient client;
+  private final String version;
   private final Set<SupportedFeature> features;
 
   public Mono<Set<String>> listTopics(boolean listInternal) {
@@ -98,6 +106,10 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Void> deleteTopic(String topicName) {
     return toMono(client.deleteTopics(List.of(topicName)).all());
+  }
+
+  public String getVersion() {
+    return version;
   }
 
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
@@ -186,7 +198,11 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
-    return toMono(client.deleteConsumerGroups(groupIds).all());
+    return toMono(client.deleteConsumerGroups(groupIds).all())
+        .onErrorResume(GroupIdNotFoundException.class,
+            th -> Mono.error(new NotFoundException("The group id does not exist")))
+        .onErrorResume(GroupNotEmptyException.class,
+            th -> Mono.error(new IllegalEntityStateException("The group is not empty")));
   }
 
   public Mono<Void> createTopic(String name,
@@ -241,7 +257,7 @@ public class ReactiveAdminClient implements Closeable {
     return topicPartitions(topic).flatMap(tps -> listOffsets(tps, offsetSpec));
   }
 
-  public Mono<Map<TopicPartition, Long>> listOffsets(Set<TopicPartition> partitions,
+  public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicPartition> partitions,
                                                      OffsetSpec offsetSpec) {
     return toMono(
         client.listOffsets(partitions.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())
