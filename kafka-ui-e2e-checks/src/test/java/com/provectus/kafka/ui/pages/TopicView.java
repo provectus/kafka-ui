@@ -5,7 +5,6 @@ import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
-import com.provectus.kafka.ui.helpers.Helpers;
 import io.qameta.allure.Step;
 import lombok.SneakyThrows;
 import lombok.experimental.ExtensionMethod;
@@ -13,6 +12,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.By;
+
+import java.util.Optional;
 
 import static com.codeborne.selenide.Selenide.*;
 
@@ -111,8 +112,15 @@ public class TopicView {
         return this;
     }
 
-
-
+    public boolean isMessageOnPage(String messageName) {
+        Optional<SelenideElement> first = $$(By.xpath("//div[@class ='box']//table//tr//td")).stream()
+                .filter(e -> e.getText().equals(messageName))
+                .findFirst();
+        if(first.isPresent()){
+            return true;
+        }
+        return false;
+    }
     }
 
 

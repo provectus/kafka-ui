@@ -1,7 +1,10 @@
 package com.provectus.kafka.ui.helpers;
 
 import com.provectus.kafka.ui.api.ApiClient;
+import com.provectus.kafka.ui.api.api.SchemasApi;
 import com.provectus.kafka.ui.api.api.TopicsApi;
+import com.provectus.kafka.ui.api.model.NewSchemaSubject;
+import com.provectus.kafka.ui.api.model.SchemaType;
 import com.provectus.kafka.ui.api.model.TopicCreation;
 import lombok.SneakyThrows;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -12,8 +15,6 @@ public class ApiHelper {
     String newTopic = "new-topic";
     String baseURL = "http://localhost:8080/";
 
-
-
     @SneakyThrows
     private TopicsApi topicApi(){
         ApiClient defaultClient = new ApiClient();
@@ -22,8 +23,13 @@ public class ApiHelper {
         return topicsApi;
         }
 
-
-
+    @SneakyThrows
+    private SchemasApi schemaApi(){
+        ApiClient defaultClient = new ApiClient();
+        defaultClient.setBasePath(baseURL);
+        SchemasApi schemasApi = new SchemasApi(defaultClient);
+        return schemasApi;
+    }
 
     @SneakyThrows
     public void createTopic(String clusterName, String topicName) {
@@ -43,5 +49,19 @@ public class ApiHelper {
                 throw ex;
         }
     }
+    @SneakyThrows
+    public void createSchema(String clusterName, String schemaName, SchemaType type, String schemaValue){
+        NewSchemaSubject schemaSubject = new NewSchemaSubject();
+        schemaSubject.setSubject(schemaName);
+        schemaSubject.setSchema(schemaValue);
+        schemaSubject.setSchemaType(type);
+        schemaApi().createNewSchema(clusterName, schemaSubject).block();
+    }
+
+    @SneakyThrows
+    public void deleteSchema(String clusterName, String schemaName){
+        schemaApi().deleteSchema(clusterName, schemaName);
+    }
+
 
 }
