@@ -6,13 +6,13 @@
       "name" : "'java.lang.String io.netty.util.internal.ObjectUtil.checkNonEmptyAfterTrim(java.lang.String, java.lang.String)'",
       "children" : [ {
         "name" : " topic tests",
-        "uid" : "ed5ba36290df162d",
+        "uid" : "1e80d66942e7ac57",
         "parentUid" : "2199a0241ac94f29f1e0c9cf1afafa8b",
         "status" : "broken",
         "time" : {
-          "start" : 1636730061912,
-          "stop" : 1636730061913,
-          "duration" : 1
+          "start" : 1636736430683,
+          "stop" : 1636736430683,
+          "duration" : 0
         },
         "flaky" : false,
         "newFailed" : false,
