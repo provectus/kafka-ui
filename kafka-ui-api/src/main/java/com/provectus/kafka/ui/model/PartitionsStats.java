@@ -30,10 +30,9 @@ public class PartitionsStats {
           offlinePartitionCount += p.leader() == null ? 1 : 0;
           inSyncReplicasCount += p.isr().size();
           outOfSyncReplicasCount += (p.replicas().size() - p.isr().size());
-          // TODO implementations copied from old code,
-          // but looks like it is the same as outOfSyncReplicasCount...
-          underReplicatedPartitionCount +=
-              p.replicas().stream().filter(r -> !p.isr().contains(r)).count();
+          if (p.replicas().size() > p.isr().size()) {
+            underReplicatedPartitionCount++;
+          }
         });
   }
 }
