@@ -1,12 +1,12 @@
 {
-  "uid" : "9844f9ac1e439752",
+  "uid" : "4abfcc13afc45131",
   "name" : "should create a topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.createTopic",
   "historyId" : "61d3874fc5d35b85b0cd7942ccda45ef",
   "time" : {
-    "start" : 1636818623737,
-    "stop" : 1636818627316,
-    "duration" : 3579
+    "start" : 1636818642087,
+    "stop" : 1636818645440,
+    "duration" : 3353
   },
   "description" : "",
   "status" : "passed",
@@ -19,101 +19,101 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1636818623819,
-        "stop" : 1636818624094,
-        "duration" : 275
+        "start" : 1636818642190,
+        "stop" : 1636818642515,
+        "duration" : 325
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1636818623823,
-          "stop" : 1636818624094,
-          "duration" : 271
+          "start" : 1636818642192,
+          "stop" : 1636818642515,
+          "duration" : 323
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "hasContent" : true,
       "stepsCount" : 1,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1636818624094,
-        "stop" : 1636818624661,
-        "duration" : 567
+        "start" : 1636818642515,
+        "stop" : 1636818643014,
+        "duration" : 499
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1636818624094,
-          "stop" : 1636818624139,
-          "duration" : 45
+          "start" : 1636818642515,
+          "stop" : 1636818642555,
+          "duration" : 40
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1636818624140,
-          "stop" : 1636818624660,
-          "duration" : 520
+          "start" : 1636818642556,
+          "stop" : 1636818643014,
+          "duration" : 458
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "hasContent" : true,
       "stepsCount" : 2,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
     }, {
       "name" : "goToSideMenu",
       "time" : {
-        "start" : 1636818624661,
-        "stop" : 1636818624807,
-        "duration" : 146
+        "start" : 1636818643014,
+        "stop" : 1636818643186,
+        "duration" : 172
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //aside//*[a[text()='secondLocal']]//a[text()='Topics']\") click()",
         "time" : {
-          "start" : 1636818624661,
-          "stop" : 1636818624807,
-          "duration" : 146
+          "start" : 1636818643015,
+          "stop" : 1636818643186,
+          "duration" : 171
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
-        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false
+        "shouldDisplayMessage" : false,
+        "hasContent" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ {
@@ -123,40 +123,40 @@
         "name" : "option",
         "value" : "TOPICS"
       } ],
-      "hasContent" : true,
       "stepsCount" : 1,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : true
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='new-topic']\") should be(visible)",
       "time" : {
-        "start" : 1636818627235,
-        "stop" : 1636818627269,
-        "duration" : 34
+        "start" : 1636818645300,
+        "stop" : 1636818645373,
+        "duration" : 73
       },
       "status" : "passed",
       "steps" : [ ],
       "attachments" : [ ],
       "parameters" : [ ],
-      "hasContent" : false,
       "stepsCount" : 0,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false
+      "shouldDisplayMessage" : false,
+      "hasContent" : false
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
-    "hasContent" : true,
     "stepsCount" : 8,
     "attachmentsCount" : 0,
-    "shouldDisplayMessage" : false
+    "shouldDisplayMessage" : false,
+    "hasContent" : true
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az212-621"
+    "value" : "fv-az219-353"
   }, {
     "name" : "thread",
-    "value" : "6267@fv-az212-621.main(1)"
+    "value" : "6407@fv-az219-353.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -189,6 +189,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "9844f9ac1e439752.json",
+  "source" : "4abfcc13afc45131.json",
   "parameterValues" : [ ]
 }
