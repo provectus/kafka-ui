@@ -4,3 +4,13 @@ zookeeper:
   connection-timeout: 1000
 auth:
   enabled: false
+management:
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "info,health"
