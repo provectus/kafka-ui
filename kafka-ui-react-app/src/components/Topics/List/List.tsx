@@ -121,6 +121,13 @@ const List: React.FC<TopicsListProps> = ({
     closeConfirmationModal();
     clearSelectedTopics();
   }, [clusterName, selectedTopics]);
+  const searchHandler = React.useCallback(
+    (searchString: string) => {
+      setTopicsSearch(searchString);
+      history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
+    },
+    [search, pathname, perPage]
+  );
 
   return (
     <div className="section">
@@ -142,7 +149,7 @@ const List: React.FC<TopicsListProps> = ({
           </div>
           <div className="column">
             <Search
-              handleSearch={setTopicsSearch}
+              handleSearch={searchHandler}
               placeholder="Search by Topic Name"
               value={search}
             />
