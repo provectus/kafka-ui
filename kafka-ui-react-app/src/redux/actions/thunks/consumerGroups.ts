@@ -59,7 +59,7 @@ export const fetchConsumerGroupDetails =
       const response = await getResponse(e);
       const alert: FailurePayload = {
         subject: ['consumer-group', consumerGroupID].join('-'),
-        title: `Consumer Gropup ${consumerGroupID}`,
+        title: `Consumer Group ${consumerGroupID}`,
         response,
       };
       dispatch(actions.fetchConsumerGroupDetailsAction.failure({ alert }));
@@ -83,7 +83,7 @@ export const deleteConsumerGroup =
       const response = await getResponse(e);
       const alert: FailurePayload = {
         subject: ['consumer-group', consumerGroupID].join('-'),
-        title: `Consumer Gropup ${consumerGroupID}`,
+        title: `Consumer Group ${consumerGroupID}`,
         response,
       };
       dispatch(actions.deleteConsumerGroupAction.failure({ alert }));
@@ -124,7 +124,7 @@ export const resetConsumerGroupOffsets =
       const response = await getResponse(e);
       const alert: FailurePayload = {
         subject: ['consumer-group', consumerGroupID].join('-'),
-        title: `Consumer Gropup ${consumerGroupID}`,
+        title: `Consumer Group ${consumerGroupID}`,
         response,
       };
       dispatch(actions.resetConsumerGroupOffsetsAction.failure({ alert }));

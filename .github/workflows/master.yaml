@@ -53,6 +53,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           context: kafka-ui-api
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: provectuslabs/kafka-ui:master
           build-args: |

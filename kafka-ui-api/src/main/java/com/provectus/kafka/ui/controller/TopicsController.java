@@ -49,20 +49,16 @@ public class TopicsController extends AbstractController implements TopicsApi {
   public Mono<ResponseEntity<Flux<TopicConfigDTO>>> getTopicConfigs(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return Mono.just(
-        topicsService.getTopicConfigs(getCluster(clusterName), topicName)
-            .map(Flux::fromIterable)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build())
-    );
+        ResponseEntity.ok(
+            Flux.fromIterable(topicsService.getTopicConfigs(getCluster(clusterName), topicName))));
   }
 
   @Override
   public Mono<ResponseEntity<TopicDetailsDTO>> getTopicDetails(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return Mono.just(
-        topicsService.getTopicDetails(getCluster(clusterName), topicName)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build())
+        ResponseEntity.ok(
+            topicsService.getTopicDetails(getCluster(clusterName), topicName))
     );
   }
 

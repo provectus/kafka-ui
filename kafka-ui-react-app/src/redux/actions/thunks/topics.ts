@@ -171,7 +171,7 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     retentionBytes,
     retentionMs,
     maxMessageBytes,
-    minInSyncReplicas,
+    minInsyncReplicas,
     customParams,
   } = form;
 
@@ -184,7 +184,7 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
       'retention.ms': retentionMs.toString(),
       'retention.bytes': retentionBytes.toString(),
       'max.message.bytes': maxMessageBytes.toString(),
-      'min.insync.replicas': minInSyncReplicas.toString(),
+      'min.insync.replicas': minInsyncReplicas.toString(),
       ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
@@ -196,7 +196,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
     retentionBytes,
     retentionMs,
     maxMessageBytes,
-    minInSyncReplicas,
+    minInsyncReplicas,
     customParams,
   } = form;
 
@@ -206,7 +206,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
       'retention.ms': retentionMs,
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInSyncReplicas,
+      'min.insync.replicas': minInsyncReplicas,
       ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };

@@ -22,7 +22,7 @@ public class FeatureService {
 
   private final BrokerService brokerService;
 
-  public Flux<Feature> getAvailableFeatures(KafkaCluster cluster) {
+  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster) {
     List<Mono<Feature>> features = new ArrayList<>();
 
     if (Optional.ofNullable(cluster.getKafkaConnect())
@@ -44,7 +44,7 @@ public class FeatureService {
             .flatMap(r -> r ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
     );
 
-    return Flux.fromIterable(features).flatMap(m -> m);
+    return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
 
   private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster) {
