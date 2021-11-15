@@ -202,7 +202,7 @@ describe('Actions', () => {
     it('creates DELETE_CONSUMER_GROUP__FAILURE', () => {
       const alert: FailurePayload = {
         subject: ['consumer-group', 'test'].join('-'),
-        title: `Consumer Gropup Test`,
+        title: `Consumer Group Test`,
       };
       expect(actions.deleteConsumerGroupAction.failure({ alert })).toEqual({
         type: 'DELETE_CONSUMER_GROUP__FAILURE',

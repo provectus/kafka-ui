@@ -8,7 +8,9 @@ describe('SchemaVersion', () => {
   it('renders versions', () => {
     const wrapper = shallow(<SchemaVersion version={versions[0]} />);
 
-    expect(wrapper.find('td').length).toEqual(3);
+    expect(wrapper.find('td').length).toEqual(4);
+    expect(wrapper.exists('JSONEditor')).toBeFalsy();
+    wrapper.find('.is-clickable').simulate('click');
     expect(wrapper.exists('JSONEditor')).toBeTruthy();
   });
 

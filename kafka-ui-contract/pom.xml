@@ -4,7 +4,7 @@
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.2.2-SNAPSHOT</version>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
@@ -21,6 +21,11 @@
                 <dependency>
                     <groupId>org.springframework.boot</groupId>
                     <artifactId>spring-boot-starter-webflux</artifactId>
+                    <version>${spring-boot.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-validation</artifactId>
                     <version>${spring-boot.version}</version>
                 </dependency>
                 <dependency>
@@ -81,7 +86,7 @@
                                     </inputSpec>
                                     <output>${project.build.directory}/generated-sources/api</output>
                                     <generatorName>spring</generatorName>
-
+                                    <modelNameSuffix>DTO</modelNameSuffix>
                                     <configOptions>
                                         <modelPackage>com.provectus.kafka.ui.model</modelPackage>
                                         <apiPackage>com.provectus.kafka.ui.api</apiPackage>

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
-import com.provectus.kafka.ui.model.MessageSchema;
-import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.model.MessageSchemaDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
@@ -121,23 +121,23 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public TopicMessageSchema getTopicSchema(String topic) {
+  public TopicMessageSchemaDTO getTopicSchema(String topic) {
 
     final JsonSchema jsonSchema = schemaConverter.convert(
             protobufSchemaPath.toUri(),
             getDescriptor(topic)
     );
-    final MessageSchema keySchema = new MessageSchema()
+    final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
-        .source(MessageSchema.SourceEnum.PROTO_FILE)
+        .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
         .schema(JsonSchema.stringSchema().toJson(objectMapper));
 
-    final MessageSchema valueSchema = new MessageSchema()
+    final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
-        .source(MessageSchema.SourceEnum.PROTO_FILE)
+        .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
         .schema(jsonSchema.toJson(objectMapper));
 
-    return new TopicMessageSchema()
+    return new TopicMessageSchemaDTO()
         .key(keySchema)
         .value(valueSchema);
   }

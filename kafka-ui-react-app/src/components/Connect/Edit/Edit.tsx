@@ -99,34 +99,45 @@ const Edit: React.FC<EditProps> = ({
 
   if (isConfigFetching) return <PageLoader />;
 
+  const hasCredentials = JSON.stringify(config, null, '\t').includes(
+    '"******"'
+  );
   return (
-    <div className="box">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="field">
-          <div className="control">
-            <Controller
-              control={control}
-              name="config"
-              render={({ field }) => (
-                <JSONEditor {...field} readOnly={isSubmitting} />
-              )}
-            />
-          </div>
-          <p className="help is-danger">
-            <ErrorMessage errors={errors} name="config" />
-          </p>
+    <>
+      {hasCredentials && (
+        <div className="notification is-danger is-light">
+          Please replace ****** with the real credential values to avoid
+          accidentally breaking your connector config!
         </div>
-        <div className="field">
-          <div className="control">
-            <input
-              type="submit"
-              className="button is-primary"
-              disabled={!isValid || isSubmitting || !isDirty}
-            />
+      )}
+      <div className="box">
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="field">
+            <div className="control">
+              <Controller
+                control={control}
+                name="config"
+                render={({ field }) => (
+                  <JSONEditor {...field} readOnly={isSubmitting} />
+                )}
+              />
+            </div>
+            <p className="help is-danger">
+              <ErrorMessage errors={errors} name="config" />
+            </p>
           </div>
-        </div>
-      </form>
-    </div>
+          <div className="field">
+            <div className="control">
+              <input
+                type="submit"
+                className="button is-primary"
+                disabled={!isValid || isSubmitting || !isDirty}
+              />
+            </div>
+          </div>
+        </form>
+      </div>
+    </>
   );
 };
 

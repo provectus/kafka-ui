@@ -3,8 +3,8 @@ package com.provectus.kafka.ui.util;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.model.ConsumerPosition;
-import com.provectus.kafka.ui.model.SeekDirection;
-import com.provectus.kafka.ui.model.SeekType;
+import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,9 +56,9 @@ class OffsetsSeekTest {
     var seek = new OffsetsSeekForward(
         topic,
         new ConsumerPosition(
-            SeekType.BEGINNING,
+            SeekTypeDTO.BEGINNING,
             Map.of(tp0, 0L, tp1, 0L),
-            SeekDirection.FORWARD
+            SeekDirectionDTO.FORWARD
         )
     );
 
@@ -73,9 +73,9 @@ class OffsetsSeekTest {
     var seek = new OffsetsSeekBackward(
         topic,
         new ConsumerPosition(
-            SeekType.BEGINNING,
+            SeekTypeDTO.BEGINNING,
             Map.of(tp2, 0L, tp3, 0L),
-            SeekDirection.BACKWARD
+            SeekDirectionDTO.BACKWARD
         ),
         10
     );
@@ -90,7 +90,7 @@ class OffsetsSeekTest {
   void forwardSeekToBeginningWithPartitionsList() {
     var seek = new OffsetsSeekForward(
         topic,
-        new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.FORWARD));
+        new ConsumerPosition(SeekTypeDTO.BEGINNING, Map.of(), SeekDirectionDTO.FORWARD));
     seek.assignAndSeek(consumer);
     assertThat(consumer.assignment()).containsExactlyInAnyOrder(tp0, tp1, tp2, tp3);
     assertThat(consumer.position(tp0)).isZero();
@@ -103,7 +103,7 @@ class OffsetsSeekTest {
   void backwardSeekToBeginningWithPartitionsList() {
     var seek = new OffsetsSeekBackward(
         topic,
-        new ConsumerPosition(SeekType.BEGINNING, Map.of(), SeekDirection.BACKWARD),
+        new ConsumerPosition(SeekTypeDTO.BEGINNING, Map.of(), SeekDirectionDTO.BACKWARD),
         10
     );
     seek.assignAndSeek(consumer);
@@ -120,9 +120,9 @@ class OffsetsSeekTest {
     var seek = new OffsetsSeekForward(
         topic,
         new ConsumerPosition(
-            SeekType.OFFSET,
+            SeekTypeDTO.OFFSET,
             Map.of(tp0, 0L, tp1, 1L, tp2, 2L),
-            SeekDirection.FORWARD
+            SeekDirectionDTO.FORWARD
         )
     );
     seek.assignAndSeek(consumer);
@@ -135,9 +135,9 @@ class OffsetsSeekTest {
     var seek = new OffsetsSeekBackward(
         topic,
         new ConsumerPosition(
-            SeekType.OFFSET,
+            SeekTypeDTO.OFFSET,
             Map.of(tp0, 0L, tp1, 1L, tp2, 20L),
-            SeekDirection.BACKWARD
+            SeekDirectionDTO.BACKWARD
         ),
         2
     );
@@ -151,9 +151,9 @@ class OffsetsSeekTest {
     var seek = new OffsetsSeekBackward(
         topic,
         new ConsumerPosition(
-            SeekType.OFFSET,
+            SeekTypeDTO.OFFSET,
             Map.of(tp2, 20L),
-            SeekDirection.BACKWARD
+            SeekDirectionDTO.BACKWARD
         ),
         20
     );

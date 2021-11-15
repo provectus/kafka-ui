@@ -1,8 +1,8 @@
 package com.provectus.kafka.ui.serde;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.model.MessageSchema;
-import com.provectus.kafka.ui.model.TopicMessageSchema;
+import com.provectus.kafka.ui.model.MessageSchemaDTO;
+import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
 import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
@@ -41,12 +41,12 @@ public class SimpleRecordSerDe implements RecordSerDe {
   }
 
   @Override
-  public TopicMessageSchema getTopicSchema(String topic) {
-    final MessageSchema schema = new MessageSchema()
+  public TopicMessageSchemaDTO getTopicSchema(String topic) {
+    final MessageSchemaDTO schema = new MessageSchemaDTO()
         .name("unknown")
-        .source(MessageSchema.SourceEnum.UNKNOWN)
+        .source(MessageSchemaDTO.SourceEnum.UNKNOWN)
         .schema(JsonSchema.stringSchema().toJson(new ObjectMapper()));
-    return new TopicMessageSchema()
+    return new TopicMessageSchemaDTO()
         .key(schema)
         .value(schema);
   }

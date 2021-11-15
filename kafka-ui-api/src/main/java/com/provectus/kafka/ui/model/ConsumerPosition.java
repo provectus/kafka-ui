@@ -6,7 +6,7 @@ import org.apache.kafka.common.TopicPartition;
 
 @Value
 public class ConsumerPosition {
-  SeekType seekType;
+  SeekTypeDTO seekType;
   Map<TopicPartition, Long> seekTo;
-  SeekDirection seekDirection;
+  SeekDirectionDTO seekDirection;
 }
