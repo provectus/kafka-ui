@@ -61,6 +61,13 @@ describe('Edit', () => {
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
+    it('matches snapshot when config has credentials', () => {
+      const wrapper = create(
+        setupWrapper({ config: { ...connector.config, password: '******' } })
+      );
+      expect(wrapper.toJSON()).toMatchSnapshot();
+    });
+
     it('fetches config on mount', () => {
       const fetchConfig = jest.fn();
       mount(setupWrapper({ fetchConfig }));

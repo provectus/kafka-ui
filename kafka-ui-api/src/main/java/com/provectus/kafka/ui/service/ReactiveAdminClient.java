@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
@@ -59,6 +60,7 @@ public class ReactiveAdminClient implements Closeable {
 
   @Value
   public static class ClusterDescription {
+    @Nullable
     Node controller;
     String clusterId;
     Collection<Node> nodes;
@@ -70,6 +72,7 @@ public class ReactiveAdminClient implements Closeable {
         .map(ver ->
             new ReactiveAdminClient(
                 adminClient,
+                ver,
                 Set.of(getSupportedUpdateFeatureForVersion(ver))));
   }
 
@@ -94,6 +97,7 @@ public class ReactiveAdminClient implements Closeable {
   //---------------------------------------------------------------------------------
 
   private final AdminClient client;
+  private final String version;
   private final Set<SupportedFeature> features;
 
   public Mono<Set<String>> listTopics(boolean listInternal) {
@@ -102,6 +106,10 @@ public class ReactiveAdminClient implements Closeable {
 
   public Mono<Void> deleteTopic(String topicName) {
     return toMono(client.deleteTopics(List.of(topicName)).all());
+  }
+
+  public String getVersion() {
+    return version;
   }
 
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {

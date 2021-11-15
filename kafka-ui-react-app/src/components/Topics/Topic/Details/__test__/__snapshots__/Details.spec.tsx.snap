@@ -1,0 +1,741 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Details when it does not have readonly flag matches the snapshot 1`] = `
+<Provider
+  store={
+    Object {
+      "@@observable": [Function],
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <StaticRouter>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      staticContext={Object {}}
+    >
+      <Details
+        clearTopicMessages={[MockFunction]}
+        clusterName="local"
+        deleteTopic={[MockFunction]}
+        isDeletePolicy={true}
+        isDeleted={false}
+        isInternal={false}
+        name="__internal.topic"
+        topicName="__internal.topic"
+      >
+        <div
+          className="box"
+        >
+          <nav
+            className="navbar"
+            role="navigation"
+          >
+            <div
+              className="navbar-start"
+            >
+              <NavLink
+                activeClassName="is-active is-primary"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic"
+                      onClick={[Function]}
+                    >
+                      Overview
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/messages"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/messages"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/messages"
+                      onClick={[Function]}
+                    >
+                      Messages
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/consumergroups"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/consumergroups",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/consumergroups"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/consumergroups"
+                      onClick={[Function]}
+                    >
+                      Consumers
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/settings"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/settings"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/settings"
+                      onClick={[Function]}
+                    >
+                      Settings
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+            </div>
+            <div
+              className="navbar-end"
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  className="button is-danger"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Clear All Messages
+                </button>
+                <button
+                  className="button is-danger"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Delete Topic
+                </button>
+                <Link
+                  className="button"
+                  to="/ui/clusters/local/topics/__internal.topic/message"
+                >
+                  <LinkAnchor
+                    className="button"
+                    href="/ui/clusters/local/topics/__internal.topic/message"
+                    navigate={[Function]}
+                  >
+                    <a
+                      className="button"
+                      href="/ui/clusters/local/topics/__internal.topic/message"
+                      onClick={[Function]}
+                    >
+                      Produce message
+                    </a>
+                  </LinkAnchor>
+                </Link>
+                <Link
+                  className="button"
+                  to="/ui/clusters/local/topics/__internal.topic/edit"
+                >
+                  <LinkAnchor
+                    className="button"
+                    href="/ui/clusters/local/topics/__internal.topic/edit"
+                    navigate={[Function]}
+                  >
+                    <a
+                      className="button"
+                      href="/ui/clusters/local/topics/__internal.topic/edit"
+                      onClick={[Function]}
+                    >
+                      Edit settings
+                    </a>
+                  </LinkAnchor>
+                </Link>
+                <ConfirmationModal
+                  isOpen={false}
+                  onCancel={[Function]}
+                  onConfirm={[Function]}
+                />
+              </div>
+            </div>
+          </nav>
+          <br />
+          <Switch />
+        </div>
+      </Details>
+    </Router>
+  </StaticRouter>
+</Provider>
+`;
+
+exports[`Details when it has readonly flag matches the snapshot 1`] = `
+<Provider
+  store={
+    Object {
+      "@@observable": [Function],
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <StaticRouter>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      staticContext={Object {}}
+    >
+      <Details
+        clearTopicMessages={[MockFunction]}
+        clusterName="local"
+        deleteTopic={[MockFunction]}
+        isDeletePolicy={true}
+        isDeleted={false}
+        isInternal={true}
+        name="__internal.topic"
+        topicName="__internal.topic"
+      >
+        <div
+          className="box"
+        >
+          <nav
+            className="navbar"
+            role="navigation"
+          >
+            <div
+              className="navbar-start"
+            >
+              <NavLink
+                activeClassName="is-active is-primary"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic"
+                      onClick={[Function]}
+                    >
+                      Overview
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/messages"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/messages"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/messages"
+                      onClick={[Function]}
+                    >
+                      Messages
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/consumergroups"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/consumergroups",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/consumergroups"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/consumergroups"
+                      onClick={[Function]}
+                    >
+                      Consumers
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/settings"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/settings"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/settings"
+                      onClick={[Function]}
+                    >
+                      Settings
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+            </div>
+            <div
+              className="navbar-end"
+            />
+          </nav>
+          <br />
+          <Switch />
+        </div>
+      </Details>
+    </Router>
+  </StaticRouter>
+</Provider>
+`;
+
+exports[`Details when it shows on compact topic page matches the snapshot 1`] = `
+<Provider
+  store={
+    Object {
+      "@@observable": [Function],
+      "dispatch": [Function],
+      "getState": [Function],
+      "replaceReducer": [Function],
+      "subscribe": [Function],
+    }
+  }
+>
+  <StaticRouter>
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/",
+            "search": "",
+            "state": undefined,
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      staticContext={Object {}}
+    >
+      <Details
+        clearTopicMessages={[MockFunction]}
+        clusterName="local"
+        deleteTopic={[MockFunction]}
+        isDeletePolicy={false}
+        isDeleted={false}
+        isInternal={false}
+        name="__internal.topic"
+        topicName="__internal.topic"
+      >
+        <div
+          className="box"
+        >
+          <nav
+            className="navbar"
+            role="navigation"
+          >
+            <div
+              className="navbar-start"
+            >
+              <NavLink
+                activeClassName="is-active is-primary"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic"
+                      onClick={[Function]}
+                    >
+                      Overview
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/messages"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/messages"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/messages"
+                      onClick={[Function]}
+                    >
+                      Messages
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/consumergroups"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/consumergroups",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/consumergroups"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/consumergroups"
+                      onClick={[Function]}
+                    >
+                      Consumers
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+              <NavLink
+                activeClassName="is-active"
+                className="navbar-item is-tab"
+                exact={true}
+                to="/ui/clusters/local/topics/__internal.topic/settings"
+              >
+                <Link
+                  aria-current={null}
+                  className="navbar-item is-tab"
+                  to={
+                    Object {
+                      "hash": "",
+                      "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
+                      "search": "",
+                      "state": null,
+                    }
+                  }
+                >
+                  <LinkAnchor
+                    aria-current={null}
+                    className="navbar-item is-tab"
+                    href="/ui/clusters/local/topics/__internal.topic/settings"
+                    navigate={[Function]}
+                  >
+                    <a
+                      aria-current={null}
+                      className="navbar-item is-tab"
+                      href="/ui/clusters/local/topics/__internal.topic/settings"
+                      onClick={[Function]}
+                    >
+                      Settings
+                    </a>
+                  </LinkAnchor>
+                </Link>
+              </NavLink>
+            </div>
+            <div
+              className="navbar-end"
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  className="button is-danger"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  Delete Topic
+                </button>
+                <Link
+                  className="button"
+                  to="/ui/clusters/local/topics/__internal.topic/message"
+                >
+                  <LinkAnchor
+                    className="button"
+                    href="/ui/clusters/local/topics/__internal.topic/message"
+                    navigate={[Function]}
+                  >
+                    <a
+                      className="button"
+                      href="/ui/clusters/local/topics/__internal.topic/message"
+                      onClick={[Function]}
+                    >
+                      Produce message
+                    </a>
+                  </LinkAnchor>
+                </Link>
+                <Link
+                  className="button"
+                  to="/ui/clusters/local/topics/__internal.topic/edit"
+                >
+                  <LinkAnchor
+                    className="button"
+                    href="/ui/clusters/local/topics/__internal.topic/edit"
+                    navigate={[Function]}
+                  >
+                    <a
+                      className="button"
+                      href="/ui/clusters/local/topics/__internal.topic/edit"
+                      onClick={[Function]}
+                    >
+                      Edit settings
+                    </a>
+                  </LinkAnchor>
+                </Link>
+                <ConfirmationModal
+                  isOpen={false}
+                  onCancel={[Function]}
+                  onConfirm={[Function]}
+                />
+              </div>
+            </div>
+          </nav>
+          <br />
+          <Switch />
+        </div>
+      </Details>
+    </Router>
+  </StaticRouter>
+</Provider>
+`;

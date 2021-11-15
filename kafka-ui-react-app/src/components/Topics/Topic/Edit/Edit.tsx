@@ -13,6 +13,7 @@ import { camelCase } from 'lodash';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
+import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 
 import DangerZoneContainer from './DangerZoneContainer';
 
@@ -65,7 +66,11 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
     partitions: topic.partitionCount || DEFAULTS.partitions,
     replicationFactor,
     customParams: topic.config
-      ?.filter((el) => el.value !== el.defaultValue)
+      ?.filter(
+        (el) =>
+          el.value !== el.defaultValue &&
+          Object.keys(TOPIC_CUSTOM_PARAMS).includes(el.name)
+      )
       .map((el) => ({ name: el.name, value: el.value })),
     ...configs,
   };
