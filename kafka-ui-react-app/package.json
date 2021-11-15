@@ -77,7 +77,7 @@
   },
   "devDependencies": {
     "@jest/types": "^27.0.6",
-    "@openapitools/openapi-generator-cli": "^2.4.14",
+    "@openapitools/openapi-generator-cli": "^2.4.15",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.9",
