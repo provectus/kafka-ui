@@ -1,9 +1,9 @@
 package com.provectus.kafka.ui;
 
-import com.provectus.kafka.ui.model.CompatibilityLevel;
-import com.provectus.kafka.ui.model.NewSchemaSubject;
-import com.provectus.kafka.ui.model.SchemaSubject;
-import com.provectus.kafka.ui.model.SchemaType;
+import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
+import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import java.util.List;
 import java.util.UUID;
 import lombok.extern.log4j.Log4j2;
@@ -96,27 +96,27 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
   void shouldCreateNewProtobufSchema() {
     String schema =
         "syntax = \"proto3\";\n\nmessage MyRecord {\n  int32 id = 1;\n  string name = 2;\n}\n";
-    NewSchemaSubject requestBody = new NewSchemaSubject()
-        .schemaType(SchemaType.PROTOBUF)
+    NewSchemaSubjectDTO requestBody = new NewSchemaSubjectDTO()
+        .schemaType(SchemaTypeDTO.PROTOBUF)
         .subject(subject)
         .schema(schema);
-    SchemaSubject actual = webTestClient
+    SchemaSubjectDTO actual = webTestClient
         .post()
         .uri("/api/clusters/{clusterName}/schemas", LOCAL)
         .contentType(MediaType.APPLICATION_JSON)
-        .body(BodyInserters.fromPublisher(Mono.just(requestBody), NewSchemaSubject.class))
+        .body(BodyInserters.fromPublisher(Mono.just(requestBody), NewSchemaSubjectDTO.class))
         .exchange()
         .expectStatus()
         .isOk()
-        .expectBody(SchemaSubject.class)
+        .expectBody(SchemaSubjectDTO.class)
         .returnResult()
         .getResponseBody();
 
     Assertions.assertNotNull(actual);
-    Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.BACKWARD.name(),
+    Assertions.assertEquals(CompatibilityLevelDTO.CompatibilityEnum.BACKWARD.name(),
         actual.getCompatibilityLevel());
     Assertions.assertEquals("1", actual.getVersion());
-    Assertions.assertEquals(SchemaType.PROTOBUF, actual.getSchemaType());
+    Assertions.assertEquals(SchemaTypeDTO.PROTOBUF, actual.getSchemaType());
     Assertions.assertEquals(schema, actual.getSchema());
   }
 
@@ -127,11 +127,11 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/schemas/compatibility", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBody(CompatibilityLevel.class)
+        .expectBody(CompatibilityLevelDTO.class)
         .consumeWith(result -> {
-          CompatibilityLevel responseBody = result.getResponseBody();
+          CompatibilityLevelDTO responseBody = result.getResponseBody();
           Assertions.assertNotNull(responseBody);
-          Assertions.assertEquals(CompatibilityLevel.CompatibilityEnum.BACKWARD,
+          Assertions.assertEquals(CompatibilityLevelDTO.CompatibilityEnum.BACKWARD,
               responseBody.getCompatibility());
         });
   }
@@ -145,14 +145,14 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/schemas", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBodyList(SchemaSubject.class)
+        .expectBodyList(SchemaSubjectDTO.class)
         .consumeWith(result -> {
-          List<SchemaSubject> responseBody = result.getResponseBody();
+          List<SchemaSubjectDTO> responseBody = result.getResponseBody();
           log.info("Response of test schemas: {}", responseBody);
           Assertions.assertNotNull(responseBody);
           Assertions.assertFalse(responseBody.isEmpty());
 
-          SchemaSubject actualSchemaSubject = responseBody.stream()
+          SchemaSubjectDTO actualSchemaSubject = responseBody.stream()
               .filter(schemaSubject -> subject.equals(schemaSubject.getSubject()))
               .findFirst()
               .orElseThrow();
@@ -173,10 +173,10 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, subject)
         .exchange()
         .expectStatus().isOk()
-        .expectBodyList(SchemaSubject.class)
+        .expectBodyList(SchemaSubjectDTO.class)
         .consumeWith(listEntityExchangeResult -> {
           val expectedCompatibility =
-              CompatibilityLevel.CompatibilityEnum.BACKWARD;
+              CompatibilityLevelDTO.CompatibilityEnum.BACKWARD;
           assertSchemaWhenGetLatest(subject, listEntityExchangeResult, expectedCompatibility);
         });
 
@@ -196,10 +196,10 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, subject)
         .exchange()
         .expectStatus().isOk()
-        .expectBodyList(SchemaSubject.class)
+        .expectBodyList(SchemaSubjectDTO.class)
         .consumeWith(listEntityExchangeResult -> {
           val expectedCompatibility =
-              CompatibilityLevel.CompatibilityEnum.FULL;
+              CompatibilityLevelDTO.CompatibilityEnum.FULL;
           assertSchemaWhenGetLatest(subject, listEntityExchangeResult, expectedCompatibility);
         });
   }
@@ -218,34 +218,34 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         ))
         .exchange()
         .expectStatus().isOk()
-        .expectBody(SchemaSubject.class)
+        .expectBody(SchemaSubjectDTO.class)
         .consumeWith(this::assertResponseBodyWhenCreateNewSchema);
   }
 
   private void assertSchemaWhenGetLatest(
-      String subject, EntityExchangeResult<List<SchemaSubject>> listEntityExchangeResult,
-      CompatibilityLevel.CompatibilityEnum expectedCompatibility) {
-    List<SchemaSubject> responseBody = listEntityExchangeResult.getResponseBody();
+      String subject, EntityExchangeResult<List<SchemaSubjectDTO>> listEntityExchangeResult,
+      CompatibilityLevelDTO.CompatibilityEnum expectedCompatibility) {
+    List<SchemaSubjectDTO> responseBody = listEntityExchangeResult.getResponseBody();
     Assertions.assertNotNull(responseBody);
     Assertions.assertEquals(1, responseBody.size());
-    SchemaSubject actualSchema = responseBody.get(0);
+    SchemaSubjectDTO actualSchema = responseBody.get(0);
     Assertions.assertNotNull(actualSchema);
     Assertions.assertEquals(subject, actualSchema.getSubject());
     Assertions.assertEquals("\"string\"", actualSchema.getSchema());
 
     Assertions.assertNotNull(actualSchema.getCompatibilityLevel());
-    Assertions.assertEquals(SchemaType.AVRO, actualSchema.getSchemaType());
+    Assertions.assertEquals(SchemaTypeDTO.AVRO, actualSchema.getSchemaType());
     Assertions.assertEquals(expectedCompatibility.name(), actualSchema.getCompatibilityLevel());
   }
 
   private void assertResponseBodyWhenCreateNewSchema(
-      EntityExchangeResult<SchemaSubject> exchangeResult) {
-    SchemaSubject responseBody = exchangeResult.getResponseBody();
+      EntityExchangeResult<SchemaSubjectDTO> exchangeResult) {
+    SchemaSubjectDTO responseBody = exchangeResult.getResponseBody();
     Assertions.assertNotNull(responseBody);
     Assertions.assertEquals("1", responseBody.getVersion());
     Assertions.assertNotNull(responseBody.getSchema());
     Assertions.assertNotNull(responseBody.getSubject());
     Assertions.assertNotNull(responseBody.getCompatibilityLevel());
-    Assertions.assertEquals(SchemaType.AVRO, responseBody.getSchemaType());
+    Assertions.assertEquals(SchemaTypeDTO.AVRO, responseBody.getSchemaType());
   }
 }

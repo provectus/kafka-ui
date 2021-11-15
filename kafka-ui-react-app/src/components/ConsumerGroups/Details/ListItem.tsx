@@ -2,6 +2,7 @@ import React from 'react';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 import { NavLink } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces/cluster';
+import { clusterTopicPath } from 'lib/paths';
 
 interface Props {
   clusterName: ClusterName;
@@ -16,7 +17,7 @@ const ListItem: React.FC<Props> = ({ clusterName, consumer }) => {
       <td>
         <NavLink
           exact
-          to={`/clusters/${clusterName}/topics/${consumer.topic}`}
+          to={clusterTopicPath(clusterName, consumer.topic)}
           activeClassName="is-active"
           className="title is-6"
         >
