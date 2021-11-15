@@ -54,7 +54,7 @@ spec:
               protocol: TCP
           livenessProbe:
             httpGet:
-              {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/" | urlParse }}
+              {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/actuator/health" | urlParse }}
               path: {{ get $contextPath "path" }}
               port: http
             initialDelaySeconds: 60
@@ -62,7 +62,7 @@ spec:
             timeoutSeconds: 10
           readinessProbe:
             httpGet:
-              {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/" | urlParse }}
+              {{- $contextPath := .Values.envs.config.SERVER_SERVLET_CONTEXT_PATH | default "" | printf "%s/actuator/health" | urlParse }}
               path: {{ get $contextPath "path" }}
               port: http
             initialDelaySeconds: 60
