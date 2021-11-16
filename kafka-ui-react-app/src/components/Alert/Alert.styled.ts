@@ -30,6 +30,8 @@ export const AlertWrapper = styled.div<Props>`
   justify-content: space-between;
   align-items: center;
   filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+  margin-top: 10px;
+
   & .alert-title {
     font-weight: 500;
     font-size: 14px;
