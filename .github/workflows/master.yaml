@@ -60,18 +60,18 @@ jobs:
             JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
-#################
-#               #
-#   ECS update  #
-#               #
-#################
-      - name: Configure AWS credentials from Test account
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.TEST_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.TEST_AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
-
-      - name: Restart service with the AWS CLI
+#################################
+#                               #
+#   Master image digest update  #
+#                               #
+#################################
+      - name: update-master-deployment
         run: |
-          aws --region eu-central-1 ecs update-service --cluster kad-ecs --service kad-ecs-kafka-ui --force-new-deployment
+          git clone https://azsafin:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch master
+          cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
+          echo "Image digest is:${{ steps.docker_build_and_push.outputs.digest }}"
+          ./kafka-ui-update-master-digest.sh ${{ steps.docker_build_and_push.outputs.digest }}
+          git config --global user.email "azsafin@provectus.com"
+          git config --global user.name "azsafin"
+          git add ../kafka-ui/*
+          git commit -m "updated master image digest: ${{ steps.docker_build_and_push.outputs.digest }}" && git push
