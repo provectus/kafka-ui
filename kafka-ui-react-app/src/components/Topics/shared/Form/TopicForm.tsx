@@ -9,6 +9,7 @@ import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
 import InputLabel from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
+import { StyledForm } from 'components/common/Form/Form.styles';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
@@ -20,10 +21,6 @@ interface Props {
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
 }
-
-const TopicFormWrapper = styled.form`
-  max-width: 800px;
-`;
 
 export const TopicFormColumn = styled.div`
   display: flex;
@@ -48,7 +45,7 @@ const TopicForm: React.FC<Props> = ({
   } = useFormContext();
 
   return (
-    <TopicFormWrapper onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
           <TopicFormColumn>
@@ -167,7 +164,7 @@ const TopicForm: React.FC<Props> = ({
           Send
         </Button>
       </fieldset>
-    </TopicFormWrapper>
+    </StyledForm>
   );
 };
 

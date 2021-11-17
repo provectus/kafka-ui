@@ -14,20 +14,10 @@ import { useHistory, useParams } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import styled from 'styled-components';
 
 interface RouterParams {
   clusterName: ClusterName;
 }
-
-const NewTopicWrapperStyled = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-bottom: 16px;
-  & > * {
-    width: 800px;
-  }
-`;
 
 const New: React.FC = () => {
   const methods = useForm<TopicFormData>({
@@ -60,14 +50,12 @@ const New: React.FC = () => {
   return (
     <div>
       <PageHeading text="Create new Topic" />
-      <NewTopicWrapperStyled>
-        <FormProvider {...methods}>
-          <TopicForm
-            isSubmitting={methods.formState.isSubmitting}
-            onSubmit={methods.handleSubmit(onSubmit)}
-          />
-        </FormProvider>
-      </NewTopicWrapperStyled>
+      <FormProvider {...methods}>
+        <TopicForm
+          isSubmitting={methods.formState.isSubmitting}
+          onSubmit={methods.handleSubmit(onSubmit)}
+        />
+      </FormProvider>
     </div>
   );
 };
