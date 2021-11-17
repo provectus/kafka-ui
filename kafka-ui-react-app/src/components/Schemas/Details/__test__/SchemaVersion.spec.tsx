@@ -6,7 +6,13 @@ import { versions } from './fixtures';
 
 describe('SchemaVersion', () => {
   it('renders versions', () => {
-    const wrapper = mount(<SchemaVersion version={versions[0]} />);
+    const wrapper = mount(
+      <table>
+        <tbody>
+          <SchemaVersion version={versions[0]} />
+        </tbody>
+      </table>
+    );
 
     expect(wrapper.find('td').length).toEqual(3);
     expect(wrapper.exists('JSONEditor')).toBeFalsy();
