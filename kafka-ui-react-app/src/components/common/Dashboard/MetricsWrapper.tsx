@@ -12,10 +12,12 @@ const MetricsWrapperStyled = styled.div`
     gap: 2px;
     > * {
       &:first-child {
-        border-radius: 8px 0px 0px 8px;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
       }
       &:last-child {
-        border-radius: 0px 8px 8px 0px;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
         margin-right: 3px;
       }
     }
