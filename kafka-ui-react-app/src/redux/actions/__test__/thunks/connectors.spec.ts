@@ -25,7 +25,7 @@ describe('Thunks', () => {
     store.clearActions();
   });
 
-  xdescribe('fetchConnects', () => {
+  describe('fetchConnects', () => {
     it('creates GET_CONNECTS__SUCCESS when fetching connects', async () => {
       fetchMock.getOnce(`/api/clusters/${clusterName}/connects`, connects);
       await store.dispatch(thunks.fetchConnects(clusterName));
@@ -211,7 +211,7 @@ describe('Thunks', () => {
         {}
       );
       fetchMock.getOnce(
-        `/api/clusters/${clusterName}/connectors`,
+        `/api/clusters/${clusterName}/connectors?search=`,
         connectorsServerPayload
       );
       await store.dispatch(
