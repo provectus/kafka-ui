@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -37,6 +39,7 @@ import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
@@ -45,8 +48,11 @@ import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
 import org.apache.kafka.common.errors.GroupIdNotFoundException;
 import org.apache.kafka.common.errors.GroupNotEmptyException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 
 @Log4j2
@@ -112,20 +118,24 @@ public class ReactiveAdminClient implements Closeable {
     return version;
   }
 
+  public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig() {
+    return listTopics(true).flatMap(this::getTopicsConfig);
+  }
+
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
     List<ConfigResource> resources = topicNames.stream()
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
         .collect(toList());
 
-    return toMono(
+    return toMonoWithExceptionFilter(
         client.describeConfigs(
             resources,
-            new DescribeConfigsOptions().includeSynonyms(true)
-        ).all())
-        .map(config -> config.entrySet().stream()
-            .collect(toMap(
-                c -> c.getKey().name(),
-                c -> new ArrayList<>(c.getValue().entries()))));
+            new DescribeConfigsOptions().includeSynonyms(true)).values(),
+        UnknownTopicOrPartitionException.class
+    ).map(config -> config.entrySet().stream()
+        .collect(toMap(
+            c -> c.getKey().name(),
+            c -> List.copyOf(c.getValue().entries()))));
   }
 
   public Mono<Map<Integer, List<ConfigEntry>>> loadBrokersConfig(List<Integer> brokerIds) {
@@ -139,8 +149,56 @@ public class ReactiveAdminClient implements Closeable {
                 c -> new ArrayList<>(c.getValue().entries()))));
   }
 
+  public Mono<Map<String, TopicDescription>> describeTopics() {
+    return listTopics(true).flatMap(this::describeTopics);
+  }
+
   public Mono<Map<String, TopicDescription>> describeTopics(Collection<String> topics) {
-    return toMono(client.describeTopics(topics).all());
+    return toMonoWithExceptionFilter(
+        client.describeTopics(topics).values(),
+        UnknownTopicOrPartitionException.class
+    );
+  }
+
+  /**
+   * Kafka API often returns Map responses with KafkaFuture values. If we do allOf()
+   * logic resulting Mono will be failing if any of Futures finished with error.
+   * In some situations it is not what we what, ex. we call describeTopics(List names) method and
+   * we getting UnknownTopicOrPartitionException for unknown topics and we what to just not put
+   * such topics in resulting map.
+   * <p/>
+   * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
+   * finished with <code>clazz</code> exception.
+   */
+  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+                                                           Class<? extends KafkaException> clazz) {
+    if (values.isEmpty()) {
+      return Mono.just(Map.of());
+    }
+
+    List<Mono<Tuple2<K, V>>> monos = values.entrySet().stream()
+        .map(e -> toMono(e.getValue()).map(r -> Tuples.of(e.getKey(), r)))
+        .collect(toList());
+
+    return Mono.create(sink -> {
+      var finishedCnt = new AtomicInteger();
+      var results = new ConcurrentHashMap<K, V>();
+      monos.forEach(mono -> mono.subscribe(
+          r -> {
+            results.put(r.getT1(), r.getT2());
+            if (finishedCnt.incrementAndGet() == monos.size()) {
+              sink.success(results);
+            }
+          },
+          th -> {
+            if (!th.getClass().isAssignableFrom(clazz)) {
+              sink.error(th);
+            } else if (finishedCnt.incrementAndGet() == monos.size()) {
+              sink.success(results);
+            }
+          }
+      ));
+    });
   }
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {
@@ -191,10 +249,6 @@ public class ReactiveAdminClient implements Closeable {
                     .findFirst().map(ConfigEntry::value)
                     .orElse("1.0-UNKNOWN")
             )));
-  }
-
-  public Mono<String> getClusterVersion() {
-    return getClusterVersionImpl(client);
   }
 
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {

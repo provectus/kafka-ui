@@ -33,7 +33,6 @@ public enum CleanupPolicy {
                 )
             )
         ).findFirst()
-        .orElseThrow(() ->
-            new IllegalEntityStateException("Unknown cleanup policy value: " + string));
+        .orElse(UNKNOWN);
   }
 }
