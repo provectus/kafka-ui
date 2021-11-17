@@ -14,6 +14,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicsPath } from 'lib/paths';
+import Switch from 'components/common/Switch/Switch';
 
 interface Props {
   clusters: Cluster[];
@@ -49,7 +50,7 @@ const ClustersWidget: React.FC<Props> = ({
   const handleSwitch = () => setShowOfflineOnly(!showOfflineOnly);
 
   return (
-    <div>
+    <>
       <MetricsContainerStyled>
         <MetricsWrapper>
           <Indicator label={<TagStyled color="green">Online</TagStyled>}>
@@ -63,11 +64,8 @@ const ClustersWidget: React.FC<Props> = ({
         </MetricsWrapper>
       </MetricsContainerStyled>
       <div className="p-4">
-        <input
-          type="checkbox"
-          className="switch is-rounded"
+        <Switch
           name="switchRoundedDefault"
-          id="switchRoundedDefault"
           checked={showOfflineOnly}
           onChange={handleSwitch}
         />
@@ -109,7 +107,7 @@ const ClustersWidget: React.FC<Props> = ({
           </tbody>
         </StyledTable>
       ))}
-    </div>
+    </>
   );
 };
 

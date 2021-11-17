@@ -111,6 +111,10 @@ exports[`Details component when consumer gruops are NOT fetched Matches the snap
           "normal": "#171A1C",
         },
       },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
       "tagStyles": Object {
         "backgroundColor": Object {
           "gray": "#E3E6E8",
@@ -276,6 +280,10 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+      },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
       },
       "tagStyles": Object {
         "backgroundColor": Object {

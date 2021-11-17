@@ -20,6 +20,7 @@ import StyledTable from 'components/common/table/Table/Table.styled';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import Switch from 'components/common/Switch/Switch';
 
 import ListItem from './ListItem';
 
@@ -156,15 +157,12 @@ const List: React.FC<TopicsListProps> = ({
             />
           </div>
           <div>
-            <input
-              id="switchRoundedDefault"
-              type="checkbox"
-              name="switchRoundedDefault"
-              className="switch is-rounded"
+            <Switch
+              name="ShowInternalTopics"
               checked={showInternal}
               onChange={handleSwitch}
             />
-            <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
+            <label>Show Internal Topics</label>
           </div>
         </ControlPanelWrapper>
       </div>

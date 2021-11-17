@@ -163,6 +163,10 @@ exports[`App view matches snapshot 1`] = `
                   "normal": "#171A1C",
                 },
               },
+              "switch": Object {
+                "checked": "#29A352",
+                "unchecked": "#ABB5BA",
+              },
               "tagStyles": Object {
                 "backgroundColor": Object {
                   "gray": "#E3E6E8",
@@ -379,144 +383,165 @@ exports[`App view matches snapshot 1`] = `
                           offlineClusters={Array []}
                           onlineClusters={Array []}
                         >
-                          <div>
-                            <styled.div>
-                              <div
-                                className="sc-fubCzh gEgcEC"
-                              >
-                                <MetricsWrapper>
-                                  <styled.div>
+                          <styled.div>
+                            <div
+                              className="sc-fubCzh gEgcEC"
+                            >
+                              <MetricsWrapper>
+                                <styled.div>
+                                  <div
+                                    className="sc-gKseQn ixPhvJ"
+                                  >
                                     <div
-                                      className="sc-gKseQn gnQrfd"
+                                      className="indicatorsWrapper"
                                     >
-                                      <div
-                                        className="indicatorsWrapper"
+                                      <Indicator
+                                        label={
+                                          <Styled(Tag)
+                                            color="green"
+                                          >
+                                            Online
+                                          </Styled(Tag)>
+                                        }
                                       >
-                                        <Indicator
-                                          label={
-                                            <Styled(Tag)
-                                              color="green"
-                                            >
-                                              Online
-                                            </Styled(Tag)>
-                                          }
-                                        >
-                                          <styled.div>
-                                            <div
-                                              className="sc-iBPTik cqcUkT"
-                                            >
-                                              <div>
-                                                <div
-                                                  className="indicator-label"
+                                        <styled.div>
+                                          <div
+                                            className="sc-iBPTik cqcUkT"
+                                          >
+                                            <div>
+                                              <div
+                                                className="indicator-label"
+                                              >
+                                                <Styled(Tag)
+                                                  color="green"
                                                 >
-                                                  <Styled(Tag)
+                                                  <Tag
+                                                    className="sc-kEjbQP kcSPGN"
                                                     color="green"
                                                   >
-                                                    <Tag
+                                                    <p
                                                       className="sc-kEjbQP kcSPGN"
-                                                      color="green"
                                                     >
-                                                      <p
-                                                        className="sc-kEjbQP kcSPGN"
-                                                      >
-                                                        Online
-                                                      </p>
-                                                    </Tag>
-                                                  </Styled(Tag)>
-                                                   
-                                                </div>
-                                                <span>
-                                                  <span
-                                                    data-testid="onlineCount"
-                                                  >
-                                                    0
-                                                  </span>
-                                                   
-                                                  <styled.span>
-                                                    <span
-                                                      className="sc-pGacB dBjHDQ"
-                                                    >
-                                                      clusters
-                                                    </span>
-                                                  </styled.span>
-                                                </span>
+                                                      Online
+                                                    </p>
+                                                  </Tag>
+                                                </Styled(Tag)>
+                                                 
                                               </div>
-                                            </div>
-                                          </styled.div>
-                                        </Indicator>
-                                        <Indicator
-                                          label={
-                                            <Styled(Tag)
-                                              color="gray"
-                                            >
-                                              Offline
-                                            </Styled(Tag)>
-                                          }
-                                        >
-                                          <styled.div>
-                                            <div
-                                              className="sc-iBPTik cqcUkT"
-                                            >
-                                              <div>
-                                                <div
-                                                  className="indicator-label"
+                                              <span>
+                                                <span
+                                                  data-testid="onlineCount"
                                                 >
-                                                  <Styled(Tag)
+                                                  0
+                                                </span>
+                                                 
+                                                <styled.span>
+                                                  <span
+                                                    className="sc-pGacB dBjHDQ"
+                                                  >
+                                                    clusters
+                                                  </span>
+                                                </styled.span>
+                                              </span>
+                                            </div>
+                                          </div>
+                                        </styled.div>
+                                      </Indicator>
+                                      <Indicator
+                                        label={
+                                          <Styled(Tag)
+                                            color="gray"
+                                          >
+                                            Offline
+                                          </Styled(Tag)>
+                                        }
+                                      >
+                                        <styled.div>
+                                          <div
+                                            className="sc-iBPTik cqcUkT"
+                                          >
+                                            <div>
+                                              <div
+                                                className="indicator-label"
+                                              >
+                                                <Styled(Tag)
+                                                  color="gray"
+                                                >
+                                                  <Tag
+                                                    className="sc-kEjbQP eOlhnN"
                                                     color="gray"
                                                   >
-                                                    <Tag
+                                                    <p
                                                       className="sc-kEjbQP eOlhnN"
-                                                      color="gray"
                                                     >
-                                                      <p
-                                                        className="sc-kEjbQP eOlhnN"
-                                                      >
-                                                        Offline
-                                                      </p>
-                                                    </Tag>
-                                                  </Styled(Tag)>
-                                                   
-                                                </div>
-                                                <span>
-                                                  <span
-                                                    data-testid="offlineCount"
-                                                  >
-                                                    0
-                                                  </span>
-                                                   
-                                                  <styled.span>
-                                                    <span
-                                                      className="sc-pGacB dBjHDQ"
-                                                    >
-                                                      clusters
-                                                    </span>
-                                                  </styled.span>
-                                                </span>
+                                                      Offline
+                                                    </p>
+                                                  </Tag>
+                                                </Styled(Tag)>
+                                                 
                                               </div>
+                                              <span>
+                                                <span
+                                                  data-testid="offlineCount"
+                                                >
+                                                  0
+                                                </span>
+                                                 
+                                                <styled.span>
+                                                  <span
+                                                    className="sc-pGacB dBjHDQ"
+                                                  >
+                                                    clusters
+                                                  </span>
+                                                </styled.span>
+                                              </span>
                                             </div>
-                                          </styled.div>
-                                        </Indicator>
-                                      </div>
+                                          </div>
+                                        </styled.div>
+                                      </Indicator>
                                     </div>
-                                  </styled.div>
-                                </MetricsWrapper>
-                              </div>
-                            </styled.div>
-                            <div
-                              className="p-4"
-                            >
-                              <input
-                                checked={false}
-                                className="switch is-rounded"
-                                id="switchRoundedDefault"
-                                name="switchRoundedDefault"
-                                onChange={[Function]}
-                                type="checkbox"
-                              />
-                              <span>
-                                Only offline clusters
-                              </span>
+                                  </div>
+                                </styled.div>
+                              </MetricsWrapper>
                             </div>
+                          </styled.div>
+                          <div
+                            className="p-4"
+                          >
+                            <Switch
+                              checked={false}
+                              name="switchRoundedDefault"
+                              onChange={[Function]}
+                            >
+                              <styled.label>
+                                <label
+                                  className="sc-dQoVA kgrMNQ"
+                                >
+                                  <styled.input
+                                    checked={false}
+                                    name="switchRoundedDefault"
+                                    onChange={[Function]}
+                                    type="checkbox"
+                                  >
+                                    <input
+                                      checked={false}
+                                      className="sc-kstqJO bEasRT"
+                                      name="switchRoundedDefault"
+                                      onChange={[Function]}
+                                      type="checkbox"
+                                    />
+                                  </styled.input>
+                                  <styled.span>
+                                    <span
+                                      className="sc-bqyKOL fENLa"
+                                    />
+                                  </styled.span>
+                                </label>
+                              </styled.label>
+                            </Switch>
+                            <span>
+                              Only offline clusters
+                            </span>
                           </div>
                         </ClustersWidget>
                       </Connect(ClustersWidget)>

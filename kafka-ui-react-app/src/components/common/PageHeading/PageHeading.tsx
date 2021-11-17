@@ -16,7 +16,6 @@ const PageHeading: React.FC<Props> = ({ text, className, children }) => {
 };
 
 export default styled(PageHeading)`
-  width: 100%;
   height: 56px;
   display: flex;
   justify-content: space-between;

@@ -134,6 +134,10 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               "normal": "#171A1C",
             },
           },
+          "switch": Object {
+            "checked": "#29A352",
+            "unchecked": "#ABB5BA",
+          },
           "tagStyles": Object {
             "backgroundColor": Object {
               "gray": "#E3E6E8",
@@ -197,11 +201,11 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
               text="All Topics"
             >
               <PageHeading
-                className="sc-jrAFXE hVcdFx"
+                className="sc-jrAFXE jRNYgY"
                 text="All Topics"
               >
                 <div
-                  className="sc-jrAFXE hVcdFx"
+                  className="sc-jrAFXE jRNYgY"
                 >
                   <h1>
                     All Topics
@@ -309,17 +313,38 @@ exports[`List when it does not have readonly flag matches the snapshot 1`] = `
                   </Search>
                 </div>
                 <div>
-                  <input
+                  <Switch
                     checked={true}
-                    className="switch is-rounded"
-                    id="switchRoundedDefault"
-                    name="switchRoundedDefault"
+                    name="ShowInternalTopics"
                     onChange={[Function]}
-                    type="checkbox"
-                  />
-                  <label
-                    htmlFor="switchRoundedDefault"
                   >
+                    <styled.label>
+                      <label
+                        className="sc-iqHYmW bopFkq"
+                      >
+                        <styled.input
+                          checked={true}
+                          name="ShowInternalTopics"
+                          onChange={[Function]}
+                          type="checkbox"
+                        >
+                          <input
+                            checked={true}
+                            className="sc-dQoVA fYeNpe"
+                            name="ShowInternalTopics"
+                            onChange={[Function]}
+                            type="checkbox"
+                          />
+                        </styled.input>
+                        <styled.span>
+                          <span
+                            className="sc-crrszt eazPIW"
+                          />
+                        </styled.span>
+                      </label>
+                    </styled.label>
+                  </Switch>
+                  <label>
                     Show Internal Topics
                   </label>
                 </div>

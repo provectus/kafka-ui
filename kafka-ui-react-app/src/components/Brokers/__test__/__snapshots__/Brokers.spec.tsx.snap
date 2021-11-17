@@ -140,6 +140,10 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               "normal": "#171A1C",
             },
           },
+          "switch": Object {
+            "checked": "#29A352",
+            "unchecked": "#ABB5BA",
+          },
           "tagStyles": Object {
             "backgroundColor": Object {
               "gray": "#E3E6E8",
@@ -209,11 +213,11 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
             text="Brokers"
           >
             <PageHeading
-              className="sc-jSgvzq feAFzU"
+              className="sc-jSgvzq gXXPNp"
               text="Brokers"
             >
               <div
-                className="sc-jSgvzq feAFzU"
+                className="sc-jSgvzq gXXPNp"
               >
                 <h1>
                   Brokers
@@ -231,7 +235,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB beSsiJ"
+                    className="sc-bdfBQB goGmkB"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -347,7 +351,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB beSsiJ"
+                    className="sc-bdfBQB goGmkB"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -691,6 +695,10 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               "normal": "#171A1C",
             },
           },
+          "switch": Object {
+            "checked": "#29A352",
+            "unchecked": "#ABB5BA",
+          },
           "tagStyles": Object {
             "backgroundColor": Object {
               "gray": "#E3E6E8",
@@ -769,11 +777,11 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
             text="Brokers"
           >
             <PageHeading
-              className="sc-jSgvzq feAFzU"
+              className="sc-jSgvzq gXXPNp"
               text="Brokers"
             >
               <div
-                className="sc-jSgvzq feAFzU"
+                className="sc-jSgvzq gXXPNp"
               >
                 <h1>
                   Brokers
@@ -791,7 +799,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB beSsiJ"
+                    className="sc-bdfBQB goGmkB"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -907,7 +915,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB beSsiJ"
+                    className="sc-bdfBQB goGmkB"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"

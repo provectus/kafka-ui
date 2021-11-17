@@ -116,7 +116,7 @@ describe('List', () => {
 
     it('should refetch topics on show internal toggle change', () => {
       jest.clearAllMocks();
-      const toggle = component.find('input#switchRoundedDefault');
+      const toggle = component.find('input[name="ShowInternalTopics"]');
       toggle.simulate('change');
       expect(fetchTopicsList).toHaveBeenLastCalledWith({
         search: '',
@@ -133,7 +133,7 @@ describe('List', () => {
         mockedHistory
       );
 
-      const toggle = component.find('input#switchRoundedDefault');
+      const toggle = component.find('input[name="ShowInternalTopics"]');
       toggle.simulate('change');
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');

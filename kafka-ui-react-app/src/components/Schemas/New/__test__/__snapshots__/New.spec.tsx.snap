@@ -111,6 +111,10 @@ exports[`New View matches snapshot 1`] = `
           "normal": "#171A1C",
         },
       },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
       "tagStyles": Object {
         "backgroundColor": Object {
           "gray": "#E3E6E8",
@@ -354,11 +358,11 @@ exports[`New View matches snapshot 1`] = `
             text="Create new schema"
           >
             <PageHeading
-              className="sc-jrAFXE hVcdFx"
+              className="sc-jrAFXE jRNYgY"
               text="Create new schema"
             >
               <div
-                className="sc-jrAFXE hVcdFx"
+                className="sc-jrAFXE jRNYgY"
               >
                 <h1>
                   Create new schema

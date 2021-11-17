@@ -111,6 +111,10 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "normal": "#171A1C",
         },
       },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
       "tagStyles": Object {
         "backgroundColor": Object {
           "gray": "#E3E6E8",
@@ -181,11 +185,11 @@ exports[`Details when it has readonly flag does not render the Action button a T
               text="__internal.topic"
             >
               <PageHeading
-                className="sc-dlfnuX knYiCm"
+                className="sc-dlfnuX bHYqBj"
                 text="__internal.topic"
               >
                 <div
-                  className="sc-dlfnuX knYiCm"
+                  className="sc-dlfnuX bHYqBj"
                 >
                   <h1>
                     __internal.topic

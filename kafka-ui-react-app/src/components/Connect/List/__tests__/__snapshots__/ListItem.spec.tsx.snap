@@ -111,6 +111,10 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "normal": "#171A1C",
         },
       },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
       "tagStyles": Object {
         "backgroundColor": Object {
           "gray": "#E3E6E8",

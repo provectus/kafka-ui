@@ -163,6 +163,10 @@ const theme = {
       disabled: Colors.neutral[20],
     },
   },
+  switch: {
+    unchecked: Colors.neutral[30],
+    checked: Colors.green[60],
+  },
 };
 
 export type ThemeType = typeof theme;
