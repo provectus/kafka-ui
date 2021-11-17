@@ -16,13 +16,13 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
-public class ClustersController implements ClustersApi {
+public class ClustersController extends AbstractController implements ClustersApi {
   private final ClusterService clusterService;
 
   @Override
   public Mono<ResponseEntity<ClusterMetricsDTO>> getClusterMetrics(String clusterName,
                                                                 ServerWebExchange exchange) {
-    return clusterService.getClusterMetrics(clusterName)
+    return clusterService.getClusterMetrics(getCluster(clusterName))
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
   }
@@ -30,7 +30,7 @@ public class ClustersController implements ClustersApi {
   @Override
   public Mono<ResponseEntity<ClusterStatsDTO>> getClusterStats(String clusterName,
                                                             ServerWebExchange exchange) {
-    return clusterService.getClusterStats(clusterName)
+    return clusterService.getClusterStats(getCluster(clusterName))
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
   }
@@ -43,6 +43,6 @@ public class ClustersController implements ClustersApi {
   @Override
   public Mono<ResponseEntity<ClusterDTO>> updateClusterInfo(String clusterName,
                                                          ServerWebExchange exchange) {
-    return clusterService.updateCluster(clusterName).map(ResponseEntity::ok);
+    return clusterService.updateCluster(getCluster(clusterName)).map(ResponseEntity::ok);
   }
 }

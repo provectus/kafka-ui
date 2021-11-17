@@ -1,19 +1,11 @@
 package com.provectus.kafka.ui.util;
 
-import static com.provectus.kafka.ui.util.KafkaConstants.TOPIC_DEFAULT_CONFIGS;
-import static org.apache.kafka.common.config.TopicConfig.MESSAGE_FORMAT_VERSION_CONFIG;
-
 import com.provectus.kafka.ui.model.BrokerDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupDetailsDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupStateDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupTopicPartitionDTO;
-import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
-import com.provectus.kafka.ui.model.InternalPartition;
-import com.provectus.kafka.ui.model.InternalReplica;
-import com.provectus.kafka.ui.model.InternalTopic;
-import com.provectus.kafka.ui.model.InternalTopicConfig;
 import com.provectus.kafka.ui.model.MessageFormatDTO;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
@@ -24,22 +16,20 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
-import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
+
 
 @Log4j2
 public class ClusterUtil {
@@ -163,89 +153,6 @@ public class ClusterUtil {
     }
   }
 
-
-  public static InternalTopicConfig mapToInternalTopicConfig(ConfigEntry configEntry) {
-    InternalTopicConfig.InternalTopicConfigBuilder builder = InternalTopicConfig.builder()
-        .name(configEntry.name())
-        .value(configEntry.value())
-        .source(configEntry.source())
-        .isReadOnly(configEntry.isReadOnly())
-        .isSensitive(configEntry.isSensitive())
-        .synonyms(configEntry.synonyms());
-    if (configEntry.name().equals(MESSAGE_FORMAT_VERSION_CONFIG)) {
-      builder.defaultValue(configEntry.value());
-    } else {
-      builder.defaultValue(TOPIC_DEFAULT_CONFIGS.get(configEntry.name()));
-    }
-    return builder.build();
-  }
-
-  public static InternalBrokerConfig mapToInternalBrokerConfig(ConfigEntry configEntry) {
-    InternalBrokerConfig.InternalBrokerConfigBuilder builder = InternalBrokerConfig.builder()
-        .name(configEntry.name())
-        .value(configEntry.value())
-        .source(configEntry.source())
-        .isReadOnly(configEntry.isReadOnly())
-        .isSensitive(configEntry.isSensitive())
-        .synonyms(configEntry.synonyms());
-    return builder.build();
-  }
-
-  public static InternalTopic mapToInternalTopic(TopicDescription topicDescription) {
-    var topic = InternalTopic.builder();
-    topic.internal(
-        topicDescription.isInternal() || topicDescription.name().startsWith("_")
-    );
-    topic.name(topicDescription.name());
-
-    List<InternalPartition> partitions = topicDescription.partitions().stream().map(
-        partition -> {
-          var partitionDto = InternalPartition.builder();
-          partitionDto.leader(partition.leader().id());
-          partitionDto.partition(partition.partition());
-          partitionDto.inSyncReplicasCount(partition.isr().size());
-          partitionDto.replicasCount(partition.replicas().size());
-          List<InternalReplica> replicas = partition.replicas().stream().map(
-              r -> new InternalReplica(r.id(), partition.leader().id() != r.id(),
-                  partition.isr().contains(r)))
-              .collect(Collectors.toList());
-          partitionDto.replicas(replicas);
-          return partitionDto.build();
-        })
-        .collect(Collectors.toList());
-
-    int urpCount = partitions.stream()
-        .flatMap(partition -> partition.getReplicas().stream())
-        .filter(p -> !p.isInSync()).mapToInt(e -> 1)
-        .sum();
-
-    int inSyncReplicasCount = partitions.stream()
-        .mapToInt(InternalPartition::getInSyncReplicasCount)
-        .sum();
-
-    int replicasCount = partitions.stream()
-        .mapToInt(InternalPartition::getReplicasCount)
-        .sum();
-
-    topic.partitions(partitions.stream().collect(Collectors.toMap(
-        InternalPartition::getPartition,
-        t -> t
-    )));
-    topic.replicas(replicasCount);
-    topic.partitionCount(topicDescription.partitions().size());
-    topic.inSyncReplicas(inSyncReplicasCount);
-
-    topic.replicationFactor(
-        topicDescription.partitions().isEmpty()
-            ? 0
-            : topicDescription.partitions().get(0).replicas().size()
-    );
-
-    topic.underReplicatedPartitions(urpCount);
-
-    return topic.build();
-  }
-
   public static int convertToIntServerStatus(ServerStatusDTO serverStatus) {
     return serverStatus.equals(ServerStatusDTO.ONLINE) ? 1 : 0;
   }
@@ -303,13 +210,6 @@ public class ClusterUtil {
       default:
         throw new IllegalArgumentException("Unknown timestampType: " + timestampType);
     }
-  }
-
-
-  public static <T, R> Map<T, R> toSingleMap(Stream<Map<T, R>> streamOfMaps) {
-    return streamOfMaps
-        .reduce((map1, map2) -> Stream.concat(map1.entrySet().stream(), map2.entrySet().stream())
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))).orElseThrow();
   }
 
   public static Optional<InternalConsumerGroup> filterConsumerGroupTopic(
