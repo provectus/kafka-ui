@@ -1,6 +1,217 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App view matches snapshot 1`] = `
+.c1 {
+  font-size: 14px;
+  font-weight: 500;
+  height: 32px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.c1 a {
+  width: 100%;
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  margin: 0px 0px;
+  background-color: #FFFFFF;
+  color: #73848C;
+}
+
+.c1 a:hover {
+  background-color: #F1F2F3;
+  color: #73848C;
+}
+
+.c1 a.is-active {
+  background-color: #E3E6E8;
+  color: #171A1C;
+}
+
+.c0 > * {
+  padding-bottom: 4px;
+}
+
+.c3 {
+  overflow-y: scroll;
+}
+
+.c3 .indicatorsWrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 2px;
+}
+
+.c3 .indicatorsWrapper > *:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.c3 .indicatorsWrapper > *:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  margin-right: 3px;
+}
+
+.c4 {
+  background-color: white;
+  height: 68px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  min-width: 150px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  padding: 12px 16px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
+  margin: 0 0 3px 0;
+}
+
+.c4 .indicator-label {
+  font-weight: 500;
+  font-size: 12px;
+  color: #73848C;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.c2 {
+  padding: 1.5rem 1rem;
+  background: #F1F2F3;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  grid-gap: 1rem;
+  gap: 1rem;
+  margin-bottom: 0.5rem !important;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+.c6 {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c5 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #D6F5E0;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c7 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #E3E6E8;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c8 {
+  position: relative;
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.c11 {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ABB5BA;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 20px;
+}
+
+.c11::before {
+  position: absolute;
+  content: '';
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+.c9 {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.c9:checked + .c10 {
+  background-color: #29A352;
+}
+
+.c9:focus + .c10 {
+  box-shadow: 0 0 1px #29A352;
+}
+
+.c9:checked + .c10:before {
+  -webkit-transform: translateX(14px);
+  -ms-transform: translateX(14px);
+  transform: translateX(14px);
+}
+
 <Provider
   store={
     Object {
@@ -235,12 +446,12 @@ exports[`App view matches snapshot 1`] = `
                   isClusterListFetched={true}
                 >
                   <Nav
-                    className="sc-hKgJUU dAOeGn"
+                    className="c0"
                     clusters={Array []}
                     isClusterListFetched={true}
                   >
                     <aside
-                      className="has-shadow has-background-white sc-hKgJUU dAOeGn"
+                      className="has-shadow has-background-white c0"
                     >
                       <ul>
                         <ClusterMenuItem
@@ -255,7 +466,7 @@ exports[`App view matches snapshot 1`] = `
                             to="/ui"
                           >
                             <li
-                              className="sc-bdfBQB dLgsMO"
+                              className="c1"
                               to="/ui"
                             >
                               <NavLink
@@ -385,12 +596,12 @@ exports[`App view matches snapshot 1`] = `
                         >
                           <styled.div>
                             <div
-                              className="sc-fubCzh gEgcEC"
+                              className="c2"
                             >
                               <MetricsWrapper>
                                 <styled.div>
                                   <div
-                                    className="sc-gKseQn ixPhvJ"
+                                    className="c3"
                                   >
                                     <div
                                       className="indicatorsWrapper"
@@ -406,7 +617,7 @@ exports[`App view matches snapshot 1`] = `
                                       >
                                         <styled.div>
                                           <div
-                                            className="sc-iBPTik cqcUkT"
+                                            className="c4"
                                           >
                                             <div>
                                               <div
@@ -416,11 +627,11 @@ exports[`App view matches snapshot 1`] = `
                                                   color="green"
                                                 >
                                                   <Tag
-                                                    className="sc-kEjbQP kcSPGN"
+                                                    className="c5"
                                                     color="green"
                                                   >
                                                     <p
-                                                      className="sc-kEjbQP kcSPGN"
+                                                      className="c5"
                                                     >
                                                       Online
                                                     </p>
@@ -437,7 +648,7 @@ exports[`App view matches snapshot 1`] = `
                                                  
                                                 <styled.span>
                                                   <span
-                                                    className="sc-pGacB dBjHDQ"
+                                                    className="c6"
                                                   >
                                                     clusters
                                                   </span>
@@ -458,7 +669,7 @@ exports[`App view matches snapshot 1`] = `
                                       >
                                         <styled.div>
                                           <div
-                                            className="sc-iBPTik cqcUkT"
+                                            className="c4"
                                           >
                                             <div>
                                               <div
@@ -468,11 +679,11 @@ exports[`App view matches snapshot 1`] = `
                                                   color="gray"
                                                 >
                                                   <Tag
-                                                    className="sc-kEjbQP eOlhnN"
+                                                    className="c7"
                                                     color="gray"
                                                   >
                                                     <p
-                                                      className="sc-kEjbQP eOlhnN"
+                                                      className="c7"
                                                     >
                                                       Offline
                                                     </p>
@@ -489,7 +700,7 @@ exports[`App view matches snapshot 1`] = `
                                                  
                                                 <styled.span>
                                                   <span
-                                                    className="sc-pGacB dBjHDQ"
+                                                    className="c6"
                                                   >
                                                     clusters
                                                   </span>
@@ -515,7 +726,7 @@ exports[`App view matches snapshot 1`] = `
                             >
                               <styled.label>
                                 <label
-                                  className="sc-dQoVA kgrMNQ"
+                                  className="c8"
                                 >
                                   <styled.input
                                     checked={false}
@@ -525,7 +736,7 @@ exports[`App view matches snapshot 1`] = `
                                   >
                                     <input
                                       checked={false}
-                                      className="sc-kstqJO bEasRT"
+                                      className="c9"
                                       name="switchRoundedDefault"
                                       onChange={[Function]}
                                       type="checkbox"
@@ -533,7 +744,7 @@ exports[`App view matches snapshot 1`] = `
                                   </styled.input>
                                   <styled.span>
                                     <span
-                                      className="sc-bqyKOL fENLa"
+                                      className="c10 c11"
                                     />
                                   </styled.span>
                                 </label>

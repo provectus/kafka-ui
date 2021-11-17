@@ -1,6 +1,92 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Details when it has readonly flag does not render the Action button a Topic 1`] = `
+.c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 1px #E3E6E8 solid;
+}
+
+.c2 a {
+  height: 40px;
+  width: 96px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  color: #73848C;
+  border-bottom: 1px transparent solid;
+}
+
+.c2 a.is-active {
+  border-bottom: 1px #4F4FFF solid;
+  color: #171A1C;
+}
+
+.c2 a:hover:not(.is-active) {
+  border-bottom: 1px transparent solid;
+  color: #171A1C;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+  gap: 26px;
+}
+
 <Component
   theme={
     Object {
@@ -185,11 +271,11 @@ exports[`Details when it has readonly flag does not render the Action button a T
               text="__internal.topic"
             >
               <PageHeading
-                className="sc-dlfnuX bHYqBj"
+                className="c0"
                 text="__internal.topic"
               >
                 <div
-                  className="sc-dlfnuX bHYqBj"
+                  className="c0"
                 >
                   <h1>
                     __internal.topic
@@ -197,7 +283,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
                   <div>
                     <styled.div>
                       <div
-                        className="sc-iUuxjF lnbHJl"
+                        className="c1"
                       >
                         <Route
                           exact={true}
@@ -218,7 +304,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
               role="navigation"
             >
               <nav
-                className="sc-jSgvzq loMnuM"
+                className="c2"
                 role="navigation"
               >
                 <NavLink

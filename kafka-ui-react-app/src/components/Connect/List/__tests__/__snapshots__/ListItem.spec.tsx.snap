@@ -1,6 +1,81 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Connectors ListItem matches snapshot 1`] = `
+.c5 {
+  background: transparent;
+  border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: 'center';
+  -webkit-box-align: 'center';
+  -ms-flex-align: 'center';
+  align-items: 'center';
+  -webkit-box-pack: 'center';
+  -webkit-justify-content: 'center';
+  -ms-flex-pack: 'center';
+  justify-content: 'center';
+}
+
+.c5:hover {
+  cursor: pointer;
+}
+
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
+.c2 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #E3E6E8;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c3 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #FFEECC;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c0 > a {
+  color: #171A1C;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
 <Component
   theme={
     Object {
@@ -195,7 +270,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
               <tr>
                 <styled.td>
                   <td
-                    className="sc-hKgJUU behyrW"
+                    className="c0"
                   >
                     <NavLink
                       exact={true}
@@ -241,18 +316,18 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                 <td>
                   <styled.div>
                     <div
-                      className="sc-eCstlR bMQArj"
+                      className="c1"
                     >
                       <Styled(Tag)
                         color="gray"
                         key="test-topic"
                       >
                         <Tag
-                          className="sc-dlfnuX gTkaKb"
+                          className="c2"
                           color="gray"
                         >
                           <p
-                            className="sc-dlfnuX gTkaKb"
+                            className="c2"
                           >
                             <Link
                               to="/ui/clusters/local/topics/test-topic"
@@ -280,11 +355,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                     color="yellow"
                   >
                     <Tag
-                      className="sc-dlfnuX jOLmGj"
+                      className="c3"
                       color="yellow"
                     >
                       <p
-                        className="sc-dlfnuX jOLmGj"
+                        className="c3"
                       >
                         RUNNING
                       </p>
@@ -309,19 +384,19 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea bcxnzQ"
+                            className="c4"
                           >
                             <Styled(DropdownTrigger)
                               onClick={[Function]}
                             >
                               <DropdownTrigger
-                                className="sc-bdfBQB fjFNAo"
+                                className="c5"
                                 onClick={[Function]}
                               >
                                 <button
                                   aria-controls="dropdown-menu"
                                   aria-haspopup="true"
-                                  className="sc-bdfBQB fjFNAo"
+                                  className="c5"
                                   onClick={[Function]}
                                   type="button"
                                 >

@@ -87,23 +87,6 @@ describe('List', () => {
     it('renders the Add a Topic button', () => {
       expect(component.exists('Link')).toBeTruthy();
     });
-    it('matches the snapshot', () => {
-      component = mount(
-        <StaticRouter>
-          <ClusterContext.Provider
-            value={{
-              isReadOnly: false,
-              hasKafkaConnectConfigured: true,
-              hasSchemaRegistryConfigured: true,
-              isTopicDeletionAllowed: true,
-            }}
-          >
-            {setupComponent()}
-          </ClusterContext.Provider>
-        </StaticRouter>
-      );
-      expect(component).toMatchSnapshot();
-    });
 
     it('calls setTopicsSearch on input', () => {
       const setTopicsSearch = jest.fn();

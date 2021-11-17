@@ -1,6 +1,201 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
+.c2 {
+  overflow-y: scroll;
+}
+
+.c2 .indicatorsWrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 2px;
+}
+
+.c2 .indicatorsWrapper > *:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.c2 .indicatorsWrapper > *:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  margin-right: 3px;
+}
+
+.c3 {
+  background-color: white;
+  height: 68px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  min-width: 150px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  padding: 12px 16px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
+  margin: 0 0 3px 0;
+}
+
+.c3 .indicator-label {
+  font-weight: 500;
+  font-size: 12px;
+  color: #73848C;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.c4 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #E3E6E8;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c7 {
+  padding: 4px 0 4px 24px !important;
+  border-bottom-width: 1px !important;
+  vertical-align: middle !important;
+}
+
+.c7.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.c7.has-text-link-dark span {
+  color: #4F4FFF !important;
+}
+
+.c7 span {
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  -webkit-letter-spacing: 0em;
+  -moz-letter-spacing: 0em;
+  -ms-letter-spacing: 0em;
+  letter-spacing: 0em;
+  text-align: left;
+  background: #FFFFFF;
+  color: #73848C;
+}
+
+.c7 span.preview {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #4F4FFF;
+  cursor: pointer;
+}
+
+.c7 span.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.c6 {
+  width: 100%;
+}
+
+.c6 td {
+  border-top: 1px #f1f2f3 solid;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 8px 8px 24px;
+  color: #171A1C;
+  vertical-align: middle;
+}
+
+.c6 tbody > tr:hover {
+  background-color: #F1F2F3;
+}
+
+.c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
+.c1 {
+  padding: 1.5rem 1rem;
+  background: #F1F2F3;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  grid-gap: 1rem;
+  gap: 1rem;
+  margin-bottom: 0.5rem !important;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+.c5 {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
 <StaticRouter
   context={Object {}}
   location={
@@ -213,11 +408,11 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
             text="Brokers"
           >
             <PageHeading
-              className="sc-jSgvzq gXXPNp"
+              className="c0"
               text="Brokers"
             >
               <div
-                className="sc-jSgvzq gXXPNp"
+                className="c0"
               >
                 <h1>
                   Brokers
@@ -228,14 +423,14 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           </Styled(PageHeading)>
           <styled.div>
             <div
-              className="sc-gKseQn XXMOX"
+              className="c1"
             >
               <MetricsWrapper
                 title="Uptime"
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB goGmkB"
+                    className="c2"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -250,7 +445,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -271,7 +466,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -292,7 +487,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -306,11 +501,11 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                   color="gray"
                                 >
                                   <Tag
-                                    className="sc-dlfnuX gTkaKb"
+                                    className="c4"
                                     color="gray"
                                   >
                                     <p
-                                      className="sc-dlfnuX gTkaKb"
+                                      className="c4"
                                     >
                                       offline
                                     </p>
@@ -326,7 +521,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -351,7 +546,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB goGmkB"
+                    className="c2"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -367,7 +562,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -394,7 +589,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                                 0
                                 <styled.span>
                                   <span
-                                    className="sc-iBPTik btCWqK"
+                                    className="c5"
                                   >
                                      
                                     of 
@@ -412,7 +607,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div
                               title="Under replicated partitions"
@@ -435,7 +630,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -456,7 +651,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -483,7 +678,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
           isFullwidth={true}
         >
           <table
-            className="sc-eCstlR gRjRbL"
+            className="c6"
           >
             <thead>
               <tr>
@@ -495,7 +690,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                     title="Broker"
                   >
                     <th
-                      className="sc-hKgJUU kwoanP"
+                      className="c7"
                       title="Broker"
                     >
                       <span
@@ -514,7 +709,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                     title="Segment size (Mb)"
                   >
                     <th
-                      className="sc-hKgJUU kwoanP"
+                      className="c7"
                       title="Segment size (Mb)"
                     >
                       <span
@@ -533,7 +728,7 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
                     title="Segment Count"
                   >
                     <th
-                      className="sc-hKgJUU kwoanP"
+                      className="c7"
                       title="Segment Count"
                     >
                       <span
@@ -556,6 +751,201 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
 `;
 
 exports[`Brokers Component Brokers matches snapshot 1`] = `
+.c2 {
+  overflow-y: scroll;
+}
+
+.c2 .indicatorsWrapper {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 2px;
+}
+
+.c2 .indicatorsWrapper > *:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.c2 .indicatorsWrapper > *:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  margin-right: 3px;
+}
+
+.c3 {
+  background-color: white;
+  height: 68px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  min-width: 150px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: flex-start;
+  -webkit-box-align: flex-start;
+  -ms-flex-align: flex-start;
+  align-items: flex-start;
+  padding: 12px 16px;
+  -webkit-box-flex: 1;
+  -webkit-flex-grow: 1;
+  -ms-flex-positive: 1;
+  flex-grow: 1;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
+  margin: 0 0 3px 0;
+}
+
+.c3 .indicator-label {
+  font-weight: 500;
+  font-size: 12px;
+  color: #73848C;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.c4 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #D6F5E0;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c7 {
+  padding: 4px 0 4px 24px !important;
+  border-bottom-width: 1px !important;
+  vertical-align: middle !important;
+}
+
+.c7.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.c7.has-text-link-dark span {
+  color: #4F4FFF !important;
+}
+
+.c7 span {
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  -webkit-letter-spacing: 0em;
+  -moz-letter-spacing: 0em;
+  -ms-letter-spacing: 0em;
+  letter-spacing: 0em;
+  text-align: left;
+  background: #FFFFFF;
+  color: #73848C;
+}
+
+.c7 span.preview {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #4F4FFF;
+  cursor: pointer;
+}
+
+.c7 span.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.c6 {
+  width: 100%;
+}
+
+.c6 td {
+  border-top: 1px #f1f2f3 solid;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 8px 8px 24px;
+  color: #171A1C;
+  vertical-align: middle;
+}
+
+.c6 tbody > tr:hover {
+  background-color: #F1F2F3;
+}
+
+.c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
+.c1 {
+  padding: 1.5rem 1rem;
+  background: #F1F2F3;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  grid-gap: 1rem;
+  gap: 1rem;
+  margin-bottom: 0.5rem !important;
+  display: -webkit-box !important;
+  display: -webkit-flex !important;
+  display: -ms-flexbox !important;
+  display: flex !important;
+}
+
+.c5 {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
 <StaticRouter
   context={Object {}}
   location={
@@ -777,11 +1167,11 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
             text="Brokers"
           >
             <PageHeading
-              className="sc-jSgvzq gXXPNp"
+              className="c0"
               text="Brokers"
             >
               <div
-                className="sc-jSgvzq gXXPNp"
+                className="c0"
               >
                 <h1>
                   Brokers
@@ -792,14 +1182,14 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           </Styled(PageHeading)>
           <styled.div>
             <div
-              className="sc-gKseQn XXMOX"
+              className="c1"
             >
               <MetricsWrapper
                 title="Uptime"
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB goGmkB"
+                    className="c2"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -814,7 +1204,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -835,7 +1225,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -856,7 +1246,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -870,11 +1260,11 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                   color="green"
                                 >
                                   <Tag
-                                    className="sc-dlfnuX gOWcUL"
+                                    className="c4"
                                     color="green"
                                   >
                                     <p
-                                      className="sc-dlfnuX gOWcUL"
+                                      className="c4"
                                     >
                                       online
                                     </p>
@@ -890,7 +1280,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -915,7 +1305,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               >
                 <styled.div>
                   <div
-                    className="sc-bdfBQB goGmkB"
+                    className="c2"
                   >
                     <h5
                       className="is-7 has-text-weight-medium mb-2"
@@ -931,7 +1321,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -958,7 +1348,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                                 64
                                 <styled.span>
                                   <span
-                                    className="sc-iBPTik btCWqK"
+                                    className="c5"
                                   >
                                      
                                     of 
@@ -976,7 +1366,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div
                               title="Under replicated partitions"
@@ -999,7 +1389,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -1020,7 +1410,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                       >
                         <styled.div>
                           <div
-                            className="sc-gsTEea liOFnL"
+                            className="c3"
                           >
                             <div>
                               <div
@@ -1047,7 +1437,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
           isFullwidth={true}
         >
           <table
-            className="sc-eCstlR gRjRbL"
+            className="c6"
           >
             <thead>
               <tr>
@@ -1059,7 +1449,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                     title="Broker"
                   >
                     <th
-                      className="sc-hKgJUU kwoanP"
+                      className="c7"
                       title="Broker"
                     >
                       <span
@@ -1078,7 +1468,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                     title="Segment size (Mb)"
                   >
                     <th
-                      className="sc-hKgJUU kwoanP"
+                      className="c7"
                       title="Segment size (Mb)"
                     >
                       <span
@@ -1097,7 +1487,7 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
                     title="Segment Count"
                   >
                     <th
-                      className="sc-hKgJUU kwoanP"
+                      className="c7"
                       title="Segment Count"
                     >
                       <span

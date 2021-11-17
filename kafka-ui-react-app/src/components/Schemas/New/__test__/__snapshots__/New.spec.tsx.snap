@@ -1,6 +1,319 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`New View matches snapshot 1`] = `
+.c2 {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: #454F54;
+}
+
+.c4 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c4::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:hover {
+  border-color: #73848C;
+}
+
+.c4:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c4:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c4:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::placeholder {
+  color: transparent;
+}
+
+.c4:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c4:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c4:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c4:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c5 {
+  color: #E51A1A;
+  font-size: 12px;
+}
+
+.c3 {
+  position: relative;
+}
+
+.c8 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c8:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c8:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c8:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c9:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c9:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c9:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c9 a {
+  color: white;
+}
+
+.c9 i {
+  margin-right: 7px;
+}
+
+.c6 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px;
+  padding-top: 6px;
+}
+
+.c6::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6:hover {
+  border-color: #73848C;
+}
+
+.c6:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c6:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c6:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c6:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c6:focus::placeholder {
+  color: transparent;
+}
+
+.c6:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c6:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c6:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c6:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
+.c1 {
+  padding: 16px;
+  padding-top: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.c1 > button:last-child {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+}
+
+.c1 textarea {
+  height: 200px;
+}
+
+.c1 select {
+  width: 30%;
+}
+
 <Component
   theme={
     Object {
@@ -205,8 +518,82 @@ exports[`New View matches snapshot 1`] = `
                     "_f": Object {
                       "mount": true,
                       "name": "schema",
-                      "ref": <textarea
-                        class="sc-pGacB bSlNSy"
+                      "ref": .c0 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px;
+  padding-top: 6px;
+}
+
+.c0::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:hover {
+  border-color: #73848C;
+}
+
+.c0:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c0:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c0:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::placeholder {
+  color: transparent;
+}
+
+.c0:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c0:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c0:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c0:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+<textarea
+                        class="c0"
                         name="schema"
                       />,
                       "required": "Schema is required.",
@@ -217,8 +604,43 @@ exports[`New View matches snapshot 1`] = `
                     "_f": Object {
                       "mount": true,
                       "name": "schemaType",
-                      "ref": <select
-                        class="sc-gKseQn gvIlsx"
+                      "ref": .c0 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c0:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c0:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c0:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+<select
+                        class="c0"
                         name="schemaType"
                       >
                         <option
@@ -249,9 +671,88 @@ exports[`New View matches snapshot 1`] = `
                         "message": "Only alphanumeric, _, -, and . allowed",
                         "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
                       },
-                      "ref": <input
+                      "ref": .c0 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c0::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:hover {
+  border-color: #73848C;
+}
+
+.c0:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c0:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c0:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::placeholder {
+  color: transparent;
+}
+
+.c0:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c0:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c0:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c0:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c1 {
+  position: relative;
+}
+
+<input
                         autocomplete="off"
-                        class="sc-dlfnuX bPecSV sc-eCstlR jXyqPy"
+                        class="c0 c1"
                         name="subject"
                         placeholder="Schema Name"
                       />,
@@ -358,11 +859,11 @@ exports[`New View matches snapshot 1`] = `
             text="Create new schema"
           >
             <PageHeading
-              className="sc-jrAFXE jRNYgY"
+              className="c0"
               text="Create new schema"
             >
               <div
-                className="sc-jrAFXE jRNYgY"
+                className="c0"
               >
                 <h1>
                   Create new schema
@@ -375,13 +876,13 @@ exports[`New View matches snapshot 1`] = `
             onSubmit={[Function]}
           >
             <form
-              className="sc-kEjbQP eTqWi"
+              className="c1"
               onSubmit={[Function]}
             >
               <div>
                 <styled.label>
                   <label
-                    className="sc-bdfBQB eXWprc"
+                    className="c2"
                   >
                     Subject *
                   </label>
@@ -404,7 +905,7 @@ exports[`New View matches snapshot 1`] = `
                 >
                   <Input
                     autoComplete="off"
-                    className="sc-eCstlR jXyqPy"
+                    className="c3"
                     disabled={false}
                     hookFormOptions={
                       Object {
@@ -420,11 +921,11 @@ exports[`New View matches snapshot 1`] = `
                     placeholder="Schema Name"
                   >
                     <div
-                      className="sc-eCstlR jXyqPy"
+                      className="c3"
                     >
                       <styled.input
                         autoComplete="off"
-                        className="sc-eCstlR jXyqPy"
+                        className="c3"
                         disabled={false}
                         hasLeftIcon={false}
                         inputSize="M"
@@ -435,7 +936,7 @@ exports[`New View matches snapshot 1`] = `
                       >
                         <input
                           autoComplete="off"
-                          className="sc-dlfnuX bPecSV sc-eCstlR jXyqPy"
+                          className="c4 c3"
                           disabled={false}
                           name="subject"
                           onBlur={[Function]}
@@ -448,7 +949,7 @@ exports[`New View matches snapshot 1`] = `
                 </Styled(Input)>
                 <styled.p>
                   <p
-                    className="sc-hKgJUU gNOyDc"
+                    className="c5"
                   >
                     <Component
                       errors={Object {}}
@@ -460,7 +961,7 @@ exports[`New View matches snapshot 1`] = `
               <div>
                 <styled.label>
                   <label
-                    className="sc-bdfBQB eXWprc"
+                    className="c2"
                   >
                     Schema *
                   </label>
@@ -472,7 +973,7 @@ exports[`New View matches snapshot 1`] = `
                   onChange={[Function]}
                 >
                   <textarea
-                    className="sc-pGacB bSlNSy"
+                    className="c6"
                     disabled={false}
                     name="schema"
                     onBlur={[Function]}
@@ -481,7 +982,7 @@ exports[`New View matches snapshot 1`] = `
                 </styled.textarea>
                 <styled.p>
                   <p
-                    className="sc-hKgJUU gNOyDc"
+                    className="c5"
                   >
                     <Component
                       errors={Object {}}
@@ -493,7 +994,7 @@ exports[`New View matches snapshot 1`] = `
               <div>
                 <styled.label>
                   <label
-                    className="sc-bdfBQB eXWprc"
+                    className="c2"
                   >
                     Schema Type *
                   </label>
@@ -509,7 +1010,7 @@ exports[`New View matches snapshot 1`] = `
                   selectSize="M"
                 >
                   <Select
-                    className="sc-iBPTik bUenXA"
+                    className="c7"
                     disabled={false}
                     hookFormOptions={
                       Object {
@@ -520,7 +1021,7 @@ exports[`New View matches snapshot 1`] = `
                     selectSize="M"
                   >
                     <div
-                      className="select-wrapper sc-iBPTik bUenXA"
+                      className="select-wrapper c7"
                     >
                       <styled.select
                         disabled={false}
@@ -530,7 +1031,7 @@ exports[`New View matches snapshot 1`] = `
                         selectSize="M"
                       >
                         <select
-                          className="sc-gKseQn gvIlsx"
+                          className="c8"
                           disabled={false}
                           name="schemaType"
                           onBlur={[Function]}
@@ -558,7 +1059,7 @@ exports[`New View matches snapshot 1`] = `
                 </Styled(Select)>
                 <styled.p>
                   <p
-                    className="sc-hKgJUU gNOyDc"
+                    className="c5"
                   >
                     <Component
                       errors={Object {}}
@@ -580,7 +1081,7 @@ exports[`New View matches snapshot 1`] = `
                   type="submit"
                 >
                   <button
-                    className="sc-fubCzh hbnxtW"
+                    className="c9"
                     disabled={true}
                     type="submit"
                   >

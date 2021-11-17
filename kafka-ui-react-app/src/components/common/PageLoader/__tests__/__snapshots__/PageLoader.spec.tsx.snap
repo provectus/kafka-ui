@@ -1,14 +1,42 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PageLoader matches the snapshot 1`] = `
+.c1 {
+  border: 10px solid #4F4FFF;
+  border-bottom: 10px solid #FFFFFF;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  -webkit-animation: spin 1.3s linear infinite;
+  animation: spin 1.3s linear infinite;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding-top: 15%;
+  height: 100%;
+  width: 100%;
+}
+
 <PageLoader>
   <styled.div>
     <div
-      className="sc-gsTEea bVlHEY"
+      className="c0"
     >
       <styled.div>
         <div
-          className="sc-bdfBQB iJLklD"
+          className="c1"
         />
       </styled.div>
     </div>

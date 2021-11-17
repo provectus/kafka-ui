@@ -1,6 +1,51 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ListItem view matches snapshot 1`] = `
+.c2 {
+  background: transparent;
+  border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: 'center';
+  -webkit-box-align: 'center';
+  -ms-flex-align: 'center';
+  align-items: 'center';
+  -webkit-box-pack: 'center';
+  -webkit-justify-content: 'center';
+  -ms-flex-pack: 'center';
+  justify-content: 'center';
+}
+
+.c2:hover {
+  cursor: pointer;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
+.c0 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #FFEECC;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
 <table>
   <tbody>
     <tr>
@@ -12,7 +57,7 @@ exports[`ListItem view matches snapshot 1`] = `
       </td>
       <td>
         <p
-          className="sc-dlfnuX jOLmGj"
+          className="c0"
         >
           RUNNING
         </p>
@@ -32,12 +77,12 @@ exports[`ListItem view matches snapshot 1`] = `
             className="dropdown is-right"
           >
             <div
-              className="sc-gsTEea bcxnzQ"
+              className="c1"
             >
               <button
                 aria-controls="dropdown-menu"
                 aria-haspopup="true"
-                className="sc-bdfBQB fjFNAo"
+                className="c2"
                 onClick={[Function]}
                 type="button"
               >

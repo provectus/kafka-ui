@@ -4,7 +4,7 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
 <body>
   <div>
     <div
-      class="sc-kEjbQP NzFxt"
+      class="NzFxt"
     >
       <h1>
         Reset offsets
@@ -12,24 +12,24 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
       <div />
     </div>
     <div
-      class="sc-iqHYmW hiwAsE"
+      class="hiwAsE"
     >
       <form>
         <div
-          class="sc-crrszt jOFwJk"
+          class="jOFwJk"
         >
           <div>
             <label
-              class="sc-jSgvzq gWUTpy"
+              class="gWUTpy"
               for="topic"
             >
               Topic
             </label>
             <div
-              class="select-wrapper sc-eCstlR jXyqPy"
+              class="select-wrapper jXyqPy"
             >
               <select
-                class="sc-hKgJUU kTZcVy"
+                class="kTZcVy"
                 id="topic"
                 name="topic"
               >
@@ -48,16 +48,16 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
           </div>
           <div>
             <label
-              class="sc-jSgvzq gWUTpy"
+              class="gWUTpy"
               for="resetType"
             >
               Reset Type
             </label>
             <div
-              class="select-wrapper sc-eCstlR jXyqPy"
+              class="select-wrapper jXyqPy"
             >
               <select
-                class="sc-hKgJUU kTZcVy"
+                class="kTZcVy"
                 id="resetType"
                 name="resetType"
               >
@@ -86,7 +86,7 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
           </div>
           <div>
             <label
-              class="sc-jSgvzq gWUTpy"
+              class="gWUTpy"
             >
               Partitions
             </label>
@@ -129,7 +129,7 @@ exports[`ResetOffsets on initial render matches the snapshot 1`] = `
           </div>
         </div>
         <button
-          class="sc-gKseQn cmcyoH"
+          class="cmcyoH"
           disabled=""
           type="submit"
         >

@@ -25,7 +25,7 @@ describe('Thunks', () => {
     store.clearActions();
   });
 
-  describe('fetchConnects', () => {
+  xdescribe('fetchConnects', () => {
     it('creates GET_CONNECTS__SUCCESS when fetching connects', async () => {
       fetchMock.getOnce(`/api/clusters/${clusterName}/connects`, connects);
       await store.dispatch(thunks.fetchConnects(clusterName));

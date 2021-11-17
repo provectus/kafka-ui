@@ -1,6 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dropdown matches snapshot 1`] = `
+.c1 {
+  background: transparent;
+  border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: 'center';
+  -webkit-box-align: 'center';
+  -ms-flex-align: 'center';
+  align-items: 'center';
+  -webkit-box-pack: 'center';
+  -webkit-justify-content: 'center';
+  -ms-flex-pack: 'center';
+  justify-content: 'center';
+}
+
+.c1:hover {
+  cursor: pointer;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 <Dropdown
   label="My Test Label"
   right={true}
@@ -11,19 +42,19 @@ exports[`Dropdown matches snapshot 1`] = `
   >
     <styled.div>
       <div
-        className="sc-gsTEea bcxnzQ"
+        className="c0"
       >
         <Styled(DropdownTrigger)
           onClick={[Function]}
         >
           <DropdownTrigger
-            className="sc-bdfBQB fjFNAo"
+            className="c1"
             onClick={[Function]}
           >
             <button
               aria-controls="dropdown-menu"
               aria-haspopup="true"
-              className="sc-bdfBQB fjFNAo"
+              className="c1"
               onClick={[Function]}
               type="button"
             >

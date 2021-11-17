@@ -88,11 +88,4 @@ describe('Pagination', () => {
       expect(wrapper.exists('a.pagination-link.is-current')).toBeFalsy();
     });
   });
-
-  it('matches snapshot', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper.find('Pagination')).toMatchSnapshot();
-  });
 });
-
-// span.pagination-ellipsis

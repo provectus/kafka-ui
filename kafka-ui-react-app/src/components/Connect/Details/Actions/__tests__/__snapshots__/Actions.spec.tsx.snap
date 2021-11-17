@@ -1,11 +1,119 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Actions view matches snapshot 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+}
+
 <div
-  className="sc-gsTEea fGTfUx"
+  className="c0"
 >
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -20,7 +128,7 @@ exports[`Actions view matches snapshot 1`] = `
     </span>
   </button>
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -39,7 +147,7 @@ exports[`Actions view matches snapshot 1`] = `
     onClick={[Function]}
   >
     <button
-      className="sc-bdfBQB gfDMZr"
+      className="c1"
       disabled={false}
       type="button"
     >
@@ -54,7 +162,7 @@ exports[`Actions view matches snapshot 1`] = `
     </button>
   </a>
   <button
-    className="sc-bdfBQB cNPkMu"
+    className="c2"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -84,11 +192,119 @@ exports[`Actions view matches snapshot 1`] = `
 `;
 
 exports[`Actions view matches snapshot when deleting connector 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+}
+
 <div
-  className="sc-gsTEea fGTfUx"
+  className="c0"
 >
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -103,7 +319,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     </span>
   </button>
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -122,7 +338,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     onClick={[Function]}
   >
     <button
-      className="sc-bdfBQB gfDMZr"
+      className="c1"
       disabled={false}
       type="button"
     >
@@ -137,7 +353,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     </button>
   </a>
   <button
-    className="sc-bdfBQB cNPkMu"
+    className="c2"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -167,11 +383,119 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
 `;
 
 exports[`Actions view matches snapshot when failed 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+}
+
 <div
-  className="sc-gsTEea fGTfUx"
+  className="c0"
 >
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -190,7 +514,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
     onClick={[Function]}
   >
     <button
-      className="sc-bdfBQB gfDMZr"
+      className="c1"
       disabled={false}
       type="button"
     >
@@ -205,7 +529,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
     </button>
   </a>
   <button
-    className="sc-bdfBQB cNPkMu"
+    className="c2"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -235,11 +559,119 @@ exports[`Actions view matches snapshot when failed 1`] = `
 `;
 
 exports[`Actions view matches snapshot when paused 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+}
+
 <div
-  className="sc-gsTEea fGTfUx"
+  className="c0"
 >
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -254,7 +686,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
     </span>
   </button>
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -273,7 +705,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
     onClick={[Function]}
   >
     <button
-      className="sc-bdfBQB gfDMZr"
+      className="c1"
       disabled={false}
       type="button"
     >
@@ -288,7 +720,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
     </button>
   </a>
   <button
-    className="sc-bdfBQB cNPkMu"
+    className="c2"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -318,11 +750,119 @@ exports[`Actions view matches snapshot when paused 1`] = `
 `;
 
 exports[`Actions view matches snapshot when running connector action 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+}
+
 <div
-  className="sc-gsTEea fGTfUx"
+  className="c0"
 >
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -337,7 +877,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
     </span>
   </button>
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -356,7 +896,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
     onClick={[Function]}
   >
     <button
-      className="sc-bdfBQB gfDMZr"
+      className="c1"
       disabled={true}
       type="button"
     >
@@ -371,7 +911,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
     </button>
   </a>
   <button
-    className="sc-bdfBQB cNPkMu"
+    className="c2"
     disabled={true}
     onClick={[Function]}
     type="button"
@@ -401,11 +941,119 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
 `;
 
 exports[`Actions view matches snapshot when unassigned 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+}
+
 <div
-  className="sc-gsTEea fGTfUx"
+  className="c0"
 >
   <button
-    className="sc-bdfBQB gfDMZr"
+    className="c1"
     disabled={false}
     onClick={[Function]}
     type="button"
@@ -424,7 +1072,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
     onClick={[Function]}
   >
     <button
-      className="sc-bdfBQB gfDMZr"
+      className="c1"
       disabled={false}
       type="button"
     >
@@ -439,7 +1087,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
     </button>
   </a>
   <button
-    className="sc-bdfBQB cNPkMu"
+    className="c2"
     disabled={false}
     onClick={[Function]}
     type="button"

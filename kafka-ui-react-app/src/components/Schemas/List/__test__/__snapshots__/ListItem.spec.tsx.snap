@@ -41,7 +41,7 @@ exports[`ListItem matches snapshot 1`] = `
           <tr>
             <styled.td>
               <td
-                className="sc-bdfBQB cQKBWR"
+                className="cQKBWR"
               >
                 <NavLink
                   exact={true}

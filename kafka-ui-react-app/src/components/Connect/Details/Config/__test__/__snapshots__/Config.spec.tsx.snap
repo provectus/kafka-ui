@@ -1,8 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Config view matches snapshot 1`] = `
+.c0 {
+  padding: 16px;
+  margin: 16px;
+  border: 1px solid #E3E6E8;
+  border-radius: 8px;
+}
+
 <div
-  className="sc-bdfBQB dvPywA"
+  className="c0"
 >
   <mock-JSONEditor
     highlightActiveLine={false}

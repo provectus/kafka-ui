@@ -1,6 +1,139 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Nav renders ClusterMenu 1`] = `
+.c1 {
+  font-size: 14px;
+  font-weight: 500;
+  height: 32px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.c1 a {
+  width: 100%;
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  margin: 0px 0px;
+  background-color: #FFFFFF;
+  color: #73848C;
+}
+
+.c1 a:hover {
+  background-color: #F1F2F3;
+  color: #73848C;
+}
+
+.c1 a.is-active {
+  background-color: #E3E6E8;
+  color: #171A1C;
+}
+
+.c4 {
+  font-size: 14px;
+  font-weight: normal;
+  height: 32px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.c4 a {
+  width: 100%;
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  margin: 0px 0px;
+  background-color: #FFFFFF;
+  color: #73848C;
+}
+
+.c4 a:hover {
+  background-color: #F1F2F3;
+  color: #73848C;
+}
+
+.c4 a.is-active {
+  background-color: #E3E6E8;
+  color: #171A1C;
+}
+
+.c3 {
+  font-size: 14px;
+  font-weight: 500;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.c3 .cluster-tab-wrapper {
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  margin: 0px 0px;
+  line-height: 20px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  gap: 10px;
+  background-color: #FFFFFF;
+  color: #73848C;
+}
+
+.c3 .cluster-tab-wrapper:hover {
+  background-color: #F1F2F3;
+  color: #73848C;
+}
+
+.c3 .cluster-tab-wrapper .cluster-tab-l {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.c2 hr {
+  margin: 0;
+  height: 1px;
+}
+
+.c2 > ul {
+  padding-left: 8px;
+}
+
+.c0 > * {
+  padding-bottom: 4px;
+}
+
 <StaticRouter>
   <Router
     history={
@@ -43,7 +176,7 @@ exports[`Nav renders ClusterMenu 1`] = `
       isClusterListFetched={true}
     >
       <Nav
-        className="sc-hKgJUU dAOeGn"
+        className="c0"
         clusters={
           Array [
             Object {
@@ -62,7 +195,7 @@ exports[`Nav renders ClusterMenu 1`] = `
         isClusterListFetched={true}
       >
         <aside
-          className="has-shadow has-background-white sc-hKgJUU dAOeGn"
+          className="has-shadow has-background-white c0"
         >
           <ul>
             <ClusterMenuItem
@@ -77,7 +210,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                 to="/ui"
               >
                 <li
-                  className="sc-bdfBQB dLgsMO"
+                  className="c1"
                   to="/ui"
                 >
                   <NavLink
@@ -137,7 +270,7 @@ exports[`Nav renders ClusterMenu 1`] = `
           >
             <styled.ul>
               <ul
-                className="sc-dlfnuX eaSOWX"
+                className="c2"
               >
                 <hr />
                 <ClusterTab
@@ -151,7 +284,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                     onClick={[Function]}
                   >
                     <li
-                      className="sc-gsTEea gCBqHr"
+                      className="c3"
                       onClick={[Function]}
                     >
                       <div
@@ -229,7 +362,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                       to="/ui/clusters/secondLocal/brokers"
                     >
                       <li
-                        className="sc-bdfBQB khcYE"
+                        className="c4"
                         to="/ui/clusters/secondLocal/brokers"
                       >
                         <NavLink
@@ -278,7 +411,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                       to="/ui/clusters/secondLocal/topics"
                     >
                       <li
-                        className="sc-bdfBQB khcYE"
+                        className="c4"
                         to="/ui/clusters/secondLocal/topics"
                       >
                         <NavLink
@@ -327,7 +460,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                       to="/ui/clusters/secondLocal/consumer-groups"
                     >
                       <li
-                        className="sc-bdfBQB khcYE"
+                        className="c4"
                         to="/ui/clusters/secondLocal/consumer-groups"
                       >
                         <NavLink

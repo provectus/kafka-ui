@@ -1,6 +1,48 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Alert matches snapshot 1`] = `
+.c1 {
+  height: 16px !important;
+  display: inline-block;
+}
+
+.c1:hover {
+  cursor: pointer;
+}
+
+.c0 {
+  background-color: #FAD1D1;
+  width: 400px;
+  height: 64px;
+  border-radius: 8px;
+  padding: 12px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-filter: drop-shadow(0px 4px 16px rgba(0,0,0,0.1));
+  filter: drop-shadow(0px 4px 16px rgba(0,0,0,0.1));
+  margin-top: 10px;
+}
+
+.c0 .alert-title {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.c0 .alert-message {
+  font-weight: normal;
+  font-size: 14px;
+}
+
 <Alert
   createdAt={1234567}
   id="test-id"
@@ -12,7 +54,7 @@ exports[`Alert matches snapshot 1`] = `
     type="error"
   >
     <div
-      className="sc-gsTEea liqCqO"
+      className="c0"
       type="error"
     >
       <div>
@@ -33,7 +75,7 @@ exports[`Alert matches snapshot 1`] = `
       >
         <span
           aria-hidden={true}
-          className="sc-bdfBQB krSkZM"
+          className="c1"
           onClick={[Function]}
         >
           <CloseIcon>
