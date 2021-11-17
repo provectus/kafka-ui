@@ -36,6 +36,7 @@
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "sass": "^1.43.4",
     "typesafe-actions": "^5.1.0",
     "use-debounce": "^7.0.0",
     "uuid": "^8.3.1",
@@ -111,10 +112,10 @@
     "esprint": "^3.1.0",
     "fetch-mock-jest": "^1.5.1",
     "history": "^5.0.0",
+    "http-proxy-middleware": "^2.0.1",
     "husky": "^7.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "lint-staged": "^11.1.2",
-    "node-sass": "5.0.0",
     "prettier": "^2.3.1",
     "react-scripts": "4.0.3",
     "react-test-renderer": "^17.0.2",
@@ -127,7 +128,6 @@
     "node": "14.17.1",
     "npm": "6.14.13"
   },
-  "proxy": "http://localhost:8080",
   "jest": {
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
