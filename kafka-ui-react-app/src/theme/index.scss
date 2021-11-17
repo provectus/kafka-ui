@@ -1,6 +1,12 @@
 @import '@fortawesome/fontawesome-free/css/all.min.css';
 @import 'src/theme/variables';
-@import 'bulma';
+@import 'bulma/sass/utilities/_all';
+@import 'bulma/sass/base/_all';
+@import 'bulma/sass/elements/_all';
+@import 'bulma/sass/form/_all';
+@import 'bulma/sass/components/_all';
+@import 'bulma/sass/grid/_all';
+@import 'bulma/sass/helpers/_all';
 @import '~bulma-switch';
 @import 'src/theme/bulma_overrides';
 
@@ -15,7 +21,7 @@ html {
   font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: $white;
+  background-color: #fff;
 }
 
 code {

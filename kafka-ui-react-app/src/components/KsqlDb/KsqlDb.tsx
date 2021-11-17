@@ -6,12 +6,10 @@ import Query from 'components/KsqlDb/Query/Query';
 
 const KsqlDb: React.FC = () => {
   return (
-    <div className="section">
-      <Switch>
-        <Route exact path={clusterKsqlDbPath()} component={List} />
-        <Route exact path={clusterKsqlDbQueryPath()} component={Query} />
-      </Switch>
-    </div>
+    <Switch>
+      <Route exact path={clusterKsqlDbPath()} component={List} />
+      <Route exact path={clusterKsqlDbQueryPath()} component={Query} />
+    </Switch>
   );
 };
 

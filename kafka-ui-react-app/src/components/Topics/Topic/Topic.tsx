@@ -27,29 +27,27 @@ const Topic: React.FC<TopicProps> = ({
     fetchTopicDetails(clusterName, topicName);
   }, [fetchTopicDetails, clusterName, topicName]);
 
+  if (isTopicFetching) {
+    return <PageLoader />;
+  }
+
   return (
-    <div className="section">
-      {isTopicFetching ? (
-        <PageLoader />
-      ) : (
-        <Switch>
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName/edit"
-            component={EditContainer}
-          />
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName/message"
-            component={SendMessageContainer}
-          />
-          <Route
-            path="/ui/clusters/:clusterName/topics/:topicName"
-            component={DetailsContainer}
-          />
-        </Switch>
-      )}
-    </div>
+    <Switch>
+      <Route
+        exact
+        path="/ui/clusters/:clusterName/topics/:topicName/edit"
+        component={EditContainer}
+      />
+      <Route
+        exact
+        path="/ui/clusters/:clusterName/topics/:topicName/message"
+        component={SendMessageContainer}
+      />
+      <Route
+        path="/ui/clusters/:clusterName/topics/:topicName"
+        component={DetailsContainer}
+      />
+    </Switch>
   );
 };
 

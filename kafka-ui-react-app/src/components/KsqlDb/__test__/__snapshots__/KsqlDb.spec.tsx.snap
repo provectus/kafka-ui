@@ -31,11 +31,7 @@ exports[`KsqlDb Component KsqlDb matches snapshot 1`] = `
     staticContext={Object {}}
   >
     <KsqlDb>
-      <div
-        className="section"
-      >
-        <Switch />
-      </div>
+      <Switch />
     </KsqlDb>
   </Router>
 </StaticRouter>
