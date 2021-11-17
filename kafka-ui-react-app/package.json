@@ -15,7 +15,6 @@
     "ace-builds": "^1.4.12",
     "ajv": "^8.6.3",
     "bulma": "^0.9.3",
-    "bulma-switch": "^2.0.0",
     "classnames": "^2.2.6",
     "dayjs": "^1.10.6",
     "eslint-import-resolver-node": "^0.3.5",

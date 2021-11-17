@@ -2,12 +2,22 @@
 @import 'src/theme/variables';
 @import 'bulma/sass/utilities/_all';
 @import 'bulma/sass/base/_all';
-@import 'bulma/sass/elements/_all';
+@import "bulma/sass/elements/box";
+@import "bulma/sass/elements/container";
+@import "bulma/sass/elements/content";
+@import "bulma/sass/elements/icon";
+@import "bulma/sass/elements/image";
+@import "bulma/sass/elements/notification";
+@import "bulma/sass/elements/progress";
+@import "bulma/sass/elements/tag";
+@import "bulma/sass/elements/title";
+@import "bulma/sass/elements/other";
+
 @import 'bulma/sass/form/_all';
 @import 'bulma/sass/components/_all';
+
 @import 'bulma/sass/grid/_all';
 @import 'bulma/sass/helpers/_all';
-@import '~bulma-switch';
 @import 'src/theme/bulma_overrides';
 
 @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
