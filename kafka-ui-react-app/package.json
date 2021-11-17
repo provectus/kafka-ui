@@ -37,6 +37,7 @@
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "sass": "^1.43.4",
     "styled-components": "^5.3.1",
     "typesafe-actions": "^5.1.0",
     "use-debounce": "^7.0.0",
@@ -79,14 +80,14 @@
   },
   "devDependencies": {
     "@jest/types": "^27.0.6",
-    "@openapitools/openapi-generator-cli": "^2.3.10",
+    "@openapitools/openapi-generator-cli": "^2.4.15",
     "@testing-library/jest-dom": "^5.14.1",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.9",
-    "@types/jest": "^26.0.24",
+    "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.172",
     "@types/node": "^16.4.13",
-    "@types/node-fetch": "^2.5.12",
+    "@types/node-fetch": "^3.0.3",
     "@types/react": "^17.0.16",
     "@types/react-datepicker": "^4.1.4",
     "@types/react-dom": "^17.0.9",
@@ -114,10 +115,10 @@
     "esprint": "^3.1.0",
     "fetch-mock-jest": "^1.5.1",
     "history": "^5.0.0",
+    "http-proxy-middleware": "^2.0.1",
     "husky": "^7.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "lint-staged": "^11.1.2",
-    "node-sass": "5.0.0",
     "prettier": "^2.3.1",
     "react-scripts": "4.0.3",
     "react-test-renderer": "^17.0.2",
@@ -130,7 +131,6 @@
     "node": "14.17.1",
     "npm": "6.14.13"
   },
-  "proxy": "http://localhost:8080",
   "jest": {
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
