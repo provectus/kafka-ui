@@ -1,65 +1,65 @@
 {
   "uid" : "98d3104e051c652961429bf95fa0b5d6",
   "children" : [ {
-    "name" : "com.provectus.kafka.ui.topics.TopicTests",
-    "children" : [ {
-      "name" : "should delete topic",
-      "uid" : "eb572fdcabe803d6",
-      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
-      "status" : "passed",
-      "time" : {
-        "start" : 1637181287177,
-        "stop" : 1637181308848,
-        "duration" : 21671
-      },
-      "flaky" : false,
-      "newFailed" : false,
-      "parameters" : [ ]
-    }, {
-      "name" : "should update a topic",
-      "uid" : "f5be99d133bfb916",
-      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
-      "status" : "passed",
-      "time" : {
-        "start" : 1637181308907,
-        "stop" : 1637181337097,
-        "duration" : 28190
-      },
-      "flaky" : false,
-      "newFailed" : false,
-      "parameters" : [ ]
-    }, {
-      "name" : "should create a topic",
-      "uid" : "778e7856c44b9408",
-      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
-      "status" : "passed",
-      "time" : {
-        "start" : 1637181337104,
-        "stop" : 1637181340608,
-        "duration" : 3504
-      },
-      "flaky" : false,
-      "newFailed" : false,
-      "parameters" : [ ]
-    } ],
-    "uid" : "fc854a7ac86496a8bb197a9f990b4d4a"
-  }, {
     "name" : "com.provectus.kafka.ui.SmokeTests",
     "children" : [ {
       "name" : "main page should load",
-      "uid" : "2d7e43e23d0e920b",
+      "uid" : "26c23995757ecf91",
       "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
       "status" : "passed",
       "time" : {
-        "start" : 1637181340844,
-        "stop" : 1637181341935,
-        "duration" : 1091
+        "start" : 1637236369949,
+        "stop" : 1637236383202,
+        "duration" : 13253
       },
       "flaky" : false,
       "newFailed" : false,
       "parameters" : [ ]
     } ],
     "uid" : "69fdc287dff659537c8bf8784f0eea66"
+  }, {
+    "name" : "com.provectus.kafka.ui.topics.TopicTests",
+    "children" : [ {
+      "name" : "should delete topic",
+      "uid" : "c001bec35039abd4",
+      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1637236388168,
+        "stop" : 1637236397826,
+        "duration" : 9658
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "should update a topic",
+      "uid" : "bda1e7dda2aff82",
+      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1637236397835,
+        "stop" : 1637236412591,
+        "duration" : 14756
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "should create a topic",
+      "uid" : "10b9c678929480dd",
+      "parentUid" : "fc854a7ac86496a8bb197a9f990b4d4a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1637236412601,
+        "stop" : 1637236416234,
+        "duration" : 3633
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "fc854a7ac86496a8bb197a9f990b4d4a"
   } ],
   "name" : "suites"
 }
