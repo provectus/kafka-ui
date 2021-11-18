@@ -1,6 +1,6 @@
 import { mount } from 'enzyme';
 import React from 'react';
-import Indicator from 'components/common/Dashboard/Indicator';
+import Indicator from 'components/common/Metrics/Indicator';
 
 describe('Indicator', () => {
   it('matches the snapshot', () => {

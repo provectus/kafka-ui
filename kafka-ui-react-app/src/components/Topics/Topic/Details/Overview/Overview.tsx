@@ -3,18 +3,18 @@ import { Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
-import Indicator from 'components/common/Dashboard/Indicator';
+import MetricsSection from 'components/common/Metrics/MetricsSection';
+import Indicator from 'components/common/Metrics/Indicator';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import StyledTable from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import {
-  MetricsContainerStyled,
+  StyledMetricsWrapper,
   MetricsLightText,
   MetricsRedText,
-} from 'components/common/Dashboard/MetricsContainer.styled';
+} from 'components/common/Metrics/Metrics.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends Topic, TopicDetails {
@@ -46,8 +46,8 @@ const Overview: React.FC<Props> = ({
 
   return (
     <>
-      <MetricsContainerStyled>
-        <MetricsWrapper>
+      <StyledMetricsWrapper>
+        <MetricsSection>
           <Indicator label="Partitions">{partitionCount}</Indicator>
           <Indicator label="Replication Factor">{replicationFactor}</Indicator>
           <Indicator label="URP" title="Under replicated partitions" isAlert>
@@ -73,8 +73,8 @@ const Overview: React.FC<Props> = ({
           <Indicator label="Clean Up Policy">
             <TagStyled color="gray">{cleanUpPolicy || 'Unknown'}</TagStyled>
           </Indicator>
-        </MetricsWrapper>
-      </MetricsContainerStyled>
+        </MetricsSection>
+      </StyledMetricsWrapper>
       <div>
         <StyledTable isFullwidth>
           <thead>

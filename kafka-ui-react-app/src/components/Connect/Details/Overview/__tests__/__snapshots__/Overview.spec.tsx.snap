@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Overview view matches snapshot 1`] = `
-.c3 {
+.c5 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -18,43 +18,18 @@ exports[`Overview view matches snapshot 1`] = `
 .c0 {
   padding: 1.5rem 1rem;
   background: #F1F2F3;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  grid-gap: 1rem;
-  gap: 1rem;
   margin-bottom: 0.5rem !important;
-  display: -webkit-box !important;
-  display: -webkit-flex !important;
-  display: -ms-flexbox !important;
-  display: flex !important;
-}
-
-.c1 {
-  overflow-y: scroll;
-}
-
-.c1 .indicatorsWrapper {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  gap: 2px;
+  gap: 16px;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
-.c1 .indicatorsWrapper > *:first-child {
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-}
-
-.c1 .indicatorsWrapper > *:last-child {
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  margin-right: 3px;
-}
-
-.c2 {
+.c3 {
   background-color: white;
   height: 68px;
   width: -webkit-fit-content;
@@ -77,15 +52,15 @@ exports[`Overview view matches snapshot 1`] = `
   -ms-flex-align: flex-start;
   align-items: flex-start;
   padding: 12px 16px;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
+  margin: 0 0 3px 0;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
-  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
-  margin: 0 0 3px 0;
 }
 
-.c2 .indicator-label {
+.c4 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -100,21 +75,47 @@ exports[`Overview view matches snapshot 1`] = `
   gap: 10px;
 }
 
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 2px;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+.c1 > .c2:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.c1 > .c2:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+@media screen and (max-width:1023px) {
+  .c1 > .c2:first-child,
+  .c1 > .c2:last-child {
+    border-radius: 0;
+  }
+}
+
 <div
   className="c0"
 >
-  <div
-    className="c1"
-  >
+  <div>
     <div
-      className="indicatorsWrapper"
+      className="c1"
     >
       <div
-        className="c2"
+        className="c2 c3"
       >
         <div>
           <div
-            className="indicator-label"
+            className="c4"
           >
             Worker
              
@@ -125,11 +126,11 @@ exports[`Overview view matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="c2"
+        className="c2 c3"
       >
         <div>
           <div
-            className="indicator-label"
+            className="c4"
           >
             Type
              
@@ -140,11 +141,11 @@ exports[`Overview view matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="c2"
+        className="c2 c3"
       >
         <div>
           <div
-            className="indicator-label"
+            className="c4"
           >
             Class
              
@@ -155,18 +156,18 @@ exports[`Overview view matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="c2"
+        className="c2 c3"
       >
         <div>
           <div
-            className="indicator-label"
+            className="c4"
           >
             State
              
           </div>
           <span>
             <p
-              className="c3"
+              className="c5"
             >
               RUNNING
             </p>
@@ -174,11 +175,11 @@ exports[`Overview view matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="c2"
+        className="c2 c3"
       >
         <div>
           <div
-            className="indicator-label"
+            className="c4"
           >
             Tasks running
              
@@ -189,11 +190,11 @@ exports[`Overview view matches snapshot 1`] = `
         </div>
       </div>
       <div
-        className="c2"
+        className="c2 c3"
       >
         <div>
           <div
-            className="indicator-label"
+            className="c4"
           >
             Tasks failed
              

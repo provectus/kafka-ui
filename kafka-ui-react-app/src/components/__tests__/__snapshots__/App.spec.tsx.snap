@@ -40,30 +40,21 @@ exports[`App view matches snapshot 1`] = `
   padding-bottom: 4px;
 }
 
-.c3 {
-  overflow-y: scroll;
-}
-
-.c3 .indicatorsWrapper {
+.c2 {
+  padding: 1.5rem 1rem;
+  background: #F1F2F3;
+  margin-bottom: 0.5rem !important;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  gap: 2px;
+  gap: 16px;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
-.c3 .indicatorsWrapper > *:first-child {
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-}
-
-.c3 .indicatorsWrapper > *:last-child {
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  margin-right: 3px;
-}
-
-.c4 {
+.c5 {
   background-color: white;
   height: 68px;
   width: -webkit-fit-content;
@@ -86,15 +77,15 @@ exports[`App view matches snapshot 1`] = `
   -ms-flex-align: flex-start;
   align-items: flex-start;
   padding: 12px 16px;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
+  margin: 0 0 3px 0;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
-  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
-  margin: 0 0 3px 0;
 }
 
-.c4 .indicator-label {
+.c6 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -109,28 +100,33 @@ exports[`App view matches snapshot 1`] = `
   gap: 10px;
 }
 
-.c2 {
-  padding: 1.5rem 1rem;
-  background: #F1F2F3;
+.c3 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
   display: flex;
-  grid-gap: 1rem;
-  gap: 1rem;
-  margin-bottom: 0.5rem !important;
-  display: -webkit-box !important;
-  display: -webkit-flex !important;
-  display: -ms-flexbox !important;
-  display: flex !important;
+  gap: 2px;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
-.c6 {
+.c3 > .c4:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.c3 > .c4:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.c8 {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c5 {
+.c7 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -144,7 +140,7 @@ exports[`App view matches snapshot 1`] = `
   text-align: center;
 }
 
-.c7 {
+.c9 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -158,7 +154,7 @@ exports[`App view matches snapshot 1`] = `
   text-align: center;
 }
 
-.c8 {
+.c10 {
   position: relative;
   display: inline-block;
   width: 34px;
@@ -166,7 +162,7 @@ exports[`App view matches snapshot 1`] = `
   margin-right: 8px;
 }
 
-.c11 {
+.c13 {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -179,7 +175,7 @@ exports[`App view matches snapshot 1`] = `
   border-radius: 20px;
 }
 
-.c11::before {
+.c13::before {
   position: absolute;
   content: '';
   height: 14px;
@@ -192,24 +188,31 @@ exports[`App view matches snapshot 1`] = `
   border-radius: 50%;
 }
 
-.c9 {
+.c11 {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.c9:checked + .c10 {
+.c11:checked + .c12 {
   background-color: #29A352;
 }
 
-.c9:focus + .c10 {
+.c11:focus + .c12 {
   box-shadow: 0 0 1px #29A352;
 }
 
-.c9:checked + .c10:before {
+.c11:checked + .c12:before {
   -webkit-transform: translateX(14px);
   -ms-transform: translateX(14px);
   transform: translateX(14px);
+}
+
+@media screen and (max-width:1023px) {
+  .c3 > .c4:first-child,
+  .c3 > .c4:last-child {
+    border-radius: 0;
+  }
 }
 
 <Provider
@@ -598,13 +601,11 @@ exports[`App view matches snapshot 1`] = `
                             <div
                               className="c2"
                             >
-                              <MetricsWrapper>
-                                <styled.div>
-                                  <div
-                                    className="c3"
-                                  >
+                              <MetricsSection>
+                                <div>
+                                  <styled.div>
                                     <div
-                                      className="indicatorsWrapper"
+                                      className="c3"
                                     >
                                       <Indicator
                                         label={
@@ -617,28 +618,30 @@ exports[`App view matches snapshot 1`] = `
                                       >
                                         <styled.div>
                                           <div
-                                            className="c4"
+                                            className="c4 c5"
                                           >
                                             <div>
-                                              <div
-                                                className="indicator-label"
-                                              >
-                                                <Styled(Tag)
-                                                  color="green"
+                                              <styled.div>
+                                                <div
+                                                  className="c6"
                                                 >
-                                                  <Tag
-                                                    className="c5"
+                                                  <Styled(Tag)
                                                     color="green"
                                                   >
-                                                    <p
-                                                      className="c5"
+                                                    <Tag
+                                                      className="c7"
+                                                      color="green"
                                                     >
-                                                      Online
-                                                    </p>
-                                                  </Tag>
-                                                </Styled(Tag)>
-                                                 
-                                              </div>
+                                                      <p
+                                                        className="c7"
+                                                      >
+                                                        Online
+                                                      </p>
+                                                    </Tag>
+                                                  </Styled(Tag)>
+                                                   
+                                                </div>
+                                              </styled.div>
                                               <span>
                                                 <span
                                                   data-testid="onlineCount"
@@ -648,7 +651,7 @@ exports[`App view matches snapshot 1`] = `
                                                  
                                                 <styled.span>
                                                   <span
-                                                    className="c6"
+                                                    className="c8"
                                                   >
                                                     clusters
                                                   </span>
@@ -669,28 +672,30 @@ exports[`App view matches snapshot 1`] = `
                                       >
                                         <styled.div>
                                           <div
-                                            className="c4"
+                                            className="c4 c5"
                                           >
                                             <div>
-                                              <div
-                                                className="indicator-label"
-                                              >
-                                                <Styled(Tag)
-                                                  color="gray"
+                                              <styled.div>
+                                                <div
+                                                  className="c6"
                                                 >
-                                                  <Tag
-                                                    className="c7"
+                                                  <Styled(Tag)
                                                     color="gray"
                                                   >
-                                                    <p
-                                                      className="c7"
+                                                    <Tag
+                                                      className="c9"
+                                                      color="gray"
                                                     >
-                                                      Offline
-                                                    </p>
-                                                  </Tag>
-                                                </Styled(Tag)>
-                                                 
-                                              </div>
+                                                      <p
+                                                        className="c9"
+                                                      >
+                                                        Offline
+                                                      </p>
+                                                    </Tag>
+                                                  </Styled(Tag)>
+                                                   
+                                                </div>
+                                              </styled.div>
                                               <span>
                                                 <span
                                                   data-testid="offlineCount"
@@ -700,7 +705,7 @@ exports[`App view matches snapshot 1`] = `
                                                  
                                                 <styled.span>
                                                   <span
-                                                    className="c6"
+                                                    className="c8"
                                                   >
                                                     clusters
                                                   </span>
@@ -711,9 +716,9 @@ exports[`App view matches snapshot 1`] = `
                                         </styled.div>
                                       </Indicator>
                                     </div>
-                                  </div>
-                                </styled.div>
-                              </MetricsWrapper>
+                                  </styled.div>
+                                </div>
+                              </MetricsSection>
                             </div>
                           </styled.div>
                           <div
@@ -726,7 +731,7 @@ exports[`App view matches snapshot 1`] = `
                             >
                               <styled.label>
                                 <label
-                                  className="c8"
+                                  className="c10"
                                 >
                                   <styled.input
                                     checked={false}
@@ -736,7 +741,7 @@ exports[`App view matches snapshot 1`] = `
                                   >
                                     <input
                                       checked={false}
-                                      className="c9"
+                                      className="c11"
                                       name="switchRoundedDefault"
                                       onChange={[Function]}
                                       type="checkbox"
@@ -744,7 +749,7 @@ exports[`App view matches snapshot 1`] = `
                                   </styled.input>
                                   <styled.span>
                                     <span
-                                      className="c10 c11"
+                                      className="c12 c13"
                                     />
                                   </styled.span>
                                 </label>

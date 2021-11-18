@@ -16,9 +16,9 @@ import { useHistory } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
-import Indicator from 'components/common/Dashboard/Indicator';
+import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
+import MetricsSection from 'components/common/Metrics/MetricsSection';
+import Indicator from 'components/common/Metrics/Indicator';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
@@ -101,8 +101,8 @@ const Details: React.FC<Props> = ({
           )}
         </PageHeading>
       </div>
-      <MetricsContainerStyled>
-        <MetricsWrapper>
+      <StyledMetricsWrapper>
+        <MetricsSection>
           <Indicator label="State">
             <TagStyled color="yellow">{state || 'unknown'}</TagStyled>
           </Indicator>
@@ -112,8 +112,8 @@ const Details: React.FC<Props> = ({
             {partitions?.length}
           </Indicator>
           <Indicator label="Coordinator ID">{coordinator?.id}</Indicator>
-        </MetricsWrapper>
-      </MetricsContainerStyled>
+        </MetricsSection>
+      </StyledMetricsWrapper>
       <StyledTable isFullwidth>
         <thead>
           <tr>

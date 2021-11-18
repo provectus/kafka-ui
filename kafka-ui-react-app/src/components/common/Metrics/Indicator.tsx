@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+
+import { StyledIndicator, StyledIndicatorTitle } from './Metrics.styled';
 
 interface Props {
   fetching?: boolean;
@@ -8,31 +8,6 @@ interface Props {
   label: React.ReactNode;
   title?: string;
 }
-
-const IndicatorWrapperStyled = styled.div`
-  background-color: white;
-  height: 68px;
-  width: fit-content;
-  min-width: 150px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 12px 16px;
-  flex-grow: 1;
-
-  box-shadow: 3px 3px 3px rgba(0, 0, 0, 0.08);
-  margin: 0 0 3px 0;
-
-  & .indicator-label {
-    font-weight: 500;
-    font-size: 12px;
-    color: ${Colors.neutral[50]};
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-`;
 
 const Indicator: React.FC<Props> = ({
   label,
@@ -42,9 +17,9 @@ const Indicator: React.FC<Props> = ({
   children,
 }) => {
   return (
-    <IndicatorWrapperStyled>
+    <StyledIndicator>
       <div title={title}>
-        <div className="indicator-label">
+        <StyledIndicatorTitle>
           {label}{' '}
           {isAlert && (
             <svg
@@ -57,12 +32,12 @@ const Indicator: React.FC<Props> = ({
               <circle cx="2" cy="2" r="2" fill="#E61A1A" />
             </svg>
           )}
-        </div>
+        </StyledIndicatorTitle>
         <span>
           {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
         </span>
       </div>
-    </IndicatorWrapperStyled>
+    </StyledIndicator>
   );
 };
 

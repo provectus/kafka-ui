@@ -1,9 +1,9 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
 import TagStyled from 'components/common/Tag/Tag.styled';
-import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
-import Indicator from 'components/common/Dashboard/Indicator';
+import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
+import MetricsSection from 'components/common/Metrics/MetricsSection';
+import Indicator from 'components/common/Metrics/Indicator';
 
 export interface OverviewProps {
   connector: Connector | null;
@@ -19,8 +19,8 @@ const Overview: React.FC<OverviewProps> = ({
   if (!connector) return null;
 
   return (
-    <MetricsContainerStyled>
-      <MetricsWrapper>
+    <StyledMetricsWrapper>
+      <MetricsSection>
         {connector.status?.workerId && (
           <Indicator label="Worker">{connector.status.workerId}</Indicator>
         )}
@@ -37,8 +37,8 @@ const Overview: React.FC<OverviewProps> = ({
         <Indicator label="Tasks failed" isAlert>
           {failedTasksCount}
         </Indicator>
-      </MetricsWrapper>
-    </MetricsContainerStyled>
+      </MetricsSection>
+    </StyledMetricsWrapper>
   );
 };
 

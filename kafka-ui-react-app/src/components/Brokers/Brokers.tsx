@@ -2,8 +2,8 @@ import React from 'react';
 import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
 import { ClusterStats } from 'generated-sources';
 import useInterval from 'lib/hooks/useInterval';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
-import Indicator from 'components/common/Dashboard/Indicator';
+import MetricsSection from 'components/common/Metrics/MetricsSection';
+import Indicator from 'components/common/Metrics/Indicator';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
 import TagStyled from 'components/common/Tag/Tag.styled';
@@ -12,9 +12,9 @@ import StyledTable from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import {
   MetricsLightText,
-  MetricsContainerStyled,
+  StyledMetricsWrapper,
   MetricsRedText,
-} from 'components/common/Dashboard/MetricsContainer.styled';
+} from 'components/common/Metrics/Metrics.styled';
 
 interface Props extends ClusterStats {
   isFetched: boolean;
@@ -53,8 +53,8 @@ const Brokers: React.FC<Props> = ({
     <>
       <div>
         <PageHeading text="Brokers" />
-        <MetricsContainerStyled>
-          <MetricsWrapper title="Uptime">
+        <StyledMetricsWrapper>
+          <MetricsSection title="Uptime">
             <Indicator label="Total Brokers">{brokerCount}</Indicator>
             <Indicator label="Active Controllers">
               {activeControllers}
@@ -65,8 +65,8 @@ const Brokers: React.FC<Props> = ({
               </TagStyled>
             </Indicator>
             <Indicator label="Version">{version}</Indicator>
-          </MetricsWrapper>
-          <MetricsWrapper title="Partitions">
+          </MetricsSection>
+          <MetricsSection title="Partitions">
             <Indicator label="Online" isAlert>
               {offlinePartitionCount && offlinePartitionCount > 0 ? (
                 <MetricsRedText>{onlinePartitionCount}</MetricsRedText>
@@ -87,8 +87,8 @@ const Brokers: React.FC<Props> = ({
             <Indicator label="Out of Sync Replicas">
               {outOfSyncReplicasCount}
             </Indicator>
-          </MetricsWrapper>
-        </MetricsContainerStyled>
+          </MetricsSection>
+        </StyledMetricsWrapper>
       </div>
       <StyledTable isFullwidth>
         <thead>

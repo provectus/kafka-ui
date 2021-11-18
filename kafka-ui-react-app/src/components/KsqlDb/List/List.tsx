@@ -1,5 +1,5 @@
-import Indicator from 'components/common/Dashboard/Indicator';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
+import Indicator from 'components/common/Metrics/Indicator';
+import MetricsSection from 'components/common/Metrics/MetricsSection';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ListItem from 'components/KsqlDb/List/ListItem';
 import React, { FC, useEffect } from 'react';
@@ -9,7 +9,7 @@ import { fetchKsqlDbTables } from 'redux/actions/thunks/ksqlDb';
 import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { MetricsContainerStyled } from 'components/common/Dashboard/MetricsContainer.styled';
+import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
 import TableStyled from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
@@ -48,16 +48,16 @@ const List: FC = () => {
           Execute KSQL request
         </Button>
       </PageHeading>
-      <MetricsContainerStyled>
-        <MetricsWrapper>
+      <StyledMetricsWrapper>
+        <MetricsSection>
           <Indicator label="Tables" title="Tables" fetching={fetching}>
             {tablesCount}
           </Indicator>
           <Indicator label="Streams" title="Streams" fetching={fetching}>
             {streamsCount}
           </Indicator>
-        </MetricsWrapper>
-      </MetricsContainerStyled>
+        </MetricsSection>
+      </StyledMetricsWrapper>
       <div>
         {fetching ? (
           <PageLoader />

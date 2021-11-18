@@ -24,15 +24,15 @@ exports[`Indicator matches the snapshot 1`] = `
   -ms-flex-align: flex-start;
   align-items: flex-start;
   padding: 12px 16px;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
+  margin: 0 0 3px 0;
   -webkit-box-flex: 1;
   -webkit-flex-grow: 1;
   -ms-flex-positive: 1;
   flex-grow: 1;
-  box-shadow: 3px 3px 3px rgba(0,0,0,0.08);
-  margin: 0 0 3px 0;
 }
 
-.c0 .indicator-label {
+.c1 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -58,12 +58,14 @@ exports[`Indicator matches the snapshot 1`] = `
       <div
         title="title"
       >
-        <div
-          className="indicator-label"
-        >
-          label
-           
-        </div>
+        <styled.div>
+          <div
+            className="c1"
+          >
+            label
+             
+          </div>
+        </styled.div>
         <span>
           Child
         </span>
