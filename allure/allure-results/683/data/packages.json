@@ -6,13 +6,13 @@
       "name" : "SmokeTests",
       "children" : [ {
         "name" : "mainPageLoads",
-        "uid" : "cd98de215df61659",
+        "uid" : "68b7c319b4d0c555",
         "parentUid" : "0611dfeb62e4f0d51bda6611ccbad1f8",
         "status" : "passed",
         "time" : {
-          "start" : 1637305930055,
-          "stop" : 1637305943621,
-          "duration" : 13566
+          "start" : 1637305995980,
+          "stop" : 1637306006822,
+          "duration" : 10842
         },
         "flaky" : false,
         "newFailed" : false,
@@ -23,39 +23,39 @@
       "name" : "topics.TopicTests",
       "children" : [ {
         "name" : "deleteTopic",
-        "uid" : "cd395e8353d5e4e9",
+        "uid" : "e8013f493e3bd10a",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1637305949133,
-          "stop" : 1637305959825,
-          "duration" : 10692
+          "start" : 1637306011794,
+          "stop" : 1637306021205,
+          "duration" : 9411
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       }, {
         "name" : "updateTopic",
-        "uid" : "c5b83d9d083d4dd",
+        "uid" : "7d48e36d44fe063d",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1637305959861,
-          "stop" : 1637305997511,
-          "duration" : 37650
+          "start" : 1637306021215,
+          "stop" : 1637306035428,
+          "duration" : 14213
         },
         "flaky" : false,
         "newFailed" : false,
         "parameters" : [ ]
       }, {
         "name" : "createTopic",
-        "uid" : "98a9c4e039e2823a",
+        "uid" : "ad72d43f139eb7d9",
         "parentUid" : "74f7f35902b544273aa4d0bcf92d4b0d",
         "status" : "passed",
         "time" : {
-          "start" : 1637305997516,
-          "stop" : 1637306000975,
-          "duration" : 3459
+          "start" : 1637306035434,
+          "stop" : 1637306038749,
+          "duration" : 3315
         },
         "flaky" : false,
         "newFailed" : false,
