@@ -1,0 +1,26 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Product defects",
+    "children" : [ {
+      "name" : "Element not found {By.xpath: //span[text()='Restart all tasks']}\nExpected: visible\nTimeout: 4 s.\nCaused by: NoSuchElementException: no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//span[text()='Restart all tasks']\"}",
+      "children" : [ {
+        "name" : "should create a connector",
+        "uid" : "4694c34783296d9c",
+        "parentUid" : "aebc4ff35e26a7ef6f051a5813db256a",
+        "status" : "failed",
+        "time" : {
+          "start" : 1637284327038,
+          "stop" : 1637284335999,
+          "duration" : 8961
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "aebc4ff35e26a7ef6f051a5813db256a"
+    } ],
+    "uid" : "8fb3a91ba5aaf9de24cc8a92edc82b5d"
+  } ],
+  "name" : "categories"
+}
