@@ -1,8 +1,8 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 
 import { SchemaVersionWrapper } from './SchemaVersion.styled';
 
@@ -29,23 +29,7 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
       {isOpen && (
         <SchemaVersionWrapper>
           <td colSpan={3}>
-            <div>
-              <JSONEditor
-                isFixedHeight
-                name="schema"
-                value={
-                  schema.trim().startsWith('{')
-                    ? JSON.stringify(JSON.parse(schema), null, '\t')
-                    : schema
-                }
-                setOptions={{
-                  showLineNumbers: false,
-                  maxLines: 40,
-                  showGutter: false,
-                }}
-                readOnly
-              />
-            </div>
+            <JSONViewer data={schema} />
           </td>
         </SchemaVersionWrapper>
       )}

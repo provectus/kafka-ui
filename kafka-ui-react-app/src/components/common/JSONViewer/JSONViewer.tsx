@@ -1,7 +1,7 @@
 import React from 'react';
-import JSONTree from 'react-json-tree';
+import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 
-import theme from './theme';
+import { StyledWrapper } from './StyledWrapper.styled';
 
 interface FullMessageProps {
   data: string;
@@ -9,16 +9,35 @@ interface FullMessageProps {
 
 const JSONViewer: React.FC<FullMessageProps> = ({ data }) => {
   try {
+    if (data.trim().startsWith('{')) {
+      return (
+        <StyledWrapper data-testid="json-viewer">
+          <JSONEditor
+            isFixedHeight
+            name="schema"
+            value={JSON.stringify(JSON.parse(data), null, '\t')}
+            setOptions={{
+              showLineNumbers: false,
+              maxLines: 40,
+              showGutter: false,
+            }}
+            readOnly
+          />
+        </StyledWrapper>
+      );
+    }
+
     return (
-      <JSONTree
-        data={JSON.parse(data)}
-        theme={theme}
-        shouldExpandNode={() => true}
-        hideRoot
-      />
+      <StyledWrapper data-testid="json-viewer">
+        <p>{JSON.stringify(data)}</p>
+      </StyledWrapper>
     );
   } catch (e) {
-    return <p>{JSON.stringify(data)}</p>;
+    return (
+      <StyledWrapper data-testid="json-viewer">
+        <p>{data}</p>
+      </StyledWrapper>
+    );
   }
 };
 

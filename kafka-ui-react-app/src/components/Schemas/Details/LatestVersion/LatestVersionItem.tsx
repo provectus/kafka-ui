@@ -17,13 +17,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
   <LatestVersionWrapper>
     <div>
       <h1>Relevant version</h1>
-      <JSONViewer
-        data={
-          schema.trim().startsWith('{')
-            ? JSON.stringify(JSON.parse(schema), null, '\t')
-            : schema
-        }
-      />
+      <JSONViewer data={schema} />
     </div>
     <div data-testid="meta-data">
       <div>

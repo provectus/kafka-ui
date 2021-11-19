@@ -206,7 +206,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           <h4>
             Latest schema
           </h4>
-          <JSONEditor
+          <Styled(JSONEditor)
             height="372px"
             highlightActiveLine={false}
             isFixedHeight={true}

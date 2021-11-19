@@ -7,7 +7,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 import {
   ContentBox,
-  JSONViewerWrapper,
+  StyledSection,
   MessageContentWrapper,
   Metadata,
   MetadataLabel,
@@ -74,66 +74,66 @@ const MessageContent: React.FC<MessageContentProps> = ({
   };
   return (
     <MessageContentWrapper>
-      <td colSpan={5}>
-        <ContentBox>
-          <SecondaryTabsStyles>
-            <button
-              type="button"
-              className={activeTab === 'key' ? 'is-active' : ''}
-              onClick={handleKeyTabClick}
-            >
-              Key
-            </button>
-            <button
-              className={activeTab === 'content' ? 'is-active' : ''}
-              type="button"
-              onClick={handleContentTabClick}
-            >
-              Content
-            </button>
-            <button
-              className={activeTab === 'headers' ? 'is-active' : ''}
-              type="button"
-              onClick={handleHeadersTabClick}
-            >
-              Headers
-            </button>
-          </SecondaryTabsStyles>
-          <JSONViewerWrapper>
+      <td colSpan={10}>
+        <StyledSection>
+          <ContentBox>
+            <SecondaryTabsStyles>
+              <button
+                type="button"
+                className={activeTab === 'key' ? 'is-active' : ''}
+                onClick={handleKeyTabClick}
+              >
+                Key
+              </button>
+              <button
+                className={activeTab === 'content' ? 'is-active' : ''}
+                type="button"
+                onClick={handleContentTabClick}
+              >
+                Content
+              </button>
+              <button
+                className={activeTab === 'headers' ? 'is-active' : ''}
+                type="button"
+                onClick={handleHeadersTabClick}
+              >
+                Headers
+              </button>
+            </SecondaryTabsStyles>
             <JSONViewer data={activeTabContent() || ''} />
-          </JSONViewerWrapper>
-        </ContentBox>
-      </td>
-      <td colSpan={2}>
-        <MetadataWrapper>
-          <Metadata>
-            <MetadataLabel>Timestamp</MetadataLabel>
-            <span>
-              <MetadataValue>{timestamp?.toLocaleString()}</MetadataValue>
-              <MetadataMeta>Timestamp type: {timestampType}</MetadataMeta>
-            </span>
-          </Metadata>
+          </ContentBox>
+          <MetadataWrapper>
+            <Metadata>
+              <MetadataLabel>Timestamp</MetadataLabel>
+              <span>
+                <MetadataValue>{timestamp?.toLocaleString()}</MetadataValue>
+                <MetadataMeta>Timestamp type: {timestampType}</MetadataMeta>
+              </span>
+            </Metadata>
 
-          <Metadata>
-            <MetadataLabel>Content</MetadataLabel>
-            <span>
-              <MetadataValue>{isContentJson() ? 'JSON' : 'Text'}</MetadataValue>
-              <MetadataMeta>
-                Size: <BytesFormatted value={contentSize} />
-              </MetadataMeta>
-            </span>
-          </Metadata>
+            <Metadata>
+              <MetadataLabel>Content</MetadataLabel>
+              <span>
+                <MetadataValue>
+                  {isContentJson() ? 'JSON' : 'Text'}
+                </MetadataValue>
+                <MetadataMeta>
+                  Size: <BytesFormatted value={contentSize} />
+                </MetadataMeta>
+              </span>
+            </Metadata>
 
-          <Metadata>
-            <MetadataLabel>Key</MetadataLabel>
-            <span>
-              <MetadataValue>{isKeyJson() ? 'JSON' : 'Text'}</MetadataValue>
-              <MetadataMeta>
-                Size: <BytesFormatted value={keySize} />
-              </MetadataMeta>
-            </span>
-          </Metadata>
-        </MetadataWrapper>
+            <Metadata>
+              <MetadataLabel>Key</MetadataLabel>
+              <span>
+                <MetadataValue>{isKeyJson() ? 'JSON' : 'Text'}</MetadataValue>
+                <MetadataMeta>
+                  Size: <BytesFormatted value={keySize} />
+                </MetadataMeta>
+              </span>
+            </Metadata>
+          </MetadataWrapper>
+        </StyledSection>
       </td>
     </MessageContentWrapper>
   );

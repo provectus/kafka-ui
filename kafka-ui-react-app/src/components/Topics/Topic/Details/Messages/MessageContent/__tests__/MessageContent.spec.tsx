@@ -1,12 +1,12 @@
 import { TextEncoder } from 'util';
 
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import React from 'react';
+import { ThemeProvider } from 'styled-components';
+import { fireEvent, render, waitFor, screen } from '@testing-library/react';
 import MessageContent, {
   MessageContentProps,
 } from 'components/Topics/Topic/Details/Messages/MessageContent/MessageContent';
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
-import React from 'react';
-import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
 const setupWrapper = (props?: Partial<MessageContentProps>) => {
@@ -30,21 +30,22 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
 
 global.TextEncoder = TextEncoder;
 
-describe('MessageContent component', () => {
+describe('MessageContent screen', () => {
+  beforeEach(() => {
+    render(setupWrapper());
+  });
   describe('when switched to display the key', () => {
     it('has a tab with is-active classname', async () => {
-      const component = render(setupWrapper());
-      const keyTab = await component.findAllByText('Key');
+      const keyTab = await screen.findAllByText('Key');
       fireEvent.click(keyTab[0]);
       await waitFor(async () => {
         expect(keyTab[0]).toHaveClass('is-active');
       });
     });
     it('displays the key in the JSONViewer', async () => {
-      const component = render(setupWrapper());
-      const keyTab = await component.findAllByText('Key');
+      const keyTab = await screen.findAllByText('Key');
       fireEvent.click(keyTab[0]);
-      const JSONViewer = await component.findByText('"test-key"');
+      const JSONViewer = await screen.getByTestId('json-viewer');
       await waitFor(async () => {
         expect(JSONViewer).toBeTruthy();
       });
@@ -53,18 +54,16 @@ describe('MessageContent component', () => {
 
   describe('when switched to display the headers', () => {
     it('has a tab with is-active classname', async () => {
-      const component = render(setupWrapper());
-      const headersTab = await component.findByText('Headers');
+      const headersTab = await screen.findByText('Headers');
       fireEvent.click(headersTab);
       await waitFor(async () => {
         expect(headersTab).toHaveClass('is-active');
       });
     });
     it('displays the key in the JSONViewer', async () => {
-      const component = render(setupWrapper());
-      const headersTab = await component.findByText('Headers');
+      const headersTab = await screen.findByText('Headers');
       fireEvent.click(headersTab);
-      const JSONViewer = await component.findByText('header:');
+      const JSONViewer = await screen.getByTestId('json-viewer');
       await waitFor(async () => {
         expect(JSONViewer).toBeTruthy();
       });
@@ -73,11 +72,10 @@ describe('MessageContent component', () => {
 
   describe('when switched to display the content', () => {
     it('has a tab with is-active classname', async () => {
-      const component = render(setupWrapper());
-      const headersTab = await component.findByText('Headers');
+      const headersTab = await screen.findByText('Headers');
       fireEvent.click(headersTab);
       await waitFor(async () => {
-        const contentTab = await component.findAllByText('Content');
+        const contentTab = await screen.findAllByText('Content');
         fireEvent.click(contentTab[0]);
         await waitFor(async () => {
           expect(contentTab[0]).toHaveClass('is-active');

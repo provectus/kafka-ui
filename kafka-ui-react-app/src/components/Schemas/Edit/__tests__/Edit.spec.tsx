@@ -59,9 +59,9 @@ describe('Edit Component', () => {
       expect(component).toMatchSnapshot();
     });
     it('shows editor', () => {
-      expect(component.find('JSONEditor[name="latestSchema"]').length).toEqual(
-        1
-      );
+      expect(
+        component.find('Styled(JSONEditor)[name="latestSchema"]').length
+      ).toEqual(1);
       expect(component.find('Controller').length).toEqual(1);
       expect(component.find('Button').exists()).toBeTruthy();
     });
