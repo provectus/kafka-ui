@@ -1,4 +1,4 @@
-name: DeployFromBranch
+name: RemoveCustomDeployment
 on:
   workflow_dispatch:
   pull_request:
