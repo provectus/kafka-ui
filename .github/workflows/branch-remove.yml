@@ -30,7 +30,7 @@ jobs:
           ./delete-env.sh ${{ steps.extract_branch.outputs.tag }}
           git config --global user.email "azsafin@provectus.com"
           git config --global user.name "azsafin"
-          git add ../kafka-ui-from-branch/*
+          git add ../kafka-ui-from-branch/
           git commit -m "removed env:${{ needs.build.outputs.deploy }}" && git push || true
       - name: make comment with deployment link
         uses: peter-evans/create-or-update-comment@v1.4.5
