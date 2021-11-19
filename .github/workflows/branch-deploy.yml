@@ -1,0 +1,99 @@
+name: DeployFromBranch
+on:
+  workflow_dispatch:
+  pull_request:
+    types: ['labeled']
+jobs:
+  build:
+    if: ${{ github.event.label.name == 'status/feature_testing' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: get branch name
+        id: extract_branch
+        run: |
+          hub pr checkout ${{ github.event.pull_request.number }}
+          branch_name=$(hub branch | grep "*" | sed -e 's/^\*//')
+          echo $branch_name
+          echo ::set-output name=branch::${branch_name}
+          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
+          echo ::set-output name=tag::${tag}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Cache local Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      - name: Set up JDK 1.13
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.13
+      - name: Build
+        id: build
+        run: |
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          echo "::set-output name=version::${VERSION}"
+          mvn clean package -Pprod -DskipTests
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+      - name: Configure AWS credentials for Kafka-UI account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Build and push
+        id: docker_build_and_push
+        uses: docker/build-push-action@v2
+        with:
+          builder: ${{ steps.buildx.outputs.name }}
+          context: kafka-ui-api
+          push: true
+          tags: 297478128798.dkr.ecr.eu-central-1.amazonaws.com/kafka-ui:${{ steps.extract_branch.outputs.tag }}
+          build-args: |
+            JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+    outputs:
+      tag: ${{ steps.extract_branch.outputs.tag }}
+  make-branch-env:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone
+        run: |
+          git clone https://azsafin:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+      - name: create deployment
+        run: |
+          cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
+          echo "Branch:${{ needs.build.outputs.tag }}"
+          ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }}
+          git config --global user.email "azsafin@provectus.com"
+          git config --global user.name "azsafin"
+          git add ../kafka-ui-from-branch/*
+          git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
+      - name: make comment with deployment link
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Custom deployment will be available at https://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io
+
+
+

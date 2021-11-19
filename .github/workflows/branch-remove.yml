@@ -1,0 +1,40 @@
+name: RemoveCustomDeployment
+on:
+  workflow_dispatch:
+  pull_request:
+    types: ['unlabeled']
+jobs:
+  remove:
+    if: ${{ github.event.label.name == 'status/feature_testing' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: get branch name
+        id: extract_branch
+        run: |
+          hub pr checkout ${{ github.event.pull_request.number }}
+          branch_name=$(hub branch | grep "*" | sed -e 's/^\*//')
+          echo $branch_name
+          echo ::set-output name=branch::${branch_name}
+          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
+          echo ::set-output name=tag::${tag}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: clone
+        run: |
+          git clone https://azsafin:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+      - name: remove env
+        run: |
+          cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
+          echo "Branch:${{ steps.extract_branch.outputs.tag }}"
+          ./delete-env.sh ${{ steps.extract_branch.outputs.tag }}
+          git config --global user.email "azsafin@provectus.com"
+          git config --global user.name "azsafin"
+          git add ../kafka-ui-from-branch/*
+          git commit -m "removed env:${{ needs.build.outputs.deploy }}" && git push || true
+      - name: make comment with deployment link
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Custom deployment removed
