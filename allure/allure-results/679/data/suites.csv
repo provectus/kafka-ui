@@ -1,5 +1,0 @@
-"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"passed","Thu Nov 18 19:52:06 GMT 2021","Thu Nov 18 19:52:34 GMT 2021","27555","","com.provectus.kafka.ui.topics.TopicTests","","com.provectus.kafka.ui.topics.TopicTests","updateTopic","should update a topic",""
-"passed","Thu Nov 18 19:52:34 GMT 2021","Thu Nov 18 19:52:37 GMT 2021","3335","","com.provectus.kafka.ui.topics.TopicTests","","com.provectus.kafka.ui.topics.TopicTests","createTopic","should create a topic",""
-"passed","Thu Nov 18 19:51:53 GMT 2021","Thu Nov 18 19:52:06 GMT 2021","13449","","com.provectus.kafka.ui.topics.TopicTests","","com.provectus.kafka.ui.topics.TopicTests","deleteTopic","should delete topic",""
-"passed","Thu Nov 18 19:51:31 GMT 2021","Thu Nov 18 19:51:47 GMT 2021","16104","","com.provectus.kafka.ui.SmokeTests","","com.provectus.kafka.ui.SmokeTests","mainPageLoads","main page should load",""
