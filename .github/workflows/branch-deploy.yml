@@ -86,14 +86,14 @@ jobs:
           ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }}
           git config --global user.email "azsafin@provectus.com"
           git config --global user.name "azsafin"
-          git add ../kafka-ui-from-branch/*
+          git add ../kafka-ui-from-branch/
           git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
       - name: make comment with deployment link
         uses: peter-evans/create-or-update-comment@v1.4.5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Custom deployment will be available at https://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io
+            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io
 
 
 
