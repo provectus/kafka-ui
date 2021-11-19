@@ -4,12 +4,12 @@
     "uid" : "210524d67b6b53a598daab3239516f3f",
     "name" : "com.provectus.kafka.ui.topics.ConnectorsTests",
     "statistic" : {
-      "failed" : 1,
-      "broken" : 0,
+      "failed" : 0,
+      "broken" : 1,
       "skipped" : 0,
-      "passed" : 2,
+      "passed" : 0,
       "unknown" : 0,
-      "total" : 3
+      "total" : 1
     }
   }, {
     "uid" : "fc854a7ac86496a8bb197a9f990b4d4a",
