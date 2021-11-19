@@ -1,13 +1,13 @@
 package com.provectus.kafka.ui.service;
 
-import static com.provectus.kafka.ui.util.Constants.DELETE_TOPIC_ENABLE;
-
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.kafka.common.Node;
@@ -20,9 +20,11 @@ import reactor.core.publisher.Mono;
 @Log4j2
 public class FeatureService {
 
-  private final BrokerService brokerService;
+  private static final String DELETE_TOPIC_ENABLED_SERVER_PROPERTY = "delete.topic.enable";
 
-  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster) {
+  private final AdminClientService adminClientService;
+
+  public Mono<List<Feature>> getAvailableFeatures(KafkaCluster cluster, @Nullable Node controller) {
     List<Mono<Feature>> features = new ArrayList<>();
 
     if (Optional.ofNullable(cluster.getKafkaConnect())
@@ -39,23 +41,25 @@ public class FeatureService {
       features.add(Mono.just(Feature.SCHEMA_REGISTRY));
     }
 
-    features.add(
-        isTopicDeletionEnabled(cluster)
-            .flatMap(r -> r ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
-    );
+    if (controller != null) {
+      features.add(
+          isTopicDeletionEnabled(cluster, controller)
+              .flatMap(r -> r ? Mono.just(Feature.TOPIC_DELETION) : Mono.empty())
+      );
+    }
 
     return Flux.fromIterable(features).flatMap(m -> m).collectList();
   }
 
-  private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster) {
-    return brokerService.getController(cluster)
-        .map(Node::id)
-        .flatMap(broker -> brokerService.getBrokerConfigMap(cluster, broker))
-        .map(config -> {
-          if (config != null && config.get(DELETE_TOPIC_ENABLE) != null) {
-            return Boolean.parseBoolean(config.get(DELETE_TOPIC_ENABLE).getValue());
-          }
-          return false;
-        });
+  private Mono<Boolean> isTopicDeletionEnabled(KafkaCluster cluster, Node controller) {
+    return adminClientService.get(cluster)
+        .flatMap(ac -> ac.loadBrokersConfig(List.of(controller.id())))
+        .map(config ->
+            config.values().stream()
+                .flatMap(Collection::stream)
+                .filter(e -> e.name().equals(DELETE_TOPIC_ENABLED_SERVER_PROPERTY))
+                .map(e -> Boolean.parseBoolean(e.value()))
+                .findFirst()
+                .orElse(false));
   }
 }

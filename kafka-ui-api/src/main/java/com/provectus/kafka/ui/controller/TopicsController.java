@@ -48,18 +48,16 @@ public class TopicsController extends AbstractController implements TopicsApi {
   @Override
   public Mono<ResponseEntity<Flux<TopicConfigDTO>>> getTopicConfigs(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(
-        ResponseEntity.ok(
-            Flux.fromIterable(topicsService.getTopicConfigs(getCluster(clusterName), topicName))));
+    return topicsService.getTopicConfigs(getCluster(clusterName), topicName)
+        .map(Flux::fromIterable)
+        .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<TopicDetailsDTO>> getTopicDetails(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(
-        ResponseEntity.ok(
-            topicsService.getTopicDetails(getCluster(clusterName), topicName))
-    );
+    return topicsService.getTopicDetails(getCluster(clusterName), topicName)
+        .map(ResponseEntity::ok);
   }
 
   @Override
@@ -69,7 +67,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                         @Valid String search,
                                                         @Valid TopicColumnsToSortDTO orderBy,
                                                         ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(topicsService
+    return topicsService
         .getTopics(
             getCluster(clusterName),
             Optional.ofNullable(page),
@@ -77,7 +75,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
             Optional.ofNullable(showInternal),
             Optional.ofNullable(search),
             Optional.ofNullable(orderBy)
-        )));
+        ).map(ResponseEntity::ok);
   }
 
   @Override

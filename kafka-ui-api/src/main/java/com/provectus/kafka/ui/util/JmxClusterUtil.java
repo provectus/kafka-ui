@@ -56,6 +56,15 @@ public class JmxClusterUtil {
     Map<String, BigDecimal> bytesOutPerSec;
     Map<Integer, JmxBrokerMetrics> internalBrokerMetrics;
     List<MetricDTO> metrics;
+
+    public static JmxMetrics empty() {
+      return JmxClusterUtil.JmxMetrics.builder()
+          .bytesInPerSec(Map.of())
+          .bytesOutPerSec(Map.of())
+          .internalBrokerMetrics(Map.of())
+          .metrics(List.of())
+          .build();
+    }
   }
 
   public Mono<JmxMetrics> getBrokerMetrics(KafkaCluster cluster, Collection<Node> nodes) {
