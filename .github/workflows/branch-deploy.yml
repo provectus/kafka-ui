@@ -78,14 +78,14 @@ jobs:
     steps:
       - name: clone
         run: |
-          git clone https://azsafin:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
       - name: create deployment
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ needs.build.outputs.tag }}"
           ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }}
-          git config --global user.email "azsafin@provectus.com"
-          git config --global user.name "azsafin"
+          git config --global user.email "kafka-ui-infra@provectus.com"
+          git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/
           git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
       - name: make comment with deployment link
