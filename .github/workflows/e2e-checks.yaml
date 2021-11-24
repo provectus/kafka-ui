@@ -1,7 +1,7 @@
 name: e2e-checks
 on:
   pull_request:
-    types: ['opened', 'edited', 'reopened', 'synchronize']
+    types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
     paths:
       - 'kafka-ui-api/**'
       - 'kafka-ui-contract/**'
@@ -71,3 +71,6 @@ jobs:
           state: 'success'
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
