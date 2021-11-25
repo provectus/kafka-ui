@@ -15,6 +15,7 @@ import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
 import Breadcrumb from './common/Breadcrumb/Breadcrumb';
+import * as S from './App.styled';
 
 export interface AppProps {
   isClusterListFetched?: boolean;
@@ -50,9 +51,7 @@ const App: React.FC<AppProps> = ({
 
   return (
     <ThemeProvider theme={theme}>
-      <div
-        className={cx('Layout', { 'Layout--sidebarVisible': isSidebarVisible })}
-      >
+      <S.Layout>
         <nav
           className="navbar is-fixed-top is-white Layout__header"
           role="navigation"
@@ -83,15 +82,15 @@ const App: React.FC<AppProps> = ({
           </div>
         </nav>
 
-        <main className="Layout__container">
-          <div className="Layout__sidebar has-shadow has-background-white">
+        <S.Container>
+          <S.Sidebar $isVisible={isSidebarVisible}>
             <Nav
               clusters={clusters}
               isClusterListFetched={isClusterListFetched}
             />
-          </div>
-          <div
-            className="Layout__sidebarOverlay is-overlay"
+          </S.Sidebar>
+          <S.Overlay
+            $isVisible={isSidebarVisible}
             onClick={closeSidebar}
             onKeyDown={closeSidebar}
             tabIndex={-1}
@@ -115,9 +114,9 @@ const App: React.FC<AppProps> = ({
           ) : (
             <PageLoader />
           )}
-        </main>
+        </S.Container>
 
-        <div className="Layout__alerts">
+        <S.Alerts>
           {alerts.map(({ id, type, title, message, response, createdAt }) => (
             <Alert
               key={id}
@@ -129,8 +128,8 @@ const App: React.FC<AppProps> = ({
               createdAt={createdAt}
             />
           ))}
-        </div>
-      </div>
+        </S.Alerts>
+      </S.Layout>
     </ThemeProvider>
   );
 };
