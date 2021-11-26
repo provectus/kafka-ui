@@ -7,7 +7,6 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,8 +14,7 @@ public class ClustersStorage {
 
   private final ImmutableMap<String, KafkaCluster> kafkaClusters;
 
-  public ClustersStorage(ClustersProperties properties) {
-    var mapper = Mappers.getMapper(ClusterMapper.class);
+  public ClustersStorage(ClustersProperties properties, ClusterMapper mapper) {
     var builder = ImmutableMap.<String, KafkaCluster>builder();
     properties.getClusters().forEach(c -> builder.put(c.getName(), mapper.toKafkaCluster(c)));
     this.kafkaClusters = builder.build();
