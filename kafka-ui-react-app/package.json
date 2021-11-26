@@ -79,7 +79,9 @@
   "devDependencies": {
     "@jest/types": "^27.0.6",
     "@openapitools/openapi-generator-cli": "^2.4.15",
+    "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/user-event": "^13.5.0",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.9",
     "@types/jest": "^27.0.2",
@@ -106,6 +108,7 @@
     "eslint-config-airbnb-typescript": "^12.3.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.0",
+    "eslint-plugin-jest-dom": "^3.9.2",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.21.5",

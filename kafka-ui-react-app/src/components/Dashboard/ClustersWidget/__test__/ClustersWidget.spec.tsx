@@ -1,9 +1,10 @@
 import React from 'react';
 import { StaticRouter } from 'react-router';
 import { ThemeProvider } from 'styled-components';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import theme from 'theme/theme';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
+import userEvent from '@testing-library/user-event';
 
 import { offlineCluster, onlineCluster, clusters } from './fixtures';
 
@@ -29,7 +30,7 @@ describe('ClustersWidget', () => {
 
   it('hides online cluster widgets', () => {
     expect(screen.getAllByRole('row').length).toBe(3);
-    fireEvent.click(screen.getByRole('checkbox'));
+    userEvent.click(screen.getByRole('checkbox'));
     expect(screen.getAllByRole('row').length).toBe(2);
   });
 });

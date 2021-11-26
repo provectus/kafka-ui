@@ -1,9 +1,10 @@
+import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ResetOffsets, {
   Props,
 } from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 import { ConsumerGroupState } from 'generated-sources';
-import React from 'react';
 import { StaticRouter } from 'react-router';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
@@ -79,14 +80,10 @@ const setupWrapper = (props?: Partial<Props>) => (
 );
 
 const selectresetTypeAndPartitions = async (resetType: string) => {
-  fireEvent.change(screen.getByLabelText('Reset Type'), {
-    target: { value: resetType },
-  });
+  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
-    fireEvent.click(screen.getByText('Select...'));
-  });
-  await waitFor(() => {
-    fireEvent.click(screen.getByText('Partition #0'));
+    userEvent.click(screen.getByText('Partition #0'));
   });
 };
 
@@ -109,7 +106,7 @@ describe('ResetOffsets', () => {
         );
         await selectresetTypeAndPartitions('EARLIEST');
         await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
+          userEvent.click(screen.getByText('Submit'));
         });
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(1);
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
@@ -130,7 +127,7 @@ describe('ResetOffsets', () => {
         );
         await selectresetTypeAndPartitions('LATEST');
         await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
+          userEvent.click(screen.getByText('Submit'));
         });
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(1);
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
@@ -156,7 +153,7 @@ describe('ResetOffsets', () => {
           });
         });
         await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
+          userEvent.click(screen.getByText('Submit'));
         });
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(1);
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
@@ -173,10 +170,12 @@ describe('ResetOffsets', () => {
         render(setupWrapper());
         await selectresetTypeAndPartitions('TIMESTAMP');
         await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
+          userEvent.click(screen.getByText('Submit'));
         });
         expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(0);
-        expect(screen.getByText("This field shouldn't be empty!")).toBeTruthy();
+        expect(
+          screen.getByText("This field shouldn't be empty!")
+        ).toBeInTheDocument();
       });
     });
   });

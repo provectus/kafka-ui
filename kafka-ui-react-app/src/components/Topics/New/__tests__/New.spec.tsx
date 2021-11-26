@@ -4,12 +4,13 @@ import { Router } from 'react-router';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import { Provider } from 'react-redux';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
 import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import userEvent from '@testing-library/user-event';
 
 const mockStore = configureStore();
 
@@ -38,35 +39,31 @@ describe('New', () => {
   it('validates form', async () => {
     const mockedHistory = createMemoryHistory();
     jest.spyOn(mockedHistory, 'push');
-
     render(setupComponent(mockedHistory));
+    userEvent.click(screen.getByText('Send'));
 
-    await waitFor(async () => {
-      fireEvent.click(await screen.findByText('Send'));
-      const errorText = await screen.findByText('name is a required field');
+    await waitFor(() => {
+      expect(screen.getByText('name is a required field')).toBeInTheDocument();
+    });
+    await waitFor(() => {
       expect(mockedHistory.push).toBeCalledTimes(0);
-      expect(errorText).toBeTruthy();
     });
   });
 
-  it('submits valid form', async () => {
+  it('submits valid form', () => {
     const mockedHistory = createMemoryHistory({
       initialEntries: [clusterTopicNewPath(clusterName)],
     });
     jest.spyOn(mockedHistory, 'push');
-
     render(setupComponent());
-
-    const input = await screen.findByPlaceholderText('Topic Name');
-    fireEvent.change(input, { target: { value: topicName } });
-    expect(input).toHaveValue(topicName);
-
-    waitFor(async () => {
-      fireEvent.click(await screen.findByText('Send'));
-
+    userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
+    userEvent.click(screen.getByText('Send'));
+    waitFor(() => {
       expect(mockedHistory.location.pathname).toBe(
         clusterTopicPath(clusterName, topicName)
       );
+    });
+    waitFor(() => {
       expect(mockedHistory.push).toBeCalledTimes(1);
     });
   });

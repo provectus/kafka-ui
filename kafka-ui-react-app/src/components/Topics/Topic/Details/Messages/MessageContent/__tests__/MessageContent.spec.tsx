@@ -2,12 +2,13 @@ import { TextEncoder } from 'util';
 
 import React from 'react';
 import { ThemeProvider } from 'styled-components';
-import { fireEvent, render, waitFor, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import MessageContent, {
   MessageContentProps,
 } from 'components/Topics/Topic/Details/Messages/MessageContent/MessageContent';
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import theme from 'theme/theme';
+import userEvent from '@testing-library/user-event';
 
 const setupWrapper = (props?: Partial<MessageContentProps>) => {
   return (
@@ -35,52 +36,35 @@ describe('MessageContent screen', () => {
     render(setupWrapper());
   });
   describe('when switched to display the key', () => {
-    it('has a tab with is-active classname', async () => {
-      const keyTab = await screen.findAllByText('Key');
-      fireEvent.click(keyTab[0]);
-      await waitFor(async () => {
-        expect(keyTab[0]).toHaveClass('is-active');
-      });
+    it('has a tab with is-active classname', () => {
+      const keyTab = screen.getAllByText('Key');
+      userEvent.click(keyTab[0]);
+      expect(keyTab[0]).toHaveClass('is-active');
     });
-    it('displays the key in the JSONViewer', async () => {
-      const keyTab = await screen.findAllByText('Key');
-      fireEvent.click(keyTab[0]);
-      const JSONViewer = await screen.getByTestId('json-viewer');
-      await waitFor(async () => {
-        expect(JSONViewer).toBeTruthy();
-      });
+    it('displays the key in the JSONViewer', () => {
+      const keyTab = screen.getAllByText('Key');
+      userEvent.click(keyTab[0]);
+      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
     });
   });
 
   describe('when switched to display the headers', () => {
-    it('has a tab with is-active classname', async () => {
-      const headersTab = await screen.findByText('Headers');
-      fireEvent.click(headersTab);
-      await waitFor(async () => {
-        expect(headersTab).toHaveClass('is-active');
-      });
+    it('has a tab with is-active classname', () => {
+      userEvent.click(screen.getByText('Headers'));
+      expect(screen.getByText('Headers')).toHaveClass('is-active');
     });
-    it('displays the key in the JSONViewer', async () => {
-      const headersTab = await screen.findByText('Headers');
-      fireEvent.click(headersTab);
-      const JSONViewer = await screen.getByTestId('json-viewer');
-      await waitFor(async () => {
-        expect(JSONViewer).toBeTruthy();
-      });
+    it('displays the key in the JSONViewer', () => {
+      userEvent.click(screen.getByText('Headers'));
+      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
     });
   });
 
   describe('when switched to display the content', () => {
-    it('has a tab with is-active classname', async () => {
-      const headersTab = await screen.findByText('Headers');
-      fireEvent.click(headersTab);
-      await waitFor(async () => {
-        const contentTab = await screen.findAllByText('Content');
-        fireEvent.click(contentTab[0]);
-        await waitFor(async () => {
-          expect(contentTab[0]).toHaveClass('is-active');
-        });
-      });
+    it('has a tab with is-active classname', () => {
+      userEvent.click(screen.getByText('Headers'));
+      const contentTab = screen.getAllByText('Content');
+      userEvent.click(contentTab[0]);
+      expect(contentTab[0]).toHaveClass('is-active');
     });
   });
 });

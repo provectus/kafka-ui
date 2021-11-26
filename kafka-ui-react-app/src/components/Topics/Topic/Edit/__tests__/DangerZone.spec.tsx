@@ -2,9 +2,10 @@ import React from 'react';
 import DangerZone, {
   Props,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import userEvent from '@testing-library/user-event';
 
 const setupWrapper = (props?: Partial<Props>) => (
   <ThemeProvider theme={theme}>
@@ -36,15 +37,11 @@ describe('DangerZone', () => {
       })
     );
 
-    const input = screen.getByLabelText('Number of partitions *');
-    fireEvent.input(input, {
-      target: {
-        value: 4,
-      },
-    });
-    fireEvent.submit(screen.getByTestId('partitionsSubmit'));
+    userEvent.type(screen.getByLabelText('Number of partitions *'), '4');
+    userEvent.click(screen.getByTestId('partitionsSubmit'));
+
     await waitFor(() => {
-      fireEvent.click(screen.getAllByText('Submit')[1]);
+      userEvent.click(screen.getAllByText('Submit')[1]);
       expect(mockUpdateTopicPartitionsCount).toHaveBeenCalledTimes(1);
     });
   });
@@ -57,15 +54,13 @@ describe('DangerZone', () => {
       })
     );
 
-    const input = screen.getByLabelText('Replication Factor *');
-    fireEvent.input(input, {
-      target: {
-        value: 4,
-      },
-    });
-    fireEvent.submit(screen.getByTestId('replicationFactorSubmit'));
+    userEvent.type(screen.getByLabelText('Replication Factor *'), '4');
+    userEvent.click(screen.getByTestId('replicationFactorSubmit'));
     await waitFor(() => {
-      fireEvent.click(screen.getAllByText('Submit')[2]);
+      userEvent.click(screen.getAllByText('Submit')[2]);
+    });
+
+    await waitFor(() => {
       expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
     });
   });
