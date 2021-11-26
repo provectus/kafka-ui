@@ -5,7 +5,6 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import org.springframework.stereotype.Component;
 
@@ -26,9 +25,5 @@ public class ClustersStorage {
 
   public Optional<KafkaCluster> getClusterByName(String clusterName) {
     return Optional.ofNullable(kafkaClusters.get(clusterName));
-  }
-
-  public Map<String, KafkaCluster> getKafkaClustersMap() {
-    return kafkaClusters;
   }
 }
