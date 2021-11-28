@@ -2,8 +2,9 @@ import React from 'react';
 import List, { ListProps } from 'components/ConsumerGroups/List/List';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { StaticRouter } from 'react-router';
+import userEvent from '@testing-library/user-event';
 
 const setupWrapper = (props?: Partial<ListProps>) => (
   <StaticRouter>
@@ -41,21 +42,18 @@ const setupWrapper = (props?: Partial<ListProps>) => (
 );
 
 describe('List', () => {
-  it('renders all rows with consumers', async () => {
-    const component = render(setupWrapper());
-    expect(await component.findByText('groupId1')).toBeTruthy();
-    expect(await component.findByText('groupId2')).toBeTruthy();
+  beforeEach(() => render(setupWrapper()));
+
+  it('renders all rows with consumers', () => {
+    expect(screen.getByText('groupId1')).toBeInTheDocument();
+    expect(screen.getByText('groupId2')).toBeInTheDocument();
   });
 
   describe('when searched', () => {
-    it('renders only searched consumers', async () => {
-      const component = render(setupWrapper());
-      const input = await component.findByPlaceholderText('Search');
-      fireEvent.change(input, { target: { value: 'groupId1' } });
-      await waitFor(async () => {
-        expect(await component.findByText('groupId1')).toBeTruthy();
-        expect(await component.findByText('groupId2')).toBeTruthy();
-      });
+    it('renders only searched consumers', () => {
+      userEvent.type(screen.getByPlaceholderText('Search'), 'groupId1');
+      expect(screen.getByText('groupId1')).toBeInTheDocument();
+      expect(screen.getByText('groupId2')).toBeInTheDocument();
     });
   });
 });

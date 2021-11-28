@@ -14,13 +14,13 @@ describe('Breadcrumb component', () => {
       </StaticRouter>
     );
 
-  it('renders the name of brokers path', async () => {
+  it('renders the name of brokers path', () => {
     setupComponent(brokersPath);
-    expect(screen.findByText('Brokers')).toBeTruthy();
+    expect(screen.queryByText('Brokers')).not.toBeInTheDocument();
   });
   it('renders the list of links', () => {
     setupComponent(createTopicPath);
-    expect(screen.findByText('Topic')).toBeTruthy();
-    expect(screen.findByText('Create New')).toBeTruthy();
+    expect(screen.getByText('Topics')).toBeInTheDocument();
+    expect(screen.getByText('Create New')).toBeInTheDocument();
   });
 });
