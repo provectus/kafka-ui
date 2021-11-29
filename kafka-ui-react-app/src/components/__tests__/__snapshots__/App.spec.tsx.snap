@@ -3,7 +3,7 @@
 exports[`App view matches snapshot 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .c4 {
+  "baseElement": .c5 {
   font-size: 14px;
   font-weight: 500;
   height: 32px;
@@ -17,7 +17,7 @@ Object {
   user-select: none;
 }
 
-.c4 a {
+.c5 a {
   width: 100%;
   padding: 0.5em 0.75em;
   cursor: pointer;
@@ -28,21 +28,21 @@ Object {
   color: #73848C;
 }
 
-.c4 a:hover {
+.c5 a:hover {
   background-color: #F1F2F3;
   color: #73848C;
 }
 
-.c4 a.is-active {
+.c5 a.is-active {
   background-color: #E3E6E8;
   color: #171A1C;
 }
 
-.c3 > * {
+.c4 > * {
   padding-bottom: 4px;
 }
 
-.c6 {
+.c7 {
   padding: 1.5rem 1rem;
   background: #F1F2F3;
   margin-bottom: 0.5rem !important;
@@ -56,7 +56,7 @@ Object {
   flex-wrap: wrap;
 }
 
-.c9 {
+.c10 {
   background-color: white;
   height: 68px;
   width: -webkit-fit-content;
@@ -87,7 +87,7 @@ Object {
   flex-grow: 1;
 }
 
-.c10 {
+.c11 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -102,7 +102,7 @@ Object {
   gap: 10px;
 }
 
-.c7 {
+.c8 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -113,22 +113,22 @@ Object {
   flex-wrap: wrap;
 }
 
-.c7 > .c8:first-child {
+.c8 > .c9:first-child {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
-.c7 > .c8:last-child {
+.c8 > .c9:last-child {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-.c12 {
+.c13 {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c11 {
+.c12 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -142,7 +142,7 @@ Object {
   text-align: center;
 }
 
-.c13 {
+.c14 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -156,7 +156,7 @@ Object {
   text-align: center;
 }
 
-.c14 {
+.c15 {
   position: relative;
   display: inline-block;
   width: 34px;
@@ -164,7 +164,7 @@ Object {
   margin-right: 8px;
 }
 
-.c17 {
+.c18 {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -177,7 +177,7 @@ Object {
   border-radius: 20px;
 }
 
-.c17::before {
+.c18::before {
   position: absolute;
   content: '';
   height: 14px;
@@ -190,21 +190,21 @@ Object {
   border-radius: 50%;
 }
 
-.c15 {
+.c16 {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.c15:checked + .c16 {
+.c16:checked + .c17 {
   background-color: #29A352;
 }
 
-.c15:focus + .c16 {
+.c16:focus + .c17 {
   box-shadow: 0 0 1px #29A352;
 }
 
-.c15:checked + .c16:before {
+.c16:checked + .c17:before {
   -webkit-transform: translateX(14px);
   -ms-transform: translateX(14px);
   transform: translateX(14px);
@@ -214,7 +214,7 @@ Object {
   min-width: 1200px;
 }
 
-.c18 {
+.c19 {
   max-width: 40%;
   width: 500px;
   position: fixed;
@@ -223,14 +223,14 @@ Object {
   z-index: 1000;
 }
 
-.c1 {
+.c2 {
   margin-top: 3.25rem;
   margin-left: 201px;
   position: relative;
   z-index: 20;
 }
 
-.c2 {
+.c3 {
   width: 201px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -252,7 +252,7 @@ Object {
   background: #FFFFFF;
 }
 
-.c5 {
+.c6 {
   height: calc(100vh - 3.25rem);
   z-index: 99;
   display: block;
@@ -268,9 +268,20 @@ Object {
   top: 0;
 }
 
+.c1 {
+  border-bottom: 1px solid #e7e7e7;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background-color: #FFFFFF;
+  min-height: 3.25rem;
+}
+
 @media screen and (max-width:1023px) {
-  .c7 > .c8:first-child,
-  .c7 > .c8:last-child {
+  .c8 > .c9:first-child,
+  .c8 > .c9:last-child {
     border-radius: 0;
   }
 }
@@ -282,20 +293,20 @@ Object {
 }
 
 @media screen and (max-width:1023px) {
-  .c18 {
+  .c19 {
     max-width: initial;
   }
 }
 
 @media screen and (max-width:1023px) {
-  .c1 {
+  .c2 {
     margin-left: initial;
     margin-top: 3.5rem;
   }
 }
 
 @media screen and (max-width:1023px) {
-  .c2 {
+  .c3 {
     -webkit-transform: none;
     -ms-transform: none;
     transform: none;
@@ -305,7 +316,7 @@ Object {
 }
 
 @media screen and (max-width:1023px) {
-  .c5 {
+  .c6 {
     visibility: hidden;
     opacity: 0;
     background-color: transparent;
@@ -319,7 +330,7 @@ Object {
       >
         <nav
           aria-label="main navigation"
-          class="navbar is-fixed-top is-white Layout__header"
+          class="c1"
           role="navigation"
         >
           <div
@@ -346,17 +357,17 @@ Object {
           </div>
         </nav>
         <main
-          class="c1"
+          class="c2"
         >
           <div
-            class="c2"
+            class="c3"
           >
             <aside
-              class="has-shadow has-background-white c3"
+              class="has-shadow has-background-white c4"
             >
               <ul>
                 <li
-                  class="c4"
+                  class="c5"
                   to="/ui"
                 >
                   <a
@@ -371,26 +382,26 @@ Object {
           </div>
           <div
             aria-hidden="true"
-            class="c5"
+            class="c6"
             tabindex="-1"
           />
           <div>
             <div
-              class="c6"
+              class="c7"
             >
               <div>
                 <div
-                  class="c7"
+                  class="c8"
                 >
                   <div
-                    class="c8 c9"
+                    class="c9 c10"
                   >
                     <div>
                       <div
-                        class="c10"
+                        class="c11"
                       >
                         <p
-                          class="c11"
+                          class="c12"
                         >
                           Online
                         </p>
@@ -404,7 +415,7 @@ Object {
                         </span>
                          
                         <span
-                          class="c12"
+                          class="c13"
                         >
                           clusters
                         </span>
@@ -412,14 +423,14 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="c8 c9"
+                    class="c9 c10"
                   >
                     <div>
                       <div
-                        class="c10"
+                        class="c11"
                       >
                         <p
-                          class="c13"
+                          class="c14"
                         >
                           Offline
                         </p>
@@ -433,7 +444,7 @@ Object {
                         </span>
                          
                         <span
-                          class="c12"
+                          class="c13"
                         >
                           clusters
                         </span>
@@ -447,15 +458,15 @@ Object {
               class="p-4"
             >
               <label
-                class="c14"
+                class="c15"
               >
                 <input
-                  class="c15"
+                  class="c16"
                   name="switchRoundedDefault"
                   type="checkbox"
                 />
                 <span
-                  class="c16 c17"
+                  class="c17 c18"
                 />
               </label>
               <span>
@@ -465,7 +476,7 @@ Object {
           </div>
         </main>
         <div
-          class="c18"
+          class="c19"
           role="toolbar"
         />
       </div>
@@ -477,7 +488,7 @@ Object {
     >
       <nav
         aria-label="main navigation"
-        class="navbar is-fixed-top is-white Layout__header"
+        class="sc-kYrlTI eCUSqC"
         role="navigation"
       >
         <div

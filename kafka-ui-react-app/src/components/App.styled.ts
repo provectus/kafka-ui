@@ -80,3 +80,14 @@ export const Overlay = styled.div<{ $isVisible: IsVisible }>`
       $isVisible ? 'rgba(34, 41, 47, 0.5)' : 'transparent'};
   }
 `;
+
+export const Navbar = styled.nav`
+  border-bottom: 1px solid #e7e7e7;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background-color: ${theme.menuStyles.backgroundColor.normal};
+  min-height: 3.25rem;
+`;

@@ -10,7 +10,6 @@ import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
 import Alert from 'components/Alert/Alert';
-import 'components/App.scss';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
@@ -52,11 +51,7 @@ const App: React.FC<AppProps> = ({
   return (
     <ThemeProvider theme={theme}>
       <S.Layout>
-        <nav
-          className="navbar is-fixed-top is-white Layout__header"
-          role="navigation"
-          aria-label="main navigation"
-        >
+        <S.Navbar role="navigation" aria-label="main navigation">
           <div className="navbar-brand">
             <div
               className={cx('navbar-burger', 'ml-0', {
@@ -80,7 +75,7 @@ const App: React.FC<AppProps> = ({
               <Version tag={GIT_TAG} commit={GIT_COMMIT} />
             </div>
           </div>
-        </nav>
+        </S.Navbar>
 
         <S.Container>
           <S.Sidebar $isVisible={isSidebarVisible}>
