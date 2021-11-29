@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import theme from 'theme/theme';
 
+type IsActive = boolean;
 type IsVisible = boolean;
 
 export const Layout = styled.div`
@@ -90,4 +91,75 @@ export const Navbar = styled.nav`
   z-index: 30;
   background-color: ${theme.menuStyles.backgroundColor.normal};
   min-height: 3.25rem;
+`;
+
+export const NavbarBrand = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  align-items: stretch;
+  min-height: 3.25rem;
+`;
+
+export const NavbarItem = styled.div`
+  display: flex;
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem;
+`;
+
+export const NavbarBurger = styled.div`
+  display: block;
+  position: relative;
+  cursor: pointer;
+  height: 3.25rem;
+  width: 3.25rem;
+  margin: 0;
+  padding: 0;
+
+  &:hover {
+    background-color: ${theme.menuStyles.backgroundColor.hover};
+  }
+`;
+
+export const Span = styled.span`
+  display: block;
+  position: absolute;
+  background: ${theme.menuStyles.color.active};
+  height: 1px;
+  left: calc(50% - 8px);
+  transform-origin: center;
+  transition-duration: 86ms;
+  transition-property: background-color, opacity, transform, -webkit-transform;
+  transition-timing-function: ease-out;
+  width: 16px;
+
+  &:first-child {
+    top: calc(50% - 6px);
+  }
+  &:nth-child(2) {
+    top: calc(50% - 1px);
+  }
+  &:nth-child(3) {
+    top: calc(50% + 4px);
+  }
+`;
+
+export const Hyperlink = styled.a`
+  display: flex;
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  align-items: center;
+  margin: 0;
+  color: ${theme.menuStyles.color.active};
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem;
+  text-decoration: none;
+  word-break: break-word;
 `;

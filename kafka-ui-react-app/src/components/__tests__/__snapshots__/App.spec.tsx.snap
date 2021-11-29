@@ -3,7 +3,7 @@
 exports[`App view matches snapshot 1`] = `
 Object {
   "asFragment": [Function],
-  "baseElement": .c5 {
+  "baseElement": .c10 {
   font-size: 14px;
   font-weight: 500;
   height: 32px;
@@ -17,7 +17,7 @@ Object {
   user-select: none;
 }
 
-.c5 a {
+.c10 a {
   width: 100%;
   padding: 0.5em 0.75em;
   cursor: pointer;
@@ -28,21 +28,21 @@ Object {
   color: #73848C;
 }
 
-.c5 a:hover {
+.c10 a:hover {
   background-color: #F1F2F3;
   color: #73848C;
 }
 
-.c5 a.is-active {
+.c10 a.is-active {
   background-color: #E3E6E8;
   color: #171A1C;
 }
 
-.c4 > * {
+.c9 > * {
   padding-bottom: 4px;
 }
 
-.c7 {
+.c12 {
   padding: 1.5rem 1rem;
   background: #F1F2F3;
   margin-bottom: 0.5rem !important;
@@ -56,7 +56,7 @@ Object {
   flex-wrap: wrap;
 }
 
-.c10 {
+.c15 {
   background-color: white;
   height: 68px;
   width: -webkit-fit-content;
@@ -87,7 +87,7 @@ Object {
   flex-grow: 1;
 }
 
-.c11 {
+.c16 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -102,7 +102,7 @@ Object {
   gap: 10px;
 }
 
-.c8 {
+.c13 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -113,22 +113,22 @@ Object {
   flex-wrap: wrap;
 }
 
-.c8 > .c9:first-child {
+.c13 > .c14:first-child {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
-.c8 > .c9:last-child {
+.c13 > .c14:last-child {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-.c13 {
+.c18 {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c12 {
+.c17 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -142,7 +142,7 @@ Object {
   text-align: center;
 }
 
-.c14 {
+.c19 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -156,7 +156,7 @@ Object {
   text-align: center;
 }
 
-.c15 {
+.c20 {
   position: relative;
   display: inline-block;
   width: 34px;
@@ -164,7 +164,7 @@ Object {
   margin-right: 8px;
 }
 
-.c18 {
+.c23 {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -177,7 +177,7 @@ Object {
   border-radius: 20px;
 }
 
-.c18::before {
+.c23::before {
   position: absolute;
   content: '';
   height: 14px;
@@ -190,21 +190,21 @@ Object {
   border-radius: 50%;
 }
 
-.c16 {
+.c21 {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.c16:checked + .c17 {
+.c21:checked + .c22 {
   background-color: #29A352;
 }
 
-.c16:focus + .c17 {
+.c21:focus + .c22 {
   box-shadow: 0 0 1px #29A352;
 }
 
-.c16:checked + .c17:before {
+.c21:checked + .c22:before {
   -webkit-transform: translateX(14px);
   -ms-transform: translateX(14px);
   transform: translateX(14px);
@@ -214,7 +214,7 @@ Object {
   min-width: 1200px;
 }
 
-.c19 {
+.c24 {
   max-width: 40%;
   width: 500px;
   position: fixed;
@@ -223,14 +223,14 @@ Object {
   z-index: 1000;
 }
 
-.c2 {
+.c7 {
   margin-top: 3.25rem;
   margin-left: 201px;
   position: relative;
   z-index: 20;
 }
 
-.c3 {
+.c8 {
   width: 201px;
   display: -webkit-box;
   display: -webkit-flex;
@@ -252,7 +252,7 @@ Object {
   background: #FFFFFF;
 }
 
-.c6 {
+.c11 {
   height: calc(100vh - 3.25rem);
   z-index: 99;
   display: block;
@@ -279,9 +279,119 @@ Object {
   min-height: 3.25rem;
 }
 
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-align-items: stretch;
+  -webkit-box-align: stretch;
+  -ms-flex-align: stretch;
+  align-items: stretch;
+  min-height: 3.25rem;
+}
+
+.c6 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem;
+}
+
+.c3 {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  height: 3.25rem;
+  width: 3.25rem;
+  margin: 0;
+  padding: 0;
+}
+
+.c3:hover {
+  background-color: #F1F2F3;
+}
+
+.c4 {
+  display: block;
+  position: absolute;
+  background: #171A1C;
+  height: 1px;
+  left: calc(50% - 8px);
+  -webkit-transform-origin: center;
+  -ms-transform-origin: center;
+  transform-origin: center;
+  -webkit-transition-duration: 86ms;
+  transition-duration: 86ms;
+  -webkit-transition-property: background-color,opacity,-webkit-transform,-webkit-transform;
+  -webkit-transition-property: background-color,opacity,transform,-webkit-transform;
+  transition-property: background-color,opacity,transform,-webkit-transform;
+  -webkit-transition-timing-function: ease-out;
+  transition-timing-function: ease-out;
+  width: 16px;
+}
+
+.c4:first-child {
+  top: calc(50% - 6px);
+}
+
+.c4:nth-child(2) {
+  top: calc(50% - 1px);
+}
+
+.c4:nth-child(3) {
+  top: calc(50% + 4px);
+}
+
+.c5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+  -webkit-box-flex: 0;
+  -webkit-flex-grow: 0;
+  -ms-flex-positive: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  -ms-flex-negative: 0;
+  flex-shrink: 0;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  margin: 0;
+  color: #171A1C;
+  font-size: 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  line-height: 1.5;
+  padding: 0.5rem 0.75rem;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  word-break: break-word;
+}
+
 @media screen and (max-width:1023px) {
-  .c8 > .c9:first-child,
-  .c8 > .c9:last-child {
+  .c13 > .c14:first-child,
+  .c13 > .c14:last-child {
     border-radius: 0;
   }
 }
@@ -293,20 +403,20 @@ Object {
 }
 
 @media screen and (max-width:1023px) {
-  .c19 {
+  .c24 {
     max-width: initial;
   }
 }
 
 @media screen and (max-width:1023px) {
-  .c2 {
+  .c7 {
     margin-left: initial;
     margin-top: 3.5rem;
   }
 }
 
 @media screen and (max-width:1023px) {
-  .c3 {
+  .c8 {
     -webkit-transform: none;
     -ms-transform: none;
     transform: none;
@@ -316,7 +426,7 @@ Object {
 }
 
 @media screen and (max-width:1023px) {
-  .c6 {
+  .c11 {
     visibility: hidden;
     opacity: 0;
     background-color: transparent;
@@ -334,40 +444,46 @@ Object {
           role="navigation"
         >
           <div
-            class="navbar-brand"
+            class="c2"
           >
             <div
-              class="navbar-burger ml-0"
+              class="c3"
               role="button"
               tabindex="0"
             >
-              <span />
-              <span />
-              <span />
+              <span
+                class="c4"
+              />
+              <span
+                class="c4"
+              />
+              <span
+                class="c4"
+              />
             </div>
             <a
-              class="navbar-item title is-5 is-marginless"
+              class="c5"
               href="/ui"
             >
               UI for Apache Kafka
             </a>
             <div
-              class="navbar-item"
+              class="c6"
             />
           </div>
         </nav>
         <main
-          class="c2"
+          class="c7"
         >
           <div
-            class="c3"
+            class="c8"
           >
             <aside
-              class="has-shadow has-background-white c4"
+              class="has-shadow has-background-white c9"
             >
               <ul>
                 <li
-                  class="c5"
+                  class="c10"
                   to="/ui"
                 >
                   <a
@@ -382,26 +498,26 @@ Object {
           </div>
           <div
             aria-hidden="true"
-            class="c6"
+            class="c11"
             tabindex="-1"
           />
           <div>
             <div
-              class="c7"
+              class="c12"
             >
               <div>
                 <div
-                  class="c8"
+                  class="c13"
                 >
                   <div
-                    class="c9 c10"
+                    class="c14 c15"
                   >
                     <div>
                       <div
-                        class="c11"
+                        class="c16"
                       >
                         <p
-                          class="c12"
+                          class="c17"
                         >
                           Online
                         </p>
@@ -415,7 +531,7 @@ Object {
                         </span>
                          
                         <span
-                          class="c13"
+                          class="c18"
                         >
                           clusters
                         </span>
@@ -423,14 +539,14 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="c9 c10"
+                    class="c14 c15"
                   >
                     <div>
                       <div
-                        class="c11"
+                        class="c16"
                       >
                         <p
-                          class="c14"
+                          class="c19"
                         >
                           Offline
                         </p>
@@ -444,7 +560,7 @@ Object {
                         </span>
                          
                         <span
-                          class="c13"
+                          class="c18"
                         >
                           clusters
                         </span>
@@ -458,15 +574,15 @@ Object {
               class="p-4"
             >
               <label
-                class="c15"
+                class="c20"
               >
                 <input
-                  class="c16"
+                  class="c21"
                   name="switchRoundedDefault"
                   type="checkbox"
                 />
                 <span
-                  class="c17 c18"
+                  class="c22 c23"
                 />
               </label>
               <span>
@@ -476,7 +592,7 @@ Object {
           </div>
         </main>
         <div
-          class="c19"
+          class="c24"
           role="toolbar"
         />
       </div>
@@ -492,25 +608,31 @@ Object {
         role="navigation"
       >
         <div
-          class="navbar-brand"
+          class="sc-xyEDr jjstZO"
         >
           <div
-            class="navbar-burger ml-0"
+            class="sc-jGVbWl jCdpjm"
             role="button"
             tabindex="0"
           >
-            <span />
-            <span />
-            <span />
+            <span
+              class="sc-bQdRvg kGuWsn"
+            />
+            <span
+              class="sc-bQdRvg kGuWsn"
+            />
+            <span
+              class="sc-bQdRvg kGuWsn"
+            />
           </div>
           <a
-            class="navbar-item title is-5 is-marginless"
+            class="sc-fXoxaI eBCwRs"
             href="/ui"
           >
             UI for Apache Kafka
           </a>
           <div
-            class="navbar-item"
+            class="sc-dWddBi dBABgl"
           />
         </div>
       </nav>

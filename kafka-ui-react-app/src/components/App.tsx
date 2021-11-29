@@ -52,29 +52,24 @@ const App: React.FC<AppProps> = ({
     <ThemeProvider theme={theme}>
       <S.Layout>
         <S.Navbar role="navigation" aria-label="main navigation">
-          <div className="navbar-brand">
-            <div
-              className={cx('navbar-burger', 'ml-0', {
-                'is-active': isSidebarVisible,
-              })}
+          <S.NavbarBrand>
+            <S.NavbarBurger
               onClick={onBurgerClick}
               onKeyDown={onBurgerClick}
               role="button"
               tabIndex={0}
             >
-              <span />
-              <span />
-              <span />
-            </div>
+              <S.Span />
+              <S.Span />
+              <S.Span />
+            </S.NavbarBurger>
 
-            <a className="navbar-item title is-5 is-marginless" href="/ui">
-              UI for Apache Kafka
-            </a>
+            <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>
 
-            <div className="navbar-item">
+            <S.NavbarItem>
               <Version tag={GIT_TAG} commit={GIT_COMMIT} />
-            </div>
-          </div>
+            </S.NavbarItem>
+          </S.NavbarBrand>
         </S.Navbar>
 
         <S.Container>
