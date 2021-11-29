@@ -38,7 +38,10 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
           .put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
       properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
       return AdminClient.create(properties);
-    }).flatMap(ReactiveAdminClient::create);
+    })
+        .flatMap(ReactiveAdminClient::create)
+        .onErrorMap(th -> new IllegalStateException(
+            "Error while creating AdminClient for Cluster " + cluster.getName(), th));
   }
 
   @Override
