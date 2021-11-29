@@ -1,11 +1,11 @@
-import React from 'react';
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { Alert } from 'redux/interfaces';
 import configureStore from 'redux/store/configureStore';
 import App, { AppProps } from 'components/App';
 import AppContainer from 'components/AppContainer';
+import React from 'react';
 
 const fetchClustersList = jest.fn();
 const store = configureStore();
@@ -13,20 +13,24 @@ const store = configureStore();
 describe('App', () => {
   describe('container', () => {
     it('renders view', () => {
-      const wrapper = mount(
+      render(
         <Provider store={store}>
-          <StaticRouter>
+          <BrowserRouter basename={window.basePath || '/'}>
             <AppContainer />
-          </StaticRouter>
+          </BrowserRouter>
         </Provider>
       );
-      expect(wrapper.exists('App')).toBeTruthy();
+
+      expect(screen.getByRole('navigation')).toBeInTheDocument();
+      expect(screen.getByText('Dashboard')).toBeInTheDocument();
+      expect(screen.getByRole('toolbar')).toBeInTheDocument();
+      expect(screen.getByRole('list')).toBeInTheDocument();
     });
   });
   describe('view', () => {
     const setupComponent = (props: Partial<AppProps> = {}) => (
       <Provider store={store}>
-        <StaticRouter>
+        <BrowserRouter basename={window.basePath || '/'}>
           <App
             isClusterListFetched
             alerts={[]}
@@ -34,24 +38,28 @@ describe('App', () => {
             fetchClustersList={fetchClustersList}
             {...props}
           />
-        </StaticRouter>
+        </BrowserRouter>
       </Provider>
     );
 
     it('handles fetchClustersList', () => {
-      const wrapper = mount(setupComponent());
-      expect(wrapper.exists()).toBeTruthy();
+      render(setupComponent());
+
       expect(fetchClustersList).toHaveBeenCalledTimes(1);
     });
 
-    it('shows PageLoader until cluster list is fetched', () => {
-      let component = mount(setupComponent({ isClusterListFetched: false }));
-      expect(component.exists('.Layout__container PageLoader')).toBeTruthy();
-      expect(component.exists('.Layout__container Switch')).toBeFalsy();
+    it('shows PageLoader when cluster list is fetched', () => {
+      render(setupComponent({ isClusterListFetched: true }));
 
-      component = mount(setupComponent({ isClusterListFetched: true }));
-      expect(component.exists('.Layout__container PageLoader')).toBeFalsy();
-      expect(component.exists('.Layout__container Switch')).toBeTruthy();
+      expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(1);
+      expect(screen.queryByRole('progressbar')).toBeNull();
+    });
+
+    it('shows PageLoader when cluster list is not fetched', () => {
+      render(setupComponent({ isClusterListFetched: false }));
+
+      expect(screen.getAllByRole('listitem').length).toEqual(1);
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
 
     it('correctly renders alerts', () => {
@@ -62,17 +70,23 @@ describe('App', () => {
         message: 'My Custom Message',
         createdAt: 1234567890,
       };
-      let wrapper = mount(setupComponent());
-      expect(wrapper.exists('.Layout__alerts')).toBeTruthy();
-      expect(wrapper.exists('Alert')).toBeFalsy();
 
-      wrapper = mount(setupComponent({ alerts: [alert] }));
-      expect(wrapper.exists('Alert')).toBeTruthy();
-      expect(wrapper.find('Alert').length).toEqual(1);
+      render(setupComponent({ alerts: [alert] }));
+
+      expect(screen.getByRole('alert')).toBeInTheDocument();
+      expect(screen.getByRole('heading')).toHaveTextContent(alert.title);
+    });
+
+    it('correctly renders empty alerts', () => {
+      render(setupComponent());
+
+      expect(screen.queryByRole('alert')).toBeNull();
+      expect(screen.queryByRole('heading')).toBeNull();
     });
 
     it('matches snapshot', () => {
-      const wrapper = mount(setupComponent());
+      const wrapper = render(setupComponent());
+
       expect(wrapper).toMatchSnapshot();
     });
   });

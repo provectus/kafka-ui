@@ -49,7 +49,7 @@ const Breadcrumb: React.FC<Props> = () => {
     return <></>;
   }
   return (
-    <BreadcrumbWrapper>
+    <BreadcrumbWrapper role="list">
       {links.slice(0, links.length - 1).map((link, index) => (
         <li key={link}>
           <Link to={getPathPredicate(index)}>{link}</Link>

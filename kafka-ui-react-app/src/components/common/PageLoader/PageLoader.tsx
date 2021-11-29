@@ -30,7 +30,7 @@ const LoaderWrapper = styled.div`
 
 const PageLoader: React.FC = () => (
   <LoaderWrapper>
-    <LoaderStyled />
+    <LoaderStyled role="progressbar" />
   </LoaderWrapper>
 );
 

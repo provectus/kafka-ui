@@ -5,7 +5,7 @@ import { Alert as AlertProps } from 'redux/interfaces';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 
-import { AlertWrapper } from './Alert.styled';
+import * as S from './Alert.styled';
 
 const Alert: React.FC<AlertProps> = ({
   id,
@@ -20,21 +20,21 @@ const Alert: React.FC<AlertProps> = ({
   }, []);
 
   return (
-    <AlertWrapper type={type}>
+    <S.Wrapper $type={type} role="alert">
       <div>
-        <div className="alert-title">{title}</div>
-        <p className="alert-message">{message}</p>
+        <S.Title role="heading">{title}</S.Title>
+        <S.Message role="contentinfo">{message}</S.Message>
         {response && (
-          <p className="alert-message alert-server-response">
+          <S.Message role="contentinfo">
             {response.status} {response.body?.message || response.statusText}
-          </p>
+          </S.Message>
         )}
       </div>
 
-      <IconButtonWrapper onClick={dismiss} aria-hidden>
+      <IconButtonWrapper role="button" onClick={dismiss}>
         <CloseIcon />
       </IconButtonWrapper>
-    </AlertWrapper>
+    </S.Wrapper>
   );
 };
 

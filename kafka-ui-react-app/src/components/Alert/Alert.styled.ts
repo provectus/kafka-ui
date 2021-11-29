@@ -1,11 +1,9 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-interface Props {
-  type: 'error' | 'success' | 'warning' | 'info';
-}
+type Type = 'error' | 'success' | 'warning' | 'info';
 
-function getColor(type: 'error' | 'success' | 'warning' | 'info') {
+function getColor(type: Type) {
   switch (type) {
     case 'error':
       return Colors.red[10];
@@ -13,17 +11,15 @@ function getColor(type: 'error' | 'success' | 'warning' | 'info') {
       return Colors.green[10];
     case 'warning':
       return Colors.yellow[10];
-    case 'info':
-      return Colors.neutral[10];
     default:
       return Colors.neutral[10];
   }
 }
 
-export const AlertWrapper = styled.div<Props>`
-  background-color: ${(props) => getColor(props.type)};
+export const Wrapper = styled.div<{ $type: Type }>`
+  background-color: ${({ $type }) => getColor($type)};
   width: 400px;
-  height: 64px;
+  min-height: 64px;
   border-radius: 8px;
   padding: 12px;
   display: flex;
@@ -31,14 +27,16 @@ export const AlertWrapper = styled.div<Props>`
   align-items: center;
   filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
   margin-top: 10px;
+  line-height: 20px;
+`;
 
-  & .alert-title {
-    font-weight: 500;
-    font-size: 14px;
-  }
+export const Title = styled.div`
+  font-weight: 500;
+  font-size: 14px;
+`;
 
-  & .alert-message {
-    font-weight: normal;
-    font-size: 14px;
-  }
+export const Message = styled.p`
+  font-weight: normal;
+  font-size: 14px;
+  margin: 3px 0;
 `;

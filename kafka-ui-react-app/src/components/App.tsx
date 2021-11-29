@@ -116,7 +116,7 @@ const App: React.FC<AppProps> = ({
           )}
         </S.Container>
 
-        <S.Alerts>
+        <S.Alerts role="toolbar">
           {alerts.map(({ id, type, title, message, response, createdAt }) => (
             <Alert
               key={id}

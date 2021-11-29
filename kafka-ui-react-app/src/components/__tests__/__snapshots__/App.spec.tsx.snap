@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`App view matches snapshot 1`] = `
-.c1 {
+Object {
+  "asFragment": [Function],
+  "baseElement": .c4 {
   font-size: 14px;
   font-weight: 500;
   height: 32px;
@@ -15,7 +17,7 @@ exports[`App view matches snapshot 1`] = `
   user-select: none;
 }
 
-.c1 a {
+.c4 a {
   width: 100%;
   padding: 0.5em 0.75em;
   cursor: pointer;
@@ -26,21 +28,21 @@ exports[`App view matches snapshot 1`] = `
   color: #73848C;
 }
 
-.c1 a:hover {
+.c4 a:hover {
   background-color: #F1F2F3;
   color: #73848C;
 }
 
-.c1 a.is-active {
+.c4 a.is-active {
   background-color: #E3E6E8;
   color: #171A1C;
 }
 
-.c0 > * {
+.c3 > * {
   padding-bottom: 4px;
 }
 
-.c2 {
+.c6 {
   padding: 1.5rem 1rem;
   background: #F1F2F3;
   margin-bottom: 0.5rem !important;
@@ -54,7 +56,7 @@ exports[`App view matches snapshot 1`] = `
   flex-wrap: wrap;
 }
 
-.c5 {
+.c9 {
   background-color: white;
   height: 68px;
   width: -webkit-fit-content;
@@ -85,7 +87,7 @@ exports[`App view matches snapshot 1`] = `
   flex-grow: 1;
 }
 
-.c6 {
+.c10 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -100,7 +102,7 @@ exports[`App view matches snapshot 1`] = `
   gap: 10px;
 }
 
-.c3 {
+.c7 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -111,22 +113,22 @@ exports[`App view matches snapshot 1`] = `
   flex-wrap: wrap;
 }
 
-.c3 > .c4:first-child {
+.c7 > .c8:first-child {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
-.c3 > .c4:last-child {
+.c7 > .c8:last-child {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-.c8 {
+.c12 {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7 {
+.c11 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -140,7 +142,7 @@ exports[`App view matches snapshot 1`] = `
   text-align: center;
 }
 
-.c9 {
+.c13 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -154,7 +156,7 @@ exports[`App view matches snapshot 1`] = `
   text-align: center;
 }
 
-.c10 {
+.c14 {
   position: relative;
   display: inline-block;
   width: 34px;
@@ -162,7 +164,7 @@ exports[`App view matches snapshot 1`] = `
   margin-right: 8px;
 }
 
-.c13 {
+.c17 {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -175,7 +177,7 @@ exports[`App view matches snapshot 1`] = `
   border-radius: 20px;
 }
 
-.c13::before {
+.c17::before {
   position: absolute;
   content: '';
   height: 14px;
@@ -188,591 +190,494 @@ exports[`App view matches snapshot 1`] = `
   border-radius: 50%;
 }
 
-.c11 {
+.c15 {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.c11:checked + .c12 {
+.c15:checked + .c16 {
   background-color: #29A352;
 }
 
-.c11:focus + .c12 {
+.c15:focus + .c16 {
   box-shadow: 0 0 1px #29A352;
 }
 
-.c11:checked + .c12:before {
+.c15:checked + .c16:before {
   -webkit-transform: translateX(14px);
   -ms-transform: translateX(14px);
   transform: translateX(14px);
 }
 
+.c0 {
+  min-width: 1200px;
+}
+
+.c18 {
+  max-width: 40%;
+  width: 500px;
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  z-index: 1000;
+}
+
+.c1 {
+  margin-top: 3.25rem;
+  margin-left: 201px;
+  position: relative;
+  z-index: 20;
+}
+
+.c2 {
+  width: 201px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  border-right: 1px solid #e7e7e7;
+  position: fixed;
+  top: 3.25rem;
+  left: 0;
+  bottom: 0;
+  padding: 8px 16px;
+  overflow-y: scroll;
+  -webkit-transition: width 0.25s,opacity 0.25s,-webkit-transform 0.25s, -webkit-transform 0.25s;
+  -webkit-transition: width 0.25s,opacity 0.25s,transform 0.25s, -webkit-transform 0.25s;
+  transition: width 0.25s,opacity 0.25s,transform 0.25s, -webkit-transform 0.25s;
+  background: #FFFFFF;
+}
+
+.c5 {
+  height: calc(100vh - 3.25rem);
+  z-index: 99;
+  display: block;
+  visibility: 'hidden';
+  opacity: 0;
+  -webkit-transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
 @media screen and (max-width:1023px) {
-  .c3 > .c4:first-child,
-  .c3 > .c4:last-child {
+  .c7 > .c8:first-child,
+  .c7 > .c8:last-child {
     border-radius: 0;
   }
 }
 
-<Provider
-  store={
-    Object {
-      "@@observable": [Function],
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-    }
+@media screen and (max-width:1023px) {
+  .c0 {
+    min-width: initial;
   }
->
-  <StaticRouter>
-    <Router
-      history={
-        Object {
-          "action": "POP",
-          "block": [Function],
-          "createHref": [Function],
-          "go": [Function],
-          "goBack": [Function],
-          "goForward": [Function],
-          "listen": [Function],
-          "location": Object {
-            "hash": "",
-            "pathname": "/",
-            "search": "",
-            "state": undefined,
-          },
-          "push": [Function],
-          "replace": [Function],
-        }
-      }
-      staticContext={Object {}}
-    >
-      <App
-        alerts={Array []}
-        clusters={Array []}
-        fetchClustersList={
-          [MockFunction] {
-            "calls": Array [
-              Array [],
-            ],
-            "results": Array [
-              Object {
-                "type": "return",
-                "value": undefined,
-              },
-            ],
-          }
-        }
-        isClusterListFetched={true}
+}
+
+@media screen and (max-width:1023px) {
+  .c18 {
+    max-width: initial;
+  }
+}
+
+@media screen and (max-width:1023px) {
+  .c1 {
+    margin-left: initial;
+    margin-top: 3.5rem;
+  }
+}
+
+@media screen and (max-width:1023px) {
+  .c2 {
+    -webkit-transform: none;
+    -ms-transform: none;
+    transform: none;
+    left: -201px;
+    z-index: 100;
+  }
+}
+
+@media screen and (max-width:1023px) {
+  .c5 {
+    visibility: hidden;
+    opacity: 0;
+    background-color: transparent;
+  }
+}
+
+<body>
+    <div>
+      <div
+        class="c0"
       >
-        <Component
-          theme={
-            Object {
-              "buttonStyles": Object {
-                "fontSize": Object {
-                  "L": "16px",
-                  "M": "14px",
-                  "S": "14px",
-                },
-                "height": Object {
-                  "L": "40px",
-                  "M": "32px",
-                  "S": "24px",
-                },
-                "primary": Object {
-                  "backgroundColor": Object {
-                    "active": "#1414B8",
-                    "hover": "#1717CF",
-                    "normal": "#4F4FFF",
-                  },
-                  "color": "#FFFFFF",
-                  "invertedColors": Object {
-                    "active": "#1414B8",
-                    "hover": "#1717CF",
-                    "normal": "#4F4FFF",
-                  },
-                },
-                "secondary": Object {
-                  "backgroundColor": Object {
-                    "active": "#D5DADD",
-                    "hover": "#E3E6E8",
-                    "normal": "#F1F2F3",
-                  },
-                  "color": "#171A1C",
-                  "invertedColors": Object {
-                    "active": "#171A1C",
-                    "hover": "#454F54",
-                    "normal": "#73848C",
-                  },
-                },
-              },
-              "layout": Object {
-                "minWidth": "1200px",
-                "navBarHeight": "3.25rem",
-                "navBarWidth": "201px",
-              },
-              "menuStyles": Object {
-                "backgroundColor": Object {
-                  "active": "#E3E6E8",
-                  "hover": "#F1F2F3",
-                  "normal": "#FFFFFF",
-                },
-                "color": Object {
-                  "active": "#171A1C",
-                  "hover": "#73848C",
-                  "normal": "#73848C",
-                },
-              },
-              "paginationStyles": Object {
-                "borderColor": Object {
-                  "active": "#454F54",
-                  "disabled": "#C7CED1",
-                  "hover": "#73848C",
-                  "normal": "#ABB5BA",
-                },
-                "color": Object {
-                  "active": "#171A1C",
-                  "disabled": "#C7CED1",
-                  "hover": "#171A1C",
-                  "normal": "#171A1C",
-                },
-              },
-              "primaryTabStyles": Object {
-                "borderColor": Object {
-                  "active": "#4F4FFF",
-                  "hover": "transparent",
-                  "normal": "transparent",
-                },
-                "color": Object {
-                  "active": "#171A1C",
-                  "hover": "#171A1C",
-                  "normal": "#73848C",
-                },
-              },
-              "secondaryTabStyles": Object {
-                "backgroundColor": Object {
-                  "active": "#E3E6E8",
-                  "hover": "#F1F2F3",
-                  "normal": "#FFFFFF",
-                },
-                "color": Object {
-                  "active": "#171A1C",
-                  "hover": "#171A1C",
-                  "normal": "#73848C",
-                },
-              },
-              "selectStyles": Object {
-                "borderColor": Object {
-                  "active": "#454F54",
-                  "disabled": "#E3E6E8",
-                  "hover": "#73848C",
-                  "normal": "#ABB5BA",
-                },
-                "color": Object {
-                  "active": "#171A1C",
-                  "disabled": "#ABB5BA",
-                  "hover": "#171A1C",
-                  "normal": "#171A1C",
-                },
-              },
-              "switch": Object {
-                "checked": "#29A352",
-                "unchecked": "#ABB5BA",
-              },
-              "tagStyles": Object {
-                "backgroundColor": Object {
-                  "gray": "#E3E6E8",
-                  "green": "#D6F5E0",
-                  "yellow": "#FFEECC",
-                },
-                "color": "#171A1C",
-              },
-              "thStyles": Object {
-                "backgroundColor": Object {
-                  "normal": "#FFFFFF",
-                },
-                "color": Object {
-                  "normal": "#73848C",
-                },
-                "previewColor": Object {
-                  "normal": "#4F4FFF",
-                },
-              },
-            }
-          }
+        <nav
+          aria-label="main navigation"
+          class="navbar is-fixed-top is-white Layout__header"
+          role="navigation"
         >
           <div
-            className="Layout"
+            class="navbar-brand"
           >
-            <nav
-              aria-label="main navigation"
-              className="navbar is-fixed-top is-white Layout__header"
-              role="navigation"
-            >
-              <div
-                className="navbar-brand"
-              >
-                <div
-                  className="navbar-burger ml-0"
-                  onClick={[Function]}
-                  onKeyDown={[Function]}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <span />
-                  <span />
-                  <span />
-                </div>
-                <a
-                  className="navbar-item title is-5 is-marginless"
-                  href="/ui"
-                >
-                  UI for Apache Kafka
-                </a>
-                <div
-                  className="navbar-item"
-                >
-                  <Version />
-                </div>
-              </div>
-            </nav>
-            <main
-              className="Layout__container"
-            >
-              <div
-                className="Layout__sidebar has-shadow has-background-white"
-              >
-                <Styled(Nav)
-                  clusters={Array []}
-                  isClusterListFetched={true}
-                >
-                  <Nav
-                    className="c0"
-                    clusters={Array []}
-                    isClusterListFetched={true}
-                  >
-                    <aside
-                      className="has-shadow has-background-white c0"
-                    >
-                      <ul>
-                        <ClusterMenuItem
-                          activeClassName="is-active"
-                          exact={true}
-                          isTopLevel={true}
-                          title="Dashboard"
-                          to="/ui"
-                        >
-                          <StyledMenuItem
-                            isTopLevel={true}
-                            to="/ui"
-                          >
-                            <li
-                              className="c1"
-                              to="/ui"
-                            >
-                              <NavLink
-                                activeClassName="is-active"
-                                exact={true}
-                                title="Dashboard"
-                                to="/ui"
-                              >
-                                <Link
-                                  aria-current={null}
-                                  title="Dashboard"
-                                  to={
-                                    Object {
-                                      "hash": "",
-                                      "pathname": "/ui",
-                                      "search": "",
-                                      "state": null,
-                                    }
-                                  }
-                                >
-                                  <LinkAnchor
-                                    aria-current={null}
-                                    href="/ui"
-                                    navigate={[Function]}
-                                    title="Dashboard"
-                                  >
-                                    <a
-                                      aria-current={null}
-                                      href="/ui"
-                                      onClick={[Function]}
-                                      title="Dashboard"
-                                    >
-                                      Dashboard
-                                    </a>
-                                  </LinkAnchor>
-                                </Link>
-                              </NavLink>
-                            </li>
-                          </StyledMenuItem>
-                        </ClusterMenuItem>
-                      </ul>
-                    </aside>
-                  </Nav>
-                </Styled(Nav)>
-              </div>
-              <div
-                aria-hidden="true"
-                className="Layout__sidebarOverlay is-overlay"
-                onClick={[Function]}
-                onKeyDown={[Function]}
-                tabIndex={-1}
-              />
-              <Breadcrumb />
-              <Switch>
-                <Route
-                  component={[Function]}
-                  computedMatch={
-                    Object {
-                      "isExact": true,
-                      "params": Object {},
-                      "path": "/",
-                      "url": "/",
-                    }
-                  }
-                  exact={true}
-                  location={
-                    Object {
-                      "hash": "",
-                      "pathname": "/",
-                      "search": "",
-                      "state": undefined,
-                    }
-                  }
-                  path={
-                    Array [
-                      "/",
-                      "/ui",
-                      "/ui/clusters",
-                    ]
-                  }
-                >
-                  <Dashboard
-                    history={
-                      Object {
-                        "action": "POP",
-                        "block": [Function],
-                        "createHref": [Function],
-                        "go": [Function],
-                        "goBack": [Function],
-                        "goForward": [Function],
-                        "listen": [Function],
-                        "location": Object {
-                          "hash": "",
-                          "pathname": "/",
-                          "search": "",
-                          "state": undefined,
-                        },
-                        "push": [Function],
-                        "replace": [Function],
-                      }
-                    }
-                    location={
-                      Object {
-                        "hash": "",
-                        "pathname": "/",
-                        "search": "",
-                        "state": undefined,
-                      }
-                    }
-                    match={
-                      Object {
-                        "isExact": true,
-                        "params": Object {},
-                        "path": "/",
-                        "url": "/",
-                      }
-                    }
-                    staticContext={Object {}}
-                  >
-                    <div>
-                      <Connect(ClustersWidget)>
-                        <ClustersWidget
-                          clusters={Array []}
-                          dispatch={[Function]}
-                          offlineClusters={Array []}
-                          onlineClusters={Array []}
-                        >
-                          <styled.div>
-                            <div
-                              className="c2"
-                            >
-                              <MetricsSection>
-                                <div>
-                                  <styled.div>
-                                    <div
-                                      className="c3"
-                                    >
-                                      <Indicator
-                                        label={
-                                          <Styled(Tag)
-                                            color="green"
-                                          >
-                                            Online
-                                          </Styled(Tag)>
-                                        }
-                                      >
-                                        <styled.div>
-                                          <div
-                                            className="c4 c5"
-                                          >
-                                            <div>
-                                              <styled.div>
-                                                <div
-                                                  className="c6"
-                                                >
-                                                  <Styled(Tag)
-                                                    color="green"
-                                                  >
-                                                    <Tag
-                                                      className="c7"
-                                                      color="green"
-                                                    >
-                                                      <p
-                                                        className="c7"
-                                                      >
-                                                        Online
-                                                      </p>
-                                                    </Tag>
-                                                  </Styled(Tag)>
-                                                   
-                                                </div>
-                                              </styled.div>
-                                              <span>
-                                                <span
-                                                  data-testid="onlineCount"
-                                                >
-                                                  0
-                                                </span>
-                                                 
-                                                <styled.span>
-                                                  <span
-                                                    className="c8"
-                                                  >
-                                                    clusters
-                                                  </span>
-                                                </styled.span>
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </styled.div>
-                                      </Indicator>
-                                      <Indicator
-                                        label={
-                                          <Styled(Tag)
-                                            color="gray"
-                                          >
-                                            Offline
-                                          </Styled(Tag)>
-                                        }
-                                      >
-                                        <styled.div>
-                                          <div
-                                            className="c4 c5"
-                                          >
-                                            <div>
-                                              <styled.div>
-                                                <div
-                                                  className="c6"
-                                                >
-                                                  <Styled(Tag)
-                                                    color="gray"
-                                                  >
-                                                    <Tag
-                                                      className="c9"
-                                                      color="gray"
-                                                    >
-                                                      <p
-                                                        className="c9"
-                                                      >
-                                                        Offline
-                                                      </p>
-                                                    </Tag>
-                                                  </Styled(Tag)>
-                                                   
-                                                </div>
-                                              </styled.div>
-                                              <span>
-                                                <span
-                                                  data-testid="offlineCount"
-                                                >
-                                                  0
-                                                </span>
-                                                 
-                                                <styled.span>
-                                                  <span
-                                                    className="c8"
-                                                  >
-                                                    clusters
-                                                  </span>
-                                                </styled.span>
-                                              </span>
-                                            </div>
-                                          </div>
-                                        </styled.div>
-                                      </Indicator>
-                                    </div>
-                                  </styled.div>
-                                </div>
-                              </MetricsSection>
-                            </div>
-                          </styled.div>
-                          <div
-                            className="p-4"
-                          >
-                            <Switch
-                              checked={false}
-                              name="switchRoundedDefault"
-                              onChange={[Function]}
-                            >
-                              <styled.label>
-                                <label
-                                  className="c10"
-                                >
-                                  <styled.input
-                                    checked={false}
-                                    name="switchRoundedDefault"
-                                    onChange={[Function]}
-                                    type="checkbox"
-                                  >
-                                    <input
-                                      checked={false}
-                                      className="c11"
-                                      name="switchRoundedDefault"
-                                      onChange={[Function]}
-                                      type="checkbox"
-                                    />
-                                  </styled.input>
-                                  <styled.span>
-                                    <span
-                                      className="c12 c13"
-                                    />
-                                  </styled.span>
-                                </label>
-                              </styled.label>
-                            </Switch>
-                            <span>
-                              Only offline clusters
-                            </span>
-                          </div>
-                        </ClustersWidget>
-                      </Connect(ClustersWidget)>
-                    </div>
-                  </Dashboard>
-                </Route>
-              </Switch>
-            </main>
             <div
-              className="Layout__alerts"
+              class="navbar-burger ml-0"
+              role="button"
+              tabindex="0"
+            >
+              <span />
+              <span />
+              <span />
+            </div>
+            <a
+              class="navbar-item title is-5 is-marginless"
+              href="/ui"
+            >
+              UI for Apache Kafka
+            </a>
+            <div
+              class="navbar-item"
             />
           </div>
-        </Component>
-      </App>
-    </Router>
-  </StaticRouter>
-</Provider>
+        </nav>
+        <main
+          class="c1"
+        >
+          <div
+            class="c2"
+          >
+            <aside
+              class="has-shadow has-background-white c3"
+            >
+              <ul>
+                <li
+                  class="c4"
+                  to="/ui"
+                >
+                  <a
+                    href="/ui"
+                    title="Dashboard"
+                  >
+                    Dashboard
+                  </a>
+                </li>
+              </ul>
+            </aside>
+          </div>
+          <div
+            aria-hidden="true"
+            class="c5"
+            tabindex="-1"
+          />
+          <div>
+            <div
+              class="c6"
+            >
+              <div>
+                <div
+                  class="c7"
+                >
+                  <div
+                    class="c8 c9"
+                  >
+                    <div>
+                      <div
+                        class="c10"
+                      >
+                        <p
+                          class="c11"
+                        >
+                          Online
+                        </p>
+                         
+                      </div>
+                      <span>
+                        <span
+                          data-testid="onlineCount"
+                        >
+                          0
+                        </span>
+                         
+                        <span
+                          class="c12"
+                        >
+                          clusters
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="c8 c9"
+                  >
+                    <div>
+                      <div
+                        class="c10"
+                      >
+                        <p
+                          class="c13"
+                        >
+                          Offline
+                        </p>
+                         
+                      </div>
+                      <span>
+                        <span
+                          data-testid="offlineCount"
+                        >
+                          0
+                        </span>
+                         
+                        <span
+                          class="c12"
+                        >
+                          clusters
+                        </span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="p-4"
+            >
+              <label
+                class="c14"
+              >
+                <input
+                  class="c15"
+                  name="switchRoundedDefault"
+                  type="checkbox"
+                />
+                <span
+                  class="c16 c17"
+                />
+              </label>
+              <span>
+                Only offline clusters
+              </span>
+            </div>
+          </div>
+        </main>
+        <div
+          class="c18"
+          role="toolbar"
+        />
+      </div>
+    </div>
+  </body>,
+  "container": <div>
+    <div
+      class="sc-ikPAEB gQnZIF"
+    >
+      <nav
+        aria-label="main navigation"
+        class="navbar is-fixed-top is-white Layout__header"
+        role="navigation"
+      >
+        <div
+          class="navbar-brand"
+        >
+          <div
+            class="navbar-burger ml-0"
+            role="button"
+            tabindex="0"
+          >
+            <span />
+            <span />
+            <span />
+          </div>
+          <a
+            class="navbar-item title is-5 is-marginless"
+            href="/ui"
+          >
+            UI for Apache Kafka
+          </a>
+          <div
+            class="navbar-item"
+          />
+        </div>
+      </nav>
+      <main
+        class="sc-biBsmb jNhsQo"
+      >
+        <div
+          class="sc-eHfRjS hpkfEn"
+        >
+          <aside
+            class="has-shadow has-background-white sc-hKgJUU dAOeGn"
+          >
+            <ul>
+              <li
+                class="sc-bdfBQB dLgsMO"
+                to="/ui"
+              >
+                <a
+                  href="/ui"
+                  title="Dashboard"
+                >
+                  Dashboard
+                </a>
+              </li>
+            </ul>
+          </aside>
+        </div>
+        <div
+          aria-hidden="true"
+          class="sc-hzMMVR dQrYdl"
+          tabindex="-1"
+        />
+        <div>
+          <div
+            class="sc-gKseQn hrnPzI"
+          >
+            <div>
+              <div
+                class="sc-pGacB biCKdH"
+              >
+                <div
+                  class="sc-iBPTik fyFASl"
+                >
+                  <div>
+                    <div
+                      class="sc-fubCzh fcIiyF"
+                    >
+                      <p
+                        class="sc-iqHYmW DqfIR"
+                      >
+                        Online
+                      </p>
+                       
+                    </div>
+                    <span>
+                      <span
+                        data-testid="onlineCount"
+                      >
+                        0
+                      </span>
+                       
+                      <span
+                        class="sc-jrAFXE gMBDpV"
+                      >
+                        clusters
+                      </span>
+                    </span>
+                  </div>
+                </div>
+                <div
+                  class="sc-iBPTik fyFASl"
+                >
+                  <div>
+                    <div
+                      class="sc-fubCzh fcIiyF"
+                    >
+                      <p
+                        class="sc-iqHYmW edOLMN"
+                      >
+                        Offline
+                      </p>
+                       
+                    </div>
+                    <span>
+                      <span
+                        data-testid="offlineCount"
+                      >
+                        0
+                      </span>
+                       
+                      <span
+                        class="sc-jrAFXE gMBDpV"
+                      >
+                        clusters
+                      </span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div
+            class="p-4"
+          >
+            <label
+              class="sc-bqyKOL fKLSJD"
+            >
+              <input
+                class="sc-hBEYId gPWovS"
+                name="switchRoundedDefault"
+                type="checkbox"
+              />
+              <span
+                class="sc-kstqJO iuEhCo"
+              />
+            </label>
+            <span>
+              Only offline clusters
+            </span>
+          </div>
+        </div>
+      </main>
+      <div
+        class="sc-tYqdw dtHNwD"
+        role="toolbar"
+      />
+    </div>
+  </div>,
+  "debug": [Function],
+  "findAllByAltText": [Function],
+  "findAllByDisplayValue": [Function],
+  "findAllByLabelText": [Function],
+  "findAllByPlaceholderText": [Function],
+  "findAllByRole": [Function],
+  "findAllByTestId": [Function],
+  "findAllByText": [Function],
+  "findAllByTitle": [Function],
+  "findByAltText": [Function],
+  "findByDisplayValue": [Function],
+  "findByLabelText": [Function],
+  "findByPlaceholderText": [Function],
+  "findByRole": [Function],
+  "findByTestId": [Function],
+  "findByText": [Function],
+  "findByTitle": [Function],
+  "getAllByAltText": [Function],
+  "getAllByDisplayValue": [Function],
+  "getAllByLabelText": [Function],
+  "getAllByPlaceholderText": [Function],
+  "getAllByRole": [Function],
+  "getAllByTestId": [Function],
+  "getAllByText": [Function],
+  "getAllByTitle": [Function],
+  "getByAltText": [Function],
+  "getByDisplayValue": [Function],
+  "getByLabelText": [Function],
+  "getByPlaceholderText": [Function],
+  "getByRole": [Function],
+  "getByTestId": [Function],
+  "getByText": [Function],
+  "getByTitle": [Function],
+  "queryAllByAltText": [Function],
+  "queryAllByDisplayValue": [Function],
+  "queryAllByLabelText": [Function],
+  "queryAllByPlaceholderText": [Function],
+  "queryAllByRole": [Function],
+  "queryAllByTestId": [Function],
+  "queryAllByText": [Function],
+  "queryAllByTitle": [Function],
+  "queryByAltText": [Function],
+  "queryByDisplayValue": [Function],
+  "queryByLabelText": [Function],
+  "queryByPlaceholderText": [Function],
+  "queryByRole": [Function],
+  "queryByTestId": [Function],
+  "queryByText": [Function],
+  "queryByTitle": [Function],
+  "rerender": [Function],
+  "unmount": [Function],
+}
 `;
