@@ -59,9 +59,9 @@ const App: React.FC<AppProps> = ({
               role="button"
               tabIndex={0}
             >
-              <S.Span />
-              <S.Span />
-              <S.Span />
+              <S.Span role="separator" />
+              <S.Span role="separator" />
+              <S.Span role="separator" />
             </S.NavbarBurger>
 
             <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>

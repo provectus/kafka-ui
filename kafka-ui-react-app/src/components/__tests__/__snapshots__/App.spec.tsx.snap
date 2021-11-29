@@ -453,12 +453,15 @@ Object {
             >
               <span
                 class="c4"
+                role="separator"
               />
               <span
                 class="c4"
+                role="separator"
               />
               <span
                 class="c4"
+                role="separator"
               />
             </div>
             <a
@@ -617,12 +620,15 @@ Object {
           >
             <span
               class="sc-bQdRvg kGuWsn"
+              role="separator"
             />
             <span
               class="sc-bQdRvg kGuWsn"
+              role="separator"
             />
             <span
               class="sc-bQdRvg kGuWsn"
+              role="separator"
             />
           </div>
           <a

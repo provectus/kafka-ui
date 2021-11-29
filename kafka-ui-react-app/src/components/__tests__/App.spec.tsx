@@ -84,6 +84,14 @@ describe('App', () => {
       expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     });
 
+    it('correctly renders navbar', () => {
+      render(setupComponent());
+
+      expect(screen.getByText('UI for Apache Kafka')).toBeInTheDocument();
+      expect(screen.getAllByRole('separator').length).toEqual(3);
+      expect(screen.getByRole('button')).toBeInTheDocument();
+    });
+
     it('matches snapshot', () => {
       const wrapper = render(setupComponent());
 
