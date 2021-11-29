@@ -52,7 +52,7 @@ describe('App', () => {
       render(setupComponent({ isClusterListFetched: true }));
 
       expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(1);
-      expect(screen.queryByRole('progressbar')).toBeNull();
+      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
     });
 
     it('shows PageLoader when cluster list is not fetched', () => {
@@ -80,8 +80,8 @@ describe('App', () => {
     it('correctly renders empty alerts', () => {
       render(setupComponent());
 
-      expect(screen.queryByRole('alert')).toBeNull();
-      expect(screen.queryByRole('heading')).toBeNull();
+      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+      expect(screen.queryByRole('heading')).not.toBeInTheDocument();
     });
 
     it('matches snapshot', () => {
