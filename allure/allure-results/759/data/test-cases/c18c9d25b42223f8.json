@@ -1,12 +1,12 @@
 {
-  "uid" : "53debcefb06c8a4c",
+  "uid" : "c18c9d25b42223f8",
   "name" : "main page should load",
   "fullName" : "com.provectus.kafka.ui.SmokeTests.mainPageLoads",
   "historyId" : "5472b00abbb74c5c8bdcfb9f276f316",
   "time" : {
-    "start" : 1638284295580,
-    "stop" : 1638284307284,
-    "duration" : 11704
+    "start" : 1638287640575,
+    "stop" : 1638287651367,
+    "duration" : 10792
   },
   "description" : "",
   "status" : "passed",
@@ -19,93 +19,93 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1638284295659,
-        "stop" : 1638284305329,
-        "duration" : 9670
+        "start" : 1638287640643,
+        "stop" : 1638287649513,
+        "duration" : 8870
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/",
         "time" : {
-          "start" : 1638284295675,
-          "stop" : 1638284305328,
-          "duration" : 9653
+          "start" : 1638287640665,
+          "stop" : 1638287649513,
+          "duration" : 8848
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "shouldDisplayMessage" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
+      "hasContent" : true,
       "stepsCount" : 1,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "shouldDisplayMessage" : false
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1638284305329,
-        "stop" : 1638284307266,
-        "duration" : 1937
+        "start" : 1638287649514,
+        "stop" : 1638287651344,
+        "duration" : 1830
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1638284305339,
-          "stop" : 1638284306545,
-          "duration" : 1206
+          "start" : 1638287649530,
+          "stop" : 1638287650711,
+          "duration" : 1181
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "shouldDisplayMessage" : false
       }, {
         "name" : "$(\"By.xpath: //h5[text()='Clusters']\") should be(visible)",
         "time" : {
-          "start" : 1638284306546,
-          "stop" : 1638284307266,
-          "duration" : 720
+          "start" : 1638287650711,
+          "stop" : 1638287651344,
+          "duration" : 633
         },
         "status" : "passed",
         "steps" : [ ],
         "attachments" : [ ],
         "parameters" : [ ],
+        "hasContent" : false,
         "stepsCount" : 0,
         "attachmentsCount" : 0,
-        "shouldDisplayMessage" : false,
-        "hasContent" : false
+        "shouldDisplayMessage" : false
       } ],
       "attachments" : [ ],
       "parameters" : [ ],
+      "hasContent" : true,
       "stepsCount" : 2,
       "attachmentsCount" : 0,
-      "shouldDisplayMessage" : false,
-      "hasContent" : true
+      "shouldDisplayMessage" : false
     } ],
     "attachments" : [ ],
     "parameters" : [ ],
+    "hasContent" : true,
     "stepsCount" : 5,
     "attachmentsCount" : 0,
-    "shouldDisplayMessage" : false,
-    "hasContent" : true
+    "shouldDisplayMessage" : false
   },
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az292-87"
+    "value" : "fv-az290-169"
   }, {
     "name" : "thread",
-    "value" : "5573@fv-az292-87.main(1)"
+    "value" : "5592@fv-az290-169.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -142,6 +142,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "53debcefb06c8a4c.json",
+  "source" : "c18c9d25b42223f8.json",
   "parameterValues" : [ ]
 }
