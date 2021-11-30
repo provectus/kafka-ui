@@ -1478,6 +1478,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldError'
+        stackTrace:
+          type: string
 
     FieldError:
       type: object
@@ -1491,6 +1493,14 @@ components:
           items:
             type: string
 
+    MetricsCollectionError:
+      type: object
+      properties:
+        message:
+          type: string
+        stackTrace:
+          type: string
+
     Cluster:
       type: object
       properties:
@@ -1500,6 +1510,8 @@ components:
           type: boolean
         status:
           $ref: '#/components/schemas/ServerStatus'
+        lastError:
+          $ref: '#/components/schemas/MetricsCollectionError'
         brokerCount:
           type: integer
         onlinePartitionCount:
