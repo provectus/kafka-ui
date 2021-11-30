@@ -1,4 +1,4 @@
-import StyledMenuItem from 'components/Nav/ClusterMenuItem/ClusterMenuItem.styled';
+import { StyledMenuItem } from 'components/Nav/ClusterMenuItem/ClusterMenuItem.styled';
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 

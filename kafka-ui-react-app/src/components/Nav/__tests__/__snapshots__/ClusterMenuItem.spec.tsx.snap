@@ -62,7 +62,7 @@ exports[`ClusterMenuItem matches the snapshot 1`] = `
     <ClusterMenuItem
       to="/test"
     >
-      <StyledMenuItem
+      <styled.li
         to="/test"
       >
         <li
@@ -97,7 +97,7 @@ exports[`ClusterMenuItem matches the snapshot 1`] = `
             </Link>
           </NavLink>
         </li>
-      </StyledMenuItem>
+      </styled.li>
     </ClusterMenuItem>
   </Router>
 </StaticRouter>
