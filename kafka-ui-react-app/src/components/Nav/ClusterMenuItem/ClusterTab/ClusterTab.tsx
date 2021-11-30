@@ -1,4 +1,4 @@
-import StyledClusterTab from 'components/Nav/ClusterMenuItem/ClusterTab/ClusterTab.styled';
+import { StyledClusterTab } from 'components/Nav/ClusterMenuItem/ClusterTab/ClusterTab.styled';
 import { ServerStatus } from 'generated-sources';
 import React from 'react';
 import ClusterStatusIcon from 'components/Nav/ClusterStatusIcon';

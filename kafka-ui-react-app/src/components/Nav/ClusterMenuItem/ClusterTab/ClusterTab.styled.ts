@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyledClusterTab = styled.li`
+export const StyledClusterTab = styled.li`
   font-size: 14px;
   font-weight: 500;
   user-select: none;
@@ -32,5 +32,3 @@ const StyledClusterTab = styled.li`
     }
   }
 `;
-
-export default StyledClusterTab;

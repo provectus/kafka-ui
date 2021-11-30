@@ -2,12 +2,12 @@ import React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
 import styled from 'styled-components';
 
-import StyledIcon from './InputIcon.styled';
-import StyledInput, { StyledInputProps } from './Input.styled';
+import { InputIcon } from './InputIcon.styled';
+import * as S from './Input.styled';
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement>,
-    Omit<StyledInputProps, 'hasLeftIcon'> {
+    Omit<S.InputProps, 'hasLeftIcon'> {
   name?: string;
   hookFormOptions?: RegisterOptions;
   leftIcon?: string;
@@ -27,14 +27,10 @@ const Input: React.FC<InputProps> = ({
   return (
     <div className={className}>
       {leftIcon && (
-        <StyledIcon
-          className={leftIcon}
-          position="left"
-          inputSize={inputSize}
-        />
+        <InputIcon className={leftIcon} position="left" inputSize={inputSize} />
       )}
       {name ? (
-        <StyledInput
+        <S.Input
           className={className}
           inputSize={inputSize}
           {...methods.register(name, { ...hookFormOptions })}
@@ -42,7 +38,7 @@ const Input: React.FC<InputProps> = ({
           {...rest}
         />
       ) : (
-        <StyledInput
+        <S.Input
           className={className}
           inputSize={inputSize}
           hasLeftIcon={!!leftIcon}
@@ -50,7 +46,7 @@ const Input: React.FC<InputProps> = ({
         />
       )}
       {rightIcon && (
-        <StyledIcon
+        <InputIcon
           className={rightIcon}
           position="right"
           inputSize={inputSize}

@@ -1,5 +1,4 @@
 import React from 'react';
-import cx from 'classnames';
 import { Cluster } from 'generated-sources';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
@@ -10,11 +9,11 @@ import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
 import Alert from 'components/Alert/Alert';
-import 'components/App.scss';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
 import Breadcrumb from './common/Breadcrumb/Breadcrumb';
+import * as S from './App.styled';
 
 export interface AppProps {
   isClusterListFetched?: boolean;
@@ -50,48 +49,37 @@ const App: React.FC<AppProps> = ({
 
   return (
     <ThemeProvider theme={theme}>
-      <div
-        className={cx('Layout', { 'Layout--sidebarVisible': isSidebarVisible })}
-      >
-        <nav
-          className="navbar is-fixed-top is-white Layout__header"
-          role="navigation"
-          aria-label="main navigation"
-        >
-          <div className="navbar-brand">
-            <div
-              className={cx('navbar-burger', 'ml-0', {
-                'is-active': isSidebarVisible,
-              })}
+      <S.Layout>
+        <S.Navbar role="navigation" aria-label="main navigation">
+          <S.NavbarBrand>
+            <S.NavbarBurger
               onClick={onBurgerClick}
               onKeyDown={onBurgerClick}
               role="button"
               tabIndex={0}
             >
-              <span />
-              <span />
-              <span />
-            </div>
+              <S.Span role="separator" />
+              <S.Span role="separator" />
+              <S.Span role="separator" />
+            </S.NavbarBurger>
 
-            <a className="navbar-item title is-5 is-marginless" href="/ui">
-              UI for Apache Kafka
-            </a>
+            <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>
 
-            <div className="navbar-item">
+            <S.NavbarItem>
               <Version tag={GIT_TAG} commit={GIT_COMMIT} />
-            </div>
-          </div>
-        </nav>
+            </S.NavbarItem>
+          </S.NavbarBrand>
+        </S.Navbar>
 
-        <main className="Layout__container">
-          <div className="Layout__sidebar has-shadow has-background-white">
+        <S.Container>
+          <S.Sidebar $visible={isSidebarVisible}>
             <Nav
               clusters={clusters}
               isClusterListFetched={isClusterListFetched}
             />
-          </div>
-          <div
-            className="Layout__sidebarOverlay is-overlay"
+          </S.Sidebar>
+          <S.Overlay
+            $visible={isSidebarVisible}
             onClick={closeSidebar}
             onKeyDown={closeSidebar}
             tabIndex={-1}
@@ -115,9 +103,9 @@ const App: React.FC<AppProps> = ({
           ) : (
             <PageLoader />
           )}
-        </main>
+        </S.Container>
 
-        <div className="Layout__alerts">
+        <S.Alerts role="toolbar">
           {alerts.map(({ id, type, title, message, response, createdAt }) => (
             <Alert
               key={id}
@@ -129,8 +117,8 @@ const App: React.FC<AppProps> = ({
               createdAt={createdAt}
             />
           ))}
-        </div>
-      </div>
+        </S.Alerts>
+      </S.Layout>
     </ThemeProvider>
   );
 };

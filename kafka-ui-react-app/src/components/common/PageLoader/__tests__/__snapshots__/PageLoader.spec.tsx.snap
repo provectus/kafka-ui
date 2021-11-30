@@ -34,9 +34,12 @@ exports[`PageLoader matches the snapshot 1`] = `
     <div
       className="c0"
     >
-      <styled.div>
+      <styled.div
+        role="progressbar"
+      >
         <div
           className="c1"
+          role="progressbar"
         />
       </styled.div>
     </div>

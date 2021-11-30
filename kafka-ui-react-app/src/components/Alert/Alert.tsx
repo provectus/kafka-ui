@@ -20,7 +20,7 @@ const Alert: React.FC<AlertProps> = ({
   }, []);
 
   return (
-    <S.Wrapper $type={type}>
+    <S.Wrapper $type={type} role="alert">
       <div>
         <S.Title role="heading">{title}</S.Title>
         <S.Message role="contentinfo">{message}</S.Message>

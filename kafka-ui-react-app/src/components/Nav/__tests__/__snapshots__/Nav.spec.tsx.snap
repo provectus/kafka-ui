@@ -205,7 +205,7 @@ exports[`Nav renders ClusterMenu 1`] = `
               title="Dashboard"
               to="/ui"
             >
-              <StyledMenuItem
+              <styled.li
                 isTopLevel={true}
                 to="/ui"
               >
@@ -249,7 +249,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                     </Link>
                   </NavLink>
                 </li>
-              </StyledMenuItem>
+              </styled.li>
             </ClusterMenuItem>
           </ul>
           <ClusterMenu
@@ -358,7 +358,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                     title="Brokers"
                     to="/ui/clusters/secondLocal/brokers"
                   >
-                    <StyledMenuItem
+                    <styled.li
                       to="/ui/clusters/secondLocal/brokers"
                     >
                       <li
@@ -400,14 +400,14 @@ exports[`Nav renders ClusterMenu 1`] = `
                           </Link>
                         </NavLink>
                       </li>
-                    </StyledMenuItem>
+                    </styled.li>
                   </ClusterMenuItem>
                   <ClusterMenuItem
                     activeClassName="is-active"
                     title="Topics"
                     to="/ui/clusters/secondLocal/topics"
                   >
-                    <StyledMenuItem
+                    <styled.li
                       to="/ui/clusters/secondLocal/topics"
                     >
                       <li
@@ -449,14 +449,14 @@ exports[`Nav renders ClusterMenu 1`] = `
                           </Link>
                         </NavLink>
                       </li>
-                    </StyledMenuItem>
+                    </styled.li>
                   </ClusterMenuItem>
                   <ClusterMenuItem
                     activeClassName="is-active"
                     title="Consumers"
                     to="/ui/clusters/secondLocal/consumer-groups"
                   >
-                    <StyledMenuItem
+                    <styled.li
                       to="/ui/clusters/secondLocal/consumer-groups"
                     >
                       <li
@@ -498,7 +498,7 @@ exports[`Nav renders ClusterMenu 1`] = `
                           </Link>
                         </NavLink>
                       </li>
-                    </StyledMenuItem>
+                    </styled.li>
                   </ClusterMenuItem>
                 </ul>
               </ul>

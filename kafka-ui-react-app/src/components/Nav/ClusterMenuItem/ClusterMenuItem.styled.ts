@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 import { MenuItemProps } from './ClusterMenuItem';
 
-const StyledMenuItem = styled.li<MenuItemProps>`
+export const StyledMenuItem = styled.li<MenuItemProps>`
   font-size: 14px;
   font-weight: ${(props) => (props.isTopLevel ? 500 : 'normal')};
   height: 32px;
@@ -30,7 +30,3 @@ const StyledMenuItem = styled.li<MenuItemProps>`
     }
   }
 `;
-
-StyledMenuItem.displayName = 'StyledMenuItem';
-
-export default StyledMenuItem;

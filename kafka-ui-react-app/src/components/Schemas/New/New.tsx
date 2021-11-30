@@ -6,7 +6,7 @@ import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubject, SchemaType } from 'generated-sources';
 import { SCHEMA_NAME_VALIDATION_PATTERN } from 'lib/constants';
 import { useHistory, useParams } from 'react-router';
-import InputLabel from 'components/common/Input/InputLabel.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
