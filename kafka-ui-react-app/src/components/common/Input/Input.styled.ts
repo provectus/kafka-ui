@@ -1,12 +1,12 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-export interface StyledInputProps {
+export interface InputProps {
   inputSize?: 'M' | 'L';
   hasLeftIcon: boolean;
 }
 
-const StyledInput = styled.input<StyledInputProps>`
+export const Input = styled.input<InputProps>`
   border: 1px ${Colors.neutral[30]} solid;
   border-radius: 4px;
   height: ${(props) => (props.inputSize === 'M' ? '32px' : '40px')};
@@ -50,5 +50,3 @@ export const FormError = styled.p`
   color: ${Colors.red[50]};
   font-size: 12px;
 `;
-
-export default StyledInput;

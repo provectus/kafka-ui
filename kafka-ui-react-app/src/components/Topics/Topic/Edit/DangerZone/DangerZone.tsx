@@ -3,7 +3,7 @@ import { Button } from 'components/common/Button/Button';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
-import InputLabel from 'components/common/Input/InputLabel.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import React from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 

@@ -7,7 +7,7 @@ interface Props {
   inputSize: 'M' | 'L';
 }
 
-const StyledIcon = styled.i<Props>`
+export const InputIcon = styled.i<Props>`
   position: absolute;
   top: 50%;
   line-height: 0;
@@ -18,5 +18,3 @@ const StyledIcon = styled.i<Props>`
   width: 11px;
   color: ${Colors.neutral[70]};
 `;
-
-export default StyledIcon;

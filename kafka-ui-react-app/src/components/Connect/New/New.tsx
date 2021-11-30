@@ -9,7 +9,7 @@ import { clusterConnectConnectorPath } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import InputLabel from 'components/common/Input/InputLabel.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Select from 'components/common/Select/Select';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';

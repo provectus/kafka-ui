@@ -20,7 +20,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
 import { useHistory } from 'react-router';
 import Select from 'components/common/Select/Select';
-import InputLabel from 'components/common/Input/InputLabel.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';

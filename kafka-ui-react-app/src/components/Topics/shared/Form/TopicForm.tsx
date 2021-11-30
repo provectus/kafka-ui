@@ -7,7 +7,7 @@ import Select from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
-import InputLabel from 'components/common/Input/InputLabel.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styles';
 

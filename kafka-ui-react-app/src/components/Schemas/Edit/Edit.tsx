@@ -12,7 +12,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
-import InputLabel from 'components/common/Input/InputLabel.styled';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import { EditorsWrapper, EditWrapper } from './Edit.styled';
