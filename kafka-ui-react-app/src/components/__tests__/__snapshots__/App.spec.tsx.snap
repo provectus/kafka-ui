@@ -436,6 +436,12 @@ Object {
   }
 }
 
+@media screen and (min-width:1024px) {
+  .c3 {
+    display: none;
+  }
+}
+
 <body>
     <div>
       <div
@@ -617,7 +623,7 @@ Object {
           class="sc-xyEDr jjstZO"
         >
           <div
-            class="sc-jGVbWl jCdpjm"
+            class="sc-jGVbWl fVDaRv"
             role="button"
             tabindex="0"
           >

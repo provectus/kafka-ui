@@ -122,6 +122,10 @@ export const NavbarBurger = styled.div`
   &:hover {
     background-color: ${theme.menuStyles.backgroundColor.hover};
   }
+
+  @media screen and (min-width: 1024px) {
+    display: none;
+  }
 `;
 
 export const Span = styled.span`
