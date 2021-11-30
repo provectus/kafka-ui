@@ -1,9 +1,6 @@
 import styled from 'styled-components';
 import theme from 'theme/theme';
 
-type IsActive = boolean;
-type IsVisible = boolean;
-
 export const Layout = styled.div`
   min-width: 1200px;
 
@@ -37,7 +34,7 @@ export const Container = styled.main`
   }
 `;
 
-export const Sidebar = styled.div<{ $isVisible: IsVisible }>`
+export const Sidebar = styled.div`
   width: ${theme.layout.navBarWidth};
   display: flex;
   flex-direction: column;
@@ -53,14 +50,16 @@ export const Sidebar = styled.div<{ $isVisible: IsVisible }>`
   background: ${theme.menuStyles.backgroundColor.normal};
 
   @media screen and (max-width: 1023px) {
-    transform: ${({ $isVisible }) =>
-      $isVisible ? `translate3d(${theme.layout.navBarWidth}, 0, 0)` : 'none'};
+    &.visible {
+      transform: translate3d(${theme.layout.navBarWidth}, 0, 0);
+    }
+
     left: -${theme.layout.navBarWidth};
     z-index: 100;
   }
 `;
 
-export const Overlay = styled.div<{ $isVisible: IsVisible }>`
+export const Overlay = styled.div`
   height: calc(100vh - ${theme.layout.navBarHeight});
   z-index: 99;
   display: block;
@@ -75,10 +74,11 @@ export const Overlay = styled.div<{ $isVisible: IsVisible }>`
   top: 0;
 
   @media screen and (max-width: 1023px) {
-    visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
-    opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
-    background-color: ${({ $isVisible }) =>
-      $isVisible ? 'rgba(34, 41, 47, 0.5)' : 'transparent'};
+    &.visible {
+      visibility: 'visible';
+      opacity: 1;
+      background-color: rgba(34, 41, 47, 0.5);
+    }
   }
 `;
 

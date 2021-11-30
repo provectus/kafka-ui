@@ -417,19 +417,22 @@ Object {
 
 @media screen and (max-width:1023px) {
   .c8 {
-    -webkit-transform: none;
-    -ms-transform: none;
-    transform: none;
     left: -201px;
     z-index: 100;
+  }
+
+  .c8.visible {
+    -webkit-transform: translate3d(201px,0,0);
+    -ms-transform: translate3d(201px,0,0);
+    transform: translate3d(201px,0,0);
   }
 }
 
 @media screen and (max-width:1023px) {
-  .c11 {
-    visibility: hidden;
-    opacity: 0;
-    background-color: transparent;
+  .c11.visible {
+    visibility: 'visible';
+    opacity: 1;
+    background-color: rgba(34,41,47,0.5);
   }
 }
 
@@ -646,7 +649,7 @@ Object {
         class="sc-biBsmb jNhsQo"
       >
         <div
-          class="sc-eHfRjS hpkfEn"
+          class="sc-eHfRjS hGzBbA"
         >
           <aside
             class="has-shadow has-background-white sc-hKgJUU dAOeGn"
@@ -668,7 +671,7 @@ Object {
         </div>
         <div
           aria-hidden="true"
-          class="sc-hzMMVR dQrYdl"
+          class="sc-hzMMVR SlYrk"
           tabindex="-1"
         />
         <div>
