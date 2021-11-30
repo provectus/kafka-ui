@@ -11,7 +11,7 @@ services:
       - 2182:2181
 
   kafka1:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     depends_on:
       - zookeeper1
     environment:
@@ -54,7 +54,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     volumes:
        - ./message.json:/data/message.json
     depends_on:
