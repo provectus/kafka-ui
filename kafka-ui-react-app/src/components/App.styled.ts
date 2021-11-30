@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import theme from 'theme/theme';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -22,60 +21,61 @@ export const Alerts = styled.div`
   }
 `;
 
-export const Container = styled.main`
-  margin-top: ${theme.layout.navBarHeight};
-  margin-left: ${theme.layout.navBarWidth};
-  position: relative;
-  z-index: 20;
+export const Container = styled.main(
+  ({ theme }) => css`
+    margin-top: ${theme.layout.navBarHeight};
+    margin-left: ${theme.layout.navBarWidth};
+    position: relative;
+    z-index: 20;
 
-  @media screen and (max-width: 1023px) {
-    margin-left: initial;
-    margin-top: 3.5rem;
-  }
-`;
+    @media screen and (max-width: 1023px) {
+      margin-left: initial;
+      margin-top: 3.5rem;
+    }
+  `
+);
 
-export const Sidebar = styled.div<{ $visible: boolean }>`
-  width: ${theme.layout.navBarWidth};
-  display: flex;
-  flex-direction: column;
-  border-right: 1px solid #e7e7e7;
-  position: fixed;
-  top: ${theme.layout.navBarHeight};
-  left: 0;
-  bottom: 0;
-  padding: 8px 16px;
-  overflow-y: scroll;
-  transition: width 0.25s, opacity 0.25s, transform 0.25s,
-    -webkit-transform 0.25s;
-  background: ${theme.menuStyles.backgroundColor.normal};
-
-  @media screen and (max-width: 1023px) {
-    ${(props) =>
-      props.$visible &&
-      css`
+export const Sidebar = styled.div<{ $visible: boolean }>(
+  ({ theme, $visible }) => css`
+    width: ${theme.layout.navBarWidth};
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e7e7e7;
+    position: fixed;
+    top: ${theme.layout.navBarHeight};
+    left: 0;
+    bottom: 0;
+    padding: 8px 16px;
+    overflow-y: scroll;
+    transition: width 0.25s, opacity 0.25s, transform 0.25s,
+      -webkit-transform 0.25s;
+    background: ${theme.menuStyles.backgroundColor.normal};
+    ${$visible &&
+    css`
+      @media screen and (max-width: 1023px) {
         transform: translate3d(${theme.layout.navBarWidth}, 0, 0);
-      `}
+        left: -${theme.layout.navBarWidth};
+        z-index: 100;
+      }
+    `}
+  `
+);
 
-    left: -${theme.layout.navBarWidth};
-    z-index: 100;
-  }
-`;
-
-export const Overlay = styled.div<{ $visible: boolean }>`
-  height: calc(100vh - ${theme.layout.navBarHeight});
-  z-index: 99;
-  display: block;
-  visibility: 'hidden';
-  opacity: 0;
-  -webkit-transition: all 0.5s ease;
-  transition: all 0.5s ease;
-  bottom: 0;
-  left: 0;
-  position: absolute;
-  right: 0;
-  top: 0;
-  ${(props) =>
-    props.$visible &&
+export const Overlay = styled.div<{ $visible: boolean }>(
+  ({ theme, $visible }) => css`
+    height: calc(100vh - ${theme.layout.navBarHeight});
+    z-index: 99;
+    display: block;
+    visibility: 'hidden';
+    opacity: 0;
+    -webkit-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    ${$visible &&
     css`
       @media screen and (max-width: 1023px) {
         visibility: 'visible';
@@ -83,18 +83,21 @@ export const Overlay = styled.div<{ $visible: boolean }>`
         background-color: rgba(34, 41, 47, 0.5);
       }
     `}
-`;
+  `
+);
 
-export const Navbar = styled.nav`
-  border-bottom: 1px solid #e7e7e7;
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 30;
-  background-color: ${theme.menuStyles.backgroundColor.normal};
-  min-height: 3.25rem;
-`;
+export const Navbar = styled.nav(
+  ({ theme }) => css`
+    border-bottom: 1px solid #e7e7e7;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 30;
+    background-color: ${theme.menuStyles.backgroundColor.normal};
+    min-height: 3.25rem;
+  `
+);
 
 export const NavbarBrand = styled.div`
   display: flex;
@@ -113,60 +116,66 @@ export const NavbarItem = styled.div`
   padding: 0.5rem 0.75rem;
 `;
 
-export const NavbarBurger = styled.div`
-  display: block;
-  position: relative;
-  cursor: pointer;
-  height: 3.25rem;
-  width: 3.25rem;
-  margin: 0;
-  padding: 0;
+export const NavbarBurger = styled.div(
+  ({ theme }) => css`
+    display: block;
+    position: relative;
+    cursor: pointer;
+    height: 3.25rem;
+    width: 3.25rem;
+    margin: 0;
+    padding: 0;
 
-  &:hover {
-    background-color: ${theme.menuStyles.backgroundColor.hover};
-  }
+    &:hover {
+      background-color: ${theme.menuStyles.backgroundColor.hover};
+    }
 
-  @media screen and (min-width: 1024px) {
-    display: none;
-  }
-`;
+    @media screen and (min-width: 1024px) {
+      display: none;
+    }
+  `
+);
 
-export const Span = styled.span`
-  display: block;
-  position: absolute;
-  background: ${theme.menuStyles.color.active};
-  height: 1px;
-  left: calc(50% - 8px);
-  transform-origin: center;
-  transition-duration: 86ms;
-  transition-property: background-color, opacity, transform, -webkit-transform;
-  transition-timing-function: ease-out;
-  width: 16px;
+export const Span = styled.span(
+  ({ theme }) => css`
+    display: block;
+    position: absolute;
+    background: ${theme.menuStyles.color.active};
+    height: 1px;
+    left: calc(50% - 8px);
+    transform-origin: center;
+    transition-duration: 86ms;
+    transition-property: background-color, opacity, transform, -webkit-transform;
+    transition-timing-function: ease-out;
+    width: 16px;
 
-  &:first-child {
-    top: calc(50% - 6px);
-  }
-  &:nth-child(2) {
-    top: calc(50% - 1px);
-  }
-  &:nth-child(3) {
-    top: calc(50% + 4px);
-  }
-`;
+    &:first-child {
+      top: calc(50% - 6px);
+    }
+    &:nth-child(2) {
+      top: calc(50% - 1px);
+    }
+    &:nth-child(3) {
+      top: calc(50% + 4px);
+    }
+  `
+);
 
-export const Hyperlink = styled.a`
-  display: flex;
-  position: relative;
-  flex-grow: 0;
-  flex-shrink: 0;
-  align-items: center;
-  margin: 0;
-  color: ${theme.menuStyles.color.active};
-  font-size: 1.25rem;
-  font-weight: 600;
-  cursor: pointer;
-  line-height: 1.5;
-  padding: 0.5rem 0.75rem;
-  text-decoration: none;
-  word-break: break-word;
-`;
+export const Hyperlink = styled.a(
+  ({ theme }) => css`
+    display: flex;
+    position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
+    align-items: center;
+    margin: 0;
+    color: ${theme.menuStyles.color.active};
+    font-size: 1.25rem;
+    font-weight: 600;
+    cursor: pointer;
+    line-height: 1.5;
+    padding: 0.5rem 0.75rem;
+    text-decoration: none;
+    word-break: break-word;
+  `
+);
