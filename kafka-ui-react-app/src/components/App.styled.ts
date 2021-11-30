@@ -50,14 +50,12 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     transition: width 0.25s, opacity 0.25s, transform 0.25s,
       -webkit-transform 0.25s;
     background: ${theme.menuStyles.backgroundColor.normal};
-    ${$visible &&
-    css`
-      @media screen and (max-width: 1023px) {
-        transform: translate3d(${theme.layout.navBarWidth}, 0, 0);
-        left: -${theme.layout.navBarWidth};
-        z-index: 100;
-      }
-    `}
+    @media screen and (max-width: 1023px) {
+      ${$visible &&
+      `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
+      left: -${theme.layout.navBarWidth};
+      z-index: 100;
+    }
   `
 );
 

@@ -415,6 +415,13 @@ Object {
   }
 }
 
+@media screen and (max-width:1023px) {
+  .c8 {
+    left: -201px;
+    z-index: 100;
+  }
+}
+
 @media screen and (min-width:1024px) {
   .c3 {
     display: none;
@@ -634,7 +641,7 @@ Object {
         class="sc-biBsmb cQIXNw"
       >
         <div
-          class="sc-eHfRjS htklyK"
+          class="sc-eHfRjS gaEMZx"
         >
           <aside
             class="has-shadow has-background-white sc-hKgJUU dAOeGn"
