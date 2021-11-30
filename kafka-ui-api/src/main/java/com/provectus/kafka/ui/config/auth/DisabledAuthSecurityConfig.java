@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.config;
+package com.provectus.kafka.ui.config.auth;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +10,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @Configuration
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.enabled", havingValue = "false")
-public class SecurityConfig {
+public class DisabledAuthSecurityConfig {
 
   @Bean
   public SecurityWebFilterChain configure(ServerHttpSecurity http) {

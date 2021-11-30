@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.config;
+package com.provectus.kafka.ui.config.auth;
 
 import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
 import lombok.AllArgsConstructor;
