@@ -422,10 +422,6 @@ Object {
   }
 }
 
-@media screen and (max-width:1023px) {
-
-}
-
 @media screen and (min-width:1024px) {
   .c3 {
     display: none;
@@ -645,7 +641,7 @@ Object {
         class="sc-biBsmb jNhsQo"
       >
         <div
-          class="sc-eHfRjS iZMBHK"
+          class="sc-eHfRjS bhQyHe"
         >
           <aside
             class="has-shadow has-background-white sc-hKgJUU dAOeGn"
@@ -667,7 +663,7 @@ Object {
         </div>
         <div
           aria-hidden="true"
-          class="sc-hzMMVR sJoAR"
+          class="sc-hzMMVR XLQNO"
           tabindex="-1"
         />
         <div>

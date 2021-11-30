@@ -34,59 +34,56 @@ export const Container = styled.main`
   }
 `;
 
-export const Sidebar = styled.div<{ $visible: boolean }>(
-  ({ $visible }) => css`
-    width: ${theme.layout.navBarWidth};
-    display: flex;
-    flex-direction: column;
-    border-right: 1px solid #e7e7e7;
-    position: fixed;
-    top: ${theme.layout.navBarHeight};
-    left: 0;
-    bottom: 0;
-    padding: 8px 16px;
-    overflow-y: scroll;
-    transition: width 0.25s, opacity 0.25s, transform 0.25s,
-      -webkit-transform 0.25s;
-    background: ${theme.menuStyles.backgroundColor.normal};
+export const Sidebar = styled.div<{ $visible: boolean }>`
+  width: ${theme.layout.navBarWidth};
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e7e7e7;
+  position: fixed;
+  top: ${theme.layout.navBarHeight};
+  left: 0;
+  bottom: 0;
+  padding: 8px 16px;
+  overflow-y: scroll;
+  transition: width 0.25s, opacity 0.25s, transform 0.25s,
+    -webkit-transform 0.25s;
+  background: ${theme.menuStyles.backgroundColor.normal};
 
-    @media screen and (max-width: 1023px) {
-      ${$visible &&
+  @media screen and (max-width: 1023px) {
+    ${(props) =>
+      props.$visible &&
       css`
         transform: translate3d(${theme.layout.navBarWidth}, 0, 0);
       `}
 
-      left: -${theme.layout.navBarWidth};
-      z-index: 100;
-    }
-  `
-);
+    left: -${theme.layout.navBarWidth};
+    z-index: 100;
+  }
+`;
 
-export const Overlay = styled.div<{ $visible: boolean }>(
-  ({ $visible }) => css`
-    height: calc(100vh - ${theme.layout.navBarHeight});
-    z-index: 99;
-    display: block;
-    visibility: 'hidden';
-    opacity: 0;
-    -webkit-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-
-    @media screen and (max-width: 1023px) {
-      ${$visible &&
-      css`
+export const Overlay = styled.div<{ $visible: boolean }>`
+  height: calc(100vh - ${theme.layout.navBarHeight});
+  z-index: 99;
+  display: block;
+  visibility: 'hidden';
+  opacity: 0;
+  -webkit-transition: all 0.5s ease;
+  transition: all 0.5s ease;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  ${(props) =>
+    props.$visible &&
+    css`
+      @media screen and (max-width: 1023px) {
         visibility: 'visible';
         opacity: 1;
         background-color: rgba(34, 41, 47, 0.5);
-      `}
-    }
-  `
-);
+      }
+    `}
+`;
 
 export const Navbar = styled.nav`
   border-bottom: 1px solid #e7e7e7;
