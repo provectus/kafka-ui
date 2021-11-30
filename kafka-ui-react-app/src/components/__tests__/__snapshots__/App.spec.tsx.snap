@@ -4,6 +4,35 @@ exports[`App view matches snapshot 1`] = `
 Object {
   "asFragment": [Function],
   "baseElement": .c10 {
+  padding-bottom: 4px;
+}
+
+.c9 > .c9 {
+  padding-left: 8px;
+}
+
+.c12 {
+  width: 100%;
+  padding: 0.5em 0.75em;
+  cursor: pointer;
+  -webkit-text-decoration: none;
+  text-decoration: none;
+  margin: 0px 0px;
+  background-color: #FFFFFF;
+  color: #73848C;
+}
+
+.c12:hover {
+  background-color: #F1F2F3;
+  color: #73848C;
+}
+
+.c12.is-active {
+  background-color: #E3E6E8;
+  color: #171A1C;
+}
+
+.c11 {
   font-size: 14px;
   font-weight: 500;
   height: 32px;
@@ -17,32 +46,7 @@ Object {
   user-select: none;
 }
 
-.c10 a {
-  width: 100%;
-  padding: 0.5em 0.75em;
-  cursor: pointer;
-  -webkit-text-decoration: none;
-  text-decoration: none;
-  margin: 0px 0px;
-  background-color: #FFFFFF;
-  color: #73848C;
-}
-
-.c10 a:hover {
-  background-color: #F1F2F3;
-  color: #73848C;
-}
-
-.c10 a.is-active {
-  background-color: #E3E6E8;
-  color: #171A1C;
-}
-
-.c9 > * {
-  padding-bottom: 4px;
-}
-
-.c12 {
+.c14 {
   padding: 1.5rem 1rem;
   background: #F1F2F3;
   margin-bottom: 0.5rem !important;
@@ -56,7 +60,7 @@ Object {
   flex-wrap: wrap;
 }
 
-.c15 {
+.c17 {
   background-color: white;
   height: 68px;
   width: -webkit-fit-content;
@@ -87,7 +91,7 @@ Object {
   flex-grow: 1;
 }
 
-.c16 {
+.c18 {
   font-weight: 500;
   font-size: 12px;
   color: #73848C;
@@ -102,7 +106,7 @@ Object {
   gap: 10px;
 }
 
-.c13 {
+.c15 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -113,22 +117,22 @@ Object {
   flex-wrap: wrap;
 }
 
-.c13 > .c14:first-child {
+.c15 > .c16:first-child {
   border-top-left-radius: 8px;
   border-bottom-left-radius: 8px;
 }
 
-.c13 > .c14:last-child {
+.c15 > .c16:last-child {
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
 }
 
-.c18 {
+.c20 {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c17 {
+.c19 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -142,7 +146,7 @@ Object {
   text-align: center;
 }
 
-.c19 {
+.c21 {
   border: none;
   border-radius: 16px;
   height: 20px;
@@ -156,7 +160,7 @@ Object {
   text-align: center;
 }
 
-.c20 {
+.c22 {
   position: relative;
   display: inline-block;
   width: 34px;
@@ -164,7 +168,7 @@ Object {
   margin-right: 8px;
 }
 
-.c23 {
+.c25 {
   position: absolute;
   cursor: pointer;
   top: 0;
@@ -177,7 +181,7 @@ Object {
   border-radius: 20px;
 }
 
-.c23::before {
+.c25::before {
   position: absolute;
   content: '';
   height: 14px;
@@ -190,21 +194,21 @@ Object {
   border-radius: 50%;
 }
 
-.c21 {
+.c23 {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.c21:checked + .c22 {
+.c23:checked + .c24 {
   background-color: #29A352;
 }
 
-.c21:focus + .c22 {
+.c23:focus + .c24 {
   box-shadow: 0 0 1px #29A352;
 }
 
-.c21:checked + .c22:before {
+.c23:checked + .c24:before {
   -webkit-transform: translateX(14px);
   -ms-transform: translateX(14px);
   transform: translateX(14px);
@@ -214,7 +218,7 @@ Object {
   min-width: 1200px;
 }
 
-.c24 {
+.c26 {
   max-width: 40%;
   width: 500px;
   position: fixed;
@@ -252,19 +256,16 @@ Object {
   background: #FFFFFF;
 }
 
-.c11 {
+.c13 {
   height: calc(100vh - 3.25rem);
   z-index: 99;
-  display: block;
   visibility: 'hidden';
   opacity: 0;
   -webkit-transition: all 0.5s ease;
   -webkit-transition: all 0.5s ease;
   transition: all 0.5s ease;
-  bottom: 0;
   left: 0;
   position: absolute;
-  right: 0;
   top: 0;
 }
 
@@ -390,8 +391,8 @@ Object {
 }
 
 @media screen and (max-width:1023px) {
-  .c13 > .c14:first-child,
-  .c13 > .c14:last-child {
+  .c15 > .c16:first-child,
+  .c15 > .c16:last-child {
     border-radius: 0;
   }
 }
@@ -403,7 +404,7 @@ Object {
 }
 
 @media screen and (max-width:1023px) {
-  .c24 {
+  .c26 {
     max-width: initial;
   }
 }
@@ -411,7 +412,6 @@ Object {
 @media screen and (max-width:1023px) {
   .c7 {
     margin-left: initial;
-    margin-top: 3.5rem;
   }
 }
 
@@ -476,15 +476,15 @@ Object {
           <div
             class="c8"
           >
-            <aside
-              class="has-shadow has-background-white c9"
-            >
-              <ul>
+            <aside>
+              <ul
+                class="c9 c10"
+              >
                 <li
-                  class="c10"
-                  to="/ui"
+                  class="c11"
                 >
                   <a
+                    class="c12"
                     href="/ui"
                     title="Dashboard"
                   >
@@ -496,26 +496,26 @@ Object {
           </div>
           <div
             aria-hidden="true"
-            class="c11"
+            class="c13"
             tabindex="-1"
           />
           <div>
             <div
-              class="c12"
+              class="c14"
             >
               <div>
                 <div
-                  class="c13"
+                  class="c15"
                 >
                   <div
-                    class="c14 c15"
+                    class="c16 c17"
                   >
                     <div>
                       <div
-                        class="c16"
+                        class="c18"
                       >
                         <p
-                          class="c17"
+                          class="c19"
                         >
                           Online
                         </p>
@@ -529,7 +529,7 @@ Object {
                         </span>
                          
                         <span
-                          class="c18"
+                          class="c20"
                         >
                           clusters
                         </span>
@@ -537,14 +537,14 @@ Object {
                     </div>
                   </div>
                   <div
-                    class="c14 c15"
+                    class="c16 c17"
                   >
                     <div>
                       <div
-                        class="c16"
+                        class="c18"
                       >
                         <p
-                          class="c19"
+                          class="c21"
                         >
                           Offline
                         </p>
@@ -558,7 +558,7 @@ Object {
                         </span>
                          
                         <span
-                          class="c18"
+                          class="c20"
                         >
                           clusters
                         </span>
@@ -572,15 +572,15 @@ Object {
               class="p-4"
             >
               <label
-                class="c20"
+                class="c22"
               >
                 <input
-                  class="c21"
+                  class="c23"
                   name="switchRoundedDefault"
                   type="checkbox"
                 />
                 <span
-                  class="c22 c23"
+                  class="c24 c25"
                 />
               </label>
               <span>
@@ -590,7 +590,7 @@ Object {
           </div>
         </main>
         <div
-          class="c24"
+          class="c26"
           role="toolbar"
         />
       </div>
@@ -598,60 +598,60 @@ Object {
   </body>,
   "container": <div>
     <div
-      class="sc-ikPAEB gQnZIF"
+      class="sc-xyEDr TkGoz"
     >
       <nav
         aria-label="main navigation"
-        class="sc-kYrlTI bjRwJd"
+        class="sc-FyeoB jpYWKP"
         role="navigation"
       >
         <div
-          class="sc-xyEDr jjstZO"
+          class="sc-jXktde efJaBU"
         >
           <div
-            class="sc-jGVbWl dnQXUk"
+            class="sc-fmlJrY fyWCFQ"
             role="button"
             tabindex="0"
           >
             <span
-              class="sc-bQdRvg dKEhtQ"
+              class="sc-ljRaeN hlTLke"
               role="separator"
             />
             <span
-              class="sc-bQdRvg dKEhtQ"
+              class="sc-ljRaeN hlTLke"
               role="separator"
             />
             <span
-              class="sc-bQdRvg dKEhtQ"
+              class="sc-ljRaeN hlTLke"
               role="separator"
             />
           </div>
           <a
-            class="sc-fXoxaI ijyPWD"
+            class="sc-jmhFuu hWDQmv"
             href="/ui"
           >
             UI for Apache Kafka
           </a>
           <div
-            class="sc-dWddBi dBABgl"
+            class="sc-eFuaqX fkSybH"
           />
         </div>
       </nav>
       <main
-        class="sc-biBsmb cQIXNw"
+        class="sc-jGVbWl jYPSHW"
       >
         <div
-          class="sc-eHfRjS gaEMZx"
+          class="sc-bQdRvg aUqYF"
         >
-          <aside
-            class="has-shadow has-background-white sc-hKgJUU dAOeGn"
-          >
-            <ul>
+          <aside>
+            <ul
+              class="sc-bdfBQB dEkqBY"
+            >
               <li
-                class="sc-bdfBQB dLgsMO"
-                to="/ui"
+                class="sc-hKgJUU cpEfIZ"
               >
                 <a
+                  class="sc-dlfnuX dNDAjC"
                   href="/ui"
                   title="Dashboard"
                 >
@@ -663,26 +663,26 @@ Object {
         </div>
         <div
           aria-hidden="true"
-          class="sc-hzMMVR hwUZpu"
+          class="sc-fXoxaI klPPxu"
           tabindex="-1"
         />
         <div>
           <div
-            class="sc-gKseQn hrnPzI"
+            class="sc-iqHYmW idJbnC"
           >
             <div>
               <div
-                class="sc-pGacB biCKdH"
+                class="sc-bqyKOL fdHVfu"
               >
                 <div
-                  class="sc-iBPTik fyFASl"
+                  class="sc-crrszt czFWZS"
                 >
                   <div>
                     <div
-                      class="sc-fubCzh fcIiyF"
+                      class="sc-dQoVA eVlZjo"
                     >
                       <p
-                        class="sc-iqHYmW DqfIR"
+                        class="sc-fodVek kZYxrH"
                       >
                         Online
                       </p>
@@ -696,7 +696,7 @@ Object {
                       </span>
                        
                       <span
-                        class="sc-jrAFXE gMBDpV"
+                        class="sc-kstqJO fyGxaH"
                       >
                         clusters
                       </span>
@@ -704,14 +704,14 @@ Object {
                   </div>
                 </div>
                 <div
-                  class="sc-iBPTik fyFASl"
+                  class="sc-crrszt czFWZS"
                 >
                   <div>
                     <div
-                      class="sc-fubCzh fcIiyF"
+                      class="sc-dQoVA eVlZjo"
                     >
                       <p
-                        class="sc-iqHYmW edOLMN"
+                        class="sc-fodVek bPWvrf"
                       >
                         Offline
                       </p>
@@ -725,7 +725,7 @@ Object {
                       </span>
                        
                       <span
-                        class="sc-jrAFXE gMBDpV"
+                        class="sc-kstqJO fyGxaH"
                       >
                         clusters
                       </span>
@@ -739,15 +739,15 @@ Object {
             class="p-4"
           >
             <label
-              class="sc-bqyKOL fKLSJD"
+              class="sc-idOiZg hpqIin"
             >
               <input
-                class="sc-hBEYId gPWovS"
+                class="sc-hHfuMS jvDzZs"
                 name="switchRoundedDefault"
                 type="checkbox"
               />
               <span
-                class="sc-kstqJO iuEhCo"
+                class="sc-dIUeWJ dvPvSw"
               />
             </label>
             <span>
@@ -757,7 +757,7 @@ Object {
         </div>
       </main>
       <div
-        class="sc-tYqdw dtHNwD"
+        class="sc-dWddBi UeUDU"
         role="toolbar"
       />
     </div>

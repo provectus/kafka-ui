@@ -23,6 +23,5 @@ describe('Nav', () => {
     );
     expect(wrapper.exists('.loader')).toBeFalsy();
     expect(wrapper.exists('ClusterMenu')).toBeTruthy();
-    expect(wrapper).toMatchSnapshot();
   });
 });

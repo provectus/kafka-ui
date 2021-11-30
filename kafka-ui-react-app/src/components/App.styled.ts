@@ -30,7 +30,6 @@ export const Container = styled.main(
 
     @media screen and (max-width: 1023px) {
       margin-left: initial;
-      margin-top: 3.5rem;
     }
   `
 );
@@ -63,19 +62,18 @@ export const Overlay = styled.div<{ $visible: boolean }>(
   ({ theme, $visible }) => css`
     height: calc(100vh - ${theme.layout.navBarHeight});
     z-index: 99;
-    display: block;
     visibility: 'hidden';
     opacity: 0;
     -webkit-transition: all 0.5s ease;
     transition: all 0.5s ease;
-    bottom: 0;
     left: 0;
     position: absolute;
-    right: 0;
     top: 0;
     ${$visible &&
     css`
       @media screen and (max-width: 1023px) {
+        bottom: 0;
+        right: 0;
         visibility: 'visible';
         opacity: 1;
         background-color: rgba(34, 41, 47, 0.5);

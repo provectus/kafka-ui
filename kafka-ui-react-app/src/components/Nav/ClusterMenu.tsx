@@ -10,34 +10,33 @@ import {
   clusterKsqlDbPath,
 } from 'lib/paths';
 
-import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';
-import ClusterTab from './ClusterMenuItem/ClusterTab/ClusterTab';
-import ClusterMenuList from './ClusterMenuList/ClusterMenuList.styled';
+import ClusterMenuItem from './ClusterMenuItem';
+import ClusterTab from './ClusterTab/ClusterTab';
+import * as S from './Nav.styled';
 
 interface Props {
   cluster: Cluster;
 }
 
 const ClusterMenu: React.FC<Props> = ({
-  cluster: { name, status, defaultCluster, features },
+  cluster: { name, status, features },
 }) => {
   const hasFeatureConfigured = React.useCallback(
     (key) => features?.includes(key),
     [features]
   );
-  const [isOpen, setisOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(false);
   return (
-    <ClusterMenuList>
-      <hr />
+    <S.List>
+      <S.Divider />
       <ClusterTab
         title={name}
         status={status}
-        defaultCluster={defaultCluster}
         isOpen={isOpen}
-        toggleClusterMenu={() => setisOpen((prev) => !prev)}
+        toggleClusterMenu={() => setIsOpen((prev) => !prev)}
       />
       {isOpen && (
-        <ul>
+        <S.List>
           <ClusterMenuItem
             to={clusterBrokersPath(name)}
             activeClassName="is-active"
@@ -79,9 +78,9 @@ const ClusterMenu: React.FC<Props> = ({
               title="KSQL DB"
             />
           )}
-        </ul>
+        </S.List>
       )}
-    </ClusterMenuList>
+    </S.List>
   );
 };
 
