@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-const ConfirmationModalWrapper = styled.div`
+export const ConfirmationModalWrapper = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -56,5 +56,3 @@ const ConfirmationModalWrapper = styled.div`
     }
   }
 `;
-
-export default ConfirmationModalWrapper;

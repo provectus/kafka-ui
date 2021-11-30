@@ -1,5 +1,4 @@
 import React from 'react';
-import cx from 'classnames';
 import { Cluster } from 'generated-sources';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from 'components/common/Button/Button';
 
-import ConfirmationModalWrapper from './ConfirmationModal.styled';
+import { ConfirmationModalWrapper } from './ConfirmationModal.styled';
 
 export interface ConfirmationModalProps {
   isOpen?: boolean;
