@@ -39,8 +39,6 @@ const App: React.FC<AppProps> = ({
 
   const location = useLocation();
 
-  const classNameVisibility = isSidebarVisible ? 'visible' : '';
-
   React.useEffect(() => {
     closeSidebar();
   }, [location]);
@@ -74,14 +72,14 @@ const App: React.FC<AppProps> = ({
         </S.Navbar>
 
         <S.Container>
-          <S.Sidebar className={classNameVisibility}>
+          <S.Sidebar $visible={isSidebarVisible}>
             <Nav
               clusters={clusters}
               isClusterListFetched={isClusterListFetched}
             />
           </S.Sidebar>
           <S.Overlay
-            className={classNameVisibility}
+            $visible={isSidebarVisible}
             onClick={closeSidebar}
             onKeyDown={closeSidebar}
             tabIndex={-1}

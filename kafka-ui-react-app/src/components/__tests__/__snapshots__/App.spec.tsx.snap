@@ -420,20 +420,10 @@ Object {
     left: -201px;
     z-index: 100;
   }
-
-  .c8.visible {
-    -webkit-transform: translate3d(201px,0,0);
-    -ms-transform: translate3d(201px,0,0);
-    transform: translate3d(201px,0,0);
-  }
 }
 
 @media screen and (max-width:1023px) {
-  .c11.visible {
-    visibility: 'visible';
-    opacity: 1;
-    background-color: rgba(34,41,47,0.5);
-  }
+
 }
 
 @media screen and (min-width:1024px) {
@@ -655,7 +645,7 @@ Object {
         class="sc-biBsmb jNhsQo"
       >
         <div
-          class="sc-eHfRjS hGzBbA"
+          class="sc-eHfRjS iZMBHK"
         >
           <aside
             class="has-shadow has-background-white sc-hKgJUU dAOeGn"
@@ -677,7 +667,7 @@ Object {
         </div>
         <div
           aria-hidden="true"
-          class="sc-hzMMVR SlYrk"
+          class="sc-hzMMVR sJoAR"
           tabindex="-1"
         />
         <div>
