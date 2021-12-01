@@ -1,0 +1,10 @@
+[ {
+  "name" : "GitHub Actions",
+  "type" : "github",
+  "url" : "https://provectus.github.io/kafka-ui/allure-results",
+  "buildOrder" : 778,
+  "buildName" : "GitHub Actions Run #1525984430",
+  "buildUrl" : "https://github.com/provectus/kafka-ui/actions/runs/1525984430",
+  "reportName" : "Allure Report with history",
+  "reportUrl" : "https://provectus.github.io/kafka-ui/allure-results/778/"
+} ]
