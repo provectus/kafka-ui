@@ -1,6 +1,6 @@
 import React from 'react';
 import { TopicColumnsToSort } from 'generated-sources';
-import StyledTableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
+import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 import cx from 'classnames';
 
 export interface TableHeaderCellProps {
@@ -17,7 +17,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
     props;
 
   return (
-    <StyledTableHeaderCell
+    <S.TableHeaderCell
       className={cx(orderBy && orderBy === orderValue && 'has-text-link-dark')}
       {...props}
     >
@@ -46,7 +46,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
           <i className="fas fa-sort" />
         </span>
       )}
-    </StyledTableHeaderCell>
+    </S.TableHeaderCell>
   );
 };
 
