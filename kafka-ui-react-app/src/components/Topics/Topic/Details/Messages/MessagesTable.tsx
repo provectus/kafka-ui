@@ -1,6 +1,6 @@
 import { Button } from 'components/common/Button/Button';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { SeekDirection, TopicMessage } from 'generated-sources';
 import styled from 'styled-components';
@@ -70,7 +70,7 @@ const MessagesTable: React.FC = () => {
 
   return (
     <>
-      <StyledTable isFullwidth>
+      <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell> </TableHeaderCell>
@@ -107,7 +107,7 @@ const MessagesTable: React.FC = () => {
             </tr>
           )}
         </tbody>
-      </StyledTable>
+      </Table>
       <MessagesPaginationWrapperStyled>
         <Button buttonType="secondary" buttonSize="M" onClick={handleNextClick}>
           Next

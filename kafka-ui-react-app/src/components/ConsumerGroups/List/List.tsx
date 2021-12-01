@@ -1,7 +1,7 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
 import { ConsumerGroup } from 'generated-sources';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
@@ -31,7 +31,7 @@ const List: React.FC<ListProps> = ({ consumerGroups }) => {
           handleSearch={handleInputChange}
         />
       </ControlPanelWrapper>
-      <StyledTable isFullwidth>
+      <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell title="Consumer group ID" />
@@ -60,7 +60,7 @@ const List: React.FC<ListProps> = ({ consumerGroups }) => {
             </tr>
           )}
         </tbody>
-      </StyledTable>
+      </Table>
     </div>
   );
 };

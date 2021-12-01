@@ -1,4 +1,4 @@
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 import React from 'react';
@@ -14,7 +14,7 @@ const TopicContents: React.FC<Props> = ({ consumers }) => {
     <TopicContentWrapper>
       <td colSpan={3}>
         <ContentBox>
-          <StyledTable isFullwidth>
+          <Table isFullwidth>
             <thead>
               <tr>
                 <TableHeaderCell title="Partition" />
@@ -37,7 +37,7 @@ const TopicContents: React.FC<Props> = ({ consumers }) => {
                 </tr>
               ))}
             </tbody>
-          </StyledTable>
+          </Table>
         </ContentBox>
       </td>
     </TopicContentWrapper>

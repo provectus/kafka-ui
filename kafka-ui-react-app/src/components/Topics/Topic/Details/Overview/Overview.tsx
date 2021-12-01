@@ -7,7 +7,7 @@ import MetricsSection from 'components/common/Metrics/MetricsSection';
 import Indicator from 'components/common/Metrics/Indicator';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import {
@@ -76,7 +76,7 @@ const Overview: React.FC<Props> = ({
         </MetricsSection>
       </StyledMetricsWrapper>
       <div>
-        <StyledTable isFullwidth>
+        <Table isFullwidth>
           <thead>
             <tr>
               <TableHeaderCell title="Partition ID" />
@@ -116,7 +116,7 @@ const Overview: React.FC<Props> = ({
               </tr>
             )}
           </tbody>
-        </StyledTable>
+        </Table>
       </div>
     </>
   );

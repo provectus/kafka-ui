@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { Task } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import ListItemContainer from './ListItem/ListItemContainer';
@@ -41,7 +41,7 @@ const Tasks: React.FC<TasksProps> = ({
   }
 
   return (
-    <StyledTable isFullwidth>
+    <Table isFullwidth>
       <thead>
         <tr>
           <TableHeaderCell title="ID" />
@@ -61,7 +61,7 @@ const Tasks: React.FC<TasksProps> = ({
           <ListItemContainer key={task.status?.id} task={task} />
         ))}
       </tbody>
-    </StyledTable>
+    </Table>
   );
 };
 

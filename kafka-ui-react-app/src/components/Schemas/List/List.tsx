@@ -8,7 +8,7 @@ import { clusterSchemaNewPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ClusterContext from 'components/contexts/ClusterContext';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -75,7 +75,7 @@ const List: React.FC<ListProps> = ({
         <PageLoader />
       ) : (
         <div>
-          <StyledTable isFullwidth>
+          <Table isFullwidth>
             <thead>
               <tr>
                 <TableHeaderCell title="Schema Name" />
@@ -96,7 +96,7 @@ const List: React.FC<ListProps> = ({
                 />
               ))}
             </tbody>
-          </StyledTable>
+          </Table>
         </div>
       )}
     </div>

@@ -16,7 +16,7 @@ import { GetTopicsRequest, TopicColumnsToSort } from 'generated-sources';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
@@ -207,7 +207,7 @@ const List: React.FC<TopicsListProps> = ({
               </ConfirmationModal>
             </>
           )}
-          <StyledTable isFullwidth>
+          <Table isFullwidth>
             <thead>
               <tr>
                 {!isReadOnly && <TableHeaderCell />}
@@ -253,7 +253,7 @@ const List: React.FC<TopicsListProps> = ({
                 </tr>
               )}
             </tbody>
-          </StyledTable>
+          </Table>
           <Pagination totalPages={totalPages} />
         </div>
       )}

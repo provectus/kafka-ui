@@ -9,7 +9,7 @@ import {
   StyledMetricsWrapper,
 } from 'components/common/Metrics/Metrics.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
@@ -72,7 +72,7 @@ const ClustersWidget: React.FC<Props> = ({
         <span>Only offline clusters</span>
       </div>
       {clusterList.map((chunkItem) => (
-        <StyledTable key={chunkItem.id} isFullwidth>
+        <Table key={chunkItem.id} isFullwidth>
           <thead>
             <tr>
               <TableHeaderCell title="Cluster name" />
@@ -105,7 +105,7 @@ const ClustersWidget: React.FC<Props> = ({
               </tr>
             ))}
           </tbody>
-        </StyledTable>
+        </Table>
       ))}
     </>
   );
