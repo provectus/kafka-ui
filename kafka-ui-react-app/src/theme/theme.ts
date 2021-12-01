@@ -172,6 +172,10 @@ const theme = {
     unchecked: Colors.neutral[30],
     checked: Colors.green[60],
   },
+  pageLoader: {
+    borderColor: Colors.brand[50],
+    borderBottomColor: Colors.neutral[0],
+  },
 };
 
 export type ThemeType = typeof theme;

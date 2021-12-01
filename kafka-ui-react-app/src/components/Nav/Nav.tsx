@@ -13,15 +13,8 @@ interface Props {
 const Nav: React.FC<Props> = ({ isClusterListFetched, clusters }) => (
   <aside>
     <S.List>
-      <ClusterMenuItem
-        exact
-        to="/ui"
-        activeClassName="is-active"
-        title="Dashboard"
-        isTopLevel
-      />
+      <ClusterMenuItem exact to="/ui" title="Dashboard" isTopLevel />
     </S.List>
-    {!isClusterListFetched && <div className="loader" />}
 
     {isClusterListFetched &&
       clusters.map((cluster) => (

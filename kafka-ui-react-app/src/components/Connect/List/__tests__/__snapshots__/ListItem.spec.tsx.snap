@@ -139,6 +139,10 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "online": "#5CD685",
         },
       },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
       "paginationStyles": Object {
         "borderColor": Object {
           "active": "#454F54",

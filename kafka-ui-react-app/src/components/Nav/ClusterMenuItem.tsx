@@ -5,7 +5,6 @@ import * as S from './Nav.styled';
 
 export interface ClusterMenuItemProps {
   to: string;
-  activeClassName?: string;
   title?: string;
   exact?: boolean;
   isTopLevel?: boolean;

@@ -150,6 +150,10 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "online": "#5CD685",
         },
       },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
       "paginationStyles": Object {
         "borderColor": Object {
           "active": "#454F54",

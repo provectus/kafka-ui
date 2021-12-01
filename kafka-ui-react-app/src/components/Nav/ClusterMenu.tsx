@@ -37,33 +37,22 @@ const ClusterMenu: React.FC<Props> = ({
       />
       {isOpen && (
         <S.List>
-          <ClusterMenuItem
-            to={clusterBrokersPath(name)}
-            activeClassName="is-active"
-            title="Brokers"
-          />
-          <ClusterMenuItem
-            to={clusterTopicsPath(name)}
-            activeClassName="is-active"
-            title="Topics"
-          />
+          <ClusterMenuItem to={clusterBrokersPath(name)} title="Brokers" />
+          <ClusterMenuItem to={clusterTopicsPath(name)} title="Topics" />
           <ClusterMenuItem
             to={clusterConsumerGroupsPath(name)}
-            activeClassName="is-active"
             title="Consumers"
           />
 
           {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
             <ClusterMenuItem
               to={clusterSchemasPath(name)}
-              activeClassName="is-active"
               title="Schema Registry"
             />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_CONNECT) && (
             <ClusterMenuItem
               to={clusterConnectorsPath(name)}
-              activeClassName="is-active"
               title="Kafka Connect"
               isActive={(_, location) =>
                 location.pathname.startsWith(clusterConnectsPath(name)) ||
@@ -72,11 +61,7 @@ const ClusterMenu: React.FC<Props> = ({
             />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (
-            <ClusterMenuItem
-              to={clusterKsqlDbPath(name)}
-              activeClassName="is-active"
-              title="KSQL DB"
-            />
+            <ClusterMenuItem to={clusterKsqlDbPath(name)} title="KSQL DB" />
           )}
         </S.List>
       )}

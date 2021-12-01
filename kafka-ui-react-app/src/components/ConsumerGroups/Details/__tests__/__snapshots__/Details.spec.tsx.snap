@@ -64,6 +64,10 @@ exports[`Details component when consumer gruops are NOT fetched Matches the snap
           "online": "#5CD685",
         },
       },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
       "paginationStyles": Object {
         "borderColor": Object {
           "active": "#454F54",
@@ -238,6 +242,10 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
           "offline": "#E51A1A",
           "online": "#5CD685",
         },
+      },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
       },
       "paginationStyles": Object {
         "borderColor": Object {
