@@ -18,7 +18,11 @@ const Nav: React.FC<Props> = ({ isClusterListFetched, clusters }) => (
 
     {isClusterListFetched &&
       clusters.map((cluster) => (
-        <ClusterMenu cluster={cluster} key={cluster.name} />
+        <ClusterMenu
+          cluster={cluster}
+          key={cluster.name}
+          singleMode={clusters.length === 1}
+        />
       ))}
   </aside>
 );

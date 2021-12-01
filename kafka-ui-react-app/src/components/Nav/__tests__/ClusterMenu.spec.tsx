@@ -10,10 +10,14 @@ import userEvent from '@testing-library/user-event';
 import { clusterConnectorsPath, clusterConnectsPath } from 'lib/paths';
 
 describe('ClusterMenu', () => {
-  const setupComponent = (cluster: Cluster, pathname?: string) => (
+  const setupComponent = (
+    cluster: Cluster,
+    pathname?: string,
+    singleMode?: boolean
+  ) => (
     <ThemeProvider theme={theme}>
       <StaticRouter location={{ pathname }} context={{}}>
-        <ClusterMenu cluster={cluster} />
+        <ClusterMenu cluster={cluster} singleMode={singleMode} />
       </StaticRouter>
     </ThemeProvider>
   );
@@ -52,7 +56,21 @@ describe('ClusterMenu', () => {
     expect(screen.getByTitle('Kafka Connect')).toBeInTheDocument();
     expect(screen.getByTitle('KSQL DB')).toBeInTheDocument();
   });
+  it('renders open cluster menu', () => {
+    render(
+      setupComponent(
+        onlineClusterPayload,
+        clusterConnectorsPath(onlineClusterPayload.name),
+        true
+      )
+    );
 
+    expect(screen.getAllByRole('listitem').length).toEqual(4);
+    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
+    expect(screen.getByTitle('Brokers')).toBeInTheDocument();
+    expect(screen.getByTitle('Topics')).toBeInTheDocument();
+    expect(screen.getByTitle('Consumers')).toBeInTheDocument();
+  });
   it('makes Kafka Connect link active', () => {
     render(
       setupComponent(
@@ -70,7 +88,6 @@ describe('ClusterMenu', () => {
     expect(screen.getByText('Kafka Connect')).toBeInTheDocument();
     expect(screen.getByText('Kafka Connect')).toHaveClass('is-active');
   });
-
   it('makes Kafka Connect link active', () => {
     render(
       setupComponent(
