@@ -1,7 +1,7 @@
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import React from 'react';
 import JSONViewer from 'components/common/JSONViewer/JSONViewer';
-import SecondaryTabsStyles from 'components/common/Tabs/SecondaryTabs.styled';
+import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import { isObject } from 'lodash';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
@@ -77,7 +77,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
       <td colSpan={10}>
         <StyledSection>
           <ContentBox>
-            <SecondaryTabsStyles>
+            <SecondaryTabs>
               <button
                 type="button"
                 className={activeTab === 'key' ? 'is-active' : ''}
@@ -99,7 +99,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
               >
                 Headers
               </button>
-            </SecondaryTabsStyles>
+            </SecondaryTabs>
             <JSONViewer data={activeTabContent() || ''} />
           </ContentBox>
           <MetadataWrapper>

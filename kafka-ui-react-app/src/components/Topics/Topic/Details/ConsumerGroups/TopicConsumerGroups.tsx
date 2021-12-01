@@ -2,7 +2,7 @@ import React from 'react';
 import { Topic, TopicDetails, ConsumerGroup } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { clusterConsumerGroupsPath } from 'lib/paths';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
@@ -30,7 +30,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
 
   return (
     <div>
-      <StyledTable isFullwidth>
+      <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell title="Consumer group ID" />
@@ -72,7 +72,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
             </tr>
           )}
         </tbody>
-      </StyledTable>
+      </Table>
     </div>
   );
 };

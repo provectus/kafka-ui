@@ -10,7 +10,7 @@ import { getKsqlDbTables } from 'redux/reducers/ksqlDb/selectors';
 import { clusterKsqlDbQueryPath } from 'lib/paths';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
-import TableStyled from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
 
@@ -62,7 +62,7 @@ const List: FC = () => {
         {fetching ? (
           <PageLoader />
         ) : (
-          <TableStyled isFullwidth>
+          <Table isFullwidth>
             <thead>
               <tr>
                 <th> </th>
@@ -83,7 +83,7 @@ const List: FC = () => {
                 </tr>
               )}
             </tbody>
-          </TableStyled>
+          </Table>
         )}
       </div>
     </>

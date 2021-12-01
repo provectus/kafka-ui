@@ -8,7 +8,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import {
   MetricsLightText,
@@ -90,7 +90,7 @@ const Brokers: React.FC<Props> = ({
           </MetricsSection>
         </StyledMetricsWrapper>
       </div>
-      <StyledTable isFullwidth>
+      <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell title="Broker" />
@@ -109,7 +109,7 @@ const Brokers: React.FC<Props> = ({
             </tr>
           ))}
         </tbody>
-      </StyledTable>
+      </Table>
     </>
   );
 };

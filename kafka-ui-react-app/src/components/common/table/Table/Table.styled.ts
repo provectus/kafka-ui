@@ -5,7 +5,7 @@ interface Props {
   isFullwidth?: boolean;
 }
 
-const StyledTable = styled.table<Props>`
+export const Table = styled.table<Props>`
   width: ${(props) => (props.isFullwidth ? '100%' : 'auto')};
 
   & td {
@@ -23,5 +23,3 @@ const StyledTable = styled.table<Props>`
     }
   }
 `;
-
-export default StyledTable;

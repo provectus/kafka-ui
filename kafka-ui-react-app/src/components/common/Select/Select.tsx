@@ -3,7 +3,7 @@ import React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
 
 import LiveIcon from './LiveIcon.styled';
-import StyledSelect from './Select.styled';
+import * as S from './Select.styled';
 
 export interface SelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -27,18 +27,18 @@ const Select: React.FC<SelectProps> = ({
     <div className={`select-wrapper ${className}`}>
       {isLive && <LiveIcon />}
       {name ? (
-        <StyledSelect
+        <S.Select
           selectSize={selectSize}
           isLive={isLive}
           {...methods.register(name, { ...hookFormOptions })}
           {...props}
         >
           {children}
-        </StyledSelect>
+        </S.Select>
       ) : (
-        <StyledSelect selectSize={selectSize} isLive={isLive} {...props}>
+        <S.Select selectSize={selectSize} isLive={isLive} {...props}>
           {children}
-        </StyledSelect>
+        </S.Select>
       )}
     </div>
   );

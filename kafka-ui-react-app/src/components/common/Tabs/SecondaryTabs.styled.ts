@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const SecondaryTabsStyles = styled.nav`
+export const SecondaryTabs = styled.nav`
   & button {
     background-color: ${(props) =>
       props.theme.secondaryTabStyles.backgroundColor.normal};
@@ -36,5 +36,3 @@ const SecondaryTabsStyles = styled.nav`
     }
   }
 `;
-
-export default SecondaryTabsStyles;

@@ -11,7 +11,7 @@ import { Button } from 'components/common/Button/Button';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
@@ -97,7 +97,7 @@ const Details: React.FC<DetailsProps> = ({
             <LatestVersionItem schema={schema} />
           </div>
           <OldVersionsTitle>Old versions</OldVersionsTitle>
-          <StyledTable isFullwidth>
+          <Table isFullwidth>
             <thead>
               <tr>
                 <TableHeaderCell />
@@ -115,7 +115,7 @@ const Details: React.FC<DetailsProps> = ({
                 </tr>
               )}
             </tbody>
-          </StyledTable>
+          </Table>
         </>
       ) : (
         <PageLoader />

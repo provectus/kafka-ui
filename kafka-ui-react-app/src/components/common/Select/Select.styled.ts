@@ -1,11 +1,11 @@
 import styled from 'styled-components';
 
-interface Poprs {
+interface Props {
   selectSize: 'M' | 'L';
   isLive?: boolean;
 }
 
-const StyledSelect = styled.select<Poprs>`
+export const Select = styled.select<Props>`
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px ${(props) => props.theme.selectStyles.borderColor.normal} solid;
   border-radius: 4px;
@@ -36,5 +36,3 @@ const StyledSelect = styled.select<Poprs>`
     cursor: not-allowed;
   }
 `;
-
-export default StyledSelect;

@@ -24,7 +24,7 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { Colors } from 'theme/theme';
 import { groupBy } from 'lodash';
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import ListItem from './ListItem';
@@ -114,7 +114,7 @@ const Details: React.FC<Props> = ({
           <Indicator label="Coordinator ID">{coordinator?.id}</Indicator>
         </MetricsSection>
       </StyledMetricsWrapper>
-      <StyledTable isFullwidth>
+      <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell> </TableHeaderCell>
@@ -131,7 +131,7 @@ const Details: React.FC<Props> = ({
             />
           ))}
         </tbody>
-      </StyledTable>
+      </Table>
       <ConfirmationModal
         isOpen={isConfirmationModelVisible}
         onCancel={() => setIsConfirmationModelVisible(false)}

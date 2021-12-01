@@ -1,4 +1,4 @@
-import StyledTable from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicConfig } from 'generated-sources';
 import React from 'react';
@@ -31,7 +31,7 @@ const Settings: React.FC<Props> = ({
 
   return (
     <div>
-      <StyledTable isFullwidth>
+      <Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell title="Key" />
@@ -44,7 +44,7 @@ const Settings: React.FC<Props> = ({
             <ConfigListItem key={item.name} config={item} />
           ))}
         </tbody>
-      </StyledTable>
+      </Table>
     </div>
   );
 };
