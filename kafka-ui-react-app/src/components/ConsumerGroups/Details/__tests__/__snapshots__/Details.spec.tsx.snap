@@ -4,6 +4,14 @@ exports[`Details component when consumer gruops are NOT fetched Matches the snap
 <ContextProvider
   value={
     Object {
+      "alert": Object {
+        "color": Object {
+          "error": "#FAD1D1",
+          "info": "#E3E6E8",
+          "success": "#D6F5E0",
+          "warning": "#FFEECC",
+        },
+      },
       "buttonStyles": Object {
         "fontSize": Object {
           "L": "16px",
@@ -183,6 +191,14 @@ exports[`Details component when consumer gruops are fetched Matches the snapshot
 <ContextProvider
   value={
     Object {
+      "alert": Object {
+        "color": Object {
+          "error": "#FAD1D1",
+          "info": "#E3E6E8",
+          "success": "#D6F5E0",
+          "warning": "#FFEECC",
+        },
+      },
       "buttonStyles": Object {
         "fontSize": Object {
           "L": "16px",

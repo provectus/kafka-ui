@@ -3,10 +3,9 @@ import SendMessage, {
   Props,
 } from 'components/Topics/Topic/SendMessage/SendMessage';
 import { MessageSchemaSourceEnum } from 'generated-sources';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { render } from 'lib/testHelpers';
 
 jest.mock('json-schema-faker', () => ({
   generate: () => ({
@@ -18,17 +17,16 @@ jest.mock('json-schema-faker', () => ({
 }));
 
 const setupWrapper = (props?: Partial<Props>) => (
-  <ThemeProvider theme={theme}>
-    <SendMessage
-      clusterName="testCluster"
-      topicName="testTopic"
-      fetchTopicMessageSchema={jest.fn()}
-      sendTopicMessage={jest.fn()}
-      messageSchema={{
-        key: {
-          name: 'key',
-          source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-          schema: `{
+  <SendMessage
+    clusterName="testCluster"
+    topicName="testTopic"
+    fetchTopicMessageSchema={jest.fn()}
+    sendTopicMessage={jest.fn()}
+    messageSchema={{
+      key: {
+        name: 'key',
+        source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+        schema: `{
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "http://example.com/myURI.schema.json",
           "title": "TestRecord",
@@ -47,11 +45,11 @@ const setupWrapper = (props?: Partial<Props>) => (
           }
         }
         `,
-        },
-        value: {
-          name: 'value',
-          source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-          schema: `{
+      },
+      value: {
+        name: 'value',
+        source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
+        schema: `{
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "$id": "http://example.com/myURI1.schema.json",
           "title": "TestRecord",
@@ -70,41 +68,40 @@ const setupWrapper = (props?: Partial<Props>) => (
           }
         }
         `,
-        },
-      }}
-      schemaIsFetched={false}
-      messageIsSending={false}
-      partitions={[
-        {
-          partition: 0,
-          leader: 2,
-          replicas: [
-            {
-              broker: 2,
-              leader: false,
-              inSync: true,
-            },
-          ],
-          offsetMax: 0,
-          offsetMin: 0,
-        },
-        {
-          partition: 1,
-          leader: 1,
-          replicas: [
-            {
-              broker: 1,
-              leader: false,
-              inSync: true,
-            },
-          ],
-          offsetMax: 0,
-          offsetMin: 0,
-        },
-      ]}
-      {...props}
-    />
-  </ThemeProvider>
+      },
+    }}
+    schemaIsFetched={false}
+    messageIsSending={false}
+    partitions={[
+      {
+        partition: 0,
+        leader: 2,
+        replicas: [
+          {
+            broker: 2,
+            leader: false,
+            inSync: true,
+          },
+        ],
+        offsetMax: 0,
+        offsetMin: 0,
+      },
+      {
+        partition: 1,
+        leader: 1,
+        replicas: [
+          {
+            broker: 1,
+            leader: false,
+            inSync: true,
+          },
+        ],
+        offsetMax: 0,
+        offsetMin: 0,
+      },
+    ]}
+    {...props}
+  />
 );
 
 describe('SendMessage', () => {

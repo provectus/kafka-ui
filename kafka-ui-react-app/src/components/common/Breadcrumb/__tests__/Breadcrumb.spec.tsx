@@ -1,7 +1,8 @@
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 const brokersPath = '/ui/clusters/local/brokers';
 const createTopicPath = '/ui/clusters/local/topics/create-new';

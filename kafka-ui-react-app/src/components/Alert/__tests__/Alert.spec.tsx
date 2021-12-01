@@ -1,9 +1,10 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Alert as AlertProps } from 'redux/interfaces';
 import * as actions from 'redux/actions/actions';
 import Alert from 'components/Alert/Alert';
+import { render } from 'lib/testHelpers';
 
 const id = 'test-id';
 const title = 'My Alert Title';

@@ -1,23 +1,8 @@
+import { AlertType } from 'redux/interfaces';
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
-type Type = 'error' | 'success' | 'warning' | 'info';
-
-function getColor(type: Type) {
-  switch (type) {
-    case 'error':
-      return Colors.red[10];
-    case 'success':
-      return Colors.green[10];
-    case 'warning':
-      return Colors.yellow[10];
-    default:
-      return Colors.neutral[10];
-  }
-}
-
-export const Wrapper = styled.div<{ $type: Type }>`
-  background-color: ${({ $type }) => getColor($type)};
+export const Wrapper = styled.div<{ $type: AlertType }>`
+  background-color: ${({ $type, theme }) => theme.alert.color[$type]};
   width: 400px;
   min-height: 64px;
   border-radius: 8px;

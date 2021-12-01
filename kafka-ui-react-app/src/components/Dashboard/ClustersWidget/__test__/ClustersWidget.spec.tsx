@@ -1,24 +1,21 @@
 import React from 'react';
 import { StaticRouter } from 'react-router';
-import { ThemeProvider } from 'styled-components';
-import { render, screen } from '@testing-library/react';
-import theme from 'theme/theme';
+import { screen } from '@testing-library/react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 import { offlineCluster, onlineCluster, clusters } from './fixtures';
 
 const setupComponent = () =>
   render(
-    <ThemeProvider theme={theme}>
-      <StaticRouter>
-        <ClustersWidget
-          clusters={clusters}
-          onlineClusters={[onlineCluster]}
-          offlineClusters={[offlineCluster]}
-        />
-      </StaticRouter>
-    </ThemeProvider>
+    <StaticRouter>
+      <ClustersWidget
+        clusters={clusters}
+        onlineClusters={[onlineCluster]}
+        offlineClusters={[offlineCluster]}
+      />
+    </StaticRouter>
   );
 
 describe('ClustersWidget', () => {

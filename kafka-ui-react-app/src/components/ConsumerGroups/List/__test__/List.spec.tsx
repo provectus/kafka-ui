@@ -1,43 +1,40 @@
 import React from 'react';
 import List, { ListProps } from 'components/ConsumerGroups/List/List';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { StaticRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const setupWrapper = (props?: Partial<ListProps>) => (
   <StaticRouter>
-    <ThemeProvider theme={theme}>
-      <List
-        consumerGroups={[
-          {
-            groupId: 'groupId1',
-            members: 0,
-            topics: 1,
-            simple: false,
-            partitionAssignor: '',
-            coordinator: {
-              id: 1,
-              host: 'host',
-            },
+    <List
+      consumerGroups={[
+        {
+          groupId: 'groupId1',
+          members: 0,
+          topics: 1,
+          simple: false,
+          partitionAssignor: '',
+          coordinator: {
+            id: 1,
+            host: 'host',
           },
-          {
-            groupId: 'groupId2',
-            members: 0,
-            topics: 1,
-            simple: false,
-            partitionAssignor: '',
-            coordinator: {
-              id: 1,
-              host: 'host',
-            },
+        },
+        {
+          groupId: 'groupId2',
+          members: 0,
+          topics: 1,
+          simple: false,
+          partitionAssignor: '',
+          coordinator: {
+            id: 1,
+            host: 'host',
           },
-        ]}
-        clusterName="cluster"
-        {...props}
-      />
-    </ThemeProvider>
+        },
+      ]}
+      clusterName="cluster"
+      {...props}
+    />
   </StaticRouter>
 );
 

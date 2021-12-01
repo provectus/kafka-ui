@@ -1,24 +1,21 @@
 import React from 'react';
 import { StaticRouter } from 'react-router';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
 import ClusterMenuItem, {
   ClusterMenuItemProps,
 } from 'components/Nav/ClusterMenuItem';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('ClusterMenuItem', () => {
   const setupComponent = (
     props: Partial<ClusterMenuItemProps> = {},
     pathname?: string
   ) => (
-    <ThemeProvider theme={theme}>
-      <StaticRouter location={{ pathname }} context={{}}>
-        <ul>
-          <ClusterMenuItem to="/test" {...props} />
-        </ul>
-      </StaticRouter>
-    </ThemeProvider>
+    <StaticRouter location={{ pathname }} context={{}}>
+      <ul>
+        <ClusterMenuItem to="/test" {...props} />
+      </ul>
+    </StaticRouter>
   );
 
   it('renders component with correct title', () => {
@@ -51,13 +48,11 @@ describe('ClusterMenuItem', () => {
 
   it('renders list item with children', () => {
     render(
-      <ThemeProvider theme={theme}>
-        <StaticRouter location={{}} context={{}}>
-          <ul>
-            <ClusterMenuItem to="/test">Test Text Box</ClusterMenuItem>
-          </ul>
-        </StaticRouter>
-      </ThemeProvider>
+      <StaticRouter location={{}} context={{}}>
+        <ul>
+          <ClusterMenuItem to="/test">Test Text Box</ClusterMenuItem>
+        </ul>
+      </StaticRouter>
     );
     expect(screen.getByRole('listitem')).toBeInTheDocument();
     expect(screen.queryByRole('link')).toBeInTheDocument();
