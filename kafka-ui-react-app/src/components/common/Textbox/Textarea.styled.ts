@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-const TextareaStyled = styled.textarea`
+export const Textarea = styled.textarea`
   border: 1px ${Colors.neutral[30]} solid;
   border-radius: 4px;
   width: 100%;
@@ -39,5 +39,3 @@ const TextareaStyled = styled.textarea`
     cursor: not-allowed;
   }
 `;
-
-export default TextareaStyled;

@@ -12,7 +12,7 @@ import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
-import TextareaStyled from 'components/common/Textbox/Textarea.styled';
+import { Textarea } from 'components/common/Textbox/Textarea.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
 export interface NewProps {
@@ -94,7 +94,7 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
 
         <div>
           <InputLabel>Schema *</InputLabel>
-          <TextareaStyled
+          <Textarea
             {...register('schema', {
               required: 'Schema is required.',
             })}
