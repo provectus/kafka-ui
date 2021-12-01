@@ -280,11 +280,20 @@ exports[`Brokers Component Brokers Empty matches Brokers Empty snapshot 1`] = `
               "hover": "#F1F2F3",
               "normal": "#FFFFFF",
             },
+            "chevronIconColor": "#73848C",
             "color": Object {
               "active": "#171A1C",
               "hover": "#73848C",
               "normal": "#73848C",
             },
+            "statusIconColor": Object {
+              "offline": "#E51A1A",
+              "online": "#5CD685",
+            },
+          },
+          "pageLoader": Object {
+            "borderBottomColor": "#FFFFFF",
+            "borderColor": "#4F4FFF",
           },
           "paginationStyles": Object {
             "borderColor": Object {
@@ -1045,11 +1054,20 @@ exports[`Brokers Component Brokers matches snapshot 1`] = `
               "hover": "#F1F2F3",
               "normal": "#FFFFFF",
             },
+            "chevronIconColor": "#73848C",
             "color": Object {
               "active": "#171A1C",
               "hover": "#73848C",
               "normal": "#73848C",
             },
+            "statusIconColor": Object {
+              "offline": "#E51A1A",
+              "online": "#5CD685",
+            },
+          },
+          "pageLoader": Object {
+            "borderBottomColor": "#FFFFFF",
+            "borderColor": "#4F4FFF",
           },
           "paginationStyles": Object {
             "borderColor": Object {

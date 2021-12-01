@@ -10,61 +10,51 @@ import {
   clusterKsqlDbPath,
 } from 'lib/paths';
 
-import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';
-import ClusterTab from './ClusterMenuItem/ClusterTab/ClusterTab';
-import ClusterMenuList from './ClusterMenuList/ClusterMenuList.styled';
+import ClusterMenuItem from './ClusterMenuItem';
+import ClusterTab from './ClusterTab/ClusterTab';
+import * as S from './Nav.styled';
 
 interface Props {
   cluster: Cluster;
+  singleMode?: boolean;
 }
 
 const ClusterMenu: React.FC<Props> = ({
-  cluster: { name, status, defaultCluster, features },
+  cluster: { name, status, features },
+  singleMode,
 }) => {
   const hasFeatureConfigured = React.useCallback(
     (key) => features?.includes(key),
     [features]
   );
-  const [isOpen, setisOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(!!singleMode);
   return (
-    <ClusterMenuList>
-      <hr />
+    <S.List>
+      <S.Divider />
       <ClusterTab
         title={name}
         status={status}
-        defaultCluster={defaultCluster}
         isOpen={isOpen}
-        toggleClusterMenu={() => setisOpen((prev) => !prev)}
+        toggleClusterMenu={() => setIsOpen((prev) => !prev)}
       />
       {isOpen && (
-        <ul>
-          <ClusterMenuItem
-            to={clusterBrokersPath(name)}
-            activeClassName="is-active"
-            title="Brokers"
-          />
-          <ClusterMenuItem
-            to={clusterTopicsPath(name)}
-            activeClassName="is-active"
-            title="Topics"
-          />
+        <S.List>
+          <ClusterMenuItem to={clusterBrokersPath(name)} title="Brokers" />
+          <ClusterMenuItem to={clusterTopicsPath(name)} title="Topics" />
           <ClusterMenuItem
             to={clusterConsumerGroupsPath(name)}
-            activeClassName="is-active"
             title="Consumers"
           />
 
           {hasFeatureConfigured(ClusterFeaturesEnum.SCHEMA_REGISTRY) && (
             <ClusterMenuItem
               to={clusterSchemasPath(name)}
-              activeClassName="is-active"
               title="Schema Registry"
             />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_CONNECT) && (
             <ClusterMenuItem
               to={clusterConnectorsPath(name)}
-              activeClassName="is-active"
               title="Kafka Connect"
               isActive={(_, location) =>
                 location.pathname.startsWith(clusterConnectsPath(name)) ||
@@ -73,15 +63,11 @@ const ClusterMenu: React.FC<Props> = ({
             />
           )}
           {hasFeatureConfigured(ClusterFeaturesEnum.KSQL_DB) && (
-            <ClusterMenuItem
-              to={clusterKsqlDbPath(name)}
-              activeClassName="is-active"
-              title="KSQL DB"
-            />
+            <ClusterMenuItem to={clusterKsqlDbPath(name)} title="KSQL DB" />
           )}
-        </ul>
+        </S.List>
       )}
-    </ClusterMenuList>
+    </S.List>
   );
 };
 

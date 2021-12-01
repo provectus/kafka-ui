@@ -1,43 +1,30 @@
 import React from 'react';
-import cx from 'classnames';
 import { Cluster } from 'generated-sources';
-import styled from 'styled-components';
 
 import ClusterMenu from './ClusterMenu';
-import ClusterMenuItem from './ClusterMenuItem/ClusterMenuItem';
+import ClusterMenuItem from './ClusterMenuItem';
+import * as S from './Nav.styled';
 
 interface Props {
   isClusterListFetched?: boolean;
   clusters: Cluster[];
-  className?: string;
 }
 
-const Nav: React.FC<Props> = ({
-  isClusterListFetched,
-  clusters,
-  className,
-}) => (
-  <aside className={cx('has-shadow has-background-white', className)}>
-    <ul>
-      <ClusterMenuItem
-        exact
-        to="/ui"
-        activeClassName="is-active"
-        title="Dashboard"
-        isTopLevel
-      />
-    </ul>
-    {!isClusterListFetched && <div className="loader" />}
+const Nav: React.FC<Props> = ({ isClusterListFetched, clusters }) => (
+  <aside>
+    <S.List>
+      <ClusterMenuItem exact to="/ui" title="Dashboard" isTopLevel />
+    </S.List>
 
     {isClusterListFetched &&
       clusters.map((cluster) => (
-        <ClusterMenu cluster={cluster} key={cluster.name} />
+        <ClusterMenu
+          cluster={cluster}
+          key={cluster.name}
+          singleMode={clusters.length === 1}
+        />
       ))}
   </aside>
 );
 
-export default styled(Nav)`
-  > * {
-    padding-bottom: 4px;
-  }
-`;
+export default Nav;

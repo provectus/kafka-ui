@@ -91,6 +91,11 @@ const theme = {
       hover: Colors.neutral[50],
       active: Colors.neutral[90],
     },
+    statusIconColor: {
+      online: Colors.green[40],
+      offline: Colors.red[50],
+    },
+    chevronIconColor: Colors.neutral[50],
   },
   thStyles: {
     backgroundColor: {
@@ -166,6 +171,10 @@ const theme = {
   switch: {
     unchecked: Colors.neutral[30],
     checked: Colors.green[60],
+  },
+  pageLoader: {
+    borderColor: Colors.brand[50],
+    borderBottomColor: Colors.neutral[0],
   },
 };
 
