@@ -1,9 +1,11 @@
 package com.provectus.kafka.ui.model;
 
+import com.google.common.base.Throwables;
 import com.provectus.kafka.ui.service.MetricsCache;
 import com.provectus.kafka.ui.util.ClusterUtil;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ import lombok.Data;
 public class InternalClusterState {
   private String name;
   private ServerStatusDTO status;
+  private MetricsCollectionErrorDTO lastError;
   private Integer topicCount;
   private Integer brokerCount;
   private Integer zooKeeperStatus;
@@ -29,6 +32,11 @@ public class InternalClusterState {
   public InternalClusterState(KafkaCluster cluster, MetricsCache.Metrics metrics) {
     name = cluster.getName();
     status = metrics.getStatus();
+    lastError = Optional.ofNullable(metrics.getLastKafkaException())
+        .map(e -> new MetricsCollectionErrorDTO()
+            .message(e.getMessage())
+            .stackTrace(Throwables.getStackTraceAsString(e)))
+        .orElse(null);
     topicCount = metrics.getTopicDescriptions().size();
     brokerCount = metrics.getClusterDescription().getNodes().size();
     zooKeeperStatus = ClusterUtil.convertToIntServerStatus(metrics.getZkStatus().getStatus());
