@@ -26,6 +26,7 @@ envs:
   config: {}
 
 podAnnotations: {}
+podLabels: {}
 
 podSecurityContext: {}
   # fsGroup: 2000
