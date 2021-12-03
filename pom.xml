@@ -39,6 +39,7 @@
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <mockito.version>2.21.0</mockito.version>
         <assertj.version>3.19.0</assertj.version>
+        <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
 
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
         </frontend-generated-sources-directory>
