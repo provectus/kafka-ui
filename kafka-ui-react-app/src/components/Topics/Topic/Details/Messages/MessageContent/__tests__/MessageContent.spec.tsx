@@ -1,31 +1,28 @@
 import { TextEncoder } from 'util';
 
 import React from 'react';
-import { ThemeProvider } from 'styled-components';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import MessageContent, {
   MessageContentProps,
 } from 'components/Topics/Topic/Details/Messages/MessageContent/MessageContent';
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
-import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const setupWrapper = (props?: Partial<MessageContentProps>) => {
   return (
-    <ThemeProvider theme={theme}>
-      <table>
-        <tbody>
-          <MessageContent
-            messageKey='"test-key"'
-            messageContent='{"data": "test"}'
-            headers={{ header: 'test' }}
-            timestamp={new Date(0)}
-            timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
-            {...props}
-          />
-        </tbody>
-      </table>
-    </ThemeProvider>
+    <table>
+      <tbody>
+        <MessageContent
+          messageKey='"test-key"'
+          messageContent='{"data": "test"}'
+          headers={{ header: 'test' }}
+          timestamp={new Date(0)}
+          timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
+          {...props}
+        />
+      </tbody>
+    </table>
   );
 };
 

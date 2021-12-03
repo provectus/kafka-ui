@@ -42,6 +42,14 @@ const theme = {
     navBarWidth: '201px',
     navBarHeight: '3.25rem',
   },
+  alert: {
+    color: {
+      error: Colors.red[10],
+      success: Colors.green[10],
+      warning: Colors.yellow[10],
+      info: Colors.neutral[10],
+    },
+  },
   buttonStyles: {
     primary: {
       backgroundColor: {

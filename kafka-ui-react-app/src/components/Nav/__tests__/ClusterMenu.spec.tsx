@@ -1,13 +1,12 @@
 import React from 'react';
 import { StaticRouter } from 'react-router';
-import { ThemeProvider } from 'styled-components';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { Cluster, ClusterFeaturesEnum } from 'generated-sources';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import ClusterMenu from 'components/Nav/ClusterMenu';
-import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
 import { clusterConnectorsPath, clusterConnectsPath } from 'lib/paths';
+import { render } from 'lib/testHelpers';
 
 describe('ClusterMenu', () => {
   const setupComponent = (
@@ -15,11 +14,9 @@ describe('ClusterMenu', () => {
     pathname?: string,
     singleMode?: boolean
   ) => (
-    <ThemeProvider theme={theme}>
-      <StaticRouter location={{ pathname }} context={{}}>
-        <ClusterMenu cluster={cluster} singleMode={singleMode} />
-      </StaticRouter>
-    </ThemeProvider>
+    <StaticRouter location={{ pathname }} context={{}}>
+      <ClusterMenu cluster={cluster} singleMode={singleMode} />
+    </StaticRouter>
   );
 
   it('renders cluster menu with default set of features', () => {

@@ -2,10 +2,11 @@ import React from 'react';
 import DangerZone, {
   Props,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const setupWrapper = (props?: Partial<Props>) => (
   <ThemeProvider theme={theme}>

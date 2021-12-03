@@ -1,16 +1,11 @@
 import React from 'react';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('PageLoader', () => {
   it('renders spinner', () => {
-    render(
-      <ThemeProvider theme={theme}>
-        <PageLoader />
-      </ThemeProvider>
-    );
+    render(<PageLoader />);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

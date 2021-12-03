@@ -14,9 +14,11 @@ export interface FailurePayload {
   response?: ServerResponse;
 }
 
+export type AlertType = 'error' | 'success' | 'warning' | 'info';
+
 export interface Alert {
   id: string;
-  type: 'error' | 'success' | 'warning' | 'info';
+  type: AlertType;
   title: string;
   message: React.ReactNode;
   response?: ServerResponse;

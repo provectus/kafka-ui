@@ -1,11 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { Alert } from 'redux/interfaces';
 import configureStore from 'redux/store/configureStore';
 import App, { AppProps } from 'components/App';
 import AppContainer from 'components/AppContainer';
-import React from 'react';
+import { render } from 'lib/testHelpers';
 
 const fetchClustersList = jest.fn();
 const store = configureStore();

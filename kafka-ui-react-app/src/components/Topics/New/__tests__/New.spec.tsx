@@ -4,13 +4,12 @@ import { Router } from 'react-router';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import { Provider } from 'react-redux';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
 import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const mockStore = configureStore();
 
@@ -29,9 +28,7 @@ describe('New', () => {
   const setupComponent = (history = historyMock, store = storeMock) => (
     <Router history={history}>
       <Provider store={store}>
-        <ThemeProvider theme={theme}>
-          <New />
-        </ThemeProvider>
+        <New />
       </Provider>
     </Router>
   );

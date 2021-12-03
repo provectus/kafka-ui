@@ -5,18 +5,15 @@ import {
 } from 'redux/reducers/clusters/__test__/fixtures';
 import Nav from 'components/Nav/Nav';
 import { StaticRouter } from 'react-router';
-import { render, screen } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('Nav', () => {
   it('renders loader', () => {
     render(
-      <ThemeProvider theme={theme}>
-        <StaticRouter>
-          <Nav clusters={[]} />
-        </StaticRouter>
-      </ThemeProvider>
+      <StaticRouter>
+        <Nav clusters={[]} />
+      </StaticRouter>
     );
     expect(screen.getAllByRole('listitem').length).toEqual(1);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
@@ -24,14 +21,12 @@ describe('Nav', () => {
 
   it('renders ClusterMenu', () => {
     render(
-      <ThemeProvider theme={theme}>
-        <StaticRouter>
-          <Nav
-            clusters={[onlineClusterPayload, offlineClusterPayload]}
-            isClusterListFetched
-          />
-        </StaticRouter>
-      </ThemeProvider>
+      <StaticRouter>
+        <Nav
+          clusters={[onlineClusterPayload, offlineClusterPayload]}
+          isClusterListFetched
+        />
+      </StaticRouter>
     );
 
     expect(screen.getAllByRole('list').length).toEqual(3);

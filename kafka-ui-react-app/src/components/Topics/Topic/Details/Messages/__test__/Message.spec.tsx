@@ -1,7 +1,8 @@
 import React from 'react';
 import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import Message from 'components/Topics/Topic/Details/Messages/Message';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('Message component', () => {
   it('shows the data in the table row', async () => {

@@ -1,8 +1,6 @@
 import Select, { SelectProps } from 'components/common/Select/Select';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 jest.mock('react-hook-form', () => ({
   useFormContext: () => ({
@@ -11,9 +9,7 @@ jest.mock('react-hook-form', () => ({
 }));
 
 const setupWrapper = (props?: Partial<SelectProps>) => (
-  <ThemeProvider theme={theme}>
-    <Select name="test" {...props} />
-  </ThemeProvider>
+  <Select name="test" {...props} />
 );
 
 describe('Custom Select', () => {

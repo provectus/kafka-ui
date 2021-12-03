@@ -2,7 +2,7 @@ import Input, { InputProps } from 'components/common/Input/Input';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 const setupWrapper = (props?: Partial<InputProps>) => (
   <ThemeProvider theme={theme}>
