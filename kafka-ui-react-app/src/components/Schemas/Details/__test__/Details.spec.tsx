@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { StaticRouter } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
 import DetailsContainer from 'components/Schemas/Details/DetailsContainer';
@@ -21,8 +21,6 @@ jest.mock(
 
 describe('Details', () => {
   describe('Container', () => {
-    const store = configureStore();
-
     it('renders view', () => {
       const wrapper = mount(
         <ThemeProvider theme={theme}>

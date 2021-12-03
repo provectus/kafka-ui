@@ -1,10 +1,10 @@
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/brokers/selectors';
 import { fetchBrokersAction, fetchClusterStatsAction } from 'redux/actions';
 
 import { brokersPayload, brokerStatsPayload } from './fixtures';
 
-const { dispatch, getState } = configureStore();
+const { dispatch, getState } = store;
 
 describe('Brokers selectors', () => {
   describe('Initial State', () => {

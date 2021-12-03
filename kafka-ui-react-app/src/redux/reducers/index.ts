@@ -1,4 +1,4 @@
-import { combineReducers } from 'redux';
+import { combineReducers } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
 
 import topics from './topics/reducer';

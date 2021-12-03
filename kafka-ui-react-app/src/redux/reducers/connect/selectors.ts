@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { ConnectState, RootState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import { ConnectorTaskStatus } from 'generated-sources';

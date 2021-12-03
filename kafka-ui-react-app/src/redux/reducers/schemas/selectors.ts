@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { orderBy } from 'lodash';
 import { RootState, SchemasState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';

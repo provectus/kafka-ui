@@ -5,11 +5,9 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import Details from 'components/Topics/Topic/Details/Details';
 import { internalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { Provider } from 'react-redux';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-
-const store = configureStore();
 
 describe('Details', () => {
   const mockDelete = jest.fn();

@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState, AlertsState } from 'redux/interfaces';
 import { orderBy } from 'lodash';
 

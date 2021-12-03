@@ -3,13 +3,12 @@ import { screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { Alert } from 'redux/interfaces';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import App, { AppProps } from 'components/App';
 import AppContainer from 'components/AppContainer';
 import { render } from 'lib/testHelpers';
 
 const fetchClustersList = jest.fn();
-const store = configureStore();
 
 describe('App', () => {
   describe('container', () => {

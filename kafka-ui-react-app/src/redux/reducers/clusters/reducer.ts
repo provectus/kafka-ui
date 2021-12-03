@@ -8,7 +8,9 @@ export const initialState: Cluster[] = [];
 const reducer = (state = initialState, action: Action): Cluster[] => {
   switch (action.type) {
     case getType(actions.fetchClusterListAction.success):
-      return action.payload;
+      // eslint-disable-next-line no-param-reassign
+      state = action.payload;
+      return state;
     default:
       return state;
   }

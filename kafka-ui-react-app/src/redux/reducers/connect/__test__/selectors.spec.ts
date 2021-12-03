@@ -5,12 +5,10 @@ import {
   fetchConnectorTasksAction,
   fetchConnectsAction,
 } from 'redux/actions';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/connect/selectors';
 
 import { connects, connectors, connector, tasks } from './fixtures';
-
-const store = configureStore();
 
 describe('Connect selectors', () => {
   describe('Initial State', () => {

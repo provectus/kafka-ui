@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
@@ -12,8 +12,6 @@ import ListContainer from 'components/Connect/List/ListContainer';
 import List, { ListProps } from 'components/Connect/List/List';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-
-const store = configureStore();
 
 describe('Connectors List', () => {
   describe('Container', () => {

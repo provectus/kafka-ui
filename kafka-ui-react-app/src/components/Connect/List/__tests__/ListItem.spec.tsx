@@ -3,13 +3,11 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import ListItem, { ListItemProps } from 'components/Connect/List/ListItem';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-
-const store = configureStore();
 
 const mockDeleteConnector = jest.fn();
 jest.mock('redux/actions', () => ({

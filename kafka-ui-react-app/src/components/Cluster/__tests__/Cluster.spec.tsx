@@ -4,11 +4,9 @@ import { Provider } from 'react-redux';
 import { Route, StaticRouter } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import { fetchClusterListAction } from 'redux/actions';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import Cluster from 'components/Cluster/Cluster';
-
-const store = configureStore();
 
 jest.mock('components/Topics/Topics', () => 'mock-Topics');
 jest.mock('components/Schemas/Schemas', () => 'mock-Schemas');

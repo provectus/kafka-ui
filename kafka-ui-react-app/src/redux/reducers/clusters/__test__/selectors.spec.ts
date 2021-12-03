@@ -1,5 +1,5 @@
 import { fetchClusterListAction } from 'redux/actions';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/clusters/selectors';
 
 import {
@@ -7,8 +7,6 @@ import {
   offlineClusterPayload,
   onlineClusterPayload,
 } from './fixtures';
-
-const store = configureStore();
 
 describe('Clusters selectors', () => {
   describe('Initial State', () => {

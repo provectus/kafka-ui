@@ -2,7 +2,7 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Schemas/List/ListContainer';
 import List, { ListProps } from 'components/Schemas/List/List';
@@ -13,8 +13,6 @@ import { schemas } from './fixtures';
 
 describe('List', () => {
   describe('Container', () => {
-    const store = configureStore();
-
     it('renders view', () => {
       const component = shallow(
         <Provider store={store}>
