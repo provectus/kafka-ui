@@ -13,8 +13,8 @@ Most of the Helm charts parameters are common, follow table describe unique para
 | `envs.secret`| Set of the sensitive environment variables to pass to Kafka-UI | `{}`|
 | `envs.config`| Set of the environment variables to pass to Kafka-UI | `{}`|
 | `networkPolicy.enabled` | Enable network policies | `false`|
-| `networkPolicy.egressRules.customRules` | Custom network egress policy rules | `{}`|
-| `networkPolicy.ingressRules.customRules` | Custom network ingress policy rules | `{}`|
+| `networkPolicy.egressRules.customRules` | Custom network egress policy rules | `[]`|
+| `networkPolicy.ingressRules.customRules` | Custom network ingress policy rules | `[]`|
 | `podLabels` | Extra labels for Kafka-UI pod | `{}`|
 
 ## Example
