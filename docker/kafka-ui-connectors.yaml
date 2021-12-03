@@ -140,6 +140,8 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
+#      AWS_ACCESS_KEY_ID: ""
+#      AWS_SECRET_ACCESS_KEY: ""
 
   kafka-init-topics:
     image: confluentinc/cp-kafka:5.2.4
