@@ -36,6 +36,7 @@
     "redux": "^4.1.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^4.0.0",
+    "rimraf": "^3.0.2",
     "sass": "^1.43.4",
     "typesafe-actions": "^5.1.0",
     "use-debounce": "^7.0.0",
@@ -50,7 +51,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "gen:sources": "rm -rf src/generated-sources && openapi-generator-cli generate",
+    "gen:sources": "rimraf src/generated-sources && openapi-generator-cli generate",
     "build": "react-scripts build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
