@@ -1,15 +1,14 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
 import { KsqlState } from 'redux/interfaces/ksqlDb';
 
 const ksqlDbState = ({ ksqlDb }: RootState): KsqlState => ksqlDb;
 
-const getKsqlDbFetchTablesAndStreamsFetchingStatus = createFetchingSelector(
-  'GET_KSQL_DB_TABLES_AND_STREAMS'
-);
+const getKsqlDbFetchTablesAndStreamsFetchingStatus =
+  createLeagcyFetchingSelector('GET_KSQL_DB_TABLES_AND_STREAMS');
 
-const getKsqlExecutionStatus = createFetchingSelector('EXECUTE_KSQL');
+const getKsqlExecutionStatus = createLeagcyFetchingSelector('EXECUTE_KSQL');
 
 export const getKsqlDbTables = createSelector(
   [ksqlDbState, getKsqlDbFetchTablesAndStreamsFetchingStatus],

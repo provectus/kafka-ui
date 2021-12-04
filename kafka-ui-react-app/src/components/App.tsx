@@ -11,6 +11,8 @@ import Version from 'components/Version/Version';
 import Alert from 'components/Alert/Alert';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { useAppDispatch } from 'lib/hooks/redux';
+import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
 
 import Breadcrumb from './common/Breadcrumb/Breadcrumb';
 import * as S from './App.styled';
@@ -19,15 +21,14 @@ export interface AppProps {
   isClusterListFetched?: boolean;
   alerts: Alerts;
   clusters: Cluster[];
-  fetchClustersList: () => void;
 }
 
 const App: React.FC<AppProps> = ({
   isClusterListFetched,
   alerts,
   clusters,
-  fetchClustersList,
 }) => {
+  const dispatch = useAppDispatch();
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
 
   const onBurgerClick = React.useCallback(
@@ -44,8 +45,8 @@ const App: React.FC<AppProps> = ({
   }, [location]);
 
   React.useEffect(() => {
-    fetchClustersList();
-  }, [fetchClustersList]);
+    dispatch(fetchClusters());
+  }, [fetchClusters]);
 
   return (
     <ThemeProvider theme={theme}>

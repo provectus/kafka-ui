@@ -23,7 +23,7 @@ describe('KsqlDb List', () => {
         streams: [],
         executionResult: null,
       },
-      loader: {
+      legacyLoader: {
         GET_KSQL_DB_TABLES_AND_STREAMS: 'fetched',
       },
     };
@@ -47,7 +47,7 @@ describe('KsqlDb List', () => {
   it('Renders rows', () => {
     const initialState: Partial<RootState> = {
       ksqlDb: { ...fetchKsqlDbTablesPayload, executionResult: null },
-      loader: {
+      legacyLoader: {
         GET_KSQL_DB_TABLES_AND_STREAMS: 'fetched',
       },
     };

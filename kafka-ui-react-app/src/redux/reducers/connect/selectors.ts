@@ -1,11 +1,11 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ConnectState, RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
 import { ConnectorTaskStatus } from 'generated-sources';
 
 const connectState = ({ connect }: RootState): ConnectState => connect;
 
-const getConnectsFetchingStatus = createFetchingSelector('GET_CONNECTS');
+const getConnectsFetchingStatus = createLeagcyFetchingSelector('GET_CONNECTS');
 export const getAreConnectsFetching = createSelector(
   getConnectsFetchingStatus,
   (status) => status === 'fetching'
@@ -16,7 +16,8 @@ export const getConnects = createSelector(
   ({ connects }) => connects
 );
 
-const getConnectorsFetchingStatus = createFetchingSelector('GET_CONNECTORS');
+const getConnectorsFetchingStatus =
+  createLeagcyFetchingSelector('GET_CONNECTORS');
 export const getAreConnectorsFetching = createSelector(
   getConnectorsFetchingStatus,
   (status) => status === 'fetching'
@@ -27,7 +28,8 @@ export const getConnectors = createSelector(
   ({ connectors }) => connectors
 );
 
-const getConnectorFetchingStatus = createFetchingSelector('GET_CONNECTOR');
+const getConnectorFetchingStatus =
+  createLeagcyFetchingSelector('GET_CONNECTOR');
 export const getIsConnectorFetching = createSelector(
   getConnectorFetchingStatus,
   (status) => status === 'fetching'
@@ -48,26 +50,29 @@ export const getConnectorStatus = createSelector(
   (connector) => connector?.status?.state
 );
 
-const getConnectorDeletingStatus = createFetchingSelector('DELETE_CONNECTOR');
+const getConnectorDeletingStatus =
+  createLeagcyFetchingSelector('DELETE_CONNECTOR');
 export const getIsConnectorDeleting = createSelector(
   getConnectorDeletingStatus,
   (status) => status === 'fetching'
 );
 
 const getConnectorRestartingStatus =
-  createFetchingSelector('RESTART_CONNECTOR');
+  createLeagcyFetchingSelector('RESTART_CONNECTOR');
 export const getIsConnectorRestarting = createSelector(
   getConnectorRestartingStatus,
   (status) => status === 'fetching'
 );
 
-const getConnectorPausingStatus = createFetchingSelector('PAUSE_CONNECTOR');
+const getConnectorPausingStatus =
+  createLeagcyFetchingSelector('PAUSE_CONNECTOR');
 export const getIsConnectorPausing = createSelector(
   getConnectorPausingStatus,
   (status) => status === 'fetching'
 );
 
-const getConnectorResumingStatus = createFetchingSelector('RESUME_CONNECTOR');
+const getConnectorResumingStatus =
+  createLeagcyFetchingSelector('RESUME_CONNECTOR');
 export const getIsConnectorResuming = createSelector(
   getConnectorResumingStatus,
   (status) => status === 'fetching'
@@ -80,7 +85,7 @@ export const getIsConnectorActionRunning = createSelector(
   (restarting, pausing, resuming) => restarting || pausing || resuming
 );
 
-const getConnectorTasksFetchingStatus = createFetchingSelector(
+const getConnectorTasksFetchingStatus = createLeagcyFetchingSelector(
   'GET_CONNECTOR_TASKS'
 );
 export const getAreConnectorTasksFetching = createSelector(
@@ -107,7 +112,7 @@ export const getConnectorFailedTasksCount = createSelector(
       .length
 );
 
-const getConnectorConfigFetchingStatus = createFetchingSelector(
+const getConnectorConfigFetchingStatus = createLeagcyFetchingSelector(
   'GET_CONNECTOR_CONFIG'
 );
 export const getIsConnectorConfigFetching = createSelector(

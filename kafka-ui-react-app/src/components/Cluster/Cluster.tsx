@@ -5,7 +5,7 @@ import { ClusterFeaturesEnum } from 'generated-sources';
 import {
   getClustersFeatures,
   getClustersReadonlyStatus,
-} from 'redux/reducers/clusters/selectors';
+} from 'redux/reducers/clusters/clustersSlice';
 import {
   clusterBrokersPath,
   clusterConnectorsPath,

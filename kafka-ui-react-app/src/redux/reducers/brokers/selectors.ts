@@ -1,10 +1,10 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState, BrokersState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const brokersState = ({ brokers }: RootState): BrokersState => brokers;
 
-const getBrokerListFetchingStatus = createFetchingSelector('GET_BROKERS');
+const getBrokerListFetchingStatus = createLeagcyFetchingSelector('GET_BROKERS');
 
 export const getIsBrokerListFetched = createSelector(
   getBrokerListFetchingStatus,

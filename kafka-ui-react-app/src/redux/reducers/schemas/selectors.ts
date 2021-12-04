@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { orderBy } from 'lodash';
 import { RootState, SchemasState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const schemasState = ({ schemas }: RootState): SchemasState => schemas;
 
@@ -10,19 +10,18 @@ const getSchemaMap = (state: RootState) => schemasState(state).byName;
 export const getGlobalSchemaCompatibilityLevel = (state: RootState) =>
   schemasState(state).globalSchemaCompatibilityLevel;
 
-const getSchemaListFetchingStatus = createFetchingSelector(
+const getSchemaListFetchingStatus = createLeagcyFetchingSelector(
   'GET_CLUSTER_SCHEMAS'
 );
 
-const getSchemaVersionsFetchingStatus = createFetchingSelector(
+const getSchemaVersionsFetchingStatus = createLeagcyFetchingSelector(
   'GET_SCHEMA_VERSIONS'
 );
 
-const getSchemaCreationStatus = createFetchingSelector('POST_SCHEMA');
+const getSchemaCreationStatus = createLeagcyFetchingSelector('POST_SCHEMA');
 
-const getGlobalSchemaCompatibilityLevelFetchingStatus = createFetchingSelector(
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY'
-);
+const getGlobalSchemaCompatibilityLevelFetchingStatus =
+  createLeagcyFetchingSelector('GET_GLOBAL_SCHEMA_COMPATIBILITY');
 
 export const getIsSchemaListFetched = createSelector(
   getSchemaListFetchingStatus,

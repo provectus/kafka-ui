@@ -3,10 +3,10 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { Route, StaticRouter } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
-import { fetchClusterListAction } from 'redux/actions';
 import { store } from 'redux/store';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
 import Cluster from 'components/Cluster/Cluster';
+import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
 
 jest.mock('components/Topics/Topics', () => 'mock-Topics');
 jest.mock('components/Schemas/Schemas', () => 'mock-Schemas');
@@ -49,12 +49,15 @@ describe('Cluster', () => {
     });
     it('renders Schemas if SCHEMA_REGISTRY is configured', () => {
       store.dispatch(
-        fetchClusterListAction.success([
-          {
-            ...onlineClusterPayload,
-            features: [ClusterFeaturesEnum.SCHEMA_REGISTRY],
-          },
-        ])
+        fetchClusters.fulfilled(
+          [
+            {
+              ...onlineClusterPayload,
+              features: [ClusterFeaturesEnum.SCHEMA_REGISTRY],
+            },
+          ],
+          '123'
+        )
       );
       const wrapper = mount(setupComponent('/ui/clusters/secondLocal/schemas'));
       expect(wrapper.exists('mock-Schemas')).toBeTruthy();
@@ -67,12 +70,15 @@ describe('Cluster', () => {
     });
     it('renders Schemas if KAFKA_CONNECT is configured', async () => {
       store.dispatch(
-        fetchClusterListAction.success([
-          {
-            ...onlineClusterPayload,
-            features: [ClusterFeaturesEnum.KAFKA_CONNECT],
-          },
-        ])
+        fetchClusters.fulfilled(
+          [
+            {
+              ...onlineClusterPayload,
+              features: [ClusterFeaturesEnum.KAFKA_CONNECT],
+            },
+          ],
+          'requestId'
+        )
       );
       const wrapper = mount(
         setupComponent('/ui/clusters/secondLocal/connectors')

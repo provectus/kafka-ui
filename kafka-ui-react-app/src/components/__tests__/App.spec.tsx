@@ -8,8 +8,6 @@ import App, { AppProps } from 'components/App';
 import AppContainer from 'components/AppContainer';
 import { render } from 'lib/testHelpers';
 
-const fetchClustersList = jest.fn();
-
 describe('App', () => {
   describe('container', () => {
     it('renders view', () => {
@@ -31,22 +29,10 @@ describe('App', () => {
     const setupComponent = (props: Partial<AppProps> = {}) => (
       <Provider store={store}>
         <BrowserRouter basename={window.basePath || '/'}>
-          <App
-            isClusterListFetched
-            alerts={[]}
-            clusters={[]}
-            fetchClustersList={fetchClustersList}
-            {...props}
-          />
+          <App isClusterListFetched alerts={[]} clusters={[]} {...props} />
         </BrowserRouter>
       </Provider>
     );
-
-    it('handles fetchClustersList', () => {
-      render(setupComponent());
-
-      expect(fetchClustersList).toHaveBeenCalledTimes(1);
-    });
 
     it('shows PageLoader when cluster list is fetched', () => {
       render(setupComponent({ isClusterListFetched: true }));

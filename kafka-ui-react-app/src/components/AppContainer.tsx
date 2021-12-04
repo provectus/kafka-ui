@@ -1,21 +1,16 @@
 import { connect } from 'react-redux';
-import { fetchClustersList } from 'redux/actions';
 import {
   getClusterList,
-  getIsClusterListFetched,
-} from 'redux/reducers/clusters/selectors';
+  getAreClustersFulfilled,
+} from 'redux/reducers/clusters/clustersSlice';
 import { getAlerts } from 'redux/reducers/alerts/selectors';
 import { RootState } from 'redux/interfaces';
 import App from 'components/App';
 
 const mapStateToProps = (state: RootState) => ({
-  isClusterListFetched: getIsClusterListFetched(state),
+  isClusterListFetched: getAreClustersFulfilled(state),
   alerts: getAlerts(state),
   clusters: getClusterList(state),
 });
 
-const mapDispatchToProps = {
-  fetchClustersList,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

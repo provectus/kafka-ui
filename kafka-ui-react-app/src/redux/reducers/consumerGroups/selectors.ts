@@ -1,6 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
 import {
   ConsumerGroupID,
   ConsumerGroupsState,
@@ -15,17 +15,17 @@ const getConsumerGroupsMap = (state: RootState) =>
 const getConsumerGroupsIDsList = (state: RootState) =>
   consumerGroupsState(state).allIDs;
 
-const getConsumerGroupsListFetchingStatus = createFetchingSelector(
+const getConsumerGroupsListFetchingStatus = createLeagcyFetchingSelector(
   'GET_CONSUMER_GROUPS'
 );
-const getConsumerGroupDetailsFetchingStatus = createFetchingSelector(
+const getConsumerGroupDetailsFetchingStatus = createLeagcyFetchingSelector(
   'GET_CONSUMER_GROUP_DETAILS'
 );
-const getConsumerGroupDeletingStatus = createFetchingSelector(
+const getConsumerGroupDeletingStatus = createLeagcyFetchingSelector(
   'DELETE_CONSUMER_GROUP'
 );
 
-const getOffsetResettingStatus = createFetchingSelector('RESET_OFFSETS');
+const getOffsetResettingStatus = createLeagcyFetchingSelector('RESET_OFFSETS');
 
 export const getIsConsumerGroupsListFetched = createSelector(
   getConsumerGroupsListFetchingStatus,
