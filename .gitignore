@@ -37,6 +37,5 @@ build/
 
 *.tar.gz
 *.tgz
-**/charts/
 
 /docker/*.override.yaml
