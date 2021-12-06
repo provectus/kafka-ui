@@ -67,7 +67,11 @@ export function mountWithTheme(child: ReactElement) {
 
 // overrides @testing-library/react render.
 const AllTheProviders: React.FC = ({ children }) => {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>{children}</Provider>
+    </ThemeProvider>
+  );
 };
 
 const customRender = (
