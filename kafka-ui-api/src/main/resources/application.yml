@@ -3,7 +3,7 @@ kafka:
 zookeeper:
   connection-timeout: 1000
 auth:
-  enabled: false
+  type: LOGIN_FORM
 management:
   endpoint:
     info:
