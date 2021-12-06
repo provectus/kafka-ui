@@ -1,10 +1,10 @@
 import { combineReducers } from '@reduxjs/toolkit';
 import clusters from 'redux/reducers/clusters/clustersSlice';
 import loader from 'redux/reducers/loader/loaderSlice';
+import brokers from 'redux/reducers/brokers/brokersSlice';
 
 import topics from './topics/reducer';
 import topicMessages from './topicMessages/reducer';
-import brokers from './brokers/reducer';
 import consumerGroups from './consumerGroups/reducer';
 import schemas from './schemas/reducer';
 import connect from './connect/reducer';

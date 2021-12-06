@@ -8,11 +8,6 @@ import {
   ConnectorConfig,
 } from 'redux/interfaces';
 import {
-  Cluster,
-  ClusterStats,
-  ClusterMetrics,
-  Broker,
-  BrokerMetrics,
   ConsumerGroup,
   ConsumerGroupDetails,
   SchemaSubject,
@@ -27,36 +22,6 @@ import {
   TopicMessageSchema,
   KsqlCommandResponse,
 } from 'generated-sources';
-
-export const fetchClusterStatsAction = createAsyncAction(
-  'GET_CLUSTER_STATUS__REQUEST',
-  'GET_CLUSTER_STATUS__SUCCESS',
-  'GET_CLUSTER_STATUS__FAILURE'
-)<undefined, ClusterStats, undefined>();
-
-export const fetchClusterMetricsAction = createAsyncAction(
-  'GET_CLUSTER_METRICS__REQUEST',
-  'GET_CLUSTER_METRICS__SUCCESS',
-  'GET_CLUSTER_METRICS__FAILURE'
-)<undefined, ClusterMetrics, undefined>();
-
-export const fetchBrokersAction = createAsyncAction(
-  'GET_BROKERS__REQUEST',
-  'GET_BROKERS__SUCCESS',
-  'GET_BROKERS__FAILURE'
-)<undefined, Broker[], undefined>();
-
-export const fetchBrokerMetricsAction = createAsyncAction(
-  'GET_BROKER_METRICS__REQUEST',
-  'GET_BROKER_METRICS__SUCCESS',
-  'GET_BROKER_METRICS__FAILURE'
-)<undefined, BrokerMetrics, undefined>();
-
-export const fetchClusterListAction = createAsyncAction(
-  'GET_CLUSTERS__REQUEST',
-  'GET_CLUSTERS__SUCCESS',
-  'GET_CLUSTERS__FAILURE'
-)<undefined, Cluster[], undefined>();
 
 export const fetchTopicsListAction = createAsyncAction(
   'GET_TOPICS__REQUEST',

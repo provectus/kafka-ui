@@ -18,31 +18,6 @@ import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixture
 import { mockTopicsState } from './fixtures';
 
 describe('Actions', () => {
-  describe('fetchClusterStatsAction', () => {
-    it('creates a REQUEST action', () => {
-      expect(actions.fetchClusterStatsAction.request()).toEqual({
-        type: 'GET_CLUSTER_STATUS__REQUEST',
-      });
-    });
-
-    it('creates a SUCCESS action', () => {
-      expect(
-        actions.fetchClusterStatsAction.success({ brokerCount: 1 })
-      ).toEqual({
-        type: 'GET_CLUSTER_STATUS__SUCCESS',
-        payload: {
-          brokerCount: 1,
-        },
-      });
-    });
-
-    it('creates a FAILURE action', () => {
-      expect(actions.fetchClusterStatsAction.failure()).toEqual({
-        type: 'GET_CLUSTER_STATUS__FAILURE',
-      });
-    });
-  });
-
   describe('fetchSchemasByClusterNameAction', () => {
     it('creates a REQUEST action', () => {
       expect(actions.fetchSchemasByClusterNameAction.request()).toEqual({

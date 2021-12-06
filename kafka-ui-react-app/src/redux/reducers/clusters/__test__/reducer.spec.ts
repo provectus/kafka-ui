@@ -40,7 +40,7 @@ describe('Clusters Slice', () => {
         ]);
       });
 
-      it('creates fetchClusters.fulfilled when fetched clusters', async () => {
+      it('creates fetchClusters.rejected when fetched clusters', async () => {
         fetchMock.getOnce('/api/clusters', 422);
         await store.dispatch(fetchClusters());
         expect(

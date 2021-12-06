@@ -1,8 +1,11 @@
 import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/brokers/selectors';
-import { fetchBrokersAction, fetchClusterStatsAction } from 'redux/actions';
+import {
+  fetchBrokers,
+  fetchClusterStats,
+} from 'redux/reducers/brokers/brokersSlice';
 
-import { brokersPayload, brokerStatsPayload } from './fixtures';
+import { brokersPayload, updatedBrokersReducerState } from './fixtures';
 
 const { dispatch, getState } = store;
 
@@ -42,8 +45,11 @@ describe('Brokers selectors', () => {
 
   describe('state', () => {
     beforeAll(() => {
-      dispatch(fetchBrokersAction.success(brokersPayload));
-      dispatch(fetchClusterStatsAction.success(brokerStatsPayload));
+      dispatch({ type: fetchBrokers.fulfilled.type, payload: brokersPayload });
+      dispatch({
+        type: fetchClusterStats.fulfilled.type,
+        payload: updatedBrokersReducerState,
+      });
     });
 
     it('returns broker count', () => {
@@ -72,8 +78,8 @@ describe('Brokers selectors', () => {
     });
     it('returns disk usage', () => {
       expect(selectors.getDiskUsage(getState())).toEqual([
-        { brokerId: 1, segmentCount: 118, segmentSize: 16848434 },
-        { brokerId: 2, segmentCount: 121, segmentSize: 12345678 },
+        { brokerId: 0, segmentSize: 334567, segmentCount: 245 },
+        { brokerId: 1, segmentSize: 12345678, segmentCount: 121 },
       ]);
     });
     it('returns version', () => {
