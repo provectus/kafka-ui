@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Builder;
@@ -88,7 +89,7 @@ public class MetricsCache {
   }
 
   public Metrics get(KafkaCluster c) {
-    return cache.get(c.getName());
+    return Optional.ofNullable(cache.get(c.getName())).orElseGet(MetricsCache::empty);
   }
 
 }

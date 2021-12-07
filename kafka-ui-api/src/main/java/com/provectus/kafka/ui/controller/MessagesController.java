@@ -39,7 +39,7 @@ public class MessagesController extends AbstractController implements MessagesAp
         getCluster(clusterName),
         topicName,
         Optional.ofNullable(partitions).orElse(List.of())
-    ).map(ResponseEntity::ok);
+    ).thenReturn(ResponseEntity.ok().build());
   }
 
   @Override

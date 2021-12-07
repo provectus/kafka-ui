@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.exception;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import com.provectus.kafka.ui.model.ErrorResponseDTO;
 import java.math.BigDecimal;
@@ -73,7 +74,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         .code(ErrorCode.UNEXPECTED.code())
         .message(coalesce(throwable.getMessage(), "Unexpected internal error"))
         .requestId(requestId(request))
-        .timestamp(currentTimestamp());
+        .timestamp(currentTimestamp())
+        .stackTrace(Throwables.getStackTraceAsString(throwable));
     return ServerResponse
         .status(ErrorCode.UNEXPECTED.httpStatus())
         .contentType(MediaType.APPLICATION_JSON)
@@ -86,7 +88,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         .code(errorCode.code())
         .message(coalesce(baseException.getMessage(), "Internal error"))
         .requestId(requestId(request))
-        .timestamp(currentTimestamp());
+        .timestamp(currentTimestamp())
+        .stackTrace(Throwables.getStackTraceAsString(baseException));
     return ServerResponse
         .status(errorCode.httpStatus())
         .contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +118,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         .message(message)
         .requestId(requestId(request))
         .timestamp(currentTimestamp())
-        .fieldsErrors(fieldsErrors);
+        .fieldsErrors(fieldsErrors)
+        .stackTrace(Throwables.getStackTraceAsString(exception));
     return ServerResponse
         .status(HttpStatus.BAD_REQUEST)
         .contentType(MediaType.APPLICATION_JSON)
@@ -128,7 +132,8 @@ public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHan
         .code(ErrorCode.UNEXPECTED.code())
         .message(msg)
         .requestId(requestId(request))
-        .timestamp(currentTimestamp());
+        .timestamp(currentTimestamp())
+        .stackTrace(Throwables.getStackTraceAsString(exception));
     return ServerResponse
         .status(exception.getStatus())
         .contentType(MediaType.APPLICATION_JSON)
