@@ -1,0 +1,26 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Product defects",
+    "children" : [ {
+      "name" : "Element not found {By.xpath: //span[text()='Edit config']}\nExpected: visible\nTimeout: 4 s.\nCaused by: NoSuchElementException: no such element: Unable to locate element: {\"method\":\"xpath\",\"selector\":\"//span[text()='Edit config']\"}",
+      "children" : [ {
+        "name" : "should create a connector",
+        "uid" : "46163b5e2061b766",
+        "parentUid" : "8a85777f97c27e95c8952c3a4aac7c9e",
+        "status" : "failed",
+        "time" : {
+          "start" : 1638911909351,
+          "stop" : 1638911917710,
+          "duration" : 8359
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "8a85777f97c27e95c8952c3a4aac7c9e"
+    } ],
+    "uid" : "8fb3a91ba5aaf9de24cc8a92edc82b5d"
+  } ],
+  "name" : "categories"
+}
