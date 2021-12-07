@@ -31,10 +31,10 @@ public class ConnectorsTests extends BaseTest {
         apiHelper.sendMessage(LOCAL, TOPIC_FOR_CONNECTOR, message, " ");
      //   apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
       //  apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
-      //  apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE, createConfig);
-      //  apiHelper.createTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
-      //  apiHelper.sendMessage(LOCAL, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
-       // apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_DELETE, deleteConfig);
+        //apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE, createConfig);
+        apiHelper.createTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
+        apiHelper.sendMessage(LOCAL, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
+        apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_DELETE, deleteConfig);
     }
 
     @AfterAll
@@ -45,7 +45,7 @@ public class ConnectorsTests extends BaseTest {
        apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
     //    apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
      //   apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
-     //   apiHelper.deleteTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
+        apiHelper.deleteTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
         apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
     }
 
@@ -82,7 +82,6 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete connector")
     @Test
-    @Disabled
     void deleteConnector() {
         pages.openConnectorsList(LOCAL)
                 .isOnPage()
