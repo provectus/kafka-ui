@@ -14,24 +14,19 @@ public class ConnectorCreateView {
     private static final String path = "ui/clusters/secondLocal/connectors/create_new";
 
     @Step
-    public ConnectorCreateView setConnectorConfig(String connectName, String configJson) {
+    public ConnectorsView setConnectorConfig(String connectName, String configJson) {
         $(By.xpath("//input[@name='name']")).sendKeys(connectName);
         $(".ace_text-input").sendKeys(Keys.BACK_SPACE);
         $(".ace_text-input").sendKeys(Keys.BACK_SPACE);
         $(".ace_text-input").sendKeys(String.valueOf(configJson.toCharArray()));
         $(By.xpath("//input[@name='name']")).click();
         $(By.xpath("//input[@type='submit']")).click();
-        return this;
+        return new ConnectorsView();
     }
 
     @Step
     public ConnectorCreateView isOnConnectorCreatePage() {
         $(By.xpath("//input[@name='name']")).shouldBe(Condition.visible);
         return this;
-    }
-
-    @Step
-    public void connectorIsVisibleOnOverview() {
-        $(By.xpath("//span[text()='Edit config']")).shouldBe(Condition.visible);
     }
 }

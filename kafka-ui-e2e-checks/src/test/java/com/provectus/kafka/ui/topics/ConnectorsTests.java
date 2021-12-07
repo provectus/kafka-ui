@@ -13,7 +13,6 @@ public class ConnectorsTests extends BaseTest {
     public static final String SINK_CONNECTOR = "sink_postgres_activities_e2e_checks";
     public static final String TOPIC_FOR_CONNECTOR = "topic_for_connector";
     public static final String TOPIC_FOR_UPDATE_CONNECTOR = "topic_for_update_connector";
-    public static final String TOPIC_FOR_DELETE_CONNECTOR = "topic_for_delete_connector";
     public static final String FIRST = "first";
     public static final String CONNECTOR_FOR_DELETE = "sink_postgres_activities_e2e_checks_for_delete";
     public static final String CONNECTOR_FOR_UPDATE = "sink_postgres_activities_e2e_checks_for_update";
@@ -24,28 +23,15 @@ public class ConnectorsTests extends BaseTest {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
 
         String message = FileUtils.getResourceAsString("message_content_create_topic.json");
-        String createConfig = FileUtils.getResourceAsString("config_for_create_connector_via_api.json");
-        String deleteConfig = FileUtils.getResourceAsString("delete_connector_config.json");
-
         apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
         apiHelper.sendMessage(LOCAL, TOPIC_FOR_CONNECTOR, message, " ");
-     //   apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
-      //  apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
-        //apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE, createConfig);
-      //  apiHelper.createTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
-    //    apiHelper.sendMessage(LOCAL, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
-    //    apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_DELETE, deleteConfig);
     }
 
     @AfterAll
     @SneakyThrows
     public static void afterAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
-
-       apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
-    //    apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
-     //   apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
-       // apiHelper.deleteTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
+        apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
         apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
     }
 
