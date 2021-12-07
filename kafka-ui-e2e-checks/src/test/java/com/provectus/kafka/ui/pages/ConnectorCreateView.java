@@ -25,6 +25,12 @@ public class ConnectorCreateView {
     }
 
     @Step
+    public ConnectorCreateView isOnConnectorCreatePage() {
+        $(By.xpath("//input[@name='name']")).shouldBe(Condition.visible);
+        return this;
+    }
+
+    @Step
     public void connectorIsVisibleOnOverview() {
         $(By.xpath("//span[text()='Edit config']")).shouldBe(Condition.visible);
     }

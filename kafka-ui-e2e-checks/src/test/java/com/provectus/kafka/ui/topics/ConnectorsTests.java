@@ -56,6 +56,7 @@ public class ConnectorsTests extends BaseTest {
         pages.openConnectorsList(LOCAL)
                 .isOnPage()
                 .clickCreateConnectorButton()
+                .isOnConnectorCreatePage()
                 .setConnectorConfig(
                         SINK_CONNECTOR,
                         FileUtils.getResourceAsString("config_for_create_connector.json")
