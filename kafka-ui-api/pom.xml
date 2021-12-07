@@ -189,7 +189,7 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
-            <version>4.7.1</version>
+            <version>${antlr4-maven-plugin.version}</version>
         </dependency>
     </dependencies>
 
