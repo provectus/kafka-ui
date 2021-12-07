@@ -29,12 +29,12 @@ public class ConnectorsTests extends BaseTest {
 
         apiHelper.createTopic(LOCAL, TOPIC_FOR_CONNECTOR);
         apiHelper.sendMessage(LOCAL, TOPIC_FOR_CONNECTOR, message, " ");
-        apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
-        apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
-        apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE, createConfig);
-        apiHelper.createTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
-        apiHelper.sendMessage(LOCAL, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
-        apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_DELETE, deleteConfig);
+     //   apiHelper.createTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
+      //  apiHelper.sendMessage(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR, message, " ");
+      //  apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE, createConfig);
+      //  apiHelper.createTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
+      //  apiHelper.sendMessage(LOCAL, TOPIC_FOR_DELETE_CONNECTOR, message, " ");
+       // apiHelper.createConnector(LOCAL, FIRST, CONNECTOR_FOR_DELETE, deleteConfig);
     }
 
     @AfterAll
@@ -42,10 +42,10 @@ public class ConnectorsTests extends BaseTest {
     public static void afterAll() {
         ApiHelper apiHelper = Helpers.INSTANCE.apiHelper;
 
-        apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
-        apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
-        apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
-        apiHelper.deleteTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
+       apiHelper.deleteConnector(LOCAL, FIRST, SINK_CONNECTOR);
+    //    apiHelper.deleteConnector(LOCAL, FIRST, CONNECTOR_FOR_UPDATE);
+     //   apiHelper.deleteTopic(LOCAL, TOPIC_FOR_UPDATE_CONNECTOR);
+     //   apiHelper.deleteTopic(LOCAL, TOPIC_FOR_DELETE_CONNECTOR);
         apiHelper.deleteTopic(LOCAL, TOPIC_FOR_CONNECTOR);
     }
 
@@ -67,6 +67,7 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update a connector")
     @Test
+    @Disabled
     void updateConnector() {
         pages.openConnectorsList(LOCAL)
                 .isOnPage()
@@ -81,6 +82,7 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete connector")
     @Test
+    @Disabled
     void deleteConnector() {
         pages.openConnectorsList(LOCAL)
                 .isOnPage()
