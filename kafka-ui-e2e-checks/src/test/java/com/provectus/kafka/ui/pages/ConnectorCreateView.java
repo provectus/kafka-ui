@@ -25,7 +25,7 @@ public class ConnectorCreateView {
     }
 
     @Step
-    public void connectorIsVisible() {
-        $(By.xpath("//span[text()='Restart all tasks']")).shouldBe(Condition.visible);
+    public void connectorIsVisibleOnOverview() {
+        $(By.xpath("//span[text()='Edit config']")).shouldBe(Condition.visible);
     }
 }

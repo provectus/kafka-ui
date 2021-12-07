@@ -60,7 +60,7 @@ public class ConnectorsTests extends BaseTest {
                         SINK_CONNECTOR,
                         FileUtils.getResourceAsString("config_for_create_connector.json")
                 )
-                .connectorIsVisible();
+                .connectorIsVisibleOnOverview();
         pages.openConnectorsList(LOCAL).connectorIsVisibleInList(SINK_CONNECTOR, TOPIC_FOR_CONNECTOR);
     }
 
