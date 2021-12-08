@@ -10,6 +10,3 @@ management:
     web:
       exposure:
         include: "info,health"
-#spring:
-#  main:
-#    allow-bean-definition-overriding=true:
