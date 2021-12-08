@@ -1,0 +1,71 @@
+[ {
+  "uid" : "251289eadfa85501",
+  "name" : "should create a topic",
+  "time" : {
+    "start" : 1638996535488,
+    "stop" : 1638996539755,
+    "duration" : 4267
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "b246a4197583faaa",
+  "name" : "main page should load",
+  "time" : {
+    "start" : 1638996557839,
+    "stop" : 1638996559540,
+    "duration" : 1701
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "3bcbbbaf0f09c7cd",
+  "name" : "should update a topic",
+  "time" : {
+    "start" : 1638996513180,
+    "stop" : 1638996535478,
+    "duration" : 22298
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "52156eb63de88004",
+  "name" : "should delete topic",
+  "time" : {
+    "start" : 1638996487870,
+    "stop" : 1638996513090,
+    "duration" : 25220
+  },
+  "status" : "passed",
+  "severity" : "normal"
+}, {
+  "uid" : "32ac51bd69859b63",
+  "name" : "should delete connector",
+  "time" : {
+    "start" : 1638996555614,
+    "stop" : 1638996555614,
+    "duration" : 0
+  },
+  "status" : "skipped",
+  "severity" : "normal"
+}, {
+  "uid" : "a15ec22b90cafddd",
+  "name" : "should update a connector",
+  "time" : {
+    "start" : 1638996555642,
+    "stop" : 1638996555642,
+    "duration" : 0
+  },
+  "status" : "skipped",
+  "severity" : "normal"
+}, {
+  "uid" : "68ef1bfd6a4f3a20",
+  "name" : "should create a connector",
+  "time" : {
+    "start" : 1638996542624,
+    "stop" : 1638996555400,
+    "duration" : 12776
+  },
+  "status" : "failed",
+  "severity" : "normal"
+} ]
