@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.topics;
+package com.provectus.kafka.ui.tests;
 
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
