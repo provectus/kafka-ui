@@ -20,7 +20,7 @@ import reactor.core.publisher.Mono;
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
   @Setter // used in tests
-  @Value("${kafka.admin-client-timeout}")
+  @Value("${kafka.admin-client-timeout:30000}")
   private int clientTimeout;
 
   @Override
