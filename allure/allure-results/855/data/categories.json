@@ -1,0 +1,43 @@
+{
+  "uid" : "4b4757e66a1912dae1a509f688f20b0f",
+  "children" : [ {
+    "name" : "Test defects",
+    "children" : [ {
+      "name" : "Connection prematurely closed BEFORE response; nested exception is reactor.netty.http.client.PrematureCloseException: Connection prematurely closed BEFORE response",
+      "children" : [ {
+        "name" : " topic tests",
+        "uid" : "3c5b11b390f1fa60",
+        "parentUid" : "8abf10aa16b0b63e055e4cdc5b9a24e1",
+        "status" : "broken",
+        "time" : {
+          "start" : 1638999186649,
+          "stop" : 1638999186649,
+          "duration" : 0
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "8abf10aa16b0b63e055e4cdc5b9a24e1"
+    }, {
+      "name" : "400 Bad Request from POST http://localhost:8080/api/clusters/local/topics",
+      "children" : [ {
+        "name" : " connectors tests",
+        "uid" : "43f8bf713b39bbc2",
+        "parentUid" : "3863cc2e3bee3a2d848a4d177a226c51",
+        "status" : "broken",
+        "time" : {
+          "start" : 1638999192768,
+          "stop" : 1638999192768,
+          "duration" : 0
+        },
+        "flaky" : false,
+        "newFailed" : false,
+        "parameters" : [ ]
+      } ],
+      "uid" : "3863cc2e3bee3a2d848a4d177a226c51"
+    } ],
+    "uid" : "bdbf199525818fae7a8651db9eafe741"
+  } ],
+  "name" : "categories"
+}
