@@ -1,0 +1,108 @@
+{
+  "uid" : "98d3104e051c652961429bf95fa0b5d6",
+  "children" : [ {
+    "name" : "com.provectus.kafka.ui.SmokeTests",
+    "children" : [ {
+      "name" : "main page should load",
+      "uid" : "e3f4119eef950242",
+      "parentUid" : "69fdc287dff659537c8bf8784f0eea66",
+      "status" : "passed",
+      "time" : {
+        "start" : 1639000839728,
+        "stop" : 1639000855737,
+        "duration" : 16009
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "69fdc287dff659537c8bf8784f0eea66"
+  }, {
+    "name" : "com.provectus.kafka.ui.tests.TopicTests",
+    "children" : [ {
+      "name" : "should delete topic",
+      "uid" : "24c0ac8108bb5869",
+      "parentUid" : "b678488638421c2abe62671b8900184a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1639000863745,
+        "stop" : 1639000877314,
+        "duration" : 13569
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "should update a topic",
+      "uid" : "7b63fa22bc722bbd",
+      "parentUid" : "b678488638421c2abe62671b8900184a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1639000877352,
+        "stop" : 1639000894600,
+        "duration" : 17248
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "should create a topic",
+      "uid" : "f2923b20c66574b8",
+      "parentUid" : "b678488638421c2abe62671b8900184a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1639000894605,
+        "stop" : 1639000900907,
+        "duration" : 6302
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "b678488638421c2abe62671b8900184a"
+  }, {
+    "name" : "com.provectus.kafka.ui.tests.ConnectorsTests",
+    "children" : [ {
+      "name" : "should create a connector",
+      "uid" : "fe91629c9e7a9c2b",
+      "parentUid" : "ece5c875522cfeac0e7a67cc33c21d8a",
+      "status" : "passed",
+      "time" : {
+        "start" : 1639000902769,
+        "stop" : 1639000926676,
+        "duration" : 23907
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "should delete connector",
+      "uid" : "82d47a2f4d25badd",
+      "parentUid" : "ece5c875522cfeac0e7a67cc33c21d8a",
+      "status" : "skipped",
+      "time" : {
+        "start" : 1639000926683,
+        "stop" : 1639000926684,
+        "duration" : 1
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    }, {
+      "name" : "should update a connector",
+      "uid" : "86faede009acd683",
+      "parentUid" : "ece5c875522cfeac0e7a67cc33c21d8a",
+      "status" : "skipped",
+      "time" : {
+        "start" : 1639000926688,
+        "stop" : 1639000926688,
+        "duration" : 0
+      },
+      "flaky" : false,
+      "newFailed" : false,
+      "parameters" : [ ]
+    } ],
+    "uid" : "ece5c875522cfeac0e7a67cc33c21d8a"
+  } ],
+  "name" : "suites"
+}
