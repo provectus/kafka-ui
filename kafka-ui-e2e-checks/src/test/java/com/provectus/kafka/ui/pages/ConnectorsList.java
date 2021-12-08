@@ -50,7 +50,7 @@ public class ConnectorsList {
 
     @Step
     public ConnectorsList connectorIsVisibleInList(String connectorName, String topicName) {
-        $(By.xpath("//a[text() = '%s']".formatted(connectorName))).shouldBe(Condition.visible);
+        By.xpath("//a[text() = '%s']".formatted(connectorName)).refreshUntil(Condition.visible);
         By.xpath("//a[text() = '%s']".formatted(topicName)).refreshUntil(Condition.visible);
         return this;
     }
