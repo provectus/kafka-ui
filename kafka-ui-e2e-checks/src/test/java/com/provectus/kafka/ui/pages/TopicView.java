@@ -49,6 +49,7 @@ public class TopicView {
 
     @SneakyThrows
     public TopicView clickDeleteTopicButton() {
+        By.xpath("//*[text()='Delete Topic']").refreshUntil(Condition.visible);
         $(By.xpath("//*[text()='Delete Topic']")).click();
         $(By.xpath("//*[text()='Confirm']")).click();
         return this;
