@@ -1,0 +1,58 @@
+{
+  "uid" : "4806d00ac5eb521b",
+  "name" : "should update a connector",
+  "fullName" : "com.provectus.kafka.ui.tests.ConnectorsTests.updateConnector",
+  "historyId" : "23f219d74751003b662042c4f7ae974",
+  "time" : {
+    "start" : 1639000388481,
+    "stop" : 1639000388481,
+    "duration" : 0
+  },
+  "description" : "",
+  "status" : "skipped",
+  "statusMessage" : "void com.provectus.kafka.ui.tests.ConnectorsTests.updateConnector() is @Disabled",
+  "flaky" : false,
+  "newFailed" : false,
+  "beforeStages" : [ ],
+  "afterStages" : [ ],
+  "labels" : [ {
+    "name" : "host",
+    "value" : "fv-az198-145"
+  }, {
+    "name" : "thread",
+    "value" : "6922@fv-az198-145.main(1)"
+  }, {
+    "name" : "framework",
+    "value" : "junit-platform"
+  }, {
+    "name" : "language",
+    "value" : "java"
+  }, {
+    "name" : "package",
+    "value" : "com.provectus.kafka.ui.tests.ConnectorsTests"
+  }, {
+    "name" : "testClass",
+    "value" : "com.provectus.kafka.ui.tests.ConnectorsTests"
+  }, {
+    "name" : "testMethod",
+    "value" : "updateConnector"
+  }, {
+    "name" : "suite",
+    "value" : "com.provectus.kafka.ui.tests.ConnectorsTests"
+  }, {
+    "name" : "resultFormat",
+    "value" : "allure2"
+  } ],
+  "parameters" : [ ],
+  "links" : [ ],
+  "hidden" : false,
+  "retry" : false,
+  "extra" : {
+    "severity" : "normal",
+    "retries" : [ ],
+    "categories" : [ ],
+    "tags" : [ ]
+  },
+  "source" : "4806d00ac5eb521b.json",
+  "parameterValues" : [ ]
+}
