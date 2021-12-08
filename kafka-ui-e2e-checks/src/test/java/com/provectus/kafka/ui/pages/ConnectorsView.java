@@ -34,6 +34,8 @@ public class ConnectorsView {
 
     @Step
     public void connectorIsVisibleOnOverview() {
-       $(By.xpath("//span[text()='Edit config']")).shouldBe(Condition.visible);
+        $(By.xpath("//a[text() ='Tasks']")).click();
+        $(By.xpath("//a[text() ='Config']")).click();
+        $(By.xpath("//span[text()='Edit config']")).waitUntil(Condition.visible, 100);
     }
 }
