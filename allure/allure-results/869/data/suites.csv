@@ -1,8 +1,0 @@
-"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"skipped","Thu Dec 09 09:36:23 GMT 2021","Thu Dec 09 09:36:23 GMT 2021","0","","com.provectus.kafka.ui.tests.ConnectorsTests","","com.provectus.kafka.ui.tests.ConnectorsTests","deleteConnector","should delete connector",""
-"passed","Thu Dec 09 09:35:00 GMT 2021","Thu Dec 09 09:35:14 GMT 2021","13895","","com.provectus.kafka.ui.SmokeTests","","com.provectus.kafka.ui.SmokeTests","mainPageLoads","main page should load",""
-"skipped","Thu Dec 09 09:36:23 GMT 2021","Thu Dec 09 09:36:23 GMT 2021","1","","com.provectus.kafka.ui.tests.ConnectorsTests","","com.provectus.kafka.ui.tests.ConnectorsTests","updateConnector","should update a connector",""
-"passed","Thu Dec 09 09:35:22 GMT 2021","Thu Dec 09 09:35:35 GMT 2021","12561","","com.provectus.kafka.ui.tests.TopicTests","","com.provectus.kafka.ui.tests.TopicTests","deleteTopic","should delete topic",""
-"passed","Thu Dec 09 09:36:00 GMT 2021","Thu Dec 09 09:36:22 GMT 2021","22509","","com.provectus.kafka.ui.tests.ConnectorsTests","","com.provectus.kafka.ui.tests.ConnectorsTests","createConnector","should create a connector",""
-"passed","Thu Dec 09 09:35:35 GMT 2021","Thu Dec 09 09:35:53 GMT 2021","17892","","com.provectus.kafka.ui.tests.TopicTests","","com.provectus.kafka.ui.tests.TopicTests","updateTopic","should update a topic",""
-"passed","Thu Dec 09 09:35:53 GMT 2021","Thu Dec 09 09:35:57 GMT 2021","4406","","com.provectus.kafka.ui.tests.TopicTests","","com.provectus.kafka.ui.tests.TopicTests","createTopic","should create a topic",""
