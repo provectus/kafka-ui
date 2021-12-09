@@ -83,7 +83,7 @@ jobs:
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ needs.build.outputs.tag }}"
-          ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }}
+          ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }} ${{ secrets.GITHUB_TOKEN }}
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/
