@@ -1,12 +1,12 @@
 {
-  "uid" : "bdf3c0492b934986",
+  "uid" : "faf20b8acb517643",
   "name" : "should delete topic",
   "fullName" : "com.provectus.kafka.ui.topics.TopicTests.deleteTopic",
   "historyId" : "68ea0c9be4a2b1282c1c0563a861c577",
   "time" : {
-    "start" : 1639037612835,
-    "stop" : 1639037633909,
-    "duration" : 21074
+    "start" : 1639039467367,
+    "stop" : 1639039487650,
+    "duration" : 20283
   },
   "description" : "",
   "status" : "passed",
@@ -19,17 +19,17 @@
     "steps" : [ {
       "name" : "goTo",
       "time" : {
-        "start" : 1639037612895,
-        "stop" : 1639037621630,
-        "duration" : 8735
+        "start" : 1639039467462,
+        "stop" : 1639039475932,
+        "duration" : 8470
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/ui/clusters/secondLocal/topics",
         "time" : {
-          "start" : 1639037612898,
-          "stop" : 1639037621629,
-          "duration" : 8731
+          "start" : 1639039467472,
+          "stop" : 1639039475932,
+          "duration" : 8460
         },
         "status" : "passed",
         "steps" : [ ],
@@ -52,17 +52,17 @@
     }, {
       "name" : "isOnPage",
       "time" : {
-        "start" : 1639037621630,
-        "stop" : 1639037624099,
-        "duration" : 2469
+        "start" : 1639039475933,
+        "stop" : 1639039479392,
+        "duration" : 3459
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1639037621632,
-          "stop" : 1639037622126,
-          "duration" : 494
+          "start" : 1639039475936,
+          "stop" : 1639039476363,
+          "duration" : 427
         },
         "status" : "passed",
         "steps" : [ ],
@@ -75,9 +75,9 @@
       }, {
         "name" : "$(\"By.xpath: //span[text()='All Topics']\") should be(visible)",
         "time" : {
-          "start" : 1639037622127,
-          "stop" : 1639037624099,
-          "duration" : 1972
+          "start" : 1639039476363,
+          "stop" : 1639039479392,
+          "duration" : 3029
         },
         "status" : "passed",
         "steps" : [ ],
@@ -97,9 +97,9 @@
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='topic-to-delete']\") should be(visible)",
       "time" : {
-        "start" : 1639037626735,
-        "stop" : 1639037626840,
-        "duration" : 105
+        "start" : 1639039481493,
+        "stop" : 1639039481573,
+        "duration" : 80
       },
       "status" : "passed",
       "steps" : [ ],
@@ -112,9 +112,9 @@
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table//a[text()='topic-to-delete']\") click()",
       "time" : {
-        "start" : 1639037626840,
-        "stop" : 1639037627200,
-        "duration" : 360
+        "start" : 1639039481573,
+        "stop" : 1639039481862,
+        "duration" : 289
       },
       "status" : "passed",
       "steps" : [ ],
@@ -127,17 +127,17 @@
     }, {
       "name" : "goTo",
       "time" : {
-        "start" : 1639037627200,
-        "stop" : 1639037628202,
-        "duration" : 1002
+        "start" : 1639039481862,
+        "stop" : 1639039482708,
+        "duration" : 846
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"open\") http://host.docker.internal:8080/ui/clusters/secondLocal/topics/topic-to-delete",
         "time" : {
-          "start" : 1639037627201,
-          "stop" : 1639037628202,
-          "duration" : 1001
+          "start" : 1639039481863,
+          "stop" : 1639039482708,
+          "duration" : 845
         },
         "status" : "passed",
         "steps" : [ ],
@@ -163,9 +163,9 @@
     }, {
       "name" : "$(\"By.xpath: //*[text()='Delete Topic']\") click()",
       "time" : {
-        "start" : 1639037628202,
-        "stop" : 1639037629998,
-        "duration" : 1796
+        "start" : 1639039482708,
+        "stop" : 1639039484093,
+        "duration" : 1385
       },
       "status" : "passed",
       "steps" : [ ],
@@ -178,9 +178,9 @@
     }, {
       "name" : "$(\"By.xpath: //*[text()='Confirm']\") click()",
       "time" : {
-        "start" : 1639037629998,
-        "stop" : 1639037630174,
-        "duration" : 176
+        "start" : 1639039484094,
+        "stop" : 1639039484381,
+        "duration" : 287
       },
       "status" : "passed",
       "steps" : [ ],
@@ -193,17 +193,17 @@
     }, {
       "name" : "isOnTopicListPage",
       "time" : {
-        "start" : 1639037630174,
-        "stop" : 1639037631236,
-        "duration" : 1062
+        "start" : 1639039484382,
+        "stop" : 1639039485451,
+        "duration" : 1069
       },
       "status" : "passed",
       "steps" : [ {
         "name" : "$(\"By.xpath: //*[contains(text(),'Loading')]\") should be(hidden)",
         "time" : {
-          "start" : 1639037630175,
-          "stop" : 1639037630206,
-          "duration" : 31
+          "start" : 1639039484382,
+          "stop" : 1639039484429,
+          "duration" : 47
         },
         "status" : "passed",
         "steps" : [ ],
@@ -216,9 +216,9 @@
       }, {
         "name" : "$(\"By.xpath: //span[text()='All Topics']\") should be(visible)",
         "time" : {
-          "start" : 1639037630207,
-          "stop" : 1639037631236,
-          "duration" : 1029
+          "start" : 1639039484429,
+          "stop" : 1639039485451,
+          "duration" : 1022
         },
         "status" : "passed",
         "steps" : [ ],
@@ -238,9 +238,9 @@
     }, {
       "name" : "$(\"By.xpath: //div[contains(@class,'section')]//table\") should be(visible)",
       "time" : {
-        "start" : 1639037633753,
-        "stop" : 1639037633856,
-        "duration" : 103
+        "start" : 1639039487524,
+        "stop" : 1639039487618,
+        "duration" : 94
       },
       "status" : "passed",
       "steps" : [ ],
@@ -253,9 +253,9 @@
     }, {
       "name" : "$(\"By.xpath: //a[text()='topic-to-delete']\") should not be(visible)",
       "time" : {
-        "start" : 1639037633856,
-        "stop" : 1639037633892,
-        "duration" : 36
+        "start" : 1639039487618,
+        "stop" : 1639039487637,
+        "duration" : 19
       },
       "status" : "passed",
       "steps" : [ ],
@@ -276,10 +276,10 @@
   "afterStages" : [ ],
   "labels" : [ {
     "name" : "host",
-    "value" : "fv-az154-972"
+    "value" : "fv-az198-145"
   }, {
     "name" : "thread",
-    "value" : "6424@fv-az154-972.main(1)"
+    "value" : "6153@fv-az198-145.main(1)"
   }, {
     "name" : "framework",
     "value" : "junit-platform"
@@ -312,6 +312,6 @@
     "categories" : [ ],
     "tags" : [ ]
   },
-  "source" : "bdf3c0492b934986.json",
+  "source" : "faf20b8acb517643.json",
   "parameterValues" : [ ]
 }
