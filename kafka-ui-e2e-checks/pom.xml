@@ -181,7 +181,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${org.projectlombok.e2e-checks.version}</version>
+            <version>${org.projectlombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>

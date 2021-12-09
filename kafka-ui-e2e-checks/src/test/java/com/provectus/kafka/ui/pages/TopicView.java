@@ -28,6 +28,13 @@ public class TopicView {
     }
 
     @Step
+    public TopicsList isOnTopicViewPage() {
+        $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
+        $(By.xpath("//a[text()='All Topics']")).shouldBe(Condition.visible);
+        return new TopicsList();
+    }
+
+    @Step
     public TopicsList isOnTopicListPage() {
         $(By.xpath("//*[contains(text(),'Loading')]")).shouldBe(Condition.disappear);
         $(By.xpath("//span[text()='All Topics']")).shouldBe(Condition.visible);
@@ -42,6 +49,7 @@ public class TopicView {
 
     @SneakyThrows
     public TopicView clickDeleteTopicButton() {
+        By.xpath("//*[text()='Delete Topic']").refreshUntil(Condition.visible);
         $(By.xpath("//*[text()='Delete Topic']")).click();
         $(By.xpath("//*[text()='Confirm']")).click();
         return this;
@@ -76,8 +84,9 @@ public class TopicView {
     }
 
     @SneakyThrows
-    public void submitSettingChanges() {
+    public TopicView submitSettingChanges() {
         $(By.xpath("//input[@type='submit']")).click();
+        return this;
     }
 
     public TopicView cleanupPolicyIs(String value) {

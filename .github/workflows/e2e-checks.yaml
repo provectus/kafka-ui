@@ -1,7 +1,7 @@
 name: e2e-checks
 on:
   pull_request:
-    types: ['opened', 'edited', 'reopened', 'synchronize']
+    types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
     paths:
       - 'kafka-ui-api/**'
       - 'kafka-ui-contract/**'
@@ -37,8 +37,9 @@ jobs:
           mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
+        # use the following command until #819 will be fixed
         run: |
-          docker-compose -f ./docker/kafka-ui.yaml up -d
+          docker-compose -f ./docker/kafka-ui-connectors.yaml up -d
       - name: e2e run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
@@ -70,3 +71,6 @@ jobs:
           state: 'success'
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v1
