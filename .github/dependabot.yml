@@ -1,5 +1,18 @@
 version: 2
 updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "10:00"
+    timezone: Europe/Moscow
+  reviewers:
+    - "Haarolean"
+  assignees:
+    - "Haarolean"
+  labels:
+    - "scope/backend"
+    - "type/dependencies"
 - package-ecosystem: npm
   directory: "/kafka-ui-react-app"
   schedule:
@@ -8,6 +21,9 @@ updates:
     timezone: Europe/Moscow
   open-pull-requests-limit: 10
   versioning-strategy: increase-if-necessary
+  labels:
+    - "scope/frontend"
+    - "type/dependencies"
   ignore:
   - dependency-name: react-hook-form
     versions:
@@ -75,3 +91,9 @@ updates:
   - dependency-name: react-json-tree
     versions:
     - 0.15.0
+- package-ecosystem: "github-actions"
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: "10:00"
+    timezone: Europe/Moscow
