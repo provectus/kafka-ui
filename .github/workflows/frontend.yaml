@@ -20,7 +20,7 @@ jobs:
         # Disabling shallow clone is recommended for improving relevancy of reporting
         fetch-depth: 0
     - name: Use Node.js
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2.5.0
       with:
         node-version: "14"
     - name: Cache node dependency
