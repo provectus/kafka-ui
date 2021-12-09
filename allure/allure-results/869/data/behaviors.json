@@ -1,0 +1,96 @@
+{
+  "uid" : "b1a8273437954620fa374b796ffaacdd",
+  "children" : [ {
+    "name" : "main page should load",
+    "uid" : "d996b021ddff288c",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "passed",
+    "time" : {
+      "start" : 1639042500984,
+      "stop" : 1639042514879,
+      "duration" : 13895
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  }, {
+    "name" : "should delete topic",
+    "uid" : "f4ec63ae8ca17f67",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "passed",
+    "time" : {
+      "start" : 1639042522928,
+      "stop" : 1639042535489,
+      "duration" : 12561
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  }, {
+    "name" : "should update a topic",
+    "uid" : "399a6ddb17af9ccc",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "passed",
+    "time" : {
+      "start" : 1639042535510,
+      "stop" : 1639042553402,
+      "duration" : 17892
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  }, {
+    "name" : "should create a topic",
+    "uid" : "a260769fee971a36",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "passed",
+    "time" : {
+      "start" : 1639042553421,
+      "stop" : 1639042557827,
+      "duration" : 4406
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  }, {
+    "name" : "should create a connector",
+    "uid" : "b7ea3f627d41dabb",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "passed",
+    "time" : {
+      "start" : 1639042560488,
+      "stop" : 1639042582997,
+      "duration" : 22509
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  }, {
+    "name" : "should delete connector",
+    "uid" : "bf57f309f7c6468c",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "skipped",
+    "time" : {
+      "start" : 1639042583012,
+      "stop" : 1639042583012,
+      "duration" : 0
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  }, {
+    "name" : "should update a connector",
+    "uid" : "4f14e911c37c0f41",
+    "parentUid" : "b1a8273437954620fa374b796ffaacdd",
+    "status" : "skipped",
+    "time" : {
+      "start" : 1639042583016,
+      "stop" : 1639042583017,
+      "duration" : 1
+    },
+    "flaky" : false,
+    "newFailed" : false,
+    "parameters" : [ ]
+  } ],
+  "name" : "behaviors"
+}
