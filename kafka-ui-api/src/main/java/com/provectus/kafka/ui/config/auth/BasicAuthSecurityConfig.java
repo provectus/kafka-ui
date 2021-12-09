@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.config.auth;
 
-import com.provectus.kafka.ui.config.Constants;
 import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,7 +20,7 @@ public class BasicAuthSecurityConfig {
   public SecurityWebFilterChain configure(ServerHttpSecurity http) {
     log.info("Configuring LOGIN_FORM authentication.");
     http.authorizeExchange()
-        .pathMatchers(Constants.AUTH_WHITELIST)
+        .pathMatchers(AbstractAuthSecurityConfig.AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated();

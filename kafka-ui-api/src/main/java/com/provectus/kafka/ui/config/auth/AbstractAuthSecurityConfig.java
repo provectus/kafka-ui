@@ -1,6 +1,6 @@
-package com.provectus.kafka.ui.config;
+package com.provectus.kafka.ui.config.auth;
 
-public class Constants {
+public abstract class AbstractAuthSecurityConfig {
 
   public static final String[] AUTH_WHITELIST = {
       "/css/**",

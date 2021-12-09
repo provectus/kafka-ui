@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.config.auth;
 
-import com.provectus.kafka.ui.config.Constants;
-import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,7 +9,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.util.ClassUtils;
 
 @Configuration
@@ -36,7 +33,7 @@ public class OAuthSecurityConfig {
   public SecurityWebFilterChain configure(ServerHttpSecurity http) {
     log.info("Configuring OAUTH2 authentication.");
     http.authorizeExchange()
-        .pathMatchers(Constants.AUTH_WHITELIST)
+        .pathMatchers(AbstractAuthSecurityConfig.AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated();

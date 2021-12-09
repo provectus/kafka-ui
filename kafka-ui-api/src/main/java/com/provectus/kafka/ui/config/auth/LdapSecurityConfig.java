@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.config.auth;
 
-import com.provectus.kafka.ui.config.Constants;
 import java.util.List;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +55,7 @@ public class LdapSecurityConfig {
 
     http
         .authorizeExchange()
-        .pathMatchers(Constants.AUTH_WHITELIST)
+        .pathMatchers(AbstractAuthSecurityConfig.AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated()
