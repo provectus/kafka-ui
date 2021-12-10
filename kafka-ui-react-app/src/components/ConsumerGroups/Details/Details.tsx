@@ -5,14 +5,9 @@ import {
   clusterConsumerGroupsPath,
 } from 'lib/paths';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
-import {
-  ConsumerGroup,
-  ConsumerGroupDetails,
-  ConsumerGroupTopicPartition,
-} from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
@@ -26,45 +21,39 @@ import { Colors } from 'theme/theme';
 import { groupBy } from 'lodash';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  fetchConsumerGroupDetails,
+  deleteConsumerGroup,
+  selectById,
+  getIsConsumerGroupDeleted,
+  getAreConsumerGroupDetailsFulfilled,
+} from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
 import ListItem from './ListItem';
 
-export interface Props extends ConsumerGroup, ConsumerGroupDetails {
-  clusterName: ClusterName;
-  partitions?: ConsumerGroupTopicPartition[];
-  isFetched: boolean;
-  isDeleted: boolean;
-  fetchConsumerGroupDetails: (
-    clusterName: ClusterName,
-    consumerGroupID: ConsumerGroupID
-  ) => void;
-  deleteConsumerGroup: (clusterName: string, id: ConsumerGroupID) => void;
-}
-
-const Details: React.FC<Props> = ({
-  clusterName,
-  groupId,
-  partitions,
-  isFetched,
-  isDeleted,
-  state,
-  members,
-  topics,
-  coordinator,
-  fetchConsumerGroupDetails,
-  deleteConsumerGroup,
-}) => {
-  React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, groupId);
-  }, [fetchConsumerGroupDetails, clusterName, groupId]);
-  const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
-    React.useState<boolean>(false);
+const Details: React.FC = () => {
   const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
+  const { consumerGroupID, clusterName } =
+    useParams<{ consumerGroupID: ConsumerGroupID; clusterName: ClusterName }>();
+  const dispatch = useAppDispatch();
+  const consumerGroup = useAppSelector((state) =>
+    selectById(state, consumerGroupID)
+  );
+  const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
+  const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
+
+  const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
+    React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
+  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
 
   const onDelete = () => {
-    setIsConfirmationModelVisible(false);
-    deleteConsumerGroup(clusterName, groupId);
+    setIsConfirmationModalVisible(false);
+    dispatch(deleteConsumerGroup({ clusterName, consumerGroupID }));
   };
   React.useEffect(() => {
     if (isDeleted) {
@@ -73,19 +62,21 @@ const Details: React.FC<Props> = ({
   }, [isDeleted]);
 
   const onResetOffsets = () => {
-    history.push(clusterConsumerGroupResetOffsetsPath(clusterName, groupId));
+    history.push(
+      clusterConsumerGroupResetOffsetsPath(clusterName, consumerGroupID)
+    );
   };
 
-  const partitionsByTopic = groupBy(partitions, 'topic');
-
-  if (!isFetched) {
+  if (!isFetched || !consumerGroup) {
     return <PageLoader />;
   }
+
+  const partitionsByTopic = groupBy(consumerGroup.partitions, 'topic');
 
   return (
     <div>
       <div>
-        <PageHeading text={groupId}>
+        <PageHeading text={consumerGroupID}>
           {!isReadOnly && (
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem onClick={onResetOffsets}>
@@ -93,7 +84,7 @@ const Details: React.FC<Props> = ({
               </DropdownItem>
               <DropdownItem
                 style={{ color: Colors.red[50] }}
-                onClick={() => setIsConfirmationModelVisible(true)}
+                onClick={() => setIsConfirmationModalVisible(true)}
               >
                 Delete consumer group
               </DropdownItem>
@@ -104,14 +95,18 @@ const Details: React.FC<Props> = ({
       <StyledMetricsWrapper>
         <MetricsSection>
           <Indicator label="State">
-            <TagStyled color="yellow">{state || 'unknown'}</TagStyled>
+            <TagStyled color="yellow">
+              {consumerGroup.state || 'unknown'}
+            </TagStyled>
           </Indicator>
-          <Indicator label="Members">{members}</Indicator>
-          <Indicator label="Assigned topics">{topics}</Indicator>
+          <Indicator label="Members">{consumerGroup.members}</Indicator>
+          <Indicator label="Assigned topics">{consumerGroup.topics}</Indicator>
           <Indicator label="Assigned partitions">
-            {partitions?.length}
+            {consumerGroup.partitions?.length}
           </Indicator>
-          <Indicator label="Coordinator ID">{coordinator?.id}</Indicator>
+          <Indicator label="Coordinator ID">
+            {consumerGroup.coordinator?.id}
+          </Indicator>
         </MetricsSection>
       </StyledMetricsWrapper>
       <Table isFullwidth>
@@ -133,8 +128,8 @@ const Details: React.FC<Props> = ({
         </tbody>
       </Table>
       <ConfirmationModal
-        isOpen={isConfirmationModelVisible}
-        onCancel={() => setIsConfirmationModelVisible(false)}
+        isOpen={isConfirmationModalVisible}
+        onCancel={() => setIsConfirmationModalVisible(false)}
         onConfirm={onDelete}
       >
         Are you sure you want to delete this consumer group?

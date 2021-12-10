@@ -8,19 +8,6 @@ export const Layout = styled.div`
   }
 `;
 
-export const Alerts = styled.div`
-  max-width: 40%;
-  width: 500px;
-  position: fixed;
-  bottom: 15px;
-  left: 15px;
-  z-index: 1000;
-
-  @media screen and (max-width: 1023px) {
-    max-width: initial;
-  }
-`;
-
 export const Container = styled.main(
   ({ theme }) => css`
     margin-top: ${theme.layout.navBarHeight};
@@ -175,3 +162,16 @@ export const Hyperlink = styled.a(
     word-break: break-word;
   `
 );
+
+export const AlertsContainer = styled.div`
+  max-width: 40%;
+  width: 500px;
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  z-index: 1000;
+
+  @media screen and (max-width: 1023px) {
+    max-width: initial;
+  }
+`;

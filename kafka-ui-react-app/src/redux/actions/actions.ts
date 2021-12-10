@@ -1,6 +1,5 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 import {
-  ConsumerGroupID,
   FailurePayload,
   TopicName,
   TopicsState,
@@ -8,8 +7,6 @@ import {
   ConnectorConfig,
 } from 'redux/interfaces';
 import {
-  ConsumerGroup,
-  ConsumerGroupDetails,
   SchemaSubject,
   CompatibilityLevelCompatibilityEnum,
   TopicColumnsToSort,
@@ -65,28 +62,6 @@ export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__FAILURE',
   'DELETE_TOPIC__CANCEL'
 )<undefined, TopicName, undefined, undefined>();
-
-export const fetchConsumerGroupsAction = createAsyncAction(
-  'GET_CONSUMER_GROUPS__REQUEST',
-  'GET_CONSUMER_GROUPS__SUCCESS',
-  'GET_CONSUMER_GROUPS__FAILURE'
-)<undefined, ConsumerGroup[], { alert?: FailurePayload }>();
-
-export const fetchConsumerGroupDetailsAction = createAsyncAction(
-  'GET_CONSUMER_GROUP_DETAILS__REQUEST',
-  'GET_CONSUMER_GROUP_DETAILS__SUCCESS',
-  'GET_CONSUMER_GROUP_DETAILS__FAILURE'
-)<
-  undefined,
-  { consumerGroupID: ConsumerGroupID; details: ConsumerGroupDetails },
-  { alert?: FailurePayload }
->();
-
-export const deleteConsumerGroupAction = createAsyncAction(
-  'DELETE_CONSUMER_GROUP__REQUEST',
-  'DELETE_CONSUMER_GROUP__SUCCESS',
-  'DELETE_CONSUMER_GROUP__FAILURE'
-)<undefined, ConsumerGroupID, { alert?: FailurePayload }>();
 
 export const fetchSchemasByClusterNameAction = createAsyncAction(
   'GET_CLUSTER_SCHEMAS__REQUEST',
@@ -282,10 +257,3 @@ export const executeKsqlAction = createAsyncAction(
 )<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
 
 export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();
-
-export const resetConsumerGroupOffsetsAction = createAsyncAction(
-  'RESET_OFFSETS__REQUEST',
-  'RESET_OFFSETS__SUCCESS',
-  'RESET_OFFSETS__FAILURE',
-  'RESET_OFFSETS__CANCEL'
-)<undefined, undefined, { alert?: FailurePayload }, undefined>();

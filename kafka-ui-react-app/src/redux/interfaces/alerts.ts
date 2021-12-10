@@ -4,7 +4,8 @@ import React from 'react';
 export interface ServerResponse {
   status: number;
   statusText: string;
-  body?: ErrorResponse;
+  url?: string;
+  message?: ErrorResponse['message'];
 }
 
 export interface FailurePayload {

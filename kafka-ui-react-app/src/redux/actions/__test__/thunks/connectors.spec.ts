@@ -47,7 +47,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects`,
             },
           },
         }),
@@ -98,7 +98,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connectors?search=`,
             },
           },
         }),
@@ -138,7 +138,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}`,
             },
           },
         }),
@@ -196,7 +196,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors`,
             },
           },
         }),
@@ -242,7 +242,7 @@ describe('Thunks', () => {
               response: {
                 status: 404,
                 statusText: 'Not Found',
-                body: undefined,
+                url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}`,
               },
             },
           }),
@@ -283,7 +283,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/tasks`,
             },
           },
         }),
@@ -327,7 +327,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/action/${ConnectorAction.RESTART}`,
             },
           },
         }),
@@ -367,7 +367,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/action/${ConnectorAction.PAUSE}`,
             },
           },
         }),
@@ -407,7 +407,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/action/${ConnectorAction.RESUME}`,
             },
           },
         }),
@@ -461,7 +461,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/tasks/${taskId}/action/restart`,
             },
           },
         }),
@@ -503,7 +503,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/config`,
             },
           },
         }),
@@ -553,7 +553,7 @@ describe('Thunks', () => {
             response: {
               status: 404,
               statusText: 'Not Found',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/config`,
             },
           },
         }),

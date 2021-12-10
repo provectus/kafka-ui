@@ -1,87 +1,66 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
-import { Provider } from 'react-redux';
+import { screen, within } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { Alert } from 'redux/interfaces';
-import { store } from 'redux/store';
-import App, { AppProps } from 'components/App';
-import AppContainer from 'components/AppContainer';
+import App from 'components/App';
 import { render } from 'lib/testHelpers';
+import { store } from 'redux/store';
+import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
+import { clustersPayload } from 'redux/reducers/clusters/__test__/fixtures';
+import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
-  describe('container', () => {
-    it('renders view', () => {
-      render(
-        <Provider store={store}>
-          <BrowserRouter basename={window.basePath || '/'}>
-            <AppContainer />
-          </BrowserRouter>
-        </Provider>
-      );
-
-      expect(screen.getByRole('navigation')).toBeInTheDocument();
-      expect(screen.getByText('Dashboard')).toBeInTheDocument();
-      expect(screen.getByRole('toolbar')).toBeInTheDocument();
-      expect(screen.getByRole('list')).toBeInTheDocument();
-    });
-  });
-  describe('view', () => {
-    const setupComponent = (props: Partial<AppProps> = {}) => (
-      <Provider store={store}>
-        <BrowserRouter basename={window.basePath || '/'}>
-          <App isClusterListFetched alerts={[]} clusters={[]} {...props} />
-        </BrowserRouter>
-      </Provider>
+  beforeEach(() => {
+    render(
+      <BrowserRouter basename={window.basePath || '/'}>
+        <App />
+      </BrowserRouter>
     );
+  });
 
-    it('shows PageLoader when cluster list is fetched', () => {
-      render(setupComponent({ isClusterListFetched: true }));
+  it('shows PageLoader until clusters are fulfilled', () => {
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
 
-      expect(screen.getAllByRole('listitem').length).toBeGreaterThanOrEqual(1);
-      expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  it('shows Cluster list', () => {
+    store.dispatch({
+      type: fetchClusters.fulfilled.type,
+      payload: clustersPayload,
     });
+    const menuContainer = screen.getByLabelText('Sidebar Menu');
+    expect(menuContainer).toBeInTheDocument();
+    expect(within(menuContainer).getByText('Dashboard')).toBeInTheDocument();
+    expect(
+      within(menuContainer).getByText(clustersPayload[0].name)
+    ).toBeInTheDocument();
+    expect(
+      within(menuContainer).getByText(clustersPayload[1].name)
+    ).toBeInTheDocument();
 
-    it('shows PageLoader when cluster list is not fetched', () => {
-      render(setupComponent({ isClusterListFetched: false }));
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
 
-      expect(screen.getAllByRole('listitem').length).toEqual(1);
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    });
+  it('correctly renders header', () => {
+    const header = screen.getByLabelText('Page Header');
+    expect(header).toBeInTheDocument();
 
-    it('correctly renders alerts', () => {
-      const alert: Alert = {
-        id: 'alert-id',
-        type: 'success',
-        title: 'My Custom Title',
-        message: 'My Custom Message',
-        createdAt: 1234567890,
-      };
+    expect(within(header).getByText('UI for Apache Kafka')).toBeInTheDocument();
+    expect(within(header).getAllByRole('separator').length).toEqual(3);
+    expect(within(header).getByRole('button')).toBeInTheDocument();
+  });
 
-      render(setupComponent({ alerts: [alert] }));
+  it('handle burger click correctly', () => {
+    const header = screen.getByLabelText('Page Header');
+    const burger = within(header).getByRole('button');
+    const sidebar = screen.getByLabelText('Sidebar');
+    const overlay = screen.getByLabelText('Overlay');
 
-      expect(screen.getByRole('alert')).toBeInTheDocument();
-      expect(screen.getByRole('heading')).toHaveTextContent(alert.title);
-    });
+    expect(sidebar).toBeInTheDocument();
+    expect(overlay).toBeInTheDocument();
+    expect(overlay).toHaveStyleRule('visibility: hidden');
+    expect(burger).toHaveStyleRule('display: none');
 
-    it('correctly renders empty alerts', () => {
-      render(setupComponent());
-
-      expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-      expect(screen.queryByRole('heading')).not.toBeInTheDocument();
-    });
-
-    it('correctly renders navbar', () => {
-      render(setupComponent());
-
-      expect(screen.getByText('UI for Apache Kafka')).toBeInTheDocument();
-      expect(screen.getAllByRole('separator').length).toEqual(3);
-      expect(screen.getByRole('button')).toBeInTheDocument();
-    });
-
-    it('matches snapshot', () => {
-      const wrapper = render(setupComponent());
-
-      expect(wrapper).toMatchSnapshot();
-    });
+    userEvent.click(burger);
+    expect(overlay).toHaveStyleRule('visibility: visible');
   });
 });

@@ -1,7 +1,4 @@
-import {
-  ConsumerGroupDetails,
-  ConsumerGroupOffsetsResetType,
-} from 'generated-sources';
+import { ConsumerGroupOffsetsResetType } from 'generated-sources';
 import { clusterConsumerGroupDetailsPath } from 'lib/paths';
 import React from 'react';
 import {
@@ -18,13 +15,22 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { groupBy } from 'lodash';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import Select from 'components/common/Select/Select';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import {
+  fetchConsumerGroupDetails,
+  selectById,
+  getAreConsumerGroupDetailsFulfilled,
+  getIsOffsetReseted,
+  resetConsumerGroupOffsets,
+} from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import {
   MainSelectorsWrapperStyled,
@@ -33,30 +39,6 @@ import {
   OffsetsTitleStyled,
 } from './ResetOffsets.styled';
 
-export interface Props {
-  clusterName: ClusterName;
-  consumerGroupID: ConsumerGroupID;
-  consumerGroup: ConsumerGroupDetails;
-  detailsAreFetched: boolean;
-  IsOffsetReset: boolean;
-  fetchConsumerGroupDetails(
-    clusterName: ClusterName,
-    consumerGroupID: ConsumerGroupID
-  ): void;
-  resetConsumerGroupOffsets(
-    clusterName: ClusterName,
-    consumerGroupID: ConsumerGroupID,
-    requestBody: {
-      topic: string;
-      resetType: ConsumerGroupOffsetsResetType;
-      partitionsOffsets?: { offset: string; partition: number }[];
-      resetToTimestamp?: Date;
-      partitions: number[];
-    }
-  ): void;
-  resetResettingStatus: () => void;
-}
-
 interface FormType {
   topic: string;
   resetType: ConsumerGroupOffsetsResetType;
@@ -64,18 +46,18 @@ interface FormType {
   resetToTimestamp: Date;
 }
 
-const ResetOffsets: React.FC<Props> = ({
-  clusterName,
-  consumerGroupID,
-  consumerGroup,
-  detailsAreFetched,
-  IsOffsetReset,
-  fetchConsumerGroupDetails,
-  resetConsumerGroupOffsets,
-  resetResettingStatus,
-}) => {
+const ResetOffsets: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { consumerGroupID, clusterName } =
+    useParams<{ consumerGroupID: ConsumerGroupID; clusterName: ClusterName }>();
+  const consumerGroup = useAppSelector((state) =>
+    selectById(state, consumerGroupID)
+  );
+  const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
+  const isOffsetReseted = useAppSelector(getIsOffsetReseted);
+
   React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, consumerGroupID);
+    dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
   }, [clusterName, consumerGroupID]);
 
   const [uniqueTopics, setUniqueTopics] = React.useState<string[]>([]);
@@ -108,11 +90,11 @@ const ResetOffsets: React.FC<Props> = ({
   const offsetsValue = watch('partitionsOffsets');
 
   React.useEffect(() => {
-    if (detailsAreFetched && consumerGroup.partitions) {
+    if (isFetched && consumerGroup?.partitions) {
       setValue('topic', consumerGroup.partitions[0].topic);
       setUniqueTopics(Object.keys(groupBy(consumerGroup.partitions, 'topic')));
     }
-  }, [detailsAreFetched]);
+  }, [isFetched]);
 
   const onSelectedPartitionsChange = (value: Option[]) => {
     clearErrors();
@@ -167,21 +149,27 @@ const ResetOffsets: React.FC<Props> = ({
       }
     }
     if (isValid) {
-      resetConsumerGroupOffsets(clusterName, consumerGroupID, augmentedData);
+      dispatch(
+        resetConsumerGroupOffsets({
+          clusterName,
+          consumerGroupID,
+          requestBody: augmentedData,
+        })
+      );
     }
   };
 
   const history = useHistory();
   React.useEffect(() => {
-    if (IsOffsetReset) {
-      resetResettingStatus();
+    if (isOffsetReseted) {
+      dispatch(resetLoaderById('consumerGroups/resetConsumerGroupOffsets'));
       history.push(
         clusterConsumerGroupDetailsPath(clusterName, consumerGroupID)
       );
     }
-  }, [IsOffsetReset]);
+  }, [isOffsetReseted]);
 
-  if (!detailsAreFetched) {
+  if (!isFetched || !consumerGroup) {
     return <PageLoader />;
   }
 

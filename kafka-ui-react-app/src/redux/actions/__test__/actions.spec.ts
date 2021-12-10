@@ -160,32 +160,6 @@ describe('Actions', () => {
     });
   });
 
-  describe('deleting consumer group', () => {
-    it('creates DELETE_CONSUMER_GROUP__REQUEST', () => {
-      expect(actions.deleteConsumerGroupAction.request()).toEqual({
-        type: 'DELETE_CONSUMER_GROUP__REQUEST',
-      });
-    });
-
-    it('creates DELETE_CONSUMER_GROUP__SUCCESS', () => {
-      expect(actions.deleteConsumerGroupAction.success('test')).toEqual({
-        type: 'DELETE_CONSUMER_GROUP__SUCCESS',
-        payload: 'test',
-      });
-    });
-
-    it('creates DELETE_CONSUMER_GROUP__FAILURE', () => {
-      const alert: FailurePayload = {
-        subject: ['consumer-group', 'test'].join('-'),
-        title: `Consumer Group Test`,
-      };
-      expect(actions.deleteConsumerGroupAction.failure({ alert })).toEqual({
-        type: 'DELETE_CONSUMER_GROUP__FAILURE',
-        payload: { alert },
-      });
-    });
-  });
-
   describe('topic messages', () => {
     it('creates ADD_TOPIC_MESSAGE', () => {
       expect(actions.addTopicMessage(topicMessagePayload)).toEqual({

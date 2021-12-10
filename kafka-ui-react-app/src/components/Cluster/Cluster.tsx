@@ -20,7 +20,7 @@ import Schemas from 'components/Schemas/Schemas';
 import Connect from 'components/Connect/Connect';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BrokersContainer from 'components/Brokers/BrokersContainer';
-import ConsumersGroupsContainer from 'components/ConsumerGroups/ConsumersGroupsContainer';
+import ConsumersGroups from 'components/ConsumerGroups/ConsumerGroups';
 import KsqlDb from 'components/KsqlDb/KsqlDb';
 
 const Cluster: React.FC = () => {
@@ -59,7 +59,7 @@ const Cluster: React.FC = () => {
         <Route path={clusterTopicsPath(':clusterName')} component={Topics} />
         <Route
           path={clusterConsumerGroupsPath(':clusterName')}
-          component={ConsumersGroupsContainer}
+          component={ConsumersGroups}
         />
         {hasSchemaRegistryConfigured && (
           <Route

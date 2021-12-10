@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {
   UnknownAsyncThunkFulfilledAction,
   UnknownAsyncThunkPendingAction,
@@ -16,7 +16,14 @@ export const initialState: LoaderSliceState = {};
 export const loaderSlice = createSlice({
   name: 'loader',
   initialState,
-  reducers: {},
+  reducers: {
+    resetLoaderById: (
+      state: LoaderSliceState,
+      { payload }: PayloadAction<string>
+    ) => {
+      delete state[payload];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addMatcher(
@@ -42,5 +49,7 @@ export const loaderSlice = createSlice({
       );
   },
 });
+
+export const { resetLoaderById } = loaderSlice.actions;
 
 export default loaderSlice.reducer;

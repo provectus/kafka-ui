@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import * as serviceWorker from 'serviceWorker';
-import AppContainer from 'components/AppContainer';
+import App from 'components/App';
 import { store } from 'redux/store';
 import 'theme/index.scss';
 import 'lib/constants';
@@ -11,7 +11,7 @@ import 'lib/constants';
 ReactDOM.render(
   <Provider store={store}>
     <BrowserRouter basename={window.basePath || '/'}>
-      <AppContainer />
+      <App />
     </BrowserRouter>
   </Provider>,
   document.getElementById('root')

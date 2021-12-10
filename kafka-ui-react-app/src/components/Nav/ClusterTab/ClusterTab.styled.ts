@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { ServerStatus } from 'generated-sources';
 
-export const Wrapper = styled.li(
+export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
   ({ theme }) => css`
     font-size: 14px;
     font-weight: 500;

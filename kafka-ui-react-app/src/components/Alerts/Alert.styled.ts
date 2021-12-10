@@ -1,7 +1,7 @@
 import { AlertType } from 'redux/interfaces';
 import styled from 'styled-components';
 
-export const Wrapper = styled.div<{ $type: AlertType }>`
+export const Alert = styled.div<{ $type: AlertType }>`
   background-color: ${({ $type, theme }) => theme.alert.color[$type]};
   width: 400px;
   min-height: 64px;

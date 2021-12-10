@@ -1,7 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-export const List = styled.ul`
+export const List = styled.ul.attrs({ role: 'menu' })`
   padding-bottom: 4px;
 
   & > & {
@@ -36,7 +36,9 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })(
   `
 );
 
-export const ListItem = styled.li<{ $isTopLevel?: boolean }>`
+export const ListItem = styled('li').attrs({ role: 'menuitem' })<{
+  $isTopLevel?: boolean;
+}>`
   font-size: 14px;
   font-weight: ${({ $isTopLevel }) => ($isTopLevel ? 500 : 'normal')};
   height: 32px;
