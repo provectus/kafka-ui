@@ -1671,12 +1671,7 @@ components:
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:
-          type: string
-          enum:
-            - DELETE
-            - COMPACT
-            - COMPACT_DELETE
-            - UNKNOWN
+          $ref: '#/components/schemas/CleanUpPolicy'
         partitions:
           type: array
           items:
@@ -1724,6 +1719,8 @@ components:
           type: integer
         underReplicatedPartitions:
           type: integer
+        cleanUpPolicy:
+          $ref: '#/components/schemas/CleanUpPolicy'
       required:
         - name
 
@@ -2581,3 +2578,11 @@ components:
           type: string
         source:
           $ref: '#/components/schemas/ConfigSource'
+
+    CleanUpPolicy:
+      type: string
+      enum:
+        - DELETE
+        - COMPACT
+        - COMPACT_DELETE
+        - UNKNOWN
