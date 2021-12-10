@@ -12,16 +12,16 @@
     <artifactId>kafka-ui-e2e-checks</artifactId>
     <properties>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
-        <junit.version>5.7.0</junit.version>
+        <junit.version>5.8.2</junit.version>
         <aspectj.version>1.9.6</aspectj.version>
-        <allure.version>2.13.7</allure.version>
+        <allure.version>2.17.1</allure.version>
         <json-smart.version>1.3.2</json-smart.version>
         <testcontainers.version>1.15.2</testcontainers.version>
         <selenide.version>5.16.2</selenide.version>
         <assertj.version>3.17.1</assertj.version>
         <google.auto-service.version>1.0-rc7</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <slf4j.version>1.7.29</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
         <testcontainers.junit-jupiter.version>1.15.1</testcontainers.junit-jupiter.version>
         <allure.java-commons.version>2.13.6</allure.java-commons.version>
         <dotenv.version>2.2.0</dotenv.version>
@@ -181,7 +181,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>${org.projectlombok.e2e-checks.version}</version>
+            <version>${org.projectlombok.version}</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>

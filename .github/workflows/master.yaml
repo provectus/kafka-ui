@@ -70,7 +70,7 @@ jobs:
           git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch master
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Image digest is:${{ steps.docker_build_and_push.outputs.digest }}"
-          ./kafka-ui-update-master-digest.sh ${{ steps.docker_build_and_push.outputs.digest }}
+          ./kafka-ui-update-master-digest.sh ${{ steps.docker_build_and_push.outputs.digest }} ${{ secrets.GITHUB_TOKEN }}
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui/*

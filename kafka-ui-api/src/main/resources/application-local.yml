@@ -27,9 +27,6 @@ kafka:
   #      protobufMessageNameByTopic:
   #        input-topic: InputMessage
   #        output-topic: OutputMessage
-  admin-client-timeout: 5000
-zookeeper:
-  connection-timeout: 1000
 spring:
   jmx:
     enabled: true

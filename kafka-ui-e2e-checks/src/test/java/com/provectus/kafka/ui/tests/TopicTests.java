@@ -1,6 +1,5 @@
-package com.provectus.kafka.ui.topics;
+package com.provectus.kafka.ui.tests;
 
-import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
@@ -63,7 +62,8 @@ public class TopicTests extends BaseTest {
                 .changeTimeToRetainValue(UPDATED_TIME_TO_RETAIN_VALUE)
                 .changeMaxSizeOnDisk(UPDATED_MAX_SIZE_ON_DISK)
                 .changeMaxMessageBytes(UPDATED_MAX_MESSAGE_BYTES)
-                .submitSettingChanges();
+                .submitSettingChanges()
+                .isOnTopicViewPage();
         pages.openTopicView(SECOND_LOCAL, TOPIC_TO_UPDATE)
                 .openEditSettings()
         // Assertions
