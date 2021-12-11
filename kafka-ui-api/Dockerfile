@@ -7,4 +7,4 @@ ENV JAVA_OPTS=
 
 EXPOSE 8080
 
-CMD java $JAVA_OPTS -jar kafka-ui-api.jar
+CMD java -Dlog4j2.formatMsgNoLookups=true $JAVA_OPTS -jar kafka-ui-api.jar
