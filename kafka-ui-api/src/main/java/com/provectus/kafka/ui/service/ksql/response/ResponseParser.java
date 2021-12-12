@@ -1,8 +1,5 @@
 package com.provectus.kafka.ui.service.ksql.response;
 
-import static com.provectus.kafka.ui.service.ksql.response.DynamicParser.parseArray;
-import static com.provectus.kafka.ui.service.ksql.response.DynamicParser.parseObject;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.google.common.collect.Lists;
@@ -17,7 +14,8 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 public class ResponseParser {
 
-  public static Optional<KsqlApiClient.KsqlResponseTable> parserSelectResponse(JsonNode jsonNode) {
+  public static Optional<KsqlApiClient.KsqlResponseTable> parseSelectResponse(JsonNode jsonNode) {
+    // in response we getting either header record or row data
     if (arrayFieldNonEmpty(jsonNode, "header")) {
       return Optional.of(
           KsqlApiClient.KsqlResponseTable.builder()
@@ -44,10 +42,10 @@ public class ResponseParser {
     return Optional.empty();
   }
 
-  public static KsqlApiClient.KsqlResponseTable parserErrorResponse(WebClientResponseException e) {
+  public static KsqlApiClient.KsqlResponseTable parseErrorResponse(WebClientResponseException e) {
     try {
       var errBody = new JsonMapper().readTree(e.getResponseBodyAsString());
-      return parseObject("Execution error", errBody);
+      return DynamicParser.parseObject("Execution error", errBody);
     } catch (Exception ex) {
       throw new KsqlApiException(
           String.format(
@@ -55,7 +53,6 @@ public class ResponseParser {
               e.getStatusCode(), e.getResponseBodyAsString()), e);
     }
   }
-
 
   public static List<KsqlApiClient.KsqlResponseTable> parseStatementResponse(JsonNode jsonNode) {
     var type = Optional.ofNullable(jsonNode.get("@type"))
@@ -65,7 +62,7 @@ public class ResponseParser {
     // messages structure can be inferred from https://github.com/confluentinc/ksql/blob/master/ksqldb-rest-model/src/main/java/io/confluent/ksql/rest/entity/KsqlEntity.java
     switch (type) {
       case "currentStatus":
-        return parseObjectDynamically(
+        return parseObject(
             "Status",
             List.of("status", "message"),
             jsonNode.get("commandStatus")
@@ -73,87 +70,87 @@ public class ResponseParser {
       case "properties":
         return parseProperties(jsonNode);
       case "queries":
-        return parseArrayDynamically("Queries", "queries", jsonNode);
+        return parseArray("Queries", "queries", jsonNode);
       case "sourceDescription":
         return parseObjectDynamically("Source Description", jsonNode.get("sourceDescription"));
       case "queryDescription":
-        return parseArrayDynamically("Queries Description", "queryDescription", jsonNode);
+        return parseArray("Queries Description", "queryDescription", jsonNode);
       case "topicDescription":
-        return parseObjectDynamically(
+        return parseObject(
             "Topic Description",
             List.of("name", "kafkaTopic", "format", "schemaString"),
             jsonNode
         );
       case "streams":
-        return parseArrayDynamically("Streams", "streams", jsonNode);
+        return parseArray("Streams", "streams", jsonNode);
       case "tables":
-        return parseArrayDynamically("Tables", "tables", jsonNode);
+        return parseArray("Tables", "tables", jsonNode);
       case "kafka_topics":
-        return parseArrayDynamically("Topics", "topics", jsonNode);
+        return parseArray("Topics", "topics", jsonNode);
       case "kafka_topics_extended":
-        return parseArrayDynamically("Topics extended", "topics", jsonNode);
+        return parseArray("Topics extended", "topics", jsonNode);
       case "executionPlan":
-        return parseObjectDynamically("Execution plan", List.of("executionPlanText"), jsonNode);
+        return parseObject("Execution plan", List.of("executionPlanText"), jsonNode);
       case "source_descriptions":
-        return parseArrayDynamically("Source descriptions", "sourceDescriptions", jsonNode);
+        return parseArray("Source descriptions", "sourceDescriptions", jsonNode);
       case "query_descriptions":
-        return parseArrayDynamically("Queries", "queryDescriptions", jsonNode);
+        return parseArray("Queries", "queryDescriptions", jsonNode);
       case "describe_function":
-        return parseObjectDynamically("Function description",
+        return parseObject("Function description",
             List.of("name", "author", "version", "description", "functions", "path", "type"),
             jsonNode
         );
       case "function_names":
-        return parseArrayDynamically("Function Names", "functions", jsonNode);
+        return parseArray("Function Names", "functions", jsonNode);
       case "connector_info":
         return parseObjectDynamically("Connector Info", jsonNode.get("info"));
       case "drop_connector":
-        return parseObjectDynamically("Dropped connector", List.of("connectorName"), jsonNode);
+        return parseObject("Dropped connector", List.of("connectorName"), jsonNode);
       case "connector_list":
-        return parseArrayDynamically("Connectors", "connectors", jsonNode);
+        return parseArray("Connectors", "connectors", jsonNode);
       case "connector_plugins_list":
-        return parseArrayDynamically("Connector Plugins", "connectorPlugins", jsonNode);
+        return parseArray("Connector Plugins", "connectorPlugins", jsonNode);
       case "connector_description":
-        return parseObjectDynamically("Connector Description",
+        return parseObject("Connector Description",
             List.of("connectorClass", "status", "sources", "topics"),
             jsonNode
         );
       default:
-        return parseUnknownStatus(jsonNode);
+        return parseUnknownResponse(jsonNode);
     }
   }
 
   private static List<KsqlApiClient.KsqlResponseTable> parseObjectDynamically(
       String tableName, JsonNode jsonNode) {
-    return List.of(parseObject(tableName, jsonNode));
+    return List.of(DynamicParser.parseObject(tableName, jsonNode));
   }
 
-  private static List<KsqlApiClient.KsqlResponseTable> parseObjectDynamically(
+  private static List<KsqlApiClient.KsqlResponseTable> parseObject(
       String tableName, List<String> fields, JsonNode jsonNode) {
-    return List.of(parseObject(tableName, fields, jsonNode));
+    return List.of(DynamicParser.parseObject(tableName, fields, jsonNode));
   }
 
-  private static List<KsqlApiClient.KsqlResponseTable> parseArrayDynamically(
+  private static List<KsqlApiClient.KsqlResponseTable> parseArray(
       String tableName, String arrayField, JsonNode jsonNode) {
-    return List.of(parseArray(tableName, jsonNode.get(arrayField)));
+    return List.of(DynamicParser.parseArray(tableName, jsonNode.get(arrayField)));
   }
 
   private static List<KsqlApiClient.KsqlResponseTable> parseProperties(JsonNode jsonNode) {
     var tables = new ArrayList<KsqlApiClient.KsqlResponseTable>();
-    if (jsonNode.get("properties") != null) {
-      tables.add(parseArray("properties", jsonNode.get("properties")));
+    if (arrayFieldNonEmpty(jsonNode, "properties")) {
+      tables.add(DynamicParser.parseArray("properties", jsonNode.get("properties")));
     }
     if (arrayFieldNonEmpty(jsonNode, "overwrittenProperties")) {
-      tables.add(parseArray("overwrittenProperties", jsonNode.get("overwrittenProperties")));
+      tables.add(DynamicParser.parseArray("overwrittenProperties", jsonNode.get("overwrittenProperties")));
     }
     if (arrayFieldNonEmpty(jsonNode, "defaultProperties")) {
-      tables.add(parseArray("defaultProperties", jsonNode.get("defaultProperties")));
+      tables.add(DynamicParser.parseArray("defaultProperties", jsonNode.get("defaultProperties")));
     }
     return tables;
   }
 
-  private static List<KsqlApiClient.KsqlResponseTable> parseUnknownStatus(JsonNode jsonNode) {
-    return List.of(parseObject("Ksql Response", jsonNode));
+  private static List<KsqlApiClient.KsqlResponseTable> parseUnknownResponse(JsonNode jsonNode) {
+    return List.of(DynamicParser.parseObject("Ksql Response", jsonNode));
   }
 
   private static boolean arrayFieldNonEmpty(JsonNode json, String field) {

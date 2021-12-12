@@ -12,18 +12,18 @@ import java.util.stream.StreamSupport;
 
 class DynamicParser {
 
-  static KsqlResponseTable parseArray(String tableName, JsonNode arr) {
-    return parseArray(tableName, getFieldNames(arr), arr);
+  static KsqlResponseTable parseArray(String tableName, JsonNode array) {
+    return parseArray(tableName, getFieldNamesFromArray(array), array);
   }
 
   static KsqlResponseTable parseArray(String tableName,
-                                                    List<String> columnNames,
-                                                    JsonNode arr) {
+                                      List<String> columnNames,
+                                      JsonNode array) {
     return KsqlResponseTable.builder()
         .header(tableName)
         .columnNames(columnNames)
         .values(
-            StreamSupport.stream(arr.spliterator(), false)
+            StreamSupport.stream(array.spliterator(), false)
                 .map(node ->
                     columnNames.stream()
                         .map(node::get)
@@ -32,9 +32,9 @@ class DynamicParser {
         ).build();
   }
 
-  private static List<String> getFieldNames(JsonNode arr) {
+  private static List<String> getFieldNamesFromArray(JsonNode array) {
     List<String> fields = new ArrayList<>();
-    arr.forEach(node -> node.fieldNames().forEachRemaining(f -> {
+    array.forEach(node -> node.fieldNames().forEachRemaining(f -> {
       if (!fields.contains(f)) {
         fields.add(f);
       }

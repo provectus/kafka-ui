@@ -25,7 +25,6 @@ public class KsqlApiClient {
     List<List<JsonNode>> values;
   }
 
-  @Builder
   @Value
   private static class KsqlRequest {
     String ksql;
@@ -49,7 +48,7 @@ public class KsqlApiClient {
   }
 
   private KsqlRequest ksqlRequest(String ksql, Map<String, String> streamProperties) {
-    return KsqlRequest.builder().ksql(ksql).streamsProperties(streamProperties).build();
+    return new KsqlRequest(ksql, streamProperties);
   }
 
   private Flux<KsqlResponseTable> executeSelect(String ksql, Map<String, String> streamProperties) {
@@ -61,11 +60,11 @@ public class KsqlApiClient {
         .bodyValue(ksqlRequest(ksql, streamProperties))
         .retrieve()
         .bodyToFlux(JsonNode.class)
-        .map(ResponseParser::parserSelectResponse)
+        .map(ResponseParser::parseSelectResponse)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .onErrorResume(WebClientResponseException.class,
-            e -> Flux.just(ResponseParser.parserErrorResponse(e)));
+            e -> Flux.just(ResponseParser.parseErrorResponse(e)));
   }
 
   private Flux<KsqlResponseTable> executeStatement(String ksql,
@@ -79,11 +78,11 @@ public class KsqlApiClient {
         .exchangeToFlux(
             resp -> {
               if (resp.statusCode().isError()) {
-                return resp.createException().flux().map(ResponseParser::parserErrorResponse);
+                return resp.createException().flux().map(ResponseParser::parseErrorResponse);
               }
               return resp.bodyToFlux(JsonNode.class)
                   .flatMap(body ->
-                      // body can be an array or object
+                      // body can be an array or single object
                       (body.isArray() ? Flux.fromIterable(body) : Flux.just(body))
                           .flatMapIterable(ResponseParser::parseStatementResponse))
                   // body can be empty for some statements like INSERT
