@@ -18,7 +18,7 @@ jobs:
           git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch master
           echo "Cd to deployment..."
           cd kafka-ui-infra/aws-infrastructure4eks/deployment
-          echo "$TF_DIR=$(pwd)" >> $GITHUB_ENV
+          echo "TF_DIR=$(pwd)" >> $GITHUB_ENV
           echo "Terraform will be triggered in this dir $TF_DIR"
 
       - name: Configure AWS credentials for Kafka-UI account
