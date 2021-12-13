@@ -1,0 +1,76 @@
+name: terraform_deploy
+on:
+  workflow_dispatch:
+    inputs:
+      applyTerraform:
+        description: 'Do you want to apply the infra-repo terraform?'
+        required: true
+        default: 'no'
+
+jobs:
+  terraform:
+    name: Terraform
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone infra repo
+        run: |
+          echo "Cloning repo..."
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch master
+          echo "\nCd to deployment..."
+          cd kafka-ui-infra/aws-infrastructure4eks/deployment
+          echo "\nListing files in pwd=$(pwd)"
+          ls -al
+          echo "GITHUB_WORKSPACE=$(pwd)" >> $GITHUB_ENV
+          echo "\nThis is the working directory now: $GITHUB_WORKSPACE"
+
+      - name: Configure AWS credentials for Kafka-UI account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
+
+      - name: Terraform Install
+        uses: hashicorp/setup-terraform@v1
+
+      - name: Terraform format
+        id: fmt
+        run: terraform fmt -check
+
+      - name: Terraform init
+        id: init
+        run: terraform init --backend-config="../envs/pro/terraform-backend.tfvars"
+
+      - name: Terraform validate
+        id: validate
+        run: terraform validate -no-color
+
+      - name: Terraform plan
+        id: plan
+        run: |
+        echo "TF_VAR_github_connector_access_token=${{ secrets.SOURCE_CONNECTOR_GITHUB_TOKEN }}" >> $GITHUB_ENV
+# TODO:        echo "TF_VAR_repo_user_key=${{ secrets.KAKFA_UI_INFRA_TOKEN }}" >> $GITHUB_ENV
+# we add these two vars to the env since we use them in tf deployment
+# the TF_VAR_repo_user_key has to match the user from kafka-ui-infra repo (we create kubernetes secret there)
+# currently its azsafin, changing it to kafka-ui-infra in infra repo will be better (imho).
+# for now i'm leaving this var not exported (kubernetes secret is already created there, so it will work just yet).
+# After the discussion we deal with this.
+        terraform plan --var-file="../envs/pro/eks.tfvars"
+
+      - name: Terraform plan status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform apply
+        id: apply
+        if: ${{ github.event.inputs.applyTerraform == 'yes' }}
+        run: terraform apply --var-file="../envs/pro/eks.tfvars" -auto-approve
+
+
+
+
+
+
+
+
+
