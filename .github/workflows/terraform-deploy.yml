@@ -64,12 +64,3 @@ jobs:
         id: apply
         if: ${{ github.event.inputs.applyTerraform == 'yes' }}
         run: cd $TF_DIR && terraform apply --var-file="../envs/pro/eks.tfvars" -auto-approve
-
-
-
-
-
-
-
-
-
