@@ -186,6 +186,11 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>${antlr4-maven-plugin.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -268,6 +273,22 @@
                             <configLocation>file:${basedir}/../etc/checkstyle/checkstyle.xml</configLocation>
                             <headerLocation>file:${basedir}/../etc/checkstyle/apache-header.txt</headerLocation>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <version>${antlr4-maven-plugin.version}</version>
+                <configuration>
+                    <visitor>false</visitor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
