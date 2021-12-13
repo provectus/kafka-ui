@@ -1338,6 +1338,7 @@ paths:
           description: OK
 
   /api/clusters/{clusterName}/ksql:
+    description: Deprecated - use ksql/v2 instead!
     post:
       tags:
         - Ksql
@@ -1361,6 +1362,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KsqlCommandResponse'
+
+  /api/clusters/{clusterName}/ksql/v2:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsql
+      operationId: executeKsql
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlResponse'
 
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
@@ -2464,6 +2492,28 @@ components:
       required:
         - headers
         - rows
+
+    KsqlResponse:
+      type: object
+      properties:
+        table:
+          $ref: '#/components/schemas/KsqlTableResponse'
+
+    KsqlTableResponse:
+      type: object
+      properties:
+        header:
+          type: string
+        columnNames:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: object
 
     FullConnectorInfo:
       type: object
