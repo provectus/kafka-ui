@@ -47,8 +47,8 @@ jobs:
         id: plan
         run: |
           cd $TF_DIR
-          echo "TF_VAR_github_connector_access_token=${{ secrets.SOURCE_CONNECTOR_GITHUB_TOKEN }}" >> $GITHUB_ENV
-          # TODO:        echo "TF_VAR_repo_user_key=${{ secrets.KAKFA_UI_INFRA_TOKEN }}" >> $GITHUB_ENV
+          export TF_VAR_github_connector_access_token=${{ secrets.SOURCE_CONNECTOR_GITHUB_TOKEN }}
+          # TODO:        export TF_VAR_repo_user_key=${{ secrets.KAKFA_UI_INFRA_TOKEN }}
           # we add these two vars to the env since we use them in tf deployment
           # the TF_VAR_repo_user_key has to match the user from kafka-ui-infra repo (we create kubernetes secret there)
           # currently its azsafin, changing it to kafka-ui-infra in infra repo will be better (imho).
