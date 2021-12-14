@@ -526,7 +526,7 @@ exports[`Filters component matches the snapshot 1`] = `
             <option
               value="FORWARD"
             >
-              Latest first
+              Oldest first
             </option>
             <option
               value="BACKWARD"
@@ -1120,7 +1120,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             <option
               value="FORWARD"
             >
-              Latest first
+              Oldest first
             </option>
             <option
               value="BACKWARD"
