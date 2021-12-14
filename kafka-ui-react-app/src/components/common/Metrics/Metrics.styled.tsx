@@ -1,17 +1,16 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
-export const StyledMetricsWrapper = styled.div`
+export const Wrapper = styled.div`
   padding: 1.5rem 1rem;
-  background: ${Colors.neutral[5]};
+  background: ${({ theme }) => theme.metrics.backgroundColor};
   margin-bottom: 0.5rem !important;
   display: flex;
   gap: 16px;
   flex-wrap: wrap;
 `;
 
-export const StyledIndicator = styled.div`
-  background-color: white;
+export const IndicatorWrapper = styled.div`
+  background-color: ${({ theme }) => theme.metrics.indicator.backgroundColor};
   height: 68px;
   width: fit-content;
   min-width: 150px;
@@ -25,21 +24,21 @@ export const StyledIndicator = styled.div`
   flex-grow: 1;
 `;
 
-export const StyledIndicatorTitle = styled.div`
+export const IndicatorTitle = styled.div`
   font-weight: 500;
   font-size: 12px;
-  color: ${Colors.neutral[50]};
+  color: ${({ theme }) => theme.metrics.indicator.titleColor};
   display: flex;
   align-items: center;
   gap: 10px;
 `;
 
-export const StyledIndicatorsWrapper = styled.div`
+export const IndicatorsWrapper = styled.div`
   display: flex;
   gap: 2px;
   flex-wrap: wrap;
 
-  > ${StyledIndicator} {
+  > ${IndicatorWrapper} {
     &:first-child {
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
@@ -51,7 +50,7 @@ export const StyledIndicatorsWrapper = styled.div`
   }
 
   @media screen and (max-width: 1023px) {
-    > ${StyledIndicator} {
+    > ${IndicatorWrapper} {
       &:first-child,
       &:last-child {
         border-radius: 0;
@@ -60,12 +59,18 @@ export const StyledIndicatorsWrapper = styled.div`
   }
 `;
 
-export const MetricsLightText = styled.span`
-  color: ${Colors.neutral[30]};
+export const SectionTitle = styled.h5`
+  font-weight: 500;
+  margin: 0 0 0.5rem 0;
+  font-size: 100%;
+`;
+
+export const LightText = styled.span`
+  color: ${({ theme }) => theme.metrics.indicator.lightTextColor};
   font-size: 14px;
 `;
 
-export const MetricsRedText = styled.span`
-  color: ${Colors.red[50]};
+export const RedText = styled.span`
+  color: ${({ theme }) => theme.metrics.indicator.warningTextColor};
   font-size: 14px;
 `;

@@ -3,18 +3,12 @@ import { Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import MetricsSection from 'components/common/Metrics/MetricsSection';
-import Indicator from 'components/common/Metrics/Indicator';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import {
-  StyledMetricsWrapper,
-  MetricsLightText,
-  MetricsRedText,
-} from 'components/common/Metrics/Metrics.styled';
+import * as Metrics from 'components/common/Metrics';
 import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends Topic, TopicDetails {
@@ -46,35 +40,45 @@ const Overview: React.FC<Props> = ({
 
   return (
     <>
-      <StyledMetricsWrapper>
-        <MetricsSection>
-          <Indicator label="Partitions">{partitionCount}</Indicator>
-          <Indicator label="Replication Factor">{replicationFactor}</Indicator>
-          <Indicator label="URP" title="Under replicated partitions" isAlert>
-            <MetricsRedText>{underReplicatedPartitions}</MetricsRedText>
-          </Indicator>
-          <Indicator label="In sync replicas" isAlert>
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator label="Partitions">
+            {partitionCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Replication Factor">
+            {replicationFactor}
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label="URP"
+            title="Under replicated partitions"
+            isAlert
+          >
+            <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="In sync replicas" isAlert>
             {inSyncReplicas && replicas && inSyncReplicas < replicas ? (
-              <MetricsRedText>{inSyncReplicas}</MetricsRedText>
+              <Metrics.RedText>{inSyncReplicas}</Metrics.RedText>
             ) : (
               inSyncReplicas
             )}
-            <MetricsLightText> of {replicas}</MetricsLightText>
-          </Indicator>
-          <Indicator label="Type">
+            <Metrics.LightText> of {replicas}</Metrics.LightText>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Type">
             <TagStyled color="gray">
               {internal ? 'Internal' : 'External'}
             </TagStyled>
-          </Indicator>
-          <Indicator label="Segment Size" title="">
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Segment Size" title="">
             <BytesFormatted value={segmentSize} />
-          </Indicator>
-          <Indicator label="Segment count">{segmentCount}</Indicator>
-          <Indicator label="Clean Up Policy">
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Segment count">
+            {segmentCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Clean Up Policy">
             <TagStyled color="gray">{cleanUpPolicy || 'Unknown'}</TagStyled>
-          </Indicator>
-        </MetricsSection>
-      </StyledMetricsWrapper>
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
       <div>
         <Table isFullwidth>
           <thead>
@@ -103,7 +107,7 @@ const Overview: React.FC<Props> = ({
                           ])
                         }
                       >
-                        <MetricsRedText>Clear Messages</MetricsRedText>
+                        <Metrics.RedText>Clear Messages</Metrics.RedText>
                       </DropdownItem>
                     </Dropdown>
                   ) : null}

@@ -20,9 +20,7 @@ jest.mock('components/Topics/Topics', () => () => <div>Topics</div>);
 jest.mock('components/Schemas/Schemas', () => () => <div>Schemas</div>);
 jest.mock('components/Connect/Connect', () => () => <div>Connect</div>);
 jest.mock('components/Connect/Connect', () => () => <div>Connect</div>);
-jest.mock('components/Brokers/BrokersContainer', () => () => (
-  <div>Brokers</div>
-));
+jest.mock('components/Brokers/Brokers', () => () => <div>Brokers</div>);
 jest.mock('components/ConsumerGroups/ConsumerGroups', () => () => (
   <div>ConsumerGroups</div>
 ));

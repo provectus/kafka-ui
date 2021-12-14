@@ -48,7 +48,7 @@ const New: React.FC = () => {
   };
 
   return (
-    <div>
+    <>
       <PageHeading text="Create new Topic" />
       <FormProvider {...methods}>
         <TopicForm
@@ -56,7 +56,7 @@ const New: React.FC = () => {
           onSubmit={methods.handleSubmit(onSubmit)}
         />
       </FormProvider>
-    </div>
+    </>
   );
 };
 

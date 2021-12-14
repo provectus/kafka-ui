@@ -1,13 +1,8 @@
 import React from 'react';
 import { chunk } from 'lodash';
 import { v4 } from 'uuid';
-import MetricsSection from 'components/common/Metrics/MetricsSection';
-import Indicator from 'components/common/Metrics/Indicator';
+import * as Metrics from 'components/common/Metrics';
 import { Cluster } from 'generated-sources';
-import {
-  MetricsLightText,
-  StyledMetricsWrapper,
-} from 'components/common/Metrics/Metrics.styled';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -51,18 +46,22 @@ const ClustersWidget: React.FC<Props> = ({
 
   return (
     <>
-      <StyledMetricsWrapper>
-        <MetricsSection>
-          <Indicator label={<TagStyled color="green">Online</TagStyled>}>
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator
+            label={<TagStyled color="green">Online</TagStyled>}
+          >
             <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
-            <MetricsLightText>clusters</MetricsLightText>
-          </Indicator>
-          <Indicator label={<TagStyled color="gray">Offline</TagStyled>}>
+            <Metrics.LightText>clusters</Metrics.LightText>
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label={<TagStyled color="gray">Offline</TagStyled>}
+          >
             <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
-            <MetricsLightText>clusters</MetricsLightText>
-          </Indicator>
-        </MetricsSection>
-      </StyledMetricsWrapper>
+            <Metrics.LightText>clusters</Metrics.LightText>
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
       <div className="p-4">
         <Switch
           name="switchRoundedDefault"

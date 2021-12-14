@@ -385,6 +385,15 @@ exports[`New View matches snapshot 1`] = `
           "online": "#5CD685",
         },
       },
+      "metrics": Object {
+        "backgroundColor": "#F1F2F3",
+        "indicator": Object {
+          "backgroundColor": "#FFFFFF",
+          "lightTextColor": "#ABB5BA",
+          "titleColor": "#73848C",
+          "warningTextColor": "#E51A1A",
+        },
+      },
       "pageLoader": Object {
         "borderBottomColor": "#FFFFFF",
         "borderColor": "#4F4FFF",

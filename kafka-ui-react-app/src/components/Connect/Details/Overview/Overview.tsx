@@ -1,9 +1,7 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
 import TagStyled from 'components/common/Tag/Tag.styled';
-import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
-import MetricsSection from 'components/common/Metrics/MetricsSection';
-import Indicator from 'components/common/Metrics/Indicator';
+import * as Metrics from 'components/common/Metrics';
 
 export interface OverviewProps {
   connector: Connector | null;
@@ -19,26 +17,30 @@ const Overview: React.FC<OverviewProps> = ({
   if (!connector) return null;
 
   return (
-    <StyledMetricsWrapper>
-      <MetricsSection>
+    <Metrics.Wrapper>
+      <Metrics.Section>
         {connector.status?.workerId && (
-          <Indicator label="Worker">{connector.status.workerId}</Indicator>
+          <Metrics.Indicator label="Worker">
+            {connector.status.workerId}
+          </Metrics.Indicator>
         )}
-        <Indicator label="Type">{connector.type}</Indicator>
+        <Metrics.Indicator label="Type">{connector.type}</Metrics.Indicator>
         {connector.config['connector.class'] && (
-          <Indicator label="Class">
+          <Metrics.Indicator label="Class">
             {connector.config['connector.class']}
-          </Indicator>
+          </Metrics.Indicator>
         )}
-        <Indicator label="State">
+        <Metrics.Indicator label="State">
           <TagStyled color="yellow">{connector.status.state}</TagStyled>
-        </Indicator>
-        <Indicator label="Tasks running">{runningTasksCount}</Indicator>
-        <Indicator label="Tasks failed" isAlert>
+        </Metrics.Indicator>
+        <Metrics.Indicator label="Tasks running">
+          {runningTasksCount}
+        </Metrics.Indicator>
+        <Metrics.Indicator label="Tasks failed" isAlert>
           {failedTasksCount}
-        </Indicator>
-      </MetricsSection>
-    </StyledMetricsWrapper>
+        </Metrics.Indicator>
+      </Metrics.Section>
+    </Metrics.Wrapper>
   );
 };
 
