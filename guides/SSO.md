@@ -48,4 +48,4 @@ provectuslabs/kafka-ui:0.1.0
 ```
 
 #### Step 4 (optional)
-If you're using load balancer/proxy and use HTTP between the proxy and the app, you might wanna set `SERVER_USEFORWARDHEADERS` to true as well, for more info refer to [this issue](https://github.com/provectus/kafka-ui/issues/1017).
+If you're using load balancer/proxy and use HTTP between the proxy and the app, you might wanna set `server_forward-headers-strategy` to `native` as well, for more info refer to [this issue](https://github.com/provectus/kafka-ui/issues/1017).
