@@ -73,7 +73,7 @@ const List: React.FC<ListProps> = ({
             title="Connects"
             fetching={areConnectsFetching}
           >
-            {connects.length}
+            {connectors.length}
           </Indicator>
         </MetricsSection>
       </StyledMetricsWrapper>
