@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-export const ConfirmationModalWrapper = styled.div`
+export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })`
   display: flex;
   align-items: center;
   flex-direction: column;

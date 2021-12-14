@@ -95,9 +95,7 @@ const Details: React.FC = () => {
       <StyledMetricsWrapper>
         <MetricsSection>
           <Indicator label="State">
-            <TagStyled color="yellow">
-              {consumerGroup.state || 'unknown'}
-            </TagStyled>
+            <TagStyled color="yellow">{consumerGroup.state}</TagStyled>
           </Indicator>
           <Indicator label="Members">{consumerGroup.members}</Indicator>
           <Indicator label="Assigned topics">{consumerGroup.topics}</Indicator>

@@ -117,14 +117,11 @@ const consumerGroupsSlice = createSlice({
   initialState: consumerGroupsAdapter.getInitialState(),
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchConsumerGroups.fulfilled, (state, { payload }) =>
-      consumerGroupsAdapter.setAll(state, payload)
-    );
+    builder.addCase(fetchConsumerGroups.fulfilled, (state, { payload }) => {
+      consumerGroupsAdapter.setAll(state, payload);
+    });
     builder.addCase(fetchConsumerGroupDetails.fulfilled, (state, { payload }) =>
-      consumerGroupsAdapter.updateOne(state, {
-        id: payload.groupId,
-        changes: payload,
-      })
+      consumerGroupsAdapter.upsertOne(state, payload)
     );
     builder.addCase(deleteConsumerGroup.fulfilled, (state, { payload }) =>
       consumerGroupsAdapter.removeOne(state, payload)

@@ -53,6 +53,7 @@ const ResetOffsets: React.FC = () => {
   const consumerGroup = useAppSelector((state) =>
     selectById(state, consumerGroupID)
   );
+
   const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
   const isOffsetReseted = useAppSelector(getIsOffsetReseted);
 

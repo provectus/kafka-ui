@@ -9,10 +9,11 @@ import { ConfirmationModalProps } from 'components/common/ConfirmationModal/Conf
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 
-const mockDeleteConnector = jest.fn();
+const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
+
 jest.mock('redux/actions', () => ({
   ...jest.requireActual('redux/actions'),
-  deleteConnector: () => mockDeleteConnector(),
+  deleteConnector: () => mockDeleteConnector,
 }));
 
 jest.mock(

@@ -39,21 +39,23 @@ describe('Connectors List', () => {
       contextValue: ContextProps = initialValue
     ) => (
       <ThemeProvider theme={theme}>
-        <StaticRouter>
-          <ClusterContext.Provider value={contextValue}>
-            <List
-              areConnectorsFetching
-              areConnectsFetching
-              connectors={[]}
-              connects={[]}
-              fetchConnects={fetchConnects}
-              fetchConnectors={fetchConnectors}
-              search=""
-              setConnectorSearch={setConnectorSearch}
-              {...props}
-            />
-          </ClusterContext.Provider>
-        </StaticRouter>
+        <Provider store={store}>
+          <StaticRouter>
+            <ClusterContext.Provider value={contextValue}>
+              <List
+                areConnectorsFetching
+                areConnectsFetching
+                connectors={[]}
+                connects={[]}
+                fetchConnects={fetchConnects}
+                fetchConnectors={fetchConnectors}
+                search=""
+                setConnectorSearch={setConnectorSearch}
+                {...props}
+              />
+            </ClusterContext.Provider>
+          </StaticRouter>
+        </Provider>
       </ThemeProvider>
     );
 

@@ -1,56 +1,46 @@
 import React from 'react';
-import List, { ListProps } from 'components/ConsumerGroups/List/List';
+import List from 'components/ConsumerGroups/List/List';
 import { screen } from '@testing-library/react';
 import { StaticRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-
-const setupWrapper = (props?: Partial<ListProps>) => (
-  <StaticRouter>
-    <List
-      consumerGroups={[
-        {
-          groupId: 'groupId1',
-          members: 0,
-          topics: 1,
-          simple: false,
-          partitionAssignor: '',
-          coordinator: {
-            id: 1,
-            host: 'host',
-          },
-        },
-        {
-          groupId: 'groupId2',
-          members: 0,
-          topics: 1,
-          simple: false,
-          partitionAssignor: '',
-          coordinator: {
-            id: 1,
-            host: 'host',
-          },
-        },
-      ]}
-      clusterName="cluster"
-      {...props}
-    />
-  </StaticRouter>
-);
+import { store } from 'redux/store';
+import { fetchConsumerGroups } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
 
 describe('List', () => {
-  beforeEach(() => render(setupWrapper()));
+  beforeEach(() =>
+    render(
+      <StaticRouter>
+        <List />
+      </StaticRouter>
+    )
+  );
 
-  it('renders all rows with consumers', () => {
-    expect(screen.getByText('groupId1')).toBeInTheDocument();
-    expect(screen.getByText('groupId2')).toBeInTheDocument();
+  it('renders empty table', () => {
+    expect(screen.getByRole('table')).toBeInTheDocument();
+    expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
   });
 
-  describe('when searched', () => {
-    it('renders only searched consumers', () => {
-      userEvent.type(screen.getByPlaceholderText('Search'), 'groupId1');
+  describe('consumerGroups are fecthed', () => {
+    beforeEach(() => {
+      store.dispatch({
+        type: fetchConsumerGroups.fulfilled.type,
+        payload: consumerGroups,
+      });
+    });
+
+    it('renders all rows with consumers', () => {
       expect(screen.getByText('groupId1')).toBeInTheDocument();
       expect(screen.getByText('groupId2')).toBeInTheDocument();
+    });
+
+    describe('when searched', () => {
+      it('renders only searched consumers', () => {
+        userEvent.type(screen.getByPlaceholderText('Search'), 'groupId1');
+        expect(screen.getByText('groupId1')).toBeInTheDocument();
+        expect(screen.getByText('groupId2')).toBeInTheDocument();
+      });
     });
   });
 });

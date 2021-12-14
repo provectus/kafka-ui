@@ -19,9 +19,7 @@ const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
       <td>{consumerGroup.messagesBehind}</td>
       <td>{consumerGroup.coordinator?.id}</td>
       <td>
-        <TagStyled color="yellow">
-          {consumerGroup.state?.toString() || ''}
-        </TagStyled>
+        <TagStyled color="yellow">{consumerGroup.state}</TagStyled>
       </td>
     </tr>
   );
