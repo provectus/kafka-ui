@@ -19,7 +19,7 @@ import Topics from 'components/Topics/Topics';
 import Schemas from 'components/Schemas/Schemas';
 import Connect from 'components/Connect/Connect';
 import ClusterContext from 'components/contexts/ClusterContext';
-import BrokersContainer from 'components/Brokers/BrokersContainer';
+import Brokers from 'components/Brokers/Brokers';
 import ConsumersGroups from 'components/ConsumerGroups/ConsumerGroups';
 import KsqlDb from 'components/KsqlDb/KsqlDb';
 
@@ -52,10 +52,7 @@ const Cluster: React.FC = () => {
   return (
     <ClusterContext.Provider value={contextValue}>
       <Switch>
-        <Route
-          path={clusterBrokersPath(':clusterName')}
-          component={BrokersContainer}
-        />
+        <Route path={clusterBrokersPath(':clusterName')} component={Brokers} />
         <Route path={clusterTopicsPath(':clusterName')} component={Topics} />
         <Route
           path={clusterConsumerGroupsPath(':clusterName')}

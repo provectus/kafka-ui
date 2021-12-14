@@ -184,6 +184,15 @@ const theme = {
     borderColor: Colors.brand[50],
     borderBottomColor: Colors.neutral[0],
   },
+  metrics: {
+    backgroundColor: Colors.neutral[5],
+    indicator: {
+      backgroundColor: Colors.neutral[0],
+      titleColor: Colors.neutral[50],
+      warningTextColor: Colors.red[50],
+      lightTextColor: Colors.neutral[30],
+    },
+  },
 };
 
 export type ThemeType = typeof theme;

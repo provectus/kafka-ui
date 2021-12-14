@@ -4,11 +4,9 @@ import { Connect, FullConnectorInfo } from 'generated-sources';
 import { ClusterName, ConnectorSearch } from 'redux/interfaces';
 import { clusterConnectorNewPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import Indicator from 'components/common/Metrics/Indicator';
-import MetricsSection from 'components/common/Metrics/MetricsSection';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Search from 'components/common/Search/Search';
-import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
+import * as Metrics from 'components/common/Metrics';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
@@ -65,17 +63,17 @@ const List: React.FC<ListProps> = ({
           </Button>
         )}
       </PageHeading>
-      <StyledMetricsWrapper>
-        <MetricsSection>
-          <Indicator
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator
             label="Connects"
             title="Connects"
             fetching={areConnectsFetching}
           >
             {connectors.length}
-          </Indicator>
-        </MetricsSection>
-      </StyledMetricsWrapper>
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
       <ControlPanelWrapper hasInput>
         <Search
           handleSearch={handleSearch}

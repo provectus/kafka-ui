@@ -1,5 +1,10 @@
 import { BrokersApi, ClustersApi, Configuration } from 'generated-sources';
-import { BrokersState, ClusterName, ZooKeeperStatus } from 'redux/interfaces';
+import {
+  BrokersState,
+  ClusterName,
+  RootState,
+  ZooKeeperStatus,
+} from 'redux/interfaces';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
 
@@ -47,5 +52,7 @@ export const brokersSlice = createSlice({
     }));
   },
 });
+
+export const selectStats = (state: RootState) => state.brokers;
 
 export default brokersSlice.reducer;

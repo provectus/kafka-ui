@@ -1,47 +1,38 @@
 import React from 'react';
 import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
-import { ClusterStats } from 'generated-sources';
 import useInterval from 'lib/hooks/useInterval';
-import MetricsSection from 'components/common/Metrics/MetricsSection';
-import Indicator from 'components/common/Metrics/Indicator';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import * as Metrics from 'components/common/Metrics';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
-  MetricsLightText,
-  StyledMetricsWrapper,
-  MetricsRedText,
-} from 'components/common/Metrics/Metrics.styled';
-
-interface Props extends ClusterStats {
-  isFetched: boolean;
-  fetchClusterStats: (clusterName: ClusterName) => void;
-  fetchBrokers: (clusterName: ClusterName) => void;
-}
-
-const Brokers: React.FC<Props> = ({
-  brokerCount,
-  activeControllers,
-  zooKeeperStatus,
-  onlinePartitionCount,
-  offlinePartitionCount,
-  inSyncReplicasCount,
-  outOfSyncReplicasCount,
-  underReplicatedPartitionCount,
-  diskUsage,
   fetchClusterStats,
-  fetchBrokers,
-  version,
-}) => {
+  selectStats,
+} from 'redux/reducers/brokers/brokersSlice';
+
+const Brokers: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const {
+    brokerCount,
+    activeControllers,
+    zooKeeperStatus,
+    onlinePartitionCount,
+    offlinePartitionCount,
+    inSyncReplicasCount,
+    outOfSyncReplicasCount,
+    underReplicatedPartitionCount,
+    diskUsage,
+    version,
+  } = useAppSelector(selectStats);
 
   React.useEffect(() => {
-    fetchClusterStats(clusterName);
-    fetchBrokers(clusterName);
-  }, [fetchClusterStats, fetchBrokers, clusterName]);
+    dispatch(fetchClusterStats(clusterName));
+  }, [fetchClusterStats, clusterName]);
 
   useInterval(() => {
     fetchClusterStats(clusterName);
@@ -51,45 +42,45 @@ const Brokers: React.FC<Props> = ({
 
   return (
     <>
-      <div>
-        <PageHeading text="Brokers" />
-        <StyledMetricsWrapper>
-          <MetricsSection title="Uptime">
-            <Indicator label="Total Brokers">{brokerCount}</Indicator>
-            <Indicator label="Active Controllers">
-              {activeControllers}
-            </Indicator>
-            <Indicator label="Zookeeper Status">
-              <TagStyled color={zkOnline ? 'green' : 'gray'}>
-                {zkOnline ? 'online' : 'offline'}
-              </TagStyled>
-            </Indicator>
-            <Indicator label="Version">{version}</Indicator>
-          </MetricsSection>
-          <MetricsSection title="Partitions">
-            <Indicator label="Online" isAlert>
-              {offlinePartitionCount && offlinePartitionCount > 0 ? (
-                <MetricsRedText>{onlinePartitionCount}</MetricsRedText>
-              ) : (
-                onlinePartitionCount
-              )}
-              <MetricsLightText>
-                {' '}
-                of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
-              </MetricsLightText>
-            </Indicator>
-            <Indicator label="URP" title="Under replicated partitions">
-              {underReplicatedPartitionCount}
-            </Indicator>
-            <Indicator label="In Sync Replicas">
-              {inSyncReplicasCount}
-            </Indicator>
-            <Indicator label="Out of Sync Replicas">
-              {outOfSyncReplicasCount}
-            </Indicator>
-          </MetricsSection>
-        </StyledMetricsWrapper>
-      </div>
+      <PageHeading text="Brokers" />
+      <Metrics.Wrapper>
+        <Metrics.Section title="Uptime">
+          <Metrics.Indicator label="Total Brokers">
+            {brokerCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Active Controllers">
+            {activeControllers}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Zookeeper Status">
+            <TagStyled color={zkOnline ? 'green' : 'gray'}>
+              {zkOnline ? 'online' : 'offline'}
+            </TagStyled>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
+        </Metrics.Section>
+        <Metrics.Section title="Partitions">
+          <Metrics.Indicator label="Online" isAlert>
+            {offlinePartitionCount && offlinePartitionCount > 0 ? (
+              <Metrics.RedText>{onlinePartitionCount}</Metrics.RedText>
+            ) : (
+              onlinePartitionCount
+            )}
+            <Metrics.LightText>
+              {' '}
+              of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
+            </Metrics.LightText>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="URP" title="Under replicated partitions">
+            {underReplicatedPartitionCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="In Sync Replicas">
+            {inSyncReplicasCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Out of Sync Replicas">
+            {outOfSyncReplicasCount}
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
       <Table isFullwidth>
         <thead>
           <tr>
@@ -99,13 +90,13 @@ const Brokers: React.FC<Props> = ({
           </tr>
         </thead>
         <tbody>
-          {diskUsage?.map((brokerDiskUsage) => (
-            <tr key={brokerDiskUsage.brokerId}>
-              <td>{brokerDiskUsage.brokerId}</td>
+          {diskUsage?.map(({ brokerId, segmentSize, segmentCount }) => (
+            <tr key={brokerId}>
+              <td>{brokerId}</td>
               <td>
-                <BytesFormatted value={brokerDiskUsage.segmentSize} />
+                <BytesFormatted value={segmentSize} />
               </td>
-              <td>{brokerDiskUsage.segmentCount}</td>
+              <td>{segmentCount}</td>
             </tr>
           ))}
         </tbody>

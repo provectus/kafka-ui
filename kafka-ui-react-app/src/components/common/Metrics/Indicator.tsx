@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { StyledIndicator, StyledIndicatorTitle } from './Metrics.styled';
+import * as S from './Metrics.styled';
 
 interface Props {
   fetching?: boolean;
@@ -17,9 +17,9 @@ const Indicator: React.FC<Props> = ({
   children,
 }) => {
   return (
-    <StyledIndicator>
+    <S.IndicatorWrapper>
       <div title={title}>
-        <StyledIndicatorTitle>
+        <S.IndicatorTitle>
           {label}{' '}
           {isAlert && (
             <svg
@@ -32,12 +32,12 @@ const Indicator: React.FC<Props> = ({
               <circle cx="2" cy="2" r="2" fill="#E61A1A" />
             </svg>
           )}
-        </StyledIndicatorTitle>
+        </S.IndicatorTitle>
         <span>
           {fetching ? <i className="fas fa-spinner fa-pulse" /> : children}
         </span>
       </div>
-    </StyledIndicator>
+    </S.IndicatorWrapper>
   );
 };
 

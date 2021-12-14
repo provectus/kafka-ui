@@ -11,9 +11,7 @@ import { useHistory, useParams } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import { StyledMetricsWrapper } from 'components/common/Metrics/Metrics.styled';
-import MetricsSection from 'components/common/Metrics/MetricsSection';
-import Indicator from 'components/common/Metrics/Indicator';
+import * as Metrics from 'components/common/Metrics';
 import TagStyled from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
@@ -92,21 +90,25 @@ const Details: React.FC = () => {
           )}
         </PageHeading>
       </div>
-      <StyledMetricsWrapper>
-        <MetricsSection>
-          <Indicator label="State">
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator label="State">
             <TagStyled color="yellow">{consumerGroup.state}</TagStyled>
-          </Indicator>
-          <Indicator label="Members">{consumerGroup.members}</Indicator>
-          <Indicator label="Assigned topics">{consumerGroup.topics}</Indicator>
-          <Indicator label="Assigned partitions">
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Members">
+            {consumerGroup.members}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Assigned topics">
+            {consumerGroup.topics}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Assigned partitions">
             {consumerGroup.partitions?.length}
-          </Indicator>
-          <Indicator label="Coordinator ID">
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Coordinator ID">
             {consumerGroup.coordinator?.id}
-          </Indicator>
-        </MetricsSection>
-      </StyledMetricsWrapper>
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
       <Table isFullwidth>
         <thead>
           <tr>

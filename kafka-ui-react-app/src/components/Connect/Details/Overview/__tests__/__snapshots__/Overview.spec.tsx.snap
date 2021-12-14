@@ -30,7 +30,7 @@ exports[`Overview view matches snapshot 1`] = `
 }
 
 .c3 {
-  background-color: white;
+  background-color: #FFFFFF;
   height: 68px;
   width: -webkit-fit-content;
   width: -moz-fit-content;
