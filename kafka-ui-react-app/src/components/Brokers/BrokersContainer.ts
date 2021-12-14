@@ -1,8 +1,7 @@
 import { connect } from 'react-redux';
-import { fetchClusterStats, fetchBrokers } from 'redux/actions';
 import { RootState } from 'redux/interfaces';
 import {
-  getIsBrokerListFetched,
+  getAreBrokersFulfilled,
   getBrokerCount,
   getZooKeeperStatus,
   getActiveControllers,
@@ -15,9 +14,13 @@ import {
   getVersion,
 } from 'redux/reducers/brokers/selectors';
 import Brokers from 'components/Brokers/Brokers';
+import {
+  fetchClusterStats,
+  fetchBrokers,
+} from 'redux/reducers/brokers/brokersSlice';
 
 const mapStateToProps = (state: RootState) => ({
-  isFetched: getIsBrokerListFetched(state),
+  isFetched: getAreBrokersFulfilled(state),
   brokerCount: getBrokerCount(state),
   zooKeeperStatus: getZooKeeperStatus(state),
   activeControllers: getActiveControllers(state),

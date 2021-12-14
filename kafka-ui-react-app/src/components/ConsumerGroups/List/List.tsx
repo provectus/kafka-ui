@@ -1,20 +1,16 @@
 import React from 'react';
-import { ClusterName } from 'redux/interfaces';
-import { ConsumerGroup } from 'generated-sources';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import { selectAll } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
 import ListItem from './ListItem';
 
-export interface ListProps {
-  clusterName: ClusterName;
-  consumerGroups: ConsumerGroup[];
-}
-
-const List: React.FC<ListProps> = ({ consumerGroups }) => {
+const List: React.FC = () => {
+  const consumerGroups = useAppSelector(selectAll);
   const [searchText, setSearchText] = React.useState<string>('');
 
   const handleInputChange = (search: string) => {

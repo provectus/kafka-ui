@@ -3,7 +3,7 @@ import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { render, RenderOptions } from '@testing-library/react';
@@ -41,8 +41,6 @@ export const containerRendersView = (
   view: React.FC<any>
 ) => {
   describe('container', () => {
-    const store = configureStore();
-
     it('renders view', async () => {
       let wrapper = mount(<div />);
       await act(async () => {
@@ -69,7 +67,11 @@ export function mountWithTheme(child: ReactElement) {
 
 // overrides @testing-library/react render.
 const AllTheProviders: React.FC = ({ children }) => {
-  return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
+  return (
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>{children}</Provider>
+    </ThemeProvider>
+  );
 };
 
 const customRender = (

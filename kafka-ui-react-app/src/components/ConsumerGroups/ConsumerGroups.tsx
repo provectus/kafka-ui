@@ -1,26 +1,23 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import DetailsContainer from 'components/ConsumerGroups/Details/DetailsContainer';
-import ListContainer from 'components/ConsumerGroups/List/ListContainer';
+import Details from 'components/ConsumerGroups/Details/Details';
+import List from 'components/ConsumerGroups/List/List';
+import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  fetchConsumerGroups,
+  getAreConsumerGroupsFulfilled,
+} from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
-import ResetOffsetsContainer from './Details/ResetOffsets/ResetOffsetsContainer';
-
-interface Props {
-  clusterName: ClusterName;
-  isFetched: boolean;
-  fetchConsumerGroupsList: (clusterName: ClusterName) => void;
-}
-
-const ConsumerGroups: React.FC<Props> = ({
-  clusterName,
-  isFetched,
-  fetchConsumerGroupsList,
-}) => {
+const ConsumerGroups: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+  const isFetched = useAppSelector(getAreConsumerGroupsFulfilled);
   React.useEffect(() => {
-    fetchConsumerGroupsList(clusterName);
-  }, [fetchConsumerGroupsList, clusterName]);
+    dispatch(fetchConsumerGroups(clusterName));
+  }, [fetchConsumerGroups, clusterName]);
 
   if (isFetched) {
     return (
@@ -28,16 +25,16 @@ const ConsumerGroups: React.FC<Props> = ({
         <Route
           exact
           path="/ui/clusters/:clusterName/consumer-groups"
-          component={ListContainer}
+          component={List}
         />
         <Route
           exact
           path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
-          component={DetailsContainer}
+          component={Details}
         />
         <Route
           path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
-          component={ResetOffsetsContainer}
+          component={ResetOffsets}
         />
       </Switch>
     );

@@ -15,7 +15,7 @@ describe('Nav', () => {
         <Nav clusters={[]} />
       </StaticRouter>
     );
-    expect(screen.getAllByRole('listitem').length).toEqual(1);
+    expect(screen.getAllByRole('menuitem').length).toEqual(1);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
@@ -24,13 +24,12 @@ describe('Nav', () => {
       <StaticRouter>
         <Nav
           clusters={[onlineClusterPayload, offlineClusterPayload]}
-          isClusterListFetched
+          areClustersFulfilled
         />
       </StaticRouter>
     );
-
-    expect(screen.getAllByRole('list').length).toEqual(3);
-    expect(screen.getAllByRole('listitem').length).toEqual(3);
+    expect(screen.getAllByRole('menu').length).toEqual(3);
+    expect(screen.getAllByRole('menuitem').length).toEqual(3);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
     expect(screen.getByText(offlineClusterPayload.name)).toBeInTheDocument();

@@ -21,7 +21,7 @@ describe('KsqlDb Query Component', () => {
         tables: [],
         executionResult: ksqlCommandResponse,
       },
-      loader: {
+      legacyLoader: {
         EXECUTE_KSQL: 'fetched',
       },
     };
@@ -50,7 +50,7 @@ describe('KsqlDb Query Component', () => {
           message: 'No available data',
         },
       },
-      loader: {
+      legacyLoader: {
         EXECUTE_KSQL: 'fetched',
       },
     };

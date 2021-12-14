@@ -1,14 +1,14 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState, BrokersState } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const brokersState = ({ brokers }: RootState): BrokersState => brokers;
 
-const getBrokerListFetchingStatus = createFetchingSelector('GET_BROKERS');
+const getBrokersFetchingStatus = createFetchingSelector('brokers/fetchBrokers');
 
-export const getIsBrokerListFetched = createSelector(
-  getBrokerListFetchingStatus,
-  (status) => status === 'fetched'
+export const getAreBrokersFulfilled = createSelector(
+  getBrokersFetchingStatus,
+  (status) => status === 'fulfilled'
 );
 
 export const getBrokerCount = createSelector(

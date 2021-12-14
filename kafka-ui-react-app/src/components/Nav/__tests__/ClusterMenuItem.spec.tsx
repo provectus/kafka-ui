@@ -26,23 +26,23 @@ describe('ClusterMenuItem', () => {
 
   it('renders top level component with correct styles', () => {
     render(setupComponent({ isTopLevel: true }));
-    expect(screen.getByRole('listitem')).toHaveStyle({ fontWeight: '500' });
+    expect(screen.getByRole('menuitem')).toHaveStyle({ fontWeight: '500' });
   });
 
   it('renders non-top level component with correct styles', () => {
     render(setupComponent({ isTopLevel: false }));
-    expect(screen.getByRole('listitem')).toHaveStyle({ fontWeight: 'normal' });
+    expect(screen.getByRole('menuitem')).toHaveStyle({ fontWeight: 'normal' });
   });
 
   it('renders list item with link inside', () => {
     render(setupComponent({ to: '/my-cluster' }));
-    expect(screen.getByRole('listitem')).toBeInTheDocument();
+    expect(screen.getByRole('menuitem')).toBeInTheDocument();
     expect(screen.queryByRole('link')).toBeInTheDocument();
   });
 
   it('renders list item without link inside', () => {
     render(setupComponent({ to: '' }));
-    expect(screen.getByRole('listitem')).toBeInTheDocument();
+    expect(screen.getByRole('menuitem')).toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
@@ -54,7 +54,7 @@ describe('ClusterMenuItem', () => {
         </ul>
       </StaticRouter>
     );
-    expect(screen.getByRole('listitem')).toBeInTheDocument();
+    expect(screen.getByRole('menuitem')).toBeInTheDocument();
     expect(screen.queryByRole('link')).toBeInTheDocument();
     expect(screen.getByText('Test Text Box')).toBeInTheDocument();
   });

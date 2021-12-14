@@ -18,31 +18,6 @@ import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixture
 import { mockTopicsState } from './fixtures';
 
 describe('Actions', () => {
-  describe('fetchClusterStatsAction', () => {
-    it('creates a REQUEST action', () => {
-      expect(actions.fetchClusterStatsAction.request()).toEqual({
-        type: 'GET_CLUSTER_STATUS__REQUEST',
-      });
-    });
-
-    it('creates a SUCCESS action', () => {
-      expect(
-        actions.fetchClusterStatsAction.success({ brokerCount: 1 })
-      ).toEqual({
-        type: 'GET_CLUSTER_STATUS__SUCCESS',
-        payload: {
-          brokerCount: 1,
-        },
-      });
-    });
-
-    it('creates a FAILURE action', () => {
-      expect(actions.fetchClusterStatsAction.failure()).toEqual({
-        type: 'GET_CLUSTER_STATUS__FAILURE',
-      });
-    });
-  });
-
   describe('fetchSchemasByClusterNameAction', () => {
     it('creates a REQUEST action', () => {
       expect(actions.fetchSchemasByClusterNameAction.request()).toEqual({
@@ -181,32 +156,6 @@ describe('Actions', () => {
       expect(actions.setTopicsOrderByAction(TopicColumnsToSort.NAME)).toEqual({
         type: 'SET_TOPICS_ORDER_BY',
         payload: TopicColumnsToSort.NAME,
-      });
-    });
-  });
-
-  describe('deleting consumer group', () => {
-    it('creates DELETE_CONSUMER_GROUP__REQUEST', () => {
-      expect(actions.deleteConsumerGroupAction.request()).toEqual({
-        type: 'DELETE_CONSUMER_GROUP__REQUEST',
-      });
-    });
-
-    it('creates DELETE_CONSUMER_GROUP__SUCCESS', () => {
-      expect(actions.deleteConsumerGroupAction.success('test')).toEqual({
-        type: 'DELETE_CONSUMER_GROUP__SUCCESS',
-        payload: 'test',
-      });
-    });
-
-    it('creates DELETE_CONSUMER_GROUP__FAILURE', () => {
-      const alert: FailurePayload = {
-        subject: ['consumer-group', 'test'].join('-'),
-        title: `Consumer Group Test`,
-      };
-      expect(actions.deleteConsumerGroupAction.failure({ alert })).toEqual({
-        type: 'DELETE_CONSUMER_GROUP__FAILURE',
-        payload: { alert },
       });
     });
   });

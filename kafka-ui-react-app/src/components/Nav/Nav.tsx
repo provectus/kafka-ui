@@ -6,17 +6,17 @@ import ClusterMenuItem from './ClusterMenuItem';
 import * as S from './Nav.styled';
 
 interface Props {
-  isClusterListFetched?: boolean;
+  areClustersFulfilled?: boolean;
   clusters: Cluster[];
 }
 
-const Nav: React.FC<Props> = ({ isClusterListFetched, clusters }) => (
-  <aside>
+const Nav: React.FC<Props> = ({ areClustersFulfilled, clusters }) => (
+  <aside aria-label="Sidebar Menu">
     <S.List>
       <ClusterMenuItem exact to="/ui" title="Dashboard" isTopLevel />
     </S.List>
 
-    {isClusterListFetched &&
+    {areClustersFulfilled &&
       clusters.map((cluster) => (
         <ClusterMenu
           cluster={cluster}

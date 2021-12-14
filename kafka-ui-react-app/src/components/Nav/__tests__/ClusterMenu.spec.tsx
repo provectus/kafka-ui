@@ -23,9 +23,9 @@ describe('ClusterMenu', () => {
     render(setupComponent(onlineClusterPayload));
     expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
 
-    expect(screen.getAllByRole('listitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('listitem'));
-    expect(screen.getAllByRole('listitem').length).toEqual(4);
+    expect(screen.getAllByRole('menuitem').length).toEqual(1);
+    userEvent.click(screen.getByRole('menuitem'));
+    expect(screen.getAllByRole('menuitem').length).toEqual(4);
 
     expect(screen.getByTitle('Brokers')).toBeInTheDocument();
     expect(screen.getByTitle('Topics')).toBeInTheDocument();
@@ -42,9 +42,9 @@ describe('ClusterMenu', () => {
         ],
       })
     );
-    expect(screen.getAllByRole('listitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('listitem'));
-    expect(screen.getAllByRole('listitem').length).toEqual(7);
+    expect(screen.getAllByRole('menuitem').length).toEqual(1);
+    userEvent.click(screen.getByRole('menuitem'));
+    expect(screen.getAllByRole('menuitem').length).toEqual(7);
 
     expect(screen.getByTitle('Brokers')).toBeInTheDocument();
     expect(screen.getByTitle('Topics')).toBeInTheDocument();
@@ -62,7 +62,7 @@ describe('ClusterMenu', () => {
       )
     );
 
-    expect(screen.getAllByRole('listitem').length).toEqual(4);
+    expect(screen.getAllByRole('menuitem').length).toEqual(4);
     expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
     expect(screen.getByTitle('Brokers')).toBeInTheDocument();
     expect(screen.getByTitle('Topics')).toBeInTheDocument();
@@ -78,9 +78,9 @@ describe('ClusterMenu', () => {
         clusterConnectorsPath(onlineClusterPayload.name)
       )
     );
-    expect(screen.getAllByRole('listitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('listitem'));
-    expect(screen.getAllByRole('listitem').length).toEqual(5);
+    expect(screen.getAllByRole('menuitem').length).toEqual(1);
+    userEvent.click(screen.getByRole('menuitem'));
+    expect(screen.getAllByRole('menuitem').length).toEqual(5);
 
     expect(screen.getByText('Kafka Connect')).toBeInTheDocument();
     expect(screen.getByText('Kafka Connect')).toHaveClass('is-active');
@@ -95,9 +95,9 @@ describe('ClusterMenu', () => {
         clusterConnectsPath(onlineClusterPayload.name)
       )
     );
-    expect(screen.getAllByRole('listitem').length).toEqual(1);
-    userEvent.click(screen.getByRole('listitem'));
-    expect(screen.getAllByRole('listitem').length).toEqual(5);
+    expect(screen.getAllByRole('menuitem').length).toEqual(1);
+    userEvent.click(screen.getByRole('menuitem'));
+    expect(screen.getAllByRole('menuitem').length).toEqual(5);
 
     expect(screen.getByText('Kafka Connect')).toBeInTheDocument();
     expect(screen.getByText('Kafka Connect')).toHaveClass('is-active');

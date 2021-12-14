@@ -1,5 +1,5 @@
 import React from 'react';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
@@ -10,8 +10,6 @@ import theme from 'theme/theme';
 
 describe('New', () => {
   describe('Container', () => {
-    const store = configureStore();
-
     it('renders view', () => {
       const component = shallow(
         <ThemeProvider theme={theme}>
