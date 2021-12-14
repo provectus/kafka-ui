@@ -24,7 +24,6 @@ export interface ListProps {
 
 const List: React.FC<ListProps> = ({
   connectors,
-  connects,
   areConnectsFetching,
   areConnectorsFetching,
   fetchConnects,
