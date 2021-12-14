@@ -112,7 +112,7 @@ describe('ResetOffsets', () => {
       });
       it('calls resetConsumerGroupOffsets with OFFSET', async () => {
         await selectresetTypeAndPartitions('OFFSET');
-        const resetConsumerGroupOffsetsMock = fetchMock.postOnce(
+        fetchMock.postOnce(
           `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
           200,
           {
@@ -130,13 +130,7 @@ describe('ResetOffsets', () => {
           });
         });
         userEvent.click(screen.getByText('Submit'));
-        await waitFor(() =>
-          expect(
-            resetConsumerGroupOffsetsMock.called(
-              `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`
-            )
-          ).toBeTruthy()
-        );
+        await waitFor(() => resetConsumerGroupOffsetsMockCalled());
       });
       it('calls resetConsumerGroupOffsets with TIMESTAMP', async () => {
         await selectresetTypeAndPartitions('TIMESTAMP');

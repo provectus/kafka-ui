@@ -30,10 +30,9 @@ export const fetchConsumerGroups = createAsyncThunk<
   'consumerGroups/fetchConsumerGroups',
   async (clusterName: ClusterName, { rejectWithValue }) => {
     try {
-      const response = await api.getConsumerGroups({
+      return await api.getConsumerGroups({
         clusterName,
       });
-      return response;
     } catch (error) {
       return rejectWithValue(await getResponse(error as Response));
     }
@@ -47,11 +46,10 @@ export const fetchConsumerGroupDetails = createAsyncThunk<
   'consumerGroups/fetchConsumerGroupDetails',
   async ({ clusterName, consumerGroupID }, { rejectWithValue }) => {
     try {
-      const response = await api.getConsumerGroup({
+      return await api.getConsumerGroup({
         clusterName,
         id: consumerGroupID,
       });
-      return response;
     } catch (error) {
       return rejectWithValue(await getResponse(error as Response));
     }
