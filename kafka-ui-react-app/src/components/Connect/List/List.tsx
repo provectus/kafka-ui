@@ -24,7 +24,6 @@ export interface ListProps {
 
 const List: React.FC<ListProps> = ({
   connectors,
-  connects,
   areConnectsFetching,
   areConnectorsFetching,
   fetchConnects,
@@ -55,7 +54,7 @@ const List: React.FC<ListProps> = ({
           title="Connects"
           fetching={areConnectsFetching}
         >
-          {connects.length}
+          {connectors.length}
         </Indicator>
 
         <div className="column">
