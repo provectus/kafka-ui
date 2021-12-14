@@ -11,14 +11,6 @@ import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOf
 const clusterName = 'cluster1';
 const { groupId } = consumerGroupPayload;
 
-const selectresetTypeAndPartitions = async (resetType: string) => {
-  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
-  userEvent.click(screen.getByText('Select...'));
-  await waitFor(() => {
-    userEvent.click(screen.getByText('Partition #0'));
-  });
-};
-
 const renderComponent = () =>
   render(
     <StaticRouter
@@ -46,6 +38,39 @@ const resetConsumerGroupOffsetsMockCalled = () =>
       `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`
     )
   ).toBeTruthy();
+
+const selectresetTypeAndPartitions = async (resetType: string) => {
+  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByText('Select...'));
+  await waitFor(() => {
+    userEvent.click(screen.getByText('Partition #0'));
+  });
+};
+
+const resetConsumerGroupOffsetsWith = async (
+  resetType: string,
+  offset: null | number = null
+) => {
+  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByText('Select...'));
+  await waitFor(() => {
+    userEvent.click(screen.getByText('Partition #0'));
+  });
+  fetchMock.postOnce(
+    `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
+    200,
+    {
+      body: {
+        topic: '__amazon_msk_canary',
+        resetType,
+        partitions: [0],
+        partitionsOffsets: [{ partition: 0, offset }],
+      },
+    }
+  );
+  userEvent.click(screen.getByText('Submit'));
+  await waitFor(() => resetConsumerGroupOffsetsMockCalled());
+};
 
 describe('ResetOffsets', () => {
   afterEach(() => {
@@ -76,39 +101,11 @@ describe('ResetOffsets', () => {
       });
 
       it('calls resetConsumerGroupOffsets with EARLIEST', async () => {
-        await selectresetTypeAndPartitions('EARLIEST');
-        fetchMock.postOnce(
-          `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
-          200,
-          {
-            body: {
-              topic: '__amazon_msk_canary',
-              resetType: 'EARLIEST',
-              partitions: [0],
-              partitionsOffsets: [{ partition: 0, offset: null }],
-            },
-          }
-        );
-        userEvent.click(screen.getByText('Submit'));
-        await waitFor(() => resetConsumerGroupOffsetsMockCalled());
+        await resetConsumerGroupOffsetsWith('EARLIEST');
       });
 
       it('calls resetConsumerGroupOffsets with LATEST', async () => {
-        await selectresetTypeAndPartitions('LATEST');
-        fetchMock.postOnce(
-          `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
-          200,
-          {
-            body: {
-              topic: '__amazon_msk_canary',
-              resetType: 'LATEST',
-              partitions: [0],
-              partitionsOffsets: [{ partition: 0, offset: null }],
-            },
-          }
-        );
-        userEvent.click(screen.getByText('Submit'));
-        await waitFor(() => resetConsumerGroupOffsetsMockCalled());
+        await resetConsumerGroupOffsetsWith('LATEST');
       });
       it('calls resetConsumerGroupOffsets with OFFSET', async () => {
         await selectresetTypeAndPartitions('OFFSET');

@@ -51,8 +51,8 @@ describe('Alerts', () => {
     const dissmissButton = dissmissAlertButtons[0];
     const dissmissLegacyButton = dissmissAlertButtons[1];
 
-    await userEvent.click(dissmissButton);
-    await userEvent.click(dissmissLegacyButton);
+    userEvent.click(dissmissButton);
+    userEvent.click(dissmissLegacyButton);
 
     expect(screen.queryAllByRole('alert').length).toEqual(0);
   });
