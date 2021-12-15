@@ -4,8 +4,14 @@ import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
 import { remove as _remove } from 'lodash';
 import { TopicFormData } from 'redux/interfaces';
-
-import CustomParamButton from './CustomParamButton';
+import { TopicFormColumn } from 'components/Topics/shared/Form/TopicForm';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { FormError } from 'components/common/Input/Input.styled';
+import Select from 'components/common/Select/Select';
+import Input from 'components/common/Input/Input';
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import CloseIcon from 'components/common/Icons/CloseIcon';
+import styled from 'styled-components';
 
 interface Props {
   isDisabled: boolean;
@@ -16,6 +22,16 @@ interface Props {
   setExistingFields: React.Dispatch<React.SetStateAction<string[]>>;
 }
 
+const CustomParamDeleteButtonWrapper = styled.div`
+  height: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: flex-end;
+  flex-grow: 0.25 !important;
+`;
+
 const CustomParamField: React.FC<Props> = ({
   field,
   isDisabled,
@@ -25,7 +41,6 @@ const CustomParamField: React.FC<Props> = ({
   setExistingFields,
 }) => {
   const {
-    register,
     formState: { errors },
     setValue,
     watch,
@@ -51,14 +66,16 @@ const CustomParamField: React.FC<Props> = ({
   }, [nameValue]);
 
   return (
-    <div className="columns is-centered">
-      <div className="column">
-        <label className="label">Custom Parameter</label>
-        <div className="select is-block">
-          <select
-            {...register(`customParams.${index}.name` as const, {
+    <TopicFormColumn>
+      <>
+        <div>
+          <InputLabel>Custom Parameter</InputLabel>
+          <Select
+            selectSize="M"
+            name={`customParams.${index}.name` as const}
+            hookFormOptions={{
               required: 'Custom Parameter is required.',
-            })}
+            }}
             disabled={isDisabled}
             defaultValue={field.name}
           >
@@ -74,39 +91,37 @@ const CustomParamField: React.FC<Props> = ({
                   {opt}
                 </option>
               ))}
-          </select>
-          <p className="help is-danger">
+          </Select>
+          <FormError>
             <ErrorMessage errors={errors} name={`customParams.${index}.name`} />
-          </p>
+          </FormError>
         </div>
-      </div>
+      </>
 
-      <div className="column">
-        <label className="label">Value</label>
-        <input
-          className="input"
-          placeholder="Value"
-          {...register(`customParams.${index}.value` as const, {
+      <div>
+        <InputLabel>Value</InputLabel>
+        <Input
+          inputSize="M"
+          name={`customParams.${index}.value` as const}
+          hookFormOptions={{
             required: 'Value is required.',
-          })}
+          }}
+          placeholder="Value"
           defaultValue={field.value}
           autoComplete="off"
           disabled={isDisabled}
         />
-        <p className="help is-danger">
+        <FormError>
           <ErrorMessage errors={errors} name={`customParams.${index}.value`} />
-        </p>
+        </FormError>
       </div>
 
-      <div className="column is-narrow">
-        <label className="label">&nbsp;</label>
-        <CustomParamButton
-          className="is-danger"
-          type="fa-minus"
-          onClick={() => remove(index)}
-        />
-      </div>
-    </div>
+      <CustomParamDeleteButtonWrapper>
+        <IconButtonWrapper onClick={() => remove(index)} aria-hidden>
+          <CloseIcon />
+        </IconButtonWrapper>
+      </CustomParamDeleteButtonWrapper>
+    </TopicFormColumn>
   );
 };
 

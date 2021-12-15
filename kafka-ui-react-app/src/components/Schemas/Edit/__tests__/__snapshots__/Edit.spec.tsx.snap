@@ -1,57 +1,131 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
-<div
-  className="section"
+<Component
+  clearErrors={[Function]}
+  control={
+    Object {
+      "controllerSubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+      "defaultValuesRef": Object {
+        "current": Object {},
+      },
+      "fieldArrayDefaultValuesRef": Object {
+        "current": Object {},
+      },
+      "fieldArrayNamesRef": Object {
+        "current": Set {},
+      },
+      "fieldArraySubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+      "fieldsRef": Object {
+        "current": Object {},
+      },
+      "fieldsWithValidationRef": Object {
+        "current": Object {},
+      },
+      "formStateRef": Object {
+        "current": Object {
+          "dirtyFields": Object {},
+          "errors": Object {},
+          "isDirty": false,
+          "isSubmitSuccessful": false,
+          "isSubmitted": false,
+          "isSubmitting": false,
+          "isValid": true,
+          "isValidating": false,
+          "submitCount": 0,
+          "touchedFields": Object {},
+        },
+      },
+      "formStateSubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+      "getIsDirty": [Function],
+      "inFieldArrayActionRef": Object {
+        "current": false,
+      },
+      "isWatchAllRef": Object {
+        "current": false,
+      },
+      "readFormStateRef": Object {
+        "current": Object {
+          "dirtyFields": false,
+          "errors": false,
+          "isDirty": "all",
+          "isSubmitting": "all",
+          "isValid": false,
+          "isValidating": false,
+          "touchedFields": false,
+        },
+      },
+      "register": [Function],
+      "shouldUnmount": undefined,
+      "unregister": [Function],
+      "validFieldsRef": Object {
+        "current": Object {},
+      },
+      "watchFieldsRef": Object {
+        "current": Set {},
+      },
+      "watchInternal": [Function],
+      "watchSubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+    }
+  }
+  formState={
+    Object {
+      "dirtyFields": Object {},
+      "errors": Object {},
+      "isDirty": false,
+      "isSubmitSuccessful": false,
+      "isSubmitted": false,
+      "isSubmitting": false,
+      "isValid": true,
+      "isValidating": false,
+      "submitCount": 0,
+      "touchedFields": Object {},
+    }
+  }
+  getValues={[Function]}
+  handleSubmit={[Function]}
+  register={[Function]}
+  reset={[Function]}
+  setError={[Function]}
+  setFocus={[Function]}
+  setValue={[Function]}
+  trigger={[Function]}
+  unregister={[Function]}
+  watch={[Function]}
 >
-  <div
-    className="level"
-  >
-    <div
-      className="level-item level-left"
-    >
-      <Breadcrumb
-        links={
-          Array [
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas",
-              "label": "Schema Registry",
-            },
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
-              "label": "Subject",
-            },
-          ]
-        }
-      >
-        Edit
-      </Breadcrumb>
-    </div>
-  </div>
-  <div
-    className="box"
-  >
+  <Styled(PageHeading)
+    text="Edit schema"
+  />
+  <styled.div>
     <form
-      className="mt-3 is-flex-direction-column"
       onSubmit={[Function]}
     >
-      <div
-        className="mb-4"
-      >
-        <h5
-          className="title is-5 mb-2"
-        >
-          Schema Type
-        </h5>
-        <div
-          className="select"
-        >
-          <select
+      <div>
+        <div>
+          <styled.label>
+            Type
+          </styled.label>
+          <Styled(Select)
             defaultValue="AVRO"
             disabled={false}
             name="schemaType"
-            onBlur={[Function]}
-            onChange={[Function]}
+            required={true}
           >
             <option
               key="AVRO"
@@ -71,26 +145,16 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             >
               PROTOBUF
             </option>
-          </select>
+          </Styled(Select)>
         </div>
-      </div>
-      <div
-        className="mb-4"
-      >
-        <h5
-          className="title is-5 mb-2"
-        >
-          Compatibility Level
-        </h5>
-        <div
-          className="select"
-        >
-          <select
+        <div>
+          <styled.label>
+            Compatibility level
+          </styled.label>
+          <Styled(Select)
             defaultValue="BACKWARD"
             disabled={false}
             name="compatibilityLevel"
-            onBlur={[Function]}
-            onChange={[Function]}
           >
             <option
               key="BACKWARD"
@@ -134,22 +198,16 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             >
               NONE
             </option>
-          </select>
+          </Styled(Select)>
         </div>
       </div>
-      <div
-        className="columns"
-      >
-        <div
-          className="column is-one-half"
-        >
-          <h4
-            className="title is-5 mb-2"
-          >
-            Latest Schema
+      <styled.div>
+        <div>
+          <h4>
+            Latest schema
           </h4>
-          <JSONEditor
-            height="500px"
+          <Styled(JSONEditor)
+            height="372px"
             highlightActiveLine={false}
             isFixedHeight={true}
             name="latestSchema"
@@ -159,13 +217,9 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
 }"
           />
         </div>
-        <div
-          className="column is-one-half"
-        >
-          <h4
-            className="title is-5 mb-2"
-          >
-            New Schema
+        <div>
+          <h4>
+            New schema
           </h4>
           <Controller
             control={
@@ -190,34 +244,10 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                   },
                 },
                 "fieldsRef": Object {
-                  "current": Object {
-                    "compatibilityLevel": Object {
-                      "_f": Object {
-                        "mount": true,
-                        "name": "compatibilityLevel",
-                        "ref": Object {
-                          "name": "compatibilityLevel",
-                        },
-                        "value": undefined,
-                      },
-                    },
-                    "schemaType": Object {
-                      "_f": Object {
-                        "mount": true,
-                        "name": "schemaType",
-                        "ref": Object {
-                          "name": "schemaType",
-                        },
-                        "required": "Schema Type is required.",
-                        "value": undefined,
-                      },
-                    },
-                  },
+                  "current": Object {},
                 },
                 "fieldsWithValidationRef": Object {
-                  "current": Object {
-                    "schemaType": true,
-                  },
+                  "current": Object {},
                 },
                 "formStateRef": Object {
                   "current": Object {
@@ -247,13 +277,17 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
                 },
                 "readFormStateRef": Object {
                   "current": Object {
-                    "dirtyFields": false,
-                    "errors": false,
+                    "constructor": "all",
+                    "dirtyFields": "all",
+                    "errors": "all",
                     "isDirty": "all",
+                    "isSubmitSuccessful": "all",
+                    "isSubmitted": "all",
                     "isSubmitting": "all",
-                    "isValid": false,
-                    "isValidating": false,
-                    "touchedFields": false,
+                    "isValid": "all",
+                    "isValidating": "all",
+                    "submitCount": "all",
+                    "touchedFields": "all",
                   },
                 },
                 "register": [Function],
@@ -277,47 +311,131 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             render={[Function]}
           />
         </div>
-      </div>
-      <button
-        className="button is-primary"
+      </styled.div>
+      <Button
+        buttonSize="M"
+        buttonType="primary"
         disabled={true}
         type="submit"
       >
         Submit
-      </button>
+      </Button>
     </form>
-  </div>
-</div>
+  </styled.div>
+</Component>
 `;
 
 exports[`Edit Component when schemas are not fetched matches the snapshot 1`] = `
-<div
-  className="section"
+<Component
+  clearErrors={[Function]}
+  control={
+    Object {
+      "controllerSubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+      "defaultValuesRef": Object {
+        "current": Object {},
+      },
+      "fieldArrayDefaultValuesRef": Object {
+        "current": Object {},
+      },
+      "fieldArrayNamesRef": Object {
+        "current": Set {},
+      },
+      "fieldArraySubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+      "fieldsRef": Object {
+        "current": Object {},
+      },
+      "fieldsWithValidationRef": Object {
+        "current": Object {},
+      },
+      "formStateRef": Object {
+        "current": Object {
+          "dirtyFields": Object {},
+          "errors": Object {},
+          "isDirty": false,
+          "isSubmitSuccessful": false,
+          "isSubmitted": false,
+          "isSubmitting": false,
+          "isValid": true,
+          "isValidating": false,
+          "submitCount": 0,
+          "touchedFields": Object {},
+        },
+      },
+      "formStateSubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+      "getIsDirty": [Function],
+      "inFieldArrayActionRef": Object {
+        "current": false,
+      },
+      "isWatchAllRef": Object {
+        "current": false,
+      },
+      "readFormStateRef": Object {
+        "current": Object {
+          "dirtyFields": false,
+          "errors": false,
+          "isDirty": false,
+          "isValid": false,
+          "isValidating": false,
+          "touchedFields": false,
+        },
+      },
+      "register": [Function],
+      "shouldUnmount": undefined,
+      "unregister": [Function],
+      "validFieldsRef": Object {
+        "current": Object {},
+      },
+      "watchFieldsRef": Object {
+        "current": Set {},
+      },
+      "watchInternal": [Function],
+      "watchSubjectRef": Object {
+        "current": Re {
+          "observers": Array [],
+        },
+      },
+    }
+  }
+  formState={
+    Object {
+      "dirtyFields": Object {},
+      "errors": Object {},
+      "isDirty": false,
+      "isSubmitSuccessful": false,
+      "isSubmitted": false,
+      "isSubmitting": false,
+      "isValid": true,
+      "isValidating": false,
+      "submitCount": 0,
+      "touchedFields": Object {},
+    }
+  }
+  getValues={[Function]}
+  handleSubmit={[Function]}
+  register={[Function]}
+  reset={[Function]}
+  setError={[Function]}
+  setFocus={[Function]}
+  setValue={[Function]}
+  trigger={[Function]}
+  unregister={[Function]}
+  watch={[Function]}
 >
-  <div
-    className="level"
-  >
-    <div
-      className="level-item level-left"
-    >
-      <Breadcrumb
-        links={
-          Array [
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas",
-              "label": "Schema Registry",
-            },
-            Object {
-              "href": "/ui/clusters/ClusterName/schemas/Subject/latest",
-              "label": "Subject",
-            },
-          ]
-        }
-      >
-        Edit
-      </Breadcrumb>
-    </div>
-  </div>
+  <Styled(PageHeading)
+    text="Edit schema"
+  />
   <PageLoader />
-</div>
+</Component>
 `;

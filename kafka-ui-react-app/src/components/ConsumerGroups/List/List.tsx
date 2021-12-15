@@ -1,74 +1,62 @@
 import React from 'react';
-import { ClusterName } from 'redux/interfaces';
-import { ConsumerGroup } from 'generated-sources';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import Search from 'components/common/Search/Search';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import { useAppSelector } from 'lib/hooks/redux';
+import { selectAll } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
 import ListItem from './ListItem';
 
-interface Props {
-  clusterName: ClusterName;
-  consumerGroups: ConsumerGroup[];
-}
-
-const List: React.FC<Props> = ({ consumerGroups }) => {
+const List: React.FC = () => {
+  const consumerGroups = useAppSelector(selectAll);
   const [searchText, setSearchText] = React.useState<string>('');
 
-  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchText(event.target.value);
+  const handleInputChange = (search: string) => {
+    setSearchText(search);
   };
 
   return (
-    <div className="section">
-      <Breadcrumb>All Consumer Groups</Breadcrumb>
-
-      <div className="box">
-        <div>
-          <div className="columns">
-            <div className="column is-half is-offset-half">
-              <input
-                id="searchText"
-                type="text"
-                name="searchText"
-                className="input"
-                placeholder="Search"
-                value={searchText}
-                onChange={handleInputChange}
+    <div>
+      <PageHeading text="Consumers" />
+      <ControlPanelWrapper hasInput>
+        <Search
+          placeholder="Search"
+          value={searchText}
+          handleSearch={handleInputChange}
+        />
+      </ControlPanelWrapper>
+      <Table isFullwidth>
+        <thead>
+          <tr>
+            <TableHeaderCell title="Consumer group ID" />
+            <TableHeaderCell title="Num of members" />
+            <TableHeaderCell title="Num of topics" />
+            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Coordinator" />
+            <TableHeaderCell title="State" />
+          </tr>
+        </thead>
+        <tbody>
+          {consumerGroups
+            .filter(
+              (consumerGroup) =>
+                !searchText || consumerGroup?.groupId?.indexOf(searchText) >= 0
+            )
+            .map((consumerGroup) => (
+              <ListItem
+                key={consumerGroup.groupId}
+                consumerGroup={consumerGroup}
               />
-            </div>
-          </div>
-          <table className="table is-striped is-fullwidth is-hoverable">
-            <thead>
-              <tr>
-                <th>Consumer group ID</th>
-                <th>Num of members</th>
-                <th>Num of topics</th>
-                <th>Messages behind</th>
-                <th>Coordinator</th>
-                <th>State</th>
-              </tr>
-            </thead>
-            <tbody>
-              {consumerGroups
-                .filter(
-                  (consumerGroup) =>
-                    !searchText ||
-                    consumerGroup?.groupId?.indexOf(searchText) >= 0
-                )
-                .map((consumerGroup) => (
-                  <ListItem
-                    key={consumerGroup.groupId}
-                    consumerGroup={consumerGroup}
-                  />
-                ))}
-              {consumerGroups.length === 0 && (
-                <tr>
-                  <td colSpan={10}>No active consumer groups</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            ))}
+          {consumerGroups.length === 0 && (
+            <tr>
+              <td colSpan={10}>No active consumer groups</td>
+            </tr>
+          )}
+        </tbody>
+      </Table>
     </div>
   );
 };

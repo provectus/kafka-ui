@@ -1,10 +1,8 @@
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/ksqlDb/selectors';
 import { fetchKsqlDbTablesAction } from 'redux/actions';
 
 import { fetchKsqlDbTablesPayload } from './fixtures';
-
-const store = configureStore();
 
 describe('TopicMessages selectors', () => {
   describe('Initial state', () => {

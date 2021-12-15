@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom Select when live matches the snapshot 1`] = `
+<body>
+  .c1 {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  line-height: 0;
+}
+
+.c2 {
+  height: 40px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 36px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c2:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c2:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c2:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c0 {
+  position: relative;
+}
+
+<div>
+    <div
+      class="select-wrapper c0"
+    >
+      <i
+        class="c1"
+      >
+        <svg
+          fill="none"
+          height="16"
+          viewBox="0 0 16 16"
+          width="16"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <circle
+            cx="8"
+            cy="8"
+            fill="#FAD1D1"
+            r="7"
+          />
+          <circle
+            cx="8"
+            cy="8"
+            fill="#E61A1A"
+            r="4"
+          />
+        </svg>
+      </i>
+      <select
+        class="c2"
+      />
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Custom Select when non-live matches the snapshot 1`] = `
+.c1 {
+  height: 40px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c1:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c1:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c1:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c0 {
+  position: relative;
+}
+
+<body>
+  <div>
+    <div
+      class="select-wrapper c0"
+    >
+      <select
+        class="c1"
+      />
+    </div>
+  </div>
+</body>
+`;

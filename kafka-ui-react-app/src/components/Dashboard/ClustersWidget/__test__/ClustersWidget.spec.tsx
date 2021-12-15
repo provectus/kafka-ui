@@ -1,37 +1,33 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { StaticRouter } from 'react-router';
+import { screen } from '@testing-library/react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
+import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 import { offlineCluster, onlineCluster, clusters } from './fixtures';
 
-const component = () =>
-  shallow(
-    <ClustersWidget
-      clusters={clusters}
-      onlineClusters={[onlineCluster]}
-      offlineClusters={[offlineCluster]}
-    />
+const setupComponent = () =>
+  render(
+    <StaticRouter>
+      <ClustersWidget
+        clusters={clusters}
+        onlineClusters={[onlineCluster]}
+        offlineClusters={[offlineCluster]}
+      />
+    </StaticRouter>
   );
 
 describe('ClustersWidget', () => {
+  beforeEach(() => setupComponent());
+
   it('renders clusterWidget list', () => {
-    const clusterWidget = component().find('ClusterWidget');
-    expect(clusterWidget.length).toBe(2);
-  });
-
-  it('renders ClusterWidget', () => {
-    expect(component().exists('ClusterWidget')).toBeTruthy();
-  });
-
-  it('renders columns', () => {
-    expect(component().exists('.columns')).toBeTruthy();
+    expect(screen.getAllByRole('row').length).toBe(3);
   });
 
   it('hides online cluster widgets', () => {
-    const value = component();
-    const input = value.find('input');
-    expect(value.find('ClusterWidget').length).toBe(2);
-    input.simulate('change', { target: { checked: true } });
-    expect(value.find('ClusterWidget').length).toBe(1);
+    expect(screen.getAllByRole('row').length).toBe(3);
+    userEvent.click(screen.getByRole('checkbox'));
+    expect(screen.getAllByRole('row').length).toBe(2);
   });
 });

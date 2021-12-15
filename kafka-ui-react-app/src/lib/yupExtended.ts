@@ -1,6 +1,8 @@
 import * as yup from 'yup';
 import { AnyObject, Maybe } from 'yup/lib/types';
 
+import { TOPIC_NAME_VALIDATION_PATTERN } from './constants';
+
 declare module 'yup' {
   interface StringSchema<
     TType extends Maybe<string> = string | undefined,
@@ -39,3 +41,26 @@ const isJsonObject = () => {
 yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
 
 export default yup;
+
+export const topicFormValidationSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required()
+    .matches(
+      TOPIC_NAME_VALIDATION_PATTERN,
+      'Only alphanumeric, _, -, and . allowed'
+    ),
+  partitions: yup.number().required(),
+  replicationFactor: yup.number().required(),
+  minInsyncReplicas: yup.number().required(),
+  cleanupPolicy: yup.string().required(),
+  retentionMs: yup.number().min(-1, 'Must be greater than or equal to -1'),
+  retentionBytes: yup.number(),
+  maxMessageBytes: yup.number().required(),
+  customParams: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required(),
+      value: yup.string().required(),
+    })
+  ),
+});

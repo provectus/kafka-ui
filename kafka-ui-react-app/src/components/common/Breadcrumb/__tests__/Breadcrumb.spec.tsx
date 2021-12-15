@@ -1,50 +1,27 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
-import Breadcrumb, {
-  BreadcrumbItem,
-} from 'components/common/Breadcrumb/Breadcrumb';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
+
+const brokersPath = '/ui/clusters/local/brokers';
+const createTopicPath = '/ui/clusters/local/topics/create-new';
 
 describe('Breadcrumb component', () => {
-  const links: BreadcrumbItem[] = [
-    {
-      label: 'link1',
-      href: 'link1href',
-    },
-    {
-      label: 'link2',
-      href: 'link2href',
-    },
-    {
-      label: 'link3',
-      href: 'link3href',
-    },
-  ];
-
-  const child = <div className="child" />;
-
-  const component = mount(
-    <StaticRouter>
-      <Breadcrumb links={links}>{child}</Breadcrumb>
-    </StaticRouter>
-  );
-
-  it('renders the list of links', () => {
-    component.find(`Link`).forEach((link, idx) => {
-      expect(link.prop('to')).toEqual(links[idx].href);
-      expect(link.contains(links[idx].label)).toBeTruthy();
-    });
-  });
-  it('renders the children', () => {
-    const list = component.find('ul').children();
-    expect(list.last().containsMatchingElement(child)).toBeTruthy();
-  });
-  it('matches the snapshot', () => {
-    const shallowComponent = shallow(
-      <StaticRouter>
-        <Breadcrumb links={links}>{child}</Breadcrumb>
+  const setupComponent = (pathname: string) =>
+    render(
+      <StaticRouter location={{ pathname }}>
+        <Breadcrumb />
       </StaticRouter>
     );
-    expect(shallowComponent).toMatchSnapshot();
+
+  it('renders the name of brokers path', () => {
+    setupComponent(brokersPath);
+    expect(screen.queryByText('Brokers')).not.toBeInTheDocument();
+  });
+  it('renders the list of links', () => {
+    setupComponent(createTopicPath);
+    expect(screen.getByText('Topics')).toBeInTheDocument();
+    expect(screen.getByText('Create New')).toBeInTheDocument();
   });
 });

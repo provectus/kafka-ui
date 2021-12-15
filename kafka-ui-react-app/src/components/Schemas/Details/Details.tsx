@@ -3,14 +3,20 @@ import { useHistory } from 'react-router';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemasPath, clusterSchemaSchemaEditPath } from 'lib/paths';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
-import { Link } from 'react-router-dom';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Button } from 'components/common/Button/Button';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
-import SchemaVersion from './SchemaVersion';
-import LatestVersionItem from './LatestVersionItem';
+import LatestVersionItem from './LatestVersion/LatestVersionItem';
+import SchemaVersion from './SchemaVersion/SchemaVersion';
+import { OldVersionsTitle } from './SchemaVersion/SchemaVersion.styled';
 
 export interface DetailsProps {
   subject: SchemaName;
@@ -56,49 +62,28 @@ const Details: React.FC<DetailsProps> = ({
   }, [deleteSchema, clusterName, subject]);
 
   return (
-    <div className="section">
-      <div className="level">
-        <Breadcrumb
-          links={[
-            {
-              href: clusterSchemasPath(clusterName),
-              label: 'Schema Registry',
-            },
-          ]}
-        >
-          {subject}
-        </Breadcrumb>
-      </div>
+    <div>
       {areVersionsFetched && areSchemasFetched ? (
         <>
-          <div className="box">
-            <div className="level">
-              <div className="level-left">
-                <div className="level-item">
-                  <div className="mr-1">
-                    <b>Latest Version</b>
-                  </div>
-                  <div className="tag is-info is-light" title="Version">
-                    #{schema.version}
-                  </div>
-                </div>
-              </div>
+          <div>
+            <PageHeading text={schema.subject}>
               {!isReadOnly && (
-                <div className="level-right buttons">
-                  <Link
-                    className="button is-warning"
-                    type="button"
+                <>
+                  <Button
+                    isLink
+                    buttonSize="M"
+                    buttonType="primary"
                     to={clusterSchemaSchemaEditPath(clusterName, subject)}
                   >
                     Edit Schema
-                  </Link>
-                  <button
-                    className="button is-danger"
-                    type="button"
-                    onClick={() => setDeleteSchemaConfirmationVisible(true)}
-                  >
-                    Remove
-                  </button>
+                  </Button>
+                  <Dropdown label={<VerticalElipsisIcon />} right>
+                    <DropdownItem
+                      onClick={() => setDeleteSchemaConfirmationVisible(true)}
+                    >
+                      Remove schema
+                    </DropdownItem>
+                  </Dropdown>
                   <ConfirmationModal
                     isOpen={isDeleteSchemaConfirmationVisible}
                     onCancel={() => setDeleteSchemaConfirmationVisible(false)}
@@ -106,33 +91,31 @@ const Details: React.FC<DetailsProps> = ({
                   >
                     Are you sure want to remove <b>{subject}</b> schema?
                   </ConfirmationModal>
-                </div>
+                </>
               )}
-            </div>
+            </PageHeading>
             <LatestVersionItem schema={schema} />
           </div>
-          <div className="box">
-            <table className="table is-fullwidth">
-              <thead>
+          <OldVersionsTitle>Old versions</OldVersionsTitle>
+          <Table isFullwidth>
+            <thead>
+              <tr>
+                <TableHeaderCell />
+                <TableHeaderCell title="Version" />
+                <TableHeaderCell title="ID" />
+              </tr>
+            </thead>
+            <tbody>
+              {versions.map((version) => (
+                <SchemaVersion key={version.id} version={version} />
+              ))}
+              {versions.length === 0 && (
                 <tr>
-                  <th style={{ width: 40 }}> </th>
-                  <th style={{ width: 90 }}>Version</th>
-                  <th style={{ width: 170 }}>ID</th>
-                  <th>Schema</th>
+                  <td colSpan={10}>No active Schema</td>
                 </tr>
-              </thead>
-              <tbody>
-                {versions.map((version) => (
-                  <SchemaVersion key={version.id} version={version} />
-                ))}
-                {versions.length === 0 && (
-                  <tr>
-                    <td colSpan={10}>No active Schema</td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+              )}
+            </tbody>
+          </Table>
         </>
       ) : (
         <PageLoader />

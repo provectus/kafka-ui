@@ -10,6 +10,8 @@ import {
 import EditContainer from 'components/Connect/Edit/EditContainer';
 import Edit, { EditProps } from 'components/Connect/Edit/Edit';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -37,18 +39,20 @@ describe('Edit', () => {
     const connectorName = 'my-connector';
 
     const setupWrapper = (props: Partial<EditProps> = {}) => (
-      <TestRouterWrapper
-        pathname={pathname}
-        urlParams={{ clusterName, connectName, connectorName }}
-      >
-        <Edit
-          fetchConfig={jest.fn()}
-          isConfigFetching={false}
-          config={connector.config}
-          updateConfig={jest.fn()}
-          {...props}
-        />
-      </TestRouterWrapper>
+      <ThemeProvider theme={theme}>
+        <TestRouterWrapper
+          pathname={pathname}
+          urlParams={{ clusterName, connectName, connectorName }}
+        >
+          <Edit
+            fetchConfig={jest.fn()}
+            isConfigFetching={false}
+            config={connector.config}
+            updateConfig={jest.fn()}
+            {...props}
+          />
+        </TestRouterWrapper>
+      </ThemeProvider>
     );
 
     it('matches snapshot', () => {

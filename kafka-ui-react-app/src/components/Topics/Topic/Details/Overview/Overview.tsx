@@ -3,10 +3,13 @@ import { Topic, TopicDetails } from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import MetricsWrapper from 'components/common/Dashboard/MetricsWrapper';
-import Indicator from 'components/common/Dashboard/Indicator';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import * as Metrics from 'components/common/Metrics';
+import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -37,42 +40,54 @@ const Overview: React.FC<Props> = ({
 
   return (
     <>
-      <MetricsWrapper>
-        <Indicator label="Partitions">{partitionCount}</Indicator>
-        <Indicator label="Replication Factor">{replicationFactor}</Indicator>
-        <Indicator label="URP" title="Under replicated partitions">
-          {underReplicatedPartitions}
-        </Indicator>
-        <Indicator label="In sync replicas">
-          {inSyncReplicas}
-          <span className="subtitle has-text-weight-light">
-            {' '}
-            of
-            {replicas}
-          </span>
-        </Indicator>
-        <Indicator label="Type">
-          <span className={`tag ${internal ? 'is-light' : 'is-primary'}`}>
-            {internal ? 'Internal' : 'External'}
-          </span>
-        </Indicator>
-        <Indicator label="Segment Size" title="">
-          <BytesFormatted value={segmentSize} />
-        </Indicator>
-        <Indicator label="Segment count">{segmentCount}</Indicator>
-        <Indicator label="Clean Up Policy">
-          <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
-        </Indicator>
-      </MetricsWrapper>
-      <div className="box">
-        <table className="table is-striped is-fullwidth">
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator label="Partitions">
+            {partitionCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Replication Factor">
+            {replicationFactor}
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label="URP"
+            title="Under replicated partitions"
+            isAlert
+          >
+            <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="In sync replicas" isAlert>
+            {inSyncReplicas && replicas && inSyncReplicas < replicas ? (
+              <Metrics.RedText>{inSyncReplicas}</Metrics.RedText>
+            ) : (
+              inSyncReplicas
+            )}
+            <Metrics.LightText> of {replicas}</Metrics.LightText>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Type">
+            <TagStyled color="gray">
+              {internal ? 'Internal' : 'External'}
+            </TagStyled>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Segment Size" title="">
+            <BytesFormatted value={segmentSize} />
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Segment count">
+            {segmentCount}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Clean Up Policy">
+            <TagStyled color="gray">{cleanUpPolicy || 'Unknown'}</TagStyled>
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
+      <div>
+        <Table isFullwidth>
           <thead>
             <tr>
-              <th>Partition ID</th>
-              <th>Broker leader</th>
-              <th>Min offset</th>
-              <th>Max offset</th>
-              <th> </th>
+              <TableHeaderCell title="Partition ID" />
+              <TableHeaderCell title="Broker leader" />
+              <TableHeaderCell title="Min offset" />
+              <TableHeaderCell title="Max offset" />
+              <TableHeaderCell title=" " />
             </tr>
           </thead>
           <tbody>
@@ -82,16 +97,9 @@ const Overview: React.FC<Props> = ({
                 <td>{leader}</td>
                 <td>{offsetMin}</td>
                 <td>{offsetMax}</td>
-                <td className="has-text-right">
+                <td style={{ width: '5%' }}>
                   {!internal && !isReadOnly ? (
-                    <Dropdown
-                      label={
-                        <span className="icon">
-                          <i className="fas fa-cog" />
-                        </span>
-                      }
-                      right
-                    >
+                    <Dropdown label={<VerticalElipsisIcon />} right>
                       <DropdownItem
                         onClick={() =>
                           clearTopicMessages(clusterName, topicName, [
@@ -99,7 +107,7 @@ const Overview: React.FC<Props> = ({
                           ])
                         }
                       >
-                        <span className="has-text-danger">Clear Messages</span>
+                        <Metrics.RedText>Clear Messages</Metrics.RedText>
                       </DropdownItem>
                     </Dropdown>
                   ) : null}
@@ -112,7 +120,7 @@ const Overview: React.FC<Props> = ({
               </tr>
             )}
           </tbody>
-        </table>
+        </Table>
       </div>
     </>
   );

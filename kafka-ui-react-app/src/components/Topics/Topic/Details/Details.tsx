@@ -1,7 +1,7 @@
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import { Topic, TopicDetails } from 'generated-sources';
-import { NavLink, Switch, Route, Link, useHistory } from 'react-router-dom';
+import { NavLink, Switch, Route, useHistory } from 'react-router-dom';
 import {
   clusterTopicSettingsPath,
   clusterTopicPath,
@@ -15,28 +15,41 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { useDispatch } from 'react-redux';
 import { deleteTopicAction } from 'redux/actions';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { Button } from 'components/common/Button/Button';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import styled from 'styled-components';
+import { Colors } from 'theme/theme';
+import Navbar from 'components/common/Navigation/Navbar.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
 
-export interface DetailsProps extends Topic, TopicDetails {
+interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   isInternal: boolean;
   isDeleted: boolean;
-  isDeletePolicy: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
 
-const Details: React.FC<DetailsProps> = ({
+const HeaderControlsWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-self: center;
+  gap: 26px;
+`;
+
+const Details: React.FC<Props> = ({
   clusterName,
   topicName,
   isInternal,
   isDeleted,
-  isDeletePolicy,
   deleteTopic,
   clearTopicMessages,
 }) => {
@@ -62,92 +75,88 @@ const Details: React.FC<DetailsProps> = ({
   }, [clusterName, topicName]);
 
   return (
-    <div className="box">
-      <nav className="navbar" role="navigation">
-        <div className="navbar-start">
-          <NavLink
+    <div>
+      <PageHeading text={topicName}>
+        <HeaderControlsWrapper>
+          <Route
             exact
-            to={clusterTopicPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active is-primary"
+            path="/ui/clusters/:clusterName/topics/:topicName/messages"
           >
-            Overview
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicMessagesPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Messages
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Consumers
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterTopicSettingsPath(clusterName, topicName)}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Settings
-          </NavLink>
-        </div>
-        <div className="navbar-end">
-          {!isReadOnly && !isInternal ? (
-            <div className="buttons">
-              <>
-                {isDeletePolicy && (
-                  <button
-                    type="button"
-                    className="button is-danger"
-                    onClick={clearTopicMessagesHandler}
-                  >
-                    Clear All Messages
-                  </button>
-                )}
-                {isTopicDeletionAllowed && (
-                  <button
-                    className="button is-danger"
-                    type="button"
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                  >
-                    Delete Topic
-                  </button>
-                )}
-
-                <Link
-                  to={clusterTopicSendMessagePath(clusterName, topicName)}
-                  className="button"
-                >
-                  Produce message
-                </Link>
-
-                <Link
-                  to={clusterTopicEditPath(clusterName, topicName)}
-                  className="button"
+            <Button
+              buttonSize="M"
+              buttonType="primary"
+              isLink
+              to={clusterTopicSendMessagePath(clusterName, topicName)}
+            >
+              Produce message
+            </Button>
+          </Route>
+          {!isReadOnly && !isInternal && (
+            <Route path="/ui/clusters/:clusterName/topics/:topicName">
+              <Dropdown label={<VerticalElipsisIcon />} right>
+                <DropdownItem
+                  onClick={() =>
+                    history.push(clusterTopicEditPath(clusterName, topicName))
+                  }
                 >
                   Edit settings
-                </Link>
-
-                <ConfirmationModal
-                  isOpen={isDeleteTopicConfirmationVisible}
-                  onCancel={() => setDeleteTopicConfirmationVisible(false)}
-                  onConfirm={deleteTopicHandler}
+                </DropdownItem>
+                <DropdownItem
+                  style={{ color: Colors.red[50] }}
+                  onClick={clearTopicMessagesHandler}
                 >
-                  Are you sure want to remove <b>{topicName}</b> topic?
-                </ConfirmationModal>
-              </>
-            </div>
-          ) : null}
-        </div>
-      </nav>
-      <br />
+                  Clear messages
+                </DropdownItem>
+                {isTopicDeletionAllowed && (
+                  <DropdownItem
+                    style={{ color: Colors.red[50] }}
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  >
+                    Remove topic
+                  </DropdownItem>
+                )}
+              </Dropdown>
+            </Route>
+          )}
+        </HeaderControlsWrapper>
+      </PageHeading>
+      <ConfirmationModal
+        isOpen={isDeleteTopicConfirmationVisible}
+        onCancel={() => setDeleteTopicConfirmationVisible(false)}
+        onConfirm={deleteTopicHandler}
+      >
+        Are you sure want to remove <b>{topicName}</b> topic?
+      </ConfirmationModal>
+      <Navbar role="navigation">
+        <NavLink
+          exact
+          to={clusterTopicPath(clusterName, topicName)}
+          activeClassName="is-active is-primary"
+        >
+          Overview
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterTopicMessagesPath(clusterName, topicName)}
+          activeClassName="is-active"
+        >
+          Messages
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterTopicConsumerGroupsPath(clusterName, topicName)}
+          activeClassName="is-active"
+        >
+          Consumers
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterTopicSettingsPath(clusterName, topicName)}
+          activeClassName="is-active"
+        >
+          Settings
+        </NavLink>
+      </Navbar>
       <Switch>
         <Route
           exact
@@ -166,7 +175,7 @@ const Details: React.FC<DetailsProps> = ({
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/consumergroups"
+          path="/ui/clusters/:clusterName/topics/:topicName/consumer-groups"
           component={TopicConsumerGroupsContainer}
         />
       </Switch>

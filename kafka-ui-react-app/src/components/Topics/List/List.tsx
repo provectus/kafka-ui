@@ -5,8 +5,7 @@ import {
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
@@ -14,9 +13,14 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { GetTopicsRequest, TopicColumnsToSort } from 'generated-sources';
-import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
+import { Table } from 'components/common/table/Table/Table.styled';
+import { Button } from 'components/common/Button/Button';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import Switch from 'components/common/Switch/Switch';
 
 import ListItem from './ListItem';
 
@@ -130,68 +134,64 @@ const List: React.FC<TopicsListProps> = ({
   );
 
   return (
-    <div className="section">
-      <Breadcrumb>{showInternal ? `All Topics` : `External Topics`}</Breadcrumb>
-      <div className="box">
-        <div className="columns">
-          <div className="column is-one-quarter is-align-items-center is-flex">
-            <div className="field">
-              <input
-                id="switchRoundedDefault"
-                type="checkbox"
-                name="switchRoundedDefault"
-                className="switch is-rounded"
-                checked={showInternal}
-                onChange={handleSwitch}
-              />
-              <label htmlFor="switchRoundedDefault">Show Internal Topics</label>
-            </div>
-          </div>
-          <div className="column">
+    <div>
+      <div>
+        <PageHeading text="All Topics">
+          {!isReadOnly && (
+            <Button
+              buttonType="primary"
+              buttonSize="M"
+              isLink
+              to={clusterTopicNewPath(clusterName)}
+            >
+              <i className="fas fa-plus" /> Add a Topic
+            </Button>
+          )}
+        </PageHeading>
+        <ControlPanelWrapper hasInput>
+          <div>
             <Search
               handleSearch={searchHandler}
               placeholder="Search by Topic Name"
               value={search}
             />
           </div>
-          <div className="column is-2 is-justify-content-flex-end is-flex">
-            {!isReadOnly && (
-              <Link
-                className="button is-primary"
-                to={clusterTopicNewPath(clusterName)}
-              >
-                Add a Topic
-              </Link>
-            )}
+          <div>
+            <Switch
+              name="ShowInternalTopics"
+              checked={showInternal}
+              onChange={handleSwitch}
+            />
+            <label>Show Internal Topics</label>
           </div>
-        </div>
+        </ControlPanelWrapper>
       </div>
       {areTopicsFetching ? (
         <PageLoader />
       ) : (
-        <div className="box">
+        <div>
           {selectedTopics.size > 0 && (
             <>
-              <div className="buttons">
-                <button
-                  type="button"
-                  className="button is-danger"
+              <ControlPanelWrapper data-testid="delete-buttons">
+                <Button
+                  buttonSize="M"
+                  buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('deleteTopics');
                   }}
                 >
                   Delete selected topics
-                </button>
-                <button
-                  type="button"
-                  className="button is-danger"
+                </Button>
+                <Button
+                  buttonSize="M"
+                  buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('purgeMessages');
                   }}
                 >
                   Purge messages of selected topics
-                </button>
-              </div>
+                </Button>
+              </ControlPanelWrapper>
               <ConfirmationModal
                 isOpen={confirmationModal !== ''}
                 onCancel={closeConfirmationModal}
@@ -207,34 +207,32 @@ const List: React.FC<TopicsListProps> = ({
               </ConfirmationModal>
             </>
           )}
-          <table className="table is-fullwidth">
+          <Table isFullwidth>
             <thead>
               <tr>
-                {!isReadOnly && <th> </th>}
-                <SortableColumnHeader
-                  value={TopicColumnsToSort.NAME}
+                {!isReadOnly && <TableHeaderCell />}
+                <TableHeaderCell
                   title="Topic Name"
+                  orderValue={TopicColumnsToSort.NAME}
                   orderBy={orderBy}
-                  setOrderBy={setTopicsOrderBy}
+                  handleOrderBy={setTopicsOrderBy}
                 />
-                <SortableColumnHeader
-                  value={TopicColumnsToSort.TOTAL_PARTITIONS}
+                <TableHeaderCell
                   title="Total Partitions"
+                  orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
                   orderBy={orderBy}
-                  setOrderBy={setTopicsOrderBy}
+                  handleOrderBy={setTopicsOrderBy}
                 />
-                <SortableColumnHeader
-                  value={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+                <TableHeaderCell
                   title="Out of sync replicas"
+                  orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
                   orderBy={orderBy}
-                  setOrderBy={setTopicsOrderBy}
+                  handleOrderBy={setTopicsOrderBy}
                 />
-                <th>Replication Factor</th>
-                <th>Number of messages</th>
-                <th>Size</th>
-                <th>Type</th>
-                <th>Clean Up Policy</th>
-                <th> </th>
+                <TableHeaderCell title="Replication Factor" />
+                <TableHeaderCell title="Number of messages" />
+                <TableHeaderCell title="Size" />
+                <TableHeaderCell />
               </tr>
             </thead>
             <tbody>
@@ -255,7 +253,7 @@ const List: React.FC<TopicsListProps> = ({
                 </tr>
               )}
             </tbody>
-          </table>
+          </Table>
           <Pagination totalPages={totalPages} />
         </div>
       )}

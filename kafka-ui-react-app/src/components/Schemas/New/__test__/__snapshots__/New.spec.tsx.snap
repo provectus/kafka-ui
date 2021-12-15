@@ -1,222 +1,1125 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`New View matches snapshot 1`] = `
-<StaticRouter
-  context={Object {}}
-  location={
+.c2 {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: #454F54;
+}
+
+.c4 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c4::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:hover {
+  border-color: #73848C;
+}
+
+.c4:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c4:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c4:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::placeholder {
+  color: transparent;
+}
+
+.c4:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c4:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c4:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c4:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c5 {
+  color: #E51A1A;
+  font-size: 12px;
+}
+
+.c3 {
+  position: relative;
+}
+
+.c8 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c8:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c8:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c8:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c7 {
+  position: relative;
+}
+
+.c9 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c9:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c9:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c9:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c9 a {
+  color: white;
+}
+
+.c9 i {
+  margin-right: 7px;
+}
+
+.c6 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px;
+  padding-top: 6px;
+}
+
+.c6::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6:hover {
+  border-color: #73848C;
+}
+
+.c6:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c6:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c6:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c6:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c6:focus::placeholder {
+  color: transparent;
+}
+
+.c6:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c6:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c6:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c6:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
+.c1 {
+  padding: 16px;
+  padding-top: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.c1 > button:last-child {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+}
+
+.c1 textarea {
+  height: 200px;
+}
+
+.c1 select {
+  width: 30%;
+}
+
+<Component
+  theme={
     Object {
-      "pathname": "/ui/clusters/clusterName/schemas/create_new",
+      "alert": Object {
+        "color": Object {
+          "error": "#FAD1D1",
+          "info": "#E3E6E8",
+          "success": "#D6F5E0",
+          "warning": "#FFEECC",
+        },
+      },
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "chevronIconColor": "#73848C",
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+        "statusIconColor": Object {
+          "offline": "#E51A1A",
+          "online": "#5CD685",
+        },
+      },
+      "metrics": Object {
+        "backgroundColor": "#F1F2F3",
+        "indicator": Object {
+          "backgroundColor": "#FFFFFF",
+          "lightTextColor": "#ABB5BA",
+          "titleColor": "#73848C",
+          "warningTextColor": "#E51A1A",
+        },
+      },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
+      "paginationStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "gray": "#E3E6E8",
+          "green": "#D6F5E0",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
     }
   }
 >
-  <Router
-    history={
+  <StaticRouter
+    context={Object {}}
+    location={
       Object {
-        "action": "POP",
-        "block": [Function],
-        "createHref": [Function],
-        "go": [Function],
-        "goBack": [Function],
-        "goForward": [Function],
-        "listen": [Function],
-        "location": Object {
-          "hash": "",
-          "pathname": "/ui/clusters/clusterName/schemas/create_new",
-          "search": "",
-        },
-        "push": [Function],
-        "replace": [Function],
+        "pathname": "/ui/clusters/clusterName/schemas/create-new",
       }
     }
-    staticContext={Object {}}
   >
-    <New
-      createSchema={[MockFunction]}
+    <Router
+      history={
+        Object {
+          "action": "POP",
+          "block": [Function],
+          "createHref": [Function],
+          "go": [Function],
+          "goBack": [Function],
+          "goForward": [Function],
+          "listen": [Function],
+          "location": Object {
+            "hash": "",
+            "pathname": "/ui/clusters/clusterName/schemas/create-new",
+            "search": "",
+          },
+          "push": [Function],
+          "replace": [Function],
+        }
+      }
+      staticContext={Object {}}
     >
-      <div
-        className="section"
+      <New
+        createSchema={[MockFunction]}
       >
-        <div
-          className="level"
-        >
-          <div
-            className="level-item level-left"
-          >
-            <Breadcrumb
-              links={
-                Array [
-                  Object {
-                    "href": "/ui/clusters/undefined/schemas",
-                    "label": "Schema Registry",
+        <Component
+          clearErrors={[Function]}
+          control={
+            Object {
+              "controllerSubjectRef": Object {
+                "current": Re {
+                  "observers": Array [],
+                },
+              },
+              "defaultValuesRef": Object {
+                "current": Object {},
+              },
+              "fieldArrayDefaultValuesRef": Object {
+                "current": Object {},
+              },
+              "fieldArrayNamesRef": Object {
+                "current": Set {},
+              },
+              "fieldArraySubjectRef": Object {
+                "current": Re {
+                  "observers": Array [
+                    ke {
+                      "closed": false,
+                      "observer": Object {
+                        "next": [Function],
+                      },
+                    },
+                  ],
+                },
+              },
+              "fieldsRef": Object {
+                "current": Object {
+                  "schema": Object {
+                    "_f": Object {
+                      "mount": true,
+                      "name": "schema",
+                      "ref": .c0 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  width: 100%;
+  padding: 12px;
+  padding-top: 6px;
+}
+
+.c0::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:hover {
+  border-color: #73848C;
+}
+
+.c0:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c0:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c0:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::placeholder {
+  color: transparent;
+}
+
+.c0:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c0:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c0:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c0:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+<textarea
+                        class="c0"
+                        name="schema"
+                      />,
+                      "required": "Schema is required.",
+                      "value": "",
+                    },
                   },
-                ]
-              }
-            >
-              <nav
-                aria-label="breadcrumbs"
-                className="breadcrumb"
-              >
-                <ul>
-                  <li
-                    key="/ui/clusters/undefined/schemas"
-                  >
-                    <Link
-                      to="/ui/clusters/undefined/schemas"
-                    >
-                      <LinkAnchor
-                        href="/ui/clusters/undefined/schemas"
-                        navigate={[Function]}
+                  "schemaType": Object {
+                    "_f": Object {
+                      "mount": true,
+                      "name": "schemaType",
+                      "ref": .c0 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c0:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c0:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c0:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+<select
+                        class="c0"
+                        name="schemaType"
                       >
-                        <a
-                          href="/ui/clusters/undefined/schemas"
-                          onClick={[Function]}
+                        <option
+                          value="AVRO"
                         >
-                          Schema Registry
-                        </a>
-                      </LinkAnchor>
-                    </Link>
-                  </li>
-                  <li
-                    className="is-active"
-                  >
-                    <span
-                      className=""
-                    >
-                      New Schema
-                    </span>
-                  </li>
-                </ul>
-              </nav>
-            </Breadcrumb>
-          </div>
-        </div>
-        <div
-          className="box"
+                          AVRO
+                        </option>
+                        <option
+                          value="JSON"
+                        >
+                          JSON
+                        </option>
+                        <option
+                          value="PROTOBUF"
+                        >
+                          PROTOBUF
+                        </option>
+                      </select>,
+                      "required": "Schema Type is required.",
+                      "value": "AVRO",
+                    },
+                  },
+                  "subject": Object {
+                    "_f": Object {
+                      "mount": true,
+                      "name": "subject",
+                      "pattern": Object {
+                        "message": "Only alphanumeric, _, -, and . allowed",
+                        "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
+                      },
+                      "ref": .c0 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c0::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c0:hover {
+  border-color: #73848C;
+}
+
+.c0:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c0:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c0:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c0:focus::placeholder {
+  color: transparent;
+}
+
+.c0:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c0:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c0:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c0:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c1 {
+  position: relative;
+}
+
+<input
+                        autocomplete="off"
+                        class="c0 c1"
+                        name="subject"
+                        placeholder="Schema Name"
+                      />,
+                      "required": "Schema Name is required.",
+                      "value": "",
+                    },
+                  },
+                },
+              },
+              "fieldsWithValidationRef": Object {
+                "current": Object {
+                  "schema": true,
+                  "schemaType": true,
+                  "subject": true,
+                },
+              },
+              "formStateRef": Object {
+                "current": Object {
+                  "dirtyFields": Object {},
+                  "errors": Object {},
+                  "isDirty": false,
+                  "isSubmitSuccessful": false,
+                  "isSubmitted": false,
+                  "isSubmitting": false,
+                  "isValid": false,
+                  "isValidating": false,
+                  "submitCount": 0,
+                  "touchedFields": Object {},
+                },
+              },
+              "formStateSubjectRef": Object {
+                "current": Re {
+                  "observers": Array [
+                    ke {
+                      "closed": false,
+                      "observer": Object {
+                        "next": [Function],
+                      },
+                    },
+                  ],
+                },
+              },
+              "getIsDirty": [Function],
+              "inFieldArrayActionRef": Object {
+                "current": false,
+              },
+              "isWatchAllRef": Object {
+                "current": false,
+              },
+              "readFormStateRef": Object {
+                "current": Object {
+                  "dirtyFields": false,
+                  "errors": "all",
+                  "isDirty": "all",
+                  "isSubmitting": "all",
+                  "isValid": false,
+                  "isValidating": false,
+                  "touchedFields": false,
+                },
+              },
+              "register": [Function],
+              "shouldUnmount": undefined,
+              "unregister": [Function],
+              "validFieldsRef": Object {
+                "current": Object {},
+              },
+              "watchFieldsRef": Object {
+                "current": Set {},
+              },
+              "watchInternal": [Function],
+              "watchSubjectRef": Object {
+                "current": Re {
+                  "observers": Array [],
+                },
+              },
+            }
+          }
+          formState={
+            Object {
+              "dirtyFields": Object {},
+              "errors": Object {},
+              "isDirty": false,
+              "isSubmitSuccessful": false,
+              "isSubmitted": false,
+              "isSubmitting": false,
+              "isValid": false,
+              "isValidating": false,
+              "submitCount": 0,
+              "touchedFields": Object {},
+            }
+          }
+          getValues={[Function]}
+          handleSubmit={[Function]}
+          register={[Function]}
+          reset={[Function]}
+          setError={[Function]}
+          setFocus={[Function]}
+          setValue={[Function]}
+          trigger={[Function]}
+          unregister={[Function]}
+          watch={[Function]}
         >
-          <form
+          <Styled(PageHeading)
+            text="Create new schema"
+          >
+            <PageHeading
+              className="c0"
+              text="Create new schema"
+            >
+              <div
+                className="c0"
+              >
+                <h1>
+                  Create new schema
+                </h1>
+                <div />
+              </div>
+            </PageHeading>
+          </Styled(PageHeading)>
+          <styled.form
             onSubmit={[Function]}
           >
-            <div>
-              <div
-                className="field"
-              >
-                <label
-                  className="label"
+            <form
+              className="c1"
+              onSubmit={[Function]}
+            >
+              <div>
+                <styled.label>
+                  <label
+                    className="c2"
+                  >
+                    Subject *
+                  </label>
+                </styled.label>
+                <Styled(Input)
+                  autoComplete="off"
+                  disabled={false}
+                  hookFormOptions={
+                    Object {
+                      "pattern": Object {
+                        "message": "Only alphanumeric, _, -, and . allowed",
+                        "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
+                      },
+                      "required": "Schema Name is required.",
+                    }
+                  }
+                  inputSize="M"
+                  name="subject"
+                  placeholder="Schema Name"
                 >
-                  Subject *
-                </label>
-                <div
-                  className="control"
-                >
-                  <input
+                  <Input
                     autoComplete="off"
-                    className="input"
+                    className="c3"
                     disabled={false}
+                    hookFormOptions={
+                      Object {
+                        "pattern": Object {
+                          "message": "Only alphanumeric, _, -, and . allowed",
+                          "value": /\\^\\[\\.,A-Za-z0-9_-\\]\\+\\$/,
+                        },
+                        "required": "Schema Name is required.",
+                      }
+                    }
+                    inputSize="M"
                     name="subject"
-                    onBlur={[Function]}
-                    onChange={[Function]}
                     placeholder="Schema Name"
-                  />
-                </div>
-                <p
-                  className="help is-danger"
-                >
-                  <Component
-                    errors={Object {}}
-                    name="subject"
-                  />
-                </p>
+                  >
+                    <div
+                      className="c3"
+                    >
+                      <styled.input
+                        autoComplete="off"
+                        className="c3"
+                        disabled={false}
+                        hasLeftIcon={false}
+                        inputSize="M"
+                        name="subject"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        placeholder="Schema Name"
+                      >
+                        <input
+                          autoComplete="off"
+                          className="c4 c3"
+                          disabled={false}
+                          name="subject"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                          placeholder="Schema Name"
+                        />
+                      </styled.input>
+                    </div>
+                  </Input>
+                </Styled(Input)>
+                <styled.p>
+                  <p
+                    className="c5"
+                  >
+                    <Component
+                      errors={Object {}}
+                      name="subject"
+                    />
+                  </p>
+                </styled.p>
               </div>
-              <div
-                className="field"
-              >
-                <label
-                  className="label"
-                >
-                  Schema *
-                </label>
-                <div
-                  className="control"
+              <div>
+                <styled.label>
+                  <label
+                    className="c2"
+                  >
+                    Schema *
+                  </label>
+                </styled.label>
+                <styled.textarea
+                  disabled={false}
+                  name="schema"
+                  onBlur={[Function]}
+                  onChange={[Function]}
                 >
                   <textarea
-                    className="textarea"
+                    className="c6"
                     disabled={false}
                     name="schema"
                     onBlur={[Function]}
                     onChange={[Function]}
                   />
-                </div>
-                <p
-                  className="help is-danger"
-                >
-                  <Component
-                    errors={Object {}}
-                    name="schema"
-                  />
-                </p>
-              </div>
-              <div
-                className="field"
-              >
-                <label
-                  className="label"
-                >
-                  Schema Type *
-                </label>
-                <div
-                  className="control select"
-                >
-                  <select
-                    disabled={false}
-                    name="schemaType"
-                    onBlur={[Function]}
-                    onChange={[Function]}
+                </styled.textarea>
+                <styled.p>
+                  <p
+                    className="c5"
                   >
-                    <option
-                      value="AVRO"
-                    >
-                      AVRO
-                    </option>
-                    <option
-                      value="JSON"
-                    >
-                      JSON
-                    </option>
-                    <option
-                      value="PROTOBUF"
-                    >
-                      PROTOBUF
-                    </option>
-                  </select>
-                </div>
-                <p
-                  className="help is-danger"
-                >
-                  <Component
-                    errors={Object {}}
-                    name="schemaType"
-                  />
-                </p>
+                    <Component
+                      errors={Object {}}
+                      name="schema"
+                    />
+                  </p>
+                </styled.p>
               </div>
-            </div>
-            <br />
-            <div
-              className="field"
-            >
-              <div
-                className="control"
+              <div>
+                <styled.label>
+                  <label
+                    className="c2"
+                  >
+                    Schema Type *
+                  </label>
+                </styled.label>
+                <Styled(Select)
+                  disabled={false}
+                  hookFormOptions={
+                    Object {
+                      "required": "Schema Type is required.",
+                    }
+                  }
+                  name="schemaType"
+                  selectSize="M"
+                >
+                  <Select
+                    className="c7"
+                    disabled={false}
+                    hookFormOptions={
+                      Object {
+                        "required": "Schema Type is required.",
+                      }
+                    }
+                    name="schemaType"
+                    selectSize="M"
+                  >
+                    <div
+                      className="select-wrapper c7"
+                    >
+                      <styled.select
+                        disabled={false}
+                        name="schemaType"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        selectSize="M"
+                      >
+                        <select
+                          className="c8"
+                          disabled={false}
+                          name="schemaType"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                        >
+                          <option
+                            value="AVRO"
+                          >
+                            AVRO
+                          </option>
+                          <option
+                            value="JSON"
+                          >
+                            JSON
+                          </option>
+                          <option
+                            value="PROTOBUF"
+                          >
+                            PROTOBUF
+                          </option>
+                        </select>
+                      </styled.select>
+                    </div>
+                  </Select>
+                </Styled(Select)>
+                <styled.p>
+                  <p
+                    className="c5"
+                  >
+                    <Component
+                      errors={Object {}}
+                      name="schemaType"
+                    />
+                  </p>
+                </styled.p>
+              </div>
+              <Button
+                buttonSize="M"
+                buttonType="primary"
+                disabled={true}
+                type="submit"
               >
-                <input
-                  className="button is-primary"
+                <styled.button
+                  buttonSize="M"
+                  buttonType="primary"
                   disabled={true}
                   type="submit"
-                />
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-    </New>
-  </Router>
-</StaticRouter>
+                >
+                  <button
+                    className="c9"
+                    disabled={true}
+                    type="submit"
+                  >
+                    Submit
+                  </button>
+                </styled.button>
+              </Button>
+            </form>
+          </styled.form>
+        </Component>
+      </New>
+    </Router>
+  </StaticRouter>
+</Component>
 `;

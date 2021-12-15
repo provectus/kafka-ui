@@ -1,4 +1,7 @@
 import React from 'react';
+import { Button } from 'components/common/Button/Button';
+
+import { ConfirmationModalWrapper } from './ConfirmationModal.styled';
 
 export interface ConfirmationModalProps {
   isOpen?: boolean;
@@ -25,44 +28,36 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   }, [isConfirming, onCancel]);
 
   return (
-    <div className="modal is-active">
-      <div
-        className="modal-background"
-        onClick={cancelHandler}
-        aria-hidden="true"
-      />
-      <div className="modal-card">
-        <header className="modal-card-head">
-          <p className="modal-card-title">{title || 'Confirm the action'}</p>
-          <button
-            onClick={cancelHandler}
-            type="button"
-            className="delete"
-            aria-label="close"
-            disabled={isConfirming}
-          />
+    <ConfirmationModalWrapper>
+      <div onClick={cancelHandler} aria-hidden="true" />
+      <div>
+        <header>
+          <p>{title || 'Confirm the action'}</p>
         </header>
-        <section className="modal-card-body">{children}</section>
-        <footer className="modal-card-foot is-justify-content-flex-end">
-          <button
-            onClick={onConfirm}
-            type="button"
-            className="button is-danger"
-            disabled={isConfirming}
-          >
-            Confirm
-          </button>
-          <button
+        <section>{children}</section>
+        <footer>
+          <Button
+            buttonType="secondary"
+            buttonSize="M"
             onClick={cancelHandler}
             type="button"
-            className="button"
             disabled={isConfirming}
           >
             Cancel
-          </button>
+          </Button>
+
+          <Button
+            buttonType="primary"
+            buttonSize="M"
+            onClick={onConfirm}
+            type="button"
+            disabled={isConfirming}
+          >
+            Submit
+          </Button>
         </footer>
       </div>
-    </div>
+    </ConfirmationModalWrapper>
   );
 };
 

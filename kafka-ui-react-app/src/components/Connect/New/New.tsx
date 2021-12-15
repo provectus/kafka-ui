@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Connect, Connector, NewConnector } from 'generated-sources';
@@ -9,6 +9,13 @@ import { clusterConnectConnectorPath } from 'lib/paths';
 import yup from 'lib/yupExtended';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import Select from 'components/common/Select/Select';
+import { FormError } from 'components/common/Input/Input.styled';
+import Input from 'components/common/Input/Input';
+import { Button } from 'components/common/Button/Button';
+import styled from 'styled-components';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required(),
@@ -18,6 +25,17 @@ const validationSchema = yup.object().shape({
 interface RouterParams {
   clusterName: ClusterName;
 }
+
+const NewConnectFormStyled = styled.form`
+  padding: 16px;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  & > button:last-child {
+    align-self: flex-start;
+  }
+`;
 
 export interface NewProps {
   fetchConnects(clusterName: ClusterName): void;
@@ -45,14 +63,7 @@ const New: React.FC<NewProps> = ({
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
 
-  const {
-    register,
-    handleSubmit,
-    control,
-    formState: { isDirty, isSubmitting, isValid, errors },
-    getValues,
-    setValue,
-  } = useForm<FormValues>({
+  const methods = useForm<FormValues>({
     mode: 'onTouched',
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -61,6 +72,13 @@ const New: React.FC<NewProps> = ({
       config: '',
     },
   });
+  const {
+    handleSubmit,
+    control,
+    formState: { isDirty, isSubmitting, isValid, errors },
+    getValues,
+    setValue,
+  } = methods;
 
   React.useEffect(() => {
     fetchConnects(clusterName);
@@ -105,66 +123,60 @@ const New: React.FC<NewProps> = ({
   }
 
   return (
-    <div className="box">
-      <form onSubmit={handleSubmit(onSubmit)}>
+    <FormProvider {...methods}>
+      <PageHeading text="Create new connector" />
+      <NewConnectFormStyled onSubmit={handleSubmit(onSubmit)}>
         <div className={['field', connectNameFieldClassName].join(' ')}>
-          <label className="label">Connect *</label>
-          <div className="control select">
-            <select {...register('connectName')} disabled={isSubmitting}>
-              {connects.map(({ name }) => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <p className="help is-danger">
+          <InputLabel>Connect *</InputLabel>
+          <Select selectSize="M" name="connectName" disabled={isSubmitting}>
+            {connects.map(({ name }) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </Select>
+          <FormError>
             <ErrorMessage errors={errors} name="connectName" />
-          </p>
+          </FormError>
         </div>
 
-        <div className="field">
-          <label className="label">Name *</label>
-          <div className="control">
-            <input
-              className="input"
-              placeholder="Connector Name"
-              {...register('name')}
-              autoComplete="off"
-              disabled={isSubmitting}
-            />
-          </div>
-          <p className="help is-danger">
+        <div>
+          <InputLabel>Name *</InputLabel>
+          <Input
+            inputSize="M"
+            placeholder="Connector Name"
+            name="name"
+            autoComplete="off"
+            disabled={isSubmitting}
+          />
+          <FormError>
             <ErrorMessage errors={errors} name="name" />
-          </p>
+          </FormError>
         </div>
 
-        <div className="field">
-          <label className="label">Config *</label>
-          <div className="control">
-            <Controller
-              control={control}
-              name="config"
-              render={({ field }) => (
-                <JSONEditor {...field} readOnly={isSubmitting} />
-              )}
-            />
-          </div>
-          <p className="help is-danger">
+        <div>
+          <InputLabel>Config *</InputLabel>
+          <Controller
+            control={control}
+            name="config"
+            render={({ field }) => (
+              <JSONEditor {...field} readOnly={isSubmitting} />
+            )}
+          />
+          <FormError>
             <ErrorMessage errors={errors} name="config" />
-          </p>
+          </FormError>
         </div>
-        <div className="field">
-          <div className="control">
-            <input
-              type="submit"
-              className="button is-primary"
-              disabled={!isValid || isSubmitting || !isDirty}
-            />
-          </div>
-        </div>
-      </form>
-    </div>
+        <Button
+          buttonSize="M"
+          buttonType="primary"
+          type="submit"
+          disabled={!isValid || isSubmitting || !isDirty}
+        >
+          Submit
+        </Button>
+      </NewConnectFormStyled>
+    </FormProvider>
   );
 };
 

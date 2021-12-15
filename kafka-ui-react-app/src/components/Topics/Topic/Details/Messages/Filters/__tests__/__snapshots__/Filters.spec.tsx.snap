@@ -1,0 +1,1189 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Filters component matches the snapshot 1`] = `
+.c3 {
+  position: absolute;
+  top: 50%;
+  line-height: 0;
+  z-index: 1;
+  left: 12px;
+  right: unset;
+  height: 11px;
+  width: 11px;
+  color: #454F54;
+}
+
+.c4 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 36px;
+  font-size: 14px;
+}
+
+.c4::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:hover {
+  border-color: #73848C;
+}
+
+.c4:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c4:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c4:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::placeholder {
+  color: transparent;
+}
+
+.c4:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c4:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c4:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c4:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c8 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c8::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8:hover {
+  border-color: #73848C;
+}
+
+.c8:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c8:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c8:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c8:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c8:focus::placeholder {
+  color: transparent;
+}
+
+.c8:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c8:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c8:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c8:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c7 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c7:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c7:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c7:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c6 {
+  position: relative;
+}
+
+.c9 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c9:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c9:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c9:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c9 a {
+  color: white;
+}
+
+.c9 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.c0 > div:first-child {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-top: 16px;
+}
+
+.c0 > div:first-child > div:last-child {
+  width: 10%;
+}
+
+.c0 .multi-select {
+  height: 32px;
+}
+
+.c0 .multi-select > .dropdown-container {
+  height: 32px;
+}
+
+.c0 .multi-select > .dropdown-container > .dropdown-heading {
+  height: 32px;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 90%;
+}
+
+.c1 > div:first-child {
+  width: 25%;
+}
+
+.c5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c5 .select-wrapper {
+  width: 40% !important;
+}
+
+.c5 .select-wrapper > select {
+  border-radius: 4px 0 0 4px !important;
+}
+
+.c5 .offset-selector {
+  border-radius: 0 4px 4px 0 !important;
+  border-left: none;
+}
+
+.c5 .date-picker {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: 96% !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c5 .date-picker:hover {
+  cursor: pointer;
+}
+
+.c5 .date-picker:focus {
+  outline: none;
+}
+
+.c10 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 22px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.c11 {
+  color: #73848C;
+  font-size: 12px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c12 {
+  color: #171A1C;
+  padding-right: 6px;
+  height: 12px;
+}
+
+<body>
+  <div>
+    <div
+      class="c0"
+    >
+      <div>
+        <div
+          class="c1"
+        >
+          <div
+            class="c2"
+          >
+            <i
+              class="c3 fas fa-search"
+            />
+            <input
+              class="c4 c2"
+              id="searchText"
+              placeholder="Search"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="c5"
+          >
+            <div
+              class="select-wrapper c6"
+            >
+              <select
+                class="c7"
+                id="selectSeekType"
+              >
+                <option
+                  value="OFFSET"
+                >
+                  Offset
+                </option>
+                <option
+                  value="TIMESTAMP"
+                >
+                  Timestamp
+                </option>
+              </select>
+            </div>
+            <div
+              class="c2 offset-selector"
+            >
+              <input
+                class="c8 c2 offset-selector"
+                id="offset"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="rmsc multi-select"
+          >
+            <div
+              aria-labelledby="Select partitions"
+              aria-readonly="true"
+              class="dropdown-container"
+              tabindex="0"
+            >
+              <div
+                class="dropdown-heading"
+              >
+                <div
+                  class="dropdown-heading-value"
+                >
+                  <span>
+                    All items are selected.
+                  </span>
+                </div>
+                <button
+                  aria-label="Clear Selected"
+                  class="clear-selected-button"
+                  type="button"
+                >
+                  <svg
+                    class="dropdown-search-clear-icon gray"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    width="24"
+                  >
+                    <line
+                      x1="18"
+                      x2="6"
+                      y1="6"
+                      y2="18"
+                    />
+                    <line
+                      x1="6"
+                      x2="18"
+                      y1="6"
+                      y2="18"
+                    />
+                  </svg>
+                </button>
+                <svg
+                  class="dropdown-heading-dropdown-arrow gray"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="24"
+                >
+                  <path
+                    d="M6 9L12 15 18 9"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button
+            class="c9"
+            style="font-weight: 500;"
+            type="submit"
+          >
+            Submit
+          </button>
+        </div>
+        <div
+          class="select-wrapper c6"
+        >
+          <select
+            class="c7"
+          >
+            <option
+              value="FORWARD"
+            >
+              Oldest first
+            </option>
+            <option
+              value="BACKWARD"
+            >
+              Newest first
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        class="c10"
+      >
+        <p
+          style="font-size: 14px;"
+        />
+        <div
+          class="c11"
+          title="Elapsed Time"
+        >
+          <div
+            class="c12"
+          >
+            <i
+              class="far fa-clock"
+            />
+          </div>
+          <span>
+            0
+             ms
+          </span>
+        </div>
+        <div
+          class="c11"
+          title="Bytes Consumed"
+        >
+          <div
+            class="c12"
+          >
+            <i
+              class="fas fa-arrow-down"
+            />
+          </div>
+          <span>
+            0Bytes
+          </span>
+        </div>
+        <div
+          class="c11"
+          title="Messages Consumed"
+        >
+          <div
+            class="c12"
+          >
+            <i
+              class="far fa-file-alt"
+            />
+          </div>
+          <span>
+             messages
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`Filters component when fetching matches the snapshot 1`] = `
+<body>
+  .c3 {
+  position: absolute;
+  top: 50%;
+  line-height: 0;
+  z-index: 1;
+  left: 12px;
+  right: unset;
+  height: 11px;
+  width: 11px;
+  color: #454F54;
+}
+
+.c4 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 36px;
+  font-size: 14px;
+}
+
+.c4::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c4:hover {
+  border-color: #73848C;
+}
+
+.c4:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c4:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c4:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c4:focus::placeholder {
+  color: transparent;
+}
+
+.c4:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c4:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c4:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c4:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c8 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c8::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c8:hover {
+  border-color: #73848C;
+}
+
+.c8:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c8:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c8:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c8:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c8:focus::placeholder {
+  color: transparent;
+}
+
+.c8:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c8:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c8:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c8:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c7 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c7:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c7:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c7:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c6 {
+  position: relative;
+}
+
+.c9 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #F1F2F3;
+  color: #171A1C;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c9:hover:enabled {
+  background: #E3E6E8;
+  color: #171A1C;
+  cursor: pointer;
+}
+
+.c9:active:enabled {
+  background: #D5DADD;
+  color: #171A1C;
+}
+
+.c9:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c9 a {
+  color: white;
+}
+
+.c9 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.c0 > div:first-child {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  padding-top: 16px;
+}
+
+.c0 > div:first-child > div:last-child {
+  width: 10%;
+}
+
+.c0 .multi-select {
+  height: 32px;
+}
+
+.c0 .multi-select > .dropdown-container {
+  height: 32px;
+}
+
+.c0 .multi-select > .dropdown-container > .dropdown-heading {
+  height: 32px;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 8px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 90%;
+}
+
+.c1 > div:first-child {
+  width: 25%;
+}
+
+.c5 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c5 .select-wrapper {
+  width: 40% !important;
+}
+
+.c5 .select-wrapper > select {
+  border-radius: 4px 0 0 4px !important;
+}
+
+.c5 .offset-selector {
+  border-radius: 0 4px 4px 0 !important;
+  border-left: none;
+}
+
+.c5 .date-picker {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: 96% !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c5 .date-picker:hover {
+  cursor: pointer;
+}
+
+.c5 .date-picker:focus {
+  outline: none;
+}
+
+.c10 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  gap: 22px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.c11 {
+  color: #73848C;
+  font-size: 12px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.c12 {
+  color: #171A1C;
+  padding-right: 6px;
+  height: 12px;
+}
+
+<div>
+    <div
+      class="c0"
+    >
+      <div>
+        <div
+          class="c1"
+        >
+          <div
+            class="c2"
+          >
+            <i
+              class="c3 fas fa-search"
+            />
+            <input
+              class="c4 c2"
+              id="searchText"
+              placeholder="Search"
+              type="text"
+              value=""
+            />
+          </div>
+          <div
+            class="c5"
+          >
+            <div
+              class="select-wrapper c6"
+            >
+              <select
+                class="c7"
+                id="selectSeekType"
+              >
+                <option
+                  value="OFFSET"
+                >
+                  Offset
+                </option>
+                <option
+                  value="TIMESTAMP"
+                >
+                  Timestamp
+                </option>
+              </select>
+            </div>
+            <div
+              class="c2 offset-selector"
+            >
+              <input
+                class="c8 c2 offset-selector"
+                id="offset"
+                type="text"
+                value=""
+              />
+            </div>
+          </div>
+          <div
+            class="rmsc multi-select"
+          >
+            <div
+              aria-labelledby="Select partitions"
+              aria-readonly="true"
+              class="dropdown-container"
+              tabindex="0"
+            >
+              <div
+                class="dropdown-heading"
+              >
+                <div
+                  class="dropdown-heading-value"
+                >
+                  <span>
+                    All items are selected.
+                  </span>
+                </div>
+                <button
+                  aria-label="Clear Selected"
+                  class="clear-selected-button"
+                  type="button"
+                >
+                  <svg
+                    class="dropdown-search-clear-icon gray"
+                    fill="none"
+                    height="24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    width="24"
+                  >
+                    <line
+                      x1="18"
+                      x2="6"
+                      y1="6"
+                      y2="18"
+                    />
+                    <line
+                      x1="6"
+                      x2="18"
+                      y1="6"
+                      y2="18"
+                    />
+                  </svg>
+                </button>
+                <svg
+                  class="dropdown-heading-dropdown-arrow gray"
+                  fill="none"
+                  height="24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  width="24"
+                >
+                  <path
+                    d="M6 9L12 15 18 9"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <button
+            class="c9"
+            style="font-weight: 500;"
+            type="button"
+          >
+            Cancel
+          </button>
+        </div>
+        <div
+          class="select-wrapper c6"
+        >
+          <select
+            class="c7"
+          >
+            <option
+              value="FORWARD"
+            >
+              Oldest first
+            </option>
+            <option
+              value="BACKWARD"
+            >
+              Newest first
+            </option>
+          </select>
+        </div>
+      </div>
+      <div
+        class="c10"
+      >
+        <p
+          style="font-size: 14px;"
+        />
+        <div
+          class="c11"
+          title="Elapsed Time"
+        >
+          <div
+            class="c12"
+          >
+            <i
+              class="far fa-clock"
+            />
+          </div>
+          <span>
+            0
+             ms
+          </span>
+        </div>
+        <div
+          class="c11"
+          title="Bytes Consumed"
+        >
+          <div
+            class="c12"
+          >
+            <i
+              class="fas fa-arrow-down"
+            />
+          </div>
+          <span>
+            0Bytes
+          </span>
+        </div>
+        <div
+          class="c11"
+          title="Messages Consumed"
+        >
+          <div
+            class="c12"
+          >
+            <i
+              class="far fa-file-alt"
+            />
+          </div>
+          <span>
+             messages
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+`;

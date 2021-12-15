@@ -1,6 +1,9 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
+import { StaticRouter } from 'react-router';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -25,9 +28,19 @@ describe('List', () => {
       },
     ],
   };
-  const component = shallow(<ListItem consumerGroup={mockConsumerGroup} />);
+  const component = mount(
+    <StaticRouter>
+      <ThemeProvider theme={theme}>
+        <table>
+          <tbody>
+            <ListItem consumerGroup={mockConsumerGroup} />
+          </tbody>
+        </table>
+      </ThemeProvider>
+    </StaticRouter>
+  );
 
   it('render empty ListItem', () => {
-    expect(component.exists('.is-clickable')).toBeTruthy();
+    expect(component.exists('tr')).toBeTruthy();
   });
 });

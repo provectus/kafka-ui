@@ -1,18 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Config view matches snapshot 1`] = `
-<mock-JSONEditor
-  highlightActiveLine={false}
-  isFixedHeight={true}
-  readOnly={true}
-  showGutter={false}
-  value="{
+.c0 {
+  padding: 16px;
+  margin: 16px;
+  border: 1px solid #E3E6E8;
+  border-radius: 8px;
+}
+
+<div
+  className="c0"
+>
+  <mock-JSONEditor
+    highlightActiveLine={false}
+    isFixedHeight={true}
+    readOnly={true}
+    value="{
 	\\"connector.class\\": \\"FileStreamSource\\",
 	\\"tasks.max\\": \\"10\\",
 	\\"topic\\": \\"test-topic\\",
 	\\"file\\": \\"/some/file\\"
 }"
-/>
+  />
+</div>
 `;
 
 exports[`Config view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;

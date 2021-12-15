@@ -1,178 +1,162 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import ResetOffsets, {
-  Props,
-} from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
-import { ConsumerGroupState } from 'generated-sources';
 import React from 'react';
-import { StaticRouter } from 'react-router';
+import fetchMock from 'fetch-mock';
+import { Route, StaticRouter } from 'react-router';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
+import { clusterConsumerGroupResetOffsetsPath } from 'lib/paths';
+import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 
-import { expectedOutputs } from './fixtures';
+const clusterName = 'cluster1';
+const { groupId } = consumerGroupPayload;
 
-const setupWrapper = (props?: Partial<Props>) => (
-  <StaticRouter>
-    <ResetOffsets
-      clusterName="testCluster"
-      consumerGroupID="testGroup"
-      consumerGroup={{
-        groupId: 'amazon.msk.canary.group.broker-1',
-        members: 0,
-        topics: 2,
-        simple: false,
-        partitionAssignor: '',
-        state: ConsumerGroupState.EMPTY,
-        coordinator: {
-          id: 2,
-          host: 'b-2.kad-msk.st2jzq.c6.kafka.eu-west-1.amazonaws.com',
-        },
-        messagesBehind: 0,
-        partitions: [
-          {
-            topic: '__amazon_msk_canary',
-            partition: 1,
-            currentOffset: 0,
-            endOffset: 0,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-          {
-            topic: '__amazon_msk_canary',
-            partition: 0,
-            currentOffset: 56932,
-            endOffset: 56932,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-          {
-            topic: 'other_topic',
-            partition: 3,
-            currentOffset: 56932,
-            endOffset: 56932,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-          {
-            topic: 'other_topic',
-            partition: 4,
-            currentOffset: 56932,
-            endOffset: 56932,
-            messagesBehind: 0,
-            consumerId: undefined,
-            host: undefined,
-          },
-        ],
+const renderComponent = () =>
+  render(
+    <StaticRouter
+      location={{
+        pathname: clusterConsumerGroupResetOffsetsPath(
+          clusterName,
+          consumerGroupPayload.groupId
+        ),
       }}
-      detailsAreFetched
-      IsOffsetReset={false}
-      fetchConsumerGroupDetails={jest.fn()}
-      resetConsumerGroupOffsets={jest.fn()}
-      resetResettingStatus={jest.fn()}
-      {...props}
-    />
-  </StaticRouter>
-);
+    >
+      <Route
+        path={clusterConsumerGroupResetOffsetsPath(
+          ':clusterName',
+          ':consumerGroupID'
+        )}
+      >
+        <ResetOffsets />
+      </Route>
+    </StaticRouter>
+  );
+
+const resetConsumerGroupOffsetsMockCalled = () =>
+  expect(
+    fetchMock.called(
+      `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`
+    )
+  ).toBeTruthy();
 
 const selectresetTypeAndPartitions = async (resetType: string) => {
-  fireEvent.change(screen.getByLabelText('Reset Type'), {
-    target: { value: resetType },
-  });
+  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
-    fireEvent.click(screen.getByText('Select...'));
-  });
-  await waitFor(() => {
-    fireEvent.click(screen.getByText('Partition #0'));
+    userEvent.click(screen.getByText('Partition #0'));
   });
 };
 
+const resetConsumerGroupOffsetsWith = async (
+  resetType: string,
+  offset: null | number = null
+) => {
+  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByText('Select...'));
+  await waitFor(() => {
+    userEvent.click(screen.getByText('Partition #0'));
+  });
+  fetchMock.postOnce(
+    `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
+    200,
+    {
+      body: {
+        topic: '__amazon_msk_canary',
+        resetType,
+        partitions: [0],
+        partitionsOffsets: [{ partition: 0, offset }],
+      },
+    }
+  );
+  userEvent.click(screen.getByText('Submit'));
+  await waitFor(() => resetConsumerGroupOffsetsMockCalled());
+};
+
 describe('ResetOffsets', () => {
-  describe('on initial render', () => {
-    const component = render(setupWrapper());
-    it('matches the snapshot', () => {
-      expect(component.baseElement).toMatchSnapshot();
-    });
+  afterEach(() => {
+    fetchMock.reset();
   });
 
-  describe('on submit', () => {
-    describe('with the default ResetType', () => {
-      it('calls resetConsumerGroupOffsets', async () => {
-        const mockResetConsumerGroupOffsets = jest.fn();
-        render(
-          setupWrapper({
-            resetConsumerGroupOffsets: mockResetConsumerGroupOffsets,
-          })
-        );
-        await selectresetTypeAndPartitions('EARLIEST');
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
-        });
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(1);
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
-          'testCluster',
-          'testGroup',
-          expectedOutputs.EARLIEST
-        );
-      });
-    });
+  it('renders progress bar for initial state', () => {
+    fetchMock.getOnce(
+      `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
+      404
+    );
+    renderComponent();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
 
-    describe('with the ResetType set to LATEST', () => {
-      it('calls resetConsumerGroupOffsets', async () => {
-        const mockResetConsumerGroupOffsets = jest.fn();
-        render(
-          setupWrapper({
-            resetConsumerGroupOffsets: mockResetConsumerGroupOffsets,
-          })
+  describe('with consumer group', () => {
+    describe('submit handles resetConsumerGroupOffsets', () => {
+      beforeEach(async () => {
+        const fetchConsumerGroupMock = fetchMock.getOnce(
+          `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
+          consumerGroupPayload
         );
-        await selectresetTypeAndPartitions('LATEST');
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
-        });
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(1);
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
-          'testCluster',
-          'testGroup',
-          expectedOutputs.LATEST
+        renderComponent();
+        await waitFor(() =>
+          expect(fetchConsumerGroupMock.called()).toBeTruthy()
         );
+        await waitFor(() => screen.queryByRole('form'));
       });
-    });
 
-    describe('with the ResetType set to OFFSET', () => {
-      it('calls resetConsumerGroupOffsets', async () => {
-        const mockResetConsumerGroupOffsets = jest.fn();
-        render(
-          setupWrapper({
-            resetConsumerGroupOffsets: mockResetConsumerGroupOffsets,
-          })
-        );
+      it('calls resetConsumerGroupOffsets with EARLIEST', async () => {
+        await resetConsumerGroupOffsetsWith('EARLIEST');
+      });
+
+      it('calls resetConsumerGroupOffsets with LATEST', async () => {
+        await resetConsumerGroupOffsetsWith('LATEST');
+      });
+      it('calls resetConsumerGroupOffsets with OFFSET', async () => {
         await selectresetTypeAndPartitions('OFFSET');
+        fetchMock.postOnce(
+          `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
+          200,
+          {
+            body: {
+              topic: '__amazon_msk_canary',
+              resetType: 'OFFSET',
+              partitions: [0],
+              partitionsOffsets: [{ partition: 0, offset: 10 }],
+            },
+          }
+        );
         await waitFor(() => {
           fireEvent.change(screen.getAllByLabelText('Partition #0')[1], {
             target: { value: '10' },
           });
         });
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
-        });
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(1);
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledWith(
-          'testCluster',
-          'testGroup',
-          expectedOutputs.OFFSET
-        );
+        userEvent.click(screen.getByText('Submit'));
+        await waitFor(() => resetConsumerGroupOffsetsMockCalled());
       });
-    });
-
-    describe('with the ResetType set to TIMESTAMP', () => {
-      it('adds error to the page when the input is left empty', async () => {
-        const mockResetConsumerGroupOffsets = jest.fn();
-        render(setupWrapper());
+      it('calls resetConsumerGroupOffsets with TIMESTAMP', async () => {
         await selectresetTypeAndPartitions('TIMESTAMP');
-        await waitFor(() => {
-          fireEvent.click(screen.getByText('Submit'));
-        });
-        expect(mockResetConsumerGroupOffsets).toHaveBeenCalledTimes(0);
-        expect(screen.getByText("This field shouldn't be empty!")).toBeTruthy();
+        const resetConsumerGroupOffsetsMock = fetchMock.postOnce(
+          `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`,
+          200,
+          {
+            body: {
+              topic: '__amazon_msk_canary',
+              resetType: 'OFFSET',
+              partitions: [0],
+              partitionsOffsets: [{ partition: 0, offset: 10 }],
+            },
+          }
+        );
+        userEvent.click(screen.getByText('Submit'));
+        await waitFor(() =>
+          expect(
+            screen.getByText("This field shouldn't be empty!")
+          ).toBeInTheDocument()
+        );
+
+        await waitFor(() =>
+          expect(
+            resetConsumerGroupOffsetsMock.called(
+              `/api/clusters/${clusterName}/consumer-groups/${groupId}/offsets`
+            )
+          ).toBeFalsy()
+        );
       });
     });
   });

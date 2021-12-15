@@ -1,5 +1,4 @@
 import React from 'react';
-import cx from 'classnames';
 import { NavLink } from 'react-router-dom';
 import {
   ClusterName,
@@ -11,6 +10,10 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { Colors } from 'theme/theme';
+import TagStyled from 'components/common/Tag/Tag.styled';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -22,14 +25,7 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: {
-    name,
-    internal,
-    partitions,
-    segmentSize,
-    replicationFactor,
-    cleanUpPolicy,
-  },
+  topic: { name, internal, partitions, segmentSize, replicationFactor },
   selected,
   toggleTopicSelected,
   deleteTopic,
@@ -72,9 +68,13 @@ const ListItem: React.FC<ListItemProps> = ({
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
   }, [clusterName, name]);
+  const [vElipsisVisble, setVElipsisVisble] = React.useState(false);
 
   return (
-    <tr>
+    <tr
+      onMouseEnter={() => setVElipsisVisble(true)}
+      onMouseLeave={() => setVElipsisVisble(false)}
+    >
       {!isReadOnly && (
         <td>
           {!internal && (
@@ -88,16 +88,21 @@ const ListItem: React.FC<ListItemProps> = ({
           )}
         </td>
       )}
-      <td className="has-text-overflow-ellipsis">
+      <TableKeyLink style={{ width: '44%' }}>
+        {internal && <TagStyled color="gray">IN</TagStyled>}
         <NavLink
           exact
           to={`topics/${name}`}
           activeClassName="is-active"
-          className="title is-6"
+          style={{
+            color: Colors.neutral[90],
+            fontWeight: 500,
+            paddingLeft: internal ? '5px' : 0,
+          }}
         >
           {name}
         </NavLink>
-      </td>
+      </TableKeyLink>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
       <td>{replicationFactor}</td>
@@ -105,26 +110,11 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>
         <BytesFormatted value={segmentSize} />
       </td>
-      <td>
-        <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
-          {internal ? 'Internal' : 'External'}
-        </div>
-      </td>
-      <td>
-        <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
-      </td>
-      <td className="topic-action-block">
-        {!internal && !isReadOnly ? (
+      <td className="topic-action-block" style={{ width: '4%' }}>
+        {!internal && !isReadOnly && vElipsisVisble ? (
           <>
             <div className="has-text-right">
-              <Dropdown
-                label={
-                  <span className="icon">
-                    <i className="fas fa-cog" />
-                  </span>
-                }
-                right
-              >
+              <Dropdown label={<VerticalElipsisIcon />} right>
                 <DropdownItem onClick={clearTopicMessagesHandler}>
                   <span className="has-text-danger">Clear Messages</span>
                 </DropdownItem>
@@ -137,15 +127,15 @@ const ListItem: React.FC<ListItemProps> = ({
                 )}
               </Dropdown>
             </div>
-            <ConfirmationModal
-              isOpen={isDeleteTopicConfirmationVisible}
-              onCancel={() => setDeleteTopicConfirmationVisible(false)}
-              onConfirm={deleteTopicHandler}
-            >
-              Are you sure want to remove <b>{name}</b> topic?
-            </ConfirmationModal>
           </>
         ) : null}
+        <ConfirmationModal
+          isOpen={isDeleteTopicConfirmationVisible}
+          onCancel={() => setDeleteTopicConfirmationVisible(false)}
+          onConfirm={deleteTopicHandler}
+        >
+          Are you sure want to remove <b>{name}</b> topic?
+        </ConfirmationModal>
       </td>
     </tr>
   );

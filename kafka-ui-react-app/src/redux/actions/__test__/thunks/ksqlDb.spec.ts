@@ -43,7 +43,7 @@ describe('Thunks', () => {
             response: {
               status: 422,
               statusText: 'Unprocessable Entity',
-              body: undefined,
+              url: `/api/clusters/${clusterName}/ksql`,
             },
           },
         }),

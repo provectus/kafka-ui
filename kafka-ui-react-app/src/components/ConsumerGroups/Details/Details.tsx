@@ -1,56 +1,57 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import {
   clusterConsumerGroupResetOffsetsPath,
   clusterConsumerGroupsPath,
 } from 'lib/paths';
 import { ConsumerGroupID } from 'redux/interfaces/consumerGroup';
-import {
-  ConsumerGroup,
-  ConsumerGroupDetails,
-  ConsumerGroupTopicPartition,
-} from 'generated-sources';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import ClusterContext from 'components/contexts/ClusterContext';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import * as Metrics from 'components/common/Metrics';
+import TagStyled from 'components/common/Tag/Tag.styled';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import { Colors } from 'theme/theme';
+import { groupBy } from 'lodash';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  fetchConsumerGroupDetails,
+  deleteConsumerGroup,
+  selectById,
+  getIsConsumerGroupDeleted,
+  getAreConsumerGroupDetailsFulfilled,
+} from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
 import ListItem from './ListItem';
 
-export interface Props extends ConsumerGroup, ConsumerGroupDetails {
-  clusterName: ClusterName;
-  partitions?: ConsumerGroupTopicPartition[];
-  isFetched: boolean;
-  isDeleted: boolean;
-  fetchConsumerGroupDetails: (
-    clusterName: ClusterName,
-    consumerGroupID: ConsumerGroupID
-  ) => void;
-  deleteConsumerGroup: (clusterName: string, id: ConsumerGroupID) => void;
-}
-
-const Details: React.FC<Props> = ({
-  clusterName,
-  groupId,
-  partitions,
-  isFetched,
-  isDeleted,
-  fetchConsumerGroupDetails,
-  deleteConsumerGroup,
-}) => {
-  React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, groupId);
-  }, [fetchConsumerGroupDetails, clusterName, groupId]);
-  const items = partitions || [];
-  const [isConfirmationModelVisible, setIsConfirmationModelVisible] =
-    React.useState<boolean>(false);
+const Details: React.FC = () => {
   const history = useHistory();
   const { isReadOnly } = React.useContext(ClusterContext);
+  const { consumerGroupID, clusterName } =
+    useParams<{ consumerGroupID: ConsumerGroupID; clusterName: ClusterName }>();
+  const dispatch = useAppDispatch();
+  const consumerGroup = useAppSelector((state) =>
+    selectById(state, consumerGroupID)
+  );
+  const isDeleted = useAppSelector(getIsConsumerGroupDeleted);
+  const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
+
+  const [isConfirmationModalVisible, setIsConfirmationModalVisible] =
+    React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
+  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
 
   const onDelete = () => {
-    setIsConfirmationModelVisible(false);
-    deleteConsumerGroup(clusterName, groupId);
+    setIsConfirmationModalVisible(false);
+    dispatch(deleteConsumerGroup({ clusterName, consumerGroupID }));
   };
   React.useEffect(() => {
     if (isDeleted) {
@@ -59,83 +60,76 @@ const Details: React.FC<Props> = ({
   }, [isDeleted]);
 
   const onResetOffsets = () => {
-    history.push(clusterConsumerGroupResetOffsetsPath(clusterName, groupId));
+    history.push(
+      clusterConsumerGroupResetOffsetsPath(clusterName, consumerGroupID)
+    );
   };
 
+  if (!isFetched || !consumerGroup) {
+    return <PageLoader />;
+  }
+
+  const partitionsByTopic = groupBy(consumerGroup.partitions, 'topic');
+
   return (
-    <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterConsumerGroupsPath(clusterName),
-                label: 'All Consumer Groups',
-              },
-            ]}
-          >
-            {groupId}
-          </Breadcrumb>
-        </div>
-      </div>
-
-      {isFetched ? (
-        <div className="box">
+    <div>
+      <div>
+        <PageHeading text={consumerGroupID}>
           {!isReadOnly && (
-            <div className="level">
-              <div className="level-item level-right buttons">
-                <button
-                  type="button"
-                  className="button"
-                  onClick={onResetOffsets}
-                >
-                  Reset offsets
-                </button>
-                <button
-                  type="button"
-                  className="button is-danger"
-                  onClick={() => setIsConfirmationModelVisible(true)}
-                >
-                  Delete consumer group
-                </button>
-              </div>
-            </div>
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              <DropdownItem onClick={onResetOffsets}>
+                Reset offsest
+              </DropdownItem>
+              <DropdownItem
+                style={{ color: Colors.red[50] }}
+                onClick={() => setIsConfirmationModalVisible(true)}
+              >
+                Delete consumer group
+              </DropdownItem>
+            </Dropdown>
           )}
-
-          <table className="table is-striped is-fullwidth">
-            <thead>
-              <tr>
-                <th>Consumer ID</th>
-                <th>Host</th>
-                <th>Topic</th>
-                <th>Partition</th>
-                <th>Messages behind</th>
-                <th>Current offset</th>
-                <th>End offset</th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.length === 0 && (
-                <tr>
-                  <td colSpan={10}>No active consumer groups</td>
-                </tr>
-              )}
-              {items.map((consumer) => (
-                <ListItem
-                  key={consumer.consumerId}
-                  clusterName={clusterName}
-                  consumer={consumer}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <PageLoader />
-      )}
+        </PageHeading>
+      </div>
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator label="State">
+            <TagStyled color="yellow">{consumerGroup.state}</TagStyled>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Members">
+            {consumerGroup.members}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Assigned topics">
+            {consumerGroup.topics}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Assigned partitions">
+            {consumerGroup.partitions?.length}
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Coordinator ID">
+            {consumerGroup.coordinator?.id}
+          </Metrics.Indicator>
+        </Metrics.Section>
+      </Metrics.Wrapper>
+      <Table isFullwidth>
+        <thead>
+          <tr>
+            <TableHeaderCell> </TableHeaderCell>
+            <TableHeaderCell title="Topic" />
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(partitionsByTopic).map((key) => (
+            <ListItem
+              clusterName={clusterName}
+              consumers={partitionsByTopic[key]}
+              name={key}
+              key={key}
+            />
+          ))}
+        </tbody>
+      </Table>
       <ConfirmationModal
-        isOpen={isConfirmationModelVisible}
-        onCancel={() => setIsConfirmationModelVisible(false)}
+        isOpen={isConfirmationModalVisible}
+        onCancel={() => setIsConfirmationModalVisible(false)}
         onConfirm={onDelete}
       >
         Are you sure you want to delete this consumer group?

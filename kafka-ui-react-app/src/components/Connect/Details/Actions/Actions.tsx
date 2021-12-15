@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useHistory, useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { ConnectorState } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
@@ -7,12 +7,19 @@ import {
   clusterConnectorsPath,
 } from 'lib/paths';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import styled from 'styled-components';
+import { Button } from 'components/common/Button/Button';
 
 interface RouterParams {
   clusterName: ClusterName;
   connectName: ConnectName;
   connectorName: ConnectorName;
 }
+
+const ConnectorActionsWrapperStyled = styled.div`
+  display: flex;
+  gap: 8px;
+`;
 
 export interface ActionsProps {
   deleteConnector(
@@ -78,81 +85,79 @@ const Actions: React.FC<ActionsProps> = ({
   }, [resumeConnector, clusterName, connectName, connectorName]);
 
   return (
-    <div className="buttons">
+    <ConnectorActionsWrapperStyled>
       {connectorStatus === ConnectorState.RUNNING && (
-        <button
+        <Button
+          buttonSize="M"
+          buttonType="primary"
           type="button"
-          className="button"
           onClick={pauseConnectorHandler}
           disabled={isConnectorActionRunning}
         >
-          <span className="icon">
+          <span>
             <i className="fas fa-pause" />
           </span>
           <span>Pause</span>
-        </button>
+        </Button>
       )}
 
       {connectorStatus === ConnectorState.PAUSED && (
-        <button
+        <Button
+          buttonSize="M"
+          buttonType="primary"
           type="button"
-          className="button"
           onClick={resumeConnectorHandler}
           disabled={isConnectorActionRunning}
         >
-          <span className="icon">
+          <span>
             <i className="fas fa-play" />
           </span>
           <span>Resume</span>
-        </button>
+        </Button>
       )}
 
-      <button
+      <Button
+        buttonSize="M"
+        buttonType="primary"
         type="button"
-        className="button"
         onClick={restartConnectorHandler}
         disabled={isConnectorActionRunning}
       >
-        <span className="icon">
+        <span>
           <i className="fas fa-sync-alt" />
         </span>
         <span>Restart all tasks</span>
-      </button>
+      </Button>
+      <Button
+        buttonSize="M"
+        buttonType="primary"
+        type="button"
+        isLink
+        disabled={isConnectorActionRunning}
+        to={clusterConnectConnectorEditPath(
+          clusterName,
+          connectName,
+          connectorName
+        )}
+      >
+        <span>
+          <i className="fas fa-pencil-alt" />
+        </span>
+        <span>Edit config</span>
+      </Button>
 
-      {isConnectorActionRunning ? (
-        <button type="button" className="button" disabled>
-          <span className="icon">
-            <i className="fas fa-edit" />
-          </span>
-          <span>Edit config</span>
-        </button>
-      ) : (
-        <Link
-          to={clusterConnectConnectorEditPath(
-            clusterName,
-            connectName,
-            connectorName
-          )}
-          className="button"
-        >
-          <span className="icon">
-            <i className="fas fa-pencil-alt" />
-          </span>
-          <span>Edit config</span>
-        </Link>
-      )}
-
-      <button
-        className="button is-danger"
+      <Button
+        buttonSize="M"
+        buttonType="secondary"
         type="button"
         onClick={() => setIsDeleteConnectorConfirmationVisible(true)}
         disabled={isConnectorActionRunning}
       >
-        <span className="icon">
+        <span>
           <i className="far fa-trash-alt" />
         </span>
         <span>Delete</span>
-      </button>
+      </Button>
       <ConfirmationModal
         isOpen={isDeleteConnectorConfirmationVisible}
         onCancel={() => setIsDeleteConnectorConfirmationVisible(false)}
@@ -161,7 +166,7 @@ const Actions: React.FC<ActionsProps> = ({
       >
         Are you sure you want to remove <b>{connectorName}</b> connector?
       </ConfirmationModal>
-    </div>
+    </ConnectorActionsWrapperStyled>
   );
 };
 

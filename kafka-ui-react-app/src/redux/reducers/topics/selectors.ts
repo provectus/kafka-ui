@@ -1,12 +1,12 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import {
   RootState,
   TopicName,
   TopicsState,
   TopicConfigByName,
 } from 'redux/interfaces';
-import { TopicCleanUpPolicyEnum } from 'generated-sources';
-import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { CleanUpPolicy } from 'generated-sources';
+import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const topicsState = ({ topics }: RootState): TopicsState => topics;
 
@@ -16,23 +16,24 @@ const getTopicMap = (state: RootState) => topicsState(state).byName;
 export const getTopicListTotalPages = (state: RootState) =>
   topicsState(state).totalPages;
 
-const getTopicListFetchingStatus = createFetchingSelector('GET_TOPICS');
+const getTopicListFetchingStatus = createLeagcyFetchingSelector('GET_TOPICS');
 const getTopicDetailsFetchingStatus =
-  createFetchingSelector('GET_TOPIC_DETAILS');
+  createLeagcyFetchingSelector('GET_TOPIC_DETAILS');
 
-const getTopicConfigFetchingStatus = createFetchingSelector('GET_TOPIC_CONFIG');
-const getTopicCreationStatus = createFetchingSelector('POST_TOPIC');
-const getTopicUpdateStatus = createFetchingSelector('PATCH_TOPIC');
+const getTopicConfigFetchingStatus =
+  createLeagcyFetchingSelector('GET_TOPIC_CONFIG');
+const getTopicCreationStatus = createLeagcyFetchingSelector('POST_TOPIC');
+const getTopicUpdateStatus = createLeagcyFetchingSelector('PATCH_TOPIC');
 const getTopicMessageSchemaFetchingStatus =
-  createFetchingSelector('GET_TOPIC_SCHEMA');
+  createLeagcyFetchingSelector('GET_TOPIC_SCHEMA');
 const getTopicMessageSendingStatus =
-  createFetchingSelector('SEND_TOPIC_MESSAGE');
+  createLeagcyFetchingSelector('SEND_TOPIC_MESSAGE');
 const getPartitionsCountIncreaseStatus =
-  createFetchingSelector('UPDATE_PARTITIONS');
-const getReplicationFactorUpdateStatus = createFetchingSelector(
+  createLeagcyFetchingSelector('UPDATE_PARTITIONS');
+const getReplicationFactorUpdateStatus = createLeagcyFetchingSelector(
   'UPDATE_REPLICATION_FACTOR'
 );
-const getTopicDeletingStatus = createFetchingSelector('DELETE_TOPIC');
+const getTopicDeletingStatus = createLeagcyFetchingSelector('DELETE_TOPIC');
 
 export const getIsTopicDeleted = createSelector(
   getTopicDeletingStatus,
@@ -149,7 +150,7 @@ export const getTopicConfigByParamName = createSelector(
 export const getIsTopicDeletePolicy = createSelector(
   getTopicByName,
   (topic) => {
-    return topic?.cleanUpPolicy === TopicCleanUpPolicyEnum.DELETE;
+    return topic?.cleanUpPolicy === CleanUpPolicy.DELETE;
   }
 );
 

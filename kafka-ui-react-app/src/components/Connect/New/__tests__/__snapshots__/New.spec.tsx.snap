@@ -1,24 +1,263 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`New view matches snapshot 1`] = `
+Array [
+  .c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
+
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
 <div
-  className="box"
->
-  <form
+    className="c0"
+  >
+    <h1>
+      Create new connector
+    </h1>
+    <div />
+  </div>,
+  .c1 {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 20px;
+  color: #454F54;
+}
+
+.c3 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c3:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c3:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c3:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c6 {
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  height: 32px;
+  width: 100%;
+  padding-left: 12px;
+  font-size: 14px;
+}
+
+.c6::-webkit-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c6:hover {
+  border-color: #73848C;
+}
+
+.c6:focus {
+  outline: none;
+  border-color: #454F54;
+}
+
+.c6:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c6:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c6:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c6:focus::placeholder {
+  color: transparent;
+}
+
+.c6:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c6:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c6:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c6:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c4 {
+  color: #E51A1A;
+  font-size: 12px;
+}
+
+.c5 {
+  position: relative;
+}
+
+.c7 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c7:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c7:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c7:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c7 a {
+  color: white;
+}
+
+.c7 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  padding: 16px;
+  padding-top: 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.c0 > button:last-child {
+  -webkit-align-self: flex-start;
+  -ms-flex-item-align: start;
+  align-self: flex-start;
+}
+
+<form
+    className="c0"
     onSubmit={[Function]}
   >
     <div
       className="field "
     >
       <label
-        className="label"
+        className="c1"
       >
         Connect *
       </label>
       <div
-        className="control select"
+        className="select-wrapper c2"
       >
         <select
+          className="c3"
           disabled={false}
           name="connectName"
           onBlur={[Function]}
@@ -37,23 +276,21 @@ exports[`New view matches snapshot 1`] = `
         </select>
       </div>
       <p
-        className="help is-danger"
+        className="c4"
       />
     </div>
-    <div
-      className="field"
-    >
+    <div>
       <label
-        className="label"
+        className="c1"
       >
         Name *
       </label>
       <div
-        className="control"
+        className="c5"
       >
         <input
           autoComplete="off"
-          className="input"
+          className="c6 c5"
           disabled={false}
           name="name"
           onBlur={[Function]}
@@ -62,47 +299,35 @@ exports[`New view matches snapshot 1`] = `
         />
       </div>
       <p
-        className="help is-danger"
+        className="c4"
       />
     </div>
-    <div
-      className="field"
-    >
+    <div>
       <label
-        className="label"
+        className="c1"
       >
         Config *
       </label>
-      <div
-        className="control"
-      >
-        <mock-JSONEditor
-          name="config"
-          onBlur={[Function]}
-          onChange={[Function]}
-          readOnly={false}
-          value=""
-        />
-      </div>
+      <mock-JSONEditor
+        name="config"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={false}
+        value=""
+      />
       <p
-        className="help is-danger"
+        className="c4"
       />
     </div>
-    <div
-      className="field"
+    <button
+      className="c7"
+      disabled={true}
+      type="submit"
     >
-      <div
-        className="control"
-      >
-        <input
-          className="button is-primary"
-          disabled={true}
-          type="submit"
-        />
-      </div>
-    </div>
-  </form>
-</div>
+      Submit
+    </button>
+  </form>,
+]
 `;
 
 exports[`New view matches snapshot when fetching connects 1`] = `<mock-PageLoader />`;

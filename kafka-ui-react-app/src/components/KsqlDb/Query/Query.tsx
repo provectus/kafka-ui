@@ -10,6 +10,14 @@ import ResultRenderer from 'components/KsqlDb/Query/ResultRenderer';
 import { useDispatch, useSelector } from 'react-redux';
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { resetExecutionResult } from 'redux/actions';
+import { Button } from 'components/common/Button/Button';
+
+import {
+  KSQLButtons,
+  KSQLInputHeader,
+  KSQLInputsWrapper,
+  QueryWrapper,
+} from './Query.styled';
 
 type FormValues = {
   ksql: string;
@@ -34,7 +42,7 @@ const Query: FC = () => {
     return reset;
   }, []);
 
-  const { handleSubmit, control } = useForm<FormValues>({
+  const { handleSubmit, setValue, control } = useForm<FormValues>({
     mode: 'onTouched',
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -59,11 +67,21 @@ const Query: FC = () => {
 
   return (
     <>
-      <div className="box">
+      <QueryWrapper>
         <form onSubmit={handleSubmit(submitHandler)}>
-          <div className="columns">
-            <div className="control column m-0">
-              <label className="label">KSQL</label>
+          <KSQLInputsWrapper>
+            <div>
+              <KSQLInputHeader>
+                <label>KSQL</label>
+                <Button
+                  onClick={() => setValue('ksql', '')}
+                  buttonType="primary"
+                  buttonSize="S"
+                  isInverted
+                >
+                  Clear
+                </Button>
+              </KSQLInputHeader>
               <Controller
                 control={control}
                 name="ksql"
@@ -72,8 +90,18 @@ const Query: FC = () => {
                 )}
               />
             </div>
-            <div className="control column m-0">
-              <label className="label">Stream properties</label>
+            <div>
+              <KSQLInputHeader>
+                <label>Stream properties</label>
+                <Button
+                  onClick={() => setValue('streamsProperties', '')}
+                  buttonType="primary"
+                  buttonSize="S"
+                  isInverted
+                >
+                  Clear
+                </Button>
+              </KSQLInputHeader>
               <Controller
                 control={control}
                 name="streamsProperties"
@@ -82,30 +110,27 @@ const Query: FC = () => {
                 )}
               />
             </div>
-          </div>
-          <div className="columns">
-            <div className="column is-flex-grow-0">
-              <button
-                className="button is-primary"
-                type="submit"
-                disabled={fetching}
-              >
-                Execute
-              </button>
-            </div>
-            <div className="column is-flex-grow-0">
-              <button
-                className="button is-danger"
-                type="button"
-                disabled={!executionResult}
-                onClick={reset}
-              >
-                Clear
-              </button>
-            </div>
-          </div>
+          </KSQLInputsWrapper>
+          <KSQLButtons>
+            <Button
+              buttonType="primary"
+              buttonSize="M"
+              type="submit"
+              disabled={fetching}
+            >
+              Execute
+            </Button>
+            <Button
+              buttonType="secondary"
+              buttonSize="M"
+              disabled={!executionResult}
+              onClick={reset}
+            >
+              Clear results
+            </Button>
+          </KSQLButtons>
         </form>
-      </div>
+      </QueryWrapper>
       <ResultRenderer result={executionResult} />
     </>
   );

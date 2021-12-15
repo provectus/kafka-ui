@@ -3,6 +3,8 @@ import { SchemaType } from 'generated-sources';
 import React from 'react';
 import { StaticRouter } from 'react-router-dom';
 import Edit, { EditProps } from 'components/Schemas/Edit/Edit';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 jest.mock('react-hook-form', () => ({
   ...jest.requireActual('react-hook-form'),
@@ -42,12 +44,14 @@ describe('Edit Component', () => {
     it('fetches them', () => {
       const mockFetch = jest.fn();
       mount(
-        <StaticRouter>
-          {setupWrapper({
-            schemasAreFetched: false,
-            fetchSchemasByClusterName: mockFetch,
-          })}
-        </StaticRouter>
+        <ThemeProvider theme={theme}>
+          <StaticRouter>
+            {setupWrapper({
+              schemasAreFetched: false,
+              fetchSchemasByClusterName: mockFetch,
+            })}
+          </StaticRouter>
+        </ThemeProvider>
       );
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
@@ -59,11 +63,11 @@ describe('Edit Component', () => {
       expect(component).toMatchSnapshot();
     });
     it('shows editor', () => {
-      expect(component.find('JSONEditor[name="latestSchema"]').length).toEqual(
-        1
-      );
+      expect(
+        component.find('Styled(JSONEditor)[name="latestSchema"]').length
+      ).toEqual(1);
       expect(component.find('Controller').length).toEqual(1);
-      expect(component.find('button').exists()).toBeTruthy();
+      expect(component.find('Button').exists()).toBeTruthy();
     });
     it('does not fetch them', () => {
       const mockFetch = jest.fn();

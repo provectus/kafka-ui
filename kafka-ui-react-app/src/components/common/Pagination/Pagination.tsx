@@ -5,6 +5,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import PageControl from 'components/common/Pagination/PageControl';
 
+import { Wrapper } from './Pagination.styled';
+
 export interface PaginationProps {
   totalPages: number;
 }
@@ -64,31 +66,18 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
   }, []);
 
   return (
-    <nav
-      className="pagination is-small is-right"
-      role="navigation"
-      aria-label="pagination"
-    >
+    <Wrapper role="navigation" aria-label="pagination">
       {currentPage > 1 ? (
-        <Link className="pagination-previous" to={getPath(currentPage - 1)}>
+        <Link className="pagination-btn" to={getPath(currentPage - 1)}>
           Previous
         </Link>
       ) : (
-        <button type="button" className="pagination-previous" disabled>
+        <button type="button" className="pagination-btn" disabled>
           Previous
-        </button>
-      )}
-      {currentPage < totalPages ? (
-        <Link className="pagination-next" to={getPath(currentPage + 1)}>
-          Next page
-        </Link>
-      ) : (
-        <button type="button" className="pagination-next" disabled>
-          Next page
         </button>
       )}
       {totalPages > 1 && (
-        <ul className="pagination-list">
+        <ul>
           {!pages.includes(1) && (
             <PageControl
               page={1}
@@ -123,7 +112,16 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           )}
         </ul>
       )}
-    </nav>
+      {currentPage < totalPages ? (
+        <Link className="pagination-btn" to={getPath(currentPage + 1)}>
+          Next
+        </Link>
+      ) : (
+        <button type="button" className="pagination-btn" disabled>
+          Next
+        </button>
+      )}
+    </Wrapper>
   );
 };
 

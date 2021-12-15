@@ -1,6 +1,10 @@
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicConfig } from 'generated-sources';
 import React from 'react';
 import { ClusterName, TopicName } from 'redux/interfaces';
+
+import ConfigListItem from './ConfigListItem';
 
 interface Props {
   clusterName: ClusterName;
@@ -9,26 +13,6 @@ interface Props {
   isFetched: boolean;
   fetchTopicConfig: (clusterName: ClusterName, topicName: TopicName) => void;
 }
-
-interface ListItemProps {
-  config: TopicConfig;
-}
-
-const ConfigListItem: React.FC<ListItemProps> = ({
-  config: { name, value, defaultValue },
-}) => {
-  const hasCustomValue = value !== defaultValue;
-
-  return (
-    <tr>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{name}</td>
-      <td className={hasCustomValue ? 'has-text-weight-bold' : ''}>{value}</td>
-      <td className="has-text-grey" title="Default Value">
-        {hasCustomValue && defaultValue}
-      </td>
-    </tr>
-  );
-};
 
 const Settings: React.FC<Props> = ({
   clusterName,
@@ -46,13 +30,13 @@ const Settings: React.FC<Props> = ({
   }
 
   return (
-    <div className="box">
-      <table className="table is-striped is-fullwidth">
+    <div>
+      <Table isFullwidth>
         <thead>
           <tr>
-            <th>Key</th>
-            <th>Value</th>
-            <th>Default Value</th>
+            <TableHeaderCell title="Key" />
+            <TableHeaderCell title="Value" />
+            <TableHeaderCell title="Default value" />
           </tr>
         </thead>
         <tbody>
@@ -60,7 +44,7 @@ const Settings: React.FC<Props> = ({
             <ConfigListItem key={item.name} config={item} />
           ))}
         </tbody>
-      </table>
+      </Table>
     </div>
   );
 };

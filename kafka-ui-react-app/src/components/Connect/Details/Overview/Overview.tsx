@@ -1,6 +1,7 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
-import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
+import TagStyled from 'components/common/Tag/Tag.styled';
+import * as Metrics from 'components/common/Metrics';
 
 export interface OverviewProps {
   connector: Connector | null;
@@ -16,42 +17,30 @@ const Overview: React.FC<OverviewProps> = ({
   if (!connector) return null;
 
   return (
-    <div className="tile is-6">
-      <table className="table is-fullwidth">
-        <tbody>
-          {connector.status?.workerId && (
-            <tr>
-              <th>Worker</th>
-              <td>{connector.status.workerId}</td>
-            </tr>
-          )}
-          <tr>
-            <th>Type</th>
-            <td>{connector.type}</td>
-          </tr>
-          {connector.config['connector.class'] && (
-            <tr>
-              <th>Class</th>
-              <td>{connector.config['connector.class']}</td>
-            </tr>
-          )}
-          <tr>
-            <th>State</th>
-            <td>
-              <ConnectorStatusTag status={connector.status.state} />
-            </td>
-          </tr>
-          <tr>
-            <th>Tasks Running</th>
-            <td>{runningTasksCount}</td>
-          </tr>
-          <tr>
-            <th>Tasks Failed</th>
-            <td>{failedTasksCount}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <Metrics.Wrapper>
+      <Metrics.Section>
+        {connector.status?.workerId && (
+          <Metrics.Indicator label="Worker">
+            {connector.status.workerId}
+          </Metrics.Indicator>
+        )}
+        <Metrics.Indicator label="Type">{connector.type}</Metrics.Indicator>
+        {connector.config['connector.class'] && (
+          <Metrics.Indicator label="Class">
+            {connector.config['connector.class']}
+          </Metrics.Indicator>
+        )}
+        <Metrics.Indicator label="State">
+          <TagStyled color="yellow">{connector.status.state}</TagStyled>
+        </Metrics.Indicator>
+        <Metrics.Indicator label="Tasks running">
+          {runningTasksCount}
+        </Metrics.Indicator>
+        <Metrics.Indicator label="Tasks failed" isAlert>
+          {failedTasksCount}
+        </Metrics.Indicator>
+      </Metrics.Section>
+    </Metrics.Wrapper>
   );
 };
 

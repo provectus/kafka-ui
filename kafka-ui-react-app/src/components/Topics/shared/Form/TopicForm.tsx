@@ -1,8 +1,15 @@
 import React from 'react';
 import { useFormContext } from 'react-hook-form';
-import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
+import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
+import Select from 'components/common/Select/Select';
+import Input from 'components/common/Input/Input';
+import { Button } from 'components/common/Button/Button';
+import styled from 'styled-components';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { FormError } from 'components/common/Input/Input.styled';
+import { StyledForm } from 'components/common/Form/Form.styles';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
@@ -15,6 +22,17 @@ interface Props {
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
 }
 
+export const TopicFormColumn = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  & > * {
+    flex-grow: 1;
+  }
+`;
+
 const TopicForm: React.FC<Props> = ({
   topicName,
   config,
@@ -23,143 +41,130 @@ const TopicForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const {
-    register,
     formState: { errors },
   } = useFormContext();
 
   return (
-    <form onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
-          <div className="columns">
-            <div className={`column ${isEditing ? '' : 'is-three-quarters'}`}>
-              <label className="label">Topic Name *</label>
-              <input
-                className="input"
+          <TopicFormColumn>
+            <div>
+              <InputLabel>Topic Name *</InputLabel>
+              <Input
+                name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                {...register('name', {
-                  required: 'Topic Name is required.',
-                  pattern: {
-                    value: TOPIC_NAME_VALIDATION_PATTERN,
-                    message: 'Only alphanumeric, _, -, and . allowed',
-                  },
-                })}
-                autoComplete="off"
+                inputSize="M"
               />
-              <p className="help is-danger">
+              <FormError>
                 <ErrorMessage errors={errors} name="name" />
-              </p>
+              </FormError>
             </div>
+          </TopicFormColumn>
 
-            {!isEditing && (
-              <div className="column">
-                <label className="label">Number of partitions *</label>
-                <input
-                  className="input"
+          {!isEditing && (
+            <TopicFormColumn>
+              <div>
+                <InputLabel>Number of partitions *</InputLabel>
+                <Input
                   type="number"
                   placeholder="Number of partitions"
                   defaultValue="1"
-                  {...register('partitions', {
-                    required: 'Number of partitions is required.',
-                  })}
+                  name="partitions"
+                  inputSize="M"
                 />
-                <p className="help is-danger">
+                <FormError>
                   <ErrorMessage errors={errors} name="partitions" />
-                </p>
+                </FormError>
               </div>
-            )}
-          </div>
+            </TopicFormColumn>
+          )}
         </fieldset>
 
-        <div className="columns">
+        <TopicFormColumn>
           {!isEditing && (
-            <div className="column">
-              <label className="label">Replication Factor *</label>
-              <input
-                className="input"
+            <div>
+              <InputLabel>Replication Factor *</InputLabel>
+              <Input
                 type="number"
                 placeholder="Replication Factor"
                 defaultValue="1"
-                {...register('replicationFactor', {
-                  required: 'Replication Factor is required.',
-                })}
+                name="replicationFactor"
+                inputSize="M"
               />
-              <p className="help is-danger">
+              <FormError>
                 <ErrorMessage errors={errors} name="replicationFactor" />
-              </p>
+              </FormError>
             </div>
           )}
 
-          <div className="column">
-            <label className="label">Min In Sync Replicas *</label>
-            <input
-              className="input"
+          <div>
+            <InputLabel>Min In Sync Replicas *</InputLabel>
+            <Input
               type="number"
               placeholder="Min In Sync Replicas"
               defaultValue="1"
-              {...register('minInsyncReplicas', {
-                required: 'Min In Sync Replicas is required.',
-              })}
+              name="minInsyncReplicas"
+              inputSize="M"
             />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="minInSyncReplicas" />
-            </p>
+            <FormError>
+              <ErrorMessage errors={errors} name="minInsyncReplicas" />
+            </FormError>
           </div>
-        </div>
+        </TopicFormColumn>
 
-        <div className="columns">
-          <div className="column is-one-third">
-            <label className="label">Cleanup policy</label>
-            <div className="select is-block">
-              <select defaultValue="delete" {...register('cleanupPolicy')}>
+        <div>
+          <TopicFormColumn>
+            <div>
+              <InputLabel>Cleanup policy</InputLabel>
+              <Select defaultValue="delete" name="cleanupPolicy" selectSize="M">
                 <option value="delete">Delete</option>
                 <option value="compact">Compact</option>
                 <option value="compact,delete">Compact,Delete</option>
-              </select>
+              </Select>
             </div>
-          </div>
+          </TopicFormColumn>
 
-          <div className="column is-one-third">
-            <TimeToRetain isSubmitting={isSubmitting} />
-          </div>
-
-          <div className="column is-one-third">
-            <label className="label">Max size on disk in GB</label>
-            <div className="select is-block">
-              <select defaultValue={-1} {...register('retentionBytes')}>
+          <TopicFormColumn>
+            <div>
+              <TimeToRetain isSubmitting={isSubmitting} />
+            </div>
+          </TopicFormColumn>
+          <TopicFormColumn>
+            <div>
+              <InputLabel>Max size on disk in GB</InputLabel>
+              <Select defaultValue={-1} name="retentionBytes" selectSize="M">
                 <option value={-1}>Not Set</option>
                 <option value={BYTES_IN_GB}>1 GB</option>
                 <option value={BYTES_IN_GB * 10}>10 GB</option>
                 <option value={BYTES_IN_GB * 20}>20 GB</option>
                 <option value={BYTES_IN_GB * 50}>50 GB</option>
-              </select>
+              </Select>
             </div>
-          </div>
+          </TopicFormColumn>
         </div>
 
-        <div className="columns">
-          <div className="column">
-            <label className="label">Maximum message size in bytes *</label>
-            <input
-              className="input"
-              type="number"
-              defaultValue="1000012"
-              {...register('maxMessageBytes', {
-                required: 'Maximum message size in bytes is required',
-              })}
-            />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="maxMessageBytes" />
-            </p>
-          </div>
+        <div>
+          <InputLabel>Maximum message size in bytes *</InputLabel>
+          <Input
+            type="number"
+            defaultValue="1000012"
+            name="maxMessageBytes"
+            inputSize="M"
+          />
+          <FormError>
+            <ErrorMessage errors={errors} name="maxMessageBytes" />
+          </FormError>
         </div>
 
         <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
 
-        <input type="submit" className="button is-primary" value="Send" />
+        <Button type="submit" buttonType="primary" buttonSize="L">
+          Send
+        </Button>
       </fieldset>
-    </form>
+    </StyledForm>
   );
 };
 

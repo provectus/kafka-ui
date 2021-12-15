@@ -1,8 +1,9 @@
 import React from 'react';
 import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { Button } from 'components/common/Button/Button';
+import styled from 'styled-components';
 
-import CustomParamButton from './CustomParamButton';
 import CustomParamField from './CustomParamField';
 
 export const INDEX_PREFIX = 'customParams';
@@ -11,6 +12,11 @@ interface Props {
   isSubmitting: boolean;
   config?: TopicConfigByName;
 }
+
+const CustomParamsWrapper = styled.div`
+  margin-top: 16px;
+  margin-bottom: 16px;
+`;
 
 const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   const { control } = useFormContext<TopicFormData>();
@@ -27,17 +33,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   };
 
   return (
-    <>
-      <div className="columns">
-        <div className="column">
-          <CustomParamButton
-            className="is-success"
-            type="fa-plus"
-            onClick={() => append({ name: '', value: '' })}
-            btnText="Add Custom Parameter"
-          />
-        </div>
-      </div>
+    <CustomParamsWrapper>
       {fields.map((field, idx) => (
         <CustomParamField
           key={field.id}
@@ -49,7 +45,18 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
           setExistingFields={setExistingFields}
         />
       ))}
-    </>
+      <div>
+        <Button
+          type="button"
+          buttonSize="M"
+          buttonType="secondary"
+          onClick={() => append({ name: '', value: '' })}
+        >
+          <i className="fas fa-plus" />
+          Add Custom Parameter
+        </Button>
+      </div>
+    </CustomParamsWrapper>
   );
 };
 
