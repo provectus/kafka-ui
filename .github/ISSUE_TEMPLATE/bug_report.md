@@ -12,7 +12,8 @@ assignees: ''
 
 
 **Set up**
-(How do you run the app?)
+(How do you run the app? 
+Which version of the app are you running? Provide either docker image version or check commit hash at the top left corner. We won't be able to help you without this information.)
 
 
 **Steps to Reproduce**

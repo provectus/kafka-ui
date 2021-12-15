@@ -15,7 +15,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <spring-boot.version>2.5.6</spring-boot.version>
-        <jackson-databind-nullable.version>0.2.1</jackson-databind-nullable.version>
+        <jackson-databind-nullable.version>0.2.2</jackson-databind-nullable.version>
         <org.mapstruct.version>1.4.2.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.20</org.projectlombok.version>
         <org.projectlombok.e2e-checks.version>1.18.20</org.projectlombok.e2e-checks.version>
@@ -24,8 +24,8 @@
         <kafka-clients.version>2.8.0</kafka-clients.version>
         <node.version>v14.17.1</node.version>
         <dockerfile-maven-plugin.version>1.4.10</dockerfile-maven-plugin.version>
-        <frontend-maven-plugin.version>1.8.0</frontend-maven-plugin.version>
-        <maven-compiler-plugin.version>3.5.1</maven-compiler-plugin.version>
+        <frontend-maven-plugin.version>1.12.0</frontend-maven-plugin.version>
+        <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
         <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
@@ -39,6 +39,7 @@
         <junit-jupiter-engine.version>5.7.2</junit-jupiter-engine.version>
         <mockito.version>2.21.0</mockito.version>
         <assertj.version>3.19.0</assertj.version>
+        <antlr4-maven-plugin.version>4.7.1</antlr4-maven-plugin.version>
 
         <frontend-generated-sources-directory>..//kafka-ui-react-app/src/generated-sources
         </frontend-generated-sources-directory>
