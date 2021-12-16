@@ -314,8 +314,8 @@ const Filters: React.FC<FiltersProps> = ({
           onChange={(e) => toggleSeekDirection(e.target.value)}
           value={seekDirection}
         >
-          <option value={SeekDirection.FORWARD}>Oldest first</option>
-          <option value={SeekDirection.BACKWARD}>Newest first</option>
+          <option value={SeekDirection.FORWARD}>Oldest First</option>
+          <option value={SeekDirection.BACKWARD}>Newest First</option>
         </Select>
       </div>
       <S.FiltersMetrics>

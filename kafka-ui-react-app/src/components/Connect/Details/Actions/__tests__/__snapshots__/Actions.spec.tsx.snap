@@ -139,7 +139,7 @@ exports[`Actions view matches snapshot 1`] = `
       />
     </span>
     <span>
-      Restart all tasks
+      Restart All Tasks
     </span>
   </button>
   <a
@@ -157,7 +157,7 @@ exports[`Actions view matches snapshot 1`] = `
         />
       </span>
       <span>
-        Edit config
+        Edit Config
       </span>
     </button>
   </a>
@@ -330,7 +330,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
       />
     </span>
     <span>
-      Restart all tasks
+      Restart All Tasks
     </span>
   </button>
   <a
@@ -348,7 +348,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
         />
       </span>
       <span>
-        Edit config
+        Edit Config
       </span>
     </button>
   </a>
@@ -506,7 +506,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
       />
     </span>
     <span>
-      Restart all tasks
+      Restart All Tasks
     </span>
   </button>
   <a
@@ -524,7 +524,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
         />
       </span>
       <span>
-        Edit config
+        Edit Config
       </span>
     </button>
   </a>
@@ -697,7 +697,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
       />
     </span>
     <span>
-      Restart all tasks
+      Restart All Tasks
     </span>
   </button>
   <a
@@ -715,7 +715,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
         />
       </span>
       <span>
-        Edit config
+        Edit Config
       </span>
     </button>
   </a>
@@ -888,7 +888,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
       />
     </span>
     <span>
-      Restart all tasks
+      Restart All Tasks
     </span>
   </button>
   <a
@@ -906,7 +906,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
         />
       </span>
       <span>
-        Edit config
+        Edit Config
       </span>
     </button>
   </a>
@@ -1064,7 +1064,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
       />
     </span>
     <span>
-      Restart all tasks
+      Restart All Tasks
     </span>
   </button>
   <a
@@ -1082,7 +1082,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
         />
       </span>
       <span>
-        Edit config
+        Edit Config
       </span>
     </button>
   </a>
