@@ -219,12 +219,6 @@ export const fetchTopicMessageSchemaAction = createAsyncAction(
   { alert?: FailurePayload }
 >();
 
-export const sendTopicMessageAction = createAsyncAction(
-  'SEND_TOPIC_MESSAGE__REQUEST',
-  'SEND_TOPIC_MESSAGE__SUCCESS',
-  'SEND_TOPIC_MESSAGE__FAILURE'
-)<undefined, undefined, { alert?: FailurePayload }>();
-
 export const updateTopicPartitionsCountAction = createAsyncAction(
   'UPDATE_PARTITIONS__REQUEST',
   'UPDATE_PARTITIONS__SUCCESS',

@@ -211,57 +211,6 @@ describe('Thunks', () => {
       ]);
     });
   });
-
-  describe('sendTopicMessage', () => {
-    it('creates SEND_TOPIC_MESSAGE__FAILURE', async () => {
-      fetchMock.postOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        404
-      );
-      try {
-        await store.dispatch(
-          thunks.sendTopicMessage(clusterName, topicName, {
-            key: '{}',
-            content: '{}',
-            headers: undefined,
-            partition: 0,
-          })
-        );
-      } catch (error) {
-        const err = error as Response;
-        expect(err.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.sendTopicMessageAction.request(),
-          actions.sendTopicMessageAction.failure({
-            alert: {
-              subject: ['topic', topicName].join('-'),
-              title: `Topic Message ${topicName}`,
-              response: err,
-            },
-          }),
-        ]);
-      }
-    });
-
-    it('creates SEND_TOPIC_MESSAGE__SUCCESS', async () => {
-      fetchMock.postOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        200
-      );
-      await store.dispatch(
-        thunks.sendTopicMessage(clusterName, topicName, {
-          key: '{}',
-          content: '{}',
-          headers: undefined,
-          partition: 0,
-        })
-      );
-      expect(store.getActions()).toEqual([
-        actions.sendTopicMessageAction.request(),
-        actions.sendTopicMessageAction.success(),
-      ]);
-    });
-  });
   describe('increasing partitions count', () => {
     it('calls updateTopicPartitionsCountAction.success on success', async () => {
       fetchMock.patchOnce(
