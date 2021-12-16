@@ -106,11 +106,7 @@ const SendMessage: React.FC = () => {
           clusterName,
           topicName,
           createTopicMessage: {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             key: !key ? null : key,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             content: !content ? null : content,
             headers,
             partition,
