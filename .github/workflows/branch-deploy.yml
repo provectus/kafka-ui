@@ -9,7 +9,7 @@ on:
       kafka-ui-password:
         required: true
         description: Password that will be used to login to branch env. If the env is not publicly accessible, this password will not be used.
-        default: ""
+        default: "test"
   pull_request:
     types: ['labeled']
 jobs:
