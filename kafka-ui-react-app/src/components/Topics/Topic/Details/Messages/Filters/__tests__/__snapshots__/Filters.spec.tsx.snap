@@ -1,6 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Filters component matches the snapshot 1`] = `
+.c9 {
+  min-width: 200px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.c9 > .dropdown-container {
+  height: 32px;
+}
+
+.c9 > .dropdown-container > .dropdown-heading {
+  height: 32px;
+}
+
 .c3 {
   position: absolute;
   top: 50%;
@@ -206,7 +220,7 @@ exports[`Filters component matches the snapshot 1`] = `
   position: relative;
 }
 
-.c9 {
+.c10 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -232,27 +246,27 @@ exports[`Filters component matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c9:hover:enabled {
+.c10:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c9:active:enabled {
+.c10:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c9:disabled {
+.c10:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c9 a {
+.c10 a {
   color: white;
 }
 
-.c9 i {
+.c10 i {
   margin-right: 7px;
 }
 
@@ -282,18 +296,6 @@ exports[`Filters component matches the snapshot 1`] = `
 
 .c0 > div:first-child > div:last-child {
   width: 10%;
-}
-
-.c0 .multi-select {
-  height: 32px;
-}
-
-.c0 .multi-select > .dropdown-container {
-  height: 32px;
-}
-
-.c0 .multi-select > .dropdown-container > .dropdown-heading {
-  height: 32px;
 }
 
 .c1 {
@@ -359,7 +361,7 @@ exports[`Filters component matches the snapshot 1`] = `
   outline: none;
 }
 
-.c10 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -377,7 +379,7 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c11 {
+.c12 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -386,7 +388,7 @@ exports[`Filters component matches the snapshot 1`] = `
   display: flex;
 }
 
-.c12 {
+.c13 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -449,7 +451,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <div
-            class="rmsc multi-select"
+            class="rmsc c9"
           >
             <div
               aria-labelledby="Select partitions"
@@ -510,7 +512,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="c9"
+            class="c10"
             style="font-weight: 500;"
             type="submit"
           >
@@ -537,17 +539,17 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c10"
+        class="c11"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c11"
+          class="c12"
           title="Elapsed Time"
         >
           <div
-            class="c12"
+            class="c13"
           >
             <i
               class="far fa-clock"
@@ -559,11 +561,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c11"
+          class="c12"
           title="Bytes Consumed"
         >
           <div
-            class="c12"
+            class="c13"
           >
             <i
               class="fas fa-arrow-down"
@@ -574,11 +576,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c11"
+          class="c12"
           title="Messages Consumed"
         >
           <div
-            class="c12"
+            class="c13"
           >
             <i
               class="far fa-file-alt"
@@ -596,7 +598,21 @@ exports[`Filters component matches the snapshot 1`] = `
 
 exports[`Filters component when fetching matches the snapshot 1`] = `
 <body>
-  .c3 {
+  .c9 {
+  min-width: 200px;
+  height: 32px;
+  font-size: 14px;
+}
+
+.c9 > .dropdown-container {
+  height: 32px;
+}
+
+.c9 > .dropdown-container > .dropdown-heading {
+  height: 32px;
+}
+
+.c3 {
   position: absolute;
   top: 50%;
   line-height: 0;
@@ -801,7 +817,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   position: relative;
 }
 
-.c9 {
+.c10 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -827,27 +843,27 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c9:hover:enabled {
+.c10:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c9:active:enabled {
+.c10:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c9:disabled {
+.c10:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c9 a {
+.c10 a {
   color: white;
 }
 
-.c9 i {
+.c10 i {
   margin-right: 7px;
 }
 
@@ -877,18 +893,6 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 
 .c0 > div:first-child > div:last-child {
   width: 10%;
-}
-
-.c0 .multi-select {
-  height: 32px;
-}
-
-.c0 .multi-select > .dropdown-container {
-  height: 32px;
-}
-
-.c0 .multi-select > .dropdown-container > .dropdown-heading {
-  height: 32px;
 }
 
 .c1 {
@@ -954,7 +958,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   outline: none;
 }
 
-.c10 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -972,7 +976,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c11 {
+.c12 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -981,7 +985,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   display: flex;
 }
 
-.c12 {
+.c13 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -1043,7 +1047,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <div
-            class="rmsc multi-select"
+            class="rmsc c9"
           >
             <div
               aria-labelledby="Select partitions"
@@ -1104,7 +1108,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="c9"
+            class="c10"
             style="font-weight: 500;"
             type="button"
           >
@@ -1131,17 +1135,17 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c10"
+        class="c11"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c11"
+          class="c12"
           title="Elapsed Time"
         >
           <div
-            class="c12"
+            class="c13"
           >
             <i
               class="far fa-clock"
@@ -1153,11 +1157,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c11"
+          class="c12"
           title="Bytes Consumed"
         >
           <div
-            class="c12"
+            class="c13"
           >
             <i
               class="fas fa-arrow-down"
@@ -1168,11 +1172,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c11"
+          class="c12"
           title="Messages Consumed"
         >
           <div
-            class="c12"
+            class="c13"
           >
             <i
               class="far fa-file-alt"

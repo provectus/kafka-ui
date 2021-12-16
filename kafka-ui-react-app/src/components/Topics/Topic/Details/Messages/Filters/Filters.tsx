@@ -13,7 +13,7 @@ import * as React from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
-import MultiSelect from 'react-multi-select-component';
+import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { TopicName, ClusterName } from 'redux/interfaces';
@@ -22,14 +22,7 @@ import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 
-import {
-  FilterInputs,
-  FiltersMetrics,
-  FiltersWrapper,
-  Metric,
-  MetricsIcon,
-  SeekTypeSelectorWrapper,
-} from './Filters.styled';
+import * as S from './Filters.styled';
 import {
   filterOptions,
   getOffsetFromSeekToParam,
@@ -235,9 +228,9 @@ const Filters: React.FC<FiltersProps> = ({
   }, [seekDirection]);
 
   return (
-    <FiltersWrapper>
+    <S.FiltersWrapper>
       <div>
-        <FilterInputs>
+        <S.FilterInputs>
           <Input
             inputSize="M"
             id="searchText"
@@ -248,7 +241,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={({ target: { value } }) => setQuery(value)}
           />
           {isSeekTypeControlVisible && (
-            <SeekTypeSelectorWrapper>
+            <S.SeekTypeSelectorWrapper>
               <Select
                 id="selectSeekType"
                 onChange={({ target: { value } }) =>
@@ -280,7 +273,7 @@ const Filters: React.FC<FiltersProps> = ({
                   placeholderText="Select timestamp"
                 />
               )}
-            </SeekTypeSelectorWrapper>
+            </S.SeekTypeSelectorWrapper>
           )}
           <MultiSelect
             options={partitions.map((p) => ({
@@ -315,7 +308,7 @@ const Filters: React.FC<FiltersProps> = ({
               Submit
             </Button>
           )}
-        </FilterInputs>
+        </S.FilterInputs>
         <Select
           selectSize="M"
           onChange={(e) => toggleSeekDirection(e.target.value)}
@@ -325,28 +318,28 @@ const Filters: React.FC<FiltersProps> = ({
           <option value={SeekDirection.BACKWARD}>Newest first</option>
         </Select>
       </div>
-      <FiltersMetrics>
+      <S.FiltersMetrics>
         <p style={{ fontSize: 14 }}>{isFetching && phaseMessage}</p>
-        <Metric title="Elapsed Time">
-          <MetricsIcon>
+        <S.Metric title="Elapsed Time">
+          <S.MetricsIcon>
             <i className="far fa-clock" />
-          </MetricsIcon>
+          </S.MetricsIcon>
           <span>{Math.max(elapsedMs || 0, 0)} ms</span>
-        </Metric>
-        <Metric title="Bytes Consumed">
-          <MetricsIcon>
+        </S.Metric>
+        <S.Metric title="Bytes Consumed">
+          <S.MetricsIcon>
             <i className="fas fa-arrow-down" />
-          </MetricsIcon>
+          </S.MetricsIcon>
           <BytesFormatted value={bytesConsumed} />
-        </Metric>
-        <Metric title="Messages Consumed">
-          <MetricsIcon>
+        </S.Metric>
+        <S.Metric title="Messages Consumed">
+          <S.MetricsIcon>
             <i className="far fa-file-alt" />
-          </MetricsIcon>
+          </S.MetricsIcon>
           <span>{messagesConsumed} messages</span>
-        </Metric>
-      </FiltersMetrics>
-    </FiltersWrapper>
+        </S.Metric>
+      </S.FiltersMetrics>
+    </S.FiltersWrapper>
   );
 };
 
