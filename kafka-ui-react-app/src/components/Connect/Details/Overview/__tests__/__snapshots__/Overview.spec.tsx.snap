@@ -181,7 +181,7 @@ exports[`Overview view matches snapshot 1`] = `
           <div
             className="c4"
           >
-            Tasks running
+            Tasks Running
              
           </div>
           <span>
@@ -196,7 +196,7 @@ exports[`Overview view matches snapshot 1`] = `
           <div
             className="c4"
           >
-            Tasks failed
+            Tasks Failed
              
             <svg
               fill="none"
@@ -214,6 +214,7 @@ exports[`Overview view matches snapshot 1`] = `
             </svg>
           </div>
           <span>
+            f
             2
           </span>
         </div>

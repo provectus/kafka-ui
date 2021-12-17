@@ -33,11 +33,11 @@ const Overview: React.FC<OverviewProps> = ({
         <Metrics.Indicator label="State">
           <TagStyled color="yellow">{connector.status.state}</TagStyled>
         </Metrics.Indicator>
-        <Metrics.Indicator label="Tasks running">
+        <Metrics.Indicator label="Tasks Running">
           {runningTasksCount}
         </Metrics.Indicator>
-        <Metrics.Indicator label="Tasks failed" isAlert>
-          {failedTasksCount}
+        <Metrics.Indicator label="Tasks Failed" isAlert>
+          f{failedTasksCount}
         </Metrics.Indicator>
       </Metrics.Section>
     </Metrics.Wrapper>

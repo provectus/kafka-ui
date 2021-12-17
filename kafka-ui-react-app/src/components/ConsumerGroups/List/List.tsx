@@ -30,10 +30,10 @@ const List: React.FC = () => {
       <Table isFullwidth>
         <thead>
           <tr>
-            <TableHeaderCell title="Consumer group ID" />
-            <TableHeaderCell title="Num of members" />
-            <TableHeaderCell title="Num of topics" />
-            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Consumer Group ID" />
+            <TableHeaderCell title="Num Of Members" />
+            <TableHeaderCell title="Num Of Topics" />
+            <TableHeaderCell title="Messages Behind" />
             <TableHeaderCell title="Coordinator" />
             <TableHeaderCell title="State" />
           </tr>

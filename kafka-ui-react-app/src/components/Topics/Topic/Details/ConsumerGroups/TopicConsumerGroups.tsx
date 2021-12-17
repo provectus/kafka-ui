@@ -33,9 +33,9 @@ const TopicConsumerGroups: React.FC<Props> = ({
       <Table isFullwidth>
         <thead>
           <tr>
-            <TableHeaderCell title="Consumer group ID" />
-            <TableHeaderCell title="Num of members" />
-            <TableHeaderCell title="Messages behind" />
+            <TableHeaderCell title="Consumer Group ID" />
+            <TableHeaderCell title="Num Of Members" />
+            <TableHeaderCell title="Messages Behind" />
             <TableHeaderCell title="Coordinator" />
             <TableHeaderCell title="State" />
           </tr>
