@@ -15,8 +15,7 @@ export const Select = styled.select<Props>`
   padding-left: ${(props) => (props.isLive ? '36px' : '12px')};
   padding-right: 16px;
   color: ${(props) => props.theme.selectStyles.color.normal};
-  min-width: ${({ minWidth }) => minWidth || 'auto' };
-
+  min-width: ${({ minWidth }) => minWidth || 'auto'};
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
