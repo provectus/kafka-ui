@@ -184,3 +184,5 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_JMXSSL` |Enable SSL for JMX? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
 |`KAFKA_CLUSTERS_0_JMXUSERNAME` |Username for JMX authentication
 |`KAFKA_CLUSTERS_0_JMXPASSWORD` |Password for JMX authentication
+
+test
