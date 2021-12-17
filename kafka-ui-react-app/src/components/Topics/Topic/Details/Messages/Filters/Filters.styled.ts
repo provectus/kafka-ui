@@ -16,16 +16,6 @@ export const FiltersWrapper = styled.div`
       width: 10%;
     }
   }
-
-  & .multi-select {
-    height: 32px;
-    & > .dropdown-container {
-      height: 32px;
-      & > .dropdown-heading {
-        height: 32px;
-      }
-    }
-  }
 `;
 
 export const FilterInputs = styled.div`

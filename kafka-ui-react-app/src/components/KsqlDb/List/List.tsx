@@ -43,7 +43,7 @@ const List: FC = () => {
           buttonType="primary"
           buttonSize="M"
         >
-          Execute KSQL request
+          Execute KSQL Request
         </Button>
       </PageHeading>
       <Metrics.Wrapper>

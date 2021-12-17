@@ -36,7 +36,7 @@ const Settings: React.FC<Props> = ({
           <tr>
             <TableHeaderCell title="Key" />
             <TableHeaderCell title="Value" />
-            <TableHeaderCell title="Default value" />
+            <TableHeaderCell title="Default Value" />
           </tr>
         </thead>
         <tbody>

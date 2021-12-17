@@ -11,6 +11,7 @@ export interface SelectProps
   selectSize?: 'M' | 'L';
   isLive?: boolean;
   hookFormOptions?: RegisterOptions;
+  minWidth?: string;
 }
 
 const Select: React.FC<SelectProps> = ({

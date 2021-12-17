@@ -126,7 +126,7 @@ const Actions: React.FC<ActionsProps> = ({
         <span>
           <i className="fas fa-sync-alt" />
         </span>
-        <span>Restart all tasks</span>
+        <span>Restart All Tasks</span>
       </Button>
       <Button
         buttonSize="M"
@@ -143,7 +143,7 @@ const Actions: React.FC<ActionsProps> = ({
         <span>
           <i className="fas fa-pencil-alt" />
         </span>
-        <span>Edit config</span>
+        <span>Edit Config</span>
       </Button>
 
       <Button
