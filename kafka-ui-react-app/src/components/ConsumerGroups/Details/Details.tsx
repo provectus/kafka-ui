@@ -98,10 +98,10 @@ const Details: React.FC = () => {
           <Metrics.Indicator label="Members">
             {consumerGroup.members}
           </Metrics.Indicator>
-          <Metrics.Indicator label="Assigned topics">
+          <Metrics.Indicator label="Assigned Topics">
             {consumerGroup.topics}
           </Metrics.Indicator>
-          <Metrics.Indicator label="Assigned partitions">
+          <Metrics.Indicator label="Assigned Partitions">
             {consumerGroup.partitions?.length}
           </Metrics.Indicator>
           <Metrics.Indicator label="Coordinator ID">

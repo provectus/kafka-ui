@@ -88,7 +88,7 @@ const Details: React.FC<Props> = ({
               isLink
               to={clusterTopicSendMessagePath(clusterName, topicName)}
             >
-              Produce message
+              Produce Message
             </Button>
           </Route>
           {!isReadOnly && !isInternal && (

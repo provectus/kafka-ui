@@ -216,6 +216,42 @@ exports[`Filters component matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
+.c11 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: 120px;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c11:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c11:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c11:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
 .c6 {
   position: relative;
 }
@@ -361,7 +397,7 @@ exports[`Filters component matches the snapshot 1`] = `
   outline: none;
 }
 
-.c11 {
+.c12 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -379,7 +415,7 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c12 {
+.c13 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -388,7 +424,7 @@ exports[`Filters component matches the snapshot 1`] = `
   display: flex;
 }
 
-.c13 {
+.c14 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -523,33 +559,33 @@ exports[`Filters component matches the snapshot 1`] = `
           class="select-wrapper c6"
         >
           <select
-            class="c7"
+            class="c11"
           >
             <option
               value="FORWARD"
             >
-              Oldest first
+              Oldest First
             </option>
             <option
               value="BACKWARD"
             >
-              Newest first
+              Newest First
             </option>
           </select>
         </div>
       </div>
       <div
-        class="c11"
+        class="c12"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c12"
+          class="c13"
           title="Elapsed Time"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-clock"
@@ -561,11 +597,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Bytes Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="fas fa-arrow-down"
@@ -576,11 +612,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Messages Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-file-alt"
@@ -813,6 +849,42 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
+.c11 {
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: 120px;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c11:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c11:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c11:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
 .c6 {
   position: relative;
 }
@@ -958,7 +1030,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   outline: none;
 }
 
-.c11 {
+.c12 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -976,7 +1048,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c12 {
+.c13 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -985,7 +1057,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   display: flex;
 }
 
-.c13 {
+.c14 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -1119,33 +1191,33 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           class="select-wrapper c6"
         >
           <select
-            class="c7"
+            class="c11"
           >
             <option
               value="FORWARD"
             >
-              Oldest first
+              Oldest First
             </option>
             <option
               value="BACKWARD"
             >
-              Newest first
+              Newest First
             </option>
           </select>
         </div>
       </div>
       <div
-        class="c11"
+        class="c12"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c12"
+          class="c13"
           title="Elapsed Time"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-clock"
@@ -1157,11 +1229,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Bytes Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="fas fa-arrow-down"
@@ -1172,11 +1244,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Messages Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-file-alt"

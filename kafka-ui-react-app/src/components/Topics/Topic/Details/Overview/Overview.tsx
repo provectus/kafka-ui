@@ -55,7 +55,7 @@ const Overview: React.FC<Props> = ({
           >
             <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
           </Metrics.Indicator>
-          <Metrics.Indicator label="In sync replicas" isAlert>
+          <Metrics.Indicator label="In Sync Replicas" isAlert>
             {inSyncReplicas && replicas && inSyncReplicas < replicas ? (
               <Metrics.RedText>{inSyncReplicas}</Metrics.RedText>
             ) : (
@@ -71,7 +71,7 @@ const Overview: React.FC<Props> = ({
           <Metrics.Indicator label="Segment Size" title="">
             <BytesFormatted value={segmentSize} />
           </Metrics.Indicator>
-          <Metrics.Indicator label="Segment count">
+          <Metrics.Indicator label="Segment Count">
             {segmentCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Clean Up Policy">
@@ -84,9 +84,9 @@ const Overview: React.FC<Props> = ({
           <thead>
             <tr>
               <TableHeaderCell title="Partition ID" />
-              <TableHeaderCell title="Broker leader" />
-              <TableHeaderCell title="Min offset" />
-              <TableHeaderCell title="Max offset" />
+              <TableHeaderCell title="Broker Leader" />
+              <TableHeaderCell title="Min Offset" />
+              <TableHeaderCell title="Max Offset" />
               <TableHeaderCell title=" " />
             </tr>
           </thead>

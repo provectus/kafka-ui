@@ -76,7 +76,7 @@ const Brokers: React.FC = () => {
           <Metrics.Indicator label="In Sync Replicas">
             {inSyncReplicasCount}
           </Metrics.Indicator>
-          <Metrics.Indicator label="Out of Sync Replicas">
+          <Metrics.Indicator label="Out Of Sync Replicas">
             {outOfSyncReplicasCount}
           </Metrics.Indicator>
         </Metrics.Section>
@@ -85,7 +85,7 @@ const Brokers: React.FC = () => {
         <thead>
           <tr>
             <TableHeaderCell title="Broker" />
-            <TableHeaderCell title="Segment size (Mb)" />
+            <TableHeaderCell title="Segment Size (Mb)" />
             <TableHeaderCell title="Segment Count" />
           </tr>
         </thead>
