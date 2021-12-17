@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.exception.DuplicateEntityException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.exception.SchemaTypeIsNotSupportedException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
@@ -51,6 +52,8 @@ public class SchemaRegistryService {
   private static final String URL_SUBJECT_VERSIONS = "/subjects/{schemaName}/versions";
   private static final String URL_SUBJECT_BY_VERSION = "/subjects/{schemaName}/versions/{version}";
   private static final String LATEST = "latest";
+
+  private static final String ERROR_MESSAGE_UNRECOGNIZED_FIELD_SCHEMA_TYPE = "Unrecognized field: schemaType";
 
   private final ClustersStorage clustersStorage;
   private final ClusterMapper mapper;
@@ -213,7 +216,8 @@ public class SchemaRegistryService {
         .retrieve()
         .onStatus(UNPROCESSABLE_ENTITY::equals,
             r -> r.bodyToMono(ErrorResponse.class)
-                .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
+                .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage()) ?
+                        new SchemaTypeIsNotSupportedException() : new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SubjectIdResponse.class);
   }
 
@@ -231,7 +235,8 @@ public class SchemaRegistryService {
         .onStatus(NOT_FOUND::equals, res -> Mono.empty())
         .onStatus(UNPROCESSABLE_ENTITY::equals,
             r -> r.bodyToMono(ErrorResponse.class)
-                .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
+                .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage()) ?
+                        new SchemaTypeIsNotSupportedException() : new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SchemaSubjectDTO.class)
         .filter(s -> Objects.isNull(s.getId()))
         .switchIfEmpty(Mono.error(new DuplicateEntityException("Such schema already exists")));
@@ -347,5 +352,9 @@ public class SchemaRegistryService {
         .method(method)
         .uri(schemaRegistry.getFirstUrl() + uri, params)
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
+  }
+
+  private boolean isUnrecognizedFieldSchemaTypeMessage(String errorMessage) {
+    return errorMessage.contains(ERROR_MESSAGE_UNRECOGNIZED_FIELD_SCHEMA_TYPE);
   }
 }
