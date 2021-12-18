@@ -168,7 +168,7 @@ export const AlertsContainer = styled.div`
   width: 500px;
   position: fixed;
   bottom: 15px;
-  right: 15px;
+  left: 15px;
   z-index: 1000;
 
   @media screen and (max-width: 1023px) {

@@ -5,7 +5,7 @@ import EditContainer from 'components/Topics/Topic/Edit/EditContainer';
 import DetailsContainer from 'components/Topics/Topic/Details/DetailsContainer';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 
-import SendMessage from './SendMessage/SendMessage';
+import SendMessageContainer from './SendMessage/SendMessageContainer';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -41,7 +41,7 @@ const Topic: React.FC<TopicProps> = ({
       <Route
         exact
         path="/ui/clusters/:clusterName/topics/:topicName/message"
-        component={SendMessage}
+        component={SendMessageContainer}
       />
       <Route
         path="/ui/clusters/:clusterName/topics/:topicName"

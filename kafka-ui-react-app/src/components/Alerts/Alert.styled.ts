@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 export const Alert = styled.div<{ $type: AlertType }>`
   background-color: ${({ $type, theme }) => theme.alert.color[$type]};
-  min-width: 400px;
+  width: 400px;
   min-height: 64px;
   border-radius: 8px;
   padding: 12px;
@@ -20,14 +20,8 @@ export const Title = styled.div`
   font-size: 14px;
 `;
 
-export const Message = styled.div`
+export const Message = styled.p`
   font-weight: normal;
   font-size: 14px;
   margin: 3px 0;
-
-  ol,
-  ul {
-    padding-left: 25px;
-    list-style: auto;
-  }
 `;

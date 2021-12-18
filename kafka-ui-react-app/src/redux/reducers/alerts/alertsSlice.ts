@@ -1,8 +1,4 @@
-import {
-  createEntityAdapter,
-  createSlice,
-  PayloadAction,
-} from '@reduxjs/toolkit';
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/matchers';
 import { now } from 'lodash';
 import { Alert, RootState, ServerResponse } from 'redux/interfaces';
@@ -23,9 +19,6 @@ const alertsSlice = createSlice({
   initialState: alertsAdapter.getInitialState(),
   reducers: {
     alertDissmissed: alertsAdapter.removeOne,
-    alertAdded(state, action: PayloadAction<Alert>) {
-      alertsAdapter.upsertOne(state, action.payload);
-    },
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -54,6 +47,6 @@ export const { selectAll } = alertsAdapter.getSelectors<RootState>(
   (state) => state.alerts
 );
 
-export const { alertDissmissed, alertAdded } = alertsSlice.actions;
+export const { alertDissmissed } = alertsSlice.actions;
 
 export default alertsSlice.reducer;

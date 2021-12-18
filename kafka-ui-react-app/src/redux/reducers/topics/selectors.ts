@@ -26,6 +26,8 @@ const getTopicCreationStatus = createLeagcyFetchingSelector('POST_TOPIC');
 const getTopicUpdateStatus = createLeagcyFetchingSelector('PATCH_TOPIC');
 const getTopicMessageSchemaFetchingStatus =
   createLeagcyFetchingSelector('GET_TOPIC_SCHEMA');
+const getTopicMessageSendingStatus =
+  createLeagcyFetchingSelector('SEND_TOPIC_MESSAGE');
 const getPartitionsCountIncreaseStatus =
   createLeagcyFetchingSelector('UPDATE_PARTITIONS');
 const getReplicationFactorUpdateStatus = createLeagcyFetchingSelector(
@@ -76,6 +78,11 @@ export const getTopicUpdated = createSelector(
 export const getTopicMessageSchemaFetched = createSelector(
   getTopicMessageSchemaFetchingStatus,
   (status) => status === 'fetched'
+);
+
+export const getTopicMessageSending = createSelector(
+  getTopicMessageSendingStatus,
+  (status) => status === 'fetching'
 );
 
 export const getTopicPartitionsCountIncreased = createSelector(
