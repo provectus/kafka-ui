@@ -1,4 +1,5 @@
-FROM adoptopenjdk/openjdk13:x86_64-alpine-jre-13.0.2_8
+FROM alpine:latest
+RUN apk add openjdk13-jre
 VOLUME /tmp
 ARG JAR_FILE
 COPY "/target/${JAR_FILE}" "/kafka-ui-api.jar"
