@@ -100,8 +100,8 @@ public class MessagesService {
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
       ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
-          msg.getKey(),
-          msg.getContent(),
+          msg.getKey().get(),
+          msg.getContent().get(),
           msg.getPartition()
       );
       producerRecord = new ProducerRecord<>(
