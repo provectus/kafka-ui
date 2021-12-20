@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
@@ -55,7 +55,7 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class ReactiveAdminClient implements Closeable {
 

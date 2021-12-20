@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -31,7 +31,7 @@ import org.apache.kafka.common.record.TimestampType;
 import org.apache.kafka.common.utils.Bytes;
 
 
-@Log4j2
+@Slf4j
 public class ClusterUtil {
 
   private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");

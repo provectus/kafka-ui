@@ -5,7 +5,7 @@ import com.provectus.kafka.ui.model.KsqlCommandDTO;
 import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.service.KsqlService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class KsqlController extends AbstractController implements KsqlApi {
   private final KsqlService ksqlService;
 
