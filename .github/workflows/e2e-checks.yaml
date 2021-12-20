@@ -64,7 +64,7 @@ jobs:
           destination_dir: ./allure
       - name: Post the link to allure report
         if: always()
-        uses: Sibz/github-status-action@v1
+        uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
           context: 'Test report'
