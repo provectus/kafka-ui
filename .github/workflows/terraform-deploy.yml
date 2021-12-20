@@ -62,4 +62,4 @@ jobs:
           cd $TF_DIR
           export TF_VAR_github_connector_access_token=${{ secrets.SOURCE_CONNECTOR_GITHUB_TOKEN }}
           export TF_VAR_repo_user_key=${{ secrets.KAFKA_UI_INFRA_TOKEN }}
-          terraform apply --var-file="../envs/pro/eks.tfvars"
+          terraform apply --var-file="../envs/pro/eks.tfvars" -auto-approve
