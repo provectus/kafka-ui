@@ -1879,8 +1879,6 @@ components:
           type: string
           nullable: true
       required:
-        - key
-        - content
         - partition
 
     TopicMessageSchema:

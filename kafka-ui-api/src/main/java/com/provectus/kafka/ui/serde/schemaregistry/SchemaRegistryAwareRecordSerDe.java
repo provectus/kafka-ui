@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -63,7 +64,8 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   private ObjectMapper objectMapper;
 
-  private SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster, ObjectMapper objectMapper) {
+  private SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster,
+                                                          ObjectMapper objectMapper) {
     if (cluster.getSchemaRegistry() == null) {
       throw new ValidationException("schemaRegistry is not specified");
     }
@@ -160,7 +162,9 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   @SneakyThrows
   private byte[] serialize(SchemaMetadata schema, String topic, String value, boolean isKey) {
-    if (value == null) return null;
+    if (value == null) {
+      return null;
+    }
     MessageReader<?> reader;
     if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
       reader = new ProtobufMessageReader(topic, isKey, schemaRegistryClient, schema);
@@ -176,7 +180,9 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   private byte[] serialize(String value) {
-    if (value == null) return null;
+    if (value == null) {
+      return null;
+    }
     // if no schema provided serialize input as raw string
     return value.getBytes();
   }
