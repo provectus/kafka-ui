@@ -51,7 +51,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   border-radius: 16px;
   height: 20px;
   line-height: 20px;
-  background-color: #FFEECC;
+  background-color: #D6F5E0;
   color: #171A1C;
   font-size: 12px;
   display: inline-block;
@@ -123,6 +123,14 @@ exports[`Connectors ListItem matches snapshot 1`] = `
             "hover": "#454F54",
             "normal": "#73848C",
           },
+        },
+      },
+      "circularAlert": Object {
+        "color": Object {
+          "error": "#E51A1A",
+          "info": "#E3E6E8",
+          "success": "#5CD685",
+          "warning": "#FFEECC",
         },
       },
       "layout": Object {
@@ -220,6 +228,8 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "backgroundColor": Object {
           "gray": "#E3E6E8",
           "green": "#D6F5E0",
+          "red": "#FAD1D1",
+          "white": "#E3E6E8",
           "yellow": "#FFEECC",
         },
         "color": "#171A1C",
@@ -378,11 +388,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                 </td>
                 <td>
                   <Styled(Tag)
-                    color="yellow"
+                    color="green"
                   >
                     <Tag
                       className="c3"
-                      color="yellow"
+                      color="green"
                     >
                       <p
                         className="c3"

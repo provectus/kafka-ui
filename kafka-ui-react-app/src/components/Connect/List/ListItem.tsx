@@ -1,5 +1,5 @@
 import React from 'react';
-import { FullConnectorInfo } from 'generated-sources';
+import { ConnectorState, FullConnectorInfo } from 'generated-sources';
 import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
@@ -56,6 +56,20 @@ const ListItem: React.FC<ListItemProps> = ({
     return tasksCount - (failedTasksCount || 0);
   }, [tasksCount, failedTasksCount]);
 
+  const stateColor = React.useMemo(() => {
+    const { state = '' } = status;
+
+    switch (state) {
+      case ConnectorState.RUNNING:
+        return 'green';
+      case ConnectorState.FAILED:
+      case ConnectorState.TASK_FAILED:
+        return 'red';
+      default:
+        return 'yellow';
+    }
+  }, [status]);
+
   return (
     <tr>
       <TableKeyLink>
@@ -78,7 +92,9 @@ const ListItem: React.FC<ListItemProps> = ({
           ))}
         </TopicTagsWrapper>
       </td>
-      <td>{status && <TagStyled color="yellow">{status.state}</TagStyled>}</td>
+      <td>
+        {status && <TagStyled color={stateColor}>{status.state}</TagStyled>}
+      </td>
       <td>
         {runningTasks && (
           <span>

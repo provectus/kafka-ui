@@ -136,6 +136,14 @@ exports[`Details when it has readonly flag does not render the Action button a T
           },
         },
       },
+      "circularAlert": Object {
+        "color": Object {
+          "error": "#E51A1A",
+          "info": "#E3E6E8",
+          "success": "#5CD685",
+          "warning": "#FFEECC",
+        },
+      },
       "layout": Object {
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
@@ -231,6 +239,8 @@ exports[`Details when it has readonly flag does not render the Action button a T
         "backgroundColor": Object {
           "gray": "#E3E6E8",
           "green": "#D6F5E0",
+          "red": "#FAD1D1",
+          "white": "#E3E6E8",
           "yellow": "#FFEECC",
         },
         "color": "#171A1C",

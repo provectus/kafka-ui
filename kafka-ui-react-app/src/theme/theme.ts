@@ -50,6 +50,14 @@ const theme = {
       info: Colors.neutral[10],
     },
   },
+  circularAlert: {
+    color: {
+      error: Colors.red[50],
+      success: Colors.green[40],
+      warning: Colors.yellow[10],
+      info: Colors.neutral[10],
+    },
+  },
   buttonStyles: {
     primary: {
       backgroundColor: {
@@ -159,6 +167,8 @@ const theme = {
       green: Colors.green[10],
       gray: Colors.neutral[10],
       yellow: Colors.yellow[10],
+      white: Colors.neutral[10],
+      red: Colors.red[10],
     },
     color: Colors.neutral[90],
   },

@@ -1,4 +1,5 @@
 import React from 'react';
+import { AlertType } from 'redux/interfaces';
 
 import * as S from './Metrics.styled';
 
@@ -7,6 +8,7 @@ interface Props {
   isAlert?: boolean;
   label: React.ReactNode;
   title?: string;
+  alertType?: AlertType;
 }
 
 const Indicator: React.FC<Props> = ({
@@ -14,6 +16,7 @@ const Indicator: React.FC<Props> = ({
   title,
   fetching,
   isAlert,
+  alertType = 'error',
   children,
 }) => {
   return (
@@ -22,15 +25,9 @@ const Indicator: React.FC<Props> = ({
         <S.IndicatorTitle>
           {label}{' '}
           {isAlert && (
-            <svg
-              width="4"
-              height="4"
-              viewBox="0 0 4 4"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <circle cx="2" cy="2" r="2" fill="#E61A1A" />
-            </svg>
+            <S.CircularAlertWrapper>
+              <S.CircularAlert $type={alertType} />
+            </S.CircularAlertWrapper>
           )}
         </S.IndicatorTitle>
         <span>
