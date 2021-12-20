@@ -1,7 +1,27 @@
 @import '@fortawesome/fontawesome-free/css/all.min.css';
-@import 'bulma';
-@import '~bulma-switch';
+@import 'src/theme/variables';
+@import 'bulma/sass/utilities/_all';
+@import 'bulma/sass/base/_all';
+@import "bulma/sass/elements/box";
+@import "bulma/sass/elements/container";
+@import "bulma/sass/elements/content";
+@import "bulma/sass/elements/icon";
+@import "bulma/sass/elements/image";
+@import "bulma/sass/elements/notification";
+@import "bulma/sass/elements/progress";
+@import "bulma/sass/elements/tag";
+@import "bulma/sass/elements/title";
+@import "bulma/sass/elements/other";
+
+@import 'bulma/sass/form/_all';
+@import 'bulma/sass/components/_all';
+
+@import 'bulma/sass/grid/_all';
+@import 'bulma/sass/helpers/_all';
 @import 'src/theme/bulma_overrides';
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap');
 
 #root,
 body,
@@ -9,29 +29,12 @@ html {
   width: 100%;
   position: relative;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: 'Inter', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: repeating-linear-gradient(
-      145deg,
-      rgba(0, 0, 0, 0.003),
-      rgba(0, 0, 0, 0.005) 5px,
-      rgba(0, 0, 0, 0) 5px,
-      rgba(0, 0, 0, 0) 10px
-    ),
-    repeating-linear-gradient(
-      -145deg,
-      rgba(0, 0, 0, 0.003),
-      rgba(0, 0, 0, 0.005) 5px,
-      rgba(0, 0, 0, 0) 5px,
-      rgba(0, 0, 0, 0) 10px
-    );
-  background-color: $light;
+  background-color: #fff;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: 'Roboto Mono', sans-serif;
 }

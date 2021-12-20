@@ -33,7 +33,7 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
   const { outdated, latestTag } = latestVersionInfo;
 
   return (
-    <div className="is-size-7 has-text-grey">
+    <div className="is-size-8 has-text-grey">
       <span className="has-text-grey-light mr-1">Version:</span>
       <span className="mr-1">{tag}</span>
       {outdated && (

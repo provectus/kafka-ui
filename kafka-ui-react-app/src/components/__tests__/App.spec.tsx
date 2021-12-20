@@ -1,79 +1,66 @@
 import React from 'react';
-import { mount } from 'enzyme';
-import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router-dom';
-import { Alert } from 'redux/interfaces';
-import configureStore from 'redux/store/configureStore';
-import App, { AppProps } from 'components/App';
-import AppContainer from 'components/AppContainer';
-
-const fetchClustersList = jest.fn();
-const store = configureStore();
+import { screen, within } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
+import App from 'components/App';
+import { render } from 'lib/testHelpers';
+import { store } from 'redux/store';
+import { fetchClusters } from 'redux/reducers/clusters/clustersSlice';
+import { clustersPayload } from 'redux/reducers/clusters/__test__/fixtures';
+import userEvent from '@testing-library/user-event';
 
 describe('App', () => {
-  describe('container', () => {
-    it('renders view', () => {
-      const wrapper = mount(
-        <Provider store={store}>
-          <StaticRouter>
-            <AppContainer />
-          </StaticRouter>
-        </Provider>
-      );
-      expect(wrapper.exists('App')).toBeTruthy();
-    });
-  });
-  describe('view', () => {
-    const setupComponent = (props: Partial<AppProps> = {}) => (
-      <Provider store={store}>
-        <StaticRouter>
-          <App
-            isClusterListFetched
-            alerts={[]}
-            clusters={[]}
-            fetchClustersList={fetchClustersList}
-            {...props}
-          />
-        </StaticRouter>
-      </Provider>
+  beforeEach(() => {
+    render(
+      <BrowserRouter basename={window.basePath || '/'}>
+        <App />
+      </BrowserRouter>
     );
+  });
 
-    it('handles fetchClustersList', () => {
-      const wrapper = mount(setupComponent());
-      expect(wrapper.exists()).toBeTruthy();
-      expect(fetchClustersList).toHaveBeenCalledTimes(1);
+  it('shows PageLoader until clusters are fulfilled', () => {
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
+  });
+
+  it('shows Cluster list', () => {
+    store.dispatch({
+      type: fetchClusters.fulfilled.type,
+      payload: clustersPayload,
     });
+    const menuContainer = screen.getByLabelText('Sidebar Menu');
+    expect(menuContainer).toBeInTheDocument();
+    expect(within(menuContainer).getByText('Dashboard')).toBeInTheDocument();
+    expect(
+      within(menuContainer).getByText(clustersPayload[0].name)
+    ).toBeInTheDocument();
+    expect(
+      within(menuContainer).getByText(clustersPayload[1].name)
+    ).toBeInTheDocument();
 
-    it('shows PageLoader until cluster list is fetched', () => {
-      let component = mount(setupComponent({ isClusterListFetched: false }));
-      expect(component.exists('.Layout__container PageLoader')).toBeTruthy();
-      expect(component.exists('.Layout__container Switch')).toBeFalsy();
+    expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+  });
 
-      component = mount(setupComponent({ isClusterListFetched: true }));
-      expect(component.exists('.Layout__container PageLoader')).toBeFalsy();
-      expect(component.exists('.Layout__container Switch')).toBeTruthy();
-    });
+  it('correctly renders header', () => {
+    const header = screen.getByLabelText('Page Header');
+    expect(header).toBeInTheDocument();
 
-    it('correctly renders alerts', () => {
-      const alert: Alert = {
-        id: 'alert-id',
-        type: 'success',
-        title: 'My Custom Title',
-        message: 'My Custom Message',
-        createdAt: 1234567890,
-      };
-      let wrapper = mount(setupComponent());
-      expect(wrapper.exists('.Layout__alerts')).toBeTruthy();
-      expect(wrapper.exists('Alert')).toBeFalsy();
+    expect(within(header).getByText('UI for Apache Kafka')).toBeInTheDocument();
+    expect(within(header).getAllByRole('separator').length).toEqual(3);
+    expect(within(header).getByRole('button')).toBeInTheDocument();
+  });
 
-      wrapper = mount(setupComponent({ alerts: [alert] }));
-      expect(wrapper.exists('Alert')).toBeTruthy();
-      expect(wrapper.find('Alert').length).toEqual(1);
-    });
+  it('handle burger click correctly', () => {
+    const header = screen.getByLabelText('Page Header');
+    const burger = within(header).getByRole('button');
+    const sidebar = screen.getByLabelText('Sidebar');
+    const overlay = screen.getByLabelText('Overlay');
 
-    it('matches snapshot', () => {
-      const wrapper = mount(setupComponent());
-      expect(wrapper).toMatchSnapshot();
-    });
+    expect(sidebar).toBeInTheDocument();
+    expect(overlay).toBeInTheDocument();
+    expect(overlay).toHaveStyleRule('visibility: hidden');
+    expect(burger).toHaveStyleRule('display: none');
+
+    userEvent.click(burger);
+    expect(overlay).toHaveStyleRule('visibility: visible');
   });
 });

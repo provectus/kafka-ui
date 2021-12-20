@@ -1,246 +1,507 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Connectors ListItem matches snapshot 1`] = `
-<Provider
-  store={
+.c5 {
+  background: transparent;
+  border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: 'center';
+  -webkit-box-align: 'center';
+  -ms-flex-align: 'center';
+  align-items: 'center';
+  -webkit-box-pack: 'center';
+  -webkit-justify-content: 'center';
+  -ms-flex-pack: 'center';
+  justify-content: 'center';
+}
+
+.c5:hover {
+  cursor: pointer;
+}
+
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
+.c2 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #E3E6E8;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c3 {
+  border: none;
+  border-radius: 16px;
+  height: 20px;
+  line-height: 20px;
+  background-color: #FFEECC;
+  color: #171A1C;
+  font-size: 12px;
+  display: inline-block;
+  padding-left: 0.75em;
+  padding-right: 0.75em;
+  text-align: center;
+}
+
+.c0 > a {
+  color: #171A1C;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}
+
+<Component
+  theme={
     Object {
-      "@@observable": [Function],
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
+      "alert": Object {
+        "color": Object {
+          "error": "#FAD1D1",
+          "info": "#E3E6E8",
+          "success": "#D6F5E0",
+          "warning": "#FFEECC",
+        },
+      },
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "chevronIconColor": "#73848C",
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+        "statusIconColor": Object {
+          "offline": "#E51A1A",
+          "online": "#5CD685",
+        },
+      },
+      "metrics": Object {
+        "backgroundColor": "#F1F2F3",
+        "indicator": Object {
+          "backgroundColor": "#FFFFFF",
+          "lightTextColor": "#ABB5BA",
+          "titleColor": "#73848C",
+          "warningTextColor": "#E51A1A",
+        },
+      },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
+      "paginationStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "gray": "#E3E6E8",
+          "green": "#D6F5E0",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
     }
   }
 >
-  <BrowserRouter>
-    <Router
-      history={
-        Object {
-          "action": "POP",
-          "block": [Function],
-          "createHref": [Function],
-          "go": [Function],
-          "goBack": [Function],
-          "goForward": [Function],
-          "length": 1,
-          "listen": [Function],
-          "location": Object {
-            "hash": "",
-            "pathname": "/",
-            "search": "",
-            "state": undefined,
-          },
-          "push": [Function],
-          "replace": [Function],
-        }
+  <Provider
+    store={
+      Object {
+        "@@observable": [Function],
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
       }
-    >
-      <table>
-        <tbody>
-          <ListItem
-            clusterName="local"
-            connector={
-              Object {
-                "connect": "first",
-                "connectorClass": "FileStreamSource",
-                "failedTasksCount": 0,
-                "name": "hdfs-source-connector",
-                "status": Object {
-                  "state": "RUNNING",
-                },
-                "tasksCount": 2,
-                "topics": Array [
-                  "test-topic",
-                ],
-                "type": "SOURCE",
+    }
+  >
+    <BrowserRouter>
+      <Router
+        history={
+          Object {
+            "action": "POP",
+            "block": [Function],
+            "createHref": [Function],
+            "go": [Function],
+            "goBack": [Function],
+            "goForward": [Function],
+            "length": 1,
+            "listen": [Function],
+            "location": Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+            "push": [Function],
+            "replace": [Function],
+          }
+        }
+      >
+        <table>
+          <tbody>
+            <ListItem
+              clusterName="local"
+              connector={
+                Object {
+                  "connect": "first",
+                  "connectorClass": "FileStreamSource",
+                  "failedTasksCount": 0,
+                  "name": "hdfs-source-connector",
+                  "status": Object {
+                    "state": "RUNNING",
+                  },
+                  "tasksCount": 2,
+                  "topics": Array [
+                    "test-topic",
+                  ],
+                  "type": "SOURCE",
+                }
               }
-            }
-          >
-            <tr>
-              <td
-                className="has-text-overflow-ellipsis"
-              >
-                <NavLink
-                  activeClassName="is-active"
-                  className="title is-6"
-                  exact={true}
-                  to="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
-                >
-                  <Link
-                    aria-current={null}
-                    className="title is-6"
-                    to={
-                      Object {
-                        "hash": "",
-                        "pathname": "/ui/clusters/local/connects/first/connectors/hdfs-source-connector",
-                        "search": "",
-                        "state": null,
-                      }
-                    }
+            >
+              <tr>
+                <styled.td>
+                  <td
+                    className="c0"
                   >
-                    <LinkAnchor
-                      aria-current={null}
-                      className="title is-6"
-                      href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
-                      navigate={[Function]}
+                    <NavLink
+                      exact={true}
+                      to="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
                     >
-                      <a
+                      <Link
                         aria-current={null}
-                        className="title is-6"
-                        href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
-                        onClick={[Function]}
+                        to={
+                          Object {
+                            "hash": "",
+                            "pathname": "/ui/clusters/local/connects/first/connectors/hdfs-source-connector",
+                            "search": "",
+                            "state": null,
+                          }
+                        }
                       >
-                        hdfs-source-connector
-                      </a>
-                    </LinkAnchor>
-                  </Link>
-                </NavLink>
-              </td>
-              <td>
-                first
-              </td>
-              <td>
-                SOURCE
-              </td>
-              <td>
-                FileStreamSource
-              </td>
-              <td>
-                <div
-                  className="is-flex is-flex-wrap-wrap"
-                >
-                  <span
-                    className="tag is-info is-light mr-1 mb-1"
-                    key="test-topic"
-                  >
-                    <Link
-                      to="/ui/clusters/local/topics/test-topic"
-                    >
-                      <LinkAnchor
-                        href="/ui/clusters/local/topics/test-topic"
-                        navigate={[Function]}
-                      >
-                        <a
-                          href="/ui/clusters/local/topics/test-topic"
-                          onClick={[Function]}
+                        <LinkAnchor
+                          aria-current={null}
+                          href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                          navigate={[Function]}
                         >
-                          test-topic
-                        </a>
-                      </LinkAnchor>
-                    </Link>
-                  </span>
-                </div>
-              </td>
-              <td>
-                <ConnectorStatusTag
-                  status="RUNNING"
-                >
-                  <span
-                    className="tag is-success"
-                  >
-                    RUNNING
-                  </span>
-                </ConnectorStatusTag>
-              </td>
-              <td>
-                <span
-                  className="has-text-success"
-                >
-                  2
-                   of 
-                  2
-                </span>
-              </td>
-              <td>
-                <div
-                  className="has-text-right"
-                >
-                  <Dropdown
-                    label={
-                      <span
-                        className="icon"
-                      >
-                        <i
-                          className="fas fa-cog"
-                        />
-                      </span>
-                    }
-                    right={true}
-                  >
-                    <div
-                      className="dropdown is-right"
-                    >
-                      <div
-                        className="dropdown-trigger"
-                      >
-                        <button
-                          aria-controls="dropdown-menu"
-                          aria-haspopup="true"
-                          className="button is-small is-link"
-                          onClick={[Function]}
-                          type="button"
-                        >
-                          <span
-                            className="icon"
-                          >
-                            <i
-                              className="fas fa-cog"
-                            />
-                          </span>
-                        </button>
-                      </div>
-                      <div
-                        className="dropdown-menu"
-                        id="dropdown-menu"
-                        role="menu"
-                      >
-                        <div
-                          className="dropdown-content has-text-left"
-                        >
-                          <DropdownDivider>
-                            <hr
-                              className="dropdown-divider"
-                            />
-                          </DropdownDivider>
-                          <DropdownItem
+                          <a
+                            aria-current={null}
+                            href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
                             onClick={[Function]}
                           >
-                            <a
-                              className="dropdown-item is-link"
-                              href="#end"
-                              onClick={[Function]}
-                              role="menuitem"
-                              type="button"
+                            hdfs-source-connector
+                          </a>
+                        </LinkAnchor>
+                      </Link>
+                    </NavLink>
+                  </td>
+                </styled.td>
+                <td>
+                  first
+                </td>
+                <td>
+                  SOURCE
+                </td>
+                <td>
+                  FileStreamSource
+                </td>
+                <td>
+                  <styled.div>
+                    <div
+                      className="c1"
+                    >
+                      <Styled(Tag)
+                        color="gray"
+                        key="test-topic"
+                      >
+                        <Tag
+                          className="c2"
+                          color="gray"
+                        >
+                          <p
+                            className="c2"
+                          >
+                            <Link
+                              to="/ui/clusters/local/topics/test-topic"
                             >
-                              <span
-                                className="has-text-danger"
+                              <LinkAnchor
+                                href="/ui/clusters/local/topics/test-topic"
+                                navigate={[Function]}
                               >
-                                Remove Connector
-                              </span>
-                            </a>
-                          </DropdownItem>
+                                <a
+                                  href="/ui/clusters/local/topics/test-topic"
+                                  onClick={[Function]}
+                                >
+                                  test-topic
+                                </a>
+                              </LinkAnchor>
+                            </Link>
+                          </p>
+                        </Tag>
+                      </Styled(Tag)>
+                    </div>
+                  </styled.div>
+                </td>
+                <td>
+                  <Styled(Tag)
+                    color="yellow"
+                  >
+                    <Tag
+                      className="c3"
+                      color="yellow"
+                    >
+                      <p
+                        className="c3"
+                      >
+                        RUNNING
+                      </p>
+                    </Tag>
+                  </Styled(Tag)>
+                </td>
+                <td>
+                  <span>
+                    2
+                     of 
+                    2
+                  </span>
+                </td>
+                <td>
+                  <div>
+                    <Dropdown
+                      label={<VerticalElipsisIcon />}
+                      right={true}
+                    >
+                      <div
+                        className="dropdown is-right"
+                      >
+                        <styled.div>
+                          <div
+                            className="c4"
+                          >
+                            <Styled(DropdownTrigger)
+                              onClick={[Function]}
+                            >
+                              <DropdownTrigger
+                                className="c5"
+                                onClick={[Function]}
+                              >
+                                <button
+                                  aria-controls="dropdown-menu"
+                                  aria-haspopup="true"
+                                  className="c5"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  <VerticalElipsisIcon>
+                                    <svg
+                                      fill="none"
+                                      height="16"
+                                      viewBox="0 0 4 16"
+                                      width="4"
+                                      xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                      <path
+                                        d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z"
+                                        fill="#73848C"
+                                      />
+                                    </svg>
+                                  </VerticalElipsisIcon>
+                                </button>
+                              </DropdownTrigger>
+                            </Styled(DropdownTrigger)>
+                          </div>
+                        </styled.div>
+                        <div
+                          className="dropdown-menu"
+                          id="dropdown-menu"
+                          role="menu"
+                        >
+                          <div
+                            className="dropdown-content has-text-left"
+                          >
+                            <DropdownDivider>
+                              <hr
+                                className="dropdown-divider"
+                              />
+                            </DropdownDivider>
+                            <DropdownItem
+                              onClick={[Function]}
+                            >
+                              <a
+                                className="dropdown-item is-link"
+                                href="#end"
+                                onClick={[Function]}
+                                role="menuitem"
+                                type="button"
+                              >
+                                <span
+                                  style={
+                                    Object {
+                                      "color": "#E51A1A",
+                                    }
+                                  }
+                                >
+                                  Remove Connector
+                                </span>
+                              </a>
+                            </DropdownItem>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </Dropdown>
-                </div>
-                <mock-ConfirmationModal
-                  isOpen={false}
-                  onCancel={[Function]}
-                  onConfirm={[Function]}
-                >
-                  Are you sure want to remove 
-                  <b>
-                    hdfs-source-connector
-                  </b>
-                   connector?
-                </mock-ConfirmationModal>
-              </td>
-            </tr>
-          </ListItem>
-        </tbody>
-      </table>
-    </Router>
-  </BrowserRouter>
-</Provider>
+                    </Dropdown>
+                  </div>
+                  <mock-ConfirmationModal
+                    isOpen={false}
+                    onCancel={[Function]}
+                    onConfirm={[Function]}
+                  >
+                    Are you sure want to remove 
+                    <b>
+                      hdfs-source-connector
+                    </b>
+                     connector?
+                  </mock-ConfirmationModal>
+                </td>
+              </tr>
+            </ListItem>
+          </tbody>
+        </table>
+      </Router>
+    </BrowserRouter>
+  </Provider>
+</Component>
 `;

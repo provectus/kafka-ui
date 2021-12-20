@@ -8,6 +8,8 @@ import {
 } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import styled from 'styled-components';
+import { Colors } from 'theme/theme';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -25,6 +27,13 @@ export interface ConfigProps {
   isConfigFetching: boolean;
   config: ConnectorConfig | null;
 }
+
+const ConnectConfigWrapper = styled.div`
+  padding: 16px;
+  margin: 16px;
+  border: 1px solid ${Colors.neutral[10]};
+  border-radius: 8px;
+`;
 
 const Config: React.FC<ConfigProps> = ({
   fetchConfig,
@@ -44,13 +53,14 @@ const Config: React.FC<ConfigProps> = ({
   if (!config) return null;
 
   return (
-    <JSONEditor
-      readOnly
-      value={JSON.stringify(config, null, '\t')}
-      showGutter={false}
-      highlightActiveLine={false}
-      isFixedHeight
-    />
+    <ConnectConfigWrapper>
+      <JSONEditor
+        readOnly
+        value={JSON.stringify(config, null, '\t')}
+        highlightActiveLine={false}
+        isFixedHeight
+      />
+    </ConnectConfigWrapper>
   );
 };
 

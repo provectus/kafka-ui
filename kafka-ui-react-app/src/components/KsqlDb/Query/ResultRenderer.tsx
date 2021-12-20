@@ -21,10 +21,13 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   const transformedRows = React.useMemo(
     () =>
       rows.map((row) =>
-        row.reduce((res, acc, index) => {
-          res[rawTable.headers[index]] = acc;
-          return res;
-        }, {} as Dictionary<string>)
+        row.reduce(
+          (res, acc, index) => ({
+            ...res,
+            [rawTable.headers[index]]: acc,
+          }),
+          {} as Dictionary<string>
+        )
       ),
     []
   );

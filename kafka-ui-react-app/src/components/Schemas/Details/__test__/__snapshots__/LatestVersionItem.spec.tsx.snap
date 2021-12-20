@@ -1,76 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LatestVersionItem matches snapshot 1`] = `
-<div
-  className="tile is-ancestor mt-1"
->
-  <div
-    className="tile is-4 is-parent"
-  >
-    <div
-      className="tile is-child"
-    >
-      <table
-        className="table is-fullwidth"
-      >
-        <tbody>
-          <tr>
-            <td>
-              ID
-            </td>
-            <td>
-              1
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Subject
-            </td>
-            <td>
-              test
-            </td>
-          </tr>
-          <tr>
-            <td>
-              Compatibility
-            </td>
-            <td>
-              BACKWARD
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+<styled.div>
+  <div>
+    <h1>
+      Relevant version
+    </h1>
+    <JSONViewer
+      data="{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}"
+    />
   </div>
   <div
-    className="tile is-parent"
+    data-testid="meta-data"
   >
-    <div
-      className="tile is-child box"
-    >
-      <JSONEditor
-        isFixedHeight={true}
-        name="schema"
-        readOnly={true}
-        setOptions={
-          Object {
-            "maxLines": 40,
-            "showLineNumbers": false,
-          }
-        }
-        value="{
-	\\"type\\": \\"record\\",
-	\\"name\\": \\"MyRecord1\\",
-	\\"namespace\\": \\"com.mycompany\\",
-	\\"fields\\": [
-		{
-			\\"name\\": \\"id\\",
-			\\"type\\": \\"long\\"
-		}
-	]
-}"
-      />
+    <div>
+      <styled.h3>
+        Latest version
+      </styled.h3>
+      <p>
+        1
+      </p>
+    </div>
+    <div>
+      <styled.h3>
+        ID
+      </styled.h3>
+      <p>
+        1
+      </p>
+    </div>
+    <div>
+      <styled.h3>
+        Subject
+      </styled.h3>
+      <p>
+        test
+      </p>
+    </div>
+    <div>
+      <styled.h3>
+        Compatibility
+      </styled.h3>
+      <p>
+        BACKWARD
+      </p>
     </div>
   </div>
-</div>
+</styled.div>
 `;

@@ -10,6 +10,8 @@ import Actions, {
 } from 'components/Connect/Details/Actions/Actions';
 import { ConnectorState } from 'generated-sources';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -38,21 +40,23 @@ describe('Actions', () => {
     const connectorName = 'my-connector';
 
     const setupWrapper = (props: Partial<ActionsProps> = {}) => (
-      <TestRouterWrapper
-        pathname={pathname}
-        urlParams={{ clusterName, connectName, connectorName }}
-      >
-        <Actions
-          deleteConnector={jest.fn()}
-          isConnectorDeleting={false}
-          connectorStatus={ConnectorState.RUNNING}
-          restartConnector={jest.fn()}
-          pauseConnector={jest.fn()}
-          resumeConnector={jest.fn()}
-          isConnectorActionRunning={false}
-          {...props}
-        />
-      </TestRouterWrapper>
+      <ThemeProvider theme={theme}>
+        <TestRouterWrapper
+          pathname={pathname}
+          urlParams={{ clusterName, connectName, connectorName }}
+        >
+          <Actions
+            deleteConnector={jest.fn()}
+            isConnectorDeleting={false}
+            connectorStatus={ConnectorState.RUNNING}
+            restartConnector={jest.fn()}
+            pauseConnector={jest.fn()}
+            resumeConnector={jest.fn()}
+            isConnectorActionRunning={false}
+            {...props}
+          />
+        </TestRouterWrapper>
+      </ThemeProvider>
     );
 
     it('matches snapshot', () => {
@@ -144,7 +148,7 @@ describe('Actions', () => {
     it('calls restartConnector when restart button clicked', () => {
       const restartConnector = jest.fn();
       const wrapper = mount(setupWrapper({ restartConnector }));
-      wrapper.find({ children: 'Restart all tasks' }).simulate('click');
+      wrapper.find({ children: 'Restart All Tasks' }).simulate('click');
       expect(restartConnector).toHaveBeenCalledTimes(1);
       expect(restartConnector).toHaveBeenCalledWith(
         clusterName,

@@ -1,11 +1,12 @@
 name: DeployFromBranch
 on:
   workflow_dispatch:
+
   pull_request:
     types: ['labeled']
 jobs:
   build:
-    if: ${{ github.event.label.name == 'status/feature_testing' }}
+    if: ${{ github.event.label.name == 'status/feature_testing' || github.event.label.name == 'status/feature_testing_public' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -83,17 +84,24 @@ jobs:
         run: |
           cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
           echo "Branch:${{ needs.build.outputs.tag }}"
-          ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }} ${{ secrets.GITHUB_TOKEN }}
+          ./kafka-ui-deployment-from-branch.sh ${{ needs.build.outputs.tag }} ${{ github.event.label.name }} ${{ secrets.FEATURE_TESTING_UI_PASSWORD }}
           git config --global user.email "kafka-ui-infra@provectus.com"
           git config --global user.name "kafka-ui-infra"
           git add ../kafka-ui-from-branch/
           git commit -m "added env:${{ needs.build.outputs.deploy }}" && git push || true
-      - name: make comment with deployment link
+
+      - name: make comment with private deployment link
+        if: ${{ github.event.label.name == 'status/feature_testing' }}
         uses: peter-evans/create-or-update-comment@v1.4.5
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
             Custom deployment will be available at http://${{ needs.build.outputs.tag }}.internal.kafka-ui.provectus.io
 
-
-
+      - name: make comment with public deployment link
+        if: ${{ github.event.label.name == 'status/feature_testing_public' }}
+        uses: peter-evans/create-or-update-comment@v1.4.5
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.kafka-ui.provectus.io

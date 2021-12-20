@@ -1,741 +1,469 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Details when it does not have readonly flag matches the snapshot 1`] = `
-<Provider
-  store={
-    Object {
-      "@@observable": [Function],
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-    }
-  }
->
-  <StaticRouter>
-    <Router
-      history={
-        Object {
-          "action": "POP",
-          "block": [Function],
-          "createHref": [Function],
-          "go": [Function],
-          "goBack": [Function],
-          "goForward": [Function],
-          "listen": [Function],
-          "location": Object {
-            "hash": "",
-            "pathname": "/",
-            "search": "",
-            "state": undefined,
-          },
-          "push": [Function],
-          "replace": [Function],
-        }
-      }
-      staticContext={Object {}}
-    >
-      <Details
-        clearTopicMessages={[MockFunction]}
-        clusterName="local"
-        deleteTopic={[MockFunction]}
-        isDeletePolicy={true}
-        isDeleted={false}
-        isInternal={false}
-        name="__internal.topic"
-        topicName="__internal.topic"
-      >
-        <div
-          className="box"
-        >
-          <nav
-            className="navbar"
-            role="navigation"
-          >
-            <div
-              className="navbar-start"
-            >
-              <NavLink
-                activeClassName="is-active is-primary"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic"
-                      onClick={[Function]}
-                    >
-                      Overview
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/messages"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/messages"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/messages"
-                      onClick={[Function]}
-                    >
-                      Messages
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/consumergroups"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/consumergroups",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/consumergroups"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/consumergroups"
-                      onClick={[Function]}
-                    >
-                      Consumers
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/settings"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/settings"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/settings"
-                      onClick={[Function]}
-                    >
-                      Settings
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-            </div>
-            <div
-              className="navbar-end"
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  className="button is-danger"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  Clear All Messages
-                </button>
-                <button
-                  className="button is-danger"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  Delete Topic
-                </button>
-                <Link
-                  className="button"
-                  to="/ui/clusters/local/topics/__internal.topic/message"
-                >
-                  <LinkAnchor
-                    className="button"
-                    href="/ui/clusters/local/topics/__internal.topic/message"
-                    navigate={[Function]}
-                  >
-                    <a
-                      className="button"
-                      href="/ui/clusters/local/topics/__internal.topic/message"
-                      onClick={[Function]}
-                    >
-                      Produce message
-                    </a>
-                  </LinkAnchor>
-                </Link>
-                <Link
-                  className="button"
-                  to="/ui/clusters/local/topics/__internal.topic/edit"
-                >
-                  <LinkAnchor
-                    className="button"
-                    href="/ui/clusters/local/topics/__internal.topic/edit"
-                    navigate={[Function]}
-                  >
-                    <a
-                      className="button"
-                      href="/ui/clusters/local/topics/__internal.topic/edit"
-                      onClick={[Function]}
-                    >
-                      Edit settings
-                    </a>
-                  </LinkAnchor>
-                </Link>
-                <ConfirmationModal
-                  isOpen={false}
-                  onCancel={[Function]}
-                  onConfirm={[Function]}
-                />
-              </div>
-            </div>
-          </nav>
-          <br />
-          <Switch />
-        </div>
-      </Details>
-    </Router>
-  </StaticRouter>
-</Provider>
-`;
+exports[`Details when it has readonly flag does not render the Action button a Topic 1`] = `
+.c0 {
+  height: 56px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  padding: 0px 16px;
+}
 
-exports[`Details when it has readonly flag matches the snapshot 1`] = `
-<Provider
-  store={
+.c0 h1 {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #000;
+}
+
+.c0 > div {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 16px;
+}
+
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  border-bottom: 1px #E3E6E8 solid;
+}
+
+.c2 a {
+  height: 40px;
+  width: 96px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  font-weight: 500;
+  font-size: 14px;
+  color: #73848C;
+  border-bottom: 1px transparent solid;
+}
+
+.c2 a.is-active {
+  border-bottom: 1px #4F4FFF solid;
+  color: #171A1C;
+}
+
+.c2 a:hover:not(.is-active) {
+  border-bottom: 1px transparent solid;
+  color: #171A1C;
+}
+
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: end;
+  -webkit-justify-content: flex-end;
+  -ms-flex-pack: end;
+  justify-content: flex-end;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+  gap: 26px;
+}
+
+<Component
+  theme={
     Object {
-      "@@observable": [Function],
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
+      "alert": Object {
+        "color": Object {
+          "error": "#FAD1D1",
+          "info": "#E3E6E8",
+          "success": "#D6F5E0",
+          "warning": "#FFEECC",
+        },
+      },
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "chevronIconColor": "#73848C",
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+        "statusIconColor": Object {
+          "offline": "#E51A1A",
+          "online": "#5CD685",
+        },
+      },
+      "metrics": Object {
+        "backgroundColor": "#F1F2F3",
+        "indicator": Object {
+          "backgroundColor": "#FFFFFF",
+          "lightTextColor": "#ABB5BA",
+          "titleColor": "#73848C",
+          "warningTextColor": "#E51A1A",
+        },
+      },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
+      "paginationStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "switch": Object {
+        "checked": "#29A352",
+        "unchecked": "#ABB5BA",
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "gray": "#E3E6E8",
+          "green": "#D6F5E0",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
     }
   }
 >
-  <StaticRouter>
-    <Router
-      history={
-        Object {
-          "action": "POP",
-          "block": [Function],
-          "createHref": [Function],
-          "go": [Function],
-          "goBack": [Function],
-          "goForward": [Function],
-          "listen": [Function],
-          "location": Object {
-            "hash": "",
-            "pathname": "/",
-            "search": "",
-            "state": undefined,
-          },
-          "push": [Function],
-          "replace": [Function],
-        }
+  <Provider
+    store={
+      Object {
+        "@@observable": [Function],
+        "dispatch": [Function],
+        "getState": [Function],
+        "replaceReducer": [Function],
+        "subscribe": [Function],
       }
-      staticContext={Object {}}
-    >
-      <Details
-        clearTopicMessages={[MockFunction]}
-        clusterName="local"
-        deleteTopic={[MockFunction]}
-        isDeletePolicy={true}
-        isDeleted={false}
-        isInternal={true}
-        name="__internal.topic"
-        topicName="__internal.topic"
+    }
+  >
+    <StaticRouter>
+      <Router
+        history={
+          Object {
+            "action": "POP",
+            "block": [Function],
+            "createHref": [Function],
+            "go": [Function],
+            "goBack": [Function],
+            "goForward": [Function],
+            "listen": [Function],
+            "location": Object {
+              "hash": "",
+              "pathname": "/",
+              "search": "",
+              "state": undefined,
+            },
+            "push": [Function],
+            "replace": [Function],
+          }
+        }
+        staticContext={Object {}}
       >
-        <div
-          className="box"
+        <Details
+          clearTopicMessages={[MockFunction]}
+          clusterName="local"
+          deleteTopic={[MockFunction]}
+          isDeleted={false}
+          isInternal={true}
+          name="__internal.topic"
+          topicName="__internal.topic"
         >
-          <nav
-            className="navbar"
-            role="navigation"
-          >
-            <div
-              className="navbar-start"
+          <div>
+            <Styled(PageHeading)
+              text="__internal.topic"
             >
-              <NavLink
-                activeClassName="is-active is-primary"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic"
+              <PageHeading
+                className="c0"
+                text="__internal.topic"
               >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                <div
+                  className="c0"
                 >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic"
-                      onClick={[Function]}
-                    >
-                      Overview
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/messages"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/messages"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/messages"
-                      onClick={[Function]}
-                    >
-                      Messages
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/consumergroups"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/consumergroups",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/consumergroups"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/consumergroups"
-                      onClick={[Function]}
-                    >
-                      Consumers
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/settings"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
-                >
-                  <LinkAnchor
-                    aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/settings"
-                    navigate={[Function]}
-                  >
-                    <a
-                      aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/settings"
-                      onClick={[Function]}
-                    >
-                      Settings
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-            </div>
-            <div
-              className="navbar-end"
+                  <h1>
+                    __internal.topic
+                  </h1>
+                  <div>
+                    <styled.div>
+                      <div
+                        className="c1"
+                      >
+                        <Route
+                          exact={true}
+                          path="/ui/clusters/:clusterName/topics/:topicName/messages"
+                        />
+                      </div>
+                    </styled.div>
+                  </div>
+                </div>
+              </PageHeading>
+            </Styled(PageHeading)>
+            <ConfirmationModal
+              isOpen={false}
+              onCancel={[Function]}
+              onConfirm={[Function]}
             />
-          </nav>
-          <br />
-          <Switch />
-        </div>
-      </Details>
-    </Router>
-  </StaticRouter>
-</Provider>
-`;
-
-exports[`Details when it shows on compact topic page matches the snapshot 1`] = `
-<Provider
-  store={
-    Object {
-      "@@observable": [Function],
-      "dispatch": [Function],
-      "getState": [Function],
-      "replaceReducer": [Function],
-      "subscribe": [Function],
-    }
-  }
->
-  <StaticRouter>
-    <Router
-      history={
-        Object {
-          "action": "POP",
-          "block": [Function],
-          "createHref": [Function],
-          "go": [Function],
-          "goBack": [Function],
-          "goForward": [Function],
-          "listen": [Function],
-          "location": Object {
-            "hash": "",
-            "pathname": "/",
-            "search": "",
-            "state": undefined,
-          },
-          "push": [Function],
-          "replace": [Function],
-        }
-      }
-      staticContext={Object {}}
-    >
-      <Details
-        clearTopicMessages={[MockFunction]}
-        clusterName="local"
-        deleteTopic={[MockFunction]}
-        isDeletePolicy={false}
-        isDeleted={false}
-        isInternal={false}
-        name="__internal.topic"
-        topicName="__internal.topic"
-      >
-        <div
-          className="box"
-        >
-          <nav
-            className="navbar"
-            role="navigation"
-          >
-            <div
-              className="navbar-start"
+            <styled.nav
+              role="navigation"
             >
-              <NavLink
-                activeClassName="is-active is-primary"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic"
+              <nav
+                className="c2"
+                role="navigation"
               >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                <NavLink
+                  activeClassName="is-active is-primary"
+                  exact={true}
+                  to="/ui/clusters/local/topics/__internal.topic"
                 >
-                  <LinkAnchor
+                  <Link
                     aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic"
-                    navigate={[Function]}
+                    to={
+                      Object {
+                        "hash": "",
+                        "pathname": "/ui/clusters/local/topics/__internal.topic",
+                        "search": "",
+                        "state": null,
+                      }
+                    }
                   >
-                    <a
+                    <LinkAnchor
                       aria-current={null}
-                      className="navbar-item is-tab"
                       href="/ui/clusters/local/topics/__internal.topic"
-                      onClick={[Function]}
+                      navigate={[Function]}
                     >
-                      Overview
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/messages"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                      <a
+                        aria-current={null}
+                        href="/ui/clusters/local/topics/__internal.topic"
+                        onClick={[Function]}
+                      >
+                        Overview
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
+                <NavLink
+                  activeClassName="is-active"
+                  exact={true}
+                  to="/ui/clusters/local/topics/__internal.topic/messages"
                 >
-                  <LinkAnchor
+                  <Link
                     aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/messages"
-                    navigate={[Function]}
+                    to={
+                      Object {
+                        "hash": "",
+                        "pathname": "/ui/clusters/local/topics/__internal.topic/messages",
+                        "search": "",
+                        "state": null,
+                      }
+                    }
                   >
-                    <a
+                    <LinkAnchor
                       aria-current={null}
-                      className="navbar-item is-tab"
                       href="/ui/clusters/local/topics/__internal.topic/messages"
-                      onClick={[Function]}
+                      navigate={[Function]}
                     >
-                      Messages
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/consumergroups"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/consumergroups",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                      <a
+                        aria-current={null}
+                        href="/ui/clusters/local/topics/__internal.topic/messages"
+                        onClick={[Function]}
+                      >
+                        Messages
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
+                <NavLink
+                  activeClassName="is-active"
+                  exact={true}
+                  to="/ui/clusters/local/topics/__internal.topic/consumer-groups"
                 >
-                  <LinkAnchor
+                  <Link
                     aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/consumergroups"
-                    navigate={[Function]}
+                    to={
+                      Object {
+                        "hash": "",
+                        "pathname": "/ui/clusters/local/topics/__internal.topic/consumer-groups",
+                        "search": "",
+                        "state": null,
+                      }
+                    }
                   >
-                    <a
+                    <LinkAnchor
                       aria-current={null}
-                      className="navbar-item is-tab"
-                      href="/ui/clusters/local/topics/__internal.topic/consumergroups"
-                      onClick={[Function]}
+                      href="/ui/clusters/local/topics/__internal.topic/consumer-groups"
+                      navigate={[Function]}
                     >
-                      Consumers
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-              <NavLink
-                activeClassName="is-active"
-                className="navbar-item is-tab"
-                exact={true}
-                to="/ui/clusters/local/topics/__internal.topic/settings"
-              >
-                <Link
-                  aria-current={null}
-                  className="navbar-item is-tab"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                      <a
+                        aria-current={null}
+                        href="/ui/clusters/local/topics/__internal.topic/consumer-groups"
+                        onClick={[Function]}
+                      >
+                        Consumers
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
+                <NavLink
+                  activeClassName="is-active"
+                  exact={true}
+                  to="/ui/clusters/local/topics/__internal.topic/settings"
                 >
-                  <LinkAnchor
+                  <Link
                     aria-current={null}
-                    className="navbar-item is-tab"
-                    href="/ui/clusters/local/topics/__internal.topic/settings"
-                    navigate={[Function]}
+                    to={
+                      Object {
+                        "hash": "",
+                        "pathname": "/ui/clusters/local/topics/__internal.topic/settings",
+                        "search": "",
+                        "state": null,
+                      }
+                    }
                   >
-                    <a
+                    <LinkAnchor
                       aria-current={null}
-                      className="navbar-item is-tab"
                       href="/ui/clusters/local/topics/__internal.topic/settings"
-                      onClick={[Function]}
+                      navigate={[Function]}
                     >
-                      Settings
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-            </div>
-            <div
-              className="navbar-end"
-            >
-              <div
-                className="buttons"
-              >
-                <button
-                  className="button is-danger"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  Delete Topic
-                </button>
-                <Link
-                  className="button"
-                  to="/ui/clusters/local/topics/__internal.topic/message"
-                >
-                  <LinkAnchor
-                    className="button"
-                    href="/ui/clusters/local/topics/__internal.topic/message"
-                    navigate={[Function]}
-                  >
-                    <a
-                      className="button"
-                      href="/ui/clusters/local/topics/__internal.topic/message"
-                      onClick={[Function]}
-                    >
-                      Produce message
-                    </a>
-                  </LinkAnchor>
-                </Link>
-                <Link
-                  className="button"
-                  to="/ui/clusters/local/topics/__internal.topic/edit"
-                >
-                  <LinkAnchor
-                    className="button"
-                    href="/ui/clusters/local/topics/__internal.topic/edit"
-                    navigate={[Function]}
-                  >
-                    <a
-                      className="button"
-                      href="/ui/clusters/local/topics/__internal.topic/edit"
-                      onClick={[Function]}
-                    >
-                      Edit settings
-                    </a>
-                  </LinkAnchor>
-                </Link>
-                <ConfirmationModal
-                  isOpen={false}
-                  onCancel={[Function]}
-                  onConfirm={[Function]}
-                />
-              </div>
-            </div>
-          </nav>
-          <br />
-          <Switch />
-        </div>
-      </Details>
-    </Router>
-  </StaticRouter>
-</Provider>
+                      <a
+                        aria-current={null}
+                        href="/ui/clusters/local/topics/__internal.topic/settings"
+                        onClick={[Function]}
+                      >
+                        Settings
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
+              </nav>
+            </styled.nav>
+            <Switch />
+          </div>
+        </Details>
+      </Router>
+    </StaticRouter>
+  </Provider>
+</Component>
 `;

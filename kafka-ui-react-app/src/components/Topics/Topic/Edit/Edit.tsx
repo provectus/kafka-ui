@@ -13,9 +13,13 @@ import { camelCase } from 'lodash';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { topicFormValidationSchema } from 'lib/yupExtended';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
+import styled from 'styled-components';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
-import DangerZoneContainer from './DangerZoneContainer';
+import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
 interface Props {
   clusterName: ClusterName;
@@ -35,6 +39,14 @@ interface Props {
     partitions: number
   ) => void;
 }
+
+const EditWrapperStyled = styled.div`
+  display: flex;
+  justify-content: center;
+  & > * {
+    width: 800px;
+  }
+`;
 
 const DEFAULTS = {
   partitions: 1,
@@ -89,7 +101,10 @@ const Edit: React.FC<Props> = ({
 }) => {
   const defaultValues = topicParams(topic);
 
-  const methods = useForm<TopicFormData>({ defaultValues });
+  const methods = useForm<TopicFormData>({
+    defaultValues,
+    resolver: yupResolver(topicFormValidationSchema),
+  });
 
   const [isSubmitting, setIsSubmitting] = React.useState<boolean>(false);
   const history = useHistory();
@@ -128,27 +143,32 @@ const Edit: React.FC<Props> = ({
   };
 
   return (
-    <div>
-      <div className="box">
-        <FormProvider {...methods}>
-          <TopicForm
-            topicName={topicName}
-            config={config}
-            isSubmitting={isSubmitting}
-            isEditing
-            onSubmit={methods.handleSubmit(onSubmit)}
-          />
-        </FormProvider>
-      </div>
-      {topic && (
-        <DangerZoneContainer
-          defaultPartitions={defaultValues.partitions}
-          defaultReplicationFactor={
-            defaultValues.replicationFactor || DEFAULTS.replicationFactor
-          }
-        />
-      )}
-    </div>
+    <>
+      <PageHeading text={`Edit ${topicName}`} />
+      <EditWrapperStyled>
+        <div>
+          <div>
+            <FormProvider {...methods}>
+              <TopicForm
+                topicName={topicName}
+                config={config}
+                isSubmitting={isSubmitting}
+                isEditing
+                onSubmit={methods.handleSubmit(onSubmit)}
+              />
+            </FormProvider>
+          </div>
+          {topic && (
+            <DangerZoneContainer
+              defaultPartitions={defaultValues.partitions}
+              defaultReplicationFactor={
+                defaultValues.replicationFactor || DEFAULTS.replicationFactor
+              }
+            />
+          )}
+        </div>
+      </EditWrapperStyled>
+    </>
   );
 };
 

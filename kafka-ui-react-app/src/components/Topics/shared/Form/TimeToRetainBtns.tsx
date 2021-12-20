@@ -1,5 +1,6 @@
 import React from 'react';
 import { MILLISECONDS_IN_DAY } from 'lib/constants';
+import styled from 'styled-components';
 
 import TimeToRetainBtn from './TimeToRetainBtn';
 
@@ -8,8 +9,14 @@ interface Props {
   value: string;
 }
 
+const TimeToRetainBtnsWrapper = styled.div`
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+`;
+
 const TimeToRetainBtns: React.FC<Props> = ({ name }) => (
-  <div className="buttons are-small">
+  <TimeToRetainBtnsWrapper>
     <TimeToRetainBtn
       text="12h"
       inputName={name}
@@ -31,7 +38,7 @@ const TimeToRetainBtns: React.FC<Props> = ({ name }) => (
       inputName={name}
       value={MILLISECONDS_IN_DAY * 7 * 4}
     />
-  </div>
+  </TimeToRetainBtnsWrapper>
 );
 
 export default TimeToRetainBtns;

@@ -1,30 +1,28 @@
 import React from 'react';
-import cx from 'classnames';
-import { Cluster } from 'generated-sources';
 import { Switch, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
-import { Alerts } from 'redux/interfaces';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
-import Alert from 'components/Alert/Alert';
-import 'components/App.scss';
+import Alerts from 'components/Alerts/Alerts';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  fetchClusters,
+  getClusterList,
+  getAreClustersFulfilled,
+} from 'redux/reducers/clusters/clustersSlice';
 
-export interface AppProps {
-  isClusterListFetched?: boolean;
-  alerts: Alerts;
-  clusters: Cluster[];
-  fetchClustersList: () => void;
-}
+import * as S from './App.styled';
 
-const App: React.FC<AppProps> = ({
-  isClusterListFetched,
-  alerts,
-  clusters,
-  fetchClustersList,
-}) => {
+const App: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const areClustersFulfilled = useAppSelector(getAreClustersFulfilled);
+  const clusters = useAppSelector(getClusterList);
   const [isSidebarVisible, setIsSidebarVisible] = React.useState(false);
 
   const onBurgerClick = React.useCallback(
@@ -41,85 +39,72 @@ const App: React.FC<AppProps> = ({
   }, [location]);
 
   React.useEffect(() => {
-    fetchClustersList();
-  }, [fetchClustersList]);
+    dispatch(fetchClusters());
+  }, [fetchClusters]);
 
   return (
-    <div
-      className={cx('Layout', { 'Layout--sidebarVisible': isSidebarVisible })}
-    >
-      <nav
-        className="navbar is-fixed-top is-white Layout__header"
-        role="navigation"
-        aria-label="main navigation"
-      >
-        <div className="navbar-brand">
-          <div
-            className={cx('navbar-burger', 'ml-0', {
-              'is-active': isSidebarVisible,
-            })}
-            onClick={onBurgerClick}
-            onKeyDown={onBurgerClick}
-            role="button"
-            tabIndex={0}
-          >
-            <span />
-            <span />
-            <span />
-          </div>
+    <ThemeProvider theme={theme}>
+      <S.Layout>
+        <S.Navbar role="navigation" aria-label="Page Header">
+          <S.NavbarBrand>
+            <S.NavbarBurger
+              onClick={onBurgerClick}
+              onKeyDown={onBurgerClick}
+              role="button"
+              tabIndex={0}
+            >
+              <S.Span role="separator" />
+              <S.Span role="separator" />
+              <S.Span role="separator" />
+            </S.NavbarBurger>
 
-          <a className="navbar-item title is-5 is-marginless" href="/ui">
-            UI for Apache Kafka
-          </a>
+            <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>
 
-          <div className="navbar-item">
-            <Version tag={GIT_TAG} commit={GIT_COMMIT} />
-          </div>
-        </div>
-      </nav>
+            <S.NavbarItem>
+              <Version tag={GIT_TAG} commit={GIT_COMMIT} />
+            </S.NavbarItem>
+          </S.NavbarBrand>
+        </S.Navbar>
 
-      <main className="Layout__container">
-        <div className="Layout__sidebar has-shadow has-background-white">
-          <Nav
-            clusters={clusters}
-            isClusterListFetched={isClusterListFetched}
-          />
-        </div>
-        <div
-          className="Layout__sidebarOverlay is-overlay"
-          onClick={closeSidebar}
-          onKeyDown={closeSidebar}
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-        {isClusterListFetched ? (
-          <Switch>
-            <Route
-              exact
-              path={['/', '/ui', '/ui/clusters']}
-              component={Dashboard}
+        <S.Container>
+          <S.Sidebar aria-label="Sidebar" $visible={isSidebarVisible}>
+            <Nav
+              clusters={clusters}
+              areClustersFulfilled={areClustersFulfilled}
             />
-            <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
-          </Switch>
-        ) : (
-          <PageLoader fullHeight />
-        )}
-      </main>
-
-      <div className="Layout__alerts">
-        {alerts.map(({ id, type, title, message, response, createdAt }) => (
-          <Alert
-            key={id}
-            id={id}
-            type={type}
-            title={title}
-            message={message}
-            response={response}
-            createdAt={createdAt}
+          </S.Sidebar>
+          <S.Overlay
+            $visible={isSidebarVisible}
+            onClick={closeSidebar}
+            onKeyDown={closeSidebar}
+            tabIndex={-1}
+            aria-hidden="true"
+            aria-label="Overlay"
           />
-        ))}
-      </div>
-    </div>
+          {areClustersFulfilled ? (
+            <>
+              <Breadcrumb />
+              <Switch>
+                <Route
+                  exact
+                  path={['/', '/ui', '/ui/clusters']}
+                  component={Dashboard}
+                />
+                <Route
+                  path="/ui/clusters/:clusterName"
+                  component={ClusterPage}
+                />
+              </Switch>
+            </>
+          ) : (
+            <PageLoader />
+          )}
+        </S.Container>
+        <S.AlertsContainer role="toolbar">
+          <Alerts />
+        </S.AlertsContainer>
+      </S.Layout>
+    </ThemeProvider>
   );
 };
 

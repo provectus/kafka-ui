@@ -7,20 +7,22 @@ import Overview, {
   OverviewProps,
 } from 'components/Connect/Details/Overview/Overview';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-
-jest.mock('components/Connect/StatusTag', () => 'mock-StatusTag');
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('Overview', () => {
   containerRendersView(<OverviewContainer />, Overview);
 
   describe('view', () => {
     const setupWrapper = (props: Partial<OverviewProps> = {}) => (
-      <Overview
-        connector={connector}
-        runningTasksCount={10}
-        failedTasksCount={2}
-        {...props}
-      />
+      <ThemeProvider theme={theme}>
+        <Overview
+          connector={connector}
+          runningTasksCount={10}
+          failedTasksCount={2}
+          {...props}
+        />
+      </ThemeProvider>
     );
 
     it('matches snapshot', () => {
@@ -30,7 +32,7 @@ describe('Overview', () => {
 
     it('is empty when no connector', () => {
       const wrapper = mount(setupWrapper({ connector: null }));
-      expect(wrapper.html()).toBeNull();
+      expect(wrapper.html()).toEqual('');
     });
   });
 });

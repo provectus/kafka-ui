@@ -1,21 +1,37 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
+import {
+  offlineClusterPayload,
+  onlineClusterPayload,
+} from 'redux/reducers/clusters/__test__/fixtures';
 import Nav from 'components/Nav/Nav';
+import { StaticRouter } from 'react-router';
+import { screen } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 
 describe('Nav', () => {
   it('renders loader', () => {
-    const wrapper = shallow(<Nav clusters={[]} />);
-    expect(wrapper.find('.loader')).toBeTruthy();
-    expect(wrapper.exists('ClusterMenu')).toBeFalsy();
+    render(
+      <StaticRouter>
+        <Nav clusters={[]} />
+      </StaticRouter>
+    );
+    expect(screen.getAllByRole('menuitem').length).toEqual(1);
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
   it('renders ClusterMenu', () => {
-    const wrapper = shallow(
-      <Nav clusters={[onlineClusterPayload]} isClusterListFetched />
+    render(
+      <StaticRouter>
+        <Nav
+          clusters={[onlineClusterPayload, offlineClusterPayload]}
+          areClustersFulfilled
+        />
+      </StaticRouter>
     );
-    expect(wrapper.exists('.loader')).toBeFalsy();
-    expect(wrapper.exists('ClusterMenu')).toBeTruthy();
-    expect(wrapper).toMatchSnapshot();
+    expect(screen.getAllByRole('menu').length).toEqual(3);
+    expect(screen.getAllByRole('menuitem').length).toEqual(3);
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
+    expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
+    expect(screen.getByText(offlineClusterPayload.name)).toBeInTheDocument();
   });
 });

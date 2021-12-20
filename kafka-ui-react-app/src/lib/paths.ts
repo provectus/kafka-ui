@@ -11,7 +11,8 @@ import { GIT_REPO_LINK } from './constants';
 export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
 
-const clusterPath = (clusterName: ClusterName) => `/ui/clusters/${clusterName}`;
+export const clusterPath = (clusterName: ClusterName) =>
+  `/ui/clusters/${clusterName}`;
 
 // Brokers
 export const clusterBrokersPath = (clusterName: ClusterName) =>
@@ -33,11 +34,11 @@ export const clusterConsumerGroupResetOffsetsPath = (
 export const clusterSchemasPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/schemas`;
 export const clusterSchemaNewPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/schemas/create_new`;
+  `${clusterPath(clusterName)}/schemas/create-new`;
 export const clusterSchemaPath = (
   clusterName: ClusterName,
   subject: SchemaName
-) => `${clusterSchemasPath(clusterName)}/${subject}/latest`;
+) => `${clusterSchemasPath(clusterName)}/${subject}`;
 export const clusterSchemaSchemaEditPath = (
   clusterName: ClusterName,
   subject: SchemaName
@@ -47,7 +48,7 @@ export const clusterSchemaSchemaEditPath = (
 export const clusterTopicsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics`;
 export const clusterTopicNewPath = (clusterName: ClusterName) =>
-  `${clusterPath(clusterName)}/topics/create_new`;
+  `${clusterPath(clusterName)}/topics/create-new`;
 export const clusterTopicPath = (
   clusterName: ClusterName,
   topicName: TopicName
@@ -67,7 +68,7 @@ export const clusterTopicEditPath = (
 export const clusterTopicConsumerGroupsPath = (
   clusterName: ClusterName,
   topicName: TopicName
-) => `${clusterTopicsPath(clusterName)}/${topicName}/consumergroups`;
+) => `${clusterTopicsPath(clusterName)}/${topicName}/consumer-groups`;
 export const clusterTopicSendMessagePath = (
   clusterName: ClusterName,
   topicName: TopicName
@@ -79,7 +80,7 @@ export const clusterConnectsPath = (clusterName: ClusterName) =>
 export const clusterConnectorsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/connectors`;
 export const clusterConnectorNewPath = (clusterName: ClusterName) =>
-  `${clusterConnectorsPath(clusterName)}/create_new`;
+  `${clusterConnectorsPath(clusterName)}/create-new`;
 const clusterConnectConnectorsPath = (
   clusterName: ClusterName,
   connectName: ConnectName

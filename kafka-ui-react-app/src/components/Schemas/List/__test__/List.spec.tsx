@@ -2,17 +2,17 @@ import React from 'react';
 import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Schemas/List/ListContainer';
 import List, { ListProps } from 'components/Schemas/List/List';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 import { schemas } from './fixtures';
 
 describe('List', () => {
   describe('Container', () => {
-    const store = configureStore();
-
     it('renders view', () => {
       const component = shallow(
         <Provider store={store}>
@@ -28,17 +28,19 @@ describe('List', () => {
     const pathname = `/ui/clusters/clusterName/schemas`;
 
     const setupWrapper = (props: Partial<ListProps> = {}) => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <List
-          isFetching
-          fetchSchemasByClusterName={jest.fn()}
-          isGlobalSchemaCompatibilityLevelFetched
-          fetchGlobalSchemaCompatibilityLevel={jest.fn()}
-          updateGlobalSchemaCompatibilityLevel={jest.fn()}
-          schemas={[]}
-          {...props}
-        />
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <List
+            isFetching
+            fetchSchemasByClusterName={jest.fn()}
+            isGlobalSchemaCompatibilityLevelFetched
+            fetchGlobalSchemaCompatibilityLevel={jest.fn()}
+            updateGlobalSchemaCompatibilityLevel={jest.fn()}
+            schemas={[]}
+            {...props}
+          />
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     describe('Initial state', () => {
@@ -66,7 +68,6 @@ describe('List', () => {
     describe('when fetching', () => {
       it('renders PageLoader', () => {
         const wrapper = mount(setupWrapper({ isFetching: true }));
-        expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeFalsy();
         expect(wrapper.exists('ListItem')).toBeFalsy();
         expect(wrapper.exists('PageLoader')).toBeTruthy();
@@ -76,7 +77,6 @@ describe('List', () => {
     describe('without schemas', () => {
       it('renders table heading without ListItem', () => {
         const wrapper = mount(setupWrapper({ isFetching: false }));
-        expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.exists('ListItem')).toBeFalsy();
       });
@@ -86,7 +86,6 @@ describe('List', () => {
       const wrapper = mount(setupWrapper({ isFetching: false, schemas }));
 
       it('renders table heading with ListItem', () => {
-        expect(wrapper.exists('Breadcrumb')).toBeTruthy();
         expect(wrapper.exists('thead')).toBeTruthy();
         expect(wrapper.find('ListItem').length).toEqual(3);
       });

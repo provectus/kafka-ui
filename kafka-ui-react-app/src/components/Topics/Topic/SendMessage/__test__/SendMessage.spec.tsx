@@ -3,7 +3,9 @@ import SendMessage, {
   Props,
 } from 'components/Topics/Topic/SendMessage/SendMessage';
 import { MessageSchemaSourceEnum } from 'generated-sources';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 jest.mock('json-schema-faker', () => ({
   generate: () => ({
@@ -121,12 +123,9 @@ describe('SendMessage', () => {
           sendTopicMessage: mockSendTopicMessage,
         })
       );
-      const select = await screen.findByLabelText('Partition');
-      fireEvent.change(select, {
-        target: { value: 2 },
-      });
+      userEvent.selectOptions(screen.getByLabelText('Partition'), '1');
       await waitFor(async () => {
-        fireEvent.click(await screen.findByText('Send'));
+        userEvent.click(await screen.findByText('Send'));
         expect(mockSendTopicMessage).toHaveBeenCalledTimes(1);
       });
     });

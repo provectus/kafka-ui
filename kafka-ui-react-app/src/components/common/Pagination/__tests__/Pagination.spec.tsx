@@ -4,38 +4,38 @@ import { StaticRouter } from 'react-router';
 import Pagination, {
   PaginationProps,
 } from 'components/common/Pagination/Pagination';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('Pagination', () => {
   const setupWrapper = (search = '', props: Partial<PaginationProps> = {}) => (
-    <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
-      <Pagination totalPages={11} {...props} />
-    </StaticRouter>
+    <ThemeProvider theme={theme}>
+      <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
+        <Pagination totalPages={11} {...props} />
+      </StaticRouter>
+    </ThemeProvider>
   );
 
   describe('next & prev buttons', () => {
     it('renders disable prev button and enabled next link', () => {
       const wrapper = mount(setupWrapper('?page=1'));
-      expect(wrapper.exists('a.pagination-previous')).toBeFalsy();
-      expect(
-        wrapper.find('button.pagination-previous').instance()
-      ).toBeDisabled();
-      expect(wrapper.exists('a.pagination-next')).toBeTruthy();
+      expect(wrapper.find('button.pagination-btn').instance()).toBeDisabled();
+      expect(wrapper.exists('a.pagination-btn')).toBeTruthy();
     });
 
     it('renders disable next button and enabled prev link', () => {
       const wrapper = mount(setupWrapper('?page=11'));
-      expect(wrapper.exists('a.pagination-previous')).toBeTruthy();
-      expect(wrapper.exists('button.pagination-next')).toBeTruthy();
+      expect(wrapper.exists('a.pagination-btn')).toBeTruthy();
+      expect(wrapper.exists('button.pagination-btn')).toBeTruthy();
     });
 
     it('renders next & prev links with correct path', () => {
       const wrapper = mount(setupWrapper('?page=5&perPage=20'));
-      expect(wrapper.exists('a.pagination-previous')).toBeTruthy();
-      expect(wrapper.find('a.pagination-previous').prop('href')).toEqual(
+      expect(wrapper.exists('a.pagination-btn')).toBeTruthy();
+      expect(wrapper.find('a.pagination-btn').at(0).prop('href')).toEqual(
         '/my/test/path/23?page=4&perPage=20'
       );
-      expect(wrapper.exists('a.pagination-next')).toBeTruthy();
-      expect(wrapper.find('a.pagination-next').prop('href')).toEqual(
+      expect(wrapper.find('a.pagination-btn').at(1).prop('href')).toEqual(
         '/my/test/path/23?page=6&perPage=20'
       );
     });
@@ -88,11 +88,4 @@ describe('Pagination', () => {
       expect(wrapper.exists('a.pagination-link.is-current')).toBeFalsy();
     });
   });
-
-  it('matches snapshot', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper.find('Pagination')).toMatchSnapshot();
-  });
 });
-
-// span.pagination-ellipsis

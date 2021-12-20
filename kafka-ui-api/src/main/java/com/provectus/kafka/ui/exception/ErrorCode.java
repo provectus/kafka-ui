@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
   UNEXPECTED(5000, HttpStatus.INTERNAL_SERVER_ERROR),
+  KSQL_API_ERROR(5001, HttpStatus.INTERNAL_SERVER_ERROR),
   BINDING_FAIL(4001, HttpStatus.BAD_REQUEST),
   NOT_FOUND(404, HttpStatus.NOT_FOUND),
   INVALID_ENTITY_STATE(4001, HttpStatus.BAD_REQUEST),

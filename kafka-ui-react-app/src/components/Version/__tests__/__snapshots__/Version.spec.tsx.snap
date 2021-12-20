@@ -6,7 +6,7 @@ exports[`Version matches snapshot 1`] = `
   tag="v1.0.1-SHAPSHOT"
 >
   <div
-    className="is-size-7 has-text-grey"
+    className="is-size-8 has-text-grey"
   >
     <span
       className="has-text-grey-light mr-1"

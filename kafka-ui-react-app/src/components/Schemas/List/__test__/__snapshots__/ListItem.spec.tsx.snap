@@ -39,52 +39,47 @@ exports[`ListItem matches snapshot 1`] = `
           }
         >
           <tr>
-            <td>
-              <NavLink
-                activeClassName="is-active"
-                className="title is-6"
-                exact={true}
-                to="schemas/test/latest"
+            <styled.td>
+              <td
+                className="cQKBWR"
               >
-                <Link
-                  aria-current={null}
-                  className="title is-6"
-                  to={
-                    Object {
-                      "hash": "",
-                      "pathname": "/schemas/test/latest",
-                      "search": "",
-                      "state": null,
-                    }
-                  }
+                <NavLink
+                  exact={true}
+                  to="schemas/test"
                 >
-                  <LinkAnchor
+                  <Link
                     aria-current={null}
-                    className="title is-6"
-                    href="/schemas/test/latest"
-                    navigate={[Function]}
+                    to={
+                      Object {
+                        "hash": "",
+                        "pathname": "/schemas/test",
+                        "search": "",
+                        "state": null,
+                      }
+                    }
                   >
-                    <a
+                    <LinkAnchor
                       aria-current={null}
-                      className="title is-6"
-                      href="/schemas/test/latest"
-                      onClick={[Function]}
+                      href="/schemas/test"
+                      navigate={[Function]}
                     >
-                      test
-                    </a>
-                  </LinkAnchor>
-                </Link>
-              </NavLink>
-            </td>
+                      <a
+                        aria-current={null}
+                        href="/schemas/test"
+                        onClick={[Function]}
+                      >
+                        test
+                      </a>
+                    </LinkAnchor>
+                  </Link>
+                </NavLink>
+              </td>
+            </styled.td>
             <td>
               1
             </td>
             <td>
-              <span
-                className="tag is-link"
-              >
-                BACKWARD
-              </span>
+              BACKWARD
             </td>
           </tr>
         </ListItem>

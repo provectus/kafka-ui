@@ -32,8 +32,6 @@ describe('Dropdown', () => {
     expect(wrapper.exists('.dropdown.is-right')).toBeFalsy();
     expect(wrapper.exists('.dropdown.is-up')).toBeFalsy();
 
-    expect(wrapper.exists('.dropdown-trigger')).toBeTruthy();
-    expect(wrapper.find('.dropdown-trigger').text()).toEqual(dummyLable);
     expect(wrapper.exists('.dropdown-content')).toBeTruthy();
     expect(wrapper.find('.dropdown-content').text()).toEqual('');
   });
