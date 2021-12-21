@@ -3,9 +3,13 @@ on:
   workflow_dispatch:
     inputs:
       applyTerraform:
-        description: 'Do you want to apply the infra-repo terraform? Possible values [yes/no]. If no is chosen only plan will be executed. If yes is chosen, terraform will be automatically applied.'
+        description: 'Do you want to apply the infra-repo terraform? Possible values [plan/apply].'
         required: true
-        default: 'no'
+        default: 'plan'
+      KafkaUIInfraBranch:
+        description: 'Branch name of Kafka-UI-Infra repo, tf will be executed from this branch'
+        required: true
+        default: 'master'
 
 jobs:
   terraform:
@@ -15,7 +19,7 @@ jobs:
       - name: Clone infra repo
         run: |
           echo "Cloning repo..."
-          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch master
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch ${{ github.event.inputs.KafkaUIInfraBranch }}
           echo "Cd to deployment..."
           cd kafka-ui-infra/aws-infrastructure4eks/deployment
           echo "TF_DIR=$(pwd)" >> $GITHUB_ENV
@@ -51,13 +55,9 @@ jobs:
           export TF_VAR_repo_user_key=${{ secrets.KAFKA_UI_INFRA_TOKEN }}
           terraform plan --var-file="../envs/pro/eks.tfvars"
 
-      - name: Terraform plan status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
       - name: Terraform apply
         id: apply
-        if: ${{ github.event.inputs.applyTerraform == 'yes' }}
+        if: ${{ github.event.inputs.applyTerraform == 'apply' }}
         run: |
           cd $TF_DIR
           export TF_VAR_github_connector_access_token=${{ secrets.SOURCE_CONNECTOR_GITHUB_TOKEN }}
