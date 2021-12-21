@@ -68,7 +68,7 @@ public class SchemaRegistryService {
         URL_SUBJECTS)
         .retrieve()
         .bodyToMono(String[].class)
-        .doOnError(log::error);
+        .doOnError(e -> log.error("Unexpected error", e));
   }
 
   public Flux<SchemaSubjectDTO> getAllVersionsBySubject(KafkaCluster cluster, String subject) {

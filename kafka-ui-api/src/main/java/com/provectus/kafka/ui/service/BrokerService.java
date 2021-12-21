@@ -109,7 +109,7 @@ public class BrokerService {
             e -> Mono.error(new TopicOrPartitionNotFoundException()))
         .onErrorResume(LogDirNotFoundException.class,
             e -> Mono.error(new LogDirNotFoundApiException()))
-        .doOnError(log::error);
+        .doOnError(e -> log.error("Unexpected error", e));
   }
 
   public Mono<Void> updateBrokerConfigByName(KafkaCluster cluster,
@@ -120,7 +120,7 @@ public class BrokerService {
         .flatMap(ac -> ac.updateBrokerConfigByName(broker, name, value))
         .onErrorResume(InvalidRequestException.class,
             e -> Mono.error(new InvalidRequestApiException(e.getMessage())))
-        .doOnError(log::error);
+        .doOnError(e -> log.error("Unexpected error", e));
   }
 
   private Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(

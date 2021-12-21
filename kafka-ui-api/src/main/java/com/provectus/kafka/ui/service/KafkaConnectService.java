@@ -146,7 +146,7 @@ public class KafkaConnectService {
     return getConnectAddress(cluster, connectName)
         .flatMapMany(connect ->
             KafkaConnectClients.withBaseUrl(connect).getConnectors(null)
-                .doOnError(log::error)
+                .doOnError(e -> log.error("Unexpected error upon getting connectors", e))
         );
   }
 
