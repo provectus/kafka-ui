@@ -227,6 +227,8 @@ describe('Thunks', () => {
         `/api/clusters/${clusterName}/schemas/compatibility`,
         200
       );
+      fetchMock.getOnce(`/api/clusters/${clusterName}/schemas`, 200);
+
       await store.dispatch(
         thunks.updateGlobalSchemaCompatibilityLevel(
           clusterName,
@@ -235,6 +237,7 @@ describe('Thunks', () => {
       );
       expect(store.getActions()).toEqual([
         actions.updateGlobalSchemaCompatibilityLevelAction.request(),
+        actions.fetchSchemasByClusterNameAction.request(),
         actions.updateGlobalSchemaCompatibilityLevelAction.success(
           CompatibilityLevelCompatibilityEnum.FORWARD
         ),

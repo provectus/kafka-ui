@@ -1,5 +1,4 @@
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import React from 'react';
@@ -48,6 +47,7 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
           selectSize="M"
           defaultValue={globalSchemaCompatibilityLevel}
           onChange={() => setUpdateCompatibilityConfirmationVisible(true)}
+          disabled={methods.formState.isSubmitting}
         >
           {Object.keys(CompatibilityLevelCompatibilityEnum).map(
             (level: string) => (
@@ -61,13 +61,10 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
           isOpen={isUpdateCompatibilityConfirmationVisible}
           onCancel={() => setUpdateCompatibilityConfirmationVisible(false)}
           onConfirm={methods.handleSubmit(onCompatibilityLevelUpdate)}
+          isConfirming={methods.formState.isSubmitting}
         >
-          {methods.formState.isSubmitting ? (
-            <PageLoader />
-          ) : (
-            `Are you sure you want to update the global compatibility level?
-                  This may affect the compatibility levels of the schemas.`
-          )}
+          Are you sure you want to update the global compatibility level? This
+          may affect the compatibility levels of the schemas.
         </ConfirmationModal>
       </GlobalSchemaSelectorWrapper>
     </FormProvider>
