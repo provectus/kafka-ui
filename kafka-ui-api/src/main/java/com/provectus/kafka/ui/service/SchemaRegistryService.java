@@ -25,7 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -39,7 +39,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Service
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class SchemaRegistryService {
   public static final String NO_SUCH_SCHEMA_VERSION = "No such schema %s with version %s";
@@ -68,7 +68,7 @@ public class SchemaRegistryService {
         URL_SUBJECTS)
         .retrieve()
         .bodyToMono(String[].class)
-        .doOnError(log::error);
+        .doOnError(e -> log.error("Unexpected error", e));
   }
 
   public Flux<SchemaSubjectDTO> getAllVersionsBySubject(KafkaCluster cluster, String subject) {

@@ -28,7 +28,7 @@ import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.Value;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.apache.kafka.common.Node;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +39,7 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 @Component
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class JmxClusterUtil {
 
