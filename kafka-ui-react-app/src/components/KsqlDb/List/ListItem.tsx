@@ -1,3 +1,5 @@
+import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
+import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import React from 'react';
 
 interface Props {
@@ -16,13 +18,9 @@ const ListItem: React.FC<Props> = ({ accessors, data }) => {
     <>
       <tr>
         <td>
-          <span
-            className="icon has-text-link is-size-7 is-small is-clickable"
-            onClick={toggleIsOpen}
-            aria-hidden
-          >
-            <i className={`fas fa-${isOpen ? 'minus' : 'plus'}`} />
-          </span>
+          <IconButtonWrapper onClick={toggleIsOpen}>
+            <MessageToggleIcon isOpen={isOpen} />
+          </IconButtonWrapper>
         </td>
         {accessors.map((accessor) => (
           <td key={accessor}>{data[accessor]}</td>

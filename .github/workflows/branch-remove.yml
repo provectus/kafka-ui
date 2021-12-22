@@ -5,7 +5,7 @@ on:
     types: ['unlabeled']
 jobs:
   remove:
-    if: ${{ github.event.label.name == 'status/feature_testing' }}
+    if: ${{ github.event.label.name == 'status/feature_testing' || github.event.label.name == 'status/feature_testing_public' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

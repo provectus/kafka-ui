@@ -8,7 +8,7 @@ import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.springframework.stereotype.Service;
@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class MetricsService {
 
   private final ZookeeperService zookeeperService;

@@ -4,7 +4,8 @@ import React from 'react';
 export interface ServerResponse {
   status: number;
   statusText: string;
-  body?: ErrorResponse;
+  url?: string;
+  message?: ErrorResponse['message'];
 }
 
 export interface FailurePayload {
@@ -14,9 +15,11 @@ export interface FailurePayload {
   response?: ServerResponse;
 }
 
+export type AlertType = 'error' | 'success' | 'warning' | 'info';
+
 export interface Alert {
   id: string;
-  type: 'error' | 'success' | 'warning' | 'info';
+  type: AlertType;
   title: string;
   message: React.ReactNode;
   response?: ServerResponse;

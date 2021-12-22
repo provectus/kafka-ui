@@ -1,6 +1,5 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 import {
-  ConsumerGroupID,
   FailurePayload,
   TopicName,
   TopicsState,
@@ -8,13 +7,6 @@ import {
   ConnectorConfig,
 } from 'redux/interfaces';
 import {
-  Cluster,
-  ClusterStats,
-  ClusterMetrics,
-  Broker,
-  BrokerMetrics,
-  ConsumerGroup,
-  ConsumerGroupDetails,
   SchemaSubject,
   CompatibilityLevelCompatibilityEnum,
   TopicColumnsToSort,
@@ -27,36 +19,6 @@ import {
   TopicMessageSchema,
   KsqlCommandResponse,
 } from 'generated-sources';
-
-export const fetchClusterStatsAction = createAsyncAction(
-  'GET_CLUSTER_STATUS__REQUEST',
-  'GET_CLUSTER_STATUS__SUCCESS',
-  'GET_CLUSTER_STATUS__FAILURE'
-)<undefined, ClusterStats, undefined>();
-
-export const fetchClusterMetricsAction = createAsyncAction(
-  'GET_CLUSTER_METRICS__REQUEST',
-  'GET_CLUSTER_METRICS__SUCCESS',
-  'GET_CLUSTER_METRICS__FAILURE'
-)<undefined, ClusterMetrics, undefined>();
-
-export const fetchBrokersAction = createAsyncAction(
-  'GET_BROKERS__REQUEST',
-  'GET_BROKERS__SUCCESS',
-  'GET_BROKERS__FAILURE'
-)<undefined, Broker[], undefined>();
-
-export const fetchBrokerMetricsAction = createAsyncAction(
-  'GET_BROKER_METRICS__REQUEST',
-  'GET_BROKER_METRICS__SUCCESS',
-  'GET_BROKER_METRICS__FAILURE'
-)<undefined, BrokerMetrics, undefined>();
-
-export const fetchClusterListAction = createAsyncAction(
-  'GET_CLUSTERS__REQUEST',
-  'GET_CLUSTERS__SUCCESS',
-  'GET_CLUSTERS__FAILURE'
-)<undefined, Cluster[], undefined>();
 
 export const fetchTopicsListAction = createAsyncAction(
   'GET_TOPICS__REQUEST',
@@ -100,28 +62,6 @@ export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__FAILURE',
   'DELETE_TOPIC__CANCEL'
 )<undefined, TopicName, undefined, undefined>();
-
-export const fetchConsumerGroupsAction = createAsyncAction(
-  'GET_CONSUMER_GROUPS__REQUEST',
-  'GET_CONSUMER_GROUPS__SUCCESS',
-  'GET_CONSUMER_GROUPS__FAILURE'
-)<undefined, ConsumerGroup[], { alert?: FailurePayload }>();
-
-export const fetchConsumerGroupDetailsAction = createAsyncAction(
-  'GET_CONSUMER_GROUP_DETAILS__REQUEST',
-  'GET_CONSUMER_GROUP_DETAILS__SUCCESS',
-  'GET_CONSUMER_GROUP_DETAILS__FAILURE'
-)<
-  undefined,
-  { consumerGroupID: ConsumerGroupID; details: ConsumerGroupDetails },
-  { alert?: FailurePayload }
->();
-
-export const deleteConsumerGroupAction = createAsyncAction(
-  'DELETE_CONSUMER_GROUP__REQUEST',
-  'DELETE_CONSUMER_GROUP__SUCCESS',
-  'DELETE_CONSUMER_GROUP__FAILURE'
-)<undefined, ConsumerGroupID, { alert?: FailurePayload }>();
 
 export const fetchSchemasByClusterNameAction = createAsyncAction(
   'GET_CLUSTER_SCHEMAS__REQUEST',
@@ -317,10 +257,3 @@ export const executeKsqlAction = createAsyncAction(
 )<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
 
 export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();
-
-export const resetConsumerGroupOffsetsAction = createAsyncAction(
-  'RESET_OFFSETS__REQUEST',
-  'RESET_OFFSETS__SUCCESS',
-  'RESET_OFFSETS__FAILURE',
-  'RESET_OFFSETS__CANCEL'
-)<undefined, undefined, { alert?: FailurePayload }, undefined>();

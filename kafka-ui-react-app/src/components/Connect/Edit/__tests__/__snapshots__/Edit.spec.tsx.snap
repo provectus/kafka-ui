@@ -1,105 +1,207 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Edit view matches snapshot 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c1:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c1:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c1:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c1 a {
+  color: white;
+}
+
+.c1 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  margin: 16px;
+}
+
+.c0 form > *:last-child {
+  margin-top: 16px;
+}
+
 <div
-  className="box"
+  className="c0"
 >
   <form
     onSubmit={[Function]}
   >
-    <div
-      className="field"
-    >
-      <div
-        className="control"
-      >
-        <mock-JSONEditor
-          name="config"
-          onBlur={[Function]}
-          onChange={[Function]}
-          readOnly={false}
-          value="{
+    <div>
+      <mock-JSONEditor
+        name="config"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={false}
+        value="{
 	\\"connector.class\\": \\"FileStreamSource\\",
 	\\"tasks.max\\": \\"10\\",
 	\\"topic\\": \\"test-topic\\",
 	\\"file\\": \\"/some/file\\"
 }"
-        />
-      </div>
-      <p
-        className="help is-danger"
       />
     </div>
-    <div
-      className="field"
+    <div />
+    <button
+      className="c1"
+      disabled={true}
+      type="submit"
     >
-      <div
-        className="control"
-      >
-        <input
-          className="button is-primary"
-          disabled={true}
-          type="submit"
-        />
-      </div>
-    </div>
+      Submit
+    </button>
   </form>
 </div>
 `;
 
 exports[`Edit view matches snapshot when config has credentials 1`] = `
-Array [
+.c2 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -webkit-justify-content: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  padding: 0px 12px;
+  border: none;
+  border-radius: 4px;
+  white-space: nowrap;
+  background: #4F4FFF;
+  color: #FFFFFF;
+  font-size: 14px;
+  height: 32px;
+}
+
+.c2:hover:enabled {
+  background: #1717CF;
+  color: #FFFFFF;
+  cursor: pointer;
+}
+
+.c2:active:enabled {
+  background: #1414B8;
+  color: #FFFFFF;
+}
+
+.c2:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.c2 a {
+  color: white;
+}
+
+.c2 i {
+  margin-right: 7px;
+}
+
+.c0 {
+  margin: 16px;
+}
+
+.c0 form > *:last-child {
+  margin-top: 16px;
+}
+
+.c1 {
+  height: 48px;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  background-color: #FFEECC;
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 16px;
+}
+
+<div
+  className="c0"
+>
   <div
-    className="notification is-danger is-light"
+    className="c1"
   >
     Please replace ****** with the real credential values to avoid accidentally breaking your connector config!
-  </div>,
-  <div
-    className="box"
+  </div>
+  <form
+    onSubmit={[Function]}
   >
-    <form
-      onSubmit={[Function]}
-    >
-      <div
-        className="field"
-      >
-        <div
-          className="control"
-        >
-          <mock-JSONEditor
-            name="config"
-            onBlur={[Function]}
-            onChange={[Function]}
-            readOnly={false}
-            value="{
+    <div>
+      <mock-JSONEditor
+        name="config"
+        onBlur={[Function]}
+        onChange={[Function]}
+        readOnly={false}
+        value="{
 	\\"connector.class\\": \\"FileStreamSource\\",
 	\\"tasks.max\\": \\"10\\",
 	\\"topic\\": \\"test-topic\\",
 	\\"file\\": \\"/some/file\\",
 	\\"password\\": \\"******\\"
 }"
-          />
-        </div>
-        <p
-          className="help is-danger"
-        />
-      </div>
-      <div
-        className="field"
-      >
-        <div
-          className="control"
-        >
-          <input
-            className="button is-primary"
-            disabled={true}
-            type="submit"
-          />
-        </div>
-      </div>
-    </form>
-  </div>,
-]
+      />
+    </div>
+    <div />
+    <button
+      className="c2"
+      disabled={true}
+      type="submit"
+    >
+      Submit
+    </button>
+  </form>
+</div>
 `;
 
 exports[`Edit view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;

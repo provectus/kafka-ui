@@ -20,28 +20,6 @@ describe('Thunks', () => {
     store.clearActions();
   });
 
-  describe('fetchClusterStats', () => {
-    it('creates GET_CLUSTER_STATUS__SUCCESS when fetching cluster stats', async () => {
-      fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, {
-        body: fixtures.clusterStats,
-      });
-      await store.dispatch(thunks.fetchClusterStats(clusterName));
-      expect(store.getActions()).toEqual([
-        actions.fetchClusterStatsAction.request(),
-        actions.fetchClusterStatsAction.success(fixtures.clusterStats),
-      ]);
-    });
-
-    it('creates GET_CLUSTER_STATUS__FAILURE when fetching cluster stats', async () => {
-      fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, 404);
-      await store.dispatch(thunks.fetchClusterStats(clusterName));
-      expect(store.getActions()).toEqual([
-        actions.fetchClusterStatsAction.request(),
-        actions.fetchClusterStatsAction.failure(),
-      ]);
-    });
-  });
-
   describe('fetchSchemasByClusterName', () => {
     it('creates GET_CLUSTER_SCHEMAS__SUCCESS when fetching cluster schemas', async () => {
       fetchMock.getOnce(`/api/clusters/${clusterName}/schemas`, {
@@ -119,15 +97,14 @@ describe('Thunks', () => {
           thunks.createSchema(clusterName, fixtures.schemaPayload)
         );
       } catch (error) {
-        expect(error.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.createSchemaAction.request(),
           actions.createSchemaAction.failure({
             alert: {
               response: {
-                body: undefined,
                 status: 404,
                 statusText: 'Not Found',
+                url: `/api/clusters/${clusterName}/schemas`,
               },
               subject: 'schema-NewSchema',
               title: 'Schema NewSchema',
@@ -250,6 +227,8 @@ describe('Thunks', () => {
         `/api/clusters/${clusterName}/schemas/compatibility`,
         200
       );
+      fetchMock.getOnce(`/api/clusters/${clusterName}/schemas`, 200);
+
       await store.dispatch(
         thunks.updateGlobalSchemaCompatibilityLevel(
           clusterName,
@@ -258,6 +237,7 @@ describe('Thunks', () => {
       );
       expect(store.getActions()).toEqual([
         actions.updateGlobalSchemaCompatibilityLevelAction.request(),
+        actions.fetchSchemasByClusterNameAction.request(),
         actions.updateGlobalSchemaCompatibilityLevelAction.success(
           CompatibilityLevelCompatibilityEnum.FORWARD
         ),

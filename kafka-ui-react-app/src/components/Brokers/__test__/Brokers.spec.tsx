@@ -1,90 +1,54 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import Brokers from 'components/Brokers/Brokers';
-import { ClusterName } from 'redux/interfaces';
-import { StaticRouter } from 'react-router';
-import { ClusterStats } from 'generated-sources';
-
-interface Props extends ClusterStats {
-  isFetched: boolean;
-  fetchClusterStats: (clusterName: ClusterName) => void;
-  fetchBrokers: (clusterName: ClusterName) => void;
-}
+import { render } from 'lib/testHelpers';
+import { screen, waitFor } from '@testing-library/dom';
+import { Route, StaticRouter } from 'react-router';
+import { clusterBrokersPath } from 'lib/paths';
+import fetchMock from 'fetch-mock';
+import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
 
 describe('Brokers Component', () => {
-  const pathname = `ui/clusters/local/brokers`;
+  afterEach(() => fetchMock.reset());
 
-  describe('Brokers Empty', () => {
-    const setupEmptyComponent = (props: Partial<Props> = {}) => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Brokers
-          brokerCount={0}
-          activeControllers={0}
-          zooKeeperStatus={0}
-          onlinePartitionCount={0}
-          offlinePartitionCount={0}
-          inSyncReplicasCount={0}
-          outOfSyncReplicasCount={0}
-          underReplicatedPartitionCount={0}
-          version="1"
-          fetchClusterStats={jest.fn()}
-          fetchBrokers={jest.fn()}
-          diskUsage={undefined}
-          isFetched={false}
-          {...props}
-        />
+  const clusterName = 'local';
+  const renderComponent = () =>
+    render(
+      <StaticRouter
+        location={{
+          pathname: clusterBrokersPath(clusterName),
+        }}
+      >
+        <Route path={clusterBrokersPath(':clusterName')}>
+          <Brokers />
+        </Route>
       </StaticRouter>
     );
-    it('renders section', () => {
-      const component = mount(setupEmptyComponent());
-      expect(component.exists('.section')).toBeTruthy();
-    });
-
-    it('renders section with is-danger selector', () => {
-      const component = mount(setupEmptyComponent());
-      expect(component.exists('.is-danger')).toBeTruthy();
-    });
-
-    it('matches Brokers Empty snapshot', () => {
-      expect(mount(setupEmptyComponent())).toMatchSnapshot();
-    });
-  });
 
   describe('Brokers', () => {
-    const setupComponent = (props: Partial<Props> = {}) => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Brokers
-          brokerCount={1}
-          activeControllers={1}
-          zooKeeperStatus={1}
-          onlinePartitionCount={64}
-          offlinePartitionCount={0}
-          inSyncReplicasCount={64}
-          outOfSyncReplicasCount={0}
-          underReplicatedPartitionCount={0}
-          version="1"
-          fetchClusterStats={jest.fn()}
-          fetchBrokers={jest.fn()}
-          diskUsage={[
-            {
-              brokerId: 1,
-              segmentCount: 64,
-              segmentSize: 60718,
-            },
-          ]}
-          isFetched
-          {...props}
-        />
-      </StaticRouter>
-    );
-
-    it('renders section with is-success selector', () => {
-      const component = mount(setupComponent());
-      expect(component.exists('.is-success')).toBeTruthy();
+    it('renders', async () => {
+      const mock = fetchMock.getOnce(
+        `/api/clusters/${clusterName}/stats`,
+        clusterStatsPayload
+      );
+      renderComponent();
+      await waitFor(() => expect(mock.called()).toBeTruthy());
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      const rows = screen.getAllByRole('row');
+      expect(rows.length).toEqual(3);
     });
 
-    it('matches snapshot', () => {
-      expect(mount(setupComponent())).toMatchSnapshot();
+    it('shows warning when offlinePartitionCount > 0', async () => {
+      const mock = fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, {
+        ...clusterStatsPayload,
+        offlinePartitionCount: 1345,
+      });
+      renderComponent();
+      await waitFor(() => expect(mock.called()).toBeTruthy());
+      const onlineWidget = screen.getByText(
+        clusterStatsPayload.onlinePartitionCount
+      );
+      expect(onlineWidget).toBeInTheDocument();
+      expect(onlineWidget).toHaveStyle({ color: '#E51A1A' });
     });
   });
 });

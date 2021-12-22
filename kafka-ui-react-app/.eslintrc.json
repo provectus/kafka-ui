@@ -24,6 +24,7 @@
   "extends": [
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
+    "plugin:jest-dom/recommended",
     "plugin:prettier/recommended",
     "prettier"
   ],
@@ -41,7 +42,8 @@
     }],
     "import/no-relative-parent-imports": "error",
     "no-debugger": "warn",
-    "react/jsx-props-no-spreading": "off"
+    "react/jsx-props-no-spreading": "off",
+    "no-param-reassign": ["error", { "props": true, "ignorePropertyModificationsFor": ["state"] }]
   },
   "overrides": [
     {

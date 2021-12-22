@@ -3,15 +3,18 @@ import {
   CompatibilityLevelCompatibilityEnum,
   SchemaSubject,
 } from 'generated-sources';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import ClusterContext from 'components/contexts/ClusterContext';
+import { Table } from 'components/common/table/Table/Table.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { Button } from 'components/common/Button/Button';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import ListItem from './ListItem';
-import GlobalSchemaSelector from './GlobalSchemaSelector';
+import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 
 export interface ListProps {
   schemas: SchemaSubject[];
@@ -46,39 +49,38 @@ const List: React.FC<ListProps> = ({
   }, [fetchSchemasByClusterName, clusterName]);
 
   return (
-    <div className="section">
-      <Breadcrumb>Schema Registry</Breadcrumb>
-      <div className="box">
-        <div className="level">
-          {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (
-            <div className="level-item level-right">
-              <GlobalSchemaSelector
-                globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
-                updateGlobalSchemaCompatibilityLevel={
-                  updateGlobalSchemaCompatibilityLevel
-                }
-              />
-              <Link
-                className="button is-primary"
-                to={clusterSchemaNewPath(clusterName)}
-              >
-                Create Schema
-              </Link>
-            </div>
-          )}
-        </div>
-      </div>
+    <div>
+      <PageHeading text="Schema Registry">
+        {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (
+          <>
+            <GlobalSchemaSelector
+              globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
+              updateGlobalSchemaCompatibilityLevel={
+                updateGlobalSchemaCompatibilityLevel
+              }
+            />
+            <Button
+              buttonSize="M"
+              buttonType="primary"
+              isLink
+              to={clusterSchemaNewPath(clusterName)}
+            >
+              <i className="fas fa-plus" /> Create Schema
+            </Button>
+          </>
+        )}
+      </PageHeading>
 
       {isFetching ? (
         <PageLoader />
       ) : (
-        <div className="box">
-          <table className="table is-striped is-fullwidth">
+        <div>
+          <Table isFullwidth>
             <thead>
               <tr>
-                <th>Schema Name</th>
-                <th>Version</th>
-                <th>Compatibility</th>
+                <TableHeaderCell title="Schema Name" />
+                <TableHeaderCell title="Version" />
+                <TableHeaderCell title="Compatibility" />
               </tr>
             </thead>
             <tbody>
@@ -94,7 +96,7 @@ const List: React.FC<ListProps> = ({
                 />
               ))}
             </tbody>
-          </table>
+          </Table>
         </div>
       )}
     </div>

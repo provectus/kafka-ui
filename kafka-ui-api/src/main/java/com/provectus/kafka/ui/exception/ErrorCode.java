@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.exception;
 
 import java.util.HashSet;
-import org.apache.logging.log4j.LogManager;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 
@@ -31,7 +31,7 @@ public enum ErrorCode {
     var codes = new HashSet<Integer>();
     for (ErrorCode value : ErrorCode.values()) {
       if (!codes.add(value.code())) {
-        LogManager.getLogger()
+        LoggerFactory.getLogger(ErrorCode.class)
             .warn("Multiple {} values refer to code {}", ErrorCode.class, value.code);
       }
     }

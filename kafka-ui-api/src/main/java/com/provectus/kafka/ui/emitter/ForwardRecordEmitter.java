@@ -6,14 +6,14 @@ import com.provectus.kafka.ui.util.OffsetsSeek;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.function.Supplier;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.core.publisher.FluxSink;
 
-@Log4j2
+@Slf4j
 public class ForwardRecordEmitter
     extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {

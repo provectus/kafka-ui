@@ -1,20 +1,22 @@
 import React from 'react';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { mount, shallow } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
 import NewContainer from 'components/Schemas/New/NewContainer';
 import New, { NewProps } from 'components/Schemas/New/New';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('New', () => {
   describe('Container', () => {
-    const store = configureStore();
-
     it('renders view', () => {
       const component = shallow(
-        <Provider store={store}>
-          <NewContainer />
-        </Provider>
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <NewContainer />
+          </Provider>
+        </ThemeProvider>
       );
 
       expect(component.exists()).toBeTruthy();
@@ -22,12 +24,14 @@ describe('New', () => {
   });
 
   describe('View', () => {
-    const pathname = '/ui/clusters/clusterName/schemas/create_new';
+    const pathname = '/ui/clusters/clusterName/schemas/create-new';
 
     const setupWrapper = (props: Partial<NewProps> = {}) => (
-      <StaticRouter location={{ pathname }} context={{}}>
-        <New createSchema={jest.fn()} {...props} />
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <New createSchema={jest.fn()} {...props} />
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     it('matches snapshot', () => {

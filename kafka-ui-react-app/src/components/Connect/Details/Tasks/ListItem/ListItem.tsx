@@ -2,7 +2,10 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { Task, TaskId } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
-import StatusTag from 'components/Connect/StatusTag';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import TagStyled from 'components/common/Tag/Tag.styled';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -22,33 +25,27 @@ export interface ListItemProps {
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
-  const [restarting, setRestarting] = React.useState(false);
 
   const restartTaskHandler = React.useCallback(async () => {
-    setRestarting(true);
     await restartTask(clusterName, connectName, connectorName, task.id?.task);
-    setRestarting(false);
   }, [restartTask, clusterName, connectName, connectorName, task.id?.task]);
 
   return (
     <tr>
-      <td className="has-text-overflow-ellipsis">{task.status?.id}</td>
+      <td>{task.status?.id}</td>
       <td>{task.status?.workerId}</td>
       <td>
-        <StatusTag status={task.status.state} />
+        <TagStyled color="yellow">{task.status.state}</TagStyled>
       </td>
-      <td>{task.status.trace}</td>
-      <td>
-        <button
-          type="button"
-          className="button is-small is-pulled-right"
-          onClick={restartTaskHandler}
-          disabled={restarting}
-        >
-          <span className="icon">
-            <i className="fas fa-sync-alt" />
-          </span>
-        </button>
+      <td>{task.status.trace || 'null'}</td>
+      <td style={{ width: '5%' }}>
+        <div>
+          <Dropdown label={<VerticalElipsisIcon />} right>
+            <DropdownItem onClick={restartTaskHandler}>
+              <span>Clear Messages</span>
+            </DropdownItem>
+          </Dropdown>
+        </div>
       </td>
     </tr>
   );

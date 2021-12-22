@@ -1,29 +1,116 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Tasks view matches snapshot 1`] = `
+.c0 {
+  width: 100%;
+}
+
+.c0 td {
+  border-top: 1px #f1f2f3 solid;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 8px 8px 24px;
+  color: #171A1C;
+  vertical-align: middle;
+}
+
+.c0 tbody > tr:hover {
+  background-color: #F1F2F3;
+}
+
+.c1 {
+  padding: 4px 0 4px 24px !important;
+  border-bottom-width: 1px !important;
+  vertical-align: middle !important;
+}
+
+.c1.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.c1.has-text-link-dark span {
+  color: #4F4FFF !important;
+}
+
+.c1 span {
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  -webkit-letter-spacing: 0em;
+  -moz-letter-spacing: 0em;
+  -ms-letter-spacing: 0em;
+  letter-spacing: 0em;
+  text-align: left;
+  background: #FFFFFF;
+  color: #73848C;
+}
+
+.c1 span.preview {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #4F4FFF;
+  cursor: pointer;
+}
+
+.c1 span.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
 <table
-  className="table is-fullwidth"
+  className="c0"
 >
   <thead>
     <tr>
-      <th>
-        ID
-      </th>
-      <th>
-        Worker
-      </th>
-      <th>
-        State
-      </th>
-      <th>
-        Trace
-      </th>
-      <th>
+      <th
+        className="c1"
+        title="ID"
+      >
         <span
-          className="is-pulled-right"
+          className="title"
         >
-          Restart
+          ID
         </span>
+      </th>
+      <th
+        className="c1"
+        title="Worker"
+      >
+        <span
+          className="title"
+        >
+          Worker
+        </span>
+      </th>
+      <th
+        className="c1"
+        title="State"
+      >
+        <span
+          className="title"
+        >
+          State
+        </span>
+      </th>
+      <th
+        className="c1"
+        title="Trace"
+      >
+        <span
+          className="title"
+        >
+          Trace
+        </span>
+      </th>
+      <th
+        className="c1"
+      >
+        <span
+          className="title"
+        />
       </th>
     </tr>
   </thead>
@@ -99,29 +186,116 @@ exports[`Tasks view matches snapshot 1`] = `
 exports[`Tasks view matches snapshot when fetching tasks 1`] = `<mock-PageLoader />`;
 
 exports[`Tasks view matches snapshot when no tasks 1`] = `
+.c0 {
+  width: 100%;
+}
+
+.c0 td {
+  border-top: 1px #f1f2f3 solid;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 8px 8px 8px 24px;
+  color: #171A1C;
+  vertical-align: middle;
+}
+
+.c0 tbody > tr:hover {
+  background-color: #F1F2F3;
+}
+
+.c1 {
+  padding: 4px 0 4px 24px !important;
+  border-bottom-width: 1px !important;
+  vertical-align: middle !important;
+}
+
+.c1.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
+.c1.has-text-link-dark span {
+  color: #4F4FFF !important;
+}
+
+.c1 span {
+  font-family: Inter,sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  -webkit-letter-spacing: 0em;
+  -moz-letter-spacing: 0em;
+  -ms-letter-spacing: 0em;
+  letter-spacing: 0em;
+  text-align: left;
+  background: #FFFFFF;
+  color: #73848C;
+}
+
+.c1 span.preview {
+  margin-left: 8px;
+  font-size: 14px;
+  color: #4F4FFF;
+  cursor: pointer;
+}
+
+.c1 span.is-clickable {
+  cursor: pointer !important;
+  pointer-events: all !important;
+}
+
 <table
-  className="table is-fullwidth"
+  className="c0"
 >
   <thead>
     <tr>
-      <th>
-        ID
-      </th>
-      <th>
-        Worker
-      </th>
-      <th>
-        State
-      </th>
-      <th>
-        Trace
-      </th>
-      <th>
+      <th
+        className="c1"
+        title="ID"
+      >
         <span
-          className="is-pulled-right"
+          className="title"
         >
-          Restart
+          ID
         </span>
+      </th>
+      <th
+        className="c1"
+        title="Worker"
+      >
+        <span
+          className="title"
+        >
+          Worker
+        </span>
+      </th>
+      <th
+        className="c1"
+        title="State"
+      >
+        <span
+          className="title"
+        >
+          State
+        </span>
+      </th>
+      <th
+        className="c1"
+        title="Trace"
+      >
+        <span
+          className="title"
+        >
+          Trace
+        </span>
+      </th>
+      <th
+        className="c1"
+      >
+        <span
+          className="title"
+        />
       </th>
     </tr>
   </thead>

@@ -37,12 +37,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
-@Log4j2
+@Slf4j
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   private static final int CLIENT_IDENTITY_MAP_CAPACITY = 100;

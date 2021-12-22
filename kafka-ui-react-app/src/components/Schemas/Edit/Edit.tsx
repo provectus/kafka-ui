@@ -1,16 +1,21 @@
 import React from 'react';
 import { useHistory } from 'react-router';
-import { useForm, Controller } from 'react-hook-form';
+import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
   SchemaSubject,
   SchemaType,
 } from 'generated-sources';
-import { clusterSchemaPath, clusterSchemasPath } from 'lib/paths';
+import { clusterSchemaPath } from 'lib/paths';
 import { ClusterName, NewSchemaSubjectRaw, SchemaName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import Select from 'components/common/Select/Select';
+import { Button } from 'components/common/Button/Button';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+
+import { EditorsWrapper, EditWrapper } from './Edit.styled';
 
 export interface EditProps {
   subject: SchemaName;
@@ -40,12 +45,7 @@ const Edit = ({
     if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
   }, [clusterName, fetchSchemasByClusterName]);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, isDirty },
-    control,
-  } = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
+  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
 
   const getFormattedSchema = React.useCallback(
     () => JSON.stringify(JSON.parse(schema.schema), null, '\t'),
@@ -76,62 +76,46 @@ const Edit = ({
         // do not redirect
       }
     },
-    [schema, register, control, clusterName, subject, updateSchema, history]
+    [
+      schema,
+      methods.register,
+      methods.control,
+      clusterName,
+      subject,
+      updateSchema,
+      history,
+    ]
   );
 
   return (
-    <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterSchemasPath(clusterName),
-                label: 'Schema Registry',
-              },
-              {
-                href: clusterSchemaPath(clusterName, subject),
-                label: subject,
-              },
-            ]}
-          >
-            Edit
-          </Breadcrumb>
-        </div>
-      </div>
-
+    <FormProvider {...methods}>
+      <PageHeading text="Edit schema" />
       {schemasAreFetched ? (
-        <div className="box">
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="mt-3 is-flex-direction-column"
-          >
-            <div className="mb-4">
-              <h5 className="title is-5 mb-2">Schema Type</h5>
-              <div className="select">
-                <select
-                  {...register('schemaType', {
-                    required: 'Schema Type is required.',
-                  })}
+        <EditWrapper>
+          <form onSubmit={methods.handleSubmit(onSubmit)}>
+            <div>
+              <div>
+                <InputLabel>Type</InputLabel>
+                <Select
+                  name="schemaType"
+                  required
                   defaultValue={schema.schemaType}
-                  disabled={isSubmitting}
+                  disabled={methods.formState.isSubmitting}
                 >
                   {Object.keys(SchemaType).map((type: string) => (
                     <option key={type} value={type}>
                       {type}
                     </option>
                   ))}
-                </select>
+                </Select>
               </div>
-            </div>
 
-            <div className="mb-4">
-              <h5 className="title is-5 mb-2">Compatibility Level</h5>
-              <div className="select">
-                <select
-                  {...register('compatibilityLevel')}
+              <div>
+                <InputLabel>Compatibility level</InputLabel>
+                <Select
+                  name="compatibilityLevel"
                   defaultValue={schema.compatibilityLevel}
-                  disabled={isSubmitting}
+                  disabled={methods.formState.isSubmitting}
                 >
                   {Object.keys(CompatibilityLevelCompatibilityEnum).map(
                     (level: string) => (
@@ -140,29 +124,29 @@ const Edit = ({
                       </option>
                     )
                   )}
-                </select>
+                </Select>
               </div>
             </div>
-            <div className="columns">
-              <div className="column is-one-half">
-                <h4 className="title is-5 mb-2">Latest Schema</h4>
+            <EditorsWrapper>
+              <div>
+                <h4>Latest schema</h4>
                 <JSONEditor
                   isFixedHeight
                   readOnly
-                  height="500px"
+                  height="372px"
                   value={getFormattedSchema()}
                   name="latestSchema"
                   highlightActiveLine={false}
                 />
               </div>
-              <div className="column is-one-half">
-                <h4 className="title is-5 mb-2">New Schema</h4>
+              <div>
+                <h4>New schema</h4>
                 <Controller
-                  control={control}
+                  control={methods.control}
                   name="newSchema"
                   render={({ field: { name, onChange } }) => (
                     <JSONEditor
-                      readOnly={isSubmitting}
+                      readOnly={methods.formState.isSubmitting}
                       defaultValue={getFormattedSchema()}
                       name={name}
                       onChange={onChange}
@@ -170,20 +154,23 @@ const Edit = ({
                   )}
                 />
               </div>
-            </div>
-            <button
+            </EditorsWrapper>
+            <Button
+              buttonType="primary"
+              buttonSize="M"
               type="submit"
-              className="button is-primary"
-              disabled={!isDirty || isSubmitting}
+              disabled={
+                !methods.formState.isDirty || methods.formState.isSubmitting
+              }
             >
               Submit
-            </button>
+            </Button>
           </form>
-        </div>
+        </EditWrapper>
       ) : (
         <PageLoader />
       )}
-    </div>
+    </FormProvider>
   );
 };
 

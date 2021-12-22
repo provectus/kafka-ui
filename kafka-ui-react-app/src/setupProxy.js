@@ -8,6 +8,7 @@ module.exports = (app) => {
       createProxyMiddleware({
         target: process.env.DEV_PROXY,
         changeOrigin: true,
+        secure: false,
       })
     );
   }

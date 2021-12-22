@@ -1,7 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
@@ -9,7 +9,7 @@ import reactor.core.scheduler.Schedulers;
 
 @Component
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class ClustersMetricsScheduler {
 
   private final ClustersStorage clustersStorage;

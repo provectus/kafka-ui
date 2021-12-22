@@ -5,7 +5,7 @@ import {
   fetchSchemasByClusterNameAction,
   fetchSchemaVersionsAction,
 } from 'redux/actions';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/schemas/selectors';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 
@@ -15,8 +15,6 @@ import {
   newSchemaPayload,
   schemaVersionsPayload,
 } from './fixtures';
-
-const store = configureStore();
 
 describe('Schemas selectors', () => {
   describe('Initial state', () => {

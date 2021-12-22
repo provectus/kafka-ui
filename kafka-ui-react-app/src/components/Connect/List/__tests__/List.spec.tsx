@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { connectors } from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
@@ -10,18 +10,20 @@ import ClusterContext, {
 } from 'components/contexts/ClusterContext';
 import ListContainer from 'components/Connect/List/ListContainer';
 import List, { ListProps } from 'components/Connect/List/List';
-
-const store = configureStore();
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('Connectors List', () => {
   describe('Container', () => {
     it('renders view with initial state of storage', () => {
       const wrapper = mount(
-        <Provider store={store}>
-          <StaticRouter>
-            <ListContainer />
-          </StaticRouter>
-        </Provider>
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <StaticRouter>
+              <ListContainer />
+            </StaticRouter>
+          </Provider>
+        </ThemeProvider>
       );
 
       expect(wrapper.exists(List)).toBeTruthy();
@@ -36,21 +38,25 @@ describe('Connectors List', () => {
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
     ) => (
-      <StaticRouter>
-        <ClusterContext.Provider value={contextValue}>
-          <List
-            areConnectorsFetching
-            areConnectsFetching
-            connectors={[]}
-            connects={[]}
-            fetchConnects={fetchConnects}
-            fetchConnectors={fetchConnectors}
-            search=""
-            setConnectorSearch={setConnectorSearch}
-            {...props}
-          />
-        </ClusterContext.Provider>
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <StaticRouter>
+            <ClusterContext.Provider value={contextValue}>
+              <List
+                areConnectorsFetching
+                areConnectsFetching
+                connectors={[]}
+                connects={[]}
+                fetchConnects={fetchConnects}
+                fetchConnectors={fetchConnectors}
+                search=""
+                setConnectorSearch={setConnectorSearch}
+                {...props}
+              />
+            </ClusterContext.Provider>
+          </StaticRouter>
+        </Provider>
+      </ThemeProvider>
     );
 
     it('renders PageLoader', () => {
@@ -87,9 +93,7 @@ describe('Connectors List', () => {
       const wrapper = mount(
         setupComponent({}, { ...initialValue, isReadOnly: false })
       );
-      expect(
-        wrapper.exists('.level-item.level-right > .button.is-primary')
-      ).toBeTruthy();
+      expect(wrapper.exists('button')).toBeTruthy();
     });
 
     describe('readonly cluster', () => {
