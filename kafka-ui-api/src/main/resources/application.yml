@@ -1,6 +1,6 @@
 auth:
-  enabled: false
-management:
+  type: DISABLED
+  management:
   endpoint:
     info:
       enabled: true
@@ -18,3 +18,4 @@ logging:
     #org.springframework.http.codec.json.Jackson2JsonEncoder: DEBUG
     #org.springframework.http.codec.json.Jackson2JsonDecoder: DEBUG
     reactor.netty.http.server.AccessLog: INFO
+

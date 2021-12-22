@@ -192,6 +192,16 @@
             <artifactId>antlr4-runtime</artifactId>
             <version>${antlr4-maven-plugin.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-ldap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
