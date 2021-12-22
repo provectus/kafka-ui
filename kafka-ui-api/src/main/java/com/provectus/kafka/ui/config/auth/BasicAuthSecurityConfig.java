@@ -14,13 +14,13 @@ import org.springframework.security.web.server.authentication.RedirectServerAuth
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "LOGIN_FORM")
 @Log4j2
-public class BasicAuthSecurityConfig {
+public class BasicAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   @Bean
   public SecurityWebFilterChain configure(ServerHttpSecurity http) {
     log.info("Configuring LOGIN_FORM authentication.");
     http.authorizeExchange()
-        .pathMatchers(AbstractAuthSecurityConfig.AUTH_WHITELIST)
+        .pathMatchers(AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated();

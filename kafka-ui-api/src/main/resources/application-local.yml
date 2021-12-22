@@ -31,4 +31,4 @@ spring:
   jmx:
     enabled: true
 auth:
-  type: LOGIN_FORM
+  type: DISABLED

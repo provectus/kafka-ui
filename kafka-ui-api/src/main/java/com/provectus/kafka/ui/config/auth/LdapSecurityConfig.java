@@ -22,7 +22,7 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableWebFluxSecurity
 @ConditionalOnProperty(value = "auth.type", havingValue = "LDAP")
 @Log4j2
-public class LdapSecurityConfig {
+public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
 
   @Value("${spring.ldap.urls}")
   private String ldapUrls;
@@ -55,7 +55,7 @@ public class LdapSecurityConfig {
 
     http
         .authorizeExchange()
-        .pathMatchers(AbstractAuthSecurityConfig.AUTH_WHITELIST)
+        .pathMatchers(AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated()

@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.config.auth;
 
-public abstract class AbstractAuthSecurityConfig {
+abstract class AbstractAuthSecurityConfig {
 
   public static final String[] AUTH_WHITELIST = {
       "/css/**",

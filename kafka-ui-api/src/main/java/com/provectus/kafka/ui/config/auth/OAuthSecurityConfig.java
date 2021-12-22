@@ -16,7 +16,7 @@ import org.springframework.util.ClassUtils;
 @ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
 @AllArgsConstructor
 @Log4j2
-public class OAuthSecurityConfig {
+public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   public static final String REACTIVE_CLIENT_REGISTRATION_REPOSITORY_CLASSNAME =
       "org.springframework.security.oauth2.client.registration."
@@ -33,7 +33,7 @@ public class OAuthSecurityConfig {
   public SecurityWebFilterChain configure(ServerHttpSecurity http) {
     log.info("Configuring OAUTH2 authentication.");
     http.authorizeExchange()
-        .pathMatchers(AbstractAuthSecurityConfig.AUTH_WHITELIST)
+        .pathMatchers(AUTH_WHITELIST)
         .permitAll()
         .anyExchange()
         .authenticated();
