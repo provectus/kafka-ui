@@ -67,6 +67,7 @@ const ResetOffsets: React.FC = () => {
   );
 
   const methods = useForm<FormType>({
+    mode: 'onChange',
     defaultValues: {
       resetType: ConsumerGroupOffsetsResetType.EARLIEST,
       topic: '',
@@ -258,7 +259,13 @@ const ResetOffsets: React.FC = () => {
                         id={`partitionsOffsets.${index}.offset`}
                         type="number"
                         name={`partitionsOffsets.${index}.offset` as const}
-                        hookFormOptions={{ shouldUnregister: true }}
+                        hookFormOptions={{
+                          shouldUnregister: true,
+                          min: {
+                            value: 0,
+                            message: 'must be greater than or equal to 0',
+                          },
+                        }}
                         defaultValue={field.offset}
                       />
                       <ErrorMessage
@@ -277,7 +284,10 @@ const ResetOffsets: React.FC = () => {
             buttonSize="M"
             buttonType="primary"
             type="submit"
-            disabled={selectedPartitions.length === 0}
+            disabled={
+              Object.values(errors).length > 0 ||
+              selectedPartitions.length === 0
+            }
           >
             Submit
           </Button>
