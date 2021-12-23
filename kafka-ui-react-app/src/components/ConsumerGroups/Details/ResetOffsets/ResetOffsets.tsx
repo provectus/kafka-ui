@@ -81,7 +81,7 @@ const ResetOffsets: React.FC = () => {
     control,
     setError,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isValid },
   } = methods;
   const { fields } = useFieldArray({
     control,
@@ -128,7 +128,7 @@ const ResetOffsets: React.FC = () => {
         partition: number;
       }[],
     };
-    let isValid = true;
+    let isValidAugmentedData = true;
     if (augmentedData.resetType === ConsumerGroupOffsetsResetType.OFFSET) {
       augmentedData.partitionsOffsets.forEach((offset, index) => {
         if (!offset.offset) {
@@ -136,7 +136,7 @@ const ResetOffsets: React.FC = () => {
             type: 'manual',
             message: "This field shouldn't be empty!",
           });
-          isValid = false;
+          isValidAugmentedData = false;
         }
       });
     } else if (
@@ -147,10 +147,10 @@ const ResetOffsets: React.FC = () => {
           type: 'manual',
           message: "This field shouldn't be empty!",
         });
-        isValid = false;
+        isValidAugmentedData = false;
       }
     }
-    if (isValid) {
+    if (isValidAugmentedData) {
       dispatch(
         resetConsumerGroupOffsets({
           clusterName,
@@ -284,10 +284,7 @@ const ResetOffsets: React.FC = () => {
             buttonSize="M"
             buttonType="primary"
             type="submit"
-            disabled={
-              Object.values(errors).length > 0 ||
-              selectedPartitions.length === 0
-            }
+            disabled={!isValid || selectedPartitions.length === 0}
           >
             Submit
           </Button>
