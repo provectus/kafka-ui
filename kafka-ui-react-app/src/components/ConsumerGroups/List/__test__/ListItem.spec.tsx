@@ -1,9 +1,11 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount, render } from 'enzyme';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { StaticRouter } from 'react-router';
+import { ConsumerGroupState } from 'generated-sources';
+import { screen } from '@testing-library/react';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -27,6 +29,7 @@ describe('List', () => {
         topic: 'topic',
       },
     ],
+    state: ConsumerGroupState.STABLE,
   };
   const component = mount(
     <StaticRouter>
@@ -42,5 +45,9 @@ describe('List', () => {
 
   it('render empty ListItem', () => {
     expect(component.exists('tr')).toBeTruthy();
+  });
+
+  it('renders item', () => {
+    expect(component.find('td').at(5).text()).toBe('STABLE');
   });
 });
