@@ -279,10 +279,10 @@ public class SchemaRegistryService {
       );
     } else if (schemaRegistry.getUsername() != null) {
       throw new ValidationException(
-          "You specified username but do not specified password");
+          "You specified username but did not specify password");
     } else if (schemaRegistry.getPassword() != null) {
       throw new ValidationException(
-          "You specified password but do not specified username");
+          "You specified password but did not specify username");
     }
   }
 
