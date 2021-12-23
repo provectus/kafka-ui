@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.service;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
-import com.provectus.kafka.ui.exception.DuplicateEntityException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -93,7 +92,7 @@ public class SchemaRegistryService {
   }
 
   public Mono<SchemaSubjectDTO> getLatestSchemaVersionBySubject(KafkaCluster cluster,
-                                                             String schemaName) {
+                                                                String schemaName) {
     return this.getSchemaSubject(cluster, schemaName, LATEST);
   }
 
@@ -176,8 +175,7 @@ public class SchemaRegistryService {
               Mono.just(new InternalNewSchema(schema.getSchema(), schemaType));
           String subject = schema.getSubject();
           var schemaRegistry = cluster.getSchemaRegistry();
-          return checkSchemaOnDuplicate(subject, newSchema, schemaRegistry)
-              .flatMap(s -> submitNewSchema(subject, newSchema, schemaRegistry))
+          return submitNewSchema(subject, newSchema, schemaRegistry)
               .flatMap(resp -> getLatestSchemaVersionBySubject(cluster, subject));
         });
   }
@@ -197,26 +195,6 @@ public class SchemaRegistryService {
             r -> r.bodyToMono(ErrorResponse.class)
                 .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SubjectIdResponse.class);
-  }
-
-  @NotNull
-  private Mono<SchemaSubjectDTO> checkSchemaOnDuplicate(String subject,
-                                                     Mono<InternalNewSchema> newSchemaSubject,
-                                                     InternalSchemaRegistry schemaRegistry) {
-    return configuredWebClient(
-        schemaRegistry,
-        HttpMethod.POST,
-        URL_SUBJECT, subject)
-        .contentType(MediaType.APPLICATION_JSON)
-        .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
-        .retrieve()
-        .onStatus(NOT_FOUND::equals, res -> Mono.empty())
-        .onStatus(UNPROCESSABLE_ENTITY::equals,
-            r -> r.bodyToMono(ErrorResponse.class)
-                .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
-        .bodyToMono(SchemaSubjectDTO.class)
-        .filter(s -> Objects.isNull(s.getId()))
-        .switchIfEmpty(Mono.error(new DuplicateEntityException("Such schema already exists")));
   }
 
   @NotNull
@@ -269,7 +247,7 @@ public class SchemaRegistryService {
   }
 
   private Mono<CompatibilityLevelDTO> getSchemaCompatibilityInfoOrGlobal(KafkaCluster cluster,
-                                                                      String schemaName) {
+                                                                         String schemaName) {
     return this.getSchemaCompatibilityLevel(cluster, schemaName)
         .switchIfEmpty(this.getGlobalSchemaCompatibilityLevel(cluster));
   }
