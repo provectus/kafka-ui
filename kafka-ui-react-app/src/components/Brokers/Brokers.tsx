@@ -64,7 +64,7 @@ const Brokers: React.FC = () => {
             isAlert
             alertType={
               onlinePartitionCount ===
-              (onlinePartitionCount || 0) + (offlinePartitionCount || 0)
+    {offlinePartitionCount && offlinePartitionCount > 0 ? 'error' : 'success'}
                 ? 'success'
                 : 'error'
             }
