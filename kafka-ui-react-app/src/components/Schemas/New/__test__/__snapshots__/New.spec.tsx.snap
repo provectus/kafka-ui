@@ -364,6 +364,14 @@ exports[`New View matches snapshot 1`] = `
           },
         },
       },
+      "circularAlert": Object {
+        "color": Object {
+          "error": "#E51A1A",
+          "info": "#E3E6E8",
+          "success": "#5CD685",
+          "warning": "#FFEECC",
+        },
+      },
       "layout": Object {
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
@@ -459,6 +467,8 @@ exports[`New View matches snapshot 1`] = `
         "backgroundColor": Object {
           "gray": "#E3E6E8",
           "green": "#D6F5E0",
+          "red": "#FAD1D1",
+          "white": "#E3E6E8",
           "yellow": "#FFEECC",
         },
         "color": "#171A1C",

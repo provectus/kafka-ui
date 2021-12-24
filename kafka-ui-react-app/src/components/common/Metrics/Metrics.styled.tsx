@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import { AlertType } from 'redux/interfaces';
 
 export const Wrapper = styled.div`
   padding: 1.5rem 1rem;
@@ -43,6 +44,7 @@ export const IndicatorsWrapper = styled.div`
       border-top-left-radius: 8px;
       border-bottom-left-radius: 8px;
     }
+
     &:last-child {
       border-top-right-radius: 8px;
       border-bottom-right-radius: 8px;
@@ -74,3 +76,21 @@ export const RedText = styled.span`
   color: ${({ theme }) => theme.metrics.indicator.warningTextColor};
   font-size: 14px;
 `;
+
+export const CircularAlertWrapper = styled.svg.attrs({
+  viewBox: '0 0 4 4',
+  xmlns: 'http://www.w3.org/2000/svg',
+})`
+  grid-area: status;
+  fill: none;
+  width: 4px;
+  height: 4px;
+`;
+
+export const CircularAlert = styled.circle.attrs({ cx: 2, cy: 2, r: 2 })<{
+  $type: AlertType;
+}>(
+  ({ theme, $type }) => css`
+    fill: ${theme.circularAlert.color[$type]};
+  `
+);

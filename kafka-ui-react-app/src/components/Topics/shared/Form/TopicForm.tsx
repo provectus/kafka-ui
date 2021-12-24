@@ -70,6 +70,7 @@ const TopicForm: React.FC<Props> = ({
                 <Input
                   type="number"
                   placeholder="Number of partitions"
+                  min="1"
                   defaultValue="1"
                   name="partitions"
                   inputSize="M"
@@ -89,6 +90,7 @@ const TopicForm: React.FC<Props> = ({
               <Input
                 type="number"
                 placeholder="Replication Factor"
+                min="1"
                 defaultValue="1"
                 name="replicationFactor"
                 inputSize="M"
@@ -104,6 +106,7 @@ const TopicForm: React.FC<Props> = ({
             <Input
               type="number"
               placeholder="Min In Sync Replicas"
+              min="1"
               defaultValue="1"
               name="minInsyncReplicas"
               inputSize="M"
@@ -149,6 +152,7 @@ const TopicForm: React.FC<Props> = ({
           <InputLabel>Maximum message size in bytes *</InputLabel>
           <Input
             type="number"
+            min="1"
             defaultValue="1000012"
             name="maxMessageBytes"
             inputSize="M"

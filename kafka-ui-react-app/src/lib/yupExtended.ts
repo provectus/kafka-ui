@@ -50,13 +50,13 @@ export const topicFormValidationSchema = yup.object().shape({
       TOPIC_NAME_VALIDATION_PATTERN,
       'Only alphanumeric, _, -, and . allowed'
     ),
-  partitions: yup.number().required(),
-  replicationFactor: yup.number().required(),
-  minInsyncReplicas: yup.number().required(),
+  partitions: yup.number().min(1).required(),
+  replicationFactor: yup.number().min(1).required(),
+  minInsyncReplicas: yup.number().min(1).required(),
   cleanupPolicy: yup.string().required(),
   retentionMs: yup.number().min(-1, 'Must be greater than or equal to -1'),
   retentionBytes: yup.number(),
-  maxMessageBytes: yup.number().required(),
+  maxMessageBytes: yup.number().min(1).required(),
   customParams: yup.array().of(
     yup.object().shape({
       name: yup.string().required(),

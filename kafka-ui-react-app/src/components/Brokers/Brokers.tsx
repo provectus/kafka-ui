@@ -59,7 +59,15 @@ const Brokers: React.FC = () => {
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
         <Metrics.Section title="Partitions">
-          <Metrics.Indicator label="Online" isAlert>
+          <Metrics.Indicator
+            label="Online"
+            isAlert
+            alertType={
+              offlinePartitionCount && offlinePartitionCount > 0
+                ? 'error'
+                : 'success'
+            }
+          >
             {offlinePartitionCount && offlinePartitionCount > 0 ? (
               <Metrics.RedText>{onlinePartitionCount}</Metrics.RedText>
             ) : (
