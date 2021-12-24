@@ -28,7 +28,6 @@ describe('List', () => {
         topic: 'topic',
       },
     ],
-    state: ConsumerGroupState.STABLE,
   };
   const component = mount(
     <StaticRouter>
@@ -42,11 +41,80 @@ describe('List', () => {
     </StaticRouter>
   );
 
+  const setupWrapper = (consumerGroup: {
+    partitions: {
+      endOffset: number;
+      partition: number;
+      currentOffset: number;
+      consumerId: null;
+      host: null;
+      topic: string;
+      messagesBehind: number;
+    }[];
+    coordinator: { host: string; id: number };
+    topics: number;
+    groupId: string;
+    members: number;
+    simple: boolean;
+    state: ConsumerGroupState;
+    partitionAssignor: string;
+  }) => (
+    <StaticRouter>
+      <ThemeProvider theme={theme}>
+        <table>
+          <tbody>
+            <ListItem consumerGroup={consumerGroup} />
+          </tbody>
+        </table>
+      </ThemeProvider>
+    </StaticRouter>
+  );
+
   it('render empty ListItem', () => {
     expect(component.exists('tr')).toBeTruthy();
   });
 
-  it('renders item', () => {
-    expect(component.find('td').at(5).text()).toBe('STABLE');
+  it('renders item with stable status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.STABLE,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.STABLE);
+  });
+
+  it('renders item with dead status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.DEAD,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.DEAD);
+  });
+
+  it('renders item with empty status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.EMPTY,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.EMPTY);
+  });
+
+  it('renders item with empty-string status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.UNKNOWN,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.UNKNOWN);
   });
 });
