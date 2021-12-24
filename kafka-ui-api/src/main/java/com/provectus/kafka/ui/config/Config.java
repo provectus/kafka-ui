@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.config;
 
+import com.fasterxml.jackson.databind.Module;
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.util.JmxPoolFactory;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.pool2.KeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
 import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -77,5 +79,10 @@ public class Config {
     return WebClient.builder()
         .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
         .build();
+  }
+
+  @Bean
+  public JsonNullableModule jsonNullableModule() {
+    return new JsonNullableModule();
   }
 }

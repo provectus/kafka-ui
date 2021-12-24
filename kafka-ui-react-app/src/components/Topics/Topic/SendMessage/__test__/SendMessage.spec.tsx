@@ -1,11 +1,25 @@
 import React from 'react';
-import SendMessage, {
-  Props,
-} from 'components/Topics/Topic/SendMessage/SendMessage';
-import { MessageSchemaSourceEnum } from 'generated-sources';
-import { screen, waitFor } from '@testing-library/react';
+import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
+import {
+  screen,
+  waitFor,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import fetchMock from 'fetch-mock';
+import { createMemoryHistory } from 'history';
 import { render } from 'lib/testHelpers';
+import { Route, Router } from 'react-router';
+import {
+  clusterTopicMessagesPath,
+  clusterTopicSendMessagePath,
+} from 'lib/paths';
+import { store } from 'redux/store';
+import { fetchTopicDetailsAction } from 'redux/actions';
+import { initialState } from 'redux/reducers/topics/reducer';
+import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+
+import { testSchema } from './fixtures';
 
 jest.mock('json-schema-faker', () => ({
   generate: () => ({
@@ -16,118 +30,68 @@ jest.mock('json-schema-faker', () => ({
   option: jest.fn(),
 }));
 
-const setupWrapper = (props?: Partial<Props>) => (
-  <SendMessage
-    clusterName="testCluster"
-    topicName="testTopic"
-    fetchTopicMessageSchema={jest.fn()}
-    sendTopicMessage={jest.fn()}
-    messageSchema={{
-      key: {
-        name: 'key',
-        source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-        schema: `{
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "$id": "http://example.com/myURI.schema.json",
-          "title": "TestRecord",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "f1": {
-              "type": "integer"
-            },
-            "f2": {
-              "type": "string"
-            },
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-        `,
-      },
-      value: {
-        name: 'value',
-        source: MessageSchemaSourceEnum.SCHEMA_REGISTRY,
-        schema: `{
-          "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "$id": "http://example.com/myURI1.schema.json",
-          "title": "TestRecord",
-          "type": "object",
-          "additionalProperties": false,
-          "properties": {
-            "f1": {
-              "type": "integer"
-            },
-            "f2": {
-              "type": "string"
-            },
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
-        `,
-      },
-    }}
-    schemaIsFetched={false}
-    messageIsSending={false}
-    partitions={[
-      {
-        partition: 0,
-        leader: 2,
-        replicas: [
-          {
-            broker: 2,
-            leader: false,
-            inSync: true,
-          },
-        ],
-        offsetMax: 0,
-        offsetMin: 0,
-      },
-      {
-        partition: 1,
-        leader: 1,
-        replicas: [
-          {
-            broker: 1,
-            leader: false,
-            inSync: true,
-          },
-        ],
-        offsetMax: 0,
-        offsetMin: 0,
-      },
-    ]}
-    {...props}
-  />
-);
+const clusterName = 'testCluster';
+const topicName = externalTopicPayload.name;
+const history = createMemoryHistory();
+
+const renderComponent = () => {
+  history.push(clusterTopicSendMessagePath(clusterName, topicName));
+  render(
+    <Router history={history}>
+      <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
+        <SendMessage />
+      </Route>
+    </Router>
+  );
+};
 
 describe('SendMessage', () => {
-  it('calls fetchTopicMessageSchema on first render', () => {
-    const fetchTopicMessageSchemaMock = jest.fn();
-    render(
-      setupWrapper({ fetchTopicMessageSchema: fetchTopicMessageSchemaMock })
+  beforeAll(() => {
+    store.dispatch(
+      fetchTopicDetailsAction.success({
+        ...initialState,
+        byName: {
+          [externalTopicPayload.name]: externalTopicPayload,
+        },
+      })
     );
-    expect(fetchTopicMessageSchemaMock).toHaveBeenCalledTimes(1);
+  });
+  afterEach(() => {
+    fetchMock.reset();
+  });
+
+  it('fetches schema on first render', () => {
+    const fetchTopicMessageSchemaMock = fetchMock.getOnce(
+      `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
+      testSchema
+    );
+    renderComponent();
+    expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
   describe('when schema is fetched', () => {
-    it('calls sendTopicMessage on submit', async () => {
-      jest.mock('../validateMessage', () => jest.fn().mockReturnValue(true));
-      const mockSendTopicMessage = jest.fn();
-      render(
-        setupWrapper({
-          schemaIsFetched: true,
-          sendTopicMessage: mockSendTopicMessage,
-        })
+    beforeEach(() => {
+      fetchMock.getOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
+        testSchema
       );
-      userEvent.selectOptions(screen.getByLabelText('Partition'), '1');
-      await waitFor(async () => {
-        userEvent.click(await screen.findByText('Send'));
-        expect(mockSendTopicMessage).toHaveBeenCalledTimes(1);
-      });
+    });
+
+    it('calls sendTopicMessage on submit', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(
+        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
+        200
+      );
+      renderComponent();
+      await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
+
+      userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
+      await screen.findByText('Send');
+      userEvent.click(screen.getByText('Send'));
+      await waitFor(() => expect(sendTopicMessageMock.called()).toBeTruthy());
+      expect(history.location.pathname).toEqual(
+        clusterTopicMessagesPath(clusterName, topicName)
+      );
     });
   });
 });

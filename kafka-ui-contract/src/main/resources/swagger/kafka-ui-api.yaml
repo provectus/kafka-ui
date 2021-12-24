@@ -1870,12 +1870,16 @@ components:
           type: integer
         key:
           type: string
+          nullable: true
         headers:
           type: object
           additionalProperties:
             type: string
         content:
           type: string
+          nullable: true
+      required:
+        - partition
 
     TopicMessageSchema:
       type: object

@@ -1,47 +1,32 @@
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import {
-  CreateTopicMessage,
-  Partition,
-  TopicMessageSchema,
-} from 'generated-sources';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { clusterTopicMessagesPath } from 'lib/paths';
 import jsf from 'json-schema-faker';
+import { fetchTopicMessageSchema, messagesApiClient } from 'redux/actions';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { alertAdded } from 'redux/reducers/alerts/alertsSlice';
+import { now } from 'lodash';
+import { Button } from 'components/common/Button/Button';
+import { ClusterName, TopicName } from 'redux/interfaces';
+import {
+  getMessageSchemaByTopicName,
+  getPartitionsByTopicName,
+  getTopicMessageSchemaFetched,
+} from 'redux/reducers/topics/selectors';
 
 import validateMessage from './validateMessage';
 
-export interface Props {
-  clusterName: string;
-  topicName: string;
-  fetchTopicMessageSchema: (clusterName: string, topicName: string) => void;
-  sendTopicMessage: (
-    clusterName: string,
-    topicName: string,
-    payload: CreateTopicMessage
-  ) => void;
-  messageSchema: TopicMessageSchema | undefined;
-  schemaIsFetched: boolean;
-  messageIsSending: boolean;
-  partitions: Partition[];
+interface RouterParams {
+  clusterName: ClusterName;
+  topicName: TopicName;
 }
 
-const SendMessage: React.FC<Props> = ({
-  clusterName,
-  topicName,
-  fetchTopicMessageSchema,
-  sendTopicMessage,
-  messageSchema,
-  schemaIsFetched,
-  messageIsSending,
-  partitions,
-}) => {
-  const [keyExampleValue, setKeyExampleValue] = React.useState('');
-  const [contentExampleValue, setContentExampleValue] = React.useState('');
-  const [schemaIsReady, setSchemaIsReady] = React.useState(false);
-  const [schemaErrors, setSchemaErrors] = React.useState<string[]>([]);
+const SendMessage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { clusterName, topicName } = useParams<RouterParams>();
   const {
     register,
     handleSubmit,
@@ -54,27 +39,38 @@ const SendMessage: React.FC<Props> = ({
   jsf.option('alwaysFakeOptionals', true);
 
   React.useEffect(() => {
-    fetchTopicMessageSchema(clusterName, topicName);
+    dispatch(fetchTopicMessageSchema(clusterName, topicName));
   }, []);
-  React.useEffect(() => {
-    if (schemaIsFetched && messageSchema) {
-      setKeyExampleValue(
-        JSON.stringify(
-          jsf.generate(JSON.parse(messageSchema.key.schema)),
-          null,
-          '\t'
-        )
-      );
-      setContentExampleValue(
-        JSON.stringify(
-          jsf.generate(JSON.parse(messageSchema.value.schema)),
-          null,
-          '\t'
-        )
-      );
-      setSchemaIsReady(true);
+
+  const messageSchema = useAppSelector((state) =>
+    getMessageSchemaByTopicName(state, topicName)
+  );
+  const partitions = useAppSelector((state) =>
+    getPartitionsByTopicName(state, topicName)
+  );
+  const schemaIsFetched = useAppSelector(getTopicMessageSchemaFetched);
+
+  const keyDefaultValue = React.useMemo(() => {
+    if (!schemaIsFetched || !messageSchema) {
+      return undefined;
     }
-  }, [schemaIsFetched]);
+    return JSON.stringify(
+      jsf.generate(JSON.parse(messageSchema.key.schema)),
+      null,
+      '\t'
+    );
+  }, [messageSchema, schemaIsFetched]);
+
+  const contentDefaultValue = React.useMemo(() => {
+    if (!schemaIsFetched || !messageSchema) {
+      return undefined;
+    }
+    return JSON.stringify(
+      jsf.generate(JSON.parse(messageSchema.value.schema)),
+      null,
+      '\t'
+    );
+  }, [messageSchema, schemaIsFetched]);
 
   const onSubmit = async (data: {
     key: string;
@@ -83,30 +79,55 @@ const SendMessage: React.FC<Props> = ({
     partition: number;
   }) => {
     if (messageSchema) {
-      const key = data.key || keyExampleValue;
-      const content = data.content || contentExampleValue;
-      const { partition } = data;
+      const { partition, key, content } = data;
       const headers = data.headers ? JSON.parse(data.headers) : undefined;
-      const messageIsValid = await validateMessage(
-        key,
-        content,
-        messageSchema,
-        setSchemaErrors
-      );
-
-      if (messageIsValid) {
-        sendTopicMessage(clusterName, topicName, {
-          key,
-          content,
-          headers,
-          partition,
-        });
-        history.push(clusterTopicMessagesPath(clusterName, topicName));
+      const errors = validateMessage(key, content, messageSchema);
+      if (errors.length > 0) {
+        dispatch(
+          alertAdded({
+            id: `${clusterName}-${topicName}-createTopicMessageError`,
+            type: 'error',
+            title: 'Validation Error',
+            message: (
+              <ul>
+                {errors.map((e) => (
+                  <li>{e}</li>
+                ))}
+              </ul>
+            ),
+            createdAt: now(),
+          })
+        );
+        return;
       }
+
+      try {
+        await messagesApiClient.sendTopicMessages({
+          clusterName,
+          topicName,
+          createTopicMessage: {
+            key: !key ? null : key,
+            content: !content ? null : content,
+            headers,
+            partition,
+          },
+        });
+      } catch (e) {
+        dispatch(
+          alertAdded({
+            id: `${clusterName}-${topicName}-sendTopicMessagesError`,
+            type: 'error',
+            title: `Error in sending a message to ${topicName}`,
+            message: e?.message,
+            createdAt: now(),
+          })
+        );
+      }
+      history.push(clusterTopicMessagesPath(clusterName, topicName));
     }
   };
 
-  if (!schemaIsReady) {
+  if (!schemaIsFetched) {
     return <PageLoader />;
   }
   return (
@@ -121,7 +142,7 @@ const SendMessage: React.FC<Props> = ({
               <select
                 id="select"
                 defaultValue={partitions[0].partition}
-                disabled={isSubmitting || messageIsSending}
+                disabled={isSubmitting}
                 {...register('partition')}
               >
                 {partitions.map((partition) => (
@@ -142,8 +163,8 @@ const SendMessage: React.FC<Props> = ({
               name="key"
               render={({ field: { name, onChange } }) => (
                 <JSONEditor
-                  readOnly={isSubmitting || messageIsSending}
-                  defaultValue={keyExampleValue}
+                  readOnly={isSubmitting}
+                  defaultValue={keyDefaultValue}
                   name={name}
                   onChange={onChange}
                 />
@@ -157,8 +178,8 @@ const SendMessage: React.FC<Props> = ({
               name="content"
               render={({ field: { name, onChange } }) => (
                 <JSONEditor
-                  readOnly={isSubmitting || messageIsSending}
-                  defaultValue={contentExampleValue}
+                  readOnly={isSubmitting}
+                  defaultValue={contentDefaultValue}
                   name={name}
                   onChange={onChange}
                 />
@@ -174,7 +195,7 @@ const SendMessage: React.FC<Props> = ({
               name="headers"
               render={({ field: { name, onChange } }) => (
                 <JSONEditor
-                  readOnly={isSubmitting || messageIsSending}
+                  readOnly={isSubmitting}
                   defaultValue="{}"
                   name={name}
                   onChange={onChange}
@@ -184,22 +205,14 @@ const SendMessage: React.FC<Props> = ({
             />
           </div>
         </div>
-        {schemaErrors && (
-          <div className="mb-4">
-            {schemaErrors.map((err) => (
-              <p className="help is-danger" key={err}>
-                {err}
-              </p>
-            ))}
-          </div>
-        )}
-        <button
+        <Button
+          buttonSize="M"
+          buttonType="primary"
           type="submit"
-          className="button is-primary"
-          disabled={!isDirty || isSubmitting || messageIsSending}
+          disabled={!isDirty || isSubmitting}
         >
           Send
-        </button>
+        </Button>
       </form>
     </div>
   );
