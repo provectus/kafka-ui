@@ -31,6 +31,7 @@ import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -293,9 +294,18 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.describeConsumerGroups(groupIds).all());
   }
 
-  public Mono<Map<TopicPartition, OffsetAndMetadata>> listConsumerGroupOffsets(String groupId) {
-    return toMono(client.listConsumerGroupOffsets(groupId).partitionsToOffsetAndMetadata())
-        .map(MapUtil::removeNullValues);
+  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(String groupId) {
+    return listConsumerGroupOffsets(groupId, null);
+  }
+
+  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
+      String groupId, @Nullable List<TopicPartition> partitions) {
+    var options = new ListConsumerGroupOffsetsOptions().topicPartitions(partitions);
+    return toMono(client.listConsumerGroupOffsets(groupId, options).partitionsToOffsetAndMetadata())
+        .map(MapUtil::removeNullValues)
+        .map(m -> m.entrySet().stream()
+            .map(e -> Tuples.of(e.getKey(), e.getValue().offset()))
+            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2)));
   }
 
   public Mono<Void> alterConsumerGroupOffsets(String groupId, Map<TopicPartition, Long> offsets) {
