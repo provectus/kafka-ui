@@ -78,6 +78,7 @@ export const updateGlobalSchemaCompatibilityLevel =
         clusterName,
         compatibilityLevel: { compatibility: compatibilityLevel },
       });
+      dispatch(fetchSchemasByClusterName(clusterName));
       dispatch(
         actions.updateGlobalSchemaCompatibilityLevelAction.success(
           compatibilityLevel

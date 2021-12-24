@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartitionReplica;
@@ -34,7 +34,7 @@ import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class BrokerService {
 
   private final MetricsCache metricsCache;
@@ -109,7 +109,7 @@ public class BrokerService {
             e -> Mono.error(new TopicOrPartitionNotFoundException()))
         .onErrorResume(LogDirNotFoundException.class,
             e -> Mono.error(new LogDirNotFoundApiException()))
-        .doOnError(log::error);
+        .doOnError(e -> log.error("Unexpected error", e));
   }
 
   public Mono<Void> updateBrokerConfigByName(KafkaCluster cluster,
@@ -120,7 +120,7 @@ public class BrokerService {
         .flatMap(ac -> ac.updateBrokerConfigByName(broker, name, value))
         .onErrorResume(InvalidRequestException.class,
             e -> Mono.error(new InvalidRequestApiException(e.getMessage())))
-        .doOnError(log::error);
+        .doOnError(e -> log.error("Unexpected error", e));
   }
 
   private Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> getClusterLogDirs(

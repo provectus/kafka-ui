@@ -6,7 +6,7 @@ import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import java.util.List;
 import java.util.UUID;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +22,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-@Log4j2
+@Slf4j
 @AutoConfigureWebTestClient(timeout = "10000")
 class SchemaRegistryServiceTests extends AbstractBaseTest {
   @Autowired

@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class MessagesController extends AbstractController implements MessagesApi {
   private final MessagesService messagesService;
   private final TopicsService topicsService;

@@ -1,7 +1,7 @@
-package com.provectus.kafka.ui.config;
+package com.provectus.kafka.ui.config.auth;
 
-import com.provectus.kafka.ui.util.EmptyRedirectStrategy;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
-import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
 import org.springframework.util.ClassUtils;
 
 @Configuration
 @EnableWebFluxSecurity
-@ConditionalOnProperty(value = "auth.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "auth.type", havingValue = "OAUTH2")
 @AllArgsConstructor
-public class OAuthSecurityConfig {
+@Log4j2
+public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
 
   public static final String REACTIVE_CLIENT_REGISTRATION_REPOSITORY_CLASSNAME =
       "org.springframework.security.oauth2.client.registration."
@@ -27,42 +27,19 @@ public class OAuthSecurityConfig {
       OAuthSecurityConfig.class.getClassLoader()
   );
 
-  private static final String[] AUTH_WHITELIST = {
-      "/css/**",
-      "/js/**",
-      "/media/**",
-      "/resources/**",
-      "/actuator/health",
-      "/actuator/info",
-      "/auth",
-      "/login",
-      "/logout",
-      "/oauth2/**"
-  };
-
   private final ApplicationContext context;
 
   @Bean
   public SecurityWebFilterChain configure(ServerHttpSecurity http) {
+    log.info("Configuring OAUTH2 authentication.");
     http.authorizeExchange()
-        .pathMatchers(
-            AUTH_WHITELIST
-        ).permitAll()
+        .pathMatchers(AUTH_WHITELIST)
+        .permitAll()
         .anyExchange()
         .authenticated();
 
     if (IS_OAUTH2_PRESENT && OAuth2ClasspathGuard.shouldConfigure(this.context)) {
       OAuth2ClasspathGuard.configure(this.context, http);
-    } else {
-      final RedirectServerAuthenticationSuccessHandler handler =
-          new RedirectServerAuthenticationSuccessHandler();
-      handler.setRedirectStrategy(new EmptyRedirectStrategy());
-
-      http
-          .httpBasic().and()
-          .formLogin()
-          .loginPage("/auth")
-          .authenticationSuccessHandler(handler);
     }
 
     return http.csrf().disable().build();

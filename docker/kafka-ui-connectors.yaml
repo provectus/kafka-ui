@@ -38,7 +38,7 @@ services:
       - 2181:2181
 
   kafka0:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     depends_on:
       - zookeeper0
     ports:
@@ -63,7 +63,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
 
   kafka1:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     depends_on:
       - zookeeper1
     ports:
@@ -82,7 +82,7 @@ services:
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka1 -Dcom.sun.management.jmxremote.rmi.port=9998
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:5.2.4
+    image: confluentinc/cp-schema-registry:5.5.0
     ports:
       - 8085:8085
     depends_on:
@@ -148,7 +148,7 @@ services:
 #      AWS_SECRET_ACCESS_KEY: ""
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     volumes:
       - ./message.json:/data/message.json
     depends_on:

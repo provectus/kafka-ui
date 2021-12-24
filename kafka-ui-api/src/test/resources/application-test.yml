@@ -10,4 +10,4 @@ spring:
   jmx:
     enabled: true
 auth:
-  enabled: false
+  type: DISABLED

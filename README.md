@@ -163,8 +163,8 @@ For example, if you want to use an environment variable to set the `name` parame
 |Name               	|Description
 |-----------------------|-------------------------------
 |`SERVER_SERVLET_CONTEXT_PATH`  | URI basePath
-|`LOGGING_LEVEL_ROOT`        	| Setting log level (trace, debug, info, warn, error, fatal, off). Default: debug
-|`LOGGING_LEVEL_COM_PROVECTUS`  |Setting log level (trace, debug, info, warn, error, fatal, off). Default: debug
+|`LOGGING_LEVEL_ROOT`        	| Setting log level (trace, debug, info, warn, error). Default: info
+|`LOGGING_LEVEL_COM_PROVECTUS`  |Setting log level (trace, debug, info, warn, error). Default: debug
 |`SERVER_PORT` |Port for the embedded server. Default: `8080`
 |`KAFKA_ADMIN-CLIENT-TIMEOUT` | Kafka API timeout in ms. Default: `30000`
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
