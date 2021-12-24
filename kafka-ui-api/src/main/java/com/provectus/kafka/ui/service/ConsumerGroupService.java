@@ -119,7 +119,7 @@ public class ConsumerGroupService {
                 ac,
                 descriptions.stream()
                     .sorted(getPaginationComparator(orderBy))
-                    .skip((page - 1) * perPage)
+                    .skip((long) (page - 1) * perPage)
                     .limit(perPage)
                     .collect(Collectors.toList())
             ).map(cgs -> new ConsumerGroupsPage(

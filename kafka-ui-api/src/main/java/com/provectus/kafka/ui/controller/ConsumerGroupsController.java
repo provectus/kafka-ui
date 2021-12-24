@@ -92,11 +92,11 @@ public class ConsumerGroupsController extends AbstractController implements Cons
             search,
             Optional.ofNullable(orderBy).orElse(ConsumerGroupOrderingDTO.NAME)
         )
-        .map(this::mapPage)
+        .map(this::convertPage)
         .map(ResponseEntity::ok);
   }
 
-  private ConsumerGroupsPageResponseDTO mapPage(ConsumerGroupService.ConsumerGroupsPage
+  private ConsumerGroupsPageResponseDTO convertPage(ConsumerGroupService.ConsumerGroupsPage
                                                     consumerGroupConsumerGroupsPage) {
     return new ConsumerGroupsPageResponseDTO()
         .pageCount(consumerGroupConsumerGroupsPage.getTotalPages())
