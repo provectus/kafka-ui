@@ -4,7 +4,7 @@ import ListItem from 'components/ConsumerGroups/List/ListItem';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { StaticRouter } from 'react-router';
-import { ConsumerGroupState } from 'generated-sources';
+import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -41,24 +41,7 @@ describe('List', () => {
     </StaticRouter>
   );
 
-  const setupWrapper = (consumerGroup: {
-    partitions: {
-      endOffset: number;
-      partition: number;
-      currentOffset: number;
-      consumerId: null;
-      host: null;
-      topic: string;
-      messagesBehind: number;
-    }[];
-    coordinator: { host: string; id: number };
-    topics: number;
-    groupId: string;
-    members: number;
-    simple: boolean;
-    state: ConsumerGroupState;
-    partitionAssignor: string;
-  }) => (
+  const setupWrapper = (consumerGroup: ConsumerGroup) => (
     <StaticRouter>
       <ThemeProvider theme={theme}>
         <table>
