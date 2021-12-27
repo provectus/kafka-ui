@@ -75,18 +75,18 @@ describe('Details', () => {
       expect(component.exists('button')).toBeFalsy();
       expect(component).toMatchSnapshot();
     });
+  });
 
-    it('shows a confirmation popup on deleting topic messages', () => {
-      setupComponent(
-        clusterTopicPath(mockClusterName, internalTopicPayload.name)
-      );
-      const { getByText } = screen;
-      const clearMessagesButton = getByText(/Clear messages/i);
-      userEvent.click(clearMessagesButton);
+  it('shows a confirmation popup on deleting topic messages', () => {
+    setupComponent(
+      clusterTopicPath(mockClusterName, internalTopicPayload.name)
+    );
+    const { getByText } = screen;
+    const clearMessagesButton = getByText(/Clear messages/i);
+    userEvent.click(clearMessagesButton);
 
-      expect(
-        getByText(/Are you sure want to clear topic messages?/i)
-      ).toBeInTheDocument();
-    });
+    expect(
+      getByText(/Are you sure want to clear topic messages?/i)
+    ).toBeInTheDocument();
   });
 });
