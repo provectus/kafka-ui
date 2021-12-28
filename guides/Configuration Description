@@ -1,0 +1,12 @@
+Description of configurations (*.yaml)
+
+kafka-ui.yaml - Default configuration contains 2 clusters with 2 Schema registry, 1 Connector and Topics inside. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui.yaml
+kafka-clusters-only.yaml - Default configuration without Kafka UI. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-clusters-only.yaml 
+kafka-cluster-sr-auth.yaml - Schema registry with authentication. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-cluster-sr-auth.yaml
+kafka-ui-auth-context.yaml - Basic (username/password) authentication with custom path (URL) (issue 861). https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-auth-context.yaml
+kafka-ui-connectors.yaml - Configuration with different connectors. (github-source, s3, sink-activities, source-activities) and Ksql functionality. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-connectors.yaml
+kafka-ui-jmx-secured.yml - Kafka’s JMX with ssl and authentication. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-jmx-secured.yml
+kafka-ui-reverse-proxy.yaml - An example for using the app being a proxy (like nginx). https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-reverse-proxy.yaml
+kafka-ui-sasl.yaml - SASL auth for Kafka. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-sasl.yaml
+kafka-ui-traefik-proxy.yaml - Traefik specific proxy configuration. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-traefik-proxy.yaml
+kafka-ui-zookeeper-ssl.yml - SSL enabled zookeeper. https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-zookeeper-ssl.yml
