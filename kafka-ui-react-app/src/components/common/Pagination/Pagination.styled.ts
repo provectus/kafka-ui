@@ -4,25 +4,34 @@ import { Colors } from 'theme/theme';
 export const Wrapper = styled.nav`
   display: flex;
   align-items: flex-end;
-  padding: 0 16px;
+  padding: 25px 16px;
   gap: 15px;
-  padding-top: 25px;
 
   & > ul {
     display: flex;
     align-items: flex-end;
     & .pagination-link {
       height: 32px;
-      &.is-current {
-        background-color: ${Colors.brand[50]};
-        border-color: ${Colors.brand[50]};
+      border: 1px solid
+        ${(props) => props.theme.paginationStyles.borderColor.normal};
+      &.is-current-page {
+        background-color: ${Colors.neutral[10]};
+        border-color: ${Colors.neutral[10]};
+      }
+
+      &:hover {
+        border: 1px solid
+          ${(props) => props.theme.paginationStyles.borderColor.hover};
+        color: ${(props) => props.theme.paginationStyles.color.hover};
+        cursor: pointer;
       }
     }
   }
 
   & .pagination-btn {
     height: 32px;
-    border: 1px solid;
+    border: 1px solid
+      ${(props) => props.theme.paginationStyles.borderColor.normal};
     background-color: ${Colors.neutral[0]};
     ${(props) => props.theme.paginationStyles.borderColor.normal};
     border-radius: 4px;

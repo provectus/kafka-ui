@@ -37,7 +37,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   border-radius: 16px;
   height: 20px;
   line-height: 20px;
-  background-color: #E3E6E8;
+  background-color: #F1F2F3;
   color: #171A1C;
   font-size: 12px;
   display: inline-block;
@@ -226,7 +226,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "tagStyles": Object {
         "backgroundColor": Object {
-          "gray": "#E3E6E8",
+          "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",
           "white": "#E3E6E8",

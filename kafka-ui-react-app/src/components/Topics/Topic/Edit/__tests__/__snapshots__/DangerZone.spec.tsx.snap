@@ -24,6 +24,7 @@ exports[`DangerZone is rendered properly 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 

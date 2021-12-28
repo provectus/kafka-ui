@@ -10,7 +10,7 @@ export interface PageControlProps {
 
 const PageControl: React.FC<PageControlProps> = ({ current, url, page }) => {
   const classNames = cx('pagination-link', {
-    'is-current': current,
+    'is-current-page': current,
   });
 
   return (

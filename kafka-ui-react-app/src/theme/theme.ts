@@ -165,7 +165,7 @@ const theme = {
   tagStyles: {
     backgroundColor: {
       green: Colors.green[10],
-      gray: Colors.neutral[10],
+      gray: Colors.neutral[5],
       yellow: Colors.yellow[10],
       white: Colors.neutral[10],
       red: Colors.red[10],

@@ -203,123 +203,127 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
       </div>
       <styled.div>
         <div>
-          <h4>
-            Latest schema
-          </h4>
-          <Styled(JSONEditor)
-            height="372px"
-            highlightActiveLine={false}
-            isFixedHeight={true}
-            name="latestSchema"
-            readOnly={true}
-            value="{
+          <styled.div>
+            <h4>
+              Latest schema
+            </h4>
+            <Styled(JSONEditor)
+              height="372px"
+              highlightActiveLine={false}
+              isFixedHeight={true}
+              name="latestSchema"
+              readOnly={true}
+              value="{
 	\\"schema\\": \\"schema\\"
 }"
-          />
+            />
+          </styled.div>
         </div>
         <div>
-          <h4>
-            New schema
-          </h4>
-          <Controller
-            control={
-              Object {
-                "controllerSubjectRef": Object {
-                  "current": Re {
-                    "observers": Array [],
+          <styled.div>
+            <h4>
+              New schema
+            </h4>
+            <Controller
+              control={
+                Object {
+                  "controllerSubjectRef": Object {
+                    "current": Re {
+                      "observers": Array [],
+                    },
                   },
-                },
-                "defaultValuesRef": Object {
-                  "current": Object {},
-                },
-                "fieldArrayDefaultValuesRef": Object {
-                  "current": Object {},
-                },
-                "fieldArrayNamesRef": Object {
-                  "current": Set {},
-                },
-                "fieldArraySubjectRef": Object {
-                  "current": Re {
-                    "observers": Array [],
+                  "defaultValuesRef": Object {
+                    "current": Object {},
                   },
-                },
-                "fieldsRef": Object {
-                  "current": Object {},
-                },
-                "fieldsWithValidationRef": Object {
-                  "current": Object {},
-                },
-                "formStateRef": Object {
-                  "current": Object {
-                    "dirtyFields": Object {},
-                    "errors": Object {},
-                    "isDirty": false,
-                    "isSubmitSuccessful": false,
-                    "isSubmitted": false,
-                    "isSubmitting": false,
-                    "isValid": true,
-                    "isValidating": false,
-                    "submitCount": 0,
-                    "touchedFields": Object {},
+                  "fieldArrayDefaultValuesRef": Object {
+                    "current": Object {},
                   },
-                },
-                "formStateSubjectRef": Object {
-                  "current": Re {
-                    "observers": Array [],
+                  "fieldArrayNamesRef": Object {
+                    "current": Set {},
                   },
-                },
-                "getIsDirty": [Function],
-                "inFieldArrayActionRef": Object {
-                  "current": false,
-                },
-                "isWatchAllRef": Object {
-                  "current": false,
-                },
-                "readFormStateRef": Object {
-                  "current": Object {
-                    "constructor": "all",
-                    "dirtyFields": "all",
-                    "errors": "all",
-                    "isDirty": "all",
-                    "isSubmitSuccessful": "all",
-                    "isSubmitted": "all",
-                    "isSubmitting": "all",
-                    "isValid": "all",
-                    "isValidating": "all",
-                    "submitCount": "all",
-                    "touchedFields": "all",
+                  "fieldArraySubjectRef": Object {
+                    "current": Re {
+                      "observers": Array [],
+                    },
                   },
-                },
-                "register": [Function],
-                "shouldUnmount": undefined,
-                "unregister": [Function],
-                "validFieldsRef": Object {
-                  "current": Object {},
-                },
-                "watchFieldsRef": Object {
-                  "current": Set {},
-                },
-                "watchInternal": [Function],
-                "watchSubjectRef": Object {
-                  "current": Re {
-                    "observers": Array [],
+                  "fieldsRef": Object {
+                    "current": Object {},
                   },
-                },
+                  "fieldsWithValidationRef": Object {
+                    "current": Object {},
+                  },
+                  "formStateRef": Object {
+                    "current": Object {
+                      "dirtyFields": Object {},
+                      "errors": Object {},
+                      "isDirty": false,
+                      "isSubmitSuccessful": false,
+                      "isSubmitted": false,
+                      "isSubmitting": false,
+                      "isValid": true,
+                      "isValidating": false,
+                      "submitCount": 0,
+                      "touchedFields": Object {},
+                    },
+                  },
+                  "formStateSubjectRef": Object {
+                    "current": Re {
+                      "observers": Array [],
+                    },
+                  },
+                  "getIsDirty": [Function],
+                  "inFieldArrayActionRef": Object {
+                    "current": false,
+                  },
+                  "isWatchAllRef": Object {
+                    "current": false,
+                  },
+                  "readFormStateRef": Object {
+                    "current": Object {
+                      "constructor": "all",
+                      "dirtyFields": "all",
+                      "errors": "all",
+                      "isDirty": "all",
+                      "isSubmitSuccessful": "all",
+                      "isSubmitted": "all",
+                      "isSubmitting": "all",
+                      "isValid": "all",
+                      "isValidating": "all",
+                      "submitCount": "all",
+                      "touchedFields": "all",
+                    },
+                  },
+                  "register": [Function],
+                  "shouldUnmount": undefined,
+                  "unregister": [Function],
+                  "validFieldsRef": Object {
+                    "current": Object {},
+                  },
+                  "watchFieldsRef": Object {
+                    "current": Set {},
+                  },
+                  "watchInternal": [Function],
+                  "watchSubjectRef": Object {
+                    "current": Re {
+                      "observers": Array [],
+                    },
+                  },
+                }
               }
-            }
-            name="newSchema"
-            render={[Function]}
-          />
+              name="newSchema"
+              render={[Function]}
+            />
+          </styled.div>
+          <Button
+            buttonSize="M"
+            buttonType="primary"
+            disabled={true}
+            type="submit"
+          >
+            Submit
+          </Button>
         </div>
       </styled.div>
-      <Button
-        buttonSize="M"
-        buttonType="primary"
-        disabled={true}
-        type="submit"
-      >
-        Submit
-      </Button>
     </form>
   </styled.div>
 </Component>

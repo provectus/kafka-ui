@@ -42,4 +42,5 @@ export const LatestVersionWrapper = styled.div`
 export const MetaDataLabel = styled.h3`
   color: ${Colors.neutral[50]};
   width: 110px;
+  font-size: 14px;
 `;

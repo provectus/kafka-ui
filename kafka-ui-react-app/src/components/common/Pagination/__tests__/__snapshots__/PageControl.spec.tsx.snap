@@ -4,7 +4,7 @@ exports[`PageControl matches snapshot 1`] = `
 <li>
   <Link
     aria-label="Goto page 138"
-    className="pagination-link is-current"
+    className="pagination-link is-current-page"
     to="/test"
   >
     138

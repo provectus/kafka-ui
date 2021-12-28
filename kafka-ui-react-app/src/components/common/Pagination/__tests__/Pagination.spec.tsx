@@ -71,21 +71,25 @@ describe('Pagination', () => {
   });
 
   describe('current page', () => {
-    it('adds is-current class to correct page if page param is set', () => {
+    it('adds is-current-page class to correct page if page param is set', () => {
       const wrapper = mount(setupWrapper('?page=8'));
-      expect(wrapper.exists('a.pagination-link.is-current')).toBeTruthy();
-      expect(wrapper.find('a.pagination-link.is-current').text()).toEqual('8');
+      expect(wrapper.exists('a.pagination-link.is-current-page')).toBeTruthy();
+      expect(wrapper.find('a.pagination-link.is-current-page').text()).toEqual(
+        '8'
+      );
     });
 
-    it('adds is-current class to correct page even if page param is not set', () => {
+    it('adds is-current-page class to correct page even if page param is not set', () => {
       const wrapper = mount(setupWrapper('', { totalPages: 8 }));
-      expect(wrapper.exists('a.pagination-link.is-current')).toBeTruthy();
-      expect(wrapper.find('a.pagination-link.is-current').text()).toEqual('1');
+      expect(wrapper.exists('a.pagination-link.is-current-page')).toBeTruthy();
+      expect(wrapper.find('a.pagination-link.is-current-page').text()).toEqual(
+        '1'
+      );
     });
 
-    it('adds no is-current class if page numder is invalid', () => {
+    it('adds no is-current-page class if page numder is invalid', () => {
       const wrapper = mount(setupWrapper('?page=80'));
-      expect(wrapper.exists('a.pagination-link.is-current')).toBeFalsy();
+      expect(wrapper.exists('a.pagination-link.is-current-page')).toBeFalsy();
     });
   });
 });

@@ -55,7 +55,6 @@ const TopicForm: React.FC<Props> = ({
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                inputSize="M"
               />
               <FormError>
                 <ErrorMessage errors={errors} name="name" />
@@ -73,7 +72,6 @@ const TopicForm: React.FC<Props> = ({
                   min="1"
                   defaultValue="1"
                   name="partitions"
-                  inputSize="M"
                 />
                 <FormError>
                   <ErrorMessage errors={errors} name="partitions" />
@@ -93,7 +91,6 @@ const TopicForm: React.FC<Props> = ({
                 min="1"
                 defaultValue="1"
                 name="replicationFactor"
-                inputSize="M"
               />
               <FormError>
                 <ErrorMessage errors={errors} name="replicationFactor" />
@@ -109,7 +106,6 @@ const TopicForm: React.FC<Props> = ({
               min="1"
               defaultValue="1"
               name="minInsyncReplicas"
-              inputSize="M"
             />
             <FormError>
               <ErrorMessage errors={errors} name="minInsyncReplicas" />
@@ -121,7 +117,7 @@ const TopicForm: React.FC<Props> = ({
           <TopicFormColumn>
             <div>
               <InputLabel>Cleanup policy</InputLabel>
-              <Select defaultValue="delete" name="cleanupPolicy" selectSize="M">
+              <Select defaultValue="delete" name="cleanupPolicy">
                 <option value="delete">Delete</option>
                 <option value="compact">Compact</option>
                 <option value="compact,delete">Compact,Delete</option>
@@ -137,7 +133,7 @@ const TopicForm: React.FC<Props> = ({
           <TopicFormColumn>
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
-              <Select defaultValue={-1} name="retentionBytes" selectSize="M">
+              <Select defaultValue={-1} name="retentionBytes">
                 <option value={-1}>Not Set</option>
                 <option value={BYTES_IN_GB}>1 GB</option>
                 <option value={BYTES_IN_GB * 10}>10 GB</option>
@@ -155,7 +151,6 @@ const TopicForm: React.FC<Props> = ({
             min="1"
             defaultValue="1000012"
             name="maxMessageBytes"
-            inputSize="M"
           />
           <FormError>
             <ErrorMessage errors={errors} name="maxMessageBytes" />

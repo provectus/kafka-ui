@@ -71,7 +71,6 @@ const CustomParamField: React.FC<Props> = ({
         <div>
           <InputLabel>Custom Parameter</InputLabel>
           <Select
-            selectSize="M"
             name={`customParams.${index}.name` as const}
             hookFormOptions={{
               required: 'Custom Parameter is required.',
@@ -101,7 +100,6 @@ const CustomParamField: React.FC<Props> = ({
       <div>
         <InputLabel>Value</InputLabel>
         <Input
-          inputSize="M"
           name={`customParams.${index}.value` as const}
           hookFormOptions={{
             required: 'Value is required.',

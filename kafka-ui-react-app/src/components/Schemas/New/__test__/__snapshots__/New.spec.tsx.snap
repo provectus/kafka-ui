@@ -155,6 +155,7 @@ exports[`New View matches snapshot 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -465,7 +466,7 @@ exports[`New View matches snapshot 1`] = `
       },
       "tagStyles": Object {
         "backgroundColor": Object {
-          "gray": "#E3E6E8",
+          "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",
           "white": "#E3E6E8",

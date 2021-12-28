@@ -16,12 +16,12 @@ describe('PageControl', () => {
 
   it('renders current page', () => {
     const wrapper = mount(setupWrapper({ current: true }));
-    expect(wrapper.exists('.pagination-link.is-current')).toBeTruthy();
+    expect(wrapper.exists('.pagination-link.is-current-page')).toBeTruthy();
   });
 
   it('renders non-current page', () => {
     const wrapper = mount(setupWrapper({ current: false }));
-    expect(wrapper.exists('.pagination-link.is-current')).toBeFalsy();
+    expect(wrapper.exists('.pagination-link.is-current-page')).toBeFalsy();
   });
 
   it('renders page number', () => {

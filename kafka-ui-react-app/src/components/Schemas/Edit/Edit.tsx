@@ -15,7 +15,7 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
-import { EditorsWrapper, EditWrapper } from './Edit.styled';
+import { EditorsWindow, EditorsWrapper, EditWrapper } from './Edit.styled';
 
 export interface EditProps {
   subject: SchemaName;
@@ -129,42 +129,46 @@ const Edit = ({
             </div>
             <EditorsWrapper>
               <div>
-                <h4>Latest schema</h4>
-                <JSONEditor
-                  isFixedHeight
-                  readOnly
-                  height="372px"
-                  value={getFormattedSchema()}
-                  name="latestSchema"
-                  highlightActiveLine={false}
-                />
+                <EditorsWindow>
+                  <h4>Latest schema</h4>
+                  <JSONEditor
+                    isFixedHeight
+                    readOnly
+                    height="372px"
+                    value={getFormattedSchema()}
+                    name="latestSchema"
+                    highlightActiveLine={false}
+                  />
+                </EditorsWindow>
               </div>
               <div>
-                <h4>New schema</h4>
-                <Controller
-                  control={methods.control}
-                  name="newSchema"
-                  render={({ field: { name, onChange } }) => (
-                    <JSONEditor
-                      readOnly={methods.formState.isSubmitting}
-                      defaultValue={getFormattedSchema()}
-                      name={name}
-                      onChange={onChange}
-                    />
-                  )}
-                />
+                <EditorsWindow>
+                  <h4>New schema</h4>
+                  <Controller
+                    control={methods.control}
+                    name="newSchema"
+                    render={({ field: { name, onChange } }) => (
+                      <JSONEditor
+                        readOnly={methods.formState.isSubmitting}
+                        defaultValue={getFormattedSchema()}
+                        name={name}
+                        onChange={onChange}
+                      />
+                    )}
+                  />
+                </EditorsWindow>
+                <Button
+                  buttonType="primary"
+                  buttonSize="M"
+                  type="submit"
+                  disabled={
+                    !methods.formState.isDirty || methods.formState.isSubmitting
+                  }
+                >
+                  Submit
+                </Button>
               </div>
             </EditorsWrapper>
-            <Button
-              buttonType="primary"
-              buttonSize="M"
-              type="submit"
-              disabled={
-                !methods.formState.isDirty || methods.formState.isSubmitting
-              }
-            >
-              Submit
-            </Button>
           </form>
         </EditWrapper>
       ) : (

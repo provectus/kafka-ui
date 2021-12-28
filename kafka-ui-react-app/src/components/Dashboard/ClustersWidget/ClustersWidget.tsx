@@ -68,7 +68,7 @@ const ClustersWidget: React.FC<Props> = ({
           checked={showOfflineOnly}
           onChange={handleSwitch}
         />
-        <span>Only offline clusters</span>
+        <label>Only offline clusters</label>
       </div>
       {clusterList.map((chunkItem) => (
         <Table key={chunkItem.id} isFullwidth>
