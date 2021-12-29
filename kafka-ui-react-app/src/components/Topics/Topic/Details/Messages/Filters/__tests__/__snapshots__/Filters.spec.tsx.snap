@@ -200,6 +200,25 @@ exports[`Filters component matches the snapshot 1`] = `
   appearance: none !important;
 }
 
+.c7 option {
+  height: 50px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: auto;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
 .c7:hover {
   color: #171A1C;
   border-color: #73848C;
@@ -219,6 +238,25 @@ exports[`Filters component matches the snapshot 1`] = `
 
 .c11 {
   height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: 120px;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c11 option {
+  height: 50px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
@@ -835,6 +873,25 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   appearance: none !important;
 }
 
+.c7 option {
+  height: 50px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: auto;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
 .c7:hover {
   color: #171A1C;
   border-color: #73848C;
@@ -854,6 +911,25 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 
 .c11 {
   height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: 120px;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c11 option {
+  height: 50px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;

@@ -4,7 +4,7 @@ import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
 import { remove as _remove } from 'lodash';
 import { TopicFormData } from 'redux/interfaces';
-import { TopicFormColumn } from 'components/Topics/shared/Form/TopicForm';
+import { TopicFormColumn } from 'components/Topics/shared/Form/TopicForm.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';

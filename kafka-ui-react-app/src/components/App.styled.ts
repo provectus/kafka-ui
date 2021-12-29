@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { Colors } from 'theme/theme';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -41,6 +42,28 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
       `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
       left: -${theme.layout.navBarWidth};
       z-index: 100;
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: ${Colors.neutral[0]};
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: 8px;
+      background-color: ${Colors.neutral[0]};
+      border-radius: 4px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      background: ${Colors.neutral[50]};
+    }
+
+    &:hover::-webkit-scrollbar-track {
+      background-color: ${Colors.neutral[5]};
     }
   `
 );

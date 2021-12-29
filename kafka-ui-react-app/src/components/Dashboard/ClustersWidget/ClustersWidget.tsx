@@ -10,6 +10,7 @@ import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicsPath } from 'lib/paths';
 import Switch from 'components/common/Switch/Switch';
+import styled from 'styled-components';
 
 interface Props {
   clusters: Cluster[];
@@ -21,6 +22,10 @@ interface ChunkItem {
   id: string;
   data: Cluster[];
 }
+
+const SwitchWrapper = styled.div`
+  padding: 16px;
+`;
 
 const ClustersWidget: React.FC<Props> = ({
   clusters,
@@ -62,14 +67,14 @@ const ClustersWidget: React.FC<Props> = ({
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
-      <div className="p-4">
+      <SwitchWrapper>
         <Switch
           name="switchRoundedDefault"
           checked={showOfflineOnly}
           onChange={handleSwitch}
         />
         <label>Only offline clusters</label>
-      </div>
+      </SwitchWrapper>
       {clusterList.map((chunkItem) => (
         <Table key={chunkItem.id} isFullwidth>
           <thead>
