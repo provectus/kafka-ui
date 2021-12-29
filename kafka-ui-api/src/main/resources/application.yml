@@ -1,6 +1,7 @@
 auth:
   type: DISABLED
-  management:
+
+management:
   endpoint:
     info:
       enabled: true
@@ -10,6 +11,9 @@ auth:
     web:
       exposure:
         include: "info,health"
+  health:
+    ldap:
+      enabled: false
 
 logging:
   level:
