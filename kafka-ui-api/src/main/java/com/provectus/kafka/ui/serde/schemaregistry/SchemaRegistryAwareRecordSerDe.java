@@ -62,14 +62,12 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   @Nullable
   private final JsonSchemaMessageFormatter jsonSchemaMessageFormatter;
 
-  private ObjectMapper objectMapper;
+  private final ObjectMapper objectMapper;
 
-  private SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster,
-                                                          ObjectMapper objectMapper) {
+  private SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     if (cluster.getSchemaRegistry() == null) {
       throw new ValidationException("schemaRegistry is not specified");
     }
-    this.objectMapper = objectMapper;
 
     List<SchemaProvider> schemaProviders =
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
@@ -98,8 +96,9 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster, ObjectMapper objectMapper) {
     this.cluster = cluster;
+    this.objectMapper = objectMapper;
     this.schemaRegistryClient = cluster.getSchemaRegistry() != null
-        ? createSchemaRegistryClient(cluster, objectMapper)
+        ? createSchemaRegistryClient(cluster)
         : null;
     if (schemaRegistryClient != null) {
       this.avroFormatter = new AvroMessageFormatter(schemaRegistryClient);
