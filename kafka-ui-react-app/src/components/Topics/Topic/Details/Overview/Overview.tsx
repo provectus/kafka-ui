@@ -52,6 +52,7 @@ const Overview: React.FC<Props> = ({
             label="URP"
             title="Under replicated partitions"
             isAlert
+            alertType={underReplicatedPartitions === 0 ? 'error' : 'success'}
           >
             <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
           </Metrics.Indicator>
