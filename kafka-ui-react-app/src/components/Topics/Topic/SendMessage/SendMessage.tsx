@@ -106,8 +106,8 @@ const SendMessage: React.FC = () => {
           clusterName,
           topicName,
           createTopicMessage: {
-            key: !key ? null : key,
-            content: !content ? null : content,
+            key: !key ? undefined : key,
+            content: !content ? undefined : content,
             headers,
             partition,
           },
