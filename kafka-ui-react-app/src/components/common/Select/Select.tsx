@@ -1,3 +1,4 @@
+import styled from 'styled-components';
 import React from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
 
@@ -44,4 +45,6 @@ const Select: React.FC<SelectProps> = ({
   );
 };
 
-export default Select;
+export default styled(Select)`
+  position: relative;
+`;

@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Filters component matches the snapshot 1`] = `
-.c8 {
+.c9 {
   min-width: 200px;
   height: 32px;
   font-size: 14px;
 }
 
-.c8 > .dropdown-container {
+.c9 > .dropdown-container {
   height: 32px;
 }
 
-.c8 > .dropdown-container > .dropdown-heading {
+.c9 > .dropdown-container > .dropdown-heading {
   height: 32px;
 }
 
@@ -102,7 +102,7 @@ exports[`Filters component matches the snapshot 1`] = `
   color: #ABB5BA;
 }
 
-.c7 {
+.c8 {
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   height: 32px;
@@ -111,69 +111,69 @@ exports[`Filters component matches the snapshot 1`] = `
   font-size: 14px;
 }
 
-.c7::-webkit-input-placeholder {
+.c8::-webkit-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7::-moz-placeholder {
+.c8::-moz-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7:-ms-input-placeholder {
+.c8:-ms-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7::placeholder {
+.c8::placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7:hover {
+.c8:hover {
   border-color: #73848C;
 }
 
-.c7:focus {
+.c8:focus {
   outline: none;
   border-color: #454F54;
 }
 
-.c7:focus::-webkit-input-placeholder {
+.c8:focus::-webkit-input-placeholder {
   color: transparent;
 }
 
-.c7:focus::-moz-placeholder {
+.c8:focus::-moz-placeholder {
   color: transparent;
 }
 
-.c7:focus:-ms-input-placeholder {
+.c8:focus:-ms-input-placeholder {
   color: transparent;
 }
 
-.c7:focus::placeholder {
+.c8:focus::placeholder {
   color: transparent;
 }
 
-.c7:disabled {
+.c8:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c7:read-only {
+.c8:read-only {
   color: #171A1C;
   border: none;
   background-color: #F1F2F3;
   cursor: not-allowed;
 }
 
-.c7:-moz-read-only:focus::placeholder {
+.c8:-moz-read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
-.c7:read-only:focus::placeholder {
+.c8:read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
@@ -181,8 +181,7 @@ exports[`Filters component matches the snapshot 1`] = `
   position: relative;
 }
 
-.c6 {
-  position: relative;
+.c7 {
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -201,25 +200,24 @@ exports[`Filters component matches the snapshot 1`] = `
   appearance: none !important;
 }
 
-.c6:hover {
+.c7:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c6:focus {
+.c7:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c6:disabled {
+.c7:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c10 {
-  position: relative;
+.c11 {
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -238,24 +236,28 @@ exports[`Filters component matches the snapshot 1`] = `
   appearance: none !important;
 }
 
-.c10:hover {
+.c11:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c10:focus {
+.c11:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c10:disabled {
+.c11:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c9 {
+.c6 {
+  position: relative;
+}
+
+.c10 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -282,27 +284,27 @@ exports[`Filters component matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c9:hover:enabled {
+.c10:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c9:active:enabled {
+.c10:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c9:disabled {
+.c10:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c9 a {
+.c10 a {
   color: white;
 }
 
-.c9 i {
+.c10 i {
   margin-right: 7px;
 }
 
@@ -397,7 +399,7 @@ exports[`Filters component matches the snapshot 1`] = `
   outline: none;
 }
 
-.c11 {
+.c12 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -415,7 +417,7 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c12 {
+.c13 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -424,7 +426,7 @@ exports[`Filters component matches the snapshot 1`] = `
   display: flex;
 }
 
-.c13 {
+.c14 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -457,10 +459,10 @@ exports[`Filters component matches the snapshot 1`] = `
             class="c5"
           >
             <div
-              class="select-wrapper undefined"
+              class="select-wrapper c6"
             >
               <select
-                class="c6"
+                class="c7"
                 id="selectSeekType"
               >
                 <option
@@ -479,7 +481,7 @@ exports[`Filters component matches the snapshot 1`] = `
               class="c2 offset-selector"
             >
               <input
-                class="c7 c2 offset-selector"
+                class="c8 c2 offset-selector"
                 id="offset"
                 type="text"
                 value=""
@@ -487,7 +489,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <div
-            class="rmsc c8"
+            class="rmsc c9"
           >
             <div
               aria-labelledby="Select partitions"
@@ -548,7 +550,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="c9"
+            class="c10"
             style="font-weight: 500;"
             type="submit"
           >
@@ -556,10 +558,10 @@ exports[`Filters component matches the snapshot 1`] = `
           </button>
         </div>
         <div
-          class="select-wrapper undefined"
+          class="select-wrapper c6"
         >
           <select
-            class="c10"
+            class="c11"
           >
             <option
               value="FORWARD"
@@ -575,17 +577,17 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c11"
+        class="c12"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c12"
+          class="c13"
           title="Elapsed Time"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-clock"
@@ -597,11 +599,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Bytes Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="fas fa-arrow-down"
@@ -612,11 +614,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Messages Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-file-alt"
@@ -634,17 +636,17 @@ exports[`Filters component matches the snapshot 1`] = `
 
 exports[`Filters component when fetching matches the snapshot 1`] = `
 <body>
-  .c8 {
+  .c9 {
   min-width: 200px;
   height: 32px;
   font-size: 14px;
 }
 
-.c8 > .dropdown-container {
+.c9 > .dropdown-container {
   height: 32px;
 }
 
-.c8 > .dropdown-container > .dropdown-heading {
+.c9 > .dropdown-container > .dropdown-heading {
   height: 32px;
 }
 
@@ -735,7 +737,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   color: #ABB5BA;
 }
 
-.c7 {
+.c8 {
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   height: 32px;
@@ -744,69 +746,69 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   font-size: 14px;
 }
 
-.c7::-webkit-input-placeholder {
+.c8::-webkit-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7::-moz-placeholder {
+.c8::-moz-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7:-ms-input-placeholder {
+.c8:-ms-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7::placeholder {
+.c8::placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c7:hover {
+.c8:hover {
   border-color: #73848C;
 }
 
-.c7:focus {
+.c8:focus {
   outline: none;
   border-color: #454F54;
 }
 
-.c7:focus::-webkit-input-placeholder {
+.c8:focus::-webkit-input-placeholder {
   color: transparent;
 }
 
-.c7:focus::-moz-placeholder {
+.c8:focus::-moz-placeholder {
   color: transparent;
 }
 
-.c7:focus:-ms-input-placeholder {
+.c8:focus:-ms-input-placeholder {
   color: transparent;
 }
 
-.c7:focus::placeholder {
+.c8:focus::placeholder {
   color: transparent;
 }
 
-.c7:disabled {
+.c8:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c7:read-only {
+.c8:read-only {
   color: #171A1C;
   border: none;
   background-color: #F1F2F3;
   cursor: not-allowed;
 }
 
-.c7:-moz-read-only:focus::placeholder {
+.c8:-moz-read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
-.c7:read-only:focus::placeholder {
+.c8:read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
@@ -814,8 +816,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   position: relative;
 }
 
-.c6 {
-  position: relative;
+.c7 {
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -834,25 +835,24 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   appearance: none !important;
 }
 
-.c6:hover {
+.c7:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c6:focus {
+.c7:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c6:disabled {
+.c7:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c10 {
-  position: relative;
+.c11 {
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -871,24 +871,28 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   appearance: none !important;
 }
 
-.c10:hover {
+.c11:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c10:focus {
+.c11:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c10:disabled {
+.c11:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c9 {
+.c6 {
+  position: relative;
+}
+
+.c10 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -915,27 +919,27 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c9:hover:enabled {
+.c10:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c9:active:enabled {
+.c10:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c9:disabled {
+.c10:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c9 a {
+.c10 a {
   color: white;
 }
 
-.c9 i {
+.c10 i {
   margin-right: 7px;
 }
 
@@ -1030,7 +1034,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   outline: none;
 }
 
-.c11 {
+.c12 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1048,7 +1052,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c12 {
+.c13 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -1057,7 +1061,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   display: flex;
 }
 
-.c13 {
+.c14 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -1089,10 +1093,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             class="c5"
           >
             <div
-              class="select-wrapper undefined"
+              class="select-wrapper c6"
             >
               <select
-                class="c6"
+                class="c7"
                 id="selectSeekType"
               >
                 <option
@@ -1111,7 +1115,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
               class="c2 offset-selector"
             >
               <input
-                class="c7 c2 offset-selector"
+                class="c8 c2 offset-selector"
                 id="offset"
                 type="text"
                 value=""
@@ -1119,7 +1123,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <div
-            class="rmsc c8"
+            class="rmsc c9"
           >
             <div
               aria-labelledby="Select partitions"
@@ -1180,7 +1184,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="c9"
+            class="c10"
             style="font-weight: 500;"
             type="button"
           >
@@ -1188,10 +1192,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </button>
         </div>
         <div
-          class="select-wrapper undefined"
+          class="select-wrapper c6"
         >
           <select
-            class="c10"
+            class="c11"
           >
             <option
               value="FORWARD"
@@ -1207,17 +1211,17 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c11"
+        class="c12"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c12"
+          class="c13"
           title="Elapsed Time"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-clock"
@@ -1229,11 +1233,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Bytes Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="fas fa-arrow-down"
@@ -1244,11 +1248,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c12"
+          class="c13"
           title="Messages Consumed"
         >
           <div
-            class="c13"
+            class="c14"
           >
             <i
               class="far fa-file-alt"

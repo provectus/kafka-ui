@@ -7,7 +7,6 @@ interface Props {
 }
 
 export const Select = styled.select<Props>`
-  position: relative;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px ${(props) => props.theme.selectStyles.borderColor.normal} solid;
   border-radius: 4px;

@@ -92,8 +92,7 @@ exports[`New View matches snapshot 1`] = `
   position: relative;
 }
 
-.c7 {
-  position: relative;
+.c8 {
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -112,24 +111,28 @@ exports[`New View matches snapshot 1`] = `
   appearance: none !important;
 }
 
-.c7:hover {
+.c8:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c7:focus {
+.c8:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c7:disabled {
+.c8:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c8 {
+.c7 {
+  position: relative;
+}
+
+.c9 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -156,27 +159,27 @@ exports[`New View matches snapshot 1`] = `
   height: 32px;
 }
 
-.c8:hover:enabled {
+.c9:hover:enabled {
   background: #1717CF;
   color: #FFFFFF;
   cursor: pointer;
 }
 
-.c8:active:enabled {
+.c9:active:enabled {
   background: #1414B8;
   color: #FFFFFF;
 }
 
-.c8:disabled {
+.c9:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c8 a {
+.c9 a {
   color: white;
 }
 
-.c8 i {
+.c9 i {
   margin-right: 7px;
 }
 
@@ -640,7 +643,6 @@ exports[`New View matches snapshot 1`] = `
                       "mount": true,
                       "name": "schemaType",
                       "ref": .c0 {
-  position: relative;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -1036,7 +1038,7 @@ exports[`New View matches snapshot 1`] = `
                     Schema Type *
                   </label>
                 </styled.label>
-                <Select
+                <Styled(Select)
                   disabled={false}
                   hookFormOptions={
                     Object {
@@ -1046,42 +1048,54 @@ exports[`New View matches snapshot 1`] = `
                   name="schemaType"
                   selectSize="M"
                 >
-                  <div
-                    className="select-wrapper undefined"
+                  <Select
+                    className="c7"
+                    disabled={false}
+                    hookFormOptions={
+                      Object {
+                        "required": "Schema Type is required.",
+                      }
+                    }
+                    name="schemaType"
+                    selectSize="M"
                   >
-                    <styled.select
-                      disabled={false}
-                      name="schemaType"
-                      onBlur={[Function]}
-                      onChange={[Function]}
-                      selectSize="M"
+                    <div
+                      className="select-wrapper c7"
                     >
-                      <select
-                        className="c7"
+                      <styled.select
                         disabled={false}
                         name="schemaType"
                         onBlur={[Function]}
                         onChange={[Function]}
+                        selectSize="M"
                       >
-                        <option
-                          value="AVRO"
+                        <select
+                          className="c8"
+                          disabled={false}
+                          name="schemaType"
+                          onBlur={[Function]}
+                          onChange={[Function]}
                         >
-                          AVRO
-                        </option>
-                        <option
-                          value="JSON"
-                        >
-                          JSON
-                        </option>
-                        <option
-                          value="PROTOBUF"
-                        >
-                          PROTOBUF
-                        </option>
-                      </select>
-                    </styled.select>
-                  </div>
-                </Select>
+                          <option
+                            value="AVRO"
+                          >
+                            AVRO
+                          </option>
+                          <option
+                            value="JSON"
+                          >
+                            JSON
+                          </option>
+                          <option
+                            value="PROTOBUF"
+                          >
+                            PROTOBUF
+                          </option>
+                        </select>
+                      </styled.select>
+                    </div>
+                  </Select>
+                </Styled(Select)>
                 <styled.p>
                   <p
                     className="c5"
@@ -1106,7 +1120,7 @@ exports[`New View matches snapshot 1`] = `
                   type="submit"
                 >
                   <button
-                    className="c8"
+                    className="c9"
                     disabled={true}
                     type="submit"
                   >

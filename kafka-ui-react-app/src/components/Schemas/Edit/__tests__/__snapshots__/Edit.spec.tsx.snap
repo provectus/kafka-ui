@@ -121,7 +121,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
           <styled.label>
             Type
           </styled.label>
-          <Select
+          <Styled(Select)
             defaultValue="AVRO"
             disabled={false}
             name="schemaType"
@@ -145,13 +145,13 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             >
               PROTOBUF
             </option>
-          </Select>
+          </Styled(Select)>
         </div>
         <div>
           <styled.label>
             Compatibility level
           </styled.label>
-          <Select
+          <Styled(Select)
             defaultValue="BACKWARD"
             disabled={false}
             name="compatibilityLevel"
@@ -198,7 +198,7 @@ exports[`Edit Component when schemas are fetched matches the snapshot 1`] = `
             >
               NONE
             </option>
-          </Select>
+          </Styled(Select)>
         </div>
       </div>
       <styled.div>

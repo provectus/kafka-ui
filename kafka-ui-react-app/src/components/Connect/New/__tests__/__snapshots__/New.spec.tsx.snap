@@ -49,8 +49,7 @@ Array [
   color: #454F54;
 }
 
-.c2 {
-  position: relative;
+.c3 {
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -69,24 +68,28 @@ Array [
   appearance: none !important;
 }
 
-.c2:hover {
+.c3:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c2:focus {
+.c3:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c2:disabled {
+.c3:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c5 {
+.c2 {
+  position: relative;
+}
+
+.c6 {
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   height: 32px;
@@ -95,82 +98,82 @@ Array [
   font-size: 14px;
 }
 
-.c5::-webkit-input-placeholder {
+.c6::-webkit-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c5::-moz-placeholder {
+.c6::-moz-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c5:-ms-input-placeholder {
+.c6:-ms-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c5::placeholder {
+.c6::placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c5:hover {
+.c6:hover {
   border-color: #73848C;
 }
 
-.c5:focus {
+.c6:focus {
   outline: none;
   border-color: #454F54;
 }
 
-.c5:focus::-webkit-input-placeholder {
+.c6:focus::-webkit-input-placeholder {
   color: transparent;
 }
 
-.c5:focus::-moz-placeholder {
+.c6:focus::-moz-placeholder {
   color: transparent;
 }
 
-.c5:focus:-ms-input-placeholder {
+.c6:focus:-ms-input-placeholder {
   color: transparent;
 }
 
-.c5:focus::placeholder {
+.c6:focus::placeholder {
   color: transparent;
 }
 
-.c5:disabled {
+.c6:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c5:read-only {
+.c6:read-only {
   color: #171A1C;
   border: none;
   background-color: #F1F2F3;
   cursor: not-allowed;
 }
 
-.c5:-moz-read-only:focus::placeholder {
+.c6:-moz-read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
-.c5:read-only:focus::placeholder {
+.c6:read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
-.c3 {
+.c4 {
   color: #E51A1A;
   font-size: 12px;
 }
 
-.c4 {
+.c5 {
   position: relative;
 }
 
-.c6 {
+.c7 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -197,27 +200,27 @@ Array [
   height: 32px;
 }
 
-.c6:hover:enabled {
+.c7:hover:enabled {
   background: #1717CF;
   color: #FFFFFF;
   cursor: pointer;
 }
 
-.c6:active:enabled {
+.c7:active:enabled {
   background: #1414B8;
   color: #FFFFFF;
 }
 
-.c6:disabled {
+.c7:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c6 a {
+.c7 a {
   color: white;
 }
 
-.c6 i {
+.c7 i {
   margin-right: 7px;
 }
 
@@ -253,10 +256,10 @@ Array [
         Connect *
       </label>
       <div
-        className="select-wrapper undefined"
+        className="select-wrapper c2"
       >
         <select
-          className="c2"
+          className="c3"
           disabled={false}
           name="connectName"
           onBlur={[Function]}
@@ -275,7 +278,7 @@ Array [
         </select>
       </div>
       <p
-        className="c3"
+        className="c4"
       />
     </div>
     <div>
@@ -285,11 +288,11 @@ Array [
         Name *
       </label>
       <div
-        className="c4"
+        className="c5"
       >
         <input
           autoComplete="off"
-          className="c5 c4"
+          className="c6 c5"
           disabled={false}
           name="name"
           onBlur={[Function]}
@@ -298,7 +301,7 @@ Array [
         />
       </div>
       <p
-        className="c3"
+        className="c4"
       />
     </div>
     <div>
@@ -315,11 +318,11 @@ Array [
         value=""
       />
       <p
-        className="c3"
+        className="c4"
       />
     </div>
     <button
-      className="c6"
+      className="c7"
       disabled={true}
       type="submit"
     >
