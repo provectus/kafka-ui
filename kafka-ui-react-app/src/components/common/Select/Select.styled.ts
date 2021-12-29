@@ -21,7 +21,6 @@ export const Select = styled.select<Props>`
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
   appearance: none !important;
-  }
 
   &:hover {
     color: ${(props) => props.theme.selectStyles.color.hover};
