@@ -49,66 +49,44 @@ Array [
   color: #454F54;
 }
 
-.c3 {
-  height: 32px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-.c3 option {
-  height: 50px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-.c3:hover {
-  color: #171A1C;
-  border-color: #73848C;
-}
-
-.c3:focus {
-  outline: none;
-  color: #171A1C;
-  border-color: #454F54;
-}
-
-.c3:disabled {
-  color: #ABB5BA;
-  border-color: #E3E6E8;
-  cursor: not-allowed;
-}
-
 .c2 {
   position: relative;
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: auto;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
 }
 
-.c6 {
+.c2:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c2:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c2:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c5 {
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   height: 32px;
@@ -117,82 +95,82 @@ Array [
   font-size: 14px;
 }
 
-.c6::-webkit-input-placeholder {
+.c5::-webkit-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c6::-moz-placeholder {
+.c5::-moz-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c6:-ms-input-placeholder {
+.c5:-ms-input-placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c6::placeholder {
+.c5::placeholder {
   color: #ABB5BA;
   font-size: 14px;
 }
 
-.c6:hover {
+.c5:hover {
   border-color: #73848C;
 }
 
-.c6:focus {
+.c5:focus {
   outline: none;
   border-color: #454F54;
 }
 
-.c6:focus::-webkit-input-placeholder {
+.c5:focus::-webkit-input-placeholder {
   color: transparent;
 }
 
-.c6:focus::-moz-placeholder {
+.c5:focus::-moz-placeholder {
   color: transparent;
 }
 
-.c6:focus:-ms-input-placeholder {
+.c5:focus:-ms-input-placeholder {
   color: transparent;
 }
 
-.c6:focus::placeholder {
+.c5:focus::placeholder {
   color: transparent;
 }
 
-.c6:disabled {
+.c5:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c6:read-only {
+.c5:read-only {
   color: #171A1C;
   border: none;
   background-color: #F1F2F3;
   cursor: not-allowed;
 }
 
-.c6:-moz-read-only:focus::placeholder {
+.c5:-moz-read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
-.c6:read-only:focus::placeholder {
+.c5:read-only:focus::placeholder {
   color: #ABB5BA;
 }
 
-.c4 {
+.c3 {
   color: #E51A1A;
   font-size: 12px;
 }
 
-.c5 {
+.c4 {
   position: relative;
 }
 
-.c7 {
+.c6 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -219,27 +197,27 @@ Array [
   height: 32px;
 }
 
-.c7:hover:enabled {
+.c6:hover:enabled {
   background: #1717CF;
   color: #FFFFFF;
   cursor: pointer;
 }
 
-.c7:active:enabled {
+.c6:active:enabled {
   background: #1414B8;
   color: #FFFFFF;
 }
 
-.c7:disabled {
+.c6:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c7 a {
+.c6 a {
   color: white;
 }
 
-.c7 i {
+.c6 i {
   margin-right: 7px;
 }
 
@@ -275,10 +253,10 @@ Array [
         Connect *
       </label>
       <div
-        className="select-wrapper c2"
+        className="select-wrapper undefined"
       >
         <select
-          className="c3"
+          className="c2"
           disabled={false}
           name="connectName"
           onBlur={[Function]}
@@ -297,7 +275,7 @@ Array [
         </select>
       </div>
       <p
-        className="c4"
+        className="c3"
       />
     </div>
     <div>
@@ -307,11 +285,11 @@ Array [
         Name *
       </label>
       <div
-        className="c5"
+        className="c4"
       >
         <input
           autoComplete="off"
-          className="c6 c5"
+          className="c5 c4"
           disabled={false}
           name="name"
           onBlur={[Function]}
@@ -320,7 +298,7 @@ Array [
         />
       </div>
       <p
-        className="c4"
+        className="c3"
       />
     </div>
     <div>
@@ -337,11 +315,11 @@ Array [
         value=""
       />
       <p
-        className="c4"
+        className="c3"
       />
     </div>
     <button
-      className="c7"
+      className="c6"
       disabled={true}
       type="submit"
     >

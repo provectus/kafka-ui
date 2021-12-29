@@ -92,7 +92,8 @@ exports[`New View matches snapshot 1`] = `
   position: relative;
 }
 
-.c8 {
+.c7 {
+  position: relative;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -111,47 +112,24 @@ exports[`New View matches snapshot 1`] = `
   appearance: none !important;
 }
 
-.c8 option {
-  height: 50px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-.c8:hover {
+.c7:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c8:focus {
+.c7:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c8:disabled {
+.c7:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c7 {
-  position: relative;
-}
-
-.c9 {
+.c8 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -178,27 +156,27 @@ exports[`New View matches snapshot 1`] = `
   height: 32px;
 }
 
-.c9:hover:enabled {
+.c8:hover:enabled {
   background: #1717CF;
   color: #FFFFFF;
   cursor: pointer;
 }
 
-.c9:active:enabled {
+.c8:active:enabled {
   background: #1414B8;
   color: #FFFFFF;
 }
 
-.c9:disabled {
+.c8:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c9 a {
+.c8 a {
   color: white;
 }
 
-.c9 i {
+.c8 i {
   margin-right: 7px;
 }
 
@@ -662,26 +640,8 @@ exports[`New View matches snapshot 1`] = `
                       "mount": true,
                       "name": "schemaType",
                       "ref": .c0 {
+  position: relative;
   height: 32px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-.c0 option {
-  height: 50px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
@@ -1076,7 +1036,7 @@ exports[`New View matches snapshot 1`] = `
                     Schema Type *
                   </label>
                 </styled.label>
-                <Styled(Select)
+                <Select
                   disabled={false}
                   hookFormOptions={
                     Object {
@@ -1086,54 +1046,42 @@ exports[`New View matches snapshot 1`] = `
                   name="schemaType"
                   selectSize="M"
                 >
-                  <Select
-                    className="c7"
-                    disabled={false}
-                    hookFormOptions={
-                      Object {
-                        "required": "Schema Type is required.",
-                      }
-                    }
-                    name="schemaType"
-                    selectSize="M"
+                  <div
+                    className="select-wrapper undefined"
                   >
-                    <div
-                      className="select-wrapper c7"
+                    <styled.select
+                      disabled={false}
+                      name="schemaType"
+                      onBlur={[Function]}
+                      onChange={[Function]}
+                      selectSize="M"
                     >
-                      <styled.select
+                      <select
+                        className="c7"
                         disabled={false}
                         name="schemaType"
                         onBlur={[Function]}
                         onChange={[Function]}
-                        selectSize="M"
                       >
-                        <select
-                          className="c8"
-                          disabled={false}
-                          name="schemaType"
-                          onBlur={[Function]}
-                          onChange={[Function]}
+                        <option
+                          value="AVRO"
                         >
-                          <option
-                            value="AVRO"
-                          >
-                            AVRO
-                          </option>
-                          <option
-                            value="JSON"
-                          >
-                            JSON
-                          </option>
-                          <option
-                            value="PROTOBUF"
-                          >
-                            PROTOBUF
-                          </option>
-                        </select>
-                      </styled.select>
-                    </div>
-                  </Select>
-                </Styled(Select)>
+                          AVRO
+                        </option>
+                        <option
+                          value="JSON"
+                        >
+                          JSON
+                        </option>
+                        <option
+                          value="PROTOBUF"
+                        >
+                          PROTOBUF
+                        </option>
+                      </select>
+                    </styled.select>
+                  </div>
+                </Select>
                 <styled.p>
                   <p
                     className="c5"
@@ -1158,7 +1106,7 @@ exports[`New View matches snapshot 1`] = `
                   type="submit"
                 >
                   <button
-                    className="c9"
+                    className="c8"
                     disabled={true}
                     type="submit"
                   >

@@ -1,17 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Filters component matches the snapshot 1`] = `
-.c9 {
+.c8 {
   min-width: 200px;
   height: 32px;
   font-size: 14px;
 }
 
-.c9 > .dropdown-container {
+.c8 > .dropdown-container {
   height: 32px;
 }
 
-.c9 > .dropdown-container > .dropdown-heading {
+.c8 > .dropdown-container > .dropdown-heading {
   height: 32px;
 }
 
@@ -102,132 +102,58 @@ exports[`Filters component matches the snapshot 1`] = `
   color: #ABB5BA;
 }
 
-.c8 {
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  height: 32px;
-  width: 100%;
-  padding-left: 12px;
-  font-size: 14px;
-}
-
-.c8::-webkit-input-placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8::-moz-placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8:-ms-input-placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8::placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8:hover {
-  border-color: #73848C;
-}
-
-.c8:focus {
-  outline: none;
-  border-color: #454F54;
-}
-
-.c8:focus::-webkit-input-placeholder {
-  color: transparent;
-}
-
-.c8:focus::-moz-placeholder {
-  color: transparent;
-}
-
-.c8:focus:-ms-input-placeholder {
-  color: transparent;
-}
-
-.c8:focus::placeholder {
-  color: transparent;
-}
-
-.c8:disabled {
-  color: #ABB5BA;
-  border-color: #E3E6E8;
-  cursor: not-allowed;
-}
-
-.c8:read-only {
-  color: #171A1C;
-  border: none;
-  background-color: #F1F2F3;
-  cursor: not-allowed;
-}
-
-.c8:-moz-read-only:focus::placeholder {
-  color: #ABB5BA;
-}
-
-.c8:read-only:focus::placeholder {
-  color: #ABB5BA;
-}
-
-.c2 {
-  position: relative;
-}
-
 .c7 {
-  height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
-  font-size: 14px;
+  height: 32px;
   width: 100%;
   padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
+  font-size: 14px;
 }
 
-.c7 option {
-  height: 50px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
+.c7::-webkit-input-placeholder {
+  color: #ABB5BA;
   font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
+}
+
+.c7::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c7:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c7::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
 }
 
 .c7:hover {
-  color: #171A1C;
   border-color: #73848C;
 }
 
 .c7:focus {
   outline: none;
-  color: #171A1C;
   border-color: #454F54;
+}
+
+.c7:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c7:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c7:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c7:focus::placeholder {
+  color: transparent;
 }
 
 .c7:disabled {
@@ -236,7 +162,64 @@ exports[`Filters component matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
-.c11 {
+.c7:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c7:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c7:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c6 {
+  position: relative;
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: auto;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c6:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c6:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c6:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c10 {
+  position: relative;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -255,47 +238,24 @@ exports[`Filters component matches the snapshot 1`] = `
   appearance: none !important;
 }
 
-.c11 option {
-  height: 50px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: 120px;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-.c11:hover {
+.c10:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c11:focus {
+.c10:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c11:disabled {
+.c10:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c6 {
-  position: relative;
-}
-
-.c10 {
+.c9 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -322,27 +282,27 @@ exports[`Filters component matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c10:hover:enabled {
+.c9:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c10:active:enabled {
+.c9:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c10:disabled {
+.c9:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c10 a {
+.c9 a {
   color: white;
 }
 
-.c10 i {
+.c9 i {
   margin-right: 7px;
 }
 
@@ -437,7 +397,7 @@ exports[`Filters component matches the snapshot 1`] = `
   outline: none;
 }
 
-.c12 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -455,7 +415,7 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c13 {
+.c12 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -464,7 +424,7 @@ exports[`Filters component matches the snapshot 1`] = `
   display: flex;
 }
 
-.c14 {
+.c13 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -497,10 +457,10 @@ exports[`Filters component matches the snapshot 1`] = `
             class="c5"
           >
             <div
-              class="select-wrapper c6"
+              class="select-wrapper undefined"
             >
               <select
-                class="c7"
+                class="c6"
                 id="selectSeekType"
               >
                 <option
@@ -519,7 +479,7 @@ exports[`Filters component matches the snapshot 1`] = `
               class="c2 offset-selector"
             >
               <input
-                class="c8 c2 offset-selector"
+                class="c7 c2 offset-selector"
                 id="offset"
                 type="text"
                 value=""
@@ -527,7 +487,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <div
-            class="rmsc c9"
+            class="rmsc c8"
           >
             <div
               aria-labelledby="Select partitions"
@@ -588,7 +548,7 @@ exports[`Filters component matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="c10"
+            class="c9"
             style="font-weight: 500;"
             type="submit"
           >
@@ -596,10 +556,10 @@ exports[`Filters component matches the snapshot 1`] = `
           </button>
         </div>
         <div
-          class="select-wrapper c6"
+          class="select-wrapper undefined"
         >
           <select
-            class="c11"
+            class="c10"
           >
             <option
               value="FORWARD"
@@ -615,17 +575,17 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c12"
+        class="c11"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c13"
+          class="c12"
           title="Elapsed Time"
         >
           <div
-            class="c14"
+            class="c13"
           >
             <i
               class="far fa-clock"
@@ -637,11 +597,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c12"
           title="Bytes Consumed"
         >
           <div
-            class="c14"
+            class="c13"
           >
             <i
               class="fas fa-arrow-down"
@@ -652,11 +612,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c12"
           title="Messages Consumed"
         >
           <div
-            class="c14"
+            class="c13"
           >
             <i
               class="far fa-file-alt"
@@ -674,17 +634,17 @@ exports[`Filters component matches the snapshot 1`] = `
 
 exports[`Filters component when fetching matches the snapshot 1`] = `
 <body>
-  .c9 {
+  .c8 {
   min-width: 200px;
   height: 32px;
   font-size: 14px;
 }
 
-.c9 > .dropdown-container {
+.c8 > .dropdown-container {
   height: 32px;
 }
 
-.c9 > .dropdown-container > .dropdown-heading {
+.c8 > .dropdown-container > .dropdown-heading {
   height: 32px;
 }
 
@@ -775,132 +735,58 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   color: #ABB5BA;
 }
 
-.c8 {
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  height: 32px;
-  width: 100%;
-  padding-left: 12px;
-  font-size: 14px;
-}
-
-.c8::-webkit-input-placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8::-moz-placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8:-ms-input-placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8::placeholder {
-  color: #ABB5BA;
-  font-size: 14px;
-}
-
-.c8:hover {
-  border-color: #73848C;
-}
-
-.c8:focus {
-  outline: none;
-  border-color: #454F54;
-}
-
-.c8:focus::-webkit-input-placeholder {
-  color: transparent;
-}
-
-.c8:focus::-moz-placeholder {
-  color: transparent;
-}
-
-.c8:focus:-ms-input-placeholder {
-  color: transparent;
-}
-
-.c8:focus::placeholder {
-  color: transparent;
-}
-
-.c8:disabled {
-  color: #ABB5BA;
-  border-color: #E3E6E8;
-  cursor: not-allowed;
-}
-
-.c8:read-only {
-  color: #171A1C;
-  border: none;
-  background-color: #F1F2F3;
-  cursor: not-allowed;
-}
-
-.c8:-moz-read-only:focus::placeholder {
-  color: #ABB5BA;
-}
-
-.c8:read-only:focus::placeholder {
-  color: #ABB5BA;
-}
-
-.c2 {
-  position: relative;
-}
-
 .c7 {
-  height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
-  font-size: 14px;
+  height: 32px;
   width: 100%;
   padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
+  font-size: 14px;
 }
 
-.c7 option {
-  height: 50px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
+.c7::-webkit-input-placeholder {
+  color: #ABB5BA;
   font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: auto;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
+}
+
+.c7::-moz-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c7:-ms-input-placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
+}
+
+.c7::placeholder {
+  color: #ABB5BA;
+  font-size: 14px;
 }
 
 .c7:hover {
-  color: #171A1C;
   border-color: #73848C;
 }
 
 .c7:focus {
   outline: none;
-  color: #171A1C;
   border-color: #454F54;
+}
+
+.c7:focus::-webkit-input-placeholder {
+  color: transparent;
+}
+
+.c7:focus::-moz-placeholder {
+  color: transparent;
+}
+
+.c7:focus:-ms-input-placeholder {
+  color: transparent;
+}
+
+.c7:focus::placeholder {
+  color: transparent;
 }
 
 .c7:disabled {
@@ -909,7 +795,64 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
-.c11 {
+.c7:read-only {
+  color: #171A1C;
+  border: none;
+  background-color: #F1F2F3;
+  cursor: not-allowed;
+}
+
+.c7:-moz-read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c7:read-only:focus::placeholder {
+  color: #ABB5BA;
+}
+
+.c2 {
+  position: relative;
+}
+
+.c6 {
+  position: relative;
+  height: 32px;
+  border: 1px #ABB5BA solid;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 16px;
+  color: #171A1C;
+  min-width: auto;
+  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
+  background-repeat: no-repeat !important;
+  background-position-x: calc(100% - 8px) !important;
+  background-position-y: 55% !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.c6:hover {
+  color: #171A1C;
+  border-color: #73848C;
+}
+
+.c6:focus {
+  outline: none;
+  color: #171A1C;
+  border-color: #454F54;
+}
+
+.c6:disabled {
+  color: #ABB5BA;
+  border-color: #E3E6E8;
+  cursor: not-allowed;
+}
+
+.c10 {
+  position: relative;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
@@ -928,47 +871,24 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   appearance: none !important;
 }
 
-.c11 option {
-  height: 50px;
-  border: 1px #ABB5BA solid;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 100%;
-  padding-left: 12px;
-  padding-right: 16px;
-  color: #171A1C;
-  min-width: 120px;
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  background-repeat: no-repeat !important;
-  background-position-x: calc(100% - 8px) !important;
-  background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
-}
-
-.c11:hover {
+.c10:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c11:focus {
+.c10:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c11:disabled {
+.c10:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c6 {
-  position: relative;
-}
-
-.c10 {
+.c9 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -995,27 +915,27 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c10:hover:enabled {
+.c9:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c10:active:enabled {
+.c9:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c10:disabled {
+.c9:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c10 a {
+.c9 a {
   color: white;
 }
 
-.c10 i {
+.c9 i {
   margin-right: 7px;
 }
 
@@ -1110,7 +1030,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   outline: none;
 }
 
-.c12 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1128,7 +1048,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c13 {
+.c12 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -1137,7 +1057,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   display: flex;
 }
 
-.c14 {
+.c13 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
@@ -1169,10 +1089,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             class="c5"
           >
             <div
-              class="select-wrapper c6"
+              class="select-wrapper undefined"
             >
               <select
-                class="c7"
+                class="c6"
                 id="selectSeekType"
               >
                 <option
@@ -1191,7 +1111,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
               class="c2 offset-selector"
             >
               <input
-                class="c8 c2 offset-selector"
+                class="c7 c2 offset-selector"
                 id="offset"
                 type="text"
                 value=""
@@ -1199,7 +1119,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <div
-            class="rmsc c9"
+            class="rmsc c8"
           >
             <div
               aria-labelledby="Select partitions"
@@ -1260,7 +1180,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             </div>
           </div>
           <button
-            class="c10"
+            class="c9"
             style="font-weight: 500;"
             type="button"
           >
@@ -1268,10 +1188,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </button>
         </div>
         <div
-          class="select-wrapper c6"
+          class="select-wrapper undefined"
         >
           <select
-            class="c11"
+            class="c10"
           >
             <option
               value="FORWARD"
@@ -1287,17 +1207,17 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c12"
+        class="c11"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c13"
+          class="c12"
           title="Elapsed Time"
         >
           <div
-            class="c14"
+            class="c13"
           >
             <i
               class="far fa-clock"
@@ -1309,11 +1229,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c12"
           title="Bytes Consumed"
         >
           <div
-            class="c14"
+            class="c13"
           >
             <i
               class="fas fa-arrow-down"
@@ -1324,11 +1244,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c12"
           title="Messages Consumed"
         >
           <div
-            class="c14"
+            class="c13"
           >
             <i
               class="far fa-file-alt"
