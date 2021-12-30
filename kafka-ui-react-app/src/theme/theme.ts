@@ -173,6 +173,8 @@ const theme = {
     color: Colors.neutral[90],
   },
   paginationStyles: {
+    backgroundColor: Colors.neutral[0],
+    currentPage: Colors.neutral[10],
     borderColor: {
       normal: Colors.neutral[30],
       hover: Colors.neutral[50],
@@ -201,6 +203,16 @@ const theme = {
       titleColor: Colors.neutral[50],
       warningTextColor: Colors.red[50],
       lightTextColor: Colors.neutral[30],
+    },
+  },
+  scrollbar: {
+    trackColor: {
+      normal: Colors.neutral[0],
+      active: Colors.neutral[5],
+    },
+    thumbColor: {
+      normal: Colors.neutral[0],
+      active: Colors.neutral[50],
     },
   },
 };

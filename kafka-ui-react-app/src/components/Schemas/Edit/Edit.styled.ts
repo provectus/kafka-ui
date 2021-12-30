@@ -33,7 +33,7 @@ export const EditorsWrapper = styled.div`
   }
 `;
 
-export const EditorsWindow = styled.div`
+export const EditorContainer = styled.div`
   border: 1px solid #e3e6e8;
   border-radius: 8px;
   margin-bottom: 16px;

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 import { Link } from 'react-router-dom';
+import theme from 'theme/theme';
 
 export const Wrapper = styled.nav`
   display: flex;
@@ -28,19 +28,21 @@ export const PaginationLink = styled(Link)<{ $isCurrent: boolean }>`
 
   border-radius: 4px;
   border: 1px solid
-    ${({ $isCurrent, theme }) =>
+    ${({ $isCurrent }) =>
       $isCurrent
-        ? Colors.neutral[10]
+        ? theme.paginationStyles.currentPage
         : theme.paginationStyles.borderColor.normal};
   background-color: ${({ $isCurrent }) =>
-    $isCurrent ? Colors.neutral[10] : Colors.neutral[0]};
-  color: ${Colors.neutral[90]};
+    $isCurrent
+      ? theme.paginationStyles.currentPage
+      : theme.paginationStyles.backgroundColor};
+  color: ${theme.paginationStyles.color.normal};
 
   &:hover {
     border: 1px solid
-      ${({ $isCurrent, theme }) =>
+      ${({ $isCurrent }) =>
         $isCurrent
-          ? Colors.neutral[10]
+          ? theme.paginationStyles.currentPage
           : theme.paginationStyles.borderColor.hover};
     color: ${(props) => props.theme.paginationStyles.color.hover};
     cursor: ${({ $isCurrent }) => ($isCurrent ? 'default' : 'pointer')};
@@ -52,26 +54,22 @@ export const PaginationButton = styled(Link)`
   align-items: center;
   padding: 6px 12px;
   height: 32px;
-  border: 1px solid
-    ${(props) => props.theme.paginationStyles.borderColor.normal};
+  border: 1px solid ${theme.paginationStyles.borderColor.normal};
   border-radius: 4px;
-  color: ${(props) => props.theme.paginationStyles.color.normal};
+  color: ${theme.paginationStyles.color.normal};
 
   &:hover {
-    border: 1px solid
-      ${(props) => props.theme.paginationStyles.borderColor.hover};
-    color: ${(props) => props.theme.paginationStyles.color.hover};
+    border: 1px solid ${theme.paginationStyles.borderColor.hover};
+    color: ${theme.paginationStyles.color.hover};
     cursor: pointer;
   }
   &:active {
-    border: 1px solid
-      ${(props) => props.theme.paginationStyles.borderColor.active};
-    color: ${(props) => props.theme.paginationStyles.color.active};
+    border: 1px solid ${theme.paginationStyles.borderColor.active};
+    color: ${theme.paginationStyles.color.active};
   }
   &:disabled {
-    border: 1px solid
-      ${(props) => props.theme.paginationStyles.borderColor.disabled};
-    color: ${(props) => props.theme.paginationStyles.color.disabled};
+    border: 1px solid ${theme.paginationStyles.borderColor.disabled};
+    color: ${theme.paginationStyles.color.disabled};
     cursor: not-allowed;
   }
 `;
@@ -81,10 +79,9 @@ export const DisabledButton = styled.button`
   align-items: center;
   padding: 6px 12px;
   height: 32px;
-  border: 1px solid
-    ${({ theme }) => theme.paginationStyles.borderColor.disabled};
-  background-color: ${Colors.neutral[0]};
+  border: 1px solid ${theme.paginationStyles.borderColor.disabled};
+  background-color: ${theme.paginationStyles.backgroundColor};
   border-radius: 4px;
   font-size: 16px;
-  color: ${({ theme }) => theme.paginationStyles.borderColor.disabled};
+  color: ${theme.paginationStyles.color.disabled};
 `;

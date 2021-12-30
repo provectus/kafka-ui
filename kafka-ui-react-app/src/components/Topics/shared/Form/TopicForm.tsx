@@ -37,8 +37,8 @@ const TopicForm: React.FC<Props> = ({
     <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
-          <S.TopicFormColumn>
-            <S.TopicNameField>
+          <S.Column>
+            <S.NameField>
               <InputLabel>Topic Name *</InputLabel>
               <Input
                 name="name"
@@ -48,11 +48,11 @@ const TopicForm: React.FC<Props> = ({
               <FormError>
                 <ErrorMessage errors={errors} name="name" />
               </FormError>
-            </S.TopicNameField>
-          </S.TopicFormColumn>
+            </S.NameField>
+          </S.Column>
 
           {!isEditing && (
-            <S.TopicFormColumn>
+            <S.Column>
               <div>
                 <InputLabel>Number of partitions *</InputLabel>
                 <Input
@@ -79,11 +79,11 @@ const TopicForm: React.FC<Props> = ({
                   <ErrorMessage errors={errors} name="replicationFactor" />
                 </FormError>
               </div>
-            </S.TopicFormColumn>
+            </S.Column>
           )}
         </fieldset>
 
-        <S.TopicFormColumn>
+        <S.Column>
           <div>
             <InputLabel>Min In Sync Replicas *</InputLabel>
             <Input
@@ -105,15 +105,15 @@ const TopicForm: React.FC<Props> = ({
               <option value="compact,delete">Compact,Delete</option>
             </Select>
           </div>
-        </S.TopicFormColumn>
+        </S.Column>
 
         <div>
-          <S.TopicFormColumn>
+          <S.Column>
             <div>
               <TimeToRetain isSubmitting={isSubmitting} />
             </div>
-          </S.TopicFormColumn>
-          <S.TopicFormColumn>
+          </S.Column>
+          <S.Column>
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
               <Select defaultValue={-1} name="retentionBytes">
@@ -137,7 +137,7 @@ const TopicForm: React.FC<Props> = ({
                 <ErrorMessage errors={errors} name="maxMessageBytes" />
               </FormError>
             </div>
-          </S.TopicFormColumn>
+          </S.Column>
         </div>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>

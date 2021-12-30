@@ -15,7 +15,7 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
-import { EditorsWindow, EditorsWrapper, EditWrapper } from './Edit.styled';
+import * as S from './Edit.styled';
 
 export interface EditProps {
   subject: SchemaName;
@@ -91,7 +91,7 @@ const Edit = ({
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />
       {schemasAreFetched ? (
-        <EditWrapper>
+        <S.EditWrapper>
           <form onSubmit={methods.handleSubmit(onSubmit)}>
             <div>
               <div>
@@ -127,9 +127,9 @@ const Edit = ({
                 </Select>
               </div>
             </div>
-            <EditorsWrapper>
+            <S.EditorsWrapper>
               <div>
-                <EditorsWindow>
+                <S.EditorContainer>
                   <h4>Latest schema</h4>
                   <JSONEditor
                     isFixedHeight
@@ -139,10 +139,10 @@ const Edit = ({
                     name="latestSchema"
                     highlightActiveLine={false}
                   />
-                </EditorsWindow>
+                </S.EditorContainer>
               </div>
               <div>
-                <EditorsWindow>
+                <S.EditorContainer>
                   <h4>New schema</h4>
                   <Controller
                     control={methods.control}
@@ -156,7 +156,7 @@ const Edit = ({
                       />
                     )}
                   />
-                </EditorsWindow>
+                </S.EditorContainer>
                 <Button
                   buttonType="primary"
                   buttonSize="M"
@@ -168,9 +168,9 @@ const Edit = ({
                   Submit
                 </Button>
               </div>
-            </EditorsWrapper>
+            </S.EditorsWrapper>
           </form>
-        </EditWrapper>
+        </S.EditWrapper>
       ) : (
         <PageLoader />
       )}

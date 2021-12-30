@@ -4,7 +4,7 @@ import { range } from 'lodash';
 import React from 'react';
 import PageControl from 'components/common/Pagination/PageControl';
 
-import { DisabledButton, PaginationButton, Wrapper } from './Pagination.styled';
+import * as S from './Pagination.styled';
 
 export interface PaginationProps {
   totalPages: number;
@@ -65,18 +65,13 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
   }, []);
 
   return (
-    <Wrapper role="navigation" aria-label="pagination">
+    <S.Wrapper role="navigation" aria-label="pagination">
       {currentPage > 1 ? (
-        <PaginationButton
-          to={getPath(currentPage - 1)}
-          data-testid="previous-button"
-        >
+        <S.PaginationButton to={getPath(currentPage - 1)}>
           Previous
-        </PaginationButton>
+        </S.PaginationButton>
       ) : (
-        <DisabledButton disabled data-testid="previous-disabled">
-          Previous
-        </DisabledButton>
+        <S.DisabledButton disabled>Previous</S.DisabledButton>
       )}
       {totalPages > 1 && (
         <ul>
@@ -115,18 +110,13 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
         </ul>
       )}
       {currentPage < totalPages ? (
-        <PaginationButton
-          to={getPath(currentPage + 1)}
-          data-testid="next-button"
-        >
+        <S.PaginationButton to={getPath(currentPage + 1)}>
           Next
-        </PaginationButton>
+        </S.PaginationButton>
       ) : (
-        <DisabledButton disabled data-testid="next-disabled">
-          Next
-        </DisabledButton>
+        <S.DisabledButton disabled>Next</S.DisabledButton>
       )}
-    </Wrapper>
+    </S.Wrapper>
   );
 };
 

@@ -4,7 +4,7 @@ import Pagination, {
   PaginationProps,
 } from 'components/common/Pagination/Pagination';
 import { ThemeProvider } from 'styled-components';
-import theme, { Colors } from 'theme/theme';
+import theme from 'theme/theme';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 
@@ -21,25 +21,25 @@ describe('Pagination', () => {
   describe('next & prev buttons', () => {
     it('renders disable prev button and enabled next link', () => {
       setupComponent('?page=1');
-      expect(screen.queryByTestId('previous-disabled')).toBeDisabled();
-      expect(screen.queryByTestId('next-button')).toBeInTheDocument();
+      expect(screen.queryByText('Previous')).toBeDisabled();
+      expect(screen.queryByText('Next')).toBeInTheDocument();
     });
 
     it('renders disable next button and enabled prev link', () => {
       setupComponent('?page=11');
-      expect(screen.queryByTestId('previous-button')).toBeInTheDocument();
-      expect(screen.queryByTestId('next-disabled')).toBeDisabled();
+      expect(screen.queryByText('Previous')).toBeInTheDocument();
+      expect(screen.queryByText('Next')).toBeDisabled();
     });
 
     it('renders next & prev links with correct path', () => {
       setupComponent('?page=5&perPage=20');
-      expect(screen.queryByTestId('previous-button')).toBeInTheDocument();
-      expect(screen.queryByTestId('next-button')).toBeInTheDocument();
-      expect(screen.queryByTestId('previous-button')).toHaveAttribute(
+      expect(screen.queryByText('Previous')).toBeInTheDocument();
+      expect(screen.queryByText('Next')).toBeInTheDocument();
+      expect(screen.queryByText('Previous')).toHaveAttribute(
         'href',
         '/my/test/path/23?page=4&perPage=20'
       );
-      expect(screen.queryByTestId('next-button')).toHaveAttribute(
+      expect(screen.queryByText('Next')).toHaveAttribute(
         'href',
         '/my/test/path/23?page=6&perPage=20'
       );
@@ -75,7 +75,6 @@ describe('Pagination', () => {
     it('renders 0 spread elements', () => {
       setupComponent('?page=2', { totalPages: 8 });
       expect(screen.queryAllByText('…').length).toEqual(0);
-      expect(screen.getAllByTestId('pagination-link').length).toEqual(8);
       expect(screen.getAllByRole('listitem').length).toEqual(8);
     });
   });
@@ -84,14 +83,14 @@ describe('Pagination', () => {
     it('check if it sets page 8 as current when page param is set', () => {
       setupComponent('?page=8');
       expect(screen.getByText('8')).toHaveStyle(
-        `background-color: ${Colors.neutral[10]}`
+        `background-color: ${theme.paginationStyles.currentPage}`
       );
     });
 
     it('check if it sets first page as current when page param not set', () => {
       setupComponent('', { totalPages: 8 });
       expect(screen.getByText('1')).toHaveStyle(
-        `background-color: ${Colors.neutral[10]}`
+        `background-color: ${theme.paginationStyles.currentPage}`
       );
     });
   });

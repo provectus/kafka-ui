@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const TopicFormColumn = styled.div`
+export const Column = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -8,7 +8,7 @@ export const TopicFormColumn = styled.div`
   margin-bottom: 16px;
 `;
 
-export const TopicNameField = styled.div`
+export const NameField = styled.div`
   flex-grow: 1;
 `;
 

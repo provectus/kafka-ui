@@ -15,7 +15,7 @@ const PageControl: React.FC<PageControlProps> = ({ current, url, page }) => {
         to={url}
         aria-label={`Goto page ${page}`}
         $isCurrent={current}
-        data-testid="pagination-link"
+        role="button"
       >
         {page}
       </PaginationLink>

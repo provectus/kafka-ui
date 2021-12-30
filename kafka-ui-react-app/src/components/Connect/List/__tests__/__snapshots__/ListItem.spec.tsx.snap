@@ -169,6 +169,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "borderColor": "#4F4FFF",
       },
       "paginationStyles": Object {
+        "backgroundColor": "#FFFFFF",
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#C7CED1",
@@ -181,6 +182,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+        "currentPage": "#E3E6E8",
       },
       "primaryTabStyles": Object {
         "borderColor": Object {
@@ -192,6 +194,16 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "active": "#171A1C",
           "hover": "#171A1C",
           "normal": "#73848C",
+        },
+      },
+      "scrollbar": Object {
+        "thumbColor": Object {
+          "active": "#73848C",
+          "normal": "#FFFFFF",
+        },
+        "trackColor": Object {
+          "active": "#F1F2F3",
+          "normal": "#FFFFFF",
         },
       },
       "secondaryTabStyles": Object {
