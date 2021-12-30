@@ -133,7 +133,14 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "warning": "#FFEECC",
         },
       },
+      "headingStyles": Object {
+        "h3": Object {
+          "color": "#73848C",
+          "fontSize": "14px",
+        },
+      },
       "layout": Object {
+        "mainColor": "#F1F2F3",
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
         "navBarWidth": "201px",
@@ -184,6 +191,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
         "currentPage": "#E3E6E8",
       },
+      "panelColor": "#FFFFFF",
       "primaryTabStyles": Object {
         "borderColor": Object {
           "active": "#4F4FFF",

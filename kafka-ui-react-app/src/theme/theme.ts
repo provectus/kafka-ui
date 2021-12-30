@@ -41,6 +41,14 @@ const theme = {
     minWidth: '1200px',
     navBarWidth: '201px',
     navBarHeight: '3.25rem',
+    mainColor: Colors.neutral[5],
+  },
+  panelColor: Colors.neutral[0],
+  headingStyles: {
+    h3: {
+      color: Colors.neutral[50],
+      fontSize: '14px',
+    },
   },
   alert: {
     color: {

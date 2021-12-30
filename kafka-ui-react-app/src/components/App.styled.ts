@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const Layout = styled.div`
   min-width: 1200px;
