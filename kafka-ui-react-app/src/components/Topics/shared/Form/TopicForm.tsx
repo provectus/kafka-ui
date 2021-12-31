@@ -9,7 +9,7 @@ import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
-import { StyledForm } from 'components/common/Form/Form.styles';
+import { StyledForm } from 'components/common/Form/Form.styled';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';

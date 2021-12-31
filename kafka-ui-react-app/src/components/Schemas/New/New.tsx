@@ -10,6 +10,7 @@ import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
+import * as C from 'components/common/Select/Select.styled';
 import { Button } from 'components/common/Button/Button';
 import styled from 'styled-components';
 import { Textarea } from 'components/common/Textbox/Textarea.styled';
@@ -109,15 +110,15 @@ const New: React.FC<NewProps> = ({ createSchema }) => {
           <InputLabel>Schema Type *</InputLabel>
           <Select
             selectSize="M"
-            name="schemaType"
+            // name="schemaType"
             hookFormOptions={{
               required: 'Schema Type is required.',
             }}
             disabled={isSubmitting}
           >
-            <option value={SchemaType.AVRO}>AVRO</option>
-            <option value={SchemaType.JSON}>JSON</option>
-            <option value={SchemaType.PROTOBUF}>PROTOBUF</option>
+            <C.Option value={SchemaType.AVRO}>AVRO</C.Option>
+            <C.Option value={SchemaType.JSON}>JSON</C.Option>
+            <C.Option value={SchemaType.PROTOBUF}>PROTOBUF</C.Option>
           </Select>
           <FormError>
             <ErrorMessage errors={errors} name="schemaType" />

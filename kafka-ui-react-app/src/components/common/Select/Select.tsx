@@ -1,17 +1,18 @@
 import styled from 'styled-components';
-import React from 'react';
+import React, { ChangeEvent, useState } from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
 
 import LiveIcon from './LiveIcon.styled';
 import * as S from './Select.styled';
 
 export interface SelectProps
-  extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  extends React.SelectHTMLAttributes<HTMLDivElement> {
   name?: string;
   selectSize?: 'M' | 'L';
   isLive?: boolean;
   hookFormOptions?: RegisterOptions;
   minWidth?: string;
+  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -23,6 +24,8 @@ const Select: React.FC<SelectProps> = ({
   hookFormOptions,
   ...props
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const methods = useFormContext();
   return (
     <div className={`select-wrapper ${className}`}>
@@ -33,18 +36,21 @@ const Select: React.FC<SelectProps> = ({
           isLive={isLive}
           {...methods.register(name, { ...hookFormOptions })}
           {...props}
+          onClick={() => setIsOpen(!isOpen)}
         >
-          {children}
+          {isOpen && (
+            <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
+          )}
         </S.Select>
       ) : (
-        <S.Select selectSize={selectSize} isLive={isLive} {...props}>
-          {children}
+        <S.Select selectSize={selectSize} isLive={isLive} {...props} onClick={() => setIsOpen(!isOpen)}>
+          {isOpen && (
+            <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
+          )}
         </S.Select>
       )}
     </div>
   );
 };
 
-export default styled(Select)`
-  position: relative;
-`;
+export default Select;
