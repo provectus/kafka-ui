@@ -47,4 +47,24 @@ provectuslabs/kafka-ui:latest
 ```
 
 #### Step 4 (optional)
-If you're using load balancer/proxy and use HTTP between the proxy and the app, you might wanna set `server_forward-headers-strategy` to `native` as well, for more info refer to [this issue](https://github.com/provectus/kafka-ui/issues/1017).
+If you're using load balancer/proxy and use HTTP between the proxy and the app, you might want to set `server_forward-headers-strategy` to `native` as well (`SERVER_FORWARDHEADERSSTRATEGY=native`), for more info refer to [this issue](https://github.com/provectus/kafka-ui/issues/1017).
+
+### Step 5 Azure (optional)
+For Azure AD (Office365) OAUTH2 you'll want to add more options for docker run command:
+
+```bash
+docker run -p 8080:8080 \
+        -e KAFKA_CLUSTERS_0_NAME="${cluster_name}"\
+        -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS="${kafka_listeners}" \
+        -e KAFKA_CLUSTERS_0_ZOOKEEPER="${zookeeper_servers}" \
+        -e KAFKA_CLUSTERS_0_KAFKACONNECT_0_ADDRESS="${kafka_connect_servers}"
+        -e AUTH_TYPE=OAUTH2 \
+        -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_AUTH0_CLIENTID=uhvaPKIHU4ZF8Ne4B6PGvF0hWW6OcUSB \
+        -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_AUTH0_CLIENTSECRET=YXfRjmodifiedTujnkVr7zuW9ECCAK4TcnCio-i \
+        -e SPRING_SECURITY_OAUTH2_CLIENT_REGISTRATION_AUTH0_SCOPE="https://graph.microsoft.com/User.Read" \
+        -e SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_AUTH0_ISSUER_URI="https://login.microsoftonline.com/{tenant-id}/v2.0" \
+        -d provectuslabs/kafka-ui:latest"
+```
+
+Note that scope is created by default when Application registration is done in Azure portal.
+You'll need to update application registration manifest to include `"accessTokenAcceptedVersion": 2`
