@@ -24,7 +24,8 @@ public enum ErrorCode {
   KSQLDB_NOT_FOUND(4011, HttpStatus.NOT_FOUND),
   DIR_NOT_FOUND(4012, HttpStatus.BAD_REQUEST),
   TOPIC_OR_PARTITION_NOT_FOUND(4013, HttpStatus.BAD_REQUEST),
-  INVALID_REQUEST(4014, HttpStatus.BAD_REQUEST);
+  INVALID_REQUEST(4014, HttpStatus.BAD_REQUEST),
+  SCHEMA_NOT_DELETED(4015, HttpStatus.INTERNAL_SERVER_ERROR);
 
   static {
     // codes uniqueness check
@@ -32,7 +33,7 @@ public enum ErrorCode {
     for (ErrorCode value : ErrorCode.values()) {
       if (!codes.add(value.code())) {
         LoggerFactory.getLogger(ErrorCode.class)
-            .warn("Multiple {} values refer to code {}", ErrorCode.class, value.code);
+                .warn("Multiple {} values refer to code {}", ErrorCode.class, value.code);
       }
     }
   }
