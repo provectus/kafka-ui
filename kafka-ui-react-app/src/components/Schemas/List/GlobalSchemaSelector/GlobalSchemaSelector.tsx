@@ -1,7 +1,7 @@
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
-import React from 'react';
+import React, { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces';
@@ -20,6 +20,9 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
   globalSchemaCompatibilityLevel,
   updateGlobalSchemaCompatibilityLevel,
 }) => {
+  const [currentCompatibilityLevel, setCompatibilityLevel] = useState(
+    globalSchemaCompatibilityLevel
+  );
   const { clusterName } = useParams<{ clusterName: string }>();
 
   const methods = useForm();
@@ -45,8 +48,13 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
         <Select
           name="compatibilityLevel"
           selectSize="M"
-          defaultValue={globalSchemaCompatibilityLevel}
-          onChange={() => setUpdateCompatibilityConfirmationVisible(true)}
+          value={currentCompatibilityLevel}
+          onChange={(e) => {
+            setCompatibilityLevel(
+              e.target.value as CompatibilityLevelCompatibilityEnum
+            );
+            setUpdateCompatibilityConfirmationVisible(true);
+          }}
           disabled={methods.formState.isSubmitting}
         >
           {Object.keys(CompatibilityLevelCompatibilityEnum).map(
@@ -59,7 +67,10 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
         </Select>
         <ConfirmationModal
           isOpen={isUpdateCompatibilityConfirmationVisible}
-          onCancel={() => setUpdateCompatibilityConfirmationVisible(false)}
+          onCancel={() => {
+            setUpdateCompatibilityConfirmationVisible(false);
+            setCompatibilityLevel(globalSchemaCompatibilityLevel);
+          }}
           onConfirm={methods.handleSubmit(onCompatibilityLevelUpdate)}
           isConfirming={methods.formState.isSubmitting}
         >
