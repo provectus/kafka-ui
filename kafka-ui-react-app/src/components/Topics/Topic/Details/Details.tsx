@@ -59,6 +59,8 @@ const Details: React.FC<Props> = ({
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
+  const [isClearTopicConfirmationVisible, setClearTopicConfirmationVisible] =
+    React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
   }, [clusterName, topicName]);
@@ -72,6 +74,7 @@ const Details: React.FC<Props> = ({
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
+    setClearTopicConfirmationVisible(false);
   }, [clusterName, topicName]);
 
   return (
@@ -103,7 +106,7 @@ const Details: React.FC<Props> = ({
                 </DropdownItem>
                 <DropdownItem
                   style={{ color: Colors.red[50] }}
-                  onClick={clearTopicMessagesHandler}
+                  onClick={() => setClearTopicConfirmationVisible(true)}
                 >
                   Clear messages
                 </DropdownItem>
@@ -126,6 +129,13 @@ const Details: React.FC<Props> = ({
         onConfirm={deleteTopicHandler}
       >
         Are you sure want to remove <b>{topicName}</b> topic?
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isClearTopicConfirmationVisible}
+        onCancel={() => setClearTopicConfirmationVisible(false)}
+        onConfirm={clearTopicMessagesHandler}
+      >
+        Are you sure want to clear topic messages?
       </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink
