@@ -680,6 +680,7 @@ exports[`New View matches snapshot 1`] = `
 <select
                         class="c0"
                         name="schemaType"
+                        role="listbox"
                       >
                         <option
                           value="AVRO"
@@ -1066,6 +1067,7 @@ exports[`New View matches snapshot 1`] = `
                         name="schemaType"
                         onBlur={[Function]}
                         onChange={[Function]}
+                        role="listbox"
                         selectSize="M"
                       >
                         <select
@@ -1074,6 +1076,7 @@ exports[`New View matches snapshot 1`] = `
                           name="schemaType"
                           onBlur={[Function]}
                           onChange={[Function]}
+                          role="listbox"
                         >
                           <option
                             value="AVRO"

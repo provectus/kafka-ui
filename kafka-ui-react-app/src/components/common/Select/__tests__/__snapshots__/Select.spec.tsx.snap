@@ -82,6 +82,7 @@ exports[`Custom Select when live matches the snapshot 1`] = `
       </i>
       <select
         class="c2"
+        role="listbox"
       />
     </div>
   </div>
@@ -136,6 +137,7 @@ exports[`Custom Select when non-live matches the snapshot 1`] = `
     >
       <select
         class="c1"
+        role="listbox"
       />
     </div>
   </div>

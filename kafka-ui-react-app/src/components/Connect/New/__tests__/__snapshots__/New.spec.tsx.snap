@@ -263,6 +263,7 @@ Array [
           name="connectName"
           onBlur={[Function]}
           onChange={[Function]}
+          role="listbox"
         >
           <option
             value="first"
