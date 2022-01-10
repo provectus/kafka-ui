@@ -21,25 +21,25 @@ describe('Pagination', () => {
   describe('next & prev buttons', () => {
     it('renders disable prev button and enabled next link', () => {
       setupComponent('?page=1');
-      expect(screen.queryByText('Previous')).toBeDisabled();
-      expect(screen.queryByText('Next')).toBeInTheDocument();
+      expect(screen.getByText('Previous')).toBeDisabled();
+      expect(screen.getByText('Next')).toBeInTheDocument();
     });
 
     it('renders disable next button and enabled prev link', () => {
       setupComponent('?page=11');
-      expect(screen.queryByText('Previous')).toBeInTheDocument();
-      expect(screen.queryByText('Next')).toBeDisabled();
+      expect(screen.getByText('Previous')).toBeInTheDocument();
+      expect(screen.getByText('Next')).toBeDisabled();
     });
 
     it('renders next & prev links with correct path', () => {
       setupComponent('?page=5&perPage=20');
-      expect(screen.queryByText('Previous')).toBeInTheDocument();
-      expect(screen.queryByText('Next')).toBeInTheDocument();
-      expect(screen.queryByText('Previous')).toHaveAttribute(
+      expect(screen.getByText('Previous')).toBeInTheDocument();
+      expect(screen.getByText('Next')).toBeInTheDocument();
+      expect(screen.getByText('Previous')).toHaveAttribute(
         'href',
         '/my/test/path/23?page=4&perPage=20'
       );
-      expect(screen.queryByText('Next')).toHaveAttribute(
+      expect(screen.getByText('Next')).toHaveAttribute(
         'href',
         '/my/test/path/23?page=6&perPage=20'
       );
@@ -65,7 +65,7 @@ describe('Pagination', () => {
 
     it('renders 2 spread elements', () => {
       setupComponent('?page=6');
-      expect(screen.queryAllByText('…').length).toEqual(2);
+      expect(screen.getAllByText('…').length).toEqual(2);
       expect(screen.getAllByRole('listitem')[0]).toHaveTextContent('1');
       expect(screen.getAllByRole('listitem')[1]).toHaveTextContent('…');
       expect(screen.getAllByRole('listitem')[7]).toHaveTextContent('…');

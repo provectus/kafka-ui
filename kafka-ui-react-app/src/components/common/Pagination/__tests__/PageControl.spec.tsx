@@ -19,20 +19,20 @@ describe('PageControl', () => {
 
   it('renders current page', () => {
     setupComponent({ current: true });
-    expect(screen.queryByRole('button')).toHaveStyle(
+    expect(screen.getByRole('button')).toHaveStyle(
       `background-color: ${theme.paginationStyles.currentPage}`
     );
   });
 
   it('renders non-current page', () => {
     setupComponent({ current: false });
-    expect(screen.queryByRole('button')).toHaveStyle(
+    expect(screen.getByRole('button')).toHaveStyle(
       `background-color: ${theme.paginationStyles.backgroundColor}`
     );
   });
 
   it('renders page number', () => {
     setupComponent({ current: false });
-    expect(screen.queryByRole('button')).toHaveTextContent(String(page));
+    expect(screen.getByRole('button')).toHaveTextContent(String(page));
   });
 });
