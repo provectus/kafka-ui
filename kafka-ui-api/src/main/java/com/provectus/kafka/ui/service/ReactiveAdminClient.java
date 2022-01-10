@@ -295,12 +295,17 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(String groupId) {
-    return listConsumerGroupOffsets(groupId, null);
+    return listConsumerGroupOffsets(groupId, new ListConsumerGroupOffsetsOptions());
   }
 
   public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
-      String groupId, @Nullable List<TopicPartition> partitions) {
-    var options = new ListConsumerGroupOffsetsOptions().topicPartitions(partitions);
+      String groupId, List<TopicPartition> partitions) {
+    return listConsumerGroupOffsets(groupId,
+        new ListConsumerGroupOffsetsOptions().topicPartitions(partitions));
+  }
+
+  private Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
+      String groupId, ListConsumerGroupOffsetsOptions options) {
     return toMono(client.listConsumerGroupOffsets(groupId, options).partitionsToOffsetAndMetadata())
         .map(MapUtil::removeNullValues)
         .map(m -> m.entrySet().stream()
