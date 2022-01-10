@@ -86,7 +86,14 @@ const ClustersWidget: React.FC<Props> = ({
           <tbody>
             {chunkItem.data.map((cluster) => (
               <tr key={cluster.name}>
-                <td>{cluster.name}</td>
+                <td>
+                  {cluster.readOnly && (
+                    <div className="tag has-margin-right is-info is-light">
+                      readonly
+                    </div>
+                  )}{' '}
+                  {cluster.name}
+                </td>
                 <td>{cluster.version}</td>
                 <td>{cluster.brokerCount}</td>
                 <td>{cluster.onlinePartitionCount}</td>
