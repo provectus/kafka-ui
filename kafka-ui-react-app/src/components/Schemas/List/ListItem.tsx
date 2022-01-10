@@ -13,7 +13,7 @@ const ListItem: React.FC<ListItemProps> = ({
   return (
     <tr>
       <S.TableKeyLink>
-        <NavLink exact to={`schemas/${subject}`} role="navigation">
+        <NavLink exact to={`schemas/${subject}`} role="link">
           {subject}
         </NavLink>
       </S.TableKeyLink>

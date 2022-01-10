@@ -20,7 +20,7 @@ describe('ListItem', () => {
 
   it('renders schemas', () => {
     setupComponent();
-    expect(screen.getAllByRole('navigation').length).toEqual(1);
+    expect(screen.getAllByRole('link').length).toEqual(1);
     expect(screen.getAllByRole('cell').length).toEqual(3);
   });
 });
