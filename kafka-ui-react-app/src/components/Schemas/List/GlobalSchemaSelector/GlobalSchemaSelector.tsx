@@ -6,7 +6,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { ClusterName } from 'redux/interfaces';
 
-import { GlobalSchemaSelectorWrapper } from './GlobalSchemaSelector.styled';
+import * as S from './GlobalSchemaSelector.styled';
 
 export interface GlobalSchemaSelectorProps {
   globalSchemaCompatibilityLevel?: CompatibilityLevelCompatibilityEnum;
@@ -41,20 +41,31 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
     setUpdateCompatibilityConfirmationVisible(false);
   };
 
+  const onCompatibilityLevelChange = ({
+    target: { value: newCompatibilityLevel },
+  }: {
+    target: { value: string };
+  }) => {
+    setCompatibilityLevel(
+      newCompatibilityLevel as CompatibilityLevelCompatibilityEnum
+    );
+    setUpdateCompatibilityConfirmationVisible(true);
+  };
+
+  const onCompatibilityLevelCancel = () => {
+    setCompatibilityLevel(globalSchemaCompatibilityLevel);
+    setUpdateCompatibilityConfirmationVisible(false);
+  };
+
   return (
     <FormProvider {...methods}>
-      <GlobalSchemaSelectorWrapper>
+      <S.GlobalSchemaSelectorWrapper>
         <h5>Global Compatibility Level: </h5>
         <Select
           name="compatibilityLevel"
           selectSize="M"
           value={currentCompatibilityLevel}
-          onChange={(e) => {
-            setCompatibilityLevel(
-              e.target.value as CompatibilityLevelCompatibilityEnum
-            );
-            setUpdateCompatibilityConfirmationVisible(true);
-          }}
+          onChange={onCompatibilityLevelChange}
           disabled={methods.formState.isSubmitting}
         >
           {Object.keys(CompatibilityLevelCompatibilityEnum).map(
@@ -67,17 +78,14 @@ const GlobalSchemaSelector: React.FC<GlobalSchemaSelectorProps> = ({
         </Select>
         <ConfirmationModal
           isOpen={isUpdateCompatibilityConfirmationVisible}
-          onCancel={() => {
-            setUpdateCompatibilityConfirmationVisible(false);
-            setCompatibilityLevel(globalSchemaCompatibilityLevel);
-          }}
+          onCancel={onCompatibilityLevelCancel}
           onConfirm={methods.handleSubmit(onCompatibilityLevelUpdate)}
           isConfirming={methods.formState.isSubmitting}
         >
           Are you sure you want to update the global compatibility level? This
           may affect the compatibility levels of the schemas.
         </ConfirmationModal>
-      </GlobalSchemaSelectorWrapper>
+      </S.GlobalSchemaSelectorWrapper>
     </FormProvider>
   );
 };
