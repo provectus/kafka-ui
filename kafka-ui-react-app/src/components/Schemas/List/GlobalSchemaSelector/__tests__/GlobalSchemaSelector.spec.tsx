@@ -5,16 +5,19 @@ import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import GlobalSchemaSelector from 'components/Schemas/List/GlobalSchemaSelector/GlobalSchemaSelector';
 import userEvent from '@testing-library/user-event';
 import { StaticRouter } from 'react-router-dom';
-import fetchMock from 'fetch-mock';
+
+const selectForwardOption = () =>
+  userEvent.selectOptions(
+    screen.getByRole('listbox'),
+    CompatibilityLevelCompatibilityEnum.FORWARD
+  );
 
 const expectOptionIsSelected = (option: string) =>
   expect((screen.getByText(option) as HTMLOptionElement).selected).toBeTruthy();
 
 describe('GlobalSchemaSelector', () => {
-  afterEach(() => fetchMock.reset());
-
   const pathname = `/ui/clusters/clusterName/schemas`;
-  const mockedFn = jest.fn();
+  const mockedSubmitFn = jest.fn();
 
   const setupComponent = (
     globalSchemaCompatibilityLevel?: CompatibilityLevelCompatibilityEnum
@@ -23,52 +26,42 @@ describe('GlobalSchemaSelector', () => {
       <StaticRouter location={{ pathname }} context={{}}>
         <GlobalSchemaSelector
           globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
-          updateGlobalSchemaCompatibilityLevel={mockedFn}
+          updateGlobalSchemaCompatibilityLevel={mockedSubmitFn}
         />
       </StaticRouter>
     );
   it('renders with selected prop', () => {
     setupComponent(CompatibilityLevelCompatibilityEnum.FULL);
-    expectOptionIsSelected('FULL');
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
   });
 
   it('shows popup when select value is changed', () => {
     setupComponent();
-    expectOptionIsSelected('BACKWARD');
-    userEvent.selectOptions(screen.getByRole('listbox'), 'FORWARD');
-    expectOptionIsSelected('FORWARD');
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.BACKWARD);
+    selectForwardOption();
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FORWARD);
     expect(screen.getByText('Confirm the action')).toBeInTheDocument();
   });
 
   it('resets select value when cancel is clicked', () => {
     setupComponent(CompatibilityLevelCompatibilityEnum.FULL);
-
-    userEvent.selectOptions(screen.getByRole('listbox'), 'FORWARD');
+    selectForwardOption();
     userEvent.click(screen.getByText('Cancel'));
     expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument();
-    expectOptionIsSelected('FULL');
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
   });
 
   it('sets new schema when confirm is clicked', async () => {
-    const compatibilityLevelChangeMock = fetchMock.putOnce(
-      `api/clusters/local/schemas/compatibility`,
-      200,
-      {
-        body: {
-          compatibility: 'FORWARD',
-        },
-      }
-    );
     setupComponent(CompatibilityLevelCompatibilityEnum.FULL);
-    userEvent.selectOptions(screen.getByRole('listbox'), 'FORWARD');
-
+    selectForwardOption();
     await waitFor(() => {
       userEvent.click(screen.getByText('Submit'));
     });
-    // await waitFor(() =>
-    //   expect(compatibilityLevelChangeMock.called()).toBeTruthy()
-    // );
-    expectOptionIsSelected('FORWARD');
+    expect(mockedSubmitFn).toBeCalledWith(
+      undefined,
+      CompatibilityLevelCompatibilityEnum.FORWARD
+    );
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FORWARD);
     expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument();
   });
 });
