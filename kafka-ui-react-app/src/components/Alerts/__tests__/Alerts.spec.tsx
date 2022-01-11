@@ -43,10 +43,6 @@ describe('Alerts', () => {
     };
     store.dispatch(legacyAction);
 
-    await waitFor(() => {
-      screen.getAllByRole('alert');
-    });
-
     expect(screen.getAllByRole('alert').length).toEqual(2);
 
     const dissmissAlertButtons = screen.getAllByRole('button');

@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
 import PageControl, {
   PageControlProps,
 } from 'components/common/Pagination/PageControl';
@@ -11,11 +10,7 @@ const page = 138;
 
 describe('PageControl', () => {
   const setupComponent = (props: Partial<PageControlProps> = {}) =>
-    render(
-      <StaticRouter>
-        <PageControl url="/test" page={page} current {...props} />
-      </StaticRouter>
-    );
+    render(<PageControl url="/test" page={page} current {...props} />);
 
   it('renders current page', () => {
     setupComponent({ current: true });

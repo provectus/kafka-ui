@@ -3,7 +3,6 @@ import { StaticRouter } from 'react-router';
 import Pagination, {
   PaginationProps,
 } from 'components/common/Pagination/Pagination';
-import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
@@ -11,11 +10,9 @@ import { screen } from '@testing-library/react';
 describe('Pagination', () => {
   const setupComponent = (search = '', props: Partial<PaginationProps> = {}) =>
     render(
-      <ThemeProvider theme={theme}>
-        <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
-          <Pagination totalPages={11} {...props} />
-        </StaticRouter>
-      </ThemeProvider>
+      <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
+        <Pagination totalPages={11} {...props} />
+      </StaticRouter>
     );
 
   describe('next & prev buttons', () => {
