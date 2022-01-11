@@ -1,16 +1,10 @@
 import styled from 'styled-components';
-import React from 'react';
 
 interface Props {
-  className?: string;
   color: 'green' | 'gray' | 'yellow' | 'red' | 'white';
 }
 
-const Tag: React.FC<Props> = ({ className, children }) => {
-  return <p className={className}>{children}</p>;
-};
-
-export default styled(Tag)`
+export const Tag = styled.p<Props>`
   border: none;
   border-radius: 16px;
   height: 20px;

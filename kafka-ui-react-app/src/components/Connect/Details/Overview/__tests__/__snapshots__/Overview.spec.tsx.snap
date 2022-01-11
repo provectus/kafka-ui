@@ -179,6 +179,7 @@ exports[`Overview view matches snapshot 1`] = `
           <span>
             <p
               className="c5"
+              color="yellow"
             >
               RUNNING
             </p>

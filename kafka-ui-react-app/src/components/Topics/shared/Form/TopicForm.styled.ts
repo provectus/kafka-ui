@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export const Column = styled.div`
   display: flex;
   justify-content: flex-start;
-  align-items: center;
   gap: 8px;
   margin-bottom: 16px;
 `;

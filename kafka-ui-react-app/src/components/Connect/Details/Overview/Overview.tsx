@@ -1,6 +1,6 @@
 import React from 'react';
 import { Connector } from 'generated-sources';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import * as C from 'components/common/Tag/Tag.styled';
 import * as Metrics from 'components/common/Metrics';
 
 export interface OverviewProps {
@@ -31,7 +31,7 @@ const Overview: React.FC<OverviewProps> = ({
           </Metrics.Indicator>
         )}
         <Metrics.Indicator label="State">
-          <TagStyled color="yellow">{connector.status.state}</TagStyled>
+          <C.Tag color="yellow">{connector.status.state}</C.Tag>
         </Metrics.Indicator>
         <Metrics.Indicator label="Tasks Running">
           {runningTasksCount}

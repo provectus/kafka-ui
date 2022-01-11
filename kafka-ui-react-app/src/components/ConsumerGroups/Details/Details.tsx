@@ -12,7 +12,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { Colors } from 'theme/theme';
@@ -93,7 +93,7 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <TagStyled color="yellow">{consumerGroup.state}</TagStyled>
+            <Tag color="yellow">{consumerGroup.state}</Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.members}
