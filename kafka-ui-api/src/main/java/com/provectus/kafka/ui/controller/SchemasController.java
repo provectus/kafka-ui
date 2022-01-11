@@ -7,7 +7,9 @@ import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
+import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -102,12 +104,18 @@ public class SchemasController extends AbstractController implements SchemasApi 
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<SchemaSubjectDTO>>> getSchemas(String clusterName,
-                                                              ServerWebExchange exchange) {
-    Flux<SchemaSubjectDTO> subjects = schemaRegistryService.getAllLatestVersionSchemas(
-        getCluster(clusterName)
-    );
-    return Mono.just(ResponseEntity.ok(subjects));
+  public Mono<ResponseEntity<SchemaSubjectsResponseDTO>> getSchemas(String clusterName,
+                                                                    @Valid Integer pageNum,
+                                                                    @Valid Integer nullablePerPage,
+                                                                    @Valid String search,
+                                                                    ServerWebExchange serverWebExchange) {
+    return schemaRegistryService
+            .getAllLatestVersionSchemas(
+                    getCluster(clusterName),
+                    Optional.ofNullable(pageNum),
+                    Optional.ofNullable(nullablePerPage),
+                    Optional.ofNullable(search))
+            .map(ResponseEntity::ok);
   }
 
   @Override
