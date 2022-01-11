@@ -1,20 +1,14 @@
 import {
   addTopicMessage,
-  fetchSchemaVersionsAction,
   resetTopicMessages,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
 } from 'redux/actions';
-import reducer, { initialState } from 'redux/reducers/topicMessages/reducer';
+import reducer from 'redux/reducers/topicMessages/reducer';
 
 import { topicMessagePayload, topicMessagesMetaPayload } from './fixtures';
 
 describe('TopicMessages reducer', () => {
-  it('returns the initial state', () => {
-    expect(reducer(undefined, fetchSchemaVersionsAction.request())).toEqual(
-      initialState
-    );
-  });
   it('Adds new message', () => {
     const state = reducer(undefined, addTopicMessage(topicMessagePayload));
     expect(state.messages.length).toEqual(1);

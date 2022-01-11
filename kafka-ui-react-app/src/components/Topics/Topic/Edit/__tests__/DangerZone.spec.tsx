@@ -3,25 +3,21 @@ import DangerZone, {
   Props,
 } from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
 import { screen, waitFor } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
 const setupWrapper = (props?: Partial<Props>) => (
-  <ThemeProvider theme={theme}>
-    <DangerZone
-      clusterName="testCluster"
-      topicName="testTopic"
-      defaultPartitions={3}
-      defaultReplicationFactor={3}
-      partitionsCountIncreased={false}
-      replicationFactorUpdated={false}
-      updateTopicPartitionsCount={jest.fn()}
-      updateTopicReplicationFactor={jest.fn()}
-      {...props}
-    />
-  </ThemeProvider>
+  <DangerZone
+    clusterName="testCluster"
+    topicName="testTopic"
+    defaultPartitions={3}
+    defaultReplicationFactor={3}
+    partitionsCountIncreased={false}
+    replicationFactorUpdated={false}
+    updateTopicPartitionsCount={jest.fn()}
+    updateTopicReplicationFactor={jest.fn()}
+    {...props}
+  />
 );
 
 describe('DangerZone', () => {

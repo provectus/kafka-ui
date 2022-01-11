@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
 import { screen } from '@testing-library/react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 import userEvent from '@testing-library/user-event';
@@ -9,13 +8,11 @@ import { offlineCluster, onlineCluster, clusters } from './fixtures';
 
 const setupComponent = () =>
   render(
-    <StaticRouter>
-      <ClustersWidget
-        clusters={clusters}
-        onlineClusters={[onlineCluster]}
-        offlineClusters={[offlineCluster]}
-      />
-    </StaticRouter>
+    <ClustersWidget
+      clusters={clusters}
+      onlineClusters={[onlineCluster]}
+      offlineClusters={[offlineCluster]}
+    />
   );
 
 describe('ClustersWidget', () => {

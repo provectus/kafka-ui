@@ -1,6 +1,6 @@
 import React from 'react';
 import { Action, FailurePayload, ServerResponse } from 'redux/interfaces';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import Alerts from 'components/Alerts/Alerts';
 import { render } from 'lib/testHelpers';
 import { store } from 'redux/store';
@@ -8,7 +8,7 @@ import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/
 import userEvent from '@testing-library/user-event';
 
 describe('Alerts', () => {
-  beforeEach(() => render(<Alerts />));
+  beforeEach(() => render(<Alerts />, { store }));
 
   it('renders alerts', async () => {
     const payload: ServerResponse = {
@@ -42,6 +42,10 @@ describe('Alerts', () => {
       payload: { alert },
     };
     store.dispatch(legacyAction);
+
+    await waitFor(() => {
+      screen.getAllByRole('alert');
+    });
 
     expect(screen.getAllByRole('alert').length).toEqual(2);
 

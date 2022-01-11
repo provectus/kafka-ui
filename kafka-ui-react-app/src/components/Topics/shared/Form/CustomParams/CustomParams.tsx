@@ -2,9 +2,9 @@ import React from 'react';
 import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
-import styled from 'styled-components';
 
 import CustomParamField from './CustomParamField';
+import * as S from './CustomParams.styled';
 
 export const INDEX_PREFIX = 'customParams';
 
@@ -12,11 +12,6 @@ interface Props {
   isSubmitting: boolean;
   config?: TopicConfigByName;
 }
-
-const CustomParamsWrapper = styled.div`
-  margin-top: 16px;
-  margin-bottom: 16px;
-`;
 
 const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   const { control } = useFormContext<TopicFormData>();
@@ -33,7 +28,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   };
 
   return (
-    <CustomParamsWrapper>
+    <S.ParamsWrapper>
       {fields.map((field, idx) => (
         <CustomParamField
           key={field.id}
@@ -56,7 +51,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
           Add Custom Parameter
         </Button>
       </div>
-    </CustomParamsWrapper>
+    </S.ParamsWrapper>
   );
 };
 

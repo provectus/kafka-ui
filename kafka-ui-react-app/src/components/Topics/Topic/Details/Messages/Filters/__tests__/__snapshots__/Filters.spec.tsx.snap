@@ -280,6 +280,7 @@ exports[`Filters component matches the snapshot 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -914,6 +915,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
