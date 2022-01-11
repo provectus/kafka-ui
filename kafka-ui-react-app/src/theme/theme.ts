@@ -41,6 +41,14 @@ const theme = {
     minWidth: '1200px',
     navBarWidth: '201px',
     navBarHeight: '3.25rem',
+    mainColor: Colors.neutral[5],
+  },
+  panelColor: Colors.neutral[0],
+  headingStyles: {
+    h3: {
+      color: Colors.neutral[50],
+      fontSize: '14px',
+    },
   },
   alert: {
     color: {
@@ -165,7 +173,7 @@ const theme = {
   tagStyles: {
     backgroundColor: {
       green: Colors.green[10],
-      gray: Colors.neutral[10],
+      gray: Colors.neutral[5],
       yellow: Colors.yellow[10],
       white: Colors.neutral[10],
       red: Colors.red[10],
@@ -173,6 +181,8 @@ const theme = {
     color: Colors.neutral[90],
   },
   paginationStyles: {
+    backgroundColor: Colors.neutral[0],
+    currentPage: Colors.neutral[10],
     borderColor: {
       normal: Colors.neutral[30],
       hover: Colors.neutral[50],
@@ -201,6 +211,16 @@ const theme = {
       titleColor: Colors.neutral[50],
       warningTextColor: Colors.red[50],
       lightTextColor: Colors.neutral[30],
+    },
+  },
+  scrollbar: {
+    trackColor: {
+      normal: Colors.neutral[0],
+      active: Colors.neutral[5],
+    },
+    thumbColor: {
+      normal: Colors.neutral[0],
+      active: Colors.neutral[50],
     },
   },
 };

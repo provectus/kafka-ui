@@ -21,26 +21,25 @@ describe('Details', () => {
 
   const setupComponent = (pathname: string) =>
     render(
-      <StaticRouter location={{ pathname }}>
-        <ClusterContext.Provider
-          value={{
-            isReadOnly: false,
-            hasKafkaConnectConfigured: true,
-            hasSchemaRegistryConfigured: true,
-            isTopicDeletionAllowed: true,
-          }}
-        >
-          <Details
-            clusterName={mockClusterName}
-            topicName={internalTopicPayload.name}
-            name={internalTopicPayload.name}
-            isInternal={false}
-            deleteTopic={mockDelete}
-            clearTopicMessages={mockClearTopicMessages}
-            isDeleted={false}
-          />
-        </ClusterContext.Provider>
-      </StaticRouter>
+      <ClusterContext.Provider
+        value={{
+          isReadOnly: false,
+          hasKafkaConnectConfigured: true,
+          hasSchemaRegistryConfigured: true,
+          isTopicDeletionAllowed: true,
+        }}
+      >
+        <Details
+          clusterName={mockClusterName}
+          topicName={internalTopicPayload.name}
+          name={internalTopicPayload.name}
+          isInternal={false}
+          deleteTopic={mockDelete}
+          clearTopicMessages={mockClearTopicMessages}
+          isDeleted={false}
+        />
+      </ClusterContext.Provider>,
+      { pathname }
     );
 
   describe('when it has readonly flag', () => {
