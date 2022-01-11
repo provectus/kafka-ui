@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -158,7 +159,7 @@ public class ConsumerGroupService {
     return ac.listConsumerGroups()
         .map(groupIds -> groupIds
             .stream()
-            .filter(groupId -> search == null || groupId.contains(search))
+            .filter(groupId -> search == null || StringUtils.containsIgnoreCase(groupId, search))
             .collect(Collectors.toList()))
         .flatMap(ac::describeConsumerGroups)
         .map(cgs -> new ArrayList<>(cgs.values()));
