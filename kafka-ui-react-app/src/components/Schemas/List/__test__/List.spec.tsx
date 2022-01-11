@@ -39,20 +39,7 @@ const renderComponent = (
 
 describe('List', () => {
   it('renders list', () => {
-    render(
-      <Route path={clusterSchemasPath(':clusterName')}>
-        <List />
-      </Route>,
-      {
-        pathname: clusterSchemasPath(clusterName),
-        preloadedState: {
-          loader: {
-            'schemas/fetch': 'fulfilled',
-          },
-          schemas: schemasFulfilledState,
-        },
-      }
-    );
+    renderComponent(schemasFulfilledState);
     expect(screen.getByText('MySchemaSubject')).toBeInTheDocument();
     expect(screen.getByText('schema7_1')).toBeInTheDocument();
   });
