@@ -20,7 +20,7 @@ import {
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 
-import { EditorsWrapper, EditWrapper } from './Edit.styled';
+import * as S from './Edit.styled';
 
 const Edit: React.FC = () => {
   const history = useHistory();
@@ -79,7 +79,7 @@ const Edit: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />
-      <EditWrapper>
+      <S.EditWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <div>
@@ -115,44 +115,48 @@ const Edit: React.FC = () => {
               </Select>
             </div>
           </div>
-          <EditorsWrapper>
+          <S.EditorsWrapper>
             <div>
-              <h4>Latest schema</h4>
-              <JSONEditor
-                isFixedHeight
-                readOnly
-                height="372px"
-                value={formatedSchema}
-                name="latestSchema"
-                highlightActiveLine={false}
-              />
+              <S.EditorContainer>
+                <h4>Latest schema</h4>
+                <JSONEditor
+                  isFixedHeight
+                  readOnly
+                  height="372px"
+                  value={formatedSchema}
+                  name="latestSchema"
+                  highlightActiveLine={false}
+                />
+              </S.EditorContainer>
             </div>
             <div>
-              <h4>New schema</h4>
-              <Controller
-                control={control}
-                name="newSchema"
-                render={({ field: { name, onChange } }) => (
-                  <JSONEditor
-                    readOnly={isSubmitting}
-                    defaultValue={formatedSchema}
-                    name={name}
-                    onChange={onChange}
-                  />
-                )}
-              />
+              <S.EditorContainer>
+                <h4>New schema</h4>
+                <Controller
+                  control={control}
+                  name="newSchema"
+                  render={({ field: { name, onChange } }) => (
+                    <JSONEditor
+                      readOnly={isSubmitting}
+                      defaultValue={formatedSchema}
+                      name={name}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+              </S.EditorContainer>
+              <Button
+                buttonType="primary"
+                buttonSize="M"
+                type="submit"
+                disabled={!isDirty || isSubmitting}
+              >
+                Submit
+              </Button>
             </div>
-          </EditorsWrapper>
-          <Button
-            buttonType="primary"
-            buttonSize="M"
-            type="submit"
-            disabled={!isDirty || isSubmitting}
-          >
-            Submit
-          </Button>
+          </S.EditorsWrapper>
         </form>
-      </EditWrapper>
+      </S.EditWrapper>
     </FormProvider>
   );
 };

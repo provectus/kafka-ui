@@ -144,7 +144,14 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "warning": "#FFEECC",
         },
       },
+      "headingStyles": Object {
+        "h3": Object {
+          "color": "#73848C",
+          "fontSize": "14px",
+        },
+      },
       "layout": Object {
+        "mainColor": "#F1F2F3",
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
         "navBarWidth": "201px",
@@ -180,6 +187,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
         "borderColor": "#4F4FFF",
       },
       "paginationStyles": Object {
+        "backgroundColor": "#FFFFFF",
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#C7CED1",
@@ -192,7 +200,9 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+        "currentPage": "#E3E6E8",
       },
+      "panelColor": "#FFFFFF",
       "primaryTabStyles": Object {
         "borderColor": Object {
           "active": "#4F4FFF",
@@ -203,6 +213,16 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "active": "#171A1C",
           "hover": "#171A1C",
           "normal": "#73848C",
+        },
+      },
+      "scrollbar": Object {
+        "thumbColor": Object {
+          "active": "#73848C",
+          "normal": "#FFFFFF",
+        },
+        "trackColor": Object {
+          "active": "#F1F2F3",
+          "normal": "#FFFFFF",
         },
       },
       "secondaryTabStyles": Object {
@@ -237,7 +257,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
       },
       "tagStyles": Object {
         "backgroundColor": Object {
-          "gray": "#E3E6E8",
+          "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",
           "white": "#E3E6E8",

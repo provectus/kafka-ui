@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+import theme from 'theme/theme';
 
 export const LatestVersionWrapper = styled.div`
   width: 100%;
-  background-color: ${Colors.neutral[5]};
+  background-color: ${theme.layout.mainColor};
   padding: 16px;
   display: flex;
   justify-content: center;
@@ -12,13 +12,13 @@ export const LatestVersionWrapper = styled.div`
   max-height: 700px;
 
   & > * {
-    background-color: ${Colors.neutral[0]};
+    background-color: ${theme.panelColor};
     padding: 24px;
     overflow-y: scroll;
   }
 
   & > div:first-child {
-    border-radius: 8px 0px 0px 8px;
+    border-radius: 8px 0 0 8px;
     flex-grow: 2;
 
     & > h1 {
@@ -28,7 +28,7 @@ export const LatestVersionWrapper = styled.div`
   }
 
   & > div:last-child {
-    border-radius: 0px 8px 8px 0px;
+    border-radius: 0 8px 8px 0;
     flex-grow: 1;
 
     & > div {
@@ -40,6 +40,7 @@ export const LatestVersionWrapper = styled.div`
 `;
 
 export const MetaDataLabel = styled.h3`
-  color: ${Colors.neutral[50]};
+  color: ${theme.headingStyles.h3.color};
   width: 110px;
+  font-size: ${theme.headingStyles.h3.fontSize};
 `;

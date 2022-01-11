@@ -11,6 +11,8 @@ import { NavLink } from 'react-router-dom';
 import { clusterTopicsPath } from 'lib/paths';
 import Switch from 'components/common/Switch/Switch';
 
+import * as S from './ClustersWidget.styled';
+
 interface Props {
   clusters: Cluster[];
   onlineClusters: Cluster[];
@@ -62,14 +64,14 @@ const ClustersWidget: React.FC<Props> = ({
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
-      <div className="p-4">
+      <S.SwitchWrapper>
         <Switch
           name="switchRoundedDefault"
           checked={showOfflineOnly}
           onChange={handleSwitch}
         />
-        <span>Only offline clusters</span>
-      </div>
+        <label>Only offline clusters</label>
+      </S.SwitchWrapper>
       {clusterList.map((chunkItem) => (
         <Table key={chunkItem.id} isFullwidth>
           <thead>
