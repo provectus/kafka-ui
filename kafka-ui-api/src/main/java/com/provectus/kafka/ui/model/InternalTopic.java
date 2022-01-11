@@ -102,7 +102,7 @@ public class InternalTopic {
       topic.segmentSize(segmentStats.getSegmentSize());
     }
 
-    topic.bytesOutPerSec(jmxMetrics.getBytesOutPerSec().get(topicDescription.name()));
+    topic.bytesInPerSec(jmxMetrics.getBytesInPerSec().get(topicDescription.name()));
     topic.bytesOutPerSec(jmxMetrics.getBytesOutPerSec().get(topicDescription.name()));
 
     topic.topicConfigs(
