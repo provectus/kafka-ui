@@ -131,11 +131,14 @@ public class KafkaConsumerGroupTests extends AbstractBaseTest {
         })
         .limit(count)
         .collect(Collectors.toList());
-    return () -> consumers.forEach(KafkaConsumer::close);
+    return () -> {
+      consumers.forEach(KafkaConsumer::close);
+      deleteTopic(topicName);
+    };
   }
 
   private String createTopicWithRandomName() {
-    String topicName = UUID.randomUUID().toString();
+    String topicName = getClass().getSimpleName() + "-" + UUID.randomUUID();
     short replicationFactor = 1;
     int partitions = 1;
     createTopic(new NewTopic(topicName, partitions, replicationFactor));
