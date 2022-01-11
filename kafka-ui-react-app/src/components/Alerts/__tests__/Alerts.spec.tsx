@@ -1,6 +1,6 @@
 import React from 'react';
 import { Action, FailurePayload, ServerResponse } from 'redux/interfaces';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import Alerts from 'components/Alerts/Alerts';
 import { render } from 'lib/testHelpers';
 import { store } from 'redux/store';
