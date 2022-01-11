@@ -619,8 +619,8 @@ paths:
     get:
       tags:
         - Consumer Groups
-      summary: get Consumer Groups By Topics with paging support
-      operationId: getTopicConsumerGroupsPaged
+      summary: Get consumer croups with paging support
+      operationId: getConsumerGroupsPage
       parameters:
         - name: clusterName
           in: path
@@ -1915,7 +1915,7 @@ components:
       properties:
         pageCount:
           type: integer
-        topics:
+        consumerGroups:
           type: array
           items:
             $ref: '#/components/schemas/ConsumerGroup'
