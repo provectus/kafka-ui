@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
-import { Table } from 'components/common/table/Table/Table.styled';
+import * as C from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -34,8 +34,7 @@ const List: React.FC = () => {
           </>
         )}
       </PageHeading>
-
-      <Table isFullwidth>
+      <C.Table isFullwidth>
         <thead>
           <tr>
             <TableHeaderCell title="Schema Name" />
@@ -56,7 +55,7 @@ const List: React.FC = () => {
             />
           ))}
         </tbody>
-      </Table>
+      </C.Table>
     </>
   );
 };
