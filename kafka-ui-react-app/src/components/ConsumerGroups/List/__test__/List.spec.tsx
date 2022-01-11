@@ -1,7 +1,6 @@
 import React from 'react';
 import List from 'components/ConsumerGroups/List/List';
 import { screen } from '@testing-library/react';
-import { StaticRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { store } from 'redux/store';
@@ -9,13 +8,7 @@ import { fetchConsumerGroups } from 'redux/reducers/consumerGroups/consumerGroup
 import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
 
 describe('List', () => {
-  beforeEach(() =>
-    render(
-      <StaticRouter>
-        <List />
-      </StaticRouter>
-    )
-  );
+  beforeEach(() => render(<List />, { store }));
 
   it('renders empty table', () => {
     expect(screen.getByRole('table')).toBeInTheDocument();
