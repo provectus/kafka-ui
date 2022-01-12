@@ -37,7 +37,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   border-radius: 16px;
   height: 20px;
   line-height: 20px;
-  background-color: #E3E6E8;
+  background-color: #F1F2F3;
   color: #171A1C;
   font-size: 12px;
   display: inline-block;
@@ -133,7 +133,14 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "warning": "#FFEECC",
         },
       },
+      "headingStyles": Object {
+        "h3": Object {
+          "color": "#73848C",
+          "fontSize": "14px",
+        },
+      },
       "layout": Object {
+        "mainColor": "#F1F2F3",
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
         "navBarWidth": "201px",
@@ -169,6 +176,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "borderColor": "#4F4FFF",
       },
       "paginationStyles": Object {
+        "backgroundColor": "#FFFFFF",
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#C7CED1",
@@ -181,7 +189,9 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+        "currentPage": "#E3E6E8",
       },
+      "panelColor": "#FFFFFF",
       "primaryTabStyles": Object {
         "borderColor": Object {
           "active": "#4F4FFF",
@@ -192,6 +202,16 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "active": "#171A1C",
           "hover": "#171A1C",
           "normal": "#73848C",
+        },
+      },
+      "scrollbar": Object {
+        "thumbColor": Object {
+          "active": "#73848C",
+          "normal": "#FFFFFF",
+        },
+        "trackColor": Object {
+          "active": "#F1F2F3",
+          "normal": "#FFFFFF",
         },
       },
       "secondaryTabStyles": Object {
@@ -226,7 +246,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "tagStyles": Object {
         "backgroundColor": Object {
-          "gray": "#E3E6E8",
+          "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",
           "white": "#E3E6E8",

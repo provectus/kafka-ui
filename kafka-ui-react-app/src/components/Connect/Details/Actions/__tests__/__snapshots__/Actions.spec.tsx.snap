@@ -24,6 +24,7 @@ exports[`Actions view matches snapshot 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -74,6 +75,7 @@ exports[`Actions view matches snapshot 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -215,6 +217,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -265,6 +268,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -406,6 +410,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -456,6 +461,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -582,6 +588,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -632,6 +639,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -773,6 +781,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -823,6 +832,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -964,6 +974,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -1014,6 +1025,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 

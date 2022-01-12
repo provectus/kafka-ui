@@ -1,41 +1,43 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router';
 import Pagination, {
   PaginationProps,
 } from 'components/common/Pagination/Pagination';
-import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
 describe('Pagination', () => {
-  const setupWrapper = (search = '', props: Partial<PaginationProps> = {}) => (
-    <ThemeProvider theme={theme}>
+  const setupComponent = (search = '', props: Partial<PaginationProps> = {}) =>
+    render(
       <StaticRouter location={{ pathname: '/my/test/path/23', search }}>
         <Pagination totalPages={11} {...props} />
       </StaticRouter>
-    </ThemeProvider>
-  );
+    );
 
   describe('next & prev buttons', () => {
     it('renders disable prev button and enabled next link', () => {
-      const wrapper = mount(setupWrapper('?page=1'));
-      expect(wrapper.find('button.pagination-btn').instance()).toBeDisabled();
-      expect(wrapper.exists('a.pagination-btn')).toBeTruthy();
+      setupComponent('?page=1');
+      expect(screen.getByText('Previous')).toBeDisabled();
+      expect(screen.getByText('Next')).toBeInTheDocument();
     });
 
     it('renders disable next button and enabled prev link', () => {
-      const wrapper = mount(setupWrapper('?page=11'));
-      expect(wrapper.exists('a.pagination-btn')).toBeTruthy();
-      expect(wrapper.exists('button.pagination-btn')).toBeTruthy();
+      setupComponent('?page=11');
+      expect(screen.getByText('Previous')).toBeInTheDocument();
+      expect(screen.getByText('Next')).toBeDisabled();
     });
 
     it('renders next & prev links with correct path', () => {
-      const wrapper = mount(setupWrapper('?page=5&perPage=20'));
-      expect(wrapper.exists('a.pagination-btn')).toBeTruthy();
-      expect(wrapper.find('a.pagination-btn').at(0).prop('href')).toEqual(
+      setupComponent('?page=5&perPage=20');
+      expect(screen.getByText('Previous')).toBeInTheDocument();
+      expect(screen.getByText('Next')).toBeInTheDocument();
+      expect(screen.getByText('Previous')).toHaveAttribute(
+        'href',
         '/my/test/path/23?page=4&perPage=20'
       );
-      expect(wrapper.find('a.pagination-btn').at(1).prop('href')).toEqual(
+      expect(screen.getByText('Next')).toHaveAttribute(
+        'href',
         '/my/test/path/23?page=6&perPage=20'
       );
     });
@@ -43,49 +45,50 @@ describe('Pagination', () => {
 
   describe('spread', () => {
     it('renders 1 spread element after first page control', () => {
-      const wrapper = mount(setupWrapper('?page=8'));
-      expect(wrapper.find('span.pagination-ellipsis').length).toEqual(1);
-      expect(wrapper.find('ul li').at(1).text()).toEqual('…');
+      setupComponent('?page=8');
+      expect(screen.getAllByRole('listitem')[1]).toHaveTextContent('…');
+      expect(screen.getAllByRole('listitem')[1].firstChild).toHaveClass(
+        'pagination-ellipsis'
+      );
     });
 
     it('renders 1 spread element before last spread control', () => {
-      const wrapper = mount(setupWrapper('?page=2'));
-      expect(wrapper.find('span.pagination-ellipsis').length).toEqual(1);
-      expect(wrapper.find('ul li').at(7).text()).toEqual('…');
+      setupComponent('?page=2');
+      expect(screen.getAllByRole('listitem')[7]).toHaveTextContent('…');
+      expect(screen.getAllByRole('listitem')[7].firstChild).toHaveClass(
+        'pagination-ellipsis'
+      );
     });
 
     it('renders 2 spread elements', () => {
-      const wrapper = mount(setupWrapper('?page=6'));
-      expect(wrapper.find('span.pagination-ellipsis').length).toEqual(2);
-      expect(wrapper.find('ul li').at(0).text()).toEqual('1');
-      expect(wrapper.find('ul li').at(1).text()).toEqual('…');
-      expect(wrapper.find('ul li').at(7).text()).toEqual('…');
-      expect(wrapper.find('ul li').at(8).text()).toEqual('11');
+      setupComponent('?page=6');
+      expect(screen.getAllByText('…').length).toEqual(2);
+      expect(screen.getAllByRole('listitem')[0]).toHaveTextContent('1');
+      expect(screen.getAllByRole('listitem')[1]).toHaveTextContent('…');
+      expect(screen.getAllByRole('listitem')[7]).toHaveTextContent('…');
+      expect(screen.getAllByRole('listitem')[8]).toHaveTextContent('11');
     });
 
     it('renders 0 spread elements', () => {
-      const wrapper = mount(setupWrapper('?page=2', { totalPages: 8 }));
-      expect(wrapper.find('span.pagination-ellipsis').length).toEqual(0);
-      expect(wrapper.find('ul li').length).toEqual(8);
+      setupComponent('?page=2', { totalPages: 8 });
+      expect(screen.queryAllByText('…').length).toEqual(0);
+      expect(screen.getAllByRole('listitem').length).toEqual(8);
     });
   });
 
   describe('current page', () => {
-    it('adds is-current class to correct page if page param is set', () => {
-      const wrapper = mount(setupWrapper('?page=8'));
-      expect(wrapper.exists('a.pagination-link.is-current')).toBeTruthy();
-      expect(wrapper.find('a.pagination-link.is-current').text()).toEqual('8');
+    it('check if it sets page 8 as current when page param is set', () => {
+      setupComponent('?page=8');
+      expect(screen.getByText('8')).toHaveStyle(
+        `background-color: ${theme.paginationStyles.currentPage}`
+      );
     });
 
-    it('adds is-current class to correct page even if page param is not set', () => {
-      const wrapper = mount(setupWrapper('', { totalPages: 8 }));
-      expect(wrapper.exists('a.pagination-link.is-current')).toBeTruthy();
-      expect(wrapper.find('a.pagination-link.is-current').text()).toEqual('1');
-    });
-
-    it('adds no is-current class if page numder is invalid', () => {
-      const wrapper = mount(setupWrapper('?page=80'));
-      expect(wrapper.exists('a.pagination-link.is-current')).toBeFalsy();
+    it('check if it sets first page as current when page param not set', () => {
+      setupComponent('', { totalPages: 8 });
+      expect(screen.getByText('1')).toHaveStyle(
+        `background-color: ${theme.paginationStyles.currentPage}`
+      );
     });
   });
 });

@@ -24,6 +24,7 @@ exports[`Edit view matches snapshot 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -115,6 +116,7 @@ exports[`Edit view matches snapshot when config has credentials 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 

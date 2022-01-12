@@ -1,6 +1,6 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
-import { Route, StaticRouter } from 'react-router';
+import { Route } from 'react-router';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
@@ -13,23 +13,20 @@ const { groupId } = consumerGroupPayload;
 
 const renderComponent = () =>
   render(
-    <StaticRouter
-      location={{
-        pathname: clusterConsumerGroupResetOffsetsPath(
-          clusterName,
-          consumerGroupPayload.groupId
-        ),
-      }}
+    <Route
+      path={clusterConsumerGroupResetOffsetsPath(
+        ':clusterName',
+        ':consumerGroupID'
+      )}
     >
-      <Route
-        path={clusterConsumerGroupResetOffsetsPath(
-          ':clusterName',
-          ':consumerGroupID'
-        )}
-      >
-        <ResetOffsets />
-      </Route>
-    </StaticRouter>
+      <ResetOffsets />
+    </Route>,
+    {
+      pathname: clusterConsumerGroupResetOffsetsPath(
+        clusterName,
+        consumerGroupPayload.groupId
+      ),
+    }
   );
 
 const resetConsumerGroupOffsetsMockCalled = () =>

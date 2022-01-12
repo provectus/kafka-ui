@@ -1,114 +1,62 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router';
-import { store } from 'redux/store';
-import ClusterContext from 'components/contexts/ClusterContext';
-import ListContainer from 'components/Schemas/List/ListContainer';
-import List, { ListProps } from 'components/Schemas/List/List';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import List from 'components/Schemas/List/List';
+import { render } from 'lib/testHelpers';
+import { Route } from 'react-router';
+import { clusterSchemasPath } from 'lib/paths';
+import { screen } from '@testing-library/dom';
+import {
+  schemasFulfilledState,
+  schemasInitialState,
+} from 'redux/reducers/schemas/__test__/fixtures';
+import ClusterContext, {
+  ContextProps,
+  initialValue as contextInitialValue,
+} from 'components/contexts/ClusterContext';
+import { RootState } from 'redux/interfaces';
 
-import { schemas } from './fixtures';
+const clusterName = 'testClusterName';
+
+const renderComponent = (
+  initialState: RootState['schemas'] = schemasInitialState,
+  context: ContextProps = contextInitialValue
+) =>
+  render(
+    <ClusterContext.Provider value={context}>
+      <Route path={clusterSchemasPath(':clusterName')}>
+        <List />
+      </Route>
+    </ClusterContext.Provider>,
+    {
+      pathname: clusterSchemasPath(clusterName),
+      preloadedState: {
+        loader: {
+          'schemas/fetch': 'fulfilled',
+        },
+        schemas: initialState,
+      },
+    }
+  );
 
 describe('List', () => {
-  describe('Container', () => {
-    it('renders view', () => {
-      const component = shallow(
-        <Provider store={store}>
-          <ListContainer />
-        </Provider>
-      );
-
-      expect(component.exists()).toBeTruthy();
-    });
+  it('renders list', () => {
+    renderComponent(schemasFulfilledState);
+    expect(screen.getByText('MySchemaSubject')).toBeInTheDocument();
+    expect(screen.getByText('schema7_1')).toBeInTheDocument();
   });
 
-  describe('View', () => {
-    const pathname = `/ui/clusters/clusterName/schemas`;
+  it('renders empty table', () => {
+    renderComponent();
+    expect(screen.getByText('No schemas found')).toBeInTheDocument();
+  });
 
-    const setupWrapper = (props: Partial<ListProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <StaticRouter location={{ pathname }} context={{}}>
-          <List
-            isFetching
-            fetchSchemasByClusterName={jest.fn()}
-            isGlobalSchemaCompatibilityLevelFetched
-            fetchGlobalSchemaCompatibilityLevel={jest.fn()}
-            updateGlobalSchemaCompatibilityLevel={jest.fn()}
-            schemas={[]}
-            {...props}
-          />
-        </StaticRouter>
-      </ThemeProvider>
-    );
-
-    describe('Initial state', () => {
-      let useEffect: jest.SpyInstance<
-        void,
-        [effect: React.EffectCallback, deps?: React.DependencyList | undefined]
-      >;
-      const mockedFn = jest.fn();
-
-      const mockedUseEffect = () => {
-        useEffect.mockImplementationOnce(mockedFn);
-      };
-
-      beforeEach(() => {
-        useEffect = jest.spyOn(React, 'useEffect');
-        mockedUseEffect();
+  describe('with readonly cluster', () => {
+    it('does not render Create Schema button', () => {
+      renderComponent(schemasFulfilledState, {
+        ...contextInitialValue,
+        isReadOnly: true,
       });
 
-      it('should call fetchSchemasByClusterName every render', () => {
-        mount(setupWrapper({ fetchSchemasByClusterName: mockedFn }));
-        expect(mockedFn).toHaveBeenCalled();
-      });
-    });
-
-    describe('when fetching', () => {
-      it('renders PageLoader', () => {
-        const wrapper = mount(setupWrapper({ isFetching: true }));
-        expect(wrapper.exists('thead')).toBeFalsy();
-        expect(wrapper.exists('ListItem')).toBeFalsy();
-        expect(wrapper.exists('PageLoader')).toBeTruthy();
-      });
-    });
-
-    describe('without schemas', () => {
-      it('renders table heading without ListItem', () => {
-        const wrapper = mount(setupWrapper({ isFetching: false }));
-        expect(wrapper.exists('thead')).toBeTruthy();
-        expect(wrapper.exists('ListItem')).toBeFalsy();
-      });
-    });
-
-    describe('with schemas', () => {
-      const wrapper = mount(setupWrapper({ isFetching: false, schemas }));
-
-      it('renders table heading with ListItem', () => {
-        expect(wrapper.exists('thead')).toBeTruthy();
-        expect(wrapper.find('ListItem').length).toEqual(3);
-      });
-    });
-
-    describe('with readonly cluster', () => {
-      const wrapper = mount(
-        <StaticRouter>
-          <ClusterContext.Provider
-            value={{
-              isReadOnly: true,
-              hasKafkaConnectConfigured: true,
-              hasSchemaRegistryConfigured: true,
-              isTopicDeletionAllowed: true,
-            }}
-          >
-            {setupWrapper({ schemas: [] })}
-          </ClusterContext.Provider>
-        </StaticRouter>
-      );
-      it('does not render Create Schema button', () => {
-        expect(wrapper.exists('NavLink')).toBeFalsy();
-      });
+      expect(screen.queryByText('Create Schema')).not.toBeInTheDocument();
     });
   });
 });

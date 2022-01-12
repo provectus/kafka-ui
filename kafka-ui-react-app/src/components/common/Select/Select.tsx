@@ -32,6 +32,7 @@ const Select: React.FC<SelectProps> = ({
       {isLive && <LiveIcon />}
       {name ? (
         <S.Select
+          role="listbox"
           selectSize={selectSize}
           isLive={isLive}
           {...methods.register(name, { ...hookFormOptions })}
