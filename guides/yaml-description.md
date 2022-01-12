@@ -1,6 +1,6 @@
 # Description of configurations (*.yaml)
 
-1. [kafka-ui.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui.yaml) - Default configuration contains 2 clusters with 2 Schema registry, 1 Connector and Topics inside.
+1. [kafka-ui.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui.yaml) - Default configuration with 2 kafka clusters with two nodes of Schema Registry, one kafka-connect and a few dummy topics.
 2. [kafka-clusters-only.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-clusters-only.yaml) - Default config without kafka-ui.
 3. [kafka-cluster-sr-auth.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-cluster-sr-auth.yaml) - Schema registry with authentication.
 4. [kafka-ui-auth-context.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui-auth-context.yaml) - Basic (username/password) authentication with custom path (URL) (issue 861).
