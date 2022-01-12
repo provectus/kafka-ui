@@ -32,7 +32,7 @@ pasting your own parameters, and viewing topics in the list.
 
 ![Create Topic](images/Create_topic_kafka-ui.gif)
 
-For more comfortable work you can navigate from connectors to consumers through their topics, ability to read and write to all of the topics used by the 
+It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.```
 connectors, overview topic`s settings. 
 
 ![Connector_Topic_Consumer](images/Connector_Topic_Consumer.gif)
