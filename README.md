@@ -23,15 +23,26 @@ Set up UI for Apache Kafka with just a couple of easy commands to visualize your
 * **Dynamic Topic Configuration** — create and configure new topics with dynamic configuration
 * **Configurable Authentification** — secure your installation with optional Github/Gitlab/Google OAuth 2.0
  
- # The Interface
+# The Interface
+UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
+
+![Interface](images/Interface.gif)
+
+## Topics
 UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
 pasting your own parameters, and viewing topics in the list.
 
 ![Create Topic](https://github.com/provectus/kafka-ui/blob/6d1219c70e9e24e52db64936e1a5d5ada189fecc/images/Create_topic_kafka-ui.gif)
 
+### Messages
 Let's say we want to produce messages for our topic. With the UI for Apache Kafka we can send or write data/messages to the Kafka topics without effort by specifying parameters, and viewing messages in the list.
 
 ![Produce Message](https://github.com/provectus/kafka-ui/blob/8ecc012e6ce2b5651bdd5fef9056cc8edd9b41bf/images/Create_message_kafka-ui.gif)
+
+## Schema registry
+There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
+
+![Create Schema Registry](images/Create_schema.gif)
 
 # Getting Started
 
