@@ -1,11 +1,16 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.provectus.kafka.ui.controller.SchemasController;
+import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import org.junit.jupiter.api.Test;
@@ -16,12 +21,21 @@ public class SchemaRegistryPaginationTest {
   private static final String LOCAL_KAFKA_CLUSTER_NAME = "local";
 
   private final SchemaRegistryService schemaRegistryService = mock(SchemaRegistryService.class);
-  private SchemaRegistryService.Pagination pagination;
+  private final ClustersStorage clustersStorage = mock(ClustersStorage.class);
+
+  private SchemasController controller;
 
   private void init(String[] subjects) {
     when(schemaRegistryService.getAllSubjectNames(isA(KafkaCluster.class)))
                 .thenReturn(Mono.just(subjects));
-    pagination = new SchemaRegistryService.Pagination(schemaRegistryService);
+    when(schemaRegistryService
+            .getAllLatestVersionSchemas(isA(KafkaCluster.class), anyList())).thenCallRealMethod();
+    when(clustersStorage.getClusterByName(isA(String.class)))
+            .thenReturn(Optional.of(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME)));
+    when(schemaRegistryService.getLatestSchemaVersionBySubject(isA(KafkaCluster.class), isA(String.class)))
+            .thenAnswer(a -> Mono.just(new SchemaSubjectDTO().subject(a.getArgument(1))));
+    this.controller = new SchemasController(schemaRegistryService);
+    this.controller.setClustersStorage(clustersStorage);
   }
 
   @Test
@@ -32,22 +46,20 @@ public class SchemaRegistryPaginationTest {
                     .map(num -> "subject" + num)
                     .toArray(String[]::new)
     );
-    var schemasFirst25 = pagination.getPage(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME),
-            Optional.empty(),
-            Optional.empty(),
-            Optional.empty()).block();
-    assertThat(schemasFirst25.getTotalPages()).isEqualTo(4);
-    assertThat(schemasFirst25.getSubjects()).hasSize(25);
-    assertThat(schemasFirst25.getSubjects()).isSorted();
+    var schemasFirst25 = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
+            null, null, null, null).block();
+    assertThat(schemasFirst25.getBody().getPageCount()).isEqualTo(4);
+    assertThat(schemasFirst25.getBody().getSchemas()).hasSize(25);
+    assertThat(schemasFirst25.getBody().getSchemas())
+            .isSortedAccordingTo(Comparator.comparing(SchemaSubjectDTO::getSubject));
 
-    var schemasFirst10 = pagination.getPage(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME),
-            Optional.empty(),
-            Optional.of(10),
-            Optional.empty()).block();
+    var schemasFirst10 = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
+            null, 10, null, null).block();
 
-    assertThat(schemasFirst10.getTotalPages()).isEqualTo(10);
-    assertThat(schemasFirst10.getSubjects()).hasSize(10);
-    assertThat(schemasFirst10.getSubjects()).isSorted();
+    assertThat(schemasFirst10.getBody().getPageCount()).isEqualTo(10);
+    assertThat(schemasFirst10.getBody().getSchemas()).hasSize(10);
+    assertThat(schemasFirst10.getBody().getSchemas())
+            .isSortedAccordingTo(Comparator.comparing(SchemaSubjectDTO::getSubject));
   }
 
   @Test
@@ -58,12 +70,10 @@ public class SchemaRegistryPaginationTest {
                       .map(num -> "subject" + num)
                       .toArray(String[]::new)
     );
-    var schemasSearch7 = pagination.getPage(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME),
-              Optional.empty(),
-              Optional.empty(),
-              Optional.of("1")).block();
-    assertThat(schemasSearch7.getTotalPages()).isEqualTo(1);
-    assertThat(schemasSearch7.getSubjects()).hasSize(20);
+    var schemasSearch7 = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
+            null, null, "1", null).block();
+    assertThat(schemasSearch7.getBody().getPageCount()).isEqualTo(1);
+    assertThat(schemasSearch7.getBody().getSchemas()).hasSize(20);
   }
 
   @Test
@@ -74,14 +84,12 @@ public class SchemaRegistryPaginationTest {
                         .map(num -> "subject" + num)
                         .toArray(String[]::new)
     );
-    var schemas = pagination.getPage(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME),
-                Optional.of(0),
-                Optional.of(-1),
-                Optional.empty()).block();
+    var schemas = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
+            0, -1, null, null).block();;
 
-    assertThat(schemas.getTotalPages()).isEqualTo(4);
-    assertThat(schemas.getSubjects()).hasSize(25);
-    assertThat(schemas.getSubjects()).isSorted();
+    assertThat(schemas.getBody().getPageCount()).isEqualTo(4);
+    assertThat(schemas.getBody().getSchemas()).hasSize(25);
+    assertThat(schemas.getBody().getSchemas()).isSortedAccordingTo(Comparator.comparing(SchemaSubjectDTO::getSubject));
   }
 
   @Test
@@ -93,17 +101,18 @@ public class SchemaRegistryPaginationTest {
                         .toArray(String[]::new)
     );
 
-    var schemas = pagination.getPage(buildKafkaCluster(LOCAL_KAFKA_CLUSTER_NAME),
-                Optional.of(4),
-                Optional.of(33),
-                Optional.empty()).block();
+    var schemas = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
+            4, 33, null, null).block();
 
-    assertThat(schemas.getTotalPages()).isEqualTo(4);
-    assertThat(schemas.getSubjects()).hasSize(1);
-    assertThat(schemas.getSubjects().get(0)).isEqualTo("subject99");
+    assertThat(schemas.getBody().getPageCount()).isEqualTo(4);
+    assertThat(schemas.getBody().getSchemas()).hasSize(1);
+    assertThat(schemas.getBody().getSchemas().get(0).getSubject()).isEqualTo("subject99");
   }
 
   private KafkaCluster buildKafkaCluster(String clusterName) {
-    return KafkaCluster.builder().name(clusterName).build();
+    return KafkaCluster.builder()
+            .name(clusterName)
+            .schemaRegistry(InternalSchemaRegistry.builder().build())
+            .build();
   }
 }

@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.service;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.exception.DuplicateEntityException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.SchemaTypeIsNotSupportedException;
@@ -16,25 +15,20 @@ import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
-import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import com.provectus.kafka.ui.model.schemaregistry.ErrorResponse;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
-import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -52,8 +46,6 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class SchemaRegistryService {
 
-  private static final Integer DEFAULT_PAGE_SIZE = 25;
-
   public static final String NO_SUCH_SCHEMA_VERSION = "No such schema %s with version %s";
   public static final String NO_SUCH_SCHEMA = "No such schema %s";
 
@@ -68,19 +60,11 @@ public class SchemaRegistryService {
   private final ClusterMapper mapper;
   private final WebClient webClient;
 
-  public Mono<SchemaSubjectsResponseDTO> getAllLatestVersionSchemas(KafkaCluster cluster,
-                                                                    Optional<Integer> pageNum,
-                                                                    Optional<Integer> nullablePerPage,
-                                                                    Optional<String> search) {
-    return new Pagination(this)
-            .getPage(cluster, pageNum, nullablePerPage, search)
-            .flatMap(page ->
-                    Flux.fromIterable(page.subjects)
-                            .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
-                            .collect(Collectors.toList())
-                            .map(schemas -> new SchemaSubjectsResponseDTO()
-                                    .pageCount(page.totalPages)
-                                    .schemas(schemas)));
+  public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
+                                                                 List<String> subjects) {
+    return Flux.fromIterable(subjects)
+            .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
+            .collect(Collectors.toList());
   }
 
   public Mono<String[]> getAllSubjectNames(KafkaCluster cluster) {
@@ -350,45 +334,5 @@ public class SchemaRegistryService {
 
   private boolean isUnrecognizedFieldSchemaTypeMessage(String errorMessage) {
     return errorMessage.contains(UNRECOGNIZED_FIELD_SCHEMA_TYPE);
-  }
-
-
-  @VisibleForTesting
-  @Value
-  static class Pagination {
-
-    SchemaRegistryService schemaRegistryService;
-
-    @Value
-    static class Page {
-      List<String> subjects;
-      int totalPages;
-    }
-
-    Mono<Page> getPage(
-            KafkaCluster kafkaCluster,
-            Optional<Integer> pageNum,
-            Optional<Integer> nullablePerPage,
-            Optional<String> search) {
-      return schemaRegistryService.getAllSubjectNames(kafkaCluster)
-              .map(subjects -> {
-                Predicate<Integer> positiveInt = i -> i > 0;
-                int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
-                var subjectToSkip = (pageNum.filter(positiveInt).orElse(1) - 1) * perPage;
-                List<String> filteredSubjects = Arrays.stream(subjects)
-                    .filter(subj -> search
-                        .map(s -> StringUtils.containsIgnoreCase(subj, s)).orElse(true))
-                    .sorted()
-                    .collect(Collectors.toList());
-
-                var totalPages = (filteredSubjects.size() / perPage)
-                        + (filteredSubjects.size() % perPage == 0 ? 0 : 1);
-                List<String> subjectsToRender = filteredSubjects.stream()
-                    .skip(subjectToSkip)
-                    .limit(perPage)
-                    .collect(Collectors.toList());
-                return new Page(subjectsToRender, totalPages);
-              });
-    }
   }
 }

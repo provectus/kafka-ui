@@ -9,10 +9,15 @@ import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -23,6 +28,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class SchemasController extends AbstractController implements SchemasApi {
+
+  private static final Integer DEFAULT_PAGE_SIZE = 25;
 
   private final SchemaRegistryService schemaRegistryService;
 
@@ -106,16 +113,29 @@ public class SchemasController extends AbstractController implements SchemasApi 
   @Override
   public Mono<ResponseEntity<SchemaSubjectsResponseDTO>> getSchemas(String clusterName,
                                                                     @Valid Integer pageNum,
-                                                                    @Valid Integer nullablePerPage,
+                                                                    @Valid Integer perPage,
                                                                     @Valid String search,
                                                                     ServerWebExchange serverWebExchange) {
     return schemaRegistryService
-            .getAllLatestVersionSchemas(
-                    getCluster(clusterName),
-                    Optional.ofNullable(pageNum),
-                    Optional.ofNullable(nullablePerPage),
-                    Optional.ofNullable(search))
-            .map(ResponseEntity::ok);
+            .getAllSubjectNames(getCluster(clusterName))
+            .flatMap(subjects -> {
+              Predicate<Integer> positiveInt = i -> i > 0;
+              int pageSize = Optional.ofNullable(perPage).filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
+              var subjectToSkip = (Optional.ofNullable(pageNum).filter(positiveInt).orElse(1) - 1) * pageSize;
+              List<String> filteredSubjects = Arrays.stream(subjects)
+                      .filter(subj -> Optional.ofNullable(search)
+                              .map(s -> StringUtils.containsIgnoreCase(subj, s)).orElse(true))
+                      .sorted()
+                      .collect(Collectors.toList());
+              var totalPages = (filteredSubjects.size() / pageSize)
+                      + (filteredSubjects.size() % pageSize == 0 ? 0 : 1);
+              List<String> subjectsToRender = filteredSubjects.stream()
+                      .skip(subjectToSkip)
+                      .limit(pageSize)
+                      .collect(Collectors.toList());
+              return schemaRegistryService.getAllLatestVersionSchemas(getCluster(clusterName), subjectsToRender)
+                      .map(a -> new SchemaSubjectsResponseDTO().pageCount(totalPages).schemas(a));
+            }).map(ResponseEntity::ok);
   }
 
   @Override
