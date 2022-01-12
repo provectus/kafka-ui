@@ -1,4 +1,4 @@
-# Description of configurations (*.yaml)
+# Descriptions of docker-compose configurations (*.yaml)
 
 1. [kafka-ui.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-ui.yaml) - Default configuration with 2 kafka clusters with two nodes of Schema Registry, one kafka-connect and a few dummy topics.
 2. [kafka-clusters-only.yaml](https://github.com/provectus/kafka-ui/blob/master/docker/kafka-clusters-only.yaml) - A configuration for development purposes, everything besides `kafka-ui` itself (to be run locally).
