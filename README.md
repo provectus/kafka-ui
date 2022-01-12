@@ -40,7 +40,7 @@ Let's say we want to produce messages for our topic. With the UI for Apache Kafk
 ![Produce Message](https://github.com/provectus/kafka-ui/blob/8ecc012e6ce2b5651bdd5fef9056cc8edd9b41bf/images/Create_message_kafka-ui.gif)
 
 ## Schema registry
-There are 3 types of schema reigstry are available to sreate in the UI for Apache Kafka - Avro®, JSON Schema, and Protobuf schemas.
+There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
 
 ![Create Schema Registry](images/Create_schema.gif)
 
