@@ -42,6 +42,28 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
       left: -${theme.layout.navBarWidth};
       z-index: 100;
     }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: ${theme.scrollbar.trackColor.normal};
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: 8px;
+      background-color: ${theme.scrollbar.thumbColor.normal};
+      border-radius: 4px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      background: ${theme.scrollbar.thumbColor.active};
+    }
+
+    &:hover::-webkit-scrollbar-track {
+      background-color: ${theme.scrollbar.trackColor.active};
+    }
   `
 );
 

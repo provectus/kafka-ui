@@ -4,14 +4,15 @@ import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
 import { remove as _remove } from 'lodash';
 import { TopicFormData } from 'redux/interfaces';
-import { TopicFormColumn } from 'components/Topics/shared/Form/TopicForm';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
-import styled from 'styled-components';
+import * as C from 'components/Topics/shared/Form/TopicForm.styled';
+
+import * as S from './CustomParams.styled';
 
 interface Props {
   isDisabled: boolean;
@@ -21,16 +22,6 @@ interface Props {
   remove: (index: number) => void;
   setExistingFields: React.Dispatch<React.SetStateAction<string[]>>;
 }
-
-const CustomParamDeleteButtonWrapper = styled.div`
-  height: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  align-self: flex-end;
-  flex-grow: 0.25 !important;
-`;
 
 const CustomParamField: React.FC<Props> = ({
   field,
@@ -66,12 +57,11 @@ const CustomParamField: React.FC<Props> = ({
   }, [nameValue]);
 
   return (
-    <TopicFormColumn>
+    <C.Column>
       <>
         <div>
           <InputLabel>Custom Parameter</InputLabel>
           <Select
-            selectSize="M"
             name={`customParams.${index}.name` as const}
             hookFormOptions={{
               required: 'Custom Parameter is required.',
@@ -101,7 +91,6 @@ const CustomParamField: React.FC<Props> = ({
       <div>
         <InputLabel>Value</InputLabel>
         <Input
-          inputSize="M"
           name={`customParams.${index}.value` as const}
           hookFormOptions={{
             required: 'Value is required.',
@@ -116,12 +105,12 @@ const CustomParamField: React.FC<Props> = ({
         </FormError>
       </div>
 
-      <CustomParamDeleteButtonWrapper>
+      <S.DeleteButtonWrapper>
         <IconButtonWrapper onClick={() => remove(index)} aria-hidden>
           <CloseIcon />
         </IconButtonWrapper>
-      </CustomParamDeleteButtonWrapper>
-    </TopicFormColumn>
+      </S.DeleteButtonWrapper>
+    </C.Column>
   );
 };
 

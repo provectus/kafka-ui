@@ -1,108 +1,39 @@
-import { SchemasState } from 'redux/interfaces';
-import { SchemaSubject, SchemaType } from 'generated-sources';
+import { SchemaType } from 'generated-sources';
 
-export const initialState: SchemasState = {
-  byName: {},
-  allNames: [],
-  currentSchemaVersions: [],
-};
-
-export const clusterSchemasPayload: SchemaSubject[] = [
-  {
-    subject: 'test2',
-    version: '3',
-    id: 4,
-    schema:
-      '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-  {
-    subject: 'test3',
-    version: '1',
-    id: 5,
-    schema:
-      '{"type":"record","name":"MyRecord","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-  {
-    subject: 'test',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-];
-
-export const schemaVersionsPayload: SchemaSubject[] = [
-  {
-    subject: 'test',
-    version: '1',
-    id: 1,
-    schema:
-      '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-  {
-    subject: 'test',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-];
-
-export const newSchemaPayload: SchemaSubject = {
-  subject: 'test4',
-  version: '2',
+export const schemaVersion = {
+  subject: 'schema7_1',
+  version: '1',
   id: 2,
   schema:
-    '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-  compatibilityLevel: 'BACKWARD',
+    '{"$schema":"http://json-schema.org/draft-07/schema#","$id":"http://example.com/myURI.schema.json","title":"TestRecord","type":"object","additionalProperties":false,"properties":{"f1":{"type":"integer"},"f2":{"type":"string"},"schema":{"type":"string"}}}',
+  compatibilityLevel: 'FULL',
   schemaType: SchemaType.JSON,
 };
 
-export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
-  {
-    subject: 'test2',
-    version: '3',
-    id: 4,
-    schema:
-      '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
+export const schemasFulfilledState = {
+  ids: ['MySchemaSubject', 'schema7_1'],
+  entities: {
+    MySchemaSubject: {
+      subject: 'MySchemaSubject',
+      version: '1',
+      id: 28,
+      schema: '12',
+      compatibilityLevel: 'FORWARD_TRANSITIVE',
+      schemaType: SchemaType.JSON,
+    },
+    schema7_1: schemaVersion,
   },
-  {
-    subject: 'test3',
-    version: '1',
-    id: 5,
-    schema:
-      '{"type":"record","name":"MyRecord","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
+  versions: {
+    ids: [],
+    entities: {},
   },
-  {
-    subject: 'test',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
+};
+
+export const schemasInitialState = {
+  ids: [],
+  entities: {},
+  versions: {
+    ids: [],
+    entities: {},
   },
-  {
-    subject: 'test4',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-];
+};

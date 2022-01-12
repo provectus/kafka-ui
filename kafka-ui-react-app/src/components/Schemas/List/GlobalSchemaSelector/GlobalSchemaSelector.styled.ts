@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const GlobalSchemaSelectorWrapper = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   gap: 5px;
   align-items: center;
