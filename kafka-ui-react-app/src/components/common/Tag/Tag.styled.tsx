@@ -3,7 +3,7 @@ import React from 'react';
 
 interface Props {
   className?: string;
-  color: 'green' | 'gray' | 'yellow' | 'red' | 'white';
+  color: 'green' | 'gray' | 'yellow' | 'red' | 'white' | 'blue';
 }
 
 const Tag: React.FC<Props> = ({ className, children }) => {

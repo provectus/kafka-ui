@@ -88,9 +88,7 @@ const ClustersWidget: React.FC<Props> = ({
               <tr key={cluster.name}>
                 <td>
                   {cluster.readOnly && (
-                    <div className="tag has-margin-right is-info is-light">
-                      readonly
-                    </div>
+                    <TagStyled color="blue">readonly</TagStyled>
                   )}{' '}
                   {cluster.name}
                 </td>

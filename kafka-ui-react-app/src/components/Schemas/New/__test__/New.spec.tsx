@@ -35,7 +35,9 @@ describe('New', () => {
     );
 
     it('matches snapshot', () => {
-      expect(mount(setupWrapper())).toMatchSnapshot();
+      const render = mount(setupWrapper());
+      console.log(render.debug());
+      expect(render).toMatchSnapshot();
     });
   });
 });
