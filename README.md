@@ -58,7 +58,7 @@ To run UI for Apache Kafka, you can use a pre-built Docker image or build it loc
 
 ## Configuration
 
-We have plenty of [docker-compose files](guides/yaml-description.md) as examples. Please check them out in ``docker`` directory.
+We have plenty of [docker-compose files](guides/yaml-description.md) as examples. They're built for various configuration stacks.
 
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
