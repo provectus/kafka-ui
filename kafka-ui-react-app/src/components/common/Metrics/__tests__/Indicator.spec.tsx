@@ -17,7 +17,7 @@ describe('Indicator', () => {
       </Indicator>
     );
 
-  it('matches the snapshot', () => {
+  it('renders indicator', () => {
     setupComponent({ title, label });
     expect(screen.getByTitle(title)).toBeInTheDocument();
     expect(screen.getByText(label)).toBeInTheDocument();
