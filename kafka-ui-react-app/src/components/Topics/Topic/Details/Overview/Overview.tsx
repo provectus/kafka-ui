@@ -11,7 +11,7 @@ import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import TagStyled from 'components/common/Tag/Tag.styled';
 
-interface Props extends Topic, TopicDetails {
+export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   clearTopicMessages(

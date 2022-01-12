@@ -3,7 +3,7 @@ import { Indicator } from 'components/common/Metrics';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import { Props } from 'components/common/Metrics/Indicator';
-import { Colors } from 'theme/theme';
+import theme from 'theme/theme';
 
 const title = 'Test Title';
 const label = 'Test Label';
@@ -34,26 +34,28 @@ describe('Indicator', () => {
     it('success alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'success' });
       expect(screen.getByRole('circle')).toHaveStyle(
-        `fill: ${Colors.green[40]}`
+        `fill: ${theme.circularAlert.color.success}`
       );
     });
 
     it('error alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'error' });
-      expect(screen.getByRole('circle')).toHaveStyle(`fill: ${Colors.red[50]}`);
+      expect(screen.getByRole('circle')).toHaveStyle(
+        `fill: ${theme.circularAlert.color.error}`
+      );
     });
 
     it('warning alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'warning' });
       expect(screen.getByRole('circle')).toHaveStyle(
-        `fill: ${Colors.yellow[10]}`
+        `fill: ${theme.circularAlert.color.warning}`
       );
     });
 
     it('info alert', () => {
       setupComponent({ title, label, isAlert: true, alertType: 'info' });
       expect(screen.getByRole('circle')).toHaveStyle(
-        `fill: ${Colors.neutral[10]}`
+        `fill: ${theme.circularAlert.color.info}`
       );
     });
   });

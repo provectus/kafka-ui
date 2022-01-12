@@ -3,15 +3,11 @@ import { shallow } from 'enzyme';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import Overview from 'components/Topics/Topic/Details/Overview/Overview';
-import { Colors } from 'theme/theme';
+import theme from 'theme/theme';
 
 describe('Overview', () => {
-  const mockInternal = false;
   const mockClusterName = 'local';
   const mockTopicName = 'topic';
-  const mockUnderReplicatedPartitions = 1;
-  const mockInSyncReplicas = 1;
-  const mockReplicas = 0;
   const mockClearTopicMessages = jest.fn();
   const mockPartitions = [
     {
@@ -28,18 +24,23 @@ describe('Overview', () => {
       offsetMin: 0,
     },
   ];
-  const renderComponent = () =>
+
+  const renderComponent = ({
+    underReplicatedPartitions = 1,
+    inSyncReplicas = 1,
+    replicas = 1,
+  } = {}) =>
     render(
       <Overview
         name={mockTopicName}
         partitions={mockPartitions}
-        internal={mockInternal}
+        internal={undefined}
         clusterName={mockClusterName}
         topicName={mockTopicName}
         clearTopicMessages={mockClearTopicMessages}
-        underReplicatedPartitions={mockUnderReplicatedPartitions}
-        inSyncReplicas={mockInSyncReplicas}
-        replicas={mockReplicas}
+        underReplicatedPartitions={underReplicatedPartitions}
+        inSyncReplicas={inSyncReplicas}
+        replicas={replicas}
       />
     );
 
@@ -49,7 +50,7 @@ describe('Overview', () => {
         <Overview
           name={mockTopicName}
           partitions={mockPartitions}
-          internal={mockInternal}
+          internal={false}
           clusterName={mockClusterName}
           topicName={mockTopicName}
           clearTopicMessages={mockClearTopicMessages}
@@ -64,7 +65,7 @@ describe('Overview', () => {
         <Overview
           name={mockTopicName}
           partitions={[]}
-          internal={mockInternal}
+          internal
           clusterName={mockClusterName}
           topicName={mockTopicName}
           clearTopicMessages={mockClearTopicMessages}
@@ -79,16 +80,22 @@ describe('Overview', () => {
     it('should be in document', () => {
       renderComponent();
       const circles = screen.getAllByRole('circle');
-      expect(circles[0]).toBeInTheDocument();
-      expect(circles[1]).toBeInTheDocument();
       expect(circles.length).toEqual(2);
     });
 
     it('should be the appropriate color', () => {
-      renderComponent();
+      renderComponent({
+        underReplicatedPartitions: 0,
+        inSyncReplicas: 1,
+        replicas: 2,
+      });
       const circles = screen.getAllByRole('circle');
-      expect(circles[0]).toHaveStyle(`fill: ${Colors.green[40]}`);
-      expect(circles[1]).toHaveStyle(`fill: ${Colors.red[50]}`);
+      expect(circles[0]).toHaveStyle(
+        `fill: ${theme.circularAlert.color.error}`
+      );
+      expect(circles[1]).toHaveStyle(
+        `fill: ${theme.circularAlert.color.error}`
+      );
     });
   });
 });
