@@ -8,10 +8,10 @@
 
 UI for Apache Kafka is a simple tool that makes your data flows observable, helps find and troubleshoot issues faster and deliver optimal performance. Its lightweight dashboard makes it easy to track key metrics of your Kafka clusters - Brokers, Topics, Partitions, Production, and Consumption. 
 
-Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
+Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in 
+the cloud. 
 
-![UI for Apache Kafka interface dashboard screenshot](images/apache-kafka-ui-interface-dashboard.png)
-
+![Interface](images/Interface.gif)
 
 # Features
 * **Multi-Cluster Management** — monitor and manage all your clusters in one place
@@ -26,27 +26,71 @@ Set up UI for Apache Kafka with just a couple of easy commands to visualize your
 # The Interface
 UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
 
-![Interface](images/Interface.gif)
-
 ## Topics
 UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
 pasting your own parameters, and viewing topics in the list.
 
-![Create Topic](https://github.com/provectus/kafka-ui/blob/6d1219c70e9e24e52db64936e1a5d5ada189fecc/images/Create_topic_kafka-ui.gif)
+![Create Topic](images/Create_topic_kafka-ui.gif)
+
+It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.
+connectors, overview topic`s settings. 
+
+![Connector_Topic_Consumer](images/Connector_Topic_Consumer.gif)
 
 ### Messages
 Let's say we want to produce messages for our topic. With the UI for Apache Kafka we can send or write data/messages to the Kafka topics without effort by specifying parameters, and viewing messages in the list.
 
-![Produce Message](https://github.com/provectus/kafka-ui/blob/8ecc012e6ce2b5651bdd5fef9056cc8edd9b41bf/images/Create_message_kafka-ui.gif)
+![Produce Message](images/Create_message_kafka-ui.gif)
 
 ## Schema registry
 There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
 
 ![Create Schema Registry](images/Create_schema.gif)
 
+Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do 
+with a few clicks in a user-friendly interface.
+
+![Avro Schema Topic](images/Schema_Topic.gif)
+
 # Getting Started
 
 To run UI for Apache Kafka, you can use a pre-built Docker image or build it locally.  
+
+## Configuration
+
+We have plenty of [docker-compose files](guides/yaml-description.md) as examples. They're built for various configuration stacks.
+
+### Configuration File
+Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
+
+
+```sh
+kafka:
+  clusters:
+    -
+      name: local
+      bootstrapServers: localhost:29091
+      zookeeper: localhost:2183
+      schemaRegistry: http://localhost:8085
+      schemaRegistryAuth:
+        username: username
+        password: password
+#     schemaNameTemplate: "%s-value"
+      jmxPort: 9997
+    -
+```    
+
+* `name`: cluster name
+* `bootstrapServers`: where to connect
+* `zookeeper`: zookeeper service address
+* `schemaRegistry`: schemaRegistry's address
+* `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
+* `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
+* `schemaNameTemplate`: how keys are saved to schemaRegistry
+* `jmxPort`: open jmxPosrts of a broker
+* `readOnly`: enable read only mode
+
+Configure as many clusters as you need by adding their configs below separated with `-`.
 
 ## Running From Docker Image
 The official Docker image for UI for Apache Kafka is hosted here: [hub.docker.com/r/provectuslabs/kafka-ui](https://hub.docker.com/r/provectuslabs/kafka-ui).
@@ -119,7 +163,6 @@ Then start UI for Apache Kafka with a **local** profile.
 ./mvnw spring-boot:run -Pprod
 ``` 
 
-
 ## Running in Kubernetes
 ``` bash
 helm repo add kafka-ui https://provectus.github.io/kafka-ui
@@ -131,49 +174,13 @@ To read more please follow to [chart documentation](charts/kafka-ui/README.md)
 
 - [SSO configuration](guides/SSO.md)
 - [AWS IAM configuration](guides/AWS_IAM.md)
+- [Docker-compose files](guides/yaml-description.md)
 
 ## Connecting to a Secure Broker
 
 UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
 
 To be continued
-
-
-# Configuration
-
-We have plenty of docker-compose files as examples. Please check them out in ``docker`` directory.
-
-## Configuration File
-Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
-
-
-```sh
-kafka:
-  clusters:
-    -
-      name: local
-      bootstrapServers: localhost:29091
-      zookeeper: localhost:2183
-      schemaRegistry: http://localhost:8085
-      schemaRegistryAuth:
-        username: username
-        password: password
-#     schemaNameTemplate: "%s-value"
-      jmxPort: 9997
-    -
-```    
-
-* `name`: cluster name
-* `bootstrapServers`: where to connect
-* `zookeeper`: zookeeper service address
-* `schemaRegistry`: schemaRegistry's address
-* `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
-* `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
-* `schemaNameTemplate`: how keys are saved to schemaRegistry
-* `jmxPort`: open jmxPosrts of a broker
-* `readOnly`: enable read only mode
-
-Configure as many clusters as you need by adding their configs below separated with `-`.
 
 ## <a name="env_variables"></a> Environment Variables
 
