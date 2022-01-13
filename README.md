@@ -32,7 +32,7 @@ pasting your own parameters, and viewing topics in the list.
 
 ![Create Topic](images/Create_topic_kafka-ui.gif)
 
-It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.```
+It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.
 connectors, overview topic`s settings. 
 
 ![Connector_Topic_Consumer](images/Connector_Topic_Consumer.gif)
@@ -47,7 +47,7 @@ There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schema
 
 ![Create Schema Registry](images/Create_schema.gif)
 
-Before sending avro messages to the topic, you have to register avro schema for the topic to the schema registry. Now all these steps are easy to do 
+Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do 
 with a few clicks in a user-friendly interface.
 
 ![Avro Schema Topic](images/Schema_Topic.gif)
