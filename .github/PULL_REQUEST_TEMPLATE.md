@@ -1,5 +1,5 @@
 <!-- ignore-task-list-start -->
-- [ ] **Breaking change?** (if so, please describe the impact and migration path for existing applications:)
+- [ ] **Breaking change?** (if so, please describe the impact and migration path for existing application instances)
 <!-- ignore-task-list-end -->
 **What changes did you make?** (Give an overview)
 
@@ -15,7 +15,7 @@
 - [ ] Covered by existing automation
 <!-- ignore-task-list-end -->
 
-**Checklist** (put an "X" next to an item, otherwise PR will fail)
+**Checklist** (put an "X" next to all the items, otherwise PR will fail)
 - [ ] I have performed a self-review of my own code
 - [ ] I have commented my code, particularly in hard-to-understand areas
 - [ ] I have made corresponding changes to the documentation (e.g. **ENVIRONMENT VARIABLES**)
