@@ -119,12 +119,10 @@ public class SchemasController extends AbstractController implements SchemasApi 
     return schemaRegistryService
             .getAllSubjectNames(getCluster(clusterName))
             .flatMap(subjects -> {
-              Predicate<Integer> positiveInt = i -> i > 0;
-              int pageSize = Optional.ofNullable(perPage).filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
-              var subjectToSkip = (Optional.ofNullable(pageNum).filter(positiveInt).orElse(1) - 1) * pageSize;
+              int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
+              int subjectToSkip = ((pageNum != null && pageNum > 0 ? pageNum : 1) - 1) * pageSize;
               List<String> filteredSubjects = Arrays.stream(subjects)
-                      .filter(subj -> Optional.ofNullable(search)
-                              .map(s -> StringUtils.containsIgnoreCase(subj, s)).orElse(true))
+                      .filter(subj -> search == null || StringUtils.containsIgnoreCase(subj, search))
                       .sorted()
                       .collect(Collectors.toList());
               var totalPages = (filteredSubjects.size() / pageSize)
