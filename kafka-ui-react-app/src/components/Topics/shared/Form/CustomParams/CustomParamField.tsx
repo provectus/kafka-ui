@@ -7,6 +7,7 @@ import { TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import Input from 'components/common/Input/Input';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
@@ -66,20 +67,20 @@ const CustomParamField: React.FC<Props> = ({
             hookFormOptions={{
               required: 'Custom Parameter is required.',
             }}
+            placeholder="Select"
             disabled={isDisabled}
             defaultValue={field.name}
           >
-            <option value="">Select</option>
             {Object.keys(TOPIC_CUSTOM_PARAMS)
               .sort()
               .map((opt) => (
-                <option
+                <Option
                   key={opt}
                   value={opt}
                   disabled={existingFields.includes(opt)}
                 >
                   {opt}
-                </option>
+                </Option>
               ))}
           </Select>
           <FormError>

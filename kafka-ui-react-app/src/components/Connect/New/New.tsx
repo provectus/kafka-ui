@@ -11,6 +11,7 @@ import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
@@ -130,9 +131,9 @@ const New: React.FC<NewProps> = ({
           <InputLabel>Connect *</InputLabel>
           <Select selectSize="M" name="connectName" disabled={isSubmitting}>
             {connects.map(({ name }) => (
-              <option key={name} value={name}>
+              <Option key={name} value={name}>
                 {name}
-              </option>
+              </Option>
             ))}
           </Select>
           <FormError>

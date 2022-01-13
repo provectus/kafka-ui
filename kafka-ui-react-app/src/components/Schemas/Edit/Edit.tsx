@@ -9,6 +9,7 @@ import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -91,9 +92,9 @@ const Edit: React.FC = () => {
                 disabled={isSubmitting}
               >
                 {Object.keys(SchemaType).map((type: string) => (
-                  <option key={type} value={type}>
+                  <Option key={type} value={type}>
                     {type}
-                  </option>
+                  </Option>
                 ))}
               </Select>
             </div>
@@ -107,9 +108,9 @@ const Edit: React.FC = () => {
               >
                 {Object.keys(CompatibilityLevelCompatibilityEnum).map(
                   (level: string) => (
-                    <option key={level} value={level}>
+                    <Option key={level} value={level}>
                       {level}
-                    </option>
+                    </Option>
                   )
                 )}
               </Select>

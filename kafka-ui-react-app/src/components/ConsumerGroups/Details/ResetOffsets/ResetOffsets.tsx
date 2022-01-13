@@ -9,7 +9,7 @@ import {
 } from 'react-hook-form';
 import { ClusterName, ConsumerGroupID } from 'redux/interfaces';
 import MultiSelect from 'react-multi-select-component';
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { Option as MultiOption } from 'react-multi-select-component/dist/lib/interfaces';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { groupBy } from 'lodash';
@@ -17,6 +17,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
 import { useHistory, useParams } from 'react-router';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
@@ -62,9 +63,9 @@ const ResetOffsets: React.FC = () => {
   }, [clusterName, consumerGroupID]);
 
   const [uniqueTopics, setUniqueTopics] = React.useState<string[]>([]);
-  const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
-    []
-  );
+  const [selectedPartitions, setSelectedPartitions] = React.useState<
+    MultiOption[]
+  >([]);
 
   const methods = useForm<FormType>({
     mode: 'onChange',
@@ -98,7 +99,7 @@ const ResetOffsets: React.FC = () => {
     }
   }, [isFetched]);
 
-  const onSelectedPartitionsChange = (value: Option[]) => {
+  const onSelectedPartitionsChange = (value: MultiOption[]) => {
     clearErrors();
     setValue(
       'partitionsOffsets',
@@ -182,22 +183,22 @@ const ResetOffsets: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <MainSelectorsWrapperStyled>
             <div>
-              <InputLabel htmlFor="topic">Topic</InputLabel>
-              <Select name="topic" id="topic" selectSize="M">
+              <InputLabel id="topicLabel">Topic</InputLabel>
+              <Select name="topic" id="topic" selectSize="M" aria-labelledby="topicLabel">
                 {uniqueTopics.map((topic) => (
-                  <option key={topic} value={topic}>
+                  <Option key={topic} value={topic}>
                     {topic}
-                  </option>
+                  </Option>
                 ))}
               </Select>
             </div>
             <div>
-              <InputLabel htmlFor="resetType">Reset Type</InputLabel>
-              <Select name="resetType" id="resetType" selectSize="M">
+              <InputLabel id="resetTypeLabel">Reset Type</InputLabel>
+              <Select name="resetType" id="resetType" selectSize="M" aria-labelledby="resetTypeLabel">
                 {Object.values(ConsumerGroupOffsetsResetType).map((type) => (
-                  <option key={type} value={type}>
+                  <Option key={type} value={type}>
                     {type}
-                  </option>
+                  </Option>
                 ))}
               </Select>
             </div>

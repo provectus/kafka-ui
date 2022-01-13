@@ -10,7 +10,7 @@ import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
-import * as C from 'components/common/Select/Select.styled';
+import Option from 'components/common/Select/Option';
 import { Button } from 'components/common/Button/Button';
 import { Textarea } from 'components/common/Textbox/Textarea.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -94,15 +94,15 @@ const New: React.FC = () => {
           <InputLabel>Schema Type *</InputLabel>
           <Select
             selectSize="M"
-            // name="schemaType"
+            name="schemaType"
             hookFormOptions={{
               required: 'Schema Type is required.',
             }}
             disabled={isSubmitting}
           >
-            <C.Option value={SchemaType.AVRO}>AVRO</C.Option>
-            <C.Option value={SchemaType.JSON}>JSON</C.Option>
-            <C.Option value={SchemaType.PROTOBUF}>PROTOBUF</C.Option>
+            <Option value={SchemaType.AVRO}>AVRO</Option>
+            <Option value={SchemaType.JSON}>JSON</Option>
+            <Option value={SchemaType.PROTOBUF}>PROTOBUF</Option>
           </Select>
           <FormError>
             <ErrorMessage errors={errors} name="schemaType" />

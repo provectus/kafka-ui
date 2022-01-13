@@ -1,56 +1,108 @@
-import styled from 'styled-components';
-import React, { ChangeEvent, useState } from 'react';
+import React, { ReactNode, useState, useRef } from 'react';
 import { RegisterOptions, useFormContext } from 'react-hook-form';
+import useClickOutside from 'lib/hooks/useClickOutside';
+import { SelectContext } from 'components/contexts/SelectContext';
 
-import LiveIcon from './LiveIcon.styled';
 import * as S from './Select.styled';
+import LiveIcon from './LiveIcon.styled';
 
-export interface SelectProps
-  extends React.SelectHTMLAttributes<HTMLDivElement> {
+export interface SelectProps {
+  children?: ReactNode | ReactNode[];
+  id?: string;
   name?: string;
   selectSize?: 'M' | 'L';
   isLive?: boolean;
   hookFormOptions?: RegisterOptions;
   minWidth?: string;
-  onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
+  defaultValue?: string | number;
+  value?: string | number;
+  placeholder?: string;
+  disabled?: boolean;
+  required?: boolean;
+  onChange?: (option: string | number) => void;
 }
 
 const Select: React.FC<SelectProps> = ({
-  className,
   children,
+  defaultValue,
+  value,
   selectSize = 'L',
+  placeholder = '',
   isLive,
   name,
   hookFormOptions,
+  disabled = false,
+  required = false,
+  onChange,
   ...props
 }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [selectedOption, setSelectedOption] = useState(
+    value || defaultValue || ''
+  );
+  const [showOptions, setShowOptions] = useState(false);
+
+  const showOptionsHandler = () => {
+    if (!disabled) setShowOptions(!showOptions);
+  };
+
+  const selectContainerRef = useRef(null);
+  const clickOutsideHandler = () => setShowOptions(false);
+  useClickOutside(selectContainerRef, clickOutsideHandler);
+
+  const updateSelectedOption = (option: string | number) => {
+    if (disabled) return;
+
+    setSelectedOption(option);
+    if (onChange) onChange(option);
+    setShowOptions(false);
+  };
 
   const methods = useFormContext();
+
   return (
-    <div className={`select-wrapper ${className}`}>
-      {isLive && <LiveIcon />}
-      {name ? (
-        <S.Select
-          role="listbox"
-          selectSize={selectSize}
-          isLive={isLive}
-          {...methods.register(name, { ...hookFormOptions })}
-          {...props}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen && (
-            <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
-          )}
-        </S.Select>
-      ) : (
-        <S.Select selectSize={selectSize} isLive={isLive} {...props} onClick={() => setIsOpen(!isOpen)}>
-          {isOpen && (
-            <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
-          )}
-        </S.Select>
-      )}
-    </div>
+    <SelectContext.Provider
+      value={{ selectedOption, changeSelectedOption: updateSelectedOption }}
+    >
+      <div ref={selectContainerRef}>
+        {isLive && <LiveIcon />}
+        {name ? (
+          <S.Select
+            role="listbox"
+            selectSize={selectSize}
+            isLive={isLive}
+            disabled={disabled}
+            onClick={showOptionsHandler}
+            onKeyDown={showOptionsHandler}
+            {...methods.register(name, { ...hookFormOptions })}
+            {...props}
+          >
+            <S.SelectedOption role="option">
+              {String(selectedOption).length > 0 ? selectedOption : placeholder}
+            </S.SelectedOption>
+            {showOptions && (
+              <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
+            )}
+          </S.Select>
+        ) : (
+          <S.Select
+            role="listbox"
+            selectSize={selectSize}
+            isLive={isLive}
+            disabled={disabled}
+            onClick={showOptionsHandler}
+            onKeyDown={showOptionsHandler}
+            {...props}
+          >
+            <S.SelectedOption role="option">
+              {String(selectedOption).length > 0 ? selectedOption : placeholder}
+            </S.SelectedOption>
+            {showOptions && (
+              <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
+            )}
+          </S.Select>
+        )}
+      </div>
+    </SelectContext.Provider>
   );
 };
 

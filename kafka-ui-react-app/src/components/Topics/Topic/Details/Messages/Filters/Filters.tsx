@@ -14,12 +14,13 @@ import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
-import { Option } from 'react-multi-select-component/dist/lib/interfaces';
+import { Option as MultiOption } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { TopicName, ClusterName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import { Button } from 'components/common/Button/Button';
 
 import * as S from './Filters.styled';
@@ -71,9 +72,9 @@ const Filters: React.FC<FiltersProps> = ({
     [location]
   );
 
-  const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
-    getSelectedPartitionsFromSeekToParam(searchParams, partitions)
-  );
+  const [selectedPartitions, setSelectedPartitions] = React.useState<
+    MultiOption[]
+  >(getSelectedPartitionsFromSeekToParam(searchParams, partitions));
 
   const [attempt, setAttempt] = React.useState(0);
   const [seekType, setSeekType] = React.useState<SeekType>(
@@ -244,14 +245,12 @@ const Filters: React.FC<FiltersProps> = ({
             <S.SeekTypeSelectorWrapper>
               <Select
                 id="selectSeekType"
-                onChange={({ target: { value } }) =>
-                  setSeekType(value as SeekType)
-                }
+                onChange={(value) => setSeekType(value as SeekType)}
                 value={seekType}
                 selectSize="M"
               >
-                <option value={SeekType.OFFSET}>Offset</option>
-                <option value={SeekType.TIMESTAMP}>Timestamp</option>
+                <Option value={SeekType.OFFSET}>Offset</Option>
+                <Option value={SeekType.TIMESTAMP}>Timestamp</Option>
               </Select>
               {seekType === SeekType.OFFSET ? (
                 <Input
@@ -311,12 +310,12 @@ const Filters: React.FC<FiltersProps> = ({
         </S.FilterInputs>
         <Select
           selectSize="M"
-          onChange={(e) => toggleSeekDirection(e.target.value)}
+          onChange={(value) => toggleSeekDirection(value as string)}
           value={seekDirection}
           minWidth="120px"
         >
-          <option value={SeekDirection.FORWARD}>Oldest First</option>
-          <option value={SeekDirection.BACKWARD}>Newest First</option>
+          <Option value={SeekDirection.FORWARD}>Oldest First</Option>
+          <Option value={SeekDirection.BACKWARD}>Newest First</Option>
         </Select>
       </div>
       <S.FiltersMetrics>

@@ -37,7 +37,8 @@ const resetConsumerGroupOffsetsMockCalled = () =>
   ).toBeTruthy();
 
 const selectresetTypeAndPartitions = async (resetType: string) => {
-  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByLabelText('Reset Type'));
+  userEvent.click(screen.getByText(resetType));
   userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));
@@ -48,7 +49,8 @@ const resetConsumerGroupOffsetsWith = async (
   resetType: string,
   offset: null | number = null
 ) => {
-  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByLabelText('Reset Type'));
+  userEvent.click(screen.getByText(resetType));
   userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));
@@ -119,9 +121,8 @@ describe('ResetOffsets', () => {
           }
         );
         await waitFor(() => {
-          fireEvent.change(screen.getAllByLabelText('Partition #0')[1], {
-            target: { value: '10' },
-          });
+          fireEvent.click(screen.getAllByLabelText('Partition #0')[1]);
+          fireEvent.click(screen.getByText('10'));
         });
         userEvent.click(screen.getByText('Submit'));
         await waitFor(() => resetConsumerGroupOffsetsMockCalled());

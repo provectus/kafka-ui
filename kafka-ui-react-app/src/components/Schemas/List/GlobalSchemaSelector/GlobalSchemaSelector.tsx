@@ -1,5 +1,6 @@
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
@@ -45,12 +46,8 @@ const GlobalSchemaSelector: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleChangeCompatibilityLevel = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setNextCompatibilityLevel(
-      event.target.value as CompatibilityLevelCompatibilityEnum
-    );
+  const handleChangeCompatibilityLevel = (level: string | number) => {
+    setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);
     setIsConfirmationVisible(true);
   };
 
@@ -84,9 +81,9 @@ const GlobalSchemaSelector: React.FC = () => {
       >
         {Object.keys(CompatibilityLevelCompatibilityEnum).map(
           (level: string) => (
-            <option key={level} value={level}>
+            <Option key={level} value={level}>
               {level}
-            </option>
+            </Option>
           )
         )}
       </Select>

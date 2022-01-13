@@ -4,6 +4,7 @@ import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select from 'components/common/Select/Select';
+import Option from 'components/common/Select/Option';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
@@ -100,9 +101,9 @@ const TopicForm: React.FC<Props> = ({
           <div>
             <InputLabel>Cleanup policy</InputLabel>
             <Select defaultValue="delete" name="cleanupPolicy" minWidth="250px">
-              <option value="delete">Delete</option>
-              <option value="compact">Compact</option>
-              <option value="compact,delete">Compact,Delete</option>
+              <Option value="delete">Delete</Option>
+              <Option value="compact">Compact</Option>
+              <Option value="compact,delete">Compact,Delete</Option>
             </Select>
           </div>
         </S.Column>
@@ -117,11 +118,11 @@ const TopicForm: React.FC<Props> = ({
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
               <Select defaultValue={-1} name="retentionBytes">
-                <option value={-1}>Not Set</option>
-                <option value={BYTES_IN_GB}>1 GB</option>
-                <option value={BYTES_IN_GB * 10}>10 GB</option>
-                <option value={BYTES_IN_GB * 20}>20 GB</option>
-                <option value={BYTES_IN_GB * 50}>50 GB</option>
+                <Option value={-1}>Not Set</Option>
+                <Option value={BYTES_IN_GB}>1 GB</Option>
+                <Option value={BYTES_IN_GB * 10}>10 GB</Option>
+                <Option value={BYTES_IN_GB * 20}>20 GB</Option>
+                <Option value={BYTES_IN_GB * 50}>50 GB</Option>
               </Select>
             </div>
 
