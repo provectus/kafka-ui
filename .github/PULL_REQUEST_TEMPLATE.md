@@ -25,3 +25,5 @@
 - [ ] Any dependent changes have been merged
 
 Check out [Contributing](https://github.com/provectus/kafka-ui/blob/master/CONTRIBUTING.md) and [Code of Conduct](https://github.com/provectus/kafka-ui/blob/master/CODE-OF-CONDUCT.md)
+
+**A picture of a cute animal (not mandatory but encouraged)**
