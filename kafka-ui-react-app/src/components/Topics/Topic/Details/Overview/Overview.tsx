@@ -49,14 +49,14 @@ const Overview: React.FC<Props> = ({
             {replicationFactor}
           </Metrics.Indicator>
           <Metrics.Indicator
-            label="URP"
+            label="Under Replicated Partitions"
             title="Under replicated partitions"
             isAlert
           >
             <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
           </Metrics.Indicator>
           <Metrics.Indicator
-            label="In Sync Replicas"
+            label="ISR"
             isAlert
             alertType={inSyncReplicas === replicas ? 'success' : 'error'}
           >

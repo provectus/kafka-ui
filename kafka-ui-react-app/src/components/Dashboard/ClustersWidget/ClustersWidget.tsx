@@ -84,21 +84,25 @@ const ClustersWidget: React.FC<Props> = ({
           <tbody>
             {chunkItem.data.map((cluster) => (
               <tr key={cluster.name}>
-                <td>{cluster.name}</td>
-                <td>{cluster.version}</td>
-                <td>{cluster.brokerCount}</td>
-                <td>{cluster.onlinePartitionCount}</td>
-                <td>
+                <S.ClusterName maxWidth="99px">{cluster.name}</S.ClusterName>
+                <S.ClusterName maxWidth="99px">{cluster.version}</S.ClusterName>
+                <S.ClusterName maxWidth="99px">
+                  {cluster.brokerCount}
+                </S.ClusterName>
+                <S.ClusterName maxWidth="78px">
+                  {cluster.onlinePartitionCount}
+                </S.ClusterName>
+                <S.ClusterName maxWidth="60px">
                   <NavLink to={clusterTopicsPath(cluster.name)}>
                     {cluster.topicCount}
                   </NavLink>
-                </td>
-                <td>
+                </S.ClusterName>
+                <S.ClusterName maxWidth="85px">
                   <BytesFormatted value={cluster.bytesInPerSec} />
-                </td>
-                <td>
+                </S.ClusterName>
+                <S.ClusterName maxWidth="85px">
                   <BytesFormatted value={cluster.bytesOutPerSec} />
-                </td>
+                </S.ClusterName>
               </tr>
             ))}
           </tbody>
