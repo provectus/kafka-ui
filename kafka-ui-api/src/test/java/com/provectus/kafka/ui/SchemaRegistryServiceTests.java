@@ -148,7 +148,7 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .expectStatus().isOk()
         .expectBody(SchemaSubjectsResponseDTO.class)
         .consumeWith(result -> {
-            SchemaSubjectsResponseDTO responseBody = result.getResponseBody();
+          SchemaSubjectsResponseDTO responseBody = result.getResponseBody();
           log.info("Response of test schemas: {}", responseBody);
           Assertions.assertNotNull(responseBody);
           Assertions.assertFalse(responseBody.getSchemas().isEmpty());
