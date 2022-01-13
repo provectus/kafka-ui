@@ -3,7 +3,7 @@ import { chunk } from 'lodash';
 import { v4 } from 'uuid';
 import * as Metrics from 'components/common/Metrics';
 import { Cluster } from 'generated-sources';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
@@ -50,15 +50,11 @@ const ClustersWidget: React.FC<Props> = ({
     <>
       <Metrics.Wrapper>
         <Metrics.Section>
-          <Metrics.Indicator
-            label={<TagStyled color="green">Online</TagStyled>}
-          >
+          <Metrics.Indicator label={<Tag color="green">Online</Tag>}>
             <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
-          <Metrics.Indicator
-            label={<TagStyled color="gray">Offline</TagStyled>}
-          >
+          <Metrics.Indicator label={<Tag color="gray">Offline</Tag>}>
             <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
