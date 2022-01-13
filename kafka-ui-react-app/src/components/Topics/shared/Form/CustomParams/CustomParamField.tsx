@@ -70,6 +70,7 @@ const CustomParamField: React.FC<Props> = ({
             placeholder="Select"
             disabled={isDisabled}
             defaultValue={field.name}
+            minWidth="270px"
           >
             {Object.keys(TOPIC_CUSTOM_PARAMS)
               .sort()

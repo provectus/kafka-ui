@@ -22,6 +22,11 @@ export interface SelectProps {
   onChange?: (option: string | number) => void;
 }
 
+export interface SelectOption {
+  label: string | number;
+  value: string | number;
+}
+
 const Select: React.FC<SelectProps> = ({
   children,
   defaultValue,
@@ -76,7 +81,7 @@ const Select: React.FC<SelectProps> = ({
             {...methods.register(name, { ...hookFormOptions })}
             {...props}
           >
-            <S.SelectedOption role="option">
+            <S.SelectedOption role="option" tabIndex={0} >
               {String(selectedOption).length > 0 ? selectedOption : placeholder}
             </S.SelectedOption>
             {showOptions && (
@@ -93,7 +98,7 @@ const Select: React.FC<SelectProps> = ({
             onKeyDown={showOptionsHandler}
             {...props}
           >
-            <S.SelectedOption role="option">
+            <S.SelectedOption role="option" tabIndex={0}>
               {String(selectedOption).length > 0 ? selectedOption : placeholder}
             </S.SelectedOption>
             {showOptions && (

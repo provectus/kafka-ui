@@ -184,7 +184,12 @@ const ResetOffsets: React.FC = () => {
           <MainSelectorsWrapperStyled>
             <div>
               <InputLabel id="topicLabel">Topic</InputLabel>
-              <Select name="topic" id="topic" selectSize="M" aria-labelledby="topicLabel">
+              <Select
+                name="topic"
+                id="topic"
+                selectSize="M"
+                aria-labelledby="topicLabel"
+              >
                 {uniqueTopics.map((topic) => (
                   <Option key={topic} value={topic}>
                     {topic}
@@ -194,7 +199,12 @@ const ResetOffsets: React.FC = () => {
             </div>
             <div>
               <InputLabel id="resetTypeLabel">Reset Type</InputLabel>
-              <Select name="resetType" id="resetType" selectSize="M" aria-labelledby="resetTypeLabel">
+              <Select
+                name="resetType"
+                id="resetType"
+                selectSize="M"
+                aria-labelledby="resetTypeLabel"
+              >
                 {Object.values(ConsumerGroupOffsetsResetType).map((type) => (
                   <Option key={type} value={type}>
                     {type}

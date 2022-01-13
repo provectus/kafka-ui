@@ -95,6 +95,7 @@ const New: React.FC = () => {
           <Select
             selectSize="M"
             name="schemaType"
+            minWidth="50%"
             hookFormOptions={{
               required: 'Schema Type is required.',
             }}

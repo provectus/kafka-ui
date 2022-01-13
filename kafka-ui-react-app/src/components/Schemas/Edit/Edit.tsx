@@ -88,6 +88,7 @@ const Edit: React.FC = () => {
               <Select
                 name="schemaType"
                 required
+                minWidth="100%"
                 defaultValue={schema.schemaType}
                 disabled={isSubmitting}
               >
@@ -103,6 +104,7 @@ const Edit: React.FC = () => {
               <InputLabel>Compatibility level</InputLabel>
               <Select
                 name="compatibilityLevel"
+                minWidth="100%"
                 defaultValue={schema.compatibilityLevel}
                 disabled={isSubmitting}
               >

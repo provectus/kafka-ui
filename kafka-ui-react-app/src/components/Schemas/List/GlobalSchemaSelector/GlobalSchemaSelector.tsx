@@ -76,6 +76,7 @@ const GlobalSchemaSelector: React.FC = () => {
       <Select
         selectSize="M"
         defaultValue={currentCompatibilityLevel}
+        minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}
       >

@@ -117,7 +117,7 @@ const TopicForm: React.FC<Props> = ({
           <S.Column>
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
-              <Select defaultValue={-1} name="retentionBytes">
+              <Select defaultValue={-1} name="retentionBytes" minWidth="100%">
                 <Option value={-1}>Not Set</Option>
                 <Option value={BYTES_IN_GB}>1 GB</Option>
                 <Option value={BYTES_IN_GB * 10}>10 GB</Option>

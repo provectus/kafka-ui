@@ -15,8 +15,9 @@ interface OptionProps {
   disabled?: boolean;
 }
 
-export const Select = styled.div<Props>`
+export const Select = styled.ul<Props>`
   position: relative;
+  list-style: none;
   display: flex;
   align-items: center;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
@@ -35,12 +36,11 @@ export const Select = styled.div<Props>`
     disabled
       ? theme.selectStyles.color.disabled
       : theme.selectStyles.color.normal};
-  min-width: ${({ minWidth }) => minWidth || '100%'};
-  background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  stroke: ${({ theme, disabled }) =>
-    disabled
-      ? theme.selectStyles.color.disabled
-      : theme.selectStyles.color.normal};
+  min-width: ${({ minWidth }) => minWidth || 'auto'};
+  background-image: ${({ disabled }) =>
+    `url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="${
+      disabled ? '%23ABB5BA' : '%23454F54'
+    }"/%3E%3C/svg%3E%0A') !important`};
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
@@ -65,7 +65,7 @@ export const OptionList = styled.ul<OptionListProps>`
   position: absolute;
   top: 100%;
   left: 0;
-  max-height: 104px;
+  max-height: 114px;
   margin-top: 4px;
   background-color: ${(props) =>
     props.theme.selectStyles.backgroundColor.normal};
@@ -73,7 +73,7 @@ export const OptionList = styled.ul<OptionListProps>`
   border-radius: 4px;
   font-size: 14px;
   line-height: 18px;
-  width: auto;
+  width: 100%;
   color: ${(props) => props.theme.selectStyles.color.normal};
   overflow-y: scroll;
   z-index: 10;
@@ -96,6 +96,10 @@ export const Option = styled.li<OptionProps>`
   }
 `;
 
-export const SelectedOption = styled.div`
+export const SelectedOption = styled.li`
   padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
