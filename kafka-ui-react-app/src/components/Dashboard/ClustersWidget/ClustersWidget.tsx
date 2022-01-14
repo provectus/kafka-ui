@@ -84,25 +84,23 @@ const ClustersWidget: React.FC<Props> = ({
           <tbody>
             {chunkItem.data.map((cluster) => (
               <tr key={cluster.name}>
-                <S.ClusterName maxWidth="99px">{cluster.name}</S.ClusterName>
-                <S.ClusterName maxWidth="99px">{cluster.version}</S.ClusterName>
-                <S.ClusterName maxWidth="99px">
-                  {cluster.brokerCount}
-                </S.ClusterName>
-                <S.ClusterName maxWidth="78px">
+                <S.TableCell maxWidth="99px">{cluster.name}</S.TableCell>
+                <S.TableCell maxWidth="99px">{cluster.version}</S.TableCell>
+                <S.TableCell maxWidth="99px">{cluster.brokerCount}</S.TableCell>
+                <S.TableCell maxWidth="78px">
                   {cluster.onlinePartitionCount}
-                </S.ClusterName>
-                <S.ClusterName maxWidth="60px">
+                </S.TableCell>
+                <S.TableCell maxWidth="60px">
                   <NavLink to={clusterTopicsPath(cluster.name)}>
                     {cluster.topicCount}
                   </NavLink>
-                </S.ClusterName>
-                <S.ClusterName maxWidth="85px">
+                </S.TableCell>
+                <S.TableCell maxWidth="85px">
                   <BytesFormatted value={cluster.bytesInPerSec} />
-                </S.ClusterName>
-                <S.ClusterName maxWidth="85px">
+                </S.TableCell>
+                <S.TableCell maxWidth="85px">
                   <BytesFormatted value={cluster.bytesOutPerSec} />
-                </S.ClusterName>
+                </S.TableCell>
               </tr>
             ))}
           </tbody>
