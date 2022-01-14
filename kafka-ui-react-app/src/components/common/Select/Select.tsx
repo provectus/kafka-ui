@@ -1,5 +1,5 @@
 import React, { ReactNode, useState, useRef } from 'react';
-import { RegisterOptions, useFormContext } from 'react-hook-form';
+import { RegisterOptions } from 'react-hook-form';
 import useClickOutside from 'lib/hooks/useClickOutside';
 import { SelectContext } from 'components/contexts/SelectContext';
 
@@ -18,7 +18,6 @@ export interface SelectProps {
   value?: string | number;
   placeholder?: string;
   disabled?: boolean;
-  required?: boolean;
   onChange?: (option: string | number) => void;
 }
 
@@ -28,6 +27,7 @@ export interface SelectOption {
 }
 
 const Select: React.FC<SelectProps> = ({
+  id,
   children,
   defaultValue,
   value,
@@ -37,7 +37,6 @@ const Select: React.FC<SelectProps> = ({
   name,
   hookFormOptions,
   disabled = false,
-  required = false,
   onChange,
   ...props
 }) => {
@@ -62,8 +61,6 @@ const Select: React.FC<SelectProps> = ({
     setShowOptions(false);
   };
 
-  const methods = useFormContext();
-
   return (
     <SelectContext.Provider
       value={{ selectedOption, changeSelectedOption: updateSelectedOption }}
@@ -78,10 +75,9 @@ const Select: React.FC<SelectProps> = ({
             disabled={disabled}
             onClick={showOptionsHandler}
             onKeyDown={showOptionsHandler}
-            {...methods.register(name, { ...hookFormOptions })}
             {...props}
           >
-            <S.SelectedOption role="option" tabIndex={0} >
+            <S.SelectedOption role="option" tabIndex={0}>
               {String(selectedOption).length > 0 ? selectedOption : placeholder}
             </S.SelectedOption>
             {showOptions && (

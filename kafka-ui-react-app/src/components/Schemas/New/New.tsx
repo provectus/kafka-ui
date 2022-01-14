@@ -1,6 +1,6 @@
 import React from 'react';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { clusterSchemaPath } from 'lib/paths';
 import { SchemaType } from 'generated-sources';
@@ -32,6 +32,7 @@ const New: React.FC = () => {
   const {
     register,
     handleSubmit,
+    control,
     formState: { isDirty, isSubmitting, errors },
   } = methods;
 
@@ -92,19 +93,25 @@ const New: React.FC = () => {
 
         <div>
           <InputLabel>Schema Type *</InputLabel>
-          <Select
-            selectSize="M"
+          <Controller
+            control={control}
+            rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
-            minWidth="50%"
-            hookFormOptions={{
-              required: 'Schema Type is required.',
-            }}
-            disabled={isSubmitting}
-          >
-            <Option value={SchemaType.AVRO}>AVRO</Option>
-            <Option value={SchemaType.JSON}>JSON</Option>
-            <Option value={SchemaType.PROTOBUF}>PROTOBUF</Option>
-          </Select>
+            render={({ field: { name, onChange, value } }) => (
+              <Select
+                selectSize="M"
+                name={name}
+                value={value}
+                onChange={onChange}
+                minWidth="50%"
+                disabled={isSubmitting}
+              >
+                <Option value={SchemaType.AVRO}>AVRO</Option>
+                <Option value={SchemaType.JSON}>JSON</Option>
+                <Option value={SchemaType.PROTOBUF}>PROTOBUF</Option>
+              </Select>
+            )}
+          />
           <FormError>
             <ErrorMessage errors={errors} name="schemaType" />
           </FormError>

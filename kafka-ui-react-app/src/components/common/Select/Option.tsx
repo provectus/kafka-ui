@@ -16,7 +16,12 @@ const Option: React.FC<{
   };
 
   return (
-    <S.Option onClick={handleOptionClick} disabled={disabled} role="option" tabIndex={0}>
+    <S.Option
+      onClick={handleOptionClick}
+      disabled={disabled}
+      role="option"
+      tabIndex={0}
+    >
       {children}
     </S.Option>
   );

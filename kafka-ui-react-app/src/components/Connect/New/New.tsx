@@ -129,13 +129,26 @@ const New: React.FC<NewProps> = ({
       <NewConnectFormStyled onSubmit={handleSubmit(onSubmit)}>
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>
-          <Select selectSize="M" name="connectName" disabled={isSubmitting}>
-            {connects.map(({ name }) => (
-              <Option key={name} value={name}>
-                {name}
-              </Option>
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="connectName"
+            render={({ field: { name, onChange, value } }) => (
+              <Select
+                selectSize="M"
+                name={name}
+                disabled={isSubmitting}
+                onChange={onChange}
+                value={value}
+                minWidth="100%"
+              >
+                {connects.map(({ name: connectName }) => (
+                  <Option key={connectName} value={connectName}>
+                    {connectName}
+                  </Option>
+                ))}
+              </Select>
+            )}
+          />
           <FormError>
             <ErrorMessage errors={errors} name="connectName" />
           </FormError>

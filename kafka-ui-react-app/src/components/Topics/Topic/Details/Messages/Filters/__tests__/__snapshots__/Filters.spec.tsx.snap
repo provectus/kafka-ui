@@ -183,6 +183,7 @@ exports[`Filters component matches the snapshot 1`] = `
 
 .c6 {
   position: relative;
+  list-style: none;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -201,9 +202,8 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: 100%;
+  min-width: auto;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  stroke: #171A1C;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
@@ -228,6 +228,7 @@ exports[`Filters component matches the snapshot 1`] = `
 
 .c11 {
   position: relative;
+  list-style: none;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -248,7 +249,6 @@ exports[`Filters component matches the snapshot 1`] = `
   color: #171A1C;
   min-width: 120px;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  stroke: #171A1C;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
@@ -273,6 +273,10 @@ exports[`Filters component matches the snapshot 1`] = `
 
 .c7 {
   padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .c10 {
@@ -477,18 +481,19 @@ exports[`Filters component matches the snapshot 1`] = `
             class="c5"
           >
             <div>
-              <div
+              <ul
                 class="c6"
                 id="selectSeekType"
                 role="listbox"
               >
-                <div
+                <li
                   class="c7"
                   role="option"
+                  tabindex="0"
                 >
                   OFFSET
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
             <div
               class="c2 offset-selector"
@@ -571,17 +576,18 @@ exports[`Filters component matches the snapshot 1`] = `
           </button>
         </div>
         <div>
-          <div
+          <ul
             class="c11"
             role="listbox"
           >
-            <div
+            <li
               class="c7"
               role="option"
+              tabindex="0"
             >
               FORWARD
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </div>
       <div
@@ -826,6 +832,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 
 .c6 {
   position: relative;
+  list-style: none;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -844,9 +851,8 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: 100%;
+  min-width: auto;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  stroke: #171A1C;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
@@ -871,6 +877,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 
 .c11 {
   position: relative;
+  list-style: none;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -891,7 +898,6 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   color: #171A1C;
   min-width: 120px;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  stroke: #171A1C;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
@@ -916,6 +922,10 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 
 .c7 {
   padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .c10 {
@@ -1119,18 +1129,19 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             class="c5"
           >
             <div>
-              <div
+              <ul
                 class="c6"
                 id="selectSeekType"
                 role="listbox"
               >
-                <div
+                <li
                   class="c7"
                   role="option"
+                  tabindex="0"
                 >
                   OFFSET
-                </div>
-              </div>
+                </li>
+              </ul>
             </div>
             <div
               class="c2 offset-selector"
@@ -1213,17 +1224,18 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </button>
         </div>
         <div>
-          <div
+          <ul
             class="c11"
             role="listbox"
           >
-            <div
+            <li
               class="c7"
               role="option"
+              tabindex="0"
             >
               FORWARD
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
       </div>
       <div

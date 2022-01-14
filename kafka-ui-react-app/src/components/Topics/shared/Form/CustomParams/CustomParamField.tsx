@@ -1,7 +1,7 @@
 import React from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
-import { FieldArrayWithId, useFormContext } from 'react-hook-form';
+import { FieldArrayWithId, useFormContext, Controller } from 'react-hook-form';
 import { remove as _remove } from 'lodash';
 import { TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
@@ -36,6 +36,7 @@ const CustomParamField: React.FC<Props> = ({
     formState: { errors },
     setValue,
     watch,
+    control,
   } = useFormContext<TopicFormData>();
   const nameValue = watch(`customParams.${index}.name`);
   let prevName = '';
@@ -62,28 +63,34 @@ const CustomParamField: React.FC<Props> = ({
       <>
         <div>
           <InputLabel>Custom Parameter</InputLabel>
-          <Select
-            name={`customParams.${index}.name` as const}
-            hookFormOptions={{
-              required: 'Custom Parameter is required.',
-            }}
-            placeholder="Select"
-            disabled={isDisabled}
-            defaultValue={field.name}
-            minWidth="270px"
-          >
-            {Object.keys(TOPIC_CUSTOM_PARAMS)
-              .sort()
-              .map((opt) => (
-                <Option
-                  key={opt}
-                  value={opt}
-                  disabled={existingFields.includes(opt)}
-                >
-                  {opt}
-                </Option>
-              ))}
-          </Select>
+          <Controller
+            control={control}
+            rules={{ required: 'Custom Parameter is required.' }}
+            name={`customParams.${index}.name`}
+            render={({ field: { name, onChange, value } }) => (
+              <Select
+                name={name}
+                placeholder="Select"
+                disabled={isDisabled}
+                defaultValue={field.name}
+                minWidth="270px"
+                value={value}
+                onChange={onChange}
+              >
+                {Object.keys(TOPIC_CUSTOM_PARAMS)
+                  .sort()
+                  .map((opt) => (
+                    <Option
+                      key={opt}
+                      value={opt}
+                      disabled={existingFields.includes(opt)}
+                    >
+                      {opt}
+                    </Option>
+                  ))}
+              </Select>
+            )}
+          />
           <FormError>
             <ErrorMessage errors={errors} name={`customParams.${index}.name`} />
           </FormError>

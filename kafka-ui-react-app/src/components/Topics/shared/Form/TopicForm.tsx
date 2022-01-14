@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
@@ -31,6 +31,7 @@ const TopicForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const {
+    control,
     formState: { errors },
   } = useFormContext();
 
@@ -100,11 +101,23 @@ const TopicForm: React.FC<Props> = ({
           </div>
           <div>
             <InputLabel>Cleanup policy</InputLabel>
-            <Select defaultValue="delete" name="cleanupPolicy" minWidth="250px">
-              <Option value="delete">Delete</Option>
-              <Option value="compact">Compact</Option>
-              <Option value="compact,delete">Compact,Delete</Option>
-            </Select>
+            <Controller
+              control={control}
+              name="cleanupPolicy"
+              render={({ field: { name, onChange, value } }) => (
+                <Select
+                  defaultValue="delete"
+                  name={name}
+                  value={value}
+                  onChange={onChange}
+                  minWidth="250px"
+                >
+                  <Option value="delete">Delete</Option>
+                  <Option value="compact">Compact</Option>
+                  <Option value="compact,delete">Compact,Delete</Option>
+                </Select>
+              )}
+            />
           </div>
         </S.Column>
 
@@ -117,13 +130,25 @@ const TopicForm: React.FC<Props> = ({
           <S.Column>
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
-              <Select defaultValue={-1} name="retentionBytes" minWidth="100%">
-                <Option value={-1}>Not Set</Option>
-                <Option value={BYTES_IN_GB}>1 GB</Option>
-                <Option value={BYTES_IN_GB * 10}>10 GB</Option>
-                <Option value={BYTES_IN_GB * 20}>20 GB</Option>
-                <Option value={BYTES_IN_GB * 50}>50 GB</Option>
-              </Select>
+              <Controller
+                control={control}
+                name="retentionBytes"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    defaultValue={-1}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    minWidth="100%"
+                  >
+                    <Option value={-1}>Not Set</Option>
+                    <Option value={BYTES_IN_GB}>1 GB</Option>
+                    <Option value={BYTES_IN_GB * 10}>10 GB</Option>
+                    <Option value={BYTES_IN_GB * 20}>20 GB</Option>
+                    <Option value={BYTES_IN_GB * 50}>50 GB</Option>
+                  </Select>
+                )}
+              />
             </div>
 
             <div>

@@ -51,6 +51,7 @@ Array [
 
 .c2 {
   position: relative;
+  list-style: none;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -69,9 +70,8 @@ Array [
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: 100%;
+  min-width: auto;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
-  stroke: #171A1C;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
@@ -96,6 +96,10 @@ Array [
 
 .c3 {
   padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .c6 {
@@ -265,7 +269,7 @@ Array [
         Connect *
       </label>
       <div>
-        <div
+        <ul
           className="c2"
           disabled={false}
           name="connectName"
@@ -275,13 +279,14 @@ Array [
           onKeyDown={[Function]}
           role="listbox"
         >
-          <div
+          <li
             className="c3"
             role="option"
+            tabIndex={0}
           >
             
-          </div>
-        </div>
+          </li>
+        </ul>
       </div>
       <p
         className="c4"

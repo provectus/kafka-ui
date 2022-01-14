@@ -121,8 +121,9 @@ describe('ResetOffsets', () => {
           }
         );
         await waitFor(() => {
-          fireEvent.click(screen.getAllByLabelText('Partition #0')[1]);
-          fireEvent.click(screen.getByText('10'));
+          fireEvent.change(screen.getAllByLabelText('Partition #0')[1], {
+            target: { value: '10' },
+          });
         });
         userEvent.click(screen.getByText('Submit'));
         await waitFor(() => resetConsumerGroupOffsetsMockCalled());

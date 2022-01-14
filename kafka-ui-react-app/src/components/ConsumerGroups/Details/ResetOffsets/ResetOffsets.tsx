@@ -184,33 +184,53 @@ const ResetOffsets: React.FC = () => {
           <MainSelectorsWrapperStyled>
             <div>
               <InputLabel id="topicLabel">Topic</InputLabel>
-              <Select
+              <Controller
+                control={control}
                 name="topic"
-                id="topic"
-                selectSize="M"
-                aria-labelledby="topicLabel"
-              >
-                {uniqueTopics.map((topic) => (
-                  <Option key={topic} value={topic}>
-                    {topic}
-                  </Option>
-                ))}
-              </Select>
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="topic"
+                    selectSize="M"
+                    aria-labelledby="topicLabel"
+                    minWidth="100%"
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                  >
+                    {uniqueTopics.map((topic) => (
+                      <Option key={topic} value={topic}>
+                        {topic}
+                      </Option>
+                    ))}
+                  </Select>
+                )}
+              />
             </div>
             <div>
               <InputLabel id="resetTypeLabel">Reset Type</InputLabel>
-              <Select
+              <Controller
+                control={control}
                 name="resetType"
-                id="resetType"
-                selectSize="M"
-                aria-labelledby="resetTypeLabel"
-              >
-                {Object.values(ConsumerGroupOffsetsResetType).map((type) => (
-                  <Option key={type} value={type}>
-                    {type}
-                  </Option>
-                ))}
-              </Select>
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="resetType"
+                    selectSize="M"
+                    aria-labelledby="resetTypeLabel"
+                    minWidth="100%"
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                  >
+                    {Object.values(ConsumerGroupOffsetsResetType).map(
+                      (type) => (
+                        <Option key={type} value={type}>
+                          {type}
+                        </Option>
+                      )
+                    )}
+                  </Select>
+                )}
+              />
             </div>
             <div>
               <InputLabel>Partitions</InputLabel>
