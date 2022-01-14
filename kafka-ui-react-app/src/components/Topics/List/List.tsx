@@ -229,10 +229,7 @@ const List: React.FC<TopicsListProps> = ({
                   orderBy={orderBy}
                   handleOrderBy={setTopicsOrderBy}
                 />
-                <TableHeaderCell
-                  title="Replication Factor"
-                  previewText="Test"
-                />
+                <TableHeaderCell title="Replication Factor" />
                 <TableHeaderCell title="Number of messages" />
                 <TableHeaderCell title="Size" />
                 <TableHeaderCell />
