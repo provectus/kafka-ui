@@ -1,11 +1,8 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
-
-import { TableHeaderCellProps } from './TableHeaderCell';
 
 interface TitleProps {
-  isSortable?: boolean;
-  isCurrentSort?: boolean;
+  isOrderable?: boolean;
+  isOrdered?: boolean;
 }
 export const Title = styled.span<TitleProps>`
   font-family: Inter, sans-serif;
@@ -19,19 +16,19 @@ export const Title = styled.span<TitleProps>`
   color: ${(props) => props.theme.thStyles.color.normal};
 
   ${(props) =>
-    props.isSortable &&
+    props.isOrderable &&
     `
     cursor: pointer;
 
     &:hover {
-      color: ${Colors.brand[50]};
+      color: ${props.theme.thStyles.color.hover};
     }
   `}
 
   ${(props) =>
-    props.isCurrentSort &&
+    props.isOrdered &&
     `
-    color: ${Colors.brand[50]};
+    color: ${props.theme.thStyles.color.active};
   `}
 `;
 
@@ -49,8 +46,8 @@ export const Preview = styled.span`
   cursor: pointer;
 `;
 
-export const TableHeaderCell = styled.th<TableHeaderCellProps>`
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
+export const TableHeaderCell = styled.th`
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 `;

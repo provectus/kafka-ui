@@ -34,9 +34,9 @@ exports[`Tasks view matches snapshot 1`] = `
 }
 
 .c1 {
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 }
 
 <table
@@ -194,9 +194,9 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
 }
 
 .c1 {
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 }
 
 <table

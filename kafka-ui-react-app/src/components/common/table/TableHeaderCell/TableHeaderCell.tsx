@@ -22,24 +22,32 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
     ...restProps
   } = props;
 
+  const isOrdered = !!orderValue && orderValue === orderBy;
   const isOrderable = !!(orderValue && handleOrderBy);
-  const isOrdered = !!orderValue && orderBy === orderValue;
 
+  const handleOnClick = () => {
+    return orderValue && handleOrderBy && handleOrderBy(orderValue);
+  };
+  const handleOnKeyDown = (event: React.KeyboardEvent) => {
+    return (
+      event.code === 'Space' &&
+      orderValue &&
+      handleOrderBy &&
+      handleOrderBy(orderValue)
+    );
+  };
+  const orderableProps = isOrderable && {
+    isOrderable,
+    onClick: handleOnClick,
+    onKeyDown: handleOnKeyDown,
+    role: 'button',
+    tabIndex: 0,
+  };
   return (
     <S.TableHeaderCell {...restProps}>
-      <S.Title
-        isSortable={isSortable}
-        isCurrentSort={isCurrentSort}
-        {...(orderValue &&
-          handleOrderBy && {
-            onClick: () => handleOrderBy(orderValue),
-            onKeyDown: (e) => e.code === 'Space' && handleOrderBy(orderValue),
-            role: 'button',
-            tabIndex: 0,
-          })}
-      >
+      <S.Title isOrdered={isOrdered} {...orderableProps}>
         {title}
-        {isSortable && (
+        {isOrderable && (
           <span className="icon is-small">
             <i className="fas fa-sort" />
           </span>
