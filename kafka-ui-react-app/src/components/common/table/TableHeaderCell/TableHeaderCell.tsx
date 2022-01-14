@@ -1,7 +1,6 @@
 import React from 'react';
 import { TopicColumnsToSort } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
-// import cx from 'classnames';
 
 export interface TableHeaderCellProps {
   title?: string;
@@ -24,7 +23,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
   } = props;
 
   const isSortable = !!(orderValue && handleOrderBy);
-  const isCurrentSort = isSortable && orderBy === orderValue;
+  const isCurrentSort = !!orderValue && orderBy === orderValue;
 
   return (
     <S.TableHeaderCell {...restProps}>

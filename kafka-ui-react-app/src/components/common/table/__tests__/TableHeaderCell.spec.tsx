@@ -52,6 +52,58 @@ describe('TableHeaderCell', () => {
     expect(wrapper.find('span').at(0).text()).toEqual(STUB_TITLE);
     expect(wrapper.exists('span.icon.is-small')).toBeTruthy();
     expect(wrapper.exists('i.fas.fa-sort')).toBeTruthy();
+
+    const domNode = wrapper.find('span').at(0).getDOMNode();
+    const color = getComputedStyle(domNode).getPropertyValue('color');
+    expect(color).toBe('rgb(79, 79, 255)');
+
+    const cursor = getComputedStyle(domNode).getPropertyValue('cursor');
+    expect(cursor).toBe('pointer');
+  });
+
+  it('renders without sort indication', () => {
+    const wrapper = mountWithTheme(
+      setupComponent({
+        title: STUB_TITLE,
+        orderValue: TopicColumnsToSort.NAME,
+      })
+    );
+
+    expect(wrapper.find('span').at(0).text()).toEqual(STUB_TITLE);
+    expect(wrapper.exists('span.icon.is-small')).toBeFalsy();
+    expect(wrapper.exists('i.fas.fa-sort')).toBeFalsy();
+
+    const domNode = wrapper.find('span').at(0).getDOMNode();
+    const cursor = getComputedStyle(domNode).getPropertyValue('cursor');
+    expect(cursor).toBe('');
+  });
+
+  it('renders with hightlighted title when orderBy and orderValue are equal', () => {
+    const wrapper = mountWithTheme(
+      setupComponent({
+        title: STUB_TITLE,
+        orderBy: TopicColumnsToSort.NAME,
+        orderValue: TopicColumnsToSort.NAME,
+      })
+    );
+
+    const domNode = wrapper.find('span').at(0).getDOMNode();
+    const color = getComputedStyle(domNode).getPropertyValue('color');
+    expect(color).toBe('rgb(79, 79, 255)');
+  });
+
+  it('renders without hightlighted title when orderBy and orderValue are not equal', () => {
+    const wrapper = mountWithTheme(
+      setupComponent({
+        title: STUB_TITLE,
+        orderBy: TopicColumnsToSort.NAME,
+        orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
+      })
+    );
+
+    const domNode = wrapper.find('span').at(0).getDOMNode();
+    const color = getComputedStyle(domNode).getPropertyValue('color');
+    expect(color).toBe('rgb(115, 132, 140)');
   });
 
   it('renders with default (primary) theme', () => {
