@@ -11,5 +11,5 @@ export const SwitchWrapper = styled.div`
 export const TableCell = styled.td.attrs({ role: 'tablecell' })<TableCellProps>`
   padding: 16px;
   word-break: break-word;
-  max-width: ${(props) => (props.maxWidth ? props.maxWidth : 'auto')};
+  max-width: ${(props) => props.maxWidth};
 `;
