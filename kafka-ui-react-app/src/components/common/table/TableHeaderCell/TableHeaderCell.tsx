@@ -48,7 +48,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
       <S.Title isOrdered={isOrdered} {...orderableProps}>
         {title}
         {isOrderable && (
-          <span className="icon is-small">
+          <span title="Sort icon" className="icon is-small">
             <i className="fas fa-sort" />
           </span>
         )}

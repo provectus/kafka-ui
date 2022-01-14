@@ -14,6 +14,7 @@ export const Title = styled.span<TitleProps>`
   text-align: left;
   background: ${(props) => props.theme.thStyles.backgroundColor.normal};
   color: ${(props) => props.theme.thStyles.color.normal};
+  cursor: default;
 
   ${(props) =>
     props.isOrderable &&
