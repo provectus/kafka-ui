@@ -14,13 +14,12 @@ import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
-import { Option as MultiOption } from 'react-multi-select-component/dist/lib/interfaces';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { TopicName, ClusterName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
-import Option from 'components/common/Select/Option';
 import { Button } from 'components/common/Button/Button';
 
 import * as S from './Filters.styled';
@@ -49,6 +48,15 @@ export interface FiltersProps {
 
 const PER_PAGE = 100;
 
+const SeekTypeOptions = [
+  { value: SeekType.OFFSET, label: 'Offset' },
+  { value: SeekType.TIMESTAMP, label: 'Timestamp' },
+];
+const SeekDirectionOptions = [
+  { value: SeekDirection.FORWARD, label: 'Oldest First' },
+  { value: SeekDirection.BACKWARD, label: 'Newest First' },
+];
+
 const Filters: React.FC<FiltersProps> = ({
   clusterName,
   topicName,
@@ -72,12 +80,12 @@ const Filters: React.FC<FiltersProps> = ({
     [location]
   );
 
-  const [selectedPartitions, setSelectedPartitions] = React.useState<
-    MultiOption[]
-  >(getSelectedPartitionsFromSeekToParam(searchParams, partitions));
+  const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
+    getSelectedPartitionsFromSeekToParam(searchParams, partitions)
+  );
 
   const [attempt, setAttempt] = React.useState(0);
-  const [seekType, setSeekType] = React.useState<SeekType>(
+  const [currentSeekType, setSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
   const [offset, setOffset] = React.useState<string>(
@@ -100,11 +108,11 @@ const Filters: React.FC<FiltersProps> = ({
 
   const isSubmitDisabled = React.useMemo(() => {
     if (isSeekTypeControlVisible) {
-      return seekType === SeekType.TIMESTAMP && !timestamp;
+      return currentSeekType === SeekType.TIMESTAMP && !timestamp;
     }
 
     return false;
-  }, [isSeekTypeControlVisible, seekType, timestamp]);
+  }, [isSeekTypeControlVisible, currentSeekType, timestamp]);
 
   const partitionMap = React.useMemo(
     () =>
@@ -129,11 +137,11 @@ const Filters: React.FC<FiltersProps> = ({
     };
 
     if (isSeekTypeControlVisible) {
-      props.seekType = seekType;
+      props.seekType = currentSeekType;
       props.seekTo = selectedPartitions.map(({ value }) => {
         let seekToOffset;
 
-        if (seekType === SeekType.OFFSET) {
+        if (currentSeekType === SeekType.OFFSET) {
           if (offset) {
             seekToOffset = offset;
           } else {
@@ -245,14 +253,15 @@ const Filters: React.FC<FiltersProps> = ({
             <S.SeekTypeSelectorWrapper>
               <Select
                 id="selectSeekType"
-                onChange={(value) => setSeekType(value as SeekType)}
-                value={seekType}
+                onChange={(option) => setSeekType(option.value as SeekType)}
+                value={SeekTypeOptions.find(
+                  (option) => option.value === currentSeekType
+                )}
                 selectSize="M"
-              >
-                <Option value={SeekType.OFFSET}>Offset</Option>
-                <Option value={SeekType.TIMESTAMP}>Timestamp</Option>
-              </Select>
-              {seekType === SeekType.OFFSET ? (
+                minWidth="100px"
+                options={SeekTypeOptions}
+              />
+              {currentSeekType === SeekType.OFFSET ? (
                 <Input
                   id="offset"
                   type="text"
@@ -310,13 +319,13 @@ const Filters: React.FC<FiltersProps> = ({
         </S.FilterInputs>
         <Select
           selectSize="M"
-          onChange={(value) => toggleSeekDirection(value as string)}
-          value={seekDirection}
+          onChange={(option) => toggleSeekDirection(option.value as string)}
+          value={SeekDirectionOptions.find(
+            (option) => option.value === seekDirection
+          )}
           minWidth="120px"
-        >
-          <Option value={SeekDirection.FORWARD}>Oldest First</Option>
-          <Option value={SeekDirection.BACKWARD}>Newest First</Option>
-        </Select>
+          options={SeekDirectionOptions}
+        />
       </div>
       <S.FiltersMetrics>
         <p style={{ fontSize: 14 }}>{isFetching && phaseMessage}</p>

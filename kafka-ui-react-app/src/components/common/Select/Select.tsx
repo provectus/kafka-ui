@@ -1,47 +1,42 @@
-import React, { ReactNode, useState, useRef } from 'react';
-import { RegisterOptions } from 'react-hook-form';
+import React, { useState, useRef } from 'react';
 import useClickOutside from 'lib/hooks/useClickOutside';
-import { SelectContext } from 'components/contexts/SelectContext';
 
 import * as S from './Select.styled';
 import LiveIcon from './LiveIcon.styled';
 
 export interface SelectProps {
-  children?: ReactNode | ReactNode[];
+  options?: Array<SelectOption>;
   id?: string;
   name?: string;
   selectSize?: 'M' | 'L';
   isLive?: boolean;
-  hookFormOptions?: RegisterOptions;
   minWidth?: string;
-  defaultValue?: string | number;
-  value?: string | number;
+  value?: SelectOption;
   placeholder?: string;
   disabled?: boolean;
-  onChange?: (option: string | number) => void;
+  onChange?: (option: SelectOption) => void;
 }
 
 export interface SelectOption {
   label: string | number;
   value: string | number;
+  disabled?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
   id,
-  children,
-  defaultValue,
+  options = [],
   value,
   selectSize = 'L',
   placeholder = '',
   isLive,
   name,
-  hookFormOptions,
   disabled = false,
   onChange,
   ...props
 }) => {
   const [selectedOption, setSelectedOption] = useState(
-    value || defaultValue || ''
+    value || { label: '', value: '' }
   );
   const [showOptions, setShowOptions] = useState(false);
 
@@ -53,7 +48,7 @@ const Select: React.FC<SelectProps> = ({
   const clickOutsideHandler = () => setShowOptions(false);
   useClickOutside(selectContainerRef, clickOutsideHandler);
 
-  const updateSelectedOption = (option: string | number) => {
+  const updateSelectedOption = (option: SelectOption) => {
     if (disabled) return;
 
     setSelectedOption(option);
@@ -62,48 +57,70 @@ const Select: React.FC<SelectProps> = ({
   };
 
   return (
-    <SelectContext.Provider
-      value={{ selectedOption, changeSelectedOption: updateSelectedOption }}
-    >
-      <div ref={selectContainerRef}>
-        {isLive && <LiveIcon />}
-        {name ? (
-          <S.Select
-            role="listbox"
-            selectSize={selectSize}
-            isLive={isLive}
-            disabled={disabled}
-            onClick={showOptionsHandler}
-            onKeyDown={showOptionsHandler}
-            {...props}
-          >
-            <S.SelectedOption role="option" tabIndex={0}>
-              {String(selectedOption).length > 0 ? selectedOption : placeholder}
-            </S.SelectedOption>
-            {showOptions && (
-              <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
-            )}
-          </S.Select>
-        ) : (
-          <S.Select
-            role="listbox"
-            selectSize={selectSize}
-            isLive={isLive}
-            disabled={disabled}
-            onClick={showOptionsHandler}
-            onKeyDown={showOptionsHandler}
-            {...props}
-          >
-            <S.SelectedOption role="option" tabIndex={0}>
-              {String(selectedOption).length > 0 ? selectedOption : placeholder}
-            </S.SelectedOption>
-            {showOptions && (
-              <S.OptionList selectSize={selectSize}>{children}</S.OptionList>
-            )}
-          </S.Select>
-        )}
-      </div>
-    </SelectContext.Provider>
+    <div ref={selectContainerRef}>
+      {isLive && <LiveIcon />}
+      {name ? (
+        <S.Select
+          role="listbox"
+          selectSize={selectSize}
+          isLive={isLive}
+          disabled={disabled}
+          onClick={showOptionsHandler}
+          onKeyDown={showOptionsHandler}
+          {...props}
+        >
+          <S.SelectedOption role="option" tabIndex={0}>
+            {String(selectedOption.value).length > 0
+              ? selectedOption.label
+              : placeholder}
+          </S.SelectedOption>
+          {showOptions && (
+            <S.OptionList>
+              {options?.map((option) => (
+                <S.Option
+                  value={option.value}
+                  key={option.value}
+                  disabled={option.disabled}
+                  onClick={() => updateSelectedOption(option)}
+                >
+                  {option.label}
+                </S.Option>
+              ))}
+            </S.OptionList>
+          )}
+        </S.Select>
+      ) : (
+        <S.Select
+          role="listbox"
+          selectSize={selectSize}
+          isLive={isLive}
+          disabled={disabled}
+          onClick={showOptionsHandler}
+          onKeyDown={showOptionsHandler}
+          {...props}
+        >
+          <S.SelectedOption role="option" tabIndex={0}>
+            {String(selectedOption.value).length > 0
+              ? selectedOption.label
+              : placeholder}
+          </S.SelectedOption>
+          {showOptions && (
+            <S.OptionList>
+              {options?.map((option) => (
+                <S.Option
+                  value={option.value}
+                  key={option.value}
+                  disabled={option.disabled}
+                  onClick={() => updateSelectedOption(option)}
+                >
+                  {option.label}
+                </S.Option>
+              ))}
+            </S.OptionList>
+          )}
+        </S.Select>
+      )}
+    </div>
   );
 };
 

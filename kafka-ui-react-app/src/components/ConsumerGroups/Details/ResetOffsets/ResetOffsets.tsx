@@ -9,7 +9,7 @@ import {
 } from 'react-hook-form';
 import { ClusterName, ConsumerGroupID } from 'redux/interfaces';
 import MultiSelect from 'react-multi-select-component';
-import { Option as MultiOption } from 'react-multi-select-component/dist/lib/interfaces';
+import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { groupBy } from 'lodash';
@@ -17,7 +17,6 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
 import { useHistory, useParams } from 'react-router';
 import Select from 'components/common/Select/Select';
-import Option from 'components/common/Select/Option';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { Button } from 'components/common/Button/Button';
 import Input from 'components/common/Input/Input';
@@ -63,9 +62,9 @@ const ResetOffsets: React.FC = () => {
   }, [clusterName, consumerGroupID]);
 
   const [uniqueTopics, setUniqueTopics] = React.useState<string[]>([]);
-  const [selectedPartitions, setSelectedPartitions] = React.useState<
-    MultiOption[]
-  >([]);
+  const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
+    []
+  );
 
   const methods = useForm<FormType>({
     mode: 'onChange',
@@ -99,7 +98,7 @@ const ResetOffsets: React.FC = () => {
     }
   }, [isFetched]);
 
-  const onSelectedPartitionsChange = (value: MultiOption[]) => {
+  const onSelectedPartitionsChange = (value: Option[]) => {
     clearErrors();
     setValue(
       'partitionsOffsets',
@@ -187,22 +186,20 @@ const ResetOffsets: React.FC = () => {
               <Controller
                 control={control}
                 name="topic"
-                render={({ field: { name, onChange, value } }) => (
+                render={({ field: { name, onChange } }) => (
+                  // TODO value
                   <Select
                     id="topic"
                     selectSize="M"
                     aria-labelledby="topicLabel"
                     minWidth="100%"
                     name={name}
-                    value={value}
                     onChange={onChange}
-                  >
-                    {uniqueTopics.map((topic) => (
-                      <Option key={topic} value={topic}>
-                        {topic}
-                      </Option>
-                    ))}
-                  </Select>
+                    options={uniqueTopics.map((topic) => ({
+                      value: topic,
+                      label: topic,
+                    }))}
+                  />
                 )}
               />
             </div>
@@ -211,24 +208,19 @@ const ResetOffsets: React.FC = () => {
               <Controller
                 control={control}
                 name="resetType"
-                render={({ field: { name, onChange, value } }) => (
+                render={({ field: { name, onChange } }) => (
+                  // TODO value
                   <Select
                     id="resetType"
                     selectSize="M"
                     aria-labelledby="resetTypeLabel"
                     minWidth="100%"
                     name={name}
-                    value={value}
                     onChange={onChange}
-                  >
-                    {Object.values(ConsumerGroupOffsetsResetType).map(
-                      (type) => (
-                        <Option key={type} value={type}>
-                          {type}
-                        </Option>
-                      )
+                    options={Object.values(ConsumerGroupOffsetsResetType).map(
+                      (type) => ({ value: type, label: type })
                     )}
-                  </Select>
+                  />
                 )}
               />
             </div>

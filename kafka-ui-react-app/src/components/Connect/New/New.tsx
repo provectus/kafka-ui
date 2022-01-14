@@ -11,7 +11,6 @@ import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Select from 'components/common/Select/Select';
-import Option from 'components/common/Select/Option';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
@@ -123,6 +122,11 @@ const New: React.FC<NewProps> = ({
     return null;
   }
 
+  const connectOptions = connects.map(({ name: connectName }) => ({
+    value: connectName,
+    label: connectName,
+  }));
+
   return (
     <FormProvider {...methods}>
       <PageHeading text="Create new connector" />
@@ -132,21 +136,16 @@ const New: React.FC<NewProps> = ({
           <Controller
             control={control}
             name="connectName"
-            render={({ field: { name, onChange, value } }) => (
+            render={({ field: { name, onChange } }) => (
               <Select
                 selectSize="M"
                 name={name}
                 disabled={isSubmitting}
                 onChange={onChange}
-                value={value}
+                value={connectOptions[0]}
                 minWidth="100%"
-              >
-                {connects.map(({ name: connectName }) => (
-                  <Option key={connectName} value={connectName}>
-                    {connectName}
-                  </Option>
-                ))}
-              </Select>
+                options={connectOptions}
+              />
             )}
           />
           <FormError>

@@ -1,6 +1,5 @@
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import Select from 'components/common/Select/Select';
-import Option from 'components/common/Select/Option';
+import Select, { SelectOption } from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
@@ -46,8 +45,10 @@ const GlobalSchemaSelector: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleChangeCompatibilityLevel = (level: string | number) => {
-    setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);
+  const handleChangeCompatibilityLevel = (level: SelectOption) => {
+    setNextCompatibilityLevel(
+      level.value as CompatibilityLevelCompatibilityEnum
+    );
     setIsConfirmationVisible(true);
   };
 
@@ -70,24 +71,23 @@ const GlobalSchemaSelector: React.FC = () => {
 
   if (!currentCompatibilityLevel) return null;
 
+  // TODO uncorrect reset
   return (
     <S.Wrapper>
       <div>Global Compatibility Level: </div>
       <Select
         selectSize="M"
-        defaultValue={currentCompatibilityLevel}
+        value={{
+          value: currentCompatibilityLevel,
+          label: currentCompatibilityLevel,
+        }}
         minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}
-      >
-        {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-          (level: string) => (
-            <Option key={level} value={level}>
-              {level}
-            </Option>
-          )
+        options={Object.keys(CompatibilityLevelCompatibilityEnum).map(
+          (level) => ({ value: level, label: level })
         )}
-      </Select>
+      />
       <ConfirmationModal
         isOpen={isConfirmationVisible}
         onCancel={() => setIsConfirmationVisible(false)}

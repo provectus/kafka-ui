@@ -7,7 +7,6 @@ import { TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import Select from 'components/common/Select/Select';
-import Option from 'components/common/Select/Option';
 import Input from 'components/common/Input/Input';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import CloseIcon from 'components/common/Icons/CloseIcon';
@@ -58,6 +57,7 @@ const CustomParamField: React.FC<Props> = ({
     }
   }, [nameValue]);
 
+  // TODO broken field update
   return (
     <C.Column>
       <>
@@ -67,28 +67,21 @@ const CustomParamField: React.FC<Props> = ({
             control={control}
             rules={{ required: 'Custom Parameter is required.' }}
             name={`customParams.${index}.name`}
-            render={({ field: { name, onChange, value } }) => (
+            render={({ field: { name, onChange } }) => (
               <Select
                 name={name}
                 placeholder="Select"
                 disabled={isDisabled}
-                defaultValue={field.name}
                 minWidth="270px"
-                value={value}
                 onChange={onChange}
-              >
-                {Object.keys(TOPIC_CUSTOM_PARAMS)
+                options={Object.keys(TOPIC_CUSTOM_PARAMS)
                   .sort()
-                  .map((opt) => (
-                    <Option
-                      key={opt}
-                      value={opt}
-                      disabled={existingFields.includes(opt)}
-                    >
-                      {opt}
-                    </Option>
-                  ))}
-              </Select>
+                  .map((opt) => ({
+                    value: opt,
+                    label: opt,
+                    disabled: existingFields.includes(opt),
+                  }))}
+              />
             )}
           />
           <FormError>

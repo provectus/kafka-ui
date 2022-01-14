@@ -7,10 +7,6 @@ interface Props {
   disabled?: boolean;
 }
 
-interface OptionListProps {
-  selectSize: 'M' | 'L';
-}
-
 interface OptionProps {
   disabled?: boolean;
 }
@@ -61,7 +57,7 @@ export const Select = styled.ul<Props>`
   }
 `;
 
-export const OptionList = styled.ul<OptionListProps>`
+export const OptionList = styled.ul`
   position: absolute;
   top: 100%;
   left: 0;

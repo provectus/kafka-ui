@@ -9,7 +9,6 @@ import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 import Select from 'components/common/Select/Select';
-import Option from 'components/common/Select/Option';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -89,21 +88,21 @@ const Edit: React.FC = () => {
                 control={control}
                 rules={{ required: true }}
                 name="schemaType"
-                render={({ field: { name, onChange, value } }) => (
+                render={({ field: { name, onChange } }) => (
                   <Select
                     name={name}
-                    value={value}
+                    value={{
+                      value: schema.schemaType,
+                      label: schema.schemaType,
+                    }}
                     onChange={onChange}
                     minWidth="100%"
-                    defaultValue={schema.schemaType}
                     disabled={isSubmitting}
-                  >
-                    {Object.keys(SchemaType).map((type: string) => (
-                      <Option key={type} value={type}>
-                        {type}
-                      </Option>
-                    ))}
-                  </Select>
+                    options={Object.keys(SchemaType).map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                  />
                 )}
               />
             </div>
@@ -113,23 +112,20 @@ const Edit: React.FC = () => {
               <Controller
                 control={control}
                 name="compatibilityLevel"
-                render={({ field: { name, onChange, value } }) => (
+                render={({ field: { name, onChange } }) => (
                   <Select
                     name={name}
-                    value={value}
+                    value={{
+                      value: schema.compatibilityLevel,
+                      label: schema.compatibilityLevel,
+                    }}
                     onChange={onChange}
                     minWidth="100%"
-                    defaultValue={schema.compatibilityLevel}
                     disabled={isSubmitting}
-                  >
-                    {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                      (level: string) => (
-                        <Option key={level} value={level}>
-                          {level}
-                        </Option>
-                      )
-                    )}
-                  </Select>
+                    options={Object.keys(
+                      CompatibilityLevelCompatibilityEnum
+                    ).map((level) => ({ value: level, label: level }))}
+                  />
                 )}
               />
             </div>
