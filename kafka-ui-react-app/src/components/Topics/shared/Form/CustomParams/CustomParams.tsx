@@ -22,7 +22,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
   const [existingFields, setExistingFields] = React.useState<string[]>([]);
   const removeField = (index: number): void => {
     setExistingFields(
-      existingFields.filter((field) => field === fields[index].name)
+      existingFields.filter((field) => field !== fields[index].name)
     );
     remove(index);
   };
