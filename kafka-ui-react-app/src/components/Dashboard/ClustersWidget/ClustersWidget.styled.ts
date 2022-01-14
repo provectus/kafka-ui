@@ -8,7 +8,7 @@ export const SwitchWrapper = styled.div`
   padding: 16px;
 `;
 
-export const TableCell = styled.td<TableCellProps>`
+export const TableCell = styled.td.attrs({ role: 'tablecell' })<TableCellProps>`
   padding: 16px;
   word-break: break-word;
   max-width: ${(props) => (props.maxWidth ? props.maxWidth : 'auto')};

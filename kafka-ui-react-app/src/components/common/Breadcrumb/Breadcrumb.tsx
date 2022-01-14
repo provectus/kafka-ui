@@ -27,7 +27,7 @@ const Breadcrumb: React.FC<Props> = () => {
     () =>
       paths.slice(basePathEntriesLength).map((path, index) => {
         return !pathParams.includes(paths[basePathEntriesLength + index])
-          ? path.split('-').map(capitalize).join('-')
+          ? path.split('-').map(capitalize).join(' ')
           : path;
       }),
     [paths]

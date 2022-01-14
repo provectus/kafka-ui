@@ -27,4 +27,10 @@ describe('ClustersWidget', () => {
     userEvent.click(screen.getByRole('checkbox'));
     expect(screen.getAllByRole('row').length).toBe(2);
   });
+
+  it('render clusterWidget cells', () => {
+    const cells = screen.getAllByRole('tablecell');
+    expect(screen.getAllByRole('tablecell').length).toBe(14);
+    expect(cells[0]).toHaveStyle('max-width: 99px');
+  });
 });

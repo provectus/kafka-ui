@@ -17,6 +17,6 @@ describe('Breadcrumb component', () => {
   it('renders the list of links', () => {
     setupComponent(createTopicPath);
     expect(screen.getByText('Topics')).toBeInTheDocument();
-    expect(screen.getByText('Create-New')).toBeInTheDocument();
+    expect(screen.getByText('Create New')).toBeInTheDocument();
   });
 });
