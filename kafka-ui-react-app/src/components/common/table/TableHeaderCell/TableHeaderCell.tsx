@@ -23,7 +23,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
   } = props;
 
   const isSortable = !!(orderValue && handleOrderBy);
-  const isCurrentSort = !!orderValue && orderBy === orderValue;
+  const isOrdered = !!orderValue && orderBy === orderValue;
 
   return (
     <S.TableHeaderCell {...restProps}>
