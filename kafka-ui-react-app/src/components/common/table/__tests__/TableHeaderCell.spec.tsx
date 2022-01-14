@@ -35,8 +35,8 @@ describe('TableHeaderCell', () => {
       })
     );
 
-    expect(wrapper.find('span.title').text()).toEqual(STUB_TITLE);
-    expect(wrapper.find('span.preview').text()).toEqual(STUB_PREVIEW_TEXT);
+    expect(wrapper.find('span').at(0).text()).toEqual(STUB_TITLE);
+    expect(wrapper.find('span').at(1).text()).toEqual(STUB_PREVIEW_TEXT);
   });
 
   it('renders with orderBy props', () => {
@@ -45,11 +45,12 @@ describe('TableHeaderCell', () => {
         title: STUB_TITLE,
         orderBy: TopicColumnsToSort.NAME,
         orderValue: TopicColumnsToSort.NAME,
+        handleOrderBy: () => {},
       })
     );
 
-    expect(wrapper.find('span.title').text()).toEqual(STUB_TITLE);
-    expect(wrapper.exists('span.icon.is-small.is-clickable')).toBeTruthy();
+    expect(wrapper.find('span').at(0).text()).toEqual(STUB_TITLE);
+    expect(wrapper.exists('span.icon.is-small')).toBeTruthy();
     expect(wrapper.exists('i.fas.fa-sort')).toBeTruthy();
   });
 

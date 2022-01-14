@@ -1,7 +1,7 @@
 import React from 'react';
 import { TopicColumnsToSort } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
-import cx from 'classnames';
+// import cx from 'classnames';
 
 export interface TableHeaderCellProps {
   title?: string;
@@ -13,38 +13,49 @@ export interface TableHeaderCellProps {
 }
 
 const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
-  const { title, previewText, onPreview, orderBy, orderValue, handleOrderBy } =
-    props;
+  const {
+    title,
+    previewText,
+    onPreview,
+    orderBy,
+    orderValue,
+    handleOrderBy,
+    ...restProps
+  } = props;
+
+  const isSortable = !!(orderValue && handleOrderBy);
+  const isCurrentSort = orderBy === orderValue;
 
   return (
-    <S.TableHeaderCell
-      className={cx(orderBy && orderBy === orderValue && 'has-text-link-dark')}
-      {...props}
-    >
-      <span className="title">{title}</span>
+    <S.TableHeaderCell {...restProps}>
+      <S.Title
+        isSortable={isSortable}
+        isCurrentSort={isCurrentSort}
+        {...(orderValue &&
+          handleOrderBy && {
+            onClick: () => handleOrderBy(orderValue),
+            onKeyDown: (e) => e.code === 'Space' && handleOrderBy(orderValue),
+            role: 'button',
+            tabIndex: 0,
+          })}
+      >
+        {title}
+        {isSortable && (
+          <span className="icon is-small">
+            <i className="fas fa-sort" />
+          </span>
+        )}
+      </S.Title>
+
       {previewText && (
-        <span
-          className="preview"
+        <S.Preview
           onClick={onPreview}
           onKeyDown={onPreview}
           role="button"
           tabIndex={0}
         >
           {previewText}
-        </span>
-      )}
-      {orderValue && (
-        <span
-          className="icon is-small is-clickable"
-          onClick={() =>
-            orderValue && handleOrderBy && handleOrderBy(orderValue)
-          }
-          onKeyDown={() => handleOrderBy}
-          role="button"
-          tabIndex={0}
-        >
-          <i className="fas fa-sort" />
-        </span>
+        </S.Preview>
       )}
     </S.TableHeaderCell>
   );
