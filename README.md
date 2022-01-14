@@ -1,7 +1,7 @@
-![UI for Apache Kafka logo](images/kafka-ui-logo.png) UI for Apache Kafka – Free Web UI for Apache Kafka &nbsp; 
+![UI for Apache Kafka logo](documentation/images/kafka-ui-logo.png) UI for Apache Kafka – Free Web UI for Apache Kafka &nbsp; 
 ------------------
 
-![UI for Apache Kafka Price Free](images/free-open-source.svg)
+![UI for Apache Kafka Price Free](documentation/images/free-open-source.svg)
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 <em>UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
@@ -10,7 +10,7 @@ UI for Apache Kafka is a simple tool that makes your data flows observable, help
 
 Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in the cloud. 
 
-![UI for Apache Kafka interface dashboard screenshot](images/apache-kafka-ui-interface-dashboard.png)
+![UI for Apache Kafka interface dashboard screenshot](documentation/images/apache-kafka-ui-interface-dashboard.png)
 
 
 # Features
@@ -26,7 +26,7 @@ Set up UI for Apache Kafka with just a couple of easy commands to visualize your
 # The Interface
 UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
 
-![Interface](images/Interface.gif)
+![Interface](documentation/images/Interface.gif)
 
 ## Topics
 UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
@@ -42,7 +42,7 @@ Let's say we want to produce messages for our topic. With the UI for Apache Kafk
 ## Schema registry
 There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
 
-![Create Schema Registry](images/Create_schema.gif)
+![Create Schema Registry](documentation/images/Create_schema.gif)
 
 # Getting Started
 
