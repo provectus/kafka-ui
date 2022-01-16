@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
-import { remove as _remove } from 'lodash';
 import { TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -37,19 +36,17 @@ const CustomParamField: React.FC<Props> = ({
     watch,
   } = useFormContext<TopicFormData>();
   const nameValue = watch(`customParams.${index}.name`);
-  let prevName = '';
+  const prevName = useRef(nameValue);
 
   React.useEffect(() => {
-    prevName = nameValue;
-  }, []);
-
-  React.useEffect(() => {
-    if (nameValue !== prevName) {
+    if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
-      if (prevName) {
-        newExistingFields = _remove(newExistingFields, (el) => el === prevName);
+      if (prevName.current) {
+        newExistingFields = newExistingFields.filter((name) => {
+          return name !== prevName.current;
+        });
       }
-      prevName = nameValue;
+      prevName.current = nameValue;
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
       setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue]);

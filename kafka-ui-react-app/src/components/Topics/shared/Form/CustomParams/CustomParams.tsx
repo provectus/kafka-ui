@@ -8,12 +8,12 @@ import * as S from './CustomParams.styled';
 
 export const INDEX_PREFIX = 'customParams';
 
-interface Props {
+export interface CustomParamsProps {
   isSubmitting: boolean;
   config?: TopicConfigByName;
 }
 
-const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
+const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
   const { control } = useFormContext<TopicFormData>();
   const { fields, append, remove } = useFieldArray({
     control,
