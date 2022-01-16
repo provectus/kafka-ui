@@ -42,9 +42,9 @@ const CustomParamField: React.FC<Props> = ({
     if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
       if (prevName.current) {
-        newExistingFields = newExistingFields.filter((name) => {
-          return name !== prevName.current;
-        });
+        newExistingFields = newExistingFields.filter(
+          (name) => name !== prevName.current
+        );
       }
       prevName.current = nameValue;
       newExistingFields.push(nameValue);
