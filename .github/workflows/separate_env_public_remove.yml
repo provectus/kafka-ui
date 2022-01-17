@@ -1,0 +1,32 @@
+name: Separate environment remove
+on:
+  workflow_dispatch:
+
+jobs:
+  separate-env-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: get branch name
+        id: extract_branch
+        run: |
+          hub pr checkout ${{ github.event.pull_request.number }}
+          branch_name=$(hub branch | grep "*" | sed -e 's/^\*//')
+          echo $branch_name
+          echo ::set-output name=branch::${branch_name}
+          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
+          echo ::set-output name=tag::${tag}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: clone
+        run: |
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+      - name: separate environment remove
+        run: |
+          cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
+          echo "Branch:${{ steps.extract_branch.outputs.tag }}"
+          bash separate_env_remove.sh ${{ needs.build.outputs.tag }}
+          git config --global user.email "kafka-ui-infra@provectus.com"
+          git config --global user.name "kafka-ui-infra"
+          git add -A
+          git commit -m "separate env removed:${{ needs.build.outputs.deploy }}" && git push || true
