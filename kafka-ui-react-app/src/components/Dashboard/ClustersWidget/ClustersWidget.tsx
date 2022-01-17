@@ -84,7 +84,10 @@ const ClustersWidget: React.FC<Props> = ({
           <tbody>
             {chunkItem.data.map((cluster) => (
               <tr key={cluster.name}>
-                <S.TableCell maxWidth="99px">{cluster.name}</S.TableCell>
+                <S.TableCell maxWidth="99px">
+                  {cluster.readOnly && <Tag color="blue">readonly</Tag>}{' '}
+                  {cluster.name}
+                </S.TableCell>
                 <S.TableCell maxWidth="99px">{cluster.version}</S.TableCell>
                 <S.TableCell maxWidth="99px">{cluster.brokerCount}</S.TableCell>
                 <S.TableCell maxWidth="78px">

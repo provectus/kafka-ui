@@ -28,6 +28,10 @@ describe('ClustersWidget', () => {
     expect(screen.getAllByRole('row').length).toBe(2);
   });
 
+  it('when cluster is read-only', () => {
+    expect(screen.getByText('readonly')).toBeInTheDocument();
+  });
+
   it('render clusterWidget cells', () => {
     const cells = screen.getAllByRole('tablecell');
     expect(screen.getAllByRole('tablecell').length).toBe(14);
