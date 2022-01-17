@@ -57,7 +57,6 @@ const CustomParamField: React.FC<Props> = ({
     }
   }, [nameValue]);
 
-  // TODO broken field update
   return (
     <C.Column>
       <>
@@ -73,7 +72,7 @@ const CustomParamField: React.FC<Props> = ({
                 placeholder="Select"
                 disabled={isDisabled}
                 minWidth="270px"
-                onChange={onChange}
+                onChange={(e) => onChange(e.value)}
                 options={Object.keys(TOPIC_CUSTOM_PARAMS)
                   .sort()
                   .map((opt) => ({

@@ -117,10 +117,11 @@ const TopicForm: React.FC<Props> = ({
             <Controller
               control={control}
               name="cleanupPolicy"
-              render={({ field: { name, onChange } }) => (
+              render={({ field: { name, onChange, value } }) => (
                 <Select
                   name={name}
-                  value={CleanupPolicyOptions[0]}
+                  defaultValue={CleanupPolicyOptions[0].value}
+                  value={value}
                   onChange={onChange}
                   minWidth="250px"
                   options={CleanupPolicyOptions}
@@ -142,10 +143,11 @@ const TopicForm: React.FC<Props> = ({
               <Controller
                 control={control}
                 name="retentionBytes"
-                render={({ field: { name, onChange } }) => (
+                render={({ field: { name, onChange, value } }) => (
                   <Select
                     name={name}
-                    value={RetentionBytesOptions[0]}
+                    defaultValue={RetentionBytesOptions[0].value}
+                    value={value}
                     onChange={onChange}
                     minWidth="100%"
                     options={RetentionBytesOptions}

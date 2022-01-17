@@ -71,16 +71,12 @@ const GlobalSchemaSelector: React.FC = () => {
 
   if (!currentCompatibilityLevel) return null;
 
-  // TODO uncorrect reset
   return (
     <S.Wrapper>
       <div>Global Compatibility Level: </div>
       <Select
         selectSize="M"
-        value={{
-          value: currentCompatibilityLevel,
-          label: currentCompatibilityLevel,
-        }}
+        defaultValue={currentCompatibilityLevel}
         minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}

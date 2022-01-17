@@ -136,13 +136,14 @@ const New: React.FC<NewProps> = ({
           <Controller
             control={control}
             name="connectName"
-            render={({ field: { name, onChange } }) => (
+            render={({ field: { name, onChange, value } }) => (
               <Select
                 selectSize="M"
                 name={name}
                 disabled={isSubmitting}
                 onChange={onChange}
-                value={connectOptions[0]}
+                defaultValue={connectOptions[0].value}
+                value={value}
                 minWidth="100%"
                 options={connectOptions}
               />

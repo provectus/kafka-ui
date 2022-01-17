@@ -102,11 +102,12 @@ const New: React.FC = () => {
             control={control}
             rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
-            render={({ field: { name, onChange } }) => (
+            render={({ field: { name, onChange, value } }) => (
               <Select
                 selectSize="M"
                 name={name}
-                value={SchemaTypeOptions[0]}
+                defaultValue={SchemaTypeOptions[0].value}
+                value={value}
                 onChange={onChange}
                 minWidth="50%"
                 disabled={isSubmitting}

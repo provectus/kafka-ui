@@ -11,7 +11,8 @@ export interface SelectProps {
   selectSize?: 'M' | 'L';
   isLive?: boolean;
   minWidth?: string;
-  value?: SelectOption;
+  defaultValue?: string | number;
+  value?: string | number;
   placeholder?: string;
   disabled?: boolean;
   onChange?: (option: SelectOption) => void;
@@ -26,6 +27,7 @@ export interface SelectOption {
 const Select: React.FC<SelectProps> = ({
   id,
   options = [],
+  defaultValue,
   value,
   selectSize = 'L',
   placeholder = '',
@@ -35,9 +37,7 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   ...props
 }) => {
-  const [selectedOption, setSelectedOption] = useState(
-    value || { label: '', value: '' }
-  );
+  const [selectedOption, setSelectedOption] = useState(defaultValue);
   const [showOptions, setShowOptions] = useState(false);
 
   const showOptionsHandler = () => {
@@ -51,7 +51,7 @@ const Select: React.FC<SelectProps> = ({
   const updateSelectedOption = (option: SelectOption) => {
     if (disabled) return;
 
-    setSelectedOption(option);
+    setSelectedOption(option.value);
     if (onChange) onChange(option);
     setShowOptions(false);
   };
@@ -70,9 +70,8 @@ const Select: React.FC<SelectProps> = ({
           {...props}
         >
           <S.SelectedOption role="option" tabIndex={0}>
-            {String(selectedOption.value).length > 0
-              ? selectedOption.label
-              : placeholder}
+            {options.find((option) => option.value === selectedOption)?.label ||
+              placeholder}
           </S.SelectedOption>
           {showOptions && (
             <S.OptionList>
@@ -82,6 +81,7 @@ const Select: React.FC<SelectProps> = ({
                   key={option.value}
                   disabled={option.disabled}
                   onClick={() => updateSelectedOption(option)}
+                  tabIndex={0}
                 >
                   {option.label}
                 </S.Option>
@@ -100,9 +100,8 @@ const Select: React.FC<SelectProps> = ({
           {...props}
         >
           <S.SelectedOption role="option" tabIndex={0}>
-            {String(selectedOption.value).length > 0
-              ? selectedOption.label
-              : placeholder}
+            {options.find((option) => option.value === selectedOption)?.label ||
+              placeholder}
           </S.SelectedOption>
           {showOptions && (
             <S.OptionList>
@@ -112,6 +111,7 @@ const Select: React.FC<SelectProps> = ({
                   key={option.value}
                   disabled={option.disabled}
                   onClick={() => updateSelectedOption(option)}
+                  tabIndex={0}
                 >
                   {option.label}
                 </S.Option>

@@ -186,15 +186,15 @@ const ResetOffsets: React.FC = () => {
               <Controller
                 control={control}
                 name="topic"
-                render={({ field: { name, onChange } }) => (
-                  // TODO value
+                render={({ field: { name, onChange, value } }) => (
                   <Select
                     id="topic"
                     selectSize="M"
                     aria-labelledby="topicLabel"
                     minWidth="100%"
                     name={name}
-                    onChange={onChange}
+                    value={value}
+                    onChange={(e) =>  onChange(e.value)}
                     options={uniqueTopics.map((topic) => ({
                       value: topic,
                       label: topic,
@@ -208,15 +208,15 @@ const ResetOffsets: React.FC = () => {
               <Controller
                 control={control}
                 name="resetType"
-                render={({ field: { name, onChange } }) => (
-                  // TODO value
+                render={({ field: { name, onChange, value } }) => (
                   <Select
                     id="resetType"
                     selectSize="M"
                     aria-labelledby="resetTypeLabel"
                     minWidth="100%"
                     name={name}
-                    onChange={onChange}
+                    value={value}
+                    onChange={(e) => onChange(e.value)}
                     options={Object.values(ConsumerGroupOffsetsResetType).map(
                       (type) => ({ value: type, label: type })
                     )}

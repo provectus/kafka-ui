@@ -254,9 +254,7 @@ const Filters: React.FC<FiltersProps> = ({
               <Select
                 id="selectSeekType"
                 onChange={(option) => setSeekType(option.value as SeekType)}
-                value={SeekTypeOptions.find(
-                  (option) => option.value === currentSeekType
-                )}
+                defaultValue={currentSeekType}
                 selectSize="M"
                 minWidth="100px"
                 options={SeekTypeOptions}
@@ -320,9 +318,7 @@ const Filters: React.FC<FiltersProps> = ({
         <Select
           selectSize="M"
           onChange={(option) => toggleSeekDirection(option.value as string)}
-          value={SeekDirectionOptions.find(
-            (option) => option.value === seekDirection
-          )}
+          defaultValue={seekDirection}
           minWidth="120px"
           options={SeekDirectionOptions}
         />
