@@ -9,7 +9,6 @@ import theme from 'theme/theme';
 
 const title = 'test title';
 const previewText = 'test preview text';
-// const onPreview = jest.fn();
 const orderBy = TopicColumnsToSort.NAME;
 const orderValue = TopicColumnsToSort.NAME;
 const otherOrderValue = TopicColumnsToSort.OUT_OF_SYNC_REPLICAS;

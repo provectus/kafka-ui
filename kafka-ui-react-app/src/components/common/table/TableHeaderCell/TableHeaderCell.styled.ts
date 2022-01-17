@@ -1,9 +1,18 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface TitleProps {
   isOrderable?: boolean;
   isOrdered?: boolean;
 }
+
+const isOrderableStyles = css`
+  cursor: pointer;
+
+  &:hover {
+    color: ${(props) => props.theme.thStyles.color.hover};
+  }
+`;
+
 export const Title = styled.span<TitleProps>`
   font-family: Inter, sans-serif;
   font-size: 12px;
@@ -13,24 +22,13 @@ export const Title = styled.span<TitleProps>`
   letter-spacing: 0em;
   text-align: left;
   background: ${(props) => props.theme.thStyles.backgroundColor.normal};
-  color: ${(props) => props.theme.thStyles.color.normal};
+  color: ${(props) =>
+    props.isOrdered
+      ? props.theme.thStyles.color.active
+      : props.theme.thStyles.color.normal};
   cursor: default;
 
-  ${(props) =>
-    props.isOrderable &&
-    `
-    cursor: pointer;
-
-    &:hover {
-      color: ${props.theme.thStyles.color.hover};
-    }
-  `}
-
-  ${(props) =>
-    props.isOrdered &&
-    `
-    color: ${props.theme.thStyles.color.active};
-  `}
+  ${(props) => props.isOrderable && isOrderableStyles}
 `;
 
 export const Preview = styled.span`
