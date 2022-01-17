@@ -27,4 +27,8 @@ describe('ClustersWidget', () => {
     userEvent.click(screen.getByRole('checkbox'));
     expect(screen.getAllByRole('row').length).toBe(2);
   });
+
+  it('when cluster is read-only', () => {
+    expect(screen.getByText('readonly')).toBeInTheDocument();
+  });
 });
