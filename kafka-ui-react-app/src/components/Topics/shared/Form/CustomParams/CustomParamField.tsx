@@ -80,7 +80,10 @@ const CustomParamField: React.FC<Props> = ({
               ))}
           </Select>
           <FormError>
-            <ErrorMessage errors={errors} name={`customParams.${index}.name`} />
+            <ErrorMessage
+              errors={errors}
+              name={`customParams.${index}.name` as const}
+            />
           </FormError>
         </div>
       </>
@@ -88,7 +91,7 @@ const CustomParamField: React.FC<Props> = ({
       <div>
         <InputLabel>Value</InputLabel>
         <Input
-          name={`customParams.${index}.value` as const}
+          name={`customParams.${index}.value`}
           hookFormOptions={{
             required: 'Value is required.',
           }}
@@ -103,8 +106,14 @@ const CustomParamField: React.FC<Props> = ({
       </div>
 
       <S.DeleteButtonWrapper>
-        <IconButtonWrapper onClick={() => remove(index)} aria-hidden>
-          <CloseIcon />
+        <IconButtonWrapper
+          onClick={() => remove(index)}
+          onKeyDown={(e: React.KeyboardEvent) =>
+            e.code === 'Space' && remove(index)
+          }
+          title={`Delete customParam field ${index}`}
+        >
+          <CloseIcon aria-hidden />
         </IconButtonWrapper>
       </S.DeleteButtonWrapper>
     </C.Column>

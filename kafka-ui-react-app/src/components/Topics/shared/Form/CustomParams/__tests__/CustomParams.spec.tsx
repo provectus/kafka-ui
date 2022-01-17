@@ -7,7 +7,6 @@ import CustomParams, {
 import { FormProvider, useForm } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 
-// https://github.com/react-hook-form/react-hook-form/discussions/3815
 describe('CustomParams', () => {
   const setupComponent = (props: CustomParamsProps) => {
     const Wrapper: React.FC = ({ children }) => {
@@ -117,33 +116,55 @@ describe('CustomParams', () => {
         name: 'compression.type',
       });
       expect(secondListboxOption).toBeDisabled();
-      userEvent.selectOptions(secondListbox, ['compression.type']);
     });
 
-    // it('multiple button clicks create multiple fieldsets', () => {
-    //   const addParamButton = screen.getByRole('button');
-    //   userEvent.click(addParamButton);
-    //   userEvent.click(addParamButton);
-    //   userEvent.click(addParamButton);
+    it('when fieldset with selected custom property type is deleted disabled options update correctly', async () => {
+      const addParamButton = screen.getByRole('button');
+      userEvent.click(addParamButton);
+      userEvent.click(addParamButton);
+      userEvent.click(addParamButton);
 
-    //   const listboxes = screen.getAllByRole('listbox');
+      const listboxes = screen.getAllByRole('listbox');
 
-    //   const firstListbox = listboxes[0];
-    //   userEvent.selectOptions(firstListbox, ['compression.type']);
-    //   const option = screen.getByRole('option', {
-    //     selected: true,
-    //   });
-    //   expect(option).toHaveValue('compression.type');
-    //   expect(option).toBeDisabled();
+      const firstListbox = listboxes[0];
+      userEvent.selectOptions(firstListbox, ['compression.type']);
 
-    //   const textbox = screen.getByRole('textbox');
-    //   expect(textbox).toHaveValue('producer');
+      const firstListboxOption = within(firstListbox).getByRole('option', {
+        selected: true,
+      });
+      expect(firstListboxOption).toBeDisabled();
 
-    //   const secondListbox = listboxes[1];
-    //   const thirdListbox = listboxes[2];
+      const secondListbox = listboxes[1];
+      userEvent.selectOptions(secondListbox, ['delete.retention.ms']);
+      const secondListboxOption = within(secondListbox).getByRole('option', {
+        selected: true,
+      });
+      expect(secondListboxOption).toBeDisabled();
 
-    //   const textboxes = screen.getAllByRole('textbox');
-    //   expect(textboxes.length).toBe(3);
-    // });
+      const thirdListbox = listboxes[2];
+      userEvent.selectOptions(thirdListbox, ['file.delete.delay.ms']);
+      const thirdListboxOption = within(thirdListbox).getByRole('option', {
+        selected: true,
+      });
+      expect(thirdListboxOption).toBeDisabled();
+
+      const deleteSecondFieldsetButton = screen.getByTitle(
+        'Delete customParam field 1'
+      );
+      userEvent.click(deleteSecondFieldsetButton);
+      expect(secondListbox).not.toBeInTheDocument();
+
+      expect(
+        within(firstListbox).getByRole('option', {
+          name: 'delete.retention.ms',
+        })
+      ).toBeEnabled();
+
+      expect(
+        within(thirdListbox).getByRole('option', {
+          name: 'delete.retention.ms',
+        })
+      ).toBeEnabled();
+    });
   });
 });

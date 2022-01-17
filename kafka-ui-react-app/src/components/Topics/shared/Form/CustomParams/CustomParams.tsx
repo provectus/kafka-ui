@@ -1,6 +1,6 @@
 import React from 'react';
 import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
 
 import CustomParamField from './CustomParamField';
@@ -19,17 +19,30 @@ const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
     control,
     name: INDEX_PREFIX,
   });
+  const watchFieldArray = useWatch({
+    control,
+    name: INDEX_PREFIX,
+    defaultValue: fields,
+  });
+  const controlledFields = fields.map((field, index) => {
+    return {
+      ...field,
+      ...watchFieldArray[index],
+    };
+  });
+
   const [existingFields, setExistingFields] = React.useState<string[]>([]);
+
   const removeField = (index: number): void => {
     setExistingFields(
-      existingFields.filter((field) => field !== fields[index].name)
+      existingFields.filter((field) => field !== controlledFields[index].name)
     );
     remove(index);
   };
 
   return (
     <S.ParamsWrapper>
-      {fields.map((field, idx) => (
+      {controlledFields.map((field, idx) => (
         <CustomParamField
           key={field.id}
           field={field}
