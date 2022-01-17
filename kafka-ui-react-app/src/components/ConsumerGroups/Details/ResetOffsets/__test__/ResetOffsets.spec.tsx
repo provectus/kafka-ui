@@ -1,7 +1,7 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
 import { Route } from 'react-router';
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen, waitFor, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { clusterConsumerGroupResetOffsetsPath } from 'lib/paths';
@@ -50,7 +50,8 @@ const resetConsumerGroupOffsetsWith = async (
   offset: null | number = null
 ) => {
   userEvent.click(screen.getByLabelText('Reset Type'));
-  userEvent.click(screen.getByText(resetType));
+  const options = screen.getAllByText(resetType);
+  userEvent.click(options.length > 1 ? options[1] : options[0]);
   userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));

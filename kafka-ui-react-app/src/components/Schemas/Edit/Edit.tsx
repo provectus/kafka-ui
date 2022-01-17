@@ -88,11 +88,10 @@ const Edit: React.FC = () => {
                 control={control}
                 rules={{ required: true }}
                 name="schemaType"
-                render={({ field: { name, onChange, value } }) => (
+                render={({ field: { name, onChange } }) => (
                   <Select
                     name={name}
-                    defaultValue={schema.schemaType}
-                    value={value}
+                    value={schema.schemaType}
                     onChange={onChange}
                     minWidth="100%"
                     disabled={isSubmitting}
@@ -110,11 +109,10 @@ const Edit: React.FC = () => {
               <Controller
                 control={control}
                 name="compatibilityLevel"
-                render={({ field: { name, onChange, value } }) => (
+                render={({ field: { name, onChange } }) => (
                   <Select
                     name={name}
-                    defaultValue={schema.compatibilityLevel}
-                    value={value}
+                    value={schema.compatibilityLevel}
                     onChange={onChange}
                     minWidth="100%"
                     disabled={isSubmitting}

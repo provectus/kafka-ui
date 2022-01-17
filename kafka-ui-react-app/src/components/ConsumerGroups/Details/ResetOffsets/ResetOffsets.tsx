@@ -193,8 +193,8 @@ const ResetOffsets: React.FC = () => {
                     aria-labelledby="topicLabel"
                     minWidth="100%"
                     name={name}
+                    onChange={onChange}
                     value={value}
-                    onChange={(e) =>  onChange(e.value)}
                     options={uniqueTopics.map((topic) => ({
                       value: topic,
                       label: topic,
@@ -215,8 +215,8 @@ const ResetOffsets: React.FC = () => {
                     aria-labelledby="resetTypeLabel"
                     minWidth="100%"
                     name={name}
+                    onChange={onChange}
                     value={value}
-                    onChange={(e) => onChange(e.value)}
                     options={Object.values(ConsumerGroupOffsetsResetType).map(
                       (type) => ({ value: type, label: type })
                     )}

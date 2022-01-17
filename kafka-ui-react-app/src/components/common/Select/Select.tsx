@@ -11,11 +11,10 @@ export interface SelectProps {
   selectSize?: 'M' | 'L';
   isLive?: boolean;
   minWidth?: string;
-  defaultValue?: string | number;
   value?: string | number;
   placeholder?: string;
   disabled?: boolean;
-  onChange?: (option: SelectOption) => void;
+  onChange?: (option: string | number) => void;
 }
 
 export interface SelectOption {
@@ -27,7 +26,6 @@ export interface SelectOption {
 const Select: React.FC<SelectProps> = ({
   id,
   options = [],
-  defaultValue,
   value,
   selectSize = 'L',
   placeholder = '',
@@ -37,7 +35,7 @@ const Select: React.FC<SelectProps> = ({
   onChange,
   ...props
 }) => {
-  const [selectedOption, setSelectedOption] = useState(defaultValue);
+  const [selectedOption, setSelectedOption] = useState(value);
   const [showOptions, setShowOptions] = useState(false);
 
   const showOptionsHandler = () => {
@@ -52,7 +50,7 @@ const Select: React.FC<SelectProps> = ({
     if (disabled) return;
 
     setSelectedOption(option.value);
-    if (onChange) onChange(option);
+    if (onChange) onChange(option.value);
     setShowOptions(false);
   };
 
@@ -82,6 +80,7 @@ const Select: React.FC<SelectProps> = ({
                   disabled={option.disabled}
                   onClick={() => updateSelectedOption(option)}
                   tabIndex={0}
+                  role="option"
                 >
                   {option.label}
                 </S.Option>
@@ -99,7 +98,7 @@ const Select: React.FC<SelectProps> = ({
           onKeyDown={showOptionsHandler}
           {...props}
         >
-          <S.SelectedOption role="option" tabIndex={0}>
+          <S.SelectedOption tabIndex={0} role="option">
             {options.find((option) => option.value === selectedOption)?.label ||
               placeholder}
           </S.SelectedOption>
@@ -112,6 +111,7 @@ const Select: React.FC<SelectProps> = ({
                   disabled={option.disabled}
                   onClick={() => updateSelectedOption(option)}
                   tabIndex={0}
+                  role="option"
                 >
                   {option.label}
                 </S.Option>

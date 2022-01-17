@@ -45,10 +45,8 @@ const GlobalSchemaSelector: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleChangeCompatibilityLevel = (level: SelectOption) => {
-    setNextCompatibilityLevel(
-      level.value as CompatibilityLevelCompatibilityEnum
-    );
+  const handleChangeCompatibilityLevel = (level: string | number) => {
+    setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);
     setIsConfirmationVisible(true);
   };
 
@@ -76,7 +74,7 @@ const GlobalSchemaSelector: React.FC = () => {
       <div>Global Compatibility Level: </div>
       <Select
         selectSize="M"
-        defaultValue={currentCompatibilityLevel}
+        value={currentCompatibilityLevel}
         minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}

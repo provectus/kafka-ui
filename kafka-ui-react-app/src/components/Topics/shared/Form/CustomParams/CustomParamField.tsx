@@ -53,7 +53,9 @@ const CustomParamField: React.FC<Props> = ({
       prevName = nameValue;
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
-      setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue]);
+      setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue], {
+        shouldValidate: true,
+      });
     }
   }, [nameValue]);
 
@@ -72,7 +74,7 @@ const CustomParamField: React.FC<Props> = ({
                 placeholder="Select"
                 disabled={isDisabled}
                 minWidth="270px"
-                onChange={(e) => onChange(e.value)}
+                onChange={onChange}
                 options={Object.keys(TOPIC_CUSTOM_PARAMS)
                   .sort()
                   .map((opt) => ({

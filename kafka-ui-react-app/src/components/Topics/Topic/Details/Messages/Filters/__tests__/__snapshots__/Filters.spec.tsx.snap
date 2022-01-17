@@ -202,7 +202,7 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: auto;
+  min-width: 100px;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
@@ -354,10 +354,6 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-top: 16px;
 }
 
-.c0 > div:first-child > div:last-child {
-  width: 10%;
-}
-
 .c1 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -483,7 +479,6 @@ exports[`Filters component matches the snapshot 1`] = `
             <div>
               <ul
                 class="c6"
-                id="selectSeekType"
                 role="listbox"
               >
                 <li
@@ -491,7 +486,7 @@ exports[`Filters component matches the snapshot 1`] = `
                   role="option"
                   tabindex="0"
                 >
-                  OFFSET
+                  Offset
                 </li>
               </ul>
             </div>
@@ -585,7 +580,7 @@ exports[`Filters component matches the snapshot 1`] = `
               role="option"
               tabindex="0"
             >
-              FORWARD
+              Oldest First
             </li>
           </ul>
         </div>
@@ -851,7 +846,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: auto;
+  min-width: 100px;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
@@ -1003,10 +998,6 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-top: 16px;
 }
 
-.c0 > div:first-child > div:last-child {
-  width: 10%;
-}
-
 .c1 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -1131,7 +1122,6 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             <div>
               <ul
                 class="c6"
-                id="selectSeekType"
                 role="listbox"
               >
                 <li
@@ -1139,7 +1129,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
                   role="option"
                   tabindex="0"
                 >
-                  OFFSET
+                  Offset
                 </li>
               </ul>
             </div>
@@ -1233,7 +1223,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
               role="option"
               tabindex="0"
             >
-              FORWARD
+              Oldest First
             </li>
           </ul>
         </div>
