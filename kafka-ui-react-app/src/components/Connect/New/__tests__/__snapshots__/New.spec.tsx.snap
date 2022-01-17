@@ -225,8 +225,7 @@ Array [
 }
 
 .c0 {
-  padding: 16px;
-  padding-top: 0;
+  padding: 0 16px 16px;
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
