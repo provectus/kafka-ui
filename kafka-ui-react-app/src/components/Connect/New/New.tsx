@@ -145,12 +145,16 @@ const New: React.FC<NewProps> = ({
         </div>
 
         <div>
-          <InputLabel>Config *</InputLabel>
+          <InputLabel id="configLabel">Config *</InputLabel>
           <Controller
             control={control}
             name="config"
             render={({ field }) => (
-              <JSONEditor {...field} readOnly={isSubmitting} />
+              <JSONEditor
+                {...field}
+                readOnly={isSubmitting}
+                aria-labelledby="configLabel"
+              />
             )}
           />
           <FormError>
