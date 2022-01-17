@@ -3,7 +3,6 @@ import { Switch, Route, useLocation } from 'react-router-dom';
 import { GIT_TAG, GIT_COMMIT } from 'lib/constants';
 import Nav from 'components/Nav/Nav';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import Dashboard from 'components/Dashboard/Dashboard';
 import ClusterPage from 'components/Cluster/Cluster';
 import Version from 'components/Version/Version';
@@ -82,20 +81,14 @@ const App: React.FC = () => {
             aria-label="Overlay"
           />
           {areClustersFulfilled ? (
-            <>
-              <Breadcrumb />
-              <Switch>
-                <Route
-                  exact
-                  path={['/', '/ui', '/ui/clusters']}
-                  component={Dashboard}
-                />
-                <Route
-                  path="/ui/clusters/:clusterName"
-                  component={ClusterPage}
-                />
-              </Switch>
-            </>
+            <Switch>
+              <Route
+                exact
+                path={['/', '/ui', '/ui/clusters']}
+                component={Dashboard}
+              />
+              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
+            </Switch>
           ) : (
             <PageLoader />
           )}
