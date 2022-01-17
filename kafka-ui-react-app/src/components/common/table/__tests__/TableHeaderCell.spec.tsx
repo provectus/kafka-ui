@@ -6,6 +6,7 @@ import TableHeaderCell, {
 } from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicColumnsToSort } from 'generated-sources';
 import theme from 'theme/theme';
+import userEvent from '@testing-library/user-event';
 
 const title = 'test title';
 const previewText = 'test preview text';
@@ -14,8 +15,14 @@ const orderValue = TopicColumnsToSort.NAME;
 const otherOrderValue = TopicColumnsToSort.OUT_OF_SYNC_REPLICAS;
 const handleOrderBy = jest.fn();
 const sortIconTitle = 'Sort icon';
+const onPreview = jest.fn();
+const SPACE_KEY = ' ';
 
 describe('TableHeaderCell', () => {
+  // beforeEach(() => {
+  //   handleOrderBy.mockClear();
+  //   onPreview.mockClear();
+  // });
   const setupComponent = (props: Partial<TableHeaderCellProps> = {}) =>
     render(
       <table>
@@ -57,6 +64,58 @@ describe('TableHeaderCell', () => {
     expect(within(titleNode).getByTitle(sortIconTitle)).toBeInTheDocument();
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.active};`);
     expect(titleNode).toHaveStyle('cursor: pointer;');
+  });
+
+  it('renders click on title triggers handler', () => {
+    setupComponent({
+      title,
+      orderBy,
+      orderValue,
+      handleOrderBy,
+    });
+    const th = screen.getByRole('columnheader');
+    const titleNode = within(th).getByRole('button');
+    userEvent.click(titleNode);
+    expect(handleOrderBy.mock.calls.length).toBe(1);
+  });
+
+  it('renders space on title triggers handler', () => {
+    setupComponent({
+      title,
+      orderBy,
+      orderValue,
+      handleOrderBy,
+    });
+    const th = screen.getByRole('columnheader');
+    const titleNode = within(th).getByRole('button');
+    userEvent.type(titleNode, SPACE_KEY);
+    // userEvent.type clicks and only then presses space
+    expect(handleOrderBy.mock.calls.length).toBe(2);
+  });
+
+  it('click on preview triggers handler', () => {
+    setupComponent({
+      title,
+      previewText,
+      onPreview,
+    });
+    const th = screen.getByRole('columnheader');
+    const previewNode = within(th).getByRole('button');
+    userEvent.click(previewNode);
+    expect(onPreview.mock.calls.length).toBe(1);
+  });
+
+  it('click on preview triggers handler', () => {
+    setupComponent({
+      title,
+      previewText,
+      onPreview,
+    });
+    const th = screen.getByRole('columnheader');
+    const previewNode = within(th).getByRole('button');
+    userEvent.type(previewNode, SPACE_KEY);
+    // userEvent.type clicks and only then presses space
+    expect(onPreview.mock.calls.length).toBe(2);
   });
 
   it('renders without sort indication', () => {
