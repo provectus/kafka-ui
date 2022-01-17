@@ -16,8 +16,10 @@ const selectForwardOption = () =>
     CompatibilityLevelCompatibilityEnum.FORWARD
   );
 
-const expectOptionIsSelected = (option: string) =>
-  expect((screen.getByText(option) as HTMLOptionElement).selected).toBeTruthy();
+const expectOptionIsSelected = (option: string) => {
+  const optionElement: HTMLOptionElement = screen.getByText(option);
+  expect(optionElement.selected).toBeTruthy();
+};
 
 describe('GlobalSchemaSelector', () => {
   const renderComponent = () =>
