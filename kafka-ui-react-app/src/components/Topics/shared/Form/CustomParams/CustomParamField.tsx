@@ -91,7 +91,7 @@ const CustomParamField: React.FC<Props> = ({
       <div>
         <InputLabel>Value</InputLabel>
         <Input
-          name={`customParams.${index}.value`}
+          name={`customParams.${index}.value` as const}
           hookFormOptions={{
             required: 'Value is required.',
           }}
@@ -101,7 +101,10 @@ const CustomParamField: React.FC<Props> = ({
           disabled={isDisabled}
         />
         <FormError>
-          <ErrorMessage errors={errors} name={`customParams.${index}.value`} />
+          <ErrorMessage
+            errors={errors}
+            name={`customParams.${index}.value` as const}
+          />
         </FormError>
       </div>
 
