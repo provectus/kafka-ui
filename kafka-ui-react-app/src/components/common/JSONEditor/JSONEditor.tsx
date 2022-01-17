@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import AceEditor, { IAceEditorProps } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-json5';
+import 'ace-builds/src-noconflict/mode-protobuf';
 import 'ace-builds/src-noconflict/theme-tomorrow';
 import React from 'react';
 import ReactAce from 'react-ace/lib/ace';
@@ -8,15 +9,18 @@ import styled from 'styled-components';
 
 interface JSONEditorProps extends IAceEditorProps {
   isFixedHeight?: boolean;
+  schemaType?: string;
 }
 
 const JSONEditor = React.forwardRef<ReactAce | null, JSONEditorProps>(
   (props, ref) => {
-    const { isFixedHeight, ...rest } = props;
+    const { isFixedHeight, schemaType, ...rest } = props;
     return (
       <AceEditor
         ref={ref}
-        mode="json5"
+        mode={
+          schemaType === 'JSON' || schemaType === 'AVRO' ? 'json5' : 'protobuf'
+        }
         theme="tomorrow"
         tabSize={2}
         width="100%"

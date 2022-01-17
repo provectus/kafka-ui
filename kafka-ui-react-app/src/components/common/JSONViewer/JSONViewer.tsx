@@ -5,31 +5,32 @@ import { StyledWrapper } from './StyledWrapper.styled';
 
 interface FullMessageProps {
   data: string;
+  schemaType?: string;
 }
 
-const JSONViewer: React.FC<FullMessageProps> = ({ data }) => {
-  try {
-    if (data.trim().startsWith('{')) {
-      return (
-        <StyledWrapper data-testid="json-viewer">
-          <JSONEditor
-            isFixedHeight
-            name="schema"
-            value={JSON.stringify(JSON.parse(data), null, '\t')}
-            setOptions={{
-              showLineNumbers: false,
-              maxLines: 40,
-              showGutter: false,
-            }}
-            readOnly
-          />
-        </StyledWrapper>
-      );
-    }
+const getSchemaValue = (data: string, schemaType?: string) => {
+  if (schemaType === 'JSON' || schemaType === 'AVRO') {
+    return JSON.stringify(JSON.parse(data), null, '\t');
+  }
+  return data;
+};
 
+const JSONViewer: React.FC<FullMessageProps> = ({ data, schemaType }) => {
+  try {
     return (
       <StyledWrapper data-testid="json-viewer">
-        <p>{JSON.stringify(data)}</p>
+        <JSONEditor
+          isFixedHeight
+          schemaType={schemaType}
+          name="schema"
+          value={getSchemaValue(data, schemaType)}
+          setOptions={{
+            showLineNumbers: false,
+            maxLines: 40,
+            showGutter: false,
+          }}
+          readOnly
+        />
       </StyledWrapper>
     );
   } catch (e) {

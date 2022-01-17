@@ -12,12 +12,12 @@ interface LatestVersionProps {
 }
 
 const LatestVersionItem: React.FC<LatestVersionProps> = ({
-  schema: { id, subject, schema, compatibilityLevel, version },
+  schema: { id, subject, schema, compatibilityLevel, version, schemaType },
 }) => (
   <LatestVersionWrapper>
     <div>
       <h1>Relevant version</h1>
-      <JSONViewer data={schema} />
+      <JSONViewer data={schema} schemaType={schemaType} />
     </div>
     <div data-testid="meta-data">
       <div>

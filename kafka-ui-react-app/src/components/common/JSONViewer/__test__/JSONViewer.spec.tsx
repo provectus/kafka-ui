@@ -6,12 +6,16 @@ const data = { a: 1 };
 
 describe('JSONViewer component', () => {
   it('renders JSONTree', () => {
-    const component = shallow(<JSONViewer data={JSON.stringify(data)} />);
+    const component = shallow(
+      <JSONViewer data={JSON.stringify(data)} schemaType="JSON" />
+    );
     expect(component.exists('Styled(JSONEditor)')).toBeTruthy();
   });
 
   it('matches the snapshot with fixed height with no value', () => {
-    const component = shallow(<JSONViewer data={data as unknown as string} />);
+    const component = shallow(
+      <JSONViewer data={data as unknown as string} schemaType="JSON" />
+    );
     expect(component.exists('JSONEditor')).toBeFalsy();
     expect(component.exists('p')).toBeTruthy();
   });
