@@ -19,10 +19,6 @@ const onPreview = jest.fn();
 const SPACE_KEY = ' ';
 
 describe('TableHeaderCell', () => {
-  // beforeEach(() => {
-  //   handleOrderBy.mockClear();
-  //   onPreview.mockClear();
-  // });
   const setupComponent = (props: Partial<TableHeaderCellProps> = {}) =>
     render(
       <table>
