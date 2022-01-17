@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 interface Props {
-  className?: string;
   color: 'green' | 'gray' | 'yellow' | 'red' | 'white' | 'blue';
 }
 
