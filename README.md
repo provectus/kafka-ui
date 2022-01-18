@@ -70,62 +70,17 @@ If you prefer to use `docker-compose` please refer to the [documentation](docker
 
 ## Building With Docker
 
-Steps to build UI for Apache Kafka locally with Docker:  
-
-1. Install prerequisites: Java and Docker
-2. Clone this repository and open a terminal in the directory of the project
-3. Build a Docker container with UI for Apache Kafka
-4. Start UI for Apache Kafka with your Kafka clusters
-5. Navigate to UI for Apache Kafka 
-
 ### Prerequisites
 
-* Java 13 or newer
-* Docker 
+Check [software-required.md](documentation/software-required.md)
 
-### Installing Prerequisites on Mac
-1. Install Homebrew Cask:
-```sh
-> brew update
-``` 
-2. Install JAVA 13 with Homebrew Cask:
-```sh
-> brew tap adoptopenjdk/openjdk
-> brew install adoptopenjdk13
-``` 
 ### Building
 
-Once you installed the prerequisites and cloned the repository, run the following commands in your project directory: 
+Check [building.md](documentation/building.md)
 
-Build a Docker container with UI for Apache Kafka: 
-```sh
-./mvnw clean install -Pprod
-``` 
-Start UI for Apache Kafka with your Kafka clusters: 
-```sh
-docker-compose -f ./docker/kafka-ui.yaml up
-``` 
-To see UI for Apache Kafka, navigate to http://localhost:8080.
+### Running
 
-If you want to start only kafka-clusters: 
-```sh
-docker-compose -f ./docker/kafka-clusters-only.yaml up
-``` 
-Then start UI for Apache Kafka with a **local** profile. 
-
-## Running Locally Without Docker
-
-```sh
-./mvnw spring-boot:run -Pprod
-``` 
-
-
-## Running in Kubernetes
-``` bash
-helm repo add kafka-ui https://provectus.github.io/kafka-ui
-helm install kafka-ui kafka-ui/kafka-ui
-```
-To read more please follow to [chart documentation](charts/kafka-ui/README.md)
+Check [running.md](documentation/running.md)
 
 # Guides
 
