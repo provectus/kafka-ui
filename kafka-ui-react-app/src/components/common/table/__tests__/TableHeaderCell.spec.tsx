@@ -40,9 +40,9 @@ describe('TableHeaderCell', () => {
       previewText,
     });
 
-    const th = screen.getByRole('columnheader');
-    expect(within(th).getByText(title)).toBeInTheDocument();
-    expect(within(th).getByText(previewText)).toBeInTheDocument();
+    const columnheader = screen.getByRole('columnheader');
+    expect(within(columnheader).getByText(title)).toBeInTheDocument();
+    expect(within(columnheader).getByText(previewText)).toBeInTheDocument();
   });
 
   it('renders with orderable props', () => {
@@ -52,8 +52,8 @@ describe('TableHeaderCell', () => {
       orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
     });
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByRole('button');
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByRole('button');
     expect(titleNode).toBeInTheDocument();
     expect(titleNode).toHaveTextContent(title);
     expect(
@@ -70,8 +70,8 @@ describe('TableHeaderCell', () => {
       orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
     });
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByRole('button');
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByRole('button');
     userEvent.click(titleNode);
     expect(handleOrderBy.mock.calls.length).toBe(1);
   });
@@ -83,8 +83,8 @@ describe('TableHeaderCell', () => {
       orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
     });
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByRole('button');
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByRole('button');
     userEvent.type(titleNode, SPACE_KEY);
     // userEvent.type clicks and only then presses space
     expect(handleOrderBy.mock.calls.length).toBe(2);
@@ -96,8 +96,8 @@ describe('TableHeaderCell', () => {
       previewText,
       onPreview,
     });
-    const th = screen.getByRole('columnheader');
-    const previewNode = within(th).getByRole('button');
+    const columnheader = screen.getByRole('columnheader');
+    const previewNode = within(columnheader).getByRole('button');
     userEvent.click(previewNode);
     expect(onPreview.mock.calls.length).toBe(1);
   });
@@ -108,8 +108,8 @@ describe('TableHeaderCell', () => {
       previewText,
       onPreview,
     });
-    const th = screen.getByRole('columnheader');
-    const previewNode = within(th).getByRole('button');
+    const columnheader = screen.getByRole('columnheader');
+    const previewNode = within(columnheader).getByRole('button');
     userEvent.type(previewNode, SPACE_KEY);
     // userEvent.type clicks and only then presses space
     expect(onPreview.mock.calls.length).toBe(2);
@@ -121,8 +121,8 @@ describe('TableHeaderCell', () => {
       orderBy: TopicColumnsToSort.NAME,
     });
 
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByText(title);
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByText(title);
     expect(
       within(titleNode).queryByTitle(sortIconTitleValue)
     ).not.toBeInTheDocument();
@@ -135,8 +135,8 @@ describe('TableHeaderCell', () => {
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
     });
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByText(title);
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByText(title);
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.active};`);
   });
 
@@ -146,8 +146,8 @@ describe('TableHeaderCell', () => {
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
     });
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByText(title);
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByText(title);
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.normal}`);
   });
 
@@ -156,8 +156,8 @@ describe('TableHeaderCell', () => {
       title,
     });
 
-    const th = screen.getByRole('columnheader');
-    const titleNode = within(th).getByText(title);
+    const columnheader = screen.getByRole('columnheader');
+    const titleNode = within(columnheader).getByText(title);
     expect(titleNode).toHaveStyle(
       `background: ${theme.thStyles.backgroundColor.normal};`
     );
