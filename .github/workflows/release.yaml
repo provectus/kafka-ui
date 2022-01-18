@@ -49,7 +49,6 @@ jobs:
           name: kafka-ui-${{ steps.build.outputs.version }}
           path: .
 
-
-      - name: Feature Test
+      - name: Enhancement Test
         run: |
-          echo "Feature Test"
+          echo "Enhancement Test"
