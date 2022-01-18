@@ -78,6 +78,7 @@ export const RedText = styled.span`
 `;
 
 export const CircularAlertWrapper = styled.svg.attrs({
+  role: 'svg',
   viewBox: '0 0 4 4',
   xmlns: 'http://www.w3.org/2000/svg',
 })`
@@ -87,7 +88,12 @@ export const CircularAlertWrapper = styled.svg.attrs({
   height: 4px;
 `;
 
-export const CircularAlert = styled.circle.attrs({ cx: 2, cy: 2, r: 2 })<{
+export const CircularAlert = styled.circle.attrs({
+  role: 'circle',
+  cx: 2,
+  cy: 2,
+  r: 2,
+})<{
   $type: AlertType;
 }>(
   ({ theme, $type }) => css`

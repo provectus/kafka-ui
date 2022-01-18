@@ -11,7 +11,7 @@ import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 
-interface Props extends Topic, TopicDetails {
+export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   clearTopicMessages(
@@ -52,6 +52,7 @@ const Overview: React.FC<Props> = ({
             label="URP"
             title="Under replicated partitions"
             isAlert
+            alertType={underReplicatedPartitions === 0 ? 'error' : 'success'}
           >
             <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
           </Metrics.Indicator>
