@@ -1,4 +1,4 @@
-# Contributing
+# Contribute to the Kafka-UI Project
 
 When contributing to this repository, please first discuss the change you wish to make via issue,
 email, or any other method with the maintainers of the repository before making a change. 
