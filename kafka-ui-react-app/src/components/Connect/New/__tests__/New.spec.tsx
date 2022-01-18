@@ -8,7 +8,7 @@ import NewContainer from 'components/Connect/New/NewContainer';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
 import { Route } from 'react-router';
-import { fireEvent, screen } from '@testing-library/react';
+import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
 
@@ -28,19 +28,21 @@ describe('New', () => {
   describe('view', () => {
     const clusterName = 'my-cluster';
     const simulateFormSubmit = async () => {
+      const inputs = screen.getAllByRole('textbox');
       await waitFor(() =>
         userEvent.type(
           screen.getByPlaceholderText('Connector Name'),
           'my-connector'
         )
       );
+
       await waitFor(() =>
-        userEvent.type(
-          screen.getAllByRole('textbox')[1],
-          '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
-        )
+        fireEvent.change(inputs[1], {
+          target: { value: '{"class":"MyClass"}' },
+        })
       );
-      await waitFor(() => fireEvent.submit(screen.getByRole('form')));
+      await waitFor(() => userEvent.click(screen.getByText('Submit')));
+      await waitFor(() => fireEvent.submit(screen.getByRole('button')));
     };
 
     const renderComponent = (props: Partial<NewProps> = {}) =>
@@ -58,26 +60,33 @@ describe('New', () => {
       );
 
     it('matches snapshot', async () => {
-      const { asFragment } = renderComponent();
-      expect(asFragment()).toMatchSnapshot();
+      await act(async () => {
+        const { asFragment } = renderComponent();
+        expect(asFragment()).toMatchSnapshot();
+      });
     });
 
     it('matches snapshot when fetching connects', async () => {
-      renderComponent({ areConnectsFetching: true });
-      const { asFragment } = renderComponent();
-      expect(asFragment()).toMatchSnapshot();
+      await act(async () => {
+        const { asFragment } = renderComponent({ areConnectsFetching: true });
+        expect(asFragment()).toMatchSnapshot();
+      });
     });
 
     it('fetches connects on mount', async () => {
       const fetchConnects = jest.fn();
-      renderComponent({ fetchConnects });
+      await act(async () => {
+        renderComponent({ fetchConnects });
+      });
       expect(fetchConnects).toHaveBeenCalledTimes(1);
       expect(fetchConnects).toHaveBeenCalledWith(clusterName);
     });
 
     // it('calls createConnector on form submit', async () => {
     //   const createConnector = jest.fn();
-    //   renderComponent({ createConnector });
+    //   await act(async () => {
+    //     renderComponent({ createConnector });
+    //   });
     //   await simulateFormSubmit();
     //   expect(createConnector).toHaveBeenCalledTimes(1);
     //   expect(createConnector).toHaveBeenCalledWith(
@@ -92,7 +101,9 @@ describe('New', () => {
     //
     // it('redirects to connector details view on successful submit', async () => {
     //   const createConnector = jest.fn().mockResolvedValue(connector);
-    //   renderComponent({ createConnector });
+    //   await act(async () => {
+    //     renderComponent({ createConnector });
+    //   });
     //   await simulateFormSubmit();
     //   expect(mockHistoryPush).toHaveBeenCalledTimes(1);
     //   expect(mockHistoryPush).toHaveBeenCalledWith(
@@ -106,7 +117,9 @@ describe('New', () => {
 
     it('does not redirect to connector details view on unsuccessful submit', async () => {
       const createConnector = jest.fn().mockResolvedValueOnce(undefined);
-      renderComponent({ createConnector });
+      await act(async () => {
+        renderComponent({ createConnector });
+      });
       await simulateFormSubmit();
       expect(mockHistoryPush).not.toHaveBeenCalled();
     });

@@ -148,24 +148,18 @@ const New: React.FC<NewProps> = ({
         </div>
 
         <div>
-          <InputLabel id="configLabel">Config *</InputLabel>
+          <InputLabel>Config *</InputLabel>
           <Controller
             control={control}
             name="config"
             render={({ field }) => (
-              <JSONEditor
-                {...field}
-                readOnly={isSubmitting}
-                aria-labelledby="configLabel"
-              />
+              <JSONEditor {...field} readOnly={isSubmitting} />
             )}
           />
           <FormError>
             <ErrorMessage errors={errors} name="config" />
           </FormError>
         </div>
-        <div>Is dirty: {isDirty ? 'True' : 'False'}</div>
-        <div>Is valid: {isValid ? 'True' : 'False'}</div>
         <Button
           buttonSize="M"
           buttonType="primary"
