@@ -73,8 +73,8 @@ describe('Details component', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('hanles [Reset offsest] click', async () => {
-      userEvent.click(screen.getByText('Reset offsest'));
+    it('handles [Reset offsets] click', async () => {
+      userEvent.click(screen.getByText('Reset offsets'));
       expect(history.location.pathname).toEqual(
         clusterConsumerGroupResetOffsetsPath(clusterName, groupId)
       );
