@@ -115,7 +115,10 @@ const New: React.FC<NewProps> = ({
   return (
     <FormProvider {...methods}>
       <PageHeading text="Create new connector" />
-      <S.NewConnectFormStyled onSubmit={handleSubmit(onSubmit)}>
+      <S.NewConnectFormStyled
+        onSubmit={handleSubmit(onSubmit)}
+        aria-label="form"
+      >
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>
           <Select selectSize="M" name="connectName" disabled={isSubmitting}>
@@ -161,6 +164,8 @@ const New: React.FC<NewProps> = ({
             <ErrorMessage errors={errors} name="config" />
           </FormError>
         </div>
+        <div>Is dirty: {isDirty ? 'True' : 'False'}</div>
+        <div>Is valid: {isValid ? 'True' : 'False'}</div>
         <Button
           buttonSize="M"
           buttonType="primary"

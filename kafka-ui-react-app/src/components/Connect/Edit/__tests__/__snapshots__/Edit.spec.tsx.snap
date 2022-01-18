@@ -1,7 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Edit view matches snapshot 1`] = `
-.c1 {
+<DocumentFragment>
+  .c1 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -61,39 +62,39 @@ exports[`Edit view matches snapshot 1`] = `
 }
 
 <div
-  className="c0"
->
-  <form
-    onSubmit={[Function]}
+    class="c0"
   >
-    <div>
-      <mock-JSONEditor
-        name="config"
-        onBlur={[Function]}
-        onChange={[Function]}
-        readOnly={false}
-        value="{
+    <form
+      aria-label="form"
+    >
+      <div>
+        <mock-jsoneditor
+          name="config"
+          readonly="false"
+          value="{
 	\\"connector.class\\": \\"FileStreamSource\\",
 	\\"tasks.max\\": \\"10\\",
 	\\"topic\\": \\"test-topic\\",
 	\\"file\\": \\"/some/file\\"
 }"
-      />
-    </div>
-    <div />
-    <button
-      className="c1"
-      disabled={true}
-      type="submit"
-    >
-      Submit
-    </button>
-  </form>
-</div>
+        />
+      </div>
+      <div />
+      <button
+        class="c1"
+        disabled=""
+        type="submit"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</DocumentFragment>
 `;
 
 exports[`Edit view matches snapshot when config has credentials 1`] = `
-.c2 {
+<DocumentFragment>
+  .c2 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -169,41 +170,44 @@ exports[`Edit view matches snapshot when config has credentials 1`] = `
 }
 
 <div
-  className="c0"
->
-  <div
-    className="c1"
+    class="c0"
   >
-    Please replace ****** with the real credential values to avoid accidentally breaking your connector config!
-  </div>
-  <form
-    onSubmit={[Function]}
-  >
-    <div>
-      <mock-JSONEditor
-        name="config"
-        onBlur={[Function]}
-        onChange={[Function]}
-        readOnly={false}
-        value="{
+    <div
+      class="c1"
+    >
+      Please replace ****** with the real credential values to avoid accidentally breaking your connector config!
+    </div>
+    <form
+      aria-label="form"
+    >
+      <div>
+        <mock-jsoneditor
+          name="config"
+          readonly="false"
+          value="{
 	\\"connector.class\\": \\"FileStreamSource\\",
 	\\"tasks.max\\": \\"10\\",
 	\\"topic\\": \\"test-topic\\",
 	\\"file\\": \\"/some/file\\",
 	\\"password\\": \\"******\\"
 }"
-      />
-    </div>
-    <div />
-    <button
-      className="c2"
-      disabled={true}
-      type="submit"
-    >
-      Submit
-    </button>
-  </form>
-</div>
+        />
+      </div>
+      <div />
+      <button
+        class="c2"
+        disabled=""
+        type="submit"
+      >
+        Submit
+      </button>
+    </form>
+  </div>
+</DocumentFragment>
 `;
 
-exports[`Edit view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;
+exports[`Edit view matches snapshot when fetching config 1`] = `
+<DocumentFragment>
+  <mock-pageloader />
+</DocumentFragment>
+`;

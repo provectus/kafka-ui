@@ -8,11 +8,11 @@ import NewContainer from 'components/Connect/New/NewContainer';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
 import { Route } from 'react-router';
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
 
-jest.mock('components/common/JSONEditor/JSONEditor', () => 'mock-JSONEditor');
+jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -36,11 +36,11 @@ describe('New', () => {
       );
       await waitFor(() =>
         userEvent.type(
-          screen.getByLabelText('Config *'),
+          screen.getAllByRole('textbox')[1],
           '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
         )
       );
-      await waitFor(() => userEvent.click(screen.getByText('Submit')));
+      await waitFor(() => fireEvent.submit(screen.getByRole('form')));
     };
 
     const renderComponent = (props: Partial<NewProps> = {}) =>
