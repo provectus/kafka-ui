@@ -18,7 +18,7 @@ categories:
     labels:
       - 'type/bug'
   - title: '🧰 Maintenance'
-    label: 'chore'
+    label: 'type/chore'
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 
