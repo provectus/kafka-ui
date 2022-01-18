@@ -1,4 +1,4 @@
-name: latest
+name: master
 on:
   workflow_dispatch:
   push:
