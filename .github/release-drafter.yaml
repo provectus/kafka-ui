@@ -12,13 +12,11 @@ exclude-labels:
 categories:
   - title: '🚀 Features'
     labels:
-      - 'feature'
-      - 'enhancement'
+      - 'type/feature'
+      - 'type/enhancement'
   - title: '🐛 Bug Fixes'
     labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
+      - 'type/bug'
   - title: '🧰 Maintenance'
     label: 'chore'
 
