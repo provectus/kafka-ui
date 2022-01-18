@@ -12,15 +12,13 @@ exclude-labels:
 categories:
   - title: '🚀 Features'
     labels:
-      - 'feature'
-      - 'enhancement'
+      - 'type/feature'
+      - 'type/enhancement'
   - title: '🐛 Bug Fixes'
     labels:
-      - 'fix'
-      - 'bugfix'
-      - 'bug'
+      - 'type/bug'
   - title: '🧰 Maintenance'
-    label: 'chore'
+    label: 'type/chore'
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 
@@ -46,18 +44,18 @@ autolabeler:
 
   - label: 'type/bug'
     branch:
-      - '/fix\/.+/'
-      - 'issue\/.+/'
+      - '/fix*\/.+/'
+      - 'issue*\/.+/'
     title:
-      - '/fix/i'
-      - 'issue/i'
+      - '/fix*/i'
+      - 'issue*/i'
 
   - label: 'type/feature'
     branch:
-      - '/feature\/.+/'
-      - '/new\/.+/'
+      - '/feature*\/.+/'
+      - '/new*\/.+/'
 
   - label: 'type/enhancement'
     branch:
-      - '/feature\/.+/'
-      - '/new\/.+/'
+      - '/feature*\/.+/'
+      - '/new*\/.+/'
