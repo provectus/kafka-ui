@@ -17,8 +17,6 @@ categories:
   - title: '🐛 Bug Fixes'
     labels:
       - 'type/bug'
-  - title: '🧰 Maintenance'
-    label: 'type/chore'
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 
@@ -33,29 +31,3 @@ version-resolver:
     labels:
       - 'patch'
   default: patch
-
-autolabeler:
-  - label: 'type/chore'
-    files:
-      - '*.md'
-    branch:
-      - '/docs{0,1}\/.+/'
-      - '/gh-pages\/.+/'
-
-  - label: 'type/bug'
-    branch:
-      - '/fix*\/.+/'
-      - 'issue*\/.+/'
-    title:
-      - '/fix*/i'
-      - 'issue*/i'
-
-  - label: 'type/feature'
-    branch:
-      - '/feature*\/.+/'
-      - '/new*\/.+/'
-
-  - label: 'type/enhancement'
-    branch:
-      - '/feature*\/.+/'
-      - '/new*\/.+/'
