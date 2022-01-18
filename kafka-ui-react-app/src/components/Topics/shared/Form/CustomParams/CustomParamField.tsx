@@ -13,7 +13,7 @@ import * as C from 'components/Topics/shared/Form/TopicForm.styled';
 
 import * as S from './CustomParams.styled';
 
-interface Props {
+export interface Props {
   isDisabled: boolean;
   index: number;
   existingFields: string[];

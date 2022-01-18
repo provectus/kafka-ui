@@ -6,6 +6,7 @@ import CustomParams, {
 } from 'components/Topics/shared/Form/CustomParams/CustomParams';
 import { FormProvider, useForm } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
+import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 
 describe('CustomParams', () => {
   const setupComponent = (props: CustomParamsProps) => {
@@ -14,7 +15,7 @@ describe('CustomParams', () => {
       return <FormProvider {...methods}>{children}</FormProvider>;
     };
 
-    render(
+    return render(
       <Wrapper>
         <CustomParams {...props} />
       </Wrapper>
@@ -58,7 +59,7 @@ describe('CustomParams', () => {
       expect(option).toBeDisabled();
 
       const textbox = screen.getByRole('textbox');
-      expect(textbox).toHaveValue('producer');
+      expect(textbox).toHaveValue(TOPIC_CUSTOM_PARAMS['compression.type']);
     });
 
     it('when selected option changes disabled options update correctly', () => {
