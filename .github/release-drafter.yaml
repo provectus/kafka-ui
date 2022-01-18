@@ -10,11 +10,12 @@ exclude-labels:
   - 'skip-changelog'
 
 categories:
-  - title: '🚀 Features'
+  - title: '⚙️Features'
     labels:
       - 'type/feature'
+  - title: '🪛Enhancements'
       - 'type/enhancement'
-  - title: '🐛 Bug Fixes'
+  - title: '🔨Bug Fixes'
     labels:
       - 'type/bug'
 
