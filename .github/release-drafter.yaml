@@ -46,7 +46,7 @@ autolabeler:
   - label: 'bug'
     branch:
       - '/fix\/.+/'
-      - 'issues\/.+/'
+      - 'issue\/.+/'
     title:
       - '/fix/i'
       - 'issues/i'
