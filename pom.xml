@@ -45,6 +45,7 @@
         </frontend-generated-sources-directory>
         <sonar.organization>provectus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <buildVersion>0.0.1-SNAPSHOT</buildVersion>
     </properties>
 
     <repositories>
