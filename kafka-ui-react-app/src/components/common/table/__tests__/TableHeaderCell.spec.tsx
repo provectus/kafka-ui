@@ -8,15 +8,13 @@ import { TopicColumnsToSort } from 'generated-sources';
 import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
 
+const SPACE_KEY = ' ';
+
 const title = 'test title';
 const previewText = 'test preview text';
-const orderBy = TopicColumnsToSort.NAME;
-const orderValue = TopicColumnsToSort.NAME;
-const otherOrderValue = TopicColumnsToSort.OUT_OF_SYNC_REPLICAS;
 const handleOrderBy = jest.fn();
 const sortIconTitle = 'Sort icon';
 const onPreview = jest.fn();
-const SPACE_KEY = ' ';
 
 describe('TableHeaderCell', () => {
   const setupComponent = (props: Partial<TableHeaderCellProps> = {}) =>
@@ -49,8 +47,8 @@ describe('TableHeaderCell', () => {
   it('renders with orderable props', () => {
     setupComponent({
       title,
-      orderBy,
-      orderValue,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
     });
     const th = screen.getByRole('columnheader');
@@ -65,8 +63,8 @@ describe('TableHeaderCell', () => {
   it('renders click on title triggers handler', () => {
     setupComponent({
       title,
-      orderBy,
-      orderValue,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
     });
     const th = screen.getByRole('columnheader');
@@ -78,8 +76,8 @@ describe('TableHeaderCell', () => {
   it('renders space on title triggers handler', () => {
     setupComponent({
       title,
-      orderBy,
-      orderValue,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
     });
     const th = screen.getByRole('columnheader');
@@ -117,7 +115,7 @@ describe('TableHeaderCell', () => {
   it('renders without sort indication', () => {
     setupComponent({
       title,
-      orderBy,
+      orderBy: TopicColumnsToSort.NAME,
     });
 
     const th = screen.getByRole('columnheader');
@@ -131,8 +129,8 @@ describe('TableHeaderCell', () => {
   it('renders with hightlighted title when orderBy and orderValue are equal', () => {
     setupComponent({
       title,
-      orderBy,
-      orderValue,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
     });
     const th = screen.getByRole('columnheader');
     const titleNode = within(th).getByText(title);
@@ -142,8 +140,8 @@ describe('TableHeaderCell', () => {
   it('renders without hightlighted title when orderBy and orderValue are not equal', () => {
     setupComponent({
       title,
-      orderBy,
-      orderValue: otherOrderValue,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
     });
     const th = screen.getByRole('columnheader');
     const titleNode = within(th).getByText(title);
