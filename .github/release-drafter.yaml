@@ -46,18 +46,18 @@ autolabeler:
 
   - label: 'type/bug'
     branch:
-      - '/fix\/.+/'
-      - 'issue\/.+/'
+      - '/fix*\/.+/'
+      - 'issue*\/.+/'
     title:
-      - '/fix/i'
-      - 'issue/i'
+      - '/fix*/i'
+      - 'issue*/i'
 
   - label: 'type/feature'
     branch:
-      - '/feature\/.+/'
-      - '/new\/.+/'
+      - '/feature*\/.+/'
+      - '/new*\/.+/'
 
   - label: 'type/enhancement'
     branch:
-      - '/feature\/.+/'
-      - '/new\/.+/'
+      - '/feature*\/.+/'
+      - '/new*\/.+/'
