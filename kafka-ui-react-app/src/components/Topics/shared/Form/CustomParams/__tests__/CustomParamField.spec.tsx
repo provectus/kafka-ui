@@ -15,6 +15,8 @@ const field = { name: 'name', value: 'value', id: 'id' };
 const remove = jest.fn();
 const setExistingFields = jest.fn();
 
+const SPACE_KEY = ' ';
+
 describe('CustomParamsField', () => {
   const setupComponent = (props: Props) => {
     const Wrapper: React.FC = ({ children }) => {
@@ -55,6 +57,20 @@ describe('CustomParamsField', () => {
       });
       userEvent.click(screen.getByRole('button'));
       expect(remove.mock.calls.length).toBe(1);
+    });
+
+    it('pressing space on button triggers remove', () => {
+      setupComponent({
+        field,
+        isDisabled,
+        index,
+        remove,
+        existingFields,
+        setExistingFields,
+      });
+      userEvent.type(screen.getByRole('button'), SPACE_KEY);
+      // userEvent.type triggers remove two times as at first it clicks on element and then presses space
+      expect(remove.mock.calls.length).toBe(2);
     });
 
     it('can select option', () => {
