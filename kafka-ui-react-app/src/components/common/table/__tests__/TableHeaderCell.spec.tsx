@@ -10,12 +10,12 @@ import userEvent from '@testing-library/user-event';
 
 const SPACE_KEY = ' ';
 
-const title = 'test title';
-const previewText = 'test preview text';
+const testTitle = 'test title';
+const testPreviewText = 'test preview text';
 const handleOrderBy = jest.fn();
 const onPreview = jest.fn();
 
-const sortIconTitleValue = 'Sort icon';
+const sortIconTitle = 'Sort icon';
 
 describe('TableHeaderCell', () => {
   const setupComponent = (props: Partial<TableHeaderCellProps> = {}) =>
@@ -36,18 +36,18 @@ describe('TableHeaderCell', () => {
 
   it('renders with title & preview text', () => {
     setupComponent({
-      title,
-      previewText,
+      title: testTitle,
+      previewText: testPreviewText,
     });
 
     const columnheader = screen.getByRole('columnheader');
-    expect(within(columnheader).getByText(title)).toBeInTheDocument();
-    expect(within(columnheader).getByText(previewText)).toBeInTheDocument();
+    expect(within(columnheader).getByText(testTitle)).toBeInTheDocument();
+    expect(within(columnheader).getByText(testPreviewText)).toBeInTheDocument();
   });
 
   it('renders with orderable props', () => {
     setupComponent({
-      title,
+      title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
@@ -55,17 +55,15 @@ describe('TableHeaderCell', () => {
     const columnheader = screen.getByRole('columnheader');
     const titleNode = within(columnheader).getByRole('button');
     expect(titleNode).toBeInTheDocument();
-    expect(titleNode).toHaveTextContent(title);
-    expect(
-      within(titleNode).getByTitle(sortIconTitleValue)
-    ).toBeInTheDocument();
+    expect(titleNode).toHaveTextContent(testTitle);
+    expect(within(titleNode).getByTitle(sortIconTitle)).toBeInTheDocument();
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.active};`);
     expect(titleNode).toHaveStyle('cursor: pointer;');
   });
 
   it('renders click on title triggers handler', () => {
     setupComponent({
-      title,
+      title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
@@ -78,7 +76,7 @@ describe('TableHeaderCell', () => {
 
   it('renders space on title triggers handler', () => {
     setupComponent({
-      title,
+      title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
       handleOrderBy,
@@ -92,8 +90,8 @@ describe('TableHeaderCell', () => {
 
   it('click on preview triggers handler', () => {
     setupComponent({
-      title,
-      previewText,
+      title: testTitle,
+      previewText: testPreviewText,
       onPreview,
     });
     const columnheader = screen.getByRole('columnheader');
@@ -104,8 +102,8 @@ describe('TableHeaderCell', () => {
 
   it('click on preview triggers handler', () => {
     setupComponent({
-      title,
-      previewText,
+      title: testTitle,
+      previewText: testPreviewText,
       onPreview,
     });
     const columnheader = screen.getByRole('columnheader');
@@ -117,47 +115,47 @@ describe('TableHeaderCell', () => {
 
   it('renders without sort indication', () => {
     setupComponent({
-      title,
+      title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
     });
 
     const columnheader = screen.getByRole('columnheader');
-    const titleNode = within(columnheader).getByText(title);
+    const titleNode = within(columnheader).getByText(testTitle);
     expect(
-      within(titleNode).queryByTitle(sortIconTitleValue)
+      within(titleNode).queryByTitle(sortIconTitle)
     ).not.toBeInTheDocument();
     expect(titleNode).toHaveStyle('cursor: default;');
   });
 
   it('renders with hightlighted title when orderBy and orderValue are equal', () => {
     setupComponent({
-      title,
+      title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
     });
     const columnheader = screen.getByRole('columnheader');
-    const titleNode = within(columnheader).getByText(title);
+    const titleNode = within(columnheader).getByText(testTitle);
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.active};`);
   });
 
   it('renders without hightlighted title when orderBy and orderValue are not equal', () => {
     setupComponent({
-      title,
+      title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
     });
     const columnheader = screen.getByRole('columnheader');
-    const titleNode = within(columnheader).getByText(title);
+    const titleNode = within(columnheader).getByText(testTitle);
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.normal}`);
   });
 
   it('renders with default (primary) theme', () => {
     setupComponent({
-      title,
+      title: testTitle,
     });
 
     const columnheader = screen.getByRole('columnheader');
-    const titleNode = within(columnheader).getByText(title);
+    const titleNode = within(columnheader).getByText(testTitle);
     expect(titleNode).toHaveStyle(
       `background: ${theme.thStyles.backgroundColor.normal};`
     );
