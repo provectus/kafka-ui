@@ -13,8 +13,9 @@ const SPACE_KEY = ' ';
 const title = 'test title';
 const previewText = 'test preview text';
 const handleOrderBy = jest.fn();
-const sortIconTitle = 'Sort icon';
 const onPreview = jest.fn();
+
+const sortIconTitleValue = 'Sort icon';
 
 describe('TableHeaderCell', () => {
   const setupComponent = (props: Partial<TableHeaderCellProps> = {}) =>
@@ -55,7 +56,9 @@ describe('TableHeaderCell', () => {
     const titleNode = within(th).getByRole('button');
     expect(titleNode).toBeInTheDocument();
     expect(titleNode).toHaveTextContent(title);
-    expect(within(titleNode).getByTitle(sortIconTitle)).toBeInTheDocument();
+    expect(
+      within(titleNode).getByTitle(sortIconTitleValue)
+    ).toBeInTheDocument();
     expect(titleNode).toHaveStyle(`color: ${theme.thStyles.color.active};`);
     expect(titleNode).toHaveStyle('cursor: pointer;');
   });
@@ -121,7 +124,7 @@ describe('TableHeaderCell', () => {
     const th = screen.getByRole('columnheader');
     const titleNode = within(th).getByText(title);
     expect(
-      within(titleNode).queryByTitle(sortIconTitle)
+      within(titleNode).queryByTitle(sortIconTitleValue)
     ).not.toBeInTheDocument();
     expect(titleNode).toHaveStyle('cursor: default;');
   });
