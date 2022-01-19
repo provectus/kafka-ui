@@ -2,7 +2,7 @@
 name: "⎈ K8s/Helm problem report"
 about: Report a problem with k8s/helm charts/etc
 title: ''
-labels: helm, status/triage
+labels: scope/k8s, status/triage
 assignees: azatsafin, 5hin0bi
 
 ---
