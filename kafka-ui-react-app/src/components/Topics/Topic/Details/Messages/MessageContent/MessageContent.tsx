@@ -4,16 +4,7 @@ import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
-import {
-  ContentBox,
-  StyledSection,
-  MessageContentWrapper,
-  Metadata,
-  MetadataLabel,
-  MetadataMeta,
-  MetadataValue,
-  MetadataWrapper,
-} from './MessageContent.styled';
+import * as S from './MessageContent.styled';
 
 type Tab = 'key' | 'content' | 'headers';
 
@@ -63,10 +54,10 @@ const MessageContent: React.FC<MessageContentProps> = ({
   const contentSize = new TextEncoder().encode(messageContent).length;
 
   return (
-    <MessageContentWrapper>
+    <S.Wrapper>
       <td colSpan={10}>
-        <StyledSection>
-          <ContentBox>
+        <S.Section>
+          <S.ContentBox>
             <SecondaryTabs>
               <button
                 type="button"
@@ -91,39 +82,39 @@ const MessageContent: React.FC<MessageContentProps> = ({
               </button>
             </SecondaryTabs>
             <JSONViewer data={activeTabContent() || ''} />
-          </ContentBox>
-          <MetadataWrapper>
-            <Metadata>
-              <MetadataLabel>Timestamp</MetadataLabel>
+          </S.ContentBox>
+          <S.MetadataWrapper>
+            <S.Metadata>
+              <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <MetadataValue>{timestamp?.toLocaleString()}</MetadataValue>
-                <MetadataMeta>Timestamp type: {timestampType}</MetadataMeta>
+                <S.MetadataValue>{timestamp?.toLocaleString()}</S.MetadataValue>
+                <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
-            </Metadata>
+            </S.Metadata>
 
-            <Metadata>
-              <MetadataLabel>Content</MetadataLabel>
+            <S.Metadata>
+              <S.MetadataLabel>Content</S.MetadataLabel>
               <span>
-                <MetadataValue>{messageContentFormat}</MetadataValue>
-                <MetadataMeta>
+                <S.MetadataValue>{messageContentFormat}</S.MetadataValue>
+                <S.MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
-                </MetadataMeta>
+                </S.MetadataMeta>
               </span>
-            </Metadata>
+            </S.Metadata>
 
-            <Metadata>
-              <MetadataLabel>Key</MetadataLabel>
+            <S.Metadata>
+              <S.MetadataLabel>Key</S.MetadataLabel>
               <span>
-                <MetadataValue>{messageKeyFormat}</MetadataValue>
-                <MetadataMeta>
+                <S.MetadataValue>{messageKeyFormat}</S.MetadataValue>
+                <S.MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
-                </MetadataMeta>
+                </S.MetadataMeta>
               </span>
-            </Metadata>
-          </MetadataWrapper>
-        </StyledSection>
+            </S.Metadata>
+          </S.MetadataWrapper>
+        </S.Section>
       </td>
-    </MessageContentWrapper>
+    </S.Wrapper>
   );
 };
 

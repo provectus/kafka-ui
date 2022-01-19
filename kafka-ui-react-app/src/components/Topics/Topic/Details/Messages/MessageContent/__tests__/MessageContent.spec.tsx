@@ -15,7 +15,9 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
       <tbody>
         <MessageContent
           messageKey='"test-key"'
+          messageKeyFormat="AVRO"
           messageContent='{"data": "test"}'
+          messageContentFormat="AVRO"
           headers={{ header: 'test' }}
           timestamp={new Date(0)}
           timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
@@ -32,6 +34,14 @@ describe('MessageContent screen', () => {
   beforeEach(() => {
     render(setupWrapper());
   });
+
+  // describe('renders', () => {
+  //   it('correct key format', () => {
+  //     const keyTab = screen.getAllByText('Key');
+  //     console.log(keyTab);
+  //   });
+  // });
+
   describe('when switched to display the key', () => {
     it('has a tab with is-active classname', () => {
       const keyTab = screen.getAllByText('Key');
