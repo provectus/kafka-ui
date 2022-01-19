@@ -260,6 +260,8 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "normal": "#FFFFFF",
         },
         "color": Object {
+          "active": "#4F4FFF",
+          "hover": "#4F4FFF",
           "normal": "#73848C",
         },
         "previewColor": Object {
