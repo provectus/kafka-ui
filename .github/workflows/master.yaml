@@ -26,4 +26,7 @@ jobs:
           mvn clean package -Pprod -DskipTests -DbuildVersion=$GITHUB_SHA
           export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=$GITHUB_SHA --non-recursive exec:exec)
           echo "::set-output name=version::${VERSION}"
-          
+
+      - name: echo version
+        run: |
+          echo ${{ steps.build.outputs.version }}
