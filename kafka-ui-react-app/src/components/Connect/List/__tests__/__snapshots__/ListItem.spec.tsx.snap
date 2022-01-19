@@ -246,6 +246,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "tagStyles": Object {
         "backgroundColor": Object {
+          "blue": "#e3f2fd",
           "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",

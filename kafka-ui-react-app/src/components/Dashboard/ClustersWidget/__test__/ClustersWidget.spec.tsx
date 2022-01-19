@@ -28,9 +28,7 @@ describe('ClustersWidget', () => {
     expect(screen.getAllByRole('row').length).toBe(2);
   });
 
-  it('render clusterWidget cells', () => {
-    const cells = screen.getAllByRole('tablecell');
-    expect(screen.getAllByRole('tablecell').length).toBe(14);
-    expect(cells[0]).toHaveStyle('max-width: 99px');
+  it('when cluster is read-only', () => {
+    expect(screen.getByText('readonly')).toBeInTheDocument();
   });
 });

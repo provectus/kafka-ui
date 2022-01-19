@@ -91,6 +91,13 @@ const ClustersWidget: React.FC<Props> = ({
                   {cluster.onlinePartitionCount}
                 </S.TableCell>
                 <S.TableCell maxWidth="60px">
+                  <td>
+                    {cluster.readOnly && <Tag color="blue">readonly</Tag>}{' '}
+                    {cluster.name}
+                  </td>
+                  <td>{cluster.version}</td>
+                  <td>{cluster.brokerCount}</td>
+                  <td>{cluster.onlinePartitionCount}</td>
                   <NavLink to={clusterTopicsPath(cluster.name)}>
                     {cluster.topicCount}
                   </NavLink>

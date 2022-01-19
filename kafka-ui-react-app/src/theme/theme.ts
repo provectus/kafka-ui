@@ -34,6 +34,12 @@ export const Colors = {
   yellow: {
     '10': '#FFEECC',
   },
+  blue: {
+    '10': '#e3f2fd',
+    '20': '#bbdefb',
+    '30': '#90caf9',
+    '40': '#64b5f6',
+  },
 };
 
 const theme = {
@@ -177,6 +183,7 @@ const theme = {
       yellow: Colors.yellow[10],
       white: Colors.neutral[10],
       red: Colors.red[10],
+      blue: Colors.blue[10],
     },
     color: Colors.neutral[90],
   },
