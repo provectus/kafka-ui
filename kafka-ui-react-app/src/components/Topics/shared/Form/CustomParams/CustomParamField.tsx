@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import { FieldArrayWithId, useFormContext } from 'react-hook-form';
-import { remove as _remove } from 'lodash';
 import { TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -14,7 +13,7 @@ import * as C from 'components/Topics/shared/Form/TopicForm.styled';
 
 import * as S from './CustomParams.styled';
 
-interface Props {
+export interface Props {
   isDisabled: boolean;
   index: number;
   existingFields: string[];
@@ -37,19 +36,17 @@ const CustomParamField: React.FC<Props> = ({
     watch,
   } = useFormContext<TopicFormData>();
   const nameValue = watch(`customParams.${index}.name`);
-  let prevName = '';
+  const prevName = useRef(nameValue);
 
   React.useEffect(() => {
-    prevName = nameValue;
-  }, []);
-
-  React.useEffect(() => {
-    if (nameValue !== prevName) {
+    if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
-      if (prevName) {
-        newExistingFields = _remove(newExistingFields, (el) => el === prevName);
+      if (prevName.current) {
+        newExistingFields = newExistingFields.filter(
+          (name) => name !== prevName.current
+        );
       }
-      prevName = nameValue;
+      prevName.current = nameValue;
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
       setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue]);
@@ -83,7 +80,10 @@ const CustomParamField: React.FC<Props> = ({
               ))}
           </Select>
           <FormError>
-            <ErrorMessage errors={errors} name={`customParams.${index}.name`} />
+            <ErrorMessage
+              errors={errors}
+              name={`customParams.${index}.name` as const}
+            />
           </FormError>
         </div>
       </>
@@ -101,13 +101,22 @@ const CustomParamField: React.FC<Props> = ({
           disabled={isDisabled}
         />
         <FormError>
-          <ErrorMessage errors={errors} name={`customParams.${index}.value`} />
+          <ErrorMessage
+            errors={errors}
+            name={`customParams.${index}.value` as const}
+          />
         </FormError>
       </div>
 
       <S.DeleteButtonWrapper>
-        <IconButtonWrapper onClick={() => remove(index)} aria-hidden>
-          <CloseIcon />
+        <IconButtonWrapper
+          onClick={() => remove(index)}
+          onKeyDown={(e: React.KeyboardEvent) =>
+            e.code === 'Space' && remove(index)
+          }
+          title={`Delete customParam field ${index}`}
+        >
+          <CloseIcon aria-hidden />
         </IconButtonWrapper>
       </S.DeleteButtonWrapper>
     </C.Column>
