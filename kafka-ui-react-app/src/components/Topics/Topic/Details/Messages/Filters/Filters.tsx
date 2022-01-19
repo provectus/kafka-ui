@@ -85,7 +85,7 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   const [attempt, setAttempt] = React.useState(0);
-  const [currentSeekType, setSeekType] = React.useState<SeekType>(
+  const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
   const [offset, setOffset] = React.useState<string>(
@@ -253,7 +253,7 @@ const Filters: React.FC<FiltersProps> = ({
             <S.SeekTypeSelectorWrapper>
               <Select
                 id="selectSeekType"
-                onChange={(option) => setSeekType(option as SeekType)}
+                onChange={(option) => setCurrentSeekType(option as SeekType)}
                 value={currentSeekType}
                 selectSize="M"
                 minWidth="100px"
