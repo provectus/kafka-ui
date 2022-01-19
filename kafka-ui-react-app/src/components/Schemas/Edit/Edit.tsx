@@ -38,7 +38,7 @@ const Edit: React.FC = () => {
   const schema = useAppSelector((state) => selectSchemaById(state, subject));
 
   const formatedSchema = React.useMemo(() => {
-    return schema?.schemaType === 'PROTOBUF'
+    return schema?.schemaType === SchemaType.PROTOBUF
       ? schema?.schema
       : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
   }, [schema]);
