@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Colors } from 'theme/theme';
 
 export const SecondaryTabs = styled.nav`
   & button {
@@ -8,7 +9,7 @@ export const SecondaryTabs = styled.nav`
     padding: 6px;
     height: 32px;
     min-width: 57px;
-    border: 1px solid #e3e6e8;
+    border: 1px solid ${Colors.neutral[10]};
     cursor: pointer;
 
     &:hover {

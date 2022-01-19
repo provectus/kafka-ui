@@ -22,7 +22,7 @@ export const StyledSection = styled.div`
 `;
 
 export const ContentBox = styled.div`
-  background-color: white;
+  background-color: ${Colors.neutral[0]};
   padding: 24px;
   border-radius: 8px 0 0 8px;
   flex-grow: 3;
@@ -32,7 +32,7 @@ export const ContentBox = styled.div`
 `;
 
 export const MetadataWrapper = styled.div`
-  background-color: white;
+  background-color: ${Colors.neutral[0]};
   padding: 24px;
   border-radius: 0 8px 8px 0;
   flex-grow: 1;

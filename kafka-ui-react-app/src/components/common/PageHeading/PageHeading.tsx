@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
+import { Colors } from 'theme/theme';
 
 interface Props {
   text: string;
@@ -25,7 +26,7 @@ export default styled(PageHeading)`
     font-size: 24px;
     font-weight: 500;
     line-height: 32px;
-    color: #000;
+    color: ${Colors.neutral[100]};
   }
   & > div {
     display: flex;

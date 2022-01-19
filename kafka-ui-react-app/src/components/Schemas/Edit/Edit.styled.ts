@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Colors } from 'theme/theme';
 
 export const EditWrapper = styled.div`
   padding: 16px;
@@ -34,7 +35,7 @@ export const EditorsWrapper = styled.div`
 `;
 
 export const EditorContainer = styled.div`
-  border: 1px solid #e3e6e8;
+  border: 1px solid ${Colors.neutral[10]};
   border-radius: 8px;
   margin-bottom: 16px;
   padding: 16px;

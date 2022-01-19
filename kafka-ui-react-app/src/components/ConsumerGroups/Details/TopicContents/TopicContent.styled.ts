@@ -9,7 +9,7 @@ export const TopicContentWrapper = styled.tr`
 `;
 
 export const ContentBox = styled.div`
-  background-color: white;
+  background-color: ${Colors.neutral[0]};
   padding: 20px;
   border-radius: 8px;
 `;

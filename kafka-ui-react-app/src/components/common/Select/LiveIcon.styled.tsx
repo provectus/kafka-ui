@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import React from 'react';
+import { Colors } from 'theme/theme';
 
 interface Props {
   className?: string;
@@ -15,8 +16,8 @@ const LiveIcon: React.FC<Props> = ({ className }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle cx="8" cy="8" r="7" fill="#FAD1D1" />
-        <circle cx="8" cy="8" r="4" fill="#E61A1A" />
+        <circle cx="8" cy="8" r="7" fill={Colors.red[10]} />
+        <circle cx="8" cy="8" r="4" fill={Colors.red[50]} />
       </svg>
     </i>
   );

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Colors } from 'theme/theme';
 
 export const StyledLabel = styled.label`
   position: relative;
@@ -26,7 +27,7 @@ export const StyledSlider = styled.span`
     width: 14px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: ${Colors.neutral[0]};
     transition: 0.4s;
     border-radius: 50%;
   }

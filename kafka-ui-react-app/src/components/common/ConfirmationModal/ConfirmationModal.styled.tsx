@@ -14,7 +14,7 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })`
   right: 0;
   top: 0;
   & div:first-child {
-    background-color: rgba(10, 10, 10, 0.1);
+    background-color: ${Colors.gray[30]};
     bottom: 0;
     left: 0;
     position: absolute;
@@ -30,7 +30,7 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })`
     border-radius: 8px;
 
     background-color: ${Colors.neutral[0]};
-    filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
+    filter: drop-shadow(0px 4px 16px ${Colors.gray[40]});
 
     & > * {
       padding: 16px;
