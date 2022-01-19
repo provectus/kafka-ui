@@ -33,8 +33,8 @@ describe('ClustersWidget', () => {
   });
 
   it('render clusterWidget cells', () => {
-    const cells = screen.getAllByRole('tablecell');
-    expect(screen.getAllByRole('tablecell').length).toBe(14);
+    const cells = screen.getAllByRole('cells');
+    expect(cells.length).toBe(14);
     expect(cells[0]).toHaveStyle('max-width: 99px');
   });
 });
