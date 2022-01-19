@@ -1,21 +1,27 @@
 import React from 'react';
 import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import { SchemaType } from 'generated-sources';
 
 import { StyledWrapper } from './StyledWrapper.styled';
 
-interface FullMessageProps {
+export interface FullMessageProps {
   data: string;
   schemaType?: string;
+  maxLines?: number;
 }
 
 const getSchemaValue = (data: string, schemaType?: string) => {
-  if (schemaType === 'JSON' || schemaType === 'AVRO') {
+  if (schemaType === SchemaType.JSON || schemaType === SchemaType.AVRO) {
     return JSON.stringify(JSON.parse(data), null, '\t');
   }
   return data;
 };
 
-const JSONViewer: React.FC<FullMessageProps> = ({ data, schemaType }) => {
+const JSONViewer: React.FC<FullMessageProps> = ({
+  data,
+  schemaType,
+  maxLines,
+}) => {
   try {
     return (
       <StyledWrapper data-testid="json-viewer">
@@ -26,7 +32,7 @@ const JSONViewer: React.FC<FullMessageProps> = ({ data, schemaType }) => {
           value={getSchemaValue(data, schemaType)}
           setOptions={{
             showLineNumbers: false,
-            maxLines: 40,
+            maxLines,
             showGutter: false,
           }}
           readOnly

@@ -1,22 +1,32 @@
-import { shallow } from 'enzyme';
 import React from 'react';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
+import JSONViewer, {
+  FullMessageProps,
+} from 'components/common/JSONViewer/JSONViewer';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
 const data = { a: 1 };
+const maxLines = 28;
+const schemaType = 'JSON';
 
 describe('JSONViewer component', () => {
+  const setupComponent = (props: FullMessageProps) =>
+    render(<JSONViewer {...props} />);
+
   it('renders JSONTree', () => {
-    const component = shallow(
-      <JSONViewer data={JSON.stringify(data)} schemaType="JSON" />
-    );
-    expect(component.exists('Styled(JSONEditor)')).toBeTruthy();
+    setupComponent({
+      data: JSON.stringify(data),
+      maxLines,
+      schemaType,
+    });
+    expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('matches the snapshot with fixed height with no value', () => {
-    const component = shallow(
-      <JSONViewer data={data as unknown as string} schemaType="JSON" />
-    );
-    expect(component.exists('JSONEditor')).toBeFalsy();
-    expect(component.exists('p')).toBeTruthy();
+    setupComponent({
+      data: '',
+      maxLines,
+      schemaType,
+    });
   });
 });

@@ -3,6 +3,7 @@ import AceEditor, { IAceEditorProps } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-json5';
 import 'ace-builds/src-noconflict/mode-protobuf';
 import 'ace-builds/src-noconflict/theme-tomorrow';
+import { SchemaType } from 'generated-sources';
 import React from 'react';
 import ReactAce from 'react-ace/lib/ace';
 import styled from 'styled-components';
@@ -19,7 +20,9 @@ const JSONEditor = React.forwardRef<ReactAce | null, JSONEditorProps>(
       <AceEditor
         ref={ref}
         mode={
-          schemaType === 'JSON' || schemaType === 'AVRO' ? 'json5' : 'protobuf'
+          schemaType === SchemaType.JSON || schemaType === SchemaType.AVRO
+            ? 'json5'
+            : 'protobuf'
         }
         theme="tomorrow"
         tabSize={2}
