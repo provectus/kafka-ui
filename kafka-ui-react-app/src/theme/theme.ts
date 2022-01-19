@@ -133,6 +133,8 @@ const theme = {
     },
     color: {
       normal: Colors.neutral[50],
+      hover: Colors.brand[50],
+      active: Colors.brand[50],
     },
     previewColor: {
       normal: Colors.brand[50],

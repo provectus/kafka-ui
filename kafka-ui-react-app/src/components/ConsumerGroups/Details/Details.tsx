@@ -78,7 +78,7 @@ const Details: React.FC = () => {
           {!isReadOnly && (
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem onClick={onResetOffsets}>
-                Reset offsest
+                Reset offsets
               </DropdownItem>
               <DropdownItem
                 style={{ color: Colors.red[50] }}
