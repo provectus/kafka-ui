@@ -272,6 +272,7 @@ Array [
         <ul
           className="c2"
           disabled={false}
+          name="connectName"
           onClick={[Function]}
           onKeyDown={[Function]}
           role="listbox"

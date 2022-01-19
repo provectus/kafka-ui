@@ -52,22 +52,22 @@ describe('GlobalSchemaSelector', () => {
     fetchMock.reset();
   });
 
-  // it('renders with initial prop', () => {
-  //   expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
-  // });
-  //
-  // it('shows popup when select value is changed', async () => {
-  //   expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
-  //   selectForwardOption();
-  //   expect(screen.getByText('Confirm the action')).toBeInTheDocument();
-  // });
-  //
-  // it('resets select value when cancel is clicked', () => {
-  //   selectForwardOption();
-  //   userEvent.click(screen.getByText('Cancel'));
-  //   expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument();
-  //   expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
-  // });
+  it('renders with initial prop', () => {
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
+  });
+
+  it('shows popup when select value is changed', async () => {
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
+    selectForwardOption();
+    expect(screen.getByText('Confirm the action')).toBeInTheDocument();
+  });
+
+  it('resets select value when cancel is clicked', () => {
+    selectForwardOption();
+    userEvent.click(screen.getByText('Cancel'));
+    expect(screen.queryByText('Confirm the action')).not.toBeInTheDocument();
+    expectOptionIsSelected(CompatibilityLevelCompatibilityEnum.FULL);
+  });
 
   it('sets new schema when confirm is clicked', async () => {
     selectForwardOption();

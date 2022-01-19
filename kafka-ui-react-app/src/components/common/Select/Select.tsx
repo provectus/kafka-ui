@@ -32,7 +32,6 @@ const Select: React.FC<SelectProps> = ({
   selectSize = 'L',
   placeholder = '',
   isLive,
-  name,
   disabled = false,
   onChange,
   ...props
@@ -59,71 +58,37 @@ const Select: React.FC<SelectProps> = ({
   return (
     <div ref={selectContainerRef}>
       {isLive && <LiveIcon />}
-      {name ? (
-        <S.Select
-          role="listbox"
-          selectSize={selectSize}
-          isLive={isLive}
-          disabled={disabled}
-          onClick={showOptionsHandler}
-          onKeyDown={showOptionsHandler}
-          {...props}
-        >
-          <S.SelectedOption role="option" tabIndex={0}>
-            {options.find(
-              (option) => option.value === (defaultValue || selectedOption)
-            )?.label || placeholder}
-          </S.SelectedOption>
-          {showOptions && (
-            <S.OptionList>
-              {options?.map((option) => (
-                <S.Option
-                  value={option.value}
-                  key={option.value}
-                  disabled={option.disabled}
-                  onClick={() => updateSelectedOption(option)}
-                  tabIndex={0}
-                  role="option"
-                >
-                  {option.label}
-                </S.Option>
-              ))}
-            </S.OptionList>
-          )}
-        </S.Select>
-      ) : (
-        <S.Select
-          role="listbox"
-          selectSize={selectSize}
-          isLive={isLive}
-          disabled={disabled}
-          onClick={showOptionsHandler}
-          onKeyDown={showOptionsHandler}
-          {...props}
-        >
-          <S.SelectedOption tabIndex={0} role="option">
-            {options.find(
-              (option) => option.value === (defaultValue || selectedOption)
-            )?.label || placeholder}
-          </S.SelectedOption>
-          {showOptions && (
-            <S.OptionList>
-              {options?.map((option) => (
-                <S.Option
-                  value={option.value}
-                  key={option.value}
-                  disabled={option.disabled}
-                  onClick={() => updateSelectedOption(option)}
-                  tabIndex={0}
-                  role="option"
-                >
-                  {option.label}
-                </S.Option>
-              ))}
-            </S.OptionList>
-          )}
-        </S.Select>
-      )}
+      <S.Select
+        role="listbox"
+        selectSize={selectSize}
+        isLive={isLive}
+        disabled={disabled}
+        onClick={showOptionsHandler}
+        onKeyDown={showOptionsHandler}
+        {...props}
+      >
+        <S.SelectedOption role="option" tabIndex={0}>
+          {options.find(
+            (option) => option.value === (defaultValue || selectedOption)
+          )?.label || placeholder}
+        </S.SelectedOption>
+        {showOptions && (
+          <S.OptionList>
+            {options?.map((option) => (
+              <S.Option
+                value={option.value}
+                key={option.value}
+                disabled={option.disabled}
+                onClick={() => updateSelectedOption(option)}
+                tabIndex={0}
+                role="option"
+              >
+                {option.label}
+              </S.Option>
+            ))}
+          </S.OptionList>
+        )}
+      </S.Select>
     </div>
   );
 };
