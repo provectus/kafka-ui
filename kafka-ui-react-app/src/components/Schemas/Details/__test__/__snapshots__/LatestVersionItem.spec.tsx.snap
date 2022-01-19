@@ -8,6 +8,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
     </h1>
     <JSONViewer
       data="{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}"
+      maxLines={28}
     />
   </div>
   <div
