@@ -6,11 +6,10 @@ export const ParamsWrapper = styled.div`
 `;
 
 export const DeleteButtonWrapper = styled.div`
-  height: 32px;
+  min-height: 32px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  align-self: flex-end;
-  flex-grow: 0.25 !important;
+  justify-self: flex-start;
+  margin-top: 32px;
 `;
