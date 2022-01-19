@@ -20,7 +20,9 @@ type Tab = 'key' | 'content' | 'headers';
 
 export interface MessageContentProps {
   messageKey?: string;
+  messageKeyFormat?: string;
   messageContent?: string;
+  messageContentFormat?: string;
   headers?: { [key: string]: string | undefined };
   timestamp?: Date;
   timestampType?: TopicMessageTimestampTypeEnum;
@@ -28,7 +30,9 @@ export interface MessageContentProps {
 
 const MessageContent: React.FC<MessageContentProps> = ({
   messageKey,
+  messageKeyFormat,
   messageContent,
+  messageContentFormat,
   headers,
   timestamp,
   timestampType,
@@ -58,20 +62,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
   };
   const keySize = new TextEncoder().encode(messageKey).length;
   const contentSize = new TextEncoder().encode(messageContent).length;
-  const isContentJson = () => {
-    try {
-      return isObject(messageContent && JSON.parse(messageContent));
-    } catch {
-      return false;
-    }
-  };
-  const isKeyJson = () => {
-    try {
-      return isObject(messageKey && JSON.parse(messageKey));
-    } catch {
-      return false;
-    }
-  };
+
   return (
     <MessageContentWrapper>
       <td colSpan={10}>
@@ -114,9 +105,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <Metadata>
               <MetadataLabel>Content</MetadataLabel>
               <span>
-                <MetadataValue>
-                  {isContentJson() ? 'JSON' : 'Text'}
-                </MetadataValue>
+                <MetadataValue>{messageContentFormat}</MetadataValue>
                 <MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
                 </MetadataMeta>
@@ -126,7 +115,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <Metadata>
               <MetadataLabel>Key</MetadataLabel>
               <span>
-                <MetadataValue>{isKeyJson() ? 'JSON' : 'Text'}</MetadataValue>
+                <MetadataValue>{messageKeyFormat}</MetadataValue>
                 <MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
                 </MetadataMeta>
