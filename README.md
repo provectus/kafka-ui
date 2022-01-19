@@ -1,7 +1,9 @@
 ![UI for Apache Kafka logo](documentation/images/kafka-ui-logo.png) UI for Apache Kafka – Free Web UI for Apache Kafka &nbsp; 
 ------------------
 
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/provectus/kafka-ui/blob/master/LICENSE)
 ![UI for Apache Kafka Price Free](documentation/images/free-open-source.svg)
+[![Release version](https://img.shields.io/github/v/release/provectus/kafka-ui)](https://github.com/provectus/kafka-ui/releases)
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 <em>UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
