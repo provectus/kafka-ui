@@ -15,7 +15,7 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
       <tbody>
         <MessageContent
           messageKey='"test-key"'
-          messageKeyFormat="AVRO"
+          messageKeyFormat="JSON"
           messageContent='{"data": "test"}'
           messageContentFormat="AVRO"
           headers={{ header: 'test' }}
@@ -35,12 +35,15 @@ describe('MessageContent screen', () => {
     render(setupWrapper());
   });
 
-  // describe('renders', () => {
-  //   it('correct key format', () => {
-  //     const keyTab = screen.getAllByText('Key');
-  //     console.log(keyTab);
-  //   });
-  // });
+  describe('renders', () => {
+    it('key format in document', () => {
+      expect(screen.getByText('JSON')).toBeInTheDocument();
+    });
+
+    it('content format in document', () => {
+      expect(screen.getByText('AVRO')).toBeInTheDocument();
+    });
+  });
 
   describe('when switched to display the key', () => {
     it('has a tab with is-active classname', () => {
