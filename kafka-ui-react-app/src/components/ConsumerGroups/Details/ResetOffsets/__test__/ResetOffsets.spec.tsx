@@ -1,7 +1,7 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
 import { Route } from 'react-router';
-import { screen, waitFor, fireEvent, within } from '@testing-library/react';
+import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { clusterConsumerGroupResetOffsetsPath } from 'lib/paths';

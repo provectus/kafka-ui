@@ -1,5 +1,5 @@
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import Select, { SelectOption } from 'components/common/Select/Select';
+import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
