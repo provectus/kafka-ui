@@ -1,4 +1,4 @@
-name: latest
+name: master
 on:
   workflow_dispatch:
   push:
@@ -23,9 +23,9 @@ jobs:
       - name: Build
         id: build
         run: |
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          mvn clean package -Pprod -DskipTests -DbuildVersion=$GITHUB_SHA
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=$GITHUB_SHA --non-recursive exec:exec)
           echo "::set-output name=version::${VERSION}"
-          mvn clean package -Pprod -DskipTests
 #################
 #               #
 # Docker images #
