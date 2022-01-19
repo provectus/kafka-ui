@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.config;
 import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.ReadOnlyModeException;
 import com.provectus.kafka.ui.service.ClustersStorage;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -32,7 +34,8 @@ public class ReadOnlyModeFilter implements WebFilter {
     }
 
     var path = exchange.getRequest().getPath().pathWithinApplication().value();
-    var matcher = CLUSTER_NAME_REGEX.matcher(path);
+    var decodedPath = URLDecoder.decode(path, StandardCharsets.UTF_8);
+    var matcher = CLUSTER_NAME_REGEX.matcher(decodedPath);
     if (!matcher.find()) {
       return chain.filter(exchange);
     }
