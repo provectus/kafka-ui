@@ -40,7 +40,10 @@ export const fetchSchemaVersions = createAsyncThunk<
   }
 );
 
-const schemaVersionsAdapter = createEntityAdapter<SchemaSubject>();
+const schemaVersionsAdapter = createEntityAdapter<SchemaSubject>({
+  selectId: ({ id }) => id,
+  sortComparer: (a, b) => b.id - a.id,
+});
 const schemasAdapter = createEntityAdapter<SchemaSubject>({
   selectId: ({ subject }) => subject,
 });

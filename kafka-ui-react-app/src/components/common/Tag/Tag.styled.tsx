@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface Props {
-  color: 'green' | 'gray' | 'yellow' | 'red' | 'white';
+  color: 'green' | 'gray' | 'yellow' | 'red' | 'white' | 'blue';
 }
 
 export const Tag = styled.p<Props>`

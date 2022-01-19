@@ -18,22 +18,7 @@ exports[`Tasks view matches snapshot 1`] = `
   background-color: #F1F2F3;
 }
 
-.c1 {
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
-}
-
-.c1.is-clickable {
-  cursor: pointer !important;
-  pointer-events: all !important;
-}
-
-.c1.has-text-link-dark span {
-  color: #4F4FFF !important;
-}
-
-.c1 span {
+.c2 {
   font-family: Inter,sans-serif;
   font-size: 12px;
   font-style: normal;
@@ -46,18 +31,13 @@ exports[`Tasks view matches snapshot 1`] = `
   text-align: left;
   background: #FFFFFF;
   color: #73848C;
+  cursor: default;
 }
 
-.c1 span.preview {
-  margin-left: 8px;
-  font-size: 14px;
-  color: #4F4FFF;
-  cursor: pointer;
-}
-
-.c1 span.is-clickable {
-  cursor: pointer !important;
-  pointer-events: all !important;
+.c1 {
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 }
 
 <table
@@ -67,40 +47,36 @@ exports[`Tasks view matches snapshot 1`] = `
     <tr>
       <th
         className="c1"
-        title="ID"
       >
         <span
-          className="title"
+          className="c2"
         >
           ID
         </span>
       </th>
       <th
         className="c1"
-        title="Worker"
       >
         <span
-          className="title"
+          className="c2"
         >
           Worker
         </span>
       </th>
       <th
         className="c1"
-        title="State"
       >
         <span
-          className="title"
+          className="c2"
         >
           State
         </span>
       </th>
       <th
         className="c1"
-        title="Trace"
       >
         <span
-          className="title"
+          className="c2"
         >
           Trace
         </span>
@@ -109,7 +85,7 @@ exports[`Tasks view matches snapshot 1`] = `
         className="c1"
       >
         <span
-          className="title"
+          className="c2"
         />
       </th>
     </tr>
@@ -203,22 +179,7 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
   background-color: #F1F2F3;
 }
 
-.c1 {
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
-}
-
-.c1.is-clickable {
-  cursor: pointer !important;
-  pointer-events: all !important;
-}
-
-.c1.has-text-link-dark span {
-  color: #4F4FFF !important;
-}
-
-.c1 span {
+.c2 {
   font-family: Inter,sans-serif;
   font-size: 12px;
   font-style: normal;
@@ -231,18 +192,13 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
   text-align: left;
   background: #FFFFFF;
   color: #73848C;
+  cursor: default;
 }
 
-.c1 span.preview {
-  margin-left: 8px;
-  font-size: 14px;
-  color: #4F4FFF;
-  cursor: pointer;
-}
-
-.c1 span.is-clickable {
-  cursor: pointer !important;
-  pointer-events: all !important;
+.c1 {
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 }
 
 <table
@@ -252,40 +208,36 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
     <tr>
       <th
         className="c1"
-        title="ID"
       >
         <span
-          className="title"
+          className="c2"
         >
           ID
         </span>
       </th>
       <th
         className="c1"
-        title="Worker"
       >
         <span
-          className="title"
+          className="c2"
         >
           Worker
         </span>
       </th>
       <th
         className="c1"
-        title="State"
       >
         <span
-          className="title"
+          className="c2"
         >
           State
         </span>
       </th>
       <th
         className="c1"
-        title="Trace"
       >
         <span
-          className="title"
+          className="c2"
         >
           Trace
         </span>
@@ -294,7 +246,7 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
         className="c1"
       >
         <span
-          className="title"
+          className="c2"
         />
       </th>
     </tr>

@@ -1,43 +1,52 @@
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+import styled, { css } from 'styled-components';
 
-import { TableHeaderCellProps } from './TableHeaderCell';
+interface TitleProps {
+  isOrderable?: boolean;
+  isOrdered?: boolean;
+}
 
-export const TableHeaderCell = styled.th<TableHeaderCellProps>`
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
+const isOrderableStyles = css`
+  cursor: pointer;
 
-  &.is-clickable {
-    cursor: pointer !important;
-    pointer-events: all !important;
+  &:hover {
+    color: ${(props) => props.theme.thStyles.color.hover};
   }
+`;
 
-  &.has-text-link-dark span {
-    color: ${Colors.brand[50]} !important;
-  }
+export const Title = styled.span<TitleProps>`
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: left;
+  background: ${(props) => props.theme.thStyles.backgroundColor.normal};
+  color: ${(props) =>
+    props.isOrdered
+      ? props.theme.thStyles.color.active
+      : props.theme.thStyles.color.normal};
+  cursor: default;
 
-  span {
-    font-family: Inter, sans-serif;
-    font-size: 12px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 16px;
-    letter-spacing: 0em;
-    text-align: left;
-    background: ${(props) => props.theme.thStyles.backgroundColor.normal};
-    color: ${(props) => props.theme.thStyles.color.normal};
+  ${(props) => props.isOrderable && isOrderableStyles}
+`;
 
-    &.preview {
-      margin-left: 8px;
-      font-size: 14px;
-      color: ${(props) => props.theme.thStyles.previewColor.normal};
-      cursor: pointer;
-    }
+export const Preview = styled.span`
+  margin-left: 8px;
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: left;
+  background: ${(props) => props.theme.thStyles.backgroundColor.normal};
+  font-size: 14px;
+  color: ${(props) => props.theme.thStyles.previewColor.normal};
+  cursor: pointer;
+`;
 
-    &.is-clickable {
-      cursor: pointer !important;
-      pointer-events: all !important;
-    }
-  }
+export const TableHeaderCell = styled.th`
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 `;

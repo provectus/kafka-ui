@@ -2,25 +2,17 @@ import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import React from 'react';
 import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
-import { isObject } from 'lodash';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
-import {
-  ContentBox,
-  StyledSection,
-  MessageContentWrapper,
-  Metadata,
-  MetadataLabel,
-  MetadataMeta,
-  MetadataValue,
-  MetadataWrapper,
-} from './MessageContent.styled';
+import * as S from './MessageContent.styled';
 
 type Tab = 'key' | 'content' | 'headers';
 
 export interface MessageContentProps {
   messageKey?: string;
+  messageKeyFormat?: string;
   messageContent?: string;
+  messageContentFormat?: string;
   headers?: { [key: string]: string | undefined };
   timestamp?: Date;
   timestampType?: TopicMessageTimestampTypeEnum;
@@ -28,7 +20,9 @@ export interface MessageContentProps {
 
 const MessageContent: React.FC<MessageContentProps> = ({
   messageKey,
+  messageKeyFormat,
   messageContent,
+  messageContentFormat,
   headers,
   timestamp,
   timestampType,
@@ -58,25 +52,12 @@ const MessageContent: React.FC<MessageContentProps> = ({
   };
   const keySize = new TextEncoder().encode(messageKey).length;
   const contentSize = new TextEncoder().encode(messageContent).length;
-  const isContentJson = () => {
-    try {
-      return isObject(messageContent && JSON.parse(messageContent));
-    } catch {
-      return false;
-    }
-  };
-  const isKeyJson = () => {
-    try {
-      return isObject(messageKey && JSON.parse(messageKey));
-    } catch {
-      return false;
-    }
-  };
+
   return (
-    <MessageContentWrapper>
+    <S.Wrapper>
       <td colSpan={10}>
-        <StyledSection>
-          <ContentBox>
+        <S.Section>
+          <S.ContentBox>
             <SecondaryTabs>
               <button
                 type="button"
@@ -101,41 +82,39 @@ const MessageContent: React.FC<MessageContentProps> = ({
               </button>
             </SecondaryTabs>
             <JSONViewer data={activeTabContent() || ''} />
-          </ContentBox>
-          <MetadataWrapper>
-            <Metadata>
-              <MetadataLabel>Timestamp</MetadataLabel>
+          </S.ContentBox>
+          <S.MetadataWrapper>
+            <S.Metadata>
+              <S.MetadataLabel>Timestamp</S.MetadataLabel>
               <span>
-                <MetadataValue>{timestamp?.toLocaleString()}</MetadataValue>
-                <MetadataMeta>Timestamp type: {timestampType}</MetadataMeta>
+                <S.MetadataValue>{timestamp?.toLocaleString()}</S.MetadataValue>
+                <S.MetadataMeta>Timestamp type: {timestampType}</S.MetadataMeta>
               </span>
-            </Metadata>
+            </S.Metadata>
 
-            <Metadata>
-              <MetadataLabel>Content</MetadataLabel>
+            <S.Metadata>
+              <S.MetadataLabel>Content</S.MetadataLabel>
               <span>
-                <MetadataValue>
-                  {isContentJson() ? 'JSON' : 'Text'}
-                </MetadataValue>
-                <MetadataMeta>
+                <S.MetadataValue>{messageContentFormat}</S.MetadataValue>
+                <S.MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
-                </MetadataMeta>
+                </S.MetadataMeta>
               </span>
-            </Metadata>
+            </S.Metadata>
 
-            <Metadata>
-              <MetadataLabel>Key</MetadataLabel>
+            <S.Metadata>
+              <S.MetadataLabel>Key</S.MetadataLabel>
               <span>
-                <MetadataValue>{isKeyJson() ? 'JSON' : 'Text'}</MetadataValue>
-                <MetadataMeta>
+                <S.MetadataValue>{messageKeyFormat}</S.MetadataValue>
+                <S.MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
-                </MetadataMeta>
+                </S.MetadataMeta>
               </span>
-            </Metadata>
-          </MetadataWrapper>
-        </StyledSection>
+            </S.Metadata>
+          </S.MetadataWrapper>
+        </S.Section>
       </td>
-    </MessageContentWrapper>
+    </S.Wrapper>
   );
 };
 
