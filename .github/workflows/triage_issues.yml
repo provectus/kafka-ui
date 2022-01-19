@@ -1,13 +1,13 @@
-name: Triage label new issues
+name: Add triage label to new issues
 on:
   issues:
     types:
       - opened
 jobs:
-  triage_label_issues:
+  triage_issues:
     runs-on: ubuntu-latest
     steps:
-      - name: Label issues
+      - name: Label issue
         uses: andymckay/labeler@master
         with:
           add-labels: "status/triage"

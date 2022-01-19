@@ -615,6 +615,46 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
+  /api/clusters/{clusterName}/consumer-groups/paged:
+    get:
+      tags:
+        - Consumer Groups
+      summary: Get consumer croups with paging support
+      operationId: getConsumerGroupsPage
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConsumerGroupOrdering'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerGroupsPageResponse'
+
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
@@ -1862,6 +1902,23 @@ components:
           format: int64
       required:
         - groupId
+
+    ConsumerGroupOrdering:
+      type: string
+      enum:
+        - NAME
+        - MEMBERS
+        - STATE
+
+    ConsumerGroupsPageResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        consumerGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerGroup'
 
     CreateTopicMessage:
       type: object

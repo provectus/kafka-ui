@@ -38,7 +38,12 @@ const Select: React.FC<SelectProps> = ({
           {children}
         </S.Select>
       ) : (
-        <S.Select selectSize={selectSize} isLive={isLive} {...props}>
+        <S.Select
+          role="listbox"
+          selectSize={selectSize}
+          isLive={isLive}
+          {...props}
+        >
           {children}
         </S.Select>
       )}

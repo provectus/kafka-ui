@@ -464,6 +464,7 @@ exports[`Filters component matches the snapshot 1`] = `
               <select
                 class="c7"
                 id="selectSeekType"
+                role="listbox"
               >
                 <option
                   value="OFFSET"
@@ -562,6 +563,7 @@ exports[`Filters component matches the snapshot 1`] = `
         >
           <select
             class="c11"
+            role="listbox"
           >
             <option
               value="FORWARD"
@@ -1098,6 +1100,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
               <select
                 class="c7"
                 id="selectSeekType"
+                role="listbox"
               >
                 <option
                   value="OFFSET"
@@ -1196,6 +1199,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         >
           <select
             class="c11"
+            role="listbox"
           >
             <option
               value="FORWARD"
