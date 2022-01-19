@@ -1,4 +1,4 @@
-name: Triage label new issues
+name: Add triage label to new issues
 on:
   issues:
     types:
