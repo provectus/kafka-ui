@@ -2,7 +2,6 @@ import { TopicMessageTimestampTypeEnum } from 'generated-sources';
 import React from 'react';
 import JSONViewer from 'components/common/JSONViewer/JSONViewer';
 import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
-import { isObject } from 'lodash';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
 import {
