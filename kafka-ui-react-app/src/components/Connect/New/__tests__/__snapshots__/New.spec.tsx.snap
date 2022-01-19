@@ -42,11 +42,7 @@ exports[`New view matches snapshot 1`] = `
     </h1>
     <div />
   </div>
-  .c7.ace-tomorrow {
-  background: transparent;
-}
-
-.c1 {
+  .c1 {
   font-weight: 500;
   font-size: 12px;
   line-height: 20px;
@@ -177,7 +173,7 @@ exports[`New view matches snapshot 1`] = `
   position: relative;
 }
 
-.c8 {
+.c7 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -204,27 +200,27 @@ exports[`New view matches snapshot 1`] = `
   height: 32px;
 }
 
-.c8:hover:enabled {
+.c7:hover:enabled {
   background: #1717CF;
   color: #FFFFFF;
   cursor: pointer;
 }
 
-.c8:active:enabled {
+.c7:active:enabled {
   background: #1414B8;
   color: #FFFFFF;
 }
 
-.c8:disabled {
+.c7:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c8 a {
+.c7 a {
   color: white;
 }
 
-.c8 i {
+.c7 i {
   margin-right: 7px;
 }
 
@@ -308,103 +304,15 @@ exports[`New view matches snapshot 1`] = `
       >
         Config *
       </label>
-      <div
-        class=" ace_editor ace_hidpi ace-tomorrow c7"
-        id="config"
-        style="width: 100%; height: 372px; font-size: 14px;"
-      >
-        <textarea
-          autocapitalize="off"
-          autocorrect="off"
-          class="ace_text-input"
-          spellcheck="false"
-          style="opacity: 0; font-size: 1px;"
-          wrap="off"
-        />
-        <div
-          aria-hidden="true"
-          class="ace_gutter"
-        >
-          <div
-            class="ace_layer ace_gutter-layer ace_folding-enabled"
-            style="height: 1000000px;"
-          />
-        </div>
-        <div
-          class="ace_scroller"
-          style="line-height: 0px;"
-        >
-          <div
-            class="ace_content"
-          >
-            <div
-              class="ace_layer ace_print-margin-layer"
-            >
-              <div
-                class="ace_print-margin"
-                style="left: 4px; visibility: visible;"
-              />
-            </div>
-            <div
-              class="ace_layer ace_marker-layer"
-            />
-            <div
-              class="ace_layer ace_text-layer"
-              style="height: 1000000px; margin: 0px 4px;"
-            />
-            <div
-              class="ace_layer ace_marker-layer"
-            />
-            <div
-              class="ace_layer ace_cursor-layer ace_hidden-cursors"
-            >
-              <div
-                class="ace_cursor"
-              />
-            </div>
-          </div>
-        </div>
-        <div
-          class="ace_scrollbar ace_scrollbar-v"
-          style="display: none; width: 20px;"
-        >
-          <div
-            class="ace_scrollbar-inner"
-            style="width: 20px;"
-          >
-             
-          </div>
-        </div>
-        <div
-          class="ace_scrollbar ace_scrollbar-h"
-          style="display: none; height: 20px;"
-        >
-          <div
-            class="ace_scrollbar-inner"
-            style="height: 20px;"
-          >
-             
-          </div>
-        </div>
-        <div
-          style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; overflow: hidden;"
-        >
-          <div
-            style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; overflow: visible;"
-          />
-          <div
-            style="height: auto; width: auto; top: 0px; left: 0px; visibility: hidden; position: absolute; white-space: pre; overflow: visible;"
-          >
-            XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-          </div>
-        </div>
-      </div>
+      <textarea
+        placeholder="json"
+      />
       <p
         class="c4"
       />
     </div>
     <button
-      class="c8"
+      class="c7"
       disabled=""
       type="submit"
     >
