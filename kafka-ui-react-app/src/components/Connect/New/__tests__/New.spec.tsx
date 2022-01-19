@@ -16,9 +16,9 @@ import { ControllerRenderProps } from 'react-hook-form';
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 jest.mock(
   'components/common/JSONEditor/JSONEditor',
-  () =>
-    ({ onChange }: ControllerRenderProps) =>
-      <textarea onChange={onChange} placeholder="json" />
+  () => (props: ControllerRenderProps) => {
+    return <textarea {...props} placeholder="json" />;
+  }
 );
 
 const mockHistoryPush = jest.fn();

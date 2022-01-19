@@ -305,6 +305,7 @@ exports[`New view matches snapshot 1`] = `
         Config *
       </label>
       <textarea
+        name="config"
         placeholder="json"
       />
       <p
