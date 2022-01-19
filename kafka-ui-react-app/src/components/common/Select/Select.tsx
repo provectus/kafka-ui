@@ -12,6 +12,7 @@ export interface SelectProps {
   isLive?: boolean;
   minWidth?: string;
   value?: string | number;
+  defaultValue?: string | number;
   placeholder?: string;
   disabled?: boolean;
   onChange?: (option: string | number) => void;
@@ -27,6 +28,7 @@ const Select: React.FC<SelectProps> = ({
   id,
   options = [],
   value,
+  defaultValue,
   selectSize = 'L',
   placeholder = '',
   isLive,
@@ -68,8 +70,9 @@ const Select: React.FC<SelectProps> = ({
           {...props}
         >
           <S.SelectedOption role="option" tabIndex={0}>
-            {options.find((option) => option.value === selectedOption)?.label ||
-              placeholder}
+            {options.find(
+              (option) => option.value === (defaultValue || selectedOption)
+            )?.label || placeholder}
           </S.SelectedOption>
           {showOptions && (
             <S.OptionList>
@@ -99,8 +102,9 @@ const Select: React.FC<SelectProps> = ({
           {...props}
         >
           <S.SelectedOption tabIndex={0} role="option">
-            {options.find((option) => option.value === selectedOption)?.label ||
-              placeholder}
+            {options.find(
+              (option) => option.value === (defaultValue || selectedOption)
+            )?.label || placeholder}
           </S.SelectedOption>
           {showOptions && (
             <S.OptionList>

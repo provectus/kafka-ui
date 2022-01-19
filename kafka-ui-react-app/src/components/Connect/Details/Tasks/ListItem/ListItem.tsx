@@ -5,7 +5,7 @@ import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import * as C from 'components/common/Tag/Tag.styled';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -35,7 +35,7 @@ const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
       <td>{task.status?.id}</td>
       <td>{task.status?.workerId}</td>
       <td>
-        <TagStyled color="yellow">{task.status.state}</TagStyled>
+        <C.Tag color="yellow">{task.status.state}</C.Tag>
       </td>
       <td>{task.status.trace || 'null'}</td>
       <td style={{ width: '5%' }}>

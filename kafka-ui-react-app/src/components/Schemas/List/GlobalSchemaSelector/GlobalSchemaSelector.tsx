@@ -58,6 +58,9 @@ const GlobalSchemaSelector: React.FC = () => {
           clusterName,
           compatibilityLevel: { compatibility: nextCompatibilityLevel },
         });
+        setCurrentCompatibilityLevel(nextCompatibilityLevel);
+        setNextCompatibilityLevel(undefined);
+        setIsConfirmationVisible(false);
         dispatch(fetchSchemas(clusterName));
       } catch (e) {
         const err = await getResponse(e as Response);
@@ -74,7 +77,7 @@ const GlobalSchemaSelector: React.FC = () => {
       <div>Global Compatibility Level: </div>
       <Select
         selectSize="M"
-        value={currentCompatibilityLevel}
+        defaultValue={currentCompatibilityLevel}
         minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}

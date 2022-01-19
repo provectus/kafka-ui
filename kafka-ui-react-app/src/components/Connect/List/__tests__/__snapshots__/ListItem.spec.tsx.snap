@@ -227,6 +227,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "selectStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#E3E6E8",
+          "normal": "#FFFFFF",
+        },
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#E3E6E8",
@@ -246,6 +251,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "tagStyles": Object {
         "backgroundColor": Object {
+          "blue": "#e3f2fd",
           "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",
@@ -259,6 +265,8 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "normal": "#FFFFFF",
         },
         "color": Object {
+          "active": "#4F4FFF",
+          "hover": "#4F4FFF",
           "normal": "#73848C",
         },
         "previewColor": Object {
@@ -374,53 +382,45 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                     <div
                       className="c1"
                     >
-                      <Styled(Tag)
+                      <styled.p
                         color="gray"
                         key="test-topic"
                       >
-                        <Tag
+                        <p
                           className="c2"
                           color="gray"
                         >
-                          <p
-                            className="c2"
+                          <Link
+                            to="/ui/clusters/local/topics/test-topic"
                           >
-                            <Link
-                              to="/ui/clusters/local/topics/test-topic"
+                            <LinkAnchor
+                              href="/ui/clusters/local/topics/test-topic"
+                              navigate={[Function]}
                             >
-                              <LinkAnchor
+                              <a
                                 href="/ui/clusters/local/topics/test-topic"
-                                navigate={[Function]}
+                                onClick={[Function]}
                               >
-                                <a
-                                  href="/ui/clusters/local/topics/test-topic"
-                                  onClick={[Function]}
-                                >
-                                  test-topic
-                                </a>
-                              </LinkAnchor>
-                            </Link>
-                          </p>
-                        </Tag>
-                      </Styled(Tag)>
+                                test-topic
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </p>
+                      </styled.p>
                     </div>
                   </styled.div>
                 </td>
                 <td>
-                  <Styled(Tag)
+                  <styled.p
                     color="green"
                   >
-                    <Tag
+                    <p
                       className="c3"
                       color="green"
                     >
-                      <p
-                        className="c3"
-                      >
-                        RUNNING
-                      </p>
-                    </Tag>
-                  </Styled(Tag)>
+                      RUNNING
+                    </p>
+                  </styled.p>
                 </td>
                 <td>
                   <span>

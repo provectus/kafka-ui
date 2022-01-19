@@ -37,10 +37,11 @@ const Edit: React.FC = () => {
 
   const schema = useAppSelector((state) => selectSchemaById(state, subject));
 
-  const formatedSchema = React.useMemo(
-    () => JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t'),
-    [schema]
-  );
+  const formatedSchema = React.useMemo(() => {
+    return schema?.schemaType === SchemaType.PROTOBUF
+      ? schema?.schema
+      : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
+  }, [schema]);
 
   const onSubmit = React.useCallback(async (props: NewSchemaSubjectRaw) => {
     if (!schema) return;

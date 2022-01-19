@@ -90,7 +90,7 @@ describe('Details component', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('hanles [Delete consumer group] click', async () => {
+    it('handles [Delete consumer group] click', async () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       userEvent.click(screen.getByText('Delete consumer group'));
 

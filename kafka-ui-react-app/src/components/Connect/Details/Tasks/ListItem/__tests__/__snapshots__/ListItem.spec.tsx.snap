@@ -58,6 +58,7 @@ exports[`ListItem view matches snapshot 1`] = `
       <td>
         <p
           className="c0"
+          color="yellow"
         >
           RUNNING
         </p>
