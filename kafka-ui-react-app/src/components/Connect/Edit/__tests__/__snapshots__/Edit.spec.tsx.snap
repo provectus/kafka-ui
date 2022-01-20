@@ -45,7 +45,7 @@ exports[`Edit view matches snapshot 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -137,7 +137,7 @@ exports[`Edit view matches snapshot when config has credentials 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {

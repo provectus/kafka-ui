@@ -22,7 +22,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
   font-size: 24px;
   font-weight: 500;
   line-height: 32px;
-  color: #000;
+  color: #171A1C;
 }
 
 .c0 > div {
@@ -90,6 +90,9 @@ exports[`Details when it has readonly flag does not render the Action button a T
 <Component
   theme={
     Object {
+      "JSONViewer": Object {
+        "wrapper": "#f9fafa",
+      },
       "alert": Object {
         "color": Object {
           "error": "#FAD1D1",
@@ -97,6 +100,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "success": "#D6F5E0",
           "warning": "#FFEECC",
         },
+        "shadowColor": "rgba(0, 0, 0, 0.1)",
       },
       "buttonStyles": Object {
         "fontSize": Object {
@@ -144,17 +148,36 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "warning": "#FFEECC",
         },
       },
+      "confirmationModal": Object {
+        "overlay": "rgba(10, 10, 10, 0.1)",
+        "shadow": "rgba(0, 0, 0, 0.1)",
+      },
       "headingStyles": Object {
+        "h1": Object {
+          "color": "#171A1C",
+        },
         "h3": Object {
           "color": "#73848C",
           "fontSize": "14px",
         },
       },
+      "icons": Object {
+        "closeIcon": "#ABB5BA",
+        "liveIcon": Object {
+          "circleBig": "#FAD1D1",
+          "circleSmall": "#E51A1A",
+        },
+        "messageToggleIconClosed": "#ABB5BA",
+        "messageToggleIconOpened": "#171A1C",
+        "verticalElipsisIcon": "#73848C",
+      },
       "layout": Object {
+        "mainBorderColor": "#E3E6E8",
         "mainColor": "#F1F2F3",
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
         "navBarWidth": "201px",
+        "overlayColor": "rgba(34, 41, 47, 0.5)",
       },
       "menuStyles": Object {
         "backgroundColor": Object {
@@ -253,6 +276,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
       },
       "switch": Object {
         "checked": "#29A352",
+        "circle": "#FFFFFF",
         "unchecked": "#ABB5BA",
       },
       "tagStyles": Object {
@@ -265,6 +289,9 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "yellow": "#FFEECC",
         },
         "color": "#171A1C",
+      },
+      "textarea": Object {
+        "focused": "transparent",
       },
       "thStyles": Object {
         "backgroundColor": Object {
