@@ -1,6 +1,6 @@
 const split = (v: string): string[] => {
-  const c = v.replace(/^v/, '').replace(/\+.*$/, '');
-  return c.split('-')[0].split('.');
+  const c = v.replace('v', '').split('-')[0];
+  return c.split('.');
 };
 
 const compareVersions = (v1: string, v2: string): number => {
