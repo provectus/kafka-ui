@@ -227,6 +227,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "selectStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#E3E6E8",
+          "normal": "#FFFFFF",
+        },
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#E3E6E8",

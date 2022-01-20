@@ -85,35 +85,44 @@ const Edit: React.FC = () => {
           <div>
             <div>
               <InputLabel>Type</InputLabel>
-              <Select
+              <Controller
+                control={control}
+                rules={{ required: true }}
                 name="schemaType"
-                required
-                defaultValue={schema.schemaType}
-                disabled={isSubmitting}
-              >
-                {Object.keys(SchemaType).map((type: string) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.schemaType}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(SchemaType).map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                  />
+                )}
+              />
             </div>
 
             <div>
               <InputLabel>Compatibility level</InputLabel>
-              <Select
+              <Controller
+                control={control}
                 name="compatibilityLevel"
-                defaultValue={schema.compatibilityLevel}
-                disabled={isSubmitting}
-              >
-                {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                  (level: string) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  )
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.compatibilityLevel}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(
+                      CompatibilityLevelCompatibilityEnum
+                    ).map((level) => ({ value: level, label: level }))}
+                  />
                 )}
-              </Select>
+              />
             </div>
           </div>
           <S.EditorsWrapper>

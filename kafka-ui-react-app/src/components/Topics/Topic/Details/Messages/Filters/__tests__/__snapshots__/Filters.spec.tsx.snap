@@ -181,48 +181,69 @@ exports[`Filters component matches the snapshot 1`] = `
   position: relative;
 }
 
-.c7 {
+.c6 {
+  position: relative;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: auto;
+  min-width: 100px;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
-.c7:hover {
+.c6:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c7:focus {
+.c6:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c7:disabled {
+.c6:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
 .c11 {
+  position: relative;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
@@ -231,9 +252,6 @@ exports[`Filters component matches the snapshot 1`] = `
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
 .c11:hover {
@@ -253,8 +271,12 @@ exports[`Filters component matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
-.c6 {
-  position: relative;
+.c7 {
+  padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .c10 {
@@ -330,10 +352,6 @@ exports[`Filters component matches the snapshot 1`] = `
   -ms-flex-pack: justify;
   justify-content: space-between;
   padding-top: 16px;
-}
-
-.c0 > div:first-child > div:last-child {
-  width: 10%;
 }
 
 .c1 {
@@ -458,25 +476,19 @@ exports[`Filters component matches the snapshot 1`] = `
           <div
             class="c5"
           >
-            <div
-              class="select-wrapper c6"
-            >
-              <select
-                class="c7"
-                id="selectSeekType"
+            <div>
+              <ul
+                class="c6"
                 role="listbox"
               >
-                <option
-                  value="OFFSET"
+                <li
+                  class="c7"
+                  role="option"
+                  tabindex="0"
                 >
                   Offset
-                </option>
-                <option
-                  value="TIMESTAMP"
-                >
-                  Timestamp
-                </option>
-              </select>
+                </li>
+              </ul>
             </div>
             <div
               class="c2 offset-selector"
@@ -558,24 +570,19 @@ exports[`Filters component matches the snapshot 1`] = `
             Submit
           </button>
         </div>
-        <div
-          class="select-wrapper c6"
-        >
-          <select
+        <div>
+          <ul
             class="c11"
             role="listbox"
           >
-            <option
-              value="FORWARD"
+            <li
+              class="c7"
+              role="option"
+              tabindex="0"
             >
               Oldest First
-            </option>
-            <option
-              value="BACKWARD"
-            >
-              Newest First
-            </option>
-          </select>
+            </li>
+          </ul>
         </div>
       </div>
       <div
@@ -818,48 +825,69 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   position: relative;
 }
 
-.c7 {
+.c6 {
+  position: relative;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
-  min-width: auto;
+  min-width: 100px;
   background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
-.c7:hover {
+.c6:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c7:focus {
+.c6:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c7:disabled {
+.c6:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
 .c11 {
+  position: relative;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 32px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
@@ -868,9 +896,6 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
 .c11:hover {
@@ -890,8 +915,12 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
-.c6 {
-  position: relative;
+.c7 {
+  padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .c10 {
@@ -967,10 +996,6 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   -ms-flex-pack: justify;
   justify-content: space-between;
   padding-top: 16px;
-}
-
-.c0 > div:first-child > div:last-child {
-  width: 10%;
 }
 
 .c1 {
@@ -1094,25 +1119,19 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           <div
             class="c5"
           >
-            <div
-              class="select-wrapper c6"
-            >
-              <select
-                class="c7"
-                id="selectSeekType"
+            <div>
+              <ul
+                class="c6"
                 role="listbox"
               >
-                <option
-                  value="OFFSET"
+                <li
+                  class="c7"
+                  role="option"
+                  tabindex="0"
                 >
                   Offset
-                </option>
-                <option
-                  value="TIMESTAMP"
-                >
-                  Timestamp
-                </option>
-              </select>
+                </li>
+              </ul>
             </div>
             <div
               class="c2 offset-selector"
@@ -1194,24 +1213,19 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
             Cancel
           </button>
         </div>
-        <div
-          class="select-wrapper c6"
-        >
-          <select
+        <div>
+          <ul
             class="c11"
             role="listbox"
           >
-            <option
-              value="FORWARD"
+            <li
+              class="c7"
+              role="option"
+              tabindex="0"
             >
               Oldest First
-            </option>
-            <option
-              value="BACKWARD"
-            >
-              Newest First
-            </option>
-          </select>
+            </li>
+          </ul>
         </div>
       </div>
       <div

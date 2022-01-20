@@ -112,6 +112,11 @@ const New: React.FC<NewProps> = ({
     return null;
   }
 
+  const connectOptions = connects.map(({ name: connectName }) => ({
+    value: connectName,
+    label: connectName,
+  }));
+
   return (
     <FormProvider {...methods}>
       <PageHeading text="Create new connector" />
@@ -121,13 +126,21 @@ const New: React.FC<NewProps> = ({
       >
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>
-          <Select selectSize="M" name="connectName" disabled={isSubmitting}>
-            {connects.map(({ name }) => (
-              <option key={name} value={name}>
-                {name}
-              </option>
-            ))}
-          </Select>
+          <Controller
+            control={control}
+            name="connectName"
+            render={({ field: { name, onChange } }) => (
+              <Select
+                selectSize="M"
+                name={name}
+                disabled={isSubmitting}
+                onChange={onChange}
+                value={connectOptions[0].value}
+                minWidth="100%"
+                options={connectOptions}
+              />
+            )}
+          />
           <FormError>
             <ErrorMessage errors={errors} name="connectName" />
           </FormError>
