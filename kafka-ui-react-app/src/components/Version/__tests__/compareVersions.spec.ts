@@ -61,7 +61,7 @@ describe('compareVersions function', () => {
 
   it('returns valid result (negative test cases)', () => {
     expect(compareVersions(undefined, 'v0.0.0')).toEqual(0);
-    expect(compareVersions('v0.0.0', undefined)).toEqual(0);
-    expect(compareVersions(undefined, undefined)).toEqual(0);
+    expect(compareVersions('v0.0.0')).toEqual(0);
+    expect(compareVersions(undefined)).toEqual(0);
   });
 });
