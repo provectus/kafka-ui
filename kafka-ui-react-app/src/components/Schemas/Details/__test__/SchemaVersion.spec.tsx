@@ -15,9 +15,9 @@ describe('SchemaVersion', () => {
     );
 
     expect(wrapper.find('td').length).toEqual(3);
-    expect(wrapper.exists('JSONEditor')).toBeFalsy();
+    expect(wrapper.exists('Editor')).toBeFalsy();
     wrapper.find('span').simulate('click');
-    expect(wrapper.exists('JSONEditor')).toBeTruthy();
+    expect(wrapper.exists('Editor')).toBeTruthy();
   });
 
   it('matches snapshot', () => {

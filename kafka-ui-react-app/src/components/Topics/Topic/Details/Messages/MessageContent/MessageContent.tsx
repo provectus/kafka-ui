@@ -1,6 +1,6 @@
-import { TopicMessageTimestampTypeEnum } from 'generated-sources';
+import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
 import React from 'react';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
+import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
@@ -52,7 +52,10 @@ const MessageContent: React.FC<MessageContentProps> = ({
   };
   const keySize = new TextEncoder().encode(messageKey).length;
   const contentSize = new TextEncoder().encode(messageContent).length;
-
+  const contentType =
+    messageContent && messageContent.trim().startsWith('{')
+      ? SchemaType.JSON
+      : SchemaType.PROTOBUF;
   return (
     <S.Wrapper>
       <td colSpan={10}>
@@ -81,7 +84,11 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 Headers
               </button>
             </SecondaryTabs>
-            <JSONViewer data={activeTabContent() || ''} />
+            <EditorViewer
+              data={activeTabContent() || ''}
+              maxLines={28}
+              schemaType={contentType}
+            />
           </S.ContentBox>
           <S.MetadataWrapper>
             <S.Metadata>

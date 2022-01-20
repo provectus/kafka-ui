@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, FC } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 import yup from 'lib/yupExtended';
 import { useForm, Controller } from 'react-hook-form';
@@ -106,7 +106,7 @@ const Query: FC = () => {
                 control={control}
                 name="streamsProperties"
                 render={({ field }) => (
-                  <JSONEditor {...field} readOnly={fetching} />
+                  <Editor {...field} readOnly={fetching} />
                 )}
               />
             </div>

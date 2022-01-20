@@ -12,7 +12,7 @@ import {
 } from 'redux/interfaces';
 import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import yup from 'lib/yupExtended';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Button } from 'components/common/Button/Button';
 
@@ -122,7 +122,7 @@ const Edit: React.FC<EditProps> = ({
             control={control}
             name="config"
             render={({ field }) => (
-              <JSONEditor {...field} readOnly={isSubmitting} />
+              <Editor {...field} readOnly={isSubmitting} />
             )}
           />
         </div>
