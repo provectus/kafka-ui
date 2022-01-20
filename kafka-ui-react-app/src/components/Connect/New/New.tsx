@@ -7,7 +7,7 @@ import { Connect, Connector, NewConnector } from 'generated-sources';
 import { ClusterName, ConnectName } from 'redux/interfaces';
 import { clusterConnectConnectorPath } from 'lib/paths';
 import yup from 'lib/yupExtended';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Select from 'components/common/Select/Select';
@@ -160,7 +160,7 @@ const New: React.FC<NewProps> = ({
             control={control}
             name="config"
             render={({ field }) => (
-              <JSONEditor {...field} readOnly={isSubmitting} />
+              <Editor {...field} readOnly={isSubmitting} />
             )}
           />
           <FormError>
