@@ -1,5 +1,5 @@
 import React from 'react';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import { SchemaType } from 'generated-sources';
 
 import { StyledWrapper } from './StyledWrapper.styled';
@@ -16,7 +16,6 @@ const getSchemaValue = (data: string, schemaType?: string) => {
   }
   return data;
 };
-
 const JSONViewer: React.FC<FullMessageProps> = ({
   data,
   schemaType,
@@ -25,7 +24,7 @@ const JSONViewer: React.FC<FullMessageProps> = ({
   try {
     return (
       <StyledWrapper data-testid="json-viewer">
-        <JSONEditor
+        <Editor
           isFixedHeight
           schemaType={schemaType}
           name="schema"

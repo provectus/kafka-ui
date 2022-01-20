@@ -11,10 +11,11 @@ interface SchemaVersionProps {
 }
 
 const SchemaVersion: React.FC<SchemaVersionProps> = ({
-  version: { version, id, schema },
+  version: { version, id, schema, schemaType },
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
+
   return (
     <>
       <tr>
@@ -29,7 +30,7 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
       {isOpen && (
         <SchemaVersionWrapper>
           <td colSpan={3}>
-            <JSONViewer data={schema} />
+            <JSONViewer data={schema} schemaType={schemaType} />
           </td>
         </SchemaVersionWrapper>
       )}
