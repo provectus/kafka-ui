@@ -12,7 +12,8 @@ import { waitFor } from '@testing-library/dom';
 import { fireEvent, screen } from '@testing-library/react';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
-jest.mock('components/common/JSONEditor/JSONEditor', () => 'mock-JSONEditor');
+
+jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({

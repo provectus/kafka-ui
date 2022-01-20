@@ -15,7 +15,7 @@ import { ControllerRenderProps } from 'react-hook-form';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 jest.mock(
-  'components/common/JSONEditor/JSONEditor',
+  'components/common/Editor/Editor',
   () => (props: ControllerRenderProps) => {
     return <textarea {...props} placeholder="json" />;
   }
