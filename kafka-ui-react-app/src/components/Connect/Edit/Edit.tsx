@@ -88,7 +88,7 @@ const Edit: React.FC<EditProps> = ({
         clusterName,
         connectName,
         connectorName,
-        JSON.parse(values.config)
+        JSON.parse(values.config.trim())
       );
       if (connector) {
         history.push(
@@ -116,7 +116,7 @@ const Edit: React.FC<EditProps> = ({
           accidentally breaking your connector config!
         </ConnectEditWarningMessageStyled>
       )}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} aria-label="Edit connect form">
         <div>
           <Controller
             control={control}

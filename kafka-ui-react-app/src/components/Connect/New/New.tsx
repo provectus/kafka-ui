@@ -14,8 +14,9 @@ import Select from 'components/common/Select/Select';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
-import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+
+import * as S from './New.styled';
 
 const validationSchema = yup.object().shape({
   name: yup.string().required(),
@@ -25,17 +26,6 @@ const validationSchema = yup.object().shape({
 interface RouterParams {
   clusterName: ClusterName;
 }
-
-const NewConnectFormStyled = styled.form`
-  padding: 16px;
-  padding-top: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  & > button:last-child {
-    align-self: flex-start;
-  }
-`;
 
 export interface NewProps {
   fetchConnects(clusterName: ClusterName): void;
@@ -99,7 +89,7 @@ const New: React.FC<NewProps> = ({
     async (values: FormValues) => {
       const connector = await createConnector(clusterName, values.connectName, {
         name: values.name,
-        config: JSON.parse(values.config),
+        config: JSON.parse(values.config.trim()),
       });
       if (connector) {
         history.push(
@@ -125,7 +115,10 @@ const New: React.FC<NewProps> = ({
   return (
     <FormProvider {...methods}>
       <PageHeading text="Create new connector" />
-      <NewConnectFormStyled onSubmit={handleSubmit(onSubmit)}>
+      <S.NewConnectFormStyled
+        onSubmit={handleSubmit(onSubmit)}
+        aria-label="Create connect form"
+      >
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>
           <Select selectSize="M" name="connectName" disabled={isSubmitting}>
@@ -175,7 +168,7 @@ const New: React.FC<NewProps> = ({
         >
           Submit
         </Button>
-      </NewConnectFormStyled>
+      </S.NewConnectFormStyled>
     </FormProvider>
   );
 };
