@@ -5,10 +5,10 @@ interface Props {
   className?: string;
 }
 
-const LiveIcon: React.FC<Props> = ({ className }) => {
+const LiveIcon: React.FC<Props> = () => {
   const theme = useTheme();
   return (
-    <i className={className}>
+    <i>
       <svg
         width="16"
         height="16"

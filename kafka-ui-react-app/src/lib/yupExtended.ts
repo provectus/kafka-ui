@@ -16,11 +16,13 @@ declare module 'yup' {
 export const isValidJsonObject = (value?: string) => {
   try {
     if (!value) return false;
+
+    const trimmedValue = value.trim();
     if (
-      value.indexOf('{') === 0 &&
-      value.lastIndexOf('}') === value.length - 1
+      trimmedValue.indexOf('{') === 0 &&
+      trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
     ) {
-      JSON.parse(value);
+      JSON.parse(trimmedValue);
       return true;
     }
   } catch {
