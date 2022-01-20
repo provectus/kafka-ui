@@ -7,7 +7,7 @@ import {
 } from 'generated-sources';
 import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
@@ -129,7 +129,8 @@ const Edit: React.FC = () => {
             <div>
               <S.EditorContainer>
                 <h4>Latest schema</h4>
-                <JSONEditor
+                <Editor
+                  schemaType={schema?.schemaType}
                   isFixedHeight
                   readOnly
                   height="372px"
@@ -146,7 +147,8 @@ const Edit: React.FC = () => {
                   control={control}
                   name="newSchema"
                   render={({ field: { name, onChange } }) => (
-                    <JSONEditor
+                    <Editor
+                      schemaType={schema?.schemaType}
                       readOnly={isSubmitting}
                       defaultValue={formatedSchema}
                       name={name}

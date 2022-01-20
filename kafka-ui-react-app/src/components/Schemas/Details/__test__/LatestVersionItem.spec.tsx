@@ -12,7 +12,7 @@ describe('LatestVersionItem', () => {
     expect(
       wrapper.find('div[data-testid="meta-data"] > div:first-child > p').text()
     ).toEqual('1');
-    expect(wrapper.exists('JSONViewer')).toBeTruthy();
+    expect(wrapper.exists('EditorViewer')).toBeTruthy();
   });
 
   it('renders latest version of compatibility', () => {
@@ -22,7 +22,7 @@ describe('LatestVersionItem', () => {
     expect(
       wrapper.find('div[data-testid="meta-data"] > div:last-child > p').text()
     ).toEqual('BACKWARD');
-    expect(wrapper.exists('JSONViewer')).toBeTruthy();
+    expect(wrapper.exists('EditorViewer')).toBeTruthy();
   });
 
   it('matches snapshot', () => {

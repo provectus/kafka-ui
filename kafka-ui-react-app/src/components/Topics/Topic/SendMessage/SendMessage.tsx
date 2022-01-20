@@ -1,4 +1,4 @@
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -162,7 +162,7 @@ const SendMessage: React.FC = () => {
               control={control}
               name="key"
               render={({ field: { name, onChange } }) => (
-                <JSONEditor
+                <Editor
                   readOnly={isSubmitting}
                   defaultValue={keyDefaultValue}
                   name={name}
@@ -177,7 +177,7 @@ const SendMessage: React.FC = () => {
               control={control}
               name="content"
               render={({ field: { name, onChange } }) => (
-                <JSONEditor
+                <Editor
                   readOnly={isSubmitting}
                   defaultValue={contentDefaultValue}
                   name={name}
@@ -194,7 +194,7 @@ const SendMessage: React.FC = () => {
               control={control}
               name="headers"
               render={({ field: { name, onChange } }) => (
-                <JSONEditor
+                <Editor
                   readOnly={isSubmitting}
                   defaultValue="{}"
                   name={name}
