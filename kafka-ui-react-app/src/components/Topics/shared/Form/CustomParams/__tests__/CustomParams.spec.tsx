@@ -9,8 +9,10 @@ import userEvent from '@testing-library/user-event';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 
 const selectOption = async (listbox: HTMLElement, option: string) => {
-  await waitFor(() => userEvent.click(listbox));
-  await waitFor(() => userEvent.click(screen.getByText(option)));
+  await waitFor(() => {
+    userEvent.click(listbox);
+    userEvent.click(screen.getByText(option));
+  });
 };
 
 const expectOptionIsSelected = (listbox: HTMLElement, option: string) => {
@@ -19,17 +21,27 @@ const expectOptionIsSelected = (listbox: HTMLElement, option: string) => {
   expect(selectedOption[0]).toHaveTextContent(option);
 };
 
-const expectOptionIsDisabled = async (
+const expectOptionAvailability = async (
   listbox: HTMLElement,
   option: string,
   disabled: boolean
 ) => {
   await waitFor(() => userEvent.click(listbox));
-  const selectedOption = within(listbox).getAllByText(option);
-  expect(selectedOption[1]).toHaveStyleRule(
+  const selectedOptions = within(listbox).getAllByText(option).reverse();
+  // its either two or one nodes, we only need last one
+  const selectedOption = selectedOptions[0];
+
+  if (disabled) {
+    expect(selectedOption).toHaveAttribute('disabled');
+  } else {
+    expect(selectedOption).toBeEnabled();
+  }
+
+  expect(selectedOption).toHaveStyleRule(
     'cursor',
     disabled ? 'not-allowed' : 'pointer'
   );
+  await waitFor(() => userEvent.click(listbox));
 };
 
 describe('CustomParams', () => {
@@ -51,15 +63,15 @@ describe('CustomParams', () => {
   });
 
   it('renders with props', () => {
-    const addParamButton = screen.getByRole('button');
-    expect(addParamButton).toBeInTheDocument();
-    expect(addParamButton).toHaveTextContent('Add Custom Parameter');
+    const button = screen.getByRole('button');
+    expect(button).toBeInTheDocument();
+    expect(button).toHaveTextContent('Add Custom Parameter');
   });
 
   describe('works with user inputs correctly', () => {
     it('button click creates custom param fieldset', async () => {
-      const addParamButton = screen.getByRole('button');
-      await waitFor(() => userEvent.click(addParamButton));
+      const button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
 
       const listbox = screen.getByRole('listbox');
       expect(listbox).toBeInTheDocument();
@@ -69,38 +81,38 @@ describe('CustomParams', () => {
     });
 
     it('can select option', async () => {
-      const addParamButton = screen.getByRole('button');
-      await waitFor(() => userEvent.click(addParamButton));
-
+      const button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
       const listbox = screen.getByRole('listbox');
 
       await selectOption(listbox, 'compression.type');
       expectOptionIsSelected(listbox, 'compression.type');
-      expectOptionIsDisabled(listbox, 'compression.type', true);
+      await expectOptionAvailability(listbox, 'compression.type', true);
 
       const textbox = screen.getByRole('textbox');
       expect(textbox).toHaveValue(TOPIC_CUSTOM_PARAMS['compression.type']);
     });
 
     it('when selected option changes disabled options update correctly', async () => {
-      const addParamButton = screen.getByRole('button');
-      await waitFor(() => userEvent.click(addParamButton));
+      const button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
 
       const listbox = screen.getByRole('listbox');
 
       await selectOption(listbox, 'compression.type');
-      expectOptionIsDisabled(listbox, 'compression.type', true);
+      expectOptionIsSelected(listbox, 'compression.type');
+      await expectOptionAvailability(listbox, 'compression.type', true);
 
       await selectOption(listbox, 'delete.retention.ms');
-      expectOptionIsDisabled(listbox, 'delete.retention.ms', true);
-      expectOptionIsDisabled(listbox, 'compression.type', false);
+      await expectOptionAvailability(listbox, 'delete.retention.ms', true);
+      await expectOptionAvailability(listbox, 'compression.type', false);
     });
 
     it('multiple button clicks create multiple fieldsets', async () => {
-      const addParamButton = screen.getByRole('button');
-      await waitFor(() => userEvent.click(addParamButton));
-      await waitFor(() => userEvent.click(addParamButton));
-      await waitFor(() => userEvent.click(addParamButton));
+      const button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
+      await waitFor(() => userEvent.click(button));
+      await waitFor(() => userEvent.click(button));
 
       const listboxes = screen.getAllByRole('listbox');
       expect(listboxes.length).toBe(3);
@@ -110,48 +122,64 @@ describe('CustomParams', () => {
     });
 
     it("can't select already selected option", async () => {
-      const addParamButton = screen.getByRole('button');
-      userEvent.click(addParamButton);
-      userEvent.click(addParamButton);
+      const button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
+      await waitFor(() => userEvent.click(button));
 
       const listboxes = screen.getAllByRole('listbox');
 
       const firstListbox = listboxes[0];
       await selectOption(firstListbox, 'compression.type');
-      expectOptionIsDisabled(firstListbox, 'compression.type', true);
+      await expectOptionAvailability(firstListbox, 'compression.type', true);
 
       const secondListbox = listboxes[1];
-      expectOptionIsDisabled(secondListbox, 'compression.type', true);
+      await expectOptionAvailability(secondListbox, 'compression.type', true);
     });
 
     it('when fieldset with selected custom property type is deleted disabled options update correctly', async () => {
-      const addParamButton = screen.getByRole('button');
-      userEvent.click(addParamButton);
-      userEvent.click(addParamButton);
-      userEvent.click(addParamButton);
+      const button = screen.getByRole('button');
+      await waitFor(() => userEvent.click(button));
+      await waitFor(() => userEvent.click(button));
+      await waitFor(() => userEvent.click(button));
 
       const listboxes = screen.getAllByRole('listbox');
 
       const firstListbox = listboxes[0];
       await selectOption(firstListbox, 'compression.type');
-      expectOptionIsDisabled(firstListbox, 'compression.type', true);
+      await expectOptionAvailability(firstListbox, 'compression.type', true);
 
       const secondListbox = listboxes[1];
       await selectOption(secondListbox, 'delete.retention.ms');
-      expectOptionIsDisabled(secondListbox, 'delete.retention.ms', true);
+      await expectOptionAvailability(
+        secondListbox,
+        'delete.retention.ms',
+        true
+      );
 
       const thirdListbox = listboxes[2];
       await selectOption(thirdListbox, 'file.delete.delay.ms');
-      expectOptionIsDisabled(thirdListbox, 'file.delete.delay.ms', true);
+      await expectOptionAvailability(
+        thirdListbox,
+        'file.delete.delay.ms',
+        true
+      );
 
       const deleteSecondFieldsetButton = screen.getByTitle(
         'Delete customParam field 1'
       );
-      userEvent.click(deleteSecondFieldsetButton);
+      await waitFor(() => userEvent.click(deleteSecondFieldsetButton));
       expect(secondListbox).not.toBeInTheDocument();
 
-      expectOptionIsDisabled(firstListbox, 'delete.retention.ms', false);
-      expectOptionIsDisabled(thirdListbox, 'delete.retention.ms', false);
+      await expectOptionAvailability(
+        firstListbox,
+        'delete.retention.ms',
+        false
+      );
+      await expectOptionAvailability(
+        thirdListbox,
+        'delete.retention.ms',
+        false
+      );
     });
   });
 });
