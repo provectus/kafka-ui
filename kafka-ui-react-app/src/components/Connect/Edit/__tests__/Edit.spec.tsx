@@ -15,7 +15,7 @@ import theme from 'theme/theme';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
-jest.mock('components/common/JSONEditor/JSONEditor', () => 'mock-JSONEditor');
+jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({

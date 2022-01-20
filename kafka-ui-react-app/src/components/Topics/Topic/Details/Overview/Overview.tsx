@@ -57,7 +57,8 @@ const Overview: React.FC<Props> = ({
             <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
           </Metrics.Indicator>
           <Metrics.Indicator
-            label="In Sync Replicas"
+            label="ISR"
+            title="In Sync Replicas"
             isAlert
             alertType={inSyncReplicas === replicas ? 'success' : 'error'}
           >

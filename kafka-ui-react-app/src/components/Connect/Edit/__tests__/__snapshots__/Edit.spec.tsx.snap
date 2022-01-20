@@ -67,7 +67,7 @@ exports[`Edit view matches snapshot 1`] = `
     onSubmit={[Function]}
   >
     <div>
-      <mock-JSONEditor
+      <mock-Editor
         name="config"
         onBlur={[Function]}
         onChange={[Function]}
@@ -180,7 +180,7 @@ exports[`Edit view matches snapshot when config has credentials 1`] = `
     onSubmit={[Function]}
   >
     <div>
-      <mock-JSONEditor
+      <mock-Editor
         name="config"
         onBlur={[Function]}
         onChange={[Function]}
