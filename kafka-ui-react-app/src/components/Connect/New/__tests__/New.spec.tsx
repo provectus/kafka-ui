@@ -65,20 +65,6 @@ describe('New', () => {
         { pathname: clusterConnectorNewPath(clusterName) }
       );
 
-    it('matches snapshot', async () => {
-      await act(async () => {
-        const { asFragment } = renderComponent();
-        expect(asFragment()).toMatchSnapshot();
-      });
-    });
-
-    it('matches snapshot when fetching connects', async () => {
-      await act(async () => {
-        const { asFragment } = renderComponent({ areConnectsFetching: true });
-        expect(asFragment()).toMatchSnapshot();
-      });
-    });
-
     it('fetches connects on mount', async () => {
       const fetchConnects = jest.fn();
       await act(async () => {

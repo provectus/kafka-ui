@@ -55,23 +55,6 @@ describe('Edit', () => {
         }
       );
 
-    it('matches snapshot', () => {
-      const { asFragment } = renderComponent();
-      expect(asFragment()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when fetching config', () => {
-      const { asFragment } = renderComponent({ isConfigFetching: true });
-      expect(asFragment()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when config has credentials', () => {
-      const { asFragment } = renderComponent({
-        config: { ...connector.config, password: '******' },
-      });
-      expect(asFragment()).toMatchSnapshot();
-    });
-
     it('fetches config on mount', () => {
       const fetchConfig = jest.fn();
       renderComponent({ fetchConfig });

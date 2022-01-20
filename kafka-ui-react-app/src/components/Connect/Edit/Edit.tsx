@@ -116,7 +116,7 @@ const Edit: React.FC<EditProps> = ({
           accidentally breaking your connector config!
         </ConnectEditWarningMessageStyled>
       )}
-      <form onSubmit={handleSubmit(onSubmit)} aria-label="form">
+      <form onSubmit={handleSubmit(onSubmit)} aria-label="Edit connect form">
         <div>
           <Controller
             control={control}

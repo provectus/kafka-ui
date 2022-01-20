@@ -117,7 +117,7 @@ const New: React.FC<NewProps> = ({
       <PageHeading text="Create new connector" />
       <S.NewConnectFormStyled
         onSubmit={handleSubmit(onSubmit)}
-        aria-label="form"
+        aria-label="Create connect form"
       >
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>
