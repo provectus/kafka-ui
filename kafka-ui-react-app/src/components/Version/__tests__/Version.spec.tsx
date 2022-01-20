@@ -1,5 +1,4 @@
 import React from 'react';
-// import { mount } from 'enzyme';
 import Version, { VesionProps } from 'components/Version/Version';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
