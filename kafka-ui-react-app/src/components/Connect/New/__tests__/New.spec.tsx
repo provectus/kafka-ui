@@ -1,8 +1,5 @@
 import React from 'react';
-import { create, act as rendererAct } from 'react-test-renderer';
-import { mount, ReactWrapper } from 'enzyme';
-import { act } from 'react-dom/test-utils';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import { containerRendersView, render } from 'lib/testHelpers';
 import {
   clusterConnectConnectorPath,
   clusterConnectorNewPath,
@@ -10,12 +7,19 @@ import {
 import NewContainer from 'components/Connect/New/NewContainer';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { Route } from 'react-router';
+import { act, fireEvent, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { waitFor } from '@testing-library/dom';
+import { ControllerRenderProps } from 'react-hook-form';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
-
-jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
+jest.mock(
+  'components/common/Editor/Editor',
+  () => (props: ControllerRenderProps) => {
+    return <textarea {...props} placeholder="json" />;
+  }
+);
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -29,22 +33,27 @@ describe('New', () => {
   containerRendersView(<NewContainer />, New);
 
   describe('view', () => {
-    const pathname = clusterConnectorNewPath(':clusterName');
     const clusterName = 'my-cluster';
-    const simulateFormSubmit = (wrapper: ReactWrapper) =>
-      act(async () => {
-        wrapper.find('input[name="name"]').simulate('change', {
-          target: { name: 'name', value: 'my-connector' },
-        });
-        wrapper
-          .find('mock-Editor')
-          .simulate('change', { target: { value: '{"class":"MyClass"}' } });
-        wrapper.find('button[type="submit"]').simulate('submit');
+    const simulateFormSubmit = async () => {
+      userEvent.type(
+        screen.getByPlaceholderText('Connector Name'),
+        'my-connector'
+      );
+      userEvent.type(
+        screen.getByPlaceholderText('json'),
+        '{"class":"MyClass"}'.replace(/[{[]/g, '$&$&')
+      );
+      expect(screen.getByPlaceholderText('json')).toHaveValue(
+        '{"class":"MyClass"}'
+      );
+      await waitFor(() => {
+        fireEvent.submit(screen.getByRole('form'));
       });
+    };
 
-    const setupWrapper = (props: Partial<NewProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper pathname={pathname} urlParams={{ clusterName }}>
+    const renderComponent = (props: Partial<NewProps> = {}) =>
+      render(
+        <Route path={clusterConnectorNewPath(':clusterName')}>
           <New
             fetchConnects={jest.fn()}
             areConnectsFetching={false}
@@ -52,30 +61,14 @@ describe('New', () => {
             createConnector={jest.fn()}
             {...props}
           />
-        </TestRouterWrapper>
-      </ThemeProvider>
-    );
-
-    it('matches snapshot', async () => {
-      let wrapper = create(<div />);
-      await rendererAct(async () => {
-        wrapper = create(setupWrapper());
-      });
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when fetching connects', async () => {
-      let wrapper = create(<div />);
-      await rendererAct(async () => {
-        wrapper = create(setupWrapper({ areConnectsFetching: true }));
-      });
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
+        </Route>,
+        { pathname: clusterConnectorNewPath(clusterName) }
+      );
 
     it('fetches connects on mount', async () => {
       const fetchConnects = jest.fn();
       await act(async () => {
-        mount(setupWrapper({ fetchConnects }));
+        renderComponent({ fetchConnects });
       });
       expect(fetchConnects).toHaveBeenCalledTimes(1);
       expect(fetchConnects).toHaveBeenCalledWith(clusterName);
@@ -83,8 +76,8 @@ describe('New', () => {
 
     it('calls createConnector on form submit', async () => {
       const createConnector = jest.fn();
-      const wrapper = mount(setupWrapper({ createConnector }));
-      await simulateFormSubmit(wrapper);
+      renderComponent({ createConnector });
+      await simulateFormSubmit();
       expect(createConnector).toHaveBeenCalledTimes(1);
       expect(createConnector).toHaveBeenCalledWith(
         clusterName,
@@ -98,8 +91,8 @@ describe('New', () => {
 
     it('redirects to connector details view on successful submit', async () => {
       const createConnector = jest.fn().mockResolvedValue(connector);
-      const wrapper = mount(setupWrapper({ createConnector }));
-      await simulateFormSubmit(wrapper);
+      renderComponent({ createConnector });
+      await simulateFormSubmit();
       expect(mockHistoryPush).toHaveBeenCalledTimes(1);
       expect(mockHistoryPush).toHaveBeenCalledWith(
         clusterConnectConnectorPath(
@@ -112,8 +105,8 @@ describe('New', () => {
 
     it('does not redirect to connector details view on unsuccessful submit', async () => {
       const createConnector = jest.fn().mockResolvedValueOnce(undefined);
-      const wrapper = mount(setupWrapper({ createConnector }));
-      await simulateFormSubmit(wrapper);
+      renderComponent({ createConnector });
+      await simulateFormSubmit();
       expect(mockHistoryPush).not.toHaveBeenCalled();
     });
   });
