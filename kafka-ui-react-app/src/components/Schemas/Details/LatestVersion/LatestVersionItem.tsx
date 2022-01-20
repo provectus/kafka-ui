@@ -1,6 +1,6 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
+import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 
 import {
   LatestVersionWrapper,
@@ -17,7 +17,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
   <LatestVersionWrapper>
     <div>
       <h1>Relevant version</h1>
-      <JSONViewer data={schema} schemaType={schemaType} maxLines={28} />
+      <EditorViewer data={schema} schemaType={schemaType} maxLines={28} />
     </div>
     <div data-testid="meta-data">
       <div>

@@ -1,6 +1,6 @@
 import { TopicMessageTimestampTypeEnum, SchemaType } from 'generated-sources';
 import React from 'react';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
+import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 import { SecondaryTabs } from 'components/common/Tabs/SecondaryTabs.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
@@ -84,7 +84,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 Headers
               </button>
             </SecondaryTabs>
-            <JSONViewer
+            <EditorViewer
               data={activeTabContent() || ''}
               maxLines={28}
               schemaType={contentType}

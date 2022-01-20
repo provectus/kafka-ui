@@ -16,7 +16,7 @@ const getSchemaValue = (data: string, schemaType?: string) => {
   }
   return data;
 };
-const JSONViewer: React.FC<FullMessageProps> = ({
+const EditorViewer: React.FC<FullMessageProps> = ({
   data,
   schemaType,
   maxLines,
@@ -47,4 +47,4 @@ const JSONViewer: React.FC<FullMessageProps> = ({
   }
 };
 
-export default JSONViewer;
+export default EditorViewer;
