@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
-export const MessageContentWrapper = styled.tr`
+export const Wrapper = styled.tr`
   background-color: ${Colors.neutral[5]};
   & > td {
     padding: 16px;
@@ -14,7 +14,7 @@ export const MessageContentWrapper = styled.tr`
   }
 `;
 
-export const StyledSection = styled.div`
+export const Section = styled.div`
   padding: 0 16px;
   display: flex;
   gap: 1px;
