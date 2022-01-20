@@ -1,9 +1,17 @@
 package com.provectus.kafka.ui;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.provectus.kafka.ui.model.ConsumerGroupDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupsPageResponseDTO;
+import java.io.Closeable;
 import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -78,8 +86,59 @@ public class KafkaConsumerGroupTests extends AbstractBaseTest {
         .isBadRequest();
   }
 
+
+  @Test
+  void shouldReturnConsumerGroupsWithPagination() throws Exception {
+    try (var groups1 = startConsumerGroups(3, "cgPageTest1");
+        var groups2 = startConsumerGroups(2, "cgPageTest2")) {
+      webTestClient
+          .get()
+          .uri("/api/clusters/{clusterName}/consumer-groups/paged?perPage=3&search=cgPageTest", LOCAL)
+          .exchange()
+          .expectStatus()
+          .isOk()
+          .expectBody(ConsumerGroupsPageResponseDTO.class)
+          .value(page -> {
+            assertThat(page.getPageCount()).isEqualTo(2);
+            assertThat(page.getConsumerGroups().size()).isEqualTo(3);
+          });
+
+      webTestClient
+          .get()
+          .uri("/api/clusters/{clusterName}/consumer-groups/paged?perPage=10&search=cgPageTest", LOCAL)
+          .exchange()
+          .expectStatus()
+          .isOk()
+          .expectBody(ConsumerGroupsPageResponseDTO.class)
+          .value(page -> {
+            assertThat(page.getPageCount()).isEqualTo(1);
+            assertThat(page.getConsumerGroups().size()).isEqualTo(5);
+            assertThat(page.getConsumerGroups())
+                .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId));
+          });
+    }
+  }
+
+  private Closeable startConsumerGroups(int count, String consumerGroupPrefix) {
+    String topicName = createTopicWithRandomName();
+    var consumers =
+        Stream.generate(() -> {
+          String groupId = consumerGroupPrefix + UUID.randomUUID();
+          val consumer = createTestConsumerWithGroupId(groupId);
+          consumer.subscribe(List.of(topicName));
+          consumer.poll(Duration.ofMillis(100));
+          return consumer;
+        })
+        .limit(count)
+        .collect(Collectors.toList());
+    return () -> {
+      consumers.forEach(KafkaConsumer::close);
+      deleteTopic(topicName);
+    };
+  }
+
   private String createTopicWithRandomName() {
-    String topicName = UUID.randomUUID().toString();
+    String topicName = getClass().getSimpleName() + "-" + UUID.randomUUID();
     short replicationFactor = 1;
     int partitions = 1;
     createTopic(new NewTopic(topicName, partitions, replicationFactor));

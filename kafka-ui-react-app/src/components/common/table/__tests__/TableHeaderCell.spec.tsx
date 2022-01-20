@@ -1,17 +1,25 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
+import { screen, within } from '@testing-library/react';
+import { render } from 'lib/testHelpers';
 import TableHeaderCell, {
   TableHeaderCellProps,
 } from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import { mountWithTheme } from 'lib/testHelpers';
 import { TopicColumnsToSort } from 'generated-sources';
+import theme from 'theme/theme';
+import userEvent from '@testing-library/user-event';
 
-const STUB_TITLE = 'stub test title';
-const STUB_PREVIEW_TEXT = 'stub preview text';
+const SPACE_KEY = ' ';
+
+const testTitle = 'test title';
+const testPreviewText = 'test preview text';
+const handleOrderBy = jest.fn();
+const onPreview = jest.fn();
+
+const sortIconTitle = 'Sort icon';
 
 describe('TableHeaderCell', () => {
-  const setupComponent = (props: TableHeaderCellProps) => (
-    <StaticRouter>
+  const setupComponent = (props: Partial<TableHeaderCellProps> = {}) =>
+    render(
       <table>
         <thead>
           <tr>
@@ -19,49 +27,135 @@ describe('TableHeaderCell', () => {
           </tr>
         </thead>
       </table>
-    </StaticRouter>
-  );
+    );
 
   it('renders without props', () => {
-    const wrapper = mountWithTheme(setupComponent({}));
-    expect(wrapper.contains(<TableHeaderCell />)).toBeTruthy();
+    setupComponent();
+    expect(screen.getByRole('columnheader')).toBeInTheDocument();
   });
 
   it('renders with title & preview text', () => {
-    const wrapper = mountWithTheme(
-      setupComponent({
-        title: STUB_TITLE,
-        previewText: STUB_PREVIEW_TEXT,
-      })
-    );
+    setupComponent({
+      title: testTitle,
+      previewText: testPreviewText,
+    });
 
-    expect(wrapper.find('span.title').text()).toEqual(STUB_TITLE);
-    expect(wrapper.find('span.preview').text()).toEqual(STUB_PREVIEW_TEXT);
+    const columnheader = screen.getByRole('columnheader');
+    expect(within(columnheader).getByText(testTitle)).toBeInTheDocument();
+    expect(within(columnheader).getByText(testPreviewText)).toBeInTheDocument();
   });
 
-  it('renders with orderBy props', () => {
-    const wrapper = mountWithTheme(
-      setupComponent({
-        title: STUB_TITLE,
-        orderBy: TopicColumnsToSort.NAME,
-        orderValue: TopicColumnsToSort.NAME,
-      })
-    );
+  it('renders with orderable props', () => {
+    setupComponent({
+      title: testTitle,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
+      handleOrderBy,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByRole('button');
+    expect(title).toBeInTheDocument();
+    expect(title).toHaveTextContent(testTitle);
+    expect(within(title).getByTitle(sortIconTitle)).toBeInTheDocument();
+    expect(title).toHaveStyle(`color: ${theme.thStyles.color.active};`);
+    expect(title).toHaveStyle('cursor: pointer;');
+  });
 
-    expect(wrapper.find('span.title').text()).toEqual(STUB_TITLE);
-    expect(wrapper.exists('span.icon.is-small.is-clickable')).toBeTruthy();
-    expect(wrapper.exists('i.fas.fa-sort')).toBeTruthy();
+  it('renders click on title triggers handler', () => {
+    setupComponent({
+      title: testTitle,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
+      handleOrderBy,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByRole('button');
+    userEvent.click(title);
+    expect(handleOrderBy.mock.calls.length).toBe(1);
+  });
+
+  it('renders space on title triggers handler', () => {
+    setupComponent({
+      title: testTitle,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
+      handleOrderBy,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByRole('button');
+    userEvent.type(title, SPACE_KEY);
+    // userEvent.type clicks and only then presses space
+    expect(handleOrderBy.mock.calls.length).toBe(2);
+  });
+
+  it('click on preview triggers handler', () => {
+    setupComponent({
+      title: testTitle,
+      previewText: testPreviewText,
+      onPreview,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const preview = within(columnheader).getByRole('button');
+    userEvent.click(preview);
+    expect(onPreview.mock.calls.length).toBe(1);
+  });
+
+  it('click on preview triggers handler', () => {
+    setupComponent({
+      title: testTitle,
+      previewText: testPreviewText,
+      onPreview,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const preview = within(columnheader).getByRole('button');
+    userEvent.type(preview, SPACE_KEY);
+    // userEvent.type clicks and only then presses space
+    expect(onPreview.mock.calls.length).toBe(2);
+  });
+
+  it('renders without sort indication', () => {
+    setupComponent({
+      title: testTitle,
+      orderBy: TopicColumnsToSort.NAME,
+    });
+
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByText(testTitle);
+    expect(within(title).queryByTitle(sortIconTitle)).not.toBeInTheDocument();
+    expect(title).toHaveStyle('cursor: default;');
+  });
+
+  it('renders with hightlighted title when orderBy and orderValue are equal', () => {
+    setupComponent({
+      title: testTitle,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.NAME,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByText(testTitle);
+    expect(title).toHaveStyle(`color: ${theme.thStyles.color.active};`);
+  });
+
+  it('renders without hightlighted title when orderBy and orderValue are not equal', () => {
+    setupComponent({
+      title: testTitle,
+      orderBy: TopicColumnsToSort.NAME,
+      orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
+    });
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByText(testTitle);
+    expect(title).toHaveStyle(`color: ${theme.thStyles.color.normal}`);
   });
 
   it('renders with default (primary) theme', () => {
-    const wrapper = mountWithTheme(
-      setupComponent({
-        title: STUB_TITLE,
-      })
-    );
+    setupComponent({
+      title: testTitle,
+    });
 
-    const domNode = wrapper.find('span').at(0).getDOMNode();
-    const background = getComputedStyle(domNode).getPropertyValue('background');
-    expect(background).toBe('rgb(255, 255, 255)');
+    const columnheader = screen.getByRole('columnheader');
+    const title = within(columnheader).getByText(testTitle);
+    expect(title).toHaveStyle(
+      `background: ${theme.thStyles.backgroundColor.normal};`
+    );
   });
 });
