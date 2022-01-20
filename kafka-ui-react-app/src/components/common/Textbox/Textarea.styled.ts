@@ -1,39 +1,40 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const Textarea = styled.textarea`
-  border: 1px ${Colors.neutral[30]} solid;
+  border: 1px ${({ theme }) => theme.textAreaStyles.borderColor.normal} solid;
   border-radius: 4px;
   width: 100%;
   padding: 12px;
   padding-top: 6px;
 
   &::placeholder {
-    color: ${Colors.neutral[30]};
+    color: ${({ theme }) => theme.textAreaStyles.color.placeholder.normal};
     font-size: 14px;
   }
   &:hover {
-    border-color: ${Colors.neutral[50]};
+    border-color: ${({ theme }) => theme.textAreaStyles.borderColor.hover};
   }
   &:focus {
     outline: none;
-    border-color: ${Colors.neutral[70]};
+    border-color: ${({ theme }) => theme.textAreaStyles.borderColor.focus};
     &::placeholder {
       color: transparent;
     }
   }
   &:disabled {
-    color: ${Colors.neutral[30]};
-    border-color: ${Colors.neutral[10]};
+    color: ${({ theme }) => theme.textAreaStyles.color.disabled};
+    border-color: ${({ theme }) => theme.textAreaStyles.borderColor.disabled};
     cursor: not-allowed;
   }
   &:read-only {
-    color: ${Colors.neutral[90]};
+    color: ${({ theme }) => theme.textAreaStyles.color.readOnly};
     border: none;
-    background-color: ${Colors.neutral[5]};
+    background-color: ${({ theme }) =>
+      theme.textAreaStyles.backgroundColor.readOnly};
     &:focus {
       &::placeholder {
-        color: ${Colors.neutral[30]};
+        color: ${({ theme }) =>
+          theme.textAreaStyles.color.placeholder.readOnly};
       }
     }
     cursor: not-allowed;

@@ -109,6 +109,11 @@ const theme = {
       M: '14px',
       L: '16px',
     },
+    border: {
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[70],
+      active: Colors.neutral[90],
+    },
   },
   menuStyles: {
     backgroundColor: {
@@ -127,17 +132,41 @@ const theme = {
     },
     chevronIconColor: Colors.neutral[50],
   },
-  thStyles: {
-    backgroundColor: {
-      normal: Colors.neutral[0],
+  modalStyles: {
+    backgroundColor: Colors.neutral[0],
+    border: {
+      top: Colors.neutral[5],
+      bottom: Colors.neutral[5],
     },
-    color: {
-      normal: Colors.neutral[50],
-      hover: Colors.brand[50],
-      active: Colors.brand[50],
+  },
+  tableStyles: {
+    thStyles: {
+      backgroundColor: {
+        normal: Colors.neutral[0],
+      },
+      color: {
+        normal: Colors.neutral[50],
+        hover: Colors.brand[50],
+        active: Colors.brand[50],
+      },
+      previewColor: {
+        normal: Colors.brand[50],
+      },
     },
-    previewColor: {
-      normal: Colors.brand[50],
+    tdStyles: {
+      color: {
+        normal: Colors.neutral[90],
+      },
+    },
+    trStyles: {
+      backgroundColor: {
+        hover: Colors.neutral[5],
+      },
+    },
+    link: {
+      color: {
+        normal: Colors.neutral[90],
+      },
     },
   },
   primaryTabStyles: {
@@ -150,6 +179,7 @@ const theme = {
       normal: 'transparent',
       hover: 'transparent',
       active: Colors.brand[50],
+      nav: Colors.neutral[10],
     },
   },
   secondaryTabStyles: {
@@ -176,6 +206,51 @@ const theme = {
       hover: Colors.neutral[50],
       active: Colors.neutral[70],
       disabled: Colors.neutral[10],
+    },
+  },
+  inputStyles: {
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      focus: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+    color: {
+      placeholder: {
+        normal: Colors.neutral[30],
+        readOnly: Colors.neutral[30],
+      },
+      disabled: Colors.neutral[30],
+      readOnly: Colors.neutral[90],
+    },
+    backgroundColor: {
+      readOnly: Colors.neutral[5],
+    },
+    error: Colors.red[50],
+    icon: {
+      color: Colors.neutral[70],
+    },
+    label: {
+      color: Colors.neutral[70],
+    },
+  },
+  textAreaStyles: {
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      focus: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+    color: {
+      placeholder: {
+        normal: Colors.neutral[30],
+        readOnly: Colors.neutral[30],
+      },
+      disabled: Colors.neutral[30],
+      readOnly: Colors.neutral[90],
+    },
+    backgroundColor: {
+      readOnly: Colors.neutral[5],
     },
   },
   tagStyles: {

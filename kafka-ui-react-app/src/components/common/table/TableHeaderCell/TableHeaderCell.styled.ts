@@ -9,7 +9,7 @@ const isOrderableStyles = css`
   cursor: pointer;
 
   &:hover {
-    color: ${(props) => props.theme.thStyles.color.hover};
+    color: ${(props) => props.theme.tableStyles.thStyles.color.hover};
   }
 `;
 
@@ -21,11 +21,12 @@ export const Title = styled.span<TitleProps>`
   line-height: 16px;
   letter-spacing: 0em;
   text-align: left;
-  background: ${(props) => props.theme.thStyles.backgroundColor.normal};
+  background: ${(props) =>
+    props.theme.tableStyles.thStyles.backgroundColor.normal};
   color: ${(props) =>
     props.isOrdered
-      ? props.theme.thStyles.color.active
-      : props.theme.thStyles.color.normal};
+      ? props.theme.tableStyles.thStyles.color.active
+      : props.theme.tableStyles.thStyles.color.normal};
   cursor: default;
 
   ${(props) => props.isOrderable && isOrderableStyles}
@@ -39,9 +40,10 @@ export const Preview = styled.span`
   line-height: 16px;
   letter-spacing: 0em;
   text-align: left;
-  background: ${(props) => props.theme.thStyles.backgroundColor.normal};
+  background: ${(props) =>
+    props.theme.tableStyles.thStyles.backgroundColor.normal};
   font-size: 14px;
-  color: ${(props) => props.theme.thStyles.previewColor.normal};
+  color: ${(props) => props.theme.tableStyles.thStyles.previewColor.normal};
   cursor: pointer;
 `;
 

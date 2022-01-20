@@ -61,7 +61,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
 }
 
 .c0 > a {
-  color: #171A1C;
+  color: normal:#171A1C;
   font-weight: 500;
   text-overflow: ellipsis;
 }
@@ -88,6 +88,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "buttonStyles": Object {
+        "border": Object {
+          "active": "#171A1C",
+          "hover": "#454F54",
+          "normal": "#73848C",
+        },
         "fontSize": Object {
           "L": "16px",
           "M": "14px",
@@ -139,6 +144,32 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "fontSize": "14px",
         },
       },
+      "inputStyles": Object {
+        "backgroundColor": Object {
+          "readOnly": "#F1F2F3",
+        },
+        "borderColor": Object {
+          "disabled": "#E3E6E8",
+          "focus": "#454F54",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "disabled": "#ABB5BA",
+          "placeholder": Object {
+            "normal": "#ABB5BA",
+            "readOnly": "#ABB5BA",
+          },
+          "readOnly": "#171A1C",
+        },
+        "error": "#E51A1A",
+        "icon": Object {
+          "color": "#454F54",
+        },
+        "label": Object {
+          "color": "#454F54",
+        },
+      },
       "layout": Object {
         "mainColor": "#F1F2F3",
         "minWidth": "1200px",
@@ -171,6 +202,13 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "warningTextColor": "#E51A1A",
         },
       },
+      "modalStyles": Object {
+        "backgroundColor": "#FFFFFF",
+        "border": Object {
+          "bottom": "#F1F2F3",
+          "top": "#F1F2F3",
+        },
+      },
       "pageLoader": Object {
         "borderBottomColor": "#FFFFFF",
         "borderColor": "#4F4FFF",
@@ -196,6 +234,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "borderColor": Object {
           "active": "#4F4FFF",
           "hover": "transparent",
+          "nav": "#E3E6E8",
           "normal": "transparent",
         },
         "color": Object {
@@ -244,6 +283,36 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "checked": "#29A352",
         "unchecked": "#ABB5BA",
       },
+      "tableStyles": Object {
+        "link": Object {
+          "color": Object {
+            "normal": "#171A1C",
+          },
+        },
+        "tdStyles": Object {
+          "color": Object {
+            "normal": "#171A1C",
+          },
+        },
+        "thStyles": Object {
+          "backgroundColor": Object {
+            "normal": "#FFFFFF",
+          },
+          "color": Object {
+            "active": "#4F4FFF",
+            "hover": "#4F4FFF",
+            "normal": "#73848C",
+          },
+          "previewColor": Object {
+            "normal": "#4F4FFF",
+          },
+        },
+        "trStyles": Object {
+          "backgroundColor": Object {
+            "hover": "#F1F2F3",
+          },
+        },
+      },
       "tagStyles": Object {
         "backgroundColor": Object {
           "blue": "#e3f2fd",
@@ -255,17 +324,23 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
         "color": "#171A1C",
       },
-      "thStyles": Object {
+      "textAreaStyles": Object {
         "backgroundColor": Object {
-          "normal": "#FFFFFF",
+          "readOnly": "#F1F2F3",
+        },
+        "borderColor": Object {
+          "disabled": "#E3E6E8",
+          "focus": "#454F54",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
         },
         "color": Object {
-          "active": "#4F4FFF",
-          "hover": "#4F4FFF",
-          "normal": "#73848C",
-        },
-        "previewColor": Object {
-          "normal": "#4F4FFF",
+          "disabled": "#ABB5BA",
+          "placeholder": Object {
+            "normal": "#ABB5BA",
+            "readOnly": "#ABB5BA",
+          },
+          "readOnly": "#171A1C",
         },
       },
     }

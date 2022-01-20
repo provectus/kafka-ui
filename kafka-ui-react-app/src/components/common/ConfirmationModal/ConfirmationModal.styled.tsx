@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })`
   display: flex;
@@ -29,7 +28,7 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })`
     width: 560px;
     border-radius: 8px;
 
-    background-color: ${Colors.neutral[0]};
+    background-color: ${({ theme }) => theme.modalStyles.backgroundColor};
     filter: drop-shadow(0px 4px 16px rgba(0, 0, 0, 0.1));
 
     & > * {
@@ -44,8 +43,8 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })`
     }
 
     & > section {
-      border-top: 1px solid ${Colors.neutral[5]};
-      border-bottom: 1px solid ${Colors.neutral[5]};
+      border-top: 1px solid ${({ theme }) => theme.modalStyles.border.top};
+      border-bottom: 1px solid ${({ theme }) => theme.modalStyles.border.bottom};
     }
 
     & > footer {

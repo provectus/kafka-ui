@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 const Navbar = styled.nav`
   display: flex;
-  border-bottom: 1px ${Colors.neutral[10]} solid;
+  border-bottom: 1px ${({ theme }) => theme.primaryTabStyles.borderColor.nav}
+    solid;
   & a {
     height: 40px;
     width: 96px;
