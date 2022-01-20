@@ -1,21 +1,23 @@
 import React from 'react';
-import JSONViewer, {
+import EditorViewer, {
   FullMessageProps,
-} from 'components/common/JSONViewer/JSONViewer';
+} from 'components/common/EditorViewer/EditorViewer';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 
 const data = { a: 1 };
 const maxLines = 28;
+const schemaType = 'JSON';
 
-describe('JSONViewer component', () => {
+describe('EditorViewer component', () => {
   const setupComponent = (props: FullMessageProps) =>
-    render(<JSONViewer {...props} />);
+    render(<EditorViewer {...props} />);
 
   it('renders JSONTree', () => {
     setupComponent({
       data: JSON.stringify(data),
       maxLines,
+      schemaType,
     });
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
@@ -24,7 +26,7 @@ describe('JSONViewer component', () => {
     setupComponent({
       data: '',
       maxLines,
+      schemaType,
     });
-    expect(screen.getByText(JSON.stringify(''))).toBeInTheDocument();
   });
 });

@@ -15,7 +15,7 @@ import theme from 'theme/theme';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
-jest.mock('components/common/JSONEditor/JSONEditor', () => 'mock-JSONEditor');
+jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 
 const mockHistoryPush = jest.fn();
 jest.mock('react-router-dom', () => ({
@@ -37,7 +37,7 @@ describe('New', () => {
           target: { name: 'name', value: 'my-connector' },
         });
         wrapper
-          .find('mock-JSONEditor')
+          .find('mock-Editor')
           .simulate('change', { target: { value: '{"class":"MyClass"}' } });
         wrapper.find('button[type="submit"]').simulate('submit');
       });

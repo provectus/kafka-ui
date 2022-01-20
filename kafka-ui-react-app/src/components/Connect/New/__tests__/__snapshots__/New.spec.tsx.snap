@@ -311,7 +311,7 @@ Array [
       >
         Config *
       </label>
-      <mock-JSONEditor
+      <mock-Editor
         name="config"
         onBlur={[Function]}
         onChange={[Function]}

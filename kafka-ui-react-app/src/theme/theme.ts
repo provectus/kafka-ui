@@ -260,7 +260,7 @@ const theme = {
       circleSmall: Colors.red[50],
     },
   },
-  JSONViewer: {
+  viewer: {
     wrapper: Colors.gray[10],
   },
   textarea: {
