@@ -27,6 +27,8 @@ const Message: React.FC<{ message: TopicMessage }> = ({
     key,
     partition,
     content,
+    valueFormat,
+    keyFormat,
     headers,
   },
 }) => {
@@ -72,7 +74,9 @@ const Message: React.FC<{ message: TopicMessage }> = ({
       {isOpen && (
         <MessageContent
           messageKey={key}
+          messageKeyFormat={keyFormat}
           messageContent={content}
+          messageContentFormat={valueFormat}
           headers={headers}
           timestamp={timestamp}
           timestampType={timestampType}

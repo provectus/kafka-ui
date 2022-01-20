@@ -31,4 +31,10 @@ describe('ClustersWidget', () => {
   it('when cluster is read-only', () => {
     expect(screen.getByText('readonly')).toBeInTheDocument();
   });
+
+  it('render clusterWidget cells', () => {
+    const cells = screen.getAllByRole('cells');
+    expect(cells.length).toBe(14);
+    expect(cells[0]).toHaveStyle('max-width: 99px');
+  });
 });
