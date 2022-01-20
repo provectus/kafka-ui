@@ -45,7 +45,7 @@ exports[`DangerZone is rendered properly 1`] = `
 }
 
 .c6 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c6 i {

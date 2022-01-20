@@ -13,6 +13,7 @@ export const Colors = {
     '70': '#454F54',
     '80': '#2F3639',
     '90': '#171A1C',
+    '100': '#000000',
   },
   green: {
     '10': '#D6F5E0',
@@ -40,6 +41,12 @@ export const Colors = {
     '30': '#90caf9',
     '40': '#64b5f6',
   },
+  gray: {
+    '10': '#f9fafa',
+    '80': 'rgba(34, 41, 47, 0.5)',
+    '85': 'rgba(10, 10, 10, 0.1)',
+    '90': 'rgba(0, 0, 0, 0.1)',
+  },
 };
 
 const theme = {
@@ -48,9 +55,14 @@ const theme = {
     navBarWidth: '201px',
     navBarHeight: '3.25rem',
     mainColor: Colors.neutral[5],
+    mainBorderColor: Colors.neutral[10],
+    overlayColor: Colors.gray[80],
   },
   panelColor: Colors.neutral[0],
   headingStyles: {
+    h1: {
+      color: Colors.neutral[90],
+    },
     h3: {
       color: Colors.neutral[50],
       fontSize: '14px',
@@ -63,6 +75,7 @@ const theme = {
       warning: Colors.yellow[10],
       info: Colors.neutral[10],
     },
+    shadowColor: Colors.gray[90],
   },
   circularAlert: {
     color: {
@@ -208,6 +221,7 @@ const theme = {
   switch: {
     unchecked: Colors.neutral[30],
     checked: Colors.green[60],
+    circle: Colors.neutral[0],
   },
   pageLoader: {
     borderColor: Colors.brand[50],
@@ -231,6 +245,26 @@ const theme = {
       normal: Colors.neutral[0],
       active: Colors.neutral[50],
     },
+  },
+  confirmationModal: {
+    shadow: Colors.gray[90],
+    overlay: Colors.gray[85],
+  },
+  icons: {
+    closeIcon: Colors.neutral[30],
+    messageToggleIconOpened: Colors.neutral[90],
+    messageToggleIconClosed: Colors.neutral[30],
+    verticalElipsisIcon: Colors.neutral[50],
+    liveIcon: {
+      circleBig: Colors.red[10],
+      circleSmall: Colors.red[50],
+    },
+  },
+  JSONViewer: {
+    wrapper: Colors.gray[10],
+  },
+  textarea: {
+    focused: 'transparent',
   },
 };
 
