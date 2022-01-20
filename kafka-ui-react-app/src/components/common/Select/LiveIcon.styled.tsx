@@ -5,9 +5,9 @@ interface Props {
   className?: string;
 }
 
-const LiveIcon: React.FC<Props> = ({ className }) => {
+const LiveIcon: React.FC<Props> = () => {
   return (
-    <i className={className}>
+    <i>
       <svg
         width="16"
         height="16"

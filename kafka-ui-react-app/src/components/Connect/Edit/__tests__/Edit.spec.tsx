@@ -1,8 +1,5 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import { containerRendersView, render } from 'lib/testHelpers';
 import {
   clusterConnectConnectorConfigPath,
   clusterConnectConnectorEditPath,
@@ -10,8 +7,9 @@ import {
 import EditContainer from 'components/Connect/Edit/EditContainer';
 import Edit, { EditProps } from 'components/Connect/Edit/Edit';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { Route } from 'react-router';
+import { waitFor } from '@testing-library/dom';
+import { fireEvent, screen } from '@testing-library/react';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -38,12 +36,9 @@ describe('Edit', () => {
     const connectName = 'my-connect';
     const connectorName = 'my-connector';
 
-    const setupWrapper = (props: Partial<EditProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
+    const renderComponent = (props: Partial<EditProps> = {}) =>
+      render(
+        <Route path={pathname}>
           <Edit
             fetchConfig={jest.fn()}
             isConfigFetching={false}
@@ -51,30 +46,19 @@ describe('Edit', () => {
             updateConfig={jest.fn()}
             {...props}
           />
-        </TestRouterWrapper>
-      </ThemeProvider>
-    );
-
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when fetching config', () => {
-      const wrapper = create(setupWrapper({ isConfigFetching: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('matches snapshot when config has credentials', () => {
-      const wrapper = create(
-        setupWrapper({ config: { ...connector.config, password: '******' } })
+        </Route>,
+        {
+          pathname: clusterConnectConnectorEditPath(
+            clusterName,
+            connectName,
+            connectorName
+          ),
+        }
       );
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
 
     it('fetches config on mount', () => {
       const fetchConfig = jest.fn();
-      mount(setupWrapper({ fetchConfig }));
+      renderComponent({ fetchConfig });
       expect(fetchConfig).toHaveBeenCalledTimes(1);
       expect(fetchConfig).toHaveBeenCalledWith(
         clusterName,
@@ -85,10 +69,8 @@ describe('Edit', () => {
 
     it('calls updateConfig on form submit', async () => {
       const updateConfig = jest.fn();
-      const wrapper = mount(setupWrapper({ updateConfig }));
-      await act(async () => {
-        wrapper.find('form').simulate('submit');
-      });
+      renderComponent({ updateConfig });
+      await waitFor(() => fireEvent.submit(screen.getByRole('form')));
       expect(updateConfig).toHaveBeenCalledTimes(1);
       expect(updateConfig).toHaveBeenCalledWith(
         clusterName,
@@ -100,10 +82,8 @@ describe('Edit', () => {
 
     it('redirects to connector config view on successful submit', async () => {
       const updateConfig = jest.fn().mockResolvedValueOnce(connector);
-      const wrapper = mount(setupWrapper({ updateConfig }));
-      await act(async () => {
-        wrapper.find('form').simulate('submit');
-      });
+      renderComponent({ updateConfig });
+      await waitFor(() => fireEvent.submit(screen.getByRole('form')));
       expect(mockHistoryPush).toHaveBeenCalledTimes(1);
       expect(mockHistoryPush).toHaveBeenCalledWith(
         clusterConnectConnectorConfigPath(
@@ -116,10 +96,8 @@ describe('Edit', () => {
 
     it('does not redirect to connector config view on unsuccessful submit', async () => {
       const updateConfig = jest.fn().mockResolvedValueOnce(undefined);
-      const wrapper = mount(setupWrapper({ updateConfig }));
-      await act(async () => {
-        wrapper.find('form').simulate('submit');
-      });
+      renderComponent({ updateConfig });
+      await waitFor(() => fireEvent.submit(screen.getByRole('form')));
       expect(mockHistoryPush).not.toHaveBeenCalled();
     });
   });

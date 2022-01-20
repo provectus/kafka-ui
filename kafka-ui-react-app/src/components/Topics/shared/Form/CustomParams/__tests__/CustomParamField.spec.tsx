@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, within } from '@testing-library/react';
+import {screen, waitFor, within} from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import CustomParamsField, {
   Props,
@@ -16,6 +16,11 @@ const remove = jest.fn();
 const setExistingFields = jest.fn();
 
 const SPACE_KEY = ' ';
+
+const selectOption = async (listbox: HTMLElement, option: string) => {
+  await waitFor(() => userEvent.click(listbox));
+  await waitFor(() => userEvent.click(screen.getByText(option)));
+};
 
 describe('CustomParamsField', () => {
   const setupComponent = (props: Props) => {
@@ -73,7 +78,7 @@ describe('CustomParamsField', () => {
       expect(remove.mock.calls.length).toBe(2);
     });
 
-    it('can select option', () => {
+    it('can select option', async () => {
       setupComponent({
         field,
         isDisabled,
@@ -83,13 +88,14 @@ describe('CustomParamsField', () => {
         setExistingFields,
       });
       const listbox = screen.getByRole('listbox');
-      userEvent.selectOptions(listbox, ['compression.type']);
+      await selectOption(listbox, 'compression.type');
 
-      const option = within(listbox).getByRole('option', { selected: true });
-      expect(option).toHaveValue('compression.type');
+      const selectedOption = within(listbox).getAllByRole('option');
+      expect(selectedOption.length).toEqual(1);
+      expect(selectedOption[0]).toHaveTextContent('compression.type');
     });
 
-    it('selecting option updates textbox value', () => {
+    it('selecting option updates textbox value', async () => {
       setupComponent({
         field,
         isDisabled,
@@ -99,13 +105,13 @@ describe('CustomParamsField', () => {
         setExistingFields,
       });
       const listbox = screen.getByRole('listbox');
-      userEvent.selectOptions(listbox, ['compression.type']);
+      await selectOption(listbox, 'compression.type');
 
       const textbox = screen.getByRole('textbox');
       expect(textbox).toHaveValue(TOPIC_CUSTOM_PARAMS['compression.type']);
     });
 
-    it('selecting option updates triggers setExistingFields', () => {
+    it('selecting option updates triggers setExistingFields', async () => {
       setupComponent({
         field,
         isDisabled,
@@ -115,7 +121,7 @@ describe('CustomParamsField', () => {
         setExistingFields,
       });
       const listbox = screen.getByRole('listbox');
-      userEvent.selectOptions(listbox, ['compression.type']);
+      await selectOption(listbox, 'compression.type');
 
       expect(setExistingFields.mock.calls.length).toBe(1);
     });
