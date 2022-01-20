@@ -79,9 +79,6 @@ exports[`Connectors ListItem matches snapshot 1`] = `
 <Component
   theme={
     Object {
-      "JSONViewer": Object {
-        "wrapper": "#f9fafa",
-      },
       "alert": Object {
         "color": Object {
           "error": "#FAD1D1",
@@ -294,6 +291,9 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "previewColor": Object {
           "normal": "#4F4FFF",
         },
+      },
+      "viewer": Object {
+        "wrapper": "#f9fafa",
       },
     }
   }
