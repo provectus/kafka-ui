@@ -27,9 +27,9 @@ const expectOptionAvailability = async (
   disabled: boolean
 ) => {
   await waitFor(() => userEvent.click(listbox));
-  const selectedOptions = within(listbox).getAllByText(option);
+  const selectedOptions = within(listbox).getAllByText(option).reverse();
   // its either two or one nodes, we only need last one
-  const selectedOption = selectedOptions.reverse()[0];
+  const selectedOption = selectedOptions[0];
 
   if (disabled) {
     expect(selectedOption).toHaveAttribute('disabled');
