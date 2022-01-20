@@ -9,9 +9,9 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as Metrics from 'components/common/Metrics';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 
-interface Props extends Topic, TopicDetails {
+export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
   topicName: TopicName;
   clearTopicMessages(
@@ -52,11 +52,13 @@ const Overview: React.FC<Props> = ({
             label="URP"
             title="Under replicated partitions"
             isAlert
+            alertType={underReplicatedPartitions === 0 ? 'error' : 'success'}
           >
             <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
           </Metrics.Indicator>
           <Metrics.Indicator
-            label="In Sync Replicas"
+            label="ISR"
+            title="In Sync Replicas"
             isAlert
             alertType={inSyncReplicas === replicas ? 'success' : 'error'}
           >
@@ -68,9 +70,7 @@ const Overview: React.FC<Props> = ({
             <Metrics.LightText> of {replicas}</Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator label="Type">
-            <TagStyled color="gray">
-              {internal ? 'Internal' : 'External'}
-            </TagStyled>
+            <Tag color="gray">{internal ? 'Internal' : 'External'}</Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Segment Size" title="">
             <BytesFormatted value={segmentSize} />
@@ -79,7 +79,7 @@ const Overview: React.FC<Props> = ({
             {segmentCount}
           </Metrics.Indicator>
           <Metrics.Indicator label="Clean Up Policy">
-            <TagStyled color="gray">{cleanUpPolicy || 'Unknown'}</TagStyled>
+            <Tag color="gray">{cleanUpPolicy || 'Unknown'}</Tag>
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>

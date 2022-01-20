@@ -196,6 +196,7 @@ Array [
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -263,6 +264,7 @@ Array [
           name="connectName"
           onBlur={[Function]}
           onChange={[Function]}
+          role="listbox"
         >
           <option
             value="first"

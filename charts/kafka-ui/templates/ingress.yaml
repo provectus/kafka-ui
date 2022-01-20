@@ -24,6 +24,9 @@ spec:
         - {{ .Values.ingress.host }}
       secretName: {{ .Values.ingress.tls.secretName }}
   {{- end }}
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
   rules:
     - http:
         paths:

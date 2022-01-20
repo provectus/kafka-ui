@@ -3,10 +3,14 @@ import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
-import { store } from 'redux/store';
+import { store as appStore } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { render, RenderOptions } from '@testing-library/react';
+import { AnyAction, Store } from 'redux';
+import { RootState } from 'redux/interfaces';
+import { configureStore } from '@reduxjs/toolkit';
+import rootReducer from 'redux/reducers';
 
 interface TestRouterWrapperProps {
   pathname: string;
@@ -45,7 +49,7 @@ export const containerRendersView = (
       let wrapper = mount(<div />);
       await act(async () => {
         wrapper = mount(
-          <Provider store={store}>
+          <Provider store={appStore}>
             <StaticRouter>
               <ThemeProvider theme={theme}>{container}</ThemeProvider>
             </StaticRouter>
@@ -65,18 +69,35 @@ export function mountWithTheme(child: ReactElement) {
   });
 }
 
-// overrides @testing-library/react render.
-const AllTheProviders: React.FC = ({ children }) => {
-  return (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>{children}</Provider>
-    </ThemeProvider>
-  );
-};
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
+  preloadedState?: Partial<RootState>;
+  store?: Store<Partial<RootState>, AnyAction>;
+  pathname?: string;
+}
 
 const customRender = (
   ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>
-) => render(ui, { wrapper: AllTheProviders, ...options });
+  {
+    preloadedState,
+    store = configureStore<RootState>({
+      reducer: rootReducer,
+      preloadedState,
+    }),
+    pathname,
+    ...renderOptions
+  }: CustomRenderOptions = {}
+) => {
+  // overrides @testing-library/react render.
+  const AllTheProviders: React.FC = ({ children }) => {
+    return (
+      <ThemeProvider theme={theme}>
+        <Provider store={store}>
+          <StaticRouter location={{ pathname }}>{children}</StaticRouter>
+        </Provider>
+      </ThemeProvider>
+    );
+  };
+  return render(ui, { wrapper: AllTheProviders, ...renderOptions });
+};
 
 export { customRender as render };

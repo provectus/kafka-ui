@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
 import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
@@ -9,11 +8,7 @@ const createTopicPath = '/ui/clusters/local/topics/create-new';
 
 describe('Breadcrumb component', () => {
   const setupComponent = (pathname: string) =>
-    render(
-      <StaticRouter location={{ pathname }}>
-        <Breadcrumb />
-      </StaticRouter>
-    );
+    render(<Breadcrumb />, { pathname });
 
   it('renders the name of brokers path', () => {
     setupComponent(brokersPath);

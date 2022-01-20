@@ -51,7 +51,6 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
         type="number"
         defaultValue={defaultValue}
         name={name}
-        inputSize="M"
         hookFormOptions={{
           min: { value: -1, message: 'must be greater than or equal to -1' },
         }}

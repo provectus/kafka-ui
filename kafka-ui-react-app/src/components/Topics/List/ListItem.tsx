@@ -11,7 +11,7 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Colors } from 'theme/theme';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
@@ -89,7 +89,7 @@ const ListItem: React.FC<ListItemProps> = ({
         </td>
       )}
       <TableKeyLink style={{ width: '44%' }}>
-        {internal && <TagStyled color="gray">IN</TagStyled>}
+        {internal && <Tag color="gray">IN</Tag>}
         <NavLink
           exact
           to={`topics/${name}`}

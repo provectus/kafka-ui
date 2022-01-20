@@ -39,7 +39,7 @@ export const clusterSchemaPath = (
   clusterName: ClusterName,
   subject: SchemaName
 ) => `${clusterSchemasPath(clusterName)}/${subject}`;
-export const clusterSchemaSchemaEditPath = (
+export const clusterSchemaEditPath = (
   clusterName: ClusterName,
   subject: SchemaName
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;

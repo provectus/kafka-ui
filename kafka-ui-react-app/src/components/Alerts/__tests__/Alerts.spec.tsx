@@ -8,7 +8,7 @@ import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/
 import userEvent from '@testing-library/user-event';
 
 describe('Alerts', () => {
-  beforeEach(() => render(<Alerts />));
+  beforeEach(() => render(<Alerts />, { store }));
 
   it('renders alerts', async () => {
     const payload: ServerResponse = {

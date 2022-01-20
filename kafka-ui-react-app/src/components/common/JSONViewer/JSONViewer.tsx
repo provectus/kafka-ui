@@ -3,11 +3,12 @@ import JSONEditor from 'components/common/JSONEditor/JSONEditor';
 
 import { StyledWrapper } from './StyledWrapper.styled';
 
-interface FullMessageProps {
+export interface FullMessageProps {
   data: string;
+  maxLines?: number;
 }
 
-const JSONViewer: React.FC<FullMessageProps> = ({ data }) => {
+const JSONViewer: React.FC<FullMessageProps> = ({ data, maxLines }) => {
   try {
     if (data.trim().startsWith('{')) {
       return (
@@ -18,7 +19,7 @@ const JSONViewer: React.FC<FullMessageProps> = ({ data }) => {
             value={JSON.stringify(JSON.parse(data), null, '\t')}
             setOptions={{
               showLineNumbers: false,
-              maxLines: 40,
+              maxLines,
               showGutter: false,
             }}
             readOnly
