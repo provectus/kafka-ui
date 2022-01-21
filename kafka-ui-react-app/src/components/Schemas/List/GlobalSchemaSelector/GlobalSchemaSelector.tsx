@@ -45,12 +45,8 @@ const GlobalSchemaSelector: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleChangeCompatibilityLevel = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setNextCompatibilityLevel(
-      event.target.value as CompatibilityLevelCompatibilityEnum
-    );
+  const handleChangeCompatibilityLevel = (level: string | number) => {
+    setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);
     setIsConfirmationVisible(true);
   };
 
@@ -66,6 +62,7 @@ const GlobalSchemaSelector: React.FC = () => {
         setCurrentCompatibilityLevel(nextCompatibilityLevel);
         setNextCompatibilityLevel(undefined);
         setIsConfirmationVisible(false);
+        dispatch(fetchSchemas(clusterName));
       } catch (e) {
         const err = await getResponse(e as Response);
         dispatch(serverErrorAlertAdded(err));
@@ -81,18 +78,14 @@ const GlobalSchemaSelector: React.FC = () => {
       <div>Global Compatibility Level: </div>
       <Select
         selectSize="M"
-        value={currentCompatibilityLevel}
+        defaultValue={currentCompatibilityLevel}
+        minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}
-      >
-        {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-          (level: string) => (
-            <option key={level} value={level}>
-              {level}
-            </option>
-          )
+        options={Object.keys(CompatibilityLevelCompatibilityEnum).map(
+          (level) => ({ value: level, label: level })
         )}
-      </Select>
+      />
       <ConfirmationModal
         isOpen={isConfirmationVisible}
         onCancel={() => setIsConfirmationVisible(false)}

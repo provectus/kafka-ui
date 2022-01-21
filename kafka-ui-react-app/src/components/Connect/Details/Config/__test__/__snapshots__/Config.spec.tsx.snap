@@ -11,7 +11,7 @@ exports[`Config view matches snapshot 1`] = `
 <div
   className="c0"
 >
-  <mock-JSONEditor
+  <mock-Editor
     highlightActiveLine={false}
     isFixedHeight={true}
     readOnly={true}

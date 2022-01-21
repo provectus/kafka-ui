@@ -2,22 +2,24 @@
 
 exports[`Custom Select when live matches the snapshot 1`] = `
 <body>
-  .c1 {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  line-height: 0;
-}
-
-.c2 {
+  .c0 {
+  position: relative;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 40px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   padding-left: 36px;
   padding-right: 16px;
   color: #171A1C;
@@ -26,39 +28,36 @@ exports[`Custom Select when live matches the snapshot 1`] = `
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
-.c2:hover {
+.c0:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c2:focus {
+.c0:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c2:disabled {
+.c0:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c0 {
-  position: relative;
+.c1 {
+  padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 <div>
-    <div
-      class="select-wrapper c0"
-    >
-      <i
-        class="c1"
-      >
+    <div>
+      <i>
         <svg
           fill="none"
           height="16"
@@ -80,22 +79,41 @@ exports[`Custom Select when live matches the snapshot 1`] = `
           />
         </svg>
       </i>
-      <select
-        class="c2"
+      <ul
+        class="c0"
+        name="test"
         role="listbox"
-      />
+      >
+        <li
+          class="c1"
+          role="option"
+          tabindex="0"
+        />
+      </ul>
     </div>
   </div>
 </body>
 `;
 
 exports[`Custom Select when non-live matches the snapshot 1`] = `
-.c1 {
+.c0 {
+  position: relative;
+  list-style: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
   height: 40px;
   border: 1px #ABB5BA solid;
   border-radius: 4px;
   font-size: 14px;
-  width: 100%;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
   padding-left: 12px;
   padding-right: 16px;
   color: #171A1C;
@@ -104,41 +122,47 @@ exports[`Custom Select when non-live matches the snapshot 1`] = `
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  appearance: none !important;
 }
 
-.c1:hover {
+.c0:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c1:focus {
+.c0:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c1:disabled {
+.c0:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
 }
 
-.c0 {
-  position: relative;
+.c1 {
+  padding-right: 16px;
+  list-style-position: inside;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 <body>
   <div>
-    <div
-      class="select-wrapper c0"
-    >
-      <select
-        class="c1"
+    <div>
+      <ul
+        class="c0"
+        name="test"
         role="listbox"
-      />
+      >
+        <li
+          class="c1"
+          role="option"
+          tabindex="0"
+        />
+      </ul>
     </div>
   </div>
 </body>

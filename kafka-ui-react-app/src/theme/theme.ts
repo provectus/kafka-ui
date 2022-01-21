@@ -165,6 +165,11 @@ const theme = {
     },
   },
   selectStyles: {
+    backgroundColor: {
+      normal: Colors.neutral[0],
+      hover: Colors.neutral[10],
+      active: Colors.neutral[10],
+    },
     color: {
       normal: Colors.neutral[90],
       hover: Colors.neutral[90],
