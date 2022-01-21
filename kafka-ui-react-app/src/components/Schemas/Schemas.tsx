@@ -23,7 +23,7 @@ const Schemas: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemasFulfilled);
 
   React.useEffect(() => {
-    dispatch(fetchSchemas(clusterName));
+    dispatch(fetchSchemas({ clusterName }));
   }, []);
 
   if (!isFetched) {
