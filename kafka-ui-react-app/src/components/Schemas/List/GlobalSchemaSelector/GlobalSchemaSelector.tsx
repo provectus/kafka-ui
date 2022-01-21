@@ -62,7 +62,7 @@ const GlobalSchemaSelector: React.FC = () => {
         setCurrentCompatibilityLevel(nextCompatibilityLevel);
         setNextCompatibilityLevel(undefined);
         setIsConfirmationVisible(false);
-        dispatch(fetchSchemas(clusterName));
+        dispatch(fetchSchemas({ clusterName }));
       } catch (e) {
         const err = await getResponse(e as Response);
         dispatch(serverErrorAlertAdded(err));
