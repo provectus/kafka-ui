@@ -60,7 +60,7 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
     return request -> {
       var user = oauthUserService.loadUser(request);
 
-      user.flatMap((u) -> {
+      user.map((u) -> {
         final String domainAttribute = u.getAttribute(GOOGLE_DOMAIN_ATTRIBUTE_NAME);
         final String allowedDomain = env.getProperty("oauth2.google.allowedDomain");
         if (allowedDomain != null && allowedDomain.equalsIgnoreCase(domainAttribute)) {
