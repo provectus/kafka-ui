@@ -60,17 +60,15 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
     return request -> {
       var user = oauthUserService.loadUser(request);
 
-      user.map((u) -> {
+      return user.flatMap((u) -> {
         final String domainAttribute = u.getAttribute(GOOGLE_DOMAIN_ATTRIBUTE_NAME);
         final String allowedDomain = env.getProperty("oauth2.google.allowedDomain");
         if (allowedDomain != null && allowedDomain.equalsIgnoreCase(domainAttribute)) {
-          return Mono.just(user);
+          return user;
         } else {
           return Mono.error(new RuntimeException("Authentication within this domain is prohibited"));
         }
       });
-
-      return user;
     };
   }
 
