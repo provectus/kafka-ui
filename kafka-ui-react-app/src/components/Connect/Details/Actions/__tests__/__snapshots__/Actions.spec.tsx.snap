@@ -141,7 +141,7 @@ exports[`Actions view matches snapshot 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -334,7 +334,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -512,7 +512,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -705,7 +705,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -898,7 +898,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -1076,7 +1076,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
