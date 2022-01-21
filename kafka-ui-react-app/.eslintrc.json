@@ -25,6 +25,7 @@
     "prettier"
   ],
   "extends": [
+    "airbnb",
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:jest-dom/recommended",
