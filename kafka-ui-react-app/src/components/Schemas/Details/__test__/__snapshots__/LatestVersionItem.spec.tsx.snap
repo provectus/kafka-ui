@@ -209,7 +209,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         "color": "#171A1C",
       },
       "textarea": Object {
-        "focused": "transparent",
+        "focus": "transparent",
       },
       "thStyles": Object {
         "backgroundColor": Object {

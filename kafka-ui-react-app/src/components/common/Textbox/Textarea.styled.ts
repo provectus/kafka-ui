@@ -20,7 +20,7 @@ export const Textarea = styled.textarea(
       outline: none;
       border-color: ${Colors.neutral[70]};
       &::placeholder {
-        color: ${theme.textarea.focused};
+        color: ${theme.textarea.focus};
       }
     }
     &:disabled {

@@ -270,7 +270,7 @@ const theme = {
     wrapper: Colors.neutral[3],
   },
   textarea: {
-    focused: 'transparent',
+    focus: 'transparent',
   },
 };
 
