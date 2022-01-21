@@ -46,7 +46,7 @@ const Breadcrumb: React.FC<Props> = () => {
   );
 
   if (links.length < 2) {
-    return <></>;
+    return null;
   }
   return (
     <BreadcrumbWrapper role="list">
