@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const TopicContentWrapper = styled.tr`
-  background-color: ${Colors.neutral[5]};
+  background-color: ${({ theme }) =>
+    theme.consumerTopicContent.backgroundColor};
   & > td {
     padding: 16px !important;
   }

@@ -50,6 +50,11 @@ const theme = {
     mainColor: Colors.neutral[5],
   },
   panelColor: Colors.neutral[0],
+  breadcrumb: Colors.neutral[30],
+  connectEditWarring: Colors.yellow[10],
+  dropdown: {
+    color: Colors.red[50],
+  },
   headingStyles: {
     h3: {
       color: Colors.neutral[50],
@@ -131,6 +136,12 @@ const theme = {
       offline: Colors.red[50],
     },
     chevronIconColor: Colors.neutral[50],
+  },
+  schemaStyles: {
+    backgroundColor: {
+      tr: Colors.neutral[5],
+      div: Colors.neutral[0],
+    },
   },
   modalStyles: {
     backgroundColor: Colors.neutral[0],
@@ -296,6 +307,12 @@ const theme = {
       warningTextColor: Colors.red[50],
       lightTextColor: Colors.neutral[30],
     },
+    filters: {
+      color: {
+        icon: Colors.neutral[90],
+        normal: Colors.neutral[50],
+      },
+    },
   },
   scrollbar: {
     trackColor: {
@@ -305,6 +322,38 @@ const theme = {
     thumbColor: {
       normal: Colors.neutral[0],
       active: Colors.neutral[50],
+    },
+  },
+  consumerTopicContent: {
+    backgroundColor: Colors.neutral[5],
+  },
+  topicFormLabel: {
+    color: Colors.neutral[50],
+  },
+  topicMetaDataStyles: {
+    backgroundColor: Colors.neutral[5],
+    color: {
+      label: Colors.neutral[50],
+      value: Colors.neutral[80],
+      meta: Colors.neutral[30],
+    },
+  },
+  dangerZoneStyles: {
+    borderColor: Colors.neutral[10],
+    color: Colors.red[50],
+  },
+  configListStyles: {
+    color: Colors.neutral[30],
+  },
+  topicsListStyles: {
+    color: {
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[50],
+      active: Colors.neutral[90],
+    },
+    backgroundColor: {
+      hover: Colors.neutral[5],
+      active: Colors.neutral[10],
     },
   },
 };

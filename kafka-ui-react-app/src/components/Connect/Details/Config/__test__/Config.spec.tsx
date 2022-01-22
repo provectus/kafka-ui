@@ -6,6 +6,8 @@ import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import ConfigContainer from 'components/Connect/Details/Config/ConfigContainer';
 import Config, { ConfigProps } from 'components/Connect/Details/Config/Config';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -29,12 +31,14 @@ describe('Config', () => {
         pathname={pathname}
         urlParams={{ clusterName, connectName, connectorName }}
       >
-        <Config
-          fetchConfig={jest.fn()}
-          isConfigFetching={false}
-          config={connector.config}
-          {...props}
-        />
+        <ThemeProvider theme={theme}>
+          <Config
+            fetchConfig={jest.fn()}
+            isConfigFetching={false}
+            config={connector.config}
+            {...props}
+          />
+        </ThemeProvider>
       </TestRouterWrapper>
     );
 

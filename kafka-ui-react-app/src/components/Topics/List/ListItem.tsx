@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+// import { NavLink } from 'react-router-dom';
 import {
   ClusterName,
   TopicName,
@@ -10,10 +10,12 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { Colors } from 'theme/theme';
+// import { Colors } from 'theme/theme';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+
+import * as S from './List.styled';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -90,18 +92,9 @@ const ListItem: React.FC<ListItemProps> = ({
       )}
       <TableKeyLink style={{ width: '44%' }}>
         {internal && <Tag color="gray">IN</Tag>}
-        <NavLink
-          exact
-          to={`topics/${name}`}
-          activeClassName="is-active"
-          style={{
-            color: Colors.neutral[90],
-            fontWeight: 500,
-            paddingLeft: internal ? '5px' : 0,
-          }}
-        >
+        <S.Link exact to={`topics/${name}`} $isInternal={internal}>
           {name}
-        </NavLink>
+        </S.Link>
       </TableKeyLink>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>

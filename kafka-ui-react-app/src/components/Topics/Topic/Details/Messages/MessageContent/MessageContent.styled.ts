@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const MessageContentWrapper = styled.tr`
-  background-color: ${Colors.neutral[5]};
+  background-color: ${({ theme }) => theme.topicMetaDataStyles.backgroundColor};
   & > td {
     padding: 16px;
     &:first-child {
@@ -48,17 +47,17 @@ export const Metadata = styled.span`
 `;
 
 export const MetadataLabel = styled.p`
-  color: ${Colors.neutral[50]};
+  color: ${({ theme }) => theme.topicMetaDataStyles.color.label};
   font-size: 14px;
   width: 80px;
 `;
 
 export const MetadataValue = styled.p`
-  color: ${Colors.neutral[80]};
+  color: ${({ theme }) => theme.topicMetaDataStyles.color.value};
   font-size: 14px;
 `;
 
 export const MetadataMeta = styled.p`
-  color: ${Colors.neutral[30]};
+  color: ${({ theme }) => theme.topicMetaDataStyles.color.meta};
   font-size: 12px;
 `;

@@ -19,7 +19,7 @@ export const Table = styled.table<Props>`
   & tbody > tr {
     &:hover {
       background-color: ${({ theme }) =>
-        theme.tableStyles.trStyles.backgroundColor};
+        theme.tableStyles.trStyles.backgroundColor.hover};
     }
   }
 `;

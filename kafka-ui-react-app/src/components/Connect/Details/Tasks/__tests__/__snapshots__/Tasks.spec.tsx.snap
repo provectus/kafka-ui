@@ -15,7 +15,7 @@ exports[`Tasks view matches snapshot 1`] = `
 }
 
 .c0 tbody > tr:hover {
-  background-color: hover:#F1F2F3;
+  background-color: #F1F2F3;
 }
 
 .c2 {
@@ -176,7 +176,7 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
 }
 
 .c0 tbody > tr:hover {
-  background-color: hover:#F1F2F3;
+  background-color: #F1F2F3;
 }
 
 .c2 {

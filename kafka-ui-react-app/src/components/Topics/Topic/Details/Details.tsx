@@ -21,13 +21,13 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
+import { Drop } from './Details.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -105,17 +105,15 @@ const Details: React.FC<Props> = ({
                   Edit settings
                 </DropdownItem>
                 <DropdownItem
-                  style={{ color: Colors.red[50] }}
                   onClick={() => setClearTopicConfirmationVisible(true)}
                 >
-                  Clear messages
+                  <Drop>Clear messages</Drop>
                 </DropdownItem>
                 {isTopicDeletionAllowed && (
                   <DropdownItem
-                    style={{ color: Colors.red[50] }}
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
                   >
-                    Remove topic
+                    <Drop>Remove topic</Drop>
                   </DropdownItem>
                 )}
               </Dropdown>

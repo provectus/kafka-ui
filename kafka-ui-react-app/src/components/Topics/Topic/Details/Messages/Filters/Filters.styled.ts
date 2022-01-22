@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const FiltersWrapper = styled.div`
   display: flex;
@@ -78,13 +77,13 @@ export const FiltersMetrics = styled.div`
 `;
 
 export const Metric = styled.div`
-  color: ${Colors.neutral[50]};
+  color: ${({ theme }) => theme.metrics.filters.color.normal};
   font-size: 12px;
   display: flex;
 `;
 
 export const MetricsIcon = styled.div`
-  color: ${Colors.neutral[90]};
+  color: ${({ theme }) => theme.metrics.filters.color.icon};
   padding-right: 6px;
   height: 12px;
 `;

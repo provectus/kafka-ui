@@ -15,7 +15,6 @@ import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import { Colors } from 'theme/theme';
 import { groupBy } from 'lodash';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -29,6 +28,8 @@ import {
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
 import ListItem from './ListItem';
+import { DropdownRemove } from './ListItem.styled';
+import { Drop } from './Consumer.Details.styled';
 
 const Details: React.FC = () => {
   const history = useHistory();
@@ -80,12 +81,13 @@ const Details: React.FC = () => {
               <DropdownItem onClick={onResetOffsets}>
                 Reset offsets
               </DropdownItem>
-              <DropdownItem
-                style={{ color: Colors.red[50] }}
-                onClick={() => setIsConfirmationModalVisible(true)}
-              >
-                Delete consumer group
-              </DropdownItem>
+              <DropdownRemove>
+                <DropdownItem
+                  onClick={() => setIsConfirmationModalVisible(true)}
+                >
+                  <Drop>Delete consumer group</Drop>
+                </DropdownItem>
+              </DropdownRemove>
             </Dropdown>
           )}
         </PageHeading>

@@ -2,7 +2,7 @@ import React from 'react';
 import { useFormContext } from 'react-hook-form';
 import { MILLISECONDS_IN_WEEK } from 'lib/constants';
 
-import { TimeToRetainBtnStyled } from './TimeToRetainBtn.styled';
+import * as S from './TopicForm.styled';
 
 interface Props {
   inputName: string;
@@ -15,13 +15,13 @@ const TimeToRetainBtn: React.FC<Props> = ({ inputName, text, value }) => {
   const watchedValue = watch(inputName, MILLISECONDS_IN_WEEK.toString());
 
   return (
-    <TimeToRetainBtnStyled
+    <S.Button
       isActive={watchedValue === value}
       type="button"
       onClick={() => setValue(inputName, value)}
     >
       {text}
-    </TimeToRetainBtnStyled>
+    </S.Button>
   );
 };
 

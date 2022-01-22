@@ -76,6 +76,10 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   flex-wrap: wrap;
 }
 
+.c6 {
+  color: #E51A1A;
+}
+
 <Component
   theme={
     Object {
@@ -87,6 +91,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "warning": "#FFEECC",
         },
       },
+      "breadcrumb": "#ABB5BA",
       "buttonStyles": Object {
         "border": Object {
           "active": "#171A1C",
@@ -137,6 +142,20 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "success": "#5CD685",
           "warning": "#FFEECC",
         },
+      },
+      "configListStyles": Object {
+        "color": "#ABB5BA",
+      },
+      "connectEditWarring": "#FFEECC",
+      "consumerTopicContent": Object {
+        "backgroundColor": "#F1F2F3",
+      },
+      "dangerZoneStyles": Object {
+        "borderColor": "#E3E6E8",
+        "color": "#E51A1A",
+      },
+      "dropdown": Object {
+        "color": "#E51A1A",
       },
       "headingStyles": Object {
         "h3": Object {
@@ -195,6 +214,12 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "metrics": Object {
         "backgroundColor": "#F1F2F3",
+        "filters": Object {
+          "color": Object {
+            "icon": "#171A1C",
+            "normal": "#73848C",
+          },
+        },
         "indicator": Object {
           "backgroundColor": "#FFFFFF",
           "lightTextColor": "#ABB5BA",
@@ -241,6 +266,12 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "active": "#171A1C",
           "hover": "#171A1C",
           "normal": "#73848C",
+        },
+      },
+      "schemaStyles": Object {
+        "backgroundColor": Object {
+          "div": "#FFFFFF",
+          "tr": "#F1F2F3",
         },
       },
       "scrollbar": Object {
@@ -341,6 +372,28 @@ exports[`Connectors ListItem matches snapshot 1`] = `
             "readOnly": "#ABB5BA",
           },
           "readOnly": "#171A1C",
+        },
+      },
+      "topicFormLabel": Object {
+        "color": "#73848C",
+      },
+      "topicMetaDataStyles": Object {
+        "backgroundColor": "#F1F2F3",
+        "color": Object {
+          "label": "#73848C",
+          "meta": "#ABB5BA",
+          "value": "#2F3639",
+        },
+      },
+      "topicsListStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#171A1C",
         },
       },
     }
@@ -568,15 +621,13 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                                 role="menuitem"
                                 type="button"
                               >
-                                <span
-                                  style={
-                                    Object {
-                                      "color": "#E51A1A",
-                                    }
-                                  }
-                                >
-                                  Remove Connector
-                                </span>
+                                <styled.span>
+                                  <span
+                                    className="c6"
+                                  >
+                                    Remove Connector
+                                  </span>
+                                </styled.span>
                               </a>
                             </DropdownItem>
                           </div>
