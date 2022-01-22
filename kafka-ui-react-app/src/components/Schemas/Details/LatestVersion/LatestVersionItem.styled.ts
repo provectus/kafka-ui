@@ -3,7 +3,7 @@ import theme from 'theme/theme';
 
 export const LatestVersionWrapper = styled.div`
   width: 100%;
-  background-color: ${theme.layout.mainColor};
+  background-color: ${theme.layout.stuffColor};
   padding: 16px;
   display: flex;
   justify-content: center;

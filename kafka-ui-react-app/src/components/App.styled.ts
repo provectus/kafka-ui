@@ -26,7 +26,7 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     width: ${theme.layout.navBarWidth};
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #e7e7e7;
+    border-right: 1px solid ${theme.layout.stuffBorderColor};
     position: fixed;
     top: ${theme.layout.navBarHeight};
     left: 0;
@@ -85,7 +85,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
         right: 0;
         visibility: 'visible';
         opacity: 1;
-        background-color: rgba(34, 41, 47, 0.5);
+        background-color: ${theme.layout.overlay.backgroundColor};
       }
     `}
   `
@@ -93,7 +93,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
 
 export const Navbar = styled.nav(
   ({ theme }) => css`
-    border-bottom: 1px solid #e7e7e7;
+    border-bottom: 1px solid ${theme.layout.stuffBorderColor};
     position: fixed;
     top: 0;
     left: 0;
