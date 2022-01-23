@@ -1,35 +1,246 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SchemaVersion matches snapshot 1`] = `
-<Fragment>
-  <tr>
-    <td
-      style={
-        Object {
-          "width": "3%",
-        }
+<ContextProvider
+  value={
+    Object {
+      "alert": Object {
+        "color": Object {
+          "error": "#FAD1D1",
+          "info": "#E3E6E8",
+          "success": "#D6F5E0",
+          "warning": "#FFEECC",
+        },
+        "shadow": "rgba(0, 0, 0, 0.1)",
+      },
+      "buttonStyles": Object {
+        "fontSize": Object {
+          "L": "16px",
+          "M": "14px",
+          "S": "14px",
+        },
+        "height": Object {
+          "L": "40px",
+          "M": "32px",
+          "S": "24px",
+        },
+        "primary": Object {
+          "backgroundColor": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+          "color": "#FFFFFF",
+          "invertedColors": Object {
+            "active": "#1414B8",
+            "hover": "#1717CF",
+            "normal": "#4F4FFF",
+          },
+        },
+        "secondary": Object {
+          "backgroundColor": Object {
+            "active": "#D5DADD",
+            "hover": "#E3E6E8",
+            "normal": "#F1F2F3",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#171A1C",
+            "hover": "#454F54",
+            "normal": "#73848C",
+          },
+        },
+      },
+      "circularAlert": Object {
+        "color": Object {
+          "error": "#E51A1A",
+          "info": "#E3E6E8",
+          "success": "#5CD685",
+          "warning": "#FFEECC",
+        },
+      },
+      "confirmationModal": Object {
+        "overlay": "rgba(10, 10, 10, 0.1)",
+        "shadow": "rgba(0, 0, 0, 0.1)",
+      },
+      "headingStyles": Object {
+        "h1": Object {
+          "color": "#171A1C",
+        },
+        "h3": Object {
+          "color": "#73848C",
+          "fontSize": "14px",
+        },
+      },
+      "icons": Object {
+        "closeIcon": "#ABB5BA",
+        "liveIcon": Object {
+          "circleBig": "#FAD1D1",
+          "circleSmall": "#E51A1A",
+        },
+        "messageToggleIconClosed": "#ABB5BA",
+        "messageToggleIconOpened": "#171A1C",
+        "verticalElipsisIcon": "#73848C",
+      },
+      "layout": Object {
+        "minWidth": "1200px",
+        "navBarHeight": "3.25rem",
+        "navBarWidth": "201px",
+        "overlay": Object {
+          "backgroundColor": "#73848C",
+        },
+        "stuffBorderColor": "#E3E6E8",
+        "stuffColor": "#F1F2F3",
+      },
+      "menuStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "chevronIconColor": "#73848C",
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#73848C",
+        },
+        "statusIconColor": Object {
+          "offline": "#E51A1A",
+          "online": "#5CD685",
+        },
+      },
+      "metrics": Object {
+        "backgroundColor": "#F1F2F3",
+        "indicator": Object {
+          "backgroundColor": "#FFFFFF",
+          "lightTextColor": "#ABB5BA",
+          "titleColor": "#73848C",
+          "warningTextColor": "#E51A1A",
+        },
+      },
+      "pageLoader": Object {
+        "borderBottomColor": "#FFFFFF",
+        "borderColor": "#4F4FFF",
+      },
+      "paginationStyles": Object {
+        "backgroundColor": "#FFFFFF",
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#C7CED1",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#C7CED1",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+        "currentPage": "#E3E6E8",
+      },
+      "panelColor": "#FFFFFF",
+      "primaryTabStyles": Object {
+        "borderColor": Object {
+          "active": "#4F4FFF",
+          "hover": "transparent",
+          "normal": "transparent",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "scrollbar": Object {
+        "thumbColor": Object {
+          "active": "#73848C",
+          "normal": "#FFFFFF",
+        },
+        "trackColor": Object {
+          "active": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+      },
+      "secondaryTabStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#171A1C",
+          "normal": "#73848C",
+        },
+      },
+      "selectStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#E3E6E8",
+          "normal": "#FFFFFF",
+        },
+        "borderColor": Object {
+          "active": "#454F54",
+          "disabled": "#E3E6E8",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "disabled": "#ABB5BA",
+          "hover": "#171A1C",
+          "normal": "#171A1C",
+        },
+      },
+      "switch": Object {
+        "checked": "#29A352",
+        "circle": "#FFFFFF",
+        "unchecked": "#ABB5BA",
+      },
+      "tagStyles": Object {
+        "backgroundColor": Object {
+          "blue": "#e3f2fd",
+          "gray": "#F1F2F3",
+          "green": "#D6F5E0",
+          "red": "#FAD1D1",
+          "white": "#E3E6E8",
+          "yellow": "#FFEECC",
+        },
+        "color": "#171A1C",
+      },
+      "textarea": Object {
+        "focus": "transparent",
+      },
+      "thStyles": Object {
+        "backgroundColor": Object {
+          "normal": "#FFFFFF",
+        },
+        "color": Object {
+          "active": "#4F4FFF",
+          "hover": "#4F4FFF",
+          "normal": "#73848C",
+        },
+        "previewColor": Object {
+          "normal": "#4F4FFF",
+        },
+      },
+      "viewer": Object {
+        "wrapper": "#f9fafa",
+      },
+    }
+  }
+>
+  <SchemaVersion
+    version={
+      Object {
+        "compatibilityLevel": "BACKWARD",
+        "id": 1,
+        "schema": "{\\"type\\":\\"record\\",\\"name\\":\\"MyRecord1\\",\\"namespace\\":\\"com.mycompany\\",\\"fields\\":[{\\"name\\":\\"id\\",\\"type\\":\\"long\\"}]}",
+        "schemaType": "JSON",
+        "subject": "test",
+        "version": "1",
       }
-    >
-      <styled.span
-        onClick={[Function]}
-      >
-        <MessageToggleIcon
-          isOpen={false}
-        />
-      </styled.span>
-    </td>
-    <td
-      style={
-        Object {
-          "width": "6%",
-        }
-      }
-    >
-      1
-    </td>
-    <td>
-      1
-    </td>
-  </tr>
-</Fragment>
+    }
+  />
+</ContextProvider>
 `;
