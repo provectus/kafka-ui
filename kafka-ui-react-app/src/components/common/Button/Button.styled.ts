@@ -25,6 +25,7 @@ const StyledButton = styled.button<ButtonProps>`
       ? props.theme.buttonStyles[props.buttonType].invertedColors.normal
       : props.theme.buttonStyles[props.buttonType].color};
   font-size: ${(props) => props.theme.buttonStyles.fontSize[props.buttonSize]};
+  font-weight: 500;
   height: ${(props) => props.theme.buttonStyles.height[props.buttonSize]};
 
   &:hover:enabled {
@@ -54,7 +55,7 @@ const StyledButton = styled.button<ButtonProps>`
   }
 
   & a {
-    color: white;
+    color: ${(props) => props.theme.buttonStyles.primary.color};
   }
 
   & i {

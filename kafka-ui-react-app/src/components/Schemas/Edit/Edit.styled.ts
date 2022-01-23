@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const EditWrapper = styled.div`
   padding: 16px;
@@ -30,8 +30,14 @@ export const EditorsWrapper = styled.div`
 
   & > * {
     flex-grow: 1;
-    border: 1px solid #e3e6e8;
+  }
+`;
+
+export const EditorContainer = styled.div(
+  ({ theme }) => css`
+    border: 1px solid ${theme.layout.stuffBorderColor};
     border-radius: 8px;
+    margin-bottom: 16px;
     padding: 16px;
     & > h4 {
       font-weight: 500;
@@ -39,5 +45,5 @@ export const EditorsWrapper = styled.div`
       line-height: 24px;
       padding-bottom: 16px;
     }
-  }
-`;
+  `
+);

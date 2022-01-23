@@ -37,7 +37,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   border-radius: 16px;
   height: 20px;
   line-height: 20px;
-  background-color: #E3E6E8;
+  background-color: #F1F2F3;
   color: #171A1C;
   font-size: 12px;
   display: inline-block;
@@ -86,6 +86,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "success": "#D6F5E0",
           "warning": "#FFEECC",
         },
+        "shadow": "rgba(0, 0, 0, 0.1)",
       },
       "buttonStyles": Object {
         "fontSize": Object {
@@ -133,10 +134,38 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "warning": "#FFEECC",
         },
       },
+      "confirmationModal": Object {
+        "overlay": "rgba(10, 10, 10, 0.1)",
+        "shadow": "rgba(0, 0, 0, 0.1)",
+      },
+      "headingStyles": Object {
+        "h1": Object {
+          "color": "#171A1C",
+        },
+        "h3": Object {
+          "color": "#73848C",
+          "fontSize": "14px",
+        },
+      },
+      "icons": Object {
+        "closeIcon": "#ABB5BA",
+        "liveIcon": Object {
+          "circleBig": "#FAD1D1",
+          "circleSmall": "#E51A1A",
+        },
+        "messageToggleIconClosed": "#ABB5BA",
+        "messageToggleIconOpened": "#171A1C",
+        "verticalElipsisIcon": "#73848C",
+      },
       "layout": Object {
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
         "navBarWidth": "201px",
+        "overlay": Object {
+          "backgroundColor": "#73848C",
+        },
+        "stuffBorderColor": "#E3E6E8",
+        "stuffColor": "#F1F2F3",
       },
       "menuStyles": Object {
         "backgroundColor": Object {
@@ -169,6 +198,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "borderColor": "#4F4FFF",
       },
       "paginationStyles": Object {
+        "backgroundColor": "#FFFFFF",
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#C7CED1",
@@ -181,7 +211,9 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+        "currentPage": "#E3E6E8",
       },
+      "panelColor": "#FFFFFF",
       "primaryTabStyles": Object {
         "borderColor": Object {
           "active": "#4F4FFF",
@@ -192,6 +224,16 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "active": "#171A1C",
           "hover": "#171A1C",
           "normal": "#73848C",
+        },
+      },
+      "scrollbar": Object {
+        "thumbColor": Object {
+          "active": "#73848C",
+          "normal": "#FFFFFF",
+        },
+        "trackColor": Object {
+          "active": "#F1F2F3",
+          "normal": "#FFFFFF",
         },
       },
       "secondaryTabStyles": Object {
@@ -207,6 +249,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "selectStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#E3E6E8",
+          "normal": "#FFFFFF",
+        },
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#E3E6E8",
@@ -222,11 +269,13 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "switch": Object {
         "checked": "#29A352",
+        "circle": "#FFFFFF",
         "unchecked": "#ABB5BA",
       },
       "tagStyles": Object {
         "backgroundColor": Object {
-          "gray": "#E3E6E8",
+          "blue": "#e3f2fd",
+          "gray": "#F1F2F3",
           "green": "#D6F5E0",
           "red": "#FAD1D1",
           "white": "#E3E6E8",
@@ -234,16 +283,24 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
         "color": "#171A1C",
       },
+      "textarea": Object {
+        "focus": "transparent",
+      },
       "thStyles": Object {
         "backgroundColor": Object {
           "normal": "#FFFFFF",
         },
         "color": Object {
+          "active": "#4F4FFF",
+          "hover": "#4F4FFF",
           "normal": "#73848C",
         },
         "previewColor": Object {
           "normal": "#4F4FFF",
         },
+      },
+      "viewer": Object {
+        "wrapper": "#f9fafa",
       },
     }
   }
@@ -354,53 +411,45 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                     <div
                       className="c1"
                     >
-                      <Styled(Tag)
+                      <styled.p
                         color="gray"
                         key="test-topic"
                       >
-                        <Tag
+                        <p
                           className="c2"
                           color="gray"
                         >
-                          <p
-                            className="c2"
+                          <Link
+                            to="/ui/clusters/local/topics/test-topic"
                           >
-                            <Link
-                              to="/ui/clusters/local/topics/test-topic"
+                            <LinkAnchor
+                              href="/ui/clusters/local/topics/test-topic"
+                              navigate={[Function]}
                             >
-                              <LinkAnchor
+                              <a
                                 href="/ui/clusters/local/topics/test-topic"
-                                navigate={[Function]}
+                                onClick={[Function]}
                               >
-                                <a
-                                  href="/ui/clusters/local/topics/test-topic"
-                                  onClick={[Function]}
-                                >
-                                  test-topic
-                                </a>
-                              </LinkAnchor>
-                            </Link>
-                          </p>
-                        </Tag>
-                      </Styled(Tag)>
+                                test-topic
+                              </a>
+                            </LinkAnchor>
+                          </Link>
+                        </p>
+                      </styled.p>
                     </div>
                   </styled.div>
                 </td>
                 <td>
-                  <Styled(Tag)
+                  <styled.p
                     color="green"
                   >
-                    <Tag
+                    <p
                       className="c3"
                       color="green"
                     >
-                      <p
-                        className="c3"
-                      >
-                        RUNNING
-                      </p>
-                    </Tag>
-                  </Styled(Tag)>
+                      RUNNING
+                    </p>
+                  </styled.p>
                 </td>
                 <td>
                   <span>

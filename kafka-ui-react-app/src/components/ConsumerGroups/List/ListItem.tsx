@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
@@ -34,7 +34,7 @@ const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
       <td>{consumerGroup.messagesBehind}</td>
       <td>{consumerGroup.coordinator?.id}</td>
       <td>
-        <TagStyled color={stateColor}>{consumerGroup.state}</TagStyled>
+        <Tag color={stateColor}>{consumerGroup.state}</Tag>
       </td>
     </tr>
   );

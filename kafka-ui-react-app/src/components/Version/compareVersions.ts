@@ -1,9 +1,12 @@
 const split = (v: string): string[] => {
-  const c = v.replace(/^v/, '').replace(/\+.*$/, '');
-  return c.split('-')[0].split('.');
+  const c = v.replace('v', '').split('-')[0];
+  return c.split('.');
 };
 
-const compareVersions = (v1: string, v2: string): number => {
+const compareVersions = (v1?: string, v2?: string): number => {
+  if (!v1 || !v2) return 0;
+
+  // try..catch - is our safeguard for strange git tags (or usecases without network)
   try {
     const s1 = split(v1);
     const s2 = split(v2);

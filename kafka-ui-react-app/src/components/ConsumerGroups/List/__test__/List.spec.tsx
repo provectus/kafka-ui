@@ -1,7 +1,6 @@
 import React from 'react';
 import List from 'components/ConsumerGroups/List/List';
 import { screen } from '@testing-library/react';
-import { StaticRouter } from 'react-router';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { store } from 'redux/store';
@@ -9,13 +8,7 @@ import { fetchConsumerGroups } from 'redux/reducers/consumerGroups/consumerGroup
 import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
 
 describe('List', () => {
-  beforeEach(() =>
-    render(
-      <StaticRouter>
-        <List />
-      </StaticRouter>
-    )
-  );
+  beforeEach(() => render(<List />, { store }));
 
   it('renders empty table', () => {
     expect(screen.getByRole('table')).toBeInTheDocument();
@@ -37,7 +30,10 @@ describe('List', () => {
 
     describe('when searched', () => {
       it('renders only searched consumers', () => {
-        userEvent.type(screen.getByPlaceholderText('Search'), 'groupId1');
+        userEvent.type(
+          screen.getByPlaceholderText('Search by Consumer Group ID'),
+          'groupId1'
+        );
         expect(screen.getByText('groupId1')).toBeInTheDocument();
         expect(screen.getByText('groupId2')).toBeInTheDocument();
       });

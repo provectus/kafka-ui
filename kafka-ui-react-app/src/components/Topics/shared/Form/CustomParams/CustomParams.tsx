@@ -1,40 +1,48 @@
 import React from 'react';
 import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
-import { useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
-import styled from 'styled-components';
 
 import CustomParamField from './CustomParamField';
+import * as S from './CustomParams.styled';
 
 export const INDEX_PREFIX = 'customParams';
 
-interface Props {
+export interface CustomParamsProps {
   isSubmitting: boolean;
   config?: TopicConfigByName;
 }
 
-const CustomParamsWrapper = styled.div`
-  margin-top: 16px;
-  margin-bottom: 16px;
-`;
-
-const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
+const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
   const { control } = useFormContext<TopicFormData>();
   const { fields, append, remove } = useFieldArray({
     control,
     name: INDEX_PREFIX,
   });
+  const watchFieldArray = useWatch({
+    control,
+    name: INDEX_PREFIX,
+    defaultValue: fields,
+  });
+  const controlledFields = fields.map((field, index) => {
+    return {
+      ...field,
+      ...watchFieldArray[index],
+    };
+  });
+
   const [existingFields, setExistingFields] = React.useState<string[]>([]);
+
   const removeField = (index: number): void => {
     setExistingFields(
-      existingFields.filter((field) => field === fields[index].name)
+      existingFields.filter((field) => field !== controlledFields[index].name)
     );
     remove(index);
   };
 
   return (
-    <CustomParamsWrapper>
-      {fields.map((field, idx) => (
+    <S.ParamsWrapper>
+      {controlledFields.map((field, idx) => (
         <CustomParamField
           key={field.id}
           field={field}
@@ -56,7 +64,7 @@ const CustomParams: React.FC<Props> = ({ isSubmitting }) => {
           Add Custom Parameter
         </Button>
       </div>
-    </CustomParamsWrapper>
+    </S.ParamsWrapper>
   );
 };
 

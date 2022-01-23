@@ -1,18 +1,18 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
-import Select from 'components/common/Select/Select';
+import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
-import styled from 'styled-components';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
-import { StyledForm } from 'components/common/Form/Form.styles';
+import { StyledForm } from 'components/common/Form/Form.styled';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
+import * as S from './TopicForm.styled';
 
 interface Props {
   topicName?: TopicName;
@@ -22,16 +22,19 @@ interface Props {
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
 }
 
-export const TopicFormColumn = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-  & > * {
-    flex-grow: 1;
-  }
-`;
+const CleanupPolicyOptions: Array<SelectOption> = [
+  { value: 'delete', label: 'Delete' },
+  { value: 'compact', label: 'Compact' },
+  { value: 'compact,delete', label: 'Compact,Delete' },
+];
+
+const RetentionBytesOptions: Array<SelectOption> = [
+  { value: -1, label: 'Not Set' },
+  { value: BYTES_IN_GB, label: '1 GB' },
+  { value: BYTES_IN_GB * 10, label: '10 GB' },
+  { value: BYTES_IN_GB * 20, label: '20 GB' },
+  { value: BYTES_IN_GB * 50, label: '50 GB' },
+];
 
 const TopicForm: React.FC<Props> = ({
   topicName,
@@ -41,6 +44,7 @@ const TopicForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const {
+    control,
     formState: { errors },
   } = useFormContext();
 
@@ -48,23 +52,22 @@ const TopicForm: React.FC<Props> = ({
     <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
-          <TopicFormColumn>
-            <div>
+          <S.Column>
+            <S.NameField>
               <InputLabel>Topic Name *</InputLabel>
               <Input
                 name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                inputSize="M"
               />
               <FormError>
                 <ErrorMessage errors={errors} name="name" />
               </FormError>
-            </div>
-          </TopicFormColumn>
+            </S.NameField>
+          </S.Column>
 
           {!isEditing && (
-            <TopicFormColumn>
+            <S.Column>
               <div>
                 <InputLabel>Number of partitions *</InputLabel>
                 <Input
@@ -73,34 +76,29 @@ const TopicForm: React.FC<Props> = ({
                   min="1"
                   defaultValue="1"
                   name="partitions"
-                  inputSize="M"
                 />
                 <FormError>
                   <ErrorMessage errors={errors} name="partitions" />
                 </FormError>
               </div>
-            </TopicFormColumn>
+              <div>
+                <InputLabel>Replication Factor *</InputLabel>
+                <Input
+                  type="number"
+                  placeholder="Replication Factor"
+                  min="1"
+                  defaultValue="1"
+                  name="replicationFactor"
+                />
+                <FormError>
+                  <ErrorMessage errors={errors} name="replicationFactor" />
+                </FormError>
+              </div>
+            </S.Column>
           )}
         </fieldset>
 
-        <TopicFormColumn>
-          {!isEditing && (
-            <div>
-              <InputLabel>Replication Factor *</InputLabel>
-              <Input
-                type="number"
-                placeholder="Replication Factor"
-                min="1"
-                defaultValue="1"
-                name="replicationFactor"
-                inputSize="M"
-              />
-              <FormError>
-                <ErrorMessage errors={errors} name="replicationFactor" />
-              </FormError>
-            </div>
-          )}
-
+        <S.Column>
           <div>
             <InputLabel>Min In Sync Replicas *</InputLabel>
             <Input
@@ -109,58 +107,69 @@ const TopicForm: React.FC<Props> = ({
               min="1"
               defaultValue="1"
               name="minInsyncReplicas"
-              inputSize="M"
             />
             <FormError>
               <ErrorMessage errors={errors} name="minInsyncReplicas" />
             </FormError>
           </div>
-        </TopicFormColumn>
+          <div>
+            <InputLabel>Cleanup policy</InputLabel>
+            <Controller
+              control={control}
+              name="cleanupPolicy"
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  name={name}
+                  value={CleanupPolicyOptions[0].value}
+                  onChange={onChange}
+                  minWidth="250px"
+                  options={CleanupPolicyOptions}
+                />
+              )}
+            />
+          </div>
+        </S.Column>
 
         <div>
-          <TopicFormColumn>
-            <div>
-              <InputLabel>Cleanup policy</InputLabel>
-              <Select defaultValue="delete" name="cleanupPolicy" selectSize="M">
-                <option value="delete">Delete</option>
-                <option value="compact">Compact</option>
-                <option value="compact,delete">Compact,Delete</option>
-              </Select>
-            </div>
-          </TopicFormColumn>
-
-          <TopicFormColumn>
+          <S.Column>
             <div>
               <TimeToRetain isSubmitting={isSubmitting} />
             </div>
-          </TopicFormColumn>
-          <TopicFormColumn>
+          </S.Column>
+          <S.Column>
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
-              <Select defaultValue={-1} name="retentionBytes" selectSize="M">
-                <option value={-1}>Not Set</option>
-                <option value={BYTES_IN_GB}>1 GB</option>
-                <option value={BYTES_IN_GB * 10}>10 GB</option>
-                <option value={BYTES_IN_GB * 20}>20 GB</option>
-                <option value={BYTES_IN_GB * 50}>50 GB</option>
-              </Select>
+              <Controller
+                control={control}
+                name="retentionBytes"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={RetentionBytesOptions[0].value}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={RetentionBytesOptions}
+                  />
+                )}
+              />
             </div>
-          </TopicFormColumn>
+
+            <div>
+              <InputLabel>Maximum message size in bytes *</InputLabel>
+              <Input
+                type="number"
+                min="1"
+                defaultValue="1000012"
+                name="maxMessageBytes"
+              />
+              <FormError>
+                <ErrorMessage errors={errors} name="maxMessageBytes" />
+              </FormError>
+            </div>
+          </S.Column>
         </div>
 
-        <div>
-          <InputLabel>Maximum message size in bytes *</InputLabel>
-          <Input
-            type="number"
-            min="1"
-            defaultValue="1000012"
-            name="maxMessageBytes"
-            inputSize="M"
-          />
-          <FormError>
-            <ErrorMessage errors={errors} name="maxMessageBytes" />
-          </FormError>
-        </div>
+        <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
 
         <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
 
