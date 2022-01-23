@@ -30,6 +30,7 @@ import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +52,7 @@ import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 @Service
 @RequiredArgsConstructor
@@ -61,6 +64,10 @@ public class TopicsService {
   private final ClusterMapper clusterMapper;
   private final DeserializationService deserializationService;
   private final MetricsCache metricsCache;
+  @org.springframework.beans.factory.annotation.Value("${topic.recreate.maxAttempt:3}")
+  private int maxAttemptToRecreateTopic;
+  @org.springframework.beans.factory.annotation.Value("${topic.recreate.timeout.seconds:5}")
+  private int recreateTopicTimeout;
 
   public Mono<TopicsResponseDTO> getTopics(KafkaCluster cluster,
                                            Optional<Integer> pageNum,
@@ -178,6 +185,25 @@ public class TopicsService {
     return adminClientService.get(cluster)
         .flatMap(ac -> createTopic(cluster, ac, topicCreation))
         .map(clusterMapper::toTopic);
+  }
+
+  public Mono<TopicDTO> recreateTopic(KafkaCluster cluster, String topicName) {
+    return adminClientService.get(cluster)
+            .flatMap(cl -> loadTopic(cluster, topicName))
+            .flatMap(topic -> deleteTopic(cluster, topicName).thenReturn(new TopicCreationDTO()
+                            .name(topic.getName())
+                            .partitions(topic.getPartitionCount())
+                            .replicationFactor(topic.getReplicationFactor())
+                            .configs(topic
+                                    .getTopicConfigs()
+                                    .stream()
+                                    .collect(Collectors.toMap(InternalTopicConfig::getName,
+                                            InternalTopicConfig::getValue))))
+                    .delayElement(Duration.ofSeconds(recreateTopicTimeout))
+                    .flatMap(topicCreation -> createTopic(cluster,  Mono.just(topicCreation))
+                            .retryWhen(Retry.fixedDelay(maxAttemptToRecreateTopic,
+                                            Duration.ofSeconds(recreateTopicTimeout))
+                                    .filter(throwable -> throwable instanceof TopicMetadataException))));
   }
 
   private Mono<InternalTopic> updateTopic(KafkaCluster cluster,
