@@ -182,24 +182,47 @@ const ResetOffsets: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <MainSelectorsWrapperStyled>
             <div>
-              <InputLabel htmlFor="topic">Topic</InputLabel>
-              <Select name="topic" id="topic" selectSize="M">
-                {uniqueTopics.map((topic) => (
-                  <option key={topic} value={topic}>
-                    {topic}
-                  </option>
-                ))}
-              </Select>
+              <InputLabel id="topicLabel">Topic</InputLabel>
+              <Controller
+                control={control}
+                name="topic"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="topic"
+                    selectSize="M"
+                    aria-labelledby="topicLabel"
+                    minWidth="100%"
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    options={uniqueTopics.map((topic) => ({
+                      value: topic,
+                      label: topic,
+                    }))}
+                  />
+                )}
+              />
             </div>
             <div>
-              <InputLabel htmlFor="resetType">Reset Type</InputLabel>
-              <Select name="resetType" id="resetType" selectSize="M">
-                {Object.values(ConsumerGroupOffsetsResetType).map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+              <InputLabel id="resetTypeLabel">Reset Type</InputLabel>
+              <Controller
+                control={control}
+                name="resetType"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="resetType"
+                    selectSize="M"
+                    aria-labelledby="resetTypeLabel"
+                    minWidth="100%"
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    options={Object.values(ConsumerGroupOffsetsResetType).map(
+                      (type) => ({ value: type, label: type })
+                    )}
+                  />
+                )}
+              />
             </div>
             <div>
               <InputLabel>Partitions</InputLabel>

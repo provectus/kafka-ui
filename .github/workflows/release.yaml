@@ -1,19 +1,7 @@
-name: release
-on: 
-  workflow_dispatch:
-    inputs:
-      customVersion:
-        description: 'A new version for release, please provide with -SNAPSHOT suffix'
-        required: false
-        default: '0.0.0'
-      rebuild:
-        description: 'A tag name for building previously created release'
-        required: false
-        default: 'v0.0.0'
-      extraMavenOptions:
-        description: 'A extra options for Maven'
-        required: false
-        default: ''
+name: Release
+on:
+  release:
+    types: [published]
 
 jobs:
   release:
@@ -24,9 +12,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
@@ -34,43 +24,19 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+
       - name: Set up JDK 1.13
         uses: actions/setup-java@v1
         with:
           java-version: 1.13
-      - name: Checkout to specific tag
-        if: github.event.inputs.rebuild != 'v0.0.0'
-        run: |
-          git checkout tags/${{ github.event.inputs.rebuild }} -b rebuild-${{ github.event.inputs.rebuild }}
-      - name: Set custom version
-        if: github.event.inputs.customVersion != '0.0.0' && github.event.inputs.rebuild == 'v0.0.0'
-        run: |
-          mvn -q versions:set -DnewVersion=${{ github.event.inputs.customVersion }}
-          git add pom.xml **/pom.xml
-          git commit -m "Increased release"
-      - name: Update development version
-        if: github.event.inputs.rebuild == 'v0.0.0'
-        run: |
-          mvn -q versions:set -DnextSnapshot
-          git add pom.xml **/pom.xml
-          git commit -m "Increased version in pom.xml"
-          git push -f
-          git reset --hard HEAD~1
-      - name: Prepare release
-        if: github.event.inputs.rebuild == 'v0.0.0'
-        run: |
-          mvn -q versions:set -DremoveSnapshot
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
-          git add .
-          git commit -m "release ${VERSION}"
-          git tag -f v${VERSION}
-          git push --tags
+
       - name: Build with Maven
         id: build
         run: |
-          mvn clean package -Pprod ${{ github.event.inputs.extraMavenOptions }}
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          mvn clean package -Pprod -DskipTests -DbuildVersion=${{ github.event.release.tag_name }}
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=${{ github.event.release.tag_name }} --non-recursive exec:exec)
           echo ::set-output name=version::${VERSION}
+
       - name: Archive JAR
         uses: actions/upload-artifact@v2
         with:
@@ -83,8 +49,10 @@ jobs:
 #################
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
+
       - name: Cache Docker layers
         uses: actions/cache@v2
         with:
@@ -92,12 +60,14 @@ jobs:
           key: ${{ runner.os }}-buildx-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-buildx-
+
       - name: Login to DockerHub
         if: github.ref == 'refs/heads/master'
         uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - name: Build and push
         id: docker_build_and_push
         uses: docker/build-push-action@v2
@@ -113,6 +83,7 @@ jobs:
             JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
+
   charts:
     runs-on: ubuntu-latest
     needs: release
@@ -120,14 +91,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 1
+
       - run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
+
       - uses: azure/setup-helm@v1
+
       - name: update appVersion
         run: |
           export version=${{needs.release.outputs.version}}
           sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
+
       - name: add chart
         run: |
           export VERSION=${{needs.release.outputs.version}}
@@ -139,39 +114,3 @@ jobs:
           git add -f ${MSG##*/} index.yaml
           git commit -m "release ${VERSION}"
           git push
-  gh-release:
-    runs-on: ubuntu-latest
-    needs: release
-    steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-      - id: generate
-        shell: /usr/bin/bash -x -e {0}
-        run: |
-          VERSION=${{needs.release.outputs.version}}
-          CHANGELOG=$(git --no-pager log --oneline --pretty=format:"- %s" `git tag --sort=-creatordate | grep '^v.*' | head -n2 | tail -n1`.. | uniq | grep -v '^- Merge\|^- skip')
-          CHANGELOG="${CHANGELOG//'%'/'%25'}"
-          CHANGELOG="${CHANGELOG//$'\n'/'%0A'}"
-          CHANGELOG="${CHANGELOG//$'\r'/'%0D'}"
-          echo ${CHANGELOG}
-          echo "::set-output name=changelog::${CHANGELOG}"
-      - name: Download release JAR
-        uses: actions/download-artifact@v2
-        with:
-          name: kafka-ui-${{needs.release.outputs.version}}
-          path: .
-      - id: create_release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          name: ${{needs.release.outputs.version}}
-          draft: false
-          tag_name: "v${{needs.release.outputs.version}}"
-          prerelease: false
-          files: kafka-ui-api-${{needs.release.outputs.version}}.jar
-          body: ${{steps.generate.outputs.changelog}}

@@ -55,7 +55,7 @@ const StyledButton = styled.button<ButtonProps>`
   }
 
   & a {
-    color: white;
+    color: ${(props) => props.theme.buttonStyles.primary.color};
   }
 
   & i {

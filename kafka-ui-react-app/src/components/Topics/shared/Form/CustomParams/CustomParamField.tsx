@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { ErrorMessage } from '@hookform/error-message';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
-import { FieldArrayWithId, useFormContext } from 'react-hook-form';
+import { FieldArrayWithId, useFormContext, Controller } from 'react-hook-form';
 import { TopicFormData } from 'redux/interfaces';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
@@ -34,6 +34,7 @@ const CustomParamField: React.FC<Props> = ({
     formState: { errors },
     setValue,
     watch,
+    control,
   } = useFormContext<TopicFormData>();
   const nameValue = watch(`customParams.${index}.name`);
   const prevName = useRef(nameValue);
@@ -49,45 +50,44 @@ const CustomParamField: React.FC<Props> = ({
       prevName.current = nameValue;
       newExistingFields.push(nameValue);
       setExistingFields(newExistingFields);
-      setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue]);
+      setValue(`customParams.${index}.value`, TOPIC_CUSTOM_PARAMS[nameValue], {
+        shouldValidate: true,
+      });
     }
   }, [nameValue]);
 
   return (
     <C.Column>
-      <>
-        <div>
-          <InputLabel>Custom Parameter</InputLabel>
-          <Select
-            name={`customParams.${index}.name` as const}
-            hookFormOptions={{
-              required: 'Custom Parameter is required.',
-            }}
-            disabled={isDisabled}
-            defaultValue={field.name}
-          >
-            <option value="">Select</option>
-            {Object.keys(TOPIC_CUSTOM_PARAMS)
-              .sort()
-              .map((opt) => (
-                <option
-                  key={opt}
-                  value={opt}
-                  disabled={existingFields.includes(opt)}
-                >
-                  {opt}
-                </option>
-              ))}
-          </Select>
-          <FormError>
-            <ErrorMessage
-              errors={errors}
-              name={`customParams.${index}.name` as const}
+      <div>
+        <InputLabel>Custom Parameter</InputLabel>
+        <Controller
+          control={control}
+          rules={{ required: 'Custom Parameter is required.' }}
+          name={`customParams.${index}.name`}
+          render={({ field: { name, onChange } }) => (
+            <Select
+              name={name}
+              placeholder="Select"
+              disabled={isDisabled}
+              minWidth="270px"
+              onChange={onChange}
+              options={Object.keys(TOPIC_CUSTOM_PARAMS)
+                .sort()
+                .map((opt) => ({
+                  value: opt,
+                  label: opt,
+                  disabled: existingFields.includes(opt),
+                }))}
             />
-          </FormError>
-        </div>
-      </>
-
+          )}
+        />
+        <FormError>
+          <ErrorMessage
+            errors={errors}
+            name={`customParams.${index}.name` as const}
+          />
+        </FormError>
+      </div>
       <div>
         <InputLabel>Value</InputLabel>
         <Input

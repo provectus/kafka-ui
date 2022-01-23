@@ -1,26 +1,36 @@
 import React from 'react';
 import { shallow, mount } from 'enzyme';
 import SchemaVersion from 'components/Schemas/Details/SchemaVersion/SchemaVersion';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 import { versions } from './fixtures';
 
 describe('SchemaVersion', () => {
   it('renders versions', () => {
     const wrapper = mount(
-      <table>
-        <tbody>
-          <SchemaVersion version={versions[0]} />
-        </tbody>
-      </table>
+      <ThemeProvider theme={theme}>
+        <table>
+          <tbody>
+            <SchemaVersion version={versions[0]} />
+          </tbody>
+        </table>
+      </ThemeProvider>
     );
 
     expect(wrapper.find('td').length).toEqual(3);
-    expect(wrapper.exists('JSONEditor')).toBeFalsy();
+    expect(wrapper.exists('Editor')).toBeFalsy();
     wrapper.find('span').simulate('click');
-    expect(wrapper.exists('JSONEditor')).toBeTruthy();
+    expect(wrapper.exists('Editor')).toBeTruthy();
   });
 
   it('matches snapshot', () => {
-    expect(shallow(<SchemaVersion version={versions[0]} />)).toMatchSnapshot();
+    expect(
+      shallow(
+        <ThemeProvider theme={theme}>
+          <SchemaVersion version={versions[0]} />
+        </ThemeProvider>
+      )
+    ).toMatchSnapshot();
   });
 });
