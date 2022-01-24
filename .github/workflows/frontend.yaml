@@ -46,10 +46,4 @@ jobs:
       run: |
         cd kafka-ui-react-app/
         npm run test:CI
-    - name: SonarCloud Scan
-      uses: workshur/sonarcloud-github-action@improved_basedir
-      with:
-        projectBaseDir: ./kafka-ui-react-app
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+
