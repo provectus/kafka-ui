@@ -4,7 +4,7 @@
 ![UI for Apache Kafka Price Free](images/free-open-source.svg)
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
-<em>UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
+<em>Test UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
 
 UI for Apache Kafka is a simple tool that makes your data flows observable, helps find and troubleshoot issues faster and deliver optimal performance. Its lightweight dashboard makes it easy to track key metrics of your Kafka clusters - Brokers, Topics, Partitions, Production, and Consumption. 
 
