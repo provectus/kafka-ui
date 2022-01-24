@@ -1,0 +1,19 @@
+name: Documentation
+on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - reopened
+      - synchronize
+    paths:
+      - 'documentation/*'
+      - './*.md'
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: 'Check links in documentation'
+        uses: restqa/404-links@v2.2.0
+
