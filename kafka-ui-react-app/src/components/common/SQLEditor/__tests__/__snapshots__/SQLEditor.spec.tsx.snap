@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JSONEditor component matches the snapshot 1`] = `
+exports[`SQLEditor component matches the snapshot 1`] = `
 <ReactAce
   cursorStart={1}
   editorProps={Object {}}
@@ -42,7 +42,7 @@ exports[`JSONEditor component matches the snapshot 1`] = `
 />
 `;
 
-exports[`JSONEditor component matches the snapshot with fixed height 1`] = `
+exports[`SQLEditor component matches the snapshot with fixed height 1`] = `
 <ReactAce
   cursorStart={1}
   editorProps={Object {}}
@@ -84,7 +84,7 @@ exports[`JSONEditor component matches the snapshot with fixed height 1`] = `
 />
 `;
 
-exports[`JSONEditor component matches the snapshot with fixed height with no value 1`] = `
+exports[`SQLEditor component matches the snapshot with fixed height with no value 1`] = `
 <ReactAce
   cursorStart={1}
   editorProps={Object {}}

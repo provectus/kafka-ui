@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const MessageContentWrapper = styled.tr`
+export const Wrapper = styled.tr`
   background-color: ${({ theme }) => theme.topicMetaDataStyles.backgroundColor};
   & > td {
     padding: 16px;
@@ -13,7 +13,7 @@ export const MessageContentWrapper = styled.tr`
   }
 `;
 
-export const StyledSection = styled.div`
+export const Section = styled.div`
   padding: 0 16px;
   display: flex;
   gap: 1px;

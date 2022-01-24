@@ -25,6 +25,7 @@
     "prettier"
   ],
   "extends": [
+    "airbnb",
     "airbnb-typescript",
     "plugin:@typescript-eslint/recommended",
     "plugin:jest-dom/recommended",
@@ -70,7 +71,15 @@
           "state"
         ]
       }
-    ]
+    ],
+    "react/function-component-definition": [
+      2,
+      {
+        "namedComponents": "arrow-function",
+        "unnamedComponents": "arrow-function"
+      }
+    ],
+    "react/jsx-no-constructed-context-values": "off"
   },
   "overrides": [
     {

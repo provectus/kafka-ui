@@ -7,7 +7,7 @@ import {
   ConnectorName,
 } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import styled from 'styled-components';
 
 interface RouterParams {
@@ -30,7 +30,7 @@ export interface ConfigProps {
 const ConnectConfigWrapper = styled.div`
   padding: 16px;
   margin: 16px;
-  border: 1px solid ${({ theme }) => theme.layout.mainColor};
+  border: 1px solid ${({ theme }) => theme.layout.stuffColor};
   border-radius: 8px;
 `;
 
@@ -53,7 +53,7 @@ const Config: React.FC<ConfigProps> = ({
 
   return (
     <ConnectConfigWrapper>
-      <JSONEditor
+      <Editor
         readOnly
         value={JSON.stringify(config, null, '\t')}
         highlightActiveLine={false}

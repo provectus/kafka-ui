@@ -90,6 +90,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "success": "#D6F5E0",
           "warning": "#FFEECC",
         },
+        "shadow": "rgba(0, 0, 0, 0.1)",
       },
       "breadcrumb": "#ABB5BA",
       "buttonStyles": Object {
@@ -158,10 +159,23 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "color": "#E51A1A",
       },
       "headingStyles": Object {
+        "h1": Object {
+          "color": "#171A1C",
+        },
         "h3": Object {
           "color": "#73848C",
           "fontSize": "14px",
         },
+      },
+      "icons": Object {
+        "closeIcon": "#ABB5BA",
+        "liveIcon": Object {
+          "circleBig": "#FAD1D1",
+          "circleSmall": "#E51A1A",
+        },
+        "messageToggleIconClosed": "#ABB5BA",
+        "messageToggleIconOpened": "#171A1C",
+        "verticalElipsisIcon": "#73848C",
       },
       "inputStyles": Object {
         "backgroundColor": Object {
@@ -190,10 +204,14 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "layout": Object {
-        "mainColor": "#F1F2F3",
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
         "navBarWidth": "201px",
+        "overlay": Object {
+          "backgroundColor": "#73848C",
+        },
+        "stuffBorderColor": "#E3E6E8",
+        "stuffColor": "#F1F2F3",
       },
       "menuStyles": Object {
         "backgroundColor": Object {
@@ -233,6 +251,8 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "bottom": "#F1F2F3",
           "top": "#F1F2F3",
         },
+        "overlay": "rgba(10, 10, 10, 0.1)",
+        "shadow": "rgba(0, 0, 0, 0.1)",
       },
       "pageLoader": Object {
         "borderBottomColor": "#FFFFFF",
@@ -297,6 +317,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "selectStyles": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#E3E6E8",
+          "normal": "#FFFFFF",
+        },
         "borderColor": Object {
           "active": "#454F54",
           "disabled": "#E3E6E8",
@@ -312,6 +337,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "switch": Object {
         "checked": "#29A352",
+        "circle": "#FFFFFF",
         "unchecked": "#ABB5BA",
       },
       "tableStyles": Object {
@@ -368,8 +394,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "color": Object {
           "disabled": "#ABB5BA",
           "placeholder": Object {
+            "focus": Object {
+              "normal": "transparent",
+              "readOnly": "#ABB5BA",
+            },
             "normal": "#ABB5BA",
-            "readOnly": "#ABB5BA",
           },
           "readOnly": "#171A1C",
         },
@@ -395,6 +424,9 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "hover": "#73848C",
           "normal": "#171A1C",
         },
+      },
+      "viewer": Object {
+        "wrapper": "#f9fafa",
       },
     }
   }

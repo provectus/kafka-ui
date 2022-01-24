@@ -6,7 +6,6 @@ export const Textarea = styled.textarea`
   width: 100%;
   padding: 12px;
   padding-top: 6px;
-
   &::placeholder {
     color: ${({ theme }) => theme.textAreaStyles.color.placeholder.normal};
     font-size: 14px;
@@ -18,7 +17,7 @@ export const Textarea = styled.textarea`
     outline: none;
     border-color: ${({ theme }) => theme.textAreaStyles.borderColor.focus};
     &::placeholder {
-      color: transparent;
+      color: ${({ theme }) => theme.textAreaStyles.color.placeholder.normal};
     }
   }
   &:disabled {
@@ -34,7 +33,7 @@ export const Textarea = styled.textarea`
     &:focus {
       &::placeholder {
         color: ${({ theme }) =>
-          theme.textAreaStyles.color.placeholder.readOnly};
+          theme.textAreaStyles.color.placeholder.focus.readOnly};
       }
     }
     cursor: not-allowed;

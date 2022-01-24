@@ -2,6 +2,7 @@
 export const Colors = {
   neutral: {
     '0': '#FFFFFF',
+    '3': '#f9fafa',
     '5': '#F1F2F3',
     '10': '#E3E6E8',
     '15': '#D5DADD',
@@ -13,6 +14,11 @@ export const Colors = {
     '70': '#454F54',
     '80': '#2F3639',
     '90': '#171A1C',
+  },
+  transparency: {
+    '10': 'rgba(10, 10, 10, 0.1)',
+    '20': 'rgba(0, 0, 0, 0.1)',
+    '50': 'rgba(34, 41, 47, 0.5)',
   },
   green: {
     '10': '#D6F5E0',
@@ -47,7 +53,11 @@ const theme = {
     minWidth: '1200px',
     navBarWidth: '201px',
     navBarHeight: '3.25rem',
-    mainColor: Colors.neutral[5],
+    stuffColor: Colors.neutral[5],
+    stuffBorderColor: Colors.neutral[10],
+    overlay: {
+      backgroundColor: Colors.neutral[50],
+    },
   },
   panelColor: Colors.neutral[0],
   breadcrumb: Colors.neutral[30],
@@ -56,6 +66,9 @@ const theme = {
     color: Colors.red[50],
   },
   headingStyles: {
+    h1: {
+      color: Colors.neutral[90],
+    },
     h3: {
       color: Colors.neutral[50],
       fontSize: '14px',
@@ -68,6 +81,7 @@ const theme = {
       warning: Colors.yellow[10],
       info: Colors.neutral[10],
     },
+    shadow: Colors.transparency[20],
   },
   circularAlert: {
     color: {
@@ -149,6 +163,8 @@ const theme = {
       top: Colors.neutral[5],
       bottom: Colors.neutral[5],
     },
+    overlay: Colors.transparency[10],
+    shadow: Colors.transparency[20],
   },
   tableStyles: {
     thStyles: {
@@ -206,6 +222,11 @@ const theme = {
     },
   },
   selectStyles: {
+    backgroundColor: {
+      normal: Colors.neutral[0],
+      hover: Colors.neutral[10],
+      active: Colors.neutral[10],
+    },
     color: {
       normal: Colors.neutral[90],
       hover: Colors.neutral[90],
@@ -255,7 +276,10 @@ const theme = {
     color: {
       placeholder: {
         normal: Colors.neutral[30],
-        readOnly: Colors.neutral[30],
+        focus: {
+          normal: 'transparent',
+          readOnly: Colors.neutral[30],
+        },
       },
       disabled: Colors.neutral[30],
       readOnly: Colors.neutral[90],
@@ -294,6 +318,7 @@ const theme = {
   switch: {
     unchecked: Colors.neutral[30],
     checked: Colors.green[60],
+    circle: Colors.neutral[0],
   },
   pageLoader: {
     borderColor: Colors.brand[50],
@@ -355,6 +380,19 @@ const theme = {
       hover: Colors.neutral[5],
       active: Colors.neutral[10],
     },
+  },
+  icons: {
+    closeIcon: Colors.neutral[30],
+    messageToggleIconOpened: Colors.neutral[90],
+    messageToggleIconClosed: Colors.neutral[30],
+    verticalElipsisIcon: Colors.neutral[50],
+    liveIcon: {
+      circleBig: Colors.red[10],
+      circleSmall: Colors.red[50],
+    },
+  },
+  viewer: {
+    wrapper: Colors.neutral[3],
   },
 };
 

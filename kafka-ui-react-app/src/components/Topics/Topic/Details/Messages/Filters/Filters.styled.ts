@@ -10,10 +10,6 @@ export const FiltersWrapper = styled.div`
     display: flex;
     justify-content: space-between;
     padding-top: 16px;
-
-    & > div:last-child {
-      width: 10%;
-    }
   }
 `;
 

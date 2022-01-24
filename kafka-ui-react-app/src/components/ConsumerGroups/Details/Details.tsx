@@ -78,9 +78,7 @@ const Details: React.FC = () => {
         <PageHeading text={consumerGroupID}>
           {!isReadOnly && (
             <Dropdown label={<VerticalElipsisIcon />} right>
-              <DropdownItem onClick={onResetOffsets}>
-                Reset offsets
-              </DropdownItem>
+              <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
               <DropdownRemove>
                 <DropdownItem
                   onClick={() => setIsConfirmationModalVisible(true)}

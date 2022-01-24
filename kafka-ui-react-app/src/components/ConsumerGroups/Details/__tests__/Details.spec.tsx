@@ -41,7 +41,7 @@ describe('Details component', () => {
     fetchMock.reset();
   });
 
-  describe('when consumer gruops are NOT fetched', () => {
+  describe('when consumer groups are NOT fetched', () => {
     it('renders progress bar for initial state', () => {
       fetchMock.getOnce(
         `/api/clusters/${clusterName}/consumer-groups/${groupId}`,
@@ -73,8 +73,8 @@ describe('Details component', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('handles [Reset offsets] click', async () => {
-      userEvent.click(screen.getByText('Reset offsets'));
+    it('handles [Reset offset] click', async () => {
+      userEvent.click(screen.getByText('Reset offset'));
       expect(history.location.pathname).toEqual(
         clusterConsumerGroupResetOffsetsPath(clusterName, groupId)
       );
@@ -90,7 +90,7 @@ describe('Details component', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('hanles [Delete consumer group] click', async () => {
+    it('handles [Delete consumer group] click', async () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
       userEvent.click(screen.getByText('Delete consumer group'));
 
