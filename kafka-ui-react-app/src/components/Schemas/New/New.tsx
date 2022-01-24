@@ -99,6 +99,7 @@ const New: React.FC = () => {
         <div>
           <InputLabel>Schema Type *</InputLabel>
           <Controller
+            defaultValue={SchemaTypeOptions[0].value as SchemaType}
             control={control}
             rules={{ required: 'Schema Type is required.' }}
             name="schemaType"
