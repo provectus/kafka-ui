@@ -22,7 +22,7 @@
     "fetch-mock": "^9.11.0",
     "json-schema-faker": "^0.5.0-rcv.39",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.2.0",
     "pretty-ms": "^7.0.1",
     "react": "^17.0.1",
     "react-ace": "^9.4.3",
