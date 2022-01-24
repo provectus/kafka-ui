@@ -52,7 +52,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Cluster'
         404:
-          description: Nott found
+          description: Not found
 
 
   /api/clusters/{clusterName}/brokers:
