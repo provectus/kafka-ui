@@ -9,8 +9,8 @@ import ListItem, {
   ListItemProps,
 } from 'components/Connect/Details/Tasks/ListItem/ListItem';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-
-jest.mock('components/Connect/StatusTag', () => 'mock-StatusTag');
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 describe('ListItem', () => {
   containerRendersView(
@@ -33,16 +33,18 @@ describe('ListItem', () => {
     const connectorName = 'my-connector';
 
     const setupWrapper = (props: Partial<ListItemProps> = {}) => (
-      <TestRouterWrapper
-        pathname={pathname}
-        urlParams={{ clusterName, connectName, connectorName }}
-      >
-        <table>
-          <tbody>
-            <ListItem task={tasks[0]} restartTask={jest.fn()} {...props} />
-          </tbody>
-        </table>
-      </TestRouterWrapper>
+      <ThemeProvider theme={theme}>
+        <TestRouterWrapper
+          pathname={pathname}
+          urlParams={{ clusterName, connectName, connectorName }}
+        >
+          <table>
+            <tbody>
+              <ListItem task={tasks[0]} restartTask={jest.fn()} {...props} />
+            </tbody>
+          </table>
+        </TestRouterWrapper>
+      </ThemeProvider>
     );
 
     it('matches snapshot', () => {
@@ -54,7 +56,10 @@ describe('ListItem', () => {
       const restartTask = jest.fn();
       const wrapper = mount(setupWrapper({ restartTask }));
       await act(async () => {
-        wrapper.find('button').simulate('click');
+        wrapper.find('svg').simulate('click');
+      });
+      await act(async () => {
+        wrapper.find('span').simulate('click');
       });
       expect(restartTask).toHaveBeenCalledTimes(1);
       expect(restartTask).toHaveBeenCalledWith(

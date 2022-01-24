@@ -16,7 +16,7 @@ import com.provectus.kafka.ui.model.TaskIdDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-@Log4j2
+@Slf4j
 @AutoConfigureWebTestClient(timeout = "60000")
 public class KafkaConnectServiceTests extends AbstractBaseTest {
   private final String connectName = "kafka-connect";

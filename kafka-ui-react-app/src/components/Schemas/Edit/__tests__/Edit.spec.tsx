@@ -1,74 +1,51 @@
-import { mount, shallow } from 'enzyme';
-import { SchemaType } from 'generated-sources';
 import React from 'react';
-import { StaticRouter } from 'react-router-dom';
-import Edit, { EditProps } from 'components/Schemas/Edit/Edit';
+import Edit from 'components/Schemas/Edit/Edit';
+import { render } from 'lib/testHelpers';
+import { clusterSchemaEditPath } from 'lib/paths';
+import {
+  schemasFulfilledState,
+  schemaVersion,
+} from 'redux/reducers/schemas/__test__/fixtures';
+import { Route } from 'react-router';
+import { screen } from '@testing-library/dom';
 
-jest.mock('react-hook-form', () => ({
-  ...jest.requireActual('react-hook-form'),
-  Controller: () => 'Controller',
-}));
+const clusterName = 'local';
+const { subject } = schemaVersion;
 
 describe('Edit Component', () => {
-  const mockSchema = {
-    subject: 'Subject',
-    version: '1',
-    id: 1,
-    schema: '{"schema": "schema"}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.AVRO,
-  };
-
-  const setupWrapper = (props: Partial<EditProps> = {}) => (
-    <Edit
-      subject="Subject"
-      clusterName="ClusterName"
-      schemasAreFetched
-      fetchSchemasByClusterName={jest.fn()}
-      updateSchema={jest.fn()}
-      schema={mockSchema}
-      {...props}
-    />
-  );
-
-  describe('when schemas are not fetched', () => {
-    const component = shallow(setupWrapper({ schemasAreFetched: false }));
-    it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
-    });
-    it('shows loader', () => {
-      expect(component.find('PageLoader').exists()).toBeTruthy();
-    });
-    it('fetches them', () => {
-      const mockFetch = jest.fn();
-      mount(
-        <StaticRouter>
-          {setupWrapper({
-            schemasAreFetched: false,
-            fetchSchemasByClusterName: mockFetch,
-          })}
-        </StaticRouter>
+  describe('schema exists', () => {
+    beforeEach(() => {
+      render(
+        <Route path={clusterSchemaEditPath(':clusterName', ':subject')}>
+          <Edit />
+        </Route>,
+        {
+          pathname: clusterSchemaEditPath(clusterName, subject),
+          preloadedState: { schemas: schemasFulfilledState },
+        }
       );
-      expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders component', () => {
+      expect(screen.getByText('Edit schema')).toBeInTheDocument();
     });
   });
 
-  describe('when schemas are fetched', () => {
-    const component = shallow(setupWrapper());
-    it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
-    });
-    it('shows editor', () => {
-      expect(component.find('JSONEditor[name="latestSchema"]').length).toEqual(
-        1
+  describe('schema does not exist', () => {
+    beforeEach(() => {
+      render(
+        <Route path={clusterSchemaEditPath(':clusterName', ':subject')}>
+          <Edit />
+        </Route>,
+        {
+          pathname: clusterSchemaEditPath(clusterName, 'fake'),
+          preloadedState: { schemas: schemasFulfilledState },
+        }
       );
-      expect(component.find('Controller').length).toEqual(1);
-      expect(component.find('button').exists()).toBeTruthy();
     });
-    it('does not fetch them', () => {
-      const mockFetch = jest.fn();
-      shallow(setupWrapper());
-      expect(mockFetch).toHaveBeenCalledTimes(0);
+
+    it('renders component', () => {
+      expect(screen.queryByText('Edit schema')).not.toBeInTheDocument();
     });
   });
 });

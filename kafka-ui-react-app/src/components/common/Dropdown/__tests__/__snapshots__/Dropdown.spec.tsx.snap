@@ -1,6 +1,37 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dropdown matches snapshot 1`] = `
+.c1 {
+  background: transparent;
+  border: none;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-items: 'center';
+  -webkit-box-align: 'center';
+  -ms-flex-align: 'center';
+  align-items: 'center';
+  -webkit-box-pack: 'center';
+  -webkit-justify-content: 'center';
+  -ms-flex-pack: 'center';
+  justify-content: 'center';
+}
+
+.c1:hover {
+  cursor: pointer;
+}
+
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 <Dropdown
   label="My Test Label"
   right={true}
@@ -9,19 +40,30 @@ exports[`Dropdown matches snapshot 1`] = `
   <div
     className="dropdown is-right is-up"
   >
-    <div
-      className="dropdown-trigger"
-    >
-      <button
-        aria-controls="dropdown-menu"
-        aria-haspopup="true"
-        className="button is-small is-link"
-        onClick={[Function]}
-        type="button"
+    <styled.div>
+      <div
+        className="c0"
       >
-        My Test Label
-      </button>
-    </div>
+        <Styled(DropdownTrigger)
+          onClick={[Function]}
+        >
+          <DropdownTrigger
+            className="c1"
+            onClick={[Function]}
+          >
+            <button
+              aria-controls="dropdown-menu"
+              aria-haspopup="true"
+              className="c1"
+              onClick={[Function]}
+              type="button"
+            >
+              My Test Label
+            </button>
+          </DropdownTrigger>
+        </Styled(DropdownTrigger)>
+      </div>
+    </styled.div>
     <div
       className="dropdown-menu"
       id="dropdown-menu"

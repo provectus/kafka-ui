@@ -1,5 +1,6 @@
 import React from 'react';
 import { useDebouncedCallback } from 'use-debounce';
+import Input from 'components/common/Input/Input';
 
 interface SearchProps {
   handleSearch: (value: string) => void;
@@ -17,18 +18,14 @@ const Search: React.FC<SearchProps> = ({
     300
   );
   return (
-    <p className="control has-icons-left">
-      <input
-        className="input"
-        type="text"
-        placeholder={placeholder}
-        onChange={onChange}
-        defaultValue={value}
-      />
-      <span className="icon is-small is-left">
-        <i className="fas fa-search" />
-      </span>
-    </p>
+    <Input
+      type="text"
+      placeholder={placeholder}
+      onChange={onChange}
+      defaultValue={value}
+      leftIcon="fas fa-search"
+      inputSize="M"
+    />
   );
 };
 

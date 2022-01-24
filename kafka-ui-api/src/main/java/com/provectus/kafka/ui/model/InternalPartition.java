@@ -13,7 +13,6 @@ public class InternalPartition {
   private final int inSyncReplicasCount;
   private final int replicasCount;
 
-  // should be updated manually on partitions return
   private final long offsetMin;
   private final long offsetMax;
 
@@ -21,12 +20,5 @@ public class InternalPartition {
   private final long segmentSize;
   private final long segmentCount;
 
-  public InternalPartition withOffsets(long min, long max) {
-    return toBuilder().offsetMin(min).offsetMax(max).build();
-  }
-
-  public InternalPartition withSegmentStats(long segmentSize, long segmentCount) {
-    return toBuilder().segmentSize(segmentSize).segmentCount(segmentCount).build();
-  }
 
 }

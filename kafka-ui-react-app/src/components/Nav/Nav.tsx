@@ -1,36 +1,28 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
-import cx from 'classnames';
 import { Cluster } from 'generated-sources';
 
 import ClusterMenu from './ClusterMenu';
+import ClusterMenuItem from './ClusterMenuItem';
+import * as S from './Nav.styled';
 
 interface Props {
-  isClusterListFetched?: boolean;
+  areClustersFulfilled?: boolean;
   clusters: Cluster[];
-  className?: string;
 }
 
-const Nav: React.FC<Props> = ({
-  isClusterListFetched,
-  clusters,
-  className,
-}) => (
-  <aside className={cx('menu has-shadow has-background-white', className)}>
-    <p className="menu-label">General</p>
-    <ul className="menu-list">
-      <li>
-        <NavLink exact to="/ui" activeClassName="is-active" title="Dashboard">
-          Dashboard
-        </NavLink>
-      </li>
-    </ul>
-    <p className="menu-label">Clusters</p>
-    {!isClusterListFetched && <div className="loader" />}
+const Nav: React.FC<Props> = ({ areClustersFulfilled, clusters }) => (
+  <aside aria-label="Sidebar Menu">
+    <S.List>
+      <ClusterMenuItem exact to="/ui" title="Dashboard" isTopLevel />
+    </S.List>
 
-    {isClusterListFetched &&
+    {areClustersFulfilled &&
       clusters.map((cluster) => (
-        <ClusterMenu cluster={cluster} key={cluster.name} />
+        <ClusterMenu
+          cluster={cluster}
+          key={cluster.name}
+          singleMode={clusters.length === 1}
+        />
       ))}
   </aside>
 );

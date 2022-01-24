@@ -1,6 +1,5 @@
 import { createAction, createAsyncAction } from 'typesafe-actions';
 import {
-  ConsumerGroupID,
   FailurePayload,
   TopicName,
   TopicsState,
@@ -8,15 +7,6 @@ import {
   ConnectorConfig,
 } from 'redux/interfaces';
 import {
-  Cluster,
-  ClusterStats,
-  ClusterMetrics,
-  Broker,
-  BrokerMetrics,
-  ConsumerGroup,
-  ConsumerGroupDetails,
-  SchemaSubject,
-  CompatibilityLevelCompatibilityEnum,
   TopicColumnsToSort,
   Connector,
   FullConnectorInfo,
@@ -27,36 +17,6 @@ import {
   TopicMessageSchema,
   KsqlCommandResponse,
 } from 'generated-sources';
-
-export const fetchClusterStatsAction = createAsyncAction(
-  'GET_CLUSTER_STATUS__REQUEST',
-  'GET_CLUSTER_STATUS__SUCCESS',
-  'GET_CLUSTER_STATUS__FAILURE'
-)<undefined, ClusterStats, undefined>();
-
-export const fetchClusterMetricsAction = createAsyncAction(
-  'GET_CLUSTER_METRICS__REQUEST',
-  'GET_CLUSTER_METRICS__SUCCESS',
-  'GET_CLUSTER_METRICS__FAILURE'
-)<undefined, ClusterMetrics, undefined>();
-
-export const fetchBrokersAction = createAsyncAction(
-  'GET_BROKERS__REQUEST',
-  'GET_BROKERS__SUCCESS',
-  'GET_BROKERS__FAILURE'
-)<undefined, Broker[], undefined>();
-
-export const fetchBrokerMetricsAction = createAsyncAction(
-  'GET_BROKER_METRICS__REQUEST',
-  'GET_BROKER_METRICS__SUCCESS',
-  'GET_BROKER_METRICS__FAILURE'
-)<undefined, BrokerMetrics, undefined>();
-
-export const fetchClusterListAction = createAsyncAction(
-  'GET_CLUSTERS__REQUEST',
-  'GET_CLUSTERS__SUCCESS',
-  'GET_CLUSTERS__FAILURE'
-)<undefined, Cluster[], undefined>();
 
 export const fetchTopicsListAction = createAsyncAction(
   'GET_TOPICS__REQUEST',
@@ -100,70 +60,6 @@ export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__FAILURE',
   'DELETE_TOPIC__CANCEL'
 )<undefined, TopicName, undefined, undefined>();
-
-export const fetchConsumerGroupsAction = createAsyncAction(
-  'GET_CONSUMER_GROUPS__REQUEST',
-  'GET_CONSUMER_GROUPS__SUCCESS',
-  'GET_CONSUMER_GROUPS__FAILURE'
-)<undefined, ConsumerGroup[], { alert?: FailurePayload }>();
-
-export const fetchConsumerGroupDetailsAction = createAsyncAction(
-  'GET_CONSUMER_GROUP_DETAILS__REQUEST',
-  'GET_CONSUMER_GROUP_DETAILS__SUCCESS',
-  'GET_CONSUMER_GROUP_DETAILS__FAILURE'
-)<
-  undefined,
-  { consumerGroupID: ConsumerGroupID; details: ConsumerGroupDetails },
-  { alert?: FailurePayload }
->();
-
-export const deleteConsumerGroupAction = createAsyncAction(
-  'DELETE_CONSUMER_GROUP__REQUEST',
-  'DELETE_CONSUMER_GROUP__SUCCESS',
-  'DELETE_CONSUMER_GROUP__FAILURE'
-)<undefined, ConsumerGroupID, { alert?: FailurePayload }>();
-
-export const fetchSchemasByClusterNameAction = createAsyncAction(
-  'GET_CLUSTER_SCHEMAS__REQUEST',
-  'GET_CLUSTER_SCHEMAS__SUCCESS',
-  'GET_CLUSTER_SCHEMAS__FAILURE'
-)<undefined, SchemaSubject[], undefined>();
-
-export const fetchGlobalSchemaCompatibilityLevelAction = createAsyncAction(
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST',
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS',
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE'
-)<undefined, CompatibilityLevelCompatibilityEnum, undefined>();
-
-export const updateGlobalSchemaCompatibilityLevelAction = createAsyncAction(
-  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST',
-  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS',
-  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE'
-)<undefined, CompatibilityLevelCompatibilityEnum, undefined>();
-
-export const fetchSchemaVersionsAction = createAsyncAction(
-  'GET_SCHEMA_VERSIONS__REQUEST',
-  'GET_SCHEMA_VERSIONS__SUCCESS',
-  'GET_SCHEMA_VERSIONS__FAILURE'
-)<undefined, SchemaSubject[], undefined>();
-
-export const createSchemaAction = createAsyncAction(
-  'POST_SCHEMA__REQUEST',
-  'POST_SCHEMA__SUCCESS',
-  'POST_SCHEMA__FAILURE'
-)<undefined, SchemaSubject, { alert?: FailurePayload }>();
-
-export const updateSchemaAction = createAsyncAction(
-  'PATCH_SCHEMA__REQUEST',
-  'PATCH_SCHEMA__SUCCESS',
-  'PATCH_SCHEMA__FAILURE'
-)<undefined, SchemaSubject, { alert?: FailurePayload }>();
-
-export const deleteSchemaAction = createAsyncAction(
-  'DELETE_SCHEMA__REQUEST',
-  'DELETE_SCHEMA__SUCCESS',
-  'DELETE_SCHEMA__FAILURE'
-)<undefined, string, { alert?: FailurePayload }>();
 
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
 
@@ -279,12 +175,6 @@ export const fetchTopicMessageSchemaAction = createAsyncAction(
   { alert?: FailurePayload }
 >();
 
-export const sendTopicMessageAction = createAsyncAction(
-  'SEND_TOPIC_MESSAGE__REQUEST',
-  'SEND_TOPIC_MESSAGE__SUCCESS',
-  'SEND_TOPIC_MESSAGE__FAILURE'
-)<undefined, undefined, { alert?: FailurePayload }>();
-
 export const updateTopicPartitionsCountAction = createAsyncAction(
   'UPDATE_PARTITIONS__REQUEST',
   'UPDATE_PARTITIONS__SUCCESS',
@@ -317,10 +207,3 @@ export const executeKsqlAction = createAsyncAction(
 )<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
 
 export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();
-
-export const resetConsumerGroupOffsetsAction = createAsyncAction(
-  'RESET_OFFSETS__REQUEST',
-  'RESET_OFFSETS__SUCCESS',
-  'RESET_OFFSETS__FAILURE',
-  'RESET_OFFSETS__CANCEL'
-)<undefined, undefined, { alert?: FailurePayload }, undefined>();

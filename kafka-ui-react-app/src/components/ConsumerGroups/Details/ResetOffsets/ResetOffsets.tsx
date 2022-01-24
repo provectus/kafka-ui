@@ -1,14 +1,12 @@
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
-import {
-  ConsumerGroupDetails,
-  ConsumerGroupOffsetsResetType,
-} from 'generated-sources';
-import {
-  clusterConsumerGroupsPath,
-  clusterConsumerGroupDetailsPath,
-} from 'lib/paths';
+import { ConsumerGroupOffsetsResetType } from 'generated-sources';
+import { clusterConsumerGroupDetailsPath } from 'lib/paths';
 import React from 'react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import {
+  Controller,
+  FormProvider,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
 import { ClusterName, ConsumerGroupID } from 'redux/interfaces';
 import MultiSelect from 'react-multi-select-component';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
@@ -17,31 +15,29 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { groupBy } from 'lodash';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { ErrorMessage } from '@hookform/error-message';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
+import Select from 'components/common/Select/Select';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { Button } from 'components/common/Button/Button';
+import Input from 'components/common/Input/Input';
+import { FormError } from 'components/common/Input/Input.styled';
+import PageHeading from 'components/common/PageHeading/PageHeading';
+import {
+  fetchConsumerGroupDetails,
+  selectById,
+  getAreConsumerGroupDetailsFulfilled,
+  getIsOffsetReseted,
+  resetConsumerGroupOffsets,
+} from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
-export interface Props {
-  clusterName: ClusterName;
-  consumerGroupID: ConsumerGroupID;
-  consumerGroup: ConsumerGroupDetails;
-  detailsAreFetched: boolean;
-  IsOffsetReset: boolean;
-  fetchConsumerGroupDetails(
-    clusterName: ClusterName,
-    consumerGroupID: ConsumerGroupID
-  ): void;
-  resetConsumerGroupOffsets(
-    clusterName: ClusterName,
-    consumerGroupID: ConsumerGroupID,
-    requestBody: {
-      topic: string;
-      resetType: ConsumerGroupOffsetsResetType;
-      partitionsOffsets?: { offset: string; partition: number }[];
-      resetToTimestamp?: Date;
-      partitions: number[];
-    }
-  ): void;
-  resetResettingStatus: () => void;
-}
+import {
+  MainSelectorsWrapperStyled,
+  OffsetsWrapperStyled,
+  ResetOffsetsStyledWrapper,
+  OffsetsTitleStyled,
+} from './ResetOffsets.styled';
 
 interface FormType {
   topic: string;
@@ -50,18 +46,19 @@ interface FormType {
   resetToTimestamp: Date;
 }
 
-const ResetOffsets: React.FC<Props> = ({
-  clusterName,
-  consumerGroupID,
-  consumerGroup,
-  detailsAreFetched,
-  IsOffsetReset,
-  fetchConsumerGroupDetails,
-  resetConsumerGroupOffsets,
-  resetResettingStatus,
-}) => {
+const ResetOffsets: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { consumerGroupID, clusterName } =
+    useParams<{ consumerGroupID: ConsumerGroupID; clusterName: ClusterName }>();
+  const consumerGroup = useAppSelector((state) =>
+    selectById(state, consumerGroupID)
+  );
+
+  const isFetched = useAppSelector(getAreConsumerGroupDetailsFulfilled);
+  const isOffsetReseted = useAppSelector(getIsOffsetReseted);
+
   React.useEffect(() => {
-    fetchConsumerGroupDetails(clusterName, consumerGroupID);
+    dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
   }, [clusterName, consumerGroupID]);
 
   const [uniqueTopics, setUniqueTopics] = React.useState<string[]>([]);
@@ -69,22 +66,23 @@ const ResetOffsets: React.FC<Props> = ({
     []
   );
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    control,
-    setError,
-    clearErrors,
-    formState: { errors },
-  } = useForm<FormType>({
+  const methods = useForm<FormType>({
+    mode: 'onChange',
     defaultValues: {
       resetType: ConsumerGroupOffsetsResetType.EARLIEST,
       topic: '',
       partitionsOffsets: [],
     },
   });
+  const {
+    handleSubmit,
+    setValue,
+    watch,
+    control,
+    setError,
+    clearErrors,
+    formState: { errors, isValid },
+  } = methods;
   const { fields } = useFieldArray({
     control,
     name: 'partitionsOffsets',
@@ -94,11 +92,11 @@ const ResetOffsets: React.FC<Props> = ({
   const offsetsValue = watch('partitionsOffsets');
 
   React.useEffect(() => {
-    if (detailsAreFetched && consumerGroup.partitions) {
+    if (isFetched && consumerGroup?.partitions) {
       setValue('topic', consumerGroup.partitions[0].topic);
       setUniqueTopics(Object.keys(groupBy(consumerGroup.partitions, 'topic')));
     }
-  }, [detailsAreFetched]);
+  }, [isFetched]);
 
   const onSelectedPartitionsChange = (value: Option[]) => {
     clearErrors();
@@ -130,7 +128,7 @@ const ResetOffsets: React.FC<Props> = ({
         partition: number;
       }[],
     };
-    let isValid = true;
+    let isValidAugmentedData = true;
     if (augmentedData.resetType === ConsumerGroupOffsetsResetType.OFFSET) {
       augmentedData.partitionsOffsets.forEach((offset, index) => {
         if (!offset.offset) {
@@ -138,7 +136,7 @@ const ResetOffsets: React.FC<Props> = ({
             type: 'manual',
             message: "This field shouldn't be empty!",
           });
-          isValid = false;
+          isValidAugmentedData = false;
         }
       });
     } else if (
@@ -149,178 +147,173 @@ const ResetOffsets: React.FC<Props> = ({
           type: 'manual',
           message: "This field shouldn't be empty!",
         });
-        isValid = false;
+        isValidAugmentedData = false;
       }
     }
-    if (isValid) {
-      resetConsumerGroupOffsets(clusterName, consumerGroupID, augmentedData);
+    if (isValidAugmentedData) {
+      dispatch(
+        resetConsumerGroupOffsets({
+          clusterName,
+          consumerGroupID,
+          requestBody: augmentedData,
+        })
+      );
     }
   };
 
   const history = useHistory();
   React.useEffect(() => {
-    if (IsOffsetReset) {
-      resetResettingStatus();
+    if (isOffsetReseted) {
+      dispatch(resetLoaderById('consumerGroups/resetConsumerGroupOffsets'));
       history.push(
         clusterConsumerGroupDetailsPath(clusterName, consumerGroupID)
       );
     }
-  }, [IsOffsetReset]);
+  }, [isOffsetReseted]);
 
-  if (!detailsAreFetched) {
+  if (!isFetched || !consumerGroup) {
     return <PageLoader />;
   }
 
   return (
-    <div className="section">
-      <div className="level">
-        <div className="level-item level-left">
-          <Breadcrumb
-            links={[
-              {
-                href: clusterConsumerGroupsPath(clusterName),
-                label: 'All Consumer Groups',
-              },
-              {
-                href: clusterConsumerGroupDetailsPath(
-                  clusterName,
-                  consumerGroupID
-                ),
-                label: consumerGroupID,
-              },
-            ]}
-          >
-            Reset Offsets
-          </Breadcrumb>
-        </div>
-      </div>
-
-      <div className="box">
+    <FormProvider {...methods}>
+      <PageHeading text="Reset offsets" />
+      <ResetOffsetsStyledWrapper>
         <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="columns">
-            <div className="column is-one-third">
-              <label className="label" htmlFor="topic">
-                Topic
-              </label>
-              <div className="select">
-                <select {...register('topic')} id="topic">
-                  {uniqueTopics.map((topic) => (
-                    <option key={topic} value={topic}>
-                      {topic}
-                    </option>
-                  ))}
-                </select>
-              </div>
+          <MainSelectorsWrapperStyled>
+            <div>
+              <InputLabel id="topicLabel">Topic</InputLabel>
+              <Controller
+                control={control}
+                name="topic"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="topic"
+                    selectSize="M"
+                    aria-labelledby="topicLabel"
+                    minWidth="100%"
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    options={uniqueTopics.map((topic) => ({
+                      value: topic,
+                      label: topic,
+                    }))}
+                  />
+                )}
+              />
             </div>
-            <div className="column is-one-third">
-              <label className="label" htmlFor="resetType">
-                Reset Type
-              </label>
-              <div className="select">
-                <select {...register('resetType')} id="resetType">
-                  {Object.values(ConsumerGroupOffsetsResetType).map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <InputLabel id="resetTypeLabel">Reset Type</InputLabel>
+              <Controller
+                control={control}
+                name="resetType"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="resetType"
+                    selectSize="M"
+                    aria-labelledby="resetTypeLabel"
+                    minWidth="100%"
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    options={Object.values(ConsumerGroupOffsetsResetType).map(
+                      (type) => ({ value: type, label: type })
+                    )}
+                  />
+                )}
+              />
             </div>
-            <div className="column is-one-third">
-              <label className="label">Partitions</label>
-              <div className="select">
-                <MultiSelect
-                  options={
-                    consumerGroup.partitions
-                      ?.filter((p) => p.topic === topicValue)
-                      .map((p) => ({
-                        label: `Partition #${p.partition.toString()}`,
-                        value: p.partition,
-                      })) || []
-                  }
-                  value={selectedPartitions}
-                  onChange={onSelectedPartitionsChange}
-                  labelledBy="Select partitions"
-                />
-              </div>
+            <div>
+              <InputLabel>Partitions</InputLabel>
+              <MultiSelect
+                options={
+                  consumerGroup.partitions
+                    ?.filter((p) => p.topic === topicValue)
+                    .map((p) => ({
+                      label: `Partition #${p.partition.toString()}`,
+                      value: p.partition,
+                    })) || []
+                }
+                value={selectedPartitions}
+                onChange={onSelectedPartitionsChange}
+                labelledBy="Select partitions"
+              />
             </div>
-          </div>
+          </MainSelectorsWrapperStyled>
           {resetTypeValue === ConsumerGroupOffsetsResetType.TIMESTAMP &&
             selectedPartitions.length > 0 && (
-              <div className="columns">
-                <div className="column is-half">
-                  <label className="label">Timestamp</label>
-                  <Controller
-                    control={control}
-                    name="resetToTimestamp"
-                    render={({ field: { onChange, onBlur, value, ref } }) => (
-                      <DatePicker
-                        ref={ref}
-                        selected={value}
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        showTimeInput
-                        timeInputLabel="Time:"
-                        dateFormat="MMMM d, yyyy h:mm aa"
-                        className="input"
-                      />
-                    )}
-                  />
-                  <ErrorMessage
-                    errors={errors}
-                    name="resetToTimestamp"
-                    render={({ message }) => (
-                      <p className="help is-danger">{message}</p>
-                    )}
-                  />
-                </div>
+              <div>
+                <InputLabel>Timestamp</InputLabel>
+                <Controller
+                  control={control}
+                  name="resetToTimestamp"
+                  render={({ field: { onChange, onBlur, value, ref } }) => (
+                    <DatePicker
+                      ref={ref}
+                      selected={value}
+                      onChange={onChange}
+                      onBlur={onBlur}
+                      showTimeInput
+                      timeInputLabel="Time:"
+                      dateFormat="MMMM d, yyyy h:mm aa"
+                      className="date-picker"
+                    />
+                  )}
+                />
+                <ErrorMessage
+                  errors={errors}
+                  name="resetToTimestamp"
+                  render={({ message }) => <FormError>{message}</FormError>}
+                />
               </div>
             )}
           {resetTypeValue === ConsumerGroupOffsetsResetType.OFFSET &&
             selectedPartitions.length > 0 && (
-              <div className="columns">
-                <div className="column is-one-third">
-                  <label className="label">Offsets</label>
+              <div>
+                <OffsetsTitleStyled>Offsets</OffsetsTitleStyled>
+                <OffsetsWrapperStyled>
                   {fields.map((field, index) => (
-                    <div key={field.id} className="mb-2">
-                      <label
-                        className="subtitle is-6"
-                        htmlFor={`partitionsOffsets.${index}.offset`}
-                      >
+                    <div key={field.id}>
+                      <InputLabel htmlFor={`partitionsOffsets.${index}.offset`}>
                         Partition #{field.partition}
-                      </label>
-                      <input
+                      </InputLabel>
+                      <Input
                         id={`partitionsOffsets.${index}.offset`}
                         type="number"
-                        className="input"
-                        {...register(
-                          `partitionsOffsets.${index}.offset` as const,
-                          { shouldUnregister: true }
-                        )}
+                        name={`partitionsOffsets.${index}.offset` as const}
+                        hookFormOptions={{
+                          shouldUnregister: true,
+                          min: {
+                            value: 0,
+                            message: 'must be greater than or equal to 0',
+                          },
+                        }}
                         defaultValue={field.offset}
                       />
                       <ErrorMessage
                         errors={errors}
                         name={`partitionsOffsets.${index}.offset`}
                         render={({ message }) => (
-                          <p className="help is-danger">{message}</p>
+                          <FormError>{message}</FormError>
                         )}
                       />
                     </div>
                   ))}
-                </div>
+                </OffsetsWrapperStyled>
               </div>
             )}
-          <button
-            className="button is-primary"
+          <Button
+            buttonSize="M"
+            buttonType="primary"
             type="submit"
-            disabled={selectedPartitions.length === 0}
+            disabled={!isValid || selectedPartitions.length === 0}
           >
             Submit
-          </button>
+          </Button>
         </form>
-      </div>
-    </div>
+      </ResetOffsetsStyledWrapper>
+    </FormProvider>
   );
 };
 

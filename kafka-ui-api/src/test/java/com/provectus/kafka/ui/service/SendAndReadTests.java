@@ -465,6 +465,20 @@ public class SendAndReadTests extends AbstractBaseTest {
         });
   }
 
+  @Test
+  void noKeyAndNoContentPresentTest() {
+    new SendAndReadSpec()
+        .withMsgToSend(
+            new CreateTopicMessageDTO()
+                .key(null)
+                .content(null)
+        )
+        .doAssert(polled -> {
+          assertThat(polled.getKey()).isNull();
+          assertThat(polled.getContent()).isNull();
+        });
+  }
+
   @SneakyThrows
   private void assertJsonEqual(String actual, String expected) {
     var mapper = new ObjectMapper();

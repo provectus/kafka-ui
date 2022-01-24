@@ -615,6 +615,46 @@ paths:
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
 
+  /api/clusters/{clusterName}/consumer-groups/paged:
+    get:
+      tags:
+        - Consumer Groups
+      summary: Get consumer croups with paging support
+      operationId: getConsumerGroupsPage
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConsumerGroupOrdering'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerGroupsPageResponse'
+
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
     get:
@@ -1338,6 +1378,7 @@ paths:
           description: OK
 
   /api/clusters/{clusterName}/ksql:
+    description: Deprecated - use ksql/v2 instead!
     post:
       tags:
         - Ksql
@@ -1361,6 +1402,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/KsqlCommandResponse'
+
+  /api/clusters/{clusterName}/ksql/v2:
+    post:
+      tags:
+        - Ksql
+      summary: executeKsql
+      operationId: executeKsql
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/KsqlCommand'
+      responses:
+        200:
+          description: OK
+          content:
+            text/event-stream:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/KsqlResponse'
 
   /api/clusters/{clusterName}/connects/{connectName}/plugins:
     get:
@@ -1478,6 +1546,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/FieldError'
+        stackTrace:
+          type: string
 
     FieldError:
       type: object
@@ -1491,6 +1561,14 @@ components:
           items:
             type: string
 
+    MetricsCollectionError:
+      type: object
+      properties:
+        message:
+          type: string
+        stackTrace:
+          type: string
+
     Cluster:
       type: object
       properties:
@@ -1500,6 +1578,8 @@ components:
           type: boolean
         status:
           $ref: '#/components/schemas/ServerStatus'
+        lastError:
+          $ref: '#/components/schemas/MetricsCollectionError'
         brokerCount:
           type: integer
         onlinePartitionCount:
@@ -1659,12 +1739,7 @@ components:
         underReplicatedPartitions:
           type: integer
         cleanUpPolicy:
-          type: string
-          enum:
-            - DELETE
-            - COMPACT
-            - COMPACT_DELETE
-            - UNKNOWN
+          $ref: '#/components/schemas/CleanUpPolicy'
         partitions:
           type: array
           items:
@@ -1707,10 +1782,13 @@ components:
           type: number
         segmentSize:
           type: integer
+          format: int64
         segmentCount:
           type: integer
         underReplicatedPartitions:
           type: integer
+        cleanUpPolicy:
+          $ref: '#/components/schemas/CleanUpPolicy'
       required:
         - name
 
@@ -1825,6 +1903,23 @@ components:
       required:
         - groupId
 
+    ConsumerGroupOrdering:
+      type: string
+      enum:
+        - NAME
+        - MEMBERS
+        - STATE
+
+    ConsumerGroupsPageResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        consumerGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerGroup'
+
     CreateTopicMessage:
       type: object
       properties:
@@ -1832,12 +1927,16 @@ components:
           type: integer
         key:
           type: string
+          nullable: true
         headers:
           type: object
           additionalProperties:
             type: string
         content:
           type: string
+          nullable: true
+      required:
+        - partition
 
     TopicMessageSchema:
       type: object
@@ -2452,6 +2551,28 @@ components:
         - headers
         - rows
 
+    KsqlResponse:
+      type: object
+      properties:
+        table:
+          $ref: '#/components/schemas/KsqlTableResponse'
+
+    KsqlTableResponse:
+      type: object
+      properties:
+        header:
+          type: string
+        columnNames:
+          type: array
+          items:
+            type: string
+        values:
+          type: array
+          items:
+            type: array
+            items:
+              type: object
+
     FullConnectorInfo:
       type: object
       properties:
@@ -2568,3 +2689,11 @@ components:
           type: string
         source:
           $ref: '#/components/schemas/ConfigSource'
+
+    CleanUpPolicy:
+      type: string
+      enum:
+        - DELETE
+        - COMPACT
+        - COMPACT_DELETE
+        - UNKNOWN

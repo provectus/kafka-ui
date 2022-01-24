@@ -2,7 +2,7 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import JSONDiffViewer from 'components/common/JSONDiffViewer/JSONDiffViewer';
 
-describe('JSONEditor component', () => {
+describe('Editor component', () => {
   const left = '{\n}';
   const right = '{\ntest: true\n}';
   it('matches the snapshot', () => {

@@ -1,4 +1,4 @@
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/topicMessages/selectors';
 import { initialState } from 'redux/reducers/topicMessages/reducer';
 import {
@@ -8,8 +8,6 @@ import {
 } from 'redux/actions';
 
 import { topicMessagePayload, topicMessagesMetaPayload } from './fixtures';
-
-const store = configureStore();
 
 describe('TopicMessages selectors', () => {
   describe('Initial state', () => {

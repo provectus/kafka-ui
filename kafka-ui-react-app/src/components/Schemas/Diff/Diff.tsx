@@ -1,15 +1,11 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
-import {
-  clusterSchemasPath,
-  clusterSchemaPath,
-  clusterSchemaSchemaDiffPath,
-} from 'lib/paths';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { clusterSchemaSchemaDiffPath } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import JSONDiffViewer from 'components/common/JSONDiffViewer/JSONDiffViewer';
 import { useHistory } from 'react-router';
+import { fetchSchemaVersions } from 'redux/reducers/schemas/schemasSlice';
 
 export interface DiffProps {
   subject: SchemaName;
@@ -18,10 +14,6 @@ export interface DiffProps {
   rightVersionInPath?: string;
   versions: SchemaSubject[];
   areVersionsFetched: boolean;
-  fetchSchemaVersions: (
-    clusterName: ClusterName,
-    schemaName: SchemaName
-  ) => void;
 }
 
 const Diff: React.FC<DiffProps> = ({
@@ -29,7 +21,6 @@ const Diff: React.FC<DiffProps> = ({
   clusterName,
   leftVersionInPath,
   rightVersionInPath,
-  fetchSchemaVersions,
   versions,
   areVersionsFetched,
 }) => {
@@ -39,7 +30,7 @@ const Diff: React.FC<DiffProps> = ({
   );
 
   React.useEffect(() => {
-    fetchSchemaVersions(clusterName, subject);
+    fetchSchemaVersions({ clusterName, subject });
   }, [fetchSchemaVersions, clusterName]);
 
   const getSchemaContent = (allVersions: SchemaSubject[], version: string) => {
@@ -54,22 +45,6 @@ const Diff: React.FC<DiffProps> = ({
 
   return (
     <div className="section">
-      <div className="level">
-        <Breadcrumb
-          links={[
-            {
-              href: clusterSchemasPath(clusterName),
-              label: 'Schema Registry',
-            },
-            {
-              href: clusterSchemaPath(clusterName, subject),
-              label: subject,
-            },
-          ]}
-        >
-          Compare Versions
-        </Breadcrumb>
-      </div>
       {areVersionsFetched ? (
         <>
           <div className="box tile is-ancestor is-vertical">

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`JSONEditor component matches the snapshot 1`] = `
+exports[`Editor component matches the snapshot 1`] = `
 <DiffComponent
   cursorStart={1}
   editorProps={Object {}}
@@ -49,7 +49,7 @@ test: true
 />
 `;
 
-exports[`JSONEditor component matches the snapshot with fixed height 1`] = `
+exports[`Editor component matches the snapshot with fixed height 1`] = `
 <DiffComponent
   cursorStart={1}
   editorProps={Object {}}
@@ -98,7 +98,7 @@ test: true
 />
 `;
 
-exports[`JSONEditor component matches the snapshot with fixed height with no value 1`] = `
+exports[`Editor component matches the snapshot with fixed height with no value 1`] = `
 <DiffComponent
   cursorStart={1}
   editorProps={Object {}}
@@ -144,7 +144,7 @@ exports[`JSONEditor component matches the snapshot with fixed height with no val
 />
 `;
 
-exports[`JSONEditor component matches the snapshot without fixed height with no value 1`] = `
+exports[`Editor component matches the snapshot without fixed height with no value 1`] = `
 <DiffComponent
   cursorStart={1}
   editorProps={Object {}}
@@ -190,7 +190,7 @@ exports[`JSONEditor component matches the snapshot without fixed height with no 
 />
 `;
 
-exports[`JSONEditor component matches the snapshot without fixed height with one value 1`] = `
+exports[`Editor component matches the snapshot without fixed height with one value 1`] = `
 <DiffComponent
   cursorStart={1}
   editorProps={Object {}}

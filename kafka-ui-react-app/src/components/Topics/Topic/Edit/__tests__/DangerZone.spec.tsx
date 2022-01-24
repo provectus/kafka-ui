@@ -1,6 +1,10 @@
 import React from 'react';
-import DangerZone, { Props } from 'components/Topics/Topic/Edit/DangerZone';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import DangerZone, {
+  Props,
+} from 'components/Topics/Topic/Edit/DangerZone/DangerZone';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
 
 const setupWrapper = (props?: Partial<Props>) => (
   <DangerZone
@@ -24,44 +28,36 @@ describe('DangerZone', () => {
 
   it('calls updateTopicPartitionsCount', async () => {
     const mockUpdateTopicPartitionsCount = jest.fn();
-    const component = render(
+    render(
       setupWrapper({
         updateTopicPartitionsCount: mockUpdateTopicPartitionsCount,
       })
     );
 
-    const input = screen.getByLabelText('Number of partitions *');
-    fireEvent.input(input, {
-      target: {
-        value: 4,
-      },
-    });
-    fireEvent.submit(screen.getByTestId('partitionsSubmit'));
+    userEvent.type(screen.getByLabelText('Number of partitions *'), '4');
+    userEvent.click(screen.getByTestId('partitionsSubmit'));
+
     await waitFor(() => {
-      expect(component.baseElement).toMatchSnapshot();
-      fireEvent.click(screen.getByText('Confirm'));
+      userEvent.click(screen.getAllByText('Submit')[1]);
       expect(mockUpdateTopicPartitionsCount).toHaveBeenCalledTimes(1);
     });
   });
 
   it('calls updateTopicReplicationFactor', async () => {
     const mockUpdateTopicReplicationFactor = jest.fn();
-    const component = render(
+    render(
       setupWrapper({
         updateTopicReplicationFactor: mockUpdateTopicReplicationFactor,
       })
     );
 
-    const input = screen.getByLabelText('Replication Factor *');
-    fireEvent.input(input, {
-      target: {
-        value: 4,
-      },
-    });
-    fireEvent.submit(screen.getByTestId('replicationFactorSubmit'));
+    userEvent.type(screen.getByLabelText('Replication Factor *'), '4');
+    userEvent.click(screen.getByTestId('replicationFactorSubmit'));
     await waitFor(() => {
-      expect(component.baseElement).toMatchSnapshot();
-      fireEvent.click(screen.getByText('Confirm'));
+      userEvent.click(screen.getAllByText('Submit')[2]);
+    });
+
+    await waitFor(() => {
       expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
     });
   });

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 
 interface LatestVersionProps {
   schema: SchemaSubject;
@@ -32,7 +32,7 @@ const LatestVersionItem: React.FC<LatestVersionProps> = ({
     </div>
     <div className="tile is-parent">
       <div className="tile is-child box">
-        <JSONEditor
+        <Editor
           isFixedHeight
           name="schema"
           value={

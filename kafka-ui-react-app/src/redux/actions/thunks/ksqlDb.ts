@@ -20,10 +20,13 @@ export const transformKsqlResponse = (
   rawTable: Required<KsqlTable>
 ): Dictionary<string>[] =>
   rawTable.rows.map((row) =>
-    row.reduce((res, acc, index) => {
-      res[rawTable.headers[index]] = acc;
-      return res;
-    }, {} as Dictionary<string>)
+    row.reduce(
+      (res, acc, index) => ({
+        ...res,
+        [rawTable.headers[index]]: acc,
+      }),
+      {} as Dictionary<string>
+    )
   );
 
 const getTables = (clusterName: ClusterName) =>

@@ -13,12 +13,16 @@ import * as React from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
-import MultiSelect from 'react-multi-select-component';
+import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { TopicName, ClusterName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
+import Input from 'components/common/Input/Input';
+import Select from 'components/common/Select/Select';
+import { Button } from 'components/common/Button/Button';
 
+import * as S from './Filters.styled';
 import {
   filterOptions,
   getOffsetFromSeekToParam,
@@ -43,6 +47,15 @@ export interface FiltersProps {
 }
 
 const PER_PAGE = 100;
+
+const SeekTypeOptions = [
+  { value: SeekType.OFFSET, label: 'Offset' },
+  { value: SeekType.TIMESTAMP, label: 'Timestamp' },
+];
+const SeekDirectionOptions = [
+  { value: SeekDirection.FORWARD, label: 'Oldest First' },
+  { value: SeekDirection.BACKWARD, label: 'Newest First' },
+];
 
 const Filters: React.FC<FiltersProps> = ({
   clusterName,
@@ -72,7 +85,7 @@ const Filters: React.FC<FiltersProps> = ({
   );
 
   const [attempt, setAttempt] = React.useState(0);
-  const [seekType, setSeekType] = React.useState<SeekType>(
+  const [currentSeekType, setCurrentSeekType] = React.useState<SeekType>(
     (searchParams.get('seekType') as SeekType) || SeekType.OFFSET
   );
   const [offset, setOffset] = React.useState<string>(
@@ -95,11 +108,11 @@ const Filters: React.FC<FiltersProps> = ({
 
   const isSubmitDisabled = React.useMemo(() => {
     if (isSeekTypeControlVisible) {
-      return seekType === SeekType.TIMESTAMP && !timestamp;
+      return currentSeekType === SeekType.TIMESTAMP && !timestamp;
     }
 
     return false;
-  }, [isSeekTypeControlVisible, seekType, timestamp]);
+  }, [isSeekTypeControlVisible, currentSeekType, timestamp]);
 
   const partitionMap = React.useMemo(
     () =>
@@ -124,11 +137,11 @@ const Filters: React.FC<FiltersProps> = ({
     };
 
     if (isSeekTypeControlVisible) {
-      props.seekType = seekType;
+      props.seekType = currentSeekType;
       props.seekTo = selectedPartitions.map(({ value }) => {
         let seekToOffset;
 
-        if (seekType === SeekType.OFFSET) {
+        if (currentSeekType === SeekType.OFFSET) {
           if (offset) {
             seekToOffset = offset;
           } else {
@@ -155,11 +168,11 @@ const Filters: React.FC<FiltersProps> = ({
     });
   };
 
-  const toggleSeekDirection = () => {
+  const toggleSeekDirection = (val: string) => {
     const nextSeekDirectionValue =
-      seekDirection === SeekDirection.FORWARD
-        ? SeekDirection.BACKWARD
-        : SeekDirection.FORWARD;
+      val === SeekDirection.FORWARD
+        ? SeekDirection.FORWARD
+        : SeekDirection.BACKWARD;
     setSeekDirection(nextSeekDirectionValue);
   };
 
@@ -224,10 +237,50 @@ const Filters: React.FC<FiltersProps> = ({
   }, [seekDirection]);
 
   return (
-    <>
-      <div className="columns is-align-items-flex-end">
-        <div className="column is-3">
-          <label className="label">Partitions</label>
+    <S.FiltersWrapper>
+      <div>
+        <S.FilterInputs>
+          <Input
+            inputSize="M"
+            id="searchText"
+            type="text"
+            leftIcon="fas fa-search"
+            placeholder="Search"
+            value={query}
+            onChange={({ target: { value } }) => setQuery(value)}
+          />
+          {isSeekTypeControlVisible && (
+            <S.SeekTypeSelectorWrapper>
+              <Select
+                id="selectSeekType"
+                onChange={(option) => setCurrentSeekType(option as SeekType)}
+                value={currentSeekType}
+                selectSize="M"
+                minWidth="100px"
+                options={SeekTypeOptions}
+              />
+              {currentSeekType === SeekType.OFFSET ? (
+                <Input
+                  id="offset"
+                  type="text"
+                  inputSize="M"
+                  value={offset}
+                  className="offset-selector"
+                  onChange={({ target: { value } }) => setOffset(value)}
+                />
+              ) : (
+                <DatePicker
+                  selected={timestamp}
+                  onChange={(date: Date | null) => setTimestamp(date)}
+                  showTimeInput
+                  timeInputLabel="Time:"
+                  dateFormat="MMMM d, yyyy HH:mm"
+                  className="date-picker"
+                  placeholderText="Select timestamp"
+                />
+              )}
+            </S.SeekTypeSelectorWrapper>
+          )}
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,
@@ -238,125 +291,60 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
           />
-        </div>
-        {isSeekTypeControlVisible && (
-          <>
-            <div className="column is-2">
-              <label className="label">Seek Type</label>
-              <div className="select is-block">
-                <select
-                  id="selectSeekType"
-                  name="selectSeekType"
-                  onChange={({ target: { value } }) =>
-                    setSeekType(value as SeekType)
-                  }
-                  value={seekType}
-                >
-                  <option value={SeekType.OFFSET}>Offset</option>
-                  <option value={SeekType.TIMESTAMP}>Timestamp</option>
-                </select>
-              </div>
-            </div>
-            <div className="column is-2">
-              {seekType === SeekType.OFFSET ? (
-                <>
-                  <label className="label">Offset</label>
-                  <input
-                    id="offset"
-                    name="offset"
-                    type="text"
-                    className="input"
-                    value={offset}
-                    onChange={({ target: { value } }) => setOffset(value)}
-                  />
-                </>
-              ) : (
-                <>
-                  <label className="label">Timestamp</label>
-                  <DatePicker
-                    selected={timestamp}
-                    onChange={(date: Date | null) => setTimestamp(date)}
-                    showTimeInput
-                    timeInputLabel="Time:"
-                    dateFormat="MMMM d, yyyy HH:mm"
-                    className="input"
-                  />
-                </>
-              )}
-            </div>
-          </>
-        )}
-        <div className="column is-3">
-          <label className="label">Search</label>
-          <input
-            id="searchText"
-            type="text"
-            name="searchText"
-            className="input"
-            placeholder="Search"
-            value={query}
-            onChange={({ target: { value } }) => setQuery(value)}
-          />
-        </div>
-        <div className="column is-2">
           {isFetching ? (
-            <button
+            <Button
               type="button"
-              className="button is-primary is-fullwidth"
+              buttonType="secondary"
+              buttonSize="M"
               disabled={isSubmitDisabled}
               onClick={handleSSECancel}
+              style={{ fontWeight: 500 }}
             >
               Cancel
-            </button>
+            </Button>
           ) : (
-            <input
+            <Button
               type="submit"
-              className="button is-primary is-fullwidth"
+              buttonType="secondary"
+              buttonSize="M"
               disabled={isSubmitDisabled}
               onClick={handleFiltersSubmit}
-            />
+              style={{ fontWeight: 500 }}
+            >
+              Submit
+            </Button>
           )}
-        </div>
+        </S.FilterInputs>
+        <Select
+          selectSize="M"
+          onChange={(option) => toggleSeekDirection(option as string)}
+          value={seekDirection}
+          minWidth="120px"
+          options={SeekDirectionOptions}
+        />
       </div>
-      <div className="columns">
-        <div className="column is-half">
-          <div className="field">
-            <input
-              id="switchRoundedDefault"
-              type="checkbox"
-              name="switchRoundedDefault"
-              className="switch is-rounded"
-              checked={seekDirection === SeekDirection.BACKWARD}
-              onChange={toggleSeekDirection}
-            />
-            <label htmlFor="switchRoundedDefault">Newest first</label>
-          </div>
-        </div>
-        <div className="column is-half">
-          <div className="tags is-justify-content-flex-end">
-            <div className="tag is-white">{isFetching && phaseMessage}</div>
-            <div className="tag is-info" title="Elapsed Time">
-              <span className="icon">
-                <i className="fas fa-clock" />
-              </span>
-              <span>{Math.max(elapsedMs || 0, 0)}ms</span>
-            </div>
-            <div className="tag is-info" title="Bytes Consumed">
-              <span className="icon">
-                <i className="fas fa-download" />
-              </span>
-              <BytesFormatted value={bytesConsumed} />
-            </div>
-            <div className="tag is-info" title="Messages Consumed">
-              <span className="icon">
-                <i className="fas fa-envelope" />
-              </span>
-              <span>{messagesConsumed}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+      <S.FiltersMetrics>
+        <p style={{ fontSize: 14 }}>{isFetching && phaseMessage}</p>
+        <S.Metric title="Elapsed Time">
+          <S.MetricsIcon>
+            <i className="far fa-clock" />
+          </S.MetricsIcon>
+          <span>{Math.max(elapsedMs || 0, 0)} ms</span>
+        </S.Metric>
+        <S.Metric title="Bytes Consumed">
+          <S.MetricsIcon>
+            <i className="fas fa-arrow-down" />
+          </S.MetricsIcon>
+          <BytesFormatted value={bytesConsumed} />
+        </S.Metric>
+        <S.Metric title="Messages Consumed">
+          <S.MetricsIcon>
+            <i className="far fa-file-alt" />
+          </S.MetricsIcon>
+          <span>{messagesConsumed} messages</span>
+        </S.Metric>
+      </S.FiltersMetrics>
+    </S.FiltersWrapper>
   );
 };
 

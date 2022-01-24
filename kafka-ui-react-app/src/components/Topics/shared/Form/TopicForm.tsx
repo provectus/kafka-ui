@@ -1,11 +1,18 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
-import { TOPIC_NAME_VALIDATION_PATTERN, BYTES_IN_GB } from 'lib/constants';
+import { useFormContext, Controller } from 'react-hook-form';
+import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
+import Select, { SelectOption } from 'components/common/Select/Select';
+import Input from 'components/common/Input/Input';
+import { Button } from 'components/common/Button/Button';
+import { InputLabel } from 'components/common/Input/InputLabel.styled';
+import { FormError } from 'components/common/Input/Input.styled';
+import { StyledForm } from 'components/common/Form/Form.styled';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
+import * as S from './TopicForm.styled';
 
 interface Props {
   topicName?: TopicName;
@@ -15,6 +22,20 @@ interface Props {
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
 }
 
+const CleanupPolicyOptions: Array<SelectOption> = [
+  { value: 'delete', label: 'Delete' },
+  { value: 'compact', label: 'Compact' },
+  { value: 'compact,delete', label: 'Compact,Delete' },
+];
+
+const RetentionBytesOptions: Array<SelectOption> = [
+  { value: -1, label: 'Not Set' },
+  { value: BYTES_IN_GB, label: '1 GB' },
+  { value: BYTES_IN_GB * 10, label: '10 GB' },
+  { value: BYTES_IN_GB * 20, label: '20 GB' },
+  { value: BYTES_IN_GB * 50, label: '50 GB' },
+];
+
 const TopicForm: React.FC<Props> = ({
   topicName,
   config,
@@ -23,143 +44,140 @@ const TopicForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext();
 
   return (
-    <form onSubmit={onSubmit}>
+    <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
         <fieldset disabled={isEditing}>
-          <div className="columns">
-            <div className={`column ${isEditing ? '' : 'is-three-quarters'}`}>
-              <label className="label">Topic Name *</label>
-              <input
-                className="input"
+          <S.Column>
+            <S.NameField>
+              <InputLabel>Topic Name *</InputLabel>
+              <Input
+                name="name"
                 placeholder="Topic Name"
                 defaultValue={topicName}
-                {...register('name', {
-                  required: 'Topic Name is required.',
-                  pattern: {
-                    value: TOPIC_NAME_VALIDATION_PATTERN,
-                    message: 'Only alphanumeric, _, -, and . allowed',
-                  },
-                })}
-                autoComplete="off"
               />
-              <p className="help is-danger">
+              <FormError>
                 <ErrorMessage errors={errors} name="name" />
-              </p>
-            </div>
+              </FormError>
+            </S.NameField>
+          </S.Column>
 
-            {!isEditing && (
-              <div className="column">
-                <label className="label">Number of partitions *</label>
-                <input
-                  className="input"
+          {!isEditing && (
+            <S.Column>
+              <div>
+                <InputLabel>Number of partitions *</InputLabel>
+                <Input
                   type="number"
                   placeholder="Number of partitions"
+                  min="1"
                   defaultValue="1"
-                  {...register('partitions', {
-                    required: 'Number of partitions is required.',
-                  })}
+                  name="partitions"
                 />
-                <p className="help is-danger">
+                <FormError>
                   <ErrorMessage errors={errors} name="partitions" />
-                </p>
+                </FormError>
               </div>
-            )}
-          </div>
+              <div>
+                <InputLabel>Replication Factor *</InputLabel>
+                <Input
+                  type="number"
+                  placeholder="Replication Factor"
+                  min="1"
+                  defaultValue="1"
+                  name="replicationFactor"
+                />
+                <FormError>
+                  <ErrorMessage errors={errors} name="replicationFactor" />
+                </FormError>
+              </div>
+            </S.Column>
+          )}
         </fieldset>
 
-        <div className="columns">
-          {!isEditing && (
-            <div className="column">
-              <label className="label">Replication Factor *</label>
-              <input
-                className="input"
-                type="number"
-                placeholder="Replication Factor"
-                defaultValue="1"
-                {...register('replicationFactor', {
-                  required: 'Replication Factor is required.',
-                })}
-              />
-              <p className="help is-danger">
-                <ErrorMessage errors={errors} name="replicationFactor" />
-              </p>
-            </div>
-          )}
-
-          <div className="column">
-            <label className="label">Min In Sync Replicas *</label>
-            <input
-              className="input"
+        <S.Column>
+          <div>
+            <InputLabel>Min In Sync Replicas *</InputLabel>
+            <Input
               type="number"
               placeholder="Min In Sync Replicas"
+              min="1"
               defaultValue="1"
-              {...register('minInsyncReplicas', {
-                required: 'Min In Sync Replicas is required.',
-              })}
+              name="minInsyncReplicas"
             />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="minInSyncReplicas" />
-            </p>
+            <FormError>
+              <ErrorMessage errors={errors} name="minInsyncReplicas" />
+            </FormError>
           </div>
-        </div>
-
-        <div className="columns">
-          <div className="column is-one-third">
-            <label className="label">Cleanup policy</label>
-            <div className="select is-block">
-              <select defaultValue="delete" {...register('cleanupPolicy')}>
-                <option value="delete">Delete</option>
-                <option value="compact">Compact</option>
-                <option value="compact,delete">Compact,Delete</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="column is-one-third">
-            <TimeToRetain isSubmitting={isSubmitting} />
-          </div>
-
-          <div className="column is-one-third">
-            <label className="label">Max size on disk in GB</label>
-            <div className="select is-block">
-              <select defaultValue={-1} {...register('retentionBytes')}>
-                <option value={-1}>Not Set</option>
-                <option value={BYTES_IN_GB}>1 GB</option>
-                <option value={BYTES_IN_GB * 10}>10 GB</option>
-                <option value={BYTES_IN_GB * 20}>20 GB</option>
-                <option value={BYTES_IN_GB * 50}>50 GB</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        <div className="columns">
-          <div className="column">
-            <label className="label">Maximum message size in bytes *</label>
-            <input
-              className="input"
-              type="number"
-              defaultValue="1000012"
-              {...register('maxMessageBytes', {
-                required: 'Maximum message size in bytes is required',
-              })}
+          <div>
+            <InputLabel>Cleanup policy</InputLabel>
+            <Controller
+              control={control}
+              name="cleanupPolicy"
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  name={name}
+                  value={CleanupPolicyOptions[0].value}
+                  onChange={onChange}
+                  minWidth="250px"
+                  options={CleanupPolicyOptions}
+                />
+              )}
             />
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="maxMessageBytes" />
-            </p>
           </div>
+        </S.Column>
+
+        <div>
+          <S.Column>
+            <div>
+              <TimeToRetain isSubmitting={isSubmitting} />
+            </div>
+          </S.Column>
+          <S.Column>
+            <div>
+              <InputLabel>Max size on disk in GB</InputLabel>
+              <Controller
+                control={control}
+                name="retentionBytes"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={RetentionBytesOptions[0].value}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={RetentionBytesOptions}
+                  />
+                )}
+              />
+            </div>
+
+            <div>
+              <InputLabel>Maximum message size in bytes *</InputLabel>
+              <Input
+                type="number"
+                min="1"
+                defaultValue="1000012"
+                name="maxMessageBytes"
+              />
+              <FormError>
+                <ErrorMessage errors={errors} name="maxMessageBytes" />
+              </FormError>
+            </div>
+          </S.Column>
         </div>
+
+        <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
 
         <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
 
-        <input type="submit" className="button is-primary" value="Send" />
+        <Button type="submit" buttonType="primary" buttonSize="L">
+          Send
+        </Button>
       </fieldset>
-    </form>
+    </StyledForm>
   );
 };
 

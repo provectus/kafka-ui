@@ -1,108 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Diff View Initial state matches snapshot 1`] = `
-<div
-  className="section"
->
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-          Object {
-            "href": "/ui/clusters/testCluster/schemas/test/latest",
-            "label": "test",
-          },
-        ]
-      }
-    >
-      Compare Versions
-    </Breadcrumb>
-  </div>
-  <div
-    className="box tile is-ancestor is-vertical"
-  >
-    <div
-      className="tile"
-    >
-      <div
-        className="tile is-6"
-      >
-        <div
-          className="select"
-        >
-          <select
-            defaultValue=""
-            id="left-select"
-            onChange={[Function]}
-          />
-        </div>
-      </div>
-      <div
-        className="tile is-6"
-      >
-        <div
-          className="select"
-        >
-          <select
-            defaultValue=""
-            id="right-select"
-            onChange={[Function]}
-          />
-        </div>
-      </div>
-    </div>
-    <div
-      className="tile pt-5"
-    >
-      <JSONDiffViewer
-        isFixedHeight={false}
-        setOptions={
-          Object {
-            "autoScrollEditorIntoView": true,
-          }
-        }
-        value={
-          Array [
-            "",
-            "",
-          ]
-        }
-      />
-    </div>
-  </div>
-</div>
-`;
-
 exports[`Diff View when page with schema versions is loading matches snapshot 1`] = `
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-          Object {
-            "href": "/ui/clusters/testCluster/schemas/test/latest",
-            "label": "test",
-          },
-        ]
-      }
-    >
-      Compare Versions
-    </Breadcrumb>
-  </div>
   <PageLoader />
 </div>
 `;
@@ -111,26 +12,6 @@ exports[`Diff View when schema versions are loaded and no specified versions in 
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-          Object {
-            "href": "/ui/clusters/testCluster/schemas/test/latest",
-            "label": "test",
-          },
-        ]
-      }
-    >
-      Compare Versions
-    </Breadcrumb>
-  </div>
   <div
     className="box tile is-ancestor is-vertical"
   >
@@ -242,26 +123,6 @@ exports[`Diff View when schema versions are loaded and only one versions in path
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-          Object {
-            "href": "/ui/clusters/testCluster/schemas/test/latest",
-            "label": "test",
-          },
-        ]
-      }
-    >
-      Compare Versions
-    </Breadcrumb>
-  </div>
   <div
     className="box tile is-ancestor is-vertical"
   >
@@ -376,26 +237,6 @@ exports[`Diff View when schema versions are loaded and two versions in path matc
 <div
   className="section"
 >
-  <div
-    className="level"
-  >
-    <Breadcrumb
-      links={
-        Array [
-          Object {
-            "href": "/ui/clusters/testCluster/schemas",
-            "label": "Schema Registry",
-          },
-          Object {
-            "href": "/ui/clusters/testCluster/schemas/test/latest",
-            "label": "test",
-          },
-        ]
-      }
-    >
-      Compare Versions
-    </Breadcrumb>
-  </div>
   <div
     className="box tile is-ancestor is-vertical"
   >

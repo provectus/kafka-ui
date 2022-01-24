@@ -1,23 +1,24 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.ClusterDTO;
 import com.provectus.kafka.ui.model.ClusterMetricsDTO;
 import com.provectus.kafka.ui.model.ClusterStatsDTO;
+import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class ClusterService {
 
+  private final MetricsCache metricsCache;
   private final ClustersStorage clustersStorage;
   private final ClusterMapper clusterMapper;
   private final MetricsService metricsService;
@@ -25,32 +26,25 @@ public class ClusterService {
   public List<ClusterDTO> getClusters() {
     return clustersStorage.getKafkaClusters()
         .stream()
-        .map(clusterMapper::toCluster)
+        .map(c -> clusterMapper.toCluster(new InternalClusterState(c, metricsCache.get(c))))
         .collect(Collectors.toList());
   }
 
-  public Mono<ClusterStatsDTO> getClusterStats(String name) {
+  public Mono<ClusterStatsDTO> getClusterStats(KafkaCluster cluster) {
     return Mono.justOrEmpty(
-        clustersStorage.getClusterByName(name)
-            .map(KafkaCluster::getMetrics)
-            .map(clusterMapper::toClusterStats)
+        clusterMapper.toClusterStats(
+            new InternalClusterState(cluster, metricsCache.get(cluster)))
     );
   }
 
-  public Mono<ClusterMetricsDTO> getClusterMetrics(String name) {
-    return Mono.justOrEmpty(
-        clustersStorage.getClusterByName(name)
-            .map(KafkaCluster::getMetrics)
-            .map(clusterMapper::toClusterMetrics)
-    );
+  public Mono<ClusterMetricsDTO> getClusterMetrics(KafkaCluster cluster) {
+    return Mono.just(
+        clusterMapper.toClusterMetrics(
+            metricsCache.get(cluster).getJmxMetrics()));
   }
 
-  public Mono<ClusterDTO> updateCluster(String clusterName) {
-    return clustersStorage.getClusterByName(clusterName)
-        .map(cluster -> metricsService.updateClusterMetrics(cluster)
-            .doOnNext(updatedCluster -> clustersStorage
-                .setKafkaCluster(updatedCluster.getName(), updatedCluster))
-            .map(clusterMapper::toCluster))
-        .orElse(Mono.error(new ClusterNotFoundException()));
+  public Mono<ClusterDTO> updateCluster(KafkaCluster cluster) {
+    return metricsService.updateCache(cluster)
+        .map(metrics -> clusterMapper.toCluster(new InternalClusterState(cluster, metrics)));
   }
 }

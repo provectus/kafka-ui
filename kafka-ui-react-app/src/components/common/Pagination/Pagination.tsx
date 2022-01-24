@@ -2,8 +2,9 @@ import { PER_PAGE } from 'lib/constants';
 import usePagination from 'lib/hooks/usePagination';
 import { range } from 'lodash';
 import React from 'react';
-import { Link } from 'react-router-dom';
 import PageControl from 'components/common/Pagination/PageControl';
+
+import * as S from './Pagination.styled';
 
 export interface PaginationProps {
   totalPages: number;
@@ -64,31 +65,16 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
   }, []);
 
   return (
-    <nav
-      className="pagination is-small is-right"
-      role="navigation"
-      aria-label="pagination"
-    >
+    <S.Wrapper role="navigation" aria-label="pagination">
       {currentPage > 1 ? (
-        <Link className="pagination-previous" to={getPath(currentPage - 1)}>
+        <S.PaginationButton to={getPath(currentPage - 1)}>
           Previous
-        </Link>
+        </S.PaginationButton>
       ) : (
-        <button type="button" className="pagination-previous" disabled>
-          Previous
-        </button>
-      )}
-      {currentPage < totalPages ? (
-        <Link className="pagination-next" to={getPath(currentPage + 1)}>
-          Next page
-        </Link>
-      ) : (
-        <button type="button" className="pagination-next" disabled>
-          Next page
-        </button>
+        <S.DisabledButton disabled>Previous</S.DisabledButton>
       )}
       {totalPages > 1 && (
-        <ul className="pagination-list">
+        <ul>
           {!pages.includes(1) && (
             <PageControl
               page={1}
@@ -123,7 +109,14 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
           )}
         </ul>
       )}
-    </nav>
+      {currentPage < totalPages ? (
+        <S.PaginationButton to={getPath(currentPage + 1)}>
+          Next
+        </S.PaginationButton>
+      ) : (
+        <S.DisabledButton disabled>Next</S.DisabledButton>
+      )}
+    </S.Wrapper>
   );
 };
 

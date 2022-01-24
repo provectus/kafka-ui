@@ -26,7 +26,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import lombok.Value;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Flux;
 
-@Log4j2
+@Slf4j
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 class RecordEmitterTest extends AbstractBaseTest {
 

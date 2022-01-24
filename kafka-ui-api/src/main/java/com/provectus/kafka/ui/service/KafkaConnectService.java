@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
@@ -42,7 +42,7 @@ import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
 @Service
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class KafkaConnectService {
   private final ClusterMapper clusterMapper;
@@ -146,7 +146,7 @@ public class KafkaConnectService {
     return getConnectAddress(cluster, connectName)
         .flatMapMany(connect ->
             KafkaConnectClients.withBaseUrl(connect).getConnectors(null)
-                .doOnError(log::error)
+                .doOnError(e -> log.error("Unexpected error upon getting connectors", e))
         );
   }
 

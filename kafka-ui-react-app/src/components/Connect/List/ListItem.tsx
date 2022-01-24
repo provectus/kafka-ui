@@ -1,6 +1,5 @@
 import React from 'react';
-import cx from 'classnames';
-import { FullConnectorInfo } from 'generated-sources';
+import { ConnectorState, FullConnectorInfo } from 'generated-sources';
 import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
@@ -10,12 +9,21 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import ConnectorStatusTag from 'components/Connect/ConnectorStatusTag';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { Colors } from 'theme/theme';
+import styled from 'styled-components';
 
 export interface ListItemProps {
   clusterName: ClusterName;
   connector: FullConnectorInfo;
 }
+
+const TopicTagsWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const ListItem: React.FC<ListItemProps> = ({
   clusterName,
@@ -48,57 +56,58 @@ const ListItem: React.FC<ListItemProps> = ({
     return tasksCount - (failedTasksCount || 0);
   }, [tasksCount, failedTasksCount]);
 
+  const stateColor = React.useMemo(() => {
+    const { state = '' } = status;
+
+    switch (state) {
+      case ConnectorState.RUNNING:
+        return 'green';
+      case ConnectorState.FAILED:
+      case ConnectorState.TASK_FAILED:
+        return 'red';
+      default:
+        return 'yellow';
+    }
+  }, [status]);
+
   return (
     <tr>
-      <td className="has-text-overflow-ellipsis">
+      <TableKeyLink>
         <NavLink
           exact
           to={clusterConnectConnectorPath(clusterName, connect, name)}
-          activeClassName="is-active"
-          className="title is-6"
         >
           {name}
         </NavLink>
-      </td>
+      </TableKeyLink>
       <td>{connect}</td>
       <td>{type}</td>
       <td>{connectorClass}</td>
       <td>
-        <div className="is-flex is-flex-wrap-wrap">
+        <TopicTagsWrapper>
           {topics?.map((t) => (
-            <span key={t} className="tag is-info is-light mr-1 mb-1">
+            <Tag key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
-            </span>
+            </Tag>
           ))}
-        </div>
+        </TopicTagsWrapper>
       </td>
-      <td>{status && <ConnectorStatusTag status={status.state} />}</td>
+      <td>{status && <Tag color={stateColor}>{status.state}</Tag>}</td>
       <td>
         {runningTasks && (
-          <span
-            className={cx(
-              failedTasksCount ? 'has-text-danger' : 'has-text-success'
-            )}
-          >
+          <span>
             {runningTasks} of {tasksCount}
           </span>
         )}
       </td>
       <td>
-        <div className="has-text-right">
-          <Dropdown
-            label={
-              <span className="icon">
-                <i className="fas fa-cog" />
-              </span>
-            }
-            right
-          >
+        <div>
+          <Dropdown label={<VerticalElipsisIcon />} right>
             <DropdownDivider />
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
             >
-              <span className="has-text-danger">Remove Connector</span>
+              <span style={{ color: Colors.red[50] }}>Remove Connector</span>
             </DropdownItem>
           </Dropdown>
         </div>

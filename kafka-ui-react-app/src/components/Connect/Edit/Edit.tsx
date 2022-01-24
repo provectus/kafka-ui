@@ -12,8 +12,14 @@ import {
 } from 'redux/interfaces';
 import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import yup from 'lib/yupExtended';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import { Button } from 'components/common/Button/Button';
+
+import {
+  ConnectEditWarningMessageStyled,
+  ConnectEditWrapperStyled,
+} from './Edit.styled';
 
 const validationSchema = yup.object().shape({
   config: yup.string().required().isJsonObject(),
@@ -82,7 +88,7 @@ const Edit: React.FC<EditProps> = ({
         clusterName,
         connectName,
         connectorName,
-        JSON.parse(values.config)
+        JSON.parse(values.config.trim())
       );
       if (connector) {
         history.push(
@@ -103,41 +109,36 @@ const Edit: React.FC<EditProps> = ({
     '"******"'
   );
   return (
-    <>
+    <ConnectEditWrapperStyled>
       {hasCredentials && (
-        <div className="notification is-danger is-light">
+        <ConnectEditWarningMessageStyled>
           Please replace ****** with the real credential values to avoid
           accidentally breaking your connector config!
-        </div>
+        </ConnectEditWarningMessageStyled>
       )}
-      <div className="box">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="field">
-            <div className="control">
-              <Controller
-                control={control}
-                name="config"
-                render={({ field }) => (
-                  <JSONEditor {...field} readOnly={isSubmitting} />
-                )}
-              />
-            </div>
-            <p className="help is-danger">
-              <ErrorMessage errors={errors} name="config" />
-            </p>
-          </div>
-          <div className="field">
-            <div className="control">
-              <input
-                type="submit"
-                className="button is-primary"
-                disabled={!isValid || isSubmitting || !isDirty}
-              />
-            </div>
-          </div>
-        </form>
-      </div>
-    </>
+      <form onSubmit={handleSubmit(onSubmit)} aria-label="Edit connect form">
+        <div>
+          <Controller
+            control={control}
+            name="config"
+            render={({ field }) => (
+              <Editor {...field} readOnly={isSubmitting} />
+            )}
+          />
+        </div>
+        <div>
+          <ErrorMessage errors={errors} name="config" />
+        </div>
+        <Button
+          buttonSize="M"
+          buttonType="primary"
+          type="submit"
+          disabled={!isValid || isSubmitting || !isDirty}
+        >
+          Submit
+        </Button>
+      </form>
+    </ConnectEditWrapperStyled>
   );
 };
 

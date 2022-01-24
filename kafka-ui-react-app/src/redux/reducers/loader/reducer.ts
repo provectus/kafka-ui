@@ -4,12 +4,17 @@ export const initialState: LoaderState = {};
 
 const reducer = (state = initialState, action: Action): LoaderState => {
   const { type } = action;
-  const matches = /(.*)__(REQUEST|SUCCESS|FAILURE|CANCEL)$/.exec(type);
+  const splitType = type.split('__');
+  const requestState = splitType.pop();
+  const requestName = splitType.join('__');
 
   // not a *__REQUEST / *__SUCCESS /  *__FAILURE /  *__CANCEL actions, so we ignore them
-  if (!matches) return state;
-
-  const [, requestName, requestState] = matches;
+  if (
+    requestState &&
+    !['REQUEST', 'SUCCESS', 'FAILURE', 'CANCEL'].includes(requestState)
+  ) {
+    return state;
+  }
 
   switch (requestState) {
     case 'REQUEST':

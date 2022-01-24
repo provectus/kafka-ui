@@ -13,6 +13,8 @@ import org.apache.kafka.common.utils.Bytes;
 
 public class SimpleRecordSerDe implements RecordSerDe {
 
+  private static final ObjectMapper objectMapper = new ObjectMapper();
+
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     var builder = DeserializedKeyValue.builder();
@@ -45,7 +47,7 @@ public class SimpleRecordSerDe implements RecordSerDe {
     final MessageSchemaDTO schema = new MessageSchemaDTO()
         .name("unknown")
         .source(MessageSchemaDTO.SourceEnum.UNKNOWN)
-        .schema(JsonSchema.stringSchema().toJson(new ObjectMapper()));
+        .schema(JsonSchema.stringSchema().toJson(objectMapper));
     return new TopicMessageSchemaDTO()
         .key(schema)
         .value(schema);

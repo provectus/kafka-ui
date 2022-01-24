@@ -1,6 +1,8 @@
 import * as yup from 'yup';
 import { AnyObject, Maybe } from 'yup/lib/types';
 
+import { TOPIC_NAME_VALIDATION_PATTERN } from './constants';
+
 declare module 'yup' {
   interface StringSchema<
     TType extends Maybe<string> = string | undefined,
@@ -14,11 +16,13 @@ declare module 'yup' {
 export const isValidJsonObject = (value?: string) => {
   try {
     if (!value) return false;
+
+    const trimmedValue = value.trim();
     if (
-      value.indexOf('{') === 0 &&
-      value.lastIndexOf('}') === value.length - 1
+      trimmedValue.indexOf('{') === 0 &&
+      trimmedValue.lastIndexOf('}') === trimmedValue.length - 1
     ) {
-      JSON.parse(value);
+      JSON.parse(trimmedValue);
       return true;
     }
   } catch {
@@ -39,3 +43,26 @@ const isJsonObject = () => {
 yup.addMethod(yup.string, 'isJsonObject', isJsonObject);
 
 export default yup;
+
+export const topicFormValidationSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required()
+    .matches(
+      TOPIC_NAME_VALIDATION_PATTERN,
+      'Only alphanumeric, _, -, and . allowed'
+    ),
+  partitions: yup.number().min(1).required(),
+  replicationFactor: yup.number().min(1).required(),
+  minInsyncReplicas: yup.number().min(1).required(),
+  cleanupPolicy: yup.string().required(),
+  retentionMs: yup.number().min(-1, 'Must be greater than or equal to -1'),
+  retentionBytes: yup.number(),
+  maxMessageBytes: yup.number().min(1).required(),
+  customParams: yup.array().of(
+    yup.object().shape({
+      name: yup.string().required(),
+      value: yup.string().required(),
+    })
+  ),
+});

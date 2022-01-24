@@ -9,7 +9,7 @@ import com.provectus.kafka.ui.exception.ValidationException;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
 import reactor.util.retry.RetryBackoffSpec;
 
-@Log4j2
+@Slf4j
 public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);

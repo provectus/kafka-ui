@@ -16,7 +16,7 @@ import com.provectus.kafka.ui.service.TopicsService;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class TopicsController extends AbstractController implements TopicsApi {
   private final TopicsService topicsService;
 
@@ -48,18 +48,16 @@ public class TopicsController extends AbstractController implements TopicsApi {
   @Override
   public Mono<ResponseEntity<Flux<TopicConfigDTO>>> getTopicConfigs(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(
-        ResponseEntity.ok(
-            Flux.fromIterable(topicsService.getTopicConfigs(getCluster(clusterName), topicName))));
+    return topicsService.getTopicConfigs(getCluster(clusterName), topicName)
+        .map(Flux::fromIterable)
+        .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<TopicDetailsDTO>> getTopicDetails(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(
-        ResponseEntity.ok(
-            topicsService.getTopicDetails(getCluster(clusterName), topicName))
-    );
+    return topicsService.getTopicDetails(getCluster(clusterName), topicName)
+        .map(ResponseEntity::ok);
   }
 
   @Override
@@ -69,7 +67,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                         @Valid String search,
                                                         @Valid TopicColumnsToSortDTO orderBy,
                                                         ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(topicsService
+    return topicsService
         .getTopics(
             getCluster(clusterName),
             Optional.ofNullable(page),
@@ -77,7 +75,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
             Optional.ofNullable(showInternal),
             Optional.ofNullable(search),
             Optional.ofNullable(orderBy)
-        )));
+        ).map(ResponseEntity::ok);
   }
 
   @Override

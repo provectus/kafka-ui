@@ -1,36 +1,35 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`SchemaVersion matches snapshot 1`] = `
-<tr>
-  <td>
-    <span
-      aria-hidden={true}
-      className="icon has-text-link is-size-7 is-small is-clickable"
-      onClick={[Function]}
-    >
-      <i
-        className="fas fa-plus"
-      />
-    </span>
-  </td>
-  <td>
-    1
-  </td>
-  <td>
-    1
-  </td>
-  <td
-    className="has-text-overflow-ellipsis is-family-code"
-    style={
-      Object {
-        "maxWidth": 0,
-        "width": "100%",
+<Fragment>
+  <tr>
+    <td
+      style={
+        Object {
+          "width": "3%",
+        }
       }
-    }
-  >
-    <span>
-      {"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}
-    </span>
-  </td>
-</tr>
+    >
+      <styled.span
+        onClick={[Function]}
+      >
+        <MessageToggleIcon
+          isOpen={false}
+        />
+      </styled.span>
+    </td>
+    <td
+      style={
+        Object {
+          "width": "6%",
+        }
+      }
+    >
+      1
+    </td>
+    <td>
+      1
+    </td>
+  </tr>
+</Fragment>
 `;

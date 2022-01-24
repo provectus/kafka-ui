@@ -15,7 +15,6 @@ import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,9 +23,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -36,7 +34,6 @@ import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
-import org.apache.kafka.common.utils.Bytes;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
@@ -46,7 +43,7 @@ import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class MessagesService {
 
   private static final int MAX_LOAD_RECORD_LIMIT = 100;
@@ -55,10 +52,11 @@ public class MessagesService {
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
   private final ConsumerGroupService consumerGroupService;
+  private final MetricsCache metricsCache;
 
   public Mono<Void> deleteTopicMessages(KafkaCluster cluster, String topicName,
                                         List<Integer> partitionsToInclude) {
-    if (!cluster.getMetrics().getTopics().containsKey(topicName)) {
+    if (!metricsCache.get(cluster).getTopicDescriptions().containsKey(topicName)) {
       throw new TopicNotFoundException();
     }
     return offsetsForDeletion(cluster, topicName, partitionsToInclude)
@@ -67,25 +65,25 @@ public class MessagesService {
   }
 
   private Mono<Map<TopicPartition, Long>> offsetsForDeletion(KafkaCluster cluster, String topicName,
-                                                            List<Integer> partitionsToInclude) {
-    return Mono.fromSupplier(() -> {
-      try (KafkaConsumer<Bytes, Bytes> consumer = consumerGroupService.createConsumer(cluster)) {
-        return significantOffsets(consumer, topicName, partitionsToInclude);
-      } catch (Exception e) {
-        log.error("Error occurred while consuming records", e);
-        throw new RuntimeException(e);
-      }
-    });
+                                                             List<Integer> partitionsToInclude) {
+    return adminClientService.get(cluster).flatMap(ac ->
+        ac.listOffsets(topicName, OffsetSpec.earliest())
+            .zipWith(ac.listOffsets(topicName, OffsetSpec.latest()),
+                (start, end) ->
+                    end.entrySet().stream()
+                        .filter(e -> partitionsToInclude.isEmpty()
+                            || partitionsToInclude.contains(e.getKey().partition()))
+                        // we only need non-empty partitions (where start offset != end offset)
+                        .filter(entry -> !entry.getValue().equals(start.get(entry.getKey())))
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)))
+    );
   }
 
   public Mono<RecordMetadata> sendMessage(KafkaCluster cluster, String topic,
                                           CreateTopicMessageDTO msg) {
-    if (msg.getKey() == null && msg.getContent() == null) {
-      throw new ValidationException("Invalid message: both key and value can't be null");
-    }
     if (msg.getPartition() != null
-        && msg.getPartition() > cluster.getMetrics().getTopics()
-          .get(topic).getPartitionCount() - 1) {
+        && msg.getPartition() > metricsCache.get(cluster).getTopicDescriptions()
+          .get(topic).partitions().size() - 1) {
       throw new ValidationException("Invalid partition");
     }
     RecordSerDe serde =
@@ -99,8 +97,8 @@ public class MessagesService {
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
       ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
-          msg.getKey(),
-          msg.getContent(),
+          msg.getKey().orElse(null),
+          msg.getContent().orElse(null),
           msg.getPartition()
       );
       producerRecord = new ProducerRecord<>(
@@ -159,25 +157,6 @@ public class MessagesService {
         .takeWhile(new FilterTopicMessageEvents(recordsLimit))
         .subscribeOn(Schedulers.elastic())
         .share();
-  }
-
-  /**
-   * returns end offsets for partitions where start offset != end offsets.
-   * This is useful when we need to verify that partition is not empty.
-   */
-  public static Map<TopicPartition, Long> significantOffsets(Consumer<?, ?> consumer,
-                                                             String topicName,
-                                                             Collection<Integer>
-                                                                 partitionsToInclude) {
-    var partitions = consumer.partitionsFor(topicName).stream()
-        .filter(p -> partitionsToInclude.isEmpty() || partitionsToInclude.contains(p.partition()))
-        .map(p -> new TopicPartition(topicName, p.partition()))
-        .collect(Collectors.toList());
-    var beginningOffsets = consumer.beginningOffsets(partitions);
-    var endOffsets = consumer.endOffsets(partitions);
-    return endOffsets.entrySet().stream()
-        .filter(entry -> !beginningOffsets.get(entry.getKey()).equals(entry.getValue()))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
   }
 
   private boolean filterTopicMessage(TopicMessageEventDTO message, String query) {

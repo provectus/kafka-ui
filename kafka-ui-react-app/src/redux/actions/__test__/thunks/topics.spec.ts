@@ -39,7 +39,8 @@ describe('Thunks', () => {
       try {
         await store.dispatch(thunks.deleteTopic(clusterName, topicName));
       } catch (error) {
-        expect(error.status).toEqual(404);
+        const err = error as Response;
+        expect(err.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.deleteTopicAction.request(),
           actions.deleteTopicAction.failure(),
@@ -69,7 +70,8 @@ describe('Thunks', () => {
       try {
         await store.dispatch(thunks.clearTopicMessages(clusterName, topicName));
       } catch (error) {
-        expect(error.status).toEqual(404);
+        const err = error as Response;
+        expect(err.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.clearMessagesTopicAction.request(),
           actions.clearMessagesTopicAction.failure({}),
@@ -89,7 +91,8 @@ describe('Thunks', () => {
           thunks.fetchTopicConsumerGroups(clusterName, topicName)
         );
       } catch (error) {
-        expect(error.status).toEqual(404);
+        const err = error as Response;
+        expect(err.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.fetchTopicConsumerGroupsAction.request(),
           actions.fetchTopicConsumerGroupsAction.failure(),
@@ -107,7 +110,8 @@ describe('Thunks', () => {
           thunks.fetchTopicConsumerGroups(clusterName, topicName)
         );
       } catch (error) {
-        expect(error.status).toEqual(200);
+        const err = error as Response;
+        expect(err.status).toEqual(200);
         expect(store.getActions()).toEqual([
           actions.fetchTopicConsumerGroupsAction.request(),
           actions.fetchTopicConsumerGroupsAction.success(mockTopicsState),
@@ -127,14 +131,15 @@ describe('Thunks', () => {
           thunks.fetchTopicMessageSchema(clusterName, topicName)
         );
       } catch (error) {
-        expect(error.status).toEqual(404);
+        const err = error as Response;
+        expect(err.status).toEqual(404);
         expect(store.getActions()).toEqual([
           actions.fetchTopicMessageSchemaAction.request(),
           actions.fetchTopicMessageSchemaAction.failure({
             alert: {
               subject: ['topic', topicName].join('-'),
               title: `Topic Schema ${topicName}`,
-              response: error,
+              response: err,
             },
           }),
         ]);
@@ -206,56 +211,6 @@ describe('Thunks', () => {
       ]);
     });
   });
-
-  describe('sendTopicMessage', () => {
-    it('creates SEND_TOPIC_MESSAGE__FAILURE', async () => {
-      fetchMock.postOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        404
-      );
-      try {
-        await store.dispatch(
-          thunks.sendTopicMessage(clusterName, topicName, {
-            key: '{}',
-            content: '{}',
-            headers: undefined,
-            partition: 0,
-          })
-        );
-      } catch (error) {
-        expect(error.status).toEqual(404);
-        expect(store.getActions()).toEqual([
-          actions.sendTopicMessageAction.request(),
-          actions.sendTopicMessageAction.failure({
-            alert: {
-              subject: ['topic', topicName].join('-'),
-              title: `Topic Message ${topicName}`,
-              response: error,
-            },
-          }),
-        ]);
-      }
-    });
-
-    it('creates SEND_TOPIC_MESSAGE__SUCCESS', async () => {
-      fetchMock.postOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        200
-      );
-      await store.dispatch(
-        thunks.sendTopicMessage(clusterName, topicName, {
-          key: '{}',
-          content: '{}',
-          headers: undefined,
-          partition: 0,
-        })
-      );
-      expect(store.getActions()).toEqual([
-        actions.sendTopicMessageAction.request(),
-        actions.sendTopicMessageAction.success(),
-      ]);
-    });
-  });
   describe('increasing partitions count', () => {
     it('calls updateTopicPartitionsCountAction.success on success', async () => {
       fetchMock.patchOnce(
@@ -281,7 +236,7 @@ describe('Thunks', () => {
           thunks.updateTopicPartitionsCount(clusterName, topicName, 4)
         );
       } catch (error) {
-        const response = await getResponse(error);
+        const response = await getResponse(error as Response);
         const alert: FailurePayload = {
           subject: ['topic-partitions', topicName].join('-'),
           title: `Topic ${topicName} partitions count increase failed`,
@@ -320,7 +275,8 @@ describe('Thunks', () => {
           thunks.updateTopicReplicationFactor(clusterName, topicName, 4)
         );
       } catch (error) {
-        const response = await getResponse(error);
+        const err = error as Response;
+        const response = await getResponse(err);
         const alert: FailurePayload = {
           subject: ['topic-replication-factor', topicName].join('-'),
           title: `Topic ${topicName} replication factor change failed`,
