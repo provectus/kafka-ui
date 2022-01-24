@@ -1,4 +1,4 @@
-import { KsqlCommandResponse } from 'generated-sources';
+import {KsqlCommandResponse, KsqlResponse} from 'generated-sources';
 
 export interface KsqlTables {
   data: {
@@ -10,5 +10,5 @@ export interface KsqlTables {
 export interface KsqlState {
   tables: Dictionary<string>[];
   streams: Dictionary<string>[];
-  executionResult: KsqlCommandResponse | null;
+  executionResult: Array<KsqlResponse> | null;
 }

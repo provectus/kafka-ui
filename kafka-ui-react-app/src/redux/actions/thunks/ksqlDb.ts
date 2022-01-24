@@ -72,7 +72,7 @@ export const executeKsql =
   async (dispatch) => {
     dispatch(actions.executeKsqlAction.request());
     try {
-      const response = await ksqlDbApiClient.executeKsqlCommand(params);
+      const response = await ksqlDbApiClient.executeKsql(params);
 
       dispatch(actions.executeKsqlAction.success(response));
     } catch (error) {
