@@ -5,7 +5,6 @@ import { Route } from 'react-router';
 import { clusterSchemaPath } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
 import {
-  schemasFulfilledState,
   schemasInitialState,
   schemaVersion,
 } from 'redux/reducers/schemas/__test__/fixtures';
@@ -19,7 +18,6 @@ import { RootState } from 'redux/interfaces';
 import { versionPayload, versionEmptyPayload } from './fixtures';
 
 const clusterName = 'testClusterName';
-const { subject } = schemaVersion;
 const schemasAPILatestUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/latest`;
 const schemasAPIVersionsUrl = `/api/clusters/${clusterName}/schemas/${schemaVersion.subject}/versions`;
 
@@ -34,7 +32,7 @@ const renderComponent = (
       </Route>
     </ClusterContext.Provider>,
     {
-      pathname: clusterSchemaPath(clusterName, subject),
+      pathname: clusterSchemaPath(clusterName, schemaVersion.subject),
       preloadedState: {
         schemas: initialState,
       },
@@ -63,7 +61,7 @@ describe('Details', () => {
 
     it('renders pageloader', () => {
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
-      expect(screen.queryByText(subject)).not.toBeInTheDocument();
+      expect(screen.queryByText(schemaVersion.subject)).not.toBeInTheDocument();
       expect(screen.queryByText('Edit Schema')).not.toBeInTheDocument();
       expect(screen.queryByText('Remove Schema')).not.toBeInTheDocument();
     });
@@ -115,7 +113,7 @@ describe('Details', () => {
         });
       });
 
-      // seems like incorrect behavior
+      // seems like incorrect behaviour
       it('renders versions table with 0 items', () => {
         expect(screen.getByRole('table')).toBeInTheDocument();
         expect(screen.getByText('No active Schema')).toBeInTheDocument();

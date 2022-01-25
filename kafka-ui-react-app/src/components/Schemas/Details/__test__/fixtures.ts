@@ -7,9 +7,11 @@ import {
 export const versionPayload = [schemaVersion1, schemaVersion2];
 export const versionEmptyPayload = [];
 
+export const versions = [schemaVersion1, schemaVersion2];
+
 export const jsonSchema: SchemaSubject = {
   subject: 'test',
-  version: '1',
+  version: '15',
   id: 1,
   schema:
     '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
