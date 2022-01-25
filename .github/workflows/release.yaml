@@ -97,10 +97,10 @@ jobs:
 
       - uses: azure/setup-helm@v1
 
-      - name: update appVersion
+      - name: update chart version
         run: |
           export version=${{needs.release.outputs.version}}
-          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
+          sed -i "s/version:.*/version: ${version}/" charts/kafka-ui/Chart.yaml
 
       - name: add chart
         run: |
