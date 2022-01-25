@@ -8,7 +8,7 @@ import lombok.SneakyThrows;
 import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 
-@Ignore // TODO #1480
+@Disabled // TODO #1480
 public class ConnectorsTests extends BaseTest {
 
     public static final String LOCAL = "local";
