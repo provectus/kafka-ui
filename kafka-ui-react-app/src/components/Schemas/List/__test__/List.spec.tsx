@@ -40,22 +40,11 @@ const renderComponent = (
     }
   );
 
-const expectSchemaCompabilityURLCalled = async () => {
-  const schemasAPICompabilityMock = fetchMock.getOnce(
-    schemasAPICompabilityUrl,
-    200
-  );
-  await waitFor(() => {
-    expect(schemasAPICompabilityMock.called()).toBeTruthy();
-  });
-};
-
 describe('List', () => {
   afterEach(() => {
     fetchMock.reset();
   });
 
-  // TODO: We have to show error if fetch failed
   describe('fetch error', () => {
     it('shows progressbar', async () => {
       const fetchSchemasMock = fetchMock.getOnce(schemasAPIUrl, 404);
