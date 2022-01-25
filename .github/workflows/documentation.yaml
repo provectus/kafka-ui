@@ -16,5 +16,4 @@ jobs:
       - uses: actions/checkout@v2
       - uses: byrnereese/github-action-mkdocs-link-check@v1
         with:
-          use-verbose-mode: "no"
           excludes: "localhost"
