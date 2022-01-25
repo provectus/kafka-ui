@@ -65,7 +65,7 @@ const theme = {
   dropdown: {
     color: Colors.red[50],
   },
-  headingStyles: {
+  heading: {
     h1: {
       color: Colors.neutral[90],
     },
@@ -91,7 +91,7 @@ const theme = {
       info: Colors.neutral[10],
     },
   },
-  buttonStyles: {
+  button: {
     primary: {
       backgroundColor: {
         normal: Colors.brand[50],
@@ -134,7 +134,7 @@ const theme = {
       active: Colors.neutral[90],
     },
   },
-  menuStyles: {
+  menu: {
     backgroundColor: {
       normal: Colors.neutral[0],
       hover: Colors.neutral[5],
@@ -151,13 +151,13 @@ const theme = {
     },
     chevronIconColor: Colors.neutral[50],
   },
-  schemaStyles: {
+  schema: {
     backgroundColor: {
       tr: Colors.neutral[5],
       div: Colors.neutral[0],
     },
   },
-  modalStyles: {
+  modal: {
     backgroundColor: Colors.neutral[0],
     border: {
       top: Colors.neutral[5],
@@ -166,8 +166,8 @@ const theme = {
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
   },
-  tableStyles: {
-    thStyles: {
+  table: {
+    th: {
       backgroundColor: {
         normal: Colors.neutral[0],
       },
@@ -180,12 +180,12 @@ const theme = {
         normal: Colors.brand[50],
       },
     },
-    tdStyles: {
+    td: {
       color: {
         normal: Colors.neutral[90],
       },
     },
-    trStyles: {
+    tr: {
       backgroundColor: {
         hover: Colors.neutral[5],
       },
@@ -196,7 +196,7 @@ const theme = {
       },
     },
   },
-  primaryTabStyles: {
+  primaryTab: {
     color: {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
@@ -209,7 +209,7 @@ const theme = {
       nav: Colors.neutral[10],
     },
   },
-  secondaryTabStyles: {
+  secondaryTab: {
     backgroundColor: {
       normal: Colors.neutral[0],
       hover: Colors.neutral[5],
@@ -221,7 +221,7 @@ const theme = {
       active: Colors.neutral[90],
     },
   },
-  selectStyles: {
+  select: {
     backgroundColor: {
       normal: Colors.neutral[0],
       hover: Colors.neutral[10],
@@ -240,7 +240,7 @@ const theme = {
       disabled: Colors.neutral[10],
     },
   },
-  inputStyles: {
+  input: {
     borderColor: {
       normal: Colors.neutral[30],
       hover: Colors.neutral[50],
@@ -266,7 +266,7 @@ const theme = {
       color: Colors.neutral[70],
     },
   },
-  textAreaStyles: {
+  textArea: {
     borderColor: {
       normal: Colors.neutral[30],
       hover: Colors.neutral[50],
@@ -288,7 +288,7 @@ const theme = {
       readOnly: Colors.neutral[5],
     },
   },
-  tagStyles: {
+  tag: {
     backgroundColor: {
       green: Colors.green[10],
       gray: Colors.neutral[5],
@@ -299,7 +299,7 @@ const theme = {
     },
     color: Colors.neutral[90],
   },
-  paginationStyles: {
+  pagination: {
     backgroundColor: Colors.neutral[0],
     currentPage: Colors.neutral[10],
     borderColor: {
@@ -355,7 +355,7 @@ const theme = {
   topicFormLabel: {
     color: Colors.neutral[50],
   },
-  topicMetaDataStyles: {
+  topicMetaData: {
     backgroundColor: Colors.neutral[5],
     color: {
       label: Colors.neutral[50],
@@ -363,14 +363,14 @@ const theme = {
       meta: Colors.neutral[30],
     },
   },
-  dangerZoneStyles: {
+  dangerZone: {
     borderColor: Colors.neutral[10],
     color: Colors.red[50],
   },
-  configListStyles: {
+  configList: {
     color: Colors.neutral[30],
   },
-  topicsListStyles: {
+  topicsList: {
     color: {
       normal: Colors.neutral[90],
       hover: Colors.neutral[50],

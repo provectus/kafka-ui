@@ -14,7 +14,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
         "shadow": "rgba(0, 0, 0, 0.1)",
       },
       "breadcrumb": "#ABB5BA",
-      "buttonStyles": Object {
+      "button": Object {
         "border": Object {
           "active": "#171A1C",
           "hover": "#454F54",
@@ -65,21 +65,21 @@ exports[`SchemaVersion matches snapshot 1`] = `
           "warning": "#FFEECC",
         },
       },
-      "configListStyles": Object {
+      "configList": Object {
         "color": "#ABB5BA",
       },
       "connectEditWarning": "#FFEECC",
       "consumerTopicContent": Object {
         "backgroundColor": "#F1F2F3",
       },
-      "dangerZoneStyles": Object {
+      "dangerZone": Object {
         "borderColor": "#E3E6E8",
         "color": "#E51A1A",
       },
       "dropdown": Object {
         "color": "#E51A1A",
       },
-      "headingStyles": Object {
+      "heading": Object {
         "h1": Object {
           "color": "#171A1C",
         },
@@ -98,7 +98,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
         "messageToggleIconOpened": "#171A1C",
         "verticalElipsisIcon": "#73848C",
       },
-      "inputStyles": Object {
+      "input": Object {
         "backgroundColor": Object {
           "readOnly": "#F1F2F3",
         },
@@ -134,7 +134,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
         "stuffBorderColor": "#E3E6E8",
         "stuffColor": "#F1F2F3",
       },
-      "menuStyles": Object {
+      "menu": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#F1F2F3",
@@ -166,7 +166,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
           "warningTextColor": "#E51A1A",
         },
       },
-      "modalStyles": Object {
+      "modal": Object {
         "backgroundColor": "#FFFFFF",
         "border": Object {
           "bottom": "#F1F2F3",
@@ -179,7 +179,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
         "borderBottomColor": "#FFFFFF",
         "borderColor": "#4F4FFF",
       },
-      "paginationStyles": Object {
+      "pagination": Object {
         "backgroundColor": "#FFFFFF",
         "borderColor": Object {
           "active": "#454F54",
@@ -196,7 +196,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
         "currentPage": "#E3E6E8",
       },
       "panelColor": "#FFFFFF",
-      "primaryTabStyles": Object {
+      "primaryTab": Object {
         "borderColor": Object {
           "active": "#4F4FFF",
           "hover": "transparent",
@@ -209,7 +209,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
           "normal": "#73848C",
         },
       },
-      "schemaStyles": Object {
+      "schema": Object {
         "backgroundColor": Object {
           "div": "#FFFFFF",
           "tr": "#F1F2F3",
@@ -225,7 +225,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
           "normal": "#FFFFFF",
         },
       },
-      "secondaryTabStyles": Object {
+      "secondaryTab": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#F1F2F3",
@@ -237,7 +237,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
           "normal": "#73848C",
         },
       },
-      "selectStyles": Object {
+      "select": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#E3E6E8",
@@ -261,18 +261,18 @@ exports[`SchemaVersion matches snapshot 1`] = `
         "circle": "#FFFFFF",
         "unchecked": "#ABB5BA",
       },
-      "tableStyles": Object {
+      "table": Object {
         "link": Object {
           "color": Object {
             "normal": "#171A1C",
           },
         },
-        "tdStyles": Object {
+        "td": Object {
           "color": Object {
             "normal": "#171A1C",
           },
         },
-        "thStyles": Object {
+        "th": Object {
           "backgroundColor": Object {
             "normal": "#FFFFFF",
           },
@@ -285,13 +285,13 @@ exports[`SchemaVersion matches snapshot 1`] = `
             "normal": "#4F4FFF",
           },
         },
-        "trStyles": Object {
+        "tr": Object {
           "backgroundColor": Object {
             "hover": "#F1F2F3",
           },
         },
       },
-      "tagStyles": Object {
+      "tag": Object {
         "backgroundColor": Object {
           "blue": "#e3f2fd",
           "gray": "#F1F2F3",
@@ -302,7 +302,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
         },
         "color": "#171A1C",
       },
-      "textAreaStyles": Object {
+      "textArea": Object {
         "backgroundColor": Object {
           "readOnly": "#F1F2F3",
         },
@@ -327,7 +327,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
       "topicFormLabel": Object {
         "color": "#73848C",
       },
-      "topicMetaDataStyles": Object {
+      "topicMetaData": Object {
         "backgroundColor": "#F1F2F3",
         "color": Object {
           "label": "#73848C",
@@ -335,7 +335,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
           "value": "#2F3639",
         },
       },
-      "topicsListStyles": Object {
+      "topicsList": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#F1F2F3",

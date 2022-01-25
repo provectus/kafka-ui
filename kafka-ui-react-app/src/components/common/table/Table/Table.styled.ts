@@ -12,14 +12,13 @@ export const Table = styled.table<Props>`
     font-size: 14px;
     font-weight: 400;
     padding: 8px 8px 8px 24px;
-    color: ${({ theme }) => theme.tableStyles.tdStyles.color.normal};
+    color: ${({ theme }) => theme.table.td.color.normal};
     vertical-align: middle;
   }
 
   & tbody > tr {
     &:hover {
-      background-color: ${({ theme }) =>
-        theme.tableStyles.trStyles.backgroundColor.hover};
+      background-color: ${({ theme }) => theme.table.tr.backgroundColor.hover};
     }
   }
 `;

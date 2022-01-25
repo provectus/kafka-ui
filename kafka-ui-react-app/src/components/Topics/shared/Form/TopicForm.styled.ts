@@ -29,15 +29,13 @@ export const Label = styled.div`
 export const Button = styled.button<{ isActive: boolean }>`
   background-color: ${({ theme, ...props }) =>
     props.isActive
-      ? theme.buttonStyles.primary.backgroundColor.active
-      : theme.buttonStyles.primary.color};
+      ? theme.button.primary.backgroundColor.active
+      : theme.button.primary.color};
   height: 32px;
   width: 46px;
   border: 1px solid
     ${({ theme, ...props }) =>
-      props.isActive
-        ? theme.buttonStyles.border.active
-        : theme.buttonStyles.primary.color};
+      props.isActive ? theme.button.border.active : theme.button.primary.color};
   border-radius: 6px;
   &:hover {
     cursor: pointer;

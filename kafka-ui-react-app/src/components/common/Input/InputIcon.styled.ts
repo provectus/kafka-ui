@@ -15,5 +15,5 @@ export const InputIcon = styled.i<Props>`
   right: ${(props) => (props.position === 'right' ? '15px' : 'unset')};
   height: 11px;
   width: 11px;
-  color: ${({ theme }) => theme.inputStyles.icon.color};
+  color: ${({ theme }) => theme.input.icon.color};
 `;

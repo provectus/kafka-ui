@@ -26,12 +26,12 @@ export const ResetOffsetsStyledWrapper = styled.div`
 
   & .date-picker {
     height: 32px;
-    border: 1px ${(props) => props.theme.selectStyles.borderColor.normal} solid;
+    border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
     border-radius: 4px;
     font-size: 14px;
     width: 50%;
     padding-left: 12px;
-    color: ${(props) => props.theme.selectStyles.color.normal};
+    color: ${(props) => props.theme.select.color.normal};
 
     background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
     background-repeat: no-repeat !important;

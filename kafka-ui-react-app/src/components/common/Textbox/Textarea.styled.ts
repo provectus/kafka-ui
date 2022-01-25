@@ -1,39 +1,38 @@
 import styled from 'styled-components';
 
 export const Textarea = styled.textarea`
-  border: 1px ${({ theme }) => theme.textAreaStyles.borderColor.normal} solid;
+  border: 1px ${({ theme }) => theme.textArea.borderColor.normal} solid;
   border-radius: 4px;
   width: 100%;
   padding: 12px;
   padding-top: 6px;
   &::placeholder {
-    color: ${({ theme }) => theme.textAreaStyles.color.placeholder.normal};
+    color: ${({ theme }) => theme.textArea.color.placeholder.normal};
     font-size: 14px;
   }
   &:hover {
-    border-color: ${({ theme }) => theme.textAreaStyles.borderColor.hover};
+    border-color: ${({ theme }) => theme.textArea.borderColor.hover};
   }
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.textAreaStyles.borderColor.focus};
+    border-color: ${({ theme }) => theme.textArea.borderColor.focus};
     &::placeholder {
-      color: ${({ theme }) => theme.textAreaStyles.color.placeholder.normal};
+      color: ${({ theme }) => theme.textArea.color.placeholder.normal};
     }
   }
   &:disabled {
-    color: ${({ theme }) => theme.textAreaStyles.color.disabled};
-    border-color: ${({ theme }) => theme.textAreaStyles.borderColor.disabled};
+    color: ${({ theme }) => theme.textArea.color.disabled};
+    border-color: ${({ theme }) => theme.textArea.borderColor.disabled};
     cursor: not-allowed;
   }
   &:read-only {
-    color: ${({ theme }) => theme.textAreaStyles.color.readOnly};
+    color: ${({ theme }) => theme.textArea.color.readOnly};
     border: none;
-    background-color: ${({ theme }) =>
-      theme.textAreaStyles.backgroundColor.readOnly};
+    background-color: ${({ theme }) => theme.textArea.backgroundColor.readOnly};
     &:focus {
       &::placeholder {
         color: ${({ theme }) =>
-          theme.textAreaStyles.color.placeholder.focus.readOnly};
+          theme.textArea.color.placeholder.focus.readOnly};
       }
     }
     cursor: not-allowed;

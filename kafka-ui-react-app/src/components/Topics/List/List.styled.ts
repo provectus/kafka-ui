@@ -5,18 +5,18 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })<{
   $isInternal?: boolean;
 }>(
   ({ theme, activeClassName, $isInternal }) => css`
-    color: ${theme.topicsListStyles.color.normal};
+    color: ${theme.topicsList.color.normal};
     font-weight: 500;
     padding-left: ${$isInternal ? '5px' : 0};
 
     &:hover {
-      background-color: ${theme.topicsListStyles.backgroundColor.hover};
-      color: ${theme.topicsListStyles.color.hover};
+      background-color: ${theme.topicsList.backgroundColor.hover};
+      color: ${theme.topicsList.color.hover};
     }
 
     &.${activeClassName} {
-      background-color: ${theme.topicsListStyles.backgroundColor.active};
-      color: ${theme.topicsListStyles.color.active};
+      background-color: ${theme.topicsList.backgroundColor.active};
+      color: ${theme.topicsList.color.active};
     }
   `
 );

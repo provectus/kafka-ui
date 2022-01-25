@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const DangerZoneWrapperStyled = styled.div`
   margin-top: 16px;
   padding: 8px 16px;
-  border: 1px solid ${({ theme }) => theme.dangerZoneStyles.borderColor};
+  border: 1px solid ${({ theme }) => theme.dangerZone.borderColor};
   box-sizing: border-box;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -16,7 +16,7 @@ export const DangerZoneWrapperStyled = styled.div`
 `;
 
 export const DangerZoneTitleStyled = styled.h1`
-  color: ${({ theme }) => theme.dangerZoneStyles.color};
+  color: ${({ theme }) => theme.dangerZone.color};
   font-size: 20px;
   padding-bottom: 16px;
 `;

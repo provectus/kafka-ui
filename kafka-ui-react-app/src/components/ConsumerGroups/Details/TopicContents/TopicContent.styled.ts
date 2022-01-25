@@ -10,7 +10,7 @@ export const TopicContentWrapper = styled.tr`
 
 export const ContentBox = styled.div(
   ({ theme }) => css`
-    background-color: ${theme.menuStyles.backgroundColor.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
     padding: 20px;
     border-radius: 8px;
   `

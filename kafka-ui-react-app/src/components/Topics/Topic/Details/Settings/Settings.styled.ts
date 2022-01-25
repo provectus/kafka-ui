@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const ConfigList = styled.tr`
   & > td:last-child {
-    color: ${({ theme }) => theme.configListStyles.color};
+    color: ${({ theme }) => theme.configList.color};
   }
 `;
 export const ConfigItemCell = styled.td<{ $hasCustomValue: boolean }>`

@@ -4,5 +4,5 @@ export const InputLabel = styled.label`
   font-weight: 500;
   font-size: 12px;
   line-height: 20px;
-  color: ${({ theme }) => theme.inputStyles.label.color};
+  color: ${({ theme }) => theme.input.label.color};
 `;

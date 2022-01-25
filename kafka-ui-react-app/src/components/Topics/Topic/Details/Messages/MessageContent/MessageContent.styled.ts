@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const Wrapper = styled.tr`
-  background-color: ${({ theme }) => theme.topicMetaDataStyles.backgroundColor};
+  background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   & > td {
     padding: 16px;
     &:first-child {
@@ -47,17 +47,17 @@ export const Metadata = styled.span`
 `;
 
 export const MetadataLabel = styled.p`
-  color: ${({ theme }) => theme.topicMetaDataStyles.color.label};
+  color: ${({ theme }) => theme.topicMetaData.color.label};
   font-size: 14px;
   width: 80px;
 `;
 
 export const MetadataValue = styled.p`
-  color: ${({ theme }) => theme.topicMetaDataStyles.color.value};
+  color: ${({ theme }) => theme.topicMetaData.color.value};
   font-size: 14px;
 `;
 
 export const MetadataMeta = styled.p`
-  color: ${({ theme }) => theme.topicMetaDataStyles.color.meta};
+  color: ${({ theme }) => theme.topicMetaData.color.meta};
   font-size: 12px;
 `;

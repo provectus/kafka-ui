@@ -14,7 +14,7 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
     right: 0;
     top: 0;
     & div:first-child {
-      background-color: ${theme.modalStyles.overlay};
+      background-color: ${theme.modal.overlay};
       bottom: 0;
       left: 0;
       position: absolute;
@@ -29,8 +29,8 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
       width: 560px;
       border-radius: 8px;
 
-      background-color: ${theme.modalStyles.backgroundColor};
-      filter: drop-shadow(0px 4px 16px ${theme.modalStyles.shadow});
+      background-color: ${theme.modal.backgroundColor};
+      filter: drop-shadow(0px 4px 16px ${theme.modal.shadow});
 
       & > * {
         padding: 16px;
@@ -44,8 +44,8 @@ export const ConfirmationModalWrapper = styled.div.attrs({ role: 'dialog' })(
       }
 
       & > section {
-        border-top: 1px solid ${theme.modalStyles.border.top};
-        border-bottom: 1px solid ${theme.modalStyles.border.bottom};
+        border-top: 1px solid ${theme.modal.border.top};
+        border-bottom: 1px solid ${theme.modal.border.bottom};
       }
 
       & > footer {
