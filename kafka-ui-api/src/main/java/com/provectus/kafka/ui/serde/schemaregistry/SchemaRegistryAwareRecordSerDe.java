@@ -220,7 +220,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry().getFirstUrl())
+    URI basePath = new URI(cluster.getSchemaRegistry().getUri())
         .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = Objects.requireNonNull(schemaRegistryClient)
         .getSchemaById(schema.getId());
