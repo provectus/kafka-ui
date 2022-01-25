@@ -20,4 +20,5 @@ jobs:
           exclude_patterns: localhost,127.0.,192.168.
           exclude_urls: https://api.server,https://graph.microsoft.com/User.Read
           print_all: false
+          file_types: .md
 
