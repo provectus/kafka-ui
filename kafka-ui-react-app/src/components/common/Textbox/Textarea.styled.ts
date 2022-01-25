@@ -1,40 +1,41 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const Textarea = styled.textarea`
-  border: 1px ${({ theme }) => theme.textArea.borderColor.normal} solid;
-  border-radius: 4px;
-  width: 100%;
-  padding: 12px;
-  padding-top: 6px;
-  &::placeholder {
-    color: ${({ theme }) => theme.textArea.color.placeholder.normal};
-    font-size: 14px;
-  }
-  &:hover {
-    border-color: ${({ theme }) => theme.textArea.borderColor.hover};
-  }
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.textArea.borderColor.focus};
+export const Textarea = styled.textarea(
+  ({ theme: { textArea } }) => css`
+    border: 1px ${textArea.borderColor.normal} solid;
+    border-radius: 4px;
+    width: 100%;
+    padding: 12px;
+    padding-top: 6px;
     &::placeholder {
-      color: ${({ theme }) => theme.textArea.color.placeholder.normal};
+      color: ${textArea.color.placeholder.normal};
+      font-size: 14px;
     }
-  }
-  &:disabled {
-    color: ${({ theme }) => theme.textArea.color.disabled};
-    border-color: ${({ theme }) => theme.textArea.borderColor.disabled};
-    cursor: not-allowed;
-  }
-  &:read-only {
-    color: ${({ theme }) => theme.textArea.color.readOnly};
-    border: none;
-    background-color: ${({ theme }) => theme.textArea.backgroundColor.readOnly};
+    &:hover {
+      border-color: ${textArea.borderColor.hover};
+    }
     &:focus {
+      outline: none;
+      border-color: ${textArea.borderColor.focus};
       &::placeholder {
-        color: ${({ theme }) =>
-          theme.textArea.color.placeholder.focus.readOnly};
+        color: ${textArea.color.placeholder.normal};
       }
     }
-    cursor: not-allowed;
-  }
-`;
+    &:disabled {
+      color: ${textArea.color.disabled};
+      border-color: ${textArea.borderColor.disabled};
+      cursor: not-allowed;
+    }
+    &:read-only {
+      color: ${textArea.color.readOnly};
+      border: none;
+      background-color: ${textArea.backgroundColor.readOnly};
+      &:focus {
+        &::placeholder {
+          color: ${textArea.color.placeholder.focus.readOnly};
+        }
+      }
+      cursor: not-allowed;
+    }
+  `
+);
