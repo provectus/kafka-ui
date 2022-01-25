@@ -8,7 +8,7 @@ on:
       - 'kafka-ui-react-app/**'
       - 'kafka-ui-e2e-checks/**'
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - name: Cache local Maven repository
