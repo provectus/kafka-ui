@@ -86,6 +86,7 @@ const Edit: React.FC = () => {
             <div>
               <InputLabel>Type</InputLabel>
               <Controller
+                defaultValue={schema.schemaType}
                 control={control}
                 rules={{ required: true }}
                 name="schemaType"
@@ -108,6 +109,9 @@ const Edit: React.FC = () => {
             <div>
               <InputLabel>Compatibility level</InputLabel>
               <Controller
+                defaultValue={
+                  schema.compatibilityLevel as CompatibilityLevelCompatibilityEnum
+                }
                 control={control}
                 name="compatibilityLevel"
                 render={({ field: { name, onChange } }) => (

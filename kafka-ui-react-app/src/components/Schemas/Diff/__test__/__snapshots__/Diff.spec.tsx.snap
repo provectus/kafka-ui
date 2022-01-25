@@ -86,7 +86,7 @@ exports[`Diff View when schema versions are loaded and no specified versions in 
     <div
       className="tile pt-5"
     >
-      <JSONDiffViewer
+      <DiffViewer
         isFixedHeight={false}
         setOptions={
           Object {
@@ -197,7 +197,7 @@ exports[`Diff View when schema versions are loaded and only one versions in path
     <div
       className="tile pt-5"
     >
-      <JSONDiffViewer
+      <DiffViewer
         isFixedHeight={false}
         setOptions={
           Object {
@@ -311,7 +311,7 @@ exports[`Diff View when schema versions are loaded and two versions in path matc
     <div
       className="tile pt-5"
     >
-      <JSONDiffViewer
+      <DiffViewer
         isFixedHeight={false}
         setOptions={
           Object {

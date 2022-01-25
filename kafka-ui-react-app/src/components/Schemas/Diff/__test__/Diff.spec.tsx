@@ -106,9 +106,9 @@ describe('Diff', () => {
         expect(wrapper).toMatchSnapshot();
       });
 
-      it('renders JSONDiffViewer with latest version on both sides', () => {
-        expect(wrapper.exists('JSONDiffViewer')).toBeTruthy();
-        expect(wrapper.find('JSONDiffViewer').props().value).toStrictEqual([
+      it('renders DiffViewer with latest version on both sides', () => {
+        expect(wrapper.exists('DiffViewer')).toBeTruthy();
+        expect(wrapper.find('DiffViewer').props().value).toStrictEqual([
           versions[0].schema,
           versions[0].schema,
         ]);
@@ -138,9 +138,9 @@ describe('Diff', () => {
         expect(wrapper).toMatchSnapshot();
       });
 
-      it('renders JSONDiffViewer with version 1 at left, version 2 at right', () => {
-        expect(wrapper.exists('JSONDiffViewer')).toBeTruthy();
-        expect(wrapper.find('JSONDiffViewer').props().value).toStrictEqual([
+      it('renders DiffViewer with version 1 at left, version 2 at right', () => {
+        expect(wrapper.exists('DiffViewer')).toBeTruthy();
+        expect(wrapper.find('DiffViewer').props().value).toStrictEqual([
           JSON.stringify(JSON.parse(versions[2].schema), null, '\t'),
           JSON.stringify(JSON.parse(versions[1].schema), null, '\t'),
         ]);
@@ -165,9 +165,9 @@ describe('Diff', () => {
         expect(wrapper.find('#right-select').props().defaultValue).toBe('');
       });
 
-      it('renders JSONDiffViewer with version 1 at left, version 3 at right', () => {
-        expect(wrapper.exists('JSONDiffViewer')).toBeTruthy();
-        expect(wrapper.find('JSONDiffViewer').props().value).toStrictEqual([
+      it('renders DiffViewer with version 1 at left, version 3 at right', () => {
+        expect(wrapper.exists('DiffViewer')).toBeTruthy();
+        expect(wrapper.find('DiffViewer').props().value).toStrictEqual([
           JSON.stringify(JSON.parse(versions[2].schema), null, '\t'),
           versions[0].schema,
         ]);

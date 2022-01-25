@@ -5,11 +5,11 @@ import 'ace-builds/src-noconflict/theme-textmate';
 import React from 'react';
 import { IDiffEditorProps } from 'react-ace/lib/diff';
 
-interface JSONDiffViewerProps extends IDiffEditorProps {
+interface DiffViewerProps extends IDiffEditorProps {
   isFixedHeight?: boolean;
 }
 
-const JSONDiffViewer = React.forwardRef<DiffEditor | null, JSONDiffViewerProps>(
+const DiffViewer = React.forwardRef<DiffEditor | null, DiffViewerProps>(
   (props, ref) => {
     const { isFixedHeight, ...rest } = props;
     const autoHeight =
@@ -19,6 +19,9 @@ const JSONDiffViewer = React.forwardRef<DiffEditor | null, JSONDiffViewerProps>(
             props.value[1].split(/\r\n|\r|\n/).length + 1
           ) * 16
         : 500;
+    console.log(rest);
+    console.log(props);
+
     return (
       <DiffEditor
         name="diff-editor"
@@ -38,6 +41,6 @@ const JSONDiffViewer = React.forwardRef<DiffEditor | null, JSONDiffViewerProps>(
   }
 );
 
-JSONDiffViewer.displayName = 'JSONDiffViewer';
+DiffViewer.displayName = 'DiffViewer';
 
-export default JSONDiffViewer;
+export default DiffViewer;

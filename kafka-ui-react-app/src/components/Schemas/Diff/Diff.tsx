@@ -3,7 +3,7 @@ import { SchemaSubject } from 'generated-sources';
 import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemaSchemaDiffPath } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import JSONDiffViewer from 'components/common/JSONDiffViewer/JSONDiffViewer';
+import DiffViewer from 'components/common/DiffViewer/DiffViewer';
 import { useHistory } from 'react-router';
 import { fetchSchemaVersions } from 'redux/reducers/schemas/schemasSlice';
 
@@ -46,84 +46,82 @@ const Diff: React.FC<DiffProps> = ({
   return (
     <div className="section">
       {areVersionsFetched ? (
-        <>
-          <div className="box tile is-ancestor is-vertical">
-            <div className="tile">
-              <div className="tile is-6">
-                <div className="select">
-                  <select
-                    id="left-select"
-                    defaultValue={leftVersion}
-                    onChange={(event) => {
-                      history.push(
-                        clusterSchemaSchemaDiffPath(
-                          clusterName,
-                          subject,
-                          event.target.value,
-                          !rightVersion && versions.length
-                            ? versions[0].version
-                            : rightVersion
-                        )
-                      );
-                      setLeftVersion(event.target.value);
-                    }}
-                  >
-                    {versions.map((version) => (
-                      <option
-                        key={`left-${version.version}`}
-                        value={version.version}
-                      >
-                        {`Version ${version.version}`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-              <div className="tile is-6">
-                <div className="select">
-                  <select
-                    id="right-select"
-                    defaultValue={rightVersion}
-                    onChange={(event) => {
-                      history.push(
-                        clusterSchemaSchemaDiffPath(
-                          clusterName,
-                          subject,
-                          !leftVersion && versions.length
-                            ? versions[0].version
-                            : leftVersion,
-                          event.target.value
-                        )
-                      );
-                      setRightVersion(event.target.value);
-                    }}
-                  >
-                    {versions.map((version) => (
-                      <option
-                        key={`right-${version.version}`}
-                        value={version.version}
-                      >
-                        {`Version ${version.version}`}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+        <div className="box tile is-ancestor is-vertical">
+          <div className="tile">
+            <div className="tile is-6">
+              <div className="select">
+                <select
+                  id="left-select"
+                  defaultValue={leftVersion}
+                  onChange={(event) => {
+                    history.push(
+                      clusterSchemaSchemaDiffPath(
+                        clusterName,
+                        subject,
+                        event.target.value,
+                        !rightVersion && versions.length
+                          ? versions[0].version
+                          : rightVersion
+                      )
+                    );
+                    setLeftVersion(event.target.value);
+                  }}
+                >
+                  {versions.map((version) => (
+                    <option
+                      key={`left-${version.version}`}
+                      value={version.version}
+                    >
+                      {`Version ${version.version}`}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
-            <div className="tile pt-5">
-              <JSONDiffViewer
-                value={[
-                  getSchemaContent(versions, leftVersion),
-                  getSchemaContent(versions, rightVersion),
-                ]}
-                setOptions={{
-                  autoScrollEditorIntoView: true,
-                }}
-                isFixedHeight={false}
-              />
+            <div className="tile is-6">
+              <div className="select">
+                <select
+                  id="right-select"
+                  defaultValue={rightVersion}
+                  onChange={(event) => {
+                    history.push(
+                      clusterSchemaSchemaDiffPath(
+                        clusterName,
+                        subject,
+                        !leftVersion && versions.length
+                          ? versions[0].version
+                          : leftVersion,
+                        event.target.value
+                      )
+                    );
+                    setRightVersion(event.target.value);
+                  }}
+                >
+                  {versions.map((version) => (
+                    <option
+                      key={`right-${version.version}`}
+                      value={version.version}
+                    >
+                      {`Version ${version.version}`}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
-        </>
+          <div className="tile pt-5">
+            <DiffViewer
+              value={[
+                getSchemaContent(versions, leftVersion),
+                getSchemaContent(versions, rightVersion),
+              ]}
+              setOptions={{
+                autoScrollEditorIntoView: true,
+              }}
+              isFixedHeight={false}
+            />
+          </div>
+        </div>
       ) : (
         <PageLoader />
       )}
