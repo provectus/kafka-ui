@@ -58,39 +58,36 @@ const CustomParamField: React.FC<Props> = ({
 
   return (
     <C.Column>
-      <>
-        <div>
-          <InputLabel>Custom Parameter</InputLabel>
-          <Controller
-            control={control}
-            rules={{ required: 'Custom Parameter is required.' }}
-            name={`customParams.${index}.name`}
-            render={({ field: { name, onChange } }) => (
-              <Select
-                name={name}
-                placeholder="Select"
-                disabled={isDisabled}
-                minWidth="270px"
-                onChange={onChange}
-                options={Object.keys(TOPIC_CUSTOM_PARAMS)
-                  .sort()
-                  .map((opt) => ({
-                    value: opt,
-                    label: opt,
-                    disabled: existingFields.includes(opt),
-                  }))}
-              />
-            )}
-          />
-          <FormError>
-            <ErrorMessage
-              errors={errors}
-              name={`customParams.${index}.name` as const}
+      <div>
+        <InputLabel>Custom Parameter</InputLabel>
+        <Controller
+          control={control}
+          rules={{ required: 'Custom Parameter is required.' }}
+          name={`customParams.${index}.name`}
+          render={({ field: { name, onChange } }) => (
+            <Select
+              name={name}
+              placeholder="Select"
+              disabled={isDisabled}
+              minWidth="270px"
+              onChange={onChange}
+              options={Object.keys(TOPIC_CUSTOM_PARAMS)
+                .sort()
+                .map((opt) => ({
+                  value: opt,
+                  label: opt,
+                  disabled: existingFields.includes(opt),
+                }))}
             />
-          </FormError>
-        </div>
-      </>
-
+          )}
+        />
+        <FormError>
+          <ErrorMessage
+            errors={errors}
+            name={`customParams.${index}.name` as const}
+          />
+        </FormError>
+      </div>
       <div>
         <InputLabel>Value</InputLabel>
         <Input

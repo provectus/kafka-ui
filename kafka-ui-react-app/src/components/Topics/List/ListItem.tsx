@@ -112,22 +112,20 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td className="topic-action-block" style={{ width: '4%' }}>
         {!internal && !isReadOnly && vElipsisVisble ? (
-          <>
-            <div className="has-text-right">
-              <Dropdown label={<VerticalElipsisIcon />} right>
-                <DropdownItem onClick={clearTopicMessagesHandler}>
-                  <span className="has-text-danger">Clear Messages</span>
+          <div className="has-text-right">
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              <DropdownItem onClick={clearTopicMessagesHandler}>
+                <span className="has-text-danger">Clear Messages</span>
+              </DropdownItem>
+              {isTopicDeletionAllowed && (
+                <DropdownItem
+                  onClick={() => setDeleteTopicConfirmationVisible(true)}
+                >
+                  <span className="has-text-danger">Remove Topic</span>
                 </DropdownItem>
-                {isTopicDeletionAllowed && (
-                  <DropdownItem
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                  >
-                    <span className="has-text-danger">Remove Topic</span>
-                  </DropdownItem>
-                )}
-              </Dropdown>
-            </div>
-          </>
+              )}
+            </Dropdown>
+          </div>
         ) : null}
         <ConfirmationModal
           isOpen={isDeleteTopicConfirmationVisible}
