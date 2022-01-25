@@ -21,6 +21,5 @@ jobs:
           exclude_urls: https://api.server,https://graph.microsoft.com/User.Read
           print_all: false
           file_types: .md
-          subfolder: documentation/
-          include_files: /github/workspace/*.md
+          include_files: /github/workspace/*.md,/github/workspace/documentation/*.md
 
