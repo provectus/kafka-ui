@@ -1,0 +1,35 @@
+name-template: 'v$RESOLVED_VERSION'
+tag-template: '$RESOLVED_VERSION'
+template: |
+  ## Changes
+  $CHANGES
+  ## Contributors
+  $CONTRIBUTORS
+
+exclude-labels:
+  - 'skip-changelog'
+
+categories:
+  - title: '⚙️Features'
+    labels:
+      - 'type/feature'
+  - title: '🪛Enhancements'
+    labels:
+      - 'type/enhancement'
+  - title: '🔨Bug Fixes'
+    labels:
+      - 'type/bug'
+
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch

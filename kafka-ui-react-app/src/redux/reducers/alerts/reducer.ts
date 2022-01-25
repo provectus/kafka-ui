@@ -6,11 +6,11 @@ import { addError, removeAlert } from './utils';
 
 export const initialState: AlertsState = {};
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): AlertsState => {
   const { type } = action;
 
-  const matches = /(.*)__(FAILURE)$/.exec(type);
-  if (matches && matches[2]) return addError(state, action);
+  if (type.endsWith('__FAILURE')) return addError(state, action);
 
   if (type === getType(dismissAlert)) {
     return removeAlert(state, action);

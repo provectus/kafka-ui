@@ -7,7 +7,7 @@ import {
   ConnectorName,
 } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import styled from 'styled-components';
 import { Colors } from 'theme/theme';
 
@@ -54,7 +54,7 @@ const Config: React.FC<ConfigProps> = ({
 
   return (
     <ConnectConfigWrapper>
-      <JSONEditor
+      <Editor
         readOnly
         value={JSON.stringify(config, null, '\t')}
         highlightActiveLine={false}

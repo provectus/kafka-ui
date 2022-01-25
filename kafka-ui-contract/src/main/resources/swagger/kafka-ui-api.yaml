@@ -2423,6 +2423,7 @@ components:
         - RUNNING
         - FAILED
         - PAUSED
+        - RESTARTING
         - UNASSIGNED
 
     ConnectorState:

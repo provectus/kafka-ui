@@ -1,14 +1,14 @@
 import React from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form';
 import { BYTES_IN_GB } from 'lib/constants';
 import { TopicName, TopicConfigByName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
-import Select from 'components/common/Select/Select';
+import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
-import { StyledForm } from 'components/common/Form/Form.styles';
+import { StyledForm } from 'components/common/Form/Form.styled';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
@@ -22,6 +22,20 @@ interface Props {
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
 }
 
+const CleanupPolicyOptions: Array<SelectOption> = [
+  { value: 'delete', label: 'Delete' },
+  { value: 'compact', label: 'Compact' },
+  { value: 'compact,delete', label: 'Compact,Delete' },
+];
+
+const RetentionBytesOptions: Array<SelectOption> = [
+  { value: -1, label: 'Not Set' },
+  { value: BYTES_IN_GB, label: '1 GB' },
+  { value: BYTES_IN_GB * 10, label: '10 GB' },
+  { value: BYTES_IN_GB * 20, label: '20 GB' },
+  { value: BYTES_IN_GB * 50, label: '50 GB' },
+];
+
 const TopicForm: React.FC<Props> = ({
   topicName,
   config,
@@ -30,6 +44,7 @@ const TopicForm: React.FC<Props> = ({
   onSubmit,
 }) => {
   const {
+    control,
     formState: { errors },
   } = useFormContext();
 
@@ -99,11 +114,19 @@ const TopicForm: React.FC<Props> = ({
           </div>
           <div>
             <InputLabel>Cleanup policy</InputLabel>
-            <Select defaultValue="delete" name="cleanupPolicy" minWidth="250px">
-              <option value="delete">Delete</option>
-              <option value="compact">Compact</option>
-              <option value="compact,delete">Compact,Delete</option>
-            </Select>
+            <Controller
+              control={control}
+              name="cleanupPolicy"
+              render={({ field: { name, onChange } }) => (
+                <Select
+                  name={name}
+                  value={CleanupPolicyOptions[0].value}
+                  onChange={onChange}
+                  minWidth="250px"
+                  options={CleanupPolicyOptions}
+                />
+              )}
+            />
           </div>
         </S.Column>
 
@@ -116,13 +139,19 @@ const TopicForm: React.FC<Props> = ({
           <S.Column>
             <div>
               <InputLabel>Max size on disk in GB</InputLabel>
-              <Select defaultValue={-1} name="retentionBytes">
-                <option value={-1}>Not Set</option>
-                <option value={BYTES_IN_GB}>1 GB</option>
-                <option value={BYTES_IN_GB * 10}>10 GB</option>
-                <option value={BYTES_IN_GB * 20}>20 GB</option>
-                <option value={BYTES_IN_GB * 50}>50 GB</option>
-              </Select>
+              <Controller
+                control={control}
+                name="retentionBytes"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={RetentionBytesOptions[0].value}
+                    onChange={onChange}
+                    minWidth="100%"
+                    options={RetentionBytesOptions}
+                  />
+                )}
+              />
             </div>
 
             <div>

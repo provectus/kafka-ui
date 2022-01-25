@@ -7,7 +7,7 @@ import {
 } from 'generated-sources';
 import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
@@ -85,42 +85,52 @@ const Edit: React.FC = () => {
           <div>
             <div>
               <InputLabel>Type</InputLabel>
-              <Select
+              <Controller
+                control={control}
+                rules={{ required: true }}
                 name="schemaType"
-                required
-                defaultValue={schema.schemaType}
-                disabled={isSubmitting}
-              >
-                {Object.keys(SchemaType).map((type: string) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.schemaType}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(SchemaType).map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                  />
+                )}
+              />
             </div>
 
             <div>
               <InputLabel>Compatibility level</InputLabel>
-              <Select
+              <Controller
+                control={control}
                 name="compatibilityLevel"
-                defaultValue={schema.compatibilityLevel}
-                disabled={isSubmitting}
-              >
-                {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                  (level: string) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  )
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.compatibilityLevel}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(
+                      CompatibilityLevelCompatibilityEnum
+                    ).map((level) => ({ value: level, label: level }))}
+                  />
                 )}
-              </Select>
+              />
             </div>
           </div>
           <S.EditorsWrapper>
             <div>
               <S.EditorContainer>
                 <h4>Latest schema</h4>
-                <JSONEditor
+                <Editor
+                  schemaType={schema?.schemaType}
                   isFixedHeight
                   readOnly
                   height="372px"
@@ -137,7 +147,8 @@ const Edit: React.FC = () => {
                   control={control}
                   name="newSchema"
                   render={({ field: { name, onChange } }) => (
-                    <JSONEditor
+                    <Editor
+                      schemaType={schema?.schemaType}
                       readOnly={isSubmitting}
                       defaultValue={formatedSchema}
                       name={name}

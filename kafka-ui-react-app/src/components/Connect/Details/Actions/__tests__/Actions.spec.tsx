@@ -148,7 +148,7 @@ describe('Actions', () => {
     it('calls restartConnector when restart button clicked', () => {
       const restartConnector = jest.fn();
       const wrapper = mount(setupWrapper({ restartConnector }));
-      wrapper.find({ children: 'Restart All Tasks' }).simulate('click');
+      wrapper.find({ children: 'Restart Connector' }).simulate('click');
       expect(restartConnector).toHaveBeenCalledTimes(1);
       expect(restartConnector).toHaveBeenCalledWith(
         clusterName,

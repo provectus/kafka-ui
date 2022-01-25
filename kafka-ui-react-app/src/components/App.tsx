@@ -61,7 +61,7 @@ const App: React.FC = () => {
             <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>
 
             <S.NavbarItem>
-              <Version tag={GIT_TAG} commit={GIT_COMMIT} />
+              {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
             </S.NavbarItem>
           </S.NavbarBrand>
         </S.Navbar>

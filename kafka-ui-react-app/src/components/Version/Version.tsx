@@ -5,7 +5,7 @@ import { GIT_REPO_LATEST_RELEASE_LINK } from 'lib/constants';
 import compareVersions from './compareVersions';
 
 export interface VesionProps {
-  tag?: string;
+  tag: string;
   commit?: string;
 }
 
@@ -15,20 +15,15 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
     latestTag: '',
   });
   useEffect(() => {
-    if (tag) {
-      fetch(GIT_REPO_LATEST_RELEASE_LINK)
-        .then((response) => response.json())
-        .then((data) => {
-          setLatestVersionInfo({
-            outdated: compareVersions(tag, data.tag_name) === -1,
-            latestTag: data.tag_name,
-          });
+    fetch(GIT_REPO_LATEST_RELEASE_LINK)
+      .then((response) => response.json())
+      .then((data) => {
+        setLatestVersionInfo({
+          outdated: compareVersions(tag, data.tag_name) === -1,
+          latestTag: data.tag_name,
         });
-    }
+      });
   }, [tag]);
-  if (!tag) {
-    return null;
-  }
 
   const { outdated, latestTag } = latestVersionInfo;
 
