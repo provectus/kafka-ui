@@ -25,6 +25,7 @@ jobs:
           MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
           echo "THIS IS THE MSG: $MSG"
           git fetch origin
+          git stash
           git checkout -b gh-pages origin/gh-pages
           helm repo index .
           echo "THIS IS THE CUT MSG: ${MSG##*/}"
