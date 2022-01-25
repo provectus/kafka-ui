@@ -2,36 +2,39 @@ import React from 'react';
 import { Provider } from 'react-redux';
 import { shallow, mount } from 'enzyme';
 import configureStore from 'redux-mock-store';
-import { RootState } from 'redux/interfaces';
-import fetchMock from 'fetch-mock-jest';
 import { StaticRouter } from 'react-router';
 import DiffContainer from 'components/Schemas/Diff/DiffContainer';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
-import { render } from 'lib/testHelpers';
 
 import { versions } from './fixtures';
 
-const mockStore = configureStore();
-
 const clusterName = 'testCluster';
 const subject = 'test';
+const mockStore = configureStore();
 
 describe('Diff', () => {
   describe('Container', () => {
-    const initialState: Partial<RootState> = {};
-    const storeMock = mockStore(initialState);
-    const setupComponent = (store = storeMock) =>
-      render(
+    const initialState: Partial<DiffProps> = {};
+    const store = mockStore(initialState);
+
+    it('renders view', () => {
+      const wrapper = mount(
         <Provider store={store}>
           <StaticRouter>
-            <DiffContainer />
+            <Diff
+              versions={versions}
+              clusterName={clusterName}
+              leftVersionInPath=""
+              rightVersionInPath=""
+              subject={subject}
+              areVersionsFetched
+            />
           </StaticRouter>
         </Provider>
       );
 
-    // it('renders view', () => {
-    //   setupComponent();
-    // });
+      expect(wrapper.exists(Diff)).toBeTruthy();
+    });
   });
 
   describe('View', () => {
@@ -40,33 +43,33 @@ describe('Diff', () => {
         subject={subject}
         clusterName={clusterName}
         areVersionsFetched
-        versions={versions}
+        versions={[]}
         {...props}
       />
     );
 
-    describe('Initial state', () => {
-      // it('should call fetchSchemaVersions every render', () => {
-      //   mount(
-      //     <StaticRouter>
-      //       {setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })}
-      //     </StaticRouter>
-      //   );
+    // describe('Initial state', () => {
+    //   it('should call fetchSchemaVersions every render', () => {
+    //     mount(
+    //       <StaticRouter>
+    //         {setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })}
+    //       </StaticRouter>
+    //     );
 
-      //   expect(fetchSchemaVersionsMock).toHaveBeenCalledWith(
-      //     clusterName,
-      //     subject
-      //   );
-      // });
+    //     expect(fetchSchemaVersionsMock).toHaveBeenCalledWith(
+    //       clusterName,
+    //       subject
+    //     );
+    //   });
 
-      it('matches snapshot', () => {
-        //   expect(
-        //     shallow(
-        //       setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })
-        //     )
-        //   ).toMatchSnapshot();
-      });
-    });
+    //   it('matches snapshot', () => {
+    //     expect(
+    //       shallow(
+    //         setupWrapper({ fetchSchemaVersions: fetchSchemaVersionsMock })
+    //       )
+    //     ).toMatchSnapshot();
+    //   });
+    // });
 
     describe('when page with schema versions is loading', () => {
       const wrapper = shallow(setupWrapper({ areVersionsFetched: false }));
