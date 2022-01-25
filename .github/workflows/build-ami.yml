@@ -16,6 +16,10 @@ jobs:
         run: |
           echo "Cloning repo..."
           git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch ${{ github.event.inputs.KafkaUIInfraBranch }}
+          echo "Cd to packer DIR..."
+          cd kafka-ui-infra/ami
+          echo "WORK_DIR=$(pwd)" >> $GITHUB_ENV
+          echo "Packer will be triggered in this dir $WORK_DIR"
 
       - name: Configure AWS credentials for Kafka-UI account
         uses: aws-actions/configure-aws-credentials@v1
