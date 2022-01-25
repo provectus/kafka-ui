@@ -2,6 +2,7 @@
 export const Colors = {
   neutral: {
     '0': '#FFFFFF',
+    '3': '#f9fafa',
     '5': '#F1F2F3',
     '10': '#E3E6E8',
     '15': '#D5DADD',
@@ -13,6 +14,11 @@ export const Colors = {
     '70': '#454F54',
     '80': '#2F3639',
     '90': '#171A1C',
+  },
+  transparency: {
+    '10': 'rgba(10, 10, 10, 0.1)',
+    '20': 'rgba(0, 0, 0, 0.1)',
+    '50': 'rgba(34, 41, 47, 0.5)',
   },
   green: {
     '10': '#D6F5E0',
@@ -34,6 +40,12 @@ export const Colors = {
   yellow: {
     '10': '#FFEECC',
   },
+  blue: {
+    '10': '#e3f2fd',
+    '20': '#bbdefb',
+    '30': '#90caf9',
+    '40': '#64b5f6',
+  },
 };
 
 const theme = {
@@ -41,10 +53,17 @@ const theme = {
     minWidth: '1200px',
     navBarWidth: '201px',
     navBarHeight: '3.25rem',
-    mainColor: Colors.neutral[5],
+    stuffColor: Colors.neutral[5],
+    stuffBorderColor: Colors.neutral[10],
+    overlay: {
+      backgroundColor: Colors.neutral[50],
+    },
   },
   panelColor: Colors.neutral[0],
   headingStyles: {
+    h1: {
+      color: Colors.neutral[90],
+    },
     h3: {
       color: Colors.neutral[50],
       fontSize: '14px',
@@ -57,6 +76,7 @@ const theme = {
       warning: Colors.yellow[10],
       info: Colors.neutral[10],
     },
+    shadow: Colors.transparency[20],
   },
   circularAlert: {
     color: {
@@ -127,6 +147,8 @@ const theme = {
     },
     color: {
       normal: Colors.neutral[50],
+      hover: Colors.brand[50],
+      active: Colors.brand[50],
     },
     previewColor: {
       normal: Colors.brand[50],
@@ -157,6 +179,11 @@ const theme = {
     },
   },
   selectStyles: {
+    backgroundColor: {
+      normal: Colors.neutral[0],
+      hover: Colors.neutral[10],
+      active: Colors.neutral[10],
+    },
     color: {
       normal: Colors.neutral[90],
       hover: Colors.neutral[90],
@@ -177,6 +204,7 @@ const theme = {
       yellow: Colors.yellow[10],
       white: Colors.neutral[10],
       red: Colors.red[10],
+      blue: Colors.blue[10],
     },
     color: Colors.neutral[90],
   },
@@ -199,6 +227,7 @@ const theme = {
   switch: {
     unchecked: Colors.neutral[30],
     checked: Colors.green[60],
+    circle: Colors.neutral[0],
   },
   pageLoader: {
     borderColor: Colors.brand[50],
@@ -222,6 +251,26 @@ const theme = {
       normal: Colors.neutral[0],
       active: Colors.neutral[50],
     },
+  },
+  confirmationModal: {
+    overlay: Colors.transparency[10],
+    shadow: Colors.transparency[20],
+  },
+  icons: {
+    closeIcon: Colors.neutral[30],
+    messageToggleIconOpened: Colors.neutral[90],
+    messageToggleIconClosed: Colors.neutral[30],
+    verticalElipsisIcon: Colors.neutral[50],
+    liveIcon: {
+      circleBig: Colors.red[10],
+      circleSmall: Colors.red[50],
+    },
+  },
+  viewer: {
+    wrapper: Colors.neutral[3],
+  },
+  textarea: {
+    focus: 'transparent',
   },
 };
 

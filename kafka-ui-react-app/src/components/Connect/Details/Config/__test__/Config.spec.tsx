@@ -9,7 +9,7 @@ import { connector } from 'redux/reducers/connect/__test__/fixtures';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
-jest.mock('components/common/JSONEditor/JSONEditor', () => 'mock-JSONEditor');
+jest.mock('components/common/Editor/Editor', () => 'mock-Editor');
 
 describe('Config', () => {
   containerRendersView(<ConfigContainer />, Config);

@@ -26,7 +26,7 @@ const Breadcrumb: React.FC = () => {
   );
 
   if (links.length < 2) {
-    return <></>;
+    return null;
   }
 
   return (
