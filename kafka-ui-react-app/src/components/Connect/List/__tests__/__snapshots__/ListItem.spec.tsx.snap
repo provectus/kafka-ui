@@ -1,6 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Connectors ListItem matches snapshot 1`] = `
+.c4 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 .c5 {
   background: transparent;
   border: none;
@@ -22,14 +32,8 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   cursor: pointer;
 }
 
-.c4 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
-  align-self: center;
+.c6 {
+  color: #E51A1A;
 }
 
 .c2 {
@@ -74,10 +78,6 @@ exports[`Connectors ListItem matches snapshot 1`] = `
   -webkit-flex-wrap: wrap;
   -ms-flex-wrap: wrap;
   flex-wrap: wrap;
-}
-
-.c6 {
-  color: #E51A1A;
 }
 
 <Component
@@ -147,7 +147,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       "configListStyles": Object {
         "color": "#ABB5BA",
       },
-      "connectEditWarring": "#FFEECC",
+      "connectEditWarning": "#FFEECC",
       "consumerTopicContent": Object {
         "backgroundColor": "#F1F2F3",
       },
@@ -597,37 +597,30 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                           <div
                             className="c4"
                           >
-                            <Styled(DropdownTrigger)
+                            <styled.button
                               onClick={[Function]}
                             >
-                              <DropdownTrigger
+                              <button
                                 className="c5"
                                 onClick={[Function]}
+                                type="button"
                               >
-                                <button
-                                  aria-controls="dropdown-menu"
-                                  aria-haspopup="true"
-                                  className="c5"
-                                  onClick={[Function]}
-                                  type="button"
-                                >
-                                  <VerticalElipsisIcon>
-                                    <svg
-                                      fill="none"
-                                      height="16"
-                                      viewBox="0 0 4 16"
-                                      width="4"
-                                      xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                      <path
-                                        d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z"
-                                        fill="#73848C"
-                                      />
-                                    </svg>
-                                  </VerticalElipsisIcon>
-                                </button>
-                              </DropdownTrigger>
-                            </Styled(DropdownTrigger)>
+                                <VerticalElipsisIcon>
+                                  <svg
+                                    fill="none"
+                                    height="16"
+                                    viewBox="0 0 4 16"
+                                    width="4"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                  >
+                                    <path
+                                      d="M2 4C3.1 4 4 3.1 4 2C4 0.9 3.1 0 2 0C0.9 0 0 0.9 0 2C0 3.1 0.9 4 2 4ZM2 6C0.9 6 0 6.9 0 8C0 9.1 0.9 10 2 10C3.1 10 4 9.1 4 8C4 6.9 3.1 6 2 6ZM2 12C0.9 12 0 12.9 0 14C0 15.1 0.9 16 2 16C3.1 16 4 15.1 4 14C4 12.9 3.1 12 2 12Z"
+                                      fill="#73848C"
+                                    />
+                                  </svg>
+                                </VerticalElipsisIcon>
+                              </button>
+                            </styled.button>
                           </div>
                         </styled.div>
                         <div
@@ -644,23 +637,24 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                               />
                             </DropdownDivider>
                             <DropdownItem
+                              danger={true}
                               onClick={[Function]}
                             >
-                              <a
+                              <styled.a
+                                $isDanger={true}
                                 className="dropdown-item is-link"
-                                href="#end"
                                 onClick={[Function]}
-                                role="menuitem"
-                                type="button"
                               >
-                                <styled.span>
-                                  <span
-                                    className="c6"
-                                  >
-                                    Remove Connector
-                                  </span>
-                                </styled.span>
-                              </a>
+                                <a
+                                  className="c6 dropdown-item is-link"
+                                  href="#end"
+                                  onClick={[Function]}
+                                  role="menuitem"
+                                  type="button"
+                                >
+                                  Remove Connector
+                                </a>
+                              </styled.a>
                             </DropdownItem>
                           </div>
                         </div>

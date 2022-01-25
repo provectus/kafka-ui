@@ -68,7 +68,7 @@ exports[`SchemaVersion matches snapshot 1`] = `
       "configListStyles": Object {
         "color": "#ABB5BA",
       },
-      "connectEditWarring": "#FFEECC",
+      "connectEditWarning": "#FFEECC",
       "consumerTopicContent": Object {
         "backgroundColor": "#F1F2F3",
       },

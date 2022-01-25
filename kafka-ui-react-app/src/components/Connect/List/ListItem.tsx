@@ -101,8 +101,9 @@ const ListItem: React.FC<ListItemProps> = ({
             <DropdownDivider />
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
+              danger
             >
-              <S.Dropdown>Remove Connector</S.Dropdown>
+              Remove Connector
             </DropdownItem>
           </Dropdown>
         </div>

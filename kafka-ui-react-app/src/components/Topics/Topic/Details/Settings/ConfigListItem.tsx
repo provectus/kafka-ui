@@ -14,8 +14,8 @@ const ConfigListItem: React.FC<ListItemProps> = ({
 
   return (
     <S.ConfigList>
-      <S.ConfigItemCell hasCustomValue>{name}</S.ConfigItemCell>
-      <S.ConfigItemCell hasCustomValue>{value}</S.ConfigItemCell>
+      <S.ConfigItemCell $hasCustomValue>{name}</S.ConfigItemCell>
+      <S.ConfigItemCell $hasCustomValue>{value}</S.ConfigItemCell>
       <td className="has-text-grey" title="Default Value">
         {hasCustomValue && defaultValue}
       </td>

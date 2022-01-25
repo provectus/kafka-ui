@@ -27,7 +27,6 @@ import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
 import SettingsContainer from './Settings/SettingsContainer';
 import Messages from './Messages/Messages';
-import { Drop } from './Details.styled';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -106,14 +105,16 @@ const Details: React.FC<Props> = ({
                 </DropdownItem>
                 <DropdownItem
                   onClick={() => setClearTopicConfirmationVisible(true)}
+                  danger
                 >
-                  <Drop>Clear messages</Drop>
+                  Clear messages
                 </DropdownItem>
                 {isTopicDeletionAllowed && (
                   <DropdownItem
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
+                    danger
                   >
-                    <Drop>Remove topic</Drop>
+                    Remove topic
                   </DropdownItem>
                 )}
               </Dropdown>

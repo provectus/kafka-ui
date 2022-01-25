@@ -12,7 +12,7 @@ export const ConnectEditWarningMessageStyled = styled.div`
   height: 48px;
   display: flex;
   align-items: center;
-  background-color: ${({ theme }) => theme.connectEditWarring};
+  background-color: ${({ theme }) => theme.connectEditWarning};
   border-radius: 8px;
   padding: 8px;
   margin-bottom: 16px;

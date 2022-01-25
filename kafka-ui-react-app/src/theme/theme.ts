@@ -61,7 +61,7 @@ const theme = {
   },
   panelColor: Colors.neutral[0],
   breadcrumb: Colors.neutral[30],
-  connectEditWarring: Colors.yellow[10],
+  connectEditWarning: Colors.yellow[10],
   dropdown: {
     color: Colors.red[50],
   },

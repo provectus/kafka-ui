@@ -28,8 +28,6 @@ import {
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 
 import ListItem from './ListItem';
-import { DropdownRemove } from './ListItem.styled';
-import { Drop } from './Consumer.Details.styled';
 
 const Details: React.FC = () => {
   const history = useHistory();
@@ -79,13 +77,12 @@ const Details: React.FC = () => {
           {!isReadOnly && (
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
-              <DropdownRemove>
-                <DropdownItem
-                  onClick={() => setIsConfirmationModalVisible(true)}
-                >
-                  <Drop>Delete consumer group</Drop>
-                </DropdownItem>
-              </DropdownRemove>
+              <DropdownItem
+                onClick={() => setIsConfirmationModalVisible(true)}
+                danger
+              >
+                Delete consumer group
+              </DropdownItem>
             </Dropdown>
           )}
         </PageHeading>

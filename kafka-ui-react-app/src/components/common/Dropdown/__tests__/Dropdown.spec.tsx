@@ -40,6 +40,8 @@ describe('Dropdown', () => {
     const wrapper = mount(setupWrapper({}, dummyChildren));
     expect(wrapper.exists('.dropdown-content')).toBeTruthy();
     expect(wrapper.find('.dropdown-item').length).toEqual(3);
+    // eslint-disable-next-line no-console
+    console.log(wrapper.debug());
     expect(wrapper.find('.dropdown-divider').length).toEqual(1);
   });
 

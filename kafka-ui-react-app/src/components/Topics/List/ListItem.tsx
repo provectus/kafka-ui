@@ -1,5 +1,4 @@
 import React from 'react';
-// import { NavLink } from 'react-router-dom';
 import {
   ClusterName,
   TopicName,
@@ -10,7 +9,6 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-// import { Colors } from 'theme/theme';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
@@ -107,14 +105,15 @@ const ListItem: React.FC<ListItemProps> = ({
         {!internal && !isReadOnly && vElipsisVisble ? (
           <div className="has-text-right">
             <Dropdown label={<VerticalElipsisIcon />} right>
-              <DropdownItem onClick={clearTopicMessagesHandler}>
-                <span className="has-text-danger">Clear Messages</span>
+              <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                Clear Messages
               </DropdownItem>
               {isTopicDeletionAllowed && (
                 <DropdownItem
                   onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  danger
                 >
-                  <span className="has-text-danger">Remove Topic</span>
+                  Remove Topic
                 </DropdownItem>
               )}
             </Dropdown>
