@@ -14,6 +14,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: 'Check links in documentation'
-        uses: restqa/404-links@v2.2.0
+      - name: Check URLs
+        uses: paramt/url-checker@master
+        with:
+          files: "README.md,SUPPORT.md,etc/*"
+          blacklist: "localhost"
+
 
