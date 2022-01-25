@@ -8,7 +8,7 @@ export const SecondaryTabs = styled.nav`
     padding: 6px;
     height: 32px;
     min-width: 57px;
-    border: 1px solid #e3e6e8;
+    border: 1px solid ${(props) => props.theme.layout.stuffBorderColor};
     cursor: pointer;
 
     &:hover {

@@ -3,16 +3,20 @@ import SchemaVersion from 'components/Schemas/Details/SchemaVersion/SchemaVersio
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 import { versions } from './fixtures';
 
 const renderComponent = () => {
   render(
-    <table>
-      <tbody>
-        <SchemaVersion version={versions[0]} />
-      </tbody>
-    </table>
+    <ThemeProvider theme={theme}>
+      <table>
+        <tbody>
+          <SchemaVersion version={versions[0]} />
+        </tbody>
+      </table>
+    </ThemeProvider>
   );
 };
 describe('SchemaVersion', () => {

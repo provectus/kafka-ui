@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Colors } from 'theme/theme';
 
 export const TopicContentWrapper = styled.tr`
@@ -8,8 +8,10 @@ export const TopicContentWrapper = styled.tr`
   }
 `;
 
-export const ContentBox = styled.div`
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-`;
+export const ContentBox = styled.div(
+  ({ theme }) => css`
+    background-color: ${theme.menuStyles.backgroundColor.normal};
+    padding: 20px;
+    border-radius: 8px;
+  `
+);

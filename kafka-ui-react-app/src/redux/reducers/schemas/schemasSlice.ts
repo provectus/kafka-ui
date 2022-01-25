@@ -87,6 +87,7 @@ const schemasSlice = createSlice({
   initialState,
   reducers: {
     schemaAdded: schemasAdapter.addOne,
+    schemaUpdated: schemasAdapter.upsertOne,
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSchemas.fulfilled, (state, { payload }) => {
@@ -118,7 +119,7 @@ export const getSchemaLatest = createSelector(
   (state) => state.latest
 );
 
-export const { schemaAdded } = schemasSlice.actions;
+export const { schemaAdded, schemaUpdated } = schemasSlice.actions;
 
 export const getAreSchemasFulfilled = createSelector(
   createFetchingSelector(SCHEMAS_FETCH_ACTION),
