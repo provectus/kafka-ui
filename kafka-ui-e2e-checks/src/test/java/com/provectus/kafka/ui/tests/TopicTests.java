@@ -4,11 +4,13 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import lombok.SneakyThrows;
+import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
+@Ignore // TODO #1480
 public class TopicTests extends BaseTest {
 
     public static final String NEW_TOPIC = "new-topic";
