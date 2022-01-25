@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "THIS IS THE VERSION: ${{ github.event.inputs.version }}"
           export VERSION=${{ github.event.inputs.version }}
-          sed -i "s@version:*@version: $VERSION@g" charts/kafka-ui/Chart.yaml
+          sed -i "s@version:.*@version: $VERSION@g" charts/kafka-ui/Chart.yaml
       - name: update chart
         run: |
           export VERSION=${{ github.event.inputs.version }}
