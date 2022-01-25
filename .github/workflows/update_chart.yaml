@@ -16,8 +16,8 @@ jobs:
           fetch-depth: 0
       - name: substitute version in Chart.yaml
         run: |
-          echo "THIS IS THE VERSION: ${{ inputs.version }}
-          export VERSION=${{ inputs.version }}
+          echo "THIS IS THE VERSION: ${{ github.event.inputs.version }}
+          export VERSION=${{ github.event.inputs.version }}
           sed -i "s@version:*@version: $VERSION@g" charts/kafka-ui/Chart.yaml
       - name: update chart
         run: |
