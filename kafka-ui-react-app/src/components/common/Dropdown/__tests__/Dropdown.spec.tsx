@@ -39,7 +39,7 @@ describe('Dropdown', () => {
   it('renders custom children', () => {
     const wrapper = mount(setupWrapper({}, dummyChildren));
     expect(wrapper.exists('.dropdown-content')).toBeTruthy();
-    expect(wrapper.find('.dropdown-item').length).toEqual(3);
+    expect(wrapper.find('a.dropdown-item').length).toEqual(3);
     expect(wrapper.find('.dropdown-divider').length).toEqual(1);
   });
 
