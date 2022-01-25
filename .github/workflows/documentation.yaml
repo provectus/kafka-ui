@@ -1,0 +1,23 @@
+name: Documentation
+on:
+  pull_request:
+    types:
+      - opened
+      - labeled
+      - reopened
+      - synchronize
+    paths:
+      - 'documentation/*'
+      - './*.md'
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check URLs in files
+        uses: urlstechie/urlchecker-action@0.0.25
+        with:
+          exclude_patterns: localhost,127.0.,192.168.
+          exclude_urls: https://api.server,https://graph.microsoft.com/User.Read
+          print_all: false
+          file_types: .md
