@@ -142,6 +142,10 @@ UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and 
 
 To be continued
 
+## Liveliness and readiness probes
+Liveliness and readiness endpoint is at `/actuator/health`.
+Info endpoint (build info) is located at `/actuator/info`.
+
 ## <a name="env_variables"></a> Environment Variables
 
 Alternatively, each variable of the .yml file can be set with an environment variable. 
