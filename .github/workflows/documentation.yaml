@@ -18,4 +18,5 @@ jobs:
         uses: urlstechie/urlchecker-action@0.0.25
         with:
           exclude_patterns: localhost,127.0.,192.168.
+          print_all: false
 
