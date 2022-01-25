@@ -41,8 +41,6 @@ const List: React.FC = () => {
     };
   }, [clusterName, page, perPage]);
 
-  console.log(isFetched, schemas);
-
   if (!isFetched) {
     return <PageLoader />;
   }
