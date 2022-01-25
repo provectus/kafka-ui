@@ -16,8 +16,9 @@ jobs:
           fetch-depth: 0
       - name: substitute version in Chart.yaml
         run: |
-          export version=${{ inputs.version }}
-          sed -i "s@version:*@version: $version@g" charts/kafka-ui/Chart.yaml
+          echo "THIS IS THE VERSION: ${{ inputs.version }}
+          export VERSION=${{ inputs.version }}
+          sed -i "s@version:*@version: $VERSION@g" charts/kafka-ui/Chart.yaml
       - name: update chart
         run: |
           MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
@@ -27,5 +28,5 @@ jobs:
           helm repo index .
           echo "THIS IS THE CUT MSG: ${MSG##*/}"
           git add -f ${MSG##*/} index.yaml
-          git commit -m "release $version"
+          git commit -m "release $VERSION"
           git push
