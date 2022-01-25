@@ -17,4 +17,4 @@ jobs:
       - uses: byrnereese/github-action-mkdocs-link-check@1.0
         with:
           excludes: "localhost"
-          file-path: "*"
+          file-path: "/"
