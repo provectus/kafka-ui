@@ -61,6 +61,7 @@ const GlobalSchemaSelector: React.FC = () => {
         setCurrentCompatibilityLevel(nextCompatibilityLevel);
         setNextCompatibilityLevel(undefined);
         setIsConfirmationVisible(false);
+        // TODO: Mb pages are needed there
         dispatch(fetchSchemas({ clusterName }));
       } catch (e) {
         const err = await getResponse(e as Response);

@@ -76,11 +76,7 @@ const Details: React.FC = () => {
 
   // TODO: show error if schema not found
   if (!isFetched || !schema) {
-    return (
-      <>
-        <PageLoader />
-      </>
-    );
+    return <PageLoader />;
   }
 
   return (
@@ -115,7 +111,7 @@ const Details: React.FC = () => {
       </PageHeading>
       <LatestVersionItem schema={schema} />
       <OldVersionsTitle>Old versions</OldVersionsTitle>
-      {areVersionsFetched && (
+      {areVersionsFetched ? (
         <Table isFullwidth>
           <thead>
             <tr>
@@ -135,6 +131,8 @@ const Details: React.FC = () => {
             )}
           </tbody>
         </Table>
+      ) : (
+        <PageLoader />
       )}
     </>
   );
