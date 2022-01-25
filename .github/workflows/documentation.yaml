@@ -14,10 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Check URLs
-        uses: paramt/url-checker@master
+      - uses: byrnereese/github-action-mkdocs-link-check@v1
         with:
-          files: "README.md,SUPPORT.md,etc/*"
-          blacklist: "localhost"
-
-
+          use-verbose-mode: "no"
+          excludes: "localhost"
