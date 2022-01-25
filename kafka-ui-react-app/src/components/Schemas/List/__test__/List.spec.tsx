@@ -13,6 +13,7 @@ import ClusterContext, {
   initialValue as contextInitialValue,
 } from 'components/contexts/ClusterContext';
 import { RootState } from 'redux/interfaces';
+import { SCHEMAS_FETCH_ACTION } from 'redux/reducers/schemas/schemasSlice';
 
 const clusterName = 'testClusterName';
 
@@ -30,7 +31,7 @@ const renderComponent = (
       pathname: clusterSchemasPath(clusterName),
       preloadedState: {
         loader: {
-          'schemas/fetch': 'fulfilled',
+          [SCHEMAS_FETCH_ACTION]: 'fulfilled',
         },
         schemas: initialState,
       },

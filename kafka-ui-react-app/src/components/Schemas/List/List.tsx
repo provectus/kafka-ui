@@ -6,16 +6,46 @@ import * as C from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
-import { useAppSelector } from 'lib/hooks/redux';
-import { selectAllSchemas } from 'redux/reducers/schemas/schemasSlice';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  selectAllSchemas,
+  fetchSchemas,
+  getAreSchemasFulfilled,
+  SCHEMAS_FETCH_ACTION,
+} from 'redux/reducers/schemas/schemasSlice';
+import usePagination from 'lib/hooks/usePagination';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import Pagination from 'components/common/Pagination/Pagination';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import Search from 'components/common/Search/Search';
+import useSearch from 'lib/hooks/useSearch';
 
 import ListItem from './ListItem';
 import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 
 const List: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
   const schemas = useAppSelector(selectAllSchemas);
+  const { page, perPage } = usePagination();
+  const isFetched = useAppSelector(getAreSchemasFulfilled);
+  const totalPages = useAppSelector((state) => state.schemas.totalPages);
+  const [searchText, handleSearchText] = useSearch('');
+
+  React.useEffect(() => {
+    dispatch(fetchSchemas({ clusterName, page, perPage }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMAS_FETCH_ACTION));
+    };
+  }, [clusterName, page, perPage]);
+
+  console.log(isFetched, schemas);
+
+  if (!isFetched) {
+    return <PageLoader />;
+  }
 
   return (
     <>
@@ -34,6 +64,13 @@ const List: React.FC = () => {
           </>
         )}
       </PageHeading>
+      <ControlPanelWrapper hasInput>
+        <Search
+          placeholder="Search by Schema Subject"
+          value={searchText}
+          handleSearch={handleSearchText}
+        />
+      </ControlPanelWrapper>
       <C.Table isFullwidth>
         <thead>
           <tr>
@@ -56,6 +93,7 @@ const List: React.FC = () => {
           ))}
         </tbody>
       </C.Table>
+      <Pagination totalPages={totalPages} />
     </>
   );
 };
