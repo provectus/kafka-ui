@@ -76,6 +76,10 @@ public class KafkaTopicCreateTests extends AbstractBaseTest {
             .uri("/api/clusters/{clusterName}/topics/" + topicCreation.getName(), LOCAL)
             .exchange()
             .expectStatus()
-            .isOk();
+            .isCreated()
+            .expectBody()
+            .jsonPath("partitionCount").isEqualTo(topicCreation.getPartitions().toString())
+            .jsonPath("replicationFactor").isEqualTo(topicCreation.getReplicationFactor().toString())
+            .jsonPath("name").isEqualTo(topicCreation.getName());
   }
 }

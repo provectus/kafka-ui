@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toMap;
 import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
+import com.provectus.kafka.ui.exception.TopicRecreationException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Feature;
@@ -41,7 +42,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
@@ -50,6 +50,8 @@ import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.TopicExistsException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
@@ -64,10 +66,10 @@ public class TopicsService {
   private final ClusterMapper clusterMapper;
   private final DeserializationService deserializationService;
   private final MetricsCache metricsCache;
-  @org.springframework.beans.factory.annotation.Value("${topic.recreate.maxAttempt:3}")
-  private int maxAttemptToRecreateTopic;
-  @org.springframework.beans.factory.annotation.Value("${topic.recreate.timeout.seconds:5}")
-  private int recreateTopicTimeout;
+  @Value("${topic.recreate.maxRetries:15}")
+  private int recreateMaxRetries;
+  @Value("${topic.recreate.delay.seconds:1}")
+  private int recreateDelayInSeconds;
 
   public Mono<TopicsResponseDTO> getTopics(KafkaCluster cluster,
                                            Optional<Integer> pageNum,
@@ -188,22 +190,27 @@ public class TopicsService {
   }
 
   public Mono<TopicDTO> recreateTopic(KafkaCluster cluster, String topicName) {
-    return adminClientService.get(cluster)
-            .flatMap(cl -> loadTopic(cluster, topicName))
-            .flatMap(topic -> deleteTopic(cluster, topicName).thenReturn(new TopicCreationDTO()
-                            .name(topic.getName())
-                            .partitions(topic.getPartitionCount())
-                            .replicationFactor(topic.getReplicationFactor())
-                            .configs(topic
-                                    .getTopicConfigs()
-                                    .stream()
-                                    .collect(Collectors.toMap(InternalTopicConfig::getName,
-                                            InternalTopicConfig::getValue))))
-                    .delayElement(Duration.ofSeconds(recreateTopicTimeout))
-                    .flatMap(topicCreation -> createTopic(cluster,  Mono.just(topicCreation))
-                            .retryWhen(Retry.fixedDelay(maxAttemptToRecreateTopic,
-                                            Duration.ofSeconds(recreateTopicTimeout))
-                                    .filter(throwable -> throwable instanceof TopicMetadataException))));
+    return loadTopic(cluster, topicName)
+            .flatMap(t -> deleteTopic(cluster, topicName)
+                    .thenReturn(t).delayElement(Duration.ofSeconds(recreateDelayInSeconds))
+                    .flatMap(topic -> adminClientService.get(cluster).flatMap(ac -> ac.createTopic(topic.getName(),
+                                            topic.getPartitionCount(),
+                                            (short) topic.getReplicationFactor(),
+                                            topic.getTopicConfigs()
+                                                    .stream()
+                                                    .collect(Collectors
+                                                            .toMap(InternalTopicConfig::getName,
+                                                                    InternalTopicConfig::getValue)))
+                                    .thenReturn(topicName))
+                            .retryWhen(Retry.fixedDelay(recreateMaxRetries,
+                                            Duration.ofSeconds(recreateDelayInSeconds))
+                                    .filter(throwable -> throwable instanceof TopicExistsException)
+                                    .onRetryExhaustedThrow((a, b) ->
+                                            new TopicRecreationException(topicName,
+                                                    recreateMaxRetries * recreateDelayInSeconds)))
+                            .flatMap(a -> loadTopic(cluster, topicName)).map(clusterMapper::toTopic)
+                    )
+            );
   }
 
   private Mono<InternalTopic> updateTopic(KafkaCluster cluster,
@@ -419,12 +426,12 @@ public class TopicsService {
   }
 
   @VisibleForTesting
-  @Value
+  @lombok.Value
   static class Pagination {
     ReactiveAdminClient adminClient;
     MetricsCache.Metrics metrics;
 
-    @Value
+    @lombok.Value
     static class Page {
       List<String> topics;
       int totalPages;
