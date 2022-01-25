@@ -1,53 +1,34 @@
-import React from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { clusterPath } from 'lib/paths';
-import { capitalize } from 'lodash';
 
 import { BreadcrumbWrapper } from './Breadcrumb.styled';
-
-export interface BreadcrumbItem {
-  label: string;
-  href: string;
-}
-
-interface Props {
-  links?: BreadcrumbItem[];
-}
+import { BreadcrumbContext } from './Breadcrumb.context';
 
 const basePathEntriesLength = clusterPath(':clusterName').split('/').length;
 
-const Breadcrumb: React.FC<Props> = () => {
-  const location = useLocation();
-  const params = useParams();
-  const pathParams = React.useMemo(() => Object.values(params), [params]);
+const Breadcrumb: React.FC = () => {
+  const breadcrumbContext = useContext(BreadcrumbContext);
 
-  const paths = location.pathname.split('/');
   const links = React.useMemo(
-    () =>
-      paths.slice(basePathEntriesLength).map((path, index) => {
-        return !pathParams.includes(paths[basePathEntriesLength + index])
-          ? path.split('-').map(capitalize).join(' ')
-          : path;
-      }),
-    [paths]
+    () => breadcrumbContext.path.slice(basePathEntriesLength),
+    [breadcrumbContext.link]
   );
-  const currentLink = React.useMemo(() => {
-    if (paths.length < basePathEntriesLength) {
-      return 'Dashboard';
-    }
-    return links[links.length - 1];
-  }, [links]);
 
   const getPathPredicate = React.useCallback(
     (index: number) =>
-      `${paths.slice(0, basePathEntriesLength + index + 1).join('/')}`,
-    [paths]
+      `${breadcrumbContext.link
+        .split('/')
+        .slice(0, basePathEntriesLength + index + 1)
+        .join('/')}`,
+    [breadcrumbContext.link]
   );
 
   if (links.length < 2) {
     return null;
   }
+
   return (
     <BreadcrumbWrapper role="list">
       {links.slice(0, links.length - 1).map((link, index) => (
@@ -60,7 +41,7 @@ const Breadcrumb: React.FC<Props> = () => {
           'is-size-4 has-text-weight-medium is-capitalized': links.length < 2,
         })}
       >
-        <span>{currentLink}</span>
+        <span>{links[links.length - 1]}</span>
       </li>
     </BreadcrumbWrapper>
   );
