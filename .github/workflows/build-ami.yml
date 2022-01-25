@@ -16,8 +16,6 @@ jobs:
         run: |
           echo "Cloning repo..."
           git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git --branch ${{ github.event.inputs.KafkaUIInfraBranch }}
-          echo "Cd to ami..."
-          cd kafka-ui-infra/ami
 
       - name: Configure AWS credentials for Kafka-UI account
         uses: aws-actions/configure-aws-credentials@v1
@@ -32,7 +30,7 @@ jobs:
         with:
           command: validate
           arguments: -syntax-only
-          target: kafka-ui.pkr.hcl
+          target: kafka-ui-infra/ami/kafka-ui.pkr.hcl
 
       # build artifact
       - name: Build Artifact
@@ -40,6 +38,6 @@ jobs:
         with:
           command: build
           arguments: "-color=false -on-error=abort"
-          target: kafka-ui.pkr.hcl
+          target: kafka-ui-infra/ami/kafka-ui.pkr.hcl
         env:
           PACKER_LOG: 1
