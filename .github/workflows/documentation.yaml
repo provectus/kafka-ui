@@ -17,5 +17,5 @@ jobs:
       - name: Check URLs in files
         uses: urlstechie/urlchecker-action@0.0.25
         with:
-          exclude_urls: http://localhost,http://127.0.0.1
+          exclude_patterns: localhost,127.0.0.1
 
