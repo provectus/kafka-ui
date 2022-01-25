@@ -15,7 +15,6 @@ import * as Metrics from 'components/common/Metrics';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
-import { Colors } from 'theme/theme';
 import { groupBy } from 'lodash';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
@@ -79,8 +78,8 @@ const Details: React.FC = () => {
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem onClick={onResetOffsets}>Reset offset</DropdownItem>
               <DropdownItem
-                style={{ color: Colors.red[50] }}
                 onClick={() => setIsConfirmationModalVisible(true)}
+                danger
               >
                 Delete consumer group
               </DropdownItem>

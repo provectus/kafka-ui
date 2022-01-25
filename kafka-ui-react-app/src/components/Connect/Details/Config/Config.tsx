@@ -9,7 +9,6 @@ import {
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Editor from 'components/common/Editor/Editor';
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -31,7 +30,7 @@ export interface ConfigProps {
 const ConnectConfigWrapper = styled.div`
   padding: 16px;
   margin: 16px;
-  border: 1px solid ${Colors.neutral[10]};
+  border: 1px solid ${({ theme }) => theme.layout.stuffColor};
   border-radius: 8px;
 `;
 
