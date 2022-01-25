@@ -21,6 +21,7 @@ jobs:
           sed -i "s@version:*@version: $VERSION@g" charts/kafka-ui/Chart.yaml
       - name: update chart
         run: |
+          export VERSION=${{ github.event.inputs.version }}
           MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
           echo "THIS IS THE MSG: $MSG"
           git fetch origin
