@@ -22,3 +22,4 @@ jobs:
           print_all: false
           file_types: .md
           subfolder: guides
+          include_files: README.md,CODE-OF-CONDUCT.md,SECURITY.md,CONTRIBUTING.md,docker-compose.md
