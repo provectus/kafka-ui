@@ -3,14 +3,15 @@ package com.provectus.kafka.ui.service.ksql;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient.KsqlResponseTable;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.TimeUnit;
 import lombok.SneakyThrows;
 import org.springframework.stereotype.Service;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
-
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.*;
 
 @Service
 public class KsqlServiceV2 {

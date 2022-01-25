@@ -7,11 +7,10 @@ import com.provectus.kafka.ui.model.KsqlCommandV2DTO;
 import com.provectus.kafka.ui.model.KsqlResponseDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
 import com.provectus.kafka.ui.service.KsqlService;
+import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -39,23 +38,22 @@ public class KsqlController extends AbstractController implements KsqlApi {
 
   @Override
   public Mono<ResponseEntity<Void>> executeKsql(String clusterName,
-                                                Mono<KsqlCommandV2DTO> ksqlCommandV2DTO,
+                                                Mono<KsqlCommandV2DTO> ksqlCommand2Dto,
                                                 ServerWebExchange exchange) {
-    return ksqlCommandV2DTO
-        .map(dto -> {
-              ksqlServiceV2.execute(
-                  getCluster(clusterName),
-                  dto.getResponsePipeId(),
-                  dto.getKsql(),
-                  Optional.ofNullable(dto.getStreamsProperties()).orElse(Map.of()));
-              return dto;
-            }
-        )
-        .map(dto -> ResponseEntity.ok().build());
+    return ksqlCommandV2DTO.map(dto -> {
+      ksqlServiceV2.execute(
+          getCluster(clusterName),
+          dto.getResponsePipeId(),
+          dto.getKsql(),
+          Optional.ofNullable(dto.getStreamsProperties()).orElse(Map.of()));
+      return dto;
+    }).map(dto -> ResponseEntity.ok().build());
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<KsqlResponseDTO>>> openKsqlResponsePipe(String clusterName, String pipeId, ServerWebExchange exchange) {
+  public Mono<ResponseEntity<Flux<KsqlResponseDTO>>> openKsqlResponsePipe(String clusterName,
+                                                                          String pipeId,
+                                                                          ServerWebExchange exchange) {
     return Mono.just(
         ResponseEntity.ok(ksqlServiceV2.registerPipe(pipeId)
             .map(table -> new KsqlResponseDTO()
