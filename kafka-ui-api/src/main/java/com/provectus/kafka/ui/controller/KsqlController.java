@@ -40,7 +40,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
   public Mono<ResponseEntity<Void>> executeKsql(String clusterName,
                                                 Mono<KsqlCommandV2DTO> ksqlCommand2Dto,
                                                 ServerWebExchange exchange) {
-    return ksqlCommandV2DTO.map(dto -> {
+    return ksqlCommand2Dto.map(dto -> {
       ksqlServiceV2.execute(
           getCluster(clusterName),
           dto.getResponsePipeId(),
