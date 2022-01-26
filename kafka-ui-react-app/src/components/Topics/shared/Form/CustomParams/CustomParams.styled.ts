@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const ParamsWrapper = styled.div`
   margin-top: 16px;
