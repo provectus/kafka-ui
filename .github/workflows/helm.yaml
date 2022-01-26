@@ -18,14 +18,11 @@ jobs:
         run: |
           sed -i "s@enabled: false@enabled: true@g" charts/kafka-ui/values.yaml
       - name: Run kubeval
+        shell: bash
         run: |
-          echo "
           K8S_VERSIONS=($(git ls-remote --refs --tags https://github.com/kubernetes/kubernetes.git | cut -d/ -f3 | grep -e '^v1\.[0-9]\{2\}\.[0-9]\{1,2\}$' | grep -v -e  '^v1\.1[0-8]\{1\}' | egrep '1\.\d{2}.0' | cut -c2-))
           for version in $K8S_VERSIONS;
             do 
               echo $version;
               helm template charts/kafka-ui -f charts/kafka-ui/values.yaml |& kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
-          " >> script.sh
-          cat script.sh
-          bash script.sh
