@@ -6,7 +6,7 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
   const { search, pathname } = useLocation();
   const queryParams = useMemo(() => new URLSearchParams(search), [search]);
   const [searchValue, setSearchValue] = useState<string>(
-    queryParams.get('q') || initValue
+    queryParams.get('q') || initValue.trim()
   );
 
   useEffect(() => {
