@@ -11,11 +11,6 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
 
   useEffect(() => {
     const currentSearch = queryParams.get('q');
-    if (currentSearch) setSearchValue(currentSearch);
-  }, []);
-
-  useEffect(() => {
-    const currentSearch = queryParams.get('q');
     if (searchValue !== currentSearch) {
       if (searchValue) {
         queryParams.set('q', searchValue);
