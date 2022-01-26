@@ -1,33 +1,30 @@
-import React, { useCallback } from 'react';
+import React from 'react';
+
+import * as S from './Dropdown.styled';
 
 export interface DropdownItemProps {
   onClick(): void;
-  style?: React.CSSProperties;
+  danger?: boolean;
 }
 
 const DropdownItem: React.FC<DropdownItemProps> = ({
   onClick,
-  style,
+  danger,
   children,
 }) => {
-  const onClickHandler = useCallback(
-    (e: React.MouseEvent) => {
-      e.preventDefault();
-      onClick();
-    },
-    [onClick]
-  );
+  const onClickHandler = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onClick();
+  };
+
   return (
-    <a
-      href="#end"
+    <S.Item
+      $isDanger={!!danger}
       onClick={onClickHandler}
       className="dropdown-item is-link"
-      role="menuitem"
-      type="button"
-      style={style}
     >
       {children}
-    </a>
+    </S.Item>
   );
 };
 

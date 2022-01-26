@@ -23,7 +23,7 @@ describe('TableHeaderCell', () => {
       <table>
         <thead>
           <tr>
-            <TableHeaderCell {...props} />
+            <TableHeaderCell {...props} />;
           </tr>
         </thead>
       </table>
@@ -57,7 +57,7 @@ describe('TableHeaderCell', () => {
     expect(title).toBeInTheDocument();
     expect(title).toHaveTextContent(testTitle);
     expect(within(title).getByTitle(sortIconTitle)).toBeInTheDocument();
-    expect(title).toHaveStyle(`color: ${theme.thStyles.color.active};`);
+    expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
     expect(title).toHaveStyle('cursor: pointer;');
   });
 
@@ -133,7 +133,7 @@ describe('TableHeaderCell', () => {
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
-    expect(title).toHaveStyle(`color: ${theme.thStyles.color.active};`);
+    expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
   });
 
   it('renders without hightlighted title when orderBy and orderValue are not equal', () => {
@@ -144,7 +144,7 @@ describe('TableHeaderCell', () => {
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
-    expect(title).toHaveStyle(`color: ${theme.thStyles.color.normal}`);
+    expect(title).toHaveStyle(`color: ${theme.table.th.color.normal}`);
   });
 
   it('renders with default (primary) theme', () => {
@@ -155,7 +155,7 @@ describe('TableHeaderCell', () => {
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
     expect(title).toHaveStyle(
-      `background: ${theme.thStyles.backgroundColor.normal};`
+      `background: ${theme.table.th.backgroundColor.normal};`
     );
   });
 });

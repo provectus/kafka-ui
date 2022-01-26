@@ -103,6 +103,7 @@ const Details: React.FC = () => {
             <Dropdown label={<VerticalElipsisIcon />} right>
               <DropdownItem
                 onClick={() => setDeleteSchemaConfirmationVisible(true)}
+                danger
               >
                 Remove schema
               </DropdownItem>
