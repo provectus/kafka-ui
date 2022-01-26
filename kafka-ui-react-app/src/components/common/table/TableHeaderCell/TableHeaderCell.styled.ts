@@ -50,3 +50,15 @@ export const TableHeaderCell = styled.th`
   border-bottom-width: 1px;
   vertical-align: middle;
 `;
+
+export const SortIcon = styled.span.attrs({ className: 'fas fa-sort' })(
+  ({ className }) => css`
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  height: 1rem;
+  width: 1rem;
+
+  i.${className}
+`
+);

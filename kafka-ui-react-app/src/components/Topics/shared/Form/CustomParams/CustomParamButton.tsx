@@ -1,4 +1,5 @@
 import React from 'react';
+import * as S from './CustomParams.styled'
 
 interface Props {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
