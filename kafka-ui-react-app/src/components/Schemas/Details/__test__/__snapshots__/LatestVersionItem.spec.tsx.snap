@@ -13,7 +13,13 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         },
         "shadow": "rgba(0, 0, 0, 0.1)",
       },
-      "buttonStyles": Object {
+      "breadcrumb": "#ABB5BA",
+      "button": Object {
+        "border": Object {
+          "active": "#171A1C",
+          "hover": "#454F54",
+          "normal": "#73848C",
+        },
         "fontSize": Object {
           "L": "16px",
           "M": "14px",
@@ -59,11 +65,21 @@ exports[`LatestVersionItem matches snapshot 1`] = `
           "warning": "#FFEECC",
         },
       },
-      "confirmationModal": Object {
-        "overlay": "rgba(10, 10, 10, 0.1)",
-        "shadow": "rgba(0, 0, 0, 0.1)",
+      "configList": Object {
+        "color": "#ABB5BA",
       },
-      "headingStyles": Object {
+      "connectEditWarning": "#FFEECC",
+      "consumerTopicContent": Object {
+        "backgroundColor": "#F1F2F3",
+      },
+      "dangerZone": Object {
+        "borderColor": "#E3E6E8",
+        "color": "#E51A1A",
+      },
+      "dropdown": Object {
+        "color": "#E51A1A",
+      },
+      "heading": Object {
         "h1": Object {
           "color": "#171A1C",
         },
@@ -82,6 +98,32 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         "messageToggleIconOpened": "#171A1C",
         "verticalElipsisIcon": "#73848C",
       },
+      "input": Object {
+        "backgroundColor": Object {
+          "readOnly": "#F1F2F3",
+        },
+        "borderColor": Object {
+          "disabled": "#E3E6E8",
+          "focus": "#454F54",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
+        },
+        "color": Object {
+          "disabled": "#ABB5BA",
+          "placeholder": Object {
+            "normal": "#ABB5BA",
+            "readOnly": "#ABB5BA",
+          },
+          "readOnly": "#171A1C",
+        },
+        "error": "#E51A1A",
+        "icon": Object {
+          "color": "#454F54",
+        },
+        "label": Object {
+          "color": "#454F54",
+        },
+      },
       "layout": Object {
         "minWidth": "1200px",
         "navBarHeight": "3.25rem",
@@ -92,7 +134,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         "stuffBorderColor": "#E3E6E8",
         "stuffColor": "#F1F2F3",
       },
-      "menuStyles": Object {
+      "menu": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#F1F2F3",
@@ -111,6 +153,12 @@ exports[`LatestVersionItem matches snapshot 1`] = `
       },
       "metrics": Object {
         "backgroundColor": "#F1F2F3",
+        "filters": Object {
+          "color": Object {
+            "icon": "#171A1C",
+            "normal": "#73848C",
+          },
+        },
         "indicator": Object {
           "backgroundColor": "#FFFFFF",
           "lightTextColor": "#ABB5BA",
@@ -118,11 +166,20 @@ exports[`LatestVersionItem matches snapshot 1`] = `
           "warningTextColor": "#E51A1A",
         },
       },
+      "modal": Object {
+        "backgroundColor": "#FFFFFF",
+        "border": Object {
+          "bottom": "#F1F2F3",
+          "top": "#F1F2F3",
+        },
+        "overlay": "rgba(10, 10, 10, 0.1)",
+        "shadow": "rgba(0, 0, 0, 0.1)",
+      },
       "pageLoader": Object {
         "borderBottomColor": "#FFFFFF",
         "borderColor": "#4F4FFF",
       },
-      "paginationStyles": Object {
+      "pagination": Object {
         "backgroundColor": "#FFFFFF",
         "borderColor": Object {
           "active": "#454F54",
@@ -139,16 +196,23 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         "currentPage": "#E3E6E8",
       },
       "panelColor": "#FFFFFF",
-      "primaryTabStyles": Object {
+      "primaryTab": Object {
         "borderColor": Object {
           "active": "#4F4FFF",
           "hover": "transparent",
+          "nav": "#E3E6E8",
           "normal": "transparent",
         },
         "color": Object {
           "active": "#171A1C",
           "hover": "#171A1C",
           "normal": "#73848C",
+        },
+      },
+      "schema": Object {
+        "backgroundColor": Object {
+          "div": "#FFFFFF",
+          "tr": "#F1F2F3",
         },
       },
       "scrollbar": Object {
@@ -161,7 +225,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
           "normal": "#FFFFFF",
         },
       },
-      "secondaryTabStyles": Object {
+      "secondaryTab": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#F1F2F3",
@@ -173,7 +237,7 @@ exports[`LatestVersionItem matches snapshot 1`] = `
           "normal": "#73848C",
         },
       },
-      "selectStyles": Object {
+      "select": Object {
         "backgroundColor": Object {
           "active": "#E3E6E8",
           "hover": "#E3E6E8",
@@ -197,7 +261,37 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         "circle": "#FFFFFF",
         "unchecked": "#ABB5BA",
       },
-      "tagStyles": Object {
+      "table": Object {
+        "link": Object {
+          "color": Object {
+            "normal": "#171A1C",
+          },
+        },
+        "td": Object {
+          "color": Object {
+            "normal": "#171A1C",
+          },
+        },
+        "th": Object {
+          "backgroundColor": Object {
+            "normal": "#FFFFFF",
+          },
+          "color": Object {
+            "active": "#4F4FFF",
+            "hover": "#4F4FFF",
+            "normal": "#73848C",
+          },
+          "previewColor": Object {
+            "normal": "#4F4FFF",
+          },
+        },
+        "tr": Object {
+          "backgroundColor": Object {
+            "hover": "#F1F2F3",
+          },
+        },
+      },
+      "tag": Object {
         "backgroundColor": Object {
           "blue": "#e3f2fd",
           "gray": "#F1F2F3",
@@ -208,20 +302,48 @@ exports[`LatestVersionItem matches snapshot 1`] = `
         },
         "color": "#171A1C",
       },
-      "textarea": Object {
-        "focus": "transparent",
-      },
-      "thStyles": Object {
+      "textArea": Object {
         "backgroundColor": Object {
-          "normal": "#FFFFFF",
+          "readOnly": "#F1F2F3",
+        },
+        "borderColor": Object {
+          "disabled": "#E3E6E8",
+          "focus": "#454F54",
+          "hover": "#73848C",
+          "normal": "#ABB5BA",
         },
         "color": Object {
-          "active": "#4F4FFF",
-          "hover": "#4F4FFF",
-          "normal": "#73848C",
+          "disabled": "#ABB5BA",
+          "placeholder": Object {
+            "focus": Object {
+              "normal": "transparent",
+              "readOnly": "#ABB5BA",
+            },
+            "normal": "#ABB5BA",
+          },
+          "readOnly": "#171A1C",
         },
-        "previewColor": Object {
-          "normal": "#4F4FFF",
+      },
+      "topicFormLabel": Object {
+        "color": "#73848C",
+      },
+      "topicMetaData": Object {
+        "backgroundColor": "#F1F2F3",
+        "color": Object {
+          "label": "#73848C",
+          "meta": "#ABB5BA",
+          "value": "#2F3639",
+        },
+      },
+      "topicsList": Object {
+        "backgroundColor": Object {
+          "active": "#E3E6E8",
+          "hover": "#F1F2F3",
+        },
+        "color": Object {
+          "active": "#171A1C",
+          "hover": "#73848C",
+          "normal": "#171A1C",
         },
       },
       "viewer": Object {

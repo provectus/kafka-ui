@@ -18,12 +18,12 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
     margin: 0;
     line-height: 20px;
     align-items: center;
-    color: ${theme.menuStyles.color.normal};
-    background-color: ${theme.menuStyles.backgroundColor.normal};
+    color: ${theme.menu.color.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
-      color: ${theme.menuStyles.color.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
+      color: ${theme.menu.color.hover};
     }
   `
 );
@@ -49,8 +49,8 @@ export const StatusIcon = styled.circle.attrs({
 })<{ status: ServerStatus }>(
   ({ theme, status }) => css`
     fill: ${status === ServerStatus.ONLINE
-      ? theme.menuStyles.statusIconColor.online
-      : theme.menuStyles.statusIconColor.offline};
+      ? theme.menu.statusIconColor.online
+      : theme.menu.statusIconColor.offline};
   `
 );
 
@@ -69,5 +69,5 @@ type ChevronIconProps = { $open: boolean };
 export const ChevronIcon = styled.path.attrs<ChevronIconProps>(({ $open }) => ({
   d: $open ? 'M8.99988 5L4.99988 1L0.999878 5' : 'M1 1L5 5L9 1',
 }))<ChevronIconProps>`
-  stroke: ${({ theme }) => theme.menuStyles.chevronIconColor};
+  stroke: ${({ theme }) => theme.menu.chevronIconColor};
 `;

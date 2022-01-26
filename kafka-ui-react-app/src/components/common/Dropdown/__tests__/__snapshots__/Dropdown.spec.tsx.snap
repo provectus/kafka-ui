@@ -1,6 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dropdown matches snapshot 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 .c1 {
   background: transparent;
   border: none;
@@ -22,14 +32,8 @@ exports[`Dropdown matches snapshot 1`] = `
   cursor: pointer;
 }
 
-.c0 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
-  align-self: center;
+.c2 {
+  color: initial;
 }
 
 <body>
@@ -41,8 +45,6 @@ exports[`Dropdown matches snapshot 1`] = `
         class="c0"
       >
         <button
-          aria-controls="dropdown-menu"
-          aria-haspopup="true"
           class="c1"
           type="button"
         >
@@ -58,7 +60,7 @@ exports[`Dropdown matches snapshot 1`] = `
           class="dropdown-content has-text-left"
         >
           <a
-            class="dropdown-item is-link"
+            class="c2 dropdown-item is-link"
             href="#end"
             role="menuitem"
             type="button"
@@ -66,7 +68,7 @@ exports[`Dropdown matches snapshot 1`] = `
             Child 1
           </a>
           <a
-            class="dropdown-item is-link"
+            class="c2 dropdown-item is-link"
             href="#end"
             role="menuitem"
             type="button"
@@ -77,7 +79,7 @@ exports[`Dropdown matches snapshot 1`] = `
             class="dropdown-divider"
           />
           <a
-            class="dropdown-item is-link"
+            class="c2 dropdown-item is-link"
             href="#end"
             role="menuitem"
             type="button"

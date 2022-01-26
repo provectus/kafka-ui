@@ -14,7 +14,9 @@ import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
+  schemaAdded,
   schemasApiClient,
+  schemaUpdated,
   selectSchemaById,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
@@ -48,7 +50,7 @@ const Edit: React.FC = () => {
 
     try {
       if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        await schemasApiClient.createNewSchema({
+        const resp = await schemasApiClient.createNewSchema({
           clusterName,
           newSchemaSubject: {
             ...schema,
@@ -56,6 +58,7 @@ const Edit: React.FC = () => {
             schemaType: props.schemaType || schema.schemaType,
           },
         });
+        dispatch(schemaAdded(resp));
       }
 
       if (dirtyFields.compatibilityLevel) {
@@ -66,6 +69,12 @@ const Edit: React.FC = () => {
             compatibility: props.compatibilityLevel,
           },
         });
+        dispatch(
+          schemaUpdated({
+            ...schema,
+            compatibilityLevel: props.compatibilityLevel,
+          })
+        );
       }
 
       history.push(clusterSchemaPath(clusterName, subject));
@@ -86,6 +95,7 @@ const Edit: React.FC = () => {
             <div>
               <InputLabel>Type</InputLabel>
               <Controller
+                defaultValue={schema.schemaType}
                 control={control}
                 rules={{ required: true }}
                 name="schemaType"
@@ -108,6 +118,9 @@ const Edit: React.FC = () => {
             <div>
               <InputLabel>Compatibility level</InputLabel>
               <Controller
+                defaultValue={
+                  schema.compatibilityLevel as CompatibilityLevelCompatibilityEnum
+                }
                 control={control}
                 name="compatibilityLevel"
                 render={({ field: { name, onChange } }) => (

@@ -1,10 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DropdownItem matches snapshot 1`] = `
+.c0 {
+  color: initial;
+}
+
 <body>
   <div>
     <a
-      class="dropdown-item is-link"
+      class="c0 dropdown-item is-link"
       href="#end"
       role="menuitem"
       type="button"

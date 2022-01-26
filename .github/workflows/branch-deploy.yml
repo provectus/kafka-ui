@@ -104,4 +104,4 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.kafka-ui.provectus.io
+            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.kafka-ui.provectus.io in 5 minutes
