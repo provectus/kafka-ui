@@ -32,7 +32,7 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
         } else {
           queryParams.delete(SEARCH_QUERY_ARG);
         }
-        // If we were on page 3 we can't determite if new search results have 3 pages - so we always reset page
+        // If we were on page 3 we can't determine if new search results have 3 pages - so we always reset page
         if (page) {
           queryParams.delete('page');
         }
