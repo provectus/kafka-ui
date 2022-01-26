@@ -4,14 +4,16 @@ import 'ace-builds/src-noconflict/mode-json5';
 import 'ace-builds/src-noconflict/theme-textmate';
 import React from 'react';
 import { IDiffEditorProps } from 'react-ace/lib/diff';
+import { SchemaType } from 'generated-sources';
 
 interface DiffViewerProps extends IDiffEditorProps {
   isFixedHeight?: boolean;
+  schemaType: string;
 }
 
 const DiffViewer = React.forwardRef<DiffEditor | null, DiffViewerProps>(
   (props, ref) => {
-    const { isFixedHeight, ...rest } = props;
+    const { isFixedHeight, schemaType, ...rest } = props;
     const autoHeight =
       !isFixedHeight && props.value && props.value.length === 2
         ? Math.max(
@@ -23,7 +25,11 @@ const DiffViewer = React.forwardRef<DiffEditor | null, DiffViewerProps>(
       <DiffEditor
         name="diff-editor"
         ref={ref}
-        mode="json5"
+        mode={
+          schemaType === SchemaType.JSON || schemaType === SchemaType.AVRO
+            ? 'json5'
+            : 'protobuf'
+        }
         theme="textmate"
         tabSize={2}
         width="100%"

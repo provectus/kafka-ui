@@ -30,7 +30,6 @@ const Diff: React.FC<DiffProps> = ({
   const [rightVersion, setRightVersion] = React.useState(
     rightVersionInPath || ''
   );
-
   React.useEffect(() => {
     fetchSchemaVersions({ clusterName, subject });
   }, [fetchSchemaVersions, clusterName]);
@@ -42,6 +41,9 @@ const Diff: React.FC<DiffProps> = ({
     return selectedSchema.trim().startsWith('{')
       ? JSON.stringify(JSON.parse(selectedSchema), null, '\t')
       : selectedSchema;
+  };
+  const getSchemaType = (allVersions: SchemaSubject[]) => {
+    return allVersions[0].schemaType;
   };
   const history = useHistory();
 
@@ -121,6 +123,7 @@ const Diff: React.FC<DiffProps> = ({
                 autoScrollEditorIntoView: true,
               }}
               isFixedHeight={false}
+              schemaType={getSchemaType(versions)}
             />
           </S.DiffWrapper>
         </div>
