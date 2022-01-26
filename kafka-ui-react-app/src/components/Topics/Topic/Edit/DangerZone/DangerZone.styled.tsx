@@ -1,10 +1,9 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const DangerZoneWrapperStyled = styled.div`
   margin-top: 16px;
   padding: 8px 16px;
-  border: 1px solid ${Colors.neutral[10]};
+  border: 1px solid ${({ theme }) => theme.dangerZone.borderColor};
   box-sizing: border-box;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -17,7 +16,7 @@ export const DangerZoneWrapperStyled = styled.div`
 `;
 
 export const DangerZoneTitleStyled = styled.h1`
-  color: ${Colors.red[50]};
+  color: ${({ theme }) => theme.dangerZone.color};
   font-size: 20px;
   padding-bottom: 16px;
 `;

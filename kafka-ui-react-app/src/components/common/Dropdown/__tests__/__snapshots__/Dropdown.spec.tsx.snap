@@ -1,6 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dropdown matches snapshot 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 .c1 {
   background: transparent;
   border: none;
@@ -22,14 +32,8 @@ exports[`Dropdown matches snapshot 1`] = `
   cursor: pointer;
 }
 
-.c0 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
-  align-self: center;
+.c2 {
+  color: initial;
 }
 
 <Dropdown
@@ -44,24 +48,17 @@ exports[`Dropdown matches snapshot 1`] = `
       <div
         className="c0"
       >
-        <Styled(DropdownTrigger)
+        <styled.button
           onClick={[Function]}
         >
-          <DropdownTrigger
+          <button
             className="c1"
             onClick={[Function]}
+            type="button"
           >
-            <button
-              aria-controls="dropdown-menu"
-              aria-haspopup="true"
-              className="c1"
-              onClick={[Function]}
-              type="button"
-            >
-              My Test Label
-            </button>
-          </DropdownTrigger>
-        </Styled(DropdownTrigger)>
+            My Test Label
+          </button>
+        </styled.button>
       </div>
     </styled.div>
     <div
@@ -75,28 +72,40 @@ exports[`Dropdown matches snapshot 1`] = `
         <DropdownItem
           onClick={[MockFunction]}
         >
-          <a
+          <styled.a
+            $isDanger={false}
             className="dropdown-item is-link"
-            href="#end"
             onClick={[Function]}
-            role="menuitem"
-            type="button"
           >
-            Child 1
-          </a>
+            <a
+              className="c2 dropdown-item is-link"
+              href="#end"
+              onClick={[Function]}
+              role="menuitem"
+              type="button"
+            >
+              Child 1
+            </a>
+          </styled.a>
         </DropdownItem>
         <DropdownItem
           onClick={[MockFunction]}
         >
-          <a
+          <styled.a
+            $isDanger={false}
             className="dropdown-item is-link"
-            href="#end"
             onClick={[Function]}
-            role="menuitem"
-            type="button"
           >
-            Child 2
-          </a>
+            <a
+              className="c2 dropdown-item is-link"
+              href="#end"
+              onClick={[Function]}
+              role="menuitem"
+              type="button"
+            >
+              Child 2
+            </a>
+          </styled.a>
         </DropdownItem>
         <DropdownDivider>
           <hr
@@ -106,15 +115,21 @@ exports[`Dropdown matches snapshot 1`] = `
         <DropdownItem
           onClick={[MockFunction]}
         >
-          <a
+          <styled.a
+            $isDanger={false}
             className="dropdown-item is-link"
-            href="#end"
             onClick={[Function]}
-            role="menuitem"
-            type="button"
           >
-            Child 3
-          </a>
+            <a
+              className="c2 dropdown-item is-link"
+              href="#end"
+              onClick={[Function]}
+              role="menuitem"
+              type="button"
+            >
+              Child 3
+            </a>
+          </styled.a>
         </DropdownItem>
       </div>
     </div>

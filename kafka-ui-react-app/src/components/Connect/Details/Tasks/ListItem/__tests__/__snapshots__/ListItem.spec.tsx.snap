@@ -1,6 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ListItem view matches snapshot 1`] = `
+.c1 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 .c2 {
   background: transparent;
   border: none;
@@ -22,14 +32,8 @@ exports[`ListItem view matches snapshot 1`] = `
   cursor: pointer;
 }
 
-.c1 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
-  align-self: center;
+.c3 {
+  color: #E51A1A;
 }
 
 .c0 {
@@ -81,8 +85,6 @@ exports[`ListItem view matches snapshot 1`] = `
               className="c1"
             >
               <button
-                aria-controls="dropdown-menu"
-                aria-haspopup="true"
                 className="c2"
                 onClick={[Function]}
                 type="button"
@@ -110,7 +112,7 @@ exports[`ListItem view matches snapshot 1`] = `
                 className="dropdown-content has-text-left"
               >
                 <a
-                  className="dropdown-item is-link"
+                  className="c3 dropdown-item is-link"
                   href="#end"
                   onClick={[Function]}
                   role="menuitem"

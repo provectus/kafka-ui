@@ -1,17 +1,27 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DropdownItem matches snapshot 1`] = `
+.c0 {
+  color: initial;
+}
+
 <DropdownItem
   onClick={[MockFunction]}
 >
-  <a
+  <styled.a
+    $isDanger={false}
     className="dropdown-item is-link"
-    href="#end"
     onClick={[Function]}
-    role="menuitem"
-    type="button"
   >
-    Item 1
-  </a>
+    <a
+      className="c0 dropdown-item is-link"
+      href="#end"
+      onClick={[Function]}
+      role="menuitem"
+      type="button"
+    >
+      Item 1
+    </a>
+  </styled.a>
 </DropdownItem>
 `;
