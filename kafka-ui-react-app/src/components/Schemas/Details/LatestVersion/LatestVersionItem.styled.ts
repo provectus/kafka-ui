@@ -40,7 +40,7 @@ export const LatestVersionWrapper = styled.div`
 `;
 
 export const MetaDataLabel = styled.h3`
-  color: ${theme.headingStyles.h3.color};
+  color: ${theme.heading.h3.color};
   width: 110px;
-  font-size: ${theme.headingStyles.h3.fontSize};
+  font-size: ${theme.heading.h3.fontSize};
 `;

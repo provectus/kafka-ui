@@ -21,17 +21,17 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })(
     cursor: pointer;
     text-decoration: none;
     margin: 0px 0px;
-    background-color: ${theme.menuStyles.backgroundColor.normal};
-    color: ${theme.menuStyles.color.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
+    color: ${theme.menu.color.normal};
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
-      color: ${theme.menuStyles.color.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
+      color: ${theme.menu.color.hover};
     }
 
     &.${activeClassName} {
-      background-color: ${theme.menuStyles.backgroundColor.active};
-      color: ${theme.menuStyles.color.active};
+      background-color: ${theme.menu.backgroundColor.active};
+      color: ${theme.menu.color.active};
     }
   `
 );
