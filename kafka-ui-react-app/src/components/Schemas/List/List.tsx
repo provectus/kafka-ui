@@ -37,6 +37,7 @@ const List: React.FC = () => {
   const [searchText, handleSearchText] = useSearch('');
 
   React.useEffect(() => {
+    console.log('test', searchText);
     dispatch(fetchSchemas({ clusterName, page, perPage, search: searchText }));
     return () => {
       dispatch(resetLoaderById(SCHEMAS_FETCH_ACTION));
