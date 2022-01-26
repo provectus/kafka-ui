@@ -18,7 +18,7 @@ jobs:
         shell: bash
         run: |
           sed -i "s@enabled: false@enabled: true@g" charts/kafka-ui/values.yaml
-          K8S_VERSIONS=$(git ls-remote --refs --tags https://github.com/kubernetes/kubernetes.git | cut -d/ -f3 | grep -e '^v1\.[0-9]\{2\}\.[0-9]\{1,2\}$' | grep -v -e  '^v1\.1[0-8]\{1\}' | egrep '1\.\d{2}.0' | cut -c2-)
+          K8S_VERSIONS=`git ls-remote --refs --tags https://github.com/kubernetes/kubernetes.git | cut -d/ -f3 | grep -e '^v1\.[0-9]\{2\}\.[0-9]\{1,2\}$' | grep -v -e  '^v1\.1[0-8]\{1\}' | egrep '1\.\d{2}.0' | cut -c2-`
           echo "NEXT VERSIONS ARE GOING TO BE TESTED: $K8S_VERSIONS"
           for version in $K8S_VERSIONS;
             do 
