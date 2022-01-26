@@ -45,7 +45,7 @@ export const fetchSchemas = createAsyncThunk<
         clusterName,
         page,
         perPage,
-        search: search === '' ? undefined : search,
+        search: search || undefined,
       });
     } catch (error) {
       return rejectWithValue(await getResponse(error as Response));

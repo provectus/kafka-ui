@@ -33,8 +33,8 @@ const List: React.FC = () => {
   const isFetched = useAppSelector(getAreSchemasFulfilled);
   const totalPages = useAppSelector((state) => state.schemas.totalPages);
 
+  const [searchText, handleSearchText] = useSearch();
   const { page, perPage } = usePagination();
-  const [searchText, handleSearchText] = useSearch('');
 
   React.useEffect(() => {
     dispatch(fetchSchemas({ clusterName, page, perPage, search: searchText }));

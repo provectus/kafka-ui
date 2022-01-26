@@ -1,31 +1,48 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useHistory, useLocation } from 'react-router';
 
+const SEARCH_QUERY_ARG = 'q';
+
+// meant for use with <Search> component
+// returns value of Q search param (?q='something') and callback to change it
 const useSearch = (initValue = ''): [string, (value: string) => void] => {
   const history = useHistory();
   const { search, pathname } = useLocation();
   const queryParams = useMemo(() => new URLSearchParams(search), [search]);
-  const [searchValue, setSearchValue] = useState<string>(
-    queryParams.get('q') || initValue.trim()
+  const q = useMemo(
+    () => queryParams.get(SEARCH_QUERY_ARG)?.trim() || '',
+    [queryParams]
   );
+  const page = useMemo(() => queryParams.get('page')?.trim(), [queryParams]);
 
+  // set intial value
   useEffect(() => {
-    const currentSearch = queryParams.get('q');
-    if (searchValue !== currentSearch) {
-      if (searchValue) {
-        queryParams.set('q', searchValue);
-      } else {
-        queryParams.delete('q');
-      }
+    if (initValue.trim() !== '' && !queryParams.get(SEARCH_QUERY_ARG)?.trim()) {
+      queryParams.set(SEARCH_QUERY_ARG, initValue.trim());
       history.push({ pathname, search: queryParams.toString() });
     }
-  }, [searchValue]);
+  }, [q]);
 
-  const handleChange = useCallback((value: string) => {
-    setSearchValue(value.trim());
-  }, []);
+  const handleChange = useCallback(
+    (value: string) => {
+      const trimmedValue = value.trim();
+      if (trimmedValue !== q) {
+        if (trimmedValue) {
+          queryParams.set(SEARCH_QUERY_ARG, trimmedValue);
+        } else {
+          queryParams.delete(SEARCH_QUERY_ARG);
+        }
+        // If we were on page 3 we can't determite if new search results have 3 pages - so we always reset page
+        if (page) {
+          queryParams.delete('page');
+        }
+        history.replace({ pathname, search: queryParams.toString() });
+      }
+    },
+    [q]
+  );
 
-  return [searchValue, handleChange];
+  return [q, handleChange];
 };
 
 export default useSearch;
