@@ -1,6 +1,7 @@
-import { shallow, mount } from 'enzyme';
 import Search from 'components/common/Search/Search';
 import React from 'react';
+import { render } from 'lib/testHelpers';
+import { fireEvent } from '@testing-library/dom';
 
 jest.mock('use-debounce', () => ({
   useDebouncedCallback: (fn: (e: Event) => void) => fn,
@@ -9,34 +10,35 @@ jest.mock('use-debounce', () => ({
 describe('Search', () => {
   const handleSearch = jest.fn();
   it('calls handleSearch on input', () => {
-    const component = mount(
+    const component = render(
       <Search
         handleSearch={handleSearch}
         value=""
         placeholder="Search bt the Topic name"
       />
     );
-    component.find('input').simulate('change', { target: { value: 'test' } });
+    const input = component.baseElement.querySelector('input') as HTMLElement;
+    fireEvent.change(input, { target: { value: 'test' } });
     expect(handleSearch).toHaveBeenCalledTimes(1);
   });
 
   describe('when placeholder is provided', () => {
-    const component = shallow(
-      <Search
-        handleSearch={handleSearch}
-        value=""
-        placeholder="Search bt the Topic name"
-      />
-    );
     it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
+      const component = render(
+        <Search
+          handleSearch={handleSearch}
+          value=""
+          placeholder="Search bt the Topic name"
+        />
+      );
+      expect(component.baseElement).toMatchSnapshot();
     });
   });
 
   describe('when placeholder is not provided', () => {
-    const component = shallow(<Search handleSearch={handleSearch} value="" />);
     it('matches the snapshot', () => {
-      expect(component).toMatchSnapshot();
+      const component = render(<Search handleSearch={handleSearch} value="" />);
+      expect(component.baseElement).toMatchSnapshot();
     });
   });
 });
