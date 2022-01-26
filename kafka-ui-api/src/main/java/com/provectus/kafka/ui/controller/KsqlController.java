@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.api.KsqlApi;
 import com.provectus.kafka.ui.model.KsqlCommandDTO;
 import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
 import com.provectus.kafka.ui.model.KsqlCommandV2DTO;
+import com.provectus.kafka.ui.model.KsqlCommandV2ResponseDTO;
 import com.provectus.kafka.ui.model.KsqlResponseDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
 import com.provectus.kafka.ui.service.KsqlService;
@@ -37,17 +38,17 @@ public class KsqlController extends AbstractController implements KsqlApi {
   }
 
   @Override
-  public Mono<ResponseEntity<Void>> executeKsql(String clusterName,
-                                                Mono<KsqlCommandV2DTO> ksqlCommand2Dto,
-                                                ServerWebExchange exchange) {
+  public Mono<ResponseEntity<KsqlCommandV2ResponseDTO>> executeKsql(String clusterName,
+                                                                    Mono<KsqlCommandV2DTO>
+                                                                        ksqlCommand2Dto,
+                                                                    ServerWebExchange exchange) {
     return ksqlCommand2Dto.map(dto -> {
-      ksqlServiceV2.execute(
+      var id = ksqlServiceV2.registerCommand(
           getCluster(clusterName),
-          dto.getResponsePipeId(),
           dto.getKsql(),
           Optional.ofNullable(dto.getStreamsProperties()).orElse(Map.of()));
-      return dto;
-    }).map(dto -> ResponseEntity.ok().build());
+      return new KsqlCommandV2ResponseDTO().pipeId(id);
+    }).map(ResponseEntity::ok);
   }
 
   @Override
@@ -55,7 +56,7 @@ public class KsqlController extends AbstractController implements KsqlApi {
                                                                           String pipeId,
                                                                           ServerWebExchange exchange) {
     return Mono.just(
-        ResponseEntity.ok(ksqlServiceV2.registerPipe(pipeId)
+        ResponseEntity.ok(ksqlServiceV2.execute(pipeId)
             .map(table -> new KsqlResponseDTO()
                 .table(
                     new KsqlTableResponseDTO()
