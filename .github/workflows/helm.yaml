@@ -23,6 +23,6 @@ jobs:
           for version in $K8S_VERSIONS;
             do 
               echo $version;
-              helm template charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
+              helm template charts/kafka-ui -f charts/kafka-ui/values.yaml |& kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done
           echo $?
