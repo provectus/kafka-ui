@@ -1,10 +1,10 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { render } from 'lib/testHelpers';
 import Connect from 'components/Connect/Connect';
 
 describe('Connect', () => {
   it('matches snapshot', () => {
-    const wrapper = shallow(<Connect />);
-    expect(wrapper).toMatchSnapshot();
+    const wrapper = render(<Connect />);
+    expect(wrapper.baseElement).toMatchSnapshot();
   });
 });
