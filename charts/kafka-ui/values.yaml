@@ -70,7 +70,7 @@ service:
 # Ingress configuration
 ingress:
   # Enable ingress resource
-  enabled: true
+  enabled: false
 
   # Annotations for the Ingress
   annotations: {}
