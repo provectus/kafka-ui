@@ -3,17 +3,11 @@ import LatestVersionItem from 'components/Schemas/Details/LatestVersion/LatestVe
 import { SchemaSubject } from 'generated-sources';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
 
 import { jsonSchema, protoSchema } from './fixtures';
 
 const renderComponent = (schema: SchemaSubject) => {
-  render(
-    <ThemeProvider theme={theme}>
-      <LatestVersionItem schema={schema} />
-    </ThemeProvider>
-  );
+  render(<LatestVersionItem schema={schema} />);
 };
 
 describe('LatestVersionItem', () => {
