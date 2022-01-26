@@ -7,6 +7,8 @@ import DiffViewer from 'components/common/DiffViewer/DiffViewer';
 import { useHistory } from 'react-router';
 import { fetchSchemaVersions } from 'redux/reducers/schemas/schemasSlice';
 
+import * as S from './Diff.styled';
+
 export interface DiffProps {
   subject: SchemaName;
   clusterName: ClusterName;
@@ -109,7 +111,7 @@ const Diff: React.FC<DiffProps> = ({
               </div>
             </div>
           </div>
-          <div className="tile pt-5">
+          <S.DiffWrapper>
             <DiffViewer
               value={[
                 getSchemaContent(versions, leftVersion),
@@ -120,7 +122,7 @@ const Diff: React.FC<DiffProps> = ({
               }}
               isFixedHeight={false}
             />
-          </div>
+          </S.DiffWrapper>
         </div>
       ) : (
         <PageLoader />

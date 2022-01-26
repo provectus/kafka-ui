@@ -39,6 +39,7 @@ export const Colors = {
   },
   yellow: {
     '10': '#FFEECC',
+    '20': '#ffff99',
   },
   blue: {
     '10': '#e3f2fd',

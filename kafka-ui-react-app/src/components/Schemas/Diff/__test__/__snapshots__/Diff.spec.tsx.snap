@@ -83,9 +83,7 @@ exports[`Diff View when schema versions are loaded and no specified versions in 
         </div>
       </div>
     </div>
-    <div
-      className="tile pt-5"
-    >
+    <styled.div>
       <DiffViewer
         isFixedHeight={false}
         setOptions={
@@ -114,7 +112,7 @@ message MyRecord {
           ]
         }
       />
-    </div>
+    </styled.div>
   </div>
 </div>
 `;
@@ -194,9 +192,7 @@ exports[`Diff View when schema versions are loaded and only one versions in path
         </div>
       </div>
     </div>
-    <div
-      className="tile pt-5"
-    >
+    <styled.div>
       <DiffViewer
         isFixedHeight={false}
         setOptions={
@@ -228,7 +224,7 @@ message MyRecord {
           ]
         }
       />
-    </div>
+    </styled.div>
   </div>
 </div>
 `;
@@ -308,9 +304,7 @@ exports[`Diff View when schema versions are loaded and two versions in path matc
         </div>
       </div>
     </div>
-    <div
-      className="tile pt-5"
-    >
+    <styled.div>
       <DiffViewer
         isFixedHeight={false}
         setOptions={
@@ -345,7 +339,7 @@ exports[`Diff View when schema versions are loaded and two versions in path matc
           ]
         }
       />
-    </div>
+    </styled.div>
   </div>
 </div>
 `;
