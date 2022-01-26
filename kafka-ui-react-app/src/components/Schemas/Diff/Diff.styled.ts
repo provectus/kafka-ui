@@ -9,7 +9,6 @@ export const DiffWrapper = styled.div`
   flex-shrink: 1;
   min-height: min-content;
   padding-top: 1.5rem !important;
-  background: blue;
   &
     .ace_editor
     > .ace_scroller
