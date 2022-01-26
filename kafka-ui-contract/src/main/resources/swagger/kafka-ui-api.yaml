@@ -1423,8 +1423,12 @@ paths:
       responses:
         200:
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsqlCommandV2Response'
 
-  /api/clusters/{clusterName}/ksql/sse:
+  /api/clusters/{clusterName}/ksql/response:
     get:
       tags:
         - Ksql
@@ -2557,11 +2561,16 @@ components:
           type: object
           additionalProperties:
             type: string
-        responsePipeId:
-          type: string
       required:
         - ksql
-        - responsePipeId
+
+    KsqlCommandV2Response:
+      type: object
+      properties:
+        pipeId:
+          type: string
+      required:
+        - pipeId
 
     KsqlCommandResponse:
       type: object
