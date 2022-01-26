@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+// import { mount } from 'enzyme';
 import { StaticRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -44,7 +44,7 @@ describe('Details', () => {
 
   describe('when it has readonly flag', () => {
     it('does not render the Action button a Topic', () => {
-      const component = mount(
+      const component = render(
         <ThemeProvider theme={theme}>
           <Provider store={store}>
             <StaticRouter>
@@ -71,7 +71,9 @@ describe('Details', () => {
         </ThemeProvider>
       );
 
-      expect(component.exists('button')).toBeFalsy();
+      expect(
+        component.baseElement.querySelector('button')
+      ).not.toBeInTheDocument();
       expect(component).toMatchSnapshot();
     });
   });
