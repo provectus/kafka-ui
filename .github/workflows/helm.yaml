@@ -15,6 +15,7 @@ jobs:
       - name: Setup Kubeval
         uses: lra/setup-kubeval@v1.0.1
       - name: Enable all helm chart features in values.yaml
+        shell: bash
         run: |
           sed -i "s@enabled: false@enabled: true@g" charts/kafka-ui/values.yaml
       - name: Run kubeval
