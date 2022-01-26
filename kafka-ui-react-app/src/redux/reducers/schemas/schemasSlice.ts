@@ -37,13 +37,21 @@ export const SCHEMAS_FETCH_ACTION = 'schemas/fetch';
 export const fetchSchemas = createAsyncThunk<
   SchemaSubjectsResponse,
   GetSchemasRequest
->(SCHEMAS_FETCH_ACTION, async (schemaParams, { rejectWithValue }) => {
-  try {
-    return await schemasApiClient.getSchemas(schemaParams);
-  } catch (error) {
-    return rejectWithValue(await getResponse(error as Response));
+>(
+  SCHEMAS_FETCH_ACTION,
+  async ({ clusterName, page, perPage, search }, { rejectWithValue }) => {
+    try {
+      return await schemasApiClient.getSchemas({
+        clusterName,
+        page,
+        perPage,
+        search: search === '' ? undefined : search,
+      });
+    } catch (error) {
+      return rejectWithValue(await getResponse(error as Response));
+    }
   }
-});
+);
 
 export const SCHEMAS_VERSIONS_FETCH_ACTION = 'schemas/versions/fetch';
 export const fetchSchemaVersions = createAsyncThunk<

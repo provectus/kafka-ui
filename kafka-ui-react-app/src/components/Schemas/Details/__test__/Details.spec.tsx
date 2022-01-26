@@ -26,11 +26,11 @@ const renderComponent = (
   context: ContextProps = contextInitialValue
 ) => {
   return render(
-    <ClusterContext.Provider value={context}>
-      <Route path={clusterSchemaPath(':clusterName', ':subject')}>
+    <Route path={clusterSchemaPath(':clusterName', ':subject')}>
+      <ClusterContext.Provider value={context}>
         <Details />
-      </Route>
-    </ClusterContext.Provider>,
+      </ClusterContext.Provider>
+    </Route>,
     {
       pathname: clusterSchemaPath(clusterName, schemaVersion.subject),
       preloadedState: {

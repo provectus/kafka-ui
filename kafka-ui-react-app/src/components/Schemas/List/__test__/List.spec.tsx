@@ -27,11 +27,11 @@ const renderComponent = (
   context: ContextProps = contextInitialValue
 ) =>
   render(
-    <ClusterContext.Provider value={context}>
-      <Route path={clusterSchemasPath(':clusterName')}>
+    <Route path={clusterSchemasPath(':clusterName')}>
+      <ClusterContext.Provider value={context}>
         <List />
-      </Route>
-    </ClusterContext.Provider>,
+      </ClusterContext.Provider>
+    </Route>,
     {
       pathname: clusterSchemasPath(clusterName),
       preloadedState: {
@@ -48,8 +48,13 @@ describe('List', () => {
   describe('fetch error', () => {
     it('shows progressbar', async () => {
       const fetchSchemasMock = fetchMock.getOnce(schemasAPIUrl, 404);
+      const fetchCompabilityMock = fetchMock.getOnce(
+        schemasAPICompabilityUrl,
+        404
+      );
       renderComponent();
       await waitFor(() => expect(fetchSchemasMock.called()).toBeTruthy());
+      await waitFor(() => expect(fetchCompabilityMock.called()).toBeTruthy());
       expect(screen.getByRole('progressbar')).toBeInTheDocument();
     });
   });

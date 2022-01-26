@@ -28,22 +28,20 @@ const List: React.FC = () => {
   const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
+
   const schemas = useAppSelector(selectAllSchemas);
-  const { page, perPage } = usePagination();
   const isFetched = useAppSelector(getAreSchemasFulfilled);
   const totalPages = useAppSelector((state) => state.schemas.totalPages);
+
+  const { page, perPage } = usePagination();
   const [searchText, handleSearchText] = useSearch('');
 
   React.useEffect(() => {
-    dispatch(fetchSchemas({ clusterName, page, perPage }));
+    dispatch(fetchSchemas({ clusterName, page, perPage, search: searchText }));
     return () => {
       dispatch(resetLoaderById(SCHEMAS_FETCH_ACTION));
     };
-  }, [clusterName, page, perPage]);
-
-  if (!isFetched) {
-    return <PageLoader />;
-  }
+  }, [clusterName, page, perPage, searchText]);
 
   return (
     <>
@@ -64,34 +62,40 @@ const List: React.FC = () => {
       </PageHeading>
       <ControlPanelWrapper hasInput>
         <Search
-          placeholder="Search by Schema Subject"
+          placeholder="Search by Schema Name"
           value={searchText}
           handleSearch={handleSearchText}
         />
       </ControlPanelWrapper>
-      <C.Table isFullwidth>
-        <thead>
-          <tr>
-            <TableHeaderCell title="Schema Name" />
-            <TableHeaderCell title="Version" />
-            <TableHeaderCell title="Compatibility" />
-          </tr>
-        </thead>
-        <tbody>
-          {schemas.length === 0 && (
-            <tr>
-              <td colSpan={10}>No schemas found</td>
-            </tr>
-          )}
-          {schemas.map((subject) => (
-            <ListItem
-              key={[subject.id, subject.subject].join('-')}
-              subject={subject}
-            />
-          ))}
-        </tbody>
-      </C.Table>
-      <Pagination totalPages={totalPages} />
+      {isFetched ? (
+        <>
+          <C.Table isFullwidth>
+            <thead>
+              <tr>
+                <TableHeaderCell title="Schema Name" />
+                <TableHeaderCell title="Version" />
+                <TableHeaderCell title="Compatibility" />
+              </tr>
+            </thead>
+            <tbody>
+              {schemas.length === 0 && (
+                <tr>
+                  <td colSpan={10}>No schemas found</td>
+                </tr>
+              )}
+              {schemas.map((subject) => (
+                <ListItem
+                  key={[subject.id, subject.subject].join('-')}
+                  subject={subject}
+                />
+              ))}
+            </tbody>
+          </C.Table>
+          <Pagination totalPages={totalPages} />
+        </>
+      ) : (
+        <PageLoader />
+      )}
     </>
   );
 };
