@@ -418,8 +418,8 @@ public class TopicsService {
             Predicate<Integer> positiveInt = i -> i > 0;
             int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
             var topicsToSkip = (pageNum.filter(positiveInt).orElse(1) - 1) * perPage;
-            var comparator = sortOrder.isEmpty() || !sortOrder.get().equals(SortOrderDTO.DESC) ?
-                getComparatorForTopic(sortBy) : getComparatorForTopic(sortBy).reversed();
+            var comparator = sortOrder.isEmpty() || !sortOrder.get().equals(SortOrderDTO.DESC)
+                ? getComparatorForTopic(sortBy) : getComparatorForTopic(sortBy).reversed();
             List<InternalTopic> topics = paginatingTopics.stream()
                 .filter(topic -> !topic.isInternal()
                     || showInternal.map(i -> topic.isInternal() == i).orElse(true))
