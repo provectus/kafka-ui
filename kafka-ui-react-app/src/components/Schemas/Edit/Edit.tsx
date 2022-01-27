@@ -97,7 +97,6 @@ const Edit: React.FC = () => {
     }
   }, []);
 
-  // TODO: Show error if schema is not set
   if (!isFetched || !schema) {
     return <PageLoader />;
   }

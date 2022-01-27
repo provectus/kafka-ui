@@ -20,7 +20,6 @@ import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const schemasApiClient = new SchemasApi(apiClientConf);
 
-// TODO: Check if we really need this (versions have latest schema)
 export const SCHEMA_LATEST_FETCH_ACTION = 'schemas/latest/fetch';
 export const fetchLatestSchema = createAsyncThunk<
   SchemaSubject,

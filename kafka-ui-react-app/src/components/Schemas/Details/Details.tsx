@@ -74,7 +74,6 @@ const Details: React.FC = () => {
     }
   }, [clusterName, subject]);
 
-  // TODO: show error if schema not found
   if (!isFetched || !schema) {
     return <PageLoader />;
   }
