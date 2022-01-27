@@ -1,5 +1,7 @@
+import ButtonMinusIcon from 'components/common/Icons/CustomButtonIcons/ButtonMinusIcon';
+import ButtonPlusIcon from 'components/common/Icons/CustomButtonIcons/ButtonPlusIcon';
+import ButtonRightChevronIcon from 'components/common/Icons/CustomButtonIcons/ButtonRightChevronIcon';
 import React from 'react';
-import * as S from './CustomParams.styled'
 
 interface Props {
   onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
@@ -14,17 +16,33 @@ const CustomParamButton: React.FC<Props> = ({
   className,
   type,
   btnText,
-}) => (
-  <button
-    type="button"
-    className={`button ${className} is-outlined`}
-    onClick={onClick}
-  >
-    {btnText && <span>{btnText}</span>}
-    <span className="icon">
+}) => {
+  const typeSwitcher = (typeBtn: Props['type']) => {
+    switch (typeBtn) {
+      case 'fa-plus':
+        return <ButtonPlusIcon />;
+      case 'fa-minus':
+        return <ButtonMinusIcon />;
+      case 'fa-chevron-right':
+        return <ButtonRightChevronIcon />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      className={`button ${className} is-outlined`}
+      onClick={onClick}
+    >
+      {btnText && <span>{btnText}</span>}
+      {typeSwitcher(type)}
+      {/* <span className="icon">
       <i className={`fas fa-lg ${type}`} />
-    </span>
-  </button>
-);
+    </span> */}
+    </button>
+  );
+};
 
 export default CustomParamButton;

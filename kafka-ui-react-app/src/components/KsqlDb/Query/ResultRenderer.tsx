@@ -4,7 +4,15 @@ import { KsqlCommandResponse, Table } from 'generated-sources';
 const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   result,
 }) => {
-  if (!result) return null;
+  if (!result)
+    return (
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Velit
+        perferendis quibusdam vel debitis molestiae sed facere enim ab, laborum
+        mollitia ipsa earum. Atque facilis quae non deserunt, voluptatibus
+        delectus dolorum?
+      </p>
+    );
 
   const isMessage = !!result.message;
 
