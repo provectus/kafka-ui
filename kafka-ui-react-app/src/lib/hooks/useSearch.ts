@@ -10,18 +10,18 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
   const { search, pathname } = useLocation();
   const queryParams = useMemo(() => new URLSearchParams(search), [search]);
   const q = useMemo(
-    () => queryParams.get(SEARCH_QUERY_ARG)?.trim() || '',
+    () => queryParams.get(SEARCH_QUERY_ARG)?.trim(),
     [queryParams]
   );
   const page = useMemo(() => queryParams.get('page')?.trim(), [queryParams]);
 
   // set intial value
   useEffect(() => {
-    if (initValue.trim() !== '' && !queryParams.get(SEARCH_QUERY_ARG)?.trim()) {
+    if (initValue.trim() !== '' && !q) {
       queryParams.set(SEARCH_QUERY_ARG, initValue.trim());
       history.push({ pathname, search: queryParams.toString() });
     }
-  }, [q]);
+  }, []);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -39,10 +39,10 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
         history.replace({ pathname, search: queryParams.toString() });
       }
     },
-    [q]
+    [history, pathname, queryParams, q]
   );
 
-  return [q, handleChange];
+  return [q || initValue.trim() || '', handleChange];
 };
 
 export default useSearch;
