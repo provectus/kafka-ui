@@ -9,7 +9,7 @@ on:
     - 'kafka-ui-contract/**'
     - 'kafka-ui-react-app/**'
 jobs:
-  npm-test:
+  build-and-test:
     env:
       CI: true
       NODE_ENV: dev

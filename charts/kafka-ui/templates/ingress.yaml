@@ -45,6 +45,7 @@ spec:
                 name: {{ $fullName }}
                 port:
                   number: {{ $svcPort }}
+            pathType: Prefix
 {{- if .Values.ingress.path }}
             path: {{ .Values.ingress.path }}
 {{- end }}

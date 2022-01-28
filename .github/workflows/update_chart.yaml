@@ -1,0 +1,37 @@
+name: Helm update
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'chart version'
+        required: true
+        default: '0.0.0'
+
+jobs:
+  update-helm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: substitute version in Chart.yaml
+        run: |
+          echo "THIS IS THE VERSION: ${{ github.event.inputs.version }}"
+          export VERSION=${{ github.event.inputs.version }}
+          sed -i "s@version:.*@version: $VERSION@g" charts/kafka-ui/Chart.yaml
+      - run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+      - name: update chart
+        run: |
+          export VERSION=${{ github.event.inputs.version }}
+          MSG=$(helm package --app-version ${VERSION} charts/kafka-ui)
+          echo "THIS IS THE MSG: $MSG"
+          git fetch origin
+          git stash
+          git checkout -b gh-pages origin/gh-pages
+          helm repo index .
+          echo "THIS IS THE CUT MSG: ${MSG##*/}"
+          git add -f ${MSG##*/} index.yaml
+          git commit -m "release $VERSION"
+          git push

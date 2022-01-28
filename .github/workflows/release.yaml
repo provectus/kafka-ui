@@ -37,6 +37,13 @@ jobs:
           export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=${{ github.event.release.tag_name }} --non-recursive exec:exec)
           echo ::set-output name=version::${VERSION}
 
+      - name: Upload files to a GitHub release
+        uses: svenstaro/upload-release-action@2.2.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar
+          tag: ${{ github.event.release.tag_name }}
+
       - name: Archive JAR
         uses: actions/upload-artifact@v2
         with:
