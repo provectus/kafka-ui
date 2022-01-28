@@ -1,5 +1,6 @@
 package com.provectus.kafka.ui.model;
 
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Builder;
 import lombok.Data;
@@ -8,15 +9,19 @@ import lombok.Data;
 public class InternalSchemaRegistry {
   private final String username;
   private final String password;
-  private final List<String> url;
+  private final LinkedList<String> url;
   private final FailoverUrlList urlList;
 
   @Builder(toBuilder = true)
   public InternalSchemaRegistry(String username, String password, List<String> url) {
     this.username = username;
     this.password = password;
-    this.url = url;
+    this.url = new LinkedList<>(url);
     this.urlList = new FailoverUrlList(url);
+  }
+
+  public String getPrimaryNodeUri() {
+    return url.getFirst();
   }
 
   public String getUri() {
