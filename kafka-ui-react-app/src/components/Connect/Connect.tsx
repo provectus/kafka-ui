@@ -1,11 +1,12 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import {
   clusterConnectorsPath,
   clusterConnectorNewPath,
   clusterConnectConnectorPath,
   clusterConnectConnectorEditPath,
 } from 'lib/paths';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
 import ListContainer from './List/ListContainer';
 import NewContainer from './New/NewContainer';
@@ -15,17 +16,17 @@ import EditContainer from './Edit/EditContainer';
 const Connect: React.FC = () => (
   <div>
     <Switch>
-      <Route
+      <BreadcrumbRoute
         exact
         path={clusterConnectorsPath(':clusterName')}
         component={ListContainer}
       />
-      <Route
+      <BreadcrumbRoute
         exact
         path={clusterConnectorNewPath(':clusterName')}
         component={NewContainer}
       />
-      <Route
+      <BreadcrumbRoute
         exact
         path={clusterConnectConnectorEditPath(
           ':clusterName',
@@ -34,7 +35,7 @@ const Connect: React.FC = () => (
         )}
         component={EditContainer}
       />
-      <Route
+      <BreadcrumbRoute
         path={clusterConnectConnectorPath(
           ':clusterName',
           ':connectName',

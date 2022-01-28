@@ -3,24 +3,24 @@ import styled from 'styled-components';
 export const SecondaryTabs = styled.nav`
   & button {
     background-color: ${(props) =>
-      props.theme.secondaryTabStyles.backgroundColor.normal};
-    color: ${(props) => props.theme.secondaryTabStyles.color.normal};
+      props.theme.secondaryTab.backgroundColor.normal};
+    color: ${(props) => props.theme.secondaryTab.color.normal};
     padding: 6px;
     height: 32px;
     min-width: 57px;
-    border: 1px solid #e3e6e8;
+    border: 1px solid ${(props) => props.theme.layout.stuffBorderColor};
     cursor: pointer;
 
     &:hover {
       background-color: ${(props) =>
-        props.theme.secondaryTabStyles.backgroundColor.hover};
-      color: ${(props) => props.theme.secondaryTabStyles.color.hover};
+        props.theme.secondaryTab.backgroundColor.hover};
+      color: ${(props) => props.theme.secondaryTab.color.hover};
     }
 
     &.is-active {
       background-color: ${(props) =>
-        props.theme.secondaryTabStyles.backgroundColor.active};
-      color: ${(props) => props.theme.secondaryTabStyles.color.active};
+        props.theme.secondaryTab.backgroundColor.active};
+      color: ${(props) => props.theme.secondaryTab.color.active};
     }
   }
 

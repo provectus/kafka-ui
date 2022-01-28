@@ -1,41 +1,41 @@
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+import styled, { css } from 'styled-components';
 
-export const Textarea = styled.textarea`
-  border: 1px ${Colors.neutral[30]} solid;
-  border-radius: 4px;
-  width: 100%;
-  padding: 12px;
-  padding-top: 6px;
-
-  &::placeholder {
-    color: ${Colors.neutral[30]};
-    font-size: 14px;
-  }
-  &:hover {
-    border-color: ${Colors.neutral[50]};
-  }
-  &:focus {
-    outline: none;
-    border-color: ${Colors.neutral[70]};
+export const Textarea = styled.textarea(
+  ({ theme: { textArea } }) => css`
+    border: 1px ${textArea.borderColor.normal} solid;
+    border-radius: 4px;
+    width: 100%;
+    padding: 12px;
+    padding-top: 6px;
     &::placeholder {
-      color: transparent;
+      color: ${textArea.color.placeholder.normal};
+      font-size: 14px;
     }
-  }
-  &:disabled {
-    color: ${Colors.neutral[30]};
-    border-color: ${Colors.neutral[10]};
-    cursor: not-allowed;
-  }
-  &:read-only {
-    color: ${Colors.neutral[90]};
-    border: none;
-    background-color: ${Colors.neutral[5]};
+    &:hover {
+      border-color: ${textArea.borderColor.hover};
+    }
     &:focus {
+      outline: none;
+      border-color: ${textArea.borderColor.focus};
       &::placeholder {
-        color: ${Colors.neutral[30]};
+        color: ${textArea.color.placeholder.normal};
       }
     }
-    cursor: not-allowed;
-  }
-`;
+    &:disabled {
+      color: ${textArea.color.disabled};
+      border-color: ${textArea.borderColor.disabled};
+      cursor: not-allowed;
+    }
+    &:read-only {
+      color: ${textArea.color.readOnly};
+      border: none;
+      background-color: ${textArea.backgroundColor.readOnly};
+      &:focus {
+        &::placeholder {
+          color: ${textArea.color.placeholder.focus.readOnly};
+        }
+      }
+      cursor: not-allowed;
+    }
+  `
+);

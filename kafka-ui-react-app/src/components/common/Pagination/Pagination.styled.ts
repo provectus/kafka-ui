@@ -30,21 +30,21 @@ export const PaginationLink = styled(Link)<{ $isCurrent: boolean }>`
   border: 1px solid
     ${({ $isCurrent }) =>
       $isCurrent
-        ? theme.paginationStyles.currentPage
-        : theme.paginationStyles.borderColor.normal};
+        ? theme.pagination.currentPage
+        : theme.pagination.borderColor.normal};
   background-color: ${({ $isCurrent }) =>
     $isCurrent
-      ? theme.paginationStyles.currentPage
-      : theme.paginationStyles.backgroundColor};
-  color: ${theme.paginationStyles.color.normal};
+      ? theme.pagination.currentPage
+      : theme.pagination.backgroundColor};
+  color: ${theme.pagination.color.normal};
 
   &:hover {
     border: 1px solid
       ${({ $isCurrent }) =>
         $isCurrent
-          ? theme.paginationStyles.currentPage
-          : theme.paginationStyles.borderColor.hover};
-    color: ${(props) => props.theme.paginationStyles.color.hover};
+          ? theme.pagination.currentPage
+          : theme.pagination.borderColor.hover};
+    color: ${(props) => props.theme.pagination.color.hover};
     cursor: ${({ $isCurrent }) => ($isCurrent ? 'default' : 'pointer')};
   }
 `;
@@ -54,22 +54,22 @@ export const PaginationButton = styled(Link)`
   align-items: center;
   padding: 6px 12px;
   height: 32px;
-  border: 1px solid ${theme.paginationStyles.borderColor.normal};
+  border: 1px solid ${theme.pagination.borderColor.normal};
   border-radius: 4px;
-  color: ${theme.paginationStyles.color.normal};
+  color: ${theme.pagination.color.normal};
 
   &:hover {
-    border: 1px solid ${theme.paginationStyles.borderColor.hover};
-    color: ${theme.paginationStyles.color.hover};
+    border: 1px solid ${theme.pagination.borderColor.hover};
+    color: ${theme.pagination.color.hover};
     cursor: pointer;
   }
   &:active {
-    border: 1px solid ${theme.paginationStyles.borderColor.active};
-    color: ${theme.paginationStyles.color.active};
+    border: 1px solid ${theme.pagination.borderColor.active};
+    color: ${theme.pagination.color.active};
   }
   &:disabled {
-    border: 1px solid ${theme.paginationStyles.borderColor.disabled};
-    color: ${theme.paginationStyles.color.disabled};
+    border: 1px solid ${theme.pagination.borderColor.disabled};
+    color: ${theme.pagination.color.disabled};
     cursor: not-allowed;
   }
 `;
@@ -79,9 +79,9 @@ export const DisabledButton = styled.button`
   align-items: center;
   padding: 6px 12px;
   height: 32px;
-  border: 1px solid ${theme.paginationStyles.borderColor.disabled};
-  background-color: ${theme.paginationStyles.backgroundColor};
+  border: 1px solid ${theme.pagination.borderColor.disabled};
+  background-color: ${theme.pagination.backgroundColor};
   border-radius: 4px;
   font-size: 16px;
-  color: ${theme.paginationStyles.color.disabled};
+  color: ${theme.pagination.color.disabled};
 `;

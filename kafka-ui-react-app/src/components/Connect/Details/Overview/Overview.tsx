@@ -37,7 +37,7 @@ const Overview: React.FC<OverviewProps> = ({
           {runningTasksCount}
         </Metrics.Indicator>
         <Metrics.Indicator label="Tasks Failed" isAlert>
-          f{failedTasksCount}
+          {failedTasksCount}
         </Metrics.Indicator>
       </Metrics.Section>
     </Metrics.Wrapper>

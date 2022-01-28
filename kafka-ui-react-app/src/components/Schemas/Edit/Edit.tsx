@@ -7,14 +7,16 @@ import {
 } from 'generated-sources';
 import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
+  schemaAdded,
   schemasApiClient,
+  schemaUpdated,
   selectSchemaById,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
@@ -37,17 +39,18 @@ const Edit: React.FC = () => {
 
   const schema = useAppSelector((state) => selectSchemaById(state, subject));
 
-  const formatedSchema = React.useMemo(
-    () => JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t'),
-    [schema]
-  );
+  const formatedSchema = React.useMemo(() => {
+    return schema?.schemaType === SchemaType.PROTOBUF
+      ? schema?.schema
+      : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
+  }, [schema]);
 
   const onSubmit = React.useCallback(async (props: NewSchemaSubjectRaw) => {
     if (!schema) return;
 
     try {
       if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        await schemasApiClient.createNewSchema({
+        const resp = await schemasApiClient.createNewSchema({
           clusterName,
           newSchemaSubject: {
             ...schema,
@@ -55,6 +58,7 @@ const Edit: React.FC = () => {
             schemaType: props.schemaType || schema.schemaType,
           },
         });
+        dispatch(schemaAdded(resp));
       }
 
       if (dirtyFields.compatibilityLevel) {
@@ -65,6 +69,12 @@ const Edit: React.FC = () => {
             compatibility: props.compatibilityLevel,
           },
         });
+        dispatch(
+          schemaUpdated({
+            ...schema,
+            compatibilityLevel: props.compatibilityLevel,
+          })
+        );
       }
 
       history.push(clusterSchemaPath(clusterName, subject));
@@ -84,42 +94,56 @@ const Edit: React.FC = () => {
           <div>
             <div>
               <InputLabel>Type</InputLabel>
-              <Select
-                name="schemaType"
-                required
+              <Controller
                 defaultValue={schema.schemaType}
-                disabled={isSubmitting}
-              >
-                {Object.keys(SchemaType).map((type: string) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+                control={control}
+                rules={{ required: true }}
+                name="schemaType"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.schemaType}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(SchemaType).map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                  />
+                )}
+              />
             </div>
 
             <div>
               <InputLabel>Compatibility level</InputLabel>
-              <Select
+              <Controller
+                defaultValue={
+                  schema.compatibilityLevel as CompatibilityLevelCompatibilityEnum
+                }
+                control={control}
                 name="compatibilityLevel"
-                defaultValue={schema.compatibilityLevel}
-                disabled={isSubmitting}
-              >
-                {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                  (level: string) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  )
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.compatibilityLevel}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(
+                      CompatibilityLevelCompatibilityEnum
+                    ).map((level) => ({ value: level, label: level }))}
+                  />
                 )}
-              </Select>
+              />
             </div>
           </div>
           <S.EditorsWrapper>
             <div>
               <S.EditorContainer>
                 <h4>Latest schema</h4>
-                <JSONEditor
+                <Editor
+                  schemaType={schema?.schemaType}
                   isFixedHeight
                   readOnly
                   height="372px"
@@ -136,7 +160,8 @@ const Edit: React.FC = () => {
                   control={control}
                   name="newSchema"
                   render={({ field: { name, onChange } }) => (
-                    <JSONEditor
+                    <Editor
+                      schemaType={schema?.schemaType}
                       readOnly={isSubmitting}
                       defaultValue={formatedSchema}
                       name={name}

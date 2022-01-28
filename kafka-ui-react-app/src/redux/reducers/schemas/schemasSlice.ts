@@ -40,7 +40,10 @@ export const fetchSchemaVersions = createAsyncThunk<
   }
 );
 
-const schemaVersionsAdapter = createEntityAdapter<SchemaSubject>();
+const schemaVersionsAdapter = createEntityAdapter<SchemaSubject>({
+  selectId: ({ id }) => id,
+  sortComparer: (a, b) => b.id - a.id,
+});
 const schemasAdapter = createEntityAdapter<SchemaSubject>({
   selectId: ({ subject }) => subject,
 });
@@ -52,6 +55,7 @@ const schemasSlice = createSlice({
   }),
   reducers: {
     schemaAdded: schemasAdapter.addOne,
+    schemaUpdated: schemasAdapter.upsertOne,
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSchemas.fulfilled, (state, { payload }) => {
@@ -71,7 +75,7 @@ export const { selectAll: selectAllSchemaVersions } =
     (state) => state.schemas.versions
   );
 
-export const { schemaAdded } = schemasSlice.actions;
+export const { schemaAdded, schemaUpdated } = schemasSlice.actions;
 
 export const getAreSchemasFulfilled = createSelector(
   createFetchingSelector('schemas/fetch'),

@@ -1,15 +1,17 @@
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+import styled, { css } from 'styled-components';
 
 export const TopicContentWrapper = styled.tr`
-  background-color: ${Colors.neutral[5]};
+  background-color: ${({ theme }) =>
+    theme.consumerTopicContent.backgroundColor};
   & > td {
     padding: 16px !important;
   }
 `;
 
-export const ContentBox = styled.div`
-  background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-`;
+export const ContentBox = styled.div(
+  ({ theme }) => css`
+    background-color: ${theme.menu.backgroundColor.normal};
+    padding: 20px;
+    border-radius: 8px;
+  `
+);

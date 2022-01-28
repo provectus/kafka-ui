@@ -30,7 +30,10 @@ describe('List', () => {
 
     describe('when searched', () => {
       it('renders only searched consumers', () => {
-        userEvent.type(screen.getByPlaceholderText('Search'), 'groupId1');
+        userEvent.type(
+          screen.getByPlaceholderText('Search by Consumer Group ID'),
+          'groupId1'
+        );
         expect(screen.getByText('groupId1')).toBeInTheDocument();
         expect(screen.getByText('groupId2')).toBeInTheDocument();
       });
