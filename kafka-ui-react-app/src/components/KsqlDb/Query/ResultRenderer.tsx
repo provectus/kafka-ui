@@ -1,22 +1,17 @@
 import React from 'react';
 import { KsqlCommandResponse, Table } from 'generated-sources';
 
+import { ResultRendererWrapper } from './ResultRenderer.styled';
+
 const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   result,
 }) => {
-  if (!result)
-    return (
-      <p>
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Velit
-        perferendis quibusdam vel debitis molestiae sed facere enim ab, laborum
-        mollitia ipsa earum. Atque facilis quae non deserunt, voluptatibus
-        delectus dolorum?
-      </p>
-    );
+  if (!result) return null;
 
   const isMessage = !!result.message;
 
-  if (isMessage) return <div className="box">{result.message}</div>;
+  if (isMessage)
+    return <ResultRendererWrapper>{result.message}</ResultRendererWrapper>;
 
   const isTable = result.data !== undefined;
 
@@ -41,7 +36,7 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   );
 
   return (
-    <div className="box">
+    <ResultRendererWrapper>
       <table className="table is-fullwidth">
         <thead>
           <tr>
@@ -65,7 +60,7 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
           )}
         </tbody>
       </table>
-    </div>
+    </ResultRendererWrapper>
   );
 };
 

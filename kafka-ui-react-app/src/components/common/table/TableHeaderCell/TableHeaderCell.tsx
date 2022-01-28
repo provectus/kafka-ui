@@ -47,7 +47,6 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
     <S.TableHeaderCell {...restProps}>
       <S.Title isOrdered={isOrdered} {...orderableProps}>
         {title}
-        {isOrderable && <S.SortIcon />}
       </S.Title>
 
       {previewText && (

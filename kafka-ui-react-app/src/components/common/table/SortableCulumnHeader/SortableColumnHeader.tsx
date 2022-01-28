@@ -2,8 +2,6 @@
 import React from 'react';
 import cx from 'classnames';
 
-import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
-
 export interface ListHeaderProps {
   value: any;
   title: string;
@@ -22,7 +20,6 @@ const ListHeaderCell: React.FC<ListHeaderProps> = ({
     onClick={() => setOrderBy(value)}
   >
     {title}
-    <S.SortIcon />
   </th>
 );
 

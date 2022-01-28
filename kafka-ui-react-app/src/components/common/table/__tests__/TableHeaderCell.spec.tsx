@@ -56,7 +56,6 @@ describe('TableHeaderCell', () => {
     const title = within(columnheader).getByRole('button');
     expect(title).toBeInTheDocument();
     expect(title).toHaveTextContent(testTitle);
-    expect(within(title).getByTitle(sortIconTitle)).toBeInTheDocument();
     expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
     expect(title).toHaveStyle('cursor: pointer;');
   });

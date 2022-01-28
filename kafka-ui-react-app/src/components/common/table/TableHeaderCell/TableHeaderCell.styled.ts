@@ -5,11 +5,47 @@ interface TitleProps {
   isOrdered?: boolean;
 }
 
-const isOrderableStyles = css`
+const isOrderableStyles = css<TitleProps>`
   cursor: pointer;
+
+  padding-right: 18px;
+  position: relative;
+
+  &::before,
+  &::after {
+    border: 4px solid transparent;
+    content: '';
+    display: block;
+    height: 0;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+  }
+
+  &::before {
+    border-bottom-color: ${(props) =>
+      props.isOrdered
+        ? props.theme.table.th.color.active
+        : props.theme.table.th.color.normal};
+    margin-top: -9px;
+  }
+
+  &::after {
+    border-top-color: ${(props) =>
+      props.isOrdered
+        ? props.theme.table.th.color.active
+        : props.theme.table.th.color.normal};
+    margin-top: 1px;
+  }
 
   &:hover {
     color: ${(props) => props.theme.table.th.color.hover};
+    &::before {
+      border-bottom-color: ${(props) => props.theme.table.th.color.hover};
+    }
+    &::after {
+      border-top-color: ${(props) => props.theme.table.th.color.hover};
+    }
   }
 `;
 
@@ -21,6 +57,9 @@ export const Title = styled.span<TitleProps>`
   line-height: 16px;
   letter-spacing: 0em;
   text-align: left;
+  justify-content: start;
+  display: flex;
+  align-items: center;
   background: ${(props) => props.theme.table.th.backgroundColor.normal};
   color: ${(props) =>
     props.isOrdered
@@ -28,7 +67,7 @@ export const Title = styled.span<TitleProps>`
       : props.theme.table.th.color.normal};
   cursor: default;
 
-  ${(props) => props.isOrderable && isOrderableStyles}
+  ${(props) => props.isOrderable && isOrderableStyles};
 `;
 
 export const Preview = styled.span`
@@ -50,15 +89,3 @@ export const TableHeaderCell = styled.th`
   border-bottom-width: 1px;
   vertical-align: middle;
 `;
-
-export const SortIcon = styled.span.attrs({ className: 'fas fa-sort' })(
-  ({ className }) => css`
-  align-items: center;
-  display: inline-flex;
-  justify-content: center;
-  height: 1rem;
-  width: 1rem;
-
-  i.${className}
-`
-);

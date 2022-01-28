@@ -18,6 +18,7 @@ import {
 } from 'redux/reducers/topics/selectors';
 
 import validateMessage from './validateMessage';
+import { SendMessageWrapper } from './SendMessage.styled';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -131,7 +132,7 @@ const SendMessage: React.FC = () => {
     return <PageLoader />;
   }
   return (
-    <div className="box">
+    <SendMessageWrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="columns">
           <div className="column is-one-third">
@@ -214,7 +215,7 @@ const SendMessage: React.FC = () => {
           Send
         </Button>
       </form>
-    </div>
+    </SendMessageWrapper>
   );
 };
 
