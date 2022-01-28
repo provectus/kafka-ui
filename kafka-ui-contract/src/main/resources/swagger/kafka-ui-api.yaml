@@ -1484,6 +1484,44 @@ paths:
         404:
           description: Not found
 
+  /api/clusters/{clusterName}/acls/{resourceType}:
+    get:
+      tags:
+        - Acls
+      summary: getAcls
+      operationId: getAcls
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: resourceType
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: patternType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [ANY, MATCH, LITERAL, PREFIXED]
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AclResponse'
+        404:
+          description: Not found
+
 components:
   schemas:
     ErrorResponse:
@@ -2578,6 +2616,23 @@ components:
           type: integer
         topicName:
           type: string
+      required:
+        - totalReplicationFactor
+        - topicName
+
+    AclResponse:
+      type: object
+      properties:
+        principal:
+          type: string
+        host:
+          type: string
+        operation:
+          type: string
+          enum: [UNKNOWN, ANY, ALL, READ, WRITE, CREATE, DELETE, ALTER, DESCRIBE, CLUSTER_ACTION, DESCRIBE_CONFIGS, ALTER_CONFIGS, IDEMPOTENT_WRITE]
+        permissionType:
+          type: string
+          enum: [UNKNOWN, ANY, DENY, ALLOW]
       required:
         - totalReplicationFactor
         - topicName
