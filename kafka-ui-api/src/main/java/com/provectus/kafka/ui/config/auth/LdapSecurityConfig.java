@@ -16,6 +16,8 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticationProvider;
+import org.springframework.security.ldap.search.FilterBasedLdapUserSearch;
+import org.springframework.security.ldap.search.LdapUserSearch;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
@@ -26,13 +28,28 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
 
   @Value("${spring.ldap.urls}")
   private String ldapUrls;
-  @Value("${spring.ldap.dn.pattern}")
+  @Value("${spring.ldap.dn.pattern:#{null}}")
   private String ldapUserDnPattern;
+  @Value("${spring.ldap.adminUser:#{null}}")
+  private String adminUser;
+  @Value("${spring.ldap.adminPassword:#{null}}")
+  private String adminPassword;
+  @Value("${spring.ldap.userFilter.searchBase:#{null}}")
+  private String userFilterSearchBase;
+  @Value("${spring.ldap.userFilter.searchFilter:#{null}}")
+  private String userFilterSearchFilter;
 
   @Bean
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource) {
     BindAuthenticator ba = new BindAuthenticator(contextSource);
-    ba.setUserDnPatterns(new String[]{ldapUserDnPattern});
+    if (ldapUserDnPattern != null) {
+      ba.setUserDnPatterns(new String[]{ldapUserDnPattern});
+    }
+    if (userFilterSearchFilter != null) {
+      LdapUserSearch userSearch =
+              new FilterBasedLdapUserSearch(userFilterSearchBase, userFilterSearchFilter, contextSource);
+      ba.setUserSearch(userSearch);
+    }
 
     LdapAuthenticationProvider lap = new LdapAuthenticationProvider(ba);
 
@@ -45,6 +62,8 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
   public BaseLdapPathContextSource contextSource() {
     LdapContextSource ctx = new LdapContextSource();
     ctx.setUrl(ldapUrls);
+    ctx.setUserDn(adminUser);
+    ctx.setPassword(adminPassword);
     ctx.afterPropertiesSet();
     return ctx;
   }
