@@ -48,3 +48,10 @@ jobs:
         with:
           name: kafka-ui-${{ steps.build.outputs.version }}
           path: .
+
+      - name: Upload files to a GitHub release
+        uses: svenstaro/upload-release-action@2.2.1
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: kafka-ui-${{ steps.build.outputs.version }}
+          tag: ${{ github.event.release.tag_name }}
