@@ -53,5 +53,5 @@ jobs:
         uses: svenstaro/upload-release-action@2.2.1
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: kafka-ui-${{ steps.build.outputs.version }}
+          file: kafka-ui-${{ steps.build.outputs.version }}.jar
           tag: ${{ github.event.release.tag_name }}
