@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -113,13 +114,18 @@ public class ConsumerGroupService {
       int page,
       int perPage,
       @Nullable String search,
-      ConsumerGroupOrderingDTO orderBy) {
+      ConsumerGroupOrderingDTO orderBy,
+      SortOrderDTO sortOrderDto
+  ) {
+    var comparator = sortOrderDto.equals(SortOrderDTO.ASC)
+        ? getPaginationComparator(orderBy)
+        : getPaginationComparator(orderBy).reversed();
     return adminClientService.get(cluster).flatMap(ac ->
         describeConsumerGroups(ac, search).flatMap(descriptions ->
             getConsumerGroups(
                 ac,
                 descriptions.stream()
-                    .sorted(getPaginationComparator(orderBy))
+                    .sorted(comparator)
                     .skip((long) (page - 1) * perPage)
                     .limit(perPage)
                     .collect(Collectors.toList())

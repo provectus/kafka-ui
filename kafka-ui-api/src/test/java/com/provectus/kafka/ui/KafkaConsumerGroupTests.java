@@ -86,7 +86,6 @@ public class KafkaConsumerGroupTests extends AbstractBaseTest {
         .isBadRequest();
   }
 
-
   @Test
   void shouldReturnConsumerGroupsWithPagination() throws Exception {
     try (var groups1 = startConsumerGroups(3, "cgPageTest1");
@@ -116,6 +115,21 @@ public class KafkaConsumerGroupTests extends AbstractBaseTest {
             assertThat(page.getConsumerGroups())
                 .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId));
           });
+
+      webTestClient
+            .get()
+            .uri("/api/clusters/{clusterName}/consumer-groups/paged?perPage=10&&search"
+                + "=cgPageTest&orderBy=NAME&sortOrder=DESC", LOCAL)
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(ConsumerGroupsPageResponseDTO.class)
+            .value(page -> {
+              assertThat(page.getPageCount()).isEqualTo(1);
+              assertThat(page.getConsumerGroups().size()).isEqualTo(5);
+              assertThat(page.getConsumerGroups())
+                  .isSortedAccordingTo(Comparator.comparing(ConsumerGroupDTO::getGroupId).reversed());
+            });
     }
   }
 

@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.model.ConsumerGroupOffsetsResetDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.ConsumerGroupsPageResponseDTO;
 import com.provectus.kafka.ui.model.PartitionOffsetDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.service.ConsumerGroupService;
 import com.provectus.kafka.ui.service.OffsetsResetService;
 import java.util.Map;
@@ -80,13 +81,15 @@ public class ConsumerGroupsController extends AbstractController implements Cons
       Integer perPage,
       String search,
       ConsumerGroupOrderingDTO orderBy,
+      SortOrderDTO sortOrderDto,
       ServerWebExchange exchange) {
     return consumerGroupService.getConsumerGroupsPage(
             getCluster(clusterName),
             Optional.ofNullable(page).filter(i -> i > 0).orElse(1),
             Optional.ofNullable(perPage).filter(i -> i > 0).orElse(defaultConsumerGroupsPageSize),
             search,
-            Optional.ofNullable(orderBy).orElse(ConsumerGroupOrderingDTO.NAME)
+            Optional.ofNullable(orderBy).orElse(ConsumerGroupOrderingDTO.NAME),
+            Optional.ofNullable(sortOrderDto).orElse(SortOrderDTO.ASC)
         )
         .map(this::convertPage)
         .map(ResponseEntity::ok);
