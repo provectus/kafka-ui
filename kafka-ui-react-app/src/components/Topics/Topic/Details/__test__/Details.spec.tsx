@@ -1,5 +1,4 @@
 import React from 'react';
-// import { mount } from 'enzyme';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ClusterContext from 'components/contexts/ClusterContext';
