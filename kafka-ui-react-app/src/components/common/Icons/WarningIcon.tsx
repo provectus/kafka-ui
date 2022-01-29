@@ -1,15 +1,16 @@
 import React from 'react';
 import styled, { useTheme } from 'styled-components';
 
+const WarningIconContainer = styled.span`
+  align-items: center;
+  display: inline-flex;
+  justify-content: center;
+  height: 1.5rem;
+  width: 1.5rem;
+`;
+
 const WarningIcon: React.FC = () => {
   const theme = useTheme();
-  const WarningIconContainer = styled.span`
-    align-items: center;
-    display: inline-flex;
-    justify-content: center;
-    height: 1.5rem;
-    width: 1.5rem;
-  `;
 
   return (
     <WarningIconContainer>
