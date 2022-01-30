@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.controller;
 
+import static java.util.stream.Collectors.toMap;
+
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
@@ -9,10 +11,9 @@ import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.service.MessagesService;
 import com.provectus.kafka.ui.service.TopicsService;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,11 +48,15 @@ public class MessagesController extends AbstractController implements MessagesAp
       String clusterName, String topicName, @Valid SeekTypeDTO seekType, @Valid List<String> seekTo,
       @Valid Integer limit, @Valid String q, @Valid SeekDirectionDTO seekDirection,
       ServerWebExchange exchange) {
-    return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
-        .map(position ->
+    var positions = new ConsumerPosition(
+        seekType != null ? seekType : SeekTypeDTO.BEGINNING,
+        parseSeekTo(topicName, seekTo),
+        seekDirection
+    );
+    return Mono.just(
             ResponseEntity.ok(
                 messagesService.loadMessages(
-                    getCluster(clusterName), topicName, position, q, limit)
+                    getCluster(clusterName), topicName, positions, q, limit)
             )
         );
   }
@@ -72,13 +77,26 @@ public class MessagesController extends AbstractController implements MessagesAp
     ).map(ResponseEntity::ok);
   }
 
+  @Override
+  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> tailTopicMessages(String clusterName,
+                                                                            String topicName,
+                                                                            List<String> seekTo,
+                                                                            String q,
+                                                                            ServerWebExchange exchange) {
+    return Mono.just(
+        ResponseEntity.ok(
+            messagesService.tail(
+                getCluster(topicName),
+                topicName,
+                parseSeekTo(topicName, seekTo),
+                q)));
+  }
 
-  private Mono<ConsumerPosition> parseConsumerPosition(
-      String topicName, SeekTypeDTO seekType, List<String> seekTo,
-      SeekDirectionDTO seekDirection) {
-    return Mono.justOrEmpty(seekTo)
-        .defaultIfEmpty(Collections.emptyList())
-        .flatMapIterable(Function.identity())
+  private Map<TopicPartition, Long> parseSeekTo(String topic, List<String> seekTo) {
+    if (seekTo == null || seekTo.isEmpty()) {
+      return Map.of();
+    }
+    return seekTo.stream()
         .map(p -> {
           String[] split = p.split("::");
           if (split.length != 2) {
@@ -87,13 +105,11 @@ public class MessagesController extends AbstractController implements MessagesAp
           }
 
           return Pair.of(
-              new TopicPartition(topicName, Integer.parseInt(split[0])),
+              new TopicPartition(topic, Integer.parseInt(split[0])),
               Long.parseLong(split[1])
           );
         })
-        .collectMap(Pair::getKey, Pair::getValue)
-        .map(positions -> new ConsumerPosition(seekType != null ? seekType : SeekTypeDTO.BEGINNING,
-            positions, seekDirection));
+        .collect(toMap(Pair::getKey, Pair::getValue));
   }
 
 }

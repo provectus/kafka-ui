@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.TopicTailing;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -157,6 +158,17 @@ public class MessagesService {
         .takeWhile(new FilterTopicMessageEvents(recordsLimit))
         .subscribeOn(Schedulers.elastic())
         .share();
+  }
+
+  public Flux<TopicMessageEventDTO> tail(KafkaCluster cluster, String topic,
+                                         Map<TopicPartition, Long> offsets,
+                                         String query) {
+    return new TopicTailing(
+        deserializationService.getRecordDeserializerForCluster(cluster),
+        props -> consumerGroupService.createConsumer(cluster, props),
+        msg -> filterTopicMessage(msg, query),
+        200
+    ).tail(topic, offsets);
   }
 
   private boolean filterTopicMessage(TopicMessageEventDTO message, String query) {
