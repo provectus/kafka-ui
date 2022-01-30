@@ -143,7 +143,7 @@ const TopicForm: React.FC<Props> = ({
               <Controller
                 control={control}
                 name="retentionBytes"
-                defaultValue={0}
+                defaultValue={RetentionBytesOptions[0].value}
                 render={({ field: { name, onChange } }) => (
                   <Select
                     name={name}
