@@ -48,7 +48,7 @@ public class TopicTailing {
         log.error("Error while tailing topic {}", topic, e);
         sink.error(e);
       }
-    }).subscribeOn(Schedulers.boundedElastic());
+    }).subscribeOn(Schedulers.boundedElastic()).share();
   }
 
   private void poll(KafkaConsumer<Bytes, Bytes> consumer,
