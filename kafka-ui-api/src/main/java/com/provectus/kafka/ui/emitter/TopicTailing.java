@@ -28,7 +28,7 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 public class TopicTailing {
 
-  private static final Duration POLL_TIMEOUT = Duration.ofMillis(1_000);
+  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
 
   private final RecordSerDe serde;
   private final Function<Map<String, Object>, KafkaConsumer<Bytes, Bytes>> consumerSupplier;

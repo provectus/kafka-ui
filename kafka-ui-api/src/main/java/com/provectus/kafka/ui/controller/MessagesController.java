@@ -85,11 +85,8 @@ public class MessagesController extends AbstractController implements MessagesAp
                                                                             ServerWebExchange exchange) {
     return Mono.just(
         ResponseEntity.ok(
-            messagesService.tail(
-                getCluster(topicName),
-                topicName,
-                parseSeekTo(topicName, seekTo),
-                q)));
+            messagesService.tail(getCluster(clusterName),
+                topicName, parseSeekTo(topicName, seekTo), q)));
   }
 
   private Map<TopicPartition, Long> parseSeekTo(String topic, List<String> seekTo) {
