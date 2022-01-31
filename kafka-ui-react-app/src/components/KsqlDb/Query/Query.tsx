@@ -12,15 +12,9 @@ import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { resetExecutionResult } from 'redux/actions';
 import { Button } from 'components/common/Button/Button';
 import { BASE_PARAMS } from 'lib/constants';
-import PageLoader from 'components/common/PageLoader/PageLoader';
-import { KsqlResponse } from 'generated-sources';
+import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
 
-import {
-  KSQLButtons,
-  KSQLInputHeader,
-  KSQLInputsWrapper,
-  QueryWrapper,
-} from './Query.styled';
+import * as S from './Query.styled';
 
 type FormValues = {
   ksql: string;
@@ -35,10 +29,10 @@ const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const source = React.useRef<EventSource | null>(null);
   const [continuousFetching, setContinuousFetching] = useState(false);
-  const [queryDb, setQueryDb] = useState(false);
   const dispatch = useDispatch();
 
   const { executionResult, fetching } = useSelector(getKsqlExecution);
+  const [table, setTable] = useState<KsqlTableResponse | null>(null);
 
   const reset = useCallback(() => {
     dispatch(resetExecutionResult());
@@ -48,52 +42,39 @@ const Query: FC = () => {
     return reset;
   }, []);
 
+  // eslint-disable-next-line consistent-return
   useEffect(() => {
-    const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/v2`;
-    const sse = new EventSource(url);
+    if (executionResult?.pipeId) {
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${executionResult?.pipeId}`;
+      const sse = new EventSource(url);
 
-    source.current = sse;
-    setContinuousFetching(true);
-
-    sse.onopen = () => {
-      // resetMessages();
+      source.current = sse;
       setContinuousFetching(true);
-    };
-    sse.onmessage = ({ data }) => {
-      console.log(data);
-      const { table }: KsqlResponse = JSON.parse(data);
 
-      // switch (type) {
-      //   case TopicMessageEventTypeEnum.MESSAGE:
-      //     if (message) addMessage(message);
-      //     break;
-      //   case TopicMessageEventTypeEnum.PHASE:
-      //     if (phase?.name) updatePhase(phase.name);
-      //     break;
-      //   case TopicMessageEventTypeEnum.CONSUMING:
-      //     if (consuming) updateMeta(consuming);
-      //     break;
-      //   default:
-      // }
-    };
+      sse.onopen = () => {
+        setContinuousFetching(true);
+      };
+      sse.onmessage = ({ data }) => {
+        const { table: responseTable }: KsqlResponse = JSON.parse(data);
+        if (responseTable) setTable(responseTable);
+      };
 
-    sse.onerror = () => {
-      setContinuousFetching(false);
-      setQueryDb(false);
-      sse.close();
-    };
-
-    return () => {
-      setContinuousFetching(false);
-      sse.close();
-    };
-  }, [queryDb]);
+      sse.onerror = () => {
+        setContinuousFetching(false);
+        sse.close();
+      };
+      return () => {
+        setContinuousFetching(false);
+        sse.close();
+      };
+    }
+  }, [executionResult]);
 
   const handleSSECancel = () => {
     if (!source.current) return;
 
+    reset();
     setContinuousFetching(false);
-    setQueryDb(false);
     source.current.close();
   };
 
@@ -106,12 +87,11 @@ const Query: FC = () => {
     },
   });
 
-  const submitHandler = useCallback(async (values: FormValues) => {
-    // setQueryDb(true);
+  const submitHandler = useCallback((values: FormValues) => {
     dispatch(
       executeKsql({
         clusterName,
-        ksqlCommand: {
+        ksqlCommandV2: {
           ...values,
           streamsProperties: values.streamsProperties
             ? JSON.parse(values.streamsProperties)
@@ -123,11 +103,11 @@ const Query: FC = () => {
 
   return (
     <>
-      <QueryWrapper>
+      <S.QueryWrapper>
         <form onSubmit={handleSubmit(submitHandler)}>
-          <KSQLInputsWrapper>
+          <S.KSQLInputsWrapper>
             <div>
-              <KSQLInputHeader>
+              <S.KSQLInputHeader>
                 <label>KSQL</label>
                 <Button
                   onClick={() => setValue('ksql', '')}
@@ -137,7 +117,7 @@ const Query: FC = () => {
                 >
                   Clear
                 </Button>
-              </KSQLInputHeader>
+              </S.KSQLInputHeader>
               <Controller
                 control={control}
                 name="ksql"
@@ -147,7 +127,7 @@ const Query: FC = () => {
               />
             </div>
             <div>
-              <KSQLInputHeader>
+              <S.KSQLInputHeader>
                 <label>Stream properties</label>
                 <Button
                   onClick={() => setValue('streamsProperties', '')}
@@ -157,7 +137,7 @@ const Query: FC = () => {
                 >
                   Clear
                 </Button>
-              </KSQLInputHeader>
+              </S.KSQLInputHeader>
               <Controller
                 control={control}
                 name="streamsProperties"
@@ -166,8 +146,8 @@ const Query: FC = () => {
                 )}
               />
             </div>
-          </KSQLInputsWrapper>
-          <KSQLButtons>
+          </S.KSQLInputsWrapper>
+          <S.KSQLButtons>
             <Button
               buttonType="primary"
               buttonSize="M"
@@ -179,27 +159,23 @@ const Query: FC = () => {
             <Button
               buttonType="secondary"
               buttonSize="M"
-              disabled={!executionResult}
-              onClick={reset}
+              disabled={!table}
+              onClick={() => {
+                reset();
+                handleSSECancel();
+              }}
             >
               Clear results
             </Button>
-          </KSQLButtons>
+          </S.KSQLButtons>
         </form>
-      </QueryWrapper>
+      </S.QueryWrapper>
+      <ResultRenderer result={table} />
       {continuousFetching && (
         <>
-          <PageLoader />
-          <Button
-            buttonType="secondary"
-            buttonSize="M"
-            onClick={handleSSECancel}
-          >
-            Stop updating
-          </Button>
+          <S.ContinuousLoader />
         </>
       )}
-      <ResultRenderer result={executionResult} />
     </>
   );
 };

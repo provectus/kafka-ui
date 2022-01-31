@@ -1,7 +1,7 @@
 import React from 'react';
-import { KsqlResponse, Table } from 'generated-sources';
+import { KsqlTableResponse, Table } from 'generated-sources';
 
-const ResultRenderer: React.FC<{ result: Array<KsqlResponse> | null }> = ({
+const ResultRenderer: React.FC<{ result: KsqlTableResponse | null }> = ({
   result,
 }) => {
   if (!result) return null;
@@ -13,28 +13,52 @@ const ResultRenderer: React.FC<{ result: Array<KsqlResponse> | null }> = ({
   // const isTable = result.data !== undefined;
   //
   // if (!isTable) return null;
-  //
-  // const rawTable = result.data as Table;
-  //
-  // const { headers, rows } = rawTable;
-  //
-  // const transformedRows = React.useMemo(
-  //   () =>
-  //     rows.map((row) =>
-  //       row.reduce(
-  //         (res, acc, index) => ({
-  //           ...res,
-  //           [rawTable.headers[index]]: acc,
-  //         }),
-  //         {} as Dictionary<string>
-  //       )
-  //     ),
-  //   []
-  // );
+
+  const {
+    header: tableHeader,
+    columnNames: headers = [],
+    values: rows = [],
+  } = result;
+
+  const transformedRows = React.useMemo(
+    () =>
+      rows.map((row) =>
+        row.reduce(
+          (res, acc, index) => ({
+            ...res,
+            [headers[index]]: acc,
+          }),
+          {} as Dictionary<string>
+        )
+      ),
+    []
+  );
 
   return (
     <div className="box">
-      MDE
+      <table className="table is-fullwidth">
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th key={header}>{header}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {transformedRows.map((row) => (
+            <tr key={row.name}>
+              {headers.map((header) => (
+                <td key={header}>{row[header]}</td>
+              ))}
+            </tr>
+          ))}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={headers.length}>No tables or streams found</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
 };

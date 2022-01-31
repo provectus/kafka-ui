@@ -15,7 +15,9 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
-  KsqlCommandResponse, KsqlResponse,
+  KsqlCommandResponse,
+  KsqlResponse,
+  KsqlCommandV2Response,
 } from 'generated-sources';
 
 export const fetchTopicsListAction = createAsyncAction(
@@ -204,6 +206,6 @@ export const executeKsqlAction = createAsyncAction(
   'EXECUTE_KSQL__REQUEST',
   'EXECUTE_KSQL__SUCCESS',
   'EXECUTE_KSQL__FAILURE'
-)<undefined, Array<KsqlResponse>, { alert?: FailurePayload }>();
+)<undefined, KsqlCommandV2Response, { alert?: FailurePayload }>();
 
 export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();

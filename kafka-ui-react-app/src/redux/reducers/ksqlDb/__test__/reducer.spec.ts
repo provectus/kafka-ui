@@ -18,18 +18,18 @@ describe('KsqlDb reducer', () => {
     expect(state.streams.length).toEqual(2);
     expect(state).toMatchSnapshot();
   });
-  it('Resets execution result', () => {
-    const state = reducer(
-      {
-        tables: [],
-        streams: [],
-        executionResult: {
-          message: 'No available data',
-        },
-      },
-      resetExecutionResult()
-    );
-    expect(state.executionResult).toEqual(null);
-    expect(state).toMatchSnapshot();
-  });
+  // it('Resets execution result', () => {
+  //   const state = reducer(
+  //     {
+  //       tables: [],
+  //       streams: [],
+  //       executionResult: {
+  //         message: 'No available data',
+  //       },
+  //     },
+  //     resetExecutionResult()
+  //   );
+  //   expect(state.executionResult).toEqual(null);
+  //   expect(state).toMatchSnapshot();
+  // });
 });

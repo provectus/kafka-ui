@@ -41,11 +41,3 @@ Object {
   ],
 }
 `;
-
-exports[`KsqlDb reducer Resets execution result 1`] = `
-Object {
-  "executionResult": null,
-  "streams": Array [],
-  "tables": Array [],
-}
-`;

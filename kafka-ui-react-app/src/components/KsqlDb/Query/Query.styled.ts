@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 export const QueryWrapper = styled.div`
   padding: 16px;
@@ -23,4 +24,11 @@ export const KSQLInputHeader = styled.div`
 export const KSQLButtons = styled.div`
   display: flex;
   gap: 16px;
+`;
+
+export const ContinuousLoader = styled(PageLoader)`
+  & > div {
+    transform: scale(0.5);
+    padding-top: 0;
+  }
 `;

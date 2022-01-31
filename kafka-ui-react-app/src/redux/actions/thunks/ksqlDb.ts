@@ -1,6 +1,7 @@
 import {
   Configuration,
   ExecuteKsqlCommandRequest,
+  ExecuteKsqlRequest,
   KsqlApi,
   Table as KsqlTable,
 } from 'generated-sources';
@@ -68,7 +69,7 @@ export const fetchKsqlDbTables =
   };
 
 export const executeKsql =
-  (params: ExecuteKsqlCommandRequest): PromiseThunkResult =>
+  (params: ExecuteKsqlRequest): PromiseThunkResult =>
   async (dispatch) => {
     dispatch(actions.executeKsqlAction.request());
     try {
@@ -79,7 +80,7 @@ export const executeKsql =
       const response = await getResponse(error);
       const alert: FailurePayload = {
         subject: 'ksql execution',
-        title: `Failed to execute command ${params.ksqlCommand?.ksql}`,
+        title: `Failed to execute command ${params.ksqlCommandV2?.ksql}`,
         response,
       };
 
