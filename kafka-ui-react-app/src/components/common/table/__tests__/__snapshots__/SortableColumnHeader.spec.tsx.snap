@@ -15,13 +15,6 @@ exports[`ListHeader matches the snapshot 1`] = `
           onClick={[Function]}
         >
           Name
-          <span
-            className="icon is-small"
-          >
-            <i
-              className="fas fa-sort"
-            />
-          </span>
         </th>
       </ListHeaderCell>
     </tr>
@@ -44,13 +37,6 @@ exports[`ListHeader on column click matches the snapshot 1`] = `
           onClick={[Function]}
         >
           Name
-          <span
-            className="icon is-small"
-          >
-            <i
-              className="fas fa-sort"
-            />
-          </span>
         </th>
       </ListHeaderCell>
     </tr>
