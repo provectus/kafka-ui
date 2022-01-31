@@ -790,15 +790,28 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaSubject'
+                $ref: '#/components/schemas/SchemaSubjectsResponse'
 
   /api/clusters/{clusterName}/schemas/{subject}:
     delete:
@@ -2247,6 +2260,16 @@ components:
           type: boolean
       required:
         - isCompatible
+
+    SchemaSubjectsResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        schemas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaSubject'
 
     Connect:
       type: object

@@ -16,11 +16,16 @@ import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
   schemaAdded,
   schemasApiClient,
+  fetchLatestSchema,
+  getSchemaLatest,
+  SCHEMA_LATEST_FETCH_ACTION,
+  getAreSchemaLatestFulfilled,
   schemaUpdated,
-  selectSchemaById,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import * as S from './Edit.styled';
 
@@ -37,7 +42,15 @@ const Edit: React.FC = () => {
     handleSubmit,
   } = methods;
 
-  const schema = useAppSelector((state) => selectSchemaById(state, subject));
+  React.useEffect(() => {
+    dispatch(fetchLatestSchema({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
+    };
+  }, [clusterName, subject]);
+
+  const schema = useAppSelector((state) => getSchemaLatest(state));
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
 
   const formatedSchema = React.useMemo(() => {
     return schema?.schemaType === SchemaType.PROTOBUF
@@ -84,8 +97,9 @@ const Edit: React.FC = () => {
     }
   }, []);
 
-  if (!schema) return null;
-
+  if (!isFetched || !schema) {
+    return <PageLoader />;
+  }
   return (
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />
