@@ -5,6 +5,9 @@ interface TitleProps {
   isOrdered?: boolean;
 }
 
+const getOrderedColor = (active: string, normal: string, isOrdered?: boolean) =>
+  isOrdered ? active : normal;
+
 const isOrderableStyles = css<TitleProps>`
   cursor: pointer;
 
@@ -23,18 +26,22 @@ const isOrderableStyles = css<TitleProps>`
   }
 
   &::before {
-    border-bottom-color: ${(props) =>
-      props.isOrdered
-        ? props.theme.table.th.color.active
-        : props.theme.table.th.color.normal};
+    border-bottom-color: ${({ isOrdered, theme }) =>
+      getOrderedColor(
+        theme.table.th.color.active,
+        theme.table.th.color.normal,
+        isOrdered
+      )};
     margin-top: -9px;
   }
 
   &::after {
-    border-top-color: ${(props) =>
-      props.isOrdered
-        ? props.theme.table.th.color.active
-        : props.theme.table.th.color.normal};
+    border-top-color: ${({ isOrdered, theme }) =>
+      getOrderedColor(
+        theme.table.th.color.active,
+        theme.table.th.color.normal,
+        isOrdered
+      )};
     margin-top: 1px;
   }
 
@@ -61,10 +68,12 @@ export const Title = styled.span<TitleProps>`
   display: flex;
   align-items: center;
   background: ${(props) => props.theme.table.th.backgroundColor.normal};
-  color: ${(props) =>
-    props.isOrdered
-      ? props.theme.table.th.color.active
-      : props.theme.table.th.color.normal};
+  color: ${({ isOrdered, theme }) =>
+    getOrderedColor(
+      theme.table.th.color.active,
+      theme.table.th.color.normal,
+      isOrdered
+    )};
   cursor: default;
 
   ${(props) => props.isOrderable && isOrderableStyles};
