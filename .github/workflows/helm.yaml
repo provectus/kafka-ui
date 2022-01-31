@@ -5,9 +5,13 @@ on:
       - master
     paths:
       - "charts/**"
+
   schedule:
     # * is a special character in YAML so you have to quote this string
     - cron: '0 8 * * 3'
+
+  workflow_dispatch:
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
