@@ -21,9 +21,10 @@ interface RouterParams {
 
 const New: React.FC = () => {
   const methods = useForm<TopicFormData>({
-    mode: 'onTouched',
+    mode: 'all',
     resolver: yupResolver(topicFormValidationSchema),
   });
+
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -37,7 +38,7 @@ const New: React.FC = () => {
 
       history.push(clusterTopicPath(clusterName, data.name));
     } catch (error) {
-      const response = await getResponse(error);
+      const response = await getResponse(error as Response);
       const alert: FailurePayload = {
         subject: ['schema', data.name].join('-'),
         title: `Schema ${data.name}`,

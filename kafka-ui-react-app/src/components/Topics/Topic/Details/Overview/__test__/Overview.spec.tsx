@@ -1,8 +1,9 @@
 import React from 'react';
-import { shallow } from 'enzyme';
 import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
-import Overview from 'components/Topics/Topic/Details/Overview/Overview';
+import Overview, {
+  Props as OverviewProps,
+} from 'components/Topics/Topic/Details/Overview/Overview';
 import theme from 'theme/theme';
 
 describe('Overview', () => {
@@ -25,66 +26,70 @@ describe('Overview', () => {
     },
   ];
 
-  const renderComponent = ({
-    underReplicatedPartitions = 1,
-    inSyncReplicas = 1,
-    replicas = 1,
-  } = {}) =>
+  const setupComponent = (
+    props: OverviewProps,
+    underReplicatedPartitions?: number,
+    inSyncReplicas?: number,
+    replicas?: number
+  ) =>
     render(
       <Overview
-        name={mockTopicName}
-        partitions={mockPartitions}
-        internal={undefined}
-        clusterName={mockClusterName}
-        topicName={mockTopicName}
-        clearTopicMessages={mockClearTopicMessages}
         underReplicatedPartitions={underReplicatedPartitions}
         inSyncReplicas={inSyncReplicas}
         replicas={replicas}
+        {...props}
       />
     );
 
   describe('when it has internal flag', () => {
     it('does not render the Action button a Topic', () => {
-      const component = shallow(
-        <Overview
-          name={mockTopicName}
-          partitions={mockPartitions}
-          internal={false}
-          clusterName={mockClusterName}
-          topicName={mockTopicName}
-          clearTopicMessages={mockClearTopicMessages}
-        />
-      );
-
-      expect(component.exists('Dropdown')).toBeTruthy();
+      setupComponent({
+        name: mockTopicName,
+        partitions: mockPartitions,
+        internal: false,
+        clusterName: mockClusterName,
+        topicName: mockTopicName,
+        clearTopicMessages: mockClearTopicMessages,
+      });
+      expect(screen.getByRole('menu')).toBeInTheDocument();
     });
 
     it('does not render Partitions', () => {
-      const componentEmpty = shallow(
-        <Overview
-          name={mockTopicName}
-          partitions={[]}
-          internal
-          clusterName={mockClusterName}
-          topicName={mockTopicName}
-          clearTopicMessages={mockClearTopicMessages}
-        />
-      );
+      setupComponent({
+        name: mockTopicName,
+        partitions: [],
+        internal: true,
+        clusterName: mockClusterName,
+        topicName: mockTopicName,
+        clearTopicMessages: mockClearTopicMessages,
+      });
 
-      expect(componentEmpty.find('td').text()).toEqual('No Partitions found');
+      expect(screen.getByText('No Partitions found')).toBeInTheDocument();
     });
   });
 
   describe('should render circular alert', () => {
     it('should be in document', () => {
-      renderComponent();
+      setupComponent({
+        name: mockTopicName,
+        partitions: [],
+        internal: true,
+        clusterName: mockClusterName,
+        topicName: mockTopicName,
+        clearTopicMessages: mockClearTopicMessages,
+      });
       const circles = screen.getAllByRole('circle');
       expect(circles.length).toEqual(2);
     });
 
     it('should be the appropriate color', () => {
-      renderComponent({
+      setupComponent({
+        name: mockTopicName,
+        partitions: [],
+        internal: true,
+        clusterName: mockClusterName,
+        topicName: mockTopicName,
+        clearTopicMessages: mockClearTopicMessages,
         underReplicatedPartitions: 0,
         inSyncReplicas: 1,
         replicas: 2,

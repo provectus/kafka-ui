@@ -22,7 +22,7 @@ const List: React.FC = () => {
       <PageHeading text="Consumers" />
       <ControlPanelWrapper hasInput>
         <Search
-          placeholder="Search"
+          placeholder="Search by Consumer Group ID"
           value={searchText}
           handleSearch={handleInputChange}
         />

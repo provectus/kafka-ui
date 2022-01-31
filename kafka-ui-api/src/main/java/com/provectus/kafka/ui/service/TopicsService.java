@@ -20,6 +20,7 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
@@ -67,10 +68,11 @@ public class TopicsService {
                                            Optional<Integer> nullablePerPage,
                                            Optional<Boolean> showInternal,
                                            Optional<String> search,
-                                           Optional<TopicColumnsToSortDTO> sortBy) {
+                                           Optional<TopicColumnsToSortDTO> sortBy,
+                                           Optional<SortOrderDTO> sortOrder) {
     return adminClientService.get(cluster).flatMap(ac ->
       new Pagination(ac, metricsCache.get(cluster))
-          .getPage(pageNum, nullablePerPage, showInternal, search, sortBy)
+          .getPage(pageNum, nullablePerPage, showInternal, search, sortBy, sortOrder)
           .flatMap(page ->
               loadTopics(cluster, page.getTopics())
                   .map(topics ->
@@ -409,12 +411,15 @@ public class TopicsService {
         Optional<Integer> nullablePerPage,
         Optional<Boolean> showInternal,
         Optional<String> search,
-        Optional<TopicColumnsToSortDTO> sortBy) {
+        Optional<TopicColumnsToSortDTO> sortBy,
+        Optional<SortOrderDTO> sortOrder) {
       return geTopicsForPagination()
           .map(paginatingTopics -> {
             Predicate<Integer> positiveInt = i -> i > 0;
             int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
             var topicsToSkip = (pageNum.filter(positiveInt).orElse(1) - 1) * perPage;
+            var comparator = sortOrder.isEmpty() || !sortOrder.get().equals(SortOrderDTO.DESC)
+                ? getComparatorForTopic(sortBy) : getComparatorForTopic(sortBy).reversed();
             List<InternalTopic> topics = paginatingTopics.stream()
                 .filter(topic -> !topic.isInternal()
                     || showInternal.map(i -> topic.isInternal() == i).orElse(true))
@@ -422,7 +427,7 @@ public class TopicsService {
                     search
                         .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
                         .orElse(true))
-                .sorted(getComparatorForTopic(sortBy))
+                .sorted(comparator)
                 .collect(toList());
             var totalPages = (topics.size() / perPage)
                 + (topics.size() % perPage == 0 ? 0 : 1);

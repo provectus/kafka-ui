@@ -3,6 +3,8 @@ import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
+import usePagination from 'lib/hooks/usePagination';
+import useSearch from 'lib/hooks/useSearch';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
@@ -16,6 +18,9 @@ import * as S from './GlobalSchemaSelector.styled';
 const GlobalSchemaSelector: React.FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const dispatch = useAppDispatch();
+  const [searchText] = useSearch();
+  const { page, perPage } = usePagination();
+
   const [currentCompatibilityLevel, setCurrentCompatibilityLevel] =
     React.useState<CompatibilityLevelCompatibilityEnum | undefined>();
   const [nextCompatibilityLevel, setNextCompatibilityLevel] = React.useState<
@@ -45,12 +50,8 @@ const GlobalSchemaSelector: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleChangeCompatibilityLevel = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    setNextCompatibilityLevel(
-      event.target.value as CompatibilityLevelCompatibilityEnum
-    );
+  const handleChangeCompatibilityLevel = (level: string | number) => {
+    setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);
     setIsConfirmationVisible(true);
   };
 
@@ -62,10 +63,12 @@ const GlobalSchemaSelector: React.FC = () => {
           clusterName,
           compatibilityLevel: { compatibility: nextCompatibilityLevel },
         });
-        dispatch(fetchSchemas(clusterName));
         setCurrentCompatibilityLevel(nextCompatibilityLevel);
         setNextCompatibilityLevel(undefined);
         setIsConfirmationVisible(false);
+        dispatch(
+          fetchSchemas({ clusterName, page, perPage, search: searchText })
+        );
       } catch (e) {
         const err = await getResponse(e as Response);
         dispatch(serverErrorAlertAdded(err));
@@ -81,18 +84,14 @@ const GlobalSchemaSelector: React.FC = () => {
       <div>Global Compatibility Level: </div>
       <Select
         selectSize="M"
-        value={currentCompatibilityLevel}
+        defaultValue={currentCompatibilityLevel}
+        minWidth="200px"
         onChange={handleChangeCompatibilityLevel}
         disabled={isFetching || isUpdating || isConfirmationVisible}
-      >
-        {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-          (level: string) => (
-            <option key={level} value={level}>
-              {level}
-            </option>
-          )
+        options={Object.keys(CompatibilityLevelCompatibilityEnum).map(
+          (level) => ({ value: level, label: level })
         )}
-      </Select>
+      />
       <ConfirmationModal
         isOpen={isConfirmationVisible}
         onCancel={() => setIsConfirmationVisible(false)}

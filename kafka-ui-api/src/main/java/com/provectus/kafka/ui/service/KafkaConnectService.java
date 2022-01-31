@@ -266,7 +266,8 @@ public class KafkaConnectService {
     switch (action) {
       case RESTART:
         kafkaClientCall =
-            connect -> KafkaConnectClients.withBaseUrl(connect).restartConnector(connectorName);
+            connect -> KafkaConnectClients.withBaseUrl(connect)
+                .restartConnector(connectorName, true, false);
         break;
       case PAUSE:
         kafkaClientCall =

@@ -1,6 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-nocheck
-
 import compareVersions from 'components/Version/compareVersions';
 
 const runTests = (dataSet: [string, string, number][]) => {
@@ -63,10 +60,11 @@ describe('compareVersions function', () => {
   });
 
   it('returns valid result (negative test cases)', () => {
+    expect(compareVersions()).toEqual(0);
+    expect(compareVersions('v0.0.0')).toEqual(0);
+    // @ts-expect-error first arg is number
     expect(compareVersions(123, 'v0.0.0')).toEqual(0);
-    expect(compareVersions(undefined, 'v0.0.0')).toEqual(0);
+    // @ts-expect-error second arg is number
     expect(compareVersions('v0.0.0', 123)).toEqual(0);
-    expect(compareVersions('v0.0.0', undefined)).toEqual(0);
-    expect(compareVersions(undefined, undefined)).toEqual(0);
   });
 });

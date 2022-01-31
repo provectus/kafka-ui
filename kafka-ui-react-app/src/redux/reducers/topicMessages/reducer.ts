@@ -13,6 +13,7 @@ export const initialState: TopicMessagesState = {
   isFetching: false,
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): TopicMessagesState => {
   switch (action.type) {
     case getType(actions.addTopicMessage): {

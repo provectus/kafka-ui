@@ -1,4 +1,4 @@
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
@@ -18,6 +18,7 @@ import {
 } from 'redux/reducers/topics/selectors';
 
 import validateMessage from './validateMessage';
+import * as S from './SendMessage.styled';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -131,7 +132,7 @@ const SendMessage: React.FC = () => {
     return <PageLoader />;
   }
   return (
-    <div className="box">
+    <S.Wrapper>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="columns">
           <div className="column is-one-third">
@@ -162,7 +163,7 @@ const SendMessage: React.FC = () => {
               control={control}
               name="key"
               render={({ field: { name, onChange } }) => (
-                <JSONEditor
+                <Editor
                   readOnly={isSubmitting}
                   defaultValue={keyDefaultValue}
                   name={name}
@@ -177,7 +178,7 @@ const SendMessage: React.FC = () => {
               control={control}
               name="content"
               render={({ field: { name, onChange } }) => (
-                <JSONEditor
+                <Editor
                   readOnly={isSubmitting}
                   defaultValue={contentDefaultValue}
                   name={name}
@@ -194,7 +195,7 @@ const SendMessage: React.FC = () => {
               control={control}
               name="headers"
               render={({ field: { name, onChange } }) => (
-                <JSONEditor
+                <Editor
                   readOnly={isSubmitting}
                   defaultValue="{}"
                   name={name}
@@ -214,7 +215,7 @@ const SendMessage: React.FC = () => {
           Send
         </Button>
       </form>
-    </div>
+    </S.Wrapper>
   );
 };
 

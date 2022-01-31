@@ -7,18 +7,25 @@ import {
 } from 'generated-sources';
 import { clusterSchemaPath } from 'lib/paths';
 import { NewSchemaSubjectRaw } from 'redux/interfaces';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
+  schemaAdded,
   schemasApiClient,
-  selectSchemaById,
+  fetchLatestSchema,
+  getSchemaLatest,
+  SCHEMA_LATEST_FETCH_ACTION,
+  getAreSchemaLatestFulfilled,
+  schemaUpdated,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import * as S from './Edit.styled';
 
@@ -35,7 +42,15 @@ const Edit: React.FC = () => {
     handleSubmit,
   } = methods;
 
-  const schema = useAppSelector((state) => selectSchemaById(state, subject));
+  React.useEffect(() => {
+    dispatch(fetchLatestSchema({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
+    };
+  }, [clusterName, subject]);
+
+  const schema = useAppSelector((state) => getSchemaLatest(state));
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
 
   const formatedSchema = React.useMemo(() => {
     return schema?.schemaType === SchemaType.PROTOBUF
@@ -48,7 +63,7 @@ const Edit: React.FC = () => {
 
     try {
       if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        await schemasApiClient.createNewSchema({
+        const resp = await schemasApiClient.createNewSchema({
           clusterName,
           newSchemaSubject: {
             ...schema,
@@ -56,6 +71,7 @@ const Edit: React.FC = () => {
             schemaType: props.schemaType || schema.schemaType,
           },
         });
+        dispatch(schemaAdded(resp));
       }
 
       if (dirtyFields.compatibilityLevel) {
@@ -66,6 +82,12 @@ const Edit: React.FC = () => {
             compatibility: props.compatibilityLevel,
           },
         });
+        dispatch(
+          schemaUpdated({
+            ...schema,
+            compatibilityLevel: props.compatibilityLevel,
+          })
+        );
       }
 
       history.push(clusterSchemaPath(clusterName, subject));
@@ -75,8 +97,9 @@ const Edit: React.FC = () => {
     }
   }, []);
 
-  if (!schema) return null;
-
+  if (!isFetched || !schema) {
+    return <PageLoader />;
+  }
   return (
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />
@@ -85,42 +108,56 @@ const Edit: React.FC = () => {
           <div>
             <div>
               <InputLabel>Type</InputLabel>
-              <Select
-                name="schemaType"
-                required
+              <Controller
                 defaultValue={schema.schemaType}
-                disabled={isSubmitting}
-              >
-                {Object.keys(SchemaType).map((type: string) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+                control={control}
+                rules={{ required: true }}
+                name="schemaType"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.schemaType}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(SchemaType).map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                  />
+                )}
+              />
             </div>
 
             <div>
               <InputLabel>Compatibility level</InputLabel>
-              <Select
+              <Controller
+                defaultValue={
+                  schema.compatibilityLevel as CompatibilityLevelCompatibilityEnum
+                }
+                control={control}
                 name="compatibilityLevel"
-                defaultValue={schema.compatibilityLevel}
-                disabled={isSubmitting}
-              >
-                {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                  (level: string) => (
-                    <option key={level} value={level}>
-                      {level}
-                    </option>
-                  )
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.compatibilityLevel}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(
+                      CompatibilityLevelCompatibilityEnum
+                    ).map((level) => ({ value: level, label: level }))}
+                  />
                 )}
-              </Select>
+              />
             </div>
           </div>
           <S.EditorsWrapper>
             <div>
               <S.EditorContainer>
                 <h4>Latest schema</h4>
-                <JSONEditor
+                <Editor
+                  schemaType={schema?.schemaType}
                   isFixedHeight
                   readOnly
                   height="372px"
@@ -137,7 +174,8 @@ const Edit: React.FC = () => {
                   control={control}
                   name="newSchema"
                   render={({ field: { name, onChange } }) => (
-                    <JSONEditor
+                    <Editor
+                      schemaType={schema?.schemaType}
                       readOnly={isSubmitting}
                       defaultValue={formatedSchema}
                       name={name}

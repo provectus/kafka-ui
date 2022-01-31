@@ -1,52 +1,53 @@
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+import styled, { css } from 'styled-components';
 
 export interface InputProps {
   inputSize?: 'M' | 'L';
   hasLeftIcon: boolean;
 }
 
-export const Input = styled.input<InputProps>`
-  border: 1px ${Colors.neutral[30]} solid;
-  border-radius: 4px;
-  height: ${(props) => (props.inputSize === 'M' ? '32px' : '40px')};
-  width: 100%;
-  padding-left: ${(props) => (props.hasLeftIcon ? '36px' : '12px')};
-  font-size: 14px;
-
-  &::placeholder {
-    color: ${Colors.neutral[30]};
+export const Input = styled.input<InputProps>(
+  ({ theme, ...props }) => css`
+    border: 1px ${theme.input.borderColor.normal} solid;
+    border-radius: 4px;
+    height: ${props.inputSize === 'M' ? '32px' : '40px'};
+    width: 100%;
+    padding-left: ${props.hasLeftIcon ? '36px' : '12px'};
     font-size: 14px;
-  }
-  &:hover {
-    border-color: ${Colors.neutral[50]};
-  }
-  &:focus {
-    outline: none;
-    border-color: ${Colors.neutral[70]};
+
     &::placeholder {
-      color: transparent;
+      color: ${theme.input.color.placeholder.normal};
+      font-size: 14px;
     }
-  }
-  &:disabled {
-    color: ${Colors.neutral[30]};
-    border-color: ${Colors.neutral[10]};
-    cursor: not-allowed;
-  }
-  &:read-only {
-    color: ${Colors.neutral[90]};
-    border: none;
-    background-color: ${Colors.neutral[5]};
+    &:hover {
+      border-color: ${theme.input.borderColor.hover};
+    }
     &:focus {
+      outline: none;
+      border-color: ${theme.input.borderColor.focus};
       &::placeholder {
-        color: ${Colors.neutral[30]};
+        color: transparent;
       }
     }
-    cursor: not-allowed;
-  }
-`;
+    &:disabled {
+      color: ${theme.input.color.disabled};
+      border-color: ${theme.input.borderColor.disabled};
+      cursor: not-allowed;
+    }
+    &:read-only {
+      color: ${theme.input.color.readOnly};
+      border: none;
+      background-color: ${theme.input.backgroundColor.readOnly};
+      &:focus {
+        &::placeholder {
+          color: ${theme.input.color.placeholder.readOnly};
+        }
+      }
+      cursor: not-allowed;
+    }
+  `
+);
 
 export const FormError = styled.p`
-  color: ${Colors.red[50]};
+  color: ${({ theme }) => theme.input.error};
   font-size: 12px;
 `;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import GlobalSchemaSelector from 'components/Schemas/List/GlobalSchemaSelector/GlobalSchemaSelector';
@@ -10,15 +10,20 @@ import fetchMock from 'fetch-mock';
 
 const clusterName = 'testClusterName';
 
-const selectForwardOption = () =>
-  userEvent.selectOptions(
-    screen.getByRole('listbox'),
-    CompatibilityLevelCompatibilityEnum.FORWARD
+const selectForwardOption = () => {
+  const dropdownElement = screen.getByRole('listbox');
+  // clicks to open dropdown
+  userEvent.click(within(dropdownElement).getByRole('option'));
+  userEvent.click(
+    screen.getByText(CompatibilityLevelCompatibilityEnum.FORWARD)
   );
+};
 
 const expectOptionIsSelected = (option: string) => {
-  const optionElement: HTMLOptionElement = screen.getByText(option);
-  expect(optionElement.selected).toBeTruthy();
+  const dropdownElement = screen.getByRole('listbox');
+  const selectedOption = within(dropdownElement).getAllByRole('option');
+  expect(selectedOption.length).toEqual(1);
+  expect(selectedOption[0]).toHaveTextContent(option);
 };
 
 describe('GlobalSchemaSelector', () => {

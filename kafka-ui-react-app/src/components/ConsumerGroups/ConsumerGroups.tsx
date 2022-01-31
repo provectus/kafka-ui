@@ -1,6 +1,6 @@
 import React from 'react';
 import { ClusterName } from 'redux/interfaces';
-import { Switch, Route, useParams } from 'react-router-dom';
+import { Switch, useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Details from 'components/ConsumerGroups/Details/Details';
 import List from 'components/ConsumerGroups/List/List';
@@ -10,6 +10,7 @@ import {
   fetchConsumerGroups,
   getAreConsumerGroupsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
 const ConsumerGroups: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -22,17 +23,17 @@ const ConsumerGroups: React.FC = () => {
   if (isFetched) {
     return (
       <Switch>
-        <Route
+        <BreadcrumbRoute
           exact
           path="/ui/clusters/:clusterName/consumer-groups"
           component={List}
         />
-        <Route
+        <BreadcrumbRoute
           exact
           path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
           component={Details}
         />
-        <Route
+        <BreadcrumbRoute
           path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
           component={ResetOffsets}
         />
