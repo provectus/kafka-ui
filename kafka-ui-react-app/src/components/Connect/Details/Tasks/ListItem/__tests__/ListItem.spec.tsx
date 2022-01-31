@@ -1,73 +1,73 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import { render } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
-import ListItemContainer from 'components/Connect/Details/Tasks/ListItem/ListItemContainer';
 import ListItem, {
   ListItemProps,
 } from 'components/Connect/Details/Tasks/ListItem/ListItem';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import { Route } from 'react-router-dom';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
-describe('ListItem', () => {
-  containerRendersView(
-    <table>
-      <tbody>
-        <ListItemContainer task={tasks[0]} />
-      </tbody>
-    </table>,
-    ListItem
-  );
+const pathname = clusterConnectConnectorTasksPath(
+  ':clusterName',
+  ':connectName',
+  ':connectorName'
+);
+const clusterName = 'my-cluster';
+const connectName = 'my-connect';
+const connectorName = 'my-connector';
+const restartTask = jest.fn();
+const task = tasks[0];
 
-  describe('view', () => {
-    const pathname = clusterConnectConnectorTasksPath(
-      ':clusterName',
-      ':connectName',
-      ':connectorName'
-    );
-    const clusterName = 'my-cluster';
-    const connectName = 'my-connect';
-    const connectorName = 'my-connector';
-
-    const setupWrapper = (props: Partial<ListItemProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <TestRouterWrapper
-          pathname={pathname}
-          urlParams={{ clusterName, connectName, connectorName }}
-        >
-          <table>
-            <tbody>
-              <ListItem task={tasks[0]} restartTask={jest.fn()} {...props} />
-            </tbody>
-          </table>
-        </TestRouterWrapper>
-      </ThemeProvider>
-    );
-
-    it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('calls restartTask on button click', async () => {
-      const restartTask = jest.fn();
-      const wrapper = mount(setupWrapper({ restartTask }));
-      await act(async () => {
-        wrapper.find('svg').simulate('click');
-      });
-      await act(async () => {
-        wrapper.find('span').simulate('click');
-      });
-      expect(restartTask).toHaveBeenCalledTimes(1);
-      expect(restartTask).toHaveBeenCalledWith(
+const renderComponent = (props: ListItemProps = { task, restartTask }) => {
+  return render(
+    <Route path={pathname}>
+      <table>
+        <tbody>
+          <ListItem {...props} />
+        </tbody>
+      </table>
+    </Route>,
+    {
+      pathname: clusterConnectConnectorTasksPath(
         clusterName,
         connectName,
-        connectorName,
-        tasks[0].id?.task
-      );
-    });
+        connectorName
+      ),
+    }
+  );
+};
+
+describe('ListItem', () => {
+  it('renders', () => {
+    renderComponent();
+    expect(screen.getByRole('row')).toBeInTheDocument();
+    expect(
+      screen.getByRole('cell', { name: task.status.id.toString() })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('cell', { name: task.status.workerId })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('cell', { name: task.status.state })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('button')).toBeInTheDocument();
+    expect(screen.getByRole('menu')).toBeInTheDocument();
+    expect(screen.getByRole('menuitem')).toBeInTheDocument();
+  });
+  it('calls restartTask on button click', () => {
+    renderComponent();
+
+    expect(restartTask).not.toBeCalled();
+    userEvent.click(screen.getByRole('button'));
+    userEvent.click(screen.getByRole('menuitem'));
+    expect(restartTask).toBeCalledTimes(1);
+    expect(restartTask).toHaveBeenCalledWith(
+      clusterName,
+      connectName,
+      connectorName,
+      task.id?.task
+    );
   });
 });
