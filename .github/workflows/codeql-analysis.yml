@@ -17,6 +17,9 @@ on:
   pull_request:
     # The branches below must be a subset of the branches above
     branches: [ master ]
+    paths:
+    - 'kafka-ui-contract/**'
+    - 'kafka-ui-react-app/**'
   schedule:
     - cron: '39 15 * * 6'
 
