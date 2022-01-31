@@ -482,7 +482,7 @@ paths:
             type: array
             items:
               type: string
-          description: The format is [partition]::[offset] for specifying offsets or [partition]::[timestamp in millis] for specifying timestamps
+          description: The format is [partition]::[offset]
         - name: q
           in: query
           schema:

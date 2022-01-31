@@ -33,6 +33,8 @@ public class TopicTailing {
   private final RecordSerDe serde;
   private final Function<Map<String, Object>, KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final Predicate<TopicMessageEventDTO> msgFilter;
+
+  // we do messages emit throttling to prevent UI to be overloaded
   private final int maxEmitRatePerSec;
 
   public Flux<TopicMessageEventDTO> tail(String topic,

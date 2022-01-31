@@ -89,6 +89,10 @@ public class MessagesController extends AbstractController implements MessagesAp
                 topicName, parseSeekTo(topicName, seekTo), q)));
   }
 
+  /**
+   * The format is [partition]::[offset] for specifying offsets
+   * or [partition]::[timestamp in millis] for specifying timestamps.
+   */
   private Map<TopicPartition, Long> parseSeekTo(String topic, List<String> seekTo) {
     if (seekTo == null || seekTo.isEmpty()) {
       return Map.of();
