@@ -295,6 +295,11 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/TopicColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -1728,6 +1733,12 @@ components:
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
+
+    SortOrder:
+      type: string
+      enum:
+        - ASC
+        - DESC
 
     Topic:
       type: object
