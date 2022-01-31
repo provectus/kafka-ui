@@ -21,9 +21,10 @@ interface RouterParams {
 
 const New: React.FC = () => {
   const methods = useForm<TopicFormData>({
-    mode: 'onTouched',
+    mode: 'all',
     resolver: yupResolver(topicFormValidationSchema),
   });
+
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
   const dispatch = useDispatch();

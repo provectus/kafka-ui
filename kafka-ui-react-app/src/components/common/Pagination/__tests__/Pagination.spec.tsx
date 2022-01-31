@@ -80,14 +80,14 @@ describe('Pagination', () => {
     it('check if it sets page 8 as current when page param is set', () => {
       setupComponent('?page=8');
       expect(screen.getByText('8')).toHaveStyle(
-        `background-color: ${theme.paginationStyles.currentPage}`
+        `background-color: ${theme.pagination.currentPage}`
       );
     });
 
     it('check if it sets first page as current when page param not set', () => {
       setupComponent('', { totalPages: 8 });
       expect(screen.getByText('1')).toHaveStyle(
-        `background-color: ${theme.paginationStyles.currentPage}`
+        `background-color: ${theme.pagination.currentPage}`
       );
     });
   });

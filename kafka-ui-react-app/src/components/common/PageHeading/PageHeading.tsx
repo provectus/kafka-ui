@@ -26,7 +26,7 @@ export default styled(PageHeading)(
       font-size: 24px;
       font-weight: 500;
       line-height: 32px;
-      color: ${theme.headingStyles.h1.color};
+      color: ${theme.heading.h1.color};
     }
     & > div {
       display: flex;

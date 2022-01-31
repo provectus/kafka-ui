@@ -127,6 +127,7 @@ const New: React.FC<NewProps> = ({
         <div className={['field', connectNameFieldClassName].join(' ')}>
           <InputLabel>Connect *</InputLabel>
           <Controller
+            defaultValue={connectOptions[0].value}
             control={control}
             name="connectName"
             render={({ field: { name, onChange } }) => (

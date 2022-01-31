@@ -23,7 +23,7 @@ describe('TableHeaderCell', () => {
       <table>
         <thead>
           <tr>
-            <TableHeaderCell {...props} />
+            <TableHeaderCell {...props} />;
           </tr>
         </thead>
       </table>
@@ -56,8 +56,7 @@ describe('TableHeaderCell', () => {
     const title = within(columnheader).getByRole('button');
     expect(title).toBeInTheDocument();
     expect(title).toHaveTextContent(testTitle);
-    expect(within(title).getByTitle(sortIconTitle)).toBeInTheDocument();
-    expect(title).toHaveStyle(`color: ${theme.thStyles.color.active};`);
+    expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
     expect(title).toHaveStyle('cursor: pointer;');
   });
 
@@ -130,10 +129,11 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
+      handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
-    expect(title).toHaveStyle(`color: ${theme.thStyles.color.active};`);
+    expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
   });
 
   it('renders without hightlighted title when orderBy and orderValue are not equal', () => {
@@ -141,10 +141,11 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
+      handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
-    expect(title).toHaveStyle(`color: ${theme.thStyles.color.normal}`);
+    expect(title).toHaveStyle(`color: ${theme.table.th.color.normal}`);
   });
 
   it('renders with default (primary) theme', () => {
@@ -155,7 +156,7 @@ describe('TableHeaderCell', () => {
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
     expect(title).toHaveStyle(
-      `background: ${theme.thStyles.backgroundColor.normal};`
+      `background: ${theme.table.th.backgroundColor.normal};`
     );
   });
 });

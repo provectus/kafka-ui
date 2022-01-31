@@ -15,14 +15,14 @@ describe('PageControl', () => {
   it('renders current page', () => {
     setupComponent({ current: true });
     expect(screen.getByRole('button')).toHaveStyle(
-      `background-color: ${theme.paginationStyles.currentPage}`
+      `background-color: ${theme.pagination.currentPage}`
     );
   });
 
   it('renders non-current page', () => {
     setupComponent({ current: false });
     expect(screen.getByRole('button')).toHaveStyle(
-      `background-color: ${theme.paginationStyles.backgroundColor}`
+      `background-color: ${theme.pagination.backgroundColor}`
     );
   });
 
