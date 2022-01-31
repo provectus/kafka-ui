@@ -10,4 +10,4 @@ jobs:
         with:
           mode: exactly
           count: 0
-          labels: "status/blocked, status/needs-attention, status/on-hold, status/pending, status/triage"
+          labels: "status/blocked, status/needs-attention, status/on-hold, status/pending, status/triage, status/pending-backend, status/pending-frontend, status/pending-QA"
