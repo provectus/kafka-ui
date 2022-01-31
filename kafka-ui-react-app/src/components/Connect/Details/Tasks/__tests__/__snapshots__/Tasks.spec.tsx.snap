@@ -42,8 +42,8 @@ exports[`Tasks view matches snapshot 1`] = `
   -ms-flex-align: center;
   align-items: center;
   background: #FFFFFF;
-  color: #73848C;
   cursor: default;
+  color: #73848C;
 }
 
 .c1 {
@@ -215,8 +215,8 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
   -ms-flex-align: center;
   align-items: center;
   background: #FFFFFF;
-  color: #73848C;
   cursor: default;
+  color: #73848C;
 }
 
 .c1 {

@@ -129,6 +129,7 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
+      handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
@@ -140,6 +141,7 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
+      handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
