@@ -4,8 +4,10 @@ import static com.provectus.kafka.ui.emitter.MessageFilters.containsStringFilter
 import static com.provectus.kafka.ui.emitter.MessageFilters.groovyScriptFilter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
@@ -57,6 +59,12 @@ class MessageFiltersTest {
 
   @Nested
   class GroovyScriptFilter {
+
+    @Test
+    void throwsExceptionOnInvalidGroovySyntax() {
+      assertThrows(ValidationException.class,
+          () -> groovyScriptFilter("this is invalid groovy syntax = 1"));
+    }
 
     @Test
     void canCheckPartition() {
