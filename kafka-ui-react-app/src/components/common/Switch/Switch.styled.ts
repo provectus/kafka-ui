@@ -26,7 +26,7 @@ export const StyledSlider = styled.span`
     width: 14px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
+    background-color: ${({ theme }) => theme.switch.circle};
     transition: 0.4s;
     border-radius: 50%;
   }

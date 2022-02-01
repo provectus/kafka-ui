@@ -1,6 +1,9 @@
 import React from 'react';
 import { KsqlTableResponse, Table } from 'generated-sources';
 
+import * as S from './ResultRenderer.styled';
+
+// const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
 const ResultRenderer: React.FC<{ result: KsqlTableResponse | null }> = ({
   result,
 }) => {
@@ -13,6 +16,16 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse | null }> = ({
   // const isTable = result.data !== undefined;
   //
   // if (!isTable) return null;
+
+  // if (isMessage) return <S.Wrapper>{result.message}</S.Wrapper>;
+
+  // const isTable = result.data !== undefined;
+
+  // if (!isTable) return null;
+
+  // const rawTable = result.data as Table;
+
+  // const { headers, rows } = rawTable;
 
   const {
     header: tableHeader,
@@ -35,7 +48,7 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse | null }> = ({
   );
 
   return (
-    <div className="box">
+    <S.Wrapper>
       <table className="table is-fullwidth">
         <thead>
           <tr>
@@ -59,7 +72,7 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse | null }> = ({
           )}
         </tbody>
       </table>
-    </div>
+    </S.Wrapper>
   );
 };
 

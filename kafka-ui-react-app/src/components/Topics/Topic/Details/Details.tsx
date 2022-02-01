@@ -21,7 +21,6 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
@@ -105,15 +104,15 @@ const Details: React.FC<Props> = ({
                   Edit settings
                 </DropdownItem>
                 <DropdownItem
-                  style={{ color: Colors.red[50] }}
                   onClick={() => setClearTopicConfirmationVisible(true)}
+                  danger
                 >
                   Clear messages
                 </DropdownItem>
                 {isTopicDeletionAllowed && (
                   <DropdownItem
-                    style={{ color: Colors.red[50] }}
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
+                    danger
                   >
                     Remove topic
                   </DropdownItem>

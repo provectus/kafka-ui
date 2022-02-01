@@ -1,26 +1,26 @@
 import React from 'react';
-import { shallow, mount } from 'enzyme';
 import SchemaVersion from 'components/Schemas/Details/SchemaVersion/SchemaVersion';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import { versions } from './fixtures';
 
+const renderComponent = () => {
+  render(
+    <table>
+      <tbody>
+        <SchemaVersion version={versions[0]} />
+      </tbody>
+    </table>
+  );
+};
 describe('SchemaVersion', () => {
   it('renders versions', () => {
-    const wrapper = mount(
-      <table>
-        <tbody>
-          <SchemaVersion version={versions[0]} />
-        </tbody>
-      </table>
-    );
-
-    expect(wrapper.find('td').length).toEqual(3);
-    expect(wrapper.exists('Editor')).toBeFalsy();
-    wrapper.find('span').simulate('click');
-    expect(wrapper.exists('Editor')).toBeTruthy();
-  });
-
-  it('matches snapshot', () => {
-    expect(shallow(<SchemaVersion version={versions[0]} />)).toMatchSnapshot();
+    renderComponent();
+    expect(screen.getAllByRole('cell')).toHaveLength(3);
+    expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
+    userEvent.click(screen.getByRole('button'));
+    expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
   });
 });

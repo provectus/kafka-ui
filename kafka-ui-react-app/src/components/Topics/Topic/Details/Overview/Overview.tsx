@@ -110,8 +110,9 @@ const Overview: React.FC<Props> = ({
                             partition,
                           ])
                         }
+                        danger
                       >
-                        <Metrics.RedText>Clear Messages</Metrics.RedText>
+                        Clear Messages
                       </DropdownItem>
                     </Dropdown>
                   ) : null}

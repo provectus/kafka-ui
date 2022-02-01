@@ -13,6 +13,7 @@ export const initialState: TopicsState = {
   consumerGroups: [],
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): TopicsState => {
   switch (action.type) {
     case getType(actions.fetchTopicsListAction.success):

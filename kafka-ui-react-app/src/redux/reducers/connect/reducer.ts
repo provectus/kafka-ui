@@ -15,6 +15,7 @@ export const initialState: ConnectState = {
   search: '',
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): ConnectState => {
   switch (action.type) {
     case getType(actions.fetchConnectsAction.success):

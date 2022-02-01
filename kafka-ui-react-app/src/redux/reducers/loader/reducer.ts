@@ -2,6 +2,7 @@ import { Action, LoaderState } from 'redux/interfaces';
 
 export const initialState: LoaderState = {};
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): LoaderState => {
   const { type } = action;
   const splitType = type.split('__');

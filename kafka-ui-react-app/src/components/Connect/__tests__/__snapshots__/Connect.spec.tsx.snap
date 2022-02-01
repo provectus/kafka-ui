@@ -3,7 +3,7 @@
 exports[`Connect matches snapshot 1`] = `
 <div>
   <Switch>
-    <Route
+    <BreadcrumbRoute
       component={
         Object {
           "$$typeof": Symbol(react.memo),
@@ -15,17 +15,17 @@ exports[`Connect matches snapshot 1`] = `
       exact={true}
       path="/ui/clusters/:clusterName/connectors"
     />
-    <Route
+    <BreadcrumbRoute
       component={[Function]}
       exact={true}
       path="/ui/clusters/:clusterName/connectors/create-new"
     />
-    <Route
+    <BreadcrumbRoute
       component={[Function]}
       exact={true}
       path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName/edit"
     />
-    <Route
+    <BreadcrumbRoute
       component={[Function]}
       path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName"
     />

@@ -115,6 +115,7 @@ const TopicForm: React.FC<Props> = ({
           <div>
             <InputLabel>Cleanup policy</InputLabel>
             <Controller
+              defaultValue={CleanupPolicyOptions[0].value}
               control={control}
               name="cleanupPolicy"
               render={({ field: { name, onChange } }) => (
@@ -142,6 +143,7 @@ const TopicForm: React.FC<Props> = ({
               <Controller
                 control={control}
                 name="retentionBytes"
+                defaultValue={0}
                 render={({ field: { name, onChange } }) => (
                   <Select
                     name={name}

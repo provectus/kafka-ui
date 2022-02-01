@@ -1,11 +1,13 @@
 import React from 'react';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import ClustersWidgetContainer from './ClustersWidget/ClustersWidgetContainer';
 
 const Dashboard: React.FC = () => (
-  <div>
+  <>
+    <PageHeading text="Dashboard" />
     <ClustersWidgetContainer />
-  </div>
+  </>
 );
 
 export default Dashboard;

@@ -6,25 +6,13 @@ import { MILLISECONDS_IN_WEEK, MILLISECONDS_IN_SECOND } from 'lib/constants';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { FormError } from 'components/common/Input/Input.styled';
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
+import * as S from './TopicForm.styled';
 import TimeToRetainBtns from './TimeToRetainBtns';
 
 interface Props {
   isSubmitting: boolean;
 }
-
-const TimeToRetainLabel = styled.div`
-  display: flex;
-  gap: 16px;
-  align-items: center;
-
-  & > span {
-    font-size: 12px;
-    color: ${Colors.neutral[50]};
-  }
-`;
 
 const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
   const {
@@ -42,10 +30,10 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
 
   return (
     <>
-      <TimeToRetainLabel>
+      <S.Label>
         <InputLabel>Time to retain data (in ms)</InputLabel>
         {valueHint && <span>{valueHint}</span>}
-      </TimeToRetainLabel>
+      </S.Label>
       <Input
         id="timeToRetain"
         type="number"

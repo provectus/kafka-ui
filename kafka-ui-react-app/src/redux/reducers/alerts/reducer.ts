@@ -6,6 +6,7 @@ import { addError, removeAlert } from './utils';
 
 export const initialState: AlertsState = {};
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): AlertsState => {
   const { type } = action;
 

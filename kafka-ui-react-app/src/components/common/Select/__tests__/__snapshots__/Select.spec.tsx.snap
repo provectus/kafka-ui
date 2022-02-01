@@ -74,7 +74,7 @@ exports[`Custom Select when live matches the snapshot 1`] = `
           <circle
             cx="8"
             cy="8"
-            fill="#E61A1A"
+            fill="#E51A1A"
             r="4"
           />
         </svg>

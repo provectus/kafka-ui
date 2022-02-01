@@ -323,7 +323,7 @@ exports[`Filters component matches the snapshot 1`] = `
 }
 
 .c10 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c10 i {
@@ -967,7 +967,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
 }
 
 .c10 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c10 i {

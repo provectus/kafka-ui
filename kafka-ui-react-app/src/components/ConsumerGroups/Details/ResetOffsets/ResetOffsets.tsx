@@ -194,6 +194,7 @@ const ResetOffsets: React.FC = () => {
                     minWidth="100%"
                     name={name}
                     onChange={onChange}
+                    defaultValue={value}
                     value={value}
                     options={uniqueTopics.map((topic) => ({
                       value: topic,
