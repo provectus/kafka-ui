@@ -176,6 +176,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "messageToggleIconClosed": "#ABB5BA",
         "messageToggleIconOpened": "#171A1C",
         "verticalElipsisIcon": "#73848C",
+        "warningIcon": "#FFDD57",
       },
       "input": Object {
         "backgroundColor": Object {
