@@ -4,6 +4,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
+import { create } from 'react-test-renderer';
 
 const dummyLable = 'My Test Label';
 const dummyChildren = (
@@ -66,7 +67,7 @@ describe('Dropdown', () => {
   });
 
   it('matches snapshot', () => {
-    const wrapper = render(
+    const wrapper = create(
       setupWrapper(
         {
           right: true,
@@ -75,6 +76,6 @@ describe('Dropdown', () => {
         dummyChildren
       )
     );
-    expect(wrapper.baseElement).toMatchSnapshot();
+    expect(wrapper.toJSON()).toMatchSnapshot();
   });
 });
