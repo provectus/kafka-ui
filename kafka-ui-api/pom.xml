@@ -202,6 +202,18 @@
             <artifactId>spring-security-ldap</artifactId>
         </dependency>
 
+
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-jsr223</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-json</artifactId>
+            <version>3.0.9</version>
+        </dependency>
+
     </dependencies>
 
     <build>
