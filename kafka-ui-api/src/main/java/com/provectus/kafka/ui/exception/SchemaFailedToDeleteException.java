@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.exception;
 
-public class SchemaFailedToDeleteException extends SchemaBaseException {
+public class SchemaFailedToDeleteException extends CustomBaseException {
 
   public SchemaFailedToDeleteException(String schemaName) {
     super(String.format("Unable to delete schema with name %s", schemaName));
