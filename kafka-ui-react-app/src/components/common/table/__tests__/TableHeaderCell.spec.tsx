@@ -56,7 +56,6 @@ describe('TableHeaderCell', () => {
     const title = within(columnheader).getByRole('button');
     expect(title).toBeInTheDocument();
     expect(title).toHaveTextContent(testTitle);
-    expect(within(title).getByTitle(sortIconTitle)).toBeInTheDocument();
     expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
     expect(title).toHaveStyle('cursor: pointer;');
   });
@@ -130,6 +129,7 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
+      handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
@@ -141,6 +141,7 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.OUT_OF_SYNC_REPLICAS,
+      handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');
     const title = within(columnheader).getByText(testTitle);
