@@ -240,6 +240,11 @@ const theme = {
       active: Colors.neutral[70],
       disabled: Colors.neutral[10],
     },
+    optionList: {
+      scrollbar: {
+        backgroundColor: Colors.neutral[30],
+      },
+    },
   },
   input: {
     borderColor: {
