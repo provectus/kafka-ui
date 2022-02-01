@@ -21,50 +21,43 @@ const renderComponent = (props: Props = { isSubmitting, onSubmit }) => {
   );
 };
 
+const expectByRoleAndNameToBeInDocument = (
+  role: string,
+  accessibleName: string
+) => {
+  expect(screen.getByRole(role, { name: accessibleName })).toBeInTheDocument();
+};
+
 describe('TopicForm', () => {
   it('renders', () => {
     renderComponent();
 
-    expect(
-      screen.getByRole('textbox', { name: 'Topic Name *' })
-    ).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument('textbox', 'Topic Name *');
 
-    expect(
-      screen.getByRole('spinbutton', { name: 'Number of partitions *' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('spinbutton', { name: 'Replication Factor *' })
-    ).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument('spinbutton', 'Number of partitions *');
+    expectByRoleAndNameToBeInDocument('spinbutton', 'Replication Factor *');
 
-    expect(
-      screen.getByRole('spinbutton', { name: 'Min In Sync Replicas *' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('listbox', { name: 'Cleanup policy' })
-    ).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument('spinbutton', 'Min In Sync Replicas *');
+    expectByRoleAndNameToBeInDocument('listbox', 'Cleanup policy');
 
-    expect(
-      screen.getByRole('spinbutton', { name: 'Time to retain data (in ms)' })
-    ).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '12h' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '2d' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '7d' })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: '4w' })).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument(
+      'spinbutton',
+      'Time to retain data (in ms)'
+    );
+    expectByRoleAndNameToBeInDocument('button', '12h');
+    expectByRoleAndNameToBeInDocument('button', '2d');
+    expectByRoleAndNameToBeInDocument('button', '7d');
+    expectByRoleAndNameToBeInDocument('button', '4w');
 
-    expect(
-      screen.getByRole('listbox', { name: 'Max size on disk in GB' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('spinbutton', {
-        name: 'Maximum message size in bytes *',
-      })
-    ).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument('listbox', 'Max size on disk in GB');
+    expectByRoleAndNameToBeInDocument(
+      'spinbutton',
+      'Maximum message size in bytes *'
+    );
 
-    expect(
-      screen.getByRole('heading', { name: 'Custom parameters' })
-    ).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument('heading', 'Custom parameters');
 
-    expect(screen.getByRole('button', { name: 'Send' })).toBeInTheDocument();
+    expectByRoleAndNameToBeInDocument('button', 'Send');
   });
 
   it('submits', () => {
