@@ -43,8 +43,8 @@ public class MessageFilters {
       bindings.put("keyAsText", msg.getKey());
       bindings.put("valueAsText", msg.getContent());
       bindings.put("headers", msg.getHeaders());
-      bindings.put("key", parseJsonOrReturnNull(jsonSlurper, msg.getKey()));
-      bindings.put("value", parseJsonOrReturnNull(jsonSlurper, msg.getContent()));
+      bindings.put("key", parseToJsonOrReturnNull(jsonSlurper, msg.getKey()));
+      bindings.put("value", parseToJsonOrReturnNull(jsonSlurper, msg.getContent()));
       try {
         var result = compiledScript.eval(bindings);
         if (result instanceof Boolean) {
@@ -57,7 +57,7 @@ public class MessageFilters {
     };
   }
 
-  private static Object parseJsonOrReturnNull(JsonSlurper parser, @Nullable String str) {
+  private static Object parseToJsonOrReturnNull(JsonSlurper parser, @Nullable String str) {
     if (str == null) {
       return null;
     }
