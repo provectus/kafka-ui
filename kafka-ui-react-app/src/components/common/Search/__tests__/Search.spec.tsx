@@ -1,7 +1,7 @@
 import Search from 'components/common/Search/Search';
 import React from 'react';
 import { render } from 'lib/testHelpers';
-import { fireEvent } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('use-debounce', () => ({
   useDebouncedCallback: (fn: (e: Event) => void) => fn,
@@ -18,8 +18,9 @@ describe('Search', () => {
       />
     );
     const input = component.baseElement.querySelector('input') as HTMLElement;
-    fireEvent.change(input, { target: { value: 'test' } });
-    expect(handleSearch).toHaveBeenCalledTimes(1);
+    userEvent.click(input);
+    userEvent.keyboard('value');
+    expect(handleSearch).toHaveBeenCalledTimes(5);
   });
 
   describe('when placeholder is provided', () => {

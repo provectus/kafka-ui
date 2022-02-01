@@ -2,7 +2,7 @@ import React from 'react';
 import Dropdown, { DropdownProps } from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
-import { fireEvent } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
 const dummyLable = 'My Test Label';
@@ -61,7 +61,7 @@ describe('Dropdown', () => {
     expect(button).toBeTruthy();
     expect(wrapper.querySelector('.dropdown.is-active')).toBeFalsy();
 
-    fireEvent.click(button);
+    userEvent.click(button);
     expect(wrapper.querySelector('.dropdown.is-active')).toBeTruthy();
   });
 

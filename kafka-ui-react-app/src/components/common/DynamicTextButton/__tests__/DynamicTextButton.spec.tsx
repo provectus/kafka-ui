@@ -1,7 +1,7 @@
 import React from 'react';
 import DynamicTextButton from 'components/common/DynamicTextButton/DynamicTextButton';
 import { render } from 'lib/testHelpers';
-import { fireEvent } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 
 describe('DynamicButton', () => {
   const mockCallback = jest.fn();
@@ -14,7 +14,7 @@ describe('DynamicButton', () => {
       />
     );
 
-    fireEvent.click(
+    userEvent.click(
       component.baseElement.querySelector('button') as HTMLElement
     );
     expect(mockCallback).toBeCalled();
@@ -29,7 +29,7 @@ describe('DynamicButton', () => {
       />
     );
     expect(component.baseElement).toHaveTextContent('default');
-    fireEvent.click(
+    userEvent.click(
       component.baseElement.querySelector('button') as HTMLElement
     );
     expect(component.baseElement).toHaveTextContent('active');

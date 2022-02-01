@@ -1,7 +1,7 @@
 import React from 'react';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { render } from 'lib/testHelpers';
-import { fireEvent } from '@testing-library/dom';
+import userEvent from '@testing-library/user-event';
 
 const onClick = jest.fn();
 
@@ -21,7 +21,7 @@ describe('DropdownItem', () => {
 
     const dropDown = wrapper.getByText('Item 1');
 
-    fireEvent.click(dropDown);
+    userEvent.click(dropDown);
     expect(onClick).toHaveBeenCalled();
   });
 });

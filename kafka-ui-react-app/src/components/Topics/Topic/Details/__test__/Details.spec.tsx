@@ -59,9 +59,7 @@ describe('Details', () => {
         </ClusterContext.Provider>
       );
 
-      expect(
-        component.baseElement.querySelector('button')
-      ).not.toBeInTheDocument();
+      expect(component.queryByRole('button')).not.toBeInTheDocument();
       expect(component).toMatchSnapshot();
     });
   });
