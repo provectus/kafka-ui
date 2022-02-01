@@ -84,7 +84,7 @@ describe('New', () => {
         clusterTopicPath(clusterName, topicName)
       )
     );
-    await waitFor(() => expect(mockedHistory.push).toBeCalledTimes(1));
-    await waitFor(() => expect(createTopicAPIPathMock.called()).toBeTruthy());
+    expect(mockedHistory.push).toBeCalledTimes(1);
+    expect(createTopicAPIPathMock.called()).toBeTruthy();
   });
 });
