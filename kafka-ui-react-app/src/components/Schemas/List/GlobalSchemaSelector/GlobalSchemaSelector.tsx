@@ -3,6 +3,8 @@ import Select from 'components/common/Select/Select';
 import { CompatibilityLevelCompatibilityEnum } from 'generated-sources';
 import { getResponse } from 'lib/errorHandling';
 import { useAppDispatch } from 'lib/hooks/redux';
+import usePagination from 'lib/hooks/usePagination';
+import useSearch from 'lib/hooks/useSearch';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
@@ -16,6 +18,9 @@ import * as S from './GlobalSchemaSelector.styled';
 const GlobalSchemaSelector: React.FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const dispatch = useAppDispatch();
+  const [searchText] = useSearch();
+  const { page, perPage } = usePagination();
+
   const [currentCompatibilityLevel, setCurrentCompatibilityLevel] =
     React.useState<CompatibilityLevelCompatibilityEnum | undefined>();
   const [nextCompatibilityLevel, setNextCompatibilityLevel] = React.useState<
@@ -61,7 +66,9 @@ const GlobalSchemaSelector: React.FC = () => {
         setCurrentCompatibilityLevel(nextCompatibilityLevel);
         setNextCompatibilityLevel(undefined);
         setIsConfirmationVisible(false);
-        dispatch(fetchSchemas(clusterName));
+        dispatch(
+          fetchSchemas({ clusterName, page, perPage, search: searchText })
+        );
       } catch (e) {
         const err = await getResponse(e as Response);
         dispatch(serverErrorAlertAdded(err));

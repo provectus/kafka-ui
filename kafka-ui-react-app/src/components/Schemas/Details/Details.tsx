@@ -13,15 +13,19 @@ import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
+  fetchLatestSchema,
   fetchSchemaVersions,
-  getAreSchemasFulfilled,
+  getAreSchemaLatestFulfilled,
   getAreSchemaVersionsFulfilled,
   schemasApiClient,
+  SCHEMAS_VERSIONS_FETCH_ACTION,
+  SCHEMA_LATEST_FETCH_ACTION,
   selectAllSchemaVersions,
-  selectSchemaById,
+  getSchemaLatest,
 } from 'redux/reducers/schemas/schemasSlice';
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -39,15 +43,23 @@ const Details: React.FC = () => {
   ] = React.useState(false);
 
   React.useEffect(() => {
-    dispatch(fetchSchemaVersions({ clusterName, subject }));
+    dispatch(fetchLatestSchema({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
+    };
   }, []);
 
-  const areSchemasFetched = useAppSelector(getAreSchemasFulfilled);
+  React.useEffect(() => {
+    dispatch(fetchSchemaVersions({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMAS_VERSIONS_FETCH_ACTION));
+    };
+  }, [clusterName, subject]);
+
+  const versions = useAppSelector((state) => selectAllSchemaVersions(state));
+  const schema = useAppSelector(getSchemaLatest);
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
   const areVersionsFetched = useAppSelector(getAreSchemaVersionsFulfilled);
-  const schema = useAppSelector((state) => selectSchemaById(state, subject));
-  const versions = useAppSelector((state) =>
-    selectAllSchemaVersions(state).filter((v) => v.subject === subject)
-  );
 
   const onDelete = React.useCallback(async () => {
     try {
@@ -62,7 +74,7 @@ const Details: React.FC = () => {
     }
   }, [clusterName, subject]);
 
-  if (!areSchemasFetched || !schema) {
+  if (!isFetched || !schema) {
     return <PageLoader />;
   }
 
