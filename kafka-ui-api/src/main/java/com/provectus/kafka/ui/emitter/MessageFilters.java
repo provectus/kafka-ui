@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageDTO;
 import groovy.json.JsonSlurper;
 import java.util.function.Predicate;
+import javax.annotation.Nullable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
@@ -42,23 +43,8 @@ public class MessageFilters {
       bindings.put("keyAsText", msg.getKey());
       bindings.put("valueAsText", msg.getContent());
       bindings.put("headers", msg.getHeaders());
-
-      if (msg.getKey() != null) {
-        try {
-          bindings.put("key", jsonSlurper.parseText(msg.getKey()));
-        } catch (Exception e) {
-          bindings.put("key", null);
-        }
-      }
-
-      if (msg.getContent() != null) {
-        try {
-          bindings.put("value", jsonSlurper.parseText(msg.getContent()));
-        } catch (Exception e) {
-          bindings.put("value", null);
-        }
-      }
-
+      bindings.put("key", parseJsonOrReturnNull(jsonSlurper, msg.getKey()));
+      bindings.put("value", parseJsonOrReturnNull(jsonSlurper, msg.getContent()));
       try {
         var result = compiledScript.eval(bindings);
         if (result instanceof Boolean) {
@@ -69,6 +55,17 @@ public class MessageFilters {
         return false;
       }
     };
+  }
+
+  private static Object parseJsonOrReturnNull(JsonSlurper parser, @Nullable String str) {
+    if (str == null) {
+      return null;
+    }
+    try {
+      return parser.parseText(str);
+    } catch (Exception e) {
+      return null;
+    }
   }
 
   private static synchronized GroovyScriptEngineImpl getGroovyEngine() {

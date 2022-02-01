@@ -158,7 +158,6 @@ class MessageFiltersTest {
       long before = System.currentTimeMillis();
       long matched = toFilter.stream().filter(f).count();
       long took = System.currentTimeMillis() - before;
-      System.out.println("took: " + took);
 
       assertThat(took).isLessThan(500);
       assertThat(matched).isGreaterThan(0);
