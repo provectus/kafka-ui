@@ -17,6 +17,7 @@ const Search: React.FC<SearchProps> = ({
     (e) => handleSearch(e.target.value),
     300
   );
+
   return (
     <Input
       type="text"

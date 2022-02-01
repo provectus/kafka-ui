@@ -4,6 +4,11 @@ on:
     types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
     paths:
       - "charts/**"
+
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 8 * * 3'
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
