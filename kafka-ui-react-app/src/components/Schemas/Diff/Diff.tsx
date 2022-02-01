@@ -6,6 +6,8 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
 import { useHistory } from 'react-router';
 import { fetchSchemaVersions } from 'redux/reducers/schemas/schemasSlice';
+import { useForm, Controller } from 'react-hook-form';
+import Select from 'components/common/Select/Select';
 
 import * as S from './Diff.styled';
 
@@ -47,72 +49,90 @@ const Diff: React.FC<DiffProps> = ({
   };
   const history = useHistory();
 
+  const methods = useForm({ mode: 'onChange' });
+  const {
+    formState: { isSubmitting },
+    control,
+  } = methods;
+
   return (
-    <div className="section">
+    <S.Section>
       {areVersionsFetched ? (
-        <div className="box tile is-ancestor is-vertical">
-          <div className="tile">
-            <div className="tile is-6">
-              <div className="select">
-                <select
-                  id="left-select"
+        <S.DiffBox>
+          <S.DiffTilesWrapper>
+            <S.DiffTile>
+              <S.DiffVersionsSelect>
+                <Controller
                   defaultValue={leftVersion}
-                  onChange={(event) => {
-                    history.push(
-                      clusterSchemaSchemaDiffPath(
-                        clusterName,
-                        subject,
-                        event.target.value,
-                        !rightVersion && versions.length
-                          ? versions[0].version
-                          : rightVersion
-                      )
-                    );
-                    setLeftVersion(event.target.value);
-                  }}
-                >
-                  {versions.map((version) => (
-                    <option
-                      key={`left-${version.version}`}
-                      value={version.version}
-                    >
-                      {`Version ${version.version}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="tile is-6">
-              <div className="select">
-                <select
-                  id="right-select"
+                  control={control}
+                  rules={{ required: true }}
+                  name="schemaType"
+                  render={({ field: { name } }) => (
+                    <Select
+                      id="left-select"
+                      name={name}
+                      value={leftVersion}
+                      onChange={(event) => {
+                        history.push(
+                          clusterSchemaSchemaDiffPath(
+                            clusterName,
+                            subject,
+                            event.toString(),
+                            !rightVersion && versions.length
+                              ? versions[0].version
+                              : rightVersion
+                          )
+                        );
+                        setLeftVersion(event.toString());
+                      }}
+                      minWidth="100%"
+                      disabled={isSubmitting}
+                      options={versions.map((type) => ({
+                        value: type.version,
+                        label: `Version ${type.version}`,
+                      }))}
+                    />
+                  )}
+                />
+              </S.DiffVersionsSelect>
+            </S.DiffTile>
+            <S.DiffTile>
+              <S.DiffVersionsSelect>
+                <Controller
                   defaultValue={rightVersion}
-                  onChange={(event) => {
-                    history.push(
-                      clusterSchemaSchemaDiffPath(
-                        clusterName,
-                        subject,
-                        !leftVersion && versions.length
-                          ? versions[0].version
-                          : leftVersion,
-                        event.target.value
-                      )
-                    );
-                    setRightVersion(event.target.value);
-                  }}
-                >
-                  {versions.map((version) => (
-                    <option
-                      key={`right-${version.version}`}
-                      value={version.version}
-                    >
-                      {`Version ${version.version}`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          </div>
+                  control={control}
+                  rules={{ required: true }}
+                  name="schemaType"
+                  render={({ field: { name } }) => (
+                    <Select
+                      id="right-select"
+                      name={name}
+                      value={rightVersion}
+                      onChange={(event) => {
+                        history.push(
+                          clusterSchemaSchemaDiffPath(
+                            clusterName,
+                            subject,
+                            event.toString(),
+                            !rightVersion && versions.length
+                              ? versions[0].version
+                              : rightVersion
+                          )
+                        );
+                        setRightVersion(event.toString());
+                      }}
+                      minWidth="100%"
+                      disabled={isSubmitting}
+                      options={versions.map((type) => ({
+                        value: type.version,
+                        label: `Version ${type.version}`,
+                      }))}
+                    />
+                  )}
+                />
+              </S.DiffVersionsSelect>
+            </S.DiffTile>
+          </S.DiffTilesWrapper>
           <S.DiffWrapper>
             <DiffViewer
               value={[
@@ -126,11 +146,11 @@ const Diff: React.FC<DiffProps> = ({
               schemaType={getSchemaType(versions)}
             />
           </S.DiffWrapper>
-        </div>
+        </S.DiffBox>
       ) : (
         <PageLoader />
       )}
-    </div>
+    </S.Section>
   );
 };
 

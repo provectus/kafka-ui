@@ -39,7 +39,7 @@ export const Colors = {
   },
   yellow: {
     '10': '#FFEECC',
-    '20': '#ffff99',
+    '20': '#FFDD57',
   },
   blue: {
     '10': '#e3f2fd',
@@ -384,6 +384,7 @@ const theme = {
   },
   icons: {
     closeIcon: Colors.neutral[30],
+    warningIcon: Colors.yellow[20],
     messageToggleIconOpened: Colors.neutral[90],
     messageToggleIconClosed: Colors.neutral[30],
     verticalElipsisIcon: Colors.neutral[50],
