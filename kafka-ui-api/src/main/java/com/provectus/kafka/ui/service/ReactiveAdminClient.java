@@ -92,13 +92,13 @@ public class ReactiveAdminClient implements Closeable {
 
   //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
   private static <T> Mono<T> toMono(KafkaFuture<T> future) {
-    return Mono.create(sink -> future.whenComplete((res, ex) -> {
+    return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
         sink.error(ex);
       } else {
         sink.success(res);
       }
-    }));
+    })).doOnCancel(() -> future.cancel(true));
   }
 
   //---------------------------------------------------------------------------------
