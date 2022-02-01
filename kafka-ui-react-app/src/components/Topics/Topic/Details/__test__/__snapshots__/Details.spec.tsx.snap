@@ -342,6 +342,11 @@ exports[`Details when it has readonly flag does not render the Action button a T
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+        "optionList": Object {
+          "scrollbar": Object {
+            "backgroundColor": "#ABB5BA",
+          },
+        },
       },
       "switch": Object {
         "checked": "#29A352",
