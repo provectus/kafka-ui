@@ -35,7 +35,6 @@ const New: React.FC = () => {
         clusterName,
         topicCreation: formatTopicCreation(data),
       });
-
       history.push(clusterTopicPath(clusterName, data.name));
     } catch (error) {
       const response = await getResponse(error as Response);
