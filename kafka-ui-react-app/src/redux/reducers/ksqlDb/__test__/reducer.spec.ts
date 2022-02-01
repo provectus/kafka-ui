@@ -1,5 +1,8 @@
-// eslint-disable-next-line prettier/prettier
-import reducer, { initialState, fetchKsqlDbTables, resetExecutionResult } from 'redux/reducers/ksqlDb/ksqlDbSlice';
+import reducer, {
+  initialState,
+  fetchKsqlDbTables,
+  resetExecutionResult,
+} from 'redux/reducers/ksqlDb/ksqlDbSlice';
 
 import { fetchKsqlDbTablesPayload } from './fixtures';
 
