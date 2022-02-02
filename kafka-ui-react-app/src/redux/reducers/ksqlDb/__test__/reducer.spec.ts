@@ -2,6 +2,7 @@ import reducer, {
   initialState,
   fetchKsqlDbTables,
   resetExecutionResult,
+  executeKsql,
 } from 'redux/reducers/ksqlDb/ksqlDbSlice';
 
 import { fetchKsqlDbTablesPayload } from './fixtures';
@@ -12,6 +13,7 @@ describe('KsqlDb reducer', () => {
       initialState
     );
   });
+
   it('Fetches tables and streams', () => {
     const state = reducer(undefined, {
       type: fetchKsqlDbTables.fulfilled,
@@ -21,6 +23,16 @@ describe('KsqlDb reducer', () => {
     expect(state.streams.length).toEqual(2);
     expect(state).toMatchSnapshot();
   });
+
+  it('Exexute ksql and get result', () => {
+    const state = reducer(undefined, {
+      type: executeKsql.fulfilled,
+      payload: fetchKsqlDbTablesPayload,
+    });
+    expect(state.executionResult).toBeTruthy();
+    expect(state).toMatchSnapshot();
+  });
+
   it('Resets execution result', () => {
     const state = reducer(
       {
