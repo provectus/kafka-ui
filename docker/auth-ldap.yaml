@@ -29,6 +29,14 @@ services:
       AUTH_TYPE: "LDAP"
       SPRING_LDAP_URLS: "ldap://ldap:10389"
       SPRING_LDAP_DN_PATTERN: "cn={0},ou=people,dc=planetexpress,dc=com"
+#     USER SEARCH FILTER INSTEAD OF DN
+#     SPRING_LDAP_USERFILTER_SEARCHBASE: "dc=planetexpress,dc=com"
+#     SPRING_LDAP_USERFILTER_SEARCHFILTER: "(&(uid={0})(objectClass=inetOrgPerson))"
+#     LDAP ADMIN USER
+#     SPRING_LDAP_ADMINUSER: "cn=admin,dc=planetexpress,dc=com"
+#     SPRING_LDAP_ADMINPASSWORD: "GoodNewsEveryone"
+
+
 
   ldap:
     image: rroemhild/test-openldap:latest

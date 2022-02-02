@@ -42,7 +42,7 @@ const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
         <div>
           <Dropdown label={<VerticalElipsisIcon />} right>
             <DropdownItem onClick={restartTaskHandler} danger>
-              <span>Clear Messages</span>
+              <span>Restart task</span>
             </DropdownItem>
           </Dropdown>
         </div>

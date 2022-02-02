@@ -39,6 +39,7 @@ export const Colors = {
   },
   yellow: {
     '10': '#FFEECC',
+    '20': '#FFDD57',
   },
   blue: {
     '10': '#e3f2fd',
@@ -239,6 +240,11 @@ const theme = {
       active: Colors.neutral[70],
       disabled: Colors.neutral[10],
     },
+    optionList: {
+      scrollbar: {
+        backgroundColor: Colors.neutral[30],
+      },
+    },
   },
   input: {
     borderColor: {
@@ -383,6 +389,7 @@ const theme = {
   },
   icons: {
     closeIcon: Colors.neutral[30],
+    warningIcon: Colors.yellow[20],
     messageToggleIconOpened: Colors.neutral[90],
     messageToggleIconClosed: Colors.neutral[30],
     verticalElipsisIcon: Colors.neutral[50],
