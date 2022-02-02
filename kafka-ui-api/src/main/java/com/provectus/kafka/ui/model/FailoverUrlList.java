@@ -35,7 +35,7 @@ public class FailoverUrlList {
     return this.urls.get(this.index.get());
   }
 
-  public synchronized void fail(String url) {
+  public void fail(String url) {
     int currentIndex = this.index.get();
     if ((this.urls.get(currentIndex)).equals(url)) {
       this.failures.put(currentIndex, Instant.now());
