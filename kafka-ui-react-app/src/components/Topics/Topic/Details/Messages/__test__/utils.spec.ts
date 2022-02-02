@@ -46,22 +46,22 @@ describe('utils', () => {
       searchParams = new URLSearchParams(paramsString);
     });
 
-    it('returns nothing when seekType is equal BEGGINING', () => {
+    it('returns nothing when param "seekType" is equal BEGGINING', () => {
       searchParams.set('seekType', SeekType.BEGINNING);
       expect(getOffsetFromSeekToParam(searchParams)).toEqual('');
     });
 
-    it('returns nothing when seekType is equal TIMESTAMP', () => {
+    it('returns nothing when param "seekType" is equal TIMESTAMP', () => {
       searchParams.set('seekType', SeekType.TIMESTAMP);
       expect(getOffsetFromSeekToParam(searchParams)).toEqual('');
     });
 
-    it('returns correct seekTo when seekType is equal OFFSET', () => {
+    it('returns correct messages list when param "seekType" is equal OFFSET', () => {
       searchParams.set('seekType', SeekType.OFFSET);
       expect(getOffsetFromSeekToParam(searchParams)).toEqual('123');
     });
 
-    it('returns 0 when seekTo is empty and seekType is equal OFFSET', () => {
+    it('returns 0 when param "seekTo" is not defined and param "seekType" is equal OFFSET', () => {
       searchParams.set('seekType', SeekType.OFFSET);
       searchParams.delete('seekTo');
       expect(getOffsetFromSeekToParam(searchParams)).toEqual('0');
@@ -74,21 +74,21 @@ describe('utils', () => {
       searchParams = new URLSearchParams(paramsString);
     });
 
-    it('returns when seekType is equal BEGGINING', () => {
+    it('returns null when param "seekType" is equal BEGGINING', () => {
       searchParams.set('seekType', SeekType.BEGINNING);
       expect(getTimestampFromSeekToParam(searchParams)).toEqual(null);
     });
-    it('returns when seekType is equal OFFSET', () => {
+    it('returns null when param "seekType" is equal OFFSET', () => {
       searchParams.set('seekType', SeekType.OFFSET);
       expect(getTimestampFromSeekToParam(searchParams)).toEqual(null);
     });
-    it('returns when seekType is equal TIMESTAMP', () => {
+    it('returns correct messages list when param "seekType" is equal TIMESTAMP', () => {
       searchParams.set('seekType', SeekType.TIMESTAMP);
       expect(getTimestampFromSeekToParam(searchParams)).toEqual(
         new Date(1627333200000)
       );
     });
-    it('returns default timestamp when seekTo is empty and seekType is equal TIMESTAMP', () => {
+    it('returns default timestamp when param "seekTo" is empty and param "seekType" is equal TIMESTAMP', () => {
       searchParams.set('seekType', SeekType.TIMESTAMP);
       searchParams.delete('seekTo');
       expect(getTimestampFromSeekToParam(searchParams)).toEqual(new Date(0));
@@ -104,13 +104,13 @@ describe('utils', () => {
         { label: '42', value: 42 },
       ]);
     });
-    it('returns parsed partition from params when partition NOT includes selected partition', () => {
+    it('returns parsed partition from params when partition list NOT includes selected partition', () => {
       searchParams.set('seekTo', '24::0');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual(
         []
       );
     });
-    it('returns partition when searchParams not defined', () => {
+    it('returns partitions when param "seekTo" is not defined', () => {
       searchParams.delete('seekTo');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual([
         { label: '42', value: 42 },
