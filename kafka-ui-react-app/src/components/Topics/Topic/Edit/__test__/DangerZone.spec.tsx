@@ -6,11 +6,13 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
+import { topicName, clusterName } from './fixtures';
+
 const renderComponent = (props?: Partial<Props>) =>
   render(
     <DangerZone
-      clusterName="testCluster"
-      topicName="testTopic"
+      clusterName={clusterName}
+      topicName={topicName}
       defaultPartitions={3}
       defaultReplicationFactor={3}
       partitionsCountIncreased={false}

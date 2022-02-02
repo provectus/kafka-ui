@@ -19,7 +19,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
-interface Props {
+export interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
   topic?: TopicWithDetailedInfo;

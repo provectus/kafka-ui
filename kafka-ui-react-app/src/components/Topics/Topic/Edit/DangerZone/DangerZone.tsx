@@ -182,7 +182,6 @@ const DangerZone: React.FC<Props> = ({
                 buttonSize="M"
                 type="submit"
                 disabled={!replicationFactorMethods.formState.isDirty}
-                data-testid="replicationFactorSubmit"
               >
                 Submit
               </Button>
