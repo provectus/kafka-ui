@@ -109,7 +109,10 @@ const DangerZone: React.FC<Props> = ({
       <S.Title>Danger Zone</S.Title>
       <div>
         <FormProvider {...partitionsMethods}>
-          <S.Form onSubmit={partitionsMethods.handleSubmit(validatePartitions)}>
+          <S.Form
+            onSubmit={partitionsMethods.handleSubmit(validatePartitions)}
+            aria-label="Edit number of partitions"
+          >
             <div>
               <InputLabel htmlFor="partitions">
                 Number of partitions *
@@ -131,7 +134,6 @@ const DangerZone: React.FC<Props> = ({
                 buttonSize="M"
                 type="submit"
                 disabled={!partitionsMethods.formState.isDirty}
-                data-testid="partitionsSubmit"
               >
                 Submit
               </Button>
@@ -158,6 +160,7 @@ const DangerZone: React.FC<Props> = ({
             onSubmit={replicationFactorMethods.handleSubmit(
               validateReplicationFactor
             )}
+            aria-label="Edit replication factor"
           >
             <div>
               <InputLabel htmlFor="replicationFactor">
