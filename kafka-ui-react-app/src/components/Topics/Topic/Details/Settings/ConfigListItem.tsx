@@ -10,7 +10,7 @@ export interface ListItemProps {
 const ConfigListItem: React.FC<ListItemProps> = ({
   config: { name, value, defaultValue },
 }) => {
-  const hasCustomValue = value !== defaultValue;
+  const hasCustomValue = !!defaultValue && value !== defaultValue;
 
   return (
     <S.ConfigList>
