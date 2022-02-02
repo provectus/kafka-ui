@@ -6,6 +6,8 @@ import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import { ksqlCommandResponse } from 'redux/reducers/ksqlDb/__test__/fixtures';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const mockStore = configureStore();
 
@@ -19,18 +21,20 @@ describe('KsqlDb Query Component', () => {
         tables: [],
         executionResult: ksqlCommandResponse,
       },
-      loader: {
+      legacyLoader: {
         EXECUTE_KSQL: 'fetched',
       },
     };
     const store = mockStore(initialState);
 
     const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <Query />
-        </Provider>
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <Provider store={store}>
+            <Query />
+          </Provider>
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     // 2 streams and 1 head tr
@@ -46,18 +50,20 @@ describe('KsqlDb Query Component', () => {
           message: 'No available data',
         },
       },
-      loader: {
+      legacyLoader: {
         EXECUTE_KSQL: 'fetched',
       },
     };
     const store = mockStore(initialState);
 
     const component = mount(
-      <StaticRouter location={{ pathname }} context={{}}>
-        <Provider store={store}>
-          <Query />
-        </Provider>
-      </StaticRouter>
+      <ThemeProvider theme={theme}>
+        <StaticRouter location={{ pathname }} context={{}}>
+          <Provider store={store}>
+            <Query />
+          </Provider>
+        </StaticRouter>
+      </ThemeProvider>
     );
 
     expect(

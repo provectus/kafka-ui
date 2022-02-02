@@ -1,6 +1,10 @@
 import React from 'react';
-import { shallow } from 'enzyme';
+import { mount } from 'enzyme';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
+import { StaticRouter } from 'react-router';
+import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -25,9 +29,75 @@ describe('List', () => {
       },
     ],
   };
-  const component = shallow(<ListItem consumerGroup={mockConsumerGroup} />);
+  const component = mount(
+    <StaticRouter>
+      <ThemeProvider theme={theme}>
+        <table>
+          <tbody>
+            <ListItem consumerGroup={mockConsumerGroup} />
+          </tbody>
+        </table>
+      </ThemeProvider>
+    </StaticRouter>
+  );
+
+  const setupWrapper = (consumerGroup: ConsumerGroup) => (
+    <StaticRouter>
+      <ThemeProvider theme={theme}>
+        <table>
+          <tbody>
+            <ListItem consumerGroup={consumerGroup} />
+          </tbody>
+        </table>
+      </ThemeProvider>
+    </StaticRouter>
+  );
 
   it('render empty ListItem', () => {
-    expect(component.exists('.is-clickable')).toBeTruthy();
+    expect(component.exists('tr')).toBeTruthy();
+  });
+
+  it('renders item with stable status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.STABLE,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.STABLE);
+  });
+
+  it('renders item with dead status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.DEAD,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.DEAD);
+  });
+
+  it('renders item with empty status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.EMPTY,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.EMPTY);
+  });
+
+  it('renders item with empty-string status', () => {
+    const wrapper = mount(
+      setupWrapper({
+        ...mockConsumerGroup,
+        state: ConsumerGroupState.UNKNOWN,
+      })
+    );
+
+    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.UNKNOWN);
   });
 });

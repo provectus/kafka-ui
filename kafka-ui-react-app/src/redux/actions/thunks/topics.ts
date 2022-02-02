@@ -8,7 +8,6 @@ import {
   TopicUpdate,
   TopicConfig,
   ConsumerGroupsApi,
-  CreateTopicMessage,
   GetTopicsRequest,
 } from 'generated-sources';
 import {
@@ -171,7 +170,7 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
     retentionBytes,
     retentionMs,
     maxMessageBytes,
-    minInSyncReplicas,
+    minInsyncReplicas,
     customParams,
   } = form;
 
@@ -184,7 +183,7 @@ export const formatTopicCreation = (form: TopicFormData): TopicCreation => {
       'retention.ms': retentionMs.toString(),
       'retention.bytes': retentionBytes.toString(),
       'max.message.bytes': maxMessageBytes.toString(),
-      'min.insync.replicas': minInSyncReplicas.toString(),
+      'min.insync.replicas': minInsyncReplicas.toString(),
       ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
@@ -196,7 +195,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
     retentionBytes,
     retentionMs,
     maxMessageBytes,
-    minInSyncReplicas,
+    minInsyncReplicas,
     customParams,
   } = form;
 
@@ -206,7 +205,7 @@ const formatTopicUpdate = (form: TopicFormDataRaw): TopicUpdate => {
       'retention.ms': retentionMs,
       'retention.bytes': retentionBytes,
       'max.message.bytes': maxMessageBytes,
-      'min.insync.replicas': minInSyncReplicas,
+      'min.insync.replicas': minInsyncReplicas,
       ...Object.values(customParams || {}).reduce(topicReducer, {}),
     },
   };
@@ -318,36 +317,6 @@ export const fetchTopicMessageSchema =
     }
   };
 
-export const sendTopicMessage =
-  (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    payload: CreateTopicMessage
-  ): PromiseThunkResult =>
-  async (dispatch) => {
-    dispatch(actions.sendTopicMessageAction.request());
-    try {
-      await messagesApiClient.sendTopicMessages({
-        clusterName,
-        topicName,
-        createTopicMessage: {
-          key: payload.key,
-          content: payload.content,
-          headers: payload.headers,
-          partition: payload.partition,
-        },
-      });
-      dispatch(actions.sendTopicMessageAction.success());
-    } catch (e) {
-      const response = await getResponse(e);
-      const alert: FailurePayload = {
-        subject: ['topic', topicName].join('-'),
-        title: `Topic Message ${topicName}`,
-        response,
-      };
-      dispatch(actions.sendTopicMessageAction.failure({ alert }));
-    }
-  };
 export const updateTopicPartitionsCount =
   (
     clusterName: ClusterName,

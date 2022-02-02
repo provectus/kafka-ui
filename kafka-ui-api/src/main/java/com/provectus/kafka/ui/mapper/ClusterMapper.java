@@ -15,13 +15,13 @@ import com.provectus.kafka.ui.model.ConnectDTO;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
-import com.provectus.kafka.ui.model.InternalBrokerMetrics;
-import com.provectus.kafka.ui.model.InternalClusterMetrics;
+import com.provectus.kafka.ui.model.InternalClusterState;
 import com.provectus.kafka.ui.model.InternalPartition;
 import com.provectus.kafka.ui.model.InternalReplica;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.InternalTopic;
 import com.provectus.kafka.ui.model.InternalTopicConfig;
+import com.provectus.kafka.ui.model.JmxBrokerMetrics;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import com.provectus.kafka.ui.model.PartitionDTO;
@@ -31,7 +31,7 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
-import java.math.BigDecimal;
+import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,28 +47,20 @@ import org.mapstruct.Named;
 @Mapper(componentModel = "spring")
 public interface ClusterMapper {
 
-  @Mapping(target = "brokerCount", source = "metrics.brokerCount")
-  @Mapping(target = "onlinePartitionCount", source = "metrics.onlinePartitionCount")
-  @Mapping(target = "topicCount", source = "metrics.topicCount")
-  @Mapping(target = "bytesInPerSec", source = "metrics.bytesInPerSec",
-      qualifiedByName = "sumMetrics")
-  @Mapping(target = "bytesOutPerSec", source = "metrics.bytesOutPerSec",
-      qualifiedByName = "sumMetrics")
-  ClusterDTO toCluster(KafkaCluster cluster);
+  ClusterDTO toCluster(InternalClusterState clusterState);
 
   @Mapping(target = "protobufFile", source = "protobufFile", qualifiedByName = "resolvePath")
   @Mapping(target = "properties", source = "properties", qualifiedByName = "setProperties")
   @Mapping(target = "schemaRegistry", source = ".", qualifiedByName = "setSchemaRegistry")
   KafkaCluster toKafkaCluster(ClustersProperties.Cluster clusterProperties);
 
-  @Mapping(target = "diskUsage", source = "internalBrokerDiskUsage",
-      qualifiedByName = "mapDiskUsage")
-  ClusterStatsDTO toClusterStats(InternalClusterMetrics metrics);
+  ClusterStatsDTO toClusterStats(InternalClusterState clusterState);
 
-  @Mapping(target = "items", source = "metrics")
-  ClusterMetricsDTO toClusterMetrics(InternalClusterMetrics metrics);
+  default ClusterMetricsDTO toClusterMetrics(JmxClusterUtil.JmxMetrics jmxMetrics) {
+    return new ClusterMetricsDTO().items(jmxMetrics.getMetrics());
+  }
 
-  BrokerMetricsDTO toBrokerMetrics(InternalBrokerMetrics metrics);
+  BrokerMetricsDTO toBrokerMetrics(JmxBrokerMetrics metrics);
 
   @Mapping(target = "isSensitive", source = "sensitive")
   @Mapping(target = "isReadOnly", source = "readOnly")
@@ -119,17 +111,6 @@ public interface ClusterMapper {
 
   TopicDetailsDTO toTopicDetails(InternalTopic topic);
 
-  default TopicDetailsDTO toTopicDetails(InternalTopic topic, InternalClusterMetrics metrics) {
-    final TopicDetailsDTO result = toTopicDetails(topic);
-    result.setBytesInPerSec(
-        metrics.getBytesInPerSec().get(topic.getName())
-    );
-    result.setBytesOutPerSec(
-        metrics.getBytesOutPerSec().get(topic.getName())
-    );
-    return result;
-  }
-
   @Mapping(target = "isReadOnly", source = "readOnly")
   @Mapping(target = "isSensitive", source = "sensitive")
   TopicConfigDTO toTopicConfig(InternalTopicConfig topic);
@@ -156,21 +137,6 @@ public interface ClusterMapper {
     brokerDiskUsage.segmentCount((int) internalBrokerDiskUsage.getSegmentCount());
     brokerDiskUsage.segmentSize(internalBrokerDiskUsage.getSegmentSize());
     return brokerDiskUsage;
-  }
-
-  @Named("mapDiskUsage")
-  default List<BrokerDiskUsageDTO> mapDiskUsage(Map<Integer, InternalBrokerDiskUsage> brokers) {
-    return brokers.entrySet().stream().map(e -> this.map(e.getKey(), e.getValue()))
-        .collect(Collectors.toList());
-  }
-
-  @Named("sumMetrics")
-  default BigDecimal sumMetrics(Map<String, BigDecimal> metrics) {
-    if (metrics != null) {
-      return metrics.values().stream().reduce(BigDecimal.ZERO, BigDecimal::add);
-    } else {
-      return BigDecimal.ZERO;
-    }
   }
 
   @Named("resolvePath")

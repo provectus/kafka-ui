@@ -8,6 +8,8 @@ import {
   clusterConnectConnectorTasksPath,
 } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import Navbar from 'components/common/Navigation/Navbar.styled';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TasksContainer from './Tasks/TasksContainer';
@@ -61,50 +63,45 @@ const Details: React.FC<DetailsProps> = ({
   if (!connector) return null;
 
   return (
-    <div className="box">
-      <nav className="navbar mb-4" role="navigation">
-        <div className="navbar-start tabs mb-0">
-          <NavLink
-            exact
-            to={clusterConnectConnectorPath(
-              clusterName,
-              connectName,
-              connectorName
-            )}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Overview
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterConnectConnectorTasksPath(
-              clusterName,
-              connectName,
-              connectorName
-            )}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Tasks
-          </NavLink>
-          <NavLink
-            exact
-            to={clusterConnectConnectorConfigPath(
-              clusterName,
-              connectName,
-              connectorName
-            )}
-            className="navbar-item is-tab"
-            activeClassName="is-active"
-          >
-            Config
-          </NavLink>
-        </div>
-        <div className="navbar-end">
-          <ActionsContainer />
-        </div>
-      </nav>
+    <div>
+      <PageHeading text={connectorName}>
+        <ActionsContainer />
+      </PageHeading>
+      <Navbar role="navigation">
+        <NavLink
+          exact
+          to={clusterConnectConnectorPath(
+            clusterName,
+            connectName,
+            connectorName
+          )}
+          activeClassName="is-active"
+        >
+          Overview
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterConnectConnectorTasksPath(
+            clusterName,
+            connectName,
+            connectorName
+          )}
+          activeClassName="is-active"
+        >
+          Tasks
+        </NavLink>
+        <NavLink
+          exact
+          to={clusterConnectConnectorConfigPath(
+            clusterName,
+            connectName,
+            connectorName
+          )}
+          activeClassName="is-active"
+        >
+          Config
+        </NavLink>
+      </Navbar>
       <Switch>
         <Route
           exact

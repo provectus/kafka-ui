@@ -9,6 +9,7 @@ export const initialState: KsqlState = {
   executionResult: null,
 };
 
+// eslint-disable-next-line @typescript-eslint/default-param-last
 const reducer = (state = initialState, action: Action): KsqlState => {
   switch (action.type) {
     case getType(actions.fetchKsqlDbTablesAction.success):

@@ -3,7 +3,7 @@ import {
   getClusterList,
   getOnlineClusters,
   getOfflineClusters,
-} from 'redux/reducers/clusters/selectors';
+} from 'redux/reducers/clusters/clustersSlice';
 import { RootState } from 'redux/interfaces';
 
 import ClustersWidget from './ClustersWidget';

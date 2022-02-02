@@ -16,7 +16,7 @@ import com.provectus.kafka.ui.model.TaskIdDTO;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-@Log4j2
+@Slf4j
 @AutoConfigureWebTestClient(timeout = "60000")
 public class KafkaConnectServiceTests extends AbstractBaseTest {
   private final String connectName = "kafka-connect";
@@ -37,7 +37,8 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
       "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
       "tasks.max", "1",
       "topics", "output-topic",
-      "file", "/tmp/test"
+      "file", "/tmp/test",
+      "test.password", "******"
   );
 
   @Autowired
@@ -54,7 +55,8 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
                 "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
                 "tasks.max", "1",
                 "topics", "output-topic",
-                "file", "/tmp/test"
+                "file", "/tmp/test",
+                "test.password", "test-credentials"
             ))
         )
         .exchange()
@@ -296,7 +298,8 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
             "tasks.max", "1",
             "topics", "output-topic",
             "file", "/tmp/test",
-            "name", connectorName
+            "name", connectorName,
+            "test.password", "******"
         ));
   }
 
@@ -324,6 +327,7 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
             "tasks.max", "1",
             "topics", "output-topic",
             "file", "/tmp/test",
+            "test.password", "******",
             "name", connectorName
         ));
   }
@@ -389,5 +393,23 @@ public class KafkaConnectServiceTests extends AbstractBaseTest {
               error.get(0)
           );
         });
+  }
+
+  @Test
+  public void shouldReturn400WhenTryingToCreateConnectorWithExistingName() {
+    webTestClient.post()
+        .uri("/api/clusters/{clusterName}/connects/{connectName}/connectors", LOCAL, connectName)
+        .bodyValue(new NewConnectorDTO()
+            .name(connectorName)
+            .config(Map.of(
+                "connector.class", "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                "tasks.max", "1",
+                "topics", "output-topic",
+                "file", "/tmp/test"
+            ))
+        )
+        .exchange()
+        .expectStatus()
+        .isBadRequest();
   }
 }

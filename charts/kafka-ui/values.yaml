@@ -1,6 +1,7 @@
 replicaCount: 1
 
 image:
+  registry: docker.io
   repository: provectuslabs/kafka-ui
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -25,7 +26,29 @@ envs:
   secret: {}
   config: {}
 
+networkPolicy:
+  enabled: false
+  egressRules:
+    ## Additional custom egress rules
+    ## e.g:
+    ## customRules:
+    ##   - to:
+    ##       - namespaceSelector:
+    ##           matchLabels:
+    ##             label: example
+    customRules: []
+  ingressRules:
+    ## Additional custom ingress rules
+    ## e.g:
+    ## customRules:
+    ##   - from:
+    ##       - namespaceSelector:
+    ##           matchLabels:
+    ##             label: example
+    customRules: []
+
 podAnnotations: {}
+podLabels: {}
 
 podSecurityContext: {}
   # fsGroup: 2000
@@ -51,6 +74,9 @@ ingress:
 
   # Annotations for the Ingress
   annotations: {}
+
+  # ingressClassName for the Ingress
+  ingressClassName: ""
 
   # The path for the Ingress
   path: ""

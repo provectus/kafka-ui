@@ -14,13 +14,6 @@ UI for Apache Kafka management
 
 ## Getting started
 
-Have to be run from root directory.
-
-Start UI for Apache Kafka with your Kafka clusters:
-```sh
-docker-compose -f ./docker/kafka-ui.yaml up
-```
-
 Go to react app folder
 ```sh
 cd ./kafka-ui-react-app
@@ -41,7 +34,32 @@ Generate API clients from OpenAPI document
 npm run gen:sources
 ```
 
-Start application
+## Start application
+### Proxying API Requests in Development
+
+Create or update existing `.env.local` file with
+```
+HTTPS=true # if needed
+DEV_PROXY= https://api.server # your API server
+```
+
+Run the application
+```sh
+npm start
+```
+
+### Docker way
+
+Have to be run from root directory.
+
+Start UI for Apache Kafka with your Kafka clusters:
+```sh
+docker-compose -f ./docker/kafka-ui.yaml up
+```
+
+Make sure that none of the `.env*` files contain `DEV_PROXY` variable
+
+Run the application
 ```sh
 npm start
 ```

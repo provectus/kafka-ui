@@ -2,7 +2,7 @@ import { shallow } from 'enzyme';
 import React from 'react';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 
-describe('JSONEditor component', () => {
+describe('SQLEditor component', () => {
   it('matches the snapshot', () => {
     const component = shallow(<SQLEditor value="" name="name" />);
     expect(component).toMatchSnapshot();

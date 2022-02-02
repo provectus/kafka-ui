@@ -10,7 +10,6 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.ConsumerRecordUtil;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
@@ -27,7 +26,6 @@ import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,15 +35,19 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
-@Log4j2
+@Slf4j
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   private static final int CLIENT_IDENTITY_MAP_CAPACITY = 100;
+
+  private static final StringMessageFormatter stringFormatter = new StringMessageFormatter();
+  private static final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
+  private static final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
 
   private final KafkaCluster cluster;
   private final Map<String, MessageFormatter> valueFormatMap = new ConcurrentHashMap<>();
@@ -53,25 +55,20 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   @Nullable
   private final SchemaRegistryClient schemaRegistryClient;
-
   @Nullable
   private final AvroMessageFormatter avroFormatter;
-
   @Nullable
   private final ProtobufMessageFormatter protobufFormatter;
-
   @Nullable
   private final JsonSchemaMessageFormatter jsonSchemaMessageFormatter;
 
-  private final StringMessageFormatter stringFormatter = new StringMessageFormatter();
-  private final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
-  private final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
-  private final ObjectMapper objectMapper = new ObjectMapper();
+  private final ObjectMapper objectMapper;
 
-  private static SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
+  private SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     if (cluster.getSchemaRegistry() == null) {
       throw new ValidationException("schemaRegistry is not specified");
     }
+
     List<SchemaProvider> schemaProviders =
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
 
@@ -97,8 +94,9 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     );
   }
 
-  public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster) {
+  public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster, ObjectMapper objectMapper) {
     this.cluster = cluster;
+    this.objectMapper = objectMapper;
     this.schemaRegistryClient = cluster.getSchemaRegistry() != null
         ? createSchemaRegistryClient(cluster)
         : null;
@@ -147,41 +145,45 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
                                                   @Nullable String key,
                                                   @Nullable String data,
                                                   @Nullable Integer partition) {
-    final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
     final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
+    final Optional<SchemaMetadata> maybeValueSchema = getSchemaBySubject(topic, false);
 
-    final byte[] serializedValue = data != null
-        ? serialize(maybeValueSchema, topic, data, false)
-        : null;
-    final byte[] serializedKey = key != null
-        ? serialize(maybeKeySchema, topic, key, true)
-        : null;
+    final byte[] serializedKey = maybeKeySchema.isPresent()
+        ? serialize(maybeKeySchema.get(), topic, key, true)
+        : serialize(key);
+
+    final byte[] serializedValue = maybeValueSchema.isPresent()
+        ? serialize(maybeValueSchema.get(), topic, data, false)
+        : serialize(data);
 
     return new ProducerRecord<>(topic, partition, serializedKey, serializedValue);
   }
 
   @SneakyThrows
-  private byte[] serialize(
-      Optional<SchemaMetadata> maybeSchema, String topic, String value, boolean isKey) {
-    if (maybeSchema.isPresent()) {
-      final SchemaMetadata schema = maybeSchema.get();
-
-      MessageReader<?> reader;
-      if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
-        reader = new ProtobufMessageReader(topic, isKey, schemaRegistryClient, schema);
-      } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
-        reader = new AvroMessageReader(topic, isKey, schemaRegistryClient, schema);
-      } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
-        reader = new JsonSchemaMessageReader(topic, isKey, schemaRegistryClient, schema);
-      } else {
-        throw new IllegalStateException("Unsupported schema type: " + schema.getSchemaType());
-      }
-
-      return reader.read(value);
-    } else {
-      // if no schema provided serialize input as raw string
-      return value.getBytes();
+  private byte[] serialize(SchemaMetadata schema, String topic, String value, boolean isKey) {
+    if (value == null) {
+      return null;
     }
+    MessageReader<?> reader;
+    if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
+      reader = new ProtobufMessageReader(topic, isKey, schemaRegistryClient, schema);
+    } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
+      reader = new AvroMessageReader(topic, isKey, schemaRegistryClient, schema);
+    } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
+      reader = new JsonSchemaMessageReader(topic, isKey, schemaRegistryClient, schema);
+    } else {
+      throw new IllegalStateException("Unsupported schema type: " + schema.getSchemaType());
+    }
+
+    return reader.read(value);
+  }
+
+  private byte[] serialize(String value) {
+    if (value == null) {
+      return null;
+    }
+    // if no schema provided serialize input as raw string
+    return value.getBytes();
   }
 
   @Override

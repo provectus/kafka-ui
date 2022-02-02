@@ -1,21 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Connect matches snapshot 1`] = `
-<div
-  className="section"
->
+<div>
   <Switch>
-    <Route
-      component={[Function]}
-      path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName"
-    />
-    <Route
-      component={[Function]}
-      path="/ui/clusters/:clusterName/connectors"
-    />
-  </Switch>
-  <Switch>
-    <Route
+    <BreadcrumbRoute
       component={
         Object {
           "$$typeof": Symbol(react.memo),
@@ -27,17 +15,17 @@ exports[`Connect matches snapshot 1`] = `
       exact={true}
       path="/ui/clusters/:clusterName/connectors"
     />
-    <Route
+    <BreadcrumbRoute
       component={[Function]}
       exact={true}
-      path="/ui/clusters/:clusterName/connectors/create_new"
+      path="/ui/clusters/:clusterName/connectors/create-new"
     />
-    <Route
+    <BreadcrumbRoute
       component={[Function]}
       exact={true}
       path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName/edit"
     />
-    <Route
+    <BreadcrumbRoute
       component={[Function]}
       path="/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName"
     />

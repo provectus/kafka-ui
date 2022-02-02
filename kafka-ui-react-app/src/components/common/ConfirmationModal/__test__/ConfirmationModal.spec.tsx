@@ -3,44 +3,56 @@ import React from 'react';
 import ConfirmationModal, {
   ConfirmationModalProps,
 } from 'components/common/ConfirmationModal/ConfirmationModal';
+import { ThemeProvider } from 'styled-components';
+import theme from 'theme/theme';
 
 const confirmMock = jest.fn();
 const cancelMock = jest.fn();
 const body = 'Please Confirm the action!';
 describe('ConfiramationModal', () => {
   const setupWrapper = (props: Partial<ConfirmationModalProps> = {}) => (
-    <ConfirmationModal onCancel={cancelMock} onConfirm={confirmMock} {...props}>
-      {body}
-    </ConfirmationModal>
+    <ThemeProvider theme={theme}>
+      <ConfirmationModal
+        onCancel={cancelMock}
+        onConfirm={confirmMock}
+        {...props}
+      >
+        {body}
+      </ConfirmationModal>
+    </ThemeProvider>
   );
 
   it('renders nothing', () => {
     const wrapper = mount(setupWrapper({ isOpen: false }));
     expect(wrapper.exists(ConfirmationModal)).toBeTruthy();
-    expect(wrapper.exists('.modal.is-active')).toBeFalsy();
+    expect(wrapper.exists('ConfirmationModal > div')).toBeFalsy();
   });
   it('renders modal', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
     expect(wrapper.exists(ConfirmationModal)).toBeTruthy();
-    expect(wrapper.exists('.modal.is-active')).toBeTruthy();
-    expect(wrapper.find('.modal-card-body').text()).toEqual(body);
-    expect(wrapper.find('.modal-card-foot button').length).toEqual(2);
+    expect(wrapper.exists('div')).toBeTruthy();
+    expect(wrapper.find('div > div:last-child > section').text()).toEqual(body);
+    expect(wrapper.find('div > div:last-child > footer button').length).toEqual(
+      2
+    );
   });
   it('renders modal with default header', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
-    expect(wrapper.find('.modal-card-title').text()).toEqual(
+    expect(wrapper.find('div > div:last-child > header > p').text()).toEqual(
       'Confirm the action'
     );
   });
   it('renders modal with custom header', () => {
     const title = 'My Custom Header';
     const wrapper = mount(setupWrapper({ isOpen: true, title }));
-    expect(wrapper.find('.modal-card-title').text()).toEqual(title);
+    expect(wrapper.find('div > div:last-child > header > p').text()).toEqual(
+      title
+    );
   });
   it('handles onConfirm when user clicks confirm button', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
-    const confirmBtn = wrapper.find({ children: 'Confirm' });
-    confirmBtn.simulate('click');
+    const confirmBtn = wrapper.find({ children: 'Submit' });
+    confirmBtn.at(2).simulate('click');
     expect(cancelMock).toHaveBeenCalledTimes(0);
     expect(confirmMock).toHaveBeenCalledTimes(1);
   });
@@ -53,13 +65,13 @@ describe('ConfiramationModal', () => {
         wrapper = mount(setupWrapper({ isOpen: true }));
       });
       it('handles onCancel when user clicks on modal-background', () => {
-        wrapper.find('.modal-background').simulate('click');
+        wrapper.find('div > div:first-child').simulate('click');
         expect(cancelMock).toHaveBeenCalledTimes(1);
         expect(confirmMock).toHaveBeenCalledTimes(0);
       });
       it('handles onCancel when user clicks on Cancel button', () => {
         const cancelBtn = wrapper.find({ children: 'Cancel' });
-        cancelBtn.simulate('click');
+        cancelBtn.at(2).simulate('click');
         expect(cancelMock).toHaveBeenCalledTimes(1);
         expect(confirmMock).toHaveBeenCalledTimes(0);
       });
@@ -70,13 +82,13 @@ describe('ConfiramationModal', () => {
         wrapper = mount(setupWrapper({ isOpen: true, isConfirming: true }));
       });
       it('does not call onCancel when user clicks on modal-background', () => {
-        wrapper.find('.modal-background').simulate('click');
+        wrapper.find('div > div:first-child').simulate('click');
         expect(cancelMock).toHaveBeenCalledTimes(0);
         expect(confirmMock).toHaveBeenCalledTimes(0);
       });
       it('does not call onCancel when user clicks on Cancel button', () => {
         const cancelBtn = wrapper.find({ children: 'Cancel' });
-        cancelBtn.simulate('click');
+        cancelBtn.at(2).simulate('click');
         expect(cancelMock).toHaveBeenCalledTimes(0);
         expect(confirmMock).toHaveBeenCalledTimes(0);
       });

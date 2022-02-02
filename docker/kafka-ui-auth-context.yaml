@@ -16,7 +16,7 @@ services:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
       KAFKA_CLUSTERS_0_JMXPORT: 9997
       SERVER_SERVLET_CONTEXT_PATH: /kafkaui
-      AUTH_ENABLED: "true"
+      AUTH_TYPE: "LOGIN_FORM"
       SPRING_SECURITY_USER_NAME: admin
       SPRING_SECURITY_USER_PASSWORD: pass
 
@@ -29,7 +29,7 @@ services:
       - 2181:2181
 
   kafka0:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     depends_on:
       - zookeeper0
     ports:
@@ -46,7 +46,7 @@ services:
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=kafka0 -Dcom.sun.management.jmxremote.rmi.port=9997
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     volumes:
        - ./message.json:/data/message.json
     depends_on:

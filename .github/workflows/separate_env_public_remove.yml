@@ -1,0 +1,24 @@
+name: Separate environment remove
+on:
+  workflow_dispatch:
+    inputs:
+      ENV_NAME:
+        description: 'Will be used to remove previously deployed separate environment.'
+        required: true
+        default: 'demo'
+
+jobs:
+  separate-env-remove:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone
+        run: |
+          git clone https://kafka-ui-infra:${{ secrets.KAFKA_UI_INFRA_TOKEN }}@gitlab.provectus.com/provectus-internals/kafka-ui-infra.git
+      - name: separate environment remove
+        run: |
+          cd kafka-ui-infra/aws-infrastructure4eks/argocd/scripts
+          bash separate_env_remove.sh ${{ github.event.inputs.ENV_NAME }}
+          git config --global user.email "kafka-ui-infra@provectus.com"
+          git config --global user.name "kafka-ui-infra"
+          git add -A
+          git commit -m "separate env removed: ${{ github.event.inputs.ENV_NAME }}" && git push || true

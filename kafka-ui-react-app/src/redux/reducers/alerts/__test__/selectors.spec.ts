@@ -1,10 +1,8 @@
-import configureStore from 'redux/store/configureStore';
+import { store } from 'redux/store';
 import { createTopicAction } from 'redux/actions';
 import * as selectors from 'redux/reducers/alerts/selectors';
 
 import { failurePayload1, failurePayload2 } from './fixtures';
-
-const store = configureStore();
 
 describe('Alerts selectors', () => {
   describe('Initial State', () => {

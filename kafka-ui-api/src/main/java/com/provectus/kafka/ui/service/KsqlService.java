@@ -17,13 +17,11 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class KsqlService {
   private final KsqlClient ksqlClient;
-  private final ClustersStorage clustersStorage;
   private final List<BaseStrategy> ksqlStatementStrategies;
 
-  public Mono<KsqlCommandResponseDTO> executeKsqlCommand(String clusterName,
+  public Mono<KsqlCommandResponseDTO> executeKsqlCommand(KafkaCluster cluster,
                                                       Mono<KsqlCommandDTO> ksqlCommand) {
-    return Mono.justOrEmpty(clustersStorage.getClusterByName(clusterName))
-        .switchIfEmpty(Mono.error(ClusterNotFoundException::new))
+    return Mono.justOrEmpty(cluster)
         .map(KafkaCluster::getKsqldbServer)
         .onErrorResume(e -> {
           Throwable throwable =

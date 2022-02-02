@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from '@reduxjs/toolkit';
 import { RootState, TopicMessagesState } from 'redux/interfaces';
 
 const topicMessagesState = ({ topicMessages }: RootState): TopicMessagesState =>

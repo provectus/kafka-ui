@@ -1,9 +1,9 @@
 package com.provectus.kafka.ui.util;
 
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 
-@Log4j2
+@Slf4j
 public class NumberUtil {
 
   private NumberUtil() {

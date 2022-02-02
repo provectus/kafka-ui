@@ -1,0 +1,20 @@
+{
+  "name": "github-source",
+  "config":
+  {
+    "connector.class": "io.confluent.connect.github.GithubSourceConnector",
+    "confluent.topic.bootstrap.servers": "kafka0:29092, kafka1:29092",
+    "confluent.topic.replication.factor": "1",
+    "tasks.max": "1",
+    "github.service.url": "https://api.github.com",
+    "github.access.token": "",
+    "github.repositories": "provectus/kafka-ui",
+    "github.resources": "issues,commits,pull_requests",
+    "github.since": "2019-01-01",
+    "topic.name.pattern": "github-${resourceName}",
+    "key.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "key.converter.schema.registry.url": "http://schemaregistry0:8085",
+    "value.converter": "org.apache.kafka.connect.json.JsonConverter",
+    "value.converter.schema.registry.url": "http://schemaregistry0:8085"
+  }
+}

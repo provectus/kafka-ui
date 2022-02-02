@@ -1,11 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Switch, Route, Redirect, useParams } from 'react-router-dom';
+import { Switch, Redirect, useParams } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import {
   getClustersFeatures,
   getClustersReadonlyStatus,
-} from 'redux/reducers/clusters/selectors';
+} from 'redux/reducers/clusters/clustersSlice';
 import {
   clusterBrokersPath,
   clusterConnectorsPath,
@@ -19,9 +19,12 @@ import Topics from 'components/Topics/Topics';
 import Schemas from 'components/Schemas/Schemas';
 import Connect from 'components/Connect/Connect';
 import ClusterContext from 'components/contexts/ClusterContext';
-import BrokersContainer from 'components/Brokers/BrokersContainer';
-import ConsumersGroupsContainer from 'components/ConsumerGroups/ConsumersGroupsContainer';
+import Brokers from 'components/Brokers/Brokers';
+import ConsumersGroups from 'components/ConsumerGroups/ConsumerGroups';
 import KsqlDb from 'components/KsqlDb/KsqlDb';
+import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
+import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.provider';
 
 const Cluster: React.FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
@@ -50,44 +53,53 @@ const Cluster: React.FC = () => {
   );
 
   return (
-    <ClusterContext.Provider value={contextValue}>
-      <Switch>
-        <Route
-          path={clusterBrokersPath(':clusterName')}
-          component={BrokersContainer}
-        />
-        <Route path={clusterTopicsPath(':clusterName')} component={Topics} />
-        <Route
-          path={clusterConsumerGroupsPath(':clusterName')}
-          component={ConsumersGroupsContainer}
-        />
-        {hasSchemaRegistryConfigured && (
-          <Route
-            path={clusterSchemasPath(':clusterName')}
-            component={Schemas}
+    <BreadcrumbProvider>
+      <Breadcrumb />
+      <ClusterContext.Provider value={contextValue}>
+        <Switch>
+          <BreadcrumbRoute
+            path={clusterBrokersPath(':clusterName')}
+            component={Brokers}
           />
-        )}
-        {hasKafkaConnectConfigured && (
-          <Route
-            path={clusterConnectsPath(':clusterName')}
-            component={Connect}
+          <BreadcrumbRoute
+            path={clusterTopicsPath(':clusterName')}
+            component={Topics}
           />
-        )}
-        {hasKafkaConnectConfigured && (
-          <Route
-            path={clusterConnectorsPath(':clusterName')}
-            component={Connect}
+          <BreadcrumbRoute
+            path={clusterConsumerGroupsPath(':clusterName')}
+            component={ConsumersGroups}
           />
-        )}
-        {hasKsqlDbConfigured && (
-          <Route path={clusterKsqlDbPath(':clusterName')} component={KsqlDb} />
-        )}
-        <Redirect
-          from="/ui/clusters/:clusterName"
-          to="/ui/clusters/:clusterName/brokers"
-        />
-      </Switch>
-    </ClusterContext.Provider>
+          {hasSchemaRegistryConfigured && (
+            <BreadcrumbRoute
+              path={clusterSchemasPath(':clusterName')}
+              component={Schemas}
+            />
+          )}
+          {hasKafkaConnectConfigured && (
+            <BreadcrumbRoute
+              path={clusterConnectsPath(':clusterName')}
+              component={Connect}
+            />
+          )}
+          {hasKafkaConnectConfigured && (
+            <BreadcrumbRoute
+              path={clusterConnectorsPath(':clusterName')}
+              component={Connect}
+            />
+          )}
+          {hasKsqlDbConfigured && (
+            <BreadcrumbRoute
+              path={clusterKsqlDbPath(':clusterName')}
+              component={KsqlDb}
+            />
+          )}
+          <Redirect
+            from="/ui/clusters/:clusterName"
+            to="/ui/clusters/:clusterName/brokers"
+          />
+        </Switch>
+      </ClusterContext.Provider>
+    </BreadcrumbProvider>
   );
 };
 

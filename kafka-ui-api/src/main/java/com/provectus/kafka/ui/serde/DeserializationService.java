@@ -8,10 +8,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-@Log4j2
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DeserializationService {
@@ -39,7 +39,7 @@ public class DeserializationService {
             objectMapper);
       } else {
         log.info("Using SchemaRegistryAwareRecordSerDe for cluster '{}'", cluster.getName());
-        return new SchemaRegistryAwareRecordSerDe(cluster);
+        return new SchemaRegistryAwareRecordSerDe(cluster, objectMapper);
       }
     } catch (Throwable e) {
       throw new RuntimeException("Can't init deserializer", e);

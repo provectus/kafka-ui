@@ -2,25 +2,45 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.exception.ZooKeeperException;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.ServerStatusDTO;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.ZooKeeper;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class ZookeeperService {
 
   private final Map<String, ZooKeeper> cachedZkClient = new ConcurrentHashMap<>();
 
-  public boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
+  @Value
+  public static class ZkStatus {
+    ServerStatusDTO status;
+    @Nullable
+    Throwable error;
+  }
+
+  public Mono<ZkStatus> getZkStatus(KafkaCluster kafkaCluster) {
+    return Mono.fromSupplier(() ->
+            new ZkStatus(
+                isZookeeperOnline(kafkaCluster)
+                    ? ServerStatusDTO.ONLINE
+                    : ServerStatusDTO.OFFLINE, null))
+        .onErrorResume(th -> Mono.just(new ZkStatus(ServerStatusDTO.OFFLINE, th)));
+  }
+
+  private boolean isZookeeperOnline(KafkaCluster kafkaCluster) {
     var isConnected = false;
     if (StringUtils.hasText(kafkaCluster.getZookeeper())) {
       var zkClient = getOrCreateZkClient(kafkaCluster);

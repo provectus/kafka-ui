@@ -22,7 +22,7 @@ const SQLEditor = React.forwardRef<ReactAce | null, SQLEditorProps>(
         height={
           isFixedHeight
             ? `${(props.value?.split('\n').length || 32) * 16}px`
-            : '500px'
+            : '372px'
         }
         wrapEnabled
         {...rest}

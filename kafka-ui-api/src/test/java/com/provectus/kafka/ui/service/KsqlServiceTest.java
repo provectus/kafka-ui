@@ -7,7 +7,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.provectus.kafka.ui.client.KsqlClient;
-import com.provectus.kafka.ui.exception.ClusterNotFoundException;
 import com.provectus.kafka.ui.exception.KsqlDbNotFoundException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -17,7 +16,6 @@ import com.provectus.kafka.ui.strategy.ksql.statement.BaseStrategy;
 import com.provectus.kafka.ui.strategy.ksql.statement.DescribeStrategy;
 import com.provectus.kafka.ui.strategy.ksql.statement.ShowStrategy;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,81 +43,58 @@ class KsqlServiceTest {
     this.alternativeStrategy = new DescribeStrategy();
     this.ksqlService = new KsqlService(
         this.ksqlClient,
-        this.clustersStorage,
         List.of(baseStrategy, alternativeStrategy)
     );
   }
 
   @Test
-  void shouldThrowClusterNotFoundExceptionOnExecuteKsqlCommand() {
-    String clusterName = "test";
-    KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("show streams;");
-    when(clustersStorage.getClusterByName(clusterName)).thenReturn(Optional.ofNullable(null));
-
-    StepVerifier.create(ksqlService.executeKsqlCommand(clusterName, Mono.just(command)))
-        .verifyError(ClusterNotFoundException.class);
-  }
-
-  @Test
   void shouldThrowKsqlDbNotFoundExceptionOnExecuteKsqlCommand() {
-    String clusterName = "test";
     KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("show streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
-    when(clustersStorage.getClusterByName(clusterName))
-        .thenReturn(Optional.ofNullable(kafkaCluster));
     when(kafkaCluster.getKsqldbServer()).thenReturn(null);
 
-    StepVerifier.create(ksqlService.executeKsqlCommand(clusterName, Mono.just(command)))
+    StepVerifier.create(ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)))
         .verifyError(KsqlDbNotFoundException.class);
   }
 
   @Test
   void shouldThrowUnprocessableEntityExceptionOnExecuteKsqlCommand() {
-    String clusterName = "test";
     KsqlCommandDTO command =
         (new KsqlCommandDTO()).ksql("CREATE STREAM users WITH (KAFKA_TOPIC='users');");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
-    when(clustersStorage.getClusterByName(clusterName))
-        .thenReturn(Optional.ofNullable(kafkaCluster));
     when(kafkaCluster.getKsqldbServer()).thenReturn("localhost:8088");
 
-    StepVerifier.create(ksqlService.executeKsqlCommand(clusterName, Mono.just(command)))
+    StepVerifier.create(ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)))
         .verifyError(UnprocessableEntityException.class);
 
-    StepVerifier.create(ksqlService.executeKsqlCommand(clusterName, Mono.just(command)))
+    StepVerifier.create(ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)))
         .verifyErrorMessage("Invalid sql");
   }
 
   @Test
   void shouldSetHostToStrategy() {
-    String clusterName = "test";
     String host = "localhost:8088";
     KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
 
-    when(clustersStorage.getClusterByName(clusterName))
-        .thenReturn(Optional.ofNullable(kafkaCluster));
     when(kafkaCluster.getKsqldbServer()).thenReturn(host);
     when(ksqlClient.execute(any())).thenReturn(Mono.just(new KsqlCommandResponseDTO()));
 
-    ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
+    ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)).block();
     assertThat(alternativeStrategy.getUri()).isEqualTo(host + "/ksql");
   }
 
   @Test
   void shouldCallClientAndReturnResponse() {
-    String clusterName = "test";
     KsqlCommandDTO command = (new KsqlCommandDTO()).ksql("describe streams;");
     KafkaCluster kafkaCluster = Mockito.mock(KafkaCluster.class);
     KsqlCommandResponseDTO response = new KsqlCommandResponseDTO().message("success");
 
-    when(clustersStorage.getClusterByName(clusterName))
-        .thenReturn(Optional.ofNullable(kafkaCluster));
     when(kafkaCluster.getKsqldbServer()).thenReturn("host");
     when(ksqlClient.execute(any())).thenReturn(Mono.just(response));
 
     KsqlCommandResponseDTO receivedResponse =
-        ksqlService.executeKsqlCommand(clusterName, Mono.just(command)).block();
+        ksqlService.executeKsqlCommand(kafkaCluster, Mono.just(command)).block();
     verify(ksqlClient, times(1)).execute(alternativeStrategy);
     assertThat(receivedResponse).isEqualTo(response);
 

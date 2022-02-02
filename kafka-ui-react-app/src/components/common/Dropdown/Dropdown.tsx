@@ -2,6 +2,8 @@ import useOutsideClickRef from '@rooks/use-outside-click-ref';
 import cx from 'classnames';
 import React, { useCallback, useMemo, useState } from 'react';
 
+import * as S from './Dropdown.styled';
+
 export interface DropdownProps {
   label: React.ReactNode;
   right?: boolean;
@@ -24,17 +26,9 @@ const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
   );
   return (
     <div className={classNames} ref={wrapperRef}>
-      <div className="dropdown-trigger">
-        <button
-          type="button"
-          className="button is-small is-link"
-          aria-haspopup="true"
-          aria-controls="dropdown-menu"
-          onClick={onClick}
-        >
-          {label}
-        </button>
-      </div>
+      <S.TriggerWrapper>
+        <S.Trigger onClick={onClick}>{label}</S.Trigger>
+      </S.TriggerWrapper>
       <div className="dropdown-menu" id="dropdown-menu" role="menu">
         <div className="dropdown-content has-text-left">{children}</div>
       </div>

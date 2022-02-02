@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.controller;
 
 import java.nio.charset.Charset;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,7 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
+@Slf4j
 public class AuthController {
 
   @GetMapping(value = "/auth", produces = { "text/html" })

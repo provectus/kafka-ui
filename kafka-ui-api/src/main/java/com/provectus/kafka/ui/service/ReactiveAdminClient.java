@@ -4,6 +4,8 @@ import static com.google.common.util.concurrent.Uninterruptibles.getUninterrupti
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
+import com.provectus.kafka.ui.exception.IllegalEntityStateException;
+import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.util.MapUtil;
 import com.provectus.kafka.ui.util.NumberUtil;
 import java.io.Closeable;
@@ -13,20 +15,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AlterConfigOp;
 import org.apache.kafka.clients.admin.Config;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.ConsumerGroupDescription;
 import org.apache.kafka.clients.admin.ConsumerGroupListing;
-import org.apache.kafka.clients.admin.DescribeClusterOptions;
 import org.apache.kafka.clients.admin.DescribeConfigsOptions;
+import org.apache.kafka.clients.admin.ListConsumerGroupOffsetsOptions;
 import org.apache.kafka.clients.admin.ListTopicsOptions;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
 import org.apache.kafka.clients.admin.NewPartitions;
@@ -35,17 +40,23 @@ import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.RecordsToDelete;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.KafkaFuture;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.TopicPartitionReplica;
 import org.apache.kafka.common.acl.AclOperation;
 import org.apache.kafka.common.config.ConfigResource;
+import org.apache.kafka.common.errors.GroupIdNotFoundException;
+import org.apache.kafka.common.errors.GroupNotEmptyException;
+import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 
-@Log4j2
+@Slf4j
 @RequiredArgsConstructor
 public class ReactiveAdminClient implements Closeable {
 
@@ -56,6 +67,7 @@ public class ReactiveAdminClient implements Closeable {
 
   @Value
   public static class ClusterDescription {
+    @Nullable
     Node controller;
     String clusterId;
     Collection<Node> nodes;
@@ -67,6 +79,7 @@ public class ReactiveAdminClient implements Closeable {
         .map(ver ->
             new ReactiveAdminClient(
                 adminClient,
+                ver,
                 Set.of(getSupportedUpdateFeatureForVersion(ver))));
   }
 
@@ -91,6 +104,7 @@ public class ReactiveAdminClient implements Closeable {
   //---------------------------------------------------------------------------------
 
   private final AdminClient client;
+  private final String version;
   private final Set<SupportedFeature> features;
 
   public Mono<Set<String>> listTopics(boolean listInternal) {
@@ -101,20 +115,28 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.deleteTopics(List.of(topicName)).all());
   }
 
+  public String getVersion() {
+    return version;
+  }
+
+  public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig() {
+    return listTopics(true).flatMap(this::getTopicsConfig);
+  }
+
   public Mono<Map<String, List<ConfigEntry>>> getTopicsConfig(Collection<String> topicNames) {
     List<ConfigResource> resources = topicNames.stream()
         .map(topicName -> new ConfigResource(ConfigResource.Type.TOPIC, topicName))
         .collect(toList());
 
-    return toMono(
+    return toMonoWithExceptionFilter(
         client.describeConfigs(
             resources,
-            new DescribeConfigsOptions().includeSynonyms(true)
-        ).all())
-        .map(config -> config.entrySet().stream()
-            .collect(toMap(
-                c -> c.getKey().name(),
-                c -> new ArrayList<>(c.getValue().entries()))));
+            new DescribeConfigsOptions().includeSynonyms(true)).values(),
+        UnknownTopicOrPartitionException.class
+    ).map(config -> config.entrySet().stream()
+        .collect(toMap(
+            c -> c.getKey().name(),
+            c -> List.copyOf(c.getValue().entries()))));
   }
 
   public Mono<Map<Integer, List<ConfigEntry>>> loadBrokersConfig(List<Integer> brokerIds) {
@@ -128,8 +150,56 @@ public class ReactiveAdminClient implements Closeable {
                 c -> new ArrayList<>(c.getValue().entries()))));
   }
 
+  public Mono<Map<String, TopicDescription>> describeTopics() {
+    return listTopics(true).flatMap(this::describeTopics);
+  }
+
   public Mono<Map<String, TopicDescription>> describeTopics(Collection<String> topics) {
-    return toMono(client.describeTopics(topics).all());
+    return toMonoWithExceptionFilter(
+        client.describeTopics(topics).values(),
+        UnknownTopicOrPartitionException.class
+    );
+  }
+
+  /**
+   * Kafka API often returns Map responses with KafkaFuture values. If we do allOf()
+   * logic resulting Mono will be failing if any of Futures finished with error.
+   * In some situations it is not what we what, ex. we call describeTopics(List names) method and
+   * we getting UnknownTopicOrPartitionException for unknown topics and we what to just not put
+   * such topics in resulting map.
+   * <p/>
+   * This method converts input map into Mono[Map] ignoring keys for which KafkaFutures
+   * finished with <code>clazz</code> exception.
+   */
+  private <K, V> Mono<Map<K, V>> toMonoWithExceptionFilter(Map<K, KafkaFuture<V>> values,
+                                                           Class<? extends KafkaException> clazz) {
+    if (values.isEmpty()) {
+      return Mono.just(Map.of());
+    }
+
+    List<Mono<Tuple2<K, V>>> monos = values.entrySet().stream()
+        .map(e -> toMono(e.getValue()).map(r -> Tuples.of(e.getKey(), r)))
+        .collect(toList());
+
+    return Mono.create(sink -> {
+      var finishedCnt = new AtomicInteger();
+      var results = new ConcurrentHashMap<K, V>();
+      monos.forEach(mono -> mono.subscribe(
+          r -> {
+            results.put(r.getT1(), r.getT2());
+            if (finishedCnt.incrementAndGet() == monos.size()) {
+              sink.success(results);
+            }
+          },
+          th -> {
+            if (!th.getClass().isAssignableFrom(clazz)) {
+              sink.error(th);
+            } else if (finishedCnt.incrementAndGet() == monos.size()) {
+              sink.success(results);
+            }
+          }
+      ));
+    });
   }
 
   public Mono<Map<Integer, Map<String, DescribeLogDirsResponse.LogDirInfo>>> describeLogDirs() {
@@ -144,7 +214,7 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   public Mono<ClusterDescription> describeCluster() {
-    var r = client.describeCluster(new DescribeClusterOptions().includeAuthorizedOperations(true));
+    var r = client.describeCluster();
     var all = KafkaFuture.allOf(r.nodes(), r.clusterId(), r.controller(), r.authorizedOperations());
     return Mono.create(sink -> all.whenComplete((res, ex) -> {
       if (ex != null) {
@@ -182,12 +252,12 @@ public class ReactiveAdminClient implements Closeable {
             )));
   }
 
-  public Mono<String> getClusterVersion() {
-    return getClusterVersionImpl(client);
-  }
-
   public Mono<Void> deleteConsumerGroups(Collection<String> groupIds) {
-    return toMono(client.deleteConsumerGroups(groupIds).all());
+    return toMono(client.deleteConsumerGroups(groupIds).all())
+        .onErrorResume(GroupIdNotFoundException.class,
+            th -> Mono.error(new NotFoundException("The group id does not exist")))
+        .onErrorResume(GroupNotEmptyException.class,
+            th -> Mono.error(new IllegalEntityStateException("The group is not empty")));
   }
 
   public Mono<Void> createTopic(String name,
@@ -224,9 +294,23 @@ public class ReactiveAdminClient implements Closeable {
     return toMono(client.describeConsumerGroups(groupIds).all());
   }
 
-  public Mono<Map<TopicPartition, OffsetAndMetadata>> listConsumerGroupOffsets(String groupId) {
-    return toMono(client.listConsumerGroupOffsets(groupId).partitionsToOffsetAndMetadata())
-        .map(MapUtil::removeNullValues);
+  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(String groupId) {
+    return listConsumerGroupOffsets(groupId, new ListConsumerGroupOffsetsOptions());
+  }
+
+  public Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
+      String groupId, List<TopicPartition> partitions) {
+    return listConsumerGroupOffsets(groupId,
+        new ListConsumerGroupOffsetsOptions().topicPartitions(partitions));
+  }
+
+  private Mono<Map<TopicPartition, Long>> listConsumerGroupOffsets(
+      String groupId, ListConsumerGroupOffsetsOptions options) {
+    return toMono(client.listConsumerGroupOffsets(groupId, options).partitionsToOffsetAndMetadata())
+        .map(MapUtil::removeNullValues)
+        .map(m -> m.entrySet().stream()
+            .map(e -> Tuples.of(e.getKey(), e.getValue().offset()))
+            .collect(Collectors.toMap(Tuple2::getT1, Tuple2::getT2)));
   }
 
   public Mono<Void> alterConsumerGroupOffsets(String groupId, Map<TopicPartition, Long> offsets) {
@@ -242,7 +326,7 @@ public class ReactiveAdminClient implements Closeable {
     return topicPartitions(topic).flatMap(tps -> listOffsets(tps, offsetSpec));
   }
 
-  public Mono<Map<TopicPartition, Long>> listOffsets(Set<TopicPartition> partitions,
+  public Mono<Map<TopicPartition, Long>> listOffsets(Collection<TopicPartition> partitions,
                                                      OffsetSpec offsetSpec) {
     return toMono(
         client.listOffsets(partitions.stream().collect(toMap(tp -> tp, tp -> offsetSpec))).all())

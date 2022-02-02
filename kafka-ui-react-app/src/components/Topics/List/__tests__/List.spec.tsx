@@ -11,6 +11,8 @@ import { StaticRouter } from 'react-router';
 import Search from 'components/common/Search/Search';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
+import theme from 'theme/theme';
+import { ThemeProvider } from 'styled-components';
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -19,21 +21,23 @@ jest.mock(
 
 describe('List', () => {
   const setupComponent = (props: Partial<TopicsListProps> = {}) => (
-    <List
-      areTopicsFetching={false}
-      topics={[]}
-      totalPages={1}
-      fetchTopicsList={jest.fn()}
-      deleteTopic={jest.fn()}
-      deleteTopics={jest.fn()}
-      clearTopicsMessages={jest.fn()}
-      clearTopicMessages={jest.fn()}
-      search=""
-      orderBy={null}
-      setTopicsSearch={jest.fn()}
-      setTopicsOrderBy={jest.fn()}
-      {...props}
-    />
+    <ThemeProvider theme={theme}>
+      <List
+        areTopicsFetching={false}
+        topics={[]}
+        totalPages={1}
+        fetchTopicsList={jest.fn()}
+        deleteTopic={jest.fn()}
+        deleteTopics={jest.fn()}
+        clearTopicsMessages={jest.fn()}
+        clearTopicMessages={jest.fn()}
+        search=""
+        orderBy={null}
+        setTopicsSearch={jest.fn()}
+        setTopicsOrderBy={jest.fn()}
+        {...props}
+      />
+    </ThemeProvider>
   );
 
   const historyMock = createMemoryHistory();
@@ -83,23 +87,6 @@ describe('List', () => {
     it('renders the Add a Topic button', () => {
       expect(component.exists('Link')).toBeTruthy();
     });
-    it('matches the snapshot', () => {
-      component = mount(
-        <StaticRouter>
-          <ClusterContext.Provider
-            value={{
-              isReadOnly: false,
-              hasKafkaConnectConfigured: true,
-              hasSchemaRegistryConfigured: true,
-              isTopicDeletionAllowed: true,
-            }}
-          >
-            {setupComponent()}
-          </ClusterContext.Provider>
-        </StaticRouter>
-      );
-      expect(component).toMatchSnapshot();
-    });
 
     it('calls setTopicsSearch on input', () => {
       const setTopicsSearch = jest.fn();
@@ -112,7 +99,7 @@ describe('List', () => {
 
     it('should refetch topics on show internal toggle change', () => {
       jest.clearAllMocks();
-      const toggle = component.find('input#switchRoundedDefault');
+      const toggle = component.find('input[name="ShowInternalTopics"]');
       toggle.simulate('change');
       expect(fetchTopicsList).toHaveBeenLastCalledWith({
         search: '',
@@ -129,7 +116,7 @@ describe('List', () => {
         mockedHistory
       );
 
-      const toggle = component.find('input#switchRoundedDefault');
+      const toggle = component.find('input[name="ShowInternalTopics"]');
       toggle.simulate('change');
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
@@ -179,25 +166,30 @@ describe('List', () => {
       getCheckboxInput(0).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(1);
 
       // check second item
       getCheckboxInput(1).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeTruthy();
-      expect(component.find('.buttons').length).toEqual(1);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(1);
 
       // uncheck second item
       getCheckboxInput(1).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(1);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(1);
 
       // uncheck first item
       getCheckboxInput(0).simulate('change');
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(0);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(0);
     });
 
     const checkActionButtonClick = async (action: string) => {
@@ -213,7 +205,7 @@ describe('List', () => {
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
       component
-        .find('.buttons')
+        .find('div[data-testid="delete-buttons"]')
         .find('button')
         .at(buttonIndex)
         .simulate('click');
@@ -224,10 +216,11 @@ describe('List', () => {
         (modal.props() as ConfirmationModalProps).onConfirm();
       });
       component.update();
-      expect(getConfirmationModal().prop('isOpen')).toBeFalsy();
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
-      expect(component.find('.buttons').length).toEqual(0);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(0);
       expect(mockFn).toBeCalledTimes(1);
       expect(mockFn).toBeCalledWith('local', [
         externalTopicPayload.name,
@@ -248,7 +241,11 @@ describe('List', () => {
       getCheckboxInput(1).simulate('change');
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
-      component.find('.buttons').find('button').at(0).simulate('click');
+      component
+        .find('div[data-testid="delete-buttons"]')
+        .find('button')
+        .at(0)
+        .simulate('click');
       modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeTruthy();
       await act(async () => {
@@ -258,7 +255,9 @@ describe('List', () => {
       expect(getConfirmationModal().prop('isOpen')).toBeFalsy();
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeTruthy();
-      expect(component.find('.buttons').length).toEqual(1);
+      expect(
+        component.find('div[data-testid="delete-buttons"]').length
+      ).toEqual(1);
       expect(mockDeleteTopics).toBeCalledTimes(0);
     });
   });

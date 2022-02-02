@@ -8,14 +8,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.utils.Bytes;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
-@Log4j2
+@Slf4j
 public class OffsetsSeekBackward extends OffsetsSeek {
 
   private final int maxMessages;

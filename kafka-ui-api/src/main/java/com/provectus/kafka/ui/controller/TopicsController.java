@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
@@ -12,11 +13,11 @@ import com.provectus.kafka.ui.model.TopicDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
-import com.provectus.kafka.ui.service.ClusterService;
+import com.provectus.kafka.ui.service.TopicsService;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,14 +27,14 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
-public class TopicsController implements TopicsApi {
-  private final ClusterService clusterService;
+@Slf4j
+public class TopicsController extends AbstractController implements TopicsApi {
+  private final TopicsService topicsService;
 
   @Override
   public Mono<ResponseEntity<TopicDTO>> createTopic(
       String clusterName, @Valid Mono<TopicCreationDTO> topicCreation, ServerWebExchange exchange) {
-    return clusterService.createTopic(clusterName, topicCreation)
+    return topicsService.createTopic(getCluster(clusterName), topicCreation)
         .map(s -> new ResponseEntity<>(s, HttpStatus.OK))
         .switchIfEmpty(Mono.just(ResponseEntity.notFound().build()));
   }
@@ -41,29 +42,23 @@ public class TopicsController implements TopicsApi {
   @Override
   public Mono<ResponseEntity<Void>> deleteTopic(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return clusterService.deleteTopic(clusterName, topicName).map(ResponseEntity::ok);
+    return topicsService.deleteTopic(getCluster(clusterName), topicName).map(ResponseEntity::ok);
   }
 
 
   @Override
   public Mono<ResponseEntity<Flux<TopicConfigDTO>>> getTopicConfigs(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(
-        clusterService.getTopicConfigs(clusterName, topicName)
-            .map(Flux::fromIterable)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build())
-    );
+    return topicsService.getTopicConfigs(getCluster(clusterName), topicName)
+        .map(Flux::fromIterable)
+        .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<TopicDetailsDTO>> getTopicDetails(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(
-        clusterService.getTopicDetails(clusterName, topicName)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build())
-    );
+    return topicsService.getTopicDetails(getCluster(clusterName), topicName)
+        .map(ResponseEntity::ok);
   }
 
   @Override
@@ -72,23 +67,26 @@ public class TopicsController implements TopicsApi {
                                                         @Valid Boolean showInternal,
                                                         @Valid String search,
                                                         @Valid TopicColumnsToSortDTO orderBy,
+                                                        @Valid SortOrderDTO sortOrder,
                                                         ServerWebExchange exchange) {
-    return Mono.just(ResponseEntity.ok(clusterService
+    return topicsService
         .getTopics(
-            clusterName,
+            getCluster(clusterName),
             Optional.ofNullable(page),
             Optional.ofNullable(perPage),
             Optional.ofNullable(showInternal),
             Optional.ofNullable(search),
-            Optional.ofNullable(orderBy)
-        )));
+            Optional.ofNullable(orderBy),
+            Optional.ofNullable(sortOrder)
+        ).map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<TopicDTO>> updateTopic(
       String clusterId, String topicName, @Valid Mono<TopicUpdateDTO> topicUpdate,
       ServerWebExchange exchange) {
-    return clusterService.updateTopic(clusterId, topicName, topicUpdate).map(ResponseEntity::ok);
+    return topicsService
+        .updateTopic(getCluster(clusterId), topicName, topicUpdate).map(ResponseEntity::ok);
   }
 
   @Override
@@ -97,7 +95,8 @@ public class TopicsController implements TopicsApi {
       Mono<PartitionsIncreaseDTO> partitionsIncrease,
       ServerWebExchange exchange) {
     return partitionsIncrease.flatMap(
-        partitions -> clusterService.increaseTopicPartitions(clusterName, topicName, partitions))
+        partitions ->
+            topicsService.increaseTopicPartitions(getCluster(clusterName), topicName, partitions))
         .map(ResponseEntity::ok);
   }
 
@@ -107,7 +106,8 @@ public class TopicsController implements TopicsApi {
       Mono<ReplicationFactorChangeDTO> replicationFactorChange,
       ServerWebExchange exchange) {
     return replicationFactorChange
-        .flatMap(rfc -> clusterService.changeReplicationFactor(clusterName, topicName, rfc))
+        .flatMap(rfc ->
+            topicsService.changeReplicationFactor(getCluster(clusterName), topicName, rfc))
         .map(ResponseEntity::ok);
   }
 }

@@ -1,6 +1,8 @@
 import React from 'react';
 import { KsqlCommandResponse, Table } from 'generated-sources';
 
+import * as S from './ResultRenderer.styled';
+
 const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   result,
 }) => {
@@ -8,7 +10,7 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
 
   const isMessage = !!result.message;
 
-  if (isMessage) return <div className="box">{result.message}</div>;
+  if (isMessage) return <S.Wrapper>{result.message}</S.Wrapper>;
 
   const isTable = result.data !== undefined;
 
@@ -21,16 +23,19 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
   const transformedRows = React.useMemo(
     () =>
       rows.map((row) =>
-        row.reduce((res, acc, index) => {
-          res[rawTable.headers[index]] = acc;
-          return res;
-        }, {} as Dictionary<string>)
+        row.reduce(
+          (res, acc, index) => ({
+            ...res,
+            [rawTable.headers[index]]: acc,
+          }),
+          {} as Dictionary<string>
+        )
       ),
     []
   );
 
   return (
-    <div className="box">
+    <S.Wrapper>
       <table className="table is-fullwidth">
         <thead>
           <tr>
@@ -54,7 +59,7 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
           )}
         </tbody>
       </table>
-    </div>
+    </S.Wrapper>
   );
 };
 

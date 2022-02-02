@@ -7,14 +7,15 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
-import com.provectus.kafka.ui.service.ClusterService;
+import com.provectus.kafka.ui.service.MessagesService;
+import com.provectus.kafka.ui.service.TopicsService;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.TopicPartition;
 import org.springframework.http.ResponseEntity;
@@ -25,19 +26,20 @@ import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
-@Log4j2
-public class MessagesController implements MessagesApi {
-  private final ClusterService clusterService;
+@Slf4j
+public class MessagesController extends AbstractController implements MessagesApi {
+  private final MessagesService messagesService;
+  private final TopicsService topicsService;
 
   @Override
   public Mono<ResponseEntity<Void>> deleteTopicMessages(
       String clusterName, String topicName, @Valid List<Integer> partitions,
       ServerWebExchange exchange) {
-    return clusterService.deleteTopicMessages(
-        clusterName,
+    return messagesService.deleteTopicMessages(
+        getCluster(clusterName),
         topicName,
         Optional.ofNullable(partitions).orElse(List.of())
-    ).map(ResponseEntity::ok);
+    ).thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
@@ -48,7 +50,8 @@ public class MessagesController implements MessagesApi {
     return parseConsumerPosition(topicName, seekType, seekTo, seekDirection)
         .map(position ->
             ResponseEntity.ok(
-                clusterService.getMessages(clusterName, topicName, position, q, limit)
+                messagesService.loadMessages(
+                    getCluster(clusterName), topicName, position, q, limit)
             )
         );
   }
@@ -56,7 +59,7 @@ public class MessagesController implements MessagesApi {
   @Override
   public Mono<ResponseEntity<TopicMessageSchemaDTO>> getTopicSchema(
       String clusterName, String topicName, ServerWebExchange exchange) {
-    return Mono.just(clusterService.getTopicSchema(clusterName, topicName))
+    return Mono.just(topicsService.getTopicSchema(getCluster(clusterName), topicName))
         .map(ResponseEntity::ok);
   }
 
@@ -65,7 +68,7 @@ public class MessagesController implements MessagesApi {
       String clusterName, String topicName, @Valid Mono<CreateTopicMessageDTO> createTopicMessage,
       ServerWebExchange exchange) {
     return createTopicMessage.flatMap(msg ->
-        clusterService.sendMessage(clusterName, topicName, msg)
+        messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
     ).map(ResponseEntity::ok);
   }
 

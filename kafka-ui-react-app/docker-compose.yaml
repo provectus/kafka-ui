@@ -27,7 +27,7 @@ services:
     restart: always
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:5.3.1
+    image: confluentinc/cp-schema-registry:5.5.0
     hostname: schema-registry
     ports:
       - "8081:8081"

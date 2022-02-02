@@ -81,7 +81,7 @@ services:
     - ./jmx/jmxremote.access:/jmx/jmxremote.access
 
   schemaregistry0:
-    image: confluentinc/cp-schema-registry:5.2.4
+    image: confluentinc/cp-schema-registry:5.5.0
     ports:
       - 8085:8085
     depends_on:
@@ -99,7 +99,7 @@ services:
       SCHEMA_REGISTRY_KAFKASTORE_TOPIC: _schemas
 
   kafka-connect0:
-    image: confluentinc/cp-kafka-connect:5.2.4
+    image: confluentinc/cp-kafka-connect:6.0.1
     ports:
       - 8083:8083
     depends_on:
@@ -124,7 +124,7 @@ services:
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
 
   kafka-init-topics:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:5.3.1
     volumes:
       - ./message.json:/data/message.json
     depends_on:

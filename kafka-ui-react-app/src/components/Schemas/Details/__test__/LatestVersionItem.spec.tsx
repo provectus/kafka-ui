@@ -1,19 +1,36 @@
 import React from 'react';
-import { mount, shallow } from 'enzyme';
-import LatestVersionItem from 'components/Schemas/Details/LatestVersionItem';
+import LatestVersionItem from 'components/Schemas/Details/LatestVersion/LatestVersionItem';
+import { SchemaSubject } from 'generated-sources';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
-import { schema } from './fixtures';
+import { jsonSchema, protoSchema } from './fixtures';
+
+const renderComponent = (schema: SchemaSubject) => {
+  render(<LatestVersionItem schema={schema} />);
+};
 
 describe('LatestVersionItem', () => {
-  it('renders latest version of schema', () => {
-    const wrapper = mount(<LatestVersionItem schema={schema} />);
-
-    expect(wrapper.find('table').length).toEqual(1);
-    expect(wrapper.find('td').at(1).text()).toEqual('1');
-    expect(wrapper.exists('JSONEditor')).toBeTruthy();
+  it('renders latest version of json schema', () => {
+    renderComponent(jsonSchema);
+    expect(screen.getByText('Relevant version')).toBeInTheDocument();
+    expect(screen.getByText('Latest version')).toBeInTheDocument();
+    expect(screen.getByText('ID')).toBeInTheDocument();
+    expect(screen.getByText('Subject')).toBeInTheDocument();
+    expect(screen.getByText('Compatibility')).toBeInTheDocument();
+    expect(screen.getByText('15')).toBeInTheDocument();
+    expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
   });
 
-  it('matches snapshot', () => {
-    expect(shallow(<LatestVersionItem schema={schema} />)).toMatchSnapshot();
+  it('renders latest version of compatibility', () => {
+    renderComponent(protoSchema);
+    expect(screen.getByText('Relevant version')).toBeInTheDocument();
+    expect(screen.getByText('Latest version')).toBeInTheDocument();
+    expect(screen.getByText('ID')).toBeInTheDocument();
+    expect(screen.getByText('Subject')).toBeInTheDocument();
+    expect(screen.getByText('Compatibility')).toBeInTheDocument();
+
+    expect(screen.getByText('BACKWARD')).toBeInTheDocument();
+    expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
   });
 });

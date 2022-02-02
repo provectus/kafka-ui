@@ -1,6 +1,4 @@
 import React from 'react';
-import cx from 'classnames';
-import { NavLink } from 'react-router-dom';
 import {
   ClusterName,
   TopicName,
@@ -11,6 +9,11 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+
+import * as S from './List.styled';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -22,14 +25,7 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: {
-    name,
-    internal,
-    partitions,
-    segmentSize,
-    replicationFactor,
-    cleanUpPolicy,
-  },
+  topic: { name, internal, partitions, segmentSize, replicationFactor },
   selected,
   toggleTopicSelected,
   deleteTopic,
@@ -72,9 +68,13 @@ const ListItem: React.FC<ListItemProps> = ({
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
   }, [clusterName, name]);
+  const [vElipsisVisble, setVElipsisVisble] = React.useState(false);
 
   return (
-    <tr>
+    <tr
+      onMouseEnter={() => setVElipsisVisble(true)}
+      onMouseLeave={() => setVElipsisVisble(false)}
+    >
       {!isReadOnly && (
         <td>
           {!internal && (
@@ -88,16 +88,12 @@ const ListItem: React.FC<ListItemProps> = ({
           )}
         </td>
       )}
-      <td className="has-text-overflow-ellipsis">
-        <NavLink
-          exact
-          to={`topics/${name}`}
-          activeClassName="is-active"
-          className="title is-6"
-        >
+      <TableKeyLink style={{ width: '44%' }}>
+        {internal && <Tag color="gray">IN</Tag>}
+        <S.Link exact to={`topics/${name}`} $isInternal={internal}>
           {name}
-        </NavLink>
-      </td>
+        </S.Link>
+      </TableKeyLink>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
       <td>{replicationFactor}</td>
@@ -105,47 +101,31 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>
         <BytesFormatted value={segmentSize} />
       </td>
-      <td>
-        <div className={cx('tag', internal ? 'is-light' : 'is-primary')}>
-          {internal ? 'Internal' : 'External'}
-        </div>
-      </td>
-      <td>
-        <span className="tag is-info">{cleanUpPolicy || 'Unknown'}</span>
-      </td>
-      <td className="topic-action-block">
-        {!internal && !isReadOnly ? (
-          <>
-            <div className="has-text-right">
-              <Dropdown
-                label={
-                  <span className="icon">
-                    <i className="fas fa-cog" />
-                  </span>
-                }
-                right
-              >
-                <DropdownItem onClick={clearTopicMessagesHandler}>
-                  <span className="has-text-danger">Clear Messages</span>
+      <td className="topic-action-block" style={{ width: '4%' }}>
+        {!internal && !isReadOnly && vElipsisVisble ? (
+          <div className="has-text-right">
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                Clear Messages
+              </DropdownItem>
+              {isTopicDeletionAllowed && (
+                <DropdownItem
+                  onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  danger
+                >
+                  Remove Topic
                 </DropdownItem>
-                {isTopicDeletionAllowed && (
-                  <DropdownItem
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                  >
-                    <span className="has-text-danger">Remove Topic</span>
-                  </DropdownItem>
-                )}
-              </Dropdown>
-            </div>
-            <ConfirmationModal
-              isOpen={isDeleteTopicConfirmationVisible}
-              onCancel={() => setDeleteTopicConfirmationVisible(false)}
-              onConfirm={deleteTopicHandler}
-            >
-              Are you sure want to remove <b>{name}</b> topic?
-            </ConfirmationModal>
-          </>
+              )}
+            </Dropdown>
+          </div>
         ) : null}
+        <ConfirmationModal
+          isOpen={isDeleteTopicConfirmationVisible}
+          onCancel={() => setDeleteTopicConfirmationVisible(false)}
+          onConfirm={deleteTopicHandler}
+        >
+          Are you sure want to remove <b>{name}</b> topic?
+        </ConfirmationModal>
       </td>
     </tr>
   );

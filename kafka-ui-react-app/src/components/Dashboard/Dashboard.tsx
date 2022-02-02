@@ -1,18 +1,13 @@
 import React from 'react';
-import Breadcrumb from 'components/common/Breadcrumb/Breadcrumb';
+import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import ClustersWidgetContainer from './ClustersWidget/ClustersWidgetContainer';
 
 const Dashboard: React.FC = () => (
-  <div className="section">
-    <div className="level">
-      <div className="level-item level-left">
-        <Breadcrumb>Dashboard</Breadcrumb>
-      </div>
-    </div>
-
+  <>
+    <PageHeading text="Dashboard" />
     <ClustersWidgetContainer />
-  </div>
+  </>
 );
 
 export default Dashboard;

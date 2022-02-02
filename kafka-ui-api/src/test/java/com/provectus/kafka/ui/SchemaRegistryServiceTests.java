@@ -3,10 +3,11 @@ package com.provectus.kafka.ui;
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import java.util.List;
 import java.util.UUID;
-import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,7 +23,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-@Log4j2
+@Slf4j
 @AutoConfigureWebTestClient(timeout = "10000")
 class SchemaRegistryServiceTests extends AbstractBaseTest {
   @Autowired
@@ -145,14 +146,14 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/schemas", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBodyList(SchemaSubjectDTO.class)
+        .expectBody(SchemaSubjectsResponseDTO.class)
         .consumeWith(result -> {
-          List<SchemaSubjectDTO> responseBody = result.getResponseBody();
+          SchemaSubjectsResponseDTO responseBody = result.getResponseBody();
           log.info("Response of test schemas: {}", responseBody);
           Assertions.assertNotNull(responseBody);
-          Assertions.assertFalse(responseBody.isEmpty());
+          Assertions.assertFalse(responseBody.getSchemas().isEmpty());
 
-          SchemaSubjectDTO actualSchemaSubject = responseBody.stream()
+          SchemaSubjectDTO actualSchemaSubject = responseBody.getSchemas().stream()
               .filter(schemaSubject -> subject.equals(schemaSubject.getSubject()))
               .findFirst()
               .orElseThrow();

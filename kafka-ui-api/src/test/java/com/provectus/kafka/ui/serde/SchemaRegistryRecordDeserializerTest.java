@@ -17,7 +17,7 @@ class SchemaRegistryRecordDeserializerTest {
       new SchemaRegistryAwareRecordSerDe(
           KafkaCluster.builder()
               .schemaNameTemplate("%s-value")
-              .build()
+              .build(), new ObjectMapper()
       );
 
   @Test

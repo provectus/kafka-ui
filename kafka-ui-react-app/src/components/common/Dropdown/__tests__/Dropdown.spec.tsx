@@ -32,8 +32,6 @@ describe('Dropdown', () => {
     expect(wrapper.exists('.dropdown.is-right')).toBeFalsy();
     expect(wrapper.exists('.dropdown.is-up')).toBeFalsy();
 
-    expect(wrapper.exists('.dropdown-trigger')).toBeTruthy();
-    expect(wrapper.find('.dropdown-trigger').text()).toEqual(dummyLable);
     expect(wrapper.exists('.dropdown-content')).toBeTruthy();
     expect(wrapper.find('.dropdown-content').text()).toEqual('');
   });
@@ -41,7 +39,7 @@ describe('Dropdown', () => {
   it('renders custom children', () => {
     const wrapper = mount(setupWrapper({}, dummyChildren));
     expect(wrapper.exists('.dropdown-content')).toBeTruthy();
-    expect(wrapper.find('.dropdown-item').length).toEqual(3);
+    expect(wrapper.find('a.dropdown-item').length).toEqual(3);
     expect(wrapper.find('.dropdown-divider').length).toEqual(1);
   });
 
