@@ -17,6 +17,7 @@ export const BASE_PARAMS: ConfigurationParameters = {
 export const TOPIC_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
 export const SCHEMA_NAME_VALIDATION_PATTERN = /^[.,A-Za-z0-9_-]+$/;
 
+export const TOPIC_CUSTOM_PARAMS_PREFIX = 'customParams';
 export const TOPIC_CUSTOM_PARAMS: Record<string, string> = {
   'compression.type': 'producer',
   'leader.replication.throttled.replicas': '',

@@ -219,12 +219,11 @@ exports[`DangerZone is rendered properly 1`] = `
 }
 
 .c0 {
-  margin-top: 16px;
+  margin: 16px;
   padding: 8px 16px;
   border: 1px solid #E3E6E8;
   box-sizing: border-box;
   border-radius: 8px;
-  margin-bottom: 16px;
 }
 
 .c0 > div {
