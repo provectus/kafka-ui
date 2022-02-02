@@ -35,17 +35,17 @@ UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user
 UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
 pasting your own parameters, and viewing topics in the list.
 
-![Create Topic](images/Create_topic_kafka-ui.gif)
+![Create Topic](documentation/images/Create_topic_kafka-ui.gif)
 
 It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.
-connectors, overview topic`s settings. 
+connectors, overview topic settings. 
 
-![Connector_Topic_Consumer](images/Connector_Topic_Consumer.gif)
+![Connector_Topic_Consumer](documentation/images/Connector_Topic_Consumer.gif)
 
 ### Messages
 Let's say we want to produce messages for our topic. With the UI for Apache Kafka we can send or write data/messages to the Kafka topics without effort by specifying parameters, and viewing messages in the list.
 
-![Produce Message](images/Create_message_kafka-ui.gif)
+![Produce Message](documentation/images/Create_message_kafka-ui.gif)
 
 ## Schema registry
 There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
@@ -55,7 +55,7 @@ There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schema
 Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do 
 with a few clicks in a user-friendly interface.
 
-![Avro Schema Topic](images/Schema_Topic.gif)
+![Avro Schema Topic](documentation/images/Schema_Topic.gif)
 
 # Getting Started
 
