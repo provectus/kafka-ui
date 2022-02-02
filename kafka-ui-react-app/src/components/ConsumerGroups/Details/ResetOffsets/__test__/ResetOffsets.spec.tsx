@@ -123,6 +123,8 @@ describe('ResetOffsets', () => {
         );
         await waitFor(() => {
           userEvent.click(screen.getAllByLabelText('Partition #0')[1]);
+        });
+        await waitFor(() => {
           userEvent.keyboard('10');
         });
         userEvent.click(screen.getByText('Submit'));

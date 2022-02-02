@@ -3,6 +3,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { create } from 'react-test-renderer';
+import { screen } from '@testing-library/react';
 
 const onClick = jest.fn();
 
@@ -16,11 +17,9 @@ describe('DropdownItem', () => {
   });
 
   it('handles Click', () => {
-    const wrapper = render(
-      <DropdownItem onClick={onClick}>Item 1</DropdownItem>
-    );
+    render(<DropdownItem onClick={onClick}>Item 1</DropdownItem>);
 
-    const dropDown = wrapper.getByText('Item 1');
+    const dropDown = screen.getByText('Item 1');
 
     userEvent.click(dropDown);
     expect(onClick).toHaveBeenCalled();
