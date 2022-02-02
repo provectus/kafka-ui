@@ -98,19 +98,19 @@ describe('utils', () => {
   describe('getSelectedPartitionsFromSeekToParam', () => {
     const part: Partition[] = [{ partition: 42, offsetMin: 0, offsetMax: 100 }];
 
-    it('return when serachParams have seekTo and PartititionId includes selected partition', () => {
+    it('returns parsed partition from params when partition list includes selected partition', () => {
       searchParams.set('seekTo', '42::0');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual([
         { label: '42', value: 42 },
       ]);
     });
-    it('return when serachParams have seekTo and PartititionId NOT includes selected partition', () => {
+    it('returns parsed partition from params when partition NOT includes selected partition', () => {
       searchParams.set('seekTo', '24::0');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual(
         []
       );
     });
-    it('return when searchParams not have seekTo', () => {
+    it('returns partition when searchParams not defined', () => {
       searchParams.delete('seekTo');
       expect(getSelectedPartitionsFromSeekToParam(searchParams, part)).toEqual([
         { label: '42', value: 42 },
