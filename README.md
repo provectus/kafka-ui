@@ -63,7 +63,7 @@ To run UI for Apache Kafka, you can use a pre-built Docker image or build it loc
 
 ## Configuration
 
-We have plenty of [docker-compose files](guides/yaml-description.md) as examples. They're built for various configuration stacks.
+We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md) as examples. They're built for various configuration stacks.
 
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
@@ -121,21 +121,21 @@ If you prefer to use `docker-compose` please refer to the [documentation](docker
 
 ### Prerequisites
 
-Check [software-required.md](documentation/software-required.md)
+Check [software-required.md](documentation/project/contributing/software-required.md)
 
 ### Building
 
-Check [building.md](documentation/building.md)
+Check [building.md](documentation/project/contributing/building.md)
 
 ### Running
 
-Check [running.md](documentation/running.md)
+Check [running.md](documentation/project/contributing/running.md)
 
 # Guides
 
-- [SSO configuration](guides/SSO.md)
-- [AWS IAM configuration](guides/AWS_IAM.md)
-- [Docker-compose files](guides/yaml-description.md)
+- [SSO configuration](documentation/guides/SSO.md)
+- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
+- [Docker-compose files](documentation/guides/yaml-description.md)
 
 ## Connecting to a Secure Broker
 
