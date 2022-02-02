@@ -9,10 +9,11 @@ import javax.annotation.Nullable;
 import javax.script.CompiledScript;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.jsr223.GroovyScriptEngineImpl;
 
-
+@Slf4j
 public class MessageFilters {
 
   private static GroovyScriptEngineImpl GROOVY_ENGINE;
@@ -35,7 +36,7 @@ public class MessageFilters {
 
   static Predicate<TopicMessageDTO> groovyScriptFilter(String script) {
     var compiledScript = compileScript(script);
-    JsonSlurper jsonSlurper = new JsonSlurper();
+    var jsonSlurper = new JsonSlurper();
     return msg -> {
       var bindings = getGroovyEngine().createBindings();
       bindings.put("partition", msg.getPartition());
@@ -52,6 +53,7 @@ public class MessageFilters {
         }
         return false;
       } catch (Exception e) {
+        log.trace("Error executing filter script '{}' on message '{}' ", script, msg);
         return false;
       }
     };
