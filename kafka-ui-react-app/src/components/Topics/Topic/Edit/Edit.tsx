@@ -7,21 +7,19 @@ import {
   TopicWithDetailedInfo,
   TopicFormData,
 } from 'redux/interfaces';
-import { TopicConfig } from 'generated-sources';
 import { useForm, FormProvider } from 'react-hook-form';
-import { camelCase } from 'lodash';
 import TopicForm from 'components/Topics/shared/Form/TopicForm';
 import { clusterTopicPath } from 'lib/paths';
 import { useHistory } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
-import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
+import { TOPIC_CUSTOM_PARAMS_PREFIX, TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 import styled from 'styled-components';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 
 import DangerZoneContainer from './DangerZone/DangerZoneContainer';
 
-interface Props {
+export interface Props {
   clusterName: ClusterName;
   topicName: TopicName;
   topic?: TopicWithDetailedInfo;
@@ -64,27 +62,18 @@ const topicParams = (topic: TopicWithDetailedInfo | undefined) => {
 
   const { name, replicationFactor } = topic;
 
-  const configs = topic.config?.reduce(
-    (result: { [key: string]: TopicConfig['value'] }, param) => ({
-      ...result,
-      [camelCase(param.name)]: param.value || param.defaultValue,
-    }),
-    {}
-  );
-
   return {
     ...DEFAULTS,
     name,
     partitions: topic.partitionCount || DEFAULTS.partitions,
     replicationFactor,
-    customParams: topic.config
+    [TOPIC_CUSTOM_PARAMS_PREFIX]: topic.config
       ?.filter(
         (el) =>
           el.value !== el.defaultValue &&
           Object.keys(TOPIC_CUSTOM_PARAMS).includes(el.name)
       )
       .map((el) => ({ name: el.name, value: el.value })),
-    ...configs,
   };
 };
 
@@ -99,8 +88,10 @@ const Edit: React.FC<Props> = ({
   fetchTopicConfig,
   updateTopic,
 }) => {
-  const defaultValues = topicParams(topic);
-
+  const defaultValues = React.useMemo(
+    () => topicParams(topic),
+    [topicParams, topic]
+  );
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
@@ -147,17 +138,14 @@ const Edit: React.FC<Props> = ({
       <PageHeading text={`Edit ${topicName}`} />
       <EditWrapperStyled>
         <div>
-          <div>
-            <FormProvider {...methods}>
-              <TopicForm
-                topicName={topicName}
-                config={config}
-                isSubmitting={isSubmitting}
-                isEditing
-                onSubmit={methods.handleSubmit(onSubmit)}
-              />
-            </FormProvider>
-          </div>
+          <FormProvider {...methods}>
+            <TopicForm
+              topicName={topicName}
+              isSubmitting={isSubmitting}
+              isEditing
+              onSubmit={methods.handleSubmit(onSubmit)}
+            />
+          </FormProvider>
           {topic && (
             <DangerZoneContainer
               defaultPartitions={defaultValues.partitions}

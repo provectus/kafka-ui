@@ -8,6 +8,8 @@ import { FormProvider, useForm } from 'react-hook-form';
 import userEvent from '@testing-library/user-event';
 import { TOPIC_CUSTOM_PARAMS } from 'lib/constants';
 
+import { defaultValues } from './fixtures';
+
 const selectOption = async (listbox: HTMLElement, option: string) => {
   await waitFor(() => {
     userEvent.click(listbox);
@@ -44,31 +46,44 @@ const expectOptionAvailability = async (
   await waitFor(() => userEvent.click(listbox));
 };
 
-describe('CustomParams', () => {
-  const setupComponent = (props: CustomParamsProps) => {
-    const Wrapper: React.FC = ({ children }) => {
-      const methods = useForm();
-      return <FormProvider {...methods}>{children}</FormProvider>;
-    };
-
-    return render(
-      <Wrapper>
-        <CustomParams {...props} />
-      </Wrapper>
-    );
+const renderComponent = (props: CustomParamsProps, defaults = {}) => {
+  const Wrapper: React.FC = ({ children }) => {
+    const methods = useForm({ defaultValues: defaults });
+    return <FormProvider {...methods}>{children}</FormProvider>;
   };
 
-  beforeEach(() => {
-    setupComponent({ isSubmitting: false });
-  });
+  return render(
+    <Wrapper>
+      <CustomParams {...props} />
+    </Wrapper>
+  );
+};
 
+describe('CustomParams', () => {
   it('renders with props', () => {
+    renderComponent({ isSubmitting: false });
+
     const button = screen.getByRole('button');
     expect(button).toBeInTheDocument();
     expect(button).toHaveTextContent('Add Custom Parameter');
   });
 
+  it('has defaultValues when they are set', () => {
+    renderComponent({ isSubmitting: false }, defaultValues);
+
+    expect(
+      screen.getByRole('option', { name: defaultValues.customParams[0].name })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('textbox')).toHaveValue(
+      defaultValues.customParams[0].value
+    );
+  });
+
   describe('works with user inputs correctly', () => {
+    beforeEach(() => {
+      renderComponent({ isSubmitting: false });
+    });
+
     it('button click creates custom param fieldset', async () => {
       const button = screen.getByRole('button');
       await waitFor(() => userEvent.click(button));
