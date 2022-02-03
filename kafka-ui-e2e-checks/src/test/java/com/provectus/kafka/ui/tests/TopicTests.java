@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Disabled;
 
-@Disabled // TODO #1480
 public class TopicTests extends BaseTest {
 
     public static final String NEW_TOPIC = "new-topic";

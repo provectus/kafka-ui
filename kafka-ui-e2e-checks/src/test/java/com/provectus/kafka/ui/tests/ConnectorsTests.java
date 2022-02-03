@@ -8,7 +8,6 @@ import java.io.File;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.*;
 
-@Disabled // TODO #1480
 public class ConnectorsTests extends BaseTest {
 
     public static final String LOCAL_CLUSTER = "local";
@@ -72,7 +71,6 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update a connector")
     @Test
-    //@Disabled
     void updateConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
@@ -87,7 +85,6 @@ public class ConnectorsTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete connector")
     @Test
-    @Disabled
     void deleteConnector() {
         pages.openConnectorsList(LOCAL_CLUSTER)
                 .isOnPage()
