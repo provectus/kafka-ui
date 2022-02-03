@@ -3,6 +3,7 @@ package com.provectus.kafka.ui;
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import java.util.List;
 import java.util.UUID;
@@ -145,14 +146,14 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
         .uri("/api/clusters/{clusterName}/schemas", LOCAL)
         .exchange()
         .expectStatus().isOk()
-        .expectBodyList(SchemaSubjectDTO.class)
+        .expectBody(SchemaSubjectsResponseDTO.class)
         .consumeWith(result -> {
-          List<SchemaSubjectDTO> responseBody = result.getResponseBody();
+          SchemaSubjectsResponseDTO responseBody = result.getResponseBody();
           log.info("Response of test schemas: {}", responseBody);
           Assertions.assertNotNull(responseBody);
-          Assertions.assertFalse(responseBody.isEmpty());
+          Assertions.assertFalse(responseBody.getSchemas().isEmpty());
 
-          SchemaSubjectDTO actualSchemaSubject = responseBody.stream()
+          SchemaSubjectDTO actualSchemaSubject = responseBody.getSchemas().stream()
               .filter(schemaSubject -> subject.equals(schemaSubject.getSubject()))
               .findFirst()
               .orElseThrow();

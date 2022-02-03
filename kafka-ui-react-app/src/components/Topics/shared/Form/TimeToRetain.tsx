@@ -31,7 +31,9 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
   return (
     <>
       <S.Label>
-        <InputLabel>Time to retain data (in ms)</InputLabel>
+        <InputLabel htmlFor="timeToRetain">
+          Time to retain data (in ms)
+        </InputLabel>
         {valueHint && <span>{valueHint}</span>}
       </S.Label>
       <Input

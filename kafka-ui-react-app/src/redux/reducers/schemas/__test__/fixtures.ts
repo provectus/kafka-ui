@@ -1,6 +1,18 @@
-import { SchemaType } from 'generated-sources';
+import { SchemaType, SchemaSubject } from 'generated-sources';
+import { RootState } from 'redux/interfaces';
 
-export const schemaVersion = {
+export const schemasInitialState: RootState['schemas'] = {
+  totalPages: 0,
+  ids: [],
+  entities: {},
+  versions: {
+    latest: null,
+    ids: [],
+    entities: {},
+  },
+};
+
+export const schemaVersion1: SchemaSubject = {
   subject: 'schema7_1',
   version: '1',
   id: 2,
@@ -9,31 +21,41 @@ export const schemaVersion = {
   compatibilityLevel: 'FULL',
   schemaType: SchemaType.JSON,
 };
+export const schemaVersion2: SchemaSubject = {
+  subject: 'MySchemaSubject',
+  version: '2',
+  id: 28,
+  schema: '12',
+  compatibilityLevel: 'FORWARD_TRANSITIVE',
+  schemaType: SchemaType.JSON,
+};
+
+export { schemaVersion1 as schemaVersion };
 
 export const schemasFulfilledState = {
-  ids: ['MySchemaSubject', 'schema7_1'],
+  totalPages: 1,
+  ids: [schemaVersion2.subject, schemaVersion1.subject],
   entities: {
-    MySchemaSubject: {
-      subject: 'MySchemaSubject',
-      version: '1',
-      id: 28,
-      schema: '12',
-      compatibilityLevel: 'FORWARD_TRANSITIVE',
-      schemaType: SchemaType.JSON,
-    },
-    schema7_1: schemaVersion,
+    [schemaVersion2.subject]: schemaVersion2,
+    [schemaVersion1.subject]: schemaVersion1,
   },
   versions: {
+    latest: null,
     ids: [],
     entities: {},
   },
 };
 
-export const schemasInitialState = {
+export const versionFulfilledState = {
+  totalPages: 1,
   ids: [],
   entities: {},
   versions: {
-    ids: [],
-    entities: {},
+    latest: schemaVersion2,
+    ids: [schemaVersion1.id, schemaVersion2.id],
+    entities: {
+      [schemaVersion2.id]: schemaVersion2,
+      [schemaVersion1.id]: schemaVersion1,
+    },
   },
 };

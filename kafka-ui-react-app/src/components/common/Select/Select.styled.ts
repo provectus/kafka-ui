@@ -70,6 +70,17 @@ export const OptionList = styled.ul`
   color: ${(props) => props.theme.select.color.normal};
   overflow-y: scroll;
   z-index: 10;
+
+  &::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 7px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 4px;
+    background-color: ${(props) =>
+      props.theme.select.optionList.scrollbar.backgroundColor};
+  }
 `;
 
 export const Option = styled.li<OptionProps>`
