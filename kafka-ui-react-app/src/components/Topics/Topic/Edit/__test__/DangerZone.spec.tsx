@@ -23,6 +23,13 @@ const renderComponent = (props?: Partial<Props>) =>
     />
   );
 
+const clickOnDialogSubmitButton = () => {
+  userEvent.click(
+    within(screen.getByRole('dialog')).getByRole('button', {
+      name: 'Submit',
+    })
+  );
+};
 describe('DangerZone', () => {
   it('renders', () => {
     renderComponent();
@@ -70,13 +77,7 @@ describe('DangerZone', () => {
     userEvent.click(within(numberOfPartitionsEditForm).getByRole('button'));
 
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
-    await waitFor(() =>
-      userEvent.click(
-        within(screen.getByRole('dialog')).getByRole('button', {
-          name: 'Submit',
-        })
-      )
-    );
+    await waitFor(() => clickOnDialogSubmitButton());
 
     expect(mockUpdateTopicPartitionsCount).toHaveBeenCalledTimes(1);
   });
@@ -106,13 +107,7 @@ describe('DangerZone', () => {
     userEvent.click(within(replicationFactorEditForm).getByRole('button'));
 
     await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
-    await waitFor(() =>
-      userEvent.click(
-        within(screen.getByRole('dialog')).getByRole('button', {
-          name: 'Submit',
-        })
-      )
-    );
+    await waitFor(() => clickOnDialogSubmitButton());
 
     await waitFor(() => {
       expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
