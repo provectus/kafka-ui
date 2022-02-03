@@ -26,23 +26,23 @@ describe('Search', () => {
 
   describe('when placeholder is provided', () => {
     it('matches the snapshot', () => {
-      const { baseElement } = render(
+      render(
         <Search
           handleSearch={handleSearch}
           value=""
           placeholder="Search bt the Topic name"
         />
       );
-      expect(baseElement).toMatchSnapshot();
+      expect(
+        screen.getByPlaceholderText('Search bt the Topic name')
+      ).toBeInTheDocument();
     });
   });
 
   describe('when placeholder is not provided', () => {
     it('matches the snapshot', () => {
-      const { baseElement } = render(
-        <Search handleSearch={handleSearch} value="" />
-      );
-      expect(baseElement).toMatchSnapshot();
+      render(<Search handleSearch={handleSearch} value="" />);
+      expect(screen.queryByPlaceholderText('Search')).toBeInTheDocument();
     });
   });
 });
