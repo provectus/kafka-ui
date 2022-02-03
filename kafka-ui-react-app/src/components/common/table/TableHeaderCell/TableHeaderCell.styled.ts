@@ -5,6 +5,58 @@ interface TitleProps {
   isOrdered?: boolean;
 }
 
+const orderableMixin = css(
+  ({ theme: { table } }) => `
+    cursor: pointer;
+
+    padding-right: 18px;
+    position: relative;
+
+    &::before,
+    &::after {
+      border: 4px solid transparent;
+      content: '';
+      display: block;
+      height: 0;
+      right: 5px;
+      top: 50%;
+      position: absolute;
+    }
+
+    &::before {
+      border-bottom-color: ${table.th.color.normal};
+      margin-top: -9px;
+    }
+
+    &::after {
+      border-top-color: ${table.th.color.normal};
+      margin-top: 1px;
+    }
+
+    &:hover {
+      color: ${table.th.color.hover};
+      &::before {
+        border-bottom-color: ${table.th.color.hover};
+      }
+      &::after {
+        border-top-color: ${table.th.color.hover};
+      }
+    }
+  `
+);
+
+const orderedMixin = css(
+  ({ theme: { table } }) => `
+  color: ${table.th.color.active};
+      &::before {
+        border-bottom-color: ${table.th.color.active};
+      }
+      &::after {
+        border-top-color: ${table.th.color.active};
+      }
+  `
+);
+
 export const Title = styled.span<TitleProps>(
   ({ isOrderable, isOrdered, theme: { table } }) => css`
     font-family: Inter, sans-serif;
@@ -21,56 +73,9 @@ export const Title = styled.span<TitleProps>(
     cursor: default;
     color: ${table.th.color.normal};
 
-    ${isOrderable &&
-    css`
-      cursor: pointer;
+    ${isOrderable && orderableMixin}
 
-      padding-right: 18px;
-      position: relative;
-
-      &::before,
-      &::after {
-        border: 4px solid transparent;
-        content: '';
-        display: block;
-        height: 0;
-        right: 5px;
-        top: 50%;
-        position: absolute;
-      }
-
-      &::before {
-        border-bottom-color: ${table.th.color.normal};
-        margin-top: -9px;
-      }
-
-      &::after {
-        border-top-color: ${table.th.color.normal};
-        margin-top: 1px;
-      }
-
-      &:hover {
-        color: ${table.th.color.hover};
-        &::before {
-          border-bottom-color: ${table.th.color.hover};
-        }
-        &::after {
-          border-top-color: ${table.th.color.hover};
-        }
-      }
-    `}
-
-    ${isOrderable &&
-    isOrdered &&
-    css`
-      color: ${table.th.color.active};
-      &::before {
-        border-bottom-color: ${table.th.color.active};
-      }
-      &::after {
-        border-top-color: ${table.th.color.active};
-      }
-    `}
+    ${isOrderable && isOrdered && orderedMixin}
   `
 );
 
