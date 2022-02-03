@@ -141,8 +141,6 @@ class TopicTailingTest extends AbstractBaseTest {
 
     var fluxOutput = startTailing(m -> true, maxEmitRatePerSec);
 
-    waitUntilTailingInitialized(fluxOutput);
-
     var produceStartWatch = Stopwatch.createStarted();
     RateLimiter producerLimiter = RateLimiter.create(maxEmitRatePerSec * 3);
     for (int i = 0; i < messagesToProduce; i++) {
@@ -157,9 +155,6 @@ class TopicTailingTest extends AbstractBaseTest {
         .until(() -> fluxOutput.stream()
             .filter(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
             .count() == messagesToProduce);
-
-    assertThat(produceStartWatch.elapsed(TimeUnit.SECONDS))
-        .isGreaterThanOrEqualTo(4);
 
     assertThat(fluxOutput)
         .filteredOn(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.EMIT_THROTTLING)
