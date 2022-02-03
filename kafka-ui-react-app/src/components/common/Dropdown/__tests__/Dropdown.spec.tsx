@@ -4,7 +4,7 @@ import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-import { create } from 'react-test-renderer';
+import { screen } from '@testing-library/react';
 
 const dummyLable = 'My Test Label';
 const dummyChildren = (
@@ -57,9 +57,9 @@ describe('Dropdown', () => {
 
   it('handles click', () => {
     const wrapper = render(setupWrapper()).baseElement;
-    const button = wrapper.querySelector('button') as HTMLElement;
+    const button = screen.getByText('My Test Label');
 
-    expect(button).toBeTruthy();
+    expect(button).toBeInTheDocument();
     expect(wrapper.querySelector('.dropdown.is-active')).toBeFalsy();
 
     userEvent.click(button);
@@ -67,7 +67,7 @@ describe('Dropdown', () => {
   });
 
   it('matches snapshot', () => {
-    const wrapper = create(
+    const { baseElement } = render(
       setupWrapper(
         {
           right: true,
@@ -76,6 +76,6 @@ describe('Dropdown', () => {
         dummyChildren
       )
     );
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
   });
 });

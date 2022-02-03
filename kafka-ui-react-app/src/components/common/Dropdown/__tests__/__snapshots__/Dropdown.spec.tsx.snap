@@ -36,59 +36,59 @@ exports[`Dropdown matches snapshot 1`] = `
   color: initial;
 }
 
-<div
-  className="dropdown is-right is-up"
->
-  <div
-    className="c0"
-  >
-    <button
-      className="c1"
-      onClick={[Function]}
-      type="button"
-    >
-      My Test Label
-    </button>
-  </div>
-  <div
-    className="dropdown-menu"
-    id="dropdown-menu"
-    role="menu"
-  >
+<body>
+  <div>
     <div
-      className="dropdown-content has-text-left"
+      class="dropdown is-right is-up"
     >
-      <a
-        className="c2 dropdown-item is-link"
-        href="#end"
-        onClick={[Function]}
-        role="menuitem"
-        type="button"
+      <div
+        class="c0"
       >
-        Child 1
-      </a>
-      <a
-        className="c2 dropdown-item is-link"
-        href="#end"
-        onClick={[Function]}
-        role="menuitem"
-        type="button"
+        <button
+          class="c1"
+          type="button"
+        >
+          My Test Label
+        </button>
+      </div>
+      <div
+        class="dropdown-menu"
+        id="dropdown-menu"
+        role="menu"
       >
-        Child 2
-      </a>
-      <hr
-        className="dropdown-divider"
-      />
-      <a
-        className="c2 dropdown-item is-link"
-        href="#end"
-        onClick={[Function]}
-        role="menuitem"
-        type="button"
-      >
-        Child 3
-      </a>
+        <div
+          class="dropdown-content has-text-left"
+        >
+          <a
+            class="c2 dropdown-item is-link"
+            href="#end"
+            role="menuitem"
+            type="button"
+          >
+            Child 1
+          </a>
+          <a
+            class="c2 dropdown-item is-link"
+            href="#end"
+            role="menuitem"
+            type="button"
+          >
+            Child 2
+          </a>
+          <hr
+            class="dropdown-divider"
+          />
+          <a
+            class="c2 dropdown-item is-link"
+            href="#end"
+            role="menuitem"
+            type="button"
+          >
+            Child 3
+          </a>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+</body>
 `;

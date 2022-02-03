@@ -5,13 +5,16 @@ exports[`DropdownItem matches snapshot 1`] = `
   color: initial;
 }
 
-<a
-  className="c0 dropdown-item is-link"
-  href="#end"
-  onClick={[Function]}
-  role="menuitem"
-  type="button"
->
-  Item 1
-</a>
+<body>
+  <div>
+    <a
+      class="c0 dropdown-item is-link"
+      href="#end"
+      role="menuitem"
+      type="button"
+    >
+      Item 1
+    </a>
+  </div>
+</body>
 `;

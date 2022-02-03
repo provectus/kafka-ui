@@ -2,18 +2,17 @@ import React from 'react';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
-import { create } from 'react-test-renderer';
 import { screen } from '@testing-library/react';
 
 const onClick = jest.fn();
 
 describe('DropdownItem', () => {
   it('matches snapshot', () => {
-    const wrapper = create(
+    const { baseElement } = render(
       <DropdownItem onClick={jest.fn()}>Item 1</DropdownItem>
     );
     expect(onClick).not.toHaveBeenCalled();
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
   });
 
   it('handles Click', () => {
