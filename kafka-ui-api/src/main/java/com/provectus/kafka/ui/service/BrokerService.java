@@ -6,18 +6,7 @@ import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.TopicOrPartitionNotFoundException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
-import com.provectus.kafka.ui.model.BrokerConfigDTO;
-import com.provectus.kafka.ui.model.BrokerDTO;
-import com.provectus.kafka.ui.model.BrokerLogdirUpdateDTO;
-import com.provectus.kafka.ui.model.BrokerMetricsDTO;
-import com.provectus.kafka.ui.model.BrokersLogdirsDTO;
-import com.provectus.kafka.ui.model.InternalBrokerConfig;
-import com.provectus.kafka.ui.model.KafkaCluster;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import com.provectus.kafka.ui.model.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -31,6 +20,12 @@ import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +73,7 @@ public class BrokerService {
               BrokerDTO broker = new BrokerDTO();
               broker.setId(node.id());
               broker.setHost(node.host());
+              broker.setPort(node.port());
               return broker;
             }).collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
