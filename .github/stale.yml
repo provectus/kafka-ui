@@ -1,13 +1,14 @@
 # Number of days of inactivity before an issue becomes stale
-daysUntilStale: 30
+daysUntilStale: 7
 # Number of days of inactivity before a stale issue is closed
-daysUntilClose: 7
+daysUntilClose: 3
 # Only issues or pull requests with all of these labels are check if stale. Defaults to `[]` (disabled)
 onlyLabels:
   - 'status/pending'
 # Issues with these labels will never be considered stale
 exemptLabels:
   - 'status/on-hold'
+  - 'status/blocked'
   - 'status/triage'
   - 'type/security'
 # Label to use when marking an issue as stale
