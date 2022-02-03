@@ -1,8 +1,8 @@
 ---
 name: "\U0001F680 Feature request"
 about: Propose a new feature
-title: ''
-labels: type/enhancement
+title: "[Feature]"
+labels: status/triage, type/feature
 assignees: ''
 
 ---
@@ -14,23 +14,17 @@ assignees: ''
   For example, "I'm always frustrated when..."
 -->
 
-(Write your answer here.)
-
 ### Describe the solution you'd like
 
 <!--
   Provide a clear and concise description of what you want to happen.
 -->
 
-(Describe your proposed solution here.)
-
 ### Describe alternatives you've considered
 
 <!--
   Let us know about other solutions you've tried or researched.
 -->
-
-(Write your answer here.)
 
 ### Additional context
 
@@ -39,4 +33,3 @@ assignees: ''
   You might want to link to related issues here, if you haven't already.
 -->
 
-(Write your answer here.)

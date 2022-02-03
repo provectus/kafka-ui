@@ -25,7 +25,6 @@ export interface SelectOption {
 }
 
 const Select: React.FC<SelectProps> = ({
-  id,
   options = [],
   value,
   defaultValue,

@@ -652,6 +652,11 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/ConsumerGroupOrdering'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
