@@ -1,4 +1,4 @@
-package com.provectus.kafka.ui.pages;
+package com.provectus.kafka.ui.pages.connector;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selenide;
@@ -8,6 +8,7 @@ import io.qameta.allure.Step;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
+import static com.codeborne.selenide.Selectors.byLinkText;
 import static com.codeborne.selenide.Selenide.$;
 
 @ExtensionMethod(WaitUtils.class)
@@ -22,14 +23,14 @@ public class ConnectorsView {
 
     @Step
     public ConnectorUpdateView openEditConfig() {
-        $(By.xpath("//a/span[text()='Edit config']")).click();
+        $(byLinkText("Edit Config")).click();
         return new ConnectorUpdateView();
     }
 
     @Step
     public void clickDeleteButton() {
         $(By.xpath("//span[text()='Delete']")).click();
-        $(By.xpath("//button[text()='Confirm']")).click();
+        $(By.xpath("//button[text()='Submit']")).shouldBe(Condition.visible).click();
     }
 
     @Step

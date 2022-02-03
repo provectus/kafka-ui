@@ -1,5 +1,10 @@
 package com.provectus.kafka.ui.pages;
 
+import com.provectus.kafka.ui.pages.connector.ConnectorsList;
+import com.provectus.kafka.ui.pages.connector.ConnectorsView;
+import com.provectus.kafka.ui.pages.topic.TopicView;
+import com.provectus.kafka.ui.pages.topic.TopicsList;
+
 public class Pages {
 
     public static Pages INSTANCE = new Pages();

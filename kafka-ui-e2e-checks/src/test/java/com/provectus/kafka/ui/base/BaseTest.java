@@ -94,6 +94,7 @@ public class BaseTest {
     Configuration.reopenBrowserOnFail = TestConfiguration.REOPEN_BROWSER_ON_FAIL;
     Configuration.browser = TestConfiguration.BROWSER;
     Configuration.baseUrl = TestConfiguration.BASE_URL;
+    Configuration.timeout = 10000;
     Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
     var capabilities = new DesiredCapabilities();
 //    DesiredCapabilities capabilities = DesiredCapabilities.chrome();
