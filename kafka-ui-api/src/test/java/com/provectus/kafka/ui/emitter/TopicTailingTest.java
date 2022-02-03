@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.emitter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.base.Stopwatch;
 import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -141,7 +139,6 @@ class TopicTailingTest extends AbstractBaseTest {
 
     var fluxOutput = startTailing(m -> true, maxEmitRatePerSec);
 
-    var produceStartWatch = Stopwatch.createStarted();
     RateLimiter producerLimiter = RateLimiter.create(maxEmitRatePerSec * 3);
     for (int i = 0; i < messagesToProduce; i++) {
       producerLimiter.acquire();
