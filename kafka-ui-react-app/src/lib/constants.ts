@@ -46,6 +46,7 @@ export const MILLISECONDS_IN_WEEK = 604_800_000;
 export const MILLISECONDS_IN_DAY = 86_400_000;
 export const MILLISECONDS_IN_SECOND = 1_000;
 
+export const NOT_SET = -1;
 export const BYTES_IN_GB = 1_073_741_824;
 
 export const PER_PAGE = 25;
