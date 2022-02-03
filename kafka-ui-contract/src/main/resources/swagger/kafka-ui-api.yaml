@@ -1733,6 +1733,7 @@ components:
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
+        - SIZE
 
     SortOrder:
       type: string

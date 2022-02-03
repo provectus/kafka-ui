@@ -455,6 +455,8 @@ public class TopicsService {
           return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
         case REPLICATION_FACTOR:
           return Comparator.comparing(InternalTopic::getReplicationFactor);
+        case SIZE:
+          return Comparator.comparing(InternalTopic::getSegmentSize);
         case NAME:
         default:
           return defaultComparator;
