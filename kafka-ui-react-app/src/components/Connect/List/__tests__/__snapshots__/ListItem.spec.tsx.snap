@@ -335,6 +335,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "hover": "#171A1C",
           "normal": "#171A1C",
         },
+        "optionList": Object {
+          "scrollbar": Object {
+            "backgroundColor": "#ABB5BA",
+          },
+        },
       },
       "switch": Object {
         "checked": "#29A352",

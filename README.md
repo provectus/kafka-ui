@@ -1,7 +1,10 @@
-![UI for Apache Kafka logo](images/kafka-ui-logo.png) UI for Apache Kafka – Free Web UI for Apache Kafka &nbsp; 
+![UI for Apache Kafka logo](documentation/images/kafka-ui-logo.png) UI for Apache Kafka&nbsp;
 ------------------
+#### Versatile, fast and lightweight web UI for managing Apache Kafka® clusters. Built by developers, for developers.
 
-![UI for Apache Kafka Price Free](images/free-open-source.svg)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/provectus/kafka-ui/blob/master/LICENSE)
+![UI for Apache Kafka Price Free](documentation/images/free-open-source.svg)
+[![Release version](https://img.shields.io/github/v/release/provectus/kafka-ui)](https://github.com/provectus/kafka-ui/releases)
 [![Chat with us](https://img.shields.io/discord/897805035122077716)](https://discord.gg/4DWzD7pGE5)
 
 <em>UI for Apache Kafka is a free, open-source web UI to monitor and manage Apache Kafka clusters. </em> 
@@ -11,7 +14,7 @@ UI for Apache Kafka is a simple tool that makes your data flows observable, help
 Set up UI for Apache Kafka with just a couple of easy commands to visualize your Kafka data in a comprehensible way. You can run the tool locally or in 
 the cloud. 
 
-![Interface](images/Interface.gif)
+![Interface](documentation/images/Interface.gif)
 
 # Features
 * **Multi-Cluster Management** — monitor and manage all your clusters in one place
@@ -26,31 +29,33 @@ the cloud.
 # The Interface
 UI for Apache Kafka wraps major functions of Apache Kafka with an intuitive user interface.
 
+![Interface](documentation/images/Interface.gif)
+
 ## Topics
 UI for Apache Kafka makes it easy for you to create topics in your browser by several clicks, 
 pasting your own parameters, and viewing topics in the list.
 
-![Create Topic](images/Create_topic_kafka-ui.gif)
+![Create Topic](documentation/images/Create_topic_kafka-ui.gif)
 
 It's possible to jump from connectors view to corresponding topics and from a topic to consumers (back and forth) for more convenient navigation.
-connectors, overview topic`s settings. 
+connectors, overview topic settings. 
 
-![Connector_Topic_Consumer](images/Connector_Topic_Consumer.gif)
+![Connector_Topic_Consumer](documentation/images/Connector_Topic_Consumer.gif)
 
 ### Messages
 Let's say we want to produce messages for our topic. With the UI for Apache Kafka we can send or write data/messages to the Kafka topics without effort by specifying parameters, and viewing messages in the list.
 
-![Produce Message](images/Create_message_kafka-ui.gif)
+![Produce Message](documentation/images/Create_message_kafka-ui.gif)
 
 ## Schema registry
 There are 3 supported types of schemas: Avro®, JSON Schema, and Protobuf schemas.
 
-![Create Schema Registry](images/Create_schema.gif)
+![Create Schema Registry](documentation/images/Create_schema.gif)
 
 Before producing avro-encoded messages, you have to add an avro schema for the topic in Schema Registry. Now all these steps are easy to do 
 with a few clicks in a user-friendly interface.
 
-![Avro Schema Topic](images/Schema_Topic.gif)
+![Avro Schema Topic](documentation/images/Schema_Topic.gif)
 
 # Getting Started
 
@@ -58,7 +63,7 @@ To run UI for Apache Kafka, you can use a pre-built Docker image or build it loc
 
 ## Configuration
 
-We have plenty of [docker-compose files](guides/yaml-description.md) as examples. They're built for various configuration stacks.
+We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md) as examples. They're built for various configuration stacks.
 
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
@@ -114,73 +119,33 @@ If you prefer to use `docker-compose` please refer to the [documentation](docker
 
 ## Building With Docker
 
-Steps to build UI for Apache Kafka locally with Docker:  
-
-1. Install prerequisites: Java and Docker
-2. Clone this repository and open a terminal in the directory of the project
-3. Build a Docker container with UI for Apache Kafka
-4. Start UI for Apache Kafka with your Kafka clusters
-5. Navigate to UI for Apache Kafka 
-
 ### Prerequisites
 
-* Java 13 or newer
-* Docker 
+Check [software-required.md](documentation/project/contributing/software-required.md)
 
-### Installing Prerequisites on Mac
-1. Install Homebrew Cask:
-```sh
-> brew update
-``` 
-2. Install JAVA 13 with Homebrew Cask:
-```sh
-> brew tap adoptopenjdk/openjdk
-> brew install adoptopenjdk13
-``` 
 ### Building
 
-Once you installed the prerequisites and cloned the repository, run the following commands in your project directory: 
+Check [building.md](documentation/project/contributing/building.md)
 
-Build a Docker container with UI for Apache Kafka: 
-```sh
-./mvnw clean install -Pprod
-``` 
-Start UI for Apache Kafka with your Kafka clusters: 
-```sh
-docker-compose -f ./docker/kafka-ui.yaml up
-``` 
-To see UI for Apache Kafka, navigate to http://localhost:8080.
+### Running
 
-If you want to start only kafka-clusters: 
-```sh
-docker-compose -f ./docker/kafka-clusters-only.yaml up
-``` 
-Then start UI for Apache Kafka with a **local** profile. 
-
-## Running Locally Without Docker
-
-```sh
-./mvnw spring-boot:run -Pprod
-``` 
-
-## Running in Kubernetes
-``` bash
-helm repo add kafka-ui https://provectus.github.io/kafka-ui
-helm install kafka-ui kafka-ui/kafka-ui
-```
-To read more please follow to [chart documentation](charts/kafka-ui/README.md)
+Check [running.md](documentation/project/contributing/running.md)
 
 # Guides
 
-- [SSO configuration](guides/SSO.md)
-- [AWS IAM configuration](guides/AWS_IAM.md)
-- [Docker-compose files](guides/yaml-description.md)
+- [SSO configuration](documentation/guides/SSO.md)
+- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
+- [Docker-compose files](documentation/guides/yaml-description.md)
 
 ## Connecting to a Secure Broker
 
 UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
 
 To be continued
+
+## Liveliness and readiness probes
+Liveliness and readiness endpoint is at `/actuator/health`.
+Info endpoint (build info) is located at `/actuator/info`.
 
 ## <a name="env_variables"></a> Environment Variables
 
