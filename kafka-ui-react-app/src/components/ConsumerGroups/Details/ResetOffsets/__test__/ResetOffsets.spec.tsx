@@ -1,7 +1,7 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
 import { Route } from 'react-router';
-import { screen, waitFor, fireEvent } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { clusterConsumerGroupResetOffsetsPath } from 'lib/paths';
@@ -122,9 +122,10 @@ describe('ResetOffsets', () => {
           }
         );
         await waitFor(() => {
-          fireEvent.change(screen.getAllByLabelText('Partition #0')[1], {
-            target: { value: '10' },
-          });
+          userEvent.click(screen.getAllByLabelText('Partition #0')[1]);
+        });
+        await waitFor(() => {
+          userEvent.keyboard('10');
         });
         userEvent.click(screen.getByText('Submit'));
         await waitFor(() => resetConsumerGroupOffsetsMockCalled());
