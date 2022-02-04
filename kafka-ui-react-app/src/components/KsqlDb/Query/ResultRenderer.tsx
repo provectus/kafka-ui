@@ -1,11 +1,28 @@
 import React from 'react';
 import { KsqlTableResponse } from 'generated-sources';
-import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { nanoid } from '@reduxjs/toolkit';
 
 import * as S from './ResultRenderer.styled';
 
-// const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
+function hasJsonStructure(str: string | Record<string, unknown>): boolean {
+  if (typeof str === 'object') {
+    return true;
+  }
+
+  if (typeof str === 'string') {
+    try {
+      const result = JSON.parse(str);
+      const type = Object.prototype.toString.call(result);
+      return type === '[object Object]' || type === '[object Array]';
+    } catch (err) {
+      return false;
+    }
+  }
+
+  return false;
+}
+
 const ResultRenderer: React.FC<{ result: KsqlTableResponse }> = ({
   result,
 }) => {
@@ -16,27 +33,25 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse }> = ({
     return result.columnNames || [];
   }, [result.columnNames]);
   const rows = React.useMemo(() => {
-    return result.values || [];
+    return (result.values || []).map((row) => {
+      return {
+        id: nanoid(),
+        cells: row.map((cell) => {
+          return {
+            id: nanoid(),
+            value: hasJsonStructure(cell)
+              ? JSON.stringify(cell, null, 2)
+              : cell,
+          };
+        }),
+      };
+    });
   }, [result.values]);
-
-  const transformedRows = React.useMemo(
-    () =>
-      rows.map((row) =>
-        row.reduce(
-          (res, acc, index) => ({
-            ...res,
-            [ths[index]]: acc,
-          }),
-          {} as Dictionary<string>
-        )
-      ),
-    []
-  );
 
   return (
     <S.Wrapper>
       <h3>{heading}</h3>
-      <Table>
+      <S.ScrollableTable>
         <thead>
           <tr>
             {ths.map((th) => (
@@ -45,20 +60,21 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse }> = ({
           </tr>
         </thead>
         <tbody>
-          {transformedRows.map((row) => (
-            <tr key={row.name}>
-              {ths.map((header) => (
-                <td key={header}>{row[header]}</td>
-              ))}
-            </tr>
-          ))}
-          {rows.length === 0 && (
+          {rows.length === 0 ? (
             <tr>
               <td colSpan={ths.length}>No tables or streams found</td>
             </tr>
+          ) : (
+            rows.map((row) => (
+              <tr key={row.id}>
+                {row.cells.map((cell) => (
+                  <td key={cell.id}>{cell.value}</td>
+                ))}
+              </tr>
+            ))
           )}
         </tbody>
-      </Table>
+      </S.ScrollableTable>
     </S.Wrapper>
   );
 };

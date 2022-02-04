@@ -46,6 +46,7 @@ const Query: FC = () => {
     if (sse.current) {
       sse.current.close();
       setContinuousFetching(false);
+      sse.current = null;
     }
   }, [sse, setContinuousFetching]);
 
@@ -72,7 +73,7 @@ const Query: FC = () => {
     return () => {
       closeSSE();
     };
-  }, [executionResult]);
+  }, [closeSSE, sse, executionResult]);
 
   const handleSSECancel = () => {
     if (!sse.current) return;
@@ -90,19 +91,23 @@ const Query: FC = () => {
     },
   });
 
-  const submitHandler = useCallback((values: FormValues) => {
-    dispatch(
-      executeKsql({
-        clusterName,
-        ksqlCommandV2: {
-          ...values,
-          streamsProperties: values.streamsProperties
-            ? JSON.parse(values.streamsProperties)
-            : undefined,
-        },
-      })
-    );
-  }, []);
+  const submitHandler = useCallback(
+    (values: FormValues) => {
+      handleSSECancel();
+      dispatch(
+        executeKsql({
+          clusterName,
+          ksqlCommandV2: {
+            ...values,
+            streamsProperties: values.streamsProperties
+              ? JSON.parse(values.streamsProperties)
+              : undefined,
+          },
+        })
+      );
+    },
+    [handleSSECancel, dispatch, executeKsql]
+  );
 
   return (
     <>
@@ -163,10 +168,7 @@ const Query: FC = () => {
               buttonType="secondary"
               buttonSize="M"
               disabled={!table}
-              onClick={() => {
-                reset();
-                handleSSECancel();
-              }}
+              onClick={() => handleSSECancel()}
             >
               Clear results
             </Button>
