@@ -1,7 +1,7 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
-import { TopicName, TopicConfigByName } from 'redux/interfaces';
+import { TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
@@ -16,7 +16,6 @@ import * as S from './TopicForm.styled';
 
 export interface Props {
   topicName?: TopicName;
-  config?: TopicConfigByName;
   isEditing?: boolean;
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
@@ -38,7 +37,6 @@ const RetentionBytesOptions: Array<SelectOption> = [
 
 const TopicForm: React.FC<Props> = ({
   topicName,
-  config,
   isEditing,
   isSubmitting,
   onSubmit,
@@ -197,7 +195,7 @@ const TopicForm: React.FC<Props> = ({
         </S.Column>
 
         <S.CustomParamsHeading>Custom parameters</S.CustomParamsHeading>
-        <CustomParamsContainer isSubmitting={isSubmitting} config={config} />
+        <CustomParamsContainer isSubmitting={isSubmitting} />
 
         <Button type="submit" buttonType="primary" buttonSize="L">
           Send
