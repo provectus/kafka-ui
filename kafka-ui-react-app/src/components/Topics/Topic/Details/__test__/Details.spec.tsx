@@ -37,6 +37,7 @@ describe('Details', () => {
           deleteTopic={mockDelete}
           clearTopicMessages={mockClearTopicMessages}
           isDeleted={false}
+          isDeletePolicy
         />
       </ClusterContext.Provider>,
       { pathname }
@@ -64,6 +65,7 @@ describe('Details', () => {
                   deleteTopic={mockDelete}
                   clearTopicMessages={mockClearTopicMessages}
                   isDeleted={false}
+                  isDeletePolicy
                 />
               </ClusterContext.Provider>
             </StaticRouter>
