@@ -3,7 +3,9 @@ import reducer, {
   fetchKsqlDbTables,
   resetExecutionResult,
   executeKsql,
+  transformKsqlResponse,
 } from 'redux/reducers/ksqlDb/ksqlDbSlice';
+import { Table } from 'generated-sources';
 
 import { fetchKsqlDbTablesPayload } from './fixtures';
 
@@ -12,6 +14,19 @@ describe('KsqlDb reducer', () => {
     expect(reducer(undefined, { type: fetchKsqlDbTables.pending })).toEqual(
       initialState
     );
+  });
+
+  it('It should transform data with given headers and rows', () => {
+    const data: Table = {
+      headers: ['header1'],
+      rows: [['value1'], ['value2'], ['value3']],
+    };
+    const transformedData = transformKsqlResponse(data);
+    expect(transformedData).toEqual([
+      { header1: 'value1' },
+      { header1: 'value2' },
+      { header1: 'value3' },
+    ]);
   });
 
   it('Fetches tables and streams', () => {
