@@ -24,25 +24,21 @@ describe('Search', () => {
     expect(handleSearch).toHaveBeenCalledTimes(5);
   });
 
-  describe('when placeholder is provided', () => {
-    it('matches the snapshot', () => {
-      render(
-        <Search
-          handleSearch={handleSearch}
-          value=""
-          placeholder="Search bt the Topic name"
-        />
-      );
-      expect(
-        screen.getByPlaceholderText('Search bt the Topic name')
-      ).toBeInTheDocument();
-    });
+  it('when placeholder is provided', () => {
+    render(
+      <Search
+        handleSearch={handleSearch}
+        value=""
+        placeholder="Search bt the Topic name"
+      />
+    );
+    expect(
+      screen.getByPlaceholderText('Search bt the Topic name')
+    ).toBeInTheDocument();
   });
 
-  describe('when placeholder is not provided', () => {
-    it('matches the snapshot', () => {
-      render(<Search handleSearch={handleSearch} value="" />);
-      expect(screen.queryByPlaceholderText('Search')).toBeInTheDocument();
-    });
+  it('when placeholder is not provided', () => {
+    render(<Search handleSearch={handleSearch} value="" />);
+    expect(screen.queryByPlaceholderText('Search')).toBeInTheDocument();
   });
 });
