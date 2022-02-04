@@ -15,7 +15,7 @@ import reactor.test.StepVerifier;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 class BrokerServiceTest extends AbstractBaseTest {
-  private final KafkaCluster CLUSTER =
+  private final KafkaCluster kafkaCluster =
       KafkaCluster.builder()
           .name(LOCAL)
           .bootstrapServers(kafka.getBootstrapServers())
@@ -34,14 +34,14 @@ class BrokerServiceTest extends AbstractBaseTest {
 
   @Test
   void getBrokersNominal() {
-    BrokerDTO brokerDTO = new BrokerDTO();
-    brokerDTO.setId(1);
-    brokerDTO.setHost("localhost");
+    BrokerDTO brokerdto = new BrokerDTO();
+    brokerdto.setId(1);
+    brokerdto.setHost("localhost");
     String port = kafka.getBootstrapServers().substring(kafka.getBootstrapServers().lastIndexOf(":") + 1);
-    brokerDTO.setPort(Integer.parseInt(port));
+    brokerdto.setPort(Integer.parseInt(port));
 
-    StepVerifier.create(brokerService.getBrokers(CLUSTER))
-        .expectNext(brokerDTO)
+    StepVerifier.create(brokerService.getBrokers(kafkaCluster))
+        .expectNext(brokerdto)
         .verifyComplete();
   }
 
