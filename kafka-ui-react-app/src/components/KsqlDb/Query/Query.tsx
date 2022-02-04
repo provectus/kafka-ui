@@ -27,7 +27,7 @@ const validationSchema = yup.object({
 
 const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
-  const source = React.useRef<EventSource | null>(null);
+  const sse = React.useRef<EventSource | null>(null);
   const [continuousFetching, setContinuousFetching] = useState(false);
   const dispatch = useDispatch();
 
@@ -36,46 +36,49 @@ const Query: FC = () => {
 
   const reset = useCallback(() => {
     dispatch(resetExecutionResult());
-  }, [dispatch]);
+  }, [dispatch, resetExecutionResult]);
 
   useEffect(() => {
     return reset;
   }, []);
 
-  // eslint-disable-next-line consistent-return
+  const closeSSE = useCallback(() => {
+    if (sse.current) {
+      sse.current.close();
+      setContinuousFetching(false);
+    }
+  }, [sse, setContinuousFetching]);
+
   useEffect(() => {
-    if (executionResult?.pipeId) {
+    if (!sse.current && executionResult?.pipeId) {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${executionResult?.pipeId}`;
-      const sse = new EventSource(url);
+      sse.current = new EventSource(url);
 
-      source.current = sse;
-      setContinuousFetching(true);
+      // setContinuousFetching(true);
 
-      sse.onopen = () => {
+      sse.current.onopen = () => {
         setContinuousFetching(true);
       };
-      sse.onmessage = ({ data }) => {
+
+      sse.current.onmessage = ({ data }) => {
         const { table: responseTable }: KsqlResponse = JSON.parse(data);
         if (responseTable) setTable(responseTable);
       };
 
-      sse.onerror = () => {
-        setContinuousFetching(false);
-        sse.close();
-      };
-      return () => {
-        setContinuousFetching(false);
-        sse.close();
+      sse.current.onerror = () => {
+        closeSSE();
       };
     }
+    return () => {
+      closeSSE();
+    };
   }, [executionResult]);
 
   const handleSSECancel = () => {
-    if (!source.current) return;
+    if (!sse.current) return;
 
     reset();
-    setContinuousFetching(false);
-    source.current.close();
+    closeSSE();
   };
 
   const { handleSubmit, setValue, control } = useForm<FormValues>({
@@ -170,7 +173,7 @@ const Query: FC = () => {
           </S.KSQLButtons>
         </form>
       </S.QueryWrapper>
-      <ResultRenderer result={table} />
+      {table && <ResultRenderer result={table} />}
       {continuousFetching && (
         <>
           <S.ContinuousLoader />

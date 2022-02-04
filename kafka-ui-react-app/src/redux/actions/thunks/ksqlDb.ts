@@ -1,6 +1,5 @@
 import {
   Configuration,
-  ExecuteKsqlCommandRequest,
   ExecuteKsqlRequest,
   KsqlApi,
   Table as KsqlTable,
@@ -47,8 +46,10 @@ export const fetchKsqlDbTables =
   async (dispatch) => {
     dispatch(actions.fetchKsqlDbTablesAction.request());
     try {
-      const tables = await getTables(clusterName);
-      const streams = await getStreams(clusterName);
+      const [tables, streams] = await Promise.all([
+        getTables(clusterName),
+        getStreams(clusterName),
+      ]);
 
       dispatch(
         actions.fetchKsqlDbTablesAction.success({
@@ -57,7 +58,7 @@ export const fetchKsqlDbTables =
         })
       );
     } catch (error) {
-      const response = await getResponse(error);
+      const response = await getResponse(error as Response);
       const alert: FailurePayload = {
         subject: 'ksqlDb',
         title: `Failed to fetch tables and streams`,
@@ -77,7 +78,7 @@ export const executeKsql =
 
       dispatch(actions.executeKsqlAction.success(response));
     } catch (error) {
-      const response = await getResponse(error);
+      const response = await getResponse(error as Response);
       const alert: FailurePayload = {
         subject: 'ksql execution',
         title: `Failed to execute command ${params.ksqlCommandV2?.ksql}`,

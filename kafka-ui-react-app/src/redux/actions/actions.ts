@@ -15,8 +15,6 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
-  KsqlCommandResponse,
-  KsqlResponse,
   KsqlCommandV2Response,
 } from 'generated-sources';
 
