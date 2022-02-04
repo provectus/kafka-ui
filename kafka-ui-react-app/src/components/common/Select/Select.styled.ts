@@ -84,7 +84,6 @@ export const OptionList = styled.ul`
   }
 
   &::-webkit-scrollbar:horizontal {
-    -webkit-appearance: auto;
     height: 7px;
   }
 `;
