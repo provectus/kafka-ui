@@ -69,7 +69,7 @@ export const OptionList = styled.ul`
   color: ${(props) => props.theme.select.color.normal};
   overflow-y: scroll;
   z-index: 10;
-  max-width: 350px;
+  max-width: 300px;
   min-width: 100%;
 
   &::-webkit-scrollbar {
@@ -84,7 +84,8 @@ export const OptionList = styled.ul`
   }
 
   &::-webkit-scrollbar:horizontal {
-    display: none;
+    -webkit-appearance: auto;
+    height: 7px;
   }
 `;
 
