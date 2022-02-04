@@ -2,7 +2,7 @@ import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
-import JSONViewer from 'components/common/JSONViewer/JSONViewer';
+import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 
 import { SchemaVersionWrapper } from './SchemaVersion.styled';
 
@@ -11,10 +11,11 @@ interface SchemaVersionProps {
 }
 
 const SchemaVersion: React.FC<SchemaVersionProps> = ({
-  version: { version, id, schema },
+  version: { version, id, schema, schemaType },
 }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
+
   return (
     <>
       <tr>
@@ -29,7 +30,7 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
       {isOpen && (
         <SchemaVersionWrapper>
           <td colSpan={3}>
-            <JSONViewer data={schema} />
+            <EditorViewer data={schema} schemaType={schemaType} />
           </td>
         </SchemaVersionWrapper>
       )}

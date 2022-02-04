@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
+import com.provectus.kafka.ui.exception.SchemaTypeIsNotSupportedException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
@@ -20,9 +21,11 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +44,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RequiredArgsConstructor
 public class SchemaRegistryService {
+
   public static final String NO_SUCH_SCHEMA_VERSION = "No such schema %s with version %s";
   public static final String NO_SUCH_SCHEMA = "No such schema %s";
 
@@ -50,14 +54,16 @@ public class SchemaRegistryService {
   private static final String URL_SUBJECT_BY_VERSION = "/subjects/{schemaName}/versions/{version}";
   private static final String LATEST = "latest";
 
+  private static final String UNRECOGNIZED_FIELD_SCHEMA_TYPE = "Unrecognized field: schemaType";
+
   private final ClusterMapper mapper;
   private final WebClient webClient;
 
-  public Flux<SchemaSubjectDTO> getAllLatestVersionSchemas(KafkaCluster cluster) {
-    var allSubjectNames = getAllSubjectNames(cluster);
-    return allSubjectNames
-        .flatMapMany(Flux::fromArray)
-        .flatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject));
+  public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
+                                                                 List<String> subjects) {
+    return Flux.fromIterable(subjects)
+            .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
+            .collect(Collectors.toList());
   }
 
   public Mono<String[]> getAllSubjectNames(KafkaCluster cluster) {
@@ -193,7 +199,9 @@ public class SchemaRegistryService {
         .retrieve()
         .onStatus(UNPROCESSABLE_ENTITY::equals,
             r -> r.bodyToMono(ErrorResponse.class)
-                .flatMap(x -> Mono.error(new UnprocessableEntityException(x.getMessage()))))
+                .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
+                        ? new SchemaTypeIsNotSupportedException()
+                        : new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SubjectIdResponse.class);
   }
 
@@ -298,5 +306,9 @@ public class SchemaRegistryService {
         .method(method)
         .uri(schemaRegistry.getFirstUrl() + uri, params)
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
+  }
+
+  private boolean isUnrecognizedFieldSchemaTypeMessage(String errorMessage) {
+    return errorMessage.contains(UNRECOGNIZED_FIELD_SCHEMA_TYPE);
   }
 }

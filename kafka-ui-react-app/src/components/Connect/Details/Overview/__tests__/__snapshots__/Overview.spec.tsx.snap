@@ -96,6 +96,17 @@ exports[`Overview view matches snapshot 1`] = `
   border-bottom-right-radius: 8px;
 }
 
+.c6 {
+  grid-area: status;
+  fill: none;
+  width: 4px;
+  height: 4px;
+}
+
+.c7 {
+  fill: #E51A1A;
+}
+
 @media screen and (max-width:1023px) {
   .c1 > .c2:first-child,
   .c1 > .c2:last-child {
@@ -168,6 +179,7 @@ exports[`Overview view matches snapshot 1`] = `
           <span>
             <p
               className="c5"
+              color="yellow"
             >
               RUNNING
             </p>
@@ -199,22 +211,21 @@ exports[`Overview view matches snapshot 1`] = `
             Tasks Failed
              
             <svg
-              fill="none"
-              height="4"
+              className="c6"
+              role="svg"
               viewBox="0 0 4 4"
-              width="4"
               xmlns="http://www.w3.org/2000/svg"
             >
               <circle
-                cx="2"
-                cy="2"
-                fill="#E61A1A"
-                r="2"
+                className="c7"
+                cx={2}
+                cy={2}
+                r={2}
+                role="circle"
               />
             </svg>
           </div>
           <span>
-            f
             2
           </span>
         </div>

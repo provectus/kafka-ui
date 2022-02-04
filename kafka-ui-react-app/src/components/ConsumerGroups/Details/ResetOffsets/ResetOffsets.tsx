@@ -67,6 +67,7 @@ const ResetOffsets: React.FC = () => {
   );
 
   const methods = useForm<FormType>({
+    mode: 'onChange',
     defaultValues: {
       resetType: ConsumerGroupOffsetsResetType.EARLIEST,
       topic: '',
@@ -80,7 +81,7 @@ const ResetOffsets: React.FC = () => {
     control,
     setError,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isValid },
   } = methods;
   const { fields } = useFieldArray({
     control,
@@ -127,7 +128,7 @@ const ResetOffsets: React.FC = () => {
         partition: number;
       }[],
     };
-    let isValid = true;
+    let isValidAugmentedData = true;
     if (augmentedData.resetType === ConsumerGroupOffsetsResetType.OFFSET) {
       augmentedData.partitionsOffsets.forEach((offset, index) => {
         if (!offset.offset) {
@@ -135,7 +136,7 @@ const ResetOffsets: React.FC = () => {
             type: 'manual',
             message: "This field shouldn't be empty!",
           });
-          isValid = false;
+          isValidAugmentedData = false;
         }
       });
     } else if (
@@ -146,10 +147,10 @@ const ResetOffsets: React.FC = () => {
           type: 'manual',
           message: "This field shouldn't be empty!",
         });
-        isValid = false;
+        isValidAugmentedData = false;
       }
     }
-    if (isValid) {
+    if (isValidAugmentedData) {
       dispatch(
         resetConsumerGroupOffsets({
           clusterName,
@@ -181,24 +182,48 @@ const ResetOffsets: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)}>
           <MainSelectorsWrapperStyled>
             <div>
-              <InputLabel htmlFor="topic">Topic</InputLabel>
-              <Select name="topic" id="topic" selectSize="M">
-                {uniqueTopics.map((topic) => (
-                  <option key={topic} value={topic}>
-                    {topic}
-                  </option>
-                ))}
-              </Select>
+              <InputLabel id="topicLabel">Topic</InputLabel>
+              <Controller
+                control={control}
+                name="topic"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="topic"
+                    selectSize="M"
+                    aria-labelledby="topicLabel"
+                    minWidth="100%"
+                    name={name}
+                    onChange={onChange}
+                    defaultValue={value}
+                    value={value}
+                    options={uniqueTopics.map((topic) => ({
+                      value: topic,
+                      label: topic,
+                    }))}
+                  />
+                )}
+              />
             </div>
             <div>
-              <InputLabel htmlFor="resetType">Reset Type</InputLabel>
-              <Select name="resetType" id="resetType" selectSize="M">
-                {Object.values(ConsumerGroupOffsetsResetType).map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </Select>
+              <InputLabel id="resetTypeLabel">Reset Type</InputLabel>
+              <Controller
+                control={control}
+                name="resetType"
+                render={({ field: { name, onChange, value } }) => (
+                  <Select
+                    id="resetType"
+                    selectSize="M"
+                    aria-labelledby="resetTypeLabel"
+                    minWidth="100%"
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    options={Object.values(ConsumerGroupOffsetsResetType).map(
+                      (type) => ({ value: type, label: type })
+                    )}
+                  />
+                )}
+              />
             </div>
             <div>
               <InputLabel>Partitions</InputLabel>
@@ -258,7 +283,13 @@ const ResetOffsets: React.FC = () => {
                         id={`partitionsOffsets.${index}.offset`}
                         type="number"
                         name={`partitionsOffsets.${index}.offset` as const}
-                        hookFormOptions={{ shouldUnregister: true }}
+                        hookFormOptions={{
+                          shouldUnregister: true,
+                          min: {
+                            value: 0,
+                            message: 'must be greater than or equal to 0',
+                          },
+                        }}
                         defaultValue={field.offset}
                       />
                       <ErrorMessage
@@ -277,7 +308,7 @@ const ResetOffsets: React.FC = () => {
             buttonSize="M"
             buttonType="primary"
             type="submit"
-            disabled={selectedPartitions.length === 0}
+            disabled={!isValid || selectedPartitions.length === 0}
           >
             Submit
           </Button>

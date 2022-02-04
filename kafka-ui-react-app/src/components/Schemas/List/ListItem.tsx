@@ -1,7 +1,7 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import { NavLink } from 'react-router-dom';
-import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import * as S from 'components/common/table/Table/TableKeyLink.styled';
 
 export interface ListItemProps {
   subject: SchemaSubject;
@@ -12,13 +12,13 @@ const ListItem: React.FC<ListItemProps> = ({
 }) => {
   return (
     <tr>
-      <TableKeyLink>
-        <NavLink exact to={`schemas/${subject}`}>
+      <S.TableKeyLink>
+        <NavLink exact to={`schemas/${subject}`} role="link">
           {subject}
         </NavLink>
-      </TableKeyLink>
-      <td>{version}</td>
-      <td>{compatibilityLevel}</td>
+      </S.TableKeyLink>
+      <td role="cell">{version}</td>
+      <td role="cell">{compatibilityLevel}</td>
     </tr>
   );
 };

@@ -35,9 +35,9 @@ jobs:
       - name: Build
         id: build
         run: |
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
+          mvn clean package -Pprod -DskipTests -DbuildVersion=$GITHUB_SHA
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=$GITHUB_SHA --non-recursive exec:exec)
           echo "::set-output name=version::${VERSION}"
-          mvn clean package -Pprod -DskipTests
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -104,4 +104,4 @@ jobs:
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
-            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.kafka-ui.provectus.io
+            Custom deployment will be available at http://${{ needs.build.outputs.tag }}.kafka-ui.provectus.io in 5 minutes

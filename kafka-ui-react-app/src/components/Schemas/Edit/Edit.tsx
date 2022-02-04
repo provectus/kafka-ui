@@ -1,175 +1,201 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useHistory, useParams } from 'react-router';
 import { useForm, Controller, FormProvider } from 'react-hook-form';
 import {
   CompatibilityLevelCompatibilityEnum,
-  SchemaSubject,
   SchemaType,
 } from 'generated-sources';
 import { clusterSchemaPath } from 'lib/paths';
-import { ClusterName, NewSchemaSubjectRaw, SchemaName } from 'redux/interfaces';
-import PageLoader from 'components/common/PageLoader/PageLoader';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import { NewSchemaSubjectRaw } from 'redux/interfaces';
+import Editor from 'components/common/Editor/Editor';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  schemaAdded,
+  schemasApiClient,
+  fetchLatestSchema,
+  getSchemaLatest,
+  SCHEMA_LATEST_FETCH_ACTION,
+  getAreSchemaLatestFulfilled,
+  schemaUpdated,
+} from 'redux/reducers/schemas/schemasSlice';
+import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
+import { getResponse } from 'lib/errorHandling';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
-import { EditorsWrapper, EditWrapper } from './Edit.styled';
+import * as S from './Edit.styled';
 
-export interface EditProps {
-  subject: SchemaName;
-  schema: SchemaSubject;
-  clusterName: ClusterName;
-  schemasAreFetched: boolean;
-  fetchSchemasByClusterName: (clusterName: ClusterName) => void;
-  updateSchema: (
-    latestSchema: SchemaSubject,
-    newSchema: string,
-    newSchemaType: SchemaType,
-    newCompatibilityLevel: CompatibilityLevelCompatibilityEnum,
-    clusterName: string,
-    subject: string
-  ) => Promise<void>;
-}
-
-const Edit = ({
-  subject,
-  schema,
-  clusterName,
-  schemasAreFetched,
-  fetchSchemasByClusterName,
-  updateSchema,
-}: EditProps) => {
-  React.useEffect(() => {
-    if (!schemasAreFetched) fetchSchemasByClusterName(clusterName);
-  }, [clusterName, fetchSchemasByClusterName]);
-
-  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
-
-  const getFormattedSchema = React.useCallback(
-    () => JSON.stringify(JSON.parse(schema.schema), null, '\t'),
-    [schema]
-  );
+const Edit: React.FC = () => {
   const history = useHistory();
-  const onSubmit = React.useCallback(
-    async ({
-      schemaType,
-      compatibilityLevel,
-      newSchema,
-    }: {
-      schemaType: SchemaType;
-      compatibilityLevel: CompatibilityLevelCompatibilityEnum;
-      newSchema: string;
-    }) => {
-      try {
-        await updateSchema(
-          schema,
-          newSchema,
-          schemaType,
-          compatibilityLevel,
-          clusterName,
-          subject
-        );
-        history.push(clusterSchemaPath(clusterName, subject));
-      } catch (e) {
-        // do not redirect
-      }
-    },
-    [
-      schema,
-      methods.register,
-      methods.control,
-      clusterName,
-      subject,
-      updateSchema,
-      history,
-    ]
-  );
+  const dispatch = useAppDispatch();
 
+  const { clusterName, subject } =
+    useParams<{ clusterName: string; subject: string }>();
+  const methods = useForm<NewSchemaSubjectRaw>({ mode: 'onChange' });
+  const {
+    formState: { isDirty, isSubmitting, dirtyFields },
+    control,
+    handleSubmit,
+  } = methods;
+
+  React.useEffect(() => {
+    dispatch(fetchLatestSchema({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
+    };
+  }, [clusterName, subject]);
+
+  const schema = useAppSelector((state) => getSchemaLatest(state));
+  const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
+
+  const formatedSchema = React.useMemo(() => {
+    return schema?.schemaType === SchemaType.PROTOBUF
+      ? schema?.schema
+      : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
+  }, [schema]);
+
+  const onSubmit = React.useCallback(async (props: NewSchemaSubjectRaw) => {
+    if (!schema) return;
+
+    try {
+      if (dirtyFields.newSchema || dirtyFields.schemaType) {
+        const resp = await schemasApiClient.createNewSchema({
+          clusterName,
+          newSchemaSubject: {
+            ...schema,
+            schema: props.newSchema || schema.schema,
+            schemaType: props.schemaType || schema.schemaType,
+          },
+        });
+        dispatch(schemaAdded(resp));
+      }
+
+      if (dirtyFields.compatibilityLevel) {
+        await schemasApiClient.updateSchemaCompatibilityLevel({
+          clusterName,
+          subject,
+          compatibilityLevel: {
+            compatibility: props.compatibilityLevel,
+          },
+        });
+        dispatch(
+          schemaUpdated({
+            ...schema,
+            compatibilityLevel: props.compatibilityLevel,
+          })
+        );
+      }
+
+      history.push(clusterSchemaPath(clusterName, subject));
+    } catch (e) {
+      const err = await getResponse(e as Response);
+      dispatch(serverErrorAlertAdded(err));
+    }
+  }, []);
+
+  if (!isFetched || !schema) {
+    return <PageLoader />;
+  }
   return (
     <FormProvider {...methods}>
       <PageHeading text="Edit schema" />
-      {schemasAreFetched ? (
-        <EditWrapper>
-          <form onSubmit={methods.handleSubmit(onSubmit)}>
+      <S.EditWrapper>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
             <div>
-              <div>
-                <InputLabel>Type</InputLabel>
-                <Select
-                  name="schemaType"
-                  required
-                  defaultValue={schema.schemaType}
-                  disabled={methods.formState.isSubmitting}
-                >
-                  {Object.keys(SchemaType).map((type: string) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </Select>
-              </div>
-
-              <div>
-                <InputLabel>Compatibility level</InputLabel>
-                <Select
-                  name="compatibilityLevel"
-                  defaultValue={schema.compatibilityLevel}
-                  disabled={methods.formState.isSubmitting}
-                >
-                  {Object.keys(CompatibilityLevelCompatibilityEnum).map(
-                    (level: string) => (
-                      <option key={level} value={level}>
-                        {level}
-                      </option>
-                    )
-                  )}
-                </Select>
-              </div>
+              <InputLabel>Type</InputLabel>
+              <Controller
+                defaultValue={schema.schemaType}
+                control={control}
+                rules={{ required: true }}
+                name="schemaType"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.schemaType}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(SchemaType).map((type) => ({
+                      value: type,
+                      label: type,
+                    }))}
+                  />
+                )}
+              />
             </div>
-            <EditorsWrapper>
-              <div>
+
+            <div>
+              <InputLabel>Compatibility level</InputLabel>
+              <Controller
+                defaultValue={
+                  schema.compatibilityLevel as CompatibilityLevelCompatibilityEnum
+                }
+                control={control}
+                name="compatibilityLevel"
+                render={({ field: { name, onChange } }) => (
+                  <Select
+                    name={name}
+                    value={schema.compatibilityLevel}
+                    onChange={onChange}
+                    minWidth="100%"
+                    disabled={isSubmitting}
+                    options={Object.keys(
+                      CompatibilityLevelCompatibilityEnum
+                    ).map((level) => ({ value: level, label: level }))}
+                  />
+                )}
+              />
+            </div>
+          </div>
+          <S.EditorsWrapper>
+            <div>
+              <S.EditorContainer>
                 <h4>Latest schema</h4>
-                <JSONEditor
+                <Editor
+                  schemaType={schema?.schemaType}
                   isFixedHeight
                   readOnly
                   height="372px"
-                  value={getFormattedSchema()}
+                  value={formatedSchema}
                   name="latestSchema"
                   highlightActiveLine={false}
                 />
-              </div>
-              <div>
+              </S.EditorContainer>
+            </div>
+            <div>
+              <S.EditorContainer>
                 <h4>New schema</h4>
                 <Controller
-                  control={methods.control}
+                  control={control}
                   name="newSchema"
                   render={({ field: { name, onChange } }) => (
-                    <JSONEditor
-                      readOnly={methods.formState.isSubmitting}
-                      defaultValue={getFormattedSchema()}
+                    <Editor
+                      schemaType={schema?.schemaType}
+                      readOnly={isSubmitting}
+                      defaultValue={formatedSchema}
                       name={name}
                       onChange={onChange}
                     />
                   )}
                 />
-              </div>
-            </EditorsWrapper>
-            <Button
-              buttonType="primary"
-              buttonSize="M"
-              type="submit"
-              disabled={
-                !methods.formState.isDirty || methods.formState.isSubmitting
-              }
-            >
-              Submit
-            </Button>
-          </form>
-        </EditWrapper>
-      ) : (
-        <PageLoader />
-      )}
+              </S.EditorContainer>
+              <Button
+                buttonType="primary"
+                buttonSize="M"
+                type="submit"
+                disabled={!isDirty || isSubmitting}
+              >
+                Submit
+              </Button>
+            </div>
+          </S.EditorsWrapper>
+        </form>
+      </S.EditWrapper>
     </FormProvider>
   );
 };

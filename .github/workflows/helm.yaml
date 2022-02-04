@@ -1,0 +1,32 @@
+name: Helm
+on:
+  pull_request:
+    types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
+    paths:
+      - "charts/**"
+
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 8 * * 3'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Helm tool installer
+        uses: Azure/setup-helm@v1
+      - name: Setup Kubeval
+        uses: lra/setup-kubeval@v1.0.1
+      - name: Run kubeval
+        shell: bash
+        run: |
+          sed -i "s@enabled: false@enabled: true@g" charts/kafka-ui/values.yaml
+          K8S_VERSIONS=$(git ls-remote --refs --tags https://github.com/kubernetes/kubernetes.git | cut -d/ -f3 | grep -e '^v1\.[0-9]\{2\}\.[0]\{1,2\}$' | grep -v -e  '^v1\.1[0-8]\{1\}' | cut -c2-)
+          echo "NEXT K8S VERSIONS ARE GOING TO BE TESTED: $K8S_VERSIONS"
+          echo ""
+          for version in $K8S_VERSIONS
+            do 
+              echo $version;
+              helm template charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
+            done

@@ -1,64 +1,54 @@
 import React from 'react';
-import {
-  CompatibilityLevelCompatibilityEnum,
-  SchemaSubject,
-} from 'generated-sources';
 import { useParams } from 'react-router-dom';
 import { clusterSchemaNewPath } from 'lib/paths';
-import { ClusterName } from 'redux/interfaces';
-import PageLoader from 'components/common/PageLoader/PageLoader';
 import ClusterContext from 'components/contexts/ClusterContext';
-import { Table } from 'components/common/table/Table/Table.styled';
+import * as C from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
+import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import {
+  selectAllSchemas,
+  fetchSchemas,
+  getAreSchemasFulfilled,
+  SCHEMAS_FETCH_ACTION,
+} from 'redux/reducers/schemas/schemasSlice';
+import usePagination from 'lib/hooks/usePagination';
+import PageLoader from 'components/common/PageLoader/PageLoader';
+import Pagination from 'components/common/Pagination/Pagination';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
+import Search from 'components/common/Search/Search';
+import useSearch from 'lib/hooks/useSearch';
 
 import ListItem from './ListItem';
 import GlobalSchemaSelector from './GlobalSchemaSelector/GlobalSchemaSelector';
 
-export interface ListProps {
-  schemas: SchemaSubject[];
-  isFetching: boolean;
-  isGlobalSchemaCompatibilityLevelFetched: boolean;
-  globalSchemaCompatibilityLevel?: CompatibilityLevelCompatibilityEnum;
-  fetchSchemasByClusterName: (clusterName: ClusterName) => void;
-  fetchGlobalSchemaCompatibilityLevel: (
-    clusterName: ClusterName
-  ) => Promise<void>;
-  updateGlobalSchemaCompatibilityLevel: (
-    clusterName: ClusterName,
-    compatibilityLevel: CompatibilityLevelCompatibilityEnum
-  ) => Promise<void>;
-}
-
-const List: React.FC<ListProps> = ({
-  schemas,
-  isFetching,
-  globalSchemaCompatibilityLevel,
-  isGlobalSchemaCompatibilityLevelFetched,
-  fetchSchemasByClusterName,
-  fetchGlobalSchemaCompatibilityLevel,
-  updateGlobalSchemaCompatibilityLevel,
-}) => {
+const List: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { isReadOnly } = React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: string }>();
 
+  const schemas = useAppSelector(selectAllSchemas);
+  const isFetched = useAppSelector(getAreSchemasFulfilled);
+  const totalPages = useAppSelector((state) => state.schemas.totalPages);
+
+  const [searchText, handleSearchText] = useSearch();
+  const { page, perPage } = usePagination();
+
   React.useEffect(() => {
-    fetchSchemasByClusterName(clusterName);
-    fetchGlobalSchemaCompatibilityLevel(clusterName);
-  }, [fetchSchemasByClusterName, clusterName]);
+    dispatch(fetchSchemas({ clusterName, page, perPage, search: searchText }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMAS_FETCH_ACTION));
+    };
+  }, [clusterName, page, perPage, searchText]);
 
   return (
-    <div>
+    <>
       <PageHeading text="Schema Registry">
-        {!isReadOnly && isGlobalSchemaCompatibilityLevelFetched && (
+        {!isReadOnly && (
           <>
-            <GlobalSchemaSelector
-              globalSchemaCompatibilityLevel={globalSchemaCompatibilityLevel}
-              updateGlobalSchemaCompatibilityLevel={
-                updateGlobalSchemaCompatibilityLevel
-              }
-            />
+            <GlobalSchemaSelector />
             <Button
               buttonSize="M"
               buttonType="primary"
@@ -70,12 +60,16 @@ const List: React.FC<ListProps> = ({
           </>
         )}
       </PageHeading>
-
-      {isFetching ? (
-        <PageLoader />
-      ) : (
-        <div>
-          <Table isFullwidth>
+      <ControlPanelWrapper hasInput>
+        <Search
+          placeholder="Search by Schema Name"
+          value={searchText}
+          handleSearch={handleSearchText}
+        />
+      </ControlPanelWrapper>
+      {isFetched ? (
+        <>
+          <C.Table isFullwidth>
             <thead>
               <tr>
                 <TableHeaderCell title="Schema Name" />
@@ -96,10 +90,13 @@ const List: React.FC<ListProps> = ({
                 />
               ))}
             </tbody>
-          </Table>
-        </div>
+          </C.Table>
+          <Pagination totalPages={totalPages} />
+        </>
+      ) : (
+        <PageLoader />
       )}
-    </div>
+    </>
   );
 };
 

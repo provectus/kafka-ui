@@ -2,7 +2,7 @@ name: RemoveCustomDeployment
 on:
   workflow_dispatch:
   pull_request:
-    types: ['unlabeled']
+    types: ['unlabeled', 'closed']
 jobs:
   remove:
     if: ${{ github.event.label.name == 'status/feature_testing' || github.event.label.name == 'status/feature_testing_public' }}

@@ -1,8 +1,7 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
-export const MessageContentWrapper = styled.tr`
-  background-color: ${Colors.neutral[5]};
+export const Wrapper = styled.tr`
+  background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
   & > td {
     padding: 16px;
     &:first-child {
@@ -14,7 +13,7 @@ export const MessageContentWrapper = styled.tr`
   }
 `;
 
-export const StyledSection = styled.div`
+export const Section = styled.div`
   padding: 0 16px;
   display: flex;
   gap: 1px;
@@ -48,17 +47,17 @@ export const Metadata = styled.span`
 `;
 
 export const MetadataLabel = styled.p`
-  color: ${Colors.neutral[50]};
+  color: ${({ theme }) => theme.topicMetaData.color.label};
   font-size: 14px;
   width: 80px;
 `;
 
 export const MetadataValue = styled.p`
-  color: ${Colors.neutral[80]};
+  color: ${({ theme }) => theme.topicMetaData.color.value};
   font-size: 14px;
 `;
 
 export const MetadataMeta = styled.p`
-  color: ${Colors.neutral[30]};
+  color: ${({ theme }) => theme.topicMetaData.color.meta};
   font-size: 12px;
 `;

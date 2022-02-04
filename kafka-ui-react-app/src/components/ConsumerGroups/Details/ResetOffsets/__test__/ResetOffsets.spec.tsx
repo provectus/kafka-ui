@@ -1,6 +1,6 @@
 import React from 'react';
 import fetchMock from 'fetch-mock';
-import { Route, StaticRouter } from 'react-router';
+import { Route } from 'react-router';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
@@ -13,23 +13,20 @@ const { groupId } = consumerGroupPayload;
 
 const renderComponent = () =>
   render(
-    <StaticRouter
-      location={{
-        pathname: clusterConsumerGroupResetOffsetsPath(
-          clusterName,
-          consumerGroupPayload.groupId
-        ),
-      }}
+    <Route
+      path={clusterConsumerGroupResetOffsetsPath(
+        ':clusterName',
+        ':consumerGroupID'
+      )}
     >
-      <Route
-        path={clusterConsumerGroupResetOffsetsPath(
-          ':clusterName',
-          ':consumerGroupID'
-        )}
-      >
-        <ResetOffsets />
-      </Route>
-    </StaticRouter>
+      <ResetOffsets />
+    </Route>,
+    {
+      pathname: clusterConsumerGroupResetOffsetsPath(
+        clusterName,
+        consumerGroupPayload.groupId
+      ),
+    }
   );
 
 const resetConsumerGroupOffsetsMockCalled = () =>
@@ -40,7 +37,8 @@ const resetConsumerGroupOffsetsMockCalled = () =>
   ).toBeTruthy();
 
 const selectresetTypeAndPartitions = async (resetType: string) => {
-  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByLabelText('Reset Type'));
+  userEvent.click(screen.getByText(resetType));
   userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));
@@ -51,7 +49,9 @@ const resetConsumerGroupOffsetsWith = async (
   resetType: string,
   offset: null | number = null
 ) => {
-  userEvent.selectOptions(screen.getByLabelText('Reset Type'), resetType);
+  userEvent.click(screen.getByLabelText('Reset Type'));
+  const options = screen.getAllByText(resetType);
+  userEvent.click(options.length > 1 ? options[1] : options[0]);
   userEvent.click(screen.getByText('Select...'));
   await waitFor(() => {
     userEvent.click(screen.getByText('Partition #0'));

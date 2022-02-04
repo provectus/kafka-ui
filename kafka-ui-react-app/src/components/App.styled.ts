@@ -26,7 +26,7 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     width: ${theme.layout.navBarWidth};
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #e7e7e7;
+    border-right: 1px solid ${theme.layout.stuffBorderColor};
     position: fixed;
     top: ${theme.layout.navBarHeight};
     left: 0;
@@ -35,12 +35,34 @@ export const Sidebar = styled.div<{ $visible: boolean }>(
     overflow-y: scroll;
     transition: width 0.25s, opacity 0.25s, transform 0.25s,
       -webkit-transform 0.25s;
-    background: ${theme.menuStyles.backgroundColor.normal};
+    background: ${theme.menu.backgroundColor.normal};
     @media screen and (max-width: 1023px) {
       ${$visible &&
       `transform: translate3d(${theme.layout.navBarWidth}, 0, 0)`};
       left: -${theme.layout.navBarWidth};
       z-index: 100;
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background-color: ${theme.scrollbar.trackColor.normal};
+    }
+
+    &::-webkit-scrollbar-thumb {
+      width: 8px;
+      background-color: ${theme.scrollbar.thumbColor.normal};
+      border-radius: 4px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+      background: ${theme.scrollbar.thumbColor.active};
+    }
+
+    &:hover::-webkit-scrollbar-track {
+      background-color: ${theme.scrollbar.trackColor.active};
     }
   `
 );
@@ -63,7 +85,7 @@ export const Overlay = styled.div<{ $visible: boolean }>(
         right: 0;
         visibility: 'visible';
         opacity: 1;
-        background-color: rgba(34, 41, 47, 0.5);
+        background-color: ${theme.layout.overlay.backgroundColor};
       }
     `}
   `
@@ -71,13 +93,13 @@ export const Overlay = styled.div<{ $visible: boolean }>(
 
 export const Navbar = styled.nav(
   ({ theme }) => css`
-    border-bottom: 1px solid #e7e7e7;
+    border-bottom: 1px solid ${theme.layout.stuffBorderColor};
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 30;
-    background-color: ${theme.menuStyles.backgroundColor.normal};
+    background-color: ${theme.menu.backgroundColor.normal};
     min-height: 3.25rem;
   `
 );
@@ -110,7 +132,7 @@ export const NavbarBurger = styled.div(
     padding: 0;
 
     &:hover {
-      background-color: ${theme.menuStyles.backgroundColor.hover};
+      background-color: ${theme.menu.backgroundColor.hover};
     }
 
     @media screen and (min-width: 1024px) {
@@ -123,7 +145,7 @@ export const Span = styled.span(
   ({ theme }) => css`
     display: block;
     position: absolute;
-    background: ${theme.menuStyles.color.active};
+    background: ${theme.menu.color.active};
     height: 1px;
     left: calc(50% - 8px);
     transform-origin: center;
@@ -152,7 +174,7 @@ export const Hyperlink = styled.a(
     flex-shrink: 0;
     align-items: center;
     margin: 0;
-    color: ${theme.menuStyles.color.active};
+    color: ${theme.menu.color.active};
     font-size: 1.25rem;
     font-weight: 600;
     cursor: pointer;
@@ -168,7 +190,7 @@ export const AlertsContainer = styled.div`
   width: 500px;
   position: fixed;
   bottom: 15px;
-  left: 15px;
+  right: 15px;
   z-index: 1000;
 
   @media screen and (max-width: 1023px) {

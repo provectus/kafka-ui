@@ -21,7 +21,6 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
@@ -59,6 +58,8 @@ const Details: React.FC<Props> = ({
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
+  const [isClearTopicConfirmationVisible, setClearTopicConfirmationVisible] =
+    React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
   }, [clusterName, topicName]);
@@ -72,6 +73,7 @@ const Details: React.FC<Props> = ({
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
+    setClearTopicConfirmationVisible(false);
   }, [clusterName, topicName]);
 
   return (
@@ -102,15 +104,15 @@ const Details: React.FC<Props> = ({
                   Edit settings
                 </DropdownItem>
                 <DropdownItem
-                  style={{ color: Colors.red[50] }}
-                  onClick={clearTopicMessagesHandler}
+                  onClick={() => setClearTopicConfirmationVisible(true)}
+                  danger
                 >
                   Clear messages
                 </DropdownItem>
                 {isTopicDeletionAllowed && (
                   <DropdownItem
-                    style={{ color: Colors.red[50] }}
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
+                    danger
                   >
                     Remove topic
                   </DropdownItem>
@@ -126,6 +128,13 @@ const Details: React.FC<Props> = ({
         onConfirm={deleteTopicHandler}
       >
         Are you sure want to remove <b>{topicName}</b> topic?
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isClearTopicConfirmationVisible}
+        onCancel={() => setClearTopicConfirmationVisible(false)}
+        onConfirm={clearTopicMessagesHandler}
+      >
+        Are you sure want to clear topic messages?
       </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink

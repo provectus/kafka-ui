@@ -15,7 +15,9 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
       <tbody>
         <MessageContent
           messageKey='"test-key"'
+          messageKeyFormat="JSON"
           messageContent='{"data": "test"}'
+          messageContentFormat="AVRO"
           headers={{ header: 'test' }}
           timestamp={new Date(0)}
           timestampType={TopicMessageTimestampTypeEnum.CREATE_TIME}
@@ -32,13 +34,24 @@ describe('MessageContent screen', () => {
   beforeEach(() => {
     render(setupWrapper());
   });
+
+  describe('renders', () => {
+    it('key format in document', () => {
+      expect(screen.getByText('JSON')).toBeInTheDocument();
+    });
+
+    it('content format in document', () => {
+      expect(screen.getByText('AVRO')).toBeInTheDocument();
+    });
+  });
+
   describe('when switched to display the key', () => {
     it('has a tab with is-active classname', () => {
       const keyTab = screen.getAllByText('Key');
       userEvent.click(keyTab[0]);
       expect(keyTab[0]).toHaveClass('is-active');
     });
-    it('displays the key in the JSONViewer', () => {
+    it('displays the key in the EditorViewer', () => {
       const keyTab = screen.getAllByText('Key');
       userEvent.click(keyTab[0]);
       expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
@@ -50,7 +63,7 @@ describe('MessageContent screen', () => {
       userEvent.click(screen.getByText('Headers'));
       expect(screen.getByText('Headers')).toHaveClass('is-active');
     });
-    it('displays the key in the JSONViewer', () => {
+    it('displays the key in the EditorViewer', () => {
       userEvent.click(screen.getByText('Headers'));
       expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
     });

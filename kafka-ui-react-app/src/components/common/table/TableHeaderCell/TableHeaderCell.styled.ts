@@ -1,23 +1,64 @@
-import styled from 'styled-components';
-import { Colors } from 'theme/theme';
+import styled, { css } from 'styled-components';
 
-import { TableHeaderCellProps } from './TableHeaderCell';
+interface TitleProps {
+  isOrderable?: boolean;
+  isOrdered?: boolean;
+}
 
-export const TableHeaderCell = styled.th<TableHeaderCellProps>`
-  padding: 4px 0 4px 24px !important;
-  border-bottom-width: 1px !important;
-  vertical-align: middle !important;
+const orderableMixin = css(
+  ({ theme: { table } }) => `
+    cursor: pointer;
 
-  &.is-clickable {
-    cursor: pointer !important;
-    pointer-events: all !important;
-  }
+    padding-right: 18px;
+    position: relative;
 
-  &.has-text-link-dark span {
-    color: ${Colors.brand[50]} !important;
-  }
+    &::before,
+    &::after {
+      border: 4px solid transparent;
+      content: '';
+      display: block;
+      height: 0;
+      right: 5px;
+      top: 50%;
+      position: absolute;
+    }
 
-  span {
+    &::before {
+      border-bottom-color: ${table.th.color.normal};
+      margin-top: -9px;
+    }
+
+    &::after {
+      border-top-color: ${table.th.color.normal};
+      margin-top: 1px;
+    }
+
+    &:hover {
+      color: ${table.th.color.hover};
+      &::before {
+        border-bottom-color: ${table.th.color.hover};
+      }
+      &::after {
+        border-top-color: ${table.th.color.hover};
+      }
+    }
+  `
+);
+
+const orderedMixin = css(
+  ({ theme: { table } }) => `
+  color: ${table.th.color.active};
+      &::before {
+        border-bottom-color: ${table.th.color.active};
+      }
+      &::after {
+        border-top-color: ${table.th.color.active};
+      }
+  `
+);
+
+export const Title = styled.span<TitleProps>(
+  ({ isOrderable, isOrdered, theme: { table } }) => css`
     font-family: Inter, sans-serif;
     font-size: 12px;
     font-style: normal;
@@ -25,19 +66,35 @@ export const TableHeaderCell = styled.th<TableHeaderCellProps>`
     line-height: 16px;
     letter-spacing: 0em;
     text-align: left;
-    background: ${(props) => props.theme.thStyles.backgroundColor.normal};
-    color: ${(props) => props.theme.thStyles.color.normal};
+    justify-content: start;
+    display: flex;
+    align-items: center;
+    background: ${table.th.backgroundColor.normal};
+    cursor: default;
+    color: ${table.th.color.normal};
 
-    &.preview {
-      margin-left: 8px;
-      font-size: 14px;
-      color: ${(props) => props.theme.thStyles.previewColor.normal};
-      cursor: pointer;
-    }
+    ${isOrderable && orderableMixin}
 
-    &.is-clickable {
-      cursor: pointer !important;
-      pointer-events: all !important;
-    }
-  }
+    ${isOrderable && isOrdered && orderedMixin}
+  `
+);
+
+export const Preview = styled.span`
+  margin-left: 8px;
+  font-family: Inter, sans-serif;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 16px;
+  letter-spacing: 0em;
+  text-align: left;
+  background: ${(props) => props.theme.table.th.backgroundColor.normal};
+  font-size: 14px;
+  color: ${(props) => props.theme.table.th.previewColor.normal};
+  cursor: pointer;
+`;
+
+export const TableHeaderCell = styled.th`
+  padding: 4px 0 4px 24px;
+  border-bottom-width: 1px;
+  vertical-align: middle;
 `;

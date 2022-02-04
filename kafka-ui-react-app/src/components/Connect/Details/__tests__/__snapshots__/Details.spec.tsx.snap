@@ -61,7 +61,7 @@ exports[`Details view matches snapshot 1`] = `
   font-size: 24px;
   font-weight: 500;
   line-height: 32px;
-  color: #000;
+  color: #171A1C;
 }
 
 .c0 > div {

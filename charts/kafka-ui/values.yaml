@@ -75,6 +75,9 @@ ingress:
   # Annotations for the Ingress
   annotations: {}
 
+  # ingressClassName for the Ingress
+  ingressClassName: ""
+
   # The path for the Ingress
   path: ""
 

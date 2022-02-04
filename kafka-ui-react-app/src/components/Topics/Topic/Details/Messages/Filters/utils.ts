@@ -31,7 +31,6 @@ export const getTimestampFromSeekToParam = (params: URLSearchParams) => {
       .get('seekTo')
       ?.split(',')
       .map((item) => Number(item.split('::')[1]));
-
     return new Date(Math.max(...(offsets || []), 0));
   }
 
