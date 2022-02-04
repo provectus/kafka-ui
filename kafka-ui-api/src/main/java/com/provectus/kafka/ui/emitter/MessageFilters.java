@@ -53,12 +53,13 @@ public class MessageFilters {
         }
         return false;
       } catch (Exception e) {
-        log.trace("Error executing filter script '{}' on message '{}' ", script, msg);
+        log.trace("Error executing filter script '{}' on message '{}' ", script, msg, e);
         return false;
       }
     };
   }
 
+  @Nullable
   private static Object parseToJsonOrReturnNull(JsonSlurper parser, @Nullable String str) {
     if (str == null) {
       return null;
