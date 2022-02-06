@@ -54,6 +54,8 @@ public class BaseTest {
           .withCommand(
               "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 
+  public static GenericContainer<?> chromeImage = new GenericContainer<>(DockerImageName.parse("selenoid/vnc_chrome:96.0"));
+
   static {
     if (!new File("./.env").exists()) {
       try {
@@ -80,9 +82,11 @@ public class BaseTest {
   private static void setupSelenoid() {
     String remote = TestConfiguration.SELENOID_URL;
     if (TestConfiguration.SHOULD_START_SELENOID) {
-    //TODO this image should be configurable
-    DockerClient client = DockerClientFactory.instance().client();
-    DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+//    //TODO this image should be configurable
+//    DockerClient client = DockerClientFactory.instance().client();
+//    DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+      chromeImage.start();
+      chromeImage.stop();
 
       selenoid.start();
       remote =
