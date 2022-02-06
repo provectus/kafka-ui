@@ -25,7 +25,7 @@ services:
       - ./jmx/servertruststore:/servertruststore
 
   zookeeper0:
-     image: confluentinc/cp-zookeeper:5.2.4
+     image: confluentinc/cp-zookeeper:6.0.1
      environment:
        ZOOKEEPER_CLIENT_PORT: 2181
        ZOOKEEPER_TICK_TIME: 2000
@@ -33,7 +33,7 @@ services:
        - 2181:2181
 
   kafka0:
-    image: confluentinc/cp-kafka:5.2.4
+    image: confluentinc/cp-kafka:6.0.1
     hostname: kafka0
     depends_on:
       - zookeeper0
@@ -48,13 +48,13 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: SSL
       KAFKA_SECURITY_PROTOCOL: SSL
       KAFKA_SSL_ENABLED_MECHANISMS: PLAIN,SSL
-      KAFKA_SSL_KEYSTORE_FILENAME: serverkeystore.jks
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
       KAFKA_SSL_KEYSTORE_CREDENTIALS: creds
       KAFKA_SSL_KEY_CREDENTIALS: creds
-      KAFKA_SSL_TRUSTSTORE_FILENAME: servertruststore.jks
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
       KAFKA_SSL_TRUSTSTORE_CREDENTIALS: creds
 #      KAFKA_SSL_CLIENT_AUTH: 'required'
       KAFKA_SSL_CLIENT_AUTH: "requested"
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: ''
     volumes:
-      - ./kafka-ssl:/etc/kafka/secrets
+      - ./truststore:/etc/kafka/secrets
