@@ -4,10 +4,10 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.MainPage;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.Disabled;
 
 public class TopicTests extends BaseTest {
 
@@ -38,7 +38,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should create a topic")
     @Test
-    void createTopic() {
+    public void createTopic() {
         helpers.apiHelper.createTopic(SECOND_LOCAL, NEW_TOPIC);
         pages.open()
                 .goToSideMenu(SECOND_LOCAL, MainPage.SideMenuOptions.TOPICS)
@@ -52,7 +52,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should update a topic")
     @Test
-    void updateTopic() {
+    public void updateTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_UPDATE)
@@ -75,7 +75,7 @@ public class TopicTests extends BaseTest {
     @SneakyThrows
     @DisplayName("should delete topic")
     @Test
-    void deleteTopic() {
+    public void deleteTopic() {
         pages.openTopicsList(SECOND_LOCAL)
                 .isOnPage()
                 .openTopic(TOPIC_TO_DELETE);

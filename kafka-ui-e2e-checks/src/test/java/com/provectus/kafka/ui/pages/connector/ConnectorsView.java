@@ -5,6 +5,7 @@ import com.codeborne.selenide.Selenide;
 import com.provectus.kafka.ui.base.TestConfiguration;
 import com.provectus.kafka.ui.extensions.WaitUtils;
 import io.qameta.allure.Step;
+import java.time.Duration;
 import lombok.experimental.ExtensionMethod;
 import org.openqa.selenium.By;
 
@@ -37,6 +38,6 @@ public class ConnectorsView {
     public void connectorIsVisibleOnOverview() {
         $(By.xpath("//a[text() ='Tasks']")).click();
         $(By.xpath("//a[text() ='Config']")).click();
-        $(By.xpath("//span[text()='Edit config']")).waitUntil(Condition.visible, 100);
+        $(By.xpath("//span[text()='Edit config']")).shouldBe(Condition.visible, Duration.ofMillis(300));
     }
 }
