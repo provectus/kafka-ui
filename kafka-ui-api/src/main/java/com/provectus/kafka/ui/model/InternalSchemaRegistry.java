@@ -1,38 +1,30 @@
 package com.provectus.kafka.ui.model;
 
-import java.util.LinkedList;
-import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
+@Builder(toBuilder = true)
 public class InternalSchemaRegistry {
   private final String username;
   private final String password;
-  private final LinkedList<String> url;
-  private final FailoverUrlList urlList;
-
-  @Builder(toBuilder = true)
-  public InternalSchemaRegistry(String username, String password, List<String> url) {
-    this.username = username;
-    this.password = password;
-    this.url = new LinkedList<>(url);
-    this.urlList = new FailoverUrlList(url);
-  }
+  private final FailoverUrlList url;
 
   public String getPrimaryNodeUri() {
-    return url.getFirst();
+    return url.get(0);
   }
 
   public String getUri() {
-    return urlList.current();
+    return url.current();
   }
 
   public void markAsUnavailable(String url) {
-    urlList.fail(url);
+    this.url.fail(url);
   }
 
   public boolean isFailoverAvailable() {
-    return this.urlList.isFailoverAvailable();
+    return this.url.isFailoverAvailable();
   }
 }

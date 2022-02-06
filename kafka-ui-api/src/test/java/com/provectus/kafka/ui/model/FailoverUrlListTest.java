@@ -9,6 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class FailoverUrlListTest {
 
+  public static final int RETRY_GRACE_PERIOD_IN_MS = 10;
+
   @Nested
   @SuppressWarnings("all")
   class ShouldHaveFailoverAvailableWhen {
@@ -17,7 +19,7 @@ class FailoverUrlListTest {
 
     @BeforeEach
     void before() {
-      failoverUrlList = new FailoverUrlList(List.of("localhost:123", "farawayhost:5678"), 10);
+      failoverUrlList = new FailoverUrlList(List.of("localhost:123", "farawayhost:5678"), RETRY_GRACE_PERIOD_IN_MS);
     }
 
     @Test
@@ -36,7 +38,8 @@ class FailoverUrlListTest {
     void withAllFailuresAndAtLeastOneAfterTheGraceTimeoutPeriod() throws InterruptedException {
       failoverUrlList.fail(failoverUrlList.current());
       failoverUrlList.fail(failoverUrlList.current());
-      Thread.sleep(11);
+
+      Thread.sleep(RETRY_GRACE_PERIOD_IN_MS + 1);
 
       assertThat(failoverUrlList.isFailoverAvailable()).isTrue();
     }

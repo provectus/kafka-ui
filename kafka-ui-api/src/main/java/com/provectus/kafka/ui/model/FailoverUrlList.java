@@ -2,12 +2,11 @@ package com.provectus.kafka.ui.model;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import lombok.experimental.Delegate;
 
 public class FailoverUrlList {
 
@@ -15,6 +14,7 @@ public class FailoverUrlList {
 
   private final Map<Integer, Instant> failures = new ConcurrentHashMap<>();
   private final AtomicInteger index = new AtomicInteger(0);
+  @Delegate
   private final List<String> urls;
   private final int retryGracePeriodInMs;
 
