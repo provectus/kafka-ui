@@ -19,6 +19,7 @@ public class ConnectorUpdateView {
 
     @Step
     public ConnectorUpdateView updateConnectorConfig(String configJson) {
+        $("#config").click();
         String str = configJson.replace("\r\n", "");
         executeJavaScript(
                 "function clearAndNot(){" +
