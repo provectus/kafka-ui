@@ -4,7 +4,7 @@ import { render } from 'lib/testHelpers';
 import TableHeaderCell, {
   TableHeaderCellProps,
 } from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import { TopicColumnsToSort } from 'generated-sources';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import theme from 'theme/theme';
 import userEvent from '@testing-library/user-event';
 
@@ -50,6 +50,7 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
+      sortOrder: SortOrder.ASC,
       handleOrderBy,
     });
     const columnheader = screen.getByRole('columnheader');
@@ -129,6 +130,7 @@ describe('TableHeaderCell', () => {
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
+      sortOrder: SortOrder.ASC,
       handleOrderBy: jest.fn(),
     });
     const columnheader = screen.getByRole('columnheader');

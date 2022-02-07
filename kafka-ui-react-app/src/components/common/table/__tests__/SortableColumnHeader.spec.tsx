@@ -1,6 +1,6 @@
 import SortableColumnHeader from 'components/common/table/SortableCulumnHeader/SortableColumnHeader';
 import { mount } from 'enzyme';
-import { TopicColumnsToSort } from 'generated-sources';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import React from 'react';
 
 describe('ListHeader', () => {

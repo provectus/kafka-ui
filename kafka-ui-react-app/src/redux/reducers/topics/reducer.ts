@@ -2,7 +2,7 @@ import { Action, TopicsState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
 import * as _ from 'lodash';
-import { TopicColumnsToSort } from 'generated-sources';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 
 export const initialState: TopicsState = {
   byName: {},
@@ -10,6 +10,7 @@ export const initialState: TopicsState = {
   totalPages: 1,
   search: '',
   orderBy: TopicColumnsToSort.NAME,
+  sortOrder: SortOrder.ASC,
   consumerGroups: [],
 };
 
@@ -41,6 +42,10 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       return {
         ...state,
         orderBy: action.payload,
+        sortOrder:
+          state.orderBy === action.payload && state.sortOrder === SortOrder.ASC
+            ? SortOrder.DESC
+            : SortOrder.ASC,
       };
     }
     case getType(actions.fetchTopicMessageSchemaAction.success): {

@@ -1,8 +1,10 @@
+import { SortOrder } from 'generated-sources';
 import styled, { css } from 'styled-components';
 
 interface TitleProps {
   isOrderable?: boolean;
   isOrdered?: boolean;
+  sortOrder?: SortOrder;
 }
 
 const orderableMixin = css(
@@ -24,8 +26,8 @@ const orderableMixin = css(
     }
 
     &::before {
-      border-bottom-color: ${table.th.color.normal};
-      margin-top: -9px;
+       border-bottom-color: ${table.th.color.normal};
+       margin-top: -9px;
     }
 
     &::after {
@@ -45,20 +47,48 @@ const orderableMixin = css(
   `
 );
 
-const orderedMixin = css(
+const orderedMixinASC = css(
   ({ theme: { table } }) => `
   color: ${table.th.color.active};
-      &::before {
-        border-bottom-color: ${table.th.color.active};
-      }
-      &::after {
-        border-top-color: ${table.th.color.active};
-      }
+  cursor: pointer;
+
+  &::after {
+    cursor: pointer;
+    border: 4px solid transparent;
+    content: '';
+    display: block;
+    height: 0;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+    border-top-color: ${table.th.color.active};
+    margin-top: 1px;
+  }
+  `
+);
+
+const orderedMixinDESC = css(
+  ({ theme: { table } }) => `
+  color: ${table.th.color.active};
+  cursor: pointer;
+
+  &::before {
+    border: 4px solid transparent;
+    cursor: pointer;
+    content: '';
+    display: block;
+    height: 0;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+    margin-top: -9px;
+    border-bottom-color: ${table.th.color.active};
+  }
   `
 );
 
 export const Title = styled.span<TitleProps>(
-  ({ isOrderable, isOrdered, theme: { table } }) => css`
+  ({ isOrderable, isOrdered, sortOrder, theme: { table } }) => css`
     font-family: Inter, sans-serif;
     font-size: 12px;
     font-style: normal;
@@ -72,10 +102,20 @@ export const Title = styled.span<TitleProps>(
     background: ${table.th.backgroundColor.normal};
     cursor: default;
     color: ${table.th.color.normal};
+    padding-right: 18px;
+    position: relative;
 
-    ${isOrderable && orderableMixin}
+    ${isOrderable && !isOrdered && orderableMixin}
 
-    ${isOrderable && isOrdered && orderedMixin}
+    ${isOrderable &&
+    isOrdered &&
+    sortOrder === SortOrder.ASC &&
+    orderedMixinASC}
+
+    ${isOrderable &&
+    isOrdered &&
+    sortOrder === SortOrder.DESC &&
+    orderedMixinDESC}
   `
 );
 

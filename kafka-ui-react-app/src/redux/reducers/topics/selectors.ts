@@ -157,6 +157,11 @@ export const getTopicsOrderBy = createSelector(
   (state) => state.orderBy
 );
 
+export const getTopicsSortOrder = createSelector(
+  topicsState,
+  (state) => state.sortOrder
+);
+
 export const getIsTopicInternal = createSelector(
   getTopicByName,
   (topic) => !!topic?.internal
