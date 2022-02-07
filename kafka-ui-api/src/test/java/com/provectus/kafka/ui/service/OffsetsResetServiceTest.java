@@ -7,6 +7,7 @@ import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.util.KafkaSSLManager;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -39,7 +40,7 @@ import org.springframework.test.context.ContextConfiguration;
 public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @Autowired
-  private Environment environment;
+  private KafkaSSLManager kafkaSSLManager;
 
   private static final int PARTITIONS = 5;
 
@@ -57,7 +58,7 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @BeforeEach
   void init() {
-    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl(environment);
+    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl(kafkaSSLManager);
     adminClientService.setClientTimeout(5_000);
     offsetsResetService = new OffsetsResetService(adminClientService);
 
