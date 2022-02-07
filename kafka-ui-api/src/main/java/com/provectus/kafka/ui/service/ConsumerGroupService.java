@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.SortOrderDTO;
+import com.provectus.kafka.ui.util.KafkaSSLManager;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,6 +37,7 @@ import reactor.util.function.Tuples;
 public class ConsumerGroupService {
 
   private final AdminClientService adminClientService;
+  private final KafkaSSLManager kafkaSSLManager;
 
   private Mono<List<InternalConsumerGroup>> getConsumerGroups(
       ReactiveAdminClient ac,
@@ -203,6 +205,7 @@ public class ConsumerGroupService {
     props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, BytesDeserializer.class);
     props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     props.putAll(properties);
+    props.putAll(kafkaSSLManager.getSSLProperties());
 
     return new KafkaConsumer<>(props);
   }
