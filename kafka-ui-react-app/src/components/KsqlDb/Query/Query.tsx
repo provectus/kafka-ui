@@ -6,13 +6,18 @@ import yup from 'lib/yupExtended';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router';
 import { executeKsql } from 'redux/actions/thunks/ksqlDb';
-import ResultRenderer from 'components/KsqlDb/Query/ResultRenderer';
+import TableRenderer from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
 import { useDispatch, useSelector } from 'react-redux';
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
 import { resetExecutionResult } from 'redux/actions';
 import { Button } from 'components/common/Button/Button';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
+import {
+  alertAdded,
+  serverErrorAlertAdded,
+} from 'redux/reducers/alerts/alertsSlice';
+import { now } from 'lodash';
 
 import * as S from './Query.styled';
 
@@ -25,6 +30,38 @@ const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
 });
 
+const HTTP_UNPROCESSABLE_ENTITY = 422;
+// We expect someting like that
+// "columnNames": [
+//   "@type",
+//   "error_code",
+//   "message",
+//   "statementText",
+//   "entities"
+// ],
+interface AlertErrorPayload {
+  status: number;
+  statusText: string;
+  message: string;
+  url: string;
+}
+const getFormattedError = (
+  url: string,
+  responseValues: KsqlTableResponse['values']
+): AlertErrorPayload => {
+  const [type, errorCode, message, statementText, entities] =
+    (responseValues || [[]])[0];
+  // Can't use \n - they just don't work
+  return {
+    status: errorCode || HTTP_UNPROCESSABLE_ENTITY,
+    statusText: `${type}`,
+    message: `${
+      entities.length ? `[${entities.join(', ')}]` : ''
+    }"${statementText}" ${message}`,
+    url,
+  };
+};
+
 const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const sse = React.useRef<EventSource | null>(null);
@@ -32,7 +69,7 @@ const Query: FC = () => {
   const dispatch = useDispatch();
 
   const { executionResult, fetching } = useSelector(getKsqlExecution);
-  const [table, setTable] = useState<KsqlTableResponse | null>(null);
+  const [KSQLTable, setKSQLTable] = useState<KsqlTableResponse | null>(null);
 
   const reset = useCallback(() => {
     dispatch(resetExecutionResult());
@@ -62,8 +99,46 @@ const Query: FC = () => {
       };
 
       sse.current.onmessage = ({ data }) => {
-        const { table: responseTable }: KsqlResponse = JSON.parse(data);
-        if (responseTable) setTable(responseTable);
+        const { table }: KsqlResponse = JSON.parse(data);
+        if (table) {
+          switch (table?.header) {
+            // responsetable.header can also be `Source Description` - right now it will be rendered as table
+            case 'Execution error':
+              dispatch(
+                serverErrorAlertAdded(getFormattedError(url, table.values))
+              );
+              break;
+            case 'Schema':
+              setKSQLTable(table);
+              break;
+            case 'Row':
+              setKSQLTable((PrevKSQLTable) => {
+                return {
+                  header: PrevKSQLTable?.header,
+                  columnNames: PrevKSQLTable?.columnNames,
+                  values: [
+                    ...(PrevKSQLTable?.values || []),
+                    ...(table?.values || []),
+                  ],
+                };
+              });
+              break;
+            case 'Query Result':
+              dispatch(
+                alertAdded({
+                  id: `${url}-querySuccess`,
+                  type: 'success',
+                  title: 'Query succeed',
+                  message: '',
+                  createdAt: now(),
+                })
+              );
+              break;
+            default:
+              setKSQLTable(table);
+              break;
+          }
+        }
       };
 
       sse.current.onerror = () => {
@@ -73,13 +148,23 @@ const Query: FC = () => {
     return () => {
       closeSSE();
     };
-  }, [closeSSE, sse, executionResult]);
+  }, [
+    dispatch,
+    serverErrorAlertAdded,
+    alertAdded,
+    closeSSE,
+    sse,
+    executionResult,
+  ]);
 
   const handleSSECancel = () => {
-    if (!sse.current) return;
-
     reset();
     closeSSE();
+  };
+
+  const handleClearResults = () => {
+    setKSQLTable(null);
+    handleSSECancel();
   };
 
   const { handleSubmit, setValue, control } = useForm<FormValues>({
@@ -167,15 +252,15 @@ const Query: FC = () => {
             <Button
               buttonType="secondary"
               buttonSize="M"
-              disabled={!table}
-              onClick={() => handleSSECancel()}
+              disabled={!KSQLTable}
+              onClick={() => handleClearResults()}
             >
               Clear results
             </Button>
           </S.KSQLButtons>
         </form>
       </S.QueryWrapper>
-      {table && <ResultRenderer result={table} />}
+      {KSQLTable && <TableRenderer result={KSQLTable} />}
       {continuousFetching && (
         <>
           <S.ContinuousLoader />

@@ -2,8 +2,9 @@ import React from 'react';
 import { KsqlTableResponse } from 'generated-sources';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { nanoid } from '@reduxjs/toolkit';
+import Heading from 'components/common/heading/Heading.styled';
 
-import * as S from './ResultRenderer.styled';
+import * as S from './TableRenderer.styled';
 
 function hasJsonStructure(str: string | Record<string, unknown>): boolean {
   if (typeof str === 'object') {
@@ -23,9 +24,7 @@ function hasJsonStructure(str: string | Record<string, unknown>): boolean {
   return false;
 }
 
-const ResultRenderer: React.FC<{ result: KsqlTableResponse }> = ({
-  result,
-}) => {
+const TableRenderer: React.FC<{ result: KsqlTableResponse }> = ({ result }) => {
   const heading = React.useMemo(() => {
     return result.header || [];
   }, [result.header]);
@@ -50,7 +49,7 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse }> = ({
 
   return (
     <S.Wrapper>
-      <h3>{heading}</h3>
+      <Heading level={3}>{heading}</Heading>
       <S.ScrollableTable>
         <thead>
           <tr>
@@ -79,4 +78,4 @@ const ResultRenderer: React.FC<{ result: KsqlTableResponse }> = ({
   );
 };
 
-export default ResultRenderer;
+export default TableRenderer;
