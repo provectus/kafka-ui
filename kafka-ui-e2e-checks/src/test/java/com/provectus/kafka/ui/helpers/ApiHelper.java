@@ -10,6 +10,7 @@ import com.provectus.kafka.ui.api.model.CreateTopicMessage;
 import com.provectus.kafka.ui.api.model.ErrorResponse;
 import com.provectus.kafka.ui.api.model.NewConnector;
 import com.provectus.kafka.ui.api.model.TopicCreation;
+import com.provectus.kafka.ui.base.TestConfiguration;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
