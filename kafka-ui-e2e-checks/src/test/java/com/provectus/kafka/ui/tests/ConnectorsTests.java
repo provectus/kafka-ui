@@ -13,7 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-@Testcontainers
 public class ConnectorsTests extends BaseTest {
 
     public static final String LOCAL_CLUSTER = "local";

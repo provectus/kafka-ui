@@ -16,7 +16,7 @@ import static com.codeborne.selenide.Selenide.*;
 @ExtensionMethod({WaitUtils.class})
 public class TopicView {
 
-    private static final String path = "ui/clusters/%s/topics/%s";
+    private static final String path = "/ui/clusters/%s/topics/%s";
     private final SelenideElement dotMenuHeader = $$(".dropdown.is-right button").get(0);
     private final SelenideElement dotMenuFooter = $$(".dropdown.is-right button").get(1);
 

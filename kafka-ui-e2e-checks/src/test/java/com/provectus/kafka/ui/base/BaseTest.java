@@ -51,20 +51,17 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
-//  public static GenericContainer selenoid =
-//      new GenericContainer(DockerImageName.parse("aerokube/selenoid:latest-release"))
-//          .withExposedPorts(4444)
-//          .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
-//          .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
-//          .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
-//          .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
-//          .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
-//          .withCommand(
-//              "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
+    public static GenericContainer selenoid =
+            new GenericContainer(DockerImageName.parse("aerokube/selenoid:latest-release"))
+                    .withExposedPorts(4444)
+                    .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
+                    .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
+                    .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
+                    .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
+                    .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
+                    .withCommand(
+                            "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 
-
-    public static BrowserWebDriverContainer<?> selenoid = new BrowserWebDriverContainer<>()
-            .withCapabilities(new ChromeOptions());
 
     static {
         if (!new File("./.env").exists()) {
@@ -79,72 +76,47 @@ public class BaseTest {
         if (TestConfiguration.CLEAR_REPORTS_DIR) {
             clearReports();
         }
-        beforeAllSelenideSetup();
         setupSelenoid();
     }
 
     @AfterAll
     public static void afterAll() {
 //        closeWebDriver();
-//    selenoid.close();
+//        selenoid.close();
     }
 
     @SneakyThrows
     private static void setupSelenoid() {
-//    String remote = TestConfiguration.SELENOID_URL;
-//    if (TestConfiguration.SHOULD_START_SELENOID) {
-////    //TODO this image should be configurable
-////      DockerClient client = DockerClientFactory.instance().client();
-////      DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-////      DockerClientFactory.instance().checkAndPullImage(client, "selenoid/video-recorder:latest-release");
-//      //selenoid.start();
-//      remote = selenoid.getSeleniumAddress().toString();
-////          "http://%s:%s/wd/hub"
-////              .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
-//    }
+        String remote = TestConfiguration.SELENOID_URL;
+        if (TestConfiguration.SHOULD_START_SELENOID) {
+            //TODO this image should be configurable
+            DockerClient client = DockerClientFactory.instance().client();
+            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+            selenoid.start();
+            remote = "http://%s:%s/wd/hub"
+                    .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
+        }
 
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
-//    if (!TestConfiguration.USE_LOCAL_BROWSER) {
-//      Configuration.remote = remote;
-//      TestConfiguration.BASE_URL =
-//          TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
-//    }
-//        Configuration.screenshots = TestConfiguration.SCREENSHOTS;
+        if (!TestConfiguration.USE_LOCAL_BROWSER) {
+            Configuration.remote = remote;
+            TestConfiguration.BASE_URL =
+                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+        }
+        Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
         Configuration.reopenBrowserOnFail = TestConfiguration.REOPEN_BROWSER_ON_FAIL;
         Configuration.browser = TestConfiguration.BROWSER;
         Configuration.baseUrl = TestConfiguration.BASE_URL;
         Configuration.timeout = 10000;
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
-//        var capabilities = new DesiredCapabilities();
-////    DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-//        capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
-//        capabilities.setCapability("enableVideo", TestConfiguration.ENABLE_VNC);
-//        Configuration.browserCapabilities = capabilities;
-//
-      SelenideLogger.addListener("AllureSelenide", new AllureSelenide().savePageSource(false));
-    }
+        var capabilities = new DesiredCapabilities();
+        capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
+        capabilities.setCapability("enableVideo", TestConfiguration.ENABLE_VNC);
+        capabilities.setCapability("broeser", "chrome");
+        Configuration.browserCapabilities = capabilities;
 
-    // @BeforeAll
-    public static void beforeAllSelenideSetup() {
-        String remote = TestConfiguration.SELENOID_URL;
-        if (TestConfiguration.SHOULD_START_SELENOID) {
-            selenoid.start();
-//    //TODO this image should be configurable
-//      DockerClient client = DockerClientFactory.instance().client();
-//      DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-//      DockerClientFactory.instance().checkAndPullImage(client, "selenoid/video-recorder:latest-release");
-            //selenoid.start();
-            remote = selenoid.getSeleniumAddress().toString();
-//          "http://%s:%s/wd/hub"
-//              .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
-        }
-        if (!TestConfiguration.USE_LOCAL_BROWSER) {
-            Configuration.remote = remote;
-            TestConfiguration.BASE_URL =
-                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
-        }
-
+        SelenideLogger.addListener("AllureSelenide", new AllureSelenide().savePageSource(false));
     }
 
     public static void clearReports() {

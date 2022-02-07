@@ -14,7 +14,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 @ExtensionMethod(WaitUtils.class)
 public class ConnectorsView {
-    private static final String path = "ui/clusters/%s/connects/first/connectors/%s";
+    private static final String path = "/ui/clusters/%s/connects/first/connectors/%s";
 
     @Step
     public ConnectorsView goTo(String cluster, String connector) {

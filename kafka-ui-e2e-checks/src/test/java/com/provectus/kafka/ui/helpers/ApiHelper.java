@@ -1,5 +1,7 @@
 package com.provectus.kafka.ui.helpers;
 
+import static com.codeborne.selenide.Selenide.sleep;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.provectus.kafka.ui.api.ApiClient;
@@ -24,7 +26,7 @@ public class ApiHelper {
     int partitions = 1;
     int replicationFactor = 1;
     String newTopic = "new-topic";
-    String baseURL = "http://localhost:8080";
+    String baseURL = TestConfiguration.BASE_URL;
 
 
     @SneakyThrows
@@ -40,6 +42,7 @@ public class ApiHelper {
         topic.setReplicationFactor(replicationFactor);
         topic.setConfigs(new HashMap<>());
         deleteTopic(clusterName, topicName);
+        sleep(2000);
         try {
             topicApi().createTopic(clusterName, topic).block();
         } catch (WebClientResponseException ex) {

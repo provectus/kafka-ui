@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtensionMethod({WaitUtils.class})
 public class MainPage {
 
-    private static final String path = "";
+    private static final String path = "/";
 
     @Step
     public MainPage goTo() {

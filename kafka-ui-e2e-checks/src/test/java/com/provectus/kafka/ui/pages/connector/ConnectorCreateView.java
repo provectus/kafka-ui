@@ -19,7 +19,7 @@ public class ConnectorCreateView {
     SelenideElement contentTextArea = $(".ace_text-input");
     SelenideElement submitButton = $(By.xpath("//button[@type='submit']"));
 
-    private static final String path = "ui/clusters/secondLocal/connectors/create_new";
+    private static final String path = "/ui/clusters/secondLocal/connectors/create_new";
 
     @Step
     public ConnectorsView setConnectorConfig(String connectName, String configJson) throws InterruptedException {
