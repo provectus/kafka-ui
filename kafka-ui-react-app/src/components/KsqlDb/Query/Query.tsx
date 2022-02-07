@@ -55,9 +55,10 @@ const getFormattedError = (
   return {
     status: errorCode || HTTP_UNPROCESSABLE_ENTITY,
     statusText: `${type}`,
-    message: `${
-      entities.length ? `[${entities.join(', ')}]` : ''
-    }"${statementText}" ${message}`,
+    message:
+      (entities?.length ? `[${entities.join(', ')}] ` : '') +
+      (statementText ? `"${statementText}" ` : '') +
+      message,
     url,
   };
 };
@@ -102,7 +103,7 @@ const Query: FC = () => {
         const { table }: KsqlResponse = JSON.parse(data);
         if (table) {
           switch (table?.header) {
-            // responsetable.header can also be `Source Description` - right now it will be rendered as table
+            // table.header can also be `Source Description` - right now it will be rendered as a table (with huge horizonal scroll)
             case 'Execution error':
               dispatch(
                 serverErrorAlertAdded(getFormattedError(url, table.values))
