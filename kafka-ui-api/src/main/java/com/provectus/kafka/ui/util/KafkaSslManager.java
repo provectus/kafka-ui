@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class KafkaSSLManager {
+public class KafkaSslManager {
 
   private final Environment environment;
 
-  public Properties getSSLProperties() {
+  public Properties getSslProperties() {
     final var properties = new Properties();
     properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, environment.getProperty(TRUSTSTORE_LOCATION));
     properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, environment.getProperty(TRUSTSTORE_PASSWORD));

@@ -13,7 +13,7 @@ import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
-import com.provectus.kafka.ui.util.KafkaSSLManager;
+import com.provectus.kafka.ui.util.KafkaSslManager;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.List;
@@ -54,7 +54,7 @@ public class MessagesService {
   private final DeserializationService deserializationService;
   private final ConsumerGroupService consumerGroupService;
   private final MetricsCache metricsCache;
-  private final KafkaSSLManager kafkaSSLManager;
+  private final KafkaSslManager kafkaSslManager;
 
   public Mono<Void> deleteTopicMessages(KafkaCluster cluster, String topicName,
                                         List<Integer> partitionsToInclude) {
@@ -96,7 +96,7 @@ public class MessagesService {
     properties.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
     properties.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
     properties.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-    properties.putAll(kafkaSSLManager.getSSLProperties());
+    properties.putAll(kafkaSslManager.getSslProperties());
 
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
       ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(

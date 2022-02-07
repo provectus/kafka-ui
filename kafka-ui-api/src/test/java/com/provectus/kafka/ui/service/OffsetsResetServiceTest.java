@@ -7,7 +7,7 @@ import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.KafkaSSLManager;
+import com.provectus.kafka.ui.util.KafkaSslManager;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -33,14 +33,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @Autowired
-  private KafkaSSLManager kafkaSSLManager;
+  private KafkaSslManager kafkaSslManager;
 
   private static final int PARTITIONS = 5;
 
@@ -58,7 +57,7 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @BeforeEach
   void init() {
-    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl(kafkaSSLManager);
+    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl(kafkaSslManager);
     adminClientService.setClientTimeout(5_000);
     offsetsResetService = new OffsetsResetService(adminClientService);
 
