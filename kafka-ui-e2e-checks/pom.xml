@@ -17,7 +17,7 @@
         <allure.version>2.17.1</allure.version>
         <json-smart.version>1.3.2</json-smart.version>
         <testcontainers.version>1.15.2</testcontainers.version>
-        <selenide.version>5.16.2</selenide.version>
+        <selenide.version>6.2.1</selenide.version>
         <assertj.version>3.17.1</assertj.version>
         <google.auto-service.version>1.0-rc7</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
