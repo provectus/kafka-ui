@@ -1,27 +1,25 @@
 import React from 'react';
-import { TopicConfigByName, TopicFormData } from 'redux/interfaces';
+import { TopicFormData } from 'redux/interfaces';
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 import { Button } from 'components/common/Button/Button';
+import { TOPIC_CUSTOM_PARAMS_PREFIX } from 'lib/constants';
 
 import CustomParamField from './CustomParamField';
 import * as S from './CustomParams.styled';
 
-export const INDEX_PREFIX = 'customParams';
-
 export interface CustomParamsProps {
   isSubmitting: boolean;
-  config?: TopicConfigByName;
 }
 
 const CustomParams: React.FC<CustomParamsProps> = ({ isSubmitting }) => {
   const { control } = useFormContext<TopicFormData>();
   const { fields, append, remove } = useFieldArray({
     control,
-    name: INDEX_PREFIX,
+    name: TOPIC_CUSTOM_PARAMS_PREFIX,
   });
   const watchFieldArray = useWatch({
     control,
-    name: INDEX_PREFIX,
+    name: TOPIC_CUSTOM_PARAMS_PREFIX,
     defaultValue: fields,
   });
   const controlledFields = fields.map((field, index) => {
