@@ -78,8 +78,21 @@ const Brokers: React.FC = () => {
               of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
             </Metrics.LightText>
           </Metrics.Indicator>
-          <Metrics.Indicator label="URP" title="Under replicated partitions">
-            {underReplicatedPartitionCount}
+          <Metrics.Indicator
+            label="URP"
+            title="Under replicated partitions"
+            isAlert
+            alertType={
+              underReplicatedPartitionCount === 0 ? 'success' : 'error'
+            }
+          >
+            {underReplicatedPartitionCount === 0 ? (
+              <Metrics.LightText>
+                {underReplicatedPartitionCount}
+              </Metrics.LightText>
+            ) : (
+              <Metrics.RedText>{underReplicatedPartitionCount}</Metrics.RedText>
+            )}
           </Metrics.Indicator>
           <Metrics.Indicator label="In Sync Replicas">
             {inSyncReplicasCount}
