@@ -112,8 +112,7 @@ public class BaseTest {
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
         var capabilities = new DesiredCapabilities();
         capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
-        capabilities.setCapability("enableVideo", TestConfiguration.ENABLE_VNC);
-        capabilities.setCapability("broeser", "chrome");
+        capabilities.setCapability("browser", "chrome");
         Configuration.browserCapabilities = capabilities;
 
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide().savePageSource(false));
