@@ -26,8 +26,8 @@ const orderableMixin = css(
     }
 
     &::before {
-       border-bottom-color: ${table.th.color.normal};
-       margin-top: -9px;
+      border-bottom-color: ${table.th.color.normal};
+      margin-top: -9px;
     }
 
     &::after {
@@ -47,7 +47,7 @@ const orderableMixin = css(
   `
 );
 
-const orderedMixinASC = css(
+const ASCMixin = css(
   ({ theme: { table } }) => `
   color: ${table.th.color.active};
   cursor: pointer;
@@ -67,7 +67,7 @@ const orderedMixinASC = css(
   `
 );
 
-const orderedMixinDESC = css(
+const DESCMixin = css(
   ({ theme: { table } }) => `
   color: ${table.th.color.active};
   cursor: pointer;
@@ -107,15 +107,9 @@ export const Title = styled.span<TitleProps>(
 
     ${isOrderable && !isOrdered && orderableMixin}
 
-    ${isOrderable &&
-    isOrdered &&
-    sortOrder === SortOrder.ASC &&
-    orderedMixinASC}
+    ${isOrderable && isOrdered && sortOrder === SortOrder.ASC && ASCMixin}
 
-    ${isOrderable &&
-    isOrdered &&
-    sortOrder === SortOrder.DESC &&
-    orderedMixinDESC}
+    ${isOrderable && isOrdered && sortOrder === SortOrder.DESC && DESCMixin}
   `
 );
 
