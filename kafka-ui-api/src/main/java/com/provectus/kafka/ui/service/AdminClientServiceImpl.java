@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.KafkaSslManager;
+import com.provectus.kafka.ui.util.KafkaSSLManager;
 import java.io.Closeable;
 import java.util.Map;
 import java.util.Properties;
@@ -22,7 +22,7 @@ import reactor.core.publisher.Mono;
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
 
-  private final KafkaSslManager kafkaSslManager;
+  private final KafkaSSLManager kafkaSSLManager;
 
   @Setter // used in tests
   @Value("${kafka.admin-client-timeout:30000}")
@@ -43,7 +43,7 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
       properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
       properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
-      properties.putAll(kafkaSslManager.getSslProperties());
+      properties.putAll(kafkaSSLManager.getSSLProperties());
 
       return AdminClient.create(properties);
     })
