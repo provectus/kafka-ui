@@ -1,8 +1,9 @@
 package com.provectus.kafka.ui.service;
 
+import static com.provectus.kafka.ui.util.KafkaConstants.TRUSTSTORE_LOCATION;
+import static com.provectus.kafka.ui.util.KafkaConstants.TRUSTSTORE_PASSWORD;
 
 import com.provectus.kafka.ui.model.KafkaCluster;
-import com.provectus.kafka.ui.util.KafkaSSLManager;
 import java.io.Closeable;
 import java.util.Map;
 import java.util.Properties;
@@ -12,7 +13,9 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.common.config.SslConfigs;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +25,7 @@ import reactor.core.publisher.Mono;
 public class AdminClientServiceImpl implements AdminClientService, Closeable {
   private final Map<String, ReactiveAdminClient> adminClientCache = new ConcurrentHashMap<>();
 
-  private final KafkaSSLManager kafkaSSLManager;
+  private final Environment environment;
 
   @Setter // used in tests
   @Value("${kafka.admin-client-timeout:30000}")
@@ -43,7 +46,11 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
       properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, cluster.getBootstrapServers());
       properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, clientTimeout);
-      properties.putAll(kafkaSSLManager.getSSLProperties());
+
+      properties.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG,
+          environment.getProperty(TRUSTSTORE_LOCATION));
+      properties.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG,
+          environment.getProperty(TRUSTSTORE_PASSWORD));
 
       return AdminClient.create(properties);
     })
