@@ -59,9 +59,6 @@ public final class KafkaConstants {
       new AbstractMap.SimpleEntry<>(MESSAGE_DOWNCONVERSION_ENABLE_CONFIG, "true")
   );
 
-  public static final String TRUSTSTORE_LOCATION = "kafka.ssl.truststore.location";
-  public static final String TRUSTSTORE_PASSWORD = "kafka.ssl.truststore.password";
-
   private KafkaConstants() {
   }
 }

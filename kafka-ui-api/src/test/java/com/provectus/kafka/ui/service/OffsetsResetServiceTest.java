@@ -31,15 +31,10 @@ import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 public class OffsetsResetServiceTest extends AbstractBaseTest {
-
-  @Autowired
-  private Environment environment;
 
   private static final int PARTITIONS = 5;
 
@@ -57,7 +52,7 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @BeforeEach
   void init() {
-    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl(environment);
+    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl();
     adminClientService.setClientTimeout(5_000);
     offsetsResetService = new OffsetsResetService(adminClientService);
 
