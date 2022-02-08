@@ -70,6 +70,7 @@ public class ZookeeperService {
       zkClient.close();
     } catch (InterruptedException ex) {
       log.error("Unable to close zkClient session: ", e);
+      Thread.currentThread().interrupt();
     }
   }
 
