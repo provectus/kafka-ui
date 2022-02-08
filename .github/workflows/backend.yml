@@ -17,7 +17,7 @@ jobs:
             ${{ runner.os }}-maven-
       - uses: actions/checkout@v2
       - name: compose app
-        id: step_five
+        id: step_one_hundred
         run: |
           docker-compose -f ./docker/kafka-ui.yaml up -d
       - name: Set up JDK 1.13
