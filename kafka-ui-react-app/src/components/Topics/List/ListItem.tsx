@@ -1,5 +1,4 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
 import {
   ClusterName,
   TopicName,
@@ -10,10 +9,11 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { Colors } from 'theme/theme';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+
+import * as S from './List.styled';
 
 export interface ListItemProps {
   topic: TopicWithDetailedInfo;
@@ -25,7 +25,14 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: { name, internal, partitions, segmentSize, replicationFactor },
+  topic: {
+    name,
+    internal,
+    partitions,
+    segmentSize,
+    replicationFactor,
+    cleanUpPolicy,
+  },
   selected,
   toggleTopicSelected,
   deleteTopic,
@@ -89,19 +96,10 @@ const ListItem: React.FC<ListItemProps> = ({
         </td>
       )}
       <TableKeyLink style={{ width: '44%' }}>
-        {internal && <TagStyled color="gray">IN</TagStyled>}
-        <NavLink
-          exact
-          to={`topics/${name}`}
-          activeClassName="is-active"
-          style={{
-            color: Colors.neutral[90],
-            fontWeight: 500,
-            paddingLeft: internal ? '5px' : 0,
-          }}
-        >
+        {internal && <Tag color="gray">IN</Tag>}
+        <S.Link exact to={`topics/${name}`} $isInternal={internal}>
           {name}
-        </NavLink>
+        </S.Link>
       </TableKeyLink>
       <td>{partitions?.length}</td>
       <td>{outOfSyncReplicas}</td>
@@ -112,22 +110,23 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td className="topic-action-block" style={{ width: '4%' }}>
         {!internal && !isReadOnly && vElipsisVisble ? (
-          <>
-            <div className="has-text-right">
-              <Dropdown label={<VerticalElipsisIcon />} right>
-                <DropdownItem onClick={clearTopicMessagesHandler}>
-                  <span className="has-text-danger">Clear Messages</span>
+          <div className="has-text-right">
+            <Dropdown label={<VerticalElipsisIcon />} right>
+              {cleanUpPolicy === 'DELETE' && (
+                <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                  Clear Messages
                 </DropdownItem>
-                {isTopicDeletionAllowed && (
-                  <DropdownItem
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                  >
-                    <span className="has-text-danger">Remove Topic</span>
-                  </DropdownItem>
-                )}
-              </Dropdown>
-            </div>
-          </>
+              )}
+              {isTopicDeletionAllowed && (
+                <DropdownItem
+                  onClick={() => setDeleteTopicConfirmationVisible(true)}
+                  danger
+                >
+                  Remove Topic
+                </DropdownItem>
+              )}
+            </Dropdown>
+          </div>
         ) : null}
         <ConfirmationModal
           isOpen={isDeleteTopicConfirmationVisible}

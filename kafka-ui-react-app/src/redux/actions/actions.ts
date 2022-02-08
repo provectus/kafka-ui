@@ -7,8 +7,6 @@ import {
   ConnectorConfig,
 } from 'redux/interfaces';
 import {
-  SchemaSubject,
-  CompatibilityLevelCompatibilityEnum,
   TopicColumnsToSort,
   Connector,
   FullConnectorInfo,
@@ -17,7 +15,6 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
-  KsqlCommandResponse,
 } from 'generated-sources';
 
 export const fetchTopicsListAction = createAsyncAction(
@@ -62,48 +59,6 @@ export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__FAILURE',
   'DELETE_TOPIC__CANCEL'
 )<undefined, TopicName, undefined, undefined>();
-
-export const fetchSchemasByClusterNameAction = createAsyncAction(
-  'GET_CLUSTER_SCHEMAS__REQUEST',
-  'GET_CLUSTER_SCHEMAS__SUCCESS',
-  'GET_CLUSTER_SCHEMAS__FAILURE'
-)<undefined, SchemaSubject[], undefined>();
-
-export const fetchGlobalSchemaCompatibilityLevelAction = createAsyncAction(
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST',
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS',
-  'GET_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE'
-)<undefined, CompatibilityLevelCompatibilityEnum, undefined>();
-
-export const updateGlobalSchemaCompatibilityLevelAction = createAsyncAction(
-  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__REQUEST',
-  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__SUCCESS',
-  'PUT_GLOBAL_SCHEMA_COMPATIBILITY__FAILURE'
-)<undefined, CompatibilityLevelCompatibilityEnum, undefined>();
-
-export const fetchSchemaVersionsAction = createAsyncAction(
-  'GET_SCHEMA_VERSIONS__REQUEST',
-  'GET_SCHEMA_VERSIONS__SUCCESS',
-  'GET_SCHEMA_VERSIONS__FAILURE'
-)<undefined, SchemaSubject[], undefined>();
-
-export const createSchemaAction = createAsyncAction(
-  'POST_SCHEMA__REQUEST',
-  'POST_SCHEMA__SUCCESS',
-  'POST_SCHEMA__FAILURE'
-)<undefined, SchemaSubject, { alert?: FailurePayload }>();
-
-export const updateSchemaAction = createAsyncAction(
-  'PATCH_SCHEMA__REQUEST',
-  'PATCH_SCHEMA__SUCCESS',
-  'PATCH_SCHEMA__FAILURE'
-)<undefined, SchemaSubject, { alert?: FailurePayload }>();
-
-export const deleteSchemaAction = createAsyncAction(
-  'DELETE_SCHEMA__REQUEST',
-  'DELETE_SCHEMA__SUCCESS',
-  'DELETE_SCHEMA__FAILURE'
-)<undefined, string, { alert?: FailurePayload }>();
 
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
 
@@ -219,12 +174,6 @@ export const fetchTopicMessageSchemaAction = createAsyncAction(
   { alert?: FailurePayload }
 >();
 
-export const sendTopicMessageAction = createAsyncAction(
-  'SEND_TOPIC_MESSAGE__REQUEST',
-  'SEND_TOPIC_MESSAGE__SUCCESS',
-  'SEND_TOPIC_MESSAGE__FAILURE'
-)<undefined, undefined, { alert?: FailurePayload }>();
-
 export const updateTopicPartitionsCountAction = createAsyncAction(
   'UPDATE_PARTITIONS__REQUEST',
   'UPDATE_PARTITIONS__SUCCESS',
@@ -236,24 +185,3 @@ export const updateTopicReplicationFactorAction = createAsyncAction(
   'UPDATE_REPLICATION_FACTOR__SUCCESS',
   'UPDATE_REPLICATION_FACTOR__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
-
-export const fetchKsqlDbTablesAction = createAsyncAction(
-  'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
-  'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
-  'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE'
-)<
-  undefined,
-  {
-    tables: Dictionary<string>[];
-    streams: Dictionary<string>[];
-  },
-  { alert?: FailurePayload }
->();
-
-export const executeKsqlAction = createAsyncAction(
-  'EXECUTE_KSQL__REQUEST',
-  'EXECUTE_KSQL__SUCCESS',
-  'EXECUTE_KSQL__FAILURE'
-)<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
-
-export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();

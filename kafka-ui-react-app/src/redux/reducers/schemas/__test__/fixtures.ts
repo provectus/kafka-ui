@@ -1,108 +1,61 @@
-import { SchemasState } from 'redux/interfaces';
-import { SchemaSubject, SchemaType } from 'generated-sources';
+import { SchemaType, SchemaSubject } from 'generated-sources';
+import { RootState } from 'redux/interfaces';
 
-export const initialState: SchemasState = {
-  byName: {},
-  allNames: [],
-  currentSchemaVersions: [],
+export const schemasInitialState: RootState['schemas'] = {
+  totalPages: 0,
+  ids: [],
+  entities: {},
+  versions: {
+    latest: null,
+    ids: [],
+    entities: {},
+  },
 };
 
-export const clusterSchemasPayload: SchemaSubject[] = [
-  {
-    subject: 'test2',
-    version: '3',
-    id: 4,
-    schema:
-      '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-  {
-    subject: 'test3',
-    version: '1',
-    id: 5,
-    schema:
-      '{"type":"record","name":"MyRecord","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-  {
-    subject: 'test',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-];
-
-export const schemaVersionsPayload: SchemaSubject[] = [
-  {
-    subject: 'test',
-    version: '1',
-    id: 1,
-    schema:
-      '{"type":"record","name":"MyRecord1","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-  {
-    subject: 'test',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-];
-
-export const newSchemaPayload: SchemaSubject = {
-  subject: 'test4',
-  version: '2',
+export const schemaVersion1: SchemaSubject = {
+  subject: 'schema7_1',
+  version: '1',
   id: 2,
   schema:
-    '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-  compatibilityLevel: 'BACKWARD',
+    '{"$schema":"http://json-schema.org/draft-07/schema#","$id":"http://example.com/myURI.schema.json","title":"TestRecord","type":"object","additionalProperties":false,"properties":{"f1":{"type":"integer"},"f2":{"type":"string"},"schema":{"type":"string"}}}',
+  compatibilityLevel: 'FULL',
+  schemaType: SchemaType.JSON,
+};
+export const schemaVersion2: SchemaSubject = {
+  subject: 'MySchemaSubject',
+  version: '2',
+  id: 28,
+  schema: '12',
+  compatibilityLevel: 'FORWARD_TRANSITIVE',
   schemaType: SchemaType.JSON,
 };
 
-export const clusterSchemasPayloadWithNewSchema: SchemaSubject[] = [
-  {
-    subject: 'test2',
-    version: '3',
-    id: 4,
-    schema:
-      '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
+export { schemaVersion1 as schemaVersion };
+
+export const schemasFulfilledState = {
+  totalPages: 1,
+  ids: [schemaVersion2.subject, schemaVersion1.subject],
+  entities: {
+    [schemaVersion2.subject]: schemaVersion2,
+    [schemaVersion1.subject]: schemaVersion1,
   },
-  {
-    subject: 'test3',
-    version: '1',
-    id: 5,
-    schema:
-      '{"type":"record","name":"MyRecord","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
+  versions: {
+    latest: null,
+    ids: [],
+    entities: {},
   },
-  {
-    subject: 'test',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord2","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
+};
+
+export const versionFulfilledState = {
+  totalPages: 1,
+  ids: [],
+  entities: {},
+  versions: {
+    latest: schemaVersion2,
+    ids: [schemaVersion1.id, schemaVersion2.id],
+    entities: {
+      [schemaVersion2.id]: schemaVersion2,
+      [schemaVersion1.id]: schemaVersion1,
+    },
   },
-  {
-    subject: 'test4',
-    version: '2',
-    id: 2,
-    schema:
-      '{"type":"record","name":"MyRecord4","namespace":"com.mycompany","fields":[{"name":"id","type":"long"}]}',
-    compatibilityLevel: 'BACKWARD',
-    schemaType: SchemaType.JSON,
-  },
-];
+};

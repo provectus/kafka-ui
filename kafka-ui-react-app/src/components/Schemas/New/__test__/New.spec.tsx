@@ -1,41 +1,25 @@
 import React from 'react';
-import { store } from 'redux/store';
-import { mount, shallow } from 'enzyme';
-import { Provider } from 'react-redux';
-import { StaticRouter } from 'react-router-dom';
-import NewContainer from 'components/Schemas/New/NewContainer';
-import New, { NewProps } from 'components/Schemas/New/New';
-import { ThemeProvider } from 'styled-components';
-import theme from 'theme/theme';
+import New from 'components/Schemas/New/New';
+import { render } from 'lib/testHelpers';
+import { clusterSchemaNewPath } from 'lib/paths';
+import { Route } from 'react-router';
+import { screen } from '@testing-library/dom';
 
-describe('New', () => {
-  describe('Container', () => {
-    it('renders view', () => {
-      const component = shallow(
-        <ThemeProvider theme={theme}>
-          <Provider store={store}>
-            <NewContainer />
-          </Provider>
-        </ThemeProvider>
-      );
+const clusterName = 'local';
 
-      expect(component.exists()).toBeTruthy();
-    });
+describe('New Component', () => {
+  beforeEach(() => {
+    render(
+      <Route path={clusterSchemaNewPath(':clusterName')}>
+        <New />
+      </Route>,
+      {
+        pathname: clusterSchemaNewPath(clusterName),
+      }
+    );
   });
 
-  describe('View', () => {
-    const pathname = '/ui/clusters/clusterName/schemas/create-new';
-
-    const setupWrapper = (props: Partial<NewProps> = {}) => (
-      <ThemeProvider theme={theme}>
-        <StaticRouter location={{ pathname }} context={{}}>
-          <New createSchema={jest.fn()} {...props} />
-        </StaticRouter>
-      </ThemeProvider>
-    );
-
-    it('matches snapshot', () => {
-      expect(mount(setupWrapper())).toMatchSnapshot();
-    });
+  it('renders component', () => {
+    expect(screen.getByText('Create new schema')).toBeInTheDocument();
   });
 });

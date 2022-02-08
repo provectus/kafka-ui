@@ -8,7 +8,6 @@ import {
   TopicUpdate,
   TopicConfig,
   ConsumerGroupsApi,
-  CreateTopicMessage,
   GetTopicsRequest,
 } from 'generated-sources';
 import {
@@ -318,36 +317,6 @@ export const fetchTopicMessageSchema =
     }
   };
 
-export const sendTopicMessage =
-  (
-    clusterName: ClusterName,
-    topicName: TopicName,
-    payload: CreateTopicMessage
-  ): PromiseThunkResult =>
-  async (dispatch) => {
-    dispatch(actions.sendTopicMessageAction.request());
-    try {
-      await messagesApiClient.sendTopicMessages({
-        clusterName,
-        topicName,
-        createTopicMessage: {
-          key: payload.key,
-          content: payload.content,
-          headers: payload.headers,
-          partition: payload.partition,
-        },
-      });
-      dispatch(actions.sendTopicMessageAction.success());
-    } catch (e) {
-      const response = await getResponse(e);
-      const alert: FailurePayload = {
-        subject: ['topic', topicName].join('-'),
-        title: `Topic Message ${topicName}`,
-        response,
-      };
-      dispatch(actions.sendTopicMessageAction.failure({ alert }));
-    }
-  };
 export const updateTopicPartitionsCount =
   (
     clusterName: ClusterName,

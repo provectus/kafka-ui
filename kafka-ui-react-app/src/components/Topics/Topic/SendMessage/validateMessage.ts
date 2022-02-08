@@ -1,71 +1,57 @@
 import { TopicMessageSchema } from 'generated-sources';
 import Ajv from 'ajv/dist/2020';
+import { upperFirst } from 'lodash';
 
-const validateMessage = async (
+const validateBySchema = (
+  value: string,
+  schema: string | undefined,
+  type: 'key' | 'content'
+) => {
+  let errors: string[] = [];
+
+  if (!value || !schema) {
+    return errors;
+  }
+
+  let parcedSchema;
+  let parsedValue;
+
+  try {
+    parcedSchema = JSON.parse(schema);
+  } catch (e) {
+    return [`Error in parsing the "${type}" field schema`];
+  }
+  if (parcedSchema.type === 'string') {
+    return [];
+  }
+  try {
+    parsedValue = JSON.parse(value);
+  } catch (e) {
+    return [`Error in parsing the "${type}" field value`];
+  }
+  try {
+    const validate = new Ajv().compile(parcedSchema);
+    validate(parsedValue);
+    if (validate.errors) {
+      errors = validate.errors.map(
+        ({ schemaPath, message }) =>
+          `${schemaPath.replace('#', upperFirst(type))} - ${message}`
+      );
+    }
+  } catch (e) {
+    return [`${upperFirst(type)} ${e.message}`];
+  }
+
+  return errors;
+};
+
+const validateMessage = (
   key: string,
   content: string,
-  messageSchema: TopicMessageSchema | undefined,
-  setSchemaErrors: React.Dispatch<React.SetStateAction<string[]>>
-): Promise<boolean> => {
-  setSchemaErrors([]);
-  const keyAjv = new Ajv();
-  const contentAjv = new Ajv();
-  try {
-    if (messageSchema) {
-      let keyIsValid = false;
-      let contentIsValid = false;
-
-      try {
-        const keySchema = JSON.parse(messageSchema.key.schema);
-        const validateKey = keyAjv.compile(keySchema);
-        if (keySchema.type === 'string') {
-          keyIsValid = true;
-        } else {
-          keyIsValid = validateKey(JSON.parse(key));
-        }
-        if (!keyIsValid) {
-          const errorString: string[] = [];
-          if (validateKey.errors) {
-            validateKey.errors.forEach((e) => {
-              errorString.push(
-                `${e.schemaPath.replace('#', 'Key')} ${e.message}`
-              );
-            });
-            setSchemaErrors((e) => [...e, ...errorString]);
-          }
-        }
-      } catch (err) {
-        setSchemaErrors((e) => [...e, `Key ${err.message}`]);
-      }
-      try {
-        const contentSchema = JSON.parse(messageSchema.value.schema);
-        const validateContent = contentAjv.compile(contentSchema);
-        if (contentSchema.type === 'string') {
-          contentIsValid = true;
-        } else {
-          contentIsValid = validateContent(JSON.parse(content));
-        }
-        if (!contentIsValid) {
-          const errorString: string[] = [];
-          if (validateContent.errors) {
-            validateContent.errors.forEach((e) => {
-              errorString.push(
-                `${e.schemaPath.replace('#', 'Content')} ${e.message}`
-              );
-            });
-            setSchemaErrors((e) => [...e, ...errorString]);
-          }
-        }
-      } catch (err) {
-        setSchemaErrors((e) => [...e, `Content ${err.message}`]);
-      }
-
-      return keyIsValid && contentIsValid;
-    }
-  } catch (err) {
-    setSchemaErrors((e) => [...e, err.message]);
-  }
-  return false;
-};
+  messageSchema: TopicMessageSchema | undefined
+): string[] => [
+  ...validateBySchema(key, messageSchema?.key?.schema, 'key'),
+  ...validateBySchema(content, messageSchema?.value?.schema, 'content'),
+];
 
 export default validateMessage;

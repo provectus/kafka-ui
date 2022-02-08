@@ -81,9 +81,6 @@ public class MessagesService {
 
   public Mono<RecordMetadata> sendMessage(KafkaCluster cluster, String topic,
                                           CreateTopicMessageDTO msg) {
-    if (msg.getKey() == null && msg.getContent() == null) {
-      throw new ValidationException("Invalid message: both key and value can't be null");
-    }
     if (msg.getPartition() != null
         && msg.getPartition() > metricsCache.get(cluster).getTopicDescriptions()
           .get(topic).partitions().size() - 1) {
@@ -100,8 +97,8 @@ public class MessagesService {
     try (KafkaProducer<byte[], byte[]> producer = new KafkaProducer<>(properties)) {
       ProducerRecord<byte[], byte[]> producerRecord = serde.serialize(
           topic,
-          msg.getKey(),
-          msg.getContent(),
+          msg.getKey().orElse(null),
+          msg.getContent().orElse(null),
           msg.getPartition()
       );
       producerRecord = new ProducerRecord<>(

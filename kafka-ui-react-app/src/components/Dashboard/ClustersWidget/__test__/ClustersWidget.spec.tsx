@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
 import { screen } from '@testing-library/react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 import userEvent from '@testing-library/user-event';
@@ -9,13 +8,11 @@ import { offlineCluster, onlineCluster, clusters } from './fixtures';
 
 const setupComponent = () =>
   render(
-    <StaticRouter>
-      <ClustersWidget
-        clusters={clusters}
-        onlineClusters={[onlineCluster]}
-        offlineClusters={[offlineCluster]}
-      />
-    </StaticRouter>
+    <ClustersWidget
+      clusters={clusters}
+      onlineClusters={[onlineCluster]}
+      offlineClusters={[offlineCluster]}
+    />
   );
 
 describe('ClustersWidget', () => {
@@ -29,5 +26,15 @@ describe('ClustersWidget', () => {
     expect(screen.getAllByRole('row').length).toBe(3);
     userEvent.click(screen.getByRole('checkbox'));
     expect(screen.getAllByRole('row').length).toBe(2);
+  });
+
+  it('when cluster is read-only', () => {
+    expect(screen.getByText('readonly')).toBeInTheDocument();
+  });
+
+  it('render clusterWidget cells', () => {
+    const cells = screen.getAllByRole('cells');
+    expect(cells.length).toBe(14);
+    expect(cells[0]).toHaveStyle('max-width: 99px');
   });
 });

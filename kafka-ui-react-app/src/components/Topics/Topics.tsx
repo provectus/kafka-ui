@@ -1,10 +1,11 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch } from 'react-router-dom';
 import {
   clusterTopicNewPath,
   clusterTopicPath,
   clusterTopicsPath,
 } from 'lib/paths';
+import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
 import ListContainer from './List/ListContainer';
 import TopicContainer from './Topic/TopicContainer';
@@ -12,13 +13,17 @@ import New from './New/New';
 
 const Topics: React.FC = () => (
   <Switch>
-    <Route
+    <BreadcrumbRoute
       exact
       path={clusterTopicsPath(':clusterName')}
       component={ListContainer}
     />
-    <Route exact path={clusterTopicNewPath(':clusterName')} component={New} />
-    <Route
+    <BreadcrumbRoute
+      exact
+      path={clusterTopicNewPath(':clusterName')}
+      component={New}
+    />
+    <BreadcrumbRoute
       path={clusterTopicPath(':clusterName', ':topicName')}
       component={TopicContainer}
     />

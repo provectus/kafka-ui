@@ -4,7 +4,7 @@ import { ClusterName, TopicName } from 'redux/interfaces';
 import { clusterConsumerGroupsPath } from 'lib/paths';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import { Link } from 'react-router-dom';
 
@@ -57,11 +57,11 @@ const TopicConsumerGroups: React.FC<Props> = ({
               <td>{consumer.coordinator?.id}</td>
               <td>
                 {consumer.state && (
-                  <TagStyled color="yellow">{`${consumer.state
+                  <Tag color="yellow">{`${consumer.state
                     .charAt(0)
                     .toUpperCase()}${consumer.state
                     .slice(1)
-                    .toLowerCase()}`}</TagStyled>
+                    .toLowerCase()}`}</Tag>
                 )}
               </td>
             </tr>

@@ -12,7 +12,7 @@ import {
 } from 'redux/interfaces';
 import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import yup from 'lib/yupExtended';
-import JSONEditor from 'components/common/JSONEditor/JSONEditor';
+import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Button } from 'components/common/Button/Button';
 
@@ -88,7 +88,7 @@ const Edit: React.FC<EditProps> = ({
         clusterName,
         connectName,
         connectorName,
-        JSON.parse(values.config)
+        JSON.parse(values.config.trim())
       );
       if (connector) {
         history.push(
@@ -116,13 +116,13 @@ const Edit: React.FC<EditProps> = ({
           accidentally breaking your connector config!
         </ConnectEditWarningMessageStyled>
       )}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} aria-label="Edit connect form">
         <div>
           <Controller
             control={control}
             name="config"
             render={({ field }) => (
-              <JSONEditor {...field} readOnly={isSubmitting} />
+              <Editor {...field} readOnly={isSubmitting} />
             )}
           />
         </div>

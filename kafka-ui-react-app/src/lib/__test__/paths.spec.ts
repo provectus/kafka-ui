@@ -60,8 +60,8 @@ describe('Paths', () => {
       `${paths.clusterSchemasPath(clusterName)}/${schemaId}`
     );
   });
-  it('clusterSchemaSchemaEditPath', () => {
-    expect(paths.clusterSchemaSchemaEditPath(clusterName, schemaId)).toEqual(
+  it('clusterSchemaEditPath', () => {
+    expect(paths.clusterSchemaEditPath(clusterName, schemaId)).toEqual(
       `${paths.clusterSchemaPath(clusterName, schemaId)}/edit`
     );
   });

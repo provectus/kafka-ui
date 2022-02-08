@@ -1,7 +1,3 @@
-import {
-  clusterSchemasPayload,
-  schemaVersionsPayload,
-} from 'redux/reducers/schemas/__test__/fixtures';
 import * as actions from 'redux/actions';
 import {
   MessageSchemaSourceEnum,
@@ -13,81 +9,10 @@ import {
   topicMessagePayload,
   topicMessagesMetaPayload,
 } from 'redux/reducers/topicMessages/__test__/fixtures';
-import { fetchKsqlDbTablesPayload } from 'redux/reducers/ksqlDb/__test__/fixtures';
 
 import { mockTopicsState } from './fixtures';
 
 describe('Actions', () => {
-  describe('fetchSchemasByClusterNameAction', () => {
-    it('creates a REQUEST action', () => {
-      expect(actions.fetchSchemasByClusterNameAction.request()).toEqual({
-        type: 'GET_CLUSTER_SCHEMAS__REQUEST',
-      });
-    });
-
-    it('creates a SUCCESS action', () => {
-      expect(
-        actions.fetchSchemasByClusterNameAction.success(clusterSchemasPayload)
-      ).toEqual({
-        type: 'GET_CLUSTER_SCHEMAS__SUCCESS',
-        payload: clusterSchemasPayload,
-      });
-    });
-
-    it('creates a FAILURE action', () => {
-      expect(actions.fetchSchemasByClusterNameAction.failure()).toEqual({
-        type: 'GET_CLUSTER_SCHEMAS__FAILURE',
-      });
-    });
-  });
-
-  describe('fetchSchemaVersionsAction', () => {
-    it('creates a REQUEST action', () => {
-      expect(actions.fetchSchemaVersionsAction.request()).toEqual({
-        type: 'GET_SCHEMA_VERSIONS__REQUEST',
-      });
-    });
-
-    it('creates a SUCCESS action', () => {
-      expect(
-        actions.fetchSchemaVersionsAction.success(schemaVersionsPayload)
-      ).toEqual({
-        type: 'GET_SCHEMA_VERSIONS__SUCCESS',
-        payload: schemaVersionsPayload,
-      });
-    });
-
-    it('creates a FAILURE action', () => {
-      expect(actions.fetchSchemaVersionsAction.failure()).toEqual({
-        type: 'GET_SCHEMA_VERSIONS__FAILURE',
-      });
-    });
-  });
-
-  describe('createSchemaAction', () => {
-    it('creates a REQUEST action', () => {
-      expect(actions.createSchemaAction.request()).toEqual({
-        type: 'POST_SCHEMA__REQUEST',
-      });
-    });
-
-    it('creates a SUCCESS action', () => {
-      expect(
-        actions.createSchemaAction.success(schemaVersionsPayload[0])
-      ).toEqual({
-        type: 'POST_SCHEMA__SUCCESS',
-        payload: schemaVersionsPayload[0],
-      });
-    });
-
-    it('creates a FAILURE action', () => {
-      expect(actions.createSchemaAction.failure({})).toEqual({
-        type: 'POST_SCHEMA__FAILURE',
-        payload: {},
-      });
-    });
-  });
-
   describe('dismissAlert', () => {
     it('creates a REQUEST action', () => {
       const id = 'alert-id1';
@@ -273,28 +198,6 @@ describe('Actions', () => {
           payload: { alert },
         });
       });
-    });
-  });
-});
-
-describe('ksqlDb', () => {
-  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST', () => {
-    expect(actions.fetchKsqlDbTablesAction.request()).toEqual({
-      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
-    });
-  });
-  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS', () => {
-    expect(
-      actions.fetchKsqlDbTablesAction.success(fetchKsqlDbTablesPayload)
-    ).toEqual({
-      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
-      payload: fetchKsqlDbTablesPayload,
-    });
-  });
-  it('creates GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE', () => {
-    expect(actions.fetchKsqlDbTablesAction.failure({})).toEqual({
-      type: 'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE',
-      payload: {},
     });
   });
 });

@@ -39,7 +39,7 @@ public class DeserializationService {
             objectMapper);
       } else {
         log.info("Using SchemaRegistryAwareRecordSerDe for cluster '{}'", cluster.getName());
-        return new SchemaRegistryAwareRecordSerDe(cluster);
+        return new SchemaRegistryAwareRecordSerDe(cluster, objectMapper);
       }
     } catch (Throwable e) {
       throw new RuntimeException("Can't init deserializer", e);

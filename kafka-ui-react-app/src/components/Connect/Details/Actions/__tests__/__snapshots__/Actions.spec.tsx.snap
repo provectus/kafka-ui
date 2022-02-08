@@ -24,6 +24,7 @@ exports[`Actions view matches snapshot 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -44,7 +45,7 @@ exports[`Actions view matches snapshot 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -74,6 +75,7 @@ exports[`Actions view matches snapshot 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -94,7 +96,7 @@ exports[`Actions view matches snapshot 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {
@@ -139,7 +141,7 @@ exports[`Actions view matches snapshot 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -215,6 +217,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -235,7 +238,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -265,6 +268,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -285,7 +289,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {
@@ -330,7 +334,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -406,6 +410,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -426,7 +431,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -456,6 +461,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -476,7 +482,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {
@@ -506,7 +512,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -582,6 +588,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -602,7 +609,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -632,6 +639,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -652,7 +660,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {
@@ -697,7 +705,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -773,6 +781,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -793,7 +802,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -823,6 +832,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -843,7 +853,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {
@@ -888,7 +898,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
@@ -964,6 +974,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
   background: #4F4FFF;
   color: #FFFFFF;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -984,7 +995,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
 }
 
 .c1 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c1 i {
@@ -1014,6 +1025,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
   background: #F1F2F3;
   color: #171A1C;
   font-size: 14px;
+  font-weight: 500;
   height: 32px;
 }
 
@@ -1034,7 +1046,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
 }
 
 .c2 a {
-  color: white;
+  color: #FFFFFF;
 }
 
 .c2 i {
@@ -1064,7 +1076,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
       />
     </span>
     <span>
-      Restart All Tasks
+      Restart Connector
     </span>
   </button>
   <a
