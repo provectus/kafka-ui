@@ -45,28 +45,12 @@ describe('TableHeaderCell', () => {
     expect(within(columnheader).getByText(testPreviewText)).toBeInTheDocument();
   });
 
-  it('renders with ASC sort order props', () => {
+  it('renders with oderable props', () => {
     setupComponent({
       title: testTitle,
       orderBy: TopicColumnsToSort.NAME,
       orderValue: TopicColumnsToSort.NAME,
-      sortOrder: SortOrder.ASC,
-      handleOrderBy,
-    });
-    const columnheader = screen.getByRole('columnheader');
-    const title = within(columnheader).getByRole('button');
-    expect(title).toBeInTheDocument();
-    expect(title).toHaveTextContent(testTitle);
-    expect(title).toHaveStyle(`color: ${theme.table.th.color.active};`);
-    expect(title).toHaveStyle('cursor: pointer;');
-  });
-
-  it('renders with DESC sort order props', () => {
-    setupComponent({
-      title: testTitle,
-      orderBy: TopicColumnsToSort.NAME,
-      orderValue: TopicColumnsToSort.NAME,
-      sortOrder: SortOrder.DESC,
+      sortOrder: SortOrder.ASC || SortOrder.DESC,
       handleOrderBy,
     });
     const columnheader = screen.getByRole('columnheader');
