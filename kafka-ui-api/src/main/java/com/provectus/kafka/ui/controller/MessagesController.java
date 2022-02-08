@@ -29,6 +29,10 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class MessagesController extends AbstractController implements MessagesApi {
+
+  private static final int MAX_LOAD_RECORD_LIMIT = 100;
+  private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
+
   private final MessagesService messagesService;
   private final TopicsService topicsService;
 
@@ -53,10 +57,13 @@ public class MessagesController extends AbstractController implements MessagesAp
         parseSeekTo(topicName, seekTo),
         seekDirection
     );
+    int recordsLimit = Optional.ofNullable(limit)
+        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
+        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
     return Mono.just(
             ResponseEntity.ok(
                 messagesService.loadMessages(
-                    getCluster(clusterName), topicName, positions, q, limit)
+                    getCluster(clusterName), topicName, positions, q, recordsLimit)
             )
         );
   }
@@ -75,18 +82,6 @@ public class MessagesController extends AbstractController implements MessagesAp
     return createTopicMessage.flatMap(msg ->
         messagesService.sendMessage(getCluster(clusterName), topicName, msg).then()
     ).map(ResponseEntity::ok);
-  }
-
-  @Override
-  public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> tailTopicMessages(String clusterName,
-                                                                            String topicName,
-                                                                            List<String> seekTo,
-                                                                            String q,
-                                                                            ServerWebExchange exchange) {
-    return Mono.just(
-        ResponseEntity.ok(
-            messagesService.tail(getCluster(clusterName),
-                topicName, parseSeekTo(topicName, seekTo), q)));
   }
 
   /**

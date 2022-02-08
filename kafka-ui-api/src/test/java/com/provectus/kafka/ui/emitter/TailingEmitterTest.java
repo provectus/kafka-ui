@@ -2,19 +2,19 @@ package com.provectus.kafka.ui.emitter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.google.common.util.concurrent.RateLimiter;
 import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
-import com.provectus.kafka.ui.serde.SimpleRecordSerDe;
 import com.provectus.kafka.ui.service.ClustersStorage;
-import com.provectus.kafka.ui.service.ConsumerGroupService;
+import com.provectus.kafka.ui.service.MessagesService;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Predicate;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -31,7 +31,7 @@ import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-class TopicTailingTest extends AbstractBaseTest {
+class TailingEmitterTest extends AbstractBaseTest {
 
   @Autowired
   private ApplicationContext ctx;
@@ -64,7 +64,7 @@ class TopicTailingTest extends AbstractBaseTest {
 
   @Test
   void allNewMessagesShouldBeEmitted() throws Exception {
-    var fluxOutput = startTailing(m -> true, 100);
+    var fluxOutput = startTailing(null);
 
     List<String> expectedValues = new ArrayList<>();
     for (int i = 0; i < 50; i++) {
@@ -85,16 +85,15 @@ class TopicTailingTest extends AbstractBaseTest {
 
   @Test
   void allNewMessageThatFitFilterConditionShouldBeEmitted() throws Exception {
-    var fluxOutput =
-        startTailing(m -> !m.getMessage().getContent().contains("skip"), 100);
+    var fluxOutput = startTailing("good");
 
     List<String> expectedValues = new ArrayList<>();
     for (int i = 0; i < 50; i++) {
       if (i % 2 == 0) {
-        producer.send(new ProducerRecord<>(topic, i + "", i + "")).get();
-        expectedValues.add(i + "");
+        producer.send(new ProducerRecord<>(topic, i + "", i + "_good")).get();
+        expectedValues.add(i + "_good");
       } else {
-        producer.send(new ProducerRecord<>(topic, i + "", i + "_skip")).get();
+        producer.send(new ProducerRecord<>(topic, i + "", i + "_bad")).get();
       }
     }
 
@@ -109,75 +108,23 @@ class TopicTailingTest extends AbstractBaseTest {
         });
   }
 
-  @Test
-  void noThrottlingAppliedWhenProduceRateIsLowerThanThreshold() {
-    var fluxOutput = startTailing(m -> true, 20);
-
-    RateLimiter producerLimiter = RateLimiter.create(15);
-    for (int i = 0; i < 50; i++) {
-      producerLimiter.acquire();
-      producer.send(new ProducerRecord<>(topic, i + "", i + ""));
-    }
-
-    // waiting until all messages received
-    Awaitility.await()
-        .atMost(Duration.ofSeconds(60))
-        .pollInSameThread()
-        .until(() -> fluxOutput.stream()
-            .filter(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
-            .count() == 50);
-
-    assertThat(fluxOutput)
-        .filteredOn(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.EMIT_THROTTLING)
-        .isEmpty();
-  }
-
-  @Test
-  void throttlingAppliedWhenProduceRateIsHigherThatThreshold() {
-    int maxEmitRatePerSec = 20;
-    int messagesToProduce = maxEmitRatePerSec * 5;
-
-    var fluxOutput = startTailing(m -> true, maxEmitRatePerSec);
-
-    RateLimiter producerLimiter = RateLimiter.create(maxEmitRatePerSec * 3);
-    for (int i = 0; i < messagesToProduce; i++) {
-      producerLimiter.acquire();
-      producer.send(new ProducerRecord<>(topic, i + "", i + ""));
-    }
-
-    // waiting until all messages received
-    Awaitility.await()
-        .atMost(Duration.ofSeconds(60))
-        .pollInSameThread()
-        .until(() -> fluxOutput.stream()
-            .filter(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
-            .count() == messagesToProduce);
-
-    assertThat(fluxOutput)
-        .filteredOn(evt -> evt.getType() == TopicMessageEventDTO.TypeEnum.EMIT_THROTTLING)
-        .hasSize(1);
-  }
-
-  private Flux<TopicMessageEventDTO> createTailing(
+  private Flux<TopicMessageEventDTO> createTailingFlux(
       String topicName,
-      Predicate<TopicMessageEventDTO> msgFilter,
-      int maxEmitRecPerSec) {
+      String query) {
     var cluster = ctx.getBean(ClustersStorage.class)
         .getClusterByName(LOCAL)
         .get();
-    var tailing = new TopicTailing(
-        new SimpleRecordSerDe(),
-        props -> ctx.getBean(ConsumerGroupService.class).createConsumer(cluster, props),
-        msgFilter,
-        maxEmitRecPerSec
-    );
-    return tailing.tail(topicName, Map.of());
+
+    return ctx.getBean(MessagesService.class)
+        .loadMessages(cluster, topicName,
+            new ConsumerPosition(SeekTypeDTO.LATEST, Map.of(), SeekDirectionDTO.TAILING),
+            query,
+            0);
   }
 
-  private List<TopicMessageEventDTO> startTailing(Predicate<TopicMessageEventDTO> msgFilter,
-                                                  int maxEmitRecPerSec) {
+  private List<TopicMessageEventDTO> startTailing(String filterQuery) {
     List<TopicMessageEventDTO> fluxOutput = new CopyOnWriteArrayList<>();
-    tailingFluxDispose = createTailing(topic, msgFilter, maxEmitRecPerSec)
+    tailingFluxDispose = createTailingFlux(topic, filterQuery)
         .doOnNext(fluxOutput::add)
         .subscribe();
 

@@ -464,44 +464,6 @@ paths:
         404:
           description: Not found
 
-  /api/clusters/{clusterName}/topics/{topicName}/tail:
-    get:
-      tags:
-        - Messages
-      summary: Get topic messages tail
-      operationId: tailTopicMessages
-      parameters:
-        - name: clusterName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: topicName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: seekTo
-          in: query
-          schema:
-            type: array
-            items:
-              type: string
-          description: The format is [partition]::[offset]
-        - name: q
-          in: query
-          schema:
-            type: string
-      responses:
-        200:
-          description: OK
-          content:
-            text/event-stream:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/TopicMessageEvent'
-
   /api/clusters/{clusterName}/topics/{topicName}/messages:
     get:
       tags:
@@ -2126,12 +2088,14 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
+        - LATEST
 
     SeekDirection:
       type: string
       enum:
         - FORWARD
         - BACKWARD
+        - TAILING
       default: FORWARD
 
     Partition:

@@ -14,7 +14,7 @@ class ConsumingStats {
   private int records = 0;
   private long elapsed = 0;
 
-  public void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
+  void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
                                ConsumerRecords<Bytes, Bytes> polledRecords,
                                long elapsed) {
     for (ConsumerRecord<Bytes, Bytes> record : polledRecords) {
