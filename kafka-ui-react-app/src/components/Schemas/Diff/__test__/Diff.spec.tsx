@@ -5,13 +5,12 @@ import { StaticRouter } from 'react-router';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
-import DiffViewer from 'components/common/DiffViewer/DiffViewer';
+import thunk from 'redux-thunk';
 
 import { versions } from './fixtures';
 
-const clusterName = 'testCluster';
-const subject = 'test';
-const mockStore = configureStore();
+const middlewares = [thunk];
+const mockStore = configureStore(middlewares);
 
 describe('Diff', () => {
   const initialState: Partial<DiffProps> = {};
@@ -23,10 +22,8 @@ describe('Diff', () => {
         <StaticRouter>
           <Diff
             versions={props.versions}
-            clusterName={props.clusterName}
             leftVersionInPath={props.leftVersionInPath}
             rightVersionInPath={props.rightVersionInPath}
-            subject={props.subject}
             areVersionsFetched={props.areVersionsFetched}
           />
         </StaticRouter>
@@ -35,8 +32,6 @@ describe('Diff', () => {
   describe('Container', () => {
     it('renders view', () => {
       setupComponent({
-        subject,
-        clusterName,
         areVersionsFetched: true,
         versions,
       });
@@ -45,8 +40,6 @@ describe('Diff', () => {
 
   describe('View', () => {
     setupComponent({
-      subject,
-      clusterName,
       areVersionsFetched: true,
       versions,
     });
@@ -54,8 +47,6 @@ describe('Diff', () => {
   describe('when page with schema versions is loading', () => {
     beforeAll(() => {
       setupComponent({
-        subject,
-        clusterName,
         areVersionsFetched: false,
         versions: [],
       });
@@ -68,8 +59,6 @@ describe('Diff', () => {
   describe('when schema versions are loaded and no specified versions in path', () => {
     beforeEach(() => {
       setupComponent({
-        subject,
-        clusterName,
         areVersionsFetched: true,
         versions,
       });
@@ -94,8 +83,6 @@ describe('Diff', () => {
   describe('when schema versions are loaded and two versions in path', () => {
     beforeEach(() => {
       setupComponent({
-        subject,
-        clusterName,
         areVersionsFetched: true,
         versions,
         leftVersionInPath: '1',
@@ -119,8 +106,6 @@ describe('Diff', () => {
   describe('when schema versions are loaded and only one versions in path', () => {
     beforeEach(() => {
       setupComponent({
-        subject,
-        clusterName,
         areVersionsFetched: true,
         versions,
         leftVersionInPath: '1',

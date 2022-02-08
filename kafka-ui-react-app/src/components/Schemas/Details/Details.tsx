@@ -1,7 +1,5 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
-import { SchemaSubject } from 'generated-sources';
-import { ClusterName, SchemaName } from 'redux/interfaces';
 import {
   clusterSchemasPath,
   clusterSchemaSchemaDiffPath,

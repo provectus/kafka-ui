@@ -1,19 +1,21 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
-import { ClusterName, SchemaName } from 'redux/interfaces';
 import { clusterSchemaSchemaDiffPath } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
-import { useHistory } from 'react-router';
-import { fetchSchemaVersions } from 'redux/reducers/schemas/schemasSlice';
+import { useHistory, useParams } from 'react-router';
+import {
+  fetchSchemaVersions,
+  SCHEMAS_VERSIONS_FETCH_ACTION,
+} from 'redux/reducers/schemas/schemasSlice';
 import { useForm, Controller } from 'react-hook-form';
 import Select from 'components/common/Select/Select';
+import { useAppDispatch } from 'lib/hooks/redux';
+import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 
 import * as S from './Diff.styled';
 
 export interface DiffProps {
-  subject: SchemaName;
-  clusterName: ClusterName;
   leftVersionInPath?: string;
   rightVersionInPath?: string;
   versions: SchemaSubject[];
@@ -21,8 +23,6 @@ export interface DiffProps {
 }
 
 const Diff: React.FC<DiffProps> = ({
-  subject,
-  clusterName,
   leftVersionInPath,
   rightVersionInPath,
   versions,
@@ -32,9 +32,18 @@ const Diff: React.FC<DiffProps> = ({
   const [rightVersion, setRightVersion] = React.useState(
     rightVersionInPath || ''
   );
+  const history = useHistory();
+
+  const { clusterName, subject } =
+    useParams<{ clusterName: string; subject: string }>();
+  const dispatch = useAppDispatch();
+
   React.useEffect(() => {
-    fetchSchemaVersions({ clusterName, subject });
-  }, [fetchSchemaVersions, clusterName]);
+    dispatch(fetchSchemaVersions({ clusterName, subject }));
+    return () => {
+      dispatch(resetLoaderById(SCHEMAS_VERSIONS_FETCH_ACTION));
+    };
+  }, [clusterName, subject]);
 
   const getSchemaContent = (allVersions: SchemaSubject[], version: string) => {
     const selectedSchema =
@@ -47,7 +56,6 @@ const Diff: React.FC<DiffProps> = ({
   const getSchemaType = (allVersions: SchemaSubject[]) => {
     return allVersions[0].schemaType;
   };
-  const history = useHistory();
 
   const methods = useForm({ mode: 'onChange' });
   const {

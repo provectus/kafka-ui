@@ -21,14 +21,12 @@ const mapStateToProps = (
   state: RootState,
   {
     match: {
-      params: { clusterName, subject, leftVersion, rightVersion },
+      params: { leftVersion, rightVersion },
     },
   }: OwnProps
 ) => ({
-  subject,
   versions: selectAllSchemaVersions(state),
   areVersionsFetched: getAreSchemaVersionsFulfilled(state),
-  clusterName,
   leftVersionInPath: leftVersion,
   rightVersionInPath: rightVersion,
 });
