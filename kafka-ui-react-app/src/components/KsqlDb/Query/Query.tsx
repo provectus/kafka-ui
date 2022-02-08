@@ -79,6 +79,16 @@ const Query: FC = () => {
     }
   }, [sse, setContinuousFetching]);
 
+  const handleSSECancel = useCallback(() => {
+    reset();
+    closeSSE();
+  }, [reset, closeSSE]);
+
+  const handleClearResults = useCallback(() => {
+    setKSQLTable(null);
+    handleSSECancel();
+  }, [setKSQLTable, handleSSECancel]);
+
   useEffect(() => {
     if (!sse.current && executionResult?.pipeId) {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${executionResult?.pipeId}`;
@@ -184,16 +194,6 @@ const Query: FC = () => {
     setKSQLTable,
     closeSSE,
   ]);
-
-  const handleSSECancel = () => {
-    reset();
-    closeSSE();
-  };
-
-  const handleClearResults = () => {
-    setKSQLTable(null);
-    handleSSECancel();
-  };
 
   const { handleSubmit, setValue, control } = useForm<FormValues>({
     mode: 'onTouched',
