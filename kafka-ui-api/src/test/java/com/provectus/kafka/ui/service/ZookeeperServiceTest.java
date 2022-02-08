@@ -11,13 +11,6 @@ import reactor.test.StepVerifier;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 class ZookeeperServiceTest extends AbstractBaseTest {
-  private final KafkaCluster kafkaCluster =
-      KafkaCluster.builder()
-          .name(LOCAL)
-          .bootstrapServers(kafka.getBootstrapServers())
-          .properties(new Properties())
-          .build();
-
   private ZookeeperService zookeeperService;
 
   @BeforeEach
@@ -28,7 +21,30 @@ class ZookeeperServiceTest extends AbstractBaseTest {
   }
 
   @Test
-  void getZkStatusOffline() {
+  void getZkStatusEmptyConfig() {
+    KafkaCluster kafkaCluster =
+        KafkaCluster.builder()
+            .name(LOCAL)
+            .bootstrapServers(kafka.getBootstrapServers())
+            .properties(new Properties())
+            .build();
+
+    ZookeeperService.ZkStatus zkStatus = new ZookeeperService.ZkStatus(ServerStatusDTO.OFFLINE, null);
+    StepVerifier.create(zookeeperService.getZkStatus(kafkaCluster))
+        .expectNext(zkStatus)
+        .verifyComplete();
+  }
+
+  @Test
+  void getZkStatusWrongConfig() {
+    KafkaCluster kafkaCluster =
+        KafkaCluster.builder()
+            .name(LOCAL)
+            .bootstrapServers(kafka.getBootstrapServers())
+            .zookeeper("localhost:1000")
+            .properties(new Properties())
+            .build();
+
     ZookeeperService.ZkStatus zkStatus = new ZookeeperService.ZkStatus(ServerStatusDTO.OFFLINE, null);
     StepVerifier.create(zookeeperService.getZkStatus(kafkaCluster))
         .expectNext(zkStatus)
