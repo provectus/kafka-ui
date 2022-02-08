@@ -33,8 +33,9 @@ jobs:
       - name: Build with Maven
         id: build
         run: |
-          mvn clean package -Pprod -DskipTests -DbuildVersion=${{ github.event.release.tag_name }}
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=${{ github.event.release.tag_name }} --non-recursive exec:exec)
+          mvn versions:set -DnewVersion=${{ github.event.release.tag_name }}
+          mvn clean package -Pprod -DskipTests
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo ::set-output name=version::${VERSION}
 
       - name: Upload files to a GitHub release
