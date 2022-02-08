@@ -39,7 +39,7 @@ jobs:
         id: compose_app
         # use the following command until #819 will be fixed
         run: |
-          docker-compose -f ./docker/kafka-ui-connectors.yaml up -d
+          docker-compose -f ./documentation/compose/kafka-ui-connectors.yaml up -d
       - name: e2e run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
