@@ -13,13 +13,12 @@ import { resetExecutionResult } from 'redux/actions';
 import { Button } from 'components/common/Button/Button';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
-import {
-  alertAdded,
-  serverErrorAlertAdded,
-} from 'redux/reducers/alerts/alertsSlice';
+import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
 
 import * as S from './Query.styled';
+
+const AUTO_DISMISS_TIME = 8_000;
 
 type FormValues = {
   ksql: string;
@@ -30,42 +29,33 @@ const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
 });
 
-const HTTP_UNPROCESSABLE_ENTITY = 422;
 // We expect someting like that
 // "columnNames": [
 //   "@type",
 //   "error_code",
 //   "message",
-//   "statementText",
-//   "entities"
+//   "statementText"?,
+//   "entities"?
 // ],
-interface AlertErrorPayload {
-  status: number;
-  statusText: string;
-  message: string;
-  url: string;
-}
 const getFormattedError = (
-  url: string,
   responseValues: KsqlTableResponse['values']
-): AlertErrorPayload => {
+): { statusText: string; message: string } => {
   const [type, errorCode, message, statementText, entities] =
     (responseValues || [[]])[0];
   // Can't use \n - they just don't work
   return {
-    status: errorCode || HTTP_UNPROCESSABLE_ENTITY,
-    statusText: `${type}`,
+    statusText: `[Error #${errorCode}] ${type}`,
     message:
       (entities?.length ? `[${entities.join(', ')}] ` : '') +
       (statementText ? `"${statementText}" ` : '') +
       message,
-    url,
   };
 };
 
 const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
   const sse = React.useRef<EventSource | null>(null);
+  const sseOpened = React.useRef<boolean>(false);
   const [continuousFetching, setContinuousFetching] = useState(false);
   const dispatch = useDispatch();
 
@@ -85,6 +75,7 @@ const Query: FC = () => {
       sse.current.close();
       setContinuousFetching(false);
       sse.current = null;
+      sseOpened.current = false;
     }
   }, [sse, setContinuousFetching]);
 
@@ -93,9 +84,8 @@ const Query: FC = () => {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${executionResult?.pipeId}`;
       sse.current = new EventSource(url);
 
-      // setContinuousFetching(true);
-
       sse.current.onopen = () => {
+        sseOpened.current = true;
         setContinuousFetching(true);
       };
 
@@ -104,15 +94,28 @@ const Query: FC = () => {
         if (table) {
           switch (table?.header) {
             // table.header can also be `Source Description` - right now it will be rendered as a table (with huge horizonal scroll)
-            case 'Execution error':
+            case 'Execution error': {
+              const { statusText, message } = getFormattedError(table.values);
               dispatch(
-                serverErrorAlertAdded(getFormattedError(url, table.values))
+                alertAdded({
+                  id: `${url}-executionError`,
+                  type: 'error',
+                  title: statusText,
+                  message,
+                  createdAt: now(),
+                })
+              );
+              setTimeout(
+                () => dispatch(alertDissmissed(`${url}-executionError`)),
+                AUTO_DISMISS_TIME
               );
               break;
-            case 'Schema':
+            }
+            case 'Schema': {
               setKSQLTable(table);
               break;
-            case 'Row':
+            }
+            case 'Row': {
               setKSQLTable((PrevKSQLTable) => {
                 return {
                   header: PrevKSQLTable?.header,
@@ -124,7 +127,8 @@ const Query: FC = () => {
                 };
               });
               break;
-            case 'Query Result':
+            }
+            case 'Query Result': {
               dispatch(
                 alertAdded({
                   id: `${url}-querySuccess`,
@@ -134,15 +138,36 @@ const Query: FC = () => {
                   createdAt: now(),
                 })
               );
+              setTimeout(
+                () => dispatch(alertDissmissed(`${url}-querySuccess`)),
+                AUTO_DISMISS_TIME
+              );
               break;
-            default:
+            }
+            default: {
               setKSQLTable(table);
               break;
+            }
           }
         }
       };
 
       sse.current.onerror = () => {
+        if (!sseOpened.current) {
+          dispatch(
+            alertAdded({
+              id: `${url}-connectionClosedError`,
+              type: 'error',
+              title: 'SSE connection closed',
+              message: 'Your query was immediately rejected',
+              createdAt: now(),
+            })
+          );
+          setTimeout(
+            () => dispatch(alertDissmissed(`${url}-connectionClosedError`)),
+            AUTO_DISMISS_TIME
+          );
+        }
         closeSSE();
       };
     }
@@ -151,11 +176,13 @@ const Query: FC = () => {
     };
   }, [
     dispatch,
-    serverErrorAlertAdded,
-    alertAdded,
-    closeSSE,
-    sse,
     executionResult,
+    alertAdded,
+    alertDissmissed,
+    sse,
+    sseOpened,
+    setKSQLTable,
+    closeSSE,
   ]);
 
   const handleSSECancel = () => {
@@ -261,7 +288,7 @@ const Query: FC = () => {
           </S.KSQLButtons>
         </form>
       </S.QueryWrapper>
-      {KSQLTable && <TableRenderer result={KSQLTable} />}
+      {KSQLTable && <TableRenderer table={KSQLTable} />}
       {continuousFetching && (
         <>
           <S.ContinuousLoader />

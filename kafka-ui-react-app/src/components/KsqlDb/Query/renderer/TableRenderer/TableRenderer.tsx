@@ -2,7 +2,7 @@ import React from 'react';
 import { KsqlTableResponse } from 'generated-sources';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { nanoid } from '@reduxjs/toolkit';
-import Heading from 'components/common/heading/Heading.styled';
+import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 
 import * as S from './TableRenderer.styled';
 
@@ -24,15 +24,15 @@ function hasJsonStructure(str: string | Record<string, unknown>): boolean {
   return false;
 }
 
-const TableRenderer: React.FC<{ result: KsqlTableResponse }> = ({ result }) => {
+const TableRenderer: React.FC<{ table: KsqlTableResponse }> = ({ table }) => {
   const heading = React.useMemo(() => {
-    return result.header || [];
-  }, [result.header]);
+    return table.header || [];
+  }, [table.header]);
   const ths = React.useMemo(() => {
-    return result.columnNames || [];
-  }, [result.columnNames]);
+    return table.columnNames || [];
+  }, [table.columnNames]);
   const rows = React.useMemo(() => {
-    return (result.values || []).map((row) => {
+    return (table.values || []).map((row) => {
       return {
         id: nanoid(),
         cells: row.map((cell) => {
@@ -45,11 +45,11 @@ const TableRenderer: React.FC<{ result: KsqlTableResponse }> = ({ result }) => {
         }),
       };
     });
-  }, [result.values]);
+  }, [table.values]);
 
   return (
     <S.Wrapper>
-      <Heading level={3}>{heading}</Heading>
+      <TableTitle>{heading}</TableTitle>
       <S.ScrollableTable>
         <thead>
           <tr>

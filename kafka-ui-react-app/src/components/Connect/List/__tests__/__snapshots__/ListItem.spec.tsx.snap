@@ -159,12 +159,37 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "color": "#E51A1A",
       },
       "heading": Object {
-        "h1": Object {
-          "color": "#171A1C",
+        "base": Object {
+          "color": "#000",
+          "fontFamily": "Inter, sans-serif",
+          "fontStyle": "normal",
+          "fontWeight": 500,
         },
-        "h3": Object {
-          "color": "#73848C",
-          "fontSize": "14px",
+        "variants": Object {
+          "1": Object {
+            "fontSize": "24px",
+            "lineHeight": "32px",
+          },
+          "2": Object {
+            "fontSize": "20px",
+            "lineHeight": "32px",
+          },
+          "3": Object {
+            "fontSize": "16px",
+            "lineHeight": "24px",
+          },
+          "4": Object {
+            "fontSize": "14px",
+            "lineHeight": "20px",
+          },
+          "5": Object {
+            "fontSize": "12px",
+            "lineHeight": "16px",
+          },
+          "6": Object {
+            "fontSize": "12px",
+            "lineHeight": "16px",
+          },
         },
       },
       "icons": Object {
@@ -202,6 +227,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
         "label": Object {
           "color": "#454F54",
+        },
+      },
+      "lastestVersionItem": Object {
+        "metaDataLabel": Object {
+          "color": "#73848C",
         },
       },
       "layout": Object {

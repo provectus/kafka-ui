@@ -14,6 +14,7 @@ export const Colors = {
     '70': '#454F54',
     '80': '#2F3639',
     '90': '#171A1C',
+    '100': '#000',
   },
   transparency: {
     '10': 'rgba(10, 10, 10, 0.1)',
@@ -67,12 +68,42 @@ const theme = {
     color: Colors.red[50],
   },
   heading: {
-    h1: {
-      color: Colors.neutral[90],
+    base: {
+      fontFamily: 'Inter, sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      color: Colors.neutral[100],
     },
-    h3: {
+    variants: {
+      1: {
+        fontSize: '24px',
+        lineHeight: '32px',
+      },
+      2: {
+        fontSize: '20px',
+        lineHeight: '32px',
+      },
+      3: {
+        fontSize: '16px',
+        lineHeight: '24px',
+      },
+      4: {
+        fontSize: '14px',
+        lineHeight: '20px',
+      },
+      5: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+      6: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+    },
+  },
+  lastestVersionItem: {
+    metaDataLabel: {
       color: Colors.neutral[50],
-      fontSize: '14px',
     },
   },
   alert: {
