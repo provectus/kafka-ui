@@ -1,9 +1,12 @@
+import React from 'react';
+import { render } from 'lib/testHelpers';
 import useDataSaver from 'lib/hooks/useDataSaver';
 
 describe('useDataSaver hook', () => {
   const content = {
     title: 'title',
   };
+
   describe('Save as file', () => {
     beforeAll(() => {
       jest.useFakeTimers('modern');
@@ -67,8 +70,13 @@ describe('useDataSaver hook', () => {
     });
     jest.spyOn(navigator.clipboard, 'writeText');
     const { copyToClipboard } = useDataSaver('topic', content);
-    copyToClipboard();
 
+    const HookWrapper = () => {
+      copyToClipboard();
+      return null;
+    };
+
+    render(<HookWrapper />);
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       JSON.stringify(content)
     );

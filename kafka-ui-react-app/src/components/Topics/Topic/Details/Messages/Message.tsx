@@ -8,8 +8,6 @@ import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
-import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
-import { useAppDispatch } from 'lib/hooks/redux';
 
 import MessageContent from './MessageContent/MessageContent';
 
@@ -34,30 +32,11 @@ const Message: React.FC<{ message: TopicMessage }> = ({
     headers,
   },
 }) => {
-  const AUTO_DISSMIS_TIME = 2000;
-  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = React.useState(false);
   const { copyToClipboard, saveFile } = useDataSaver(
     'topic-message',
     content || ''
   );
-
-  const test = () => {
-    copyToClipboard();
-    dispatch(
-      alertAdded({
-        id: 'topic-message',
-        type: 'success',
-        title: '',
-        message: 'Copied successfully!',
-        createdAt: Date.now(),
-      })
-    );
-    setTimeout(
-      () => dispatch(alertDissmissed('topic-message')),
-      AUTO_DISSMIS_TIME
-    );
-  };
 
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
@@ -84,7 +63,9 @@ const Message: React.FC<{ message: TopicMessage }> = ({
         <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
             <Dropdown label={<VerticalElipsisIcon />} right>
-              <DropdownItem onClick={test}>Copy to clipboard</DropdownItem>
+              <DropdownItem onClick={copyToClipboard}>
+                Copy to clipboard
+              </DropdownItem>
               <DropdownItem onClick={saveFile}>Save as a file</DropdownItem>
             </Dropdown>
           )}

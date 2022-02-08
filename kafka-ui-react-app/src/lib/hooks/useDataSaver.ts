@@ -1,13 +1,28 @@
 import { isObject } from 'lodash';
+import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
+import { useAppDispatch } from 'lib/hooks/redux';
+
+const AUTO_DISSMISS_TIME = 2000;
 
 const useDataSaver = (
   subject: string,
   data: Record<string, string> | string
 ) => {
   const copyToClipboard = () => {
+    const dispatch = useAppDispatch();
     if (navigator.clipboard) {
       const str = JSON.stringify(data);
       navigator.clipboard.writeText(str);
+      dispatch(
+        alertAdded({
+          id: subject,
+          type: 'success',
+          title: '',
+          message: 'Copied successfully!',
+          createdAt: Date.now(),
+        })
+      );
+      setTimeout(() => dispatch(alertDissmissed(subject)), AUTO_DISSMISS_TIME);
     }
   };
 
