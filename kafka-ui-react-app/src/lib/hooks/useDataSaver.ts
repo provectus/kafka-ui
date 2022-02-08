@@ -2,7 +2,7 @@ import { isObject } from 'lodash';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import { useAppDispatch } from 'lib/hooks/redux';
 
-const AUTO_DISSMISS_TIME = 2000;
+const AUTO_DISMISS_TIME = 2000;
 
 const useDataSaver = (
   subject: string,
@@ -22,7 +22,7 @@ const useDataSaver = (
           createdAt: Date.now(),
         })
       );
-      setTimeout(() => dispatch(alertDissmissed(subject)), AUTO_DISSMISS_TIME);
+      setTimeout(() => dispatch(alertDissmissed(subject)), AUTO_DISMISS_TIME);
     }
   };
 
