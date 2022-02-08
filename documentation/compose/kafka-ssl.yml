@@ -15,10 +15,10 @@ services:
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092 # SSL LISTENER!
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
-      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /servertruststore
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
       KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD: secret # A FILE WITH THE TRUSTSTORE PASSWORD
     volumes:
-      - ./ssl/kafka.truststore.jks:/servertruststore
+      - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
 
   zookeeper0:
     image: confluentinc/cp-zookeeper:6.0.1
@@ -53,4 +53,6 @@ services:
       KAFKA_SSL_CLIENT_AUTH: "requested"
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # COMMON NAME VERIFICATION IS DISABLED SERVER-SIDE
     volumes:
-      - ./ssl:/etc/kafka/secrets
+      - ./ssl/creds:/etc/kafka/secrets/creds
+      - ./ssl/kafka.truststore.jks:/etc/kafka/secrets/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/etc/kafka/secrets/kafka.keystore.jks
