@@ -13,7 +13,7 @@ import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
+import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
 import java.util.List;
@@ -165,7 +165,7 @@ public class MessagesService {
       ConsumerPosition consumerPosition, int limit) {
     return consumerPosition.getSeekDirection() == SeekDirectionDTO.TAILING
         ? evt -> true // no limit for tailing
-        : new FilterTopicMessageEvents(limit);
+        : new ResultSizeLimiter(limit);
   }
 
   private boolean filterTopicMessage(TopicMessageEventDTO message, String query) {
