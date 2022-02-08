@@ -17,7 +17,7 @@ jobs:
           branch_name=$(hub branch | grep "*" | sed -e 's/^\*//')
           echo $branch_name
           echo ::set-output name=branch::${branch_name}
-          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  cut -c1-32)
+          tag=$(echo $branch_name |  sed 's/\//-/g' | sed 's/\./-/g' | sed 's/\_/-/g' |  sed -e 's/\(.*\)/\L\1/' | cut -c1-32)
           echo ::set-output name=tag::${tag}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -35,8 +35,9 @@ jobs:
       - name: Build
         id: build
         run: |
-          mvn clean package -Pprod -DskipTests -DbuildVersion=$GITHUB_SHA
-          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' -DbuildVersion=$GITHUB_SHA --non-recursive exec:exec)
+          mvn versions:set -DnewVersion=$GITHUB_SHA
+          mvn clean package -Pprod -DskipTests
+          export VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec)
           echo "::set-output name=version::${VERSION}"
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
