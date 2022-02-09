@@ -45,7 +45,6 @@
         </frontend-generated-sources-directory>
         <sonar.organization>provectus</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <buildVersion>0.0.1-SNAPSHOT</buildVersion>
     </properties>
 
     <repositories>
@@ -85,7 +84,7 @@
 
     <groupId>com.provectus</groupId>
     <artifactId>kafka-ui</artifactId>
-    <version>${buildVersion}</version>
+    <version>0.0.1-SNAPSHOT</version>
     <name>kafka-ui</name>
     <description>Kafka metrics for UI panel</description>
 </project>

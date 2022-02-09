@@ -20,9 +20,6 @@ const ListHeaderCell: React.FC<ListHeaderProps> = ({
     onClick={() => setOrderBy(value)}
   >
     {title}
-    <span className="icon is-small">
-      <i className="fas fa-sort" />
-    </span>
   </th>
 );
 

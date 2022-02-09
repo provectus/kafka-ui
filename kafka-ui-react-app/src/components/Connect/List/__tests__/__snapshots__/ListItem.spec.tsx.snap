@@ -176,6 +176,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         "messageToggleIconClosed": "#ABB5BA",
         "messageToggleIconOpened": "#171A1C",
         "verticalElipsisIcon": "#73848C",
+        "warningIcon": "#FFDD57",
       },
       "input": Object {
         "backgroundColor": Object {
@@ -333,6 +334,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "disabled": "#ABB5BA",
           "hover": "#171A1C",
           "normal": "#171A1C",
+        },
+        "optionList": Object {
+          "scrollbar": Object {
+            "backgroundColor": "#ABB5BA",
+          },
         },
       },
       "switch": Object {

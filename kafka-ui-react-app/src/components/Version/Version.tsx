@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { gitCommitPath } from 'lib/paths';
 import { GIT_REPO_LATEST_RELEASE_LINK } from 'lib/constants';
+import WarningIcon from 'components/common/Icons/WarningIcon';
 
 import compareVersions from './compareVersions';
 
@@ -33,10 +34,9 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
       <span className="mr-1">{tag}</span>
       {outdated && (
         <span
-          className="icon has-text-warning"
           title={`Your app version is outdated. Current latest version is ${latestTag}`}
         >
-          <i className="fas fa-exclamation-triangle" />
+          <WarningIcon />
         </span>
       )}
       {commit && (
