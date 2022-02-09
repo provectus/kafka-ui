@@ -64,7 +64,7 @@ public class MessagesController extends AbstractController implements MessagesAp
     return Mono.just(
         ResponseEntity.ok(
             messagesService.loadMessages(
-                getCluster(clusterName), topicName, positions, q, recordsLimit)
+                getCluster(clusterName), topicName, positions, q, filterQueryType, recordsLimit)
         )
     );
   }

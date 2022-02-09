@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
+import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
@@ -119,6 +120,7 @@ class TailingEmitterTest extends AbstractBaseTest {
         .loadMessages(cluster, topicName,
             new ConsumerPosition(SeekTypeDTO.LATEST, Map.of(), SeekDirectionDTO.TAILING),
             query,
+            MessageFilterTypeDTO.STRING_CONTAINS,
             0);
   }
 
