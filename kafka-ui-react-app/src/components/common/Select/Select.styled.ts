@@ -59,17 +59,18 @@ export const OptionList = styled.ul`
   position: absolute;
   top: 100%;
   left: 0;
-  max-height: 114px;
+  max-height: 228px;
   margin-top: 4px;
   background-color: ${(props) => props.theme.select.backgroundColor.normal};
   border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
   border-radius: 4px;
   font-size: 14px;
   line-height: 18px;
-  width: 100%;
   color: ${(props) => props.theme.select.color.normal};
   overflow-y: scroll;
   z-index: 10;
+  max-width: 300px;
+  min-width: 100%;
 
   &::-webkit-scrollbar {
     -webkit-appearance: none;
@@ -80,6 +81,10 @@ export const OptionList = styled.ul`
     border-radius: 4px;
     background-color: ${(props) =>
       props.theme.select.optionList.scrollbar.backgroundColor};
+  }
+
+  &::-webkit-scrollbar:horizontal {
+    height: 7px;
   }
 `;
 

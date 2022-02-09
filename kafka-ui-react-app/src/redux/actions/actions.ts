@@ -15,7 +15,6 @@ import {
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
-  KsqlCommandResponse,
 } from 'generated-sources';
 
 export const fetchTopicsListAction = createAsyncAction(
@@ -186,24 +185,3 @@ export const updateTopicReplicationFactorAction = createAsyncAction(
   'UPDATE_REPLICATION_FACTOR__SUCCESS',
   'UPDATE_REPLICATION_FACTOR__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
-
-export const fetchKsqlDbTablesAction = createAsyncAction(
-  'GET_KSQL_DB_TABLES_AND_STREAMS__REQUEST',
-  'GET_KSQL_DB_TABLES_AND_STREAMS__SUCCESS',
-  'GET_KSQL_DB_TABLES_AND_STREAMS__FAILURE'
-)<
-  undefined,
-  {
-    tables: Dictionary<string>[];
-    streams: Dictionary<string>[];
-  },
-  { alert?: FailurePayload }
->();
-
-export const executeKsqlAction = createAsyncAction(
-  'EXECUTE_KSQL__REQUEST',
-  'EXECUTE_KSQL__SUCCESS',
-  'EXECUTE_KSQL__FAILURE'
-)<undefined, KsqlCommandResponse, { alert?: FailurePayload }>();
-
-export const resetExecutionResult = createAction('RESET_EXECUTE_KSQL')();

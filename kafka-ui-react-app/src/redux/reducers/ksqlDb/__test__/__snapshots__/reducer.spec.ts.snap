@@ -1,5 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`KsqlDb reducer Exexute ksql and get result 1`] = `
+Object {
+  "executionResult": Object {
+    "streams": Array [
+      Object {
+        "isWindowed": "false",
+        "keyFormat": "KAFKA",
+        "name": "KSQL_PROCESSING_LOG",
+        "topic": "default_ksql_processing_log",
+        "type": "STREAM",
+        "valueFormat": "JSON",
+      },
+      Object {
+        "isWindowed": "false",
+        "keyFormat": "KAFKA",
+        "name": "PAGEVIEWS",
+        "topic": "pageviews",
+        "type": "STREAM",
+        "valueFormat": "AVRO",
+      },
+    ],
+    "tables": Array [
+      Object {
+        "isWindowed": "false",
+        "keyFormat": "KAFKA",
+        "name": "USERS",
+        "topic": "users",
+        "type": "TABLE",
+        "valueFormat": "AVRO",
+      },
+      Object {
+        "isWindowed": "false",
+        "keyFormat": "KAFKA",
+        "name": "USERS2",
+        "topic": "users",
+        "type": "TABLE",
+        "valueFormat": "AVRO",
+      },
+    ],
+  },
+  "streams": Array [],
+  "tables": Array [],
+}
+`;
+
 exports[`KsqlDb reducer Fetches tables and streams 1`] = `
 Object {
   "executionResult": null,
