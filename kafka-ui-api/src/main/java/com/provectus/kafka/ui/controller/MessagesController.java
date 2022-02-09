@@ -5,6 +5,7 @@ import static java.util.stream.Collectors.toMap;
 import com.provectus.kafka.ui.api.MessagesApi;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
+import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
@@ -49,9 +50,9 @@ public class MessagesController extends AbstractController implements MessagesAp
 
   @Override
   public Mono<ResponseEntity<Flux<TopicMessageEventDTO>>> getTopicMessages(
-      String clusterName, String topicName, @Valid SeekTypeDTO seekType, @Valid List<String> seekTo,
-      @Valid Integer limit, @Valid String q, @Valid SeekDirectionDTO seekDirection,
-      ServerWebExchange exchange) {
+      String clusterName, String topicName, SeekTypeDTO seekType, List<String> seekTo,
+      Integer limit, String q, MessageFilterTypeDTO filterQueryType,
+      SeekDirectionDTO seekDirection, ServerWebExchange exchange) {
     var positions = new ConsumerPosition(
         seekType != null ? seekType : SeekTypeDTO.BEGINNING,
         parseSeekTo(topicName, seekTo),
@@ -61,11 +62,11 @@ public class MessagesController extends AbstractController implements MessagesAp
         .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
         .orElse(DEFAULT_LOAD_RECORD_LIMIT);
     return Mono.just(
-            ResponseEntity.ok(
-                messagesService.loadMessages(
-                    getCluster(clusterName), topicName, positions, q, recordsLimit)
-            )
-        );
+        ResponseEntity.ok(
+            messagesService.loadMessages(
+                getCluster(clusterName), topicName, positions, q, recordsLimit)
+        )
+    );
   }
 
   @Override
