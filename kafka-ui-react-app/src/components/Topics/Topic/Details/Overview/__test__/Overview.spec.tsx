@@ -5,6 +5,7 @@ import Overview, {
   Props as OverviewProps,
 } from 'components/Topics/Topic/Details/Overview/Overview';
 import theme from 'theme/theme';
+import { CleanUpPolicy } from 'generated-sources';
 
 describe('Overview', () => {
   const mockClusterName = 'local';
@@ -49,6 +50,7 @@ describe('Overview', () => {
         internal: false,
         clusterName: mockClusterName,
         topicName: mockTopicName,
+        cleanUpPolicy: CleanUpPolicy.DELETE,
         clearTopicMessages: mockClearTopicMessages,
       });
       expect(screen.getByRole('menu')).toBeInTheDocument();

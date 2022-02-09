@@ -33,6 +33,7 @@ interface Props extends Topic, TopicDetails {
   topicName: TopicName;
   isInternal: boolean;
   isDeleted: boolean;
+  isDeletePolicy: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -49,6 +50,7 @@ const Details: React.FC<Props> = ({
   topicName,
   isInternal,
   isDeleted,
+  isDeletePolicy,
   deleteTopic,
   clearTopicMessages,
 }) => {
@@ -103,12 +105,14 @@ const Details: React.FC<Props> = ({
                 >
                   Edit settings
                 </DropdownItem>
-                <DropdownItem
-                  onClick={() => setClearTopicConfirmationVisible(true)}
-                  danger
-                >
-                  Clear messages
-                </DropdownItem>
+                {isDeletePolicy && (
+                  <DropdownItem
+                    onClick={() => setClearTopicConfirmationVisible(true)}
+                    danger
+                  >
+                    Clear messages
+                  </DropdownItem>
+                )}
                 {isTopicDeletionAllowed && (
                   <DropdownItem
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
