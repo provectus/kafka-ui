@@ -1,0 +1,58 @@
+---
+version: '3.4'
+services:
+
+  kafka-ui:
+    container_name: kafka-ui
+    image: provectuslabs/kafka-ui:latest
+    ports:
+      - 8080:8080
+    depends_on:
+      - zookeeper0
+      - kafka0
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SSL
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka0:29092 # SSL LISTENER!
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper0:2181
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_LOCATION: /kafka.truststore.jks
+      KAFKA_CLUSTERS_0_PROPERTIES_SSL_TRUSTSTORE_PASSWORD: secret # A FILE WITH THE TRUSTSTORE PASSWORD
+    volumes:
+      - ./ssl/kafka.truststore.jks:/kafka.truststore.jks
+
+  zookeeper0:
+    image: confluentinc/cp-zookeeper:6.0.1
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  kafka0:
+    image: confluentinc/cp-kafka:6.0.1
+    hostname: kafka0
+    depends_on:
+      - zookeeper0
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper0:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_ADVERTISED_LISTENERS: SSL://kafka0:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SSL:SSL,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: SSL
+      KAFKA_SECURITY_PROTOCOL: SSL
+      KAFKA_SSL_ENABLED_MECHANISMS: PLAIN,SSL
+      KAFKA_SSL_KEYSTORE_FILENAME: kafka.keystore.jks
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: creds
+      KAFKA_SSL_KEY_CREDENTIALS: creds
+      KAFKA_SSL_TRUSTSTORE_FILENAME: kafka.truststore.jks
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: creds
+      #KAFKA_SSL_CLIENT_AUTH: 'required'
+      KAFKA_SSL_CLIENT_AUTH: "requested"
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: '' # COMMON NAME VERIFICATION IS DISABLED SERVER-SIDE
+    volumes:
+      - ./ssl/creds:/etc/kafka/secrets/creds
+      - ./ssl/kafka.truststore.jks:/etc/kafka/secrets/kafka.truststore.jks
+      - ./ssl/kafka.keystore.jks:/etc/kafka/secrets/kafka.keystore.jks
