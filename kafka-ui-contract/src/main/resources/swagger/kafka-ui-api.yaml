@@ -355,6 +355,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
+    post:
+      tags:
+        - Topics
+      summary: recreateTopic
+      operationId: recreateTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+        404:
+          description: Not found
+        408:
+          description: Topic recreation timeout
     patch:
       tags:
         - Topics
