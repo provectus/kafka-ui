@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import ksql.KsqlGrammarParser;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.MediaType;
@@ -103,6 +104,11 @@ public class KsqlApiClient {
     }
     if (parsed.getStatements().size() == 0) {
       throw new ValidationException("No valid ksql statement found");
+    }
+    if (parsed.getStatements().get(0).statement()
+        instanceof KsqlGrammarParser.PrintTopicContext) {
+      //PRINT returns result in non-json format, need to implement additional parser for it
+      throw new ValidationException("PRINT statement not supported");
     }
     if (KsqlGrammar.isSelect(parsed.getStatements().get(0))) {
       return executeSelect(ksql, streamProperties);

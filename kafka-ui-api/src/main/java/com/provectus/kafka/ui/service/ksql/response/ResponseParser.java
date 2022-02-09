@@ -74,7 +74,7 @@ public class ResponseParser {
       case "sourceDescription":
         return parseObjectDynamically("Source Description", jsonNode.get("sourceDescription"));
       case "queryDescription":
-        return parseArray("Queries Description", "queryDescription", jsonNode);
+        return parseObjectDynamically("Queries Description", jsonNode.get("queryDescription"));
       case "topicDescription":
         return parseObject(
             "Topic Description",
