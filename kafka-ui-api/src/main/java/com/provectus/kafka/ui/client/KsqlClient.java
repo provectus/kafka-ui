@@ -26,7 +26,7 @@ public class KsqlClient {
   public Mono<KsqlCommandResponseDTO> execute(BaseStrategy ksqlStatement) {
     return webClient.post()
         .uri(ksqlStatement.getUri())
-        .accept(new MediaType("application", "vnd.ksql.v1+json"))
+        .accept(new MediaType("application-ion", "vnd.ksql.v1+json"))
         .body(BodyInserters.fromValue(ksqlStatement.getKsqlCommand()))
         .retrieve()
         .onStatus(HttpStatus::isError, this::getErrorMessage)
