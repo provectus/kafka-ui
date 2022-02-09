@@ -8,8 +8,8 @@ const useDataSaver = (
   subject: string,
   data: Record<string, string> | string
 ) => {
+  const dispatch = useAppDispatch();
   const copyToClipboard = () => {
-    const dispatch = useAppDispatch();
     if (navigator.clipboard) {
       const str = JSON.stringify(data);
       navigator.clipboard.writeText(str);
