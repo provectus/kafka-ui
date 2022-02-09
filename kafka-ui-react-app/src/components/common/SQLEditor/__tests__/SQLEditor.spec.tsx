@@ -1,20 +1,22 @@
-import { shallow } from 'enzyme';
 import React from 'react';
 import SQLEditor from 'components/common/SQLEditor/SQLEditor';
+import { render } from 'lib/testHelpers';
 
 describe('SQLEditor component', () => {
   it('matches the snapshot', () => {
-    const component = shallow(<SQLEditor value="" name="name" />);
-    expect(component).toMatchSnapshot();
+    const { baseElement } = render(<SQLEditor value="" name="name" />);
+    expect(baseElement).toMatchSnapshot();
   });
 
   it('matches the snapshot with fixed height', () => {
-    const component = shallow(<SQLEditor value="" name="name" isFixedHeight />);
-    expect(component).toMatchSnapshot();
+    const { baseElement } = render(
+      <SQLEditor value="" name="name" isFixedHeight />
+    );
+    expect(baseElement).toMatchSnapshot();
   });
 
   it('matches the snapshot with fixed height with no value', () => {
-    const component = shallow(<SQLEditor name="name" isFixedHeight />);
-    expect(component).toMatchSnapshot();
+    const { baseElement } = render(<SQLEditor name="name" isFixedHeight />);
+    expect(baseElement).toMatchSnapshot();
   });
 });

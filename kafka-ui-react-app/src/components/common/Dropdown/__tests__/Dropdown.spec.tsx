@@ -1,8 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import Dropdown, { DropdownProps } from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
+import userEvent from '@testing-library/user-event';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
 const dummyLable = 'My Test Label';
 const dummyChildren = (
@@ -25,45 +27,47 @@ describe('Dropdown', () => {
   );
 
   it('renders Dropdown with initial props', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper.exists('.dropdown')).toBeTruthy();
+    const wrapper = render(setupWrapper()).baseElement;
+    expect(wrapper.querySelector('.dropdown')).toBeTruthy();
 
-    expect(wrapper.exists('.dropdown.is-active')).toBeFalsy();
-    expect(wrapper.exists('.dropdown.is-right')).toBeFalsy();
-    expect(wrapper.exists('.dropdown.is-up')).toBeFalsy();
+    expect(wrapper.querySelector('.dropdown.is-active')).toBeFalsy();
+    expect(wrapper.querySelector('.dropdown.is-right')).toBeFalsy();
+    expect(wrapper.querySelector('.dropdown.is-up')).toBeFalsy();
 
-    expect(wrapper.exists('.dropdown-content')).toBeTruthy();
-    expect(wrapper.find('.dropdown-content').text()).toEqual('');
+    expect(wrapper.querySelector('.dropdown-content')).toBeTruthy();
+    expect(wrapper.querySelector('.dropdown-content')).toHaveTextContent('');
   });
 
   it('renders custom children', () => {
-    const wrapper = mount(setupWrapper({}, dummyChildren));
-    expect(wrapper.exists('.dropdown-content')).toBeTruthy();
-    expect(wrapper.find('a.dropdown-item').length).toEqual(3);
-    expect(wrapper.find('.dropdown-divider').length).toEqual(1);
+    const wrapper = render(setupWrapper({}, dummyChildren)).baseElement;
+    expect(wrapper.querySelector('.dropdown-content')).toBeTruthy();
+    expect(wrapper.querySelectorAll('.dropdown-item').length).toEqual(3);
+    expect(wrapper.querySelectorAll('.dropdown-divider').length).toEqual(1);
   });
 
   it('renders dropdown with a right-aligned menu', () => {
-    const wrapper = mount(setupWrapper({ right: true }));
-    expect(wrapper.exists('.dropdown.is-right')).toBeTruthy();
+    const wrapper = render(setupWrapper({ right: true })).baseElement;
+    expect(wrapper.querySelector('.dropdown.is-right')).toBeTruthy();
   });
 
   it('renders dropdown with a popup menu', () => {
-    const wrapper = mount(setupWrapper({ up: true }));
-    expect(wrapper.exists('.dropdown.is-up')).toBeTruthy();
+    const wrapper = render(setupWrapper({ up: true })).baseElement;
+    expect(wrapper.querySelector('.dropdown.is-up')).toBeTruthy();
   });
 
   it('handles click', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper.exists('button')).toBeTruthy();
-    expect(wrapper.exists('.dropdown.is-active')).toBeFalsy();
+    const wrapper = render(setupWrapper()).baseElement;
+    const button = screen.getByText('My Test Label');
 
-    wrapper.find('button').simulate('click');
-    expect(wrapper.exists('.dropdown.is-active')).toBeTruthy();
+    expect(button).toBeInTheDocument();
+    expect(wrapper.querySelector('.dropdown.is-active')).toBeFalsy();
+
+    userEvent.click(button);
+    expect(wrapper.querySelector('.dropdown.is-active')).toBeTruthy();
   });
 
   it('matches snapshot', () => {
-    const wrapper = mount(
+    const { baseElement } = render(
       setupWrapper(
         {
           right: true,
@@ -72,6 +76,6 @@ describe('Dropdown', () => {
         dummyChildren
       )
     );
-    expect(wrapper).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
   });
 });
