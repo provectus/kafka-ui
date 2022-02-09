@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.service;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.MessageFilters;
+import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -13,9 +14,9 @@ import com.provectus.kafka.ui.model.SeekDirectionDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
+import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -48,8 +49,6 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 public class MessagesService {
 
-  private static final int MAX_LOAD_RECORD_LIMIT = 100;
-  private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
 
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
@@ -134,10 +133,7 @@ public class MessagesService {
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                                  ConsumerPosition consumerPosition, String query,
                                                  MessageFilterTypeDTO filterQueryType,
-                                                 Integer limit) {
-    int recordsLimit = Optional.ofNullable(limit)
-        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
-        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
+                                                 int limit) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     RecordSerDe recordDeserializer =
@@ -148,18 +144,31 @@ public class MessagesService {
           new OffsetsSeekForward(topic, consumerPosition),
           recordDeserializer
       );
-    } else {
+    } else if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.BACKWARD)) {
       emitter = new BackwardRecordEmitter(
           (Map<String, Object> props) -> consumerGroupService.createConsumer(cluster, props),
-          new OffsetsSeekBackward(topic, consumerPosition, recordsLimit),
+          new OffsetsSeekBackward(topic, consumerPosition, limit),
           recordDeserializer
+      );
+    } else {
+      emitter = new TailingEmitter(
+          recordDeserializer,
+          () -> consumerGroupService.createConsumer(cluster),
+          new OffsetsSeekForward(topic, consumerPosition)
       );
     }
     return Flux.create(emitter)
         .filter(getMsgFilter(query, filterQueryType))
-        .takeWhile(new FilterTopicMessageEvents(recordsLimit))
-        .subscribeOn(Schedulers.elastic())
+        .takeWhile(createTakeWhilePredicate(consumerPosition, limit))
+        .subscribeOn(Schedulers.boundedElastic())
         .share();
+  }
+
+  private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(
+      ConsumerPosition consumerPosition, int limit) {
+    return consumerPosition.getSeekDirection() == SeekDirectionDTO.TAILING
+        ? evt -> true // no limit for tailing
+        : new ResultSizeLimiter(limit);
   }
 
   private Predicate<TopicMessageEventDTO> getMsgFilter(String query, MessageFilterTypeDTO filterQueryType) {
