@@ -2010,6 +2010,7 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
+            - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
@@ -2091,6 +2092,7 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
+        - LATEST
 
     MessageFilterType:
       type: string
@@ -2103,6 +2105,7 @@ components:
       enum:
         - FORWARD
         - BACKWARD
+        - TAILING
       default: FORWARD
 
     Partition:
