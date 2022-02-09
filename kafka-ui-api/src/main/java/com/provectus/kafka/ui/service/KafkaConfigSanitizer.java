@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.service;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,17 +21,27 @@ class KafkaConfigSanitizer extends Sanitizer {
   );
 
   KafkaConfigSanitizer(
-          @Value("${kafka.config.sanitizer.patterns:}") List<String> patternsToSanitize
+      @Value("${kafka.config.sanitizer.enabled:true}") boolean enabled,
+      @Value("${kafka.config.sanitizer.patterns:}") List<String> patternsToSanitize
   ) {
+    if (!enabled) {
+      setKeysToSanitize();
+    } else {
+      var keysToSanitize = new HashSet<>(
+          patternsToSanitize.isEmpty() ? DEFAULT_PATTERNS_TO_SANITIZE : patternsToSanitize);
+      keysToSanitize.addAll(kafkaConfigKeysToSanitize());
+      setKeysToSanitize(keysToSanitize.toArray(new String[]{}));
+    }
+  }
+
+  private static Set<String> kafkaConfigKeysToSanitize() {
     final ConfigDef configDef = new ConfigDef();
     SslConfigs.addClientSslSupport(configDef);
     SaslConfigs.addClientSaslSupport(configDef);
-    final Set<String> keysToSanitize = configDef.configKeys().entrySet().stream()
-            .filter(entry -> entry.getValue().type().equals(ConfigDef.Type.PASSWORD))
-            .map(Map.Entry::getKey)
-            .collect(Collectors.toSet());
-    keysToSanitize.addAll(
-            patternsToSanitize.isEmpty() ? DEFAULT_PATTERNS_TO_SANITIZE : patternsToSanitize);
-    this.setKeysToSanitize(keysToSanitize.toArray(new String[0]));
+    return configDef.configKeys().entrySet().stream()
+        .filter(entry -> entry.getValue().type().equals(ConfigDef.Type.PASSWORD))
+        .map(Map.Entry::getKey)
+        .collect(Collectors.toSet());
   }
+
 }

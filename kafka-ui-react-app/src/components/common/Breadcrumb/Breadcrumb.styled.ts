@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const BreadcrumbWrapper = styled.ul`
   display: flex;
@@ -10,7 +9,7 @@ export const BreadcrumbWrapper = styled.ul`
 
   & li:not(:last-child)::after {
     content: '/';
-    color: ${Colors.neutral[30]};
+    color: ${({ theme }) => theme.breadcrumb};
     margin: 0 8px;
   }
 `;

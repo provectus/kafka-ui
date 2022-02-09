@@ -1,12 +1,11 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const SchemaVersionWrapper = styled.tr`
-  background-color: ${Colors.neutral[5]};
+  background-color: ${({ theme }) => theme.schema.backgroundColor.tr};
   & > td {
     padding: 16px !important;
     & > div {
-      background-color: ${Colors.neutral[0]};
+      background-color: ${({ theme }) => theme.schema.backgroundColor.div};
       border-radius: 8px;
       padding: 24px;
     }

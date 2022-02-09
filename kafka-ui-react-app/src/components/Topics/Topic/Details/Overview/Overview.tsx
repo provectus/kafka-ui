@@ -102,7 +102,7 @@ const Overview: React.FC<Props> = ({
                 <td>{offsetMin}</td>
                 <td>{offsetMax}</td>
                 <td style={{ width: '5%' }}>
-                  {!internal && !isReadOnly ? (
+                  {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
                     <Dropdown label={<VerticalElipsisIcon />} right>
                       <DropdownItem
                         onClick={() =>
@@ -110,8 +110,9 @@ const Overview: React.FC<Props> = ({
                             partition,
                           ])
                         }
+                        danger
                       >
-                        <Metrics.RedText>Clear Messages</Metrics.RedText>
+                        Clear Messages
                       </DropdownItem>
                     </Dropdown>
                   ) : null}

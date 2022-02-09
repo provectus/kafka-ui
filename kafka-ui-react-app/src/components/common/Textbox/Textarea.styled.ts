@@ -1,40 +1,38 @@
 import styled, { css } from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const Textarea = styled.textarea(
-  ({ theme }) => css`
-    border: 1px ${Colors.neutral[30]} solid;
+  ({ theme: { textArea } }) => css`
+    border: 1px ${textArea.borderColor.normal} solid;
     border-radius: 4px;
     width: 100%;
     padding: 12px;
     padding-top: 6px;
-
     &::placeholder {
-      color: ${Colors.neutral[30]};
+      color: ${textArea.color.placeholder.normal};
       font-size: 14px;
     }
     &:hover {
-      border-color: ${Colors.neutral[50]};
+      border-color: ${textArea.borderColor.hover};
     }
     &:focus {
       outline: none;
-      border-color: ${Colors.neutral[70]};
+      border-color: ${textArea.borderColor.focus};
       &::placeholder {
-        color: ${theme.textarea.focus};
+        color: ${textArea.color.placeholder.normal};
       }
     }
     &:disabled {
-      color: ${Colors.neutral[30]};
-      border-color: ${Colors.neutral[10]};
+      color: ${textArea.color.disabled};
+      border-color: ${textArea.borderColor.disabled};
       cursor: not-allowed;
     }
     &:read-only {
-      color: ${Colors.neutral[90]};
+      color: ${textArea.color.readOnly};
       border: none;
-      background-color: ${Colors.neutral[5]};
+      background-color: ${textArea.backgroundColor.readOnly};
       &:focus {
         &::placeholder {
-          color: ${Colors.neutral[30]};
+          color: ${textArea.color.placeholder.focus.readOnly};
         }
       }
       cursor: not-allowed;

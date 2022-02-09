@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 interface Props {
   className: string;
@@ -16,5 +15,5 @@ export const InputIcon = styled.i<Props>`
   right: ${(props) => (props.position === 'right' ? '15px' : 'unset')};
   height: 11px;
   width: 11px;
-  color: ${Colors.neutral[70]};
+  color: ${({ theme }) => theme.input.icon.color};
 `;

@@ -7,10 +7,17 @@ import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
+import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ServerWebExchange;
@@ -21,6 +28,8 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 @Slf4j
 public class SchemasController extends AbstractController implements SchemasApi {
+
+  private static final Integer DEFAULT_PAGE_SIZE = 25;
 
   private final SchemaRegistryService schemaRegistryService;
 
@@ -102,12 +111,29 @@ public class SchemasController extends AbstractController implements SchemasApi 
   }
 
   @Override
-  public Mono<ResponseEntity<Flux<SchemaSubjectDTO>>> getSchemas(String clusterName,
-                                                              ServerWebExchange exchange) {
-    Flux<SchemaSubjectDTO> subjects = schemaRegistryService.getAllLatestVersionSchemas(
-        getCluster(clusterName)
-    );
-    return Mono.just(ResponseEntity.ok(subjects));
+  public Mono<ResponseEntity<SchemaSubjectsResponseDTO>> getSchemas(String clusterName,
+                                                                    @Valid Integer pageNum,
+                                                                    @Valid Integer perPage,
+                                                                    @Valid String search,
+                                                                    ServerWebExchange serverWebExchange) {
+    return schemaRegistryService
+            .getAllSubjectNames(getCluster(clusterName))
+            .flatMap(subjects -> {
+              int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
+              int subjectToSkip = ((pageNum != null && pageNum > 0 ? pageNum : 1) - 1) * pageSize;
+              List<String> filteredSubjects = Arrays.stream(subjects)
+                      .filter(subj -> search == null || StringUtils.containsIgnoreCase(subj, search))
+                      .sorted()
+                      .collect(Collectors.toList());
+              var totalPages = (filteredSubjects.size() / pageSize)
+                      + (filteredSubjects.size() % pageSize == 0 ? 0 : 1);
+              List<String> subjectsToRender = filteredSubjects.stream()
+                      .skip(subjectToSkip)
+                      .limit(pageSize)
+                      .collect(Collectors.toList());
+              return schemaRegistryService.getAllLatestVersionSchemas(getCluster(clusterName), subjectsToRender)
+                      .map(a -> new SchemaSubjectsResponseDTO().pageCount(totalPages).schemas(a));
+            }).map(ResponseEntity::ok);
   }
 
   @Override

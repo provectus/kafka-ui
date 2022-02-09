@@ -39,6 +39,7 @@ export const Colors = {
   },
   yellow: {
     '10': '#FFEECC',
+    '20': '#FFDD57',
   },
   blue: {
     '10': '#e3f2fd',
@@ -60,7 +61,12 @@ const theme = {
     },
   },
   panelColor: Colors.neutral[0],
-  headingStyles: {
+  breadcrumb: Colors.neutral[30],
+  connectEditWarning: Colors.yellow[10],
+  dropdown: {
+    color: Colors.red[50],
+  },
+  heading: {
     h1: {
       color: Colors.neutral[90],
     },
@@ -86,7 +92,7 @@ const theme = {
       info: Colors.neutral[10],
     },
   },
-  buttonStyles: {
+  button: {
     primary: {
       backgroundColor: {
         normal: Colors.brand[50],
@@ -123,8 +129,13 @@ const theme = {
       M: '14px',
       L: '16px',
     },
+    border: {
+      normal: Colors.neutral[50],
+      hover: Colors.neutral[70],
+      active: Colors.neutral[90],
+    },
   },
-  menuStyles: {
+  menu: {
     backgroundColor: {
       normal: Colors.neutral[0],
       hover: Colors.neutral[5],
@@ -141,20 +152,52 @@ const theme = {
     },
     chevronIconColor: Colors.neutral[50],
   },
-  thStyles: {
+  schema: {
     backgroundColor: {
-      normal: Colors.neutral[0],
-    },
-    color: {
-      normal: Colors.neutral[50],
-      hover: Colors.brand[50],
-      active: Colors.brand[50],
-    },
-    previewColor: {
-      normal: Colors.brand[50],
+      tr: Colors.neutral[5],
+      div: Colors.neutral[0],
     },
   },
-  primaryTabStyles: {
+  modal: {
+    backgroundColor: Colors.neutral[0],
+    border: {
+      top: Colors.neutral[5],
+      bottom: Colors.neutral[5],
+    },
+    overlay: Colors.transparency[10],
+    shadow: Colors.transparency[20],
+  },
+  table: {
+    th: {
+      backgroundColor: {
+        normal: Colors.neutral[0],
+      },
+      color: {
+        normal: Colors.neutral[50],
+        hover: Colors.brand[50],
+        active: Colors.brand[50],
+      },
+      previewColor: {
+        normal: Colors.brand[50],
+      },
+    },
+    td: {
+      color: {
+        normal: Colors.neutral[90],
+      },
+    },
+    tr: {
+      backgroundColor: {
+        hover: Colors.neutral[5],
+      },
+    },
+    link: {
+      color: {
+        normal: Colors.neutral[90],
+      },
+    },
+  },
+  primaryTab: {
     color: {
       normal: Colors.neutral[50],
       hover: Colors.neutral[90],
@@ -164,9 +207,10 @@ const theme = {
       normal: 'transparent',
       hover: 'transparent',
       active: Colors.brand[50],
+      nav: Colors.neutral[10],
     },
   },
-  secondaryTabStyles: {
+  secondaryTab: {
     backgroundColor: {
       normal: Colors.neutral[0],
       hover: Colors.neutral[5],
@@ -178,7 +222,7 @@ const theme = {
       active: Colors.neutral[90],
     },
   },
-  selectStyles: {
+  select: {
     backgroundColor: {
       normal: Colors.neutral[0],
       hover: Colors.neutral[10],
@@ -196,8 +240,61 @@ const theme = {
       active: Colors.neutral[70],
       disabled: Colors.neutral[10],
     },
+    optionList: {
+      scrollbar: {
+        backgroundColor: Colors.neutral[30],
+      },
+    },
   },
-  tagStyles: {
+  input: {
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      focus: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+    color: {
+      placeholder: {
+        normal: Colors.neutral[30],
+        readOnly: Colors.neutral[30],
+      },
+      disabled: Colors.neutral[30],
+      readOnly: Colors.neutral[90],
+    },
+    backgroundColor: {
+      readOnly: Colors.neutral[5],
+    },
+    error: Colors.red[50],
+    icon: {
+      color: Colors.neutral[70],
+    },
+    label: {
+      color: Colors.neutral[70],
+    },
+  },
+  textArea: {
+    borderColor: {
+      normal: Colors.neutral[30],
+      hover: Colors.neutral[50],
+      focus: Colors.neutral[70],
+      disabled: Colors.neutral[10],
+    },
+    color: {
+      placeholder: {
+        normal: Colors.neutral[30],
+        focus: {
+          normal: 'transparent',
+          readOnly: Colors.neutral[30],
+        },
+      },
+      disabled: Colors.neutral[30],
+      readOnly: Colors.neutral[90],
+    },
+    backgroundColor: {
+      readOnly: Colors.neutral[5],
+    },
+  },
+  tag: {
     backgroundColor: {
       green: Colors.green[10],
       gray: Colors.neutral[5],
@@ -208,7 +305,7 @@ const theme = {
     },
     color: Colors.neutral[90],
   },
-  paginationStyles: {
+  pagination: {
     backgroundColor: Colors.neutral[0],
     currentPage: Colors.neutral[10],
     borderColor: {
@@ -241,6 +338,12 @@ const theme = {
       warningTextColor: Colors.red[50],
       lightTextColor: Colors.neutral[30],
     },
+    filters: {
+      color: {
+        icon: Colors.neutral[90],
+        normal: Colors.neutral[50],
+      },
+    },
   },
   scrollbar: {
     trackColor: {
@@ -252,12 +355,41 @@ const theme = {
       active: Colors.neutral[50],
     },
   },
-  confirmationModal: {
-    overlay: Colors.transparency[10],
-    shadow: Colors.transparency[20],
+  consumerTopicContent: {
+    backgroundColor: Colors.neutral[5],
+  },
+  topicFormLabel: {
+    color: Colors.neutral[50],
+  },
+  topicMetaData: {
+    backgroundColor: Colors.neutral[5],
+    color: {
+      label: Colors.neutral[50],
+      value: Colors.neutral[80],
+      meta: Colors.neutral[30],
+    },
+  },
+  dangerZone: {
+    borderColor: Colors.neutral[10],
+    color: Colors.red[50],
+  },
+  configList: {
+    color: Colors.neutral[30],
+  },
+  topicsList: {
+    color: {
+      normal: Colors.neutral[90],
+      hover: Colors.neutral[50],
+      active: Colors.neutral[90],
+    },
+    backgroundColor: {
+      hover: Colors.neutral[5],
+      active: Colors.neutral[10],
+    },
   },
   icons: {
     closeIcon: Colors.neutral[30],
+    warningIcon: Colors.yellow[20],
     messageToggleIconOpened: Colors.neutral[90],
     messageToggleIconClosed: Colors.neutral[30],
     verticalElipsisIcon: Colors.neutral[50],
@@ -268,9 +400,6 @@ const theme = {
   },
   viewer: {
     wrapper: Colors.neutral[3],
-  },
-  textarea: {
-    focus: 'transparent',
   },
 };
 

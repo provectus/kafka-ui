@@ -1,6 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Dropdown matches snapshot 1`] = `
+.c0 {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-align-self: center;
+  -ms-flex-item-align: center;
+  align-self: center;
+}
+
 .c1 {
   background: transparent;
   border: none;
@@ -22,102 +32,63 @@ exports[`Dropdown matches snapshot 1`] = `
   cursor: pointer;
 }
 
-.c0 {
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-align-self: center;
-  -ms-flex-item-align: center;
-  align-self: center;
+.c2 {
+  color: initial;
 }
 
-<Dropdown
-  label="My Test Label"
-  right={true}
-  up={true}
->
-  <div
-    className="dropdown is-right is-up"
-  >
-    <styled.div>
-      <div
-        className="c0"
-      >
-        <Styled(DropdownTrigger)
-          onClick={[Function]}
-        >
-          <DropdownTrigger
-            className="c1"
-            onClick={[Function]}
-          >
-            <button
-              aria-controls="dropdown-menu"
-              aria-haspopup="true"
-              className="c1"
-              onClick={[Function]}
-              type="button"
-            >
-              My Test Label
-            </button>
-          </DropdownTrigger>
-        </Styled(DropdownTrigger)>
-      </div>
-    </styled.div>
+<body>
+  <div>
     <div
-      className="dropdown-menu"
-      id="dropdown-menu"
-      role="menu"
+      class="dropdown is-right is-up"
     >
       <div
-        className="dropdown-content has-text-left"
+        class="c0"
       >
-        <DropdownItem
-          onClick={[MockFunction]}
+        <button
+          class="c1"
+          type="button"
+        >
+          My Test Label
+        </button>
+      </div>
+      <div
+        class="dropdown-menu"
+        id="dropdown-menu"
+        role="menu"
+      >
+        <div
+          class="dropdown-content has-text-left"
         >
           <a
-            className="dropdown-item is-link"
+            class="c2 dropdown-item is-link"
             href="#end"
-            onClick={[Function]}
             role="menuitem"
             type="button"
           >
             Child 1
           </a>
-        </DropdownItem>
-        <DropdownItem
-          onClick={[MockFunction]}
-        >
           <a
-            className="dropdown-item is-link"
+            class="c2 dropdown-item is-link"
             href="#end"
-            onClick={[Function]}
             role="menuitem"
             type="button"
           >
             Child 2
           </a>
-        </DropdownItem>
-        <DropdownDivider>
           <hr
-            className="dropdown-divider"
+            class="dropdown-divider"
           />
-        </DropdownDivider>
-        <DropdownItem
-          onClick={[MockFunction]}
-        >
           <a
-            className="dropdown-item is-link"
+            class="c2 dropdown-item is-link"
             href="#end"
-            onClick={[Function]}
             role="menuitem"
             type="button"
           >
             Child 3
           </a>
-        </DropdownItem>
+        </div>
       </div>
     </div>
   </div>
-</Dropdown>
+</body>
 `;

@@ -9,7 +9,7 @@ import topics from './topics/reducer';
 import topicMessages from './topicMessages/reducer';
 import consumerGroups from './consumerGroups/consumerGroupsSlice';
 import connect from './connect/reducer';
-import ksqlDb from './ksqlDb/reducer';
+import ksqlDb from './ksqlDb/ksqlDbSlice';
 import legacyLoader from './loader/reducer';
 import legacyAlerts from './alerts/reducer';
 

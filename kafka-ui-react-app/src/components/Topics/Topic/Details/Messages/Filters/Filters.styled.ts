@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const FiltersWrapper = styled.div`
   display: flex;
@@ -41,13 +40,13 @@ export const SeekTypeSelectorWrapper = styled.div`
 
   & .date-picker {
     height: 32px;
-    border: 1px ${(props) => props.theme.selectStyles.borderColor.normal} solid;
+    border: 1px ${(props) => props.theme.select.borderColor.normal} solid;
     border-left: none;
     border-radius: 0 4px 4px 0;
     font-size: 14px;
     width: 100%;
     padding-left: 12px;
-    color: ${(props) => props.theme.selectStyles.color.normal};
+    color: ${(props) => props.theme.select.color.normal};
 
     background-image: url('data:image/svg+xml,%3Csvg width="10" height="6" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg"%3E%3Cpath d="M1 1L5 5L9 1" stroke="%23454F54"/%3E%3C/svg%3E%0A') !important;
     background-repeat: no-repeat !important;
@@ -74,13 +73,13 @@ export const FiltersMetrics = styled.div`
 `;
 
 export const Metric = styled.div`
-  color: ${Colors.neutral[50]};
+  color: ${({ theme }) => theme.metrics.filters.color.normal};
   font-size: 12px;
   display: flex;
 `;
 
 export const MetricsIcon = styled.div`
-  color: ${Colors.neutral[90]};
+  color: ${({ theme }) => theme.metrics.filters.color.icon};
   padding-right: 6px;
   height: 12px;
 `;

@@ -1,7 +1,10 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import {
+  containerRendersView,
+  TestRouterWrapper,
+  render,
+} from 'lib/testHelpers';
 import { clusterConnectConnectorPath } from 'lib/paths';
 import DetailsContainer from 'components/Connect/Details/DetailsContainer';
 import Details, { DetailsProps } from 'components/Connect/Details/Details';
@@ -79,13 +82,13 @@ describe('Details', () => {
     });
 
     it('is empty when no connector', () => {
-      const wrapper = mount(setupWrapper({ connector: null }));
-      expect(wrapper.html()).toEqual('');
+      const wrapper = render(setupWrapper({ connector: null })).baseElement;
+      expect(wrapper.querySelector('div')).toBeEmptyDOMElement();
     });
 
     it('fetches connector on mount', () => {
       const fetchConnector = jest.fn();
-      mount(setupWrapper({ fetchConnector }));
+      render(setupWrapper({ fetchConnector }));
       expect(fetchConnector).toHaveBeenCalledTimes(1);
       expect(fetchConnector).toHaveBeenCalledWith(
         clusterName,
@@ -96,7 +99,7 @@ describe('Details', () => {
 
     it('fetches tasks on mount', () => {
       const fetchTasks = jest.fn();
-      mount(setupWrapper({ fetchTasks }));
+      render(setupWrapper({ fetchTasks }));
       expect(fetchTasks).toHaveBeenCalledTimes(1);
       expect(fetchTasks).toHaveBeenCalledWith(
         clusterName,
