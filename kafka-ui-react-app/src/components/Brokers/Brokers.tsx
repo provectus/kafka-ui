@@ -30,6 +30,9 @@ const Brokers: React.FC = () => {
     version,
   } = useAppSelector(selectStats);
 
+  let replicas = inSyncReplicasCount ?? 0;
+  replicas += outOfSyncReplicasCount ?? 0;
+
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
   }, [fetchClusterStats, clusterName]);
@@ -94,8 +97,19 @@ const Brokers: React.FC = () => {
               <Metrics.RedText>{underReplicatedPartitionCount}</Metrics.RedText>
             )}
           </Metrics.Indicator>
-          <Metrics.Indicator label="In Sync Replicas">
-            {inSyncReplicasCount}
+          <Metrics.Indicator
+            label="In Sync Replicas"
+            isAlert
+            alertType={inSyncReplicasCount === replicas ? 'success' : 'error'}
+          >
+            {inSyncReplicasCount &&
+            replicas &&
+            inSyncReplicasCount < replicas ? (
+              <Metrics.RedText>{inSyncReplicasCount}</Metrics.RedText>
+            ) : (
+              inSyncReplicasCount
+            )}
+            <Metrics.LightText> of {replicas}</Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator label="Out Of Sync Replicas">
             {outOfSyncReplicasCount}
