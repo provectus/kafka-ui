@@ -1,21 +1,22 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { RootState } from 'redux/interfaces';
-import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
+import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 import { KsqlState } from 'redux/interfaces/ksqlDb';
 
 const ksqlDbState = ({ ksqlDb }: RootState): KsqlState => ksqlDb;
 
-const getKsqlDbFetchTablesAndStreamsFetchingStatus =
-  createLeagcyFetchingSelector('GET_KSQL_DB_TABLES_AND_STREAMS');
+const getKsqlDbFetchTablesAndStreamsFetchingStatus = createFetchingSelector(
+  'ksqlDb/fetchKsqlDbTables'
+);
 
-const getKsqlExecutionStatus = createLeagcyFetchingSelector('EXECUTE_KSQL');
+const getKsqlExecutionStatus = createFetchingSelector('ksqlDb/executeKsql');
 
 export const getKsqlDbTables = createSelector(
   [ksqlDbState, getKsqlDbFetchTablesAndStreamsFetchingStatus],
   (state, status) => ({
     rows: [...state.streams, ...state.tables],
-    fetched: status === 'fetched',
-    fetching: status === 'fetching' || status === 'notFetched',
+    fetched: status === 'fulfilled',
+    fetching: status === 'pending',
     tablesCount: state.tables.length,
     streamsCount: state.streams.length,
   })
@@ -25,7 +26,7 @@ export const getKsqlExecution = createSelector(
   [ksqlDbState, getKsqlExecutionStatus],
   (state, status) => ({
     executionResult: state.executionResult,
-    fetched: status === 'fetched',
-    fetching: status === 'fetching',
+    fetched: status === 'fulfilled',
+    fetching: status === 'pending',
   })
 );
