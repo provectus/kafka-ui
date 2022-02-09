@@ -291,11 +291,7 @@ const Query: FC = () => {
         </form>
       </S.QueryWrapper>
       {KSQLTable && <TableRenderer table={KSQLTable} />}
-      {continuousFetching && (
-        <>
-          <S.ContinuousLoader />
-        </>
-      )}
+      {continuousFetching && <S.ContinuousLoader />}
     </>
   );
 };
