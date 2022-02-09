@@ -25,7 +25,7 @@ public class MessageFilters {
       case GROOVY_SCRIPT:
         return groovyScriptFilter(query);
       default:
-        throw new IllegalStateException("Unknown query type: " + type);
+        throw new IllegalStateException("Unknown query type :D: " + type);
     }
   }
 
