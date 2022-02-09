@@ -1,5 +1,10 @@
 package com.provectus.kafka.ui.service.ksql;
 
+import static ksql.KsqlGrammarParser.DefineVariableContext;
+import static ksql.KsqlGrammarParser.PrintTopicContext;
+import static ksql.KsqlGrammarParser.SingleStatementContext;
+import static ksql.KsqlGrammarParser.UndefineVariableContext;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.exception.ValidationException;
@@ -8,7 +13,7 @@ import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import ksql.KsqlGrammarParser;
+import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
 import org.springframework.http.MediaType;
@@ -17,6 +22,12 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Flux;
 
 public class KsqlApiClient {
+
+  private static final Set<Class<?>> UNSUPPORTED_STMT_TYPES = Set.of(
+      PrintTopicContext.class,
+      DefineVariableContext.class,
+      UndefineVariableContext.class
+  );
 
   @Builder
   @Value
@@ -105,16 +116,19 @@ public class KsqlApiClient {
     if (parsed.getStatements().size() == 0) {
       throw new ValidationException("No valid ksql statement found");
     }
-    if (parsed.getStatements().get(0).statement()
-        instanceof KsqlGrammarParser.PrintTopicContext) {
-      //PRINT returns result in non-json format, need to implement additional parser for it
-      throw new ValidationException("PRINT statement not supported");
+    if (isUnsupportedStatementType(parsed.getStatements().get(0))) {
+      throw new ValidationException("Unsupported statement type");
     }
     if (KsqlGrammar.isSelect(parsed.getStatements().get(0))) {
       return executeSelect(ksql, streamProperties);
     } else {
       return executeStatement(ksql, streamProperties);
     }
+  }
+
+  private boolean isUnsupportedStatementType(SingleStatementContext context) {
+    var ctxClass = context.statement().getClass();
+    return UNSUPPORTED_STMT_TYPES.contains(ctxClass);
   }
 
 }

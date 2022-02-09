@@ -144,9 +144,6 @@ public class ResponseParser {
       tables.add(DynamicParser.parseArray("overwrittenProperties",
           jsonNode.get("overwrittenProperties")));
     }
-    if (arrayFieldNonEmpty(jsonNode, "defaultProperties")) {
-      tables.add(DynamicParser.parseArray("defaultProperties", jsonNode.get("defaultProperties")));
-    }
     return tables;
   }
 
