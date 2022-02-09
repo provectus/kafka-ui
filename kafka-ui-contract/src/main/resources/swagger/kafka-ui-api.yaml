@@ -500,6 +500,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: filterQueryType
+          in: query
+          schema:
+            $ref:  "#/components/schemas/MessageFilterType"
         - name: seekDirection
           in: query
           schema:
@@ -2087,6 +2091,12 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
+
+    MessageFilterType:
+      type: string
+      enum:
+        - STRING_CONTAINS
+        - GROOVY_SCRIPT
 
     SeekDirection:
       type: string
