@@ -4,6 +4,7 @@ import {
   NewSchemaSubject,
   SchemaSubject,
   SchemaType,
+  SortOrder,
 } from 'generated-sources';
 
 export const clusterStats: ClusterStats = {
@@ -42,5 +43,6 @@ export const mockTopicsState = {
   messages: [],
   search: '',
   orderBy: null,
+  sortOrder: SortOrder.ASC,
   consumerGroups: [],
 };
