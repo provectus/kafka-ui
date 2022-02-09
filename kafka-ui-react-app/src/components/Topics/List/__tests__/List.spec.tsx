@@ -13,6 +13,7 @@ import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
 import theme from 'theme/theme';
 import { ThemeProvider } from 'styled-components';
+import { SortOrder } from 'generated-sources';
 
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
@@ -33,6 +34,7 @@ describe('List', () => {
         clearTopicMessages={jest.fn()}
         search=""
         orderBy={null}
+        sortOrder={SortOrder.ASC}
         setTopicsSearch={jest.fn()}
         setTopicsOrderBy={jest.fn()}
         {...props}
@@ -104,6 +106,7 @@ describe('List', () => {
       expect(fetchTopicsList).toHaveBeenLastCalledWith({
         search: '',
         showInternal: false,
+        sortOrder: SortOrder.ASC,
       });
     });
 
