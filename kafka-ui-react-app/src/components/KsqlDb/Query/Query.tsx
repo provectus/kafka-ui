@@ -5,11 +5,13 @@ import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 import yup from 'lib/yupExtended';
 import { useForm, Controller } from 'react-hook-form';
 import { useParams } from 'react-router';
-import { executeKsql } from 'redux/actions/thunks/ksqlDb';
 import TableRenderer from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
+import {
+  executeKsql,
+  resetExecutionResult,
+} from 'redux/reducers/ksqlDb/ksqlDbSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { getKsqlExecution } from 'redux/reducers/ksqlDb/selectors';
-import { resetExecutionResult } from 'redux/actions';
 import { Button } from 'components/common/Button/Button';
 import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';

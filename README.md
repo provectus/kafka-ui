@@ -65,6 +65,18 @@ To run UI for Apache Kafka, you can use a pre-built Docker image or build it loc
 
 We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md) as examples. They're built for various configuration stacks.
 
+# Guides
+
+- [SSO configuration](documentation/guides/SSO.md)
+- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
+- [Docker-compose files](documentation/guides/yaml-description.md)
+- [Connection to a secure broker]()
+
+## Connecting to a Secure Broker
+
+The app supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). <br/>
+An example is located [here](documentation/compose/kafka-ssl.yml).
+
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
@@ -97,7 +109,7 @@ kafka:
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
 
-## Running From Docker Image
+## Running a Docker Image
 The official Docker image for UI for Apache Kafka is hosted here: [hub.docker.com/r/provectuslabs/kafka-ui](https://hub.docker.com/r/provectuslabs/kafka-ui).
 
 Launch Docker container in the background:
@@ -130,18 +142,6 @@ Check [building.md](documentation/project/contributing/building.md)
 ### Running
 
 Check [running.md](documentation/project/contributing/running.md)
-
-# Guides
-
-- [SSO configuration](documentation/guides/SSO.md)
-- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
-- [Docker-compose files](documentation/guides/yaml-description.md)
-
-## Connecting to a Secure Broker
-
-UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
-
-To be continued
 
 ## Liveliness and readiness probes
 Liveliness and readiness endpoint is at `/actuator/health`.
