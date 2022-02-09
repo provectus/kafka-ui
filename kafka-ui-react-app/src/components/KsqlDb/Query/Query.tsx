@@ -17,6 +17,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse } from 'generated-sources';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
+import { number } from 'yup/lib/locale';
 
 import * as S from './Query.styled';
 
@@ -31,22 +32,22 @@ const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
 });
 
-// We expect someting like that
-// "columnNames": [
-//   "@type",
-//   "error_code",
-//   "message",
-//   "statementText"?,
-//   "entities"?
-// ],
-const getFormattedError = (
+const getFormattedErrorFromTableData = (
   responseValues: KsqlTableResponse['values']
-): { statusText: string; message: string } => {
+): { title: string; message: string } => {
+  // We expect someting like that
+  // "columnNames": [
+  //   "@type",
+  //   "error_code",
+  //   "message",
+  //   "statementText"?,
+  //   "entities"?
+  // ],
   const [type, errorCode, message, statementText, entities] =
     (responseValues || [[]])[0];
   // Can't use \n - they just don't work
   return {
-    statusText: `[Error #${errorCode}] ${type}`,
+    title: `[Error #${errorCode}] ${type}`,
     message:
       (entities?.length ? `[${entities.join(', ')}] ` : '') +
       (statementText ? `"${statementText}" ` : '') +
@@ -56,12 +57,15 @@ const getFormattedError = (
 
 const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
-  const sse = React.useRef<EventSource | null>(null);
-  const sseOpened = React.useRef<boolean>(false);
+  const sseRef = React.useRef<{ sse: EventSource | null; isOpen: boolean }>({
+    sse: null,
+    isOpen: false,
+  });
   const [continuousFetching, setContinuousFetching] = useState(false);
   const dispatch = useDispatch();
 
-  const { executionResult, fetching } = useSelector(getKsqlExecution);
+  const { executionResult, fetching: fetchingExecutionResult } =
+    useSelector(getKsqlExecution);
   const [KSQLTable, setKSQLTable] = useState<KsqlTableResponse | null>(null);
 
   const reset = useCallback(() => {
@@ -72,47 +76,48 @@ const Query: FC = () => {
     return reset;
   }, []);
 
-  const closeSSE = useCallback(() => {
-    if (sse.current) {
-      sse.current.close();
+  const destroySSE = useCallback(() => {
+    if (sseRef.current?.sse) {
+      sseRef.current.sse.close();
       setContinuousFetching(false);
-      sse.current = null;
-      sseOpened.current = false;
+      sseRef.current.sse = null;
+      sseRef.current.isOpen = false;
     }
-  }, [sse, setContinuousFetching]);
+  }, [sseRef, setContinuousFetching]);
 
   const handleSSECancel = useCallback(() => {
     reset();
-    closeSSE();
-  }, [reset, closeSSE]);
+    destroySSE();
+  }, [reset, destroySSE]);
 
   const handleClearResults = useCallback(() => {
     setKSQLTable(null);
     handleSSECancel();
   }, [setKSQLTable, handleSSECancel]);
 
-  useEffect(() => {
-    if (!sse.current && executionResult?.pipeId) {
-      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${executionResult?.pipeId}`;
-      sse.current = new EventSource(url);
+  const createSSE = useCallback(
+    (pipeId: string) => {
+      const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${pipeId}`;
+      sseRef.current.sse = new EventSource(url);
 
-      sse.current.onopen = () => {
-        sseOpened.current = true;
+      sseRef.current.sse.onopen = () => {
+        sseRef.current.isOpen = true;
         setContinuousFetching(true);
       };
 
-      sse.current.onmessage = ({ data }) => {
+      sseRef.current.sse.onmessage = ({ data }) => {
         const { table }: KsqlResponse = JSON.parse(data);
         if (table) {
           switch (table?.header) {
-            // table.header can also be `Source Description` - right now it will be rendered as a table (with huge horizonal scroll)
             case 'Execution error': {
-              const { statusText, message } = getFormattedError(table.values);
+              const { title, message } = getFormattedErrorFromTableData(
+                table.values
+              );
               dispatch(
                 alertAdded({
                   id: `${url}-executionError`,
                   type: 'error',
-                  title: statusText,
+                  title,
                   message,
                   createdAt: now(),
                 })
@@ -156,6 +161,8 @@ const Query: FC = () => {
               );
               break;
             }
+            case 'Source Description':
+            case 'properties':
             default: {
               setKSQLTable(table);
               break;
@@ -164,14 +171,19 @@ const Query: FC = () => {
         }
       };
 
-      sse.current.onerror = () => {
-        if (!sseOpened.current) {
+      sseRef.current.sse.onerror = (
+        e: Event & { code?: number; message?: string }
+      ) => {
+        // if it's open - new know that server responded without opening SSE
+        if (!sseRef.current.isOpen) {
           dispatch(
             alertAdded({
               id: `${url}-connectionClosedError`,
               type: 'error',
-              title: 'SSE connection closed',
-              message: 'Your query was immediately rejected',
+              title: `${
+                e?.code ? `[Error #${e.code}] ` : ''
+              }SSE connection closed`,
+              message: e?.message || 'Your query was immediately rejected',
               createdAt: now(),
             })
           );
@@ -180,22 +192,30 @@ const Query: FC = () => {
             AUTO_DISMISS_TIME
           );
         }
-        closeSSE();
+        destroySSE();
       };
+    },
+    [
+      BASE_PARAMS,
+      sseRef,
+      setContinuousFetching,
+      getFormattedErrorFromTableData,
+      dispatch,
+      alertAdded,
+      alertDissmissed,
+      setKSQLTable,
+      destroySSE,
+    ]
+  );
+
+  useEffect(() => {
+    if (!sseRef.current.sse && executionResult?.pipeId) {
+      createSSE(executionResult.pipeId);
     }
     return () => {
-      closeSSE();
+      destroySSE();
     };
-  }, [
-    dispatch,
-    executionResult,
-    alertAdded,
-    alertDissmissed,
-    sse,
-    sseOpened,
-    setKSQLTable,
-    closeSSE,
-  ]);
+  }, [sseRef, executionResult, createSSE, destroySSE]);
 
   const { handleSubmit, setValue, control } = useForm<FormValues>({
     mode: 'onTouched',
@@ -245,7 +265,10 @@ const Query: FC = () => {
                 control={control}
                 name="ksql"
                 render={({ field }) => (
-                  <SQLEditor {...field} readOnly={fetching} />
+                  <SQLEditor
+                    {...field}
+                    readOnly={fetchingExecutionResult || continuousFetching}
+                  />
                 )}
               />
             </div>
@@ -265,7 +288,10 @@ const Query: FC = () => {
                 control={control}
                 name="streamsProperties"
                 render={({ field }) => (
-                  <Editor {...field} readOnly={fetching} />
+                  <Editor
+                    {...field}
+                    readOnly={fetchingExecutionResult || continuousFetching}
+                  />
                 )}
               />
             </div>
@@ -275,7 +301,7 @@ const Query: FC = () => {
               buttonType="primary"
               buttonSize="M"
               type="submit"
-              disabled={fetching}
+              disabled={fetchingExecutionResult || continuousFetching}
             >
               Execute
             </Button>
