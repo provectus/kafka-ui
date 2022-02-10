@@ -15,11 +15,13 @@ import java.util.Optional;
 import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
 
+@Slf4j
 public class KsqlApiClient {
 
   private static final Set<Class<?>> UNSUPPORTED_STMT_TYPES = Set.of(
@@ -129,7 +131,10 @@ public class KsqlApiClient {
       outputFlux = executeStatement(ksql, streamProperties);
     }
     return outputFlux.onErrorResume(Exception.class,
-        e -> errorTableFlux("Unexpected error: " + e.getMessage()));
+        e -> {
+          log.error("Unexpected error while execution ksql: {}", ksql, e);
+          return errorTableFlux("Unexpected error: " + e.getMessage());
+        });
   }
 
   private  Flux<KsqlResponseTable> errorTableFlux(String errorText) {
