@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.base;
 
-import static com.codeborne.selenide.Selenide.closeWebDriver;
-
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.dockerjava.api.DockerClient;
@@ -11,27 +9,20 @@ import com.provectus.kafka.ui.screenshots.Screenshooter;
 import com.provectus.kafka.ui.steps.Steps;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
-import java.time.Duration;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testcontainers.DockerClientFactory;
+import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BindMode;
-import org.testcontainers.containers.BrowserWebDriverContainer;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.images.PullPolicy;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 
 @Slf4j
 @DisplayNameGeneration(CamelCaseToSpacedDisplayNameGenerator.class)
@@ -92,6 +83,7 @@ public class BaseTest {
             //TODO this image should be configurable
             DockerClient client = DockerClientFactory.instance().client();
             DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+            Testcontainers.exposeHostPorts(8080);
             selenoid.start();
             remote = "http://%s:%s/wd/hub"
                     .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
@@ -100,8 +92,8 @@ public class BaseTest {
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         if (!TestConfiguration.USE_LOCAL_BROWSER) {
             Configuration.remote = remote;
-            TestConfiguration.BASE_URL =
-                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+//            TestConfiguration.BASE_URL =
+//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
         }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
