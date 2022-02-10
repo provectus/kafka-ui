@@ -71,13 +71,13 @@ describe('Diff', () => {
     it('renders left select with empty value', () => {
       const select = screen.getAllByRole('listbox')[0];
       expect(select).toBeInTheDocument();
-      expect(select).toHaveTextContent('');
+      expect(select).toHaveTextContent(versions[0].version);
     });
 
     it('renders right select with empty value', () => {
       const select = screen.getAllByRole('listbox')[1];
       expect(select).toBeInTheDocument();
-      expect(select).toHaveTextContent('');
+      expect(select).toHaveTextContent(versions[0].version);
     });
   });
   describe('when schema versions are loaded and two versions in path', () => {
@@ -121,7 +121,7 @@ describe('Diff', () => {
     it('renders right select with empty value', () => {
       const select = screen.getAllByRole('listbox')[1];
       expect(select).toBeInTheDocument();
-      expect(select).toHaveTextContent('');
+      expect(select).toHaveTextContent(versions[0].version);
     });
   });
 });

@@ -39,12 +39,7 @@ const Schemas: React.FC = () => {
       />
       <BreadcrumbRoute
         exact
-        path={clusterSchemaSchemaDiffPath(
-          ':clusterName',
-          ':subject',
-          ':leftVersion?',
-          ':rightVersion?'
-        )}
+        path={clusterSchemaSchemaDiffPath(':clusterName', ':subject')}
         component={DiffContainer}
       />
     </Switch>

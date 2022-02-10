@@ -3,7 +3,7 @@ import { SchemaSubject } from 'generated-sources';
 import { clusterSchemaSchemaDiffPath } from 'lib/paths';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useParams, useLocation } from 'react-router';
 import {
   fetchSchemaVersions,
   SCHEMAS_VERSIONS_FETCH_ACTION,
@@ -33,6 +33,7 @@ const Diff: React.FC<DiffProps> = ({
     rightVersionInPath || ''
   );
   const history = useHistory();
+  const location = useLocation();
 
   const { clusterName, subject } =
     useParams<{ clusterName: string; subject: string }>();
@@ -63,6 +64,11 @@ const Diff: React.FC<DiffProps> = ({
     control,
   } = methods;
 
+  const searchParams = React.useMemo(
+    () => new URLSearchParams(location.search),
+    [location, history, leftVersion, rightVersion]
+  );
+
   return (
     <S.Section>
       {areVersionsFetched ? (
@@ -79,18 +85,23 @@ const Diff: React.FC<DiffProps> = ({
                     <Select
                       id="left-select"
                       name={name}
-                      value={leftVersion}
+                      value={
+                        leftVersion === '' ? versions[0].version : leftVersion
+                      }
                       onChange={(event) => {
                         history.push(
-                          clusterSchemaSchemaDiffPath(
-                            clusterName,
-                            subject,
-                            event.toString(),
-                            !rightVersion && versions.length
-                              ? versions[0].version
-                              : rightVersion
-                          )
+                          clusterSchemaSchemaDiffPath(clusterName, subject)
                         );
+                        searchParams.set('leftVersion', event.toString());
+                        searchParams.set(
+                          'rightVersion',
+                          rightVersion === ''
+                            ? versions[0].version
+                            : rightVersion
+                        );
+                        history.push({
+                          search: `?${searchParams.toString()}`,
+                        });
                         setLeftVersion(event.toString());
                       }}
                       minWidth="100%"
@@ -115,18 +126,21 @@ const Diff: React.FC<DiffProps> = ({
                     <Select
                       id="right-select"
                       name={name}
-                      value={rightVersion}
+                      value={
+                        rightVersion === '' ? versions[0].version : rightVersion
+                      }
                       onChange={(event) => {
                         history.push(
-                          clusterSchemaSchemaDiffPath(
-                            clusterName,
-                            subject,
-                            event.toString(),
-                            !rightVersion && versions.length
-                              ? versions[0].version
-                              : rightVersion
-                          )
+                          clusterSchemaSchemaDiffPath(clusterName, subject)
                         );
+                        searchParams.set(
+                          'leftVersion',
+                          leftVersion === '' ? versions[0].version : leftVersion
+                        );
+                        searchParams.set('rightVersion', event.toString());
+                        history.push({
+                          search: `?${searchParams.toString()}`,
+                        });
                         setRightVersion(event.toString());
                       }}
                       minWidth="100%"

@@ -45,13 +45,10 @@ export const clusterSchemaEditPath = (
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
 export const clusterSchemaSchemaDiffPath = (
   clusterName: ClusterName,
-  subject: SchemaName,
-  leftVersion: string,
-  rightVersion: string
-) =>
-  `${clusterSchemasPath(
-    clusterName
-  )}/${subject}/diff/${leftVersion}/${rightVersion}`;
+  subject: SchemaName
+  // leftVersion: string,
+  // rightVersion: string
+) => `${clusterSchemaPath(clusterName, subject)}/diff`;
 
 // Topics
 export const clusterTopicsPath = (clusterName: ClusterName) =>

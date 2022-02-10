@@ -91,14 +91,7 @@ const Details: React.FC = () => {
               isLink
               buttonSize="M"
               buttonType="primary"
-              to={clusterSchemaSchemaDiffPath(
-                clusterName,
-                subject,
-                schema.version,
-                versions && versions.length > 1
-                  ? versions[1].version
-                  : schema.version
-              )}
+              to={clusterSchemaSchemaDiffPath(clusterName, subject)}
             >
               Compare Versions
             </Button>
