@@ -547,6 +547,7 @@ public class SendAndReadTests extends AbstractBaseTest {
                     SeekDirectionDTO.FORWARD
                 ),
                 null,
+                null,
                 1
             ).filter(e -> e.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
             .map(TopicMessageEventDTO::getMessage)

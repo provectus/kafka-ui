@@ -295,6 +295,11 @@ paths:
           required: false
           schema:
             $ref: '#/components/schemas/TopicColumnsToSort'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
       responses:
         200:
           description: OK
@@ -350,6 +355,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TopicDetails'
+    post:
+      tags:
+        - Topics
+      summary: recreateTopic
+      operationId: recreateTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+        404:
+          description: Not found
+        408:
+          description: Topic recreation timeout
     patch:
       tags:
         - Topics
@@ -495,6 +527,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: filterQueryType
+          in: query
+          schema:
+            $ref:  "#/components/schemas/MessageFilterType"
         - name: seekDirection
           in: query
           schema:
@@ -614,6 +650,51 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ConsumerGroup'
+
+  /api/clusters/{clusterName}/consumer-groups/paged:
+    get:
+      tags:
+        - Consumer Groups
+      summary: Get consumer croups with paging support
+      operationId: getConsumerGroupsPage
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: orderBy
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/ConsumerGroupOrdering'
+        - name: sortOrder
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/SortOrder'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConsumerGroupsPageResponse'
 
 
   /api/clusters/{clusterName}/consumer-groups/{id}:
@@ -750,15 +831,28 @@ paths:
           required: true
           schema:
             type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: perPage
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: search
+          in: query
+          required: false
+          schema:
+            type: string
       responses:
         200:
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SchemaSubject'
+                $ref: '#/components/schemas/SchemaSubjectsResponse'
 
   /api/clusters/{clusterName}/schemas/{subject}:
     delete:
@@ -1713,6 +1807,13 @@ components:
         - OUT_OF_SYNC_REPLICAS
         - TOTAL_PARTITIONS
         - REPLICATION_FACTOR
+        - SIZE
+
+    SortOrder:
+      type: string
+      enum:
+        - ASC
+        - DESC
 
     Topic:
       type: object
@@ -1901,6 +2002,23 @@ components:
       required:
         - groupId
 
+    ConsumerGroupOrdering:
+      type: string
+      enum:
+        - NAME
+        - MEMBERS
+        - STATE
+
+    ConsumerGroupsPageResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        consumerGroups:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerGroup'
+
     CreateTopicMessage:
       type: object
       properties:
@@ -1958,6 +2076,7 @@ components:
             - MESSAGE
             - CONSUMING
             - DONE
+            - EMIT_THROTTLING
         message:
           $ref: "#/components/schemas/TopicMessage"
         phase:
@@ -2039,12 +2158,20 @@ components:
         - BEGINNING
         - OFFSET
         - TIMESTAMP
+        - LATEST
+
+    MessageFilterType:
+      type: string
+      enum:
+        - STRING_CONTAINS
+        - GROOVY_SCRIPT
 
     SeekDirection:
       type: string
       enum:
         - FORWARD
         - BACKWARD
+        - TAILING
       default: FORWARD
 
     Partition:
@@ -2229,6 +2356,16 @@ components:
       required:
         - isCompatible
 
+    SchemaSubjectsResponse:
+      type: object
+      properties:
+        pageCount:
+          type: integer
+        schemas:
+          type: array
+          items:
+            $ref: '#/components/schemas/SchemaSubject'
+
     Connect:
       type: object
       properties:
@@ -2377,6 +2514,7 @@ components:
         - RUNNING
         - FAILED
         - PAUSED
+        - RESTARTING
         - UNASSIGNED
 
     ConnectorState:

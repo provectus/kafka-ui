@@ -21,7 +21,6 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 import Navbar from 'components/common/Navigation/Navbar.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
@@ -34,6 +33,7 @@ interface Props extends Topic, TopicDetails {
   topicName: TopicName;
   isInternal: boolean;
   isDeleted: boolean;
+  isDeletePolicy: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
@@ -50,6 +50,7 @@ const Details: React.FC<Props> = ({
   topicName,
   isInternal,
   isDeleted,
+  isDeletePolicy,
   deleteTopic,
   clearTopicMessages,
 }) => {
@@ -58,6 +59,8 @@ const Details: React.FC<Props> = ({
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
+    React.useState(false);
+  const [isClearTopicConfirmationVisible, setClearTopicConfirmationVisible] =
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
@@ -72,6 +75,7 @@ const Details: React.FC<Props> = ({
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
+    setClearTopicConfirmationVisible(false);
   }, [clusterName, topicName]);
 
   return (
@@ -101,16 +105,18 @@ const Details: React.FC<Props> = ({
                 >
                   Edit settings
                 </DropdownItem>
-                <DropdownItem
-                  style={{ color: Colors.red[50] }}
-                  onClick={clearTopicMessagesHandler}
-                >
-                  Clear messages
-                </DropdownItem>
+                {isDeletePolicy && (
+                  <DropdownItem
+                    onClick={() => setClearTopicConfirmationVisible(true)}
+                    danger
+                  >
+                    Clear messages
+                  </DropdownItem>
+                )}
                 {isTopicDeletionAllowed && (
                   <DropdownItem
-                    style={{ color: Colors.red[50] }}
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
+                    danger
                   >
                     Remove topic
                   </DropdownItem>
@@ -126,6 +132,13 @@ const Details: React.FC<Props> = ({
         onConfirm={deleteTopicHandler}
       >
         Are you sure want to remove <b>{topicName}</b> topic?
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isClearTopicConfirmationVisible}
+        onCancel={() => setClearTopicConfirmationVisible(false)}
+        onConfirm={clearTopicMessagesHandler}
+      >
+        Are you sure want to clear topic messages?
       </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink

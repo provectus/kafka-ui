@@ -9,21 +9,16 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import { Colors } from 'theme/theme';
-import styled from 'styled-components';
+
+import * as S from './List.styled';
 
 export interface ListItemProps {
   clusterName: ClusterName;
   connector: FullConnectorInfo;
 }
-
-const TopicTagsWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`;
 
 const ListItem: React.FC<ListItemProps> = ({
   clusterName,
@@ -84,17 +79,15 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>{type}</td>
       <td>{connectorClass}</td>
       <td>
-        <TopicTagsWrapper>
+        <S.TagsWrapper>
           {topics?.map((t) => (
-            <TagStyled key={t} color="gray">
+            <Tag key={t} color="gray">
               <Link to={clusterTopicPath(clusterName, t)}>{t}</Link>
-            </TagStyled>
+            </Tag>
           ))}
-        </TopicTagsWrapper>
+        </S.TagsWrapper>
       </td>
-      <td>
-        {status && <TagStyled color={stateColor}>{status.state}</TagStyled>}
-      </td>
+      <td>{status && <Tag color={stateColor}>{status.state}</Tag>}</td>
       <td>
         {runningTasks && (
           <span>
@@ -108,8 +101,9 @@ const ListItem: React.FC<ListItemProps> = ({
             <DropdownDivider />
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
+              danger
             >
-              <span style={{ color: Colors.red[50] }}>Remove Connector</span>
+              Remove Connector
             </DropdownItem>
           </Dropdown>
         </div>

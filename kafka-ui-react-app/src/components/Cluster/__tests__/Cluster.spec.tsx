@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, StaticRouter } from 'react-router-dom';
+import { Route } from 'react-router-dom';
 import { ClusterFeaturesEnum } from 'generated-sources';
 import { store } from 'redux/store';
 import { onlineClusterPayload } from 'redux/reducers/clusters/__test__/fixtures';
@@ -29,11 +29,10 @@ jest.mock('components/KsqlDb/KsqlDb', () => () => <div>KsqlDb</div>);
 describe('Cluster', () => {
   const renderComponent = (pathname: string) =>
     render(
-      <StaticRouter location={{ pathname }}>
-        <Route path="/ui/clusters/:clusterName">
-          <Cluster />
-        </Route>
-      </StaticRouter>
+      <Route path="/ui/clusters/:clusterName">
+        <Cluster />
+      </Route>,
+      { pathname, store }
     );
 
   it('renders Brokers', () => {

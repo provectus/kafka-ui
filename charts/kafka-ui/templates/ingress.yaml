@@ -24,13 +24,16 @@ spec:
         - {{ .Values.ingress.host }}
       secretName: {{ .Values.ingress.tls.secretName }}
   {{- end }}
+  {{- if .Values.ingress.ingressClassName }}
+  ingressClassName: {{ .Values.ingress.ingressClassName }}
+  {{- end }}
   rules:
     - http:
         paths:
 {{- if semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion -}}
           {{- range .Values.ingress.precedingPaths }}
           - path: {{ .path }}
-            pathType: ImplementationSpecific
+            pathType: Prefix
             backend:
               service:
                 name: {{ .serviceName }}
@@ -42,12 +45,13 @@ spec:
                 name: {{ $fullName }}
                 port:
                   number: {{ $svcPort }}
+            pathType: Prefix
 {{- if .Values.ingress.path }}
             path: {{ .Values.ingress.path }}
 {{- end }}
           {{- range .Values.ingress.succeedingPaths }}
           - path: {{ .path }}
-            pathType: ImplementationSpecific
+            pathType: Prefix
             backend:
               service:
                 name: {{ .serviceName }}

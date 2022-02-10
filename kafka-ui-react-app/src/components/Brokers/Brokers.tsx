@@ -3,7 +3,7 @@ import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -52,9 +52,9 @@ const Brokers: React.FC = () => {
             {activeControllers}
           </Metrics.Indicator>
           <Metrics.Indicator label="Zookeeper Status">
-            <TagStyled color={zkOnline ? 'green' : 'gray'}>
+            <Tag color={zkOnline ? 'green' : 'gray'}>
               {zkOnline ? 'online' : 'offline'}
-            </TagStyled>
+            </Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
@@ -98,15 +98,21 @@ const Brokers: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {diskUsage?.map(({ brokerId, segmentSize, segmentCount }) => (
-            <tr key={brokerId}>
-              <td>{brokerId}</td>
-              <td>
-                <BytesFormatted value={segmentSize} />
-              </td>
-              <td>{segmentCount}</td>
+          {diskUsage && diskUsage.length !== 0 ? (
+            diskUsage.map(({ brokerId, segmentSize, segmentCount }) => (
+              <tr key={brokerId}>
+                <td>{brokerId}</td>
+                <td>
+                  <BytesFormatted value={segmentSize} />
+                </td>
+                <td>{segmentCount}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={10}>Disk usage data not available</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </Table>
     </>

@@ -5,8 +5,10 @@ import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
 import lombok.SneakyThrows;
+import org.junit.Ignore;
 import org.junit.jupiter.api.*;
 
+@Disabled // TODO #1480
 public class ConnectorsTests extends BaseTest {
 
     public static final String LOCAL = "local";

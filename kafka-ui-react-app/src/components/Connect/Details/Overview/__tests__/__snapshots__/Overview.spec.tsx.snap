@@ -179,6 +179,7 @@ exports[`Overview view matches snapshot 1`] = `
           <span>
             <p
               className="c5"
+              color="yellow"
             >
               RUNNING
             </p>
@@ -211,6 +212,7 @@ exports[`Overview view matches snapshot 1`] = `
              
             <svg
               className="c6"
+              role="svg"
               viewBox="0 0 4 4"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -219,11 +221,11 @@ exports[`Overview view matches snapshot 1`] = `
                 cx={2}
                 cy={2}
                 r={2}
+                role="circle"
               />
             </svg>
           </div>
           <span>
-            f
             2
           </span>
         </div>

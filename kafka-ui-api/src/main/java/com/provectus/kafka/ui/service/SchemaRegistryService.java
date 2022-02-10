@@ -22,9 +22,11 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
 import java.util.Formatter;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -43,6 +45,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @RequiredArgsConstructor
 public class SchemaRegistryService {
+
   public static final String NO_SUCH_SCHEMA_VERSION = "No such schema %s with version %s";
   public static final String NO_SUCH_SCHEMA = "No such schema %s";
 
@@ -57,11 +60,11 @@ public class SchemaRegistryService {
   private final ClusterMapper mapper;
   private final WebClient webClient;
 
-  public Flux<SchemaSubjectDTO> getAllLatestVersionSchemas(KafkaCluster cluster) {
-    var allSubjectNames = getAllSubjectNames(cluster);
-    return allSubjectNames
-        .flatMapMany(Flux::fromArray)
-        .flatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject));
+  public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
+                                                                 List<String> subjects) {
+    return Flux.fromIterable(subjects)
+            .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
+            .collect(Collectors.toList());
   }
 
   public Mono<String[]> getAllSubjectNames(KafkaCluster cluster) {

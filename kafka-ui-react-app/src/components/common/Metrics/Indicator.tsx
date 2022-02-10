@@ -3,7 +3,7 @@ import { AlertType } from 'redux/interfaces';
 
 import * as S from './Metrics.styled';
 
-interface Props {
+export interface Props {
   fetching?: boolean;
   isAlert?: boolean;
   label: React.ReactNode;

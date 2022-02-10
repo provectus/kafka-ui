@@ -3,13 +3,15 @@ import { chunk } from 'lodash';
 import { v4 } from 'uuid';
 import * as Metrics from 'components/common/Metrics';
 import { Cluster } from 'generated-sources';
-import TagStyled from 'components/common/Tag/Tag.styled';
+import { Tag } from 'components/common/Tag/Tag.styled';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { NavLink } from 'react-router-dom';
 import { clusterTopicsPath } from 'lib/paths';
 import Switch from 'components/common/Switch/Switch';
+
+import * as S from './ClustersWidget.styled';
 
 interface Props {
   clusters: Cluster[];
@@ -48,28 +50,24 @@ const ClustersWidget: React.FC<Props> = ({
     <>
       <Metrics.Wrapper>
         <Metrics.Section>
-          <Metrics.Indicator
-            label={<TagStyled color="green">Online</TagStyled>}
-          >
+          <Metrics.Indicator label={<Tag color="green">Online</Tag>}>
             <span data-testid="onlineCount">{onlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
-          <Metrics.Indicator
-            label={<TagStyled color="gray">Offline</TagStyled>}
-          >
+          <Metrics.Indicator label={<Tag color="gray">Offline</Tag>}>
             <span data-testid="offlineCount">{offlineClusters.length}</span>{' '}
             <Metrics.LightText>clusters</Metrics.LightText>
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
-      <div className="p-4">
+      <S.SwitchWrapper>
         <Switch
           name="switchRoundedDefault"
           checked={showOfflineOnly}
           onChange={handleSwitch}
         />
-        <span>Only offline clusters</span>
-      </div>
+        <label>Only offline clusters</label>
+      </S.SwitchWrapper>
       {clusterList.map((chunkItem) => (
         <Table key={chunkItem.id} isFullwidth>
           <thead>
@@ -86,21 +84,26 @@ const ClustersWidget: React.FC<Props> = ({
           <tbody>
             {chunkItem.data.map((cluster) => (
               <tr key={cluster.name}>
-                <td>{cluster.name}</td>
-                <td>{cluster.version}</td>
-                <td>{cluster.brokerCount}</td>
-                <td>{cluster.onlinePartitionCount}</td>
-                <td>
+                <S.TableCell maxWidth="99px">
+                  {cluster.readOnly && <Tag color="blue">readonly</Tag>}{' '}
+                  {cluster.name}
+                </S.TableCell>
+                <S.TableCell maxWidth="99px">{cluster.version}</S.TableCell>
+                <S.TableCell maxWidth="99px">{cluster.brokerCount}</S.TableCell>
+                <S.TableCell maxWidth="78px">
+                  {cluster.onlinePartitionCount}
+                </S.TableCell>
+                <S.TableCell maxWidth="60px">
                   <NavLink to={clusterTopicsPath(cluster.name)}>
                     {cluster.topicCount}
                   </NavLink>
-                </td>
-                <td>
+                </S.TableCell>
+                <S.TableCell maxWidth="85px">
                   <BytesFormatted value={cluster.bytesInPerSec} />
-                </td>
-                <td>
+                </S.TableCell>
+                <S.TableCell maxWidth="85px">
                   <BytesFormatted value={cluster.bytesOutPerSec} />
-                </td>
+                </S.TableCell>
               </tr>
             ))}
           </tbody>

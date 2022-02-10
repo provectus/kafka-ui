@@ -5,6 +5,7 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
@@ -39,6 +40,13 @@ public class TopicsController extends AbstractController implements TopicsApi {
   }
 
   @Override
+  public Mono<ResponseEntity<TopicDTO>> recreateTopic(String clusterName,
+                                                      String topicName, ServerWebExchange serverWebExchange) {
+    return topicsService.recreateTopic(getCluster(clusterName), topicName)
+            .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
+  }
+
+  @Override
   public Mono<ResponseEntity<Void>> deleteTopic(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return topicsService.deleteTopic(getCluster(clusterName), topicName).map(ResponseEntity::ok);
@@ -66,6 +74,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                         @Valid Boolean showInternal,
                                                         @Valid String search,
                                                         @Valid TopicColumnsToSortDTO orderBy,
+                                                        @Valid SortOrderDTO sortOrder,
                                                         ServerWebExchange exchange) {
     return topicsService
         .getTopics(
@@ -74,7 +83,8 @@ public class TopicsController extends AbstractController implements TopicsApi {
             Optional.ofNullable(perPage),
             Optional.ofNullable(showInternal),
             Optional.ofNullable(search),
-            Optional.ofNullable(orderBy)
+            Optional.ofNullable(orderBy),
+            Optional.ofNullable(sortOrder)
         ).map(ResponseEntity::ok);
   }
 

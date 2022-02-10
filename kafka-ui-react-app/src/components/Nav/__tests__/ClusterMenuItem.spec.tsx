@@ -1,5 +1,4 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
 import ClusterMenuItem, {
   ClusterMenuItemProps,
 } from 'components/Nav/ClusterMenuItem';
@@ -7,15 +6,10 @@ import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 
 describe('ClusterMenuItem', () => {
-  const setupComponent = (
-    props: Partial<ClusterMenuItemProps> = {},
-    pathname?: string
-  ) => (
-    <StaticRouter location={{ pathname }} context={{}}>
-      <ul>
-        <ClusterMenuItem to="/test" {...props} />
-      </ul>
-    </StaticRouter>
+  const setupComponent = (props: Partial<ClusterMenuItemProps> = {}) => (
+    <ul>
+      <ClusterMenuItem to="/test" {...props} />
+    </ul>
   );
 
   it('renders component with correct title', () => {
@@ -48,11 +42,9 @@ describe('ClusterMenuItem', () => {
 
   it('renders list item with children', () => {
     render(
-      <StaticRouter location={{}} context={{}}>
-        <ul>
-          <ClusterMenuItem to="/test">Test Text Box</ClusterMenuItem>
-        </ul>
-      </StaticRouter>
+      <ul>
+        <ClusterMenuItem to="/test">Test Text Box</ClusterMenuItem>
+      </ul>
     );
     expect(screen.getByRole('menuitem')).toBeInTheDocument();
     expect(screen.queryByRole('link')).toBeInTheDocument();

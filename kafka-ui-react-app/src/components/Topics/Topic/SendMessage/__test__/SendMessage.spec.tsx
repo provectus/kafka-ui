@@ -41,7 +41,8 @@ const renderComponent = () => {
       <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
         <SendMessage />
       </Route>
-    </Router>
+    </Router>,
+    { store }
   );
 };
 

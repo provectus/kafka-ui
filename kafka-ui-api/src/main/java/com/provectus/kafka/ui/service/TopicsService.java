@@ -6,6 +6,7 @@ import static java.util.stream.Collectors.toMap;
 import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.exception.TopicMetadataException;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
+import com.provectus.kafka.ui.exception.TopicRecreationException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
 import com.provectus.kafka.ui.model.Feature;
@@ -20,6 +21,7 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
 import com.provectus.kafka.ui.model.TopicCreationDTO;
@@ -30,6 +32,7 @@ import com.provectus.kafka.ui.model.TopicUpdateDTO;
 import com.provectus.kafka.ui.model.TopicsResponseDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.util.JmxClusterUtil;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -38,8 +41,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.ConfigEntry;
 import org.apache.kafka.clients.admin.NewPartitionReassignment;
@@ -48,8 +51,11 @@ import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.common.Node;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.TopicExistsException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.util.retry.Retry;
 
 @Service
 @RequiredArgsConstructor
@@ -61,16 +67,21 @@ public class TopicsService {
   private final ClusterMapper clusterMapper;
   private final DeserializationService deserializationService;
   private final MetricsCache metricsCache;
+  @Value("${topic.recreate.maxRetries:15}")
+  private int recreateMaxRetries;
+  @Value("${topic.recreate.delay.seconds:1}")
+  private int recreateDelayInSeconds;
 
   public Mono<TopicsResponseDTO> getTopics(KafkaCluster cluster,
                                            Optional<Integer> pageNum,
                                            Optional<Integer> nullablePerPage,
                                            Optional<Boolean> showInternal,
                                            Optional<String> search,
-                                           Optional<TopicColumnsToSortDTO> sortBy) {
+                                           Optional<TopicColumnsToSortDTO> sortBy,
+                                           Optional<SortOrderDTO> sortOrder) {
     return adminClientService.get(cluster).flatMap(ac ->
       new Pagination(ac, metricsCache.get(cluster))
-          .getPage(pageNum, nullablePerPage, showInternal, search, sortBy)
+          .getPage(pageNum, nullablePerPage, showInternal, search, sortBy, sortOrder)
           .flatMap(page ->
               loadTopics(cluster, page.getTopics())
                   .map(topics ->
@@ -178,6 +189,30 @@ public class TopicsService {
     return adminClientService.get(cluster)
         .flatMap(ac -> createTopic(cluster, ac, topicCreation))
         .map(clusterMapper::toTopic);
+  }
+
+  public Mono<TopicDTO> recreateTopic(KafkaCluster cluster, String topicName) {
+    return loadTopic(cluster, topicName)
+            .flatMap(t -> deleteTopic(cluster, topicName)
+                    .thenReturn(t).delayElement(Duration.ofSeconds(recreateDelayInSeconds))
+                    .flatMap(topic -> adminClientService.get(cluster).flatMap(ac -> ac.createTopic(topic.getName(),
+                                            topic.getPartitionCount(),
+                                            (short) topic.getReplicationFactor(),
+                                            topic.getTopicConfigs()
+                                                    .stream()
+                                                    .collect(Collectors
+                                                            .toMap(InternalTopicConfig::getName,
+                                                                    InternalTopicConfig::getValue)))
+                                    .thenReturn(topicName))
+                            .retryWhen(Retry.fixedDelay(recreateMaxRetries,
+                                            Duration.ofSeconds(recreateDelayInSeconds))
+                                    .filter(throwable -> throwable instanceof TopicExistsException)
+                                    .onRetryExhaustedThrow((a, b) ->
+                                            new TopicRecreationException(topicName,
+                                                    recreateMaxRetries * recreateDelayInSeconds)))
+                            .flatMap(a -> loadTopic(cluster, topicName)).map(clusterMapper::toTopic)
+                    )
+            );
   }
 
   private Mono<InternalTopic> updateTopic(KafkaCluster cluster,
@@ -393,12 +428,12 @@ public class TopicsService {
   }
 
   @VisibleForTesting
-  @Value
+  @lombok.Value
   static class Pagination {
     ReactiveAdminClient adminClient;
     MetricsCache.Metrics metrics;
 
-    @Value
+    @lombok.Value
     static class Page {
       List<String> topics;
       int totalPages;
@@ -409,12 +444,15 @@ public class TopicsService {
         Optional<Integer> nullablePerPage,
         Optional<Boolean> showInternal,
         Optional<String> search,
-        Optional<TopicColumnsToSortDTO> sortBy) {
+        Optional<TopicColumnsToSortDTO> sortBy,
+        Optional<SortOrderDTO> sortOrder) {
       return geTopicsForPagination()
           .map(paginatingTopics -> {
             Predicate<Integer> positiveInt = i -> i > 0;
             int perPage = nullablePerPage.filter(positiveInt).orElse(DEFAULT_PAGE_SIZE);
             var topicsToSkip = (pageNum.filter(positiveInt).orElse(1) - 1) * perPage;
+            var comparator = sortOrder.isEmpty() || !sortOrder.get().equals(SortOrderDTO.DESC)
+                ? getComparatorForTopic(sortBy) : getComparatorForTopic(sortBy).reversed();
             List<InternalTopic> topics = paginatingTopics.stream()
                 .filter(topic -> !topic.isInternal()
                     || showInternal.map(i -> topic.isInternal() == i).orElse(true))
@@ -422,7 +460,7 @@ public class TopicsService {
                     search
                         .map(s -> StringUtils.containsIgnoreCase(topic.getName(), s))
                         .orElse(true))
-                .sorted(getComparatorForTopic(sortBy))
+                .sorted(comparator)
                 .collect(toList());
             var totalPages = (topics.size() / perPage)
                 + (topics.size() % perPage == 0 ? 0 : 1);
@@ -450,6 +488,8 @@ public class TopicsService {
           return Comparator.comparing(t -> t.getReplicas() - t.getInSyncReplicas());
         case REPLICATION_FACTOR:
           return Comparator.comparing(InternalTopic::getReplicationFactor);
+        case SIZE:
+          return Comparator.comparing(InternalTopic::getSegmentSize);
         case NAME:
         default:
           return defaultComparator;

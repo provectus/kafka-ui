@@ -3,13 +3,13 @@ on:
   push:
     branches:
       - master
-  pull_request:
+  pull_request_target:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
     - 'kafka-ui-contract/**'
     - 'kafka-ui-react-app/**'
 jobs:
-  npm-test:
+  build-and-test:
     env:
       CI: true
       NODE_ENV: dev

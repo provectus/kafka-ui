@@ -1,13 +1,14 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import React from 'react';
 
 interface Props {
   className?: string;
 }
 
-const LiveIcon: React.FC<Props> = ({ className }) => {
+const LiveIcon: React.FC<Props> = () => {
+  const theme = useTheme();
   return (
-    <i className={className}>
+    <i>
       <svg
         width="16"
         height="16"
@@ -15,8 +16,8 @@ const LiveIcon: React.FC<Props> = ({ className }) => {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle cx="8" cy="8" r="7" fill="#FAD1D1" />
-        <circle cx="8" cy="8" r="4" fill="#E61A1A" />
+        <circle cx="8" cy="8" r="7" fill={theme.icons.liveIcon.circleBig} />
+        <circle cx="8" cy="8" r="4" fill={theme.icons.liveIcon.circleSmall} />
       </svg>
     </i>
   );

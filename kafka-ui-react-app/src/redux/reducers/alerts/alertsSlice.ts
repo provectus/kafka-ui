@@ -1,6 +1,7 @@
 import {
   createEntityAdapter,
   createSlice,
+  nanoid,
   PayloadAction,
 } from '@reduxjs/toolkit';
 import { UnknownAsyncThunkRejectedWithValueAction } from '@reduxjs/toolkit/dist/matchers';
@@ -18,6 +19,20 @@ const isServerResponse = (payload: unknown): payload is ServerResponse => {
   return false;
 };
 
+const transformResponseToAlert = (payload: ServerResponse) => {
+  const { status, statusText, message, url } = payload;
+  const alert: Alert = {
+    id: url || nanoid(),
+    type: 'error',
+    title: `${status} ${statusText}`,
+    message,
+    response: payload,
+    createdAt: now(),
+  };
+
+  return alert;
+};
+
 const alertsSlice = createSlice({
   name: 'alerts',
   initialState: alertsAdapter.getInitialState(),
@@ -25,6 +40,12 @@ const alertsSlice = createSlice({
     alertDissmissed: alertsAdapter.removeOne,
     alertAdded(state, action: PayloadAction<Alert>) {
       alertsAdapter.upsertOne(state, action.payload);
+    },
+    serverErrorAlertAdded: (
+      state,
+      { payload }: PayloadAction<ServerResponse>
+    ) => {
+      alertsAdapter.upsertOne(state, transformResponseToAlert(payload));
     },
   },
   extraReducers: (builder) => {
@@ -34,16 +55,7 @@ const alertsSlice = createSlice({
       (state, { meta, payload }) => {
         const { rejectedWithValue } = meta;
         if (rejectedWithValue && isServerResponse(payload)) {
-          const { status, statusText, message, url } = payload;
-          const alert: Alert = {
-            id: url || meta.requestId,
-            type: 'error',
-            title: `${status} ${statusText}`,
-            message,
-            response: payload,
-            createdAt: now(),
-          };
-          alertsAdapter.addOne(state, alert);
+          alertsAdapter.upsertOne(state, transformResponseToAlert(payload));
         }
       }
     );
@@ -54,6 +66,7 @@ export const { selectAll } = alertsAdapter.getSelectors<RootState>(
   (state) => state.alerts
 );
 
-export const { alertDissmissed, alertAdded } = alertsSlice.actions;
+export const { alertDissmissed, alertAdded, serverErrorAlertAdded } =
+  alertsSlice.actions;
 
 export default alertsSlice.reducer;

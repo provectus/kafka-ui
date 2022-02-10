@@ -2,7 +2,7 @@ import React from 'react';
 import Brokers from 'components/Brokers/Brokers';
 import { render } from 'lib/testHelpers';
 import { screen, waitFor } from '@testing-library/dom';
-import { Route, StaticRouter } from 'react-router';
+import { Route } from 'react-router';
 import { clusterBrokersPath } from 'lib/paths';
 import fetchMock from 'fetch-mock';
 import { clusterStatsPayload } from 'redux/reducers/brokers/__test__/fixtures';
@@ -13,15 +13,12 @@ describe('Brokers Component', () => {
   const clusterName = 'local';
   const renderComponent = () =>
     render(
-      <StaticRouter
-        location={{
-          pathname: clusterBrokersPath(clusterName),
-        }}
-      >
-        <Route path={clusterBrokersPath(':clusterName')}>
-          <Brokers />
-        </Route>
-      </StaticRouter>
+      <Route path={clusterBrokersPath(':clusterName')}>
+        <Brokers />
+      </Route>,
+      {
+        pathname: clusterBrokersPath(clusterName),
+      }
     );
 
   describe('Brokers', () => {

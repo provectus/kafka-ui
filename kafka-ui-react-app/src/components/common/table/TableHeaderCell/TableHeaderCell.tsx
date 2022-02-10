@@ -1,50 +1,66 @@
 import React from 'react';
-import { TopicColumnsToSort } from 'generated-sources';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
-import cx from 'classnames';
 
 export interface TableHeaderCellProps {
   title?: string;
   previewText?: string;
   onPreview?: () => void;
   orderBy?: TopicColumnsToSort | null;
+  sortOrder?: SortOrder;
   orderValue?: TopicColumnsToSort | null;
   handleOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
 }
 
 const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
-  const { title, previewText, onPreview, orderBy, orderValue, handleOrderBy } =
-    props;
+  const {
+    title,
+    previewText,
+    onPreview,
+    orderBy,
+    sortOrder,
+    orderValue,
+    handleOrderBy,
+    ...restProps
+  } = props;
 
+  const isOrdered = !!orderValue && orderValue === orderBy;
+  const isOrderable = !!(orderValue && handleOrderBy);
+
+  const handleOnClick = () => {
+    return orderValue && handleOrderBy && handleOrderBy(orderValue);
+  };
+  const handleOnKeyDown = (event: React.KeyboardEvent) => {
+    return (
+      event.code === 'Space' &&
+      orderValue &&
+      handleOrderBy &&
+      handleOrderBy(orderValue)
+    );
+  };
+  const orderableProps = isOrderable && {
+    isOrderable,
+    sortOrder,
+    onClick: handleOnClick,
+    onKeyDown: handleOnKeyDown,
+    role: 'button',
+    tabIndex: 0,
+  };
   return (
-    <S.TableHeaderCell
-      className={cx(orderBy && orderBy === orderValue && 'has-text-link-dark')}
-      {...props}
-    >
-      <span className="title">{title}</span>
+    <S.TableHeaderCell {...restProps}>
+      <S.Title isOrdered={isOrdered} {...orderableProps}>
+        {title}
+      </S.Title>
+
       {previewText && (
-        <span
-          className="preview"
+        <S.Preview
           onClick={onPreview}
           onKeyDown={onPreview}
           role="button"
           tabIndex={0}
         >
           {previewText}
-        </span>
-      )}
-      {orderValue && (
-        <span
-          className="icon is-small is-clickable"
-          onClick={() =>
-            orderValue && handleOrderBy && handleOrderBy(orderValue)
-          }
-          onKeyDown={() => handleOrderBy}
-          role="button"
-          tabIndex={0}
-        >
-          <i className="fas fa-sort" />
-        </span>
+        </S.Preview>
       )}
     </S.TableHeaderCell>
   );
