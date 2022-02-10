@@ -36,103 +36,59 @@ exports[`Dropdown matches snapshot 1`] = `
   color: initial;
 }
 
-<Dropdown
-  label="My Test Label"
-  right={true}
-  up={true}
->
-  <div
-    className="dropdown is-right is-up"
-  >
-    <styled.div>
-      <div
-        className="c0"
-      >
-        <styled.button
-          onClick={[Function]}
-        >
-          <button
-            className="c1"
-            onClick={[Function]}
-            type="button"
-          >
-            My Test Label
-          </button>
-        </styled.button>
-      </div>
-    </styled.div>
+<body>
+  <div>
     <div
-      className="dropdown-menu"
-      id="dropdown-menu"
-      role="menu"
+      class="dropdown is-right is-up"
     >
       <div
-        className="dropdown-content has-text-left"
+        class="c0"
       >
-        <DropdownItem
-          onClick={[MockFunction]}
+        <button
+          class="c1"
+          type="button"
         >
-          <styled.a
-            $isDanger={false}
-            className="dropdown-item is-link"
-            onClick={[Function]}
-          >
-            <a
-              className="c2 dropdown-item is-link"
-              href="#end"
-              onClick={[Function]}
-              role="menuitem"
-              type="button"
-            >
-              Child 1
-            </a>
-          </styled.a>
-        </DropdownItem>
-        <DropdownItem
-          onClick={[MockFunction]}
+          My Test Label
+        </button>
+      </div>
+      <div
+        class="dropdown-menu"
+        id="dropdown-menu"
+        role="menu"
+      >
+        <div
+          class="dropdown-content has-text-left"
         >
-          <styled.a
-            $isDanger={false}
-            className="dropdown-item is-link"
-            onClick={[Function]}
+          <a
+            class="c2 dropdown-item is-link"
+            href="#end"
+            role="menuitem"
+            type="button"
           >
-            <a
-              className="c2 dropdown-item is-link"
-              href="#end"
-              onClick={[Function]}
-              role="menuitem"
-              type="button"
-            >
-              Child 2
-            </a>
-          </styled.a>
-        </DropdownItem>
-        <DropdownDivider>
+            Child 1
+          </a>
+          <a
+            class="c2 dropdown-item is-link"
+            href="#end"
+            role="menuitem"
+            type="button"
+          >
+            Child 2
+          </a>
           <hr
-            className="dropdown-divider"
+            class="dropdown-divider"
           />
-        </DropdownDivider>
-        <DropdownItem
-          onClick={[MockFunction]}
-        >
-          <styled.a
-            $isDanger={false}
-            className="dropdown-item is-link"
-            onClick={[Function]}
+          <a
+            class="c2 dropdown-item is-link"
+            href="#end"
+            role="menuitem"
+            type="button"
           >
-            <a
-              className="c2 dropdown-item is-link"
-              href="#end"
-              onClick={[Function]}
-              role="menuitem"
-              type="button"
-            >
-              Child 3
-            </a>
-          </styled.a>
-        </DropdownItem>
+            Child 3
+          </a>
+        </div>
       </div>
     </div>
   </div>
-</Dropdown>
+</body>
 `;

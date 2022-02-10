@@ -102,7 +102,7 @@ const Overview: React.FC<Props> = ({
                 <td>{offsetMin}</td>
                 <td>{offsetMax}</td>
                 <td style={{ width: '5%' }}>
-                  {!internal && !isReadOnly ? (
+                  {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
                     <Dropdown label={<VerticalElipsisIcon />} right>
                       <DropdownItem
                         onClick={() =>

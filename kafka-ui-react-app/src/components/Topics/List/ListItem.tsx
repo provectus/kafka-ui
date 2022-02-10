@@ -25,7 +25,14 @@ export interface ListItemProps {
 }
 
 const ListItem: React.FC<ListItemProps> = ({
-  topic: { name, internal, partitions, segmentSize, replicationFactor },
+  topic: {
+    name,
+    internal,
+    partitions,
+    segmentSize,
+    replicationFactor,
+    cleanUpPolicy,
+  },
   selected,
   toggleTopicSelected,
   deleteTopic,
@@ -105,9 +112,11 @@ const ListItem: React.FC<ListItemProps> = ({
         {!internal && !isReadOnly && vElipsisVisble ? (
           <div className="has-text-right">
             <Dropdown label={<VerticalElipsisIcon />} right>
-              <DropdownItem onClick={clearTopicMessagesHandler} danger>
-                Clear Messages
-              </DropdownItem>
+              {cleanUpPolicy === 'DELETE' && (
+                <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                  Clear Messages
+                </DropdownItem>
+              )}
               {isTopicDeletionAllowed && (
                 <DropdownItem
                   onClick={() => setDeleteTopicConfirmationVisible(true)}

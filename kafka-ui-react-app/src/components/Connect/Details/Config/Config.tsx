@@ -28,10 +28,7 @@ export interface ConfigProps {
 }
 
 const ConnectConfigWrapper = styled.div`
-  padding: 16px;
   margin: 16px;
-  border: 1px solid ${({ theme }) => theme.layout.stuffColor};
-  border-radius: 8px;
 `;
 
 const Config: React.FC<ConfigProps> = ({
@@ -50,7 +47,6 @@ const Config: React.FC<ConfigProps> = ({
   }
 
   if (!config) return null;
-
   return (
     <ConnectConfigWrapper>
       <Editor

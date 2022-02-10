@@ -1,12 +1,94 @@
+import { SortOrder } from 'generated-sources';
 import styled, { css } from 'styled-components';
 
 interface TitleProps {
   isOrderable?: boolean;
   isOrdered?: boolean;
+  sortOrder?: SortOrder;
 }
 
+const orderableMixin = css(
+  ({ theme: { table } }) => `
+    cursor: pointer;
+
+    padding-right: 18px;
+    position: relative;
+
+    &::before,
+    &::after {
+      border: 4px solid transparent;
+      content: '';
+      display: block;
+      height: 0;
+      right: 5px;
+      top: 50%;
+      position: absolute;
+    }
+
+    &::before {
+      border-bottom-color: ${table.th.color.normal};
+      margin-top: -9px;
+    }
+
+    &::after {
+      border-top-color: ${table.th.color.normal};
+      margin-top: 1px;
+    }
+
+    &:hover {
+      color: ${table.th.color.hover};
+      &::before {
+        border-bottom-color: ${table.th.color.hover};
+      }
+      &::after {
+        border-top-color: ${table.th.color.hover};
+      }
+    }
+  `
+);
+
+const ASCMixin = css(
+  ({ theme: { table } }) => `
+  color: ${table.th.color.active};
+  cursor: pointer;
+
+  &::after {
+    cursor: pointer;
+    border: 4px solid transparent;
+    content: '';
+    display: block;
+    height: 0;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+    border-top-color: ${table.th.color.active};
+    margin-top: 1px;
+  }
+  `
+);
+
+const DESCMixin = css(
+  ({ theme: { table } }) => `
+  color: ${table.th.color.active};
+  cursor: pointer;
+
+  &::before {
+    border: 4px solid transparent;
+    cursor: pointer;
+    content: '';
+    display: block;
+    height: 0;
+    right: 5px;
+    top: 50%;
+    position: absolute;
+    margin-top: -9px;
+    border-bottom-color: ${table.th.color.active};
+  }
+  `
+);
+
 export const Title = styled.span<TitleProps>(
-  ({ isOrderable, isOrdered, theme: { table } }) => css`
+  ({ isOrderable, isOrdered, sortOrder, theme: { table } }) => css`
     font-family: Inter, sans-serif;
     font-size: 12px;
     font-style: normal;
@@ -20,57 +102,14 @@ export const Title = styled.span<TitleProps>(
     background: ${table.th.backgroundColor.normal};
     cursor: default;
     color: ${table.th.color.normal};
+    padding-right: 18px;
+    position: relative;
 
-    ${isOrderable &&
-    css`
-      cursor: pointer;
+    ${isOrderable && !isOrdered && orderableMixin}
 
-      padding-right: 18px;
-      position: relative;
+    ${isOrderable && isOrdered && sortOrder === SortOrder.ASC && ASCMixin}
 
-      &::before,
-      &::after {
-        border: 4px solid transparent;
-        content: '';
-        display: block;
-        height: 0;
-        right: 5px;
-        top: 50%;
-        position: absolute;
-      }
-
-      &::before {
-        border-bottom-color: ${table.th.color.normal};
-        margin-top: -9px;
-      }
-
-      &::after {
-        border-top-color: ${table.th.color.normal};
-        margin-top: 1px;
-      }
-
-      &:hover {
-        color: ${table.th.color.hover};
-        &::before {
-          border-bottom-color: ${table.th.color.hover};
-        }
-        &::after {
-          border-top-color: ${table.th.color.hover};
-        }
-      }
-    `}
-
-    ${isOrderable &&
-    isOrdered &&
-    css`
-      color: ${table.th.color.active};
-      &::before {
-        border-bottom-color: ${table.th.color.active};
-      }
-      &::after {
-        border-top-color: ${table.th.color.active};
-      }
-    `}
+    ${isOrderable && isOrdered && sortOrder === SortOrder.DESC && DESCMixin}
   `
 );
 

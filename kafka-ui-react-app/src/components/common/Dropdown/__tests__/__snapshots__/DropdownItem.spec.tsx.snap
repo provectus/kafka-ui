@@ -5,23 +5,16 @@ exports[`DropdownItem matches snapshot 1`] = `
   color: initial;
 }
 
-<DropdownItem
-  onClick={[MockFunction]}
->
-  <styled.a
-    $isDanger={false}
-    className="dropdown-item is-link"
-    onClick={[Function]}
-  >
+<body>
+  <div>
     <a
-      className="c0 dropdown-item is-link"
+      class="c0 dropdown-item is-link"
       href="#end"
-      onClick={[Function]}
       role="menuitem"
       type="button"
     >
       Item 1
     </a>
-  </styled.a>
-</DropdownItem>
+  </div>
+</body>
 `;

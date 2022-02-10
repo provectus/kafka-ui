@@ -6,5 +6,5 @@ export const ConfigList = styled.tr`
   }
 `;
 export const ConfigItemCell = styled.td<{ $hasCustomValue: boolean }>`
-  font-weight: ${(props) => (props.$hasCustomValue ? 500 : 400)};
+  font-weight: ${(props) => (props.$hasCustomValue ? 500 : 400)} !important;
 `;
