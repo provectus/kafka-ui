@@ -173,13 +173,12 @@ const Query: FC = () => {
       ) => {
         // if it's open - new know that server responded without opening SSE
         if (!sseRef.current.isOpen) {
+          const errorCode = e?.code ? `[Error #${e.code}] ` : '';
           dispatch(
             alertAdded({
               id: `${url}-connectionClosedError`,
               type: 'error',
-              title: `${
-                e?.code ? `[Error #${e.code}] ` : ''
-              }SSE connection closed`,
+              title: `${errorCode}SSE connection closed`,
               message: e?.message || 'Your query was immediately rejected',
               createdAt: now(),
             })
