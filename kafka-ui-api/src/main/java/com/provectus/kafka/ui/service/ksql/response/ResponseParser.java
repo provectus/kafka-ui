@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service.ksql.response;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.Lists;
 import com.provectus.kafka.ui.exception.KsqlApiException;
 import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
@@ -42,15 +43,23 @@ public class ResponseParser {
     return Optional.empty();
   }
 
+  public static KsqlApiClient.KsqlResponseTable errorTableWithTextMsg(String errorText) {
+    return KsqlApiClient.KsqlResponseTable.builder()
+        .header("Execution error")
+        .columnNames(List.of("message"))
+        .values(List.of(List.of(new TextNode(errorText))))
+        .build();
+  }
+
   public static KsqlApiClient.KsqlResponseTable parseErrorResponse(WebClientResponseException e) {
     try {
       var errBody = new JsonMapper().readTree(e.getResponseBodyAsString());
       return DynamicParser.parseObject("Execution error", errBody);
     } catch (Exception ex) {
-      throw new KsqlApiException(
+      return errorTableWithTextMsg(
           String.format(
               "Unparsable error response from ksqdb, status:'%s', body: '%s'",
-              e.getStatusCode(), e.getResponseBodyAsString()), e);
+              e.getStatusCode(), e.getResponseBodyAsString()));
     }
   }
 
