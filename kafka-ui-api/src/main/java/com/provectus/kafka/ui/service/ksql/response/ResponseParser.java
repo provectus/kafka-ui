@@ -74,7 +74,7 @@ public class ResponseParser {
       case "sourceDescription":
         return parseObjectDynamically("Source Description", jsonNode.get("sourceDescription"));
       case "queryDescription":
-        return parseArray("Queries Description", "queryDescription", jsonNode);
+        return parseObjectDynamically("Queries Description", jsonNode.get("queryDescription"));
       case "topicDescription":
         return parseObject(
             "Topic Description",
@@ -143,9 +143,6 @@ public class ResponseParser {
     if (arrayFieldNonEmpty(jsonNode, "overwrittenProperties")) {
       tables.add(DynamicParser.parseArray("overwrittenProperties",
           jsonNode.get("overwrittenProperties")));
-    }
-    if (arrayFieldNonEmpty(jsonNode, "defaultProperties")) {
-      tables.add(DynamicParser.parseArray("defaultProperties", jsonNode.get("defaultProperties")));
     }
     return tables;
   }
