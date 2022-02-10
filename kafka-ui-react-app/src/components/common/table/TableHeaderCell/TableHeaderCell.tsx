@@ -1,5 +1,5 @@
 import React from 'react';
-import { TopicColumnsToSort } from 'generated-sources';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 
 export interface TableHeaderCellProps {
@@ -7,6 +7,7 @@ export interface TableHeaderCellProps {
   previewText?: string;
   onPreview?: () => void;
   orderBy?: TopicColumnsToSort | null;
+  sortOrder?: SortOrder;
   orderValue?: TopicColumnsToSort | null;
   handleOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
 }
@@ -17,6 +18,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
     previewText,
     onPreview,
     orderBy,
+    sortOrder,
     orderValue,
     handleOrderBy,
     ...restProps
@@ -38,6 +40,7 @@ const TableHeaderCell: React.FC<TableHeaderCellProps> = (props) => {
   };
   const orderableProps = isOrderable && {
     isOrderable,
+    sortOrder,
     onClick: handleOnClick,
     onKeyDown: handleOnKeyDown,
     role: 'button',
