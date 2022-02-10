@@ -58,51 +58,51 @@ const Query: FC = () => {
     sse: null,
     isOpen: false,
   });
-  const [continuousFetching, setContinuousFetching] = useState(false);
+  const [fetching, setFetching] = useState(false);
   const dispatch = useDispatch();
 
-  const { executionResult, fetching: fetchingExecutionResult } =
-    useSelector(getKsqlExecution);
+  const { executionResult } = useSelector(getKsqlExecution);
   const [KSQLTable, setKSQLTable] = useState<KsqlTableResponse | null>(null);
 
   const reset = useCallback(() => {
     dispatch(resetExecutionResult());
-  }, [dispatch, resetExecutionResult]);
+  }, [dispatch]);
 
   useEffect(() => {
     return reset;
-  }, []);
+  }, [reset]);
 
-  const destroySSE = useCallback(() => {
+  const destroySSE = () => {
     if (sseRef.current?.sse) {
       sseRef.current.sse.close();
-      setContinuousFetching(false);
+      setFetching(false);
       sseRef.current.sse = null;
       sseRef.current.isOpen = false;
     }
-  }, [sseRef, setContinuousFetching]);
+  };
 
   const handleSSECancel = useCallback(() => {
     reset();
     destroySSE();
-  }, [reset, destroySSE]);
+  }, [reset]);
 
-  const handleClearResults = useCallback(() => {
+  const handleClearResults = () => {
     setKSQLTable(null);
     handleSSECancel();
-  }, [setKSQLTable, handleSSECancel]);
+  };
 
   const createSSE = useCallback(
     (pipeId: string) => {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${pipeId}`;
-      sseRef.current.sse = new EventSource(url);
-      setContinuousFetching(true);
+      const sse = new EventSource(url);
+      sseRef.current.sse = sse;
+      setFetching(true);
 
-      sseRef.current.sse.onopen = () => {
+      sse.onopen = () => {
         sseRef.current.isOpen = true;
       };
 
-      sseRef.current.sse.onmessage = ({ data }) => {
+      sse.onmessage = ({ data }) => {
         const { table }: KsqlResponse = JSON.parse(data);
         if (table) {
           switch (table?.header) {
@@ -110,19 +110,20 @@ const Query: FC = () => {
               const { title, message } = getFormattedErrorFromTableData(
                 table.values
               );
+              const id = `${url}-executionError`;
               dispatch(
                 alertAdded({
-                  id: `${url}-executionError`,
+                  id,
                   type: 'error',
                   title,
                   message,
                   createdAt: now(),
                 })
               );
-              setTimeout(
-                () => dispatch(alertDissmissed(`${url}-executionError`)),
-                AUTO_DISMISS_TIME
-              );
+
+              setTimeout(() => {
+                dispatch(alertDissmissed(id));
+              }, AUTO_DISMISS_TIME);
               break;
             }
             case 'Schema': {
@@ -143,19 +144,20 @@ const Query: FC = () => {
               break;
             }
             case 'Query Result': {
+              const id = `${url}-querySuccess`;
               dispatch(
                 alertAdded({
-                  id: `${url}-querySuccess`,
+                  id,
                   type: 'success',
                   title: 'Query succeed',
                   message: '',
                   createdAt: now(),
                 })
               );
-              setTimeout(
-                () => dispatch(alertDissmissed(`${url}-querySuccess`)),
-                AUTO_DISMISS_TIME
-              );
+
+              setTimeout(() => {
+                dispatch(alertDissmissed(id));
+              }, AUTO_DISMISS_TIME);
               break;
             }
             case 'Source Description':
@@ -166,52 +168,41 @@ const Query: FC = () => {
             }
           }
         }
+        return sse;
       };
 
-      sseRef.current.sse.onerror = (
-        e: Event & { code?: number; message?: string }
-      ) => {
-        // if it's open - new know that server responded without opening SSE
+      sse.onerror = () => {
+        // if it's open - we know that server responded without opening SSE
         if (!sseRef.current.isOpen) {
-          const errorCode = e?.code ? `[Error #${e.code}] ` : '';
+          const id = `${url}-connectionClosedError`;
           dispatch(
             alertAdded({
-              id: `${url}-connectionClosedError`,
+              id,
               type: 'error',
-              title: `${errorCode}SSE connection closed`,
-              message: e?.message || 'Your query was immediately rejected',
+              title: 'SSE connection closed',
+              message: 'Your query was immediately rejected',
               createdAt: now(),
             })
           );
-          setTimeout(
-            () => dispatch(alertDissmissed(`${url}-connectionClosedError`)),
-            AUTO_DISMISS_TIME
-          );
+
+          setTimeout(() => {
+            dispatch(alertDissmissed(id));
+          }, AUTO_DISMISS_TIME);
         }
         destroySSE();
       };
     },
-    [
-      BASE_PARAMS,
-      sseRef,
-      setContinuousFetching,
-      getFormattedErrorFromTableData,
-      dispatch,
-      alertAdded,
-      alertDissmissed,
-      setKSQLTable,
-      destroySSE,
-    ]
+    [clusterName, dispatch]
   );
 
   useEffect(() => {
-    if (!sseRef.current.sse && executionResult?.pipeId) {
+    if (executionResult?.pipeId) {
       createSSE(executionResult.pipeId);
     }
     return () => {
       destroySSE();
     };
-  }, [sseRef, executionResult, createSSE, destroySSE]);
+  }, [createSSE, executionResult]);
 
   const { handleSubmit, setValue, control } = useForm<FormValues>({
     mode: 'onTouched',
@@ -224,7 +215,7 @@ const Query: FC = () => {
 
   const submitHandler = useCallback(
     (values: FormValues) => {
-      handleSSECancel();
+      setFetching(true);
       dispatch(
         executeKsql({
           clusterName,
@@ -237,7 +228,7 @@ const Query: FC = () => {
         })
       );
     },
-    [handleSSECancel, dispatch, executeKsql]
+    [dispatch, clusterName]
   );
 
   return (
@@ -261,10 +252,7 @@ const Query: FC = () => {
                 control={control}
                 name="ksql"
                 render={({ field }) => (
-                  <S.SQLEditor
-                    {...field}
-                    readOnly={fetchingExecutionResult || continuousFetching}
-                  />
+                  <S.SQLEditor {...field} readOnly={fetching} />
                 )}
               />
             </div>
@@ -287,7 +275,7 @@ const Query: FC = () => {
                   <S.Editor
                     {...field}
                     schemaType={SchemaType.JSON}
-                    readOnly={fetchingExecutionResult || continuousFetching}
+                    readOnly={fetching}
                   />
                 )}
               />
@@ -298,7 +286,7 @@ const Query: FC = () => {
               buttonType="primary"
               buttonSize="M"
               type="submit"
-              disabled={fetchingExecutionResult || continuousFetching}
+              disabled={fetching}
             >
               Execute
             </Button>
@@ -314,7 +302,7 @@ const Query: FC = () => {
         </form>
       </S.QueryWrapper>
       {KSQLTable && <TableRenderer table={KSQLTable} />}
-      {continuousFetching && <S.ContinuousLoader />}
+      {fetching && <S.ContinuousLoader />}
     </>
   );
 };
