@@ -4,11 +4,11 @@ import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
-public class FilterTopicMessageEvents implements Predicate<TopicMessageEventDTO> {
+public class ResultSizeLimiter implements Predicate<TopicMessageEventDTO> {
   private final AtomicInteger processed = new AtomicInteger();
   private final int limit;
 
-  public FilterTopicMessageEvents(int limit) {
+  public ResultSizeLimiter(int limit) {
     this.limit = limit;
   }
 

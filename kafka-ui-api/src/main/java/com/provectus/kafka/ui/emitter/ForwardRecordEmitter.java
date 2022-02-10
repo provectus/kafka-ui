@@ -3,8 +3,6 @@ package com.provectus.kafka.ui.emitter;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
 import com.provectus.kafka.ui.util.OffsetsSeek;
-import java.time.Duration;
-import java.time.Instant;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -17,8 +15,6 @@ import reactor.core.publisher.FluxSink;
 public class ForwardRecordEmitter
     extends AbstractEmitter
     implements java.util.function.Consumer<FluxSink<TopicMessageEventDTO>> {
-
-  private static final Duration POLL_TIMEOUT_MS = Duration.ofMillis(1000L);
 
   private final Supplier<KafkaConsumer<Bytes, Bytes>> consumerSupplier;
   private final OffsetsSeek offsetsSeek;
