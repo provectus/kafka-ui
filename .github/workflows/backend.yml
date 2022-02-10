@@ -1,6 +1,6 @@
 name: backend
 on:
-  pull_request:
+  pull_request_target:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
       - 'kafka-ui-api/**'
@@ -32,6 +32,7 @@ jobs:
           restore-keys: ${{ runner.os }}-sonar
       - name: Build and analyze
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+        run: |
+          mvn versions:set -DnewVersion=$GITHUB_SHA
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
