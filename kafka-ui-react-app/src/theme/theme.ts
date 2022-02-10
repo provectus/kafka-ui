@@ -3,6 +3,7 @@ export const Colors = {
   neutral: {
     '0': '#FFFFFF',
     '3': '#f9fafa',
+    '4': '#f0f0f0',
     '5': '#F1F2F3',
     '10': '#E3E6E8',
     '15': '#D5DADD',
@@ -66,6 +67,21 @@ const theme = {
   connectEditWarning: Colors.yellow[10],
   dropdown: {
     color: Colors.red[50],
+  },
+  ksqlDb: {
+    query: {
+      editor: {
+        readonly: {
+          background: Colors.neutral[3],
+          selection: {
+            backgroundColor: 'transparent',
+          },
+          cursor: {
+            color: 'transparent',
+          },
+        },
+      },
+    },
   },
   heading: {
     base: {

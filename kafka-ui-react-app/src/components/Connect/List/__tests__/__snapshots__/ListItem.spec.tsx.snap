@@ -229,6 +229,21 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "color": "#454F54",
         },
       },
+      "ksqlDb": Object {
+        "query": Object {
+          "editor": Object {
+            "readonly": Object {
+              "background": "#f9fafa",
+              "cursor": Object {
+                "color": "transparent",
+              },
+              "selection": Object {
+                "backgroundColor": "transparent",
+              },
+            },
+          },
+        },
+      },
       "lastestVersionItem": Object {
         "metaDataLabel": Object {
           "color": "#73848C",

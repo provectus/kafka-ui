@@ -1,5 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import BaseSQLEditor from 'components/common/SQLEditor/SQLEditor';
+import BaseEditor from 'components/common/Editor/Editor';
 
 export const QueryWrapper = styled.div`
   padding: 16px;
@@ -32,3 +34,28 @@ export const ContinuousLoader = styled(PageLoader)`
     padding-top: 0;
   }
 `;
+
+export const Editor = styled(BaseEditor)(
+  ({ readOnly, theme }) =>
+    readOnly &&
+    css`
+      &,
+      &.ace-tomorrow {
+        background: ${theme.ksqlDb.query.editor.readonly.background};
+      }
+      .ace-cursor {
+        ${theme.ksqlDb.query.editor.readonly.cursor}
+      }
+    `
+);
+
+export const SQLEditor = styled(BaseSQLEditor)(
+  ({ readOnly, theme }) =>
+    readOnly &&
+    css`
+      background: ${theme.ksqlDb.query.editor.readonly.background};
+      .ace-cursor {
+        ${theme.ksqlDb.query.editor.readonly.cursor}
+      }
+    `
+);
