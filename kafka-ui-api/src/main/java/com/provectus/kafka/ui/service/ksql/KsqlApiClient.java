@@ -7,7 +7,6 @@ import static ksql.KsqlGrammarParser.UndefineVariableContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
-import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
 import java.util.List;
@@ -109,21 +108,32 @@ public class KsqlApiClient {
   }
 
   public Flux<KsqlResponseTable> execute(String ksql, Map<String, String> streamProperties) {
-    var parsed = KsqlGrammar.parse(ksql);
-    if (parsed.getStatements().size() > 1) {
-      throw new ValidationException("Only single statement supported now");
+    var parsedStatements = KsqlGrammar.parse(ksql);
+    if (parsedStatements.isEmpty()) {
+      return errorTableFlux("Sql statement is invalid or unsupported");
     }
-    if (parsed.getStatements().size() == 0) {
-      throw new ValidationException("No valid ksql statement found");
+    var statements = parsedStatements.get().getStatements();
+    if (statements.size() > 1) {
+      return errorTableFlux("Only single statement supported now");
     }
-    if (isUnsupportedStatementType(parsed.getStatements().get(0))) {
-      throw new ValidationException("Unsupported statement type");
+    if (statements.size() == 0) {
+      return errorTableFlux("No valid ksql statement found");
     }
-    if (KsqlGrammar.isSelect(parsed.getStatements().get(0))) {
-      return executeSelect(ksql, streamProperties);
+    if (isUnsupportedStatementType(statements.get(0))) {
+      return errorTableFlux("Unsupported statement type");
+    }
+    Flux<KsqlResponseTable> outputFlux;
+    if (KsqlGrammar.isSelect(statements.get(0))) {
+      outputFlux =  executeSelect(ksql, streamProperties);
     } else {
-      return executeStatement(ksql, streamProperties);
+      outputFlux = executeStatement(ksql, streamProperties);
     }
+    return outputFlux.onErrorResume(Exception.class,
+        e -> errorTableFlux("Unexpected error: " + e.getMessage()));
+  }
+
+  private  Flux<KsqlResponseTable> errorTableFlux(String errorText) {
+    return Flux.just(ResponseParser.errorTableWithTextMsg(errorText));
   }
 
   private boolean isUnsupportedStatementType(SingleStatementContext context) {
