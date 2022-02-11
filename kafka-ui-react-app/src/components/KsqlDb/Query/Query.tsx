@@ -42,15 +42,25 @@ const getFormattedErrorFromTableData = (
   // ],
   // or
   // "columnNames":["message"]
-  const [type, errorCode, message, statementText, entities] =
-    (responseValues || [[]])[0];
-  // Can't use \n - they just don't work
-  return {
-    title: (errorCode ? `[Error #${errorCode}]` : '') + (type || ''),
-    message:
+
+  let title = '';
+  let message = '';
+  if (responseValues && responseValues[0].length < 2) {
+    const [messageText] = responseValues[0];
+    title = messageText;
+  } else {
+    const [type, errorCode, messageText, statementText, entities] =
+      (responseValues || [[]])[0];
+    title = `[Error #${errorCode}] ${type}`;
+    message =
       (entities?.length ? `[${entities.join(', ')}] ` : '') +
-        (statementText ? `"${statementText}" ` : '') +
-        message || '',
+      (statementText ? `"${statementText}" ` : '') +
+      messageText;
+  }
+
+  return {
+    title,
+    message,
   };
 };
 
