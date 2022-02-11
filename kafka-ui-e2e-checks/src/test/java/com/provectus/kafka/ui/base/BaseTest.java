@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.base;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.model.Container;
 import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
@@ -81,8 +82,10 @@ public class BaseTest {
         String remote = TestConfiguration.SELENOID_URL;
         if (TestConfiguration.SHOULD_START_SELENOID) {
             //TODO this image should be configurable
-            DockerClient client = DockerClientFactory.instance().client();
-            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+//            DockerClient client = DockerClientFactory.instance().client();
+//            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+//            DockerClient client = DockerClientFactory.instance().client();
+//            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
             Testcontainers.exposeHostPorts(8080);
             selenoid.start();
             remote = "http://%s:%s/wd/hub"
