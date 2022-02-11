@@ -15,6 +15,8 @@ import { BASE_PARAMS } from 'lib/constants';
 import { KsqlResponse, KsqlTableResponse, SchemaType } from 'generated-sources';
 import { alertAdded, alertDissmissed } from 'redux/reducers/alerts/alertsSlice';
 import { now } from 'lodash';
+import { FormError } from 'components/common/Input/Input.styled';
+import { ErrorMessage } from '@hookform/error-message';
 
 import * as S from './Query.styled';
 
@@ -27,6 +29,9 @@ type FormValues = {
 
 const validationSchema = yup.object({
   ksql: yup.string().trim().required(),
+  streamsProperties: yup.lazy((value) =>
+    value === '' ? yup.string().trim() : yup.string().trim().isJsonObject()
+  ),
 });
 
 const getFormattedErrorFromTableData = (
@@ -216,7 +221,12 @@ const Query: FC = () => {
     };
   }, [createSSE, executionResult]);
 
-  const { handleSubmit, setValue, control } = useForm<FormValues>({
+  const {
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = useForm<FormValues>({
     mode: 'onTouched',
     resolver: yupResolver(validationSchema),
     defaultValues: {
@@ -264,13 +274,32 @@ const Query: FC = () => {
                 control={control}
                 name="ksql"
                 render={({ field }) => (
-                  <S.SQLEditor {...field} readOnly={fetching} />
+                  <S.SQLEditor
+                    {...field}
+                    readOnly={fetching}
+                    commands={[
+                      {
+                        // commands is array of key bindings.
+                        // name for the key binding.
+                        name: 'commandName',
+                        // key combination used for the command.
+                        bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' },
+                        // function to execute when keys are pressed.
+                        exec: () => {
+                          handleSubmit(submitHandler)();
+                        },
+                      },
+                    ]}
+                  />
                 )}
               />
+              <FormError>
+                <ErrorMessage errors={errors} name="ksql" />
+              </FormError>
             </div>
             <div>
               <S.KSQLInputHeader>
-                <label>Stream properties</label>
+                <label>Stream properties (JSON format)</label>
                 <Button
                   onClick={() => setValue('streamsProperties', '')}
                   buttonType="primary"
@@ -286,11 +315,27 @@ const Query: FC = () => {
                 render={({ field }) => (
                   <S.Editor
                     {...field}
+                    commands={[
+                      {
+                        // commands is array of key bindings.
+                        // name for the key binding.
+                        name: 'commandName',
+                        // key combination used for the command.
+                        bindKey: { win: 'Ctrl-Enter', mac: 'Command-Enter' },
+                        // function to execute when keys are pressed.
+                        exec: () => {
+                          handleSubmit(submitHandler)();
+                        },
+                      },
+                    ]}
                     schemaType={SchemaType.JSON}
                     readOnly={fetching}
                   />
                 )}
               />
+              <FormError>
+                <ErrorMessage errors={errors} name="streamsProperties" />
+              </FormError>
             </div>
           </S.KSQLInputsWrapper>
           <S.KSQLButtons>
@@ -308,7 +353,7 @@ const Query: FC = () => {
               disabled={!KSQLTable}
               onClick={() => handleClearResults()}
             >
-              Clear results
+              {fetching && 'Stop query and '}Clear results
             </Button>
           </S.KSQLButtons>
         </form>

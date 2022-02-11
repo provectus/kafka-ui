@@ -59,7 +59,7 @@ const TableRenderer: React.FC<{ table: KsqlTableResponse }> = ({ table }) => {
           </tr>
         </thead>
         <tbody>
-          {rows.length === 0 ? (
+          {ths.length === 0 ? (
             <tr>
               <td colSpan={ths.length}>No tables or streams found</td>
             </tr>
