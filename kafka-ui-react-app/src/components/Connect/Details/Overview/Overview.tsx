@@ -36,7 +36,11 @@ const Overview: React.FC<OverviewProps> = ({
         <Metrics.Indicator label="Tasks Running">
           {runningTasksCount}
         </Metrics.Indicator>
-        <Metrics.Indicator label="Tasks Failed" isAlert>
+        <Metrics.Indicator
+          label="Tasks Failed"
+          isAlert
+          alertType={failedTasksCount > 0 ? 'error' : 'success'}
+        >
           {failedTasksCount}
         </Metrics.Indicator>
       </Metrics.Section>
