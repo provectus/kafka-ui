@@ -43,6 +43,9 @@ public abstract class OffsetsSeek {
       case BEGINNING:
         offsets = offsetsFromBeginning(consumer, partitions);
         break;
+      case LATEST:
+        offsets = endOffsets(consumer, partitions);
+        break;
       default:
         throw new IllegalArgumentException("Unknown seekType: " + seekType);
     }
@@ -73,6 +76,10 @@ public abstract class OffsetsSeek {
         .collect(Collectors.toList());
   }
 
+  protected Map<TopicPartition, Long> endOffsets(
+      Consumer<Bytes, Bytes> consumer, List<TopicPartition> partitions) {
+    return consumer.endOffsets(partitions);
+  }
 
   protected abstract Map<TopicPartition, Long> offsetsFromBeginning(
       Consumer<Bytes, Bytes> consumer, List<TopicPartition> partitions);

@@ -2,28 +2,32 @@ package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
+import com.provectus.kafka.ui.emitter.MessageFilters;
+import com.provectus.kafka.ui.emitter.TailingEmitter;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
+import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
-import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
-import com.provectus.kafka.ui.util.FilterTopicMessageEvents;
 import com.provectus.kafka.ui.util.OffsetsSeekBackward;
 import com.provectus.kafka.ui.util.OffsetsSeekForward;
+import com.provectus.kafka.ui.util.ResultSizeLimiter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -35,7 +39,6 @@ import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
@@ -46,8 +49,6 @@ import reactor.core.scheduler.Schedulers;
 @Slf4j
 public class MessagesService {
 
-  private static final int MAX_LOAD_RECORD_LIMIT = 100;
-  private static final int DEFAULT_LOAD_RECORD_LIMIT = 20;
 
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
@@ -131,10 +132,8 @@ public class MessagesService {
 
   public Flux<TopicMessageEventDTO> loadMessages(KafkaCluster cluster, String topic,
                                                  ConsumerPosition consumerPosition, String query,
-                                                 Integer limit) {
-    int recordsLimit = Optional.ofNullable(limit)
-        .map(s -> Math.min(s, MAX_LOAD_RECORD_LIMIT))
-        .orElse(DEFAULT_LOAD_RECORD_LIMIT);
+                                                 MessageFilterTypeDTO filterQueryType,
+                                                 int limit) {
 
     java.util.function.Consumer<? super FluxSink<TopicMessageEventDTO>> emitter;
     RecordSerDe recordDeserializer =
@@ -145,29 +144,47 @@ public class MessagesService {
           new OffsetsSeekForward(topic, consumerPosition),
           recordDeserializer
       );
-    } else {
+    } else if (consumerPosition.getSeekDirection().equals(SeekDirectionDTO.BACKWARD)) {
       emitter = new BackwardRecordEmitter(
           (Map<String, Object> props) -> consumerGroupService.createConsumer(cluster, props),
-          new OffsetsSeekBackward(topic, consumerPosition, recordsLimit),
+          new OffsetsSeekBackward(topic, consumerPosition, limit),
           recordDeserializer
+      );
+    } else {
+      emitter = new TailingEmitter(
+          recordDeserializer,
+          () -> consumerGroupService.createConsumer(cluster),
+          new OffsetsSeekForward(topic, consumerPosition)
       );
     }
     return Flux.create(emitter)
-        .filter(m -> filterTopicMessage(m, query))
-        .takeWhile(new FilterTopicMessageEvents(recordsLimit))
-        .subscribeOn(Schedulers.elastic())
+        .filter(getMsgFilter(query, filterQueryType))
+        .takeWhile(createTakeWhilePredicate(consumerPosition, limit))
+        .subscribeOn(Schedulers.boundedElastic())
         .share();
   }
 
-  private boolean filterTopicMessage(TopicMessageEventDTO message, String query) {
-    if (StringUtils.isEmpty(query)
-        || !message.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE)) {
-      return true;
-    }
+  private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(
+      ConsumerPosition consumerPosition, int limit) {
+    return consumerPosition.getSeekDirection() == SeekDirectionDTO.TAILING
+        ? evt -> true // no limit for tailing
+        : new ResultSizeLimiter(limit);
+  }
 
-    final TopicMessageDTO msg = message.getMessage();
-    return (!StringUtils.isEmpty(msg.getKey()) && msg.getKey().contains(query))
-        || (!StringUtils.isEmpty(msg.getContent()) && msg.getContent().contains(query));
+  private Predicate<TopicMessageEventDTO> getMsgFilter(String query, MessageFilterTypeDTO filterQueryType) {
+    if (StringUtils.isEmpty(query)) {
+      return evt -> true;
+    }
+    filterQueryType = Optional.ofNullable(filterQueryType)
+        .orElse(MessageFilterTypeDTO.STRING_CONTAINS);
+    var messageFilter = MessageFilters.createMsgFilter(query, filterQueryType);
+    return evt -> {
+      // we only apply filter for message events
+      if (evt.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE) {
+        return messageFilter.test(evt.getMessage());
+      }
+      return true;
+    };
   }
 
 }

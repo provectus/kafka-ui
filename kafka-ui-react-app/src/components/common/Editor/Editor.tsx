@@ -29,7 +29,7 @@ const Editor = React.forwardRef<ReactAce | null, EditorProps>((props, ref) => {
       fontSize={14}
       height={
         isFixedHeight
-          ? `${(props.value?.split('\n').length || 32) * 16}px`
+          ? `${(props.value?.split('\n').length || 32) * 19}px`
           : '372px'
       }
       wrapEnabled
