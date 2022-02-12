@@ -41,7 +41,6 @@ import org.apache.kafka.common.utils.Bytes;
 @Slf4j
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
-  private static final int CLIENT_IDENTITY_MAP_CAPACITY = 10_000;
   private static final StringMessageFormatter FALLBACK_FORMATTER = new StringMessageFormatter();
 
   private static final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
@@ -72,7 +71,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     }
     return new CachedSchemaRegistryClient(
         cluster.getSchemaRegistry().getUrl(),
-        CLIENT_IDENTITY_MAP_CAPACITY,
+        1_000,
         schemaProviders,
         configs
     );
