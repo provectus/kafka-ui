@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.RecordSerDe;
+import com.provectus.kafka.ui.serde.RecordSerDe.DeserializedKeyValue.DeserializedKeyValueBuilder;
 import com.provectus.kafka.ui.util.jsonschema.AvroJsonSchemaConverter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
@@ -29,7 +30,6 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -87,22 +87,51 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
-      var builder = DeserializedKeyValue.builder();
+      DeserializedKeyValueBuilder builder = DeserializedKeyValue.builder();
       if (msg.key() != null) {
-        DeserResult keyDeser = deserialize(msg, true);
-        builder.key(keyDeser.result);
-        builder.keyFormat(keyDeser.format);
-        builder.keySchemaId(keyDeser.schemaId);
+        fillDeserializedKvBuilder(msg, true, builder);
       }
       if (msg.value() != null) {
-        DeserResult valueDeser = deserialize(msg, false);
-        builder.value(valueDeser.result);
-        builder.valueFormat(valueDeser.format);
-        builder.valueSchemaId(valueDeser.schemaId);
+        fillDeserializedKvBuilder(msg, false, builder);
       }
       return builder.build();
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
+    }
+  }
+
+  private void fillDeserializedKvBuilder(ConsumerRecord<Bytes, Bytes> rec,
+                                         boolean isKey,
+                                         DeserializedKeyValueBuilder builder) {
+    Optional<Integer> schemaId = extractSchemaIdFromMsg(rec, isKey);
+    Optional<MessageFormat> format = schemaId.flatMap(this::getMessageFormatBySchemaId);
+    if (format.isPresent() && schemaRegistryFormatters.containsKey(format.get())) {
+      var formatter = schemaRegistryFormatters.get(format.get());
+      try {
+        var deserialized = formatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get());
+        if (isKey) {
+          builder.key(deserialized);
+          builder.keyFormat(formatter.getFormat());
+          builder.keySchemaId(String.valueOf(schemaId.get()));
+        } else {
+          builder.value(deserialized);
+          builder.valueFormat(formatter.getFormat());
+          builder.valueSchemaId(String.valueOf(schemaId.get()));
+        }
+        return;
+      } catch (Exception e) {
+        log.trace("Can't deserialize record {} with formatter {}",
+            rec, formatter.getClass().getSimpleName(), e);
+      }
+    }
+
+    // fallback
+    if (isKey) {
+      builder.key(fallbackFormatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.keyFormat(fallbackFormatter.getFormat());
+    } else {
+      builder.value(fallbackFormatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.valueFormat(fallbackFormatter.getFormat());
     }
   }
 
@@ -209,64 +238,20 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     return jsonSchema;
   }
 
-  @Value
-  class DeserResult {
-    String result;
-    MessageFormat format;
-    @Nullable String schemaId;
-  }
-
-  private DeserResult deserialize(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
-    OptionalInt schemaId = extractSchemaIdFromMsg(msg, isKey);
-    if (schemaId.isEmpty()) {
-      return fallbackDeserialize(msg, isKey);
-    }
-    var formatter = getMessageFormatBySchemaId(schemaId.getAsInt())
-        .flatMap(fmt -> Optional.ofNullable(schemaRegistryFormatters.get(fmt)));
-    if (formatter.isEmpty()) {
-      return fallbackDeserialize(msg, isKey);
-    }
-    return deserializeWithFallback(msg, isKey, formatter.get(), schemaId.getAsInt());
-  }
-
-  private DeserResult deserializeWithFallback(ConsumerRecord<Bytes, Bytes> msg,
-                                              boolean isKey,
-                                              MessageFormatter formatter,
-                                              Integer schemaId) {
-    try {
-      return new DeserResult(
-          formatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get()),
-          formatter.getFormat(),
-          String.valueOf(schemaId)
-      );
-    } catch (Exception e) {
-      log.trace("Can't deserialize record {} with formatter {}", msg, formatter.getClass().getSimpleName(), e);
-      return fallbackDeserialize(msg, isKey);
-    }
-  }
-
-  private DeserResult fallbackDeserialize(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
-    return new DeserResult(
-        fallbackFormatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get()),
-        fallbackFormatter.getFormat(),
-        null
-    );
-  }
-
   private Optional<MessageFormat> getMessageFormatBySchemaId(int schemaId) {
     return wrapClientCall(() -> schemaRegistryClient.getSchemaById(schemaId))
         .map(ParsedSchema::schemaType)
         .flatMap(MessageFormat::fromString);
   }
 
-  private OptionalInt extractSchemaIdFromMsg(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
+  private Optional<Integer> extractSchemaIdFromMsg(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
     Bytes bytes = isKey ? msg.key() : msg.value();
     ByteBuffer buffer = ByteBuffer.wrap(bytes.get());
     if (buffer.get() == 0 && buffer.remaining() > 4) {
       int id = buffer.getInt();
-      return OptionalInt.of(id);
+      return Optional.of(id);
     }
-    return OptionalInt.empty();
+    return Optional.empty();
   }
 
   @SneakyThrows
