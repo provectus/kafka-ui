@@ -85,8 +85,6 @@ describe('useDataSaver hook', () => {
     };
 
     render(<HookWrapper />);
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      JSON.stringify(content)
-    );
+    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(String(content));
   });
 });
