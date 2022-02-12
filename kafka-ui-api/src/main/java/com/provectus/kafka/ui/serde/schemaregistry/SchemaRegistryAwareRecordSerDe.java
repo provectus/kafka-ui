@@ -26,7 +26,10 @@ import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
@@ -39,6 +42,7 @@ import org.apache.kafka.common.utils.Bytes;
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
   private static final int CLIENT_IDENTITY_MAP_CAPACITY = 10_000;
+  private static final StringMessageFormatter FALLBACK_FORMATTER = new StringMessageFormatter();
 
   private static final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
   private static final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
@@ -47,7 +51,6 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private final SchemaRegistryClient schemaRegistryClient;
 
   private final Map<MessageFormat, MessageFormatter> schemaRegistryFormatters;
-  private final StringMessageFormatter fallbackFormatter = new StringMessageFormatter();
 
   private static SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     List<SchemaProvider> schemaProviders =
@@ -127,11 +130,11 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
     // fallback
     if (isKey) {
-      builder.key(fallbackFormatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
-      builder.keyFormat(fallbackFormatter.getFormat());
+      builder.key(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.keyFormat(FALLBACK_FORMATTER.getFormat());
     } else {
-      builder.value(fallbackFormatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
-      builder.valueFormat(fallbackFormatter.getFormat());
+      builder.value(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.valueFormat(FALLBACK_FORMATTER.getFormat());
     }
   }
 
