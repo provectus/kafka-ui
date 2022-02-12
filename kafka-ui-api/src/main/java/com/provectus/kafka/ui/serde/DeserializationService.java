@@ -37,9 +37,12 @@ public class DeserializationService {
         return new ProtobufFileRecordSerDe(cluster.getProtobufFile(),
             cluster.getProtobufMessageNameByTopic(), cluster.getProtobufMessageName(),
             objectMapper);
-      } else {
+      } else if (cluster.getSchemaRegistry() != null) {
         log.info("Using SchemaRegistryAwareRecordSerDe for cluster '{}'", cluster.getName());
-        return new SchemaRegistryAwareRecordSerDe(cluster, objectMapper);
+        return new SchemaRegistryAwareRecordSerDe(cluster);
+      } else {
+        log.info("Using SimpleRecordSerDe for cluster '{}'", cluster.getName());
+        return new SimpleRecordSerDe();
       }
     } catch (Throwable e) {
       throw new RuntimeException("Can't init deserializer", e);

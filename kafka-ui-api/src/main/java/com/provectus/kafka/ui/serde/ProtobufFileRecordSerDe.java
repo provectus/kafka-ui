@@ -130,12 +130,12 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
         .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
-        .schema(JsonSchema.stringSchema().toJson(objectMapper));
+        .schema(JsonSchema.stringSchema().toJson());
 
     final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
         .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
-        .schema(jsonSchema.toJson(objectMapper));
+        .schema(jsonSchema.toJson());
 
     return new TopicMessageSchemaDTO()
         .key(keySchema)

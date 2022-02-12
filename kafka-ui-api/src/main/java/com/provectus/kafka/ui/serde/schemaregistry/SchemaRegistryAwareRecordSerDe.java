@@ -4,7 +4,6 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
@@ -26,15 +25,11 @@ import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchemaProvider;
 import java.net.URI;
 import java.nio.ByteBuffer;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -43,32 +38,18 @@ import org.apache.kafka.common.utils.Bytes;
 @Slf4j
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
-  private static final int CLIENT_IDENTITY_MAP_CAPACITY = 100;
+  private static final int CLIENT_IDENTITY_MAP_CAPACITY = 10_000;
 
-  private static final StringMessageFormatter stringFormatter = new StringMessageFormatter();
   private static final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
   private static final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();
 
   private final KafkaCluster cluster;
-  private final Map<String, MessageFormatter> valueFormatMap = new ConcurrentHashMap<>();
-  private final Map<String, MessageFormatter> keyFormatMap = new ConcurrentHashMap<>();
-
-  @Nullable
   private final SchemaRegistryClient schemaRegistryClient;
-  @Nullable
-  private final AvroMessageFormatter avroFormatter;
-  @Nullable
-  private final ProtobufMessageFormatter protobufFormatter;
-  @Nullable
-  private final JsonSchemaMessageFormatter jsonSchemaMessageFormatter;
 
-  private final ObjectMapper objectMapper;
+  private final Map<MessageFormat, MessageFormatter> schemaRegistryFormatters;
+  private final StringMessageFormatter fallbackFormatter = new StringMessageFormatter();
 
-  private SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
-    if (cluster.getSchemaRegistry() == null) {
-      throw new ValidationException("schemaRegistry is not specified");
-    }
-
+  private static SchemaRegistryClient createSchemaRegistryClient(KafkaCluster cluster) {
     List<SchemaProvider> schemaProviders =
         List.of(new AvroSchemaProvider(), new ProtobufSchemaProvider(), new JsonSchemaProvider());
 
@@ -94,45 +75,30 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     );
   }
 
-  public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster, ObjectMapper objectMapper) {
+  public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster) {
     this.cluster = cluster;
-    this.objectMapper = objectMapper;
-    this.schemaRegistryClient = cluster.getSchemaRegistry() != null
-        ? createSchemaRegistryClient(cluster)
-        : null;
-    if (schemaRegistryClient != null) {
-      this.avroFormatter = new AvroMessageFormatter(schemaRegistryClient);
-      this.protobufFormatter = new ProtobufMessageFormatter(schemaRegistryClient);
-      this.jsonSchemaMessageFormatter = new JsonSchemaMessageFormatter(schemaRegistryClient);
-    } else {
-      this.avroFormatter = null;
-      this.protobufFormatter = null;
-      this.jsonSchemaMessageFormatter = null;
-    }
+    this.schemaRegistryClient = createSchemaRegistryClient(cluster);
+    this.schemaRegistryFormatters = Map.of(
+        MessageFormat.AVRO, new AvroMessageFormatter(schemaRegistryClient),
+        MessageFormat.JSON, new JsonSchemaMessageFormatter(schemaRegistryClient),
+        MessageFormat.PROTOBUF, new ProtobufMessageFormatter(schemaRegistryClient)
+    );
   }
 
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
     try {
       var builder = DeserializedKeyValue.builder();
       if (msg.key() != null) {
-        MessageFormatter messageFormatter = getMessageFormatter(msg, true);
-        builder.key(messageFormatter.format(msg.topic(), msg.key().get()));
-        builder.keyFormat(messageFormatter.getFormat());
-        builder.keySchemaId(
-            getSchemaId(msg.key(), messageFormatter.getFormat())
-                .map(String::valueOf)
-                .orElse(null)
-        );
+        DeserResult keyDeser = deserialize(msg, true);
+        builder.key(keyDeser.result);
+        builder.keyFormat(keyDeser.format);
+        builder.keySchemaId(keyDeser.schemaId);
       }
       if (msg.value() != null) {
-        MessageFormatter messageFormatter = getMessageFormatter(msg, false);
-        builder.value(messageFormatter.format(msg.topic(), msg.value().get()));
-        builder.valueFormat(messageFormatter.getFormat());
-        builder.valueSchemaId(
-            getSchemaId(msg.value(), messageFormatter.getFormat())
-                .map(String::valueOf)
-                .orElse(null)
-        );
+        DeserResult valueDeser = deserialize(msg, false);
+        builder.value(valueDeser.result);
+        builder.valueFormat(valueDeser.format);
+        builder.valueSchemaId(valueDeser.schemaId);
       }
       return builder.build();
     } catch (Throwable e) {
@@ -192,10 +158,10 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     final Optional<SchemaMetadata> maybeKeySchema = getSchemaBySubject(topic, true);
 
     String sourceValueSchema = maybeValueSchema.map(this::convertSchema)
-        .orElseGet(() -> JsonSchema.stringSchema().toJson(objectMapper));
+        .orElseGet(() -> JsonSchema.stringSchema().toJson());
 
     String sourceKeySchema = maybeKeySchema.map(this::convertSchema)
-        .orElseGet(() -> JsonSchema.stringSchema().toJson(objectMapper));
+        .orElseGet(() -> JsonSchema.stringSchema().toJson());
 
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(maybeKeySchema.map(
@@ -222,110 +188,91 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
     String jsonSchema;
     URI basePath = new URI(cluster.getSchemaRegistry().getFirstUrl())
         .resolve(Integer.toString(schema.getId()));
-    final ParsedSchema schemaById = Objects.requireNonNull(schemaRegistryClient)
-        .getSchemaById(schema.getId());
+    final ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
 
     if (schema.getSchemaType().equals(MessageFormat.PROTOBUF.name())) {
       final ProtobufSchema protobufSchema = (ProtobufSchema) schemaById;
       jsonSchema = protoSchemaConverter
           .convert(basePath, protobufSchema.toDescriptor())
-          .toJson(objectMapper);
+          .toJson();
     } else if (schema.getSchemaType().equals(MessageFormat.AVRO.name())) {
       final AvroSchema avroSchema = (AvroSchema) schemaById;
       jsonSchema = avroSchemaConverter
           .convert(basePath, avroSchema.rawSchema())
-          .toJson(objectMapper);
+          .toJson();
     } else if (schema.getSchemaType().equals(MessageFormat.JSON.name())) {
       jsonSchema = schema.getSchema();
     } else {
-      jsonSchema = JsonSchema.stringSchema().toJson(objectMapper);
+      jsonSchema = JsonSchema.stringSchema().toJson();
     }
 
     return jsonSchema;
   }
 
-  private MessageFormatter getMessageFormatter(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
-    if (isKey) {
-      return keyFormatMap.computeIfAbsent(msg.topic(), k -> detectFormat(msg, true));
-    } else {
-      return valueFormatMap.computeIfAbsent(msg.topic(), k -> detectFormat(msg, false));
-    }
+  @Value
+  class DeserResult {
+    String result;
+    MessageFormat format;
+    @Nullable String schemaId;
   }
 
-  private MessageFormatter detectFormat(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
-    if (schemaRegistryClient != null) {
-      try {
-        final Optional<String> type = getSchemaFromMessage(msg, isKey)
-            .or(() -> getSchemaBySubject(msg.topic(), isKey).map(SchemaMetadata::getSchemaType));
-        if (type.isPresent()) {
-          if (type.get().equals(MessageFormat.PROTOBUF.name())) {
-            if (tryFormatter(protobufFormatter, msg, isKey).isPresent()) {
-              return protobufFormatter;
-            }
-          } else if (type.get().equals(MessageFormat.AVRO.name())) {
-            if (tryFormatter(avroFormatter, msg, isKey).isPresent()) {
-              return avroFormatter;
-            }
-          } else if (type.get().equals(MessageFormat.JSON.name())) {
-            if (tryFormatter(jsonSchemaMessageFormatter, msg, isKey).isPresent()) {
-              return jsonSchemaMessageFormatter;
-            }
-          } else {
-            throw new IllegalStateException("Unsupported schema type: " + type.get());
-          }
-        }
-      } catch (Exception e) {
-        log.warn("Failed to get Schema for topic {}", msg.topic(), e);
-      }
+  private DeserResult deserialize(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
+    OptionalInt schemaId = extractSchemaIdFromMsg(msg, isKey);
+    if (schemaId.isEmpty()) {
+      return fallbackDeserialize(msg, isKey);
     }
-    return stringFormatter;
+    var formatter = getMessageFormatBySchemaId(schemaId.getAsInt())
+        .flatMap(fmt -> Optional.ofNullable(schemaRegistryFormatters.get(fmt)));
+    if (formatter.isEmpty()) {
+      return fallbackDeserialize(msg, isKey);
+    }
+    return deserializeWithFallback(msg, isKey, formatter.get(), schemaId.getAsInt());
   }
 
-  private Optional<MessageFormatter> tryFormatter(
-      MessageFormatter formatter, ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
+  private DeserResult deserializeWithFallback(ConsumerRecord<Bytes, Bytes> msg,
+                                              boolean isKey,
+                                              MessageFormatter formatter,
+                                              Integer schemaId) {
     try {
-      formatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get());
-      return Optional.of(formatter);
-    } catch (Throwable e) {
-      log.warn("Failed to parse by {} from topic {}", formatter.getClass(), msg.topic(), e);
+      return new DeserResult(
+          formatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get()),
+          formatter.getFormat(),
+          String.valueOf(schemaId)
+      );
+    } catch (Exception e) {
+      log.trace("Can't deserialize record {} with formatter {}", msg, formatter.getClass().getSimpleName(), e);
+      return fallbackDeserialize(msg, isKey);
     }
-
-    return Optional.empty();
   }
 
-  @SneakyThrows
-  private Optional<String> getSchemaFromMessage(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
-    Optional<String> result = Optional.empty();
-    final Bytes value = isKey ? msg.key() : msg.value();
-    if (value != null) {
-      ByteBuffer buffer = ByteBuffer.wrap(value.get());
-      if (buffer.get() == 0) {
-        int id = buffer.getInt();
-        result =
-            Optional.ofNullable(schemaRegistryClient)
-                .flatMap(client -> wrapClientCall(() -> client.getSchemaById(id)))
-                .map(ParsedSchema::schemaType);
-      }
-    }
-    return result;
+  private DeserResult fallbackDeserialize(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
+    return new DeserResult(
+        fallbackFormatter.format(msg.topic(), isKey ? msg.key().get() : msg.value().get()),
+        fallbackFormatter.getFormat(),
+        null
+    );
   }
 
-  private Optional<Integer> getSchemaId(Bytes value, MessageFormat format) {
-    if (format != MessageFormat.AVRO
-        && format != MessageFormat.PROTOBUF
-        && format != MessageFormat.JSON) {
-      return Optional.empty();
+  private Optional<MessageFormat> getMessageFormatBySchemaId(int schemaId) {
+    return wrapClientCall(() -> schemaRegistryClient.getSchemaById(schemaId))
+        .map(ParsedSchema::schemaType)
+        .flatMap(MessageFormat::fromString);
+  }
+
+  private OptionalInt extractSchemaIdFromMsg(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
+    Bytes bytes = isKey ? msg.key() : msg.value();
+    ByteBuffer buffer = ByteBuffer.wrap(bytes.get());
+    if (buffer.get() == 0 && buffer.remaining() > 4) {
+      int id = buffer.getInt();
+      return OptionalInt.of(id);
     }
-    ByteBuffer buffer = ByteBuffer.wrap(value.get());
-    return buffer.get() == 0 ? Optional.of(buffer.getInt()) : Optional.empty();
+    return OptionalInt.empty();
   }
 
   @SneakyThrows
   private Optional<SchemaMetadata> getSchemaBySubject(String topic, boolean isKey) {
-    return Optional.ofNullable(schemaRegistryClient)
-        .flatMap(client ->
-            wrapClientCall(() ->
-                client.getLatestSchemaMetadata(schemaSubject(topic, isKey))));
+    return wrapClientCall(() ->
+        schemaRegistryClient.getLatestSchemaMetadata(schemaSubject(topic, isKey)));
   }
 
   @SneakyThrows
