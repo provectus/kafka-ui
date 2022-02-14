@@ -1,27 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
+import { ConsumerGroup } from 'generated-sources';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
 
 const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   consumerGroup,
 }) => {
-  const stateColor = React.useMemo(() => {
-    const { state = '' } = consumerGroup;
-
-    switch (state) {
-      case ConsumerGroupState.STABLE:
-        return 'green';
-      case ConsumerGroupState.DEAD:
-        return 'red';
-      case ConsumerGroupState.EMPTY:
-        return 'white';
-      default:
-        return 'yellow';
-    }
-  }, [consumerGroup]);
-
   return (
     <tr>
       <TableKeyLink>
@@ -34,7 +20,7 @@ const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
       <td>{consumerGroup.messagesBehind}</td>
       <td>{consumerGroup.coordinator?.id}</td>
       <td>
-        <Tag color={stateColor}>{consumerGroup.state}</Tag>
+        <Tag color={getTagColor(consumerGroup)}>{consumerGroup.state}</Tag>
       </td>
     </tr>
   );
