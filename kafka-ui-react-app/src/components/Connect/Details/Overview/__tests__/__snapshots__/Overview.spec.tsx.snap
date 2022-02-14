@@ -6,7 +6,7 @@ exports[`Overview view matches snapshot 1`] = `
   border-radius: 16px;
   height: 20px;
   line-height: 20px;
-  background-color: #FFEECC;
+  background-color: #D6F5E0;
   color: #171A1C;
   font-size: 12px;
   display: inline-block;
@@ -179,7 +179,7 @@ exports[`Overview view matches snapshot 1`] = `
           <span>
             <p
               className="c5"
-              color="yellow"
+              color="green"
             >
               RUNNING
             </p>

@@ -63,7 +63,9 @@ jobs:
           context: kafka-ui-api
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: provectuslabs/kafka-ui:master
+          tags: |
+            provectuslabs/kafka-ui:${{ steps.build.outputs.version }}
+            provectuslabs/kafka-ui:master
           build-args: |
             JAR_FILE=kafka-ui-api-${{ steps.build.outputs.version }}.jar
           cache-from: type=local,src=/tmp/.buildx-cache
