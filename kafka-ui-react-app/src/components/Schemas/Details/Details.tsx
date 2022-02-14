@@ -81,7 +81,6 @@ const Details: React.FC = () => {
   if (!isFetched || !schema) {
     return <PageLoader />;
   }
-
   return (
     <>
       <PageHeading text={schema.subject}>
@@ -91,7 +90,10 @@ const Details: React.FC = () => {
               isLink
               buttonSize="M"
               buttonType="primary"
-              to={clusterSchemaSchemaDiffPath(clusterName, subject)}
+              to={{
+                pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
+                search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
+              }}
             >
               Compare Versions
             </Button>

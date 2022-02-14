@@ -23,24 +23,26 @@ const DiffViewer = React.forwardRef<DiffEditor | null, DiffViewerProps>(
           ) * 16
         : 500;
     return (
-      <DiffEditor
-        name="diff-editor"
-        ref={ref}
-        mode={
-          schemaType === SchemaType.JSON || schemaType === SchemaType.AVRO
-            ? 'json5'
-            : 'protobuf'
-        }
-        theme="textmate"
-        tabSize={2}
-        width="100%"
-        height={`${autoHeight}px`}
-        showPrintMargin={false}
-        maxLines={Infinity}
-        readOnly
-        wrapEnabled
-        {...rest}
-      />
+      <div data-testid="diffviewer">
+        <DiffEditor
+          name="diff-editor"
+          ref={ref}
+          mode={
+            schemaType === SchemaType.JSON || schemaType === SchemaType.AVRO
+              ? 'json5'
+              : 'protobuf'
+          }
+          theme="textmate"
+          tabSize={2}
+          width="100%"
+          height={`${autoHeight}px`}
+          showPrintMargin={false}
+          maxLines={Infinity}
+          readOnly
+          wrapEnabled
+          {...rest}
+        />
+      </div>
     );
   }
 );

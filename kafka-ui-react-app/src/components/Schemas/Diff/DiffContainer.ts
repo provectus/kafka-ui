@@ -9,8 +9,6 @@ import {
 import Diff from './Diff';
 
 interface RouteProps {
-  clusterName: ClusterName;
-  subject: string;
   leftVersion?: string;
   rightVersion?: string;
 }
