@@ -3,11 +3,11 @@
 ### Running locally via docker
 If you have built a container locally or wish to run a public one you could bring everything up like this:
 ```shell
-docker-compose -f docker/kafka-ui.yaml up -d
+docker-compose -f documentation/compose/kafka-ui.yaml up -d
 ```
 
 ### Running locally without docker
-Once you built the app, run the following:
+Once you built the app, run the following: (TODO: is there a way to hot-reload while developing? Does it always require a re-build then a run?)
 
 ```sh
 ./mvnw spring-boot:run -Pprod
