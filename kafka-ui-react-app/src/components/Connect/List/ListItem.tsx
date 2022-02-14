@@ -1,5 +1,5 @@
 import React from 'react';
-import { ConnectorState, FullConnectorInfo } from 'generated-sources';
+import { FullConnectorInfo } from 'generated-sources';
 import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
@@ -12,6 +12,7 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import getTagColor from 'components/Connect/Utils/TagColor';
 
 import * as S from './List.styled';
 
@@ -51,20 +52,6 @@ const ListItem: React.FC<ListItemProps> = ({
     return tasksCount - (failedTasksCount || 0);
   }, [tasksCount, failedTasksCount]);
 
-  const stateColor = React.useMemo(() => {
-    const { state = '' } = status;
-
-    switch (state) {
-      case ConnectorState.RUNNING:
-        return 'green';
-      case ConnectorState.FAILED:
-      case ConnectorState.TASK_FAILED:
-        return 'red';
-      default:
-        return 'yellow';
-    }
-  }, [status]);
-
   return (
     <tr>
       <TableKeyLink>
@@ -87,7 +74,7 @@ const ListItem: React.FC<ListItemProps> = ({
           ))}
         </S.TagsWrapper>
       </td>
-      <td>{status && <Tag color={stateColor}>{status.state}</Tag>}</td>
+      <td>{status && <Tag color={getTagColor(status)}>{status.state}</Tag>}</td>
       <td>
         {runningTasks && (
           <span>

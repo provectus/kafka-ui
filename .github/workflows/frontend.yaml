@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - master
-  pull_request:
+  pull_request_target:
     types: ['opened', 'edited', 'reopened', 'synchronize']
     paths:
     - 'kafka-ui-contract/**'
