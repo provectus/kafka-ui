@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Colors } from 'theme/theme';
 
 export const DiffWrapper = styled.div`
   align-items: stretch;
@@ -15,7 +14,7 @@ export const DiffWrapper = styled.div`
     > .ace_content
     > .ace_marker-layer
     > .codeMarker {
-    background: ${Colors.yellow[20]};
+    background: ${({ theme }) => theme.icons.warningIcon};
     position: absolute;
     z-index: 20;
   }

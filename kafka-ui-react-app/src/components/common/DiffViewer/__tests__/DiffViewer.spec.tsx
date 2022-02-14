@@ -1,45 +1,45 @@
-import { shallow } from 'enzyme';
 import React from 'react';
+import { render } from 'lib/testHelpers';
 import DiffViewer from 'components/common/DiffViewer/DiffViewer';
 
 describe('Editor component', () => {
   const left = '{\n}';
   const right = '{\ntest: true\n}';
-  it('matches the snapshot', () => {
-    const component = shallow(
-      <DiffViewer value={[left, right]} name="name" schemaType="JSON" />
-    );
-    expect(component).toMatchSnapshot();
-  });
-
-  it('matches the snapshot with fixed height', () => {
-    const component = shallow(
+  const renderComponent = (props: {
+    leftVersion?: string;
+    rightVersion?: string;
+    isFixedHeight?: boolean;
+  }) => {
+    render(
       <DiffViewer
-        value={[left, right]}
+        value={[props.leftVersion ?? '', props.rightVersion ?? '']}
         name="name"
-        isFixedHeight
         schemaType="JSON"
+        isFixedHeight={props.isFixedHeight}
       />
     );
-    expect(component).toMatchSnapshot();
+  };
+  it('renders', () => {
+    renderComponent({ leftVersion: left, rightVersion: right });
   });
 
-  it('matches the snapshot with fixed height with no value', () => {
-    const component = shallow(
-      <DiffViewer name="name" isFixedHeight schemaType="JSON" />
-    );
-    expect(component).toMatchSnapshot();
+  it('renders with fixed height', () => {
+    renderComponent({
+      leftVersion: left,
+      rightVersion: right,
+      isFixedHeight: true,
+    });
   });
 
-  it('matches the snapshot without fixed height with no value', () => {
-    const component = shallow(<DiffViewer name="name" schemaType="JSON" />);
-    expect(component).toMatchSnapshot();
+  it('renders with fixed height with no value', () => {
+    renderComponent({ isFixedHeight: true });
   });
 
-  it('matches the snapshot without fixed height with one value', () => {
-    const component = shallow(
-      <DiffViewer value={[left]} name="name" schemaType="JSON" />
-    );
-    expect(component).toMatchSnapshot();
+  it('renders without fixed height with no value', () => {
+    renderComponent({});
+  });
+
+  it('renders without fixed height with one value', () => {
+    renderComponent({ leftVersion: left });
   });
 });

@@ -44,7 +44,7 @@ const Diff: React.FC<DiffProps> = ({
     return () => {
       dispatch(resetLoaderById(SCHEMAS_VERSIONS_FETCH_ACTION));
     };
-  }, [clusterName, subject]);
+  }, [clusterName, subject, dispatch]);
 
   const getSchemaContent = (allVersions: SchemaSubject[], version: string) => {
     const selectedSchema =
