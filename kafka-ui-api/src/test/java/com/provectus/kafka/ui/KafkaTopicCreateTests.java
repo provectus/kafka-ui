@@ -57,4 +57,29 @@ public class KafkaTopicCreateTests extends AbstractBaseTest {
         .expectStatus()
         .isBadRequest();
   }
+
+  @Test
+  void shouldRecreateExistingTopicSuccessfully() {
+    TopicCreationDTO topicCreation = new TopicCreationDTO()
+            .replicationFactor(1)
+            .partitions(3)
+            .name(UUID.randomUUID().toString());
+
+    webTestClient.post()
+            .uri("/api/clusters/{clusterName}/topics", LOCAL)
+            .bodyValue(topicCreation)
+            .exchange()
+            .expectStatus()
+            .isOk();
+
+    webTestClient.post()
+            .uri("/api/clusters/{clusterName}/topics/" + topicCreation.getName(), LOCAL)
+            .exchange()
+            .expectStatus()
+            .isCreated()
+            .expectBody()
+            .jsonPath("partitionCount").isEqualTo(topicCreation.getPartitions().toString())
+            .jsonPath("replicationFactor").isEqualTo(topicCreation.getReplicationFactor().toString())
+            .jsonPath("name").isEqualTo(topicCreation.getName());
+  }
 }

@@ -12,7 +12,11 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Pagination from 'components/common/Pagination/Pagination';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
-import { GetTopicsRequest, TopicColumnsToSort } from 'generated-sources';
+import {
+  GetTopicsRequest,
+  SortOrder,
+  TopicColumnsToSort,
+} from 'generated-sources';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
@@ -39,6 +43,7 @@ export interface TopicsListProps {
   ): void;
   search: string;
   orderBy: TopicColumnsToSort | null;
+  sortOrder: SortOrder;
   setTopicsSearch(search: string): void;
   setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
 }
@@ -54,6 +59,7 @@ const List: React.FC<TopicsListProps> = ({
   clearTopicsMessages,
   search,
   orderBy,
+  sortOrder,
   setTopicsSearch,
   setTopicsOrderBy,
 }) => {
@@ -69,6 +75,7 @@ const List: React.FC<TopicsListProps> = ({
       page,
       perPage,
       orderBy: orderBy || undefined,
+      sortOrder,
       search,
       showInternal,
     });
@@ -78,6 +85,7 @@ const List: React.FC<TopicsListProps> = ({
     page,
     perPage,
     orderBy,
+    sortOrder,
     search,
     showInternal,
   ]);
@@ -215,24 +223,32 @@ const List: React.FC<TopicsListProps> = ({
                   title="Topic Name"
                   orderValue={TopicColumnsToSort.NAME}
                   orderBy={orderBy}
+                  sortOrder={sortOrder}
                   handleOrderBy={setTopicsOrderBy}
                 />
                 <TableHeaderCell
                   title="Total Partitions"
                   orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
                   orderBy={orderBy}
+                  sortOrder={sortOrder}
                   handleOrderBy={setTopicsOrderBy}
                 />
                 <TableHeaderCell
                   title="Out of sync replicas"
                   orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
                   orderBy={orderBy}
+                  sortOrder={sortOrder}
                   handleOrderBy={setTopicsOrderBy}
                 />
                 <TableHeaderCell title="Replication Factor" />
                 <TableHeaderCell title="Number of messages" />
-                <TableHeaderCell title="Size" />
-                <TableHeaderCell />
+                <TableHeaderCell
+                  title="Size"
+                  orderValue={TopicColumnsToSort.SIZE}
+                  orderBy={orderBy}
+                  sortOrder={sortOrder}
+                  handleOrderBy={setTopicsOrderBy}
+                />
               </tr>
             </thead>
             <tbody>

@@ -24,7 +24,8 @@ public enum ErrorCode {
   KSQLDB_NOT_FOUND(4011, HttpStatus.NOT_FOUND),
   DIR_NOT_FOUND(4012, HttpStatus.BAD_REQUEST),
   TOPIC_OR_PARTITION_NOT_FOUND(4013, HttpStatus.BAD_REQUEST),
-  INVALID_REQUEST(4014, HttpStatus.BAD_REQUEST);
+  INVALID_REQUEST(4014, HttpStatus.BAD_REQUEST),
+  RECREATE_TOPIC_TIMEOUT(4015, HttpStatus.REQUEST_TIMEOUT);
 
   static {
     // codes uniqueness check
