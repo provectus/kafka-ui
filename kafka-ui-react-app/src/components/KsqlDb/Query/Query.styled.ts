@@ -35,6 +35,10 @@ export const ContinuousLoader = styled(PageLoader)`
   }
 `;
 
+export const Fieldset = styled.fieldset`
+  width: 100%;
+`;
+
 export const Editor = styled(BaseEditor)(
   ({ readOnly, theme }) =>
     readOnly &&

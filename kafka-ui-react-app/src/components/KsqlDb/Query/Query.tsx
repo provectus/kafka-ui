@@ -103,11 +103,6 @@ const Query: FC = () => {
     destroySSE();
   }, [reset]);
 
-  const handleClearResults = () => {
-    setKSQLTable(null);
-    handleSSECancel();
-  };
-
   const createSSE = useCallback(
     (pipeId: string) => {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/ksql/response?pipeId=${pipeId}`;
@@ -197,7 +192,7 @@ const Query: FC = () => {
               id,
               type: 'error',
               title: 'SSE connection closed',
-              message: 'Your query was immediately rejected',
+              message: '',
               createdAt: now(),
             })
           );
@@ -258,9 +253,9 @@ const Query: FC = () => {
       <S.QueryWrapper>
         <form onSubmit={handleSubmit(submitHandler)}>
           <S.KSQLInputsWrapper>
-            <div>
+            <S.Fieldset aria-labelledby="ksqlLabel">
               <S.KSQLInputHeader>
-                <label>KSQL</label>
+                <label id="ksqlLabel">KSQL</label>
                 <Button
                   onClick={() => setValue('ksql', '')}
                   buttonType="primary"
@@ -276,7 +271,6 @@ const Query: FC = () => {
                 render={({ field }) => (
                   <S.SQLEditor
                     {...field}
-                    readOnly={fetching}
                     commands={[
                       {
                         // commands is array of key bindings.
@@ -290,16 +284,19 @@ const Query: FC = () => {
                         },
                       },
                     ]}
+                    readOnly={fetching}
                   />
                 )}
               />
               <FormError>
                 <ErrorMessage errors={errors} name="ksql" />
               </FormError>
-            </div>
-            <div>
+            </S.Fieldset>
+            <S.Fieldset aria-labelledby="streamsPropertiesLabel">
               <S.KSQLInputHeader>
-                <label>Stream properties (JSON format)</label>
+                <label id="streamsPropertiesLabel">
+                  Stream properties (JSON format)
+                </label>
                 <Button
                   onClick={() => setValue('streamsProperties', '')}
                   buttonType="primary"
@@ -336,7 +333,7 @@ const Query: FC = () => {
               <FormError>
                 <ErrorMessage errors={errors} name="streamsProperties" />
               </FormError>
-            </div>
+            </S.Fieldset>
           </S.KSQLInputsWrapper>
           <S.KSQLButtons>
             <Button
@@ -350,10 +347,18 @@ const Query: FC = () => {
             <Button
               buttonType="secondary"
               buttonSize="M"
-              disabled={!KSQLTable}
-              onClick={() => handleClearResults()}
+              disabled={!fetching}
+              onClick={() => handleSSECancel()}
             >
-              {fetching && 'Stop query and '}Clear results
+              Stop query
+            </Button>
+            <Button
+              buttonType="secondary"
+              buttonSize="M"
+              disabled={fetching || !KSQLTable}
+              onClick={() => setKSQLTable(null)}
+            >
+              Clear results
             </Button>
           </S.KSQLButtons>
         </form>
