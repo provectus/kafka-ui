@@ -6,6 +6,10 @@ import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled
 
 import * as S from './TableRenderer.styled';
 
+export interface Props {
+  table: KsqlTableResponse;
+}
+
 function hasJsonStructure(str: string | Record<string, unknown>): boolean {
   if (typeof str === 'object') {
     return true;
@@ -24,7 +28,7 @@ function hasJsonStructure(str: string | Record<string, unknown>): boolean {
   return false;
 }
 
-const TableRenderer: React.FC<{ table: KsqlTableResponse }> = ({ table }) => {
+const TableRenderer: React.FC<Props> = ({ table }) => {
   const heading = React.useMemo(() => {
     return table.header || [];
   }, [table.header]);
