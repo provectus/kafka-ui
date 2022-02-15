@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
 import java.util.Optional;
+import org.apache.commons.lang3.EnumUtils;
 
 public enum MessageFormat {
   AVRO,
@@ -9,10 +10,6 @@ public enum MessageFormat {
   UNKNOWN;
 
   public static Optional<MessageFormat> fromString(String typeString) {
-    try {
-      return Optional.of(MessageFormat.valueOf(typeString.toUpperCase()));
-    } catch (Exception e) {
-      return Optional.empty();
-    }
+    return Optional.ofNullable(EnumUtils.getEnum(MessageFormat.class, typeString));
   }
 }
