@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.config;
 import com.fasterxml.jackson.databind.Module;
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.util.JmxPoolFactory;
+import io.netty.handler.logging.LogLevel;
 import java.util.Collections;
 import java.util.Map;
 import javax.management.remote.JMXConnector;
@@ -18,6 +19,7 @@ import org.springframework.boot.autoconfigure.web.reactive.WebFluxProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.http.server.reactive.ContextPathCompositeHandler;
 import org.springframework.http.server.reactive.HttpHandler;
 import org.springframework.jmx.export.MBeanExporter;
@@ -25,6 +27,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.util.unit.DataSize;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.adapter.WebHttpHandlerBuilder;
+import reactor.netty.http.client.HttpClient;
+import reactor.netty.transport.logging.AdvancedByteBufFormat;
 
 @Configuration
 @AllArgsConstructor
@@ -76,8 +80,14 @@ public class Config {
   @Bean
   public WebClient webClient(
       @Value("${webclient.max-in-memory-buffer-size:20MB}") DataSize maxBuffSize) {
+    HttpClient httpClient = HttpClient
+        .create()
+        .wiretap("reactor.netty.http.client.HttpClient",
+            LogLevel.DEBUG, AdvancedByteBufFormat.TEXTUAL);
+
     return WebClient.builder()
         .codecs(c -> c.defaultCodecs().maxInMemorySize((int) maxBuffSize.toBytes()))
+        .clientConnector(new ReactorClientHttpConnector(httpClient))
         .build();
   }
 

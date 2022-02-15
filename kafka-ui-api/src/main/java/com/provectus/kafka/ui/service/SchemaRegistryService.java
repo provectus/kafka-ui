@@ -20,6 +20,8 @@ import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityCheck;
 import com.provectus.kafka.ui.model.schemaregistry.InternalCompatibilityLevel;
 import com.provectus.kafka.ui.model.schemaregistry.InternalNewSchema;
 import com.provectus.kafka.ui.model.schemaregistry.SubjectIdResponse;
+import java.net.URI;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Objects;
@@ -34,9 +36,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -62,8 +67,8 @@ public class SchemaRegistryService {
   public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
                                                                  List<String> subjects) {
     return Flux.fromIterable(subjects)
-            .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
-            .collect(Collectors.toList());
+        .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
+        .collect(Collectors.toList());
   }
 
   public Mono<String[]> getAllSubjectNames(KafkaCluster cluster) {
@@ -85,7 +90,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.GET,
-        URL_SUBJECT_VERSIONS, schemaName)
+        URL_SUBJECT_VERSIONS,
+        schemaName)
         .retrieve()
         .onStatus(NOT_FOUND::equals,
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
@@ -107,7 +113,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.GET,
-        URL_SUBJECT_BY_VERSION, schemaName, version)
+        URL_SUBJECT_BY_VERSION,
+        List.of(schemaName, version))
         .retrieve()
         .onStatus(NOT_FOUND::equals,
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
@@ -148,7 +155,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.DELETE,
-        URL_SUBJECT_BY_VERSION, schemaName, version)
+        URL_SUBJECT_BY_VERSION,
+        List.of(schemaName, version))
         .retrieve()
         .onStatus(NOT_FOUND::equals,
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
@@ -160,7 +168,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.DELETE,
-        URL_SUBJECT, schemaName)
+        URL_SUBJECT,
+        schemaName)
         .retrieve()
         .onStatus(NOT_FOUND::equals,
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
@@ -180,8 +189,7 @@ public class SchemaRegistryService {
           Mono<InternalNewSchema> newSchema =
               Mono.just(new InternalNewSchema(schema.getSchema(), schemaType));
           String subject = schema.getSubject();
-          var schemaRegistry = cluster.getSchemaRegistry();
-          return submitNewSchema(subject, newSchema, schemaRegistry)
+          return submitNewSchema(subject, newSchema, cluster)
               .flatMap(resp -> getLatestSchemaVersionBySubject(cluster, subject));
         });
   }
@@ -189,19 +197,20 @@ public class SchemaRegistryService {
   @NotNull
   private Mono<SubjectIdResponse> submitNewSchema(String subject,
                                                   Mono<InternalNewSchema> newSchemaSubject,
-                                                  InternalSchemaRegistry schemaRegistry) {
+                                                  KafkaCluster cluster) {
     return configuredWebClient(
-        schemaRegistry,
+        cluster,
         HttpMethod.POST,
-        URL_SUBJECT_VERSIONS, subject)
+        URL_SUBJECT_VERSIONS,
+        subject)
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
         .retrieve()
         .onStatus(UNPROCESSABLE_ENTITY::equals,
             r -> r.bodyToMono(ErrorResponse.class)
                 .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
-                        ? new SchemaTypeIsNotSupportedException()
-                        : new UnprocessableEntityException(x.getMessage()))))
+                    ? new SchemaTypeIsNotSupportedException()
+                    : new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SubjectIdResponse.class);
   }
 
@@ -223,7 +232,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.PUT,
-        configEndpoint, schemaName)
+        configEndpoint,
+        schemaName)
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevelDTO.class))
         .retrieve()
@@ -239,11 +249,15 @@ public class SchemaRegistryService {
 
   public Mono<CompatibilityLevelDTO> getSchemaCompatibilityLevel(KafkaCluster cluster,
                                                                  String schemaName) {
-    String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
+    String globalConfig = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}"; // toot
+    final var values = new LinkedMultiValueMap<String, String>();
+    values.add("defaultToGlobal", "true");
     return configuredWebClient(
         cluster,
         HttpMethod.GET,
-        configEndpoint, schemaName)
+        globalConfig,
+        (schemaName == null ? Collections.emptyList() : List.of(schemaName)),
+        values)
         .retrieve()
         .bodyToMono(InternalCompatibilityLevel.class)
         .map(mapper::toCompatibilityLevel)
@@ -265,7 +279,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.POST,
-        "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
+        "/compatibility/subjects/{schemaName}/versions/latest",
+        schemaName)
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubjectDTO.class))
         .retrieve()
@@ -294,21 +309,42 @@ public class SchemaRegistryService {
     }
   }
 
-  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
-                                                        String uri, Object... params) {
-    return configuredWebClient(cluster.getSchemaRegistry(), method, uri, params);
+  private boolean isUnrecognizedFieldSchemaTypeMessage(String errorMessage) {
+    return errorMessage.contains(UNRECOGNIZED_FIELD_SCHEMA_TYPE);
   }
 
-  private WebClient.RequestBodySpec configuredWebClient(InternalSchemaRegistry schemaRegistry,
+  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method, String uri) {
+    return configuredWebClient(cluster, method, uri, Collections.emptyList(),
+        new LinkedMultiValueMap<>());
+  }
+
+  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
+                                                        String uri, List<String> uriVariables) {
+    return configuredWebClient(cluster, method, uri, uriVariables, new LinkedMultiValueMap<>());
+  }
+
+  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
+                                                        String uri, String uriVariable) {
+    return configuredWebClient(cluster, method, uri, List.of(uriVariable),
+        new LinkedMultiValueMap<>());
+  }
+
+  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster,
                                                         HttpMethod method, String uri,
-                                                        Object... params) {
+                                                        List<String> uriVariables,
+                                                        MultiValueMap<String, String> queryParams) {
+    final var schemaRegistry = cluster.getSchemaRegistry();
     return webClient
         .method(method)
-        .uri(schemaRegistry.getFirstUrl() + uri, params)
+        .uri(buildUri(schemaRegistry, uri, uriVariables, queryParams))
         .headers(headers -> setBasicAuthIfEnabled(schemaRegistry, headers));
   }
 
-  private boolean isUnrecognizedFieldSchemaTypeMessage(String errorMessage) {
-    return errorMessage.contains(UNRECOGNIZED_FIELD_SCHEMA_TYPE);
+  private URI buildUri(InternalSchemaRegistry schemaRegistry, String uri, List<String> uriVariables,
+                       MultiValueMap<String, String> queryParams) {
+    final var builder = UriComponentsBuilder
+        .fromHttpUrl(schemaRegistry.getFirstUrl() + uri);
+    builder.queryParams(queryParams);
+    return builder.buildAndExpand(uriVariables.toArray()).toUri();
   }
 }
