@@ -52,13 +52,16 @@ const Overview: React.FC<Props> = ({
             label="URP"
             title="Under replicated partitions"
             isAlert
-            alertType={underReplicatedPartitions === 0 ? 'error' : 'success'}
+            alertType={underReplicatedPartitions === 0 ? 'success' : 'error'}
           >
-            <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
+            {underReplicatedPartitions === 0 ? (
+              <Metrics.LightText>{underReplicatedPartitions}</Metrics.LightText>
+            ) : (
+              <Metrics.RedText>{underReplicatedPartitions}</Metrics.RedText>
+            )}
           </Metrics.Indicator>
           <Metrics.Indicator
-            label="ISR"
-            title="In Sync Replicas"
+            label="In Sync Replicas"
             isAlert
             alertType={inSyncReplicas === replicas ? 'success' : 'error'}
           >
