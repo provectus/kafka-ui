@@ -1,6 +1,5 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "name": "UI for Apache Kafka",
   "icons": [
     {
       "src": "/favicon/icon-192.png",
