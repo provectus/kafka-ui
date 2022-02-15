@@ -160,7 +160,9 @@ public class SchemaRegistryService {
         .retrieve()
         .onStatus(NOT_FOUND::equals,
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
-        ).toBodilessEntity();
+        )
+        .toBodilessEntity()
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   public Mono<ResponseEntity<Void>> deleteSchemaSubjectEntirely(KafkaCluster cluster,
@@ -172,8 +174,10 @@ public class SchemaRegistryService {
         schemaName)
         .retrieve()
         .onStatus(NOT_FOUND::equals,
-            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-        .toBodilessEntity();
+            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName))
+        )
+        .toBodilessEntity()
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   /**
