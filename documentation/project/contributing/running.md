@@ -7,7 +7,7 @@ docker-compose -f documentation/compose/kafka-ui.yaml up -d
 ```
 
 ### Running locally without docker
-Once you built the app, run the following: (TODO: is there a way to hot-reload while developing? Does it always require a re-build then a run?)
+Once you built the app, run the following in `kafka-ui-api/`:
 
 ```sh
 ./mvnw spring-boot:run -Pprod

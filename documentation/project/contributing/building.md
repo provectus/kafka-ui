@@ -16,7 +16,8 @@ If you want to start only kafka clusters (to run the app via `spring-boot:run`):
 ```sh
 docker-compose -f ./documentation/compose/kafka-clusters-only.yaml up -d
 ``` 
-Then start the app with a **local** profile (TODO: is this `-Plocal`? Are there any non-prod profiles?).
+
+Then, start the app.
 
 ## Where to go next
 
