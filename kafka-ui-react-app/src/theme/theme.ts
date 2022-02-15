@@ -153,12 +153,7 @@ const theme = {
     chevronIconColor: Colors.neutral[50],
   },
   version: {
-    currentVersion: {
-      color: Colors.neutral[30],
-    },
-    symbolWrapper: {
-      color: Colors.neutral[30],
-    },
+    color: Colors.neutral[30],
   },
   schema: {
     backgroundColor: {

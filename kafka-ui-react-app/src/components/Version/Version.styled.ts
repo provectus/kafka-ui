@@ -11,26 +11,21 @@ const textStyle = css`
   font-weight: normal;
   font-size: 12px;
   line-height: 16px;
+  color: ${({ theme }) => theme.version.color};
 `;
 
-export const CurrentVersion = styled.span(
-  ({ theme }) => css`
-    ${textStyle}
-    color: ${theme.version.currentVersion.color};
-    margin-right: 0.25rem;
-  `
-);
+export const CurrentVersion = styled.span`
+  ${textStyle}
+  margin-right: 0.25rem;
+`;
 
 export const OutdatedWarning = styled.span`
   ${textStyle}
 `;
 
-export const SymbolWrapper = styled.span(
-  ({ theme }) => css`
-    ${textStyle}
-    color: ${theme.version.symbolWrapper.color};
-  `
-);
+export const SymbolWrapper = styled.span`
+  ${textStyle}
+`;
 
 export const CurrentCommitLink = styled.a`
   ${textStyle}
