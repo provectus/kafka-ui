@@ -2,6 +2,7 @@ import { render } from 'lib/testHelpers';
 import React from 'react';
 import TableRenderer, {
   Props,
+  hasJsonStructure,
 } from 'components/KsqlDb/Query/renderer/TableRenderer/TableRenderer';
 import { screen } from '@testing-library/dom';
 
@@ -29,5 +30,22 @@ describe('TableRenderer', () => {
     expect(
       screen.getByRole('cell', { name: 'Table row #2' })
     ).toBeInTheDocument();
+  });
+});
+
+describe('hasJsonStructure', () => {
+  it('works', () => {
+    expect(hasJsonStructure('simplestring')).toBeFalsy();
+    expect(
+      hasJsonStructure("{'looksLikeJson': 'but has wrong quotes'}")
+    ).toBeFalsy();
+    expect(
+      hasJsonStructure('{"json": "but doesnt have closing brackets"')
+    ).toBeFalsy();
+    expect(hasJsonStructure('"string":"that looks like json"')).toBeFalsy();
+
+    expect(hasJsonStructure('{}')).toBeTruthy();
+    expect(hasJsonStructure('{"correct": "json"}')).toBeTruthy();
+    expect(hasJsonStructure('{"correct": "json"}')).toBeTruthy();
   });
 });

@@ -10,7 +10,9 @@ export interface Props {
   table: KsqlTableResponse;
 }
 
-function hasJsonStructure(str: string | Record<string, unknown>): boolean {
+export function hasJsonStructure(
+  str: string | Record<string, unknown>
+): boolean {
   if (typeof str === 'object') {
     return true;
   }
