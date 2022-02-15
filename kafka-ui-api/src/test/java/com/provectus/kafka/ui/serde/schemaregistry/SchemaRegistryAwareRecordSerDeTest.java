@@ -113,6 +113,36 @@ class SchemaRegistryAwareRecordSerDeTest {
     }
 
     @Test
+    void fallsBackToStringFormatterIfMagicByteAndSchemaIdFoundButFormatterFailed() throws Exception {
+      int schemaId = 1234;
+      when(registryClient.getSchemaById(schemaId))
+          .thenReturn(new AvroSchema("{ \"type\": \"string\" }"));
+
+      // with value will cause fail in avro deserializer
+      Bytes nonAvroValue =  bytesWithMagicByteAndSchemaId(schemaId, "123".getBytes());
+      var result = serde.deserialize(
+          new ConsumerRecord<>(
+              "test-topic",
+              1,
+              100,
+              Bytes.wrap("key".getBytes()),
+             nonAvroValue
+          )
+      );
+
+      // called twice: once by serde code, once by formatter (will be cached)
+      verify(registryClient, times(2)).getSchemaById(schemaId);
+
+      assertThat(result.getKeySchemaId()).isNull();
+      assertThat(result.getKeyFormat()).isEqualTo(MessageFormat.UNKNOWN);
+      assertThat(result.getKey()).isEqualTo("key");
+
+      assertThat(result.getValueSchemaId()).isNull();
+      assertThat(result.getValueFormat()).isEqualTo(MessageFormat.UNKNOWN);
+      assertThat(result.getValue()).isEqualTo(new String(nonAvroValue.get()));
+    }
+
+    @Test
     void useStringFormatterWithoutRegistryManipulationIfMagicByteNotSet() {
       var result = serde.deserialize(
           new ConsumerRecord<>(
