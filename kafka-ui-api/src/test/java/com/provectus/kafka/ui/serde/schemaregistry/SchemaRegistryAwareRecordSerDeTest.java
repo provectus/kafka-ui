@@ -118,7 +118,7 @@ class SchemaRegistryAwareRecordSerDeTest {
       when(registryClient.getSchemaById(schemaId))
           .thenReturn(new AvroSchema("{ \"type\": \"string\" }"));
 
-      // with value will cause fail in avro deserializer
+      // will cause exception in avro deserializer
       Bytes nonAvroValue =  bytesWithMagicByteAndSchemaId(schemaId, "123".getBytes());
       var result = serde.deserialize(
           new ConsumerRecord<>(
