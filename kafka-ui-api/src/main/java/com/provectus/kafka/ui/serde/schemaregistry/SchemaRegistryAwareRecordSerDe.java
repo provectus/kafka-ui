@@ -4,6 +4,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.BASIC_AUTH_CREDENTIALS_SOURCE;
 import static io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig.USER_INFO_CONFIG;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
@@ -78,8 +79,13 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   public SchemaRegistryAwareRecordSerDe(KafkaCluster cluster) {
+    this(cluster, createSchemaRegistryClient(cluster));
+  }
+
+  @VisibleForTesting
+  SchemaRegistryAwareRecordSerDe(KafkaCluster cluster, SchemaRegistryClient schemaRegistryClient) {
     this.cluster = cluster;
-    this.schemaRegistryClient = createSchemaRegistryClient(cluster);
+    this.schemaRegistryClient = schemaRegistryClient;
     this.schemaRegistryFormatters = Map.of(
         MessageFormat.AVRO, new AvroMessageFormatter(schemaRegistryClient),
         MessageFormat.JSON, new JsonSchemaMessageFormatter(schemaRegistryClient),
