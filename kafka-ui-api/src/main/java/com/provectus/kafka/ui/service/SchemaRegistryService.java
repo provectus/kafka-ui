@@ -252,7 +252,7 @@ public class SchemaRegistryService {
 
   public Mono<CompatibilityLevelDTO> getSchemaCompatibilityLevel(KafkaCluster cluster,
                                                                  String schemaName) {
-    String globalConfig = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}"; // toot
+    String globalConfig = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
     final var values = new LinkedMultiValueMap<String, String>();
     values.add("defaultToGlobal", "true");
     return configuredWebClient(
