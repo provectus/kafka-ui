@@ -432,7 +432,12 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "version": Object {
-        "color": "#ABB5BA",
+        "currentVersion": Object {
+          "color": "#ABB5BA",
+        },
+        "symbolWrapper": Object {
+          "color": "#ABB5BA",
+        },
       },
       "viewer": Object {
         "wrapper": "#f9fafa",
