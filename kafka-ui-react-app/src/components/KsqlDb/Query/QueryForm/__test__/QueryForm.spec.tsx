@@ -42,12 +42,17 @@ describe('QueryForm', () => {
 
     // Form controls
     expect(screen.getByRole('button', { name: 'Execute' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Execute' })).toBeEnabled();
     expect(
       screen.getByRole('button', { name: 'Stop query' })
     ).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Stop query' })).toBeDisabled();
     expect(
       screen.getByRole('button', { name: 'Clear results' })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Clear results' })
+    ).toBeDisabled();
   });
 
   it('renders error with empty input', async () => {
@@ -121,5 +126,84 @@ describe('QueryForm', () => {
     expect(
       screen.queryByText('streamsProperties is not JSON object')
     ).not.toBeInTheDocument();
+  });
+
+  it('submits with correct inputs', async () => {
+    const submitFn = jest.fn();
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: submitFn,
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"totallyJSON": "string"}'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
+    );
+
+    expect(
+      screen.queryByText('ksql is a required field')
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText('streamsProperties is not JSON object')
+    ).not.toBeInTheDocument();
+
+    expect(submitFn).toBeCalled();
+  });
+
+  it('clear results is enabled when has results', async () => {
+    const clearFn = jest.fn();
+    renderComponent({
+      fetching: false,
+      hasResults: true,
+      handleClearResults: clearFn,
+      handleSSECancel: jest.fn(),
+      submitHandler: jest.fn(),
+    });
+
+    expect(screen.getByRole('button', { name: 'Clear results' })).toBeEnabled();
+
+    await waitFor(() =>
+      userEvent.click(screen.getByRole('button', { name: 'Clear results' }))
+    );
+
+    expect(clearFn).toBeCalled();
+  });
+
+  it('stop query query is enabled when is fetching', async () => {
+    const cancelFn = jest.fn();
+    renderComponent({
+      fetching: true,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: cancelFn,
+      submitHandler: jest.fn(),
+    });
+
+    expect(screen.getByRole('button', { name: 'Stop query' })).toBeEnabled();
+
+    await waitFor(() =>
+      userEvent.click(screen.getByRole('button', { name: 'Stop query' }))
+    );
+
+    expect(cancelFn).toBeCalled();
   });
 });
