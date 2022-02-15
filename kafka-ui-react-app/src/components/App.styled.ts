@@ -177,7 +177,7 @@ export const Hyperlink = styled.a(
     gap: 8px;
 
     margin: 0;
-    padding: 5px 16px;
+    padding: 0.5rem 0.75rem;
 
     font-family: Inter, sans-serif;
     font-style: normal;
