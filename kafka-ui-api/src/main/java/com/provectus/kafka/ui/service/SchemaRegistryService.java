@@ -3,6 +3,8 @@ package com.provectus.kafka.ui.service;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
+import com.provectus.kafka.ui.exception.DuplicateEntityException;
+import com.provectus.kafka.ui.exception.SchemaFailedToDeleteException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.SchemaTypeIsNotSupportedException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
@@ -33,6 +35,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -165,7 +168,7 @@ public class SchemaRegistryService {
         .thenReturn(ResponseEntity.ok().build());
   }
 
-  public Mono<ResponseEntity<Void>> deleteSchemaSubjectEntirely(KafkaCluster cluster,
+  public Mono<Void> deleteSchemaSubjectEntirely(KafkaCluster cluster,
                                                                 String schemaName) {
     return configuredWebClient(
         cluster,
@@ -173,11 +176,9 @@ public class SchemaRegistryService {
         URL_SUBJECT,
         schemaName)
         .retrieve()
-        .onStatus(NOT_FOUND::equals,
-            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName))
-        )
+        .onStatus(HttpStatus::isError, errorOnSchemaDeleteFailure(schemaName))
         .toBodilessEntity()
-        .thenReturn(ResponseEntity.ok().build());
+        .then();
   }
 
   /**
@@ -350,5 +351,14 @@ public class SchemaRegistryService {
         .fromHttpUrl(schemaRegistry.getFirstUrl() + uri);
     builder.queryParams(queryParams);
     return builder.buildAndExpand(uriVariables.toArray()).toUri();
+  }
+
+  private Function<ClientResponse, Mono<? extends Throwable>> errorOnSchemaDeleteFailure(String schemaName) {
+    return resp -> {
+      if (NOT_FOUND.equals(resp.statusCode())) {
+        return Mono.error(new SchemaNotFoundException(schemaName));
+      }
+      return Mono.error(new SchemaFailedToDeleteException(schemaName));
+    };
   }
 }
