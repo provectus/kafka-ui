@@ -3,7 +3,6 @@ package com.provectus.kafka.ui.service;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
-import com.provectus.kafka.ui.exception.DuplicateEntityException;
 import com.provectus.kafka.ui.exception.SchemaFailedToDeleteException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.SchemaTypeIsNotSupportedException;
@@ -37,7 +36,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -142,19 +140,19 @@ public class SchemaRegistryService {
     return s.schemaType(Optional.ofNullable(s.getSchemaType()).orElse(SchemaTypeDTO.AVRO));
   }
 
-  public Mono<ResponseEntity<Void>> deleteSchemaSubjectByVersion(KafkaCluster cluster,
-                                                                 String schemaName,
-                                                                 Integer version) {
+  public Mono<Void> deleteSchemaSubjectByVersion(KafkaCluster cluster,
+                                                 String schemaName,
+                                                 Integer version) {
     return this.deleteSchemaSubject(cluster, schemaName, String.valueOf(version));
   }
 
-  public Mono<ResponseEntity<Void>> deleteLatestSchemaSubject(KafkaCluster cluster,
-                                                              String schemaName) {
+  public Mono<Void> deleteLatestSchemaSubject(KafkaCluster cluster,
+                                              String schemaName) {
     return this.deleteSchemaSubject(cluster, schemaName, LATEST);
   }
 
-  private Mono<ResponseEntity<Void>> deleteSchemaSubject(KafkaCluster cluster, String schemaName,
-                                                         String version) {
+  private Mono<Void> deleteSchemaSubject(KafkaCluster cluster, String schemaName,
+                                         String version) {
     return configuredWebClient(
         cluster,
         HttpMethod.DELETE,
@@ -165,11 +163,11 @@ public class SchemaRegistryService {
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
         )
         .toBodilessEntity()
-        .thenReturn(ResponseEntity.ok().build());
+        .then();
   }
 
   public Mono<Void> deleteSchemaSubjectEntirely(KafkaCluster cluster,
-                                                                String schemaName) {
+                                                String schemaName) {
     return configuredWebClient(
         cluster,
         HttpMethod.DELETE,
