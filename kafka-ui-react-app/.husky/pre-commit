@@ -2,8 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 
-SRC_PATTERN="kafka-ui-react-app"
-if git diff --cached --name-only | grep --quiet "$SRC_PATTERN"
+if git diff --cached --name-only | grep --quiet "kafka-ui-react-app"
 then
   cd kafka-ui-react-app && npm run pre-commit
 else 
