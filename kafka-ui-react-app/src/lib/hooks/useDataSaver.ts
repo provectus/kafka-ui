@@ -11,7 +11,8 @@ const useDataSaver = (
   const dispatch = useAppDispatch();
   const copyToClipboard = () => {
     if (navigator.clipboard) {
-      const str = JSON.stringify(data);
+      const str =
+        typeof data === 'string' ? String(data) : JSON.stringify(data);
       navigator.clipboard.writeText(str);
       dispatch(
         alertAdded({
