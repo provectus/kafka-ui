@@ -109,6 +109,7 @@ jobs:
         run: |
           export version=${{needs.release.outputs.version}}
           sed -i "s/version:.*/version: ${version}/" charts/kafka-ui/Chart.yaml
+          sed -i "s/appVersion:.*/appVersion: ${version}/" charts/kafka-ui/Chart.yaml
 
       - name: add chart
         run: |

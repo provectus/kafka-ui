@@ -7,6 +7,7 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import { Link } from 'react-router-dom';
+import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
 
 interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
@@ -57,7 +58,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
               <td>{consumer.coordinator?.id}</td>
               <td>
                 {consumer.state && (
-                  <Tag color="yellow">{`${consumer.state
+                  <Tag color={getTagColor(consumer)}>{`${consumer.state
                     .charAt(0)
                     .toUpperCase()}${consumer.state
                     .slice(1)
