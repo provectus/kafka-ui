@@ -40,6 +40,7 @@ const App: React.FC = () => {
   React.useEffect(() => {
     dispatch(fetchClusters());
   }, [fetchClusters]);
+  console.log('fe');
 
   return (
     <ThemeProvider theme={theme}>
