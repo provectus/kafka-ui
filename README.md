@@ -65,6 +65,18 @@ To run UI for Apache Kafka, you can use a pre-built Docker image or build it loc
 
 We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md) as examples. They're built for various configuration stacks.
 
+# Guides
+
+- [SSO configuration](documentation/guides/SSO.md)
+- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
+- [Docker-compose files](documentation/guides/yaml-description.md)
+- [Connection to a secure broker]()
+
+## Connecting to a Secure Broker
+
+The app supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). <br/>
+An example is located [here](documentation/compose/kafka-ssl.yml).
+
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
 
@@ -97,7 +109,7 @@ kafka:
 
 Configure as many clusters as you need by adding their configs below separated with `-`.
 
-## Running From Docker Image
+## Running a Docker Image
 The official Docker image for UI for Apache Kafka is hosted here: [hub.docker.com/r/provectuslabs/kafka-ui](https://hub.docker.com/r/provectuslabs/kafka-ui).
 
 Launch Docker container in the background:
@@ -131,18 +143,6 @@ Check [building.md](documentation/project/contributing/building.md)
 
 Check [running.md](documentation/project/contributing/running.md)
 
-# Guides
-
-- [SSO configuration](documentation/guides/SSO.md)
-- [AWS IAM configuration](documentation/guides/AWS_IAM.md)
-- [Docker-compose files](documentation/guides/yaml-description.md)
-
-## Connecting to a Secure Broker
-
-UI for Apache Kafka supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). This can be configured by providing a combination of the following files (placed into the Kafka root directory):
-
-To be continued
-
 ## Liveliness and readiness probes
 Liveliness and readiness endpoint is at `/actuator/health`.
 Info endpoint (build info) is located at `/actuator/info`.
@@ -154,9 +154,9 @@ For example, if you want to use an environment variable to set the `name` parame
 
 |Name               	|Description
 |-----------------------|-------------------------------
-|`SERVER_SERVLET_CONTEXT_PATH`  | URI basePath
+|`SERVER_SERVLET_CONTEXT_PATH` | URI basePath
 |`LOGGING_LEVEL_ROOT`        	| Setting log level (trace, debug, info, warn, error). Default: info
-|`LOGGING_LEVEL_COM_PROVECTUS`  |Setting log level (trace, debug, info, warn, error). Default: debug
+|`LOGGING_LEVEL_COM_PROVECTUS` |Setting log level (trace, debug, info, warn, error). Default: debug
 |`SERVER_PORT` |Port for the embedded server. Default: `8080`
 |`KAFKA_ADMIN-CLIENT-TIMEOUT` | Kafka API timeout in ms. Default: `30000`
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
@@ -167,7 +167,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
-|`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE`  |How keys are saved to schemaRegistry
+|`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
 |`KAFKA_CLUSTERS_0_JMXPORT`        	|Open jmxPosrts of a broker
 |`KAFKA_CLUSTERS_0_READONLY`        	|Enable read-only mode. Default: false
 |`KAFKA_CLUSTERS_0_DISABLELOGDIRSCOLLECTION`        	|Disable collecting segments information. It should be true for confluent cloud. Default: false
@@ -176,3 +176,5 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_JMXSSL` |Enable SSL for JMX? `true` or `false`. For advanced setup, see `kafka-ui-jmx-secured.yml`
 |`KAFKA_CLUSTERS_0_JMXUSERNAME` |Username for JMX authentication
 |`KAFKA_CLUSTERS_0_JMXPASSWORD` |Password for JMX authentication
+|`TOPIC_RECREATE_DELAY_SECONDS` |Time delay between topic deletion and topic creation attempts for topic recreate functionality. Default: 1
+|`TOPIC_RECREATE_MAXRETRIES`  |Number of attempts of topic creation after topic deletion for topic recreate functionality. Default: 15

@@ -2,10 +2,7 @@
 
 exports[`Config view matches snapshot 1`] = `
 .c0 {
-  padding: 16px;
   margin: 16px;
-  border: 1px solid #F1F2F3;
-  border-radius: 8px;
 }
 
 <div
