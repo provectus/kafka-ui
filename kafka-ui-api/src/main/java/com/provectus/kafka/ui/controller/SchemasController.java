@@ -69,7 +69,8 @@ public class SchemasController extends AbstractController implements SchemasApi 
   @Override
   public Mono<ResponseEntity<Void>> deleteSchema(
       String clusterName, String subjectName, ServerWebExchange exchange) {
-    return schemaRegistryService.deleteSchemaSubjectEntirely(getCluster(clusterName), subjectName);
+    return schemaRegistryService.deleteSchemaSubjectEntirely(getCluster(clusterName), subjectName)
+            .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
