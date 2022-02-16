@@ -70,7 +70,7 @@ describe('useDataSaver hook', () => {
     });
   });
 
-  it('copies the data to the clipboard', () => {
+  describe('copies the data to the clipboard', () => {
     Object.assign(navigator, {
       clipboard: {
         writeText: jest.fn(),
@@ -78,15 +78,31 @@ describe('useDataSaver hook', () => {
     });
     jest.spyOn(navigator.clipboard, 'writeText');
 
-    const HookWrapper: React.FC = () => {
-      const { copyToClipboard } = useDataSaver('topic', content);
-      useEffect(() => copyToClipboard(), []);
-      return null;
-    };
+    it('data with type Object', () => {
+      const HookWrapper: React.FC = () => {
+        const { copyToClipboard } = useDataSaver('topic', content);
+        useEffect(() => copyToClipboard(), []);
+        return null;
+      };
+      render(<HookWrapper />);
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        JSON.stringify(content)
+      );
+    });
 
-    render(<HookWrapper />);
-    expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
-      JSON.stringify(content)
-    );
+    it('data with type String', () => {
+      const HookWrapper: React.FC = () => {
+        const { copyToClipboard } = useDataSaver(
+          'topic',
+          '{ title: "title", }'
+        );
+        useEffect(() => copyToClipboard(), []);
+        return null;
+      };
+      render(<HookWrapper />);
+      expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
+        String('{ title: "title", }')
+      );
+    });
   });
 });
