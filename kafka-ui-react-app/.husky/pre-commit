@@ -5,8 +5,8 @@
 SRC_PATTERN="kafka-ui-react-app"
 if git diff --cached --name-only | grep --quiet "$SRC_PATTERN"
 then
+  cd kafka-ui-react-app && npm run pre-commit
+else 
   echo "Skipping frontend tests"
   exit 0
-else 
-  cd kafka-ui-react-app && npm run pre-commit
 fi
