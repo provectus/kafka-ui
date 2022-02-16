@@ -29,7 +29,7 @@ public class ConnectorCreateView {
         contentTextArea.setValue(String.valueOf(configJson.toCharArray()));
         nameField.click();
         submitButton.click();
-        sleep(2000);
+        sleep(4000);
         log.info("Connector config is submitted");
         return new ConnectorsView();
     }

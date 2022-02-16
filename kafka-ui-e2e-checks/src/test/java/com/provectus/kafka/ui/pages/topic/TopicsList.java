@@ -44,7 +44,7 @@ public class TopicsList {
     @SneakyThrows
     public TopicView openTopic(String topicName) {
         $$x("//table/tbody/tr/td[2]")
-                .shouldBe(CollectionCondition.sizeGreaterThan(4))
+                .shouldBe(CollectionCondition.sizeGreaterThanOrEqual(4))
                 .find(Condition.exactText(topicName))
                 .$("a")
                 .click();

@@ -82,18 +82,9 @@ public class BaseTest {
     private static void setupSelenoid() {
         String remote = TestConfiguration.SELENOID_URL;
         if (TestConfiguration.SHOULD_START_SELENOID) {
-            //TODO this image should be configurable
-//            DockerClient client = DockerClientFactory.instance().client();
-//            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-//            DockerClient client = DockerClientFactory.instance().client();
-//            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-          //  Testcontainers.exposeHostPorts(8080);
-            WebDriverManager wdm = WebDriverManager.chromedriver().browserInDocker(); //.enableVnc().enableRecording();
+            WebDriverManager wdm = WebDriverManager.chromedriver().browserInDocker();
             wdm.create();
-            //   selenoid.start();
             remote = wdm.getDockerSeleniumServerUrl().toString();
-//            remote = "http://%s:%s/wd/hub"
-//                    .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
         }
 
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
@@ -109,11 +100,6 @@ public class BaseTest {
         Configuration.baseUrl = TestConfiguration.BASE_URL;
         Configuration.timeout = 10000;
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
-//        var capabilities = new DesiredCapabilities();
-//        capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
-//        capabilities.setCapability("browser", "chrome");
-        //Configuration.browserCapabilities = capabilities;
-
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide().savePageSource(false));
     }
 

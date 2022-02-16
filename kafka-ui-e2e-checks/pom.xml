@@ -16,13 +16,13 @@
 
         <aspectj.version>1.9.7</aspectj.version>
         <allure.version>2.17.2</allure.version>
-        <json-smart.version>1.3.2</json-smart.version>
+        <json-smart.version>2.4.7</json-smart.version>
         <testcontainers.version>1.16.3</testcontainers.version>
-        <selenide.version>5.25.1</selenide.version>
+        <selenide.version>6.3.0</selenide.version>
         <assertj.version>3.17.1</assertj.version>
         <google.auto-service.version>1.0-rc7</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
-        <slf4j.version>1.7.32</slf4j.version>
+        <slf4j.version>1.7.35</slf4j.version>
         <testcontainers.junit-jupiter.version>1.16.3</testcontainers.junit-jupiter.version>
         <allure.java-commons.version>2.17.2</allure.java-commons.version>
         <dotenv.version>2.2.0</dotenv.version>
