@@ -5,7 +5,7 @@
 SRC_PATTERN="kafka-ui-react-app/"
 if git diff --cached --name-only | grep --quiet "$SRC_PATTERN"
 then
-  echo "none"
+  echo "Skipping frontend tests"
   exit 0
 fi
 

@@ -41,6 +41,7 @@ const App: React.FC = () => {
     dispatch(fetchClusters());
   }, [fetchClusters]);
 
+  console.log('test');
   return (
     <ThemeProvider theme={theme}>
       <S.Layout>
