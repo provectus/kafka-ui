@@ -11,6 +11,10 @@ Once you built the app, run the following in `kafka-ui-api/`:
 
 ```sh
 ./mvnw spring-boot:run -Pprod
+
+# or
+
+./mvnw spring-boot:run -Pprod -Dspring.config.location=file:///path/to/conf.yaml
 ```
 
 ### Running in kubernetes
