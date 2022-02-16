@@ -66,7 +66,7 @@ const Diff: React.FC<DiffProps> = ({
 
   const searchParams = React.useMemo(
     () => new URLSearchParams(location.search),
-    [location, history, leftVersion, rightVersion]
+    [location]
   );
 
   return (

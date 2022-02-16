@@ -1,4 +1,3 @@
-/* eslint-disable react/jsx-props-no-spreading */
 import { diff as DiffEditor } from 'react-ace';
 import 'ace-builds/src-noconflict/mode-json5';
 import 'ace-builds/src-noconflict/mode-protobuf';
