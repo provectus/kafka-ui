@@ -6,6 +6,7 @@ import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import * as C from 'components/common/Tag/Tag.styled';
+import getTagColor from 'components/Connect/Utils/TagColor';
 
 interface RouterParams {
   clusterName: ClusterName;
@@ -35,7 +36,7 @@ const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
       <td>{task.status?.id}</td>
       <td>{task.status?.workerId}</td>
       <td>
-        <C.Tag color="yellow">{task.status.state}</C.Tag>
+        <C.Tag color={getTagColor(task.status)}>{task.status.state}</C.Tag>
       </td>
       <td>{task.status.trace || 'null'}</td>
       <td style={{ width: '5%' }}>
