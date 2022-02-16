@@ -166,6 +166,7 @@ const Filters: React.FC<FiltersProps> = ({
     history.push({
       search: `?${qs}`,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const toggleSeekDirection = (val: string) => {
@@ -243,7 +244,7 @@ const Filters: React.FC<FiltersProps> = ({
 
   React.useEffect(() => {
     handleFiltersSubmit();
-  }, [seekDirection]);
+  }, [handleFiltersSubmit, seekDirection]);
 
   return (
     <S.FiltersWrapper>
