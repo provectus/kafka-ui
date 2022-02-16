@@ -1,16 +1,19 @@
 name: e2e-checks
 on:
   pull_request_target:
-    types: [ 'opened', 'edited', 'reopened', 'synchronize' ]
+    types: ["opened", "edited", "reopened", "synchronize"]
     paths:
-      - 'kafka-ui-api/**'
-      - 'kafka-ui-contract/**'
-      - 'kafka-ui-react-app/**'
-      - 'kafka-ui-e2e-checks/**'
+      - "kafka-ui-api/**"
+      - "kafka-ui-contract/**"
+      - "kafka-ui-react-app/**"
+      - "kafka-ui-e2e-checks/**"
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - name: Cache local Maven repository
         uses: actions/cache@v2
         with:
@@ -18,7 +21,6 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - uses: actions/checkout@v2
       - name: Set the values
         id: set_env_values
         run: |
@@ -34,7 +36,7 @@ jobs:
       - name: Build with Maven
         id: build_app
         run: |
-          mvn versions:set -DnewVersion=$GITHUB_SHA
+          mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
           mvn clean package -DskipTests ${{ github.event.inputs.extraMavenOptions }}
       - name: compose app
         id: compose_app
@@ -43,7 +45,7 @@ jobs:
           docker-compose -f ./documentation/compose/kafka-ui-connectors.yaml up -d
       - name: e2e run
         run: |
-          mvn versions:set -DnewVersion=$GITHUB_SHA
+          mvn versions:set -DnewVersion=${{ github.event.pull_request.head.sha }}
           mvn -pl '!kafka-ui-api' test -Pprod
       - name: Generate allure report
         uses: simple-elf/allure-report-action@master
@@ -67,8 +69,8 @@ jobs:
         uses: Sibz/github-status-action@v1.1.6
         with:
           authToken: ${{secrets.GITHUB_TOKEN}}
-          context: 'Test report'
-          state: 'success'
+          context: "Test report"
+          state: "success"
           sha: ${{ github.event.pull_request.head.sha  || github.sha }}
           target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
       - name: Dump docker logs on failure
