@@ -8,6 +8,7 @@ import com.provectus.kafka.ui.helpers.Helpers;
 import com.provectus.kafka.ui.pages.Pages;
 import com.provectus.kafka.ui.screenshots.Screenshooter;
 import com.provectus.kafka.ui.steps.Steps;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import io.github.cdimascio.dotenv.Dotenv;
 import io.qameta.allure.selenide.AllureSelenide;
 import java.io.File;
@@ -86,17 +87,20 @@ public class BaseTest {
 //            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
 //            DockerClient client = DockerClientFactory.instance().client();
 //            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-            Testcontainers.exposeHostPorts(8080);
-            selenoid.start();
-            remote = "http://%s:%s/wd/hub"
-                    .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
+          //  Testcontainers.exposeHostPorts(8080);
+            WebDriverManager wdm = WebDriverManager.chromedriver().browserInDocker(); //.enableVnc().enableRecording();
+            wdm.create();
+            //   selenoid.start();
+            remote = wdm.getDockerSeleniumServerUrl().toString();
+//            remote = "http://%s:%s/wd/hub"
+//                    .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
         }
 
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         if (!TestConfiguration.USE_LOCAL_BROWSER) {
             Configuration.remote = remote;
-//            TestConfiguration.BASE_URL =
-//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+            TestConfiguration.BASE_URL =
+                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
         }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
@@ -105,10 +109,10 @@ public class BaseTest {
         Configuration.baseUrl = TestConfiguration.BASE_URL;
         Configuration.timeout = 10000;
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
-        var capabilities = new DesiredCapabilities();
-        capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
-        capabilities.setCapability("browser", "chrome");
-        Configuration.browserCapabilities = capabilities;
+//        var capabilities = new DesiredCapabilities();
+//        capabilities.setCapability("enableVNC", TestConfiguration.ENABLE_VNC);
+//        capabilities.setCapability("browser", "chrome");
+        //Configuration.browserCapabilities = capabilities;
 
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide().savePageSource(false));
     }

@@ -50,7 +50,7 @@ public class ApiHelper {
         }
     }
 
-    @SneakyThrows
+
     public void deleteTopic(String clusterName, String topicName) {
         try {
             topicApi().deleteTopic(clusterName, topicName).block();

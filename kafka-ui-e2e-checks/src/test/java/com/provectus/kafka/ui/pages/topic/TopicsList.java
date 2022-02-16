@@ -54,7 +54,7 @@ public class TopicsList {
     @SneakyThrows
     public TopicsList isTopicNotVisible(String topicName) {
         $$x("//table/tbody/tr/td[2]")
-                .shouldBe(CollectionCondition.sizeGreaterThan(4))
+                .shouldBe(CollectionCondition.sizeGreaterThanOrEqual(4))
                 .find(Condition.exactText(topicName))
                 .shouldBe(Condition.not(Condition.visible));
         return this;
