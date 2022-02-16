@@ -35,11 +35,11 @@ const App: React.FC = () => {
 
   React.useEffect(() => {
     closeSidebar();
-  }, [location]);
+  }, [closeSidebar, location]);
 
   React.useEffect(() => {
     dispatch(fetchClusters());
-  }, [fetchClusters]);
+  }, [dispatch]);
 
   return (
     <ThemeProvider theme={theme}>

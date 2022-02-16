@@ -42,7 +42,7 @@ const Query: FC = () => {
 
   useEffect(() => {
     return reset;
-  }, []);
+  }, [reset]);
 
   const { handleSubmit, setValue, control } = useForm<FormValues>({
     mode: 'onTouched',
@@ -53,19 +53,22 @@ const Query: FC = () => {
     },
   });
 
-  const submitHandler = useCallback(async (values: FormValues) => {
-    dispatch(
-      executeKsql({
-        clusterName,
-        ksqlCommand: {
-          ...values,
-          streamsProperties: values.streamsProperties
-            ? JSON.parse(values.streamsProperties)
-            : undefined,
-        },
-      })
-    );
-  }, []);
+  const submitHandler = useCallback(
+    async (values: FormValues) => {
+      dispatch(
+        executeKsql({
+          clusterName,
+          ksqlCommand: {
+            ...values,
+            streamsProperties: values.streamsProperties
+              ? JSON.parse(values.streamsProperties)
+              : undefined,
+          },
+        })
+      );
+    },
+    [clusterName, dispatch]
+  );
 
   return (
     <>

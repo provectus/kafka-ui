@@ -47,14 +47,14 @@ const Details: React.FC = () => {
     return () => {
       dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
     };
-  }, []);
+  }, [clusterName, dispatch, subject]);
 
   React.useEffect(() => {
     dispatch(fetchSchemaVersions({ clusterName, subject }));
     return () => {
       dispatch(resetLoaderById(SCHEMAS_VERSIONS_FETCH_ACTION));
     };
-  }, [clusterName, subject]);
+  }, [clusterName, dispatch, subject]);
 
   const versions = useAppSelector((state) => selectAllSchemaVersions(state));
   const schema = useAppSelector(getSchemaLatest);
@@ -72,7 +72,7 @@ const Details: React.FC = () => {
       const err = await getResponse(e as Response);
       dispatch(serverErrorAlertAdded(err));
     }
-  }, [clusterName, subject]);
+  }, [clusterName, dispatch, history, subject]);
 
   if (!isFetched || !schema) {
     return <PageLoader />;

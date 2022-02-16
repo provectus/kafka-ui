@@ -54,7 +54,7 @@ const CustomParamField: React.FC<Props> = ({
         shouldValidate: true,
       });
     }
-  }, [nameValue]);
+  }, [existingFields, index, nameValue, setExistingFields, setValue]);
 
   return (
     <C.Column>
