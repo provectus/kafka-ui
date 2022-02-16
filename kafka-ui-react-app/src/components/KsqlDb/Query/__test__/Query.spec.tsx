@@ -21,8 +21,8 @@ describe('KsqlDb Query Component', () => {
         tables: [],
         executionResult: ksqlCommandResponse,
       },
-      legacyLoader: {
-        EXECUTE_KSQL: 'fetched',
+      loader: {
+        'ksqlDb/executeKsql': 'fulfilled',
       },
     };
     const store = mockStore(initialState);
@@ -50,8 +50,8 @@ describe('KsqlDb Query Component', () => {
           message: 'No available data',
         },
       },
-      legacyLoader: {
-        EXECUTE_KSQL: 'fetched',
+      loader: {
+        'ksqlDb/executeKsql': 'fulfilled',
       },
     };
     const store = mockStore(initialState);

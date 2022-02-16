@@ -1,4 +1,8 @@
-import { MessageSchemaSourceEnum, TopicColumnsToSort } from 'generated-sources';
+import {
+  MessageSchemaSourceEnum,
+  SortOrder,
+  TopicColumnsToSort,
+} from 'generated-sources';
 import {
   deleteTopicAction,
   clearMessagesTopicAction,
@@ -72,6 +76,7 @@ let state = {
   totalPages: 1,
   search: '',
   orderBy: null,
+  sortOrder: SortOrder.ASC,
   consumerGroups: [],
 };
 
@@ -130,6 +135,7 @@ describe('topics reducer', () => {
         totalPages: 1,
         search: '',
         orderBy: null,
+        sortOrder: SortOrder.ASC,
         consumerGroups: [],
       };
       expect(

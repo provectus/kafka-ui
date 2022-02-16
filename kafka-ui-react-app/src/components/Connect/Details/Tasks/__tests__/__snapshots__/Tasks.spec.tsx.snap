@@ -44,6 +44,8 @@ exports[`Tasks view matches snapshot 1`] = `
   background: #FFFFFF;
   cursor: default;
   color: #73848C;
+  padding-right: 18px;
+  position: relative;
 }
 
 .c1 {
@@ -217,6 +219,8 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
   background: #FFFFFF;
   cursor: default;
   color: #73848C;
+  padding-right: 18px;
+  position: relative;
 }
 
 .c1 {
