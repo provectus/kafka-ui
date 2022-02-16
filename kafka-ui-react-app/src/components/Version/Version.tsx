@@ -16,6 +16,7 @@ const Version: React.FC<VesionProps> = ({ tag, commit }) => {
     outdated: false,
     latestTag: '',
   });
+
   useEffect(() => {
     fetch(GIT_REPO_LATEST_RELEASE_LINK)
       .then((response) => response.json())
