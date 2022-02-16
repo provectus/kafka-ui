@@ -55,6 +55,7 @@ const getFormattedErrorFromTableData = (
 
 const Query: FC = () => {
   const { clusterName } = useParams<{ clusterName: string }>();
+
   const sseRef = React.useRef<{ sse: EventSource | null; isOpen: boolean }>({
     sse: null,
     isOpen: false,
