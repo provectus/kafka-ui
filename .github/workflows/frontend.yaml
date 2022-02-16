@@ -4,10 +4,10 @@ on:
     branches:
       - master
   pull_request_target:
-    types: ['opened', 'edited', 'reopened', 'synchronize']
+    types: ["opened", "edited", "reopened", "synchronize"]
     paths:
-    - 'kafka-ui-contract/**'
-    - 'kafka-ui-react-app/**'
+      - "kafka-ui-contract/**"
+      - "kafka-ui-react-app/**"
 jobs:
   build-and-test:
     env:
@@ -15,41 +15,43 @@ jobs:
       NODE_ENV: dev
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: Use Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: "14"
-    - name: Cache node dependency
-      uses: actions/cache@v1
-      with:
-        path: kafka-ui-react-app/node_modules
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
-    - name: Install Node dependencies
-      run: |
-        cd kafka-ui-react-app/
-        npm install
-    - name: Generate sources
-      run: |
-        cd kafka-ui-react-app/
-        npm run gen:sources
-    - name: Linter
-      run: |
-        cd kafka-ui-react-app/
-        npm run lint
-    - name: Tests
-      run: |
-        cd kafka-ui-react-app/
-        npm run test:CI
-    - name: SonarCloud Scan
-      uses: workshur/sonarcloud-github-action@improved_basedir
-      with:
-        projectBaseDir: ./kafka-ui-react-app
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
+      - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Use Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: "14"
+      - name: Cache node dependency
+        uses: actions/cache@v1
+        with:
+          path: kafka-ui-react-app/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install Node dependencies
+        run: |
+          cd kafka-ui-react-app/
+          npm install
+      - name: Generate sources
+        run: |
+          cd kafka-ui-react-app/
+          npm run gen:sources
+      - name: Linter
+        run: |
+          cd kafka-ui-react-app/
+          npm run lint
+      - name: Tests
+        run: |
+          cd kafka-ui-react-app/
+          npm run test:CI
+      - name: SonarCloud Scan
+        uses: workshur/sonarcloud-github-action@improved_basedir
+        with:
+          projectBaseDir: ./kafka-ui-react-app
+          args: -Dsonar.pullrequest.key=${{ github.event.pull_request.number }} -Dsonar.pullrequest.branch=${{ github.head_ref }} -Dsonar.pullrequest.base=${{ github.base_ref }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONTEND }}
