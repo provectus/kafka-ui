@@ -207,7 +207,7 @@ describe('QueryForm', () => {
     expect(cancelFn).toBeCalled();
   });
 
-  it('submits with ctrl+enter', async () => {
+  it('submits form with ctrl+enter', async () => {
     const submitFn = jest.fn();
     renderComponent({
       fetching: false,
@@ -231,10 +231,19 @@ describe('QueryForm', () => {
       )
     );
 
-    expect(submitFn).toBeCalled();
+    await waitFor(() =>
+      userEvent.type(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{ctrl}{enter}'
+      )
+    );
+
+    expect(submitFn.mock.calls.length).toBe(2);
   });
 
-  it('clears text input', async () => {
+  it('clears text inputs with Clear button', async () => {
     renderComponent({
       fetching: false,
       hasResults: false,
@@ -259,5 +268,36 @@ describe('QueryForm', () => {
     );
 
     expect(screen.queryByText('show tables;')).not.toBeInTheDocument();
+  });
+
+  it('clears text inputs with Clear button', async () => {
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: jest.fn(),
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"some":"json"}'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.click(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('button', {
+          name: 'Clear',
+        })
+      )
+    );
+
+    expect(screen.queryByText('{"some":"json"}')).not.toBeInTheDocument();
   });
 });
