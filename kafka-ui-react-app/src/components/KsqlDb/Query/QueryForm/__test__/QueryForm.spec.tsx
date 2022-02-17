@@ -207,7 +207,7 @@ describe('QueryForm', () => {
     expect(cancelFn).toBeCalled();
   });
 
-  it('submits form with ctrl+enter', async () => {
+  it('submits form with ctrl+enter on KSQL editor', async () => {
     const submitFn = jest.fn();
     renderComponent({
       fetching: false,
@@ -231,6 +231,26 @@ describe('QueryForm', () => {
       )
     );
 
+    expect(submitFn.mock.calls.length).toBe(1);
+  });
+
+  it('submits form with ctrl+enter on streamProperties editor', async () => {
+    const submitFn = jest.fn();
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: submitFn,
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      )
+    );
+
     await waitFor(() =>
       userEvent.type(
         within(
@@ -240,10 +260,10 @@ describe('QueryForm', () => {
       )
     );
 
-    expect(submitFn.mock.calls.length).toBe(2);
+    expect(submitFn.mock.calls.length).toBe(1);
   });
 
-  it('clears text inputs with Clear button', async () => {
+  it('clears KSQL with Clear button', async () => {
     renderComponent({
       fetching: false,
       hasResults: false,
@@ -270,7 +290,7 @@ describe('QueryForm', () => {
     expect(screen.queryByText('show tables;')).not.toBeInTheDocument();
   });
 
-  it('clears text inputs with Clear button', async () => {
+  it('clears streamProperties with Clear button', async () => {
     renderComponent({
       fetching: false,
       hasResults: false,

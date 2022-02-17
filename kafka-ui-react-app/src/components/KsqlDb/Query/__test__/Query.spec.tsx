@@ -20,6 +20,27 @@ const renderComponent = () =>
     }
   );
 
+// Small mock to get rid of reference error
+class EventSourceMock {
+  url: string;
+
+  close: () => void;
+
+  open: () => void;
+
+  error: () => void;
+
+  onmessage: () => void;
+
+  constructor(url: string) {
+    this.url = url;
+    this.open = jest.fn();
+    this.error = jest.fn();
+    this.onmessage = jest.fn();
+    this.close = jest.fn();
+  }
+}
+
 describe('Query', () => {
   it('renders', () => {
     renderComponent();
@@ -33,10 +54,13 @@ describe('Query', () => {
   it('fetch on execute', async () => {
     renderComponent();
 
-    const mock = fetchMock.postOnce(
-      `/api/clusters/${clusterName}/ksql/v2`,
-      200
-    );
+    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
+      pipeId: 'testPipeID',
+    });
+
+    Object.defineProperty(window, 'EventSource', {
+      value: EventSourceMock,
+    });
 
     await waitFor(() =>
       userEvent.paste(
