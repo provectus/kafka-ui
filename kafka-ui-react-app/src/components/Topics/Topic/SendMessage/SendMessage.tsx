@@ -1,6 +1,6 @@
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import React, { useMemo, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
 import { clusterTopicMessagesPath } from 'lib/paths';
@@ -75,15 +75,12 @@ const SendMessage: React.FC = () => {
     reset,
   } = useForm({
     mode: 'onChange',
-    defaultValues: useMemo(
-      () => ({
-        key: keyDefaultValue,
-        content: contentDefaultValue,
-        headers: undefined,
-        partition: undefined,
-      }),
-      [keyDefaultValue, contentDefaultValue]
-    ),
+    defaultValues: {
+      key: keyDefaultValue,
+      content: contentDefaultValue,
+      headers: undefined,
+      partition: undefined,
+    },
   });
 
   useEffect(() => {
