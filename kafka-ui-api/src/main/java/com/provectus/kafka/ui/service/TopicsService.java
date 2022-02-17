@@ -433,7 +433,7 @@ public class TopicsService {
   }
 
   public Mono<TopicDTO> cloneTopic(
-      KafkaCluster cluster, String topicName, String newTopicName, Boolean includeTopicMessages) {
+      KafkaCluster cluster, String topicName, String newTopicName, Optional<Boolean> includeTopicMessages) {
     return loadTopic(cluster, topicName).flatMap(topic ->
         adminClientService.get(cluster).flatMap(ac -> ac.createTopic(newTopicName,
             topic.getPartitionCount(),
@@ -445,7 +445,7 @@ public class TopicsService {
                         InternalTopicConfig::getValue)))
         ).thenReturn(newTopicName).flatMap(a -> loadTopic(cluster, newTopicName)).map(clusterMapper::toTopic)
             .doOnSuccess(topicDTO -> {
-              if (includeTopicMessages) {
+              if (includeTopicMessages.orElse(false)) {
                 Map<TopicPartition, Long> seekTo = IntStream.range(0, topicDTO.getPartitionCount())
                     .boxed().map(partitionNumber -> new TopicPartition(topicName, partitionNumber))
                     .collect(Collectors.toMap(Function.identity(), a -> 0L));
