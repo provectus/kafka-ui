@@ -11,6 +11,7 @@ import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.TopicMessageDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.serde.DeserializationService;
 import com.provectus.kafka.ui.serde.RecordSerDe;
@@ -162,6 +163,21 @@ public class MessagesService {
         .takeWhile(createTakeWhilePredicate(consumerPosition, limit))
         .subscribeOn(Schedulers.boundedElastic())
         .share();
+  }
+
+  public Mono<Void> copyAllTopicMessages(KafkaCluster cluster, String sourceTopic, String destinationTopic,
+                                         ConsumerPosition consumerPosition) {
+    return loadMessages(cluster, sourceTopic, consumerPosition, null, null, Integer.MAX_VALUE)
+          .filter(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
+          .flatMap(message -> {
+            TopicMessageDTO topicMessage = message.getMessage();
+            return sendMessage(cluster, destinationTopic, new CreateTopicMessageDTO()
+                .partition(topicMessage.getPartition())
+                .content(topicMessage.getContent())
+                .headers(topicMessage.getHeaders())
+                .key(topicMessage.getKey())
+            );
+          }).then();
   }
 
   private Predicate<TopicMessageEventDTO> createTakeWhilePredicate(

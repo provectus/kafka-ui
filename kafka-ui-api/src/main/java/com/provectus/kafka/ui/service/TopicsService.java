@@ -9,6 +9,7 @@ import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.exception.TopicRecreationException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
+import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalLogDirStats;
 import com.provectus.kafka.ui.model.InternalPartition;
@@ -21,6 +22,8 @@ import com.provectus.kafka.ui.model.PartitionsIncreaseDTO;
 import com.provectus.kafka.ui.model.PartitionsIncreaseResponseDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeDTO;
 import com.provectus.kafka.ui.model.ReplicationFactorChangeResponseDTO;
+import com.provectus.kafka.ui.model.SeekDirectionDTO;
+import com.provectus.kafka.ui.model.SeekTypeDTO;
 import com.provectus.kafka.ui.model.SortOrderDTO;
 import com.provectus.kafka.ui.model.TopicColumnsToSortDTO;
 import com.provectus.kafka.ui.model.TopicConfigDTO;
@@ -42,6 +45,7 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.admin.ConfigEntry;
@@ -67,6 +71,7 @@ public class TopicsService {
   private final ClusterMapper clusterMapper;
   private final DeserializationService deserializationService;
   private final MetricsCache metricsCache;
+  private final MessagesService messagesService;
   @Value("${topic.recreate.maxRetries:15}")
   private int recreateMaxRetries;
   @Value("${topic.recreate.delay.seconds:1}")
@@ -425,6 +430,32 @@ public class TopicsService {
     return deserializationService
         .getRecordDeserializerForCluster(cluster)
         .getTopicSchema(topicName);
+  }
+
+  public Mono<TopicDTO> cloneTopic(
+      KafkaCluster cluster, String topicName, String newTopicName, Boolean includeTopicMessages) {
+    return loadTopic(cluster, topicName).flatMap(topic ->
+        adminClientService.get(cluster).flatMap(ac -> ac.createTopic(newTopicName,
+            topic.getPartitionCount(),
+            (short) topic.getReplicationFactor(),
+            topic.getTopicConfigs()
+                .stream()
+                .collect(Collectors
+                    .toMap(InternalTopicConfig::getName,
+                        InternalTopicConfig::getValue)))
+        ).thenReturn(newTopicName).flatMap(a -> loadTopic(cluster, newTopicName)).map(clusterMapper::toTopic)
+            .doOnSuccess(topicDTO -> {
+              if (includeTopicMessages) {
+                Map<TopicPartition, Long> seekTo = IntStream.range(0, topicDTO.getPartitionCount())
+                    .boxed().map(partitionNumber -> new TopicPartition(topicName, partitionNumber))
+                    .collect(Collectors.toMap(Function.identity(), a -> 0L));
+                ConsumerPosition consumerPosition = new ConsumerPosition(SeekTypeDTO.BEGINNING,
+                    seekTo,
+                    SeekDirectionDTO.FORWARD);
+                messagesService.copyAllTopicMessages(cluster, topicName, newTopicName, consumerPosition).subscribe();
+              }
+            })
+    );
   }
 
   @VisibleForTesting
