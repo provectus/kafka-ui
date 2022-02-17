@@ -175,8 +175,8 @@ describe('getFormattedErrorFromTableData', () => {
     });
 
     expect(getFormattedErrorFromTableData([])).toStrictEqual({
-      title: '',
-      message: '',
+      title: 'Unknown error',
+      message: 'Recieved empty response',
     });
   });
 });

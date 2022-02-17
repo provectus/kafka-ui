@@ -32,15 +32,15 @@ export const getFormattedErrorFromTableData = (
   // or
   // [["message"]]
 
-  let title = '';
-  let message = '';
   if (!responseValues || !responseValues.length) {
     return {
-      title,
-      message,
+      title: 'Unknown error',
+      message: 'Recieved empty response',
     };
   }
 
+  let title = '';
+  let message = '';
   if (responseValues[0].length < 2) {
     const [messageText] = responseValues[0];
     title = messageText;
