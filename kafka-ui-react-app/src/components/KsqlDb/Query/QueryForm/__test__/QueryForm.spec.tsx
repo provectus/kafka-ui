@@ -252,6 +252,15 @@ describe('QueryForm', () => {
     );
 
     await waitFor(() =>
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"some":"json"}'
+      )
+    );
+
+    await waitFor(() =>
       userEvent.type(
         within(
           screen.getByLabelText('Stream properties (JSON format)')
