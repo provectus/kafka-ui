@@ -206,4 +206,58 @@ describe('QueryForm', () => {
 
     expect(cancelFn).toBeCalled();
   });
+
+  it('submits with ctrl+enter', async () => {
+    const submitFn = jest.fn();
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: submitFn,
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.type(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        '{ctrl}{enter}'
+      )
+    );
+
+    expect(submitFn).toBeCalled();
+  });
+
+  it('clears text input', async () => {
+    renderComponent({
+      fetching: false,
+      hasResults: false,
+      handleClearResults: jest.fn(),
+      handleSSECancel: jest.fn(),
+      submitHandler: jest.fn(),
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.click(
+        within(screen.getByLabelText('KSQL')).getByRole('button', {
+          name: 'Clear',
+        })
+      )
+    );
+
+    expect(screen.queryByText('show tables;')).not.toBeInTheDocument();
+  });
 });
