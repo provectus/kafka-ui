@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
@@ -71,26 +70,40 @@ class SchemaRegistryServiceTests extends AbstractBaseTest {
   }
 
   @Test
-  void shouldReturn409WhenSchemaDuplicatesThePreviousVersion() {
+  void shouldNotDoAnythingIfSchemaNotChanged() {
     String schema =
         "{\"subject\":\"%s\",\"schemaType\":\"AVRO\",\"schema\":"
             + "\"{\\\"type\\\": \\\"string\\\"}\"}";
 
-    webTestClient
+    SchemaSubjectDTO dto = webTestClient
         .post()
         .uri("/api/clusters/{clusterName}/schemas", LOCAL)
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromValue(String.format(schema, subject)))
         .exchange()
-        .expectStatus().isEqualTo(HttpStatus.OK);
+        .expectStatus()
+        .isOk()
+        .expectBody(SchemaSubjectDTO.class)
+        .returnResult()
+        .getResponseBody();
 
-    webTestClient
+    Assertions.assertNotNull(dto);
+    Assertions.assertEquals("1", dto.getVersion());
+
+    dto = webTestClient
         .post()
         .uri("/api/clusters/{clusterName}/schemas", LOCAL)
         .contentType(MediaType.APPLICATION_JSON)
         .body(BodyInserters.fromValue(String.format(schema, subject)))
         .exchange()
-        .expectStatus().isEqualTo(HttpStatus.CONFLICT);
+        .expectStatus()
+        .isOk()
+        .expectBody(SchemaSubjectDTO.class)
+        .returnResult()
+        .getResponseBody();
+
+    Assertions.assertNotNull(dto);
+    Assertions.assertEquals("1", dto.getVersion());
   }
 
   @Test
