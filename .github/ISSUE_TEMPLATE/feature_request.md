@@ -1,7 +1,7 @@
 ---
 name: "\U0001F680 Feature request"
 about: Propose a new feature
-title: "[Feature]"
+title: ''
 labels: status/triage, type/feature
 assignees: ''
 
