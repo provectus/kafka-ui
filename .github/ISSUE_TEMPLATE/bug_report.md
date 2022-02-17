@@ -1,7 +1,7 @@
 ---
 name: "\U0001F41E  Bug report"
 about: Create a bug report
-title: "[Bug]"
+title: ''
 labels: status/triage, type/bug
 assignees: ''
 
