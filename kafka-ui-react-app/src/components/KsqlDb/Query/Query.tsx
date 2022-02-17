@@ -34,12 +34,19 @@ export const getFormattedErrorFromTableData = (
 
   let title = '';
   let message = '';
-  if (responseValues && responseValues[0].length < 2) {
+  if (!responseValues || !responseValues.length) {
+    return {
+      title,
+      message,
+    };
+  }
+
+  if (responseValues[0].length < 2) {
     const [messageText] = responseValues[0];
     title = messageText;
   } else {
     const [type, errorCode, messageText, statementText, entities] =
-      (responseValues || [[]])[0];
+      responseValues[0];
     title = `[Error #${errorCode}] ${type}`;
     message =
       (entities?.length ? `[${entities.join(', ')}] ` : '') +

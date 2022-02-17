@@ -51,6 +51,7 @@ describe('Query', () => {
     ).toBeInTheDocument();
   });
 
+  afterEach(() => fetchMock.reset());
   it('fetch on execute', async () => {
     renderComponent();
 
@@ -66,6 +67,72 @@ describe('Query', () => {
       userEvent.paste(
         within(screen.getByLabelText('KSQL')).getByRole('textbox'),
         'show tables;'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
+    );
+    expect(mock.calls().length).toBe(1);
+  });
+
+  it('fetch on execute with streamParams', async () => {
+    renderComponent();
+
+    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
+      pipeId: 'testPipeID',
+    });
+
+    Object.defineProperty(window, 'EventSource', {
+      value: EventSourceMock,
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"some":"json"}'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.click(screen.getByRole('button', { name: 'Execute' }))
+    );
+    expect(mock.calls().length).toBe(1);
+  });
+
+  it('fetch on execute with streamParams', async () => {
+    renderComponent();
+
+    const mock = fetchMock.postOnce(`/api/clusters/${clusterName}/ksql/v2`, {
+      pipeId: 'testPipeID',
+    });
+
+    Object.defineProperty(window, 'EventSource', {
+      value: EventSourceMock,
+    });
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(screen.getByLabelText('KSQL')).getByRole('textbox'),
+        'show tables;'
+      )
+    );
+
+    await waitFor(() =>
+      userEvent.paste(
+        within(
+          screen.getByLabelText('Stream properties (JSON format)')
+        ).getByRole('textbox'),
+        '{"some":"json"}'
       )
     );
 
@@ -105,6 +172,11 @@ describe('getFormattedErrorFromTableData', () => {
     ).toStrictEqual({
       title: '[Error #errorCode] some_type',
       message: '[test1, test2] "statementText" messageText',
+    });
+
+    expect(getFormattedErrorFromTableData([])).toStrictEqual({
+      title: '',
+      message: '',
     });
   });
 });
