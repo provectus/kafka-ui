@@ -44,6 +44,17 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
+    public static GenericContainer selenoid =
+            new GenericContainer(DockerImageName.parse("aerokube/selenoid:latest-release"))
+                    .withExposedPorts(4444)
+                    .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
+                    .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
+                    .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
+                    .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
+                    .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
+                    .withCommand(
+                            "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
+
     static {
         if (!new File("./.env").exists()) {
             try {
@@ -70,16 +81,24 @@ public class BaseTest {
     private static void setupSelenoid() {
         String remote = TestConfiguration.SELENOID_URL;
         if (TestConfiguration.SHOULD_START_SELENOID) {
-            WebDriverManager wdm = WebDriverManager.chromedriver().browserInDocker();
-            wdm.create();
-            remote = wdm.getDockerSeleniumServerUrl().toString();
+//            WebDriverManager wdm = WebDriverManager.chromedriver().browserInDocker();
+//            wdm.create();
+            DockerClient client = DockerClientFactory.instance().client();
+            DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
+            Testcontainers.exposeHostPorts(8080);
+            selenoid.start();
+            remote =
+                    "http://%s:%s/wd/hub"
+                            .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
+
+//            remote = wdm.getDockerSeleniumServerUrl().toString();
         }
 
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         if (!TestConfiguration.USE_LOCAL_BROWSER) {
             Configuration.remote = remote;
-//            TestConfiguration.BASE_URL =
-//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+            TestConfiguration.BASE_URL =
+                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
         }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
