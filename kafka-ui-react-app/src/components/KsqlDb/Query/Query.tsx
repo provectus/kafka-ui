@@ -18,19 +18,19 @@ import QueryForm from './QueryForm/QueryForm';
 
 const AUTO_DISMISS_TIME = 8_000;
 
-const getFormattedErrorFromTableData = (
+export const getFormattedErrorFromTableData = (
   responseValues: KsqlTableResponse['values']
 ): { title: string; message: string } => {
   // We expect someting like that
-  // "columnNames": [
+  // [[
   //   "@type",
   //   "error_code",
   //   "message",
   //   "statementText"?,
   //   "entities"?
-  // ],
+  // ]],
   // or
-  // "columnNames":["message"]
+  // [["message"]]
 
   let title = '';
   let message = '';
