@@ -107,7 +107,7 @@ public class BaseTest {
         Configuration.baseUrl = TestConfiguration.BASE_URL;
         Configuration.timeout = 10000;
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
-        SelenideLogger.addListener("AllureSelenide", new AllureSelenide().savePageSource(false));
+        SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));
     }
 
     public static void clearReports() {

@@ -14,18 +14,18 @@
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <junit.version>5.8.2</junit.version>
         <aspectj.version>1.9.8</aspectj.version>
-        <allure.version>2.17.1</allure.version>
+        <allure.version>2.17.2</allure.version>
         <json-smart.version>1.3.3</json-smart.version>
         <testcontainers.version>1.15.2</testcontainers.version>
-        <selenide.version>5.25.1</selenide.version>
+        <selenide.version>6.3.0</selenide.version>
         <assertj.version>3.17.1</assertj.version>
         <google.auto-service.version>1.0-rc7</google.auto-service.version>
         <hamcrest.version>2.2</hamcrest.version>
         <slf4j.version>1.7.32</slf4j.version>
         <testcontainers.junit-jupiter.version>1.15.1</testcontainers.junit-jupiter.version>
-        <allure.java-commons.version>2.13.6</allure.java-commons.version>
+        <allure.java-commons.version>2.17.2</allure.java-commons.version>
         <dotenv.version>2.2.0</dotenv.version>
-        <junit.platform-launcher.version>1.6.2</junit.platform-launcher.version>
+        <junit.platform-launcher.version>1.8.2</junit.platform-launcher.version>
         <allure.maven-plugin.version>2.6</allure.maven-plugin.version>
         <ashot.version>1.5.4</ashot.version>
         <allure.screendiff-plugin.version>2.17.2</allure.screendiff-plugin.version>
@@ -45,15 +45,86 @@
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
             <version>${kafka.version}</version>
+            <exclusions> <!-- could be removed when kafka version will contain zookeeper with netty 4.1.69 -->
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-buffer</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-common</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-handler</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-resolver</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport-native-epoll</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>io.netty</groupId>
+                    <artifactId>netty-transport-native-unix-common</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-         <!-- https://mvnrepository.com/artifact/io.netty/netty-all -->
+        <!--
+        whole netty dependency block could be removed
+        when kafka version will contain zookeeper with netty 4.1.69
+        -->
         <dependency>
             <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.74.Final</version>
+            <artifactId>netty-buffer</artifactId>
+            <version>${netty.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-common</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-handler</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-epoll</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-transport-native-unix-common</artifactId>
+            <version>${netty.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>org.testcontainers</groupId>
@@ -164,22 +235,6 @@
             <artifactId>kafka-ui-contract</artifactId>
             <version>${kafka-ui-contract}</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>selenium</artifactId>
-            <version>1.16.3</version>
-<!--            <scope>test</scope>-->
-        </dependency>
-        <dependency>
-            <groupId>com.github.docker-java</groupId>
-            <artifactId>docker-java</artifactId>
-            <version>3.2.13</version>
-        </dependency>
-        <dependency>
-            <groupId>com.github.docker-java</groupId>
-            <artifactId>docker-java-transport-httpclient5</artifactId>
-            <version>3.2.13</version>
         </dependency>
     </dependencies>
 
