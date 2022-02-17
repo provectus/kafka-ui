@@ -34,11 +34,7 @@ describe('TableRenderer', () => {
 
   it('renders with empty arrays', () => {
     renderComponent({
-      table: {
-        header: '',
-        columnNames: [],
-        values: [],
-      },
+      table: {},
     });
 
     expect(screen.getByText('No tables or streams found')).toBeInTheDocument();
