@@ -14,7 +14,7 @@ describe('TableRenderer', () => {
       table: {
         header: 'Test header',
         columnNames: ['Test column name'],
-        values: [['Table row #1'], ['Table row #2']],
+        values: [['Table row #1'], ['Table row #2'], ['{"jsonrow": "#3"}']],
       },
     });
 
@@ -31,6 +31,18 @@ describe('TableRenderer', () => {
       screen.getByRole('cell', { name: 'Table row #2' })
     ).toBeInTheDocument();
   });
+
+  it('renders with empty arrays', () => {
+    renderComponent({
+      table: {
+        header: '',
+        columnNames: [],
+        values: [],
+      },
+    });
+
+    expect(screen.getByText('No tables or streams found')).toBeInTheDocument();
+  });
 });
 
 describe('hasJsonStructure', () => {
@@ -44,8 +56,20 @@ describe('hasJsonStructure', () => {
     ).toBeFalsy();
     expect(hasJsonStructure('"string":"that looks like json"')).toBeFalsy();
 
+    expect(hasJsonStructure('1')).toBeFalsy();
+    expect(hasJsonStructure('{1:}')).toBeFalsy();
+    expect(hasJsonStructure('{1:"1"}')).toBeFalsy();
+
+    // @ts-expect-error We suppress error because this function works with unknown data from server
+    expect(hasJsonStructure(1)).toBeFalsy();
+
     expect(hasJsonStructure('{}')).toBeTruthy();
     expect(hasJsonStructure('{"correct": "json"}')).toBeTruthy();
-    expect(hasJsonStructure('{"correct": "json"}')).toBeTruthy();
+
+    expect(hasJsonStructure('[]')).toBeTruthy();
+    expect(hasJsonStructure('[{}]')).toBeTruthy();
+
+    expect(hasJsonStructure({})).toBeTruthy();
+    expect(hasJsonStructure({ correct: 'json' })).toBeTruthy();
   });
 });

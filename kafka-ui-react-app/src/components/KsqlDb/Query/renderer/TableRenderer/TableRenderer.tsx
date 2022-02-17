@@ -32,7 +32,7 @@ export function hasJsonStructure(
 
 const TableRenderer: React.FC<Props> = ({ table }) => {
   const heading = React.useMemo(() => {
-    return table.header || [];
+    return table.header || '';
   }, [table.header]);
   const ths = React.useMemo(() => {
     return table.columnNames || [];
