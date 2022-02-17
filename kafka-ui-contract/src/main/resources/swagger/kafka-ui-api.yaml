@@ -1910,6 +1910,8 @@ components:
           type: integer
         host:
           type: string
+        port:
+          type: integer
       required:
         - id
 
