@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.serde;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
@@ -30,16 +29,14 @@ import org.apache.kafka.common.utils.Bytes;
 //TODO: currently we assume that keys for this serde are always string - need to discuss if it is ok
 public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ProtobufSchema protobufSchema;
-  private final ObjectMapper objectMapper;
   private final Path protobufSchemaPath;
   private final ProtobufSchemaConverter schemaConverter = new ProtobufSchemaConverter();
   private final Map<String, Descriptor> messageDescriptorMap;
   private final Descriptor defaultMessageDescriptor;
 
   public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
-                                 String defaultMessageName, ObjectMapper objectMapper)
+                                 String defaultMessageName)
       throws IOException {
-    this.objectMapper = objectMapper;
     this.protobufSchemaPath = protobufSchemaPath;
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
       var schema = new ProtobufSchema(
@@ -130,12 +127,12 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
         .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
-        .schema(JsonSchema.stringSchema().toJson(objectMapper));
+        .schema(JsonSchema.stringSchema().toJson());
 
     final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
         .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
-        .schema(jsonSchema.toJson(objectMapper));
+        .schema(jsonSchema.toJson());
 
     return new TopicMessageSchemaDTO()
         .key(keySchema)

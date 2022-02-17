@@ -2492,6 +2492,8 @@ components:
       type: string
       enum:
         - RESTART
+        - RESTART_ALL_TASKS
+        - RESTART_FAILED_TASKS
         - PAUSE
         - RESUME
 

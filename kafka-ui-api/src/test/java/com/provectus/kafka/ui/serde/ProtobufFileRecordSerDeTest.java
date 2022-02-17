@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
@@ -53,7 +52,7 @@ class ProtobufFileRecordSerDeTest {
         "topic1", "test.Person",
         "topic2", "test.AddressBook");
     var deserializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, null, new ObjectMapper());
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, null);
     var msg1 = deserializer
         .deserialize(new ConsumerRecord<>("topic1", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(personMessage)));
@@ -70,8 +69,7 @@ class ProtobufFileRecordSerDeTest {
   void testNoDefaultMessageName() throws IOException {
     // by default the first message type defined in proto definition is used
     var deserializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, Collections.emptyMap(), null,
-            new ObjectMapper());
+        new ProtobufFileRecordSerDe(protobufSchemaPath, Collections.emptyMap(), null);
     var msg = deserializer
         .deserialize(new ConsumerRecord<>("topic", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(personMessage)));
@@ -82,8 +80,7 @@ class ProtobufFileRecordSerDeTest {
   void testDefaultMessageName() throws IOException {
     var messageNameMap = Map.of("topic1", "test.Person");
     var deserializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook",
-            new ObjectMapper());
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook");
     var msg = deserializer
         .deserialize(new ConsumerRecord<>("a_random_topic", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(addressBookMessage)));
@@ -94,8 +91,7 @@ class ProtobufFileRecordSerDeTest {
   void testSerialize() throws IOException {
     var messageNameMap = Map.of("topic1", "test.Person");
     var serializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook",
-            new ObjectMapper());
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook");
     var serialized = serializer.serialize("topic1", "key1", "{\"name\":\"MyName\"}", 0);
     assertNotNull(serialized.value());
   }
