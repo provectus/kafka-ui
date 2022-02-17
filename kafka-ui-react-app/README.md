@@ -54,7 +54,7 @@ Have to be run from root directory.
 
 Start UI for Apache Kafka with your Kafka clusters:
 ```sh
-docker-compose -f ./docker/kafka-ui.yaml up
+docker-compose -f ./documentation/compose/kafka-ui.yaml up
 ```
 
 Make sure that none of the `.env*` files contain `DEV_PROXY` variable

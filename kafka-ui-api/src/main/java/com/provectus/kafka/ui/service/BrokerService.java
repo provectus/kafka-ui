@@ -78,6 +78,7 @@ public class BrokerService {
               BrokerDTO broker = new BrokerDTO();
               broker.setId(node.id());
               broker.setHost(node.host());
+              broker.setPort(node.port());
               return broker;
             }).collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
