@@ -4,14 +4,11 @@ import com.provectus.kafka.ui.base.BaseTest;
 import com.provectus.kafka.ui.extensions.FileUtils;
 import com.provectus.kafka.ui.helpers.ApiHelper;
 import com.provectus.kafka.ui.helpers.Helpers;
-import java.io.File;
 import lombok.SneakyThrows;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 public class ConnectorsTests extends BaseTest {
 

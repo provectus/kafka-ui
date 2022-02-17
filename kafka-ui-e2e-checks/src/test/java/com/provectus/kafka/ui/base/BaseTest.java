@@ -44,18 +44,6 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
-    public static GenericContainer selenoid =
-            new GenericContainer(DockerImageName.parse("aerokube/selenoid:latest-release"))
-                    .withExposedPorts(4444)
-                    .withFileSystemBind("selenoid/config/", "/etc/selenoid", BindMode.READ_WRITE)
-                    .withFileSystemBind("/var/run/docker.sock", "/var/run/docker.sock", BindMode.READ_WRITE)
-                    .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
-                    .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
-                    .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
-                    .withCommand(
-                            "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
-
-
     static {
         if (!new File("./.env").exists()) {
             try {
