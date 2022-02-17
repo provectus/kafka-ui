@@ -69,7 +69,7 @@ We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md
 
 - [SSO configuration](documentation/guides/SSO.md)
 - [AWS IAM configuration](documentation/guides/AWS_IAM.md)
-- [Docker-compose files](documentation/guides/yaml-description.md)
+- [Docker-compose files](documentation/compose/DOCKER_COMPOSE.md)
 - [Connection to a secure broker]()
 
 ## Connecting to a Secure Broker
