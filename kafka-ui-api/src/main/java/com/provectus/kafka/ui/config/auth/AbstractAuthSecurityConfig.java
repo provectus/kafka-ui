@@ -12,7 +12,8 @@ abstract class AbstractAuthSecurityConfig {
       "/auth",
       "/login",
       "/logout",
-      "/oauth2/**"
+      "/oauth2/**",
+      "/static/**"
   };
 
 }
