@@ -1935,6 +1935,8 @@ components:
           type: integer
         host:
           type: string
+        port:
+          type: integer
       required:
         - id
 
@@ -2517,6 +2519,8 @@ components:
       type: string
       enum:
         - RESTART
+        - RESTART_ALL_TASKS
+        - RESTART_FAILED_TASKS
         - PAUSE
         - RESUME
 

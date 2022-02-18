@@ -17,6 +17,7 @@ import {
 } from 'redux/reducers/clusters/clustersSlice';
 
 import * as S from './App.styled';
+import Logo from './common/Logo/Logo';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -57,7 +58,10 @@ const App: React.FC = () => {
               <S.Span role="separator" />
             </S.NavbarBurger>
 
-            <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>
+            <S.Hyperlink href="/ui">
+              <Logo />
+              UI for Apache Kafka
+            </S.Hyperlink>
 
             <S.NavbarItem>
               {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
