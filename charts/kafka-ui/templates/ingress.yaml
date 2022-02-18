@@ -1,11 +1,11 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "kafka-ui.fullname" . -}}
 {{- $svcPort := .Values.service.port -}}
-{{- if semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" }}
 apiVersion: networking.k8s.io/v1
-{{- else if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- else if $.Capabilities.APIVersions.Has "networking.k8s.io/v1beta1" }}
 apiVersion: networking.k8s.io/v1beta1
-{{- else -}}
+{{- else }}
 apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
@@ -30,7 +30,7 @@ spec:
   rules:
     - http:
         paths:
-{{- if semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion -}}
+{{- if $.Capabilities.APIVersions.Has "networking.k8s.io/v1" -}}
           {{- range .Values.ingress.precedingPaths }}
           - path: {{ .path }}
             pathType: Prefix
