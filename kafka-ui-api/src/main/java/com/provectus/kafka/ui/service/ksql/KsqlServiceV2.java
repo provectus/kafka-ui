@@ -40,9 +40,9 @@ public class KsqlServiceV2 {
     if (cmd == null) {
       throw new ValidationException("No command registered with id " + commandId);
     }
+    registeredCommands.invalidate(commandId);
     return new KsqlApiClient(cmd.cluster)
-        .execute(cmd.ksql, cmd.streamProperties)
-        .doFinally(s -> registeredCommands.invalidate(commandId));
+        .execute(cmd.ksql, cmd.streamProperties);
   }
 
 }

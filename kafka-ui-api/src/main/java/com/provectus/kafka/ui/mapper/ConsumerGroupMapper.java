@@ -93,7 +93,7 @@ public class ConsumerGroupMapper {
   }
 
   private static BrokerDTO mapCoordinator(Node node) {
-    return new BrokerDTO().host(node.host()).id(node.id());
+    return new BrokerDTO().host(node.host()).id(node.id()).port(node.port());
   }
 
   private static ConsumerGroupStateDTO mapConsumerGroupState(
