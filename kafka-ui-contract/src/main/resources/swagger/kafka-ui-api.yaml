@@ -353,11 +353,6 @@ paths:
           required: true
           schema:
             type: string
-        - name: includeTopicMessages
-          in: query
-          required: false
-          schema:
-            type: boolean
       responses:
         201:
           description: Created
