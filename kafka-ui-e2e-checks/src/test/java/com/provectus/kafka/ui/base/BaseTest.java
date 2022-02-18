@@ -81,12 +81,13 @@ public class BaseTest {
     private static void setupSelenoid() {
         String remote = TestConfiguration.SELENOID_URL;
         if (TestConfiguration.SHOULD_START_SELENOID) {
+
 //            WebDriverManager wdm = WebDriverManager.chromedriver().browserInDocker();
 //            wdm.create();
             DockerClient client = DockerClientFactory.instance().client();
             DockerClientFactory.instance().checkAndPullImage(client, "selenoid/vnc_chrome:96.0");
-            Testcontainers.exposeHostPorts(8080);
             selenoid.start();
+            Testcontainers.exposeHostPorts(8080);
             remote =
                     "http://%s:%s/wd/hub"
                             .formatted(selenoid.getContainerIpAddress(), selenoid.getMappedPort(4444));
@@ -97,8 +98,8 @@ public class BaseTest {
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         if (!TestConfiguration.USE_LOCAL_BROWSER) {
             Configuration.remote = remote;
-//            TestConfiguration.BASE_URL =
-//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+            TestConfiguration.BASE_URL =
+                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
         }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
