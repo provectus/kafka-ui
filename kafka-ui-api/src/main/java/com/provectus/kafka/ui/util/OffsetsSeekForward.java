@@ -19,7 +19,7 @@ public class OffsetsSeekForward extends OffsetsSeek {
   }
 
   protected Map<TopicPartition, Long> offsetsFromPositions(Consumer<Bytes, Bytes> consumer,
-                                        List<TopicPartition> partitions) {
+                                                           List<TopicPartition> partitions) {
     final Map<TopicPartition, Long> offsets =
         offsetsFromBeginning(consumer, partitions);
 
@@ -54,7 +54,7 @@ public class OffsetsSeekForward extends OffsetsSeek {
   }
 
   protected Map<TopicPartition, Long> offsetsFromBeginning(Consumer<Bytes, Bytes> consumer,
-                                            List<TopicPartition> partitions) {
+                                                           List<TopicPartition> partitions) {
     return consumer.beginningOffsets(partitions);
   }
 

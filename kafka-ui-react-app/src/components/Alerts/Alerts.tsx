@@ -8,14 +8,20 @@ import Alert from 'components/Alerts/Alert';
 const Alerts: React.FC = () => {
   const alerts = useAppSelector(selectAll);
   const dispatch = useAppDispatch();
-  const dismiss = React.useCallback((id: string) => {
-    dispatch(alertDissmissed(id));
-  }, []);
+  const dismiss = React.useCallback(
+    (id: string) => {
+      dispatch(alertDissmissed(id));
+    },
+    [dispatch]
+  );
 
   const legacyAlerts = useAppSelector(getAlerts);
-  const dismissLegacy = React.useCallback((id: string) => {
-    dispatch(dismissAlert(id));
-  }, []);
+  const dismissLegacy = React.useCallback(
+    (id: string) => {
+      dispatch(dismissAlert(id));
+    },
+    [dispatch]
+  );
 
   return (
     <>

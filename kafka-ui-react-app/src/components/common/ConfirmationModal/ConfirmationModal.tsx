@@ -19,13 +19,13 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   onConfirm,
   isConfirming = false,
 }) => {
-  if (!isOpen) return null;
-
   const cancelHandler = React.useCallback(() => {
     if (!isConfirming) {
       onCancel();
     }
   }, [isConfirming, onCancel]);
+
+  if (!isOpen) return null;
 
   return (
     <ConfirmationModalWrapper>

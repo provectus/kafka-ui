@@ -34,7 +34,7 @@ public enum ErrorCode {
     for (ErrorCode value : ErrorCode.values()) {
       if (!codes.add(value.code())) {
         LoggerFactory.getLogger(ErrorCode.class)
-                .warn("Multiple {} values refer to code {}", ErrorCode.class, value.code);
+            .warn("Multiple {} values refer to code {}", ErrorCode.class, value.code);
       }
     }
   }

@@ -126,7 +126,7 @@ const Filters: React.FC<FiltersProps> = ({
     [partitions]
   );
 
-  const handleFiltersSubmit = () => {
+  const handleFiltersSubmit = React.useCallback(() => {
     setAttempt(attempt + 1);
 
     const props: Query = {
@@ -166,7 +166,8 @@ const Filters: React.FC<FiltersProps> = ({
     history.push({
       search: `?${qs}`,
     });
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggleSeekDirection = (val: string) => {
     const nextSeekDirectionValue =
@@ -224,17 +225,26 @@ const Filters: React.FC<FiltersProps> = ({
         sse.close();
       };
     }
-  }, [clusterName, topicName, location]);
+  }, [
+    clusterName,
+    topicName,
+    location,
+    setIsFetching,
+    resetMessages,
+    addMessage,
+    updatePhase,
+    updateMeta,
+  ]);
 
   React.useEffect(() => {
     if (location.search.length === 0) {
       handleFiltersSubmit();
     }
-  }, [location]);
+  }, [handleFiltersSubmit, location]);
 
   React.useEffect(() => {
     handleFiltersSubmit();
-  }, [seekDirection]);
+  }, [handleFiltersSubmit, seekDirection]);
 
   return (
     <S.FiltersWrapper>
