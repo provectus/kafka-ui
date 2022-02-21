@@ -47,7 +47,7 @@ class BrokerServiceTest extends AbstractBaseTest {
   void getBrokersNull() {
     StepVerifier.create(
         brokerService.getBrokers(null)
-    ).expectErrorMatches(t -> t instanceof NullPointerException).verify();
+    ).verifyComplete();
   }
 
   @Test
@@ -56,7 +56,7 @@ class BrokerServiceTest extends AbstractBaseTest {
 
     StepVerifier.create(
         brokerService.getBrokers(emptyCluster)
-    ).expectErrorMatches(t -> t instanceof NullPointerException).verify();
+    ).verifyComplete();
   }
 
 }

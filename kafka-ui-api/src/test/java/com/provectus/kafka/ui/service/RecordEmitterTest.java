@@ -141,23 +141,8 @@ class RecordEmitterTest extends AbstractBaseTest {
 
     List<String> expectedValues = SENT_RECORDS.stream().map(Record::getValue).collect(Collectors.toList());
 
-    StepVerifier.create(
-        Flux.create(forwardEmitter)
-            .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
-            .take(100)
-            .map(m -> m.getMessage().getContent())
-        ).expectNextCount(SENT_RECORDS.size())
-        .expectComplete().verifyThenAssertThat()
-        .hasDroppedExactly(expectedValues);
-
-    StepVerifier.create(
-            Flux.create(backwardEmitter)
-                .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
-                .take(100)
-                .map(m -> m.getMessage().getContent())
-        ).expectNextCount(SENT_RECORDS.size())
-        .expectComplete().verifyThenAssertThat()
-        .hasDroppedExactly(expectedValues);
+    expectEmitter(forwardEmitter, expectedValues);
+    expectEmitter(backwardEmitter, expectedValues);
   }
 
   @Test

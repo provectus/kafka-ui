@@ -61,9 +61,9 @@ class ShowStrategyTest {
         shouldSerializeGenerate("streams", "show streams;"),
         shouldSerializeGenerate("tables", "show tables;"),
         shouldSerializeGenerate("topics", "show topics;"),
-        shouldSerializeGenerate("topics", "show properties;"),
-        shouldSerializeGenerate("topics", "show functions;"),
-        shouldSerializeGenerate("topics", "show queries;")
+        shouldSerializeGenerate("properties", "show properties;"),
+        shouldSerializeGenerate("functions", "show functions;"),
+        shouldSerializeGenerate("queries", "show queries;")
     );
   }
 
