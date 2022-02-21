@@ -7,6 +7,7 @@ on:
       - "kafka-ui-contract/**"
       - "kafka-ui-react-app/**"
       - "kafka-ui-e2e-checks/**"
+      - "pom.xml"
 jobs:
   build-and-test:
     runs-on: ubuntu-latest

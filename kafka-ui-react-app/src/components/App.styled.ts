@@ -168,20 +168,26 @@ export const Span = styled.span(
 
 export const Hyperlink = styled.a(
   ({ theme }) => css`
-    display: flex;
     position: relative;
+
+    display: flex;
     flex-grow: 0;
     flex-shrink: 0;
     align-items: center;
+    gap: 8px;
+
     margin: 0;
-    color: ${theme.menu.color.active};
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: pointer;
-    line-height: 1.5;
     padding: 0.5rem 0.75rem;
+
+    font-family: Inter, sans-serif;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 12px;
+    line-height: 16px;
+    color: ${theme.menu.color.active};
     text-decoration: none;
     word-break: break-word;
+    cursor: pointer;
   `
 );
 

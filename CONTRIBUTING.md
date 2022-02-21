@@ -1,41 +1,41 @@
-The following guide is aimed at explaining the process of working on an issue(-s) and Pull Requests (PRs).
+This guide aims to walk you through the process of working on issues and Pull Requests (PRs).
 
-Completing some of the steps isn't possible by yourself if you don't have a write permission. Feel free to ask the maintainers to help you out with the unavailable actions.
+Bear in mind that you will not be able to complete some steps on your own if you do not have a “write” permission. Feel free to reach out to the maintainers to help you unlock these activities.
 
 # General recommendations
 
-Please note we have a code of conduct (`CODE-OF-CONDUCT.md`), please follow it in all your interactions with the project.
-
+Please note that we have a code of conduct (`CODE-OF-CONDUCT.md`). Make sure that you follow it in all of your interactions with the project.
 
 # Issues
 
 ## Choosing an issue
 
-Basically, there are two places to look up for the issues to contribute to. <br/>
-The first one is our ["Up for grabs"](https://github.com/provectus/kafka-ui/projects/11) board, where issues are sorted by required experience level (beginner, intermediate, expert).
+There are two options to look for the issues to contribute to. <br/>
+The first is our ["Up for grabs"](https://github.com/provectus/kafka-ui/projects/11) board. There the issues are sorted by a required experience level (beginner, intermediate, expert).
 
-The second place is searching up for ["good first issue"](https://github.com/provectus/kafka-ui/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)-labeled issues. Some of them might not be present in the aforementioned board or vice versa.
+The second option is to search for ["good first issue"](https://github.com/provectus/kafka-ui/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)-labeled issues. Some of them might not be displayed on the aforementioned board, or vice versa.
 
-The next thing to consider is labels. You can sort the issues by scope labels, like, `scope/backend`, `scope/frontend` or even `scope/k8s`. If the issue requires a few areas to work on, and you don't have a required expertise, still feel free to pick it and do your part, others will do the rest.
+You also need to consider labels. You can sort the issues by scope labels, such as `scope/backend`, `scope/frontend` or even `scope/k8s`. If any issue covers several specific areas, and you do not have a required expertise for one of them, just do your part of work — others will do the rest.
 
 ## Grabbing the issue
 
-There is a bunch of criteria for an issue to be liable for development. <br/>
-The implementation of the features and/or their enhancements should be reasonable, must be backed by justified requirements (demanded by community, [roadmap](documentation/project/ROADMAP.md) plans, etc.). Final decision is left for maintainers' discretion. <br/>
-All the bugs should be confirmed as such (that the behavior is unintended).
+There is a bunch of criteria that make an issue feasible for development. <br/>
+The implementation of any features and/or their enhancements should be reasonable, must be backed by justified requirements (demanded by the community, [roadmap](documentation/project/ROADMAP.md) plans, etc.). The final decision is left for the maintainers' discretion.
 
-The issue should be properly triaged by maintainers beforehand, which includes:
+All bugs should be confirmed as such (i.e. the behavior is unintended).
+
+Any issue should be properly triaged by the maintainers beforehand, which includes:
 1. Having a proper milestone set
-2. Having required labels assigned: accepted label, scope labels and others.
+2. Having required labels assigned: accepted label, scope labels, etc.
 
-Formally, having the aforementioned triage conditions is enough to get started.
+Formally, if these triage conditions are met, you can start to work on the issue.
 
-Having all these requirements present, feel free to pick the issue you want. Ask the maintainers in case of doubt.
+With all these requirements met, feel free to pick the issue you want. Reach out to the maintainers if you have any questions.
 
 ## Working on the issue
 
-Every issue which is being worked on has to be assigned to the corresponding person. <br/>
-To keep the status of the issue clear, please keep the card' status actual ("project" card on the right side of the issue, should be the same as the milestone name).
+Every issue “in-progress” needs to be assigned to a corresponding person.
+To keep the status of the issue clear to everyone, please keep the card's status updated ("project" card to the right of the issue should match the milestone’s name).
 
 ## Setting up a local development environment
 
@@ -45,45 +45,45 @@ Please refer to [this guide](documentation/project/contributing/README.md).
 
 ## Branch naming
 
-In order to keep branch names understandable and similar please use the corresponding branch naming conventions.
+In order to keep branch names uniform and easy-to-understand, please use the following conventions for branch naming.
 
-Generally speaking, it's a good idea to add a group/type prefix for a branch, e.g.,
-if you're working on a specific branch you could name your branch `issues/xxx`.
+Generally speaking, it is a good idea to add a group/type prefix to a branch; e.g.,
+if you are working on a specific branch, you could name it `issues/xxx`.
 
-Here's a list of good examples:<br/>
+Here is a list of good examples:<br/>
 `issues/123`<br/>
 `feature/feature_name`<br/>
 `bugfix/fix_thing`<br/>
 
 ## Code style
 
-Java: There's a file called `checkstyle.xml` in project root under `etc` directory.<br/>
-You can import it into IntelliJ IDEA via checkstyle plugin.
+Java: There is a file called `checkstyle.xml` in project root under `etc` directory.<br/>
+You can import it into IntelliJ IDEA via Checkstyle plugin.
 
 ## Naming conventions
 
-REST paths should be **lowercase** and consist of just **plural** nouns.<br/>
-Also, multiple words in a single path segment should be divided by a hyphen symbol (`-`).<br/>
+REST paths should be written in **lowercase** and consist of **plural** nouns only.<br/>
+Also, multiple words that are placed in a single path segment should be divided by a hyphen (`-`).<br/>
 
 Query variable names should be formatted in `camelCase`.
 
-Model names should consist of just **plural** nouns and should be formatted in `camelCase` as well.
+Model names should consist of **plural** nouns only and should be formatted in `camelCase` as well.
 
 ## Creating a PR
 
 When creating a PR please do the following:
-1. In commit messages use the [closing keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword).
+1. In commit messages use these [closing keywords](https://docs.github.com/en/issues/tracking-your-work-with-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword).
 2. Link an issue(-s) via "linked issues" block.
-3. Set the PR labels. Just set the same set of labels present in the issue, ignoring yellow `status/` labels.
-4. If the PR doesn't close any issue it might need to a milestone set on itself. Ask the maintainers.
-5. Assign the PR to yourself. PR assignee is the person who's goal is to get the PR merged.
-6. Add reviewers. Usually, reviewers suggestions are pretty good, use them.
+3. Set the PR labels. Ensure that you set only the same set of labels that is present in the issue, and ignore yellow `status/` labels.
+4. If the PR does not close any of the issues, the PR itself might need to have a milestone set. Reach out to the maintainers to consult.
+5. Assign the PR to yourself. A PR assignee is someone whose goal is to get the PR merged.
+6. Add reviewers. As a rule, reviewers' suggestions are pretty good; please use them.
 
 ### Pull Request checklist
 
-1. Ensure any install or build dependencies have been removed before the end of the layer when composing a build.
-2. Update the `README.md` with details of changes to the interface, this includes new environment
-   variables, exposed ports, useful file locations and container parameters.
+1. When composing a build, ensure that any install or build dependencies have been removed before the end of the layer.
+2. Update the `README.md` with the details of changes made to the interface. This includes new environment variables, 
+exposed ports, useful file locations, and container parameters.
 
 ## Reviewing a PR
 
