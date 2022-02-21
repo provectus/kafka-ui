@@ -13,7 +13,7 @@
     <properties>
         <kafka-ui-contract>${project.version}</kafka-ui-contract>
         <junit.version>5.8.2</junit.version>
-        <aspectj.version>1.9.6</aspectj.version>
+        <aspectj.version>1.9.8</aspectj.version>
         <allure.version>2.17.1</allure.version>
         <json-smart.version>1.3.3</json-smart.version>
         <testcontainers.version>1.15.2</testcontainers.version>

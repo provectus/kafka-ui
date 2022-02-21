@@ -11,8 +11,6 @@ import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.service.SchemaRegistryService;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,21 +61,22 @@ public class SchemasController extends AbstractController implements SchemasApi 
   @Override
   public Mono<ResponseEntity<Void>> deleteLatestSchema(
       String clusterName, String subject, ServerWebExchange exchange) {
-    return schemaRegistryService.deleteLatestSchemaSubject(getCluster(clusterName), subject);
+    return schemaRegistryService.deleteLatestSchemaSubject(getCluster(clusterName), subject)
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
   public Mono<ResponseEntity<Void>> deleteSchema(
       String clusterName, String subjectName, ServerWebExchange exchange) {
     return schemaRegistryService.deleteSchemaSubjectEntirely(getCluster(clusterName), subjectName)
-            .thenReturn(ResponseEntity.ok().build());
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
   public Mono<ResponseEntity<Void>> deleteSchemaByVersion(
       String clusterName, String subjectName, Integer version, ServerWebExchange exchange) {
-    return schemaRegistryService.deleteSchemaSubjectByVersion(
-        getCluster(clusterName), subjectName, version);
+    return schemaRegistryService.deleteSchemaSubjectByVersion(getCluster(clusterName), subjectName, version)
+        .thenReturn(ResponseEntity.ok().build());
   }
 
   @Override
@@ -98,7 +97,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
 
   @Override
   public Mono<ResponseEntity<SchemaSubjectDTO>> getLatestSchema(String clusterName, String subject,
-                                                             ServerWebExchange exchange) {
+                                                                ServerWebExchange exchange) {
     return schemaRegistryService.getLatestSchemaVersionBySubject(getCluster(clusterName), subject)
         .map(ResponseEntity::ok);
   }
@@ -107,7 +106,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
   public Mono<ResponseEntity<SchemaSubjectDTO>> getSchemaByVersion(
       String clusterName, String subject, Integer version, ServerWebExchange exchange) {
     return schemaRegistryService.getSchemaSubjectByVersion(
-        getCluster(clusterName), subject, version)
+            getCluster(clusterName), subject, version)
         .map(ResponseEntity::ok);
   }
 
@@ -118,23 +117,23 @@ public class SchemasController extends AbstractController implements SchemasApi 
                                                                     @Valid String search,
                                                                     ServerWebExchange serverWebExchange) {
     return schemaRegistryService
-            .getAllSubjectNames(getCluster(clusterName))
-            .flatMap(subjects -> {
-              int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
-              int subjectToSkip = ((pageNum != null && pageNum > 0 ? pageNum : 1) - 1) * pageSize;
-              List<String> filteredSubjects = Arrays.stream(subjects)
-                      .filter(subj -> search == null || StringUtils.containsIgnoreCase(subj, search))
-                      .sorted()
-                      .collect(Collectors.toList());
-              var totalPages = (filteredSubjects.size() / pageSize)
-                      + (filteredSubjects.size() % pageSize == 0 ? 0 : 1);
-              List<String> subjectsToRender = filteredSubjects.stream()
-                      .skip(subjectToSkip)
-                      .limit(pageSize)
-                      .collect(Collectors.toList());
-              return schemaRegistryService.getAllLatestVersionSchemas(getCluster(clusterName), subjectsToRender)
-                      .map(a -> new SchemaSubjectsResponseDTO().pageCount(totalPages).schemas(a));
-            }).map(ResponseEntity::ok);
+        .getAllSubjectNames(getCluster(clusterName))
+        .flatMap(subjects -> {
+          int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
+          int subjectToSkip = ((pageNum != null && pageNum > 0 ? pageNum : 1) - 1) * pageSize;
+          List<String> filteredSubjects = Arrays.stream(subjects)
+              .filter(subj -> search == null || StringUtils.containsIgnoreCase(subj, search))
+              .sorted()
+              .collect(Collectors.toList());
+          var totalPages = (filteredSubjects.size() / pageSize)
+              + (filteredSubjects.size() % pageSize == 0 ? 0 : 1);
+          List<String> subjectsToRender = filteredSubjects.stream()
+              .skip(subjectToSkip)
+              .limit(pageSize)
+              .collect(Collectors.toList());
+          return schemaRegistryService.getAllLatestVersionSchemas(getCluster(clusterName), subjectsToRender)
+              .map(a -> new SchemaSubjectsResponseDTO().pageCount(totalPages).schemas(a));
+        }).map(ResponseEntity::ok);
   }
 
   @Override
@@ -143,7 +142,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       ServerWebExchange exchange) {
     log.info("Updating schema compatibility globally");
     return schemaRegistryService.updateSchemaCompatibility(
-        getCluster(clusterName), compatibilityLevel)
+            getCluster(clusterName), compatibilityLevel)
         .map(ResponseEntity::ok);
   }
 
@@ -153,7 +152,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
       ServerWebExchange exchange) {
     log.info("Updating schema compatibility for subject: {}", subject);
     return schemaRegistryService.updateSchemaCompatibility(
-        getCluster(clusterName), subject, compatibilityLevel)
+            getCluster(clusterName), subject, compatibilityLevel)
         .map(ResponseEntity::ok);
   }
 }

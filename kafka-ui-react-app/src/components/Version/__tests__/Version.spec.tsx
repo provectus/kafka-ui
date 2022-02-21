@@ -11,7 +11,7 @@ describe('Version', () => {
 
   it('renders', () => {
     setupComponent({ tag });
-    expect(screen.getByText('Version:')).toBeInTheDocument();
+    expect(screen.getByText(tag)).toBeInTheDocument();
   });
 
   it('shows current tag and commit', () => {
