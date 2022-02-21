@@ -87,7 +87,7 @@ public class BackwardRecordEmitter
 
               // This is workaround for case when partition begin offset is less than
               // real minimal offset, usually appear in compcated topics
-              if (records.count() > 0  && partitionRecords.isEmpty()) {
+              if (records.count() > 0 && partitionRecords.isEmpty()) {
                 waitingOffsets.markPolled(entry.getKey().partition());
               }
 

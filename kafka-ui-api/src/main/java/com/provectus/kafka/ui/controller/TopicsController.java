@@ -43,7 +43,7 @@ public class TopicsController extends AbstractController implements TopicsApi {
   public Mono<ResponseEntity<TopicDTO>> recreateTopic(String clusterName,
                                                       String topicName, ServerWebExchange serverWebExchange) {
     return topicsService.recreateTopic(getCluster(clusterName), topicName)
-            .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
+        .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
   }
 
   @Override
@@ -70,12 +70,12 @@ public class TopicsController extends AbstractController implements TopicsApi {
 
   @Override
   public Mono<ResponseEntity<TopicsResponseDTO>> getTopics(String clusterName, @Valid Integer page,
-                                                        @Valid Integer perPage,
-                                                        @Valid Boolean showInternal,
-                                                        @Valid String search,
-                                                        @Valid TopicColumnsToSortDTO orderBy,
-                                                        @Valid SortOrderDTO sortOrder,
-                                                        ServerWebExchange exchange) {
+                                                           @Valid Integer perPage,
+                                                           @Valid Boolean showInternal,
+                                                           @Valid String search,
+                                                           @Valid TopicColumnsToSortDTO orderBy,
+                                                           @Valid SortOrderDTO sortOrder,
+                                                           ServerWebExchange exchange) {
     return topicsService
         .getTopics(
             getCluster(clusterName),
@@ -101,10 +101,9 @@ public class TopicsController extends AbstractController implements TopicsApi {
       String clusterName, String topicName,
       Mono<PartitionsIncreaseDTO> partitionsIncrease,
       ServerWebExchange exchange) {
-    return partitionsIncrease.flatMap(
-        partitions ->
-            topicsService.increaseTopicPartitions(getCluster(clusterName), topicName, partitions))
-        .map(ResponseEntity::ok);
+    return partitionsIncrease.flatMap(partitions ->
+            topicsService.increaseTopicPartitions(getCluster(clusterName), topicName, partitions)
+        ).map(ResponseEntity::ok);
   }
 
   @Override
