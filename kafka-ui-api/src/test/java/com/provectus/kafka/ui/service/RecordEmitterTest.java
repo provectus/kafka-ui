@@ -5,6 +5,7 @@ import static com.provectus.kafka.ui.model.SeekDirectionDTO.FORWARD;
 import static com.provectus.kafka.ui.model.SeekTypeDTO.BEGINNING;
 import static com.provectus.kafka.ui.model.SeekTypeDTO.OFFSET;
 import static com.provectus.kafka.ui.model.SeekTypeDTO.TIMESTAMP;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
@@ -246,10 +247,12 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var expectedValues = SENT_RECORDS.stream()
-        .filter(r -> r.getOffset() < targetOffsets.get(r.getTp()))
+        .filter(r -> r.getOffset() <= targetOffsets.get(r.getTp()))
         .filter(r -> r.getOffset() >= (targetOffsets.get(r.getTp()) - (100 / PARTITIONS)))
         .map(Record::getValue)
         .collect(Collectors.toList());
+
+    assertThat(expectedValues).size().isEqualTo(numMessages);
 
     expectEmitter(backwardEmitter, expectedValues);
   }
