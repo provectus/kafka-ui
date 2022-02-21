@@ -135,7 +135,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     var backwardEmitter = new BackwardRecordEmitter(
         this::createConsumer,
         new OffsetsSeekBackward(TOPIC,
-            new ConsumerPosition(BEGINNING, Map.of(), FORWARD),
+            new ConsumerPosition(BEGINNING, Map.of(), BACKWARD),
             PARTITIONS * MSGS_PER_PARTITION
         ), new SimpleRecordSerDe()
     );
@@ -229,7 +229,6 @@ class RecordEmitterTest extends AbstractBaseTest {
     expectEmitter(backwardEmitter, expectedValues);
   }
 
-
   @Test
   void backwardEmitterSeekToEnd() {
     final int numMessages = 100;
@@ -282,7 +281,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     expectEmitter(emitter,
         e -> e.recordWith(ArrayList::new)
             .expectNextCount(expectedValues.size())
-            .expectRecordedMatches(r -> r.containsAll(expectedValues)),
+            .expectRecordedMatches(r -> r.containsAll(expectedValues))
+            .consumeRecordedWith(r -> log.info("Collected collection: {}", r)),
         v -> {}
     );
   }
