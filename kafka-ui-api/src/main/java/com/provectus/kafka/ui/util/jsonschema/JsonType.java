@@ -8,7 +8,7 @@ public abstract class JsonType {
 
   protected final Type type;
 
-  public JsonType(Type type) {
+  protected JsonType(Type type) {
     this.type = type;
   }
 

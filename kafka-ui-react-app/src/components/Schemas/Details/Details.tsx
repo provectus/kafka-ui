@@ -1,6 +1,10 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router';
-import { clusterSchemasPath, clusterSchemaEditPath } from 'lib/paths';
+import {
+  clusterSchemasPath,
+  clusterSchemaSchemaDiffPath,
+  clusterSchemaEditPath,
+} from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -77,12 +81,22 @@ const Details: React.FC = () => {
   if (!isFetched || !schema) {
     return <PageLoader />;
   }
-
   return (
     <>
       <PageHeading text={schema.subject}>
         {!isReadOnly && (
           <>
+            <Button
+              isLink
+              buttonSize="M"
+              buttonType="primary"
+              to={{
+                pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
+                search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
+              }}
+            >
+              Compare Versions
+            </Button>
             <Button
               isLink
               buttonSize="M"

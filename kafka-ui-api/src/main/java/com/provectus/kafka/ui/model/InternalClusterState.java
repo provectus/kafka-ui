@@ -67,7 +67,7 @@ public class InternalClusterState {
     inSyncReplicasCount = partitionsStats.getInSyncReplicasCount();
     outOfSyncReplicasCount = partitionsStats.getOutOfSyncReplicasCount();
     underReplicatedPartitionCount = partitionsStats.getUnderReplicatedPartitionCount();
-    readOnly = cluster.getReadOnly();
+    readOnly = cluster.isReadOnly();
   }
 
 }

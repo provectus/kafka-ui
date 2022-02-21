@@ -60,7 +60,7 @@ public class MetricsService {
   }
 
   private Mono<InternalLogDirStats> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
-    if (cluster.getDisableLogDirsCollection() == null || !cluster.getDisableLogDirsCollection()) {
+    if (!cluster.isDisableLogDirsCollection()) {
       return c.describeLogDirs().map(InternalLogDirStats::new);
     }
     return Mono.just(InternalLogDirStats.empty());

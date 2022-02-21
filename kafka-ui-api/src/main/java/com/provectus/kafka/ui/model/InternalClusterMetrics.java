@@ -38,7 +38,7 @@ public class InternalClusterMetrics {
 
   // zk stats
   @Deprecated //use 'zookeeperStatus' field with enum type instead
-  private final int zooKeeperStatus;
+  private final int zooKeeperStatusEnum;
   private final ServerStatusDTO zookeeperStatus;
   private final Throwable lastZookeeperException;
 

@@ -5,7 +5,7 @@ import static org.springframework.http.HttpStatus.UNPROCESSABLE_ENTITY;
 
 import com.provectus.kafka.ui.exception.SchemaFailedToDeleteException;
 import com.provectus.kafka.ui.exception.SchemaNotFoundException;
-import com.provectus.kafka.ui.exception.SchemaTypeIsNotSupportedException;
+import com.provectus.kafka.ui.exception.SchemaTypeNotSupportedException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.mapper.ClusterMapper;
@@ -212,7 +212,7 @@ public class SchemaRegistryService {
         .onStatus(UNPROCESSABLE_ENTITY::equals,
             r -> r.bodyToMono(ErrorResponse.class)
                 .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
-                    ? new SchemaTypeIsNotSupportedException()
+                    ? new SchemaTypeNotSupportedException()
                     : new UnprocessableEntityException(x.getMessage()))))
         .bodyToMono(SubjectIdResponse.class);
   }
@@ -294,7 +294,9 @@ public class SchemaRegistryService {
   }
 
   public String formatted(String str, Object... args) {
-    return new Formatter().format(str, args).toString();
+    try (Formatter formatter = new Formatter()) {
+      return formatter.format(str, args).toString();
+    }
   }
 
   private void setBasicAuthIfEnabled(InternalSchemaRegistry schemaRegistry, HttpHeaders headers) {
