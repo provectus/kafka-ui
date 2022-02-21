@@ -18,7 +18,7 @@ const ConsumerGroups: React.FC = () => {
   const isFetched = useAppSelector(getAreConsumerGroupsFulfilled);
   React.useEffect(() => {
     dispatch(fetchConsumerGroups(clusterName));
-  }, [fetchConsumerGroups, clusterName]);
+  }, [clusterName, dispatch]);
 
   if (isFetched) {
     return (
