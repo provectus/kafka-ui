@@ -101,7 +101,7 @@ const New: React.FC<NewProps> = ({
         );
       }
     },
-    [createConnector, clusterName]
+    [createConnector, clusterName, history]
   );
 
   if (areConnectsFetching) {

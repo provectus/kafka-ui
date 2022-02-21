@@ -15,6 +15,7 @@ const BreadcrumbRouteInternal: React.FC = () => {
 
   useEffect(() => {
     context.handleRouteChange({ ...match, url: location.pathname });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname]);
 
   return null;
