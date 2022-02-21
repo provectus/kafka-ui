@@ -135,7 +135,12 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
     // fallback
     builder.value(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
-    builder.valueFormat(FALLBACK_FORMATTER.getFormat());
+    if (isKey) {
+      builder.keyFormat(FALLBACK_FORMATTER.getFormat());
+    } else {
+      builder.valueFormat(FALLBACK_FORMATTER.getFormat());
+    }
+
   }
 
   @Override
