@@ -296,7 +296,7 @@ public class TopicsService {
             .collect(toList());
 
         // Iterate brokers and try to add them in assignment
-        // while (partition replicas count != requested replication factor)
+        // while partition replicas count != requested replication factor
         for (Integer broker : brokers) {
           if (!assignmentList.contains(broker)) {
             assignmentList.add(broker);
@@ -324,7 +324,7 @@ public class TopicsService {
             .collect(toList());
 
         // Iterate brokers and try to remove them from assignment
-        // while (partition replicas count != requested replication factor)
+        // while partition replicas count != requested replication factor
         for (Integer broker : brokersUsageList) {
           // Check is the broker the leader of partition
           if (!topic.getPartitions().get(partition).getLeader()

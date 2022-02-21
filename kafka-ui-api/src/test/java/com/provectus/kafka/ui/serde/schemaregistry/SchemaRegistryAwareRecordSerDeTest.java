@@ -35,7 +35,7 @@ class SchemaRegistryAwareRecordSerDeTest {
   );
 
   @Nested
-  class Deserialize {
+  class DeserializeTest {
 
     @Test
     void callsSchemaFormatterWhenValueHasMagicByteAndValidSchemaId() throws Exception {

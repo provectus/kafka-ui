@@ -11,9 +11,11 @@ import com.provectus.kafka.ui.model.TopicCreationDTO;
 import com.provectus.kafka.ui.model.TopicDetailsDTO;
 import com.provectus.kafka.ui.model.TopicMessageEventDTO;
 import com.provectus.kafka.ui.producer.KafkaTestProducer;
+import com.provectus.kafka.ui.util.CompletableFutureUtil;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -48,8 +50,14 @@ public class KafkaConsumerTests extends AbstractBaseTest {
         .isOk();
 
     try (KafkaTestProducer<String, String> producer = KafkaTestProducer.forKafka(kafka)) {
-      Stream.of("one", "two", "three", "four")
-          .forEach(value -> producer.send(topicName, value));
+      CompletableFutureUtil.all(
+          Stream.of("one", "two", "three", "four")
+              .map(value -> producer.send(topicName, value))
+              .collect(Collectors.toList())
+      ).get();
+    } catch (Throwable e) {
+      log.error("Error on sending", e);
+      throw new RuntimeException(e);
     }
 
     long count = webTestClient.get()

@@ -1,7 +1,5 @@
 package com.provectus.kafka.ui.service;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.mapper.ClusterMapperImpl;
 import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
@@ -47,13 +45,18 @@ class BrokerServiceTest extends AbstractBaseTest {
 
   @Test
   void getBrokersNull() {
-    assertThatThrownBy(() -> brokerService.getBrokers(null)).isInstanceOf(NullPointerException.class);
+    StepVerifier.create(
+        brokerService.getBrokers(null)
+    ).expectErrorMatches(t -> t instanceof NullPointerException).verify();
   }
 
   @Test
   void getBrokersEmpty() {
-    assertThatThrownBy(() -> brokerService.getBrokers(KafkaCluster.builder().build())).isInstanceOf(
-        NullPointerException.class);
+    final KafkaCluster emptyCluster = KafkaCluster.builder().build();
+
+    StepVerifier.create(
+        brokerService.getBrokers(emptyCluster)
+    ).expectErrorMatches(t -> t instanceof NullPointerException).verify();
   }
 
 }
