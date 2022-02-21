@@ -8,6 +8,6 @@ public class TopicRecreationException extends CustomBaseException {
 
   public TopicRecreationException(String topicName, int seconds) {
     super(String.format("Can't create topic '%s' in %d seconds: "
-                + "topic deletion is still in progress", topicName, seconds));
+        + "topic deletion is still in progress", topicName, seconds));
   }
 }

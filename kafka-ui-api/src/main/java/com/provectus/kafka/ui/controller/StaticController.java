@@ -1,13 +1,11 @@
 package com.provectus.kafka.ui.controller;
 
 import com.provectus.kafka.ui.util.ResourceUtil;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,7 +22,7 @@ public class StaticController {
   private Resource indexFile;
   private final AtomicReference<String> renderedIndexFile = new AtomicReference<>();
 
-  @GetMapping(value = "/index.html", produces = { "text/html" })
+  @GetMapping(value = "/index.html", produces = {"text/html"})
   public Mono<ResponseEntity<String>> getIndex(ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(getRenderedIndexFile(exchange)));
   }
