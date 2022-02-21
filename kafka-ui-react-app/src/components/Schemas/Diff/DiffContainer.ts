@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { ClusterName, RootState } from 'redux/interfaces';
+import { RootState } from 'redux/interfaces';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import {
   getAreSchemaVersionsFulfilled,
