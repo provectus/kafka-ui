@@ -44,7 +44,6 @@ public class ConfigTest extends AbstractBaseTest {
         .expectStatus().isOk();
 
     Awaitility.await()
-        .atLeast(Duration.ofMillis(500))
         .atMost(Duration.ofSeconds(10))
         .pollInSameThread()
         .untilAsserted(() -> {
