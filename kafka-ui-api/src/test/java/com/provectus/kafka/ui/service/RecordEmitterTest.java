@@ -277,8 +277,10 @@ class RecordEmitterTest extends AbstractBaseTest {
 
   private void expectEmitter(Consumer<FluxSink<TopicMessageEventDTO>> emitter, List<String> expectedValues) {
     expectEmitter(emitter,
-        e -> e.expectNextCount(expectedValues.size()),
-        v -> v.hasDroppedExactly(expectedValues)
+        e -> e.recordWith(ArrayList::new)
+            .expectNextCount(expectedValues.size())
+            .expectRecordedMatches(expectedValues::containsAll),
+        v -> {}
     );
   }
 
