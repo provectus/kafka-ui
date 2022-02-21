@@ -84,7 +84,7 @@ public class MessagesService {
                                           CreateTopicMessageDTO msg) {
     if (msg.getPartition() != null
         && msg.getPartition() > metricsCache.get(cluster).getTopicDescriptions()
-          .get(topic).partitions().size() - 1) {
+        .get(topic).partitions().size() - 1) {
       throw new ValidationException("Invalid partition");
     }
     RecordSerDe serde =

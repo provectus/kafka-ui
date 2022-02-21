@@ -27,9 +27,9 @@ public class KsqlController extends AbstractController implements KsqlApi {
 
   @Override
   public Mono<ResponseEntity<KsqlCommandResponseDTO>> executeKsqlCommand(String clusterName,
-                                                                      Mono<KsqlCommandDTO>
-                                                                          ksqlCommand,
-                                                                      ServerWebExchange exchange) {
+                                                                         Mono<KsqlCommandDTO>
+                                                                             ksqlCommand,
+                                                                         ServerWebExchange exchange) {
     return ksqlService.executeKsqlCommand(getCluster(clusterName), ksqlCommand)
         .map(ResponseEntity::ok);
   }

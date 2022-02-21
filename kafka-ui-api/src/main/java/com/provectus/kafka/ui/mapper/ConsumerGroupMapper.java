@@ -17,6 +17,9 @@ import org.apache.kafka.common.TopicPartition;
 
 public class ConsumerGroupMapper {
 
+  private ConsumerGroupMapper() {
+  }
+
   public static ConsumerGroupDTO toDto(InternalConsumerGroup c) {
     return convertToConsumerGroup(c, new ConsumerGroupDTO());
   }
@@ -47,7 +50,7 @@ public class ConsumerGroupMapper {
       for (TopicPartition topicPartition : member.getAssignment()) {
         final ConsumerGroupTopicPartitionDTO partition = partitionMap.computeIfAbsent(
             topicPartition,
-            (tp) -> new ConsumerGroupTopicPartitionDTO()
+            tp -> new ConsumerGroupTopicPartitionDTO()
                 .topic(tp.topic())
                 .partition(tp.partition())
         );
@@ -99,12 +102,18 @@ public class ConsumerGroupMapper {
   private static ConsumerGroupStateDTO mapConsumerGroupState(
       org.apache.kafka.common.ConsumerGroupState state) {
     switch (state) {
-      case DEAD: return ConsumerGroupStateDTO.DEAD;
-      case EMPTY: return ConsumerGroupStateDTO.EMPTY;
-      case STABLE: return ConsumerGroupStateDTO.STABLE;
-      case PREPARING_REBALANCE: return ConsumerGroupStateDTO.PREPARING_REBALANCE;
-      case COMPLETING_REBALANCE: return ConsumerGroupStateDTO.COMPLETING_REBALANCE;
-      default: return ConsumerGroupStateDTO.UNKNOWN;
+      case DEAD:
+        return ConsumerGroupStateDTO.DEAD;
+      case EMPTY:
+        return ConsumerGroupStateDTO.EMPTY;
+      case STABLE:
+        return ConsumerGroupStateDTO.STABLE;
+      case PREPARING_REBALANCE:
+        return ConsumerGroupStateDTO.PREPARING_REBALANCE;
+      case COMPLETING_REBALANCE:
+        return ConsumerGroupStateDTO.COMPLETING_REBALANCE;
+      default:
+        return ConsumerGroupStateDTO.UNKNOWN;
     }
   }
 

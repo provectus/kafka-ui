@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.model;
 
-import com.provectus.kafka.ui.exception.IllegalEntityStateException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -11,24 +10,24 @@ public enum CleanupPolicy {
   COMPACT_DELETE(Arrays.asList("compact,delete", "delete,compact")),
   UNKNOWN("unknown");
 
-  private final List<String> cleanUpPolicy;
+  private final List<String> policies;
 
-  CleanupPolicy(String cleanUpPolicy) {
-    this(Collections.singletonList(cleanUpPolicy));
+  CleanupPolicy(String policy) {
+    this(Collections.singletonList(policy));
   }
 
-  CleanupPolicy(List<String> cleanUpPolicy) {
-    this.cleanUpPolicy = cleanUpPolicy;
+  CleanupPolicy(List<String> policies) {
+    this.policies = policies;
   }
 
-  public String getCleanUpPolicy() {
-    return cleanUpPolicy.get(0);
+  public String getPolicy() {
+    return policies.get(0);
   }
 
   public static CleanupPolicy fromString(String string) {
     return Arrays.stream(CleanupPolicy.values())
         .filter(v ->
-            v.cleanUpPolicy.stream().anyMatch(
+            v.policies.stream().anyMatch(
                 s -> s.equals(string.replace(" ", "")
                 )
             )
