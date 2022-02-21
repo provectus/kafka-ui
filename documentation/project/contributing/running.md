@@ -3,14 +3,18 @@
 ### Running locally via docker
 If you have built a container locally or wish to run a public one you could bring everything up like this:
 ```shell
-docker-compose -f docker/kafka-ui.yaml up -d
+docker-compose -f documentation/compose/kafka-ui.yaml up -d
 ```
 
 ### Running locally without docker
-Once you built the app, run the following:
+Once you built the app, run the following in `kafka-ui-api/`:
 
 ```sh
 ./mvnw spring-boot:run -Pprod
+
+# or
+
+./mvnw spring-boot:run -Pprod -Dspring.config.location=file:///path/to/conf.yaml
 ```
 
 ### Running in kubernetes
