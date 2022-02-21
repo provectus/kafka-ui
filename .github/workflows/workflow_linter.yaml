@@ -18,5 +18,5 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Install yamllint
         run: sudo apt install -y yamllint
-      - name: Validate workflows
+      - name: Validate workflow yaml files
         run: yamllint .github/workflows/. -d relaxed -f github --no-warnings
