@@ -35,7 +35,7 @@ const Brokers: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
-  }, [fetchClusterStats, clusterName]);
+  }, [clusterName, dispatch]);
 
   useInterval(() => {
     fetchClusterStats(clusterName);

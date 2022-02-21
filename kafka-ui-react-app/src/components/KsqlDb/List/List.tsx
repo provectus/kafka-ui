@@ -32,7 +32,7 @@ const List: FC = () => {
 
   useEffect(() => {
     dispatch(fetchKsqlDbTables(clusterName));
-  }, []);
+  }, [clusterName, dispatch]);
 
   return (
     <>

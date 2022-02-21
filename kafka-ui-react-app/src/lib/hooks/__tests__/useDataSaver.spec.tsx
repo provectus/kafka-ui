@@ -25,7 +25,7 @@ describe('useDataSaver hook', () => {
 
       const HookWrapper: React.FC = () => {
         const { saveFile } = useDataSaver('message', content);
-        useEffect(() => saveFile(), []);
+        useEffect(() => saveFile(), [saveFile]);
         return null;
       };
 
@@ -52,7 +52,7 @@ describe('useDataSaver hook', () => {
 
       const HookWrapper: React.FC = () => {
         const { saveFile } = useDataSaver('message', 'content');
-        useEffect(() => saveFile(), []);
+        useEffect(() => saveFile(), [saveFile]);
         return null;
       };
 
@@ -81,7 +81,7 @@ describe('useDataSaver hook', () => {
     it('data with type Object', () => {
       const HookWrapper: React.FC = () => {
         const { copyToClipboard } = useDataSaver('topic', content);
-        useEffect(() => copyToClipboard(), []);
+        useEffect(() => copyToClipboard(), [copyToClipboard]);
         return null;
       };
       render(<HookWrapper />);
@@ -96,7 +96,7 @@ describe('useDataSaver hook', () => {
           'topic',
           '{ title: "title", }'
         );
-        useEffect(() => copyToClipboard(), []);
+        useEffect(() => copyToClipboard(), [copyToClipboard]);
         return null;
       };
       render(<HookWrapper />);

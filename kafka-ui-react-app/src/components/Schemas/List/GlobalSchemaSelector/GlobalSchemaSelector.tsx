@@ -48,7 +48,7 @@ const GlobalSchemaSelector: React.FC = () => {
     };
 
     fetchData();
-  }, []);
+  }, [clusterName]);
 
   const handleChangeCompatibilityLevel = (level: string | number) => {
     setNextCompatibilityLevel(level as CompatibilityLevelCompatibilityEnum);

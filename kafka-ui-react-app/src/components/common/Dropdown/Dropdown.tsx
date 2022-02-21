@@ -22,7 +22,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
         'is-right': right,
         'is-up': up,
       }),
-    [active]
+    [active, right, up]
   );
   return (
     <div className={classNames} ref={wrapperRef}>
