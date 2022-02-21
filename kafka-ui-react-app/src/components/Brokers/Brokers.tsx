@@ -126,6 +126,7 @@ const Brokers: React.FC = () => {
             <TableHeaderCell title="Segment Size (Mb)" />
             <TableHeaderCell title="Segment Count" />
             <TableHeaderCell title="Port" />
+            <TableHeaderCell title="Host" />
           </tr>
         </thead>
         <tbody>
@@ -137,7 +138,8 @@ const Brokers: React.FC = () => {
                   <BytesFormatted value={segmentSize} />
                 </td>
                 <td>{segmentCount}</td>
-                {items && <td>{items[brokerId]?.port}</td>}
+                <td>{items && items[brokerId]?.port}</td>
+                <td>{items && items[brokerId]?.host}</td>
               </tr>
             ))
           ) : (
