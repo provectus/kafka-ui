@@ -29,4 +29,3 @@ Otherwise, some apps within a stack (e.g. `kafka-ui.yaml`) might crash.
 ## Where to go next
 
 In the next section, you'll [learn how to build the application](building.md).
-### GIT SETUP
