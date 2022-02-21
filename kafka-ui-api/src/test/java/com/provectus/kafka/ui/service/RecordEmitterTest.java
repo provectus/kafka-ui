@@ -247,8 +247,8 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     var expectedValues = SENT_RECORDS.stream()
-        .filter(r -> r.getOffset() <= targetOffsets.get(r.getTp()))
-        .filter(r -> r.getOffset() >= (targetOffsets.get(r.getTp()) - (100 / PARTITIONS)))
+        .filter(r -> r.getOffset() < targetOffsets.get(r.getTp()))
+        .filter(r -> r.getOffset() >= (targetOffsets.get(r.getTp()) - (numMessages / PARTITIONS)))
         .map(Record::getValue)
         .collect(Collectors.toList());
 
@@ -282,7 +282,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     expectEmitter(emitter,
         e -> e.recordWith(ArrayList::new)
             .expectNextCount(expectedValues.size())
-            .expectRecordedMatches(expectedValues::containsAll),
+            .expectRecordedMatches(r -> r.containsAll(expectedValues)),
         v -> {}
     );
   }

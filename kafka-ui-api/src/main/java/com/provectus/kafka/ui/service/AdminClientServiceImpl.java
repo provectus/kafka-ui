@@ -12,6 +12,7 @@ import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
 
 @Service
@@ -25,10 +26,13 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
   @Override
   public Mono<ReactiveAdminClient> get(KafkaCluster cluster) {
-    String clusterName = cluster != null ? cluster.getName() != null ? cluster.getName() : "" : "";
-    return Mono.justOrEmpty(cluster != null ? adminClientCache.get(clusterName) : null)
-        .switchIfEmpty(createAdminClient(cluster))
-        .map(e -> adminClientCache.computeIfAbsent(clusterName, key -> e));
+    if (cluster != null && StringUtils.hasText(cluster.getName())) {
+      return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
+          .switchIfEmpty(createAdminClient(cluster))
+          .map(e -> adminClientCache.computeIfAbsent(cluster.getName(), key -> e));
+    } else {
+      return Mono.empty();
+    }
   }
 
   private Mono<ReactiveAdminClient> createAdminClient(KafkaCluster cluster) {
