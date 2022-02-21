@@ -93,7 +93,7 @@ const List: React.FC<TopicsListProps> = ({
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
     history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
-  }, [showInternal]);
+  }, [history, pathname, perPage, showInternal]);
 
   const [confirmationModal, setConfirmationModal] = React.useState<
     '' | 'deleteTopics' | 'purgeMessages'
@@ -127,18 +127,18 @@ const List: React.FC<TopicsListProps> = ({
     deleteTopics(clusterName, Array.from(selectedTopics));
     closeConfirmationModal();
     clearSelectedTopics();
-  }, [clusterName, selectedTopics]);
+  }, [clusterName, deleteTopics, selectedTopics]);
   const purgeMessagesHandler = React.useCallback(() => {
     clearTopicsMessages(clusterName, Array.from(selectedTopics));
     closeConfirmationModal();
     clearSelectedTopics();
-  }, [clusterName, selectedTopics]);
+  }, [clearTopicsMessages, clusterName, selectedTopics]);
   const searchHandler = React.useCallback(
     (searchString: string) => {
       setTopicsSearch(searchString);
       history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
     },
-    [search, pathname, perPage]
+    [setTopicsSearch, history, pathname, perPage]
   );
 
   return (

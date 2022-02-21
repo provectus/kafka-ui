@@ -41,7 +41,7 @@ const SendMessage: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchTopicMessageSchema(clusterName, topicName));
-  }, []);
+  }, [clusterName, dispatch, topicName]);
 
   const messageSchema = useAppSelector((state) =>
     getMessageSchemaByTopicName(state, topicName)

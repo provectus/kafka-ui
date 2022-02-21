@@ -45,7 +45,7 @@ const ListItem: React.FC<ListItemProps> = ({
       dispatch(deleteConnector(clusterName, connect, name));
     }
     setDeleteConnectorConfirmationVisible(false);
-  }, [clusterName, connect, name]);
+  }, [clusterName, connect, dispatch, name]);
 
   const runningTasks = React.useMemo(() => {
     if (!tasksCount) return null;
