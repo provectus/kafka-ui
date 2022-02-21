@@ -9,7 +9,7 @@ on:
     paths:
       - ".github/workflows/**"
 jobs:
-  build_and_test:
+  build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
