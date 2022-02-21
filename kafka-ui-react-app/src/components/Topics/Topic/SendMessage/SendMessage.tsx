@@ -88,7 +88,7 @@ const SendMessage: React.FC = () => {
       key: keyDefaultValue,
       content: contentDefaultValue,
     });
-  }, [keyDefaultValue, contentDefaultValue]);
+  }, [keyDefaultValue, contentDefaultValue, reset]);
 
   const onSubmit = async (data: {
     key: string;
