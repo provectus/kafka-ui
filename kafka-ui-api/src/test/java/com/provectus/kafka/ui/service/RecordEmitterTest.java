@@ -272,6 +272,7 @@ class RecordEmitterTest extends AbstractBaseTest {
     );
 
     expectEmitter(backwardEmitter,
+        100,
         e -> e.expectNextCount(0),
         StepVerifier.Assertions::hasNotDroppedElements
     );
@@ -279,6 +280,7 @@ class RecordEmitterTest extends AbstractBaseTest {
 
   private void expectEmitter(Consumer<FluxSink<TopicMessageEventDTO>> emitter, List<String> expectedValues) {
     expectEmitter(emitter,
+        expectedValues.size(),
         e -> e.recordWith(ArrayList::new)
             .expectNextCount(expectedValues.size())
             .expectRecordedMatches(r -> r.containsAll(expectedValues))
@@ -289,11 +291,13 @@ class RecordEmitterTest extends AbstractBaseTest {
 
   private void expectEmitter(
       Consumer<FluxSink<TopicMessageEventDTO>> emitter,
+      int take,
       Function<StepVerifier.Step<String>, StepVerifier.Step<String>> stepConsumer,
       Consumer<StepVerifier.Assertions> assertionsConsumer) {
 
     StepVerifier.FirstStep<String> firstStep = StepVerifier.create(
         Flux.create(emitter)
+            .take(take)
             .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
             .take(Long.MAX_VALUE)
             .map(m -> m.getMessage().getContent())
