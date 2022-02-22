@@ -55,6 +55,7 @@
     "build": "react-scripts build",
     "lint": "eslint --ext .tsx,.ts src/",
     "lint:fix": "eslint --ext .tsx,.ts src/ --fix",
+    "lint:CI": "eslint --ext .tsx,.ts src/ --max-warnings=0",
     "test": "react-scripts test",
     "test:CI": "CI=true npm test  -- --coverage --ci --testResultsProcessor=\"jest-sonar-reporter\" --watchAll=false",
     "eject": "react-scripts eject",
