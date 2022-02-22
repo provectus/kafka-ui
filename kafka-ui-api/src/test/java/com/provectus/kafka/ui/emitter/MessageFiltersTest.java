@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Test;
 class MessageFiltersTest {
 
   @Nested
-  class StringContainsFilterTest {
+  class StringContainsFilter {
 
     Predicate<TopicMessageDTO> filter = containsStringFilter("abC");
 
@@ -58,7 +58,7 @@ class MessageFiltersTest {
   }
 
   @Nested
-  class GroovyScriptFilterTest {
+  class GroovyScriptFilter {
 
     @Test
     void throwsExceptionOnInvalidGroovySyntax() {

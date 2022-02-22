@@ -297,9 +297,8 @@ class RecordEmitterTest extends AbstractBaseTest {
 
     StepVerifier.FirstStep<String> firstStep = StepVerifier.create(
         Flux.create(emitter)
-            .take(take)
             .filter(m -> m.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE))
-            .take(Long.MAX_VALUE)
+            .take(take)
             .map(m -> m.getMessage().getContent())
     );
 
