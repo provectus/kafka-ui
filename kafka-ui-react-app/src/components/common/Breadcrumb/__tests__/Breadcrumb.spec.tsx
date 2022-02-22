@@ -4,11 +4,11 @@ import { BreadcrumbProvider } from 'components/common/Breadcrumb/Breadcrumb.prov
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import { render } from 'lib/testHelpers';
 
-const createTopicPath = '/ui/clusters/local/topics/create-new';
-const createTopicRoutePath = '/ui/clusters/:clusterName/topics/create-new';
+const createTopicPath = '/clusters/local/topics/create-new';
+const createTopicRoutePath = '/clusters/:clusterName/topics/create-new';
 
-const topicPath = '/ui/clusters/secondLocal/topics/topic-name';
-const topicRoutePath = '/ui/clusters/:clusterName/topics/:topicName';
+const topicPath = '/clusters/secondLocal/topics/topic-name';
+const topicRoutePath = '/clusters/:clusterName/topics/:topicName';
 
 describe('Breadcrumb component', () => {
   const setupComponent = (pathname: string, routePath: string) =>
