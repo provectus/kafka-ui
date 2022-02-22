@@ -13,7 +13,7 @@ const mockDelete = jest.fn();
 const clusterName = 'local';
 const mockDeleteMessages = jest.fn();
 const mockToggleTopicSelected = jest.fn();
-
+const mockRecreateTopic = jest.fn();
 jest.mock(
   'components/common/ConfirmationModal/ConfirmationModal',
   () => 'mock-ConfirmationModal'
@@ -35,6 +35,7 @@ describe('ListItem', () => {
               deleteTopic={mockDelete}
               clusterName={clusterName}
               clearTopicMessages={mockDeleteMessages}
+              recreateTopic={mockRecreateTopic}
               selected={false}
               toggleTopicSelected={mockToggleTopicSelected}
               {...props}

@@ -35,6 +35,7 @@ export interface TopicsListProps {
   fetchTopicsList(props: GetTopicsRequest): void;
   deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
   deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
+  recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
   clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
   clearTopicMessages(
     topicName: TopicName,
@@ -55,6 +56,7 @@ const List: React.FC<TopicsListProps> = ({
   fetchTopicsList,
   deleteTopic,
   deleteTopics,
+  recreateTopic,
   clearTopicMessages,
   clearTopicsMessages,
   search,
@@ -260,6 +262,7 @@ const List: React.FC<TopicsListProps> = ({
                   selected={selectedTopics.has(topic.name)}
                   toggleTopicSelected={toggleTopicSelected}
                   deleteTopic={deleteTopic}
+                  recreateTopic={recreateTopic}
                   clearTopicMessages={clearTopicMessages}
                 />
               ))}

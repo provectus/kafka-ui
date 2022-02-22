@@ -4,6 +4,7 @@ import {
   TopicName,
   TopicWithDetailedInfo,
 } from 'redux/interfaces';
+import { useHistory } from 'react-router';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -11,6 +12,7 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import { clusterTopicPath } from 'lib/paths';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 import * as S from './List.styled';
@@ -20,6 +22,7 @@ export interface ListItemProps {
   selected: boolean;
   toggleTopicSelected(topicName: TopicName): void;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
   clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
 }
@@ -36,14 +39,22 @@ const ListItem: React.FC<ListItemProps> = ({
   selected,
   toggleTopicSelected,
   deleteTopic,
+  recreateTopic,
   clusterName,
   clearTopicMessages,
 }) => {
+  const history = useHistory();
+
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
 
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
+
+  const [
+    isRecreateTopicConfirmationVisible,
+    setRecreateTopicConfirmationVisible,
+  ] = React.useState(false);
 
   const { outOfSyncReplicas, numberOfMessages } = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
@@ -71,6 +82,12 @@ const ListItem: React.FC<ListItemProps> = ({
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, name);
   }, [clusterName, deleteTopic, name]);
+
+  const recreateTopicHandler = React.useCallback(() => {
+    recreateTopic(clusterName, name);
+    setRecreateTopicConfirmationVisible(false);
+    history.push(clusterTopicPath(clusterName, name));
+  }, [recreateTopic, clusterName, name, history]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
@@ -125,6 +142,12 @@ const ListItem: React.FC<ListItemProps> = ({
                   Remove Topic
                 </DropdownItem>
               )}
+              <DropdownItem
+                onClick={() => setRecreateTopicConfirmationVisible(true)}
+                danger
+              >
+                Recreate Topic
+              </DropdownItem>
             </Dropdown>
           </div>
         ) : null}
@@ -134,6 +157,13 @@ const ListItem: React.FC<ListItemProps> = ({
           onConfirm={deleteTopicHandler}
         >
           Are you sure want to remove <b>{name}</b> topic?
+        </ConfirmationModal>
+        <ConfirmationModal
+          isOpen={isRecreateTopicConfirmationVisible}
+          onCancel={() => setRecreateTopicConfirmationVisible(false)}
+          onConfirm={recreateTopicHandler}
+        >
+          Are you sure to recreate <b>{name}</b> topic?
         </ConfirmationModal>
       </td>
     </tr>

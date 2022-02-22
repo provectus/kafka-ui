@@ -12,6 +12,7 @@ describe('Details', () => {
   const mockClusterName = 'local';
   const mockClearTopicMessages = jest.fn();
   const mockInternalTopicPayload = internalTopicPayload.internal;
+  const mockRecreateTopic = jest.fn();
 
   const setupComponent = (pathname: string) =>
     render(
@@ -29,6 +30,7 @@ describe('Details', () => {
           name={internalTopicPayload.name}
           isInternal={false}
           deleteTopic={mockDelete}
+          recreateTopic={mockRecreateTopic}
           clearTopicMessages={mockClearTopicMessages}
           isDeleted={false}
           isDeletePolicy
@@ -54,6 +56,7 @@ describe('Details', () => {
             name={internalTopicPayload.name}
             isInternal={mockInternalTopicPayload}
             deleteTopic={mockDelete}
+            recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
             isDeleted={false}
             isDeletePolicy
