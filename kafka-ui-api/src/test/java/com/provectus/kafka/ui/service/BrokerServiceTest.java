@@ -43,20 +43,4 @@ class BrokerServiceTest extends AbstractBaseTest {
         .verifyComplete();
   }
 
-  @Test
-  void getBrokersNull() {
-    StepVerifier.create(
-        brokerService.getBrokers(null)
-    ).verifyComplete();
-  }
-
-  @Test
-  void getBrokersEmpty() {
-    final KafkaCluster emptyCluster = KafkaCluster.builder().build();
-
-    StepVerifier.create(
-        brokerService.getBrokers(emptyCluster)
-    ).verifyComplete();
-  }
-
 }

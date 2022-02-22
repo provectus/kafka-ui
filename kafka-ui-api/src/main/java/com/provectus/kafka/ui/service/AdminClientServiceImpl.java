@@ -26,13 +26,9 @@ public class AdminClientServiceImpl implements AdminClientService, Closeable {
 
   @Override
   public Mono<ReactiveAdminClient> get(KafkaCluster cluster) {
-    if (cluster != null && StringUtils.hasText(cluster.getName())) {
-      return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
-          .switchIfEmpty(createAdminClient(cluster))
-          .map(e -> adminClientCache.computeIfAbsent(cluster.getName(), key -> e));
-    } else {
-      return Mono.empty();
-    }
+    return Mono.justOrEmpty(adminClientCache.get(cluster.getName()))
+        .switchIfEmpty(createAdminClient(cluster))
+        .map(e -> adminClientCache.computeIfAbsent(cluster.getName(), key -> e));
   }
 
   private Mono<ReactiveAdminClient> createAdminClient(KafkaCluster cluster) {
