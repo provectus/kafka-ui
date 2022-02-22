@@ -10,8 +10,8 @@ import io.confluent.kafka.schemaregistry.client.SchemaMetadata;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
 import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import io.confluent.kafka.schemaregistry.json.JsonSchema;
+import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializer;
-import io.confluent.kafka.serializers.json.KafkaJsonSchemaSerializerConfig;
 import java.io.IOException;
 import java.util.Map;
 import org.apache.kafka.common.serialization.Serializer;
@@ -33,8 +33,8 @@ public class JsonSchemaMessageReader extends MessageReader<JsonNode> {
     serializer.configure(
         Map.of(
             "schema.registry.url", "wontbeused",
-            KafkaJsonSchemaSerializerConfig.AUTO_REGISTER_SCHEMAS, false,
-            KafkaJsonSchemaSerializerConfig.USE_LATEST_VERSION, true
+            AbstractKafkaSchemaSerDeConfig.AUTO_REGISTER_SCHEMAS, false,
+            AbstractKafkaSchemaSerDeConfig.USE_LATEST_VERSION, true
         ),
         isKey
     );
@@ -69,10 +69,10 @@ public class JsonSchemaMessageReader extends MessageReader<JsonNode> {
      * possible in our case. So, we just skip all infer logic and pass schema directly.
      */
     @Override
-    public byte[] serialize(String topic, JsonNode record) {
+    public byte[] serialize(String topic, JsonNode rec) {
       return super.serializeImpl(
-          super.getSubjectName(topic, isKey, record, schema),
-          record,
+          super.getSubjectName(topic, isKey, rec, schema),
+          rec,
           (JsonSchema) schema
       );
     }

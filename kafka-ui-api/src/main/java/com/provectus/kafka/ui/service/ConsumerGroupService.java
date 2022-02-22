@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.function.Function;
+import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -141,18 +141,25 @@ public class ConsumerGroupService {
       case NAME:
         return Comparator.comparing(ConsumerGroupDescription::groupId);
       case STATE:
-        Function<ConsumerGroupDescription, Integer> statesPriorities = cg -> {
+        ToIntFunction<ConsumerGroupDescription> statesPriorities = cg -> {
           switch (cg.state()) {
-            case STABLE: return 0;
-            case COMPLETING_REBALANCE: return 1;
-            case PREPARING_REBALANCE: return 2;
-            case EMPTY: return 3;
-            case DEAD: return 4;
-            case UNKNOWN: return 5;
-            default: return 100;
+            case STABLE:
+              return 0;
+            case COMPLETING_REBALANCE:
+              return 1;
+            case PREPARING_REBALANCE:
+              return 2;
+            case EMPTY:
+              return 3;
+            case DEAD:
+              return 4;
+            case UNKNOWN:
+              return 5;
+            default:
+              return 100;
           }
         };
-        return Comparator.comparingInt(statesPriorities::apply);
+        return Comparator.comparingInt(statesPriorities);
       case MEMBERS:
         return Comparator.comparingInt(cg -> -cg.members().size());
       default:

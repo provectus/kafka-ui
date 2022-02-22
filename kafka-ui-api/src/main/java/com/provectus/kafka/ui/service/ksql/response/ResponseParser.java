@@ -15,6 +15,9 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 
 public class ResponseParser {
 
+  private ResponseParser() {
+  }
+
   public static Optional<KsqlApiClient.KsqlResponseTable> parseSelectResponse(JsonNode jsonNode) {
     // in response we getting either header record or row data
     if (arrayFieldNonEmpty(jsonNode, "header")) {

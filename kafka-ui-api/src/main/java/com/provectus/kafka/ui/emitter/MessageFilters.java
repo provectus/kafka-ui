@@ -18,6 +18,9 @@ public class MessageFilters {
 
   private static GroovyScriptEngineImpl GROOVY_ENGINE;
 
+  private MessageFilters() {
+  }
+
   public static Predicate<TopicMessageDTO> createMsgFilter(String query, MessageFilterTypeDTO type) {
     switch (type) {
       case STRING_CONTAINS:

@@ -30,7 +30,7 @@ class KafkaConfigSanitizer extends Sanitizer {
       var keysToSanitize = new HashSet<>(
           patternsToSanitize.isEmpty() ? DEFAULT_PATTERNS_TO_SANITIZE : patternsToSanitize);
       keysToSanitize.addAll(kafkaConfigKeysToSanitize());
-      setKeysToSanitize(keysToSanitize.toArray(new String[]{}));
+      setKeysToSanitize(keysToSanitize.toArray(new String[] {}));
     }
   }
 

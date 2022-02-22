@@ -87,8 +87,8 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   @SneakyThrows
   private String parse(byte[] value, Descriptor descriptor) {
     DynamicMessage protoMsg = DynamicMessage.parseFrom(
-            descriptor,
-            new ByteArrayInputStream(value)
+        descriptor,
+        new ByteArrayInputStream(value)
     );
     byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
     return new String(jsonFromProto);
@@ -121,8 +121,8 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   public TopicMessageSchemaDTO getTopicSchema(String topic) {
 
     final JsonSchema jsonSchema = schemaConverter.convert(
-            protobufSchemaPath.toUri(),
-            getDescriptor(topic)
+        protobufSchemaPath.toUri(),
+        getDescriptor(topic)
     );
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
