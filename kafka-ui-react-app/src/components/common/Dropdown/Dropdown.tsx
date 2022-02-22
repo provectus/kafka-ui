@@ -1,6 +1,6 @@
 import useOutsideClickRef from '@rooks/use-outside-click-ref';
 import cx from 'classnames';
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import * as S from './Dropdown.styled';
 
@@ -8,12 +8,25 @@ export interface DropdownProps {
   label: React.ReactNode;
   right?: boolean;
   up?: boolean;
+  vElipsisVisble?: boolean;
 }
 
-const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
+const Dropdown: React.FC<DropdownProps> = ({
+  label,
+  right,
+  up,
+  children,
+  vElipsisVisble,
+}) => {
   const [active, setActive] = useState<boolean>(false);
   const [wrapperRef] = useOutsideClickRef(() => setActive(false));
   const onClick = useCallback(() => setActive(!active), [active]);
+
+  useEffect(() => {
+    if (vElipsisVisble && active === true) {
+      setActive(false);
+    }
+  }, [vElipsisVisble]);
 
   const classNames = useMemo(
     () =>

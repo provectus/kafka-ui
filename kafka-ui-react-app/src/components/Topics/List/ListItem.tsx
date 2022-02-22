@@ -109,25 +109,35 @@ const ListItem: React.FC<ListItemProps> = ({
         <BytesFormatted value={segmentSize} />
       </td>
       <td className="topic-action-block" style={{ width: '4%' }}>
-        {!internal && !isReadOnly && vElipsisVisble ? (
-          <div className="has-text-right">
-            <Dropdown label={<VerticalElipsisIcon />} right>
-              {cleanUpPolicy === 'DELETE' && (
-                <DropdownItem onClick={clearTopicMessagesHandler} danger>
-                  Clear Messages
-                </DropdownItem>
-              )}
-              {isTopicDeletionAllowed && (
-                <DropdownItem
-                  onClick={() => setDeleteTopicConfirmationVisible(true)}
-                  danger
-                >
-                  Remove Topic
-                </DropdownItem>
-              )}
-            </Dropdown>
-          </div>
-        ) : null}
+        <div
+          className="has-text-right"
+          style={
+            !internal && !isReadOnly && vElipsisVisble
+              ? { visibility: 'visible' }
+              : { visibility: 'hidden' }
+          }
+        >
+          <Dropdown
+            vElipsisVisble={!vElipsisVisble}
+            label={<VerticalElipsisIcon />}
+            right
+          >
+            {cleanUpPolicy === 'DELETE' && (
+              <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                Clear Messages
+              </DropdownItem>
+            )}
+            {isTopicDeletionAllowed && (
+              <DropdownItem
+                onClick={() => setDeleteTopicConfirmationVisible(true)}
+                danger
+              >
+                Remove Topic
+              </DropdownItem>
+            )}
+          </Dropdown>
+        </div>
+
         <ConfirmationModal
           isOpen={isDeleteTopicConfirmationVisible}
           onCancel={() => setDeleteTopicConfirmationVisible(false)}
