@@ -48,8 +48,6 @@ import reactor.core.scheduler.Schedulers;
 @RequiredArgsConstructor
 @Slf4j
 public class MessagesService {
-
-
   private final AdminClientService adminClientService;
   private final DeserializationService deserializationService;
   private final ConsumerGroupService consumerGroupService;
@@ -85,7 +83,7 @@ public class MessagesService {
     if (msg.getPartition() != null
         && msg.getPartition() > metricsCache.get(cluster).getTopicDescriptions()
         .get(topic).partitions().size() - 1) {
-      throw new ValidationException("Invalid partition");
+      return Mono.error(new ValidationException("Invalid partition"));
     }
     RecordSerDe serde =
         deserializationService.getRecordDeserializerForCluster(cluster);
@@ -118,6 +116,8 @@ public class MessagesService {
         }
       });
       return Mono.fromFuture(cf);
+    } catch (Throwable e) {
+      return Mono.error(e);
     }
   }
 

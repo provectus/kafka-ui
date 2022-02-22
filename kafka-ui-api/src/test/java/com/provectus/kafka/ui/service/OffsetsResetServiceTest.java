@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
 import com.provectus.kafka.ui.exception.NotFoundException;
@@ -32,6 +31,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.ContextConfiguration;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 public class OffsetsResetServiceTest extends AbstractBaseTest {
@@ -75,45 +76,45 @@ public class OffsetsResetServiceTest extends AbstractBaseTest {
 
   @Test
   void failsIfGroupDoesNotExists() {
-    assertThatThrownBy(
-        () -> offsetsResetService
-            .resetToEarliest(CLUSTER, "non-existing-group", topic, null).block()
-    ).isInstanceOf(NotFoundException.class);
-    assertThatThrownBy(
-        () -> offsetsResetService
-            .resetToLatest(CLUSTER, "non-existing-group", topic, null).block()
-    ).isInstanceOf(NotFoundException.class);
-    assertThatThrownBy(() -> offsetsResetService
-        .resetToTimestamp(CLUSTER, "non-existing-group", topic, null, System.currentTimeMillis())
-        .block()
-    ).isInstanceOf(NotFoundException.class);
-    assertThatThrownBy(
-        () -> offsetsResetService
+    List<Mono<?>> expectedNotFound = List.of(
+        offsetsResetService
+            .resetToEarliest(CLUSTER, "non-existing-group", topic, null),
+        offsetsResetService
+            .resetToLatest(CLUSTER, "non-existing-group", topic, null),
+        offsetsResetService
+            .resetToTimestamp(CLUSTER, "non-existing-group", topic, null, System.currentTimeMillis()),
+        offsetsResetService
             .resetToOffsets(CLUSTER, "non-existing-group", topic, Map.of())
-            .block()
-    ).isInstanceOf(NotFoundException.class);
+    );
+
+    for (Mono<?> mono : expectedNotFound) {
+      StepVerifier.create(mono)
+          .expectErrorMatches(t -> t instanceof NotFoundException)
+          .verify();
+    }
   }
 
   @Test
   void failsIfGroupIsActive() {
     // starting consumer to activate group
     try (var consumer = groupConsumer()) {
+
       consumer.subscribe(Pattern.compile("no-such-topic-pattern"));
       consumer.poll(Duration.ofMillis(100));
 
-      assertThatThrownBy(() ->
-          offsetsResetService.resetToEarliest(CLUSTER, groupId, topic, null).block()
-      ).isInstanceOf(ValidationException.class);
-      assertThatThrownBy(
-          () -> offsetsResetService.resetToLatest(CLUSTER, groupId, topic, null).block()
-      ).isInstanceOf(ValidationException.class);
-      assertThatThrownBy(() -> offsetsResetService
-          .resetToTimestamp(CLUSTER, groupId, topic, null, System.currentTimeMillis())
-          .block()
-      ).isInstanceOf(ValidationException.class);
-      assertThatThrownBy(
-          () -> offsetsResetService.resetToOffsets(CLUSTER, groupId, topic, Map.of()).block()
-      ).isInstanceOf(ValidationException.class);
+      List<Mono<?>> expectedValidationError = List.of(
+          offsetsResetService.resetToEarliest(CLUSTER, groupId, topic, null),
+          offsetsResetService.resetToLatest(CLUSTER, groupId, topic, null),
+          offsetsResetService
+              .resetToTimestamp(CLUSTER, groupId, topic, null, System.currentTimeMillis()),
+          offsetsResetService.resetToOffsets(CLUSTER, groupId, topic, Map.of())
+      );
+
+      for (Mono<?> mono : expectedValidationError) {
+        StepVerifier.create(mono)
+            .expectErrorMatches(t -> t instanceof ValidationException)
+            .verify();
+      }
     }
   }
 
