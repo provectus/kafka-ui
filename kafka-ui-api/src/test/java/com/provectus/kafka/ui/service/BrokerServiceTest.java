@@ -17,7 +17,7 @@ class BrokerServiceTest extends AbstractBaseTest {
   private ClustersStorage clustersStorage;
 
   @Test
-  void getBrokersReturnsFilledBrokerDTO() {
+  void getBrokersReturnsFilledBrokerDto() {
     BrokerDTO expectedBroker = new BrokerDTO();
     expectedBroker.setId(1);
     expectedBroker.setHost(kafka.getHost());
