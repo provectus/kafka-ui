@@ -30,7 +30,7 @@ import java.util.Map;
 
 public final class KafkaConstants {
 
-  private static final String LONG_MAX_STRING = Long.valueOf(Long.MAX_VALUE).toString();
+  private static final String LONG_MAX_STRING = Long.toString(Long.MAX_VALUE);
 
   public static final Map<String, String> TOPIC_DEFAULT_CONFIGS = Map.ofEntries(
       new AbstractMap.SimpleEntry<>(CLEANUP_POLICY_CONFIG, CLEANUP_POLICY_DELETE),
