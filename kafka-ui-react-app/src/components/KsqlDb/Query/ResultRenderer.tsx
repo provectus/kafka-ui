@@ -20,6 +20,7 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
 
   const { headers, rows } = rawTable;
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const transformedRows = React.useMemo(
     () =>
       rows.map((row) =>
@@ -31,7 +32,7 @@ const ResultRenderer: React.FC<{ result: KsqlCommandResponse | null }> = ({
           {} as Dictionary<string>
         )
       ),
-    []
+    [rawTable.headers, rows]
   );
 
   return (

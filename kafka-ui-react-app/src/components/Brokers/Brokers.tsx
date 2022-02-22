@@ -10,6 +10,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
+  fetchBrokers,
   fetchClusterStats,
   selectStats,
 } from 'redux/reducers/brokers/brokersSlice';
@@ -28,6 +29,7 @@ const Brokers: React.FC = () => {
     underReplicatedPartitionCount,
     diskUsage,
     version,
+    items,
   } = useAppSelector(selectStats);
 
   let replicas = inSyncReplicasCount ?? 0;
@@ -35,14 +37,15 @@ const Brokers: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
-  }, [fetchClusterStats, clusterName]);
+    dispatch(fetchBrokers(clusterName));
+  }, [clusterName, dispatch]);
 
   useInterval(() => {
     fetchClusterStats(clusterName);
+    fetchBrokers(clusterName);
   }, 5000);
 
   const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
-
   return (
     <>
       <PageHeading text="Brokers" />
@@ -122,6 +125,8 @@ const Brokers: React.FC = () => {
             <TableHeaderCell title="Broker" />
             <TableHeaderCell title="Segment Size (Mb)" />
             <TableHeaderCell title="Segment Count" />
+            <TableHeaderCell title="Port" />
+            <TableHeaderCell title="Host" />
           </tr>
         </thead>
         <tbody>
@@ -133,6 +138,8 @@ const Brokers: React.FC = () => {
                   <BytesFormatted value={segmentSize} />
                 </td>
                 <td>{segmentCount}</td>
+                <td>{items && items[brokerId]?.port}</td>
+                <td>{items && items[brokerId]?.host}</td>
               </tr>
             ))
           ) : (

@@ -15,15 +15,15 @@ class ConsumingStats {
   private long elapsed = 0;
 
   void sendConsumingEvt(FluxSink<TopicMessageEventDTO> sink,
-                               ConsumerRecords<Bytes, Bytes> polledRecords,
-                               long elapsed) {
-    for (ConsumerRecord<Bytes, Bytes> record : polledRecords) {
-      for (Header header : record.headers()) {
+                        ConsumerRecords<Bytes, Bytes> polledRecords,
+                        long elapsed) {
+    for (ConsumerRecord<Bytes, Bytes> rec : polledRecords) {
+      for (Header header : rec.headers()) {
         bytes +=
             (header.key() != null ? header.key().getBytes().length : 0L)
                 + (header.value() != null ? header.value().length : 0L);
       }
-      bytes += record.serializedKeySize() + record.serializedValueSize();
+      bytes += rec.serializedKeySize() + rec.serializedValueSize();
     }
     this.records += polledRecords.count();
     this.elapsed += elapsed;

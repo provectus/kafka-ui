@@ -21,7 +21,7 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
       queryParams.set(SEARCH_QUERY_ARG, initValue.trim());
       history.push({ pathname, search: queryParams.toString() });
     }
-  }, []);
+  }, [history, initValue, pathname, q, queryParams]);
 
   const handleChange = useCallback(
     (value: string) => {
@@ -39,7 +39,7 @@ const useSearch = (initValue = ''): [string, (value: string) => void] => {
         history.replace({ pathname, search: queryParams.toString() });
       }
     },
-    [history, pathname, queryParams, q]
+    [q, page, history, pathname, queryParams]
   );
 
   return [q || initValue.trim() || '', handleChange];

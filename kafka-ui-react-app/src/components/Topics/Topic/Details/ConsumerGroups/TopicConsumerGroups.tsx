@@ -27,7 +27,7 @@ const TopicConsumerGroups: React.FC<Props> = ({
 }) => {
   React.useEffect(() => {
     fetchTopicConsumerGroups(clusterName, topicName);
-  }, []);
+  }, [clusterName, fetchTopicConsumerGroups, topicName]);
 
   return (
     <div>

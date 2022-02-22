@@ -86,14 +86,14 @@ public class JmxClusterUtil {
 
   @SneakyThrows
   private List<MetricDTO> getJmxMetrics(String host, int port, boolean jmxSsl,
-                                    @Nullable String username, @Nullable String password) {
+                                        @Nullable String username, @Nullable String password) {
     String jmxUrl = JMX_URL + host + ":" + port + "/" + JMX_SERVICE_TYPE;
     final var connectionInfo = JmxConnectionInfo.builder()
-            .url(jmxUrl)
-            .ssl(jmxSsl)
-            .username(username)
-            .password(password)
-            .build();
+        .url(jmxUrl)
+        .ssl(jmxSsl)
+        .username(username)
+        .password(password)
+        .build();
     JMXConnector srv;
     try {
       srv = pool.borrowObject(connectionInfo);

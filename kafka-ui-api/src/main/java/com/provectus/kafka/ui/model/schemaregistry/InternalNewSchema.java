@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.model.schemaregistry;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
-import com.provectus.kafka.ui.model.SchemaTypeDTO;
 import lombok.Data;
 
 @Data

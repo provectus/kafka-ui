@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.config;
 
-import com.fasterxml.jackson.databind.Module;
 import com.provectus.kafka.ui.model.JmxConnectionInfo;
 import com.provectus.kafka.ui.util.JmxPoolFactory;
 import java.util.Collections;

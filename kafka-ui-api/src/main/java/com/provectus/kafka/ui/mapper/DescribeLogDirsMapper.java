@@ -25,7 +25,7 @@ public class DescribeLogDirsMapper {
   }
 
   private BrokersLogdirsDTO toBrokerLogDirs(Integer broker, String dirName,
-                                         DescribeLogDirsResponse.LogDirInfo logDirInfo) {
+                                            DescribeLogDirsResponse.LogDirInfo logDirInfo) {
     BrokersLogdirsDTO result = new BrokersLogdirsDTO();
     result.setName(dirName);
     if (logDirInfo.error != null) {
@@ -40,8 +40,8 @@ public class DescribeLogDirsMapper {
   }
 
   private BrokerTopicLogdirsDTO toTopicLogDirs(Integer broker, String name,
-                                            List<Map.Entry<TopicPartition,
-                                            DescribeLogDirsResponse.ReplicaInfo>> partitions) {
+                                               List<Map.Entry<TopicPartition,
+                                                   DescribeLogDirsResponse.ReplicaInfo>> partitions) {
     BrokerTopicLogdirsDTO topic = new BrokerTopicLogdirsDTO();
     topic.setName(name);
     topic.setPartitions(
@@ -53,8 +53,8 @@ public class DescribeLogDirsMapper {
   }
 
   private BrokerTopicPartitionLogdirDTO topicPartitionLogDir(Integer broker, Integer partition,
-                                                          DescribeLogDirsResponse.ReplicaInfo
-                                                              replicaInfo) {
+                                                             DescribeLogDirsResponse.ReplicaInfo
+                                                                 replicaInfo) {
     BrokerTopicPartitionLogdirDTO logDir = new BrokerTopicPartitionLogdirDTO();
     logDir.setBroker(broker);
     logDir.setPartition(partition);

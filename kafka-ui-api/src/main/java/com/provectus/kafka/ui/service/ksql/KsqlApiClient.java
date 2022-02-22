@@ -101,7 +101,7 @@ public class KsqlApiClient {
     if (parsed.getStatements().size() > 1) {
       throw new ValidationException("Only single statement supported now");
     }
-    if (parsed.getStatements().size() == 0) {
+    if (parsed.getStatements().isEmpty()) {
       throw new ValidationException("No valid ksql statement found");
     }
     if (KsqlGrammar.isSelect(parsed.getStatements().get(0))) {

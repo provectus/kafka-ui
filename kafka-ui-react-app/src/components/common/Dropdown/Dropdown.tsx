@@ -35,7 +35,7 @@ const Dropdown: React.FC<DropdownProps> = ({
         'is-right': right,
         'is-up': up,
       }),
-    [active]
+    [active, right, up]
   );
   return (
     <div className={classNames} ref={wrapperRef}>
