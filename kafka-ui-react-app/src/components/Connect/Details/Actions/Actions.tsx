@@ -70,7 +70,7 @@ const Actions: React.FC<ActionsProps> = ({
     } catch {
       // do not redirect
     }
-  }, [deleteConnector, clusterName, connectName, connectorName]);
+  }, [deleteConnector, clusterName, connectName, connectorName, history]);
 
   const restartConnectorHandler = React.useCallback(() => {
     restartConnector(clusterName, connectName, connectorName);

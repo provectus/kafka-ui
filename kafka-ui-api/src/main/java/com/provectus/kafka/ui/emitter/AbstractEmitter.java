@@ -19,7 +19,7 @@ public abstract class AbstractEmitter {
   private final RecordSerDe recordDeserializer;
   private final ConsumingStats consumingStats = new ConsumingStats();
 
-  public AbstractEmitter(RecordSerDe recordDeserializer) {
+  protected AbstractEmitter(RecordSerDe recordDeserializer) {
     this.recordDeserializer = recordDeserializer;
   }
 
@@ -32,10 +32,10 @@ public abstract class AbstractEmitter {
     return records;
   }
 
-  protected FluxSink<TopicMessageEventDTO> sendMessage(FluxSink<TopicMessageEventDTO> sink,
-                             ConsumerRecord<Bytes, Bytes> msg) {
+  protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
+                                                       ConsumerRecord<Bytes, Bytes> msg) {
     final TopicMessageDTO topicMessage = ClusterUtil.mapToTopicMessage(msg, recordDeserializer);
-    return sink.next(
+    sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
             .message(topicMessage)
@@ -45,8 +45,8 @@ public abstract class AbstractEmitter {
   protected void sendPhase(FluxSink<TopicMessageEventDTO> sink, String name) {
     sink.next(
         new TopicMessageEventDTO()
-          .type(TopicMessageEventDTO.TypeEnum.PHASE)
-          .phase(new TopicMessagePhaseDTO().name(name))
+            .type(TopicMessageEventDTO.TypeEnum.PHASE)
+            .phase(new TopicMessagePhaseDTO().name(name))
     );
   }
 

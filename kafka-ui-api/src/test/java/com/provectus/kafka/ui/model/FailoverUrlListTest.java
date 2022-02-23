@@ -1,11 +1,12 @@
 package com.provectus.kafka.ui.model;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 
 class FailoverUrlListTest {
 

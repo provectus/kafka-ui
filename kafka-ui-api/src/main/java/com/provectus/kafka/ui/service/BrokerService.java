@@ -78,6 +78,7 @@ public class BrokerService {
               BrokerDTO broker = new BrokerDTO();
               broker.setId(node.id());
               broker.setHost(node.host());
+              broker.setPort(node.port());
               return broker;
             }).collect(Collectors.toList()))
         .flatMapMany(Flux::fromIterable);
@@ -104,7 +105,7 @@ public class BrokerService {
     Map<TopicPartitionReplica, String> req = Map.of(
         new TopicPartitionReplica(b.getTopic(), b.getPartition(), broker),
         b.getLogDir());
-    return  admin.alterReplicaLogDirs(req)
+    return admin.alterReplicaLogDirs(req)
         .onErrorResume(UnknownTopicOrPartitionException.class,
             e -> Mono.error(new TopicOrPartitionNotFoundException()))
         .onErrorResume(LogDirNotFoundException.class,

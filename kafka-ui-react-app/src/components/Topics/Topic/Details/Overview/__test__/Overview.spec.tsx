@@ -98,7 +98,7 @@ describe('Overview', () => {
       });
       const circles = screen.getAllByRole('circle');
       expect(circles[0]).toHaveStyle(
-        `fill: ${theme.circularAlert.color.error}`
+        `fill: ${theme.circularAlert.color.success}`
       );
       expect(circles[1]).toHaveStyle(
         `fill: ${theme.circularAlert.color.error}`

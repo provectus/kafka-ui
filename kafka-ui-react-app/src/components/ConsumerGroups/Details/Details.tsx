@@ -26,6 +26,7 @@ import {
   getIsConsumerGroupDeleted,
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
 
 import ListItem from './ListItem';
 
@@ -46,7 +47,7 @@ const Details: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
-  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
+  }, [clusterName, consumerGroupID, dispatch]);
 
   const onDelete = () => {
     setIsConfirmationModalVisible(false);
@@ -56,7 +57,7 @@ const Details: React.FC = () => {
     if (isDeleted) {
       history.push(clusterConsumerGroupsPath(clusterName));
     }
-  }, [isDeleted]);
+  }, [clusterName, history, isDeleted]);
 
   const onResetOffsets = () => {
     history.push(
@@ -90,7 +91,7 @@ const Details: React.FC = () => {
       <Metrics.Wrapper>
         <Metrics.Section>
           <Metrics.Indicator label="State">
-            <Tag color="yellow">{consumerGroup.state}</Tag>
+            <Tag color={getTagColor(consumerGroup)}>{consumerGroup.state}</Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Members">
             {consumerGroup.members}

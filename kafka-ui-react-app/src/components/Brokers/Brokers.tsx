@@ -10,6 +10,7 @@ import PageHeading from 'components/common/PageHeading/PageHeading';
 import * as Metrics from 'components/common/Metrics';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
+  fetchBrokers,
   fetchClusterStats,
   selectStats,
 } from 'redux/reducers/brokers/brokersSlice';
@@ -28,18 +29,23 @@ const Brokers: React.FC = () => {
     underReplicatedPartitionCount,
     diskUsage,
     version,
+    items,
   } = useAppSelector(selectStats);
+
+  let replicas = inSyncReplicasCount ?? 0;
+  replicas += outOfSyncReplicasCount ?? 0;
 
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
-  }, [fetchClusterStats, clusterName]);
+    dispatch(fetchBrokers(clusterName));
+  }, [clusterName, dispatch]);
 
   useInterval(() => {
     fetchClusterStats(clusterName);
+    fetchBrokers(clusterName);
   }, 5000);
 
   const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
-
   return (
     <>
       <PageHeading text="Brokers" />
@@ -78,11 +84,35 @@ const Brokers: React.FC = () => {
               of {(onlinePartitionCount || 0) + (offlinePartitionCount || 0)}
             </Metrics.LightText>
           </Metrics.Indicator>
-          <Metrics.Indicator label="URP" title="Under replicated partitions">
-            {underReplicatedPartitionCount}
+          <Metrics.Indicator
+            label="URP"
+            title="Under replicated partitions"
+            isAlert
+            alertType={
+              underReplicatedPartitionCount === 0 ? 'success' : 'error'
+            }
+          >
+            {underReplicatedPartitionCount === 0 ? (
+              <Metrics.LightText>
+                {underReplicatedPartitionCount}
+              </Metrics.LightText>
+            ) : (
+              <Metrics.RedText>{underReplicatedPartitionCount}</Metrics.RedText>
+            )}
           </Metrics.Indicator>
-          <Metrics.Indicator label="In Sync Replicas">
-            {inSyncReplicasCount}
+          <Metrics.Indicator
+            label="In Sync Replicas"
+            isAlert
+            alertType={inSyncReplicasCount === replicas ? 'success' : 'error'}
+          >
+            {inSyncReplicasCount &&
+            replicas &&
+            inSyncReplicasCount < replicas ? (
+              <Metrics.RedText>{inSyncReplicasCount}</Metrics.RedText>
+            ) : (
+              inSyncReplicasCount
+            )}
+            <Metrics.LightText> of {replicas}</Metrics.LightText>
           </Metrics.Indicator>
           <Metrics.Indicator label="Out Of Sync Replicas">
             {outOfSyncReplicasCount}
@@ -95,6 +125,8 @@ const Brokers: React.FC = () => {
             <TableHeaderCell title="Broker" />
             <TableHeaderCell title="Segment Size (Mb)" />
             <TableHeaderCell title="Segment Count" />
+            <TableHeaderCell title="Port" />
+            <TableHeaderCell title="Host" />
           </tr>
         </thead>
         <tbody>
@@ -106,6 +138,8 @@ const Brokers: React.FC = () => {
                   <BytesFormatted value={segmentSize} />
                 </td>
                 <td>{segmentCount}</td>
+                <td>{items && items[brokerId]?.port}</td>
+                <td>{items && items[brokerId]?.host}</td>
               </tr>
             ))
           ) : (

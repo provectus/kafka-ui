@@ -2,7 +2,6 @@ package com.provectus.kafka.ui;
 
 import com.provectus.kafka.ui.container.KafkaConnectContainer;
 import com.provectus.kafka.ui.container.SchemaRegistryContainer;
-
 import java.util.List;
 import java.util.Properties;
 import org.apache.kafka.clients.admin.AdminClient;

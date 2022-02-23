@@ -61,14 +61,14 @@ public class ClustersProperties {
 
   private void validateClusterNames() {
     // if only one cluster provided it is ok not to set name
-    if (clusters.size() == 1 && StringUtils.isEmpty(clusters.get(0).getName())) {
+    if (clusters.size() == 1 && !StringUtils.hasText(clusters.get(0).getName())) {
       clusters.get(0).setName("Default");
       return;
     }
 
     Set<String> clusterNames = new HashSet<>();
     for (Cluster clusterProperties : clusters) {
-      if (StringUtils.isEmpty(clusterProperties.getName())) {
+      if (!StringUtils.hasText(clusterProperties.getName())) {
         throw new IllegalStateException(
             "Application config isn't valid. "
                 + "Cluster names should be provided in case of multiple clusters present");
@@ -79,5 +79,4 @@ public class ClustersProperties {
       }
     }
   }
-
 }
