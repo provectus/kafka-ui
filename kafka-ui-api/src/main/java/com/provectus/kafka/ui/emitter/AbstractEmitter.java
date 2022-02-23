@@ -32,10 +32,10 @@ public abstract class AbstractEmitter {
     return records;
   }
 
-  protected FluxSink<TopicMessageEventDTO> sendMessage(FluxSink<TopicMessageEventDTO> sink,
+  protected void sendMessage(FluxSink<TopicMessageEventDTO> sink,
                                                        ConsumerRecord<Bytes, Bytes> msg) {
     final TopicMessageDTO topicMessage = ClusterUtil.mapToTopicMessage(msg, recordDeserializer);
-    return sink.next(
+    sink.next(
         new TopicMessageEventDTO()
             .type(TopicMessageEventDTO.TypeEnum.MESSAGE)
             .message(topicMessage)

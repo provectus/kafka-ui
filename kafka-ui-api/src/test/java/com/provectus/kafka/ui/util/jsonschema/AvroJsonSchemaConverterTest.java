@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.provectus.kafka.ui.serde.schemaregistry.AvroMessageFormatter;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import java.io.IOException;
 import java.net.URI;
