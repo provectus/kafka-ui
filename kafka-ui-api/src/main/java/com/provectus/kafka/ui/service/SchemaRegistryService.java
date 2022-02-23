@@ -66,20 +66,20 @@ public class SchemaRegistryService {
   public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
                                                                  List<String> subjects) {
     return Flux.fromIterable(subjects)
-            .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
-            .collect(Collectors.toList());
+        .concatMap(subject -> getLatestSchemaVersionBySubject(cluster, subject))
+        .collect(Collectors.toList());
   }
 
   public Mono<String[]> getAllSubjectNames(KafkaCluster cluster) {
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.GET,
-              URL_SUBJECTS)
-                .retrieve()
-                .bodyToMono(String[].class)
-                .doOnError(e -> log.error("Unexpected error", e)),
-            new FailoverMono<>(cluster.getSchemaRegistry(), () -> this.getAllSubjectNames(cluster)));
+    return configuredWebClient(
+        cluster,
+        HttpMethod.GET,
+        URL_SUBJECTS)
+        .retrieve()
+        .bodyToMono(String[].class)
+        .doOnError(e -> log.error("Unexpected error", e))
+        .as(m -> failoverAble(m,
+            new FailoverMono<>(cluster.getSchemaRegistry(), () -> this.getAllSubjectNames(cluster))));
   }
 
   public Flux<SchemaSubjectDTO> getAllVersionsBySubject(KafkaCluster cluster, String subject) {
@@ -88,16 +88,16 @@ public class SchemaRegistryService {
   }
 
   private Flux<Integer> getSubjectVersions(KafkaCluster cluster, String schemaName) {
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.GET,
-              URL_SUBJECT_VERSIONS, schemaName)
-                .retrieve()
-                .onStatus(NOT_FOUND::equals,
-                    throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-                .bodyToFlux(Integer.class),
-            new FailoverFlux<>(cluster.getSchemaRegistry(), () -> this.getSubjectVersions(cluster, schemaName)));
+    return configuredWebClient(
+        cluster,
+        HttpMethod.GET,
+        URL_SUBJECT_VERSIONS, schemaName)
+        .retrieve()
+        .onStatus(NOT_FOUND::equals,
+            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
+        .bodyToFlux(Integer.class)
+        .as(f -> failoverAble(f, new FailoverFlux<>(cluster.getSchemaRegistry(),
+            () -> this.getSubjectVersions(cluster, schemaName))));
   }
 
   public Mono<SchemaSubjectDTO> getSchemaSubjectByVersion(KafkaCluster cluster, String schemaName,
@@ -106,31 +106,31 @@ public class SchemaRegistryService {
   }
 
   public Mono<SchemaSubjectDTO> getLatestSchemaVersionBySubject(KafkaCluster cluster,
-                                                             String schemaName) {
+                                                                String schemaName) {
     return this.getSchemaSubject(cluster, schemaName, LATEST);
   }
 
   private Mono<SchemaSubjectDTO> getSchemaSubject(KafkaCluster cluster, String schemaName,
                                                   String version) {
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.GET,
-              URL_SUBJECT_BY_VERSION, schemaName, version)
-                .retrieve()
-                .onStatus(NOT_FOUND::equals,
-                    throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
-                )
-                .bodyToMono(SchemaSubjectDTO.class)
-                .map(this::withSchemaType)
-                .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
-                .map(tuple -> {
-                  SchemaSubjectDTO schema = tuple.getT1();
-                  String compatibilityLevel = tuple.getT2().getCompatibility().getValue();
-                  schema.setCompatibilityLevel(compatibilityLevel);
-                  return schema;
-                }),
-            new FailoverMono<>(cluster.getSchemaRegistry(), () -> this.getSchemaSubject(cluster, schemaName, version)));
+    return configuredWebClient(
+        cluster,
+        HttpMethod.GET,
+        URL_SUBJECT_BY_VERSION, schemaName, version)
+        .retrieve()
+        .onStatus(NOT_FOUND::equals,
+            throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
+        )
+        .bodyToMono(SchemaSubjectDTO.class)
+        .map(this::withSchemaType)
+        .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
+        .map(tuple -> {
+          SchemaSubjectDTO schema = tuple.getT1();
+          String compatibilityLevel = tuple.getT2().getCompatibility().getValue();
+          schema.setCompatibilityLevel(compatibilityLevel);
+          return schema;
+        })
+        .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+            () -> this.getSchemaSubject(cluster, schemaName, version))));
   }
 
   /**
@@ -155,32 +155,30 @@ public class SchemaRegistryService {
 
   private Mono<ResponseEntity<Void>> deleteSchemaSubject(KafkaCluster cluster, String schemaName,
                                                          String version) {
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.DELETE,
-              URL_SUBJECT_BY_VERSION, schemaName, version)
-                .retrieve()
-                .onStatus(NOT_FOUND::equals,
-                    throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
-                ).toBodilessEntity(),
-            new FailoverMono<>(cluster.getSchemaRegistry(),
-                    () -> this.deleteSchemaSubject(cluster, schemaName, version)));
+    return configuredWebClient(
+            cluster,
+            HttpMethod.DELETE,
+            URL_SUBJECT_BY_VERSION, schemaName, version)
+            .retrieve()
+            .onStatus(NOT_FOUND::equals,
+                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
+            ).toBodilessEntity()
+            .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+                () -> this.deleteSchemaSubject(cluster, schemaName, version))));
   }
 
   public Mono<ResponseEntity<Void>> deleteSchemaSubjectEntirely(KafkaCluster cluster,
                                                                 String schemaName) {
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.DELETE,
-              URL_SUBJECT, schemaName)
-                .retrieve()
-                .onStatus(NOT_FOUND::equals,
-                    throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-                .toBodilessEntity(),
-            new FailoverMono<>(cluster.getSchemaRegistry(),
-                    () -> this.deleteSchemaSubjectEntirely(cluster, schemaName)));
+    return configuredWebClient(
+            cluster,
+            HttpMethod.DELETE,
+            URL_SUBJECT, schemaName)
+            .retrieve()
+            .onStatus(NOT_FOUND::equals,
+                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
+            .toBodilessEntity()
+            .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+                () -> this.deleteSchemaSubjectEntirely(cluster, schemaName))));
   }
 
   /**
@@ -207,46 +205,45 @@ public class SchemaRegistryService {
   private Mono<SubjectIdResponse> submitNewSchema(String subject,
                                                   Mono<InternalNewSchema> newSchemaSubject,
                                                   InternalSchemaRegistry schemaRegistry) {
-    return failoverAble(
-            configuredWebClient(
-              schemaRegistry,
-              HttpMethod.POST,
-              URL_SUBJECT_VERSIONS, subject)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
-                .retrieve()
-                .onStatus(UNPROCESSABLE_ENTITY::equals,
-                    r -> r.bodyToMono(ErrorResponse.class)
-                        .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
-                                ? new SchemaTypeIsNotSupportedException()
-                                : new UnprocessableEntityException(x.getMessage()))))
-                .bodyToMono(SubjectIdResponse.class),
-            new FailoverMono<>(schemaRegistry, () -> submitNewSchema(subject, newSchemaSubject, schemaRegistry)));
+    return configuredWebClient(
+            schemaRegistry,
+            HttpMethod.POST,
+            URL_SUBJECT_VERSIONS, subject)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
+            .retrieve()
+            .onStatus(UNPROCESSABLE_ENTITY::equals,
+                r -> r.bodyToMono(ErrorResponse.class)
+                    .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
+                        ? new SchemaTypeIsNotSupportedException()
+                        : new UnprocessableEntityException(x.getMessage()))))
+            .bodyToMono(SubjectIdResponse.class)
+            .as(m -> failoverAble(m, new FailoverMono<>(schemaRegistry,
+                () -> submitNewSchema(subject, newSchemaSubject, schemaRegistry))));
   }
 
   @NotNull
   private Mono<SchemaSubjectDTO> checkSchemaOnDuplicate(String subject,
-                                                     Mono<InternalNewSchema> newSchemaSubject,
-                                                     InternalSchemaRegistry schemaRegistry) {
-    return failoverAble(
-            configuredWebClient(
-              schemaRegistry,
-              HttpMethod.POST,
-              URL_SUBJECT, subject)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
-                .retrieve()
-                .onStatus(NOT_FOUND::equals, res -> Mono.empty())
-                .onStatus(UNPROCESSABLE_ENTITY::equals,
-                    r -> r.bodyToMono(ErrorResponse.class)
-                        .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
-                                ? new SchemaTypeIsNotSupportedException()
-                                : new UnprocessableEntityException(x.getMessage()))))
-                .bodyToMono(SchemaSubjectDTO.class)
-                .filter(s -> Objects.isNull(s.getId()))
-                .switchIfEmpty(Mono.error(new DuplicateEntityException("Such schema already exists"))),
-            new FailoverMono<>(schemaRegistry,
-                    () -> this.checkSchemaOnDuplicate(subject, newSchemaSubject, schemaRegistry)));
+                                                        Mono<InternalNewSchema> newSchemaSubject,
+                                                        InternalSchemaRegistry schemaRegistry) {
+    return configuredWebClient(
+            schemaRegistry,
+            HttpMethod.POST,
+            URL_SUBJECT, subject)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromPublisher(newSchemaSubject, InternalNewSchema.class))
+            .retrieve()
+            .onStatus(NOT_FOUND::equals, res -> Mono.empty())
+            .onStatus(UNPROCESSABLE_ENTITY::equals,
+                r -> r.bodyToMono(ErrorResponse.class)
+                    .flatMap(x -> Mono.error(isUnrecognizedFieldSchemaTypeMessage(x.getMessage())
+                        ? new SchemaTypeIsNotSupportedException()
+                        : new UnprocessableEntityException(x.getMessage()))))
+            .bodyToMono(SchemaSubjectDTO.class)
+            .filter(s -> Objects.isNull(s.getId()))
+            .switchIfEmpty(Mono.error(new DuplicateEntityException("Such schema already exists")))
+            .as(m -> failoverAble(m, new FailoverMono<>(schemaRegistry,
+                () -> this.checkSchemaOnDuplicate(subject, newSchemaSubject, schemaRegistry))));
   }
 
   @NotNull
@@ -264,19 +261,18 @@ public class SchemaRegistryService {
   public Mono<Void> updateSchemaCompatibility(KafkaCluster cluster, String schemaName,
                                               Mono<CompatibilityLevelDTO> compatibilityLevel) {
     String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.PUT,
-              configEndpoint, schemaName)
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevelDTO.class))
-                .retrieve()
-                .onStatus(NOT_FOUND::equals,
-                    throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-                .bodyToMono(Void.class),
-            new FailoverMono<>(cluster.getSchemaRegistry(),
-                    () -> this.updateSchemaCompatibility(cluster, schemaName, compatibilityLevel)));
+    return configuredWebClient(
+            cluster,
+            HttpMethod.PUT,
+            configEndpoint, schemaName)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromPublisher(compatibilityLevel, CompatibilityLevelDTO.class))
+            .retrieve()
+            .onStatus(NOT_FOUND::equals,
+                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
+            .bodyToMono(Void.class)
+            .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+                () -> this.updateSchemaCompatibility(cluster, schemaName, compatibilityLevel))));
   }
 
   public Mono<Void> updateSchemaCompatibility(KafkaCluster cluster,
@@ -302,27 +298,26 @@ public class SchemaRegistryService {
   }
 
   private Mono<CompatibilityLevelDTO> getSchemaCompatibilityInfoOrGlobal(KafkaCluster cluster,
-                                                                      String schemaName) {
+                                                                         String schemaName) {
     return this.getSchemaCompatibilityLevel(cluster, schemaName)
         .switchIfEmpty(this.getGlobalSchemaCompatibilityLevel(cluster));
   }
 
   public Mono<CompatibilityCheckResponseDTO> checksSchemaCompatibility(
       KafkaCluster cluster, String schemaName, Mono<NewSchemaSubjectDTO> newSchemaSubject) {
-    return failoverAble(
-            configuredWebClient(
-              cluster,
-              HttpMethod.POST,
-              "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
-              .contentType(MediaType.APPLICATION_JSON)
-                .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubjectDTO.class))
-                .retrieve()
-                .onStatus(NOT_FOUND::equals,
-                    throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
-                .bodyToMono(InternalCompatibilityCheck.class)
-                .map(mapper::toCompatibilityCheckResponse),
-            new FailoverMono<>(cluster.getSchemaRegistry(),
-                    () -> this.checksSchemaCompatibility(cluster, schemaName, newSchemaSubject)));
+    return configuredWebClient(
+            cluster,
+            HttpMethod.POST,
+            "/compatibility/subjects/{schemaName}/versions/latest", schemaName)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromPublisher(newSchemaSubject, NewSchemaSubjectDTO.class))
+            .retrieve()
+            .onStatus(NOT_FOUND::equals,
+                throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
+            .bodyToMono(InternalCompatibilityCheck.class)
+            .map(mapper::toCompatibilityCheckResponse)
+            .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
+                () -> this.checksSchemaCompatibility(cluster, schemaName, newSchemaSubject))));
   }
 
   public String formatted(String str, Object... args) {
@@ -383,8 +378,8 @@ public class SchemaRegistryService {
 
     public E failover(Throwable error) {
       if (error instanceof WebClientRequestException
-              && error.getCause() instanceof IOException
-              && schemaRegistry.isFailoverAvailable()) {
+          && error.getCause() instanceof IOException
+          && schemaRegistry.isFailoverAvailable()) {
         var uri = ((WebClientRequestException) error).getUri();
         schemaRegistry.markAsUnavailable(String.format("%s://%s", uri.getScheme(), uri.getAuthority()));
         return failover.get();
