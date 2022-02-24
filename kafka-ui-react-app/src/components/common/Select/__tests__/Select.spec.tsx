@@ -1,6 +1,7 @@
 import Select, { SelectProps } from 'components/common/Select/Select';
 import React from 'react';
 import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
 
 jest.mock('react-hook-form', () => ({
   useFormContext: () => ({
@@ -8,26 +9,21 @@ jest.mock('react-hook-form', () => ({
   }),
 }));
 
-const setupWrapper = (props?: Partial<SelectProps>) => (
-  <Select name="test" {...props} />
-);
+const renderComponent = (props?: Partial<SelectProps>) =>
+  render(<Select name="test" {...props} />);
 
 describe('Custom Select', () => {
   describe('when non-live', () => {
-    it('matches the snapshot', () => {
-      const component = render(setupWrapper());
-      expect(component.baseElement).toMatchSnapshot();
+    it('there is not live icon', () => {
+      renderComponent({ isLive: false });
+      expect(screen.queryByTestId('liveIcon')).not.toBeInTheDocument();
     });
   });
 
   describe('when live', () => {
-    it('matches the snapshot', () => {
-      const component = render(
-        setupWrapper({
-          isLive: true,
-        })
-      );
-      expect(component.baseElement).toMatchSnapshot();
+    it('there is live icon', () => {
+      renderComponent({ isLive: true });
+      expect(screen.getByTestId('liveIcon')).toBeInTheDocument();
     });
   });
 });

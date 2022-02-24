@@ -53,8 +53,9 @@ const SeekTypeOptions = [
   { value: SeekType.TIMESTAMP, label: 'Timestamp' },
 ];
 const SeekDirectionOptions = [
-  { value: SeekDirection.FORWARD, label: 'Oldest First' },
-  { value: SeekDirection.BACKWARD, label: 'Newest First' },
+  { value: SeekDirection.FORWARD, label: 'Oldest First', isLive: false },
+  { value: SeekDirection.BACKWARD, label: 'Newest First', isLive: false },
+  { value: SeekDirection.TAILING, label: 'Live Mode', isLive: true },
 ];
 
 const Filters: React.FC<FiltersProps> = ({
@@ -100,7 +101,6 @@ const Filters: React.FC<FiltersProps> = ({
     (searchParams.get('seekDirection') as SeekDirection) ||
       SeekDirection.FORWARD
   );
-
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
@@ -167,14 +167,21 @@ const Filters: React.FC<FiltersProps> = ({
       search: `?${qs}`,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [seekDirection]);
 
   const toggleSeekDirection = (val: string) => {
-    const nextSeekDirectionValue =
-      val === SeekDirection.FORWARD
-        ? SeekDirection.FORWARD
-        : SeekDirection.BACKWARD;
-    setSeekDirection(nextSeekDirectionValue);
+    switch (val) {
+      case SeekDirection.FORWARD:
+        setSeekDirection(SeekDirection.FORWARD);
+        break;
+      case SeekDirection.BACKWARD:
+        setSeekDirection(SeekDirection.BACKWARD);
+        break;
+      case SeekDirection.TAILING:
+        setSeekDirection(SeekDirection.TAILING);
+        break;
+      default:
+    }
   };
 
   const handleSSECancel = () => {
@@ -228,6 +235,7 @@ const Filters: React.FC<FiltersProps> = ({
   }, [
     clusterName,
     topicName,
+    seekDirection,
     location,
     setIsFetching,
     resetMessages,
@@ -268,6 +276,7 @@ const Filters: React.FC<FiltersProps> = ({
                 selectSize="M"
                 minWidth="100px"
                 options={SeekTypeOptions}
+                disabled={seekDirection === SeekDirection.TAILING}
               />
               {currentSeekType === SeekType.OFFSET ? (
                 <Input
@@ -277,6 +286,7 @@ const Filters: React.FC<FiltersProps> = ({
                   value={offset}
                   className="offset-selector"
                   onChange={({ target: { value } }) => setOffset(value)}
+                  disabled={seekDirection === SeekDirection.TAILING}
                 />
               ) : (
                 <DatePicker
@@ -287,6 +297,7 @@ const Filters: React.FC<FiltersProps> = ({
                   dateFormat="MMMM d, yyyy HH:mm"
                   className="date-picker"
                   placeholderText="Select timestamp"
+                  disabled={seekDirection === SeekDirection.TAILING}
                 />
               )}
             </S.SeekTypeSelectorWrapper>
@@ -331,10 +342,27 @@ const Filters: React.FC<FiltersProps> = ({
           value={seekDirection}
           minWidth="120px"
           options={SeekDirectionOptions}
+          isLive={seekDirection === SeekDirection.TAILING}
         />
       </div>
       <S.FiltersMetrics>
-        <p style={{ fontSize: 14 }}>{isFetching && phaseMessage}</p>
+        <p style={{ fontSize: 14 }}>
+          {seekDirection !== SeekDirection.TAILING &&
+            isFetching &&
+            phaseMessage}
+        </p>
+        <S.MessageLoading isLive={seekDirection === SeekDirection.TAILING}>
+          <S.MessageLoadingSpinner isFetching={isFetching} />
+          Loading messages.
+          <S.StopLoading
+            onClick={() => {
+              setSeekDirection(SeekDirection.FORWARD);
+              setIsFetching(false);
+            }}
+          >
+            Stop loading
+          </S.StopLoading>
+        </S.MessageLoading>
         <S.Metric title="Elapsed Time">
           <S.MetricsIcon>
             <i className="far fa-clock" />
