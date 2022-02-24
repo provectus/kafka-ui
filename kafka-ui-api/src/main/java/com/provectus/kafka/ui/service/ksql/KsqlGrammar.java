@@ -18,6 +18,9 @@ import org.antlr.v4.runtime.atn.PredictionMode;
 
 class KsqlGrammar {
 
+  private KsqlGrammar() {
+  }
+
   @Value
   static class KsqlStatements {
     List<KsqlGrammarParser.SingleStatementContext> statements;

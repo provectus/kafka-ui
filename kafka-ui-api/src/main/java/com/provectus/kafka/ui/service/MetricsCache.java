@@ -8,7 +8,7 @@ import com.provectus.kafka.ui.util.JmxClusterUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import lombok.Builder;
@@ -33,24 +33,29 @@ public class MetricsCache {
     InternalLogDirStats logDirInfo;
     Map<String, TopicDescription> topicDescriptions;
     Map<String, List<ConfigEntry>> topicConfigs;
-  }
 
-  public static Metrics empty() {
-    return Metrics.builder()
-        .status(ServerStatusDTO.OFFLINE)
-        .version("Unknown")
-        .features(List.of())
-        .zkStatus(new ZookeeperService.ZkStatus(ServerStatusDTO.OFFLINE, null))
-        .clusterDescription(
-            new ReactiveAdminClient.ClusterDescription(null, null, List.of(), Set.of()))
-        .jmxMetrics(JmxClusterUtil.JmxMetrics.empty())
-        .logDirInfo(InternalLogDirStats.empty())
-        .topicDescriptions(Map.of())
-        .topicConfigs(Map.of())
-        .build();
+    public static Metrics empty() {
+      return builder()
+          .status(ServerStatusDTO.OFFLINE)
+          .version("Unknown")
+          .features(List.of())
+          .zkStatus(new ZookeeperService.ZkStatus(ServerStatusDTO.OFFLINE, null))
+          .clusterDescription(
+              new ReactiveAdminClient.ClusterDescription(null, null, List.of(), Set.of()))
+          .jmxMetrics(JmxClusterUtil.JmxMetrics.empty())
+          .logDirInfo(InternalLogDirStats.empty())
+          .topicDescriptions(Map.of())
+          .topicConfigs(Map.of())
+          .build();
+    }
   }
 
   private final Map<String, Metrics> cache = new ConcurrentHashMap<>();
+
+  public MetricsCache(ClustersStorage clustersStorage) {
+    var initializing = Metrics.empty().toBuilder().status(ServerStatusDTO.INITIALIZING).build();
+    clustersStorage.getKafkaClusters().forEach(c -> cache.put(c.getName(), initializing));
+  }
 
   public synchronized void replace(KafkaCluster c, Metrics stats) {
     cache.put(c.getName(), stats);
@@ -89,7 +94,7 @@ public class MetricsCache {
   }
 
   public Metrics get(KafkaCluster c) {
-    return Optional.ofNullable(cache.get(c.getName())).orElseGet(MetricsCache::empty);
+    return Objects.requireNonNull(cache.get(c.getName()), "Unknown cluster metrics requested");
   }
 
 }

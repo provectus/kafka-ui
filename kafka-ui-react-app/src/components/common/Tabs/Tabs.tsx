@@ -21,10 +21,13 @@ const Tabs: React.FC<TabsProps> = ({
     setSelectedIndex(defaultSelectedIndex);
   }, [defaultSelectedIndex]);
 
-  const handleChange = React.useCallback((index: number) => {
-    setSelectedIndex(index);
-    onChange?.(index);
-  }, []);
+  const handleChange = React.useCallback(
+    (index: number) => {
+      setSelectedIndex(index);
+      onChange?.(index);
+    },
+    [onChange]
+  );
 
   return (
     <>

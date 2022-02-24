@@ -56,7 +56,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
 
   @Override
   public Mono<ResponseEntity<Flux<ConsumerGroupDTO>>> getConsumerGroups(String clusterName,
-                                                                     ServerWebExchange exchange) {
+                                                                        ServerWebExchange exchange) {
     return consumerGroupService.getAllConsumerGroups(getCluster(clusterName))
         .map(Flux::fromIterable)
         .map(f -> f.map(ConsumerGroupMapper::toDto))
@@ -96,7 +96,7 @@ public class ConsumerGroupsController extends AbstractController implements Cons
   }
 
   private ConsumerGroupsPageResponseDTO convertPage(ConsumerGroupService.ConsumerGroupsPage
-                                                    consumerGroupConsumerGroupsPage) {
+                                                        consumerGroupConsumerGroupsPage) {
     return new ConsumerGroupsPageResponseDTO()
         .pageCount(consumerGroupConsumerGroupsPage.getTotalPages())
         .consumerGroups(consumerGroupConsumerGroupsPage.getConsumerGroups()

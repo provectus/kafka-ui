@@ -18,6 +18,9 @@ import org.apache.kafka.common.utils.Bytes;
 @Slf4j
 public class ClusterUtil {
 
+  private ClusterUtil() {
+  }
+
   private static final ZoneId UTC_ZONE_ID = ZoneId.of("UTC");
 
   public static int convertToIntServerStatus(ServerStatusDTO serverStatus) {

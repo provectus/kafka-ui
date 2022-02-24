@@ -28,7 +28,7 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
   @Override
   public Mono<ResponseEntity<Flux<ConnectDTO>>> getConnects(String clusterName,
-                                                         ServerWebExchange exchange) {
+                                                            ServerWebExchange exchange) {
     return kafkaConnectService.getConnects(getCluster(clusterName)).map(ResponseEntity::ok);
   }
 
@@ -41,16 +41,16 @@ public class KafkaConnectController extends AbstractController implements KafkaC
 
   @Override
   public Mono<ResponseEntity<ConnectorDTO>> createConnector(String clusterName, String connectName,
-                                                         @Valid Mono<NewConnectorDTO> connector,
-                                                         ServerWebExchange exchange) {
+                                                            @Valid Mono<NewConnectorDTO> connector,
+                                                            ServerWebExchange exchange) {
     return kafkaConnectService.createConnector(getCluster(clusterName), connectName, connector)
         .map(ResponseEntity::ok);
   }
 
   @Override
   public Mono<ResponseEntity<ConnectorDTO>> getConnector(String clusterName, String connectName,
-                                                      String connectorName,
-                                                      ServerWebExchange exchange) {
+                                                         String connectorName,
+                                                         ServerWebExchange exchange) {
     return kafkaConnectService.getConnector(getCluster(clusterName), connectName, connectorName)
         .map(ResponseEntity::ok);
   }
@@ -87,9 +87,9 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   @Override
   public Mono<ResponseEntity<ConnectorDTO>> setConnectorConfig(String clusterName,
                                                                String connectName,
-                                                            String connectorName,
-                                                            @Valid Mono<Object> requestBody,
-                                                            ServerWebExchange exchange) {
+                                                               String connectorName,
+                                                               @Valid Mono<Object> requestBody,
+                                                               ServerWebExchange exchange) {
     return kafkaConnectService
         .setConnectorConfig(getCluster(clusterName), connectName, connectorName, requestBody)
         .map(ResponseEntity::ok);
@@ -135,8 +135,8 @@ public class KafkaConnectController extends AbstractController implements KafkaC
   @Override
   public Mono<ResponseEntity<ConnectorPluginConfigValidationResponseDTO>>
       validateConnectorPluginConfig(
-        String clusterName, String connectName, String pluginName, @Valid Mono<Object> requestBody,
-        ServerWebExchange exchange) {
+      String clusterName, String connectName, String pluginName, @Valid Mono<Object> requestBody,
+      ServerWebExchange exchange) {
     return kafkaConnectService
         .validateConnectorPluginConfig(
             getCluster(clusterName), connectName, pluginName, requestBody)

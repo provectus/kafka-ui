@@ -88,10 +88,7 @@ const Edit: React.FC<Props> = ({
   fetchTopicConfig,
   updateTopic,
 }) => {
-  const defaultValues = React.useMemo(
-    () => topicParams(topic),
-    [topicParams, topic]
-  );
+  const defaultValues = React.useMemo(() => topicParams(topic), [topic]);
   const methods = useForm<TopicFormData>({
     defaultValues,
     resolver: yupResolver(topicFormValidationSchema),
@@ -109,7 +106,7 @@ const Edit: React.FC<Props> = ({
       const { name } = methods.getValues();
       history.push(clusterTopicPath(clusterName, name));
     }
-  }, [isSubmitting, isTopicUpdated, clusterTopicPath, clusterName, methods]);
+  }, [isSubmitting, isTopicUpdated, clusterName, methods, history]);
 
   if (!isFetched || !topic || !topic.config) {
     return null;

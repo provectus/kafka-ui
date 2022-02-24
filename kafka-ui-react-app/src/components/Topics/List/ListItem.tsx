@@ -70,11 +70,11 @@ const ListItem: React.FC<ListItemProps> = ({
 
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, name);
-  }, [clusterName, name]);
+  }, [clusterName, deleteTopic, name]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
-  }, [clusterName, name]);
+  }, [clearTopicMessages, clusterName, name]);
   const [vElipsisVisble, setVElipsisVisble] = React.useState(false);
 
   return (

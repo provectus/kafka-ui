@@ -47,7 +47,7 @@ const Details: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchConsumerGroupDetails({ clusterName, consumerGroupID }));
-  }, [fetchConsumerGroupDetails, clusterName, consumerGroupID]);
+  }, [clusterName, consumerGroupID, dispatch]);
 
   const onDelete = () => {
     setIsConfirmationModalVisible(false);
@@ -57,7 +57,7 @@ const Details: React.FC = () => {
     if (isDeleted) {
       history.push(clusterConsumerGroupsPath(clusterName));
     }
-  }, [isDeleted]);
+  }, [clusterName, history, isDeleted]);
 
   const onResetOffsets = () => {
     history.push(

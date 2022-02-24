@@ -68,7 +68,7 @@ const Pagination: React.FC<PaginationProps> = ({ totalPages }) => {
     }
 
     return p;
-  }, []);
+  }, [currentPage, totalPages]);
 
   return (
     <S.Wrapper role="navigation" aria-label="pagination">

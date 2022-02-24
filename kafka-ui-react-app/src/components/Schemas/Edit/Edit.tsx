@@ -47,7 +47,7 @@ const Edit: React.FC = () => {
     return () => {
       dispatch(resetLoaderById(SCHEMA_LATEST_FETCH_ACTION));
     };
-  }, [clusterName, subject]);
+  }, [clusterName, dispatch, subject]);
 
   const schema = useAppSelector((state) => getSchemaLatest(state));
   const isFetched = useAppSelector(getAreSchemaLatestFulfilled);
@@ -58,44 +58,56 @@ const Edit: React.FC = () => {
       : JSON.stringify(JSON.parse(schema?.schema || '{}'), null, '\t');
   }, [schema]);
 
-  const onSubmit = React.useCallback(async (props: NewSchemaSubjectRaw) => {
-    if (!schema) return;
+  const onSubmit = React.useCallback(
+    async (props: NewSchemaSubjectRaw) => {
+      if (!schema) return;
 
-    try {
-      if (dirtyFields.newSchema || dirtyFields.schemaType) {
-        const resp = await schemasApiClient.createNewSchema({
-          clusterName,
-          newSchemaSubject: {
-            ...schema,
-            schema: props.newSchema || schema.schema,
-            schemaType: props.schemaType || schema.schemaType,
-          },
-        });
-        dispatch(schemaAdded(resp));
+      try {
+        if (dirtyFields.newSchema || dirtyFields.schemaType) {
+          const resp = await schemasApiClient.createNewSchema({
+            clusterName,
+            newSchemaSubject: {
+              ...schema,
+              schema: props.newSchema || schema.schema,
+              schemaType: props.schemaType || schema.schemaType,
+            },
+          });
+          dispatch(schemaAdded(resp));
+        }
+
+        if (dirtyFields.compatibilityLevel) {
+          await schemasApiClient.updateSchemaCompatibilityLevel({
+            clusterName,
+            subject,
+            compatibilityLevel: {
+              compatibility: props.compatibilityLevel,
+            },
+          });
+          dispatch(
+            schemaUpdated({
+              ...schema,
+              compatibilityLevel: props.compatibilityLevel,
+            })
+          );
+        }
+
+        history.push(clusterSchemaPath(clusterName, subject));
+      } catch (e) {
+        const err = await getResponse(e as Response);
+        dispatch(serverErrorAlertAdded(err));
       }
-
-      if (dirtyFields.compatibilityLevel) {
-        await schemasApiClient.updateSchemaCompatibilityLevel({
-          clusterName,
-          subject,
-          compatibilityLevel: {
-            compatibility: props.compatibilityLevel,
-          },
-        });
-        dispatch(
-          schemaUpdated({
-            ...schema,
-            compatibilityLevel: props.compatibilityLevel,
-          })
-        );
-      }
-
-      history.push(clusterSchemaPath(clusterName, subject));
-    } catch (e) {
-      const err = await getResponse(e as Response);
-      dispatch(serverErrorAlertAdded(err));
-    }
-  }, []);
+    },
+    [
+      clusterName,
+      dirtyFields.compatibilityLevel,
+      dirtyFields.newSchema,
+      dirtyFields.schemaType,
+      dispatch,
+      history,
+      schema,
+      subject,
+    ]
+  );
 
   if (!isFetched || !schema) {
     return <PageLoader />;

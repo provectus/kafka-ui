@@ -1667,6 +1667,7 @@ components:
       enum:
         - online
         - offline
+        - initializing
 
     ClusterMetrics:
       type: object
@@ -1910,6 +1911,8 @@ components:
           type: integer
         host:
           type: string
+        port:
+          type: integer
       required:
         - id
 

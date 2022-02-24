@@ -13,7 +13,7 @@ const Breadcrumb: React.FC = () => {
 
   const links = React.useMemo(
     () => breadcrumbContext.path.slice(basePathEntriesLength),
-    [breadcrumbContext.link]
+    [breadcrumbContext.path]
   );
 
   const getPathPredicate = React.useCallback(
