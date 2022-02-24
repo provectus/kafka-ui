@@ -56,7 +56,7 @@ const Select: React.FC<SelectProps> = ({
   };
   React.useEffect(() => {
     setSelectedOption(value);
-  }, [isLive]);
+  }, [isLive, value]);
 
   return (
     <div ref={selectContainerRef}>
