@@ -20,9 +20,13 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
     <>
-      <tr>
+      <tr data-testid="consumer-group-list-item">
         <ToggleButton>
-          <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
+          <IconButtonWrapper
+            onClick={() => setIsOpen(!isOpen)}
+            aria-hidden
+            data-testid="consumer-group-list-item-toggle"
+          >
             <MessageToggleIcon isOpen={isOpen} />
           </IconButtonWrapper>
         </ToggleButton>
@@ -30,7 +34,12 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
           <Link to={clusterTopicPath(clusterName, name)}>{name}</Link>
         </TableKeyLink>
       </tr>
-      {isOpen && <TopicContents consumers={consumers} />}
+      {isOpen && (
+        <TopicContents
+          consumers={consumers}
+          data-testid="consumer-group-list-item-topic"
+        />
+      )}
     </>
   );
 };
