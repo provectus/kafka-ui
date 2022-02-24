@@ -9,6 +9,8 @@ import {
   ConsumerGroup,
   ConsumerGroupDetails,
   ConsumerGroupsApi,
+  ConsumerGroupsPageResponse,
+  GetConsumerGroupsPageRequest,
 } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
@@ -23,7 +25,7 @@ import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const api = new ConsumerGroupsApi(apiClientConf);
 
-export const fetchConsumerGroups = createAsyncThunk<
+export const fetchAllConsumerGroups = createAsyncThunk<
   ConsumerGroup[],
   ClusterName
 >(
@@ -32,6 +34,30 @@ export const fetchConsumerGroups = createAsyncThunk<
     try {
       return await api.getConsumerGroups({
         clusterName,
+      });
+    } catch (error) {
+      return rejectWithValue(await getResponse(error as Response));
+    }
+  }
+);
+
+export const fetchConsumerGroupsPage = createAsyncThunk<
+  ConsumerGroupsPageResponse,
+  GetConsumerGroupsPageRequest
+>(
+  'consumerGroups/fetchConsumerGroupsPage',
+  async (
+    { clusterName, page, perPage, search, orderBy, sortOrder },
+    { rejectWithValue }
+  ) => {
+    try {
+      return await api.getConsumerGroupsPage({
+        clusterName,
+        page,
+        perPage,
+        search: search || undefined,
+        orderBy,
+        sortOrder,
       });
     } catch (error) {
       return rejectWithValue(await getResponse(error as Response));
@@ -110,13 +136,21 @@ const consumerGroupsAdapter = createEntityAdapter<ConsumerGroupDetails>({
   selectId: (consumerGroup) => consumerGroup.groupId,
 });
 
+const CONSUMER_GROUP_PAGE_COUNT = 1;
+
+const initialState = {
+  totalPages: CONSUMER_GROUP_PAGE_COUNT,
+  ...consumerGroupsAdapter.getInitialState(),
+};
+
 const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
-  initialState: consumerGroupsAdapter.getInitialState(),
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(fetchConsumerGroups.fulfilled, (state, { payload }) => {
-      consumerGroupsAdapter.setAll(state, payload);
+    builder.addCase(fetchConsumerGroupsPage.fulfilled, (state, { payload }) => {
+      state.totalPages = payload.pageCount || CONSUMER_GROUP_PAGE_COUNT;
+      consumerGroupsAdapter.setAll(state, payload.consumerGroups || []);
     });
     builder.addCase(fetchConsumerGroupDetails.fulfilled, (state, { payload }) =>
       consumerGroupsAdapter.upsertOne(state, payload)
@@ -132,8 +166,8 @@ export const { selectAll, selectById } =
     ({ consumerGroups }) => consumerGroups
   );
 
-export const getAreConsumerGroupsFulfilled = createSelector(
-  createFetchingSelector('consumerGroups/fetchConsumerGroups'),
+export const getAreConsumerGroupsPageFulfilled = createSelector(
+  createFetchingSelector('consumerGroups/fetchConsumerGroupsPage'),
   (status) => status === 'fulfilled'
 );
 

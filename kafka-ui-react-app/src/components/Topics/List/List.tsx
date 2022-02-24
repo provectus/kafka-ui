@@ -25,6 +25,7 @@ import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';
+import { StandardEnumValue } from 'lib/types';
 
 import ListItem from './ListItem';
 
@@ -45,7 +46,7 @@ export interface TopicsListProps {
   orderBy: TopicColumnsToSort | null;
   sortOrder: SortOrder;
   setTopicsSearch(search: string): void;
-  setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
+  setTopicsOrderBy(orderBy: StandardEnumValue | null): void;
 }
 
 const List: React.FC<TopicsListProps> = ({

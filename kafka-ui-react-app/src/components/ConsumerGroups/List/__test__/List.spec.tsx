@@ -1,42 +1,136 @@
 import React from 'react';
 import List from 'components/ConsumerGroups/List/List';
-import { screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { screen, waitFor } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
-import { store } from 'redux/store';
-import { fetchConsumerGroups } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
-import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import { Route, Router } from 'react-router-dom';
+import { clusterConsumerGroupsPath } from 'lib/paths';
+import fetchMock from 'fetch-mock';
+import { ConsumerGroupOrdering, SortOrder } from 'generated-sources';
+import { createMemoryHistory } from 'history';
+
+import {
+  noConsumerGroupsResponse,
+  searchComnsumerGroupsResponse,
+  someComnsumerGroupsResponse,
+} from './__fixtures__';
+
+const clusterName = 'testClusterName';
+const consumerGroupsAPIUrl = `/api/clusters/${clusterName}/consumer-groups/paged`;
+const historyMock = createMemoryHistory({
+  initialEntries: [clusterConsumerGroupsPath(clusterName)],
+});
+
+const renderComponent = (history = historyMock) =>
+  render(
+    <Router history={history}>
+      <Route path={clusterConsumerGroupsPath(':clusterName')}>
+        <List />
+      </Route>
+    </Router>
+  );
 
 describe('List', () => {
-  beforeEach(() => render(<List />, { store }));
-
-  it('renders empty table', () => {
-    expect(screen.getByRole('table')).toBeInTheDocument();
-    expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
+  afterEach(() => {
+    fetchMock.reset();
   });
 
-  describe('consumerGroups are fecthed', () => {
-    beforeEach(() => {
-      store.dispatch({
-        type: fetchConsumerGroups.fulfilled.type,
-        payload: consumerGroups,
+  describe('fetch error', () => {
+    it('renders empty table on fetch error', async () => {
+      fetchMock.getOnce(consumerGroupsAPIUrl, 404, {
+        query: {
+          orderBy: ConsumerGroupOrdering.NAME,
+          sortOrder: SortOrder.ASC,
+        },
       });
+      renderComponent();
+      await waitFor(() => expect(fetchMock.calls().length).toBe(1));
+
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+  });
+
+  describe('fetch success', () => {
+    it('renders empty table on no consumer group response', async () => {
+      fetchMock.getOnce(consumerGroupsAPIUrl, noConsumerGroupsResponse, {
+        query: {
+          orderBy: ConsumerGroupOrdering.NAME,
+          sortOrder: SortOrder.ASC,
+        },
+      });
+
+      renderComponent();
+      await waitFor(() => expect(fetchMock.calls().length).toBe(1));
+
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
     });
 
-    it('renders all rows with consumers', () => {
-      expect(screen.getByText('groupId1')).toBeInTheDocument();
-      expect(screen.getByText('groupId2')).toBeInTheDocument();
+    it('renders all rows with consumers', async () => {
+      fetchMock.getOnce(consumerGroupsAPIUrl, someComnsumerGroupsResponse, {
+        query: {
+          orderBy: ConsumerGroupOrdering.NAME,
+          sortOrder: SortOrder.ASC,
+        },
+      });
+
+      renderComponent();
+      await waitFor(() => expect(fetchMock.calls().length).toBe(1));
+
+      expect(
+        screen.getByRole('heading', { name: 'Consumers' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Search by Consumer Group ID')
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('columnheader', { name: 'Consumer Group ID' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('columnheader', { name: 'Num Of Members' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('columnheader', { name: 'Num Of Topics' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('columnheader', { name: 'Messages Behind' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('columnheader', { name: 'Coordinator' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('columnheader', { name: 'State' })
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('group1')).toBeInTheDocument();
+      expect(screen.getByText('group2')).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('navigation', { name: 'pagination' })
+      ).toBeInTheDocument();
     });
 
-    describe('when searched', () => {
-      it('renders only searched consumers', () => {
-        userEvent.type(
-          screen.getByPlaceholderText('Search by Consumer Group ID'),
-          'groupId1'
-        );
-        expect(screen.getByText('groupId1')).toBeInTheDocument();
-        expect(screen.getByText('groupId2')).toBeInTheDocument();
+    it('renders only searched consumers', async () => {
+      const searchText = 'group1';
+      fetchMock.getOnce(consumerGroupsAPIUrl, searchComnsumerGroupsResponse, {
+        query: {
+          orderBy: ConsumerGroupOrdering.NAME,
+          sortOrder: SortOrder.ASC,
+          search: searchText,
+        },
       });
+
+      const mockedHistory = createMemoryHistory({
+        initialEntries: [
+          `${clusterConsumerGroupsPath(clusterName)}?q=${searchText}`,
+        ],
+      });
+      renderComponent(mockedHistory);
+
+      await waitFor(() => expect(fetchMock.calls().length).toBe(1));
+
+      expect(screen.getByText('group1')).toBeInTheDocument();
+      expect(screen.queryByText('group2')).not.toBeInTheDocument();
     });
   });
 });
