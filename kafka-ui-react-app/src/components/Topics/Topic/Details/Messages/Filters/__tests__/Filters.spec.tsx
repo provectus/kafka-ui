@@ -31,4 +31,10 @@ describe('Filters component', () => {
       expect(screen.getByText('Cancel')).toBeInTheDocument();
     });
   });
+  describe('when fetching is over', () => {
+    it('shows submit button while fetching is over', () => {
+      setupWrapper();
+      expect(screen.getByText('Submit')).toBeInTheDocument();
+    });
+  });
 });
