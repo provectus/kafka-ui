@@ -264,11 +264,11 @@ export const recreateTopic =
   async (dispatch) => {
     dispatch(actions.recreateTopicAction.request());
     try {
-      await topicsApiClient.recreateTopic({
+      const topic = await topicsApiClient.recreateTopic({
         clusterName,
         topicName,
       });
-      dispatch(actions.recreateTopicAction.success(topicName));
+      dispatch(actions.recreateTopicAction.success(topic));
     } catch (e) {
       dispatch(actions.recreateTopicAction.failure());
     }

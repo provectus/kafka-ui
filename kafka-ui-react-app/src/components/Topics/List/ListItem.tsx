@@ -4,7 +4,6 @@ import {
   TopicName,
   TopicWithDetailedInfo,
 } from 'redux/interfaces';
-import { useHistory } from 'react-router';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -12,7 +11,6 @@ import ClusterContext from 'components/contexts/ClusterContext';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import { clusterTopicPath } from 'lib/paths';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 
 import * as S from './List.styled';
@@ -43,8 +41,6 @@ const ListItem: React.FC<ListItemProps> = ({
   clusterName,
   clearTopicMessages,
 }) => {
-  const history = useHistory();
-
   const { isReadOnly, isTopicDeletionAllowed } =
     React.useContext(ClusterContext);
 
@@ -86,8 +82,7 @@ const ListItem: React.FC<ListItemProps> = ({
   const recreateTopicHandler = React.useCallback(() => {
     recreateTopic(clusterName, name);
     setRecreateTopicConfirmationVisible(false);
-    history.push(clusterTopicPath(clusterName, name));
-  }, [recreateTopic, clusterName, name, history]);
+  }, [recreateTopic, clusterName, name]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
