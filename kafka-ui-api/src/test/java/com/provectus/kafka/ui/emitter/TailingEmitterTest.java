@@ -76,12 +76,12 @@ class TailingEmitterTest extends AbstractBaseTest {
     Awaitility.await()
         .atMost(Duration.ofSeconds(60))
         .pollInSameThread()
-        .untilAsserted(() -> {
-          assertThat(fluxOutput)
+        .untilAsserted(() ->
+            assertThat(fluxOutput)
               .filteredOn(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
               .extracting(msg -> msg.getMessage().getContent())
-              .hasSameElementsAs(expectedValues);
-        });
+              .hasSameElementsAs(expectedValues)
+        );
   }
 
   @Test
@@ -101,12 +101,12 @@ class TailingEmitterTest extends AbstractBaseTest {
     Awaitility.await()
         .atMost(Duration.ofSeconds(60))
         .pollInSameThread()
-        .untilAsserted(() -> {
-          assertThat(fluxOutput)
+        .untilAsserted(() ->
+            assertThat(fluxOutput)
               .filteredOn(msg -> msg.getType() == TopicMessageEventDTO.TypeEnum.MESSAGE)
               .extracting(msg -> msg.getMessage().getContent())
-              .hasSameElementsAs(expectedValues);
-        });
+              .hasSameElementsAs(expectedValues)
+        );
   }
 
   private Flux<TopicMessageEventDTO> createTailingFlux(
