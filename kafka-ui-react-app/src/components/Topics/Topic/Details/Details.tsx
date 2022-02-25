@@ -162,7 +162,7 @@ const Details: React.FC<Props> = ({
         onCancel={() => setRecreateTopicConfirmationVisible(false)}
         onConfirm={recreateTopicHandler}
       >
-        Are you sure to recreate <b>{topicName}</b> topic?
+        Are you sure want to recreate <b>{topicName}</b> topic?
       </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink
