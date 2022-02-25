@@ -1,0 +1,16 @@
+kafka:
+  clusters:
+    - name: local
+      bootstrapServers: localhost:9092
+      zookeeper: localhost:2181
+      schemaRegistry: http://localhost:8085
+      kafkaConnect:
+        - name: first
+          address: http://localhost:8083
+      jmxPort: 9997
+      bufRegistry: foo
+spring:
+  jmx:
+    enabled: true
+auth:
+  type: DISABLED

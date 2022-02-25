@@ -32,4 +32,10 @@ public class KafkaCluster {
   private final Properties properties;
   private final boolean readOnly;
   private final boolean disableLogDirsCollection;
+
+  // clst specific
+  private final String bufRegistry;
+  private final String bufUsername;
+  private final String bufApiToken;
+  // clst specific
 }
