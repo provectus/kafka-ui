@@ -90,4 +90,16 @@ describe('Filters component', () => {
       expect(option[1]).toHaveTextContent('Newest First');
     });
   });
+
+  describe('when live mode is active', () => {
+    it('stop loading', () => {
+      setupWrapper();
+      const StopLoading = screen.getByText('Stop loading');
+      expect(StopLoading).toBeInTheDocument();
+      userEvent.click(StopLoading);
+      const option = screen.getAllByRole('option');
+      expect(option[1]).toHaveTextContent('Oldest First');
+      expect(screen.getByText('Submit')).toBeInTheDocument();
+    });
+  });
 });
