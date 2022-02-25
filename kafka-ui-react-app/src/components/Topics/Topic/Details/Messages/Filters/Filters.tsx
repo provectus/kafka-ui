@@ -285,6 +285,7 @@ const Filters: React.FC<FiltersProps> = ({
                   inputSize="M"
                   value={offset}
                   className="offset-selector"
+                  placeholder="Offset"
                   onChange={({ target: { value } }) => setOffset(value)}
                   disabled={seekDirection === SeekDirection.TAILING}
                 />
