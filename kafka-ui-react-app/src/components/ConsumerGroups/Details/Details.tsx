@@ -28,7 +28,7 @@ import {
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
 
-import ListItem from './ListItem';
+import ListItem from './ListItem/ListItem';
 
 const Details: React.FC = () => {
   const history = useHistory();

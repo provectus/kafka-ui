@@ -4,7 +4,7 @@ import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 
-import { consumerGroup } from './__fixtures__';
+import { consumerGroup } from './fixtures';
 
 const renderComponent = (cg: ConsumerGroup = consumerGroup) =>
   render(
@@ -16,7 +16,7 @@ const renderComponent = (cg: ConsumerGroup = consumerGroup) =>
   );
 
 describe('List', () => {
-  it('render empty ListItem', () => {
+  it('renders', () => {
     renderComponent();
 
     expect(screen.getByRole('row', { name: /group1/i })).toBeInTheDocument();

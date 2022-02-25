@@ -12,7 +12,7 @@ import {
   noConsumerGroupsResponse,
   searchComnsumerGroupsResponse,
   someComnsumerGroupsResponse,
-} from './__fixtures__';
+} from './fixtures';
 
 const clusterName = 'testClusterName';
 const consumerGroupsAPIUrl = `/api/clusters/${clusterName}/consumer-groups/paged`;

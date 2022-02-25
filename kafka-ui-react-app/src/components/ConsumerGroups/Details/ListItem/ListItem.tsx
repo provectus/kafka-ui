@@ -6,11 +6,11 @@ import { clusterTopicPath } from 'lib/paths';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
+import TopicContents from 'components/ConsumerGroups/Details/TopicContents/TopicContents';
 
-import TopicContents from './TopicContents/TopicContents';
 import { ToggleButton } from './ListItem.styled';
 
-interface Props {
+export interface Props {
   clusterName: ClusterName;
   name: string;
   consumers: ConsumerGroupTopicPartition[];
@@ -22,8 +22,8 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
     <>
       <tr>
         <ToggleButton>
-          <IconButtonWrapper onClick={() => setIsOpen(!isOpen)} aria-hidden>
-            <MessageToggleIcon isOpen={isOpen} />
+          <IconButtonWrapper onClick={() => setIsOpen(!isOpen)}>
+            <MessageToggleIcon aria-hidden isOpen={isOpen} />
           </IconButtonWrapper>
         </ToggleButton>
         <TableKeyLink>

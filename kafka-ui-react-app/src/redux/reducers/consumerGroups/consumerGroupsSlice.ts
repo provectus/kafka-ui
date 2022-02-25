@@ -6,7 +6,6 @@ import {
 } from '@reduxjs/toolkit';
 import {
   Configuration,
-  ConsumerGroup,
   ConsumerGroupDetails,
   ConsumerGroupsApi,
   ConsumerGroupsPageResponse,
@@ -24,22 +23,6 @@ import { createFetchingSelector } from 'redux/reducers/loader/selectors';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const api = new ConsumerGroupsApi(apiClientConf);
-
-export const fetchAllConsumerGroups = createAsyncThunk<
-  ConsumerGroup[],
-  ClusterName
->(
-  'consumerGroups/fetchConsumerGroups',
-  async (clusterName: ClusterName, { rejectWithValue }) => {
-    try {
-      return await api.getConsumerGroups({
-        clusterName,
-      });
-    } catch (error) {
-      return rejectWithValue(await getResponse(error as Response));
-    }
-  }
-);
 
 export const fetchConsumerGroupsPage = createAsyncThunk<
   ConsumerGroupsPageResponse,
