@@ -12,6 +12,9 @@ import java.util.stream.StreamSupport;
 
 class DynamicParser {
 
+  private DynamicParser() {
+  }
+
   static KsqlResponseTable parseArray(String tableName, JsonNode array) {
     return parseArray(tableName, getFieldNamesFromArray(array), array);
   }

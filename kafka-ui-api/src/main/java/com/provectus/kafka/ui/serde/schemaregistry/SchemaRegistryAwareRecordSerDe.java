@@ -113,7 +113,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
                                          DeserializedKeyValueBuilder builder) {
     Optional<Integer> schemaId = extractSchemaIdFromMsg(rec, isKey);
     Optional<MessageFormat> format = schemaId.flatMap(this::getMessageFormatBySchemaId);
-    if (format.isPresent() && schemaRegistryFormatters.containsKey(format.get())) {
+    if (schemaId.isPresent() && format.isPresent() && schemaRegistryFormatters.containsKey(format.get())) {
       var formatter = schemaRegistryFormatters.get(format.get());
       try {
         var deserialized = formatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get());
@@ -135,12 +135,13 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
     // fallback
     if (isKey) {
-      builder.key(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.key(FALLBACK_FORMATTER.format(rec.topic(), rec.key().get()));
       builder.keyFormat(FALLBACK_FORMATTER.getFormat());
     } else {
-      builder.value(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.value(FALLBACK_FORMATTER.format(rec.topic(), rec.value().get()));
       builder.valueFormat(FALLBACK_FORMATTER.getFormat());
     }
+
   }
 
   @Override
@@ -202,14 +203,14 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(maybeKeySchema.map(
-            (s) -> schemaSubject(topic, true)
+            s -> schemaSubject(topic, true)
         ).orElse("unknown"))
         .source(MessageSchemaDTO.SourceEnum.SCHEMA_REGISTRY)
         .schema(sourceKeySchema);
 
     final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(maybeValueSchema.map(
-            (s) -> schemaSubject(topic, false)
+            s -> schemaSubject(topic, false)
         ).orElse("unknown"))
         .source(MessageSchemaDTO.SourceEnum.SCHEMA_REGISTRY)
         .schema(sourceValueSchema);

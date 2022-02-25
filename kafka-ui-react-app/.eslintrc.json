@@ -22,7 +22,8 @@
   },
   "plugins": [
     "@typescript-eslint",
-    "prettier"
+    "prettier",
+    "eslint-plugin-react-hooks"
   ],
   "extends": [
     "airbnb",
@@ -33,6 +34,8 @@
     "prettier"
   ],
   "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
     "react/no-unused-prop-types": "off",
     "react/require-default-props": "off",
     "prettier/prettier": "warn",

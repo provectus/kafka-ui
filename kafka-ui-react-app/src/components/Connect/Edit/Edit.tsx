@@ -100,7 +100,7 @@ const Edit: React.FC<EditProps> = ({
         );
       }
     },
-    [updateConfig, clusterName, connectName, connectorName]
+    [updateConfig, clusterName, connectName, connectorName, history]
   );
 
   if (isConfigFetching) return <PageLoader />;

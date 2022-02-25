@@ -20,7 +20,6 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.retry.Retry;
-import reactor.util.retry.RetryBackoffSpec;
 
 @Slf4j
 public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
@@ -32,7 +31,7 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   }
 
   private static Retry conflictCodeRetry() {
-    return RetryBackoffSpec
+    return Retry
         .fixedDelay(MAX_RETRIES, RETRIES_DELAY)
         .filter(e -> e instanceof WebClientResponseException.Conflict)
         .onRetryExhaustedThrow((spec, signal) ->

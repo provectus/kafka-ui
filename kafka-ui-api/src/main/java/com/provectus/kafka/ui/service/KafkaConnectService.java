@@ -103,19 +103,19 @@ public class KafkaConnectService {
   }
 
   private Predicate<FullConnectorInfoDTO> matchesSearchTerm(final String search) {
-    return (connector) -> getSearchValues(connector)
+    return connector -> getSearchValues(connector)
         .anyMatch(value -> value.contains(
             StringUtils.defaultString(
-                search,
-                StringUtils.EMPTY)
+                    search,
+                    StringUtils.EMPTY)
                 .toUpperCase()));
   }
 
   private Stream<String> getSearchValues(FullConnectorInfoDTO fullConnectorInfo) {
     return Stream.of(
-        fullConnectorInfo.getName(),
-        fullConnectorInfo.getStatus().getState().getValue(),
-        fullConnectorInfo.getType().getValue())
+            fullConnectorInfo.getName(),
+            fullConnectorInfo.getStatus().getState().getValue(),
+            fullConnectorInfo.getType().getValue())
         .map(String::toUpperCase);
   }
 
@@ -158,7 +158,7 @@ public class KafkaConnectService {
             connector
                 .flatMap(c -> connectorExists(cluster, connectName, c.getName())
                     .map(exists -> {
-                      if (exists) {
+                      if (Boolean.TRUE.equals(exists)) {
                         throw new ValidationException(
                             String.format("Connector with name %s already exists", c.getName()));
                       }
@@ -179,7 +179,7 @@ public class KafkaConnectService {
   }
 
   public Mono<ConnectorDTO> getConnector(KafkaCluster cluster, String connectName,
-                                      String connectorName) {
+                                         String connectorName) {
     return withConnectClient(cluster, connectName)
         .flatMap(client -> client.getConnector(connectorName)
             .map(kafkaConnectMapper::fromClient)
@@ -240,8 +240,8 @@ public class KafkaConnectService {
   }
 
   public Mono<ConnectorDTO> setConnectorConfig(KafkaCluster cluster, String connectName,
-                                            String connectorName, Mono<Object> requestBody) {
-    return  withConnectClient(cluster, connectName)
+                                               String connectorName, Mono<Object> requestBody) {
+    return withConnectClient(cluster, connectName)
         .flatMap(c ->
             requestBody
                 .flatMap(body -> c.setConnectorConfig(connectorName, (Map<String, Object>) body))

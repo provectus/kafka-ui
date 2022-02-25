@@ -28,8 +28,12 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
   `
 );
 
-export const Title = styled.span`
+export const Title = styled.div`
   grid-area: title;
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const StatusIconWrapper = styled.svg.attrs({

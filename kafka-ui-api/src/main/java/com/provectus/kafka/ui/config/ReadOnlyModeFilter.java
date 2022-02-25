@@ -45,7 +45,7 @@ public class ReadOnlyModeFilter implements WebFilter {
             () -> new ClusterNotFoundException(
                 String.format("No cluster for name '%s'", clusterName)));
 
-    if (!kafkaCluster.getReadOnly()) {
+    if (!kafkaCluster.isReadOnly()) {
       return chain.filter(exchange);
     }
 

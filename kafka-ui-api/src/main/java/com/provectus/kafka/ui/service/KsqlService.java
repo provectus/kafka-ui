@@ -20,7 +20,7 @@ public class KsqlService {
   private final List<BaseStrategy> ksqlStatementStrategies;
 
   public Mono<KsqlCommandResponseDTO> executeKsqlCommand(KafkaCluster cluster,
-                                                      Mono<KsqlCommandDTO> ksqlCommand) {
+                                                         Mono<KsqlCommandDTO> ksqlCommand) {
     return Mono.justOrEmpty(cluster)
         .map(KafkaCluster::getKsqldbServer)
         .onErrorResume(e -> {
