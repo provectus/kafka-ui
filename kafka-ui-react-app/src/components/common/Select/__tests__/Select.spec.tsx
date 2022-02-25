@@ -1,7 +1,4 @@
-import Select, {
-  SelectProps,
-  SelectOption,
-} from 'components/common/Select/Select';
+import Select, { SelectProps } from 'components/common/Select/Select';
 import React from 'react';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
