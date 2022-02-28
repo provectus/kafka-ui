@@ -1,0 +1,33 @@
+global:
+  scrape_interval: 15s # By default, scrape targets every 15 seconds.
+  evaluation_interval: 15s # By default, scrape targets every 15 seconds.
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: [ 'host.docker.internal:9090' ]
+
+  - job_name: 'kafka'
+    static_configs:
+      - targets:
+          - 'kafka0:1234'
+          - 'kafka01:1234'
+          - 'kafka1:1234'
+        labels:
+          env: 'dev'
+
+  - job_name: 'zookeeper'
+    static_configs:
+      - targets:
+          - 'zookeeper0:1234'
+          - 'zookeeper1:1234'
+        labels:
+          env: 'dev'
+
+  - job_name: 'connect'
+    static_configs:
+      - targets:
+          - 'kafka-connect0:1234'
+        labels:
+          env: 'dev'
+          cluster: 'cluster1'
