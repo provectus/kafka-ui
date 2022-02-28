@@ -123,7 +123,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
         ) : (
           filters.map((filter, index) => (
             <S.SavedFilter
-              key={Math.random()}
+              key={Symbol(filter.name).toString()}
               selected={selectedFilter === index}
               onClick={() => setSelectedFilter(index)}
             >
