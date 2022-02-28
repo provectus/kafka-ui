@@ -1,0 +1,73 @@
+lowercaseOutputName: true
+lowercaseOutputLabelNames: true
+rules:
+  - pattern: 'kafka.connect<type=app-info, client-id=(.+)><>(.+): (.+)'
+    value: 1
+    name: kafka_connect_app_info
+    labels:
+      client-id: $1
+      $2: $3
+    type: COUNTER
+  - pattern: 'kafka.connect<type=connector-metrics, connector=(.+)><>(.+): (.+)'
+    value: 1
+    name: kafka_connect_connector_info
+    labels:
+      connector: $1
+      $2: $3
+    type: COUNTER
+  - pattern: 'kafka.connect<type=connector-task-metrics, connector=(.+), task=(\d+)><>status: (.+)'
+    value: 1
+    name: kafka_connect_connector_task_status
+    labels:
+      connector: $1
+      task: "$2"
+      status: $3
+    type: COUNTER
+  - pattern: 'kafka.connect<type=connect-worker-metrics><>([^:]+)'
+    name: kafka_connect_connect_worker_metrics_$1
+  - pattern: 'kafka.connect<type=connect-worker-rebalance-metrics><>([^:]+)'
+    name: kafka_connect_connect_worker_rebalance_metrics_$1
+  - pattern: 'kafka.connect<type=(.+), client-id=([^:]+)><>([^:]+)'
+    name: kafka_connect_$1_$3
+    labels:
+      client-id: "$2"
+  - pattern: 'kafka.connect<type=(.+), connector=([^:]+), task=(\d+)><>([^:]+)'
+    name: kafka_connect_$1_$4
+    labels:
+      connector: "$2"
+      task: "$3"
+  - pattern: 'kafka.connect<type=(.+), connector=([^:]+)><>([^:]+)'
+    name: kafka_connect_$1_$3
+    labels:
+      connector: "$2"
+  - pattern: 'kafka.consumer<type=app-info, client-id=(.+)><>(.+): (.+)'
+    value: 1
+    name: kafka_consumer_app_info
+    labels:
+      client-id: $1
+      $2: $3
+    type: UNTYPED
+  - pattern: 'kafka.consumer<type=(.+), client-id=(.+), node-id=(.+)><>(.+):'
+    name: kafka_consumer_$1_$4
+    type: GAUGE
+    labels:
+      client-id: "$2"
+      host-id: "$3"
+  - pattern: 'kafka.consumer<type=(.+), client-id=(.+), partition=(.+), topic=(.+)><>(.+):'
+    name: kafka_consumer_$1_$5
+    type: GAUGE
+    labels:
+      client-id: "$2"
+      topic: "$3"
+      partition: "$4"
+  - pattern: 'kafka.consumer<type=(.+), client-id=(.+), topic=(.+)><>(.+):'
+    name: kafka_consumer_$1_$4
+    type: GAUGE
+    labels:
+      client-id: "$2"
+      topic: "$3"
+  - pattern: 'kafka.consumer<type=(.+), client-id=(.+)><>(.+):'
+    name: kafka_consumer_$1_$3
+    type: GAUGE
+    labels:
+      client-id: "$2"

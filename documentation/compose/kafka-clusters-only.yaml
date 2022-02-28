@@ -7,8 +7,11 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      EXTRA_ARGS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=1234:/usr/share/jmx_exporter/zookeeper.yml
     ports:
-    - 2181:2181
+      - 2181:2181
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
 
   kafka0:
     image: confluentinc/cp-kafka:5.3.1
@@ -22,10 +25,13 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       JMX_PORT: 9997
+      KAFKA_OPTS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=1234:/usr/share/jmx_exporter/kafka-broker.yml
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9997
     ports:
       - 9092:9092
       - 9997:9997
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
 
   kafka01:
     image: confluentinc/cp-kafka:5.3.1
@@ -39,18 +45,24 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
       JMX_PORT: 9999
+      KAFKA_OPTS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=1234:/usr/share/jmx_exporter/kafka-broker.yml
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9999
     ports:
       - 9094:9094
       - 9999:9999
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
 
   zookeeper1:
     image: confluentinc/cp-zookeeper:5.2.4
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+      EXTRA_ARGS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=1234:/usr/share/jmx_exporter/zookeeper.yml
     ports:
       - 2182:2181
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
 
   kafka1:
     image: confluentinc/cp-kafka:5.3.1
@@ -64,10 +76,13 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       JMX_PORT: 9998
+      KAFKA_OPTS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=1234:/usr/share/jmx_exporter/kafka-broker.yml
       KAFKA_JMX_OPTS: -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dcom.sun.management.jmxremote.rmi.port=9998
     ports:
       - 9093:9093
-      - 9998:9998 
+      - 9998:9998
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
 
   schemaregistry0:
     image: confluentinc/cp-schema-registry:5.5.0
@@ -114,6 +129,7 @@ services:
       - kafka0
       - schemaregistry0
     environment:
+      KAFKA_OPTS: -javaagent:/usr/share/jmx_exporter/jmx_prometheus_javaagent-0.16.1.jar=1234:/usr/share/jmx_exporter/kafka-connect.yml -Xmx256M -Xms256M
       CONNECT_BOOTSTRAP_SERVERS: kafka0:29092
       CONNECT_GROUP_ID: compose-connect-group
       CONNECT_CONFIG_STORAGE_TOPIC: _connect_configs
@@ -130,12 +146,13 @@ services:
       CONNECT_INTERNAL_VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
       CONNECT_REST_ADVERTISED_HOST_NAME: kafka-connect0
       CONNECT_PLUGIN_PATH: "/usr/share/java,/usr/share/confluent-hub-components"
-
+    volumes:
+      - ./jmx-exporter:/usr/share/jmx_exporter/
 
   kafka-init-topics:
     image: confluentinc/cp-kafka:5.3.1
     volumes:
-       - ./message.json:/data/message.json
+      - ./message.json:/data/message.json
     depends_on:
       - kafka1
     command: "bash -c 'echo Waiting for Kafka to be ready... && \
@@ -144,3 +161,10 @@ services:
                kafka-topics --create --topic second.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper1:2181 && \
                kafka-topics --create --topic first.messages --partitions 2 --replication-factor 1 --if-not-exists --zookeeper zookeeper0:2181 && \
                kafka-console-producer --broker-list kafka1:29092 -topic second.users < /data/message.json'"
+
+  prometheus:
+    image: prom/prometheus:v2.11.1
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus/:/etc/prometheus/
