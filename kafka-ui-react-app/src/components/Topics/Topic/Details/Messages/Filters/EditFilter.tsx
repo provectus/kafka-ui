@@ -41,7 +41,7 @@ const EditFilter: React.FC<EditFilterProps> = ({
       editSavedFilter({ index: editFilter.index, filter: values });
       toggleEditModal();
     },
-    [editSavedFilter]
+    [editSavedFilter, editFilter.index, toggleEditModal]
   );
   return (
     <>

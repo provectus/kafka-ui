@@ -72,7 +72,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
       setAddNewFilter(!addNewFilter);
       reset({ name: '', code: '' });
     },
-    [addNewFilter, toggleSaveFilter]
+    [addNewFilter, toggleSaveFilter, activeFilterHandler, addFilter, reset]
   );
   return !addNewFilter ? (
     <>

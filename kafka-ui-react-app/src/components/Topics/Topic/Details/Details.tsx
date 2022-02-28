@@ -65,19 +65,19 @@ const Details: React.FC<Props> = ({
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
-  }, [clusterName, topicName]);
+  }, [clusterName, topicName, deleteTopic]);
 
   React.useEffect(() => {
     if (isDeleted) {
       dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
-  }, [isDeleted]);
+  }, [isDeleted, clusterName, dispatch, history]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
     setClearTopicConfirmationVisible(false);
-  }, [clusterName, topicName]);
+  }, [clusterName, topicName, clearTopicMessages]);
 
   return (
     <div>

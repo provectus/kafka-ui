@@ -27,7 +27,7 @@ const MessagesTable: React.FC = () => {
 
   const searchParams = React.useMemo(
     () => new URLSearchParams(location.search),
-    [location, history]
+    [location]
   );
 
   const messages = useSelector(getTopicMessges);
