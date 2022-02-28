@@ -116,9 +116,11 @@ const Filters: React.FC<FiltersProps> = ({
   const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
     JSON.parse(localStorage.getItem('savedFilters') ?? '[]')
   );
-  const [activeFilter, setActiveFilter] = React.useState<
-    ActiveMessageFilter | boolean
-  >(JSON.parse(localStorage.getItem('activeFilter') ?? 'false'));
+  const [activeFilter, setActiveFilter] = React.useState<ActiveMessageFilter>({
+    name: '',
+    code: '',
+    index: -1,
+  });
 
   const [queryType, setQueryType] = React.useState<MessageFilterType>(
     activeFilter
@@ -160,20 +162,17 @@ const Filters: React.FC<FiltersProps> = ({
     [partitions]
   );
 
-  const handleFiltersSubmit = React.useCallback(() => {
-    setAttempt(attempt + 1);
-
-    const props: Query = {
+  const props: Query = React.useMemo(() => {
+    return {
       q: query,
       filterQueryType: queryType,
       attempt,
       limit: PER_PAGE,
       seekDirection,
     };
-    if (typeof activeFilter === 'object') {
-      props.q = `valueAsText.contains('${activeFilter.code}')`;
-      setQueryType(MessageFilterType.GROOVY_SCRIPT);
-    }
+  }, [attempt, query, queryType, seekDirection]);
+
+  const handleFiltersSubmit = React.useCallback(() => {
     if (isSeekTypeControlVisible) {
       props.seekType = currentSeekType;
       props.seekTo = selectedPartitions.map(({ value }) => {
@@ -205,15 +204,12 @@ const Filters: React.FC<FiltersProps> = ({
       search: `?${qs}`,
     });
   }, [
-    activeFilter,
-    attempt,
+    props,
     currentSeekType,
     history,
     isSeekTypeControlVisible,
     offset,
     partitionMap,
-    query,
-    queryType,
     seekDirection,
     selectedPartitions,
     timestamp,
@@ -244,14 +240,14 @@ const Filters: React.FC<FiltersProps> = ({
     const filters = [...savedFilters];
     if (typeof activeFilter === 'object' && activeFilter.index === index) {
       localStorage.removeItem('activeFilter');
-      setActiveFilter(false);
+      setActiveFilter({ name: '', code: '', index: -1 });
     }
     filters.splice(index, 1);
     localStorage.setItem('savedFilters', JSON.stringify(filters));
     setSavedFilters(filters);
   };
   const deleteActiveFilter = () => {
-    setActiveFilter(false);
+    setActiveFilter({ name: '', code: '', index: -1 });
     localStorage.removeItem('activeFilter');
     setQueryType(MessageFilterType.STRING_CONTAINS);
   };
@@ -269,10 +265,7 @@ const Filters: React.FC<FiltersProps> = ({
   const editSavedFilter = (filter: FilterEdit) => {
     const filters = [...savedFilters];
     filters[filter.index] = filter.filter;
-    if (
-      typeof activeFilter === 'object' &&
-      activeFilter.index === filter.index
-    ) {
+    if (activeFilter.name && activeFilter.index === filter.index) {
       setActiveFilter({
         index: filter.index,
         name: filter.filter.name,
@@ -340,12 +333,27 @@ const Filters: React.FC<FiltersProps> = ({
     updateMeta,
     updatePhase,
   ]);
-
+  const [isInitialRender, setIsInitialRender] = React.useState(true);
   React.useEffect(() => {
-    if (location.search.length === 0) {
+    if (isInitialRender) {
+      setAttempt(attempt + 1);
+      if (activeFilter.name) {
+        props.q = `valueAsText.contains('${activeFilter.code}')`;
+        setQueryType(MessageFilterType.GROOVY_SCRIPT);
+      }
+      setIsInitialRender(false);
       handleFiltersSubmit();
     }
-  }, [location, seekDirection, handleFiltersSubmit]);
+  }, [isInitialRender, activeFilter, props, attempt, handleFiltersSubmit]);
+
+  React.useEffect(() => {
+    const storageActiveFilter = JSON.parse(
+      localStorage.getItem('activeFilter') ?? '{}'
+    );
+    if (storageActiveFilter !== {}) {
+      setActiveFilter(storageActiveFilter);
+    }
+  }, []);
 
   return (
     <S.FiltersWrapper>
@@ -439,7 +447,7 @@ const Filters: React.FC<FiltersProps> = ({
         <S.AddFiltersIcon onClick={toggleIsOpen}>
           <i className="fas fa-plus fa-sm" />
         </S.AddFiltersIcon>
-        {typeof activeFilter === 'object' && (
+        {activeFilter.name && (
           <S.AddedFilter>
             {activeFilter.name}
             <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
