@@ -62,7 +62,6 @@ describe('Details', () => {
       );
 
       expect(screen.queryByText('Produce Message')).not.toBeInTheDocument();
-      expect(baseElement).toMatchSnapshot();
     });
   });
 

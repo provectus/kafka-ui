@@ -10,6 +10,7 @@ import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import styled from 'styled-components';
 
 import MessageContent from './MessageContent/MessageContent';
+import * as S from './MessageContent/MessageContent.styled';
 
 const StyledDataCell = styled.td`
   overflow: hidden;
@@ -59,7 +60,16 @@ const Message: React.FC<{ message: TopicMessage }> = ({
           <div>{dayjs(timestamp).format('MM.DD.YYYY HH:mm:ss')}</div>
         </td>
         <StyledDataCell title={key}>{key}</StyledDataCell>
-        <StyledDataCell>{content}</StyledDataCell>
+        <StyledDataCell>
+          <S.Metadata>
+            <S.MetadataLabel>Range:</S.MetadataLabel>
+            <S.MetadataValue>{content}</S.MetadataValue>
+          </S.Metadata>
+          <S.Metadata>
+            <S.MetadataLabel>Version:</S.MetadataLabel>
+            <S.MetadataValue>3</S.MetadataValue>
+          </S.Metadata>
+        </StyledDataCell>
         <td style={{ width: '5%' }}>
           {vEllipsisOpen && (
             <Dropdown label={<VerticalElipsisIcon />} right>

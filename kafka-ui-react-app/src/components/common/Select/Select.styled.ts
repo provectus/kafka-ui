@@ -67,7 +67,7 @@ export const OptionList = styled.ul`
   font-size: 14px;
   line-height: 18px;
   color: ${(props) => props.theme.select.color.normal};
-  overflow-y: scroll;
+  overflow-y: auto;
   z-index: 10;
   max-width: 300px;
   min-width: 100%;

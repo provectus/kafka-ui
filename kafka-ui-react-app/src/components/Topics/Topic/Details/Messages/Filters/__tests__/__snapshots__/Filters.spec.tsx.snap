@@ -226,7 +226,7 @@ exports[`Filters component matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
-.c11 {
+.c12 {
   position: relative;
   list-style: none;
   display: -webkit-box;
@@ -254,18 +254,18 @@ exports[`Filters component matches the snapshot 1`] = `
   background-position-y: 55% !important;
 }
 
-.c11:hover {
+.c12:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c11:focus {
+.c12:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c11:disabled {
+.c12:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
@@ -279,7 +279,7 @@ exports[`Filters component matches the snapshot 1`] = `
   text-overflow: ellipsis;
 }
 
-.c10 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -306,27 +306,27 @@ exports[`Filters component matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c10:hover:enabled {
+.c11:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c10:active:enabled {
+.c11:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c10:disabled {
+.c11:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c10 a {
+.c11 a {
   color: #FFFFFF;
 }
 
-.c10 i {
+.c11 i {
   margin-right: 7px;
 }
 
@@ -417,7 +417,7 @@ exports[`Filters component matches the snapshot 1`] = `
   outline: none;
 }
 
-.c12 {
+.c15 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -435,7 +435,7 @@ exports[`Filters component matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c13 {
+.c16 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -444,10 +444,41 @@ exports[`Filters component matches the snapshot 1`] = `
   display: flex;
 }
 
-.c14 {
+.c17 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
+}
+
+.c10 {
+  color: #73848C;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: Inter;
+}
+
+.c14 {
+  color: #171A1C;
+  padding-right: 6px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.c13 {
+  padding: 5px 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
 }
 
 <body>
@@ -563,8 +594,13 @@ exports[`Filters component matches the snapshot 1`] = `
               </div>
             </div>
           </div>
-          <button
+          <span
             class="c10"
+          >
+            Clear all
+          </span>
+          <button
+            class="c11"
             style="font-weight: 500;"
             type="submit"
           >
@@ -573,7 +609,7 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
         <div>
           <ul
-            class="c11"
+            class="c12"
             role="listbox"
           >
             <li
@@ -587,17 +623,28 @@ exports[`Filters component matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c12"
+        class="c13"
+      >
+        <div
+          class="c14"
+        >
+          <i
+            class="fas fa-plus fa-sm"
+          />
+        </div>
+      </div>
+      <div
+        class="c15"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c13"
+          class="c16"
           title="Elapsed Time"
         >
           <div
-            class="c14"
+            class="c17"
           >
             <i
               class="far fa-clock"
@@ -609,11 +656,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c16"
           title="Bytes Consumed"
         >
           <div
-            class="c14"
+            class="c17"
           >
             <i
               class="fas fa-arrow-down"
@@ -624,11 +671,11 @@ exports[`Filters component matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c16"
           title="Messages Consumed"
         >
           <div
-            class="c14"
+            class="c17"
           >
             <i
               class="far fa-file-alt"
@@ -871,7 +918,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   cursor: not-allowed;
 }
 
-.c11 {
+.c12 {
   position: relative;
   list-style: none;
   display: -webkit-box;
@@ -899,18 +946,18 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   background-position-y: 55% !important;
 }
 
-.c11:hover {
+.c12:hover {
   color: #171A1C;
   border-color: #73848C;
 }
 
-.c11:focus {
+.c12:focus {
   outline: none;
   color: #171A1C;
   border-color: #454F54;
 }
 
-.c11:disabled {
+.c12:disabled {
   color: #ABB5BA;
   border-color: #E3E6E8;
   cursor: not-allowed;
@@ -924,7 +971,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   text-overflow: ellipsis;
 }
 
-.c10 {
+.c11 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -951,27 +998,27 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   height: 32px;
 }
 
-.c10:hover:enabled {
+.c11:hover:enabled {
   background: #E3E6E8;
   color: #171A1C;
   cursor: pointer;
 }
 
-.c10:active:enabled {
+.c11:active:enabled {
   background: #D5DADD;
   color: #171A1C;
 }
 
-.c10:disabled {
+.c11:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
 
-.c10 a {
+.c11 a {
   color: #FFFFFF;
 }
 
-.c10 i {
+.c11 i {
   margin-right: 7px;
 }
 
@@ -1062,7 +1109,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   outline: none;
 }
 
-.c12 {
+.c15 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -1080,7 +1127,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   padding-bottom: 16px;
 }
 
-.c13 {
+.c16 {
   color: #73848C;
   font-size: 12px;
   display: -webkit-box;
@@ -1089,10 +1136,41 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
   display: flex;
 }
 
-.c14 {
+.c17 {
   color: #171A1C;
   padding-right: 6px;
   height: 12px;
+}
+
+.c10 {
+  color: #73848C;
+  font-size: 12px;
+  cursor: pointer;
+  font-family: Inter;
+}
+
+.c14 {
+  color: #171A1C;
+  padding-right: 6px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.c13 {
+  padding: 5px 0;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 10px;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: start;
+  -webkit-justify-content: flex-start;
+  -ms-flex-pack: start;
+  justify-content: flex-start;
 }
 
 <div>
@@ -1207,8 +1285,13 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
               </div>
             </div>
           </div>
-          <button
+          <span
             class="c10"
+          >
+            Clear all
+          </span>
+          <button
+            class="c11"
             style="font-weight: 500;"
             type="button"
           >
@@ -1217,7 +1300,7 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
         <div>
           <ul
-            class="c11"
+            class="c12"
             role="listbox"
           >
             <li
@@ -1231,17 +1314,28 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
         </div>
       </div>
       <div
-        class="c12"
+        class="c13"
+      >
+        <div
+          class="c14"
+        >
+          <i
+            class="fas fa-plus fa-sm"
+          />
+        </div>
+      </div>
+      <div
+        class="c15"
       >
         <p
           style="font-size: 14px;"
         />
         <div
-          class="c13"
+          class="c16"
           title="Elapsed Time"
         >
           <div
-            class="c14"
+            class="c17"
           >
             <i
               class="far fa-clock"
@@ -1253,11 +1347,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c16"
           title="Bytes Consumed"
         >
           <div
-            class="c14"
+            class="c17"
           >
             <i
               class="fas fa-arrow-down"
@@ -1268,11 +1362,11 @@ exports[`Filters component when fetching matches the snapshot 1`] = `
           </span>
         </div>
         <div
-          class="c13"
+          class="c16"
           title="Messages Consumed"
         >
           <div
-            class="c14"
+            class="c17"
           >
             <i
               class="far fa-file-alt"
