@@ -85,7 +85,7 @@ export const clusterConnectorsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/connectors`;
 export const clusterConnectorNewPath = (clusterName: ClusterName) =>
   `${clusterConnectorsPath(clusterName)}/create-new`;
-const clusterConnectConnectorsPath = (
+export const clusterConnectConnectorsPath = (
   clusterName: ClusterName,
   connectName: ConnectName
 ) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;
