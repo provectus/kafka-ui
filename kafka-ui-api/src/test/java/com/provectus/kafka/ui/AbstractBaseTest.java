@@ -58,6 +58,8 @@ public abstract class AbstractBaseTest {
       System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
       System.setProperty("kafka.clusters.0.schemaRegistry", schemaRegistry.getUrl());
       System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
+      System.setProperty("kafka.clusters.0.kafkaConnect.0.userName", "kafka-connect");
+      System.setProperty("kafka.clusters.0.kafkaConnect.0.password", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
 
       System.setProperty("kafka.clusters.1.name", SECOND_LOCAL);

@@ -46,6 +46,8 @@ public class ClustersProperties {
   public static class ConnectCluster {
     String name;
     String address;
+    String userName;
+    String password;
   }
 
   @Data

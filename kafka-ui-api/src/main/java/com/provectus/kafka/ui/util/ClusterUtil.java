@@ -29,7 +29,6 @@ public class ClusterUtil {
 
   public static TopicMessageDTO mapToTopicMessage(ConsumerRecord<Bytes, Bytes> consumerRecord,
                                                   RecordSerDe recordDeserializer) {
-
     Map<String, String> headers = new HashMap<>();
     consumerRecord.headers().iterator()
         .forEachRemaining(header ->

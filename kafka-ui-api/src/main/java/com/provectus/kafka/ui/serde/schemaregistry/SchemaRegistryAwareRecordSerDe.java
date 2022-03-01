@@ -141,7 +141,6 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
       builder.value(FALLBACK_FORMATTER.format(rec.topic(), rec.value().get()));
       builder.valueFormat(FALLBACK_FORMATTER.getFormat());
     }
-
   }
 
   @Override
