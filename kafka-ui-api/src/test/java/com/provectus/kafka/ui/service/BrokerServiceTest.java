@@ -1,45 +1,31 @@
 package com.provectus.kafka.ui.service;
 
 import com.provectus.kafka.ui.AbstractBaseTest;
-import com.provectus.kafka.ui.mapper.ClusterMapperImpl;
-import com.provectus.kafka.ui.mapper.DescribeLogDirsMapper;
 import com.provectus.kafka.ui.model.BrokerDTO;
-import com.provectus.kafka.ui.model.KafkaCluster;
-import java.util.Properties;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import reactor.test.StepVerifier;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 class BrokerServiceTest extends AbstractBaseTest {
-  private final KafkaCluster kafkaCluster =
-      KafkaCluster.builder()
-          .name(LOCAL)
-          .bootstrapServers(kafka.getBootstrapServers())
-          .properties(new Properties())
-          .build();
 
+  @Autowired
   private BrokerService brokerService;
 
-  @BeforeEach
-  void init() {
-    AdminClientServiceImpl adminClientService = new AdminClientServiceImpl();
-    adminClientService.setClientTimeout(5_000);
-    brokerService =
-        new BrokerService(new MetricsCache(), adminClientService, new DescribeLogDirsMapper(), new ClusterMapperImpl());
-  }
+  @Autowired
+  private ClustersStorage clustersStorage;
 
   @Test
-  void getBrokersNominal() {
-    BrokerDTO brokerdto = new BrokerDTO();
-    brokerdto.setId(1);
-    brokerdto.setHost("localhost");
-    String port = kafka.getBootstrapServers().substring(kafka.getBootstrapServers().lastIndexOf(":") + 1);
-    brokerdto.setPort(Integer.parseInt(port));
+  void getBrokersReturnsFilledBrokerDto() {
+    BrokerDTO expectedBroker = new BrokerDTO();
+    expectedBroker.setId(1);
+    expectedBroker.setHost(kafka.getHost());
+    expectedBroker.setPort(kafka.getFirstMappedPort());
 
-    StepVerifier.create(brokerService.getBrokers(kafkaCluster))
-        .expectNext(brokerdto)
+    var localCluster = clustersStorage.getClusterByName(LOCAL).get();
+    StepVerifier.create(brokerService.getBrokers(localCluster))
+        .expectNext(expectedBroker)
         .verifyComplete();
   }
 
