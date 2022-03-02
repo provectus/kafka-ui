@@ -165,7 +165,7 @@ export const AddedFiltersWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const DeleteSavedFilter = styled.div`
+export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
   color: ${({ theme }) => theme.breadcrumb};
   cursor: pointer;
 `;
@@ -183,7 +183,9 @@ export const FilterOptions = styled.div`
   color: ${({ theme }) => theme.editFilterText.color};
 `;
 
-export const SavedFilter = styled.div<SavedFilterProps>`
+export const SavedFilter = styled.div.attrs({
+  role: 'savedFilter',
+})<SavedFilterProps>`
   display: flex;
   justify-content: space-between;
   padding-right: 5px;
@@ -230,7 +232,7 @@ export const DeleteSavedFilterIcon = styled.div`
   cursor: pointer;
 `;
 
-export const ConfirmDeletionModal = styled.div`
+export const ConfirmDeletionModal = styled.div.attrs({ role: 'deletionModal' })`
   height: auto;
   width: 348px;
   border-radius: 8px;

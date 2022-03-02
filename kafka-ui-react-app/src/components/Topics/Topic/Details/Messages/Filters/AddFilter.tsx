@@ -16,7 +16,7 @@ const validationSchema = yup.object().shape({
   code: yup.string().required(),
 });
 
-interface FilterModalProps {
+export interface FilterModalProps {
   toggleIsOpen(): void;
   filters: MessageFilters[];
   addFilter(values: MessageFilters): void;

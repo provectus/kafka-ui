@@ -16,7 +16,7 @@ const validationSchema = yup.object().shape({
   code: yup.string().required(),
 });
 
-interface EditFilterProps {
+export interface EditFilterProps {
   editFilter: FilterEdit;
   toggleEditModal(): void;
   editSavedFilter(filter: FilterEdit): void;
