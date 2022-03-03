@@ -507,14 +507,14 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                   >
                     <NavLink
                       exact={true}
-                      to="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                      to="/clusters/local/connects/first/connectors/hdfs-source-connector"
                     >
                       <Link
                         aria-current={null}
                         to={
                           Object {
                             "hash": "",
-                            "pathname": "/ui/clusters/local/connects/first/connectors/hdfs-source-connector",
+                            "pathname": "/clusters/local/connects/first/connectors/hdfs-source-connector",
                             "search": "",
                             "state": null,
                           }
@@ -522,12 +522,12 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                       >
                         <LinkAnchor
                           aria-current={null}
-                          href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                          href="/clusters/local/connects/first/connectors/hdfs-source-connector"
                           navigate={[Function]}
                         >
                           <a
                             aria-current={null}
-                            href="/ui/clusters/local/connects/first/connectors/hdfs-source-connector"
+                            href="/clusters/local/connects/first/connectors/hdfs-source-connector"
                             onClick={[Function]}
                           >
                             hdfs-source-connector
@@ -560,14 +560,14 @@ exports[`Connectors ListItem matches snapshot 1`] = `
                           color="gray"
                         >
                           <Link
-                            to="/ui/clusters/local/topics/test-topic"
+                            to="/clusters/local/topics/test-topic"
                           >
                             <LinkAnchor
-                              href="/ui/clusters/local/topics/test-topic"
+                              href="/clusters/local/topics/test-topic"
                               navigate={[Function]}
                             >
                               <a
-                                href="/ui/clusters/local/topics/test-topic"
+                                href="/clusters/local/topics/test-topic"
                                 onClick={[Function]}
                               >
                                 test-topic
