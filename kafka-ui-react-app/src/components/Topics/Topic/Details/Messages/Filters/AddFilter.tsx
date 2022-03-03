@@ -118,32 +118,29 @@ const AddFilter: React.FC<FilterModalProps> = ({
         </S.ConfirmDeletionModal>
       )}
       <S.SavedFiltersContainer>
-        {filters.length === 0 ? (
-          <p>no saved filter(s)</p>
-        ) : (
-          filters.map((filter, index) => (
-            <S.SavedFilter
-              key={Symbol(filter.name).toString()}
-              selected={selectedFilter === index}
-              onClick={() => setSelectedFilter(index)}
-            >
-              <S.SavedFilterName>{filter.name}</S.SavedFilterName>
-              <S.FilterOptions>
-                <S.FilterEdit
-                  onClick={() => {
-                    toggleEditModal();
-                    editFilter({ index, filter });
-                  }}
-                >
-                  Edit
-                </S.FilterEdit>
-                <S.DeleteSavedFilter onClick={() => deleteFilterHandler(index)}>
-                  <i className="fas fa-times" />
-                </S.DeleteSavedFilter>
-              </S.FilterOptions>
-            </S.SavedFilter>
-          ))
-        )}
+        {filters.length === 0 && <p>no saved filter(s)</p>}
+        {filters.map((filter, index) => (
+          <S.SavedFilter
+            key={Symbol(filter.name).toString()}
+            selected={selectedFilter === index}
+            onClick={() => setSelectedFilter(index)}
+          >
+            <S.SavedFilterName>{filter.name}</S.SavedFilterName>
+            <S.FilterOptions>
+              <S.FilterEdit
+                onClick={() => {
+                  toggleEditModal();
+                  editFilter({ index, filter });
+                }}
+              >
+                Edit
+              </S.FilterEdit>
+              <S.DeleteSavedFilter onClick={() => deleteFilterHandler(index)}>
+                <i className="fas fa-times" />
+              </S.DeleteSavedFilter>
+            </S.FilterOptions>
+          </S.SavedFilter>
+        ))}
       </S.SavedFiltersContainer>
       <S.FilterButtonWrapper>
         <Button

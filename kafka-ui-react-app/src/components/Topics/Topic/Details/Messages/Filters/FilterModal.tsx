@@ -4,7 +4,7 @@ import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters
 import AddFilter from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
 import EditFilter from 'components/Topics/Topic/Details/Messages/Filters/EditFilter';
 
-interface FilterModalProps {
+export interface FilterModalProps {
   toggleIsOpen(): void;
   filters: MessageFilters[];
   addFilter(values: MessageFilters): void;
