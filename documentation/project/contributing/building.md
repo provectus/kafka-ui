@@ -5,7 +5,8 @@ Once you installed the prerequisites and cloned the repository, run the followin
 Build a docker container with the app:
 ```sh
 ./mvnw clean install -Pprod
-``` 
+```
+
 Start the app with Kafka clusters:
 ```sh
 docker-compose -f ./documentation/compose/kafka-ui.yaml up -d
@@ -19,6 +20,14 @@ docker-compose -f ./documentation/compose/kafka-clusters-only.yaml up -d
 
 Then, start the app.
 
+### Building only the API locally
+
+To build only the kafka-ui-api you can use this command:
+```sh
+./mvnw clean install -Papi-prod
+```
+
 ## Where to go next
 
 In the next section, you'll [learn how to run the application](running.md).
+
