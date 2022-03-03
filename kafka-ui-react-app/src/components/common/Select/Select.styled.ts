@@ -15,6 +15,7 @@ export const Select = styled.ul<Props>`
   position: relative;
   list-style: none;
   display: flex;
+  gap: ${(props) => (props.isLive ? '5px' : '0')};
   align-items: center;
   height: ${(props) => (props.selectSize === 'M' ? '32px' : '40px')};
   border: 1px
@@ -26,7 +27,7 @@ export const Select = styled.ul<Props>`
   border-radius: 4px;
   font-size: 14px;
   width: fit-content;
-  padding-left: ${(props) => (props.isLive ? '36px' : '12px')};
+  padding-left: 16px;
   padding-right: 16px;
   color: ${({ theme, disabled }) =>
     disabled ? theme.select.color.disabled : theme.select.color.normal};
@@ -38,8 +39,8 @@ export const Select = styled.ul<Props>`
   background-repeat: no-repeat !important;
   background-position-x: calc(100% - 8px) !important;
   background-position-y: 55% !important;
-
-  &:hover {
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  &:hover:enabled {
     color: ${(props) => props.theme.select.color.hover};
     border-color: ${(props) => props.theme.select.borderColor.hover};
   }
@@ -51,7 +52,6 @@ export const Select = styled.ul<Props>`
   &:disabled {
     color: ${(props) => props.theme.select.color.disabled};
     border-color: ${(props) => props.theme.select.borderColor.disabled};
-    cursor: not-allowed;
   }
 `;
 
@@ -71,7 +71,6 @@ export const OptionList = styled.ul`
   z-index: 10;
   max-width: 300px;
   min-width: 100%;
-
   &::-webkit-scrollbar {
     -webkit-appearance: none;
     width: 7px;
@@ -89,10 +88,12 @@ export const OptionList = styled.ul`
 `;
 
 export const Option = styled.li<OptionProps>`
+  display: flex;
   list-style: none;
   padding: 10px 12px;
   transition: all 0.2s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  gap: 5px;
 
   &:hover {
     background-color: ${(props) => props.theme.select.backgroundColor.hover};
