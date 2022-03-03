@@ -12,7 +12,7 @@ import theme from 'theme/theme';
 const mockStore = configureStore();
 
 describe('KsqlDb Query Component', () => {
-  const pathname = `ui/clusters/local/ksql-db/query`;
+  const pathname = `clusters/local/ksql-db/query`;
 
   it('Renders result', () => {
     const initialState: Partial<RootState> = {

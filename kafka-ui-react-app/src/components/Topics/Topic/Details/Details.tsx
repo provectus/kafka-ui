@@ -83,10 +83,7 @@ const Details: React.FC<Props> = ({
     <div>
       <PageHeading text={topicName}>
         <HeaderControlsWrapper>
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName/messages"
-          >
+          <Route exact path="/clusters/:clusterName/topics/:topicName/messages">
             <Button
               buttonSize="M"
               buttonType="primary"
@@ -97,7 +94,7 @@ const Details: React.FC<Props> = ({
             </Button>
           </Route>
           {!isReadOnly && !isInternal && (
-            <Route path="/ui/clusters/:clusterName/topics/:topicName">
+            <Route path="/clusters/:clusterName/topics/:topicName">
               <Dropdown label={<VerticalElipsisIcon />} right>
                 <DropdownItem
                   onClick={() =>
@@ -179,22 +176,22 @@ const Details: React.FC<Props> = ({
       <Switch>
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/messages"
+          path="/clusters/:clusterName/topics/:topicName/messages"
           component={Messages}
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/settings"
+          path="/clusters/:clusterName/topics/:topicName/settings"
           component={SettingsContainer}
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName"
+          path="/clusters/:clusterName/topics/:topicName"
           component={OverviewContainer}
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/consumer-groups"
+          path="/clusters/:clusterName/topics/:topicName/consumer-groups"
           component={TopicConsumerGroupsContainer}
         />
       </Switch>
