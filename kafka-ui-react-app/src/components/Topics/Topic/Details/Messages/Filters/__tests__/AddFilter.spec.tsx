@@ -36,7 +36,15 @@ describe('AddFilter component', () => {
     expect(screen.getByText('Created filters')).toBeInTheDocument();
   });
   describe('Filter deletion', () => {
-    it('opens delete modal', () => {
+    it('open deletion modal', () => {
+      setupComponent();
+      userEvent.hover(screen.getByRole('savedFilter'));
+      waitFor(() => {
+        userEvent.click(screen.getByRole('deleteIcon'));
+        expect(screen.getByRole('deletionModal')).toBeInTheDocument();
+      });
+    });
+    it('close deletion modal', () => {
       const deleteFilter = jest.fn();
       setupComponent({ filters, deleteFilter });
       userEvent.hover(screen.getByRole('savedFilter'));
@@ -47,6 +55,10 @@ describe('AddFilter component', () => {
       waitFor(() => {
         userEvent.click(screen.getByRole('button', { name: /Delete/i }));
         expect(deleteFilter).toHaveBeenCalledTimes(1);
+        expect(
+          screen.getByRole('button', { name: /Delete/i })
+        ).not.toBeInTheDocument();
+        expect(screen.getByRole('deletionModal')).not.toBeInTheDocument();
       });
     });
   });
@@ -81,6 +93,16 @@ describe('AddFilter component', () => {
       userEvent.click(screen.getByText('Edit'));
       expect(editFilter).toHaveBeenCalledTimes(1);
       expect(toggleEditModal).toHaveBeenCalledTimes(1);
+    });
+  });
+  describe('save filter checkbox', () => {
+    it('check uncheck save filter checkbox', () => {
+      setupComponent();
+      userEvent.click(screen.getByText('New filter'));
+      expect(screen.getByText('Create a new filter')).toBeInTheDocument();
+      expect(screen.getByRole('checkbox')).not.toBeChecked();
+      userEvent.click(screen.getByRole('checkbox'));
+      expect(screen.getByRole('checkbox')).toBeChecked();
     });
   });
 });

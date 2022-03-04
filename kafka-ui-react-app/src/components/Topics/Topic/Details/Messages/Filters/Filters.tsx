@@ -240,7 +240,7 @@ const Filters: React.FC<FiltersProps> = ({
   };
   const deleteFilter = (index: number) => {
     const filters = [...savedFilters];
-    if (typeof activeFilter === 'object' && activeFilter.index === index) {
+    if (activeFilter.name && activeFilter.index === index) {
       localStorage.removeItem('activeFilter');
       setActiveFilter({ name: '', code: '', index: -1 });
       setQueryType(MessageFilterType.STRING_CONTAINS);
