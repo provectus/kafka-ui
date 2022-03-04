@@ -56,12 +56,11 @@ jobs:
           PRODUCT_ID: "" # marketplace product ID
           RELEASE_VERSION: "${{ github.event.inputs.KafkaUIReleaseVersion }}"
           RELEASE_NOTES: ""
-          AMI_ID: "" # pass from packer build
           MP_ROLE_ARN: "" # https://docs.aws.amazon.com/marketplace/latest/userguide/ami-single-ami-products.html#single-ami-marketplace-ami-access
           AMI_OS_VERSION: "amzn2-ami-kernel-5.10-hvm-*-x86_64-gp2"
         run: |
+          AMI_ID=$(jq -r '.builds[-1].artifact_id' kafka-ui-infra/ami/manifest.json | cut -d ":" -f2)
           /bin/bash kafka-ui-infra/aws-marketplace/prepare_changeset.sh > changeset.json
-
           aws marketplace-catalog start-change-set \
             --catalog "AWSMarketplace" \
             --change-set "$(cat changeset.json)"
