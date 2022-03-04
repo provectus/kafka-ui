@@ -27,7 +27,7 @@ jest.mock('components/Connect/Edit/EditContainer', () => () => (
 describe('Connect', () => {
   const renderComponent = (pathname: string) =>
     render(
-      <Route path="/ui/clusters/:clusterName">
+      <Route path="/clusters/:clusterName">
         <Connect />
       </Route>,
       { pathname, store }
