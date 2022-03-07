@@ -135,7 +135,10 @@ const AddFilter: React.FC<FilterModalProps> = ({
               >
                 Edit
               </S.FilterEdit>
-              <S.DeleteSavedFilter onClick={() => deleteFilterHandler(index)}>
+              <S.DeleteSavedFilter
+                data-testid="deleteIcon"
+                onClick={() => deleteFilterHandler(index)}
+              >
                 <i className="fas fa-times" />
               </S.DeleteSavedFilter>
             </S.FilterOptions>

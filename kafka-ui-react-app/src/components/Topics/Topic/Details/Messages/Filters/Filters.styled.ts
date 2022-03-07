@@ -173,7 +173,7 @@ export const AddedFiltersWrapper = styled.div`
   justify-content: flex-start;
 `;
 
-export const DeleteSavedFilter = styled.div.attrs({ role: 'deleteIcon' })`
+export const DeleteSavedFilter = styled.div`
   color: ${({ theme }) => theme.breadcrumb};
   cursor: pointer;
 `;

@@ -4,7 +4,7 @@ import AddFilter, {
 } from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
 import { render } from 'lib/testHelpers';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
@@ -36,30 +36,38 @@ describe('AddFilter component', () => {
     expect(screen.getByText('Created filters')).toBeInTheDocument();
   });
   describe('Filter deletion', () => {
-    it('open deletion modal', () => {
+    it('open deletion modal', async () => {
       setupComponent();
       userEvent.hover(screen.getByRole('savedFilter'));
-      waitFor(() => {
-        userEvent.click(screen.getByRole('deleteIcon'));
-        expect(screen.getByRole('deletionModal')).toBeInTheDocument();
+      await act(() => {
+        userEvent.click(screen.getByTestId('deleteIcon'));
       });
+      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
     });
-    it('close deletion modal', () => {
+    it('close deletion modal', async () => {
       const deleteFilter = jest.fn();
       setupComponent({ filters, deleteFilter });
       userEvent.hover(screen.getByRole('savedFilter'));
-      waitFor(() => {
-        userEvent.click(screen.getByRole('deleteIcon'));
-        expect(screen.getByRole('deletionModal')).toBeInTheDocument();
+      await act(() => {
+        userEvent.click(screen.getByTestId('deleteIcon'));
       });
-      waitFor(() => {
+      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
+      await act(() => {
         userEvent.click(screen.getByRole('button', { name: /Delete/i }));
         expect(deleteFilter).toHaveBeenCalledTimes(1);
-        expect(
-          screen.getByRole('button', { name: /Delete/i })
-        ).not.toBeInTheDocument();
-        expect(screen.getByRole('deletionModal')).not.toBeInTheDocument();
       });
+      expect(screen.getByText('Created filters')).toBeInTheDocument();
+    });
+    it('delete filter', async () => {
+      const deleteFilter = jest.fn();
+      setupComponent({ filters, deleteFilter });
+      userEvent.hover(screen.getByRole('savedFilter'));
+      userEvent.click(screen.getByTestId('deleteIcon'));
+      await act(() => {
+        userEvent.click(screen.getByRole('button', { name: /Delete/i }));
+        expect(deleteFilter).toHaveBeenCalledTimes(1);
+      });
+      expect(screen.getByText('Created filters')).toBeInTheDocument();
     });
   });
   describe('Add new filter', () => {
@@ -83,6 +91,13 @@ describe('AddFilter component', () => {
       });
       expect(screen.getAllByRole('textbox')[0]).toHaveValue('filter name');
       expect(screen.getAllByRole('textbox')[1]).toHaveValue('filter code');
+    });
+    it('close add new filter modal', () => {
+      setupComponent();
+      userEvent.click(screen.getByText('New filter'));
+      expect(screen.getByText('Save this filter')).toBeInTheDocument();
+      userEvent.click(screen.getByText('Cancel'));
+      expect(screen.getByText('Created filters')).toBeInTheDocument();
     });
   });
   describe('Edit filter', () => {
