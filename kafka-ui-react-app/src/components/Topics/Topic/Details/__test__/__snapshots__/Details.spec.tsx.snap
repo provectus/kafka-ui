@@ -63,7 +63,7 @@ exports[`Details when it has readonly flag does not render the Action button a T
 }
 
 .c2 a.is-active {
-  border-bottom: 1px #4F4FFF solid;
+  border-bottom: 1px #4C4CFF solid;
   color: #171A1C;
 }
 
