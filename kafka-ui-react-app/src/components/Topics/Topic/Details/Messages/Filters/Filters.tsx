@@ -254,14 +254,6 @@ const Filters: React.FC<FiltersProps> = ({
     handleFiltersSubmit();
   }, [handleFiltersSubmit, seekDirection]);
 
-  // const [num, setNum] = React.useState<number>(0);
-  let num = 0;
-  const plus = () => {
-    while (num < 100) {
-      console.log(num);
-      num += 1;
-    }
-  };
   return (
     <S.FiltersWrapper>
       <div>
@@ -338,8 +330,7 @@ const Filters: React.FC<FiltersProps> = ({
               buttonType="secondary"
               buttonSize="M"
               disabled={isSubmitDisabled}
-              // onClick={handleFiltersSubmit}
-              onClick={plus}
+              onClick={handleFiltersSubmit}
               style={{ fontWeight: 500 }}
             >
               Submit
@@ -391,7 +382,6 @@ const Filters: React.FC<FiltersProps> = ({
           </S.MetricsIcon>
           <span>{messagesConsumed} messages</span>
         </S.Metric>
-        <p>COUNT: {num}</p>
       </S.FiltersMetrics>
     </S.FiltersWrapper>
   );
