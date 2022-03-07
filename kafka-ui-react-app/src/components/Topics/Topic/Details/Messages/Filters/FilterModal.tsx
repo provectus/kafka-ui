@@ -39,7 +39,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     setAddFilterModal(!addFilterModal);
   };
   return (
-    <S.MessageFilterModal>
+    <S.MessageFilterModal data-testid="messageFilterModal">
       {addFilterModal ? (
         <AddFilter
           toggleIsOpen={toggleIsOpen}

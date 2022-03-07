@@ -103,4 +103,12 @@ describe('Filters component', () => {
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
   });
+
+  describe('add new filter modal', () => {
+    it('renders addFilter modal', () => {
+      setupWrapper();
+      userEvent.click(screen.getByTestId('addFilterIcon'));
+      expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
+    });
+  });
 });

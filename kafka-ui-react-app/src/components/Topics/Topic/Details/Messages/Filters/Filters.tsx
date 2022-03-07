@@ -441,7 +441,7 @@ const Filters: React.FC<FiltersProps> = ({
         />
       </div>
       <S.AddedFiltersWrapper>
-        <S.AddFiltersIcon onClick={toggleIsOpen}>
+        <S.AddFiltersIcon data-testid="addFilterIcon" onClick={toggleIsOpen}>
           <i className="fas fa-plus fa-sm" />
         </S.AddFiltersIcon>
         {activeFilter.name && (

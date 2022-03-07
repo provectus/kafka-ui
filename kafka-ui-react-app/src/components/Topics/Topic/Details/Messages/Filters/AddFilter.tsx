@@ -86,6 +86,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
           <S.ConfirmDeletionModalHeader>
             <S.ConfirmDeletionTitle>Confirm deletion</S.ConfirmDeletionTitle>
             <S.CloseDeletionModalIcon
+              data-testid="closeDeletionModalIcon"
               onClick={() => setToggleDeletionModal(!toggleDeletionModal)}
             >
               <i className="fas fa-times-circle" />
