@@ -10,6 +10,7 @@ import org.apache.kafka.clients.admin.NewTopic;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.function.ThrowingConsumer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -88,4 +89,8 @@ public abstract class AbstractBaseTest {
       }
     }
   }
+
+  @Autowired
+  protected ConfigurableApplicationContext applicationContext;
+
 }

@@ -18,23 +18,23 @@ const ConsumerGroups: React.FC = () => {
   const isFetched = useAppSelector(getAreConsumerGroupsFulfilled);
   React.useEffect(() => {
     dispatch(fetchConsumerGroups(clusterName));
-  }, [fetchConsumerGroups, clusterName]);
+  }, [clusterName, dispatch]);
 
   if (isFetched) {
     return (
       <Switch>
         <BreadcrumbRoute
           exact
-          path="/ui/clusters/:clusterName/consumer-groups"
+          path="/clusters/:clusterName/consumer-groups"
           component={List}
         />
         <BreadcrumbRoute
           exact
-          path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
+          path="/clusters/:clusterName/consumer-groups/:consumerGroupID"
           component={Details}
         />
         <BreadcrumbRoute
-          path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
+          path="/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
           component={ResetOffsets}
         />
       </Switch>

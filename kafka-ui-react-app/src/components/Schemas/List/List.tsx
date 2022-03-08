@@ -41,7 +41,7 @@ const List: React.FC = () => {
     return () => {
       dispatch(resetLoaderById(SCHEMAS_FETCH_ACTION));
     };
-  }, [clusterName, page, perPage, searchText]);
+  }, [clusterName, dispatch, page, perPage, searchText]);
 
   return (
     <>

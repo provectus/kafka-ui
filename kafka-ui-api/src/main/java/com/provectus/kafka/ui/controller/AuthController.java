@@ -15,8 +15,8 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class AuthController {
 
-  @GetMapping(value = "/auth", produces = { "text/html" })
-  private Mono<byte[]> getAuth(ServerWebExchange exchange) {
+  @GetMapping(value = "/auth", produces = {"text/html"})
+  public Mono<byte[]> getAuth(ServerWebExchange exchange) {
     Mono<CsrfToken> token = exchange.getAttributeOrDefault(CsrfToken.class.getName(), Mono.empty());
     return token
         .map(AuthController::csrfToken)

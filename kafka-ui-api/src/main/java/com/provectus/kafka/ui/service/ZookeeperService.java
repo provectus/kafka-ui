@@ -15,7 +15,6 @@ import org.apache.zookeeper.ZooKeeper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
@@ -82,10 +81,11 @@ public class ZookeeperService {
 
   private ZooKeeper createClient(KafkaCluster cluster) {
     try {
-      return new ZooKeeper(cluster.getZookeeper(), 60 * 1000, watchedEvent -> {});
+      return new ZooKeeper(cluster.getZookeeper(), 60 * 1000, watchedEvent -> {
+      });
     } catch (IOException e) {
       log.error("Error while creating a zookeeper client for cluster [{}]",
-              cluster.getName());
+          cluster.getName());
       throw new ZooKeeperException(e);
     }
   }
