@@ -40,7 +40,7 @@ const New: React.FC = () => {
       const response = await getResponse(error as Response);
       const alert: FailurePayload = {
         subject: ['schema', data.name].join('-'),
-        title: `Schema ${data.name}`,
+        title: `${response.message}`,
         response,
       };
 

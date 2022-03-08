@@ -1,7 +1,6 @@
 package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.provectus.kafka.ui.AbstractBaseTest;
@@ -29,6 +28,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
+import reactor.test.StepVerifier;
 
 @ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 public class SendAndReadTests extends AbstractBaseTest {
@@ -526,8 +526,9 @@ public class SendAndReadTests extends AbstractBaseTest {
     public void assertSendThrowsException() {
       String topic = createTopicAndCreateSchemas();
       try {
-        assertThatThrownBy(() ->
-            messagesService.sendMessage(targetCluster, topic, msgToSend).block());
+        StepVerifier.create(
+            messagesService.sendMessage(targetCluster, topic, msgToSend)
+        ).expectError().verify();
       } finally {
         deleteTopic(topic);
       }

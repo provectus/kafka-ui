@@ -1692,6 +1692,7 @@ components:
       enum:
         - online
         - offline
+        - initializing
 
     ClusterMetrics:
       type: object
