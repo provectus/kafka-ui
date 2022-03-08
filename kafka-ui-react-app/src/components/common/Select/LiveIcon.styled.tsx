@@ -5,10 +5,14 @@ interface Props {
   className?: string;
 }
 
+const SVGWrapper = styled.i`
+  display: flex;
+`;
+
 const LiveIcon: React.FC<Props> = () => {
   const theme = useTheme();
   return (
-    <i>
+    <SVGWrapper data-testid="liveIcon">
       <svg
         width="16"
         height="16"
@@ -19,7 +23,7 @@ const LiveIcon: React.FC<Props> = () => {
         <circle cx="8" cy="8" r="7" fill={theme.icons.liveIcon.circleBig} />
         <circle cx="8" cy="8" r="4" fill={theme.icons.liveIcon.circleSmall} />
       </svg>
-    </i>
+    </SVGWrapper>
   );
 };
 

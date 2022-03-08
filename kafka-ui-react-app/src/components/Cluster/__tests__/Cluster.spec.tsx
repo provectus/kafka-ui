@@ -29,7 +29,7 @@ jest.mock('components/KsqlDb/KsqlDb', () => () => <div>KsqlDb</div>);
 describe('Cluster', () => {
   const renderComponent = (pathname: string) =>
     render(
-      <Route path="/ui/clusters/:clusterName">
+      <Route path="/clusters/:clusterName">
         <Cluster />
       </Route>,
       { pathname, store }
