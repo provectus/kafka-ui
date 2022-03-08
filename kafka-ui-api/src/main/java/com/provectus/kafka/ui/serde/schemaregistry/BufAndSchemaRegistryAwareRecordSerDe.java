@@ -119,14 +119,14 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
       valueType = protoSchemaFromTopic.get().getFullyQualifiedTypeName();
     }
 
-    Optional<ProtoSchema> protoSchemaForKeyFromHeader = protoValueSchemaFromHeaders(msg.headers());
+    Optional<ProtoSchema> protoSchemaForKeyFromHeader = protoKeySchemaFromHeaders(msg.headers());
     if (protoSchemaForKeyFromHeader.isPresent()) {
       keyType = protoSchemaForKeyFromHeader.get().getFullyQualifiedTypeName();
     }
 
-    Optional<ProtoSchema> protoSchemaFromHeader = protoKeySchemaFromHeaders(msg.headers());
-    if (protoSchemaFromHeader.isPresent()) {
-      valueType = protoSchemaFromHeader.get().getFullyQualifiedTypeName();
+    Optional<ProtoSchema> protoSchemaForValueFromHeader = protoValueSchemaFromHeaders(msg.headers());
+    if (protoSchemaForValueFromHeader.isPresent()) {
+      valueType = protoSchemaForValueFromHeader.get().getFullyQualifiedTypeName();
     }
 
     String keyTypeFromConfig = protobufKeyMessageNameByTopic.get(msg.topic());
@@ -151,7 +151,7 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private DeserializedKeyValue deserializeProto(ConsumerRecord<Bytes, Bytes> msg,
       String keyFullyQualifiedType,
       String valueFullyQualifiedType) {
-    Optional<Descriptor> keyDescriptor = null;
+    Optional<Descriptor> keyDescriptor = Optional.empty();
     if (keyFullyQualifiedType != null) {
       keyDescriptor = getDescriptor(keyFullyQualifiedType);
       if (!keyDescriptor.isPresent()) {
@@ -159,7 +159,7 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
       }
     }
 
-    Optional<Descriptor> valueDescriptor = null;
+    Optional<Descriptor> valueDescriptor = Optional.empty();
     if (valueFullyQualifiedType != null) {
       valueDescriptor = getDescriptor(valueFullyQualifiedType);
       if (!valueDescriptor.isPresent()) {
