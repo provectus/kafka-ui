@@ -1473,7 +1473,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/KsqlCommand'
+              $ref: '#/components/schemas/KsqlCommandV2'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KsqlCommandV2Response'
+
+  /api/clusters/{clusterName}/ksql/response:
+    get:
+      tags:
+        - Ksql
+      summary: Open SSE pipe
+      operationId: openKsqlResponsePipe
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pipeId
+          in: query
+          required: true
+          schema:
+            type: string
       responses:
         200:
           description: OK
@@ -2611,6 +2636,26 @@ components:
             type: string
       required:
         - ksql
+
+    KsqlCommandV2:
+      type: object
+      properties:
+        ksql:
+          type: string
+        streamsProperties:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - ksql
+
+    KsqlCommandV2Response:
+      type: object
+      properties:
+        pipeId:
+          type: string
+      required:
+        - pipeId
 
     KsqlCommandResponse:
       type: object
