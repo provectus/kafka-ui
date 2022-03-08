@@ -23,11 +23,11 @@ import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';
-import { SmartTable } from 'components/common/Smart-table/SmartTable';
+import { SmartTable } from 'components/common/smart-table/SmartTable';
 import {
   TableCellProps,
   TableColumn,
-} from 'components/common/Smart-table/TableColumn';
+} from 'components/common/smart-table/TableColumn';
 import { useTableState } from 'lib/hooks/useTableState';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
