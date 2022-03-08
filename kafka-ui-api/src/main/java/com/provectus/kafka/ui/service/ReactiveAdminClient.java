@@ -162,6 +162,13 @@ public class ReactiveAdminClient implements Closeable {
   }
 
   /**
+   * Returns TopicDescription mono, or Empty Mono if topic not found.
+   */
+  public Mono<TopicDescription> describeTopic(String topic) {
+    return describeTopics(List.of(topic)).flatMap(m -> Mono.justOrEmpty(m.get(topic)));
+  }
+
+  /**
    * Kafka API often returns Map responses with KafkaFuture values. If we do allOf()
    * logic resulting Mono will be failing if any of Futures finished with error.
    * In some situations it is not what we what, ex. we call describeTopics(List names) method and
