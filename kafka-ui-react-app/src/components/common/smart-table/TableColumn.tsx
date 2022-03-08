@@ -1,5 +1,6 @@
 import React from 'react';
-import { TableState } from 'lib/table/tableState';
+import { TableState } from 'lib/hooks/useTableState';
+import { SortOrder, TopicColumnsToSort } from 'generated-sources';
 
 interface TableCellPropsBase<T, TId extends IdType> {
   tableState?: TableState<T, TId>;
@@ -14,6 +15,7 @@ export interface TableCellProps<T, TId extends IdType>
   extends TableCellPropsBase<T, TId> {
   rowIndex: number;
   dataItem: T;
+  hovered?: boolean;
 }
 
 interface TableColumnProps<T, TId extends IdType> {
@@ -23,12 +25,19 @@ interface TableColumnProps<T, TId extends IdType> {
   headerCell?: React.FC<TableHeaderCellProps<T, TId>>;
   field?: string;
   title?: string;
+  width?: string;
+  className?: string;
+  orderBy?: TopicColumnsToSort | null;
+  sortOrder?: SortOrder;
+  orderValue?: TopicColumnsToSort | null;
+  handleOrderBy?: (orderBy: TopicColumnsToSort | null) => void;
 }
 
-export const TableColumn = <T, TId extends IdType>({
-  title,
-}: TableColumnProps<T, TId>) => {
-  return <td>{title}</td>;
+export const TableColumn = <T, TId extends IdType>(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  props: React.PropsWithChildren<TableColumnProps<T, TId>>
+): React.ReactElement => {
+  return <td />;
 };
 
 export function isColumnElement<T, TId extends IdType>(
@@ -46,4 +55,37 @@ export function isColumnElement<T, TId extends IdType>(
   );
 }
 
-// export const SelectCell: SelectCellProps
+interface SelectCellProps {
+  selected: boolean;
+  selectable: boolean;
+  el: 'td' | 'th';
+  rowIndex: number;
+  onChange: (checked: boolean) => void;
+}
+
+export const SelectCell: React.FC<SelectCellProps> = ({
+  selected,
+  selectable,
+  rowIndex,
+  onChange,
+  el,
+}) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e.target.checked);
+  };
+
+  const El = el;
+
+  return (
+    <El>
+      {selectable && (
+        <input
+          data-row={rowIndex}
+          onChange={handleChange}
+          type="checkbox"
+          checked={selected}
+        />
+      )}
+    </El>
+  );
+};

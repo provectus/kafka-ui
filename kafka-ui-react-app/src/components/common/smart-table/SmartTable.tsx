@@ -1,76 +1,117 @@
 import React from 'react';
-import { propertyLookup } from 'lib/propertyLookup';
-import { TableState } from 'lib/table/tableState';
+import Pagination from 'components/common/Pagination/Pagination';
+import { Table } from 'components/common/table/Table/Table.styled';
+import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
+import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import { TableState } from 'lib/hooks/useTableState';
 
-import { isColumnElement } from './TableColumn';
+import { isColumnElement, SelectCell } from './TableColumn';
+import { TableRow } from './TableRow';
 
 interface SmartTableProps<T, TId extends IdType> {
   tableState: TableState<T, TId>;
+  allSelectable?: boolean;
   selectable?: boolean;
   className?: string;
+  placeholder?: string;
+  isFullwidth?: boolean;
+  paginated?: boolean;
+  hoverable?: boolean;
 }
 
 export const SmartTable = <T, TId extends IdType>({
   children,
   tableState,
-  className,
+  selectable = false,
+  allSelectable = false,
+  placeholder = 'No Data Found',
+  isFullwidth = false,
+  paginated = false,
+  hoverable = false,
 }: React.PropsWithChildren<SmartTableProps<T, TId>>) => {
-  const columnHeaderCells = React.useMemo(() => {
-    return React.Children.map(children, (child) => {
+  const handleRowSelection = React.useCallback(
+    (row: T, checked: boolean) => {
+      tableState.setRowsSelection([row], checked);
+    },
+    [tableState]
+  );
+
+  const headerRow = React.useMemo(() => {
+    const headerCells = React.Children.map(children, (child) => {
       if (!isColumnElement<T, TId>(child)) {
         return child;
       }
 
       const { headerCell: HeaderCell, title, ...props } = child.props;
+
       return HeaderCell ? (
-        <th style={{ border: '1px solid black' }}>
+        <th>
           <HeaderCell {...props} tableState={tableState} />
         </th>
       ) : (
-        <th style={{ border: '1px solid black' }}>{title}</th>
+        <TableHeaderCell {...props} title={title} />
       );
     });
-  }, [children, tableState]);
-
-  const getRowCells = React.useCallback(
-    (row: T, rowIndex: number) => {
-      return React.Children.map(children, (child) => {
-        if (!isColumnElement<T, TId>(child)) {
-          return child;
-        }
-
-        const { cell: Cell, field } = child.props;
-        return Cell ? (
-          <td style={{ border: '1px solid black' }}>
-            <Cell rowIndex={rowIndex} dataItem={row} />
-          </td>
+    return (
+      <tr>
+        {allSelectable ? (
+          <SelectCell
+            rowIndex={-1}
+            el="th"
+            selectable
+            selected={tableState.selectedCount() === tableState.data.length}
+            onChange={tableState.toggleSelection}
+          />
         ) : (
-          <td style={{ border: '1px solid black' }}>
-            {field && propertyLookup(field, row)}
-          </td>
-        );
-      });
-    },
-    [children]
-  );
+          <S.TableHeaderCell />
+        )}
+        {headerCells}
+      </tr>
+    );
+  }, [children, allSelectable, tableState]);
 
-  const rows = React.useMemo(() => {
-    return tableState.data.data.map((dataItem, index) => {
+  const bodyRows = React.useMemo(() => {
+    if (tableState.data.length === 0) {
+      const colspan = React.Children.count(children) + +selectable;
       return (
-        <tr key={tableState.dataSource.idSelector(dataItem)}>
-          {/* selectable */}
-          {getRowCells(dataItem, index)}
+        <tr>
+          <td colSpan={colspan}>{placeholder}</td>
         </tr>
       );
+    }
+    return tableState.data.map((dataItem, index) => {
+      return (
+        <TableRow
+          key={tableState.idSelector(dataItem)}
+          index={index}
+          hoverable={hoverable}
+          dataItem={dataItem}
+          tableState={tableState}
+          selectable={selectable}
+          onSelectChange={handleRowSelection}
+        >
+          {children}
+        </TableRow>
+      );
     });
-  }, [getRowCells, tableState.data.data, tableState.dataSource]);
+  }, [
+    children,
+    handleRowSelection,
+    hoverable,
+    placeholder,
+    selectable,
+    tableState,
+  ]);
 
   return (
-    <table style={{ border: '1px solid black' }} className={className}>
-      <thead>
-        <tr>{columnHeaderCells}</tr>
-      </thead>
-      <tbody>{rows}</tbody>
-    </table>
+    <>
+      <Table isFullwidth={isFullwidth}>
+        <thead>{headerRow}</thead>
+        <tbody>{bodyRows}</tbody>
+      </Table>
+      {paginated && tableState.totalPages !== undefined && (
+        <Pagination totalPages={tableState.totalPages} />
+      )}
+    </>
   );
 };
