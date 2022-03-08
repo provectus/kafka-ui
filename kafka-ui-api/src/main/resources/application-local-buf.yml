@@ -8,7 +8,19 @@ kafka:
         - name: first
           address: http://localhost:8083
       jmxPort: 9997
-      bufRegistry: foo
+      bufRegistry: ""
+      bufPort: 0
+      bufApiToken: ""
+      bufDefaultOwner: ""
+      bufOwnerRepoByProtobufMessageName:
+        fully.qualified.type.1: "owner/repo"
+        fully.qualified.type.2: "owner/repo"
+      protobufMessageNameByTopic:
+        topic.1: fully.qualified.type.1
+        topic.2: fully.qualified.type.2
+      protobufKeyMessageNameByTopic:
+        topic.1: fully.qualified.type.1
+        topic.2: fully.qualified.type.2
 spring:
   jmx:
     enabled: true

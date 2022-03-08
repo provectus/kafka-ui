@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,7 +14,6 @@ import com.provectus.kafka.ui.model.ProtoSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchema;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import io.confluent.kafka.schemaregistry.client.SchemaRegistryClient;
-import io.confluent.kafka.schemaregistry.client.rest.exceptions.RestClientException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -23,8 +21,6 @@ import org.apache.avro.generic.GenericDatumWriter;
 import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,12 +28,12 @@ import org.junit.jupiter.api.Test;
 class BufAndSchemaRegistryAwareRecordSerDeTest {
 
   private final SchemaRegistryClient registryClient = mock(SchemaRegistryClient.class);
+  private final BufSchemaRegistryClient bufClient = mock(BufSchemaRegistryClient.class);
 
   private final BufAndSchemaRegistryAwareRecordSerDe serde = new BufAndSchemaRegistryAwareRecordSerDe(
       KafkaCluster.builder().build(),
       registryClient,
-      new BufSchemaRegistryClient()
-  );
+      bufClient);
 
   @Nested
   class Deserialize {
@@ -59,8 +55,7 @@ class BufAndSchemaRegistryAwareRecordSerDeTest {
               + "      \"type\": \"int\""
               + "    }"
               + "  ]"
-              + "}"
-      );
+              + "}");
 
       String jsonValueForSchema = "{ \"field1\":\"testStr\", \"field2\": 123 }";
 
@@ -73,9 +68,7 @@ class BufAndSchemaRegistryAwareRecordSerDeTest {
               1,
               100,
               Bytes.wrap("key".getBytes()),
-              bytesWithMagicByteAndSchemaId(schemaId, jsonToAvro(jsonValueForSchema, schema))
-          )
-      );
+              bytesWithMagicByteAndSchemaId(schemaId, jsonToAvro(jsonValueForSchema, schema))));
 
       // called twice: once by serde code, once by formatter (will be cached)
       verify(registryClient, times(2)).getSchemaById(schemaId);
@@ -91,13 +84,12 @@ class BufAndSchemaRegistryAwareRecordSerDeTest {
 
     @Test
     void callsBufFormatterWhenValueHasCorrectHeader() throws Exception {
-      ConsumerRecord<Bytes, Bytes> record =  new ConsumerRecord<>(
+      ConsumerRecord<Bytes, Bytes> record = new ConsumerRecord<>(
           "test-topic",
           1,
           100,
           Bytes.wrap("key".getBytes()),
-          Bytes.wrap("value".getBytes())
-      );
+          Bytes.wrap("value".getBytes()));
       record.headers().add("PROTOBUF_TYPE", "protobuf_type".getBytes());
       var result = serde.deserialize(record);
 
@@ -113,13 +105,12 @@ class BufAndSchemaRegistryAwareRecordSerDeTest {
 
     @Test
     void callsBufFormatterWhenTopicIsCorrect() throws Exception {
-      ConsumerRecord<Bytes, Bytes> record =  new ConsumerRecord<>(
+      ConsumerRecord<Bytes, Bytes> record = new ConsumerRecord<>(
           "test-topic.proto.foo",
           1,
           100,
           Bytes.wrap("key".getBytes()),
-          Bytes.wrap("value".getBytes())
-      );
+          Bytes.wrap("value".getBytes()));
       var result = serde.deserialize(record);
 
       // verify schema registry was skipped
@@ -134,23 +125,24 @@ class BufAndSchemaRegistryAwareRecordSerDeTest {
 
     @Test
     void testProtoSchemaCorrectFromHeaders() throws Exception {
-      ConsumerRecord<Bytes, Bytes> record =  new ConsumerRecord<>(
+      ConsumerRecord<Bytes, Bytes> record = new ConsumerRecord<>(
           "test-topic",
           1,
           100,
           Bytes.wrap("key".getBytes()),
-          Bytes.wrap("value".getBytes())
-      );
-      record.headers().add("PROTOBUF_TYPE", "protobuf_type.foo.v1.bar".getBytes());
+          Bytes.wrap("value".getBytes()));
+      record.headers().add("PROTOBUF_TYPE_KEY", "protobuf_type.foo.v1.bar".getBytes());
+      record.headers().add("PROTOBUF_TYPE_VALUE", "protobuf_type.dead.v1.beef".getBytes());
       record.headers().add("PROTOBUF_SCHEMA_ID", "schema_id".getBytes());
-      ProtoSchema protoSchema = serde.protoSchemaFromHeaders(record.headers());
-      assertThat(protoSchema.getFullyQualifiedTypeName()).isEqualTo("protobuf_type.foo.v1.bar");
-      assertThat(protoSchema.getSchemaID()).isEqualTo("schema_id");
+      ProtoSchema protoSchemaKey = serde.protoKeySchemaFromHeaders(record.headers()).get();
+      ProtoSchema protoSchemaValue = serde.protoValueSchemaFromHeaders(record.headers()).get();
+      assertThat(protoSchemaKey.getFullyQualifiedTypeName()).isEqualTo("protobuf_type.foo.v1.bar");
+      assertThat(protoSchemaValue.getFullyQualifiedTypeName()).isEqualTo("protobuf_type.dead.v1.beef");
     }
 
     @Test
     void testProtoSchemaCorrectFromTopic() throws Exception {
-      ProtoSchema protoSchema = serde.protoSchemaFromTopic("test-topic.proto.v1.foo.bar");
+      ProtoSchema protoSchema = serde.protoSchemaFromTopic("test-topic.proto.v1.foo.bar").get();
       assertThat(protoSchema.getFullyQualifiedTypeName()).isEqualTo("v1.foo.bar");
     }
 
@@ -174,8 +166,7 @@ class BufAndSchemaRegistryAwareRecordSerDeTest {
               .put((byte) 0)
               .putInt(schemaId)
               .put(body)
-              .array()
-      );
+              .array());
     }
   }
 

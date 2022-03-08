@@ -1,5 +1,9 @@
 # Clear Street Proto with Buf
 
+## Prerequisite
+
+Install [Buf](https://docs.buf.build/installation).
+
 ## Goal
 
 At Clear Street, protobuf on Kafka is enabled with some special Kafka Headers or topic names.
@@ -12,9 +16,17 @@ Use the [Protobuf on Kafka](https://www.notion.so/clearstreet/Protobuf-on-Kafka-
 Use these settings to set up the Buf connection:
 
 ```yaml
-bufRegistry: https://<url>
-bufUsername: <user>
+bufRegistry: <url>
+bufPort: <port>
 bufApiToken: <token>
+bufRegistryCacheDurationSeconds: <seconds>
+bufDefaultOwner: <owner>
+bufOwnerRepoByProtobufMessageName:
+    <fully_qualified_type>: "<owner>/<repo>"
+protobufMessageNameByTopic:
+    <topic>: <fully qualified type>
+protobufKeyMessageNameByTopic:
+    <topic>: <fully qualified type>
 ```
 
 ## Running the application locally
@@ -56,6 +68,12 @@ git clean -xdf
 ```
 
 Then re-run step 2 of Initial Setup.
+
+### Manual Release
+
+Run:
+- `mvn clean package -Pprod -DskipTests`
+- From `kafka-ui-api` run `docker build -t <IMAGE> --build-arg JAR_FILE=kafka-ui-api-0.0.1-SNAPSHOT.jar -f clst.Dockerfile .`
 
 ## Implementation
 
