@@ -31,7 +31,7 @@ describe('ConsumerGroup', () => {
   it('renders with initial state', async () => {
     renderComponent();
 
-    expect(screen.queryByRole('progressbar')).toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('renders with 404 from consumer groups', async () => {
@@ -59,7 +59,7 @@ describe('ConsumerGroup', () => {
     await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
     await waitFor(() => expect(consumerGroupsMock.called()).toBeTruthy());
 
-    expect(screen.queryByText('Consumers')).toBeInTheDocument();
-    expect(screen.queryByRole('table')).toBeInTheDocument();
+    expect(screen.getByText('Consumers')).toBeInTheDocument();
+    expect(screen.getByRole('table')).toBeInTheDocument();
   });
 });
