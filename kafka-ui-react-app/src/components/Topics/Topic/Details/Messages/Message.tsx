@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import dayjs from 'dayjs';
 import { TopicMessage } from 'generated-sources';
 import Dropdown from 'components/common/Dropdown/Dropdown';

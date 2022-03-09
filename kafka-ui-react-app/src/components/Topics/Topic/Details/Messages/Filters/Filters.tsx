@@ -10,7 +10,7 @@ import {
   TopicMessageEventTypeEnum,
   MessageFilterType,
 } from 'generated-sources';
-import * as React from 'react';
+import React from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';

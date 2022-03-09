@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
 import { Textarea } from 'components/common/Textbox/Textarea.styled';

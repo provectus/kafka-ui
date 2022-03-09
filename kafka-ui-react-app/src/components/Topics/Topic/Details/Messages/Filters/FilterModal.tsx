@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import AddFilter from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';

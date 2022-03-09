@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
