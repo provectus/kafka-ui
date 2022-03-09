@@ -2,6 +2,7 @@ package com.provectus.kafka.ui.service.ksql;
 
 import com.provectus.kafka.ui.exception.ValidationException;
 import java.util.List;
+import java.util.Optional;
 import ksql.KsqlGrammarLexer;
 import ksql.KsqlGrammarParser;
 import lombok.RequiredArgsConstructor;
@@ -26,13 +27,14 @@ class KsqlGrammar {
     List<KsqlGrammarParser.SingleStatementContext> statements;
   }
 
-  static KsqlStatements parse(String ksql) {
+  // returns Empty if no valid statements found
+  static Optional<KsqlStatements> parse(String ksql) {
     var parsed = parseStatements(ksql);
     if (parsed.singleStatement().stream()
         .anyMatch(s -> s.statement().exception != null)) {
-      throw new ValidationException("Error parsing ksql statement. Check syntax!");
+      return Optional.empty();
     }
-    return new KsqlStatements(parsed.singleStatement());
+    return Optional.of(new KsqlStatements(parsed.singleStatement()));
   }
 
   static boolean isSelect(KsqlGrammarParser.SingleStatementContext statement) {
