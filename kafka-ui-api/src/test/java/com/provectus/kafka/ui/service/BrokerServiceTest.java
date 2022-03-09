@@ -1,14 +1,12 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.model.BrokerDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import reactor.test.StepVerifier;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-class BrokerServiceTest extends AbstractBaseTest {
+class BrokerServiceTest extends AbstractIntegrationTest {
 
   @Autowired
   private BrokerService brokerService;
