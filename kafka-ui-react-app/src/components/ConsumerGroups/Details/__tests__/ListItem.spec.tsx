@@ -16,11 +16,15 @@ const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
     <Route
       path={clusterConsumerGroupDetailsPath(':clusterName', ':consumerGroupID')}
     >
-      <ListItem
-        clusterName={clusterName}
-        name={clusterName}
-        consumers={consumers}
-      />
+      <table>
+        <tbody>
+          <ListItem
+            clusterName={clusterName}
+            name={clusterName}
+            consumers={consumers}
+          />
+        </tbody>
+      </table>
     </Route>,
     {
       pathname: clusterConsumerGroupDetailsPath(
@@ -35,7 +39,7 @@ describe('ListItem', () => {
     fetchMock.reset();
   });
 
-  it('renders list item with topic content closed', async () => {
+  it('renders list item with topic content closed', () => {
     renderComponent(consumerGroupPayload.partitions);
     const listItem = screen.queryByTestId('consumer-group-list-item');
     expect(listItem).toBeInTheDocument();
