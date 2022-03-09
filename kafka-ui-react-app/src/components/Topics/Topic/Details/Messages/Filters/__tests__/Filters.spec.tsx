@@ -117,7 +117,6 @@ describe('Filters component', () => {
 
       await waitFor(() => userEvent.click(screen.getByTestId('addFilterIcon')));
       userEvent.click(screen.getByText('New filter'));
-      console.log(screen.getAllByRole('textbox').length);
       await waitFor(() => {
         userEvent.type(screen.getAllByRole('textbox')[2], 'filter name');
         userEvent.type(screen.getAllByRole('textbox')[3], 'filter code');
