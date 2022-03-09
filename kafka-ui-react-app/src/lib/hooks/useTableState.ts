@@ -51,7 +51,7 @@ export const useTableState = <T, TId extends IdType>(
     [data, idSelector]
   );
 
-  const tableState = React.useMemo<TableState<T, TId>>(() => {
+  return React.useMemo<TableState<T, TId>>(() => {
     return {
       data,
       totalPages,
@@ -72,6 +72,4 @@ export const useTableState = <T, TId extends IdType>(
     toggleSelection,
     totalPages,
   ]);
-
-  return tableState;
 };
