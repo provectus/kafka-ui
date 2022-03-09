@@ -31,7 +31,7 @@ exports[`Details view matches snapshot 1`] = `
 }
 
 .c1 a.is-active {
-  border-bottom: 1px #4F4FFF solid;
+  border-bottom: 1px #4C4CFF solid;
   color: #171A1C;
 }
 

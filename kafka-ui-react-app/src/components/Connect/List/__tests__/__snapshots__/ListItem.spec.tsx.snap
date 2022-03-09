@@ -99,6 +99,20 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "hover": "#454F54",
           "normal": "#73848C",
         },
+        "danger": Object {
+          "backgroundColor": Object {
+            "active": "#B81414",
+            "disabled": "#F5A3A3",
+            "hover": "#CF1717",
+            "normal": "#E51A1A",
+          },
+          "color": "#171A1C",
+          "invertedColors": Object {
+            "active": "#1717CF",
+            "hover": "#1717CF",
+            "normal": "#4C4CFF",
+          },
+        },
         "fontSize": Object {
           "L": "16px",
           "M": "14px",
@@ -111,15 +125,16 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
         "primary": Object {
           "backgroundColor": Object {
-            "active": "#1414B8",
-            "hover": "#1717CF",
-            "normal": "#4F4FFF",
+            "active": "#A3A3F5",
+            "disabled": "#F1F2F3",
+            "hover": "#D1D1FA",
+            "normal": "#E8E8FC",
           },
-          "color": "#FFFFFF",
+          "color": "#171A1C",
           "invertedColors": Object {
-            "active": "#1414B8",
+            "active": "#1717CF",
             "hover": "#1717CF",
-            "normal": "#4F4FFF",
+            "normal": "#4C4CFF",
           },
         },
         "secondary": Object {
@@ -173,8 +188,11 @@ exports[`Connectors ListItem matches snapshot 1`] = `
           "circleBig": "#FAD1D1",
           "circleSmall": "#E51A1A",
         },
-        "messageToggleIconClosed": "#ABB5BA",
-        "messageToggleIconOpened": "#171A1C",
+        "messageToggleIcon": Object {
+          "active": "#1717CF",
+          "hover": "#A3A3F5",
+          "normal": "#4C4CFF",
+        },
         "verticalElipsisIcon": "#73848C",
         "warningIcon": "#FFDD57",
       },
@@ -216,14 +234,15 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "menu": Object {
         "backgroundColor": Object {
-          "active": "#E3E6E8",
-          "hover": "#F1F2F3",
+          "active": "#F1F2F3",
+          "hover": "#F9FAFA",
           "normal": "#FFFFFF",
         },
         "chevronIconColor": "#73848C",
         "color": Object {
-          "active": "#171A1C",
-          "hover": "#73848C",
+          "active": "#1414B8",
+          "hover": "#454F54",
+          "isOpen": "#171A1C",
           "normal": "#73848C",
         },
         "statusIconColor": Object {
@@ -257,7 +276,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       },
       "pageLoader": Object {
         "borderBottomColor": "#FFFFFF",
-        "borderColor": "#4F4FFF",
+        "borderColor": "#4C4CFF",
       },
       "pagination": Object {
         "backgroundColor": "#FFFFFF",
@@ -278,7 +297,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
       "panelColor": "#FFFFFF",
       "primaryTab": Object {
         "borderColor": Object {
-          "active": "#4F4FFF",
+          "active": "#4C4CFF",
           "hover": "transparent",
           "nav": "#E3E6E8",
           "normal": "transparent",
@@ -342,9 +361,10 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "switch": Object {
-        "checked": "#29A352",
+        "checked": "#4C4CFF",
         "circle": "#FFFFFF",
-        "unchecked": "#ABB5BA",
+        "disabled": "#E3E6E8",
+        "unchecked": "#A3A3F5",
       },
       "table": Object {
         "link": Object {
@@ -362,12 +382,12 @@ exports[`Connectors ListItem matches snapshot 1`] = `
             "normal": "#FFFFFF",
           },
           "color": Object {
-            "active": "#4F4FFF",
-            "hover": "#4F4FFF",
+            "active": "#4C4CFF",
+            "hover": "#4C4CFF",
             "normal": "#73848C",
           },
           "previewColor": Object {
-            "normal": "#4F4FFF",
+            "normal": "#4C4CFF",
           },
         },
         "tr": Object {
@@ -440,7 +460,7 @@ exports[`Connectors ListItem matches snapshot 1`] = `
         },
       },
       "viewer": Object {
-        "wrapper": "#f9fafa",
+        "wrapper": "#F9FAFA",
       },
     }
   }
