@@ -1,6 +1,6 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.exception.TopicNotFoundException;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -9,11 +9,9 @@ import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import reactor.test.StepVerifier;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-class MessagesServiceTest extends AbstractBaseTest {
+class MessagesServiceTest extends AbstractIntegrationTest {
 
   private static final String NON_EXISTING_TOPIC = UUID.randomUUID().toString();
 
