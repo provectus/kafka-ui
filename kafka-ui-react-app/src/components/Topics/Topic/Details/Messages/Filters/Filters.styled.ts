@@ -165,7 +165,7 @@ export const AddFiltersIcon = styled.div`
   cursor: pointer;
 `;
 
-export const AddedFiltersWrapper = styled.div`
+export const ActiveSmartFilterWrapper = styled.div`
   padding: 5px 0;
   display: flex;
   gap: 10px;
@@ -216,7 +216,7 @@ export const CheckboxWrapper = styled.div`
   gap: 5px;
 `;
 
-export const AddedFilter = styled.div`
+export const ActiveSmartFilter = styled.div`
   border-radius: 4px;
   min-width: 115px;
   height: 24px;

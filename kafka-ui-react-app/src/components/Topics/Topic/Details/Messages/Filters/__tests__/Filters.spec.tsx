@@ -3,7 +3,7 @@ import Filters, {
   FiltersProps,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { render } from 'lib/testHelpers';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const setupWrapper = (props?: Partial<FiltersProps>) =>
@@ -26,7 +26,6 @@ describe('Filters component', () => {
   it('renders component', () => {
     setupWrapper();
   });
-  it('matches the snapshot', () => {});
   describe('when fetching', () => {
     it('shows cancel button while fetching', () => {
       setupWrapper({ isFetching: true });
@@ -109,6 +108,26 @@ describe('Filters component', () => {
       setupWrapper();
       userEvent.click(screen.getByTestId('addFilterIcon'));
       expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
+    });
+  });
+
+  describe('when there is active smart filter', () => {
+    it('shows saved smart filter', async () => {
+      setupWrapper();
+
+      await waitFor(() => userEvent.click(screen.getByTestId('addFilterIcon')));
+      userEvent.click(screen.getByText('New filter'));
+      console.log(screen.getAllByRole('textbox').length);
+      await waitFor(() => {
+        userEvent.type(screen.getAllByRole('textbox')[2], 'filter name');
+        userEvent.type(screen.getAllByRole('textbox')[3], 'filter code');
+      });
+      expect(screen.getAllByRole('textbox')[2]).toHaveValue('filter name');
+      expect(screen.getAllByRole('textbox')[3]).toHaveValue('filter code');
+      await waitFor(() =>
+        userEvent.click(screen.getByRole('button', { name: /Add Filter/i }))
+      );
+      expect(screen.getByTestId('activeSmartFilter')).toBeInTheDocument();
     });
   });
 });

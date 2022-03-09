@@ -440,19 +440,19 @@ const Filters: React.FC<FiltersProps> = ({
           isLive={seekDirection === SeekDirection.TAILING}
         />
       </div>
-      <S.AddedFiltersWrapper>
+      <S.ActiveSmartFilterWrapper>
         <S.AddFiltersIcon data-testid="addFilterIcon" onClick={toggleIsOpen}>
           <i className="fas fa-plus fa-sm" />
         </S.AddFiltersIcon>
         {activeFilter.name && (
-          <S.AddedFilter>
+          <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
             <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
               <i className="fas fa-times" />
             </S.DeleteSavedFilterIcon>
-          </S.AddedFilter>
+          </S.ActiveSmartFilter>
         )}
-      </S.AddedFiltersWrapper>
+      </S.ActiveSmartFilterWrapper>
       {isOpen && (
         <FilterModal
           toggleIsOpen={toggleIsOpen}
