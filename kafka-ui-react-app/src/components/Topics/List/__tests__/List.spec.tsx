@@ -130,10 +130,10 @@ describe('List', () => {
     const mockDeleteTopics = jest.fn();
     const mockClearTopicsMessages = jest.fn();
     jest.useFakeTimers();
-    const pathname = '/ui/clusters/local/topics';
+    const pathname = '/clusters/local/topics';
     const component = mount(
       <StaticRouter location={{ pathname }}>
-        <Route path="/ui/clusters/:clusterName">
+        <Route path="/clusters/:clusterName">
           <ClusterContext.Provider
             value={{
               isReadOnly: false,

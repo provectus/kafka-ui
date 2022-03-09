@@ -3,10 +3,12 @@ package com.provectus.kafka.ui.controller;
 import com.provectus.kafka.ui.api.KsqlApi;
 import com.provectus.kafka.ui.model.KsqlCommandDTO;
 import com.provectus.kafka.ui.model.KsqlCommandResponseDTO;
+import com.provectus.kafka.ui.model.KsqlCommandV2DTO;
+import com.provectus.kafka.ui.model.KsqlCommandV2ResponseDTO;
 import com.provectus.kafka.ui.model.KsqlResponseDTO;
 import com.provectus.kafka.ui.model.KsqlTableResponseDTO;
 import com.provectus.kafka.ui.service.KsqlService;
-import com.provectus.kafka.ui.service.ksql.KsqlApiClient;
+import com.provectus.kafka.ui.service.ksql.KsqlServiceV2;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +26,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class KsqlController extends AbstractController implements KsqlApi {
   private final KsqlService ksqlService;
+  private final KsqlServiceV2 ksqlServiceV2;
 
   @Override
   public Mono<ResponseEntity<KsqlCommandResponseDTO>> executeKsqlCommand(String clusterName,
@@ -34,25 +37,31 @@ public class KsqlController extends AbstractController implements KsqlApi {
         .map(ResponseEntity::ok);
   }
 
-  @SuppressWarnings("unchecked")
   @Override
-  public Mono<ResponseEntity<Flux<KsqlResponseDTO>>> executeKsql(String clusterName,
-                                                                 Mono<KsqlCommandDTO> ksqlCommand,
-                                                                 ServerWebExchange exchange) {
+  public Mono<ResponseEntity<KsqlCommandV2ResponseDTO>> executeKsql(String clusterName,
+                                                                    Mono<KsqlCommandV2DTO>
+                                                                        ksqlCommand2Dto,
+                                                                    ServerWebExchange exchange) {
+    return ksqlCommand2Dto.map(dto -> {
+      var id = ksqlServiceV2.registerCommand(
+          getCluster(clusterName),
+          dto.getKsql(),
+          Optional.ofNullable(dto.getStreamsProperties()).orElse(Map.of()));
+      return new KsqlCommandV2ResponseDTO().pipeId(id);
+    }).map(ResponseEntity::ok);
+  }
+
+  @Override
+  public Mono<ResponseEntity<Flux<KsqlResponseDTO>>> openKsqlResponsePipe(String clusterName,
+                                                                          String pipeId,
+                                                                          ServerWebExchange exchange) {
     return Mono.just(
-        ResponseEntity.ok(
-            ksqlCommand
-                .flux()
-                .flatMap(command ->
-                    new KsqlApiClient(getCluster(clusterName))
-                        .execute(
-                            command.getKsql(),
-                            Optional.ofNullable(command.getStreamsProperties()).orElse(Map.of())))
-                .map(table -> new KsqlResponseDTO()
-                    .table(
-                        new KsqlTableResponseDTO()
-                            .header(table.getHeader())
-                            .columnNames(table.getColumnNames())
-                            .values((List<List<Object>>) ((List<?>) (table.getValues())))))));
+        ResponseEntity.ok(ksqlServiceV2.execute(pipeId)
+            .map(table -> new KsqlResponseDTO()
+                .table(
+                    new KsqlTableResponseDTO()
+                        .header(table.getHeader())
+                        .columnNames(table.getColumnNames())
+                        .values((List<List<Object>>) ((List<?>) (table.getValues())))))));
   }
 }

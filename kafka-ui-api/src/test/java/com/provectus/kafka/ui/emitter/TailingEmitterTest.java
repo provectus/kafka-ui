@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.emitter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.MessageFilterTypeDTO;
 import com.provectus.kafka.ui.model.SeekDirectionDTO;
@@ -24,18 +24,11 @@ import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.testcontainers.shaded.org.awaitility.Awaitility;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-class TailingEmitterTest extends AbstractBaseTest {
-
-  @Autowired
-  private ApplicationContext ctx;
+class TailingEmitterTest extends AbstractIntegrationTest {
 
   private String topic;
 
@@ -112,11 +105,11 @@ class TailingEmitterTest extends AbstractBaseTest {
   private Flux<TopicMessageEventDTO> createTailingFlux(
       String topicName,
       String query) {
-    var cluster = ctx.getBean(ClustersStorage.class)
+    var cluster = applicationContext.getBean(ClustersStorage.class)
         .getClusterByName(LOCAL)
         .get();
 
-    return ctx.getBean(MessagesService.class)
+    return applicationContext.getBean(MessagesService.class)
         .loadMessages(cluster, topicName,
             new ConsumerPosition(SeekTypeDTO.LATEST, Map.of(), SeekDirectionDTO.TAILING),
             query,
