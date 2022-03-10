@@ -1,16 +1,14 @@
 package com.provectus.kafka.ui.service;
 
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.model.ServerStatusDTO;
 import java.util.Properties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 import reactor.test.StepVerifier;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-class ZookeeperServiceTest extends AbstractBaseTest {
+class ZookeeperServiceTest extends AbstractIntegrationTest {
   private ZookeeperService zookeeperService;
 
   @BeforeEach
