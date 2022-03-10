@@ -42,7 +42,7 @@ jobs:
       - name: Linter
         run: |
           cd kafka-ui-react-app/
-          npm run lint
+          npm run lint:CI
       - name: Tests
         run: |
           cd kafka-ui-react-app/

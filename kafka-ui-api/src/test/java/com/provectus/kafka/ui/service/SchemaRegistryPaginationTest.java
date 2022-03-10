@@ -85,7 +85,7 @@ public class SchemaRegistryPaginationTest {
                         .toArray(String[]::new)
     );
     var schemas = controller.getSchemas(LOCAL_KAFKA_CLUSTER_NAME,
-            0, -1, null, null).block();;
+            0, -1, null, null).block();
 
     assertThat(schemas.getBody().getPageCount()).isEqualTo(4);
     assertThat(schemas.getBody().getSchemas()).hasSize(25);

@@ -12,7 +12,7 @@ public class InternalSchemaRegistry {
   private final List<String> url;
 
   public String getFirstUrl() {
-    return url != null  && !url.isEmpty() ? url.iterator().next() : null;
+    return url != null && !url.isEmpty() ? url.iterator().next() : null;
   }
 
 }

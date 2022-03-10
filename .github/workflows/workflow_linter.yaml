@@ -1,0 +1,22 @@
+name: "Workflow linter"
+on:
+  pull_request:
+    types:
+      - "opened"
+      - "reopened"
+      - "synchronize"
+      - "edited"
+    paths:
+      - ".github/workflows/**"
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Install yamllint
+        run: sudo apt install -y yamllint
+      - name: Validate workflow yaml files
+        run: yamllint .github/workflows/. -d relaxed -f github --no-warnings

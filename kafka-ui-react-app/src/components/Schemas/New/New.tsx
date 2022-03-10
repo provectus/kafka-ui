@@ -55,7 +55,7 @@ const New: React.FC = () => {
         dispatch(serverErrorAlertAdded(err));
       }
     },
-    [clusterName]
+    [clusterName, dispatch, history]
   );
 
   return (

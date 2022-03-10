@@ -26,7 +26,7 @@ jobs:
           echo "NEXT K8S VERSIONS ARE GOING TO BE TESTED: $K8S_VERSIONS"
           echo ""
           for version in $K8S_VERSIONS
-            do 
+            do
               echo $version;
               helm template charts/kafka-ui -f charts/kafka-ui/values.yaml | kubeval --additional-schema-locations https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master --strict -v $version;
             done

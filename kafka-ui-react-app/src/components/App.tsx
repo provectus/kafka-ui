@@ -17,6 +17,7 @@ import {
 } from 'redux/reducers/clusters/clustersSlice';
 
 import * as S from './App.styled';
+import Logo from './common/Logo/Logo';
 
 const App: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -35,11 +36,11 @@ const App: React.FC = () => {
 
   React.useEffect(() => {
     closeSidebar();
-  }, [location]);
+  }, [closeSidebar, location]);
 
   React.useEffect(() => {
     dispatch(fetchClusters());
-  }, [fetchClusters]);
+  }, [dispatch]);
 
   return (
     <ThemeProvider theme={theme}>
@@ -57,7 +58,10 @@ const App: React.FC = () => {
               <S.Span role="separator" />
             </S.NavbarBurger>
 
-            <S.Hyperlink href="/ui">UI for Apache Kafka</S.Hyperlink>
+            <S.Hyperlink to="/">
+              <Logo />
+              UI for Apache Kafka
+            </S.Hyperlink>
 
             <S.NavbarItem>
               {GIT_TAG && <Version tag={GIT_TAG} commit={GIT_COMMIT} />}
@@ -82,12 +86,8 @@ const App: React.FC = () => {
           />
           {areClustersFulfilled ? (
             <Switch>
-              <Route
-                exact
-                path={['/', '/ui', '/ui/clusters']}
-                component={Dashboard}
-              />
-              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
+              <Route exact path={['/', '/clusters']} component={Dashboard} />
+              <Route path="/clusters/:clusterName" component={ClusterPage} />
             </Switch>
           ) : (
             <PageLoader />
