@@ -34,12 +34,7 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
           <Link to={clusterTopicPath(clusterName, name)}>{name}</Link>
         </TableKeyLink>
       </tr>
-      {isOpen && (
-        <TopicContents
-          consumers={consumers}
-          data-testid="consumer-group-list-item-topic"
-        />
-      )}
+      {isOpen && <TopicContents consumers={consumers} />}
     </>
   );
 };
