@@ -5,7 +5,6 @@ import TopicContent from 'components/ConsumerGroups/Details/TopicContents/TopicC
 import { consumerGroupPayload } from 'redux/reducers/consumerGroups/__test__/fixtures';
 import { render } from 'lib/testHelpers';
 import { Route } from 'react-router';
-import fetchMock from 'fetch-mock';
 import { ConsumerGroupTopicPartition } from 'generated-sources';
 
 const clusterName = 'cluster1';
@@ -15,7 +14,11 @@ const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
     <Route
       path={clusterConsumerGroupDetailsPath(':clusterName', ':consumerGroupID')}
     >
-      <TopicContent consumers={consumers} />
+      <table>
+        <tbody>
+          <TopicContent consumers={consumers} />
+        </tbody>
+      </table>
     </Route>,
     {
       pathname: clusterConsumerGroupDetailsPath(
@@ -26,19 +29,15 @@ const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
   );
 
 describe('TopicContent', () => {
-  afterEach(() => {
-    fetchMock.reset();
-  });
-
   it('renders empty table', () => {
     renderComponent();
-    const table = screen.getByRole('table');
+    const table = screen.getAllByRole('table')[1];
     expect(table.getElementsByTagName('td').length).toBe(0);
   });
 
   it('renders table with content', () => {
     renderComponent(consumerGroupPayload.partitions);
-    const table = screen.getByRole('table');
+    const table = screen.getAllByRole('table')[1];
     expect(table.getElementsByTagName('td').length).toBe(
       consumerGroupPayload.partitions.length * 6
     );
