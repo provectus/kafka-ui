@@ -34,15 +34,13 @@ const renderComponent = (consumers: ConsumerGroupTopicPartition[] = []) =>
   );
 
 describe('ListItem', () => {
-  it('renders list item with topic content closed', () => {
-    renderComponent(consumerGroupPayload.partitions);
-    expect(screen.getByTestId('consumer-group-list-item')).toBeInTheDocument();
+  beforeEach(() => renderComponent(consumerGroupPayload.partitions));
+
+  it('should renders list item with topic content closed and check if element exists', () => {
+    expect(screen.getByRole('row')).toBeInTheDocument();
   });
 
-  it('renders list item with topic content open', async () => {
-    renderComponent(consumerGroupPayload.partitions);
-    expect(screen.getByTestId('consumer-group-list-item')).toBeInTheDocument();
-
+  it('should renders list item with topic content open', () => {
     userEvent.click(screen.getByTestId('consumer-group-list-item-toggle'));
 
     expect(screen.getByText('Consumer ID')).toBeInTheDocument();

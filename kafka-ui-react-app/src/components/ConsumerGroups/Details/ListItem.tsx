@@ -20,7 +20,7 @@ const ListItem: React.FC<Props> = ({ clusterName, name, consumers }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
     <>
-      <tr data-testid="consumer-group-list-item">
+      <tr>
         <ToggleButton>
           <IconButtonWrapper
             onClick={() => setIsOpen(!isOpen)}
