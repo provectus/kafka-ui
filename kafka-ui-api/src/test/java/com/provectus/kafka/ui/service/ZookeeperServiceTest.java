@@ -21,22 +21,6 @@ class ZookeeperServiceTest extends AbstractBaseTest {
   }
 
   @Test
-  void getZkStatusRightConfig() {
-    KafkaCluster kafkaCluster =
-        KafkaCluster.builder()
-            .name(LOCAL)
-            .bootstrapServers(kafka.getBootstrapServers())
-            .zookeeper("localhost:2181")
-            .properties(new Properties())
-            .build();
-
-    ZookeeperService.ZkStatus zkStatus = new ZookeeperService.ZkStatus(ServerStatusDTO.ONLINE, null);
-    StepVerifier.create(zookeeperService.getZkStatus(kafkaCluster))
-        .expectNext(zkStatus)
-        .verifyComplete();
-  }
-
-  @Test
   void getZkStatusEmptyConfig() {
     KafkaCluster kafkaCluster =
         KafkaCluster.builder()
