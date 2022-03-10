@@ -56,12 +56,22 @@ public class ZookeeperService {
       zkClient.getChildren("/brokers/ids", null);
     } catch (KeeperException e) {
       log.error("A zookeeper exception has occurred", e);
+      closeZkClientSession(zkClient, e);
       return false;
     } catch (InterruptedException e) {
       log.error("Interrupted: ", e);
       Thread.currentThread().interrupt();
     }
     return true;
+  }
+
+  private void closeZkClientSession(ZooKeeper zkClient, KeeperException e) {
+    try {
+      zkClient.close();
+    } catch (InterruptedException ex) {
+      log.error("Unable to close zkClient session: ", e);
+      Thread.currentThread().interrupt();
+    }
   }
 
   @Nullable
