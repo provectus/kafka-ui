@@ -50,6 +50,7 @@ describe('Actions', () => {
             isConnectorDeleting={false}
             connectorStatus={ConnectorState.RUNNING}
             restartConnector={jest.fn()}
+            restartTasks={jest.fn()}
             pauseConnector={jest.fn()}
             resumeConnector={jest.fn()}
             isConnectorActionRunning={false}
