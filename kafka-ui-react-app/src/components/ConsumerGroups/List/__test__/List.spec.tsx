@@ -1,6 +1,6 @@
 import React from 'react';
 import List from 'components/ConsumerGroups/List/List';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { store } from 'redux/store';
@@ -15,7 +15,7 @@ describe('List', () => {
     expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
   });
 
-  describe('consumerGroups are fecthed', () => {
+  describe('consumerGroups are fetched', () => {
     beforeEach(() => {
       store.dispatch({
         type: fetchConsumerGroups.fulfilled.type,
@@ -29,11 +29,14 @@ describe('List', () => {
     });
 
     describe('when searched', () => {
-      it('renders only searched consumers', () => {
-        userEvent.type(
-          screen.getByPlaceholderText('Search by Consumer Group ID'),
-          'groupId1'
-        );
+      it('renders only searched consumers', async () => {
+        await waitFor(() => {
+          userEvent.type(
+            screen.getByPlaceholderText('Search by Consumer Group ID'),
+            'groupId1'
+          );
+        });
+
         expect(screen.getByText('groupId1')).toBeInTheDocument();
         expect(screen.getByText('groupId2')).toBeInTheDocument();
       });
