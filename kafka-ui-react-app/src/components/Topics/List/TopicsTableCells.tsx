@@ -1,6 +1,6 @@
 import React from 'react';
 import { TopicWithDetailedInfo } from 'redux/interfaces';
-import { TableCellProps } from 'components/common/smart-table/TableColumn';
+import { TableCellProps } from 'components/common/SmartTable/TableColumn';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 
