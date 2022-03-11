@@ -3,7 +3,7 @@ package com.provectus.kafka.ui.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.model.ConsumerPosition;
 import com.provectus.kafka.ui.model.CreateTopicMessageDTO;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -27,11 +27,9 @@ import org.apache.kafka.common.TopicPartition;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
 import reactor.test.StepVerifier;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-public class SendAndReadTests extends AbstractBaseTest {
+public class SendAndReadTests extends AbstractIntegrationTest {
 
   private static final AvroSchema AVRO_SCHEMA_1 = new AvroSchema(
       "{"

@@ -15,9 +15,7 @@ describe('Paths', () => {
     );
   });
   it('clusterPath', () => {
-    expect(paths.clusterPath(clusterName)).toEqual(
-      `/ui/clusters/${clusterName}`
-    );
+    expect(paths.clusterPath(clusterName)).toEqual(`/clusters/${clusterName}`);
   });
   it('clusterBrokersPath', () => {
     expect(paths.clusterBrokersPath(clusterName)).toEqual(
