@@ -171,10 +171,12 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   Optional<ProtoSchema> protoKeySchemaFromHeaders(Headers headers) {
-    // Get PROTOBUF_TYPE_KEY header.
+    // Get protobuf.type.key header.
     String fullyQualifiedTypeName = null;
-    for (Header header : headers.headers("PROTOBUF_TYPE_KEY")) {
-      fullyQualifiedTypeName = new String(header.value(), StandardCharsets.UTF_8);
+    for (Header header : headers) {
+      if (header.key().toLowerCase().equals("protobuf.type.key")) {
+        fullyQualifiedTypeName = new String(header.value(), StandardCharsets.UTF_8);
+      }
     }
 
     if (fullyQualifiedTypeName == null) {
@@ -187,10 +189,12 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   Optional<ProtoSchema> protoValueSchemaFromHeaders(Headers headers) {
-    // Get PROTOBUF_TYPE_VALUE header.
+    // Get protobuf.type.value header.
     String fullyQualifiedTypeName = null;
-    for (Header header : headers.headers("PROTOBUF_TYPE_VALUE")) {
-      fullyQualifiedTypeName = new String(header.value(), StandardCharsets.UTF_8);
+    for (Header header : headers) {
+      if (header.key().toLowerCase().equals("protobuf.type.value")) {
+        fullyQualifiedTypeName = new String(header.value(), StandardCharsets.UTF_8);
+      }
     }
 
     if (fullyQualifiedTypeName == null) {
