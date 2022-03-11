@@ -1,4 +1,5 @@
 import React from 'react';
+import { CleanUpPolicy } from 'generated-sources';
 import {
   ClusterName,
   TopicName,
@@ -112,7 +113,7 @@ const ListItem: React.FC<ListItemProps> = ({
         {!internal && !isReadOnly && vElipsisVisble ? (
           <div className="has-text-right">
             <Dropdown label={<VerticalElipsisIcon />} right>
-              {cleanUpPolicy === 'DELETE' && (
+              {cleanUpPolicy === CleanUpPolicy.DELETE && (
                 <DropdownItem onClick={clearTopicMessagesHandler} danger>
                   Clear Messages
                 </DropdownItem>

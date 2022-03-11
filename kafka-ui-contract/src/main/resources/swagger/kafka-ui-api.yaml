@@ -2824,7 +2824,7 @@ components:
     CleanUpPolicy:
       type: string
       enum:
-        - DELETE
-        - COMPACT
-        - COMPACT_DELETE
-        - UNKNOWN
+        - delete
+        - compact
+        - compact,delete
+        - unknown

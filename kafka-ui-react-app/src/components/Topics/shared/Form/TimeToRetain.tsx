@@ -12,9 +12,10 @@ import TimeToRetainBtns from './TimeToRetainBtns';
 
 interface Props {
   isSubmitting: boolean;
+  time?: string;
 }
 
-const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
+const TimeToRetain: React.FC<Props> = ({ time, isSubmitting }) => {
   const {
     watch,
     formState: { errors },
@@ -39,7 +40,7 @@ const TimeToRetain: React.FC<Props> = ({ isSubmitting }) => {
       <Input
         id="timeToRetain"
         type="number"
-        defaultValue={defaultValue}
+        defaultValue={time ?? defaultValue}
         name={name}
         hookFormOptions={{
           min: { value: -1, message: 'must be greater than or equal to -1' },

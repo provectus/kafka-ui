@@ -3,7 +3,6 @@ import {
   ClusterName,
   TopicFormDataRaw,
   TopicName,
-  TopicConfigByName,
   TopicWithDetailedInfo,
   TopicFormData,
 } from 'redux/interfaces';
@@ -117,14 +116,6 @@ const Edit: React.FC<Props> = ({
     formInit = true;
   }
 
-  const config: TopicConfigByName = {
-    byName: {},
-  };
-
-  topic.config.forEach((param) => {
-    config.byName[param.name] = param;
-  });
-
   const onSubmit = async (data: TopicFormDataRaw) => {
     updateTopic(clusterName, topicName, data);
     setIsSubmitting(true); // Keep this action after updateTopic to prevent redirect before update.
@@ -137,7 +128,7 @@ const Edit: React.FC<Props> = ({
         <div>
           <FormProvider {...methods}>
             <TopicForm
-              topicName={topicName}
+              topic={topic}
               isSubmitting={isSubmitting}
               isEditing
               onSubmit={methods.handleSubmit(onSubmit)}

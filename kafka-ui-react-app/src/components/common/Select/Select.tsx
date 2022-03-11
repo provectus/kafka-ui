@@ -72,7 +72,7 @@ const Select: React.FC<SelectProps> = ({
         {isLive && <LiveIcon />}
         <S.SelectedOption role="option" tabIndex={0}>
           {options.find(
-            (option) => option.value === (defaultValue || selectedOption)
+            (option) => option.value === (selectedOption || defaultValue)
           )?.label || placeholder}
         </S.SelectedOption>
         {showOptions && (

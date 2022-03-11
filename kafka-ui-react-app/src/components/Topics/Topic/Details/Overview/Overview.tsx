@@ -1,5 +1,9 @@
 import React from 'react';
-import { Topic, TopicDetails } from 'generated-sources';
+import {
+  Topic,
+  TopicDetails,
+  CleanUpPolicy,
+} from 'generated-sources';
 import { ClusterName, TopicName } from 'redux/interfaces';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
@@ -116,7 +120,7 @@ const Overview: React.FC<Props> = ({
                 <td>{offsetMax}</td>
                 <td>{offsetMax - offsetMin}</td>
                 <td style={{ width: '5%' }}>
-                  {!internal && !isReadOnly && cleanUpPolicy === 'DELETE' ? (
+                  {!internal && !isReadOnly && cleanUpPolicy === CleanUpPolicy.DELETE ? (
                     <Dropdown label={<VerticalElipsisIcon />} right>
                       <DropdownItem
                         onClick={() =>

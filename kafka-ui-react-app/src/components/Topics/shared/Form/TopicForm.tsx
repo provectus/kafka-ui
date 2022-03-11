@@ -1,7 +1,6 @@
 import React from 'react';
 import { useFormContext, Controller } from 'react-hook-form';
 import { NOT_SET, BYTES_IN_GB } from 'lib/constants';
-import { TopicName } from 'redux/interfaces';
 import { ErrorMessage } from '@hookform/error-message';
 import Select, { SelectOption } from 'components/common/Select/Select';
 import Input from 'components/common/Input/Input';
@@ -9,13 +8,14 @@ import { Button } from 'components/common/Button/Button';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import { FormError } from 'components/common/Input/Input.styled';
 import { StyledForm } from 'components/common/Form/Form.styled';
+import { TopicWithDetailedInfo } from 'redux/interfaces';
 
 import CustomParamsContainer from './CustomParams/CustomParamsContainer';
 import TimeToRetain from './TimeToRetain';
 import * as S from './TopicForm.styled';
 
 export interface Props {
-  topicName?: TopicName;
+  topic?: TopicWithDetailedInfo;
   isEditing?: boolean;
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
@@ -36,7 +36,7 @@ const RetentionBytesOptions: Array<SelectOption> = [
 ];
 
 const TopicForm: React.FC<Props> = ({
-  topicName,
+  topic,
   isEditing,
   isSubmitting,
   onSubmit,
@@ -45,6 +45,7 @@ const TopicForm: React.FC<Props> = ({
     control,
     formState: { errors },
   } = useFormContext();
+  console.log(topic?.cleanUpPolicy?.toLowerCase());
   return (
     <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
@@ -56,7 +57,7 @@ const TopicForm: React.FC<Props> = ({
                 id="topicFormName"
                 name="name"
                 placeholder="Topic Name"
-                defaultValue={topicName}
+                defaultValue={topic?.name}
               />
               <FormError>
                 <ErrorMessage errors={errors} name="name" />
@@ -135,7 +136,10 @@ const TopicForm: React.FC<Props> = ({
                   id="topicFormCleanupPolicy"
                   aria-labelledby="topicFormCleanupPolicyLabel"
                   name={name}
-                  value={CleanupPolicyOptions[0].value}
+                  defaultValue={
+                    topic?.cleanUpPolicy?.toLowerCase() ??
+                    CleanupPolicyOptions[0].value
+                  }
                   onChange={onChange}
                   minWidth="250px"
                   options={CleanupPolicyOptions}
@@ -147,7 +151,12 @@ const TopicForm: React.FC<Props> = ({
 
         <S.Column>
           <div>
-            <TimeToRetain isSubmitting={isSubmitting} />
+            <TimeToRetain
+              time={
+                topic?.config?.find((e) => e.name === 'retention.ms')?.value
+              }
+              isSubmitting={isSubmitting}
+            />
           </div>
         </S.Column>
 
