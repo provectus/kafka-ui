@@ -60,6 +60,7 @@ class SchemaRegistryAwareRecordSerDeTest {
 
       int schemaId = 1234;
       when(registryClient.getSchemaById(schemaId)).thenReturn(schema);
+      when(registryClient.getSchemaBySubjectAndId(null, schemaId)).thenReturn(schema);
 
       var result = serde.deserialize(
           new ConsumerRecord<>(
@@ -71,8 +72,10 @@ class SchemaRegistryAwareRecordSerDeTest {
           )
       );
 
-      // called twice: once by serde code, once by formatter (will be cached)
-      verify(registryClient, times(2)).getSchemaById(schemaId);
+      // called once by serde code
+      verify(registryClient, times(1)).getSchemaById(schemaId);
+      //called once by formatter (will be cached)
+      verify(registryClient, times(1)).getSchemaBySubjectAndId(null, schemaId);
 
       assertThat(result.getKeySchemaId()).isNull();
       assertThat(result.getKeyFormat()).isEqualTo(MessageFormat.UNKNOWN);
@@ -115,23 +118,29 @@ class SchemaRegistryAwareRecordSerDeTest {
     @Test
     void fallsBackToStringFormatterIfMagicByteAndSchemaIdFoundButFormatterFailed() throws Exception {
       int schemaId = 1234;
+
+      final var schema = new AvroSchema("{ \"type\": \"string\" }");
+
       when(registryClient.getSchemaById(schemaId))
-          .thenReturn(new AvroSchema("{ \"type\": \"string\" }"));
+          .thenReturn(schema);
+      when(registryClient.getSchemaBySubjectAndId(null, schemaId)).thenReturn(schema);
 
       // will cause exception in avro deserializer
-      Bytes nonAvroValue =  bytesWithMagicByteAndSchemaId(schemaId, "123".getBytes());
+      Bytes nonAvroValue = bytesWithMagicByteAndSchemaId(schemaId, "123".getBytes());
       var result = serde.deserialize(
           new ConsumerRecord<>(
               "test-topic",
               1,
               100,
               Bytes.wrap("key".getBytes()),
-             nonAvroValue
+              nonAvroValue
           )
       );
 
-      // called twice: once by serde code, once by formatter (will be cached)
-      verify(registryClient, times(2)).getSchemaById(schemaId);
+      // called once by serde code
+      verify(registryClient, times(1)).getSchemaById(schemaId);
+      //called once by formatter (will be cached)
+      verify(registryClient, times(1)).getSchemaBySubjectAndId(null, schemaId);
 
       assertThat(result.getKeySchemaId()).isNull();
       assertThat(result.getKeyFormat()).isEqualTo(MessageFormat.UNKNOWN);
