@@ -364,7 +364,7 @@ public class SchemaRegistryService {
   private URI buildUri(InternalSchemaRegistry schemaRegistry, String path, List<String> uriVariables,
                        MultiValueMap<String, String> queryParams) {
     final var builder = UriComponentsBuilder
-        .fromHttpUrl(schemaRegistry.getPrimaryNodeUri() + path);
+        .fromHttpUrl(schemaRegistry.getUri() + path);
     builder.queryParams(queryParams);
     return builder.buildAndExpand(uriVariables.toArray()).toUri();
   }
