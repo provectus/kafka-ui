@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
+import { OrderableProps } from 'components/common/SmartTable/TableColumn';
 
-export interface TableState<T, TId extends IdType> {
+export interface TableState<T, TId extends IdType, OT = never> {
   data: T[];
   selectedIds: Set<TId>;
   totalPages?: number;
@@ -9,16 +10,18 @@ export interface TableState<T, TId extends IdType> {
   selectedCount: () => number;
   setRowsSelection: (rows: T[], selected: boolean) => void;
   toggleSelection: (selected: boolean) => void;
+  orderable?: OrderableProps<OT>;
 }
 
-export const useTableState = <T, TId extends IdType>(
+export const useTableState = <T, TId extends IdType, OT = never>(
   data: T[],
   options: {
     totalPages: number;
     isRowSelectable?: (row: T) => boolean;
     idSelector: (row: T) => TId;
-  }
-): TableState<T, TId> => {
+  },
+  orderable?: OrderableProps<OT>
+): TableState<T, TId, OT> => {
   const [selectedIds, setSelectedIds] = React.useState(new Set<TId>());
 
   const { idSelector, totalPages, isRowSelectable = () => true } = options;
@@ -51,11 +54,12 @@ export const useTableState = <T, TId extends IdType>(
     [data, idSelector]
   );
 
-  return React.useMemo<TableState<T, TId>>(() => {
+  return React.useMemo<TableState<T, TId, OT>>(() => {
     return {
       data,
       totalPages,
       selectedIds,
+      orderable,
       idSelector,
       isRowSelectable,
       selectedCount,
@@ -64,12 +68,13 @@ export const useTableState = <T, TId extends IdType>(
     };
   }, [
     data,
+    orderable,
+    selectedIds,
+    totalPages,
     idSelector,
     isRowSelectable,
     selectedCount,
-    selectedIds,
     setRowsSelection,
     toggleSelection,
-    totalPages,
   ]);
 };

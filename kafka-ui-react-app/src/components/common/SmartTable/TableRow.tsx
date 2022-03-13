@@ -2,19 +2,19 @@ import React from 'react';
 import { propertyLookup } from 'lib/propertyLookup';
 import { TableState } from 'lib/hooks/useTableState';
 
-import { isColumnElement, SelectCell } from './TableColumn';
+import { isColumnElement, SelectCell, TableCellProps } from './TableColumn';
 
-interface TableRowProps<T, TId extends IdType = never> {
+interface TableRowProps<T, TId extends IdType = never, OT = never> {
   index: number;
   id?: TId;
   hoverable?: boolean;
-  tableState: TableState<T, TId>;
+  tableState: TableState<T, TId, OT>;
   dataItem: T;
   selectable: boolean;
   onSelectChange?: (row: T, checked: boolean) => void;
 }
 
-export const TableRow = <T, TId extends IdType>({
+export const TableRow = <T, TId extends IdType, OT = never>({
   children,
   hoverable = false,
   id,
@@ -23,7 +23,7 @@ export const TableRow = <T, TId extends IdType>({
   selectable,
   tableState,
   onSelectChange,
-}: React.PropsWithChildren<TableRowProps<T, TId>>): React.ReactElement => {
+}: React.PropsWithChildren<TableRowProps<T, TId, OT>>): React.ReactElement => {
   const [hovered, setHovered] = React.useState(false);
 
   const handleMouseEnter = React.useCallback(() => {
@@ -61,10 +61,18 @@ export const TableRow = <T, TId extends IdType>({
         if (!isColumnElement<T, TId>(child)) {
           return child;
         }
-        const { cell: Cell, field, width, className } = child.props;
+        const { cell, field, width, className } = child.props;
+
+        const Cell = cell as React.FC<TableCellProps<T, TId, OT>> | undefined;
+
         return Cell ? (
           <td className={className} style={{ width }}>
-            <Cell hovered={hovered} rowIndex={index} dataItem={dataItem} />
+            <Cell
+              tableState={tableState}
+              hovered={hovered}
+              rowIndex={index}
+              dataItem={dataItem}
+            />
           </td>
         ) : (
           <td className={className} style={{ width }}>

@@ -5,11 +5,15 @@ import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styl
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TableState } from 'lib/hooks/useTableState';
 
-import { isColumnElement, SelectCell } from './TableColumn';
+import {
+  isColumnElement,
+  SelectCell,
+  TableHeaderCellProps,
+} from './TableColumn';
 import { TableRow } from './TableRow';
 
-interface SmartTableProps<T, TId extends IdType> {
-  tableState: TableState<T, TId>;
+interface SmartTableProps<T, TId extends IdType, OT = never> {
+  tableState: TableState<T, TId, OT>;
   allSelectable?: boolean;
   selectable?: boolean;
   className?: string;
@@ -19,7 +23,7 @@ interface SmartTableProps<T, TId extends IdType> {
   hoverable?: boolean;
 }
 
-export const SmartTable = <T, TId extends IdType>({
+export const SmartTable = <T, TId extends IdType, OT = never>({
   children,
   tableState,
   selectable = false,
@@ -28,7 +32,7 @@ export const SmartTable = <T, TId extends IdType>({
   isFullwidth = false,
   paginated = false,
   hoverable = false,
-}: React.PropsWithChildren<SmartTableProps<T, TId>>) => {
+}: React.PropsWithChildren<SmartTableProps<T, TId, OT>>) => {
   const handleRowSelection = React.useCallback(
     (row: T, checked: boolean) => {
       tableState.setRowsSelection([row], checked);
@@ -38,18 +42,31 @@ export const SmartTable = <T, TId extends IdType>({
 
   const headerRow = React.useMemo(() => {
     const headerCells = React.Children.map(children, (child) => {
-      if (!isColumnElement<T, TId>(child)) {
+      if (!isColumnElement<T, TId, OT>(child)) {
         return child;
       }
 
-      const { headerCell: HeaderCell, title, ...props } = child.props;
+      const { headerCell, title, orderValue } = child.props;
+
+      const HeaderCell = headerCell as
+        | React.FC<TableHeaderCellProps<T, TId, OT>>
+        | undefined;
 
       return HeaderCell ? (
-        <th>
-          <HeaderCell {...props} tableState={tableState} />
-        </th>
+        <S.TableHeaderCell>
+          <HeaderCell
+            orderValue={orderValue}
+            orderable={tableState.orderable}
+            tableState={tableState}
+          />
+        </S.TableHeaderCell>
       ) : (
-        <TableHeaderCell {...props} title={title} />
+        // TODO types will be changed after fixing TableHeaderCell
+        <TableHeaderCell
+          {...(tableState.orderable as never)}
+          orderValue={orderValue as never}
+          title={title}
+        />
       );
     });
     return (
