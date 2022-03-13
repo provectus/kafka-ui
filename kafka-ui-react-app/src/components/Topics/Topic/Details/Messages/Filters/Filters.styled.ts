@@ -1,5 +1,13 @@
 import styled from 'styled-components';
 
+interface MessageLoadingProps {
+  isLive: boolean;
+}
+
+interface MessageLoadingSpinnerProps {
+  isFetching: boolean;
+}
+
 export const FiltersWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -82,4 +90,37 @@ export const MetricsIcon = styled.div`
   color: ${({ theme }) => theme.metrics.filters.color.icon};
   padding-right: 6px;
   height: 12px;
+`;
+
+export const MessageLoading = styled.div<MessageLoadingProps>`
+  color: ${({ theme }) => theme.heading.h3.color};
+  font-size: ${({ theme }) => theme.heading.h3.fontSize};
+  display: ${(props) => (props.isLive ? 'flex' : 'none')};
+  justify-content: space-around;
+  width: 250px;
+`;
+
+export const StopLoading = styled.div`
+  color: ${({ theme }) => theme.pageLoader.borderColor};
+  font-size: ${({ theme }) => theme.heading.h3.fontSize};
+  cursor: pointer;
+`;
+
+export const MessageLoadingSpinner = styled.div<MessageLoadingSpinnerProps>`
+  display: ${(props) => (props.isFetching ? 'block' : 'none')};
+  border: 3px solid ${({ theme }) => theme.pageLoader.borderColor};
+  border-bottom: 3px solid ${({ theme }) => theme.pageLoader.borderBottomColor};
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  animation: spin 1.3s linear infinite;
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `;

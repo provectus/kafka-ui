@@ -92,13 +92,13 @@ public class ReactiveAdminClient implements Closeable {
 
   //TODO: discuss - maybe we should map kafka-library's exceptions to our exceptions here
   private static <T> Mono<T> toMono(KafkaFuture<T> future) {
-    return Mono.create(sink -> future.whenComplete((res, ex) -> {
+    return Mono.<T>create(sink -> future.whenComplete((res, ex) -> {
       if (ex != null) {
         sink.error(ex);
       } else {
         sink.success(res);
       }
-    }));
+    })).doOnCancel(() -> future.cancel(true));
   }
 
   //---------------------------------------------------------------------------------
@@ -159,6 +159,13 @@ public class ReactiveAdminClient implements Closeable {
         client.describeTopics(topics).values(),
         UnknownTopicOrPartitionException.class
     );
+  }
+
+  /**
+   * Returns TopicDescription mono, or Empty Mono if topic not found.
+   */
+  public Mono<TopicDescription> describeTopic(String topic) {
+    return describeTopics(List.of(topic)).flatMap(m -> Mono.justOrEmpty(m.get(topic)));
   }
 
   /**
