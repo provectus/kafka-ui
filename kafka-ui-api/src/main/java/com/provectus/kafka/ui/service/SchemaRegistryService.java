@@ -77,8 +77,9 @@ public class SchemaRegistryService {
 
   public Mono<String[]> getAllSubjectNames(KafkaCluster cluster) {
     return configuredWebClient(
-        cluster
-    )
+        cluster,
+        HttpMethod.GET,
+        URL_SUBJECTS)
         .retrieve()
         .bodyToMono(String[].class)
         .doOnError(e -> log.error("Unexpected error", e))
@@ -120,7 +121,8 @@ public class SchemaRegistryService {
     return configuredWebClient(
         cluster,
         HttpMethod.GET,
-            List.of(schemaName, version))
+        SchemaRegistryService.URL_SUBJECT_BY_VERSION,
+        List.of(schemaName, version))
         .retrieve()
         .onStatus(NOT_FOUND::equals,
             throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA_VERSION, schemaName, version))
@@ -163,6 +165,7 @@ public class SchemaRegistryService {
     return configuredWebClient(
             cluster,
             HttpMethod.DELETE,
+            SchemaRegistryService.URL_SUBJECT_BY_VERSION,
             List.of(schemaName, version))
             .retrieve()
             .onStatus(NOT_FOUND::equals,
@@ -333,15 +336,15 @@ public class SchemaRegistryService {
     return errorMessage.contains(UNRECOGNIZED_FIELD_SCHEMA_TYPE);
   }
 
-  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster) {
-    return configuredWebClient(cluster, HttpMethod.GET, SchemaRegistryService.URL_SUBJECTS, Collections.emptyList(),
+  private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
+                                                        String uri) {
+    return configuredWebClient(cluster, method, uri, Collections.emptyList(),
         new LinkedMultiValueMap<>());
   }
 
   private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
-                                                        List<String> uriVariables) {
-    return configuredWebClient(cluster, method, SchemaRegistryService.URL_SUBJECT_BY_VERSION,
-            uriVariables, new LinkedMultiValueMap<>());
+                                                        String uri, List<String> uriVariables) {
+    return configuredWebClient(cluster, method, uri, uriVariables, new LinkedMultiValueMap<>());
   }
 
   private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
