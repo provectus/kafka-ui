@@ -103,11 +103,23 @@ const List: React.FC<TopicsListProps> = ({
     showInternal,
   ]);
 
-  const tableState = useTableState(topics, {
-    idSelector: (topic) => topic.name,
-    totalPages,
-    isRowSelectable: (topic) => !topic.internal,
-  });
+  const tableState = useTableState<
+    TopicWithDetailedInfo,
+    string,
+    TopicColumnsToSort
+  >(
+    topics,
+    {
+      idSelector: (topic) => topic.name,
+      totalPages,
+      isRowSelectable: (topic) => !topic.internal,
+    },
+    {
+      handleOrderBy: setTopicsOrderBy,
+      orderBy,
+      sortOrder,
+    }
+  );
 
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
@@ -141,6 +153,7 @@ const List: React.FC<TopicsListProps> = ({
     clusterName,
     tableState.selectedIds,
   ]);
+
   const searchHandler = React.useCallback(
     (searchString: string) => {
       setTopicsSearch(searchString);
@@ -283,25 +296,16 @@ const List: React.FC<TopicsListProps> = ({
               title="Topic Name"
               cell={TitleCell}
               orderValue={TopicColumnsToSort.NAME}
-              orderBy={orderBy}
-              sortOrder={sortOrder}
-              handleOrderBy={setTopicsOrderBy}
             />
             <TableColumn
               title="Total Partitions"
               field="partitions.length"
               orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
-              orderBy={orderBy}
-              sortOrder={sortOrder}
-              handleOrderBy={setTopicsOrderBy}
             />
             <TableColumn
               title="Out of sync replicas"
               cell={OutOfSyncReplicasCell}
               orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
-              orderBy={orderBy}
-              sortOrder={sortOrder}
-              handleOrderBy={setTopicsOrderBy}
             />
             <TableColumn title="Replication Factor" field="replicationFactor" />
             <TableColumn title="Number of messages" cell={MessagesCell} />
@@ -309,9 +313,6 @@ const List: React.FC<TopicsListProps> = ({
               title="Size"
               cell={TopicSizeCell}
               orderValue={TopicColumnsToSort.SIZE}
-              orderBy={orderBy}
-              sortOrder={sortOrder}
-              handleOrderBy={setTopicsOrderBy}
             />
             <TableColumn
               width="4%"
