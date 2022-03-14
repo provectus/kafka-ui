@@ -82,13 +82,14 @@ describe('AddFilter component', () => {
     });
   });
   describe('Add new filter', () => {
-    it('renders add new filter modal', () => {
+    beforeEach(() => {
       setupComponent();
+    });
+    it('renders add new filter modal', () => {
       userEvent.click(screen.getByText('New filter'));
       expect(screen.getByText('Create a new filter')).toBeInTheDocument();
     });
     it('adding new filter', async () => {
-      setupComponent();
       await waitFor(() => {
         userEvent.click(screen.getByText('New filter'));
       });
@@ -104,7 +105,6 @@ describe('AddFilter component', () => {
       expect(screen.getAllByRole('textbox')[1]).toHaveValue('filter code');
     });
     it('close add new filter modal', () => {
-      setupComponent();
       userEvent.click(screen.getByText('New filter'));
       expect(screen.getByText('Save this filter')).toBeInTheDocument();
       userEvent.click(screen.getByText('Cancel'));
