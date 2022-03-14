@@ -331,6 +331,38 @@ paths:
               schema:
                 $ref: '#/components/schemas/Topic'
 
+  /api/clusters/{clusterName}/topics/{topicName}/clone:
+    post:
+      tags:
+        - Topics
+      summary: cloneTopic
+      operationId: cloneTopic
+      parameters:
+        - name: clusterName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: topicName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: newTopicName
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Topic'
+        404:
+          description: Not found
+
   /api/clusters/{clusterName}/topics/{topicName}:
     get:
       tags:
