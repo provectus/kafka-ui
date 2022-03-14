@@ -30,6 +30,7 @@ export interface AddEditFilterContainerProps {
   inputDisplayNameDefaultValue?: string;
   setToggleSaveFilter?: () => void;
   inputCodeDefaultValue?: string;
+  createNewFilterText?: string;
 }
 
 const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
@@ -43,6 +44,7 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
   handleSubmit,
   errors,
   control,
+  createNewFilterText,
   inputDisplayNameDefaultValue = '',
   inputCodeDefaultValue = '',
 }) => {
@@ -50,8 +52,10 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
     <>
       <S.FilterTitle>{title}</S.FilterTitle>
       <FormProvider {...methods}>
-        <S.CreatedFilter>Create a new filter</S.CreatedFilter>
-        <form onSubmit={handleSubmit} aria-label="Add new Filter">
+        {createNewFilterText && (
+          <S.CreatedFilter>{createNewFilterText}</S.CreatedFilter>
+        )}
+        <form onSubmit={handleSubmit} aria-label="Filters submit Form">
           <div>
             <InputLabel>Display name</InputLabel>
             <Input
