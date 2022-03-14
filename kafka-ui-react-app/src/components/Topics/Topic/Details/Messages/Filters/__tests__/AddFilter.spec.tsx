@@ -53,7 +53,7 @@ describe('AddFilter component', () => {
       expect(screen.getByRole('deletionModal')).toBeInTheDocument();
       await act(() => {
         const cancelButton = screen.getAllByRole('button', { name: /Cancel/i });
-        userEvent.click(cancelButton[1]);
+        userEvent.click(cancelButton[0]);
       });
       expect(screen.getByText('Created filters')).toBeInTheDocument();
     });
