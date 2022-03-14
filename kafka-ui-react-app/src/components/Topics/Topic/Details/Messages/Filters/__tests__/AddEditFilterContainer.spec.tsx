@@ -139,5 +139,50 @@ describe('AddEditFilterContainer component', () => {
         expect(submitCallback).toBeCalled();
       });
     });
+
+    it('should display the checkbox if the props is passed and click stay checking', async () => {
+      const setCheckboxMock = jest.fn();
+      setupComponent({
+        toggleSaveFilterSetter: setCheckboxMock,
+      });
+
+      const checkbox = screen.getByRole('checkbox');
+      expect(checkbox).toBeInTheDocument();
+
+      userEvent.click(checkbox);
+
+      await waitFor(() => {
+        expect(checkbox).toBeChecked();
+      });
+
+      await waitFor(() => {
+        expect(setCheckboxMock).toBeCalled();
+      });
+    });
+
+    it('should display the checkbox if the props is passed and initially check state', () => {
+      setupComponent({
+        toggleSaveFilterSetter: jest.fn(),
+        toggleSaveFilterValue: true,
+      });
+
+      const checkbox = screen.getByRole('checkbox');
+      expect(checkbox).toBeInTheDocument();
+      expect(checkbox).toBeChecked();
+    });
+
+    it('should pass and render the view props', () => {
+      const title = 'titleTest';
+      const createNewFilterText = 'createNewFilterTextTest';
+      const submitBtnText = 'submitBtnTextTest';
+      setupComponent({
+        title,
+        createNewFilterText,
+        submitBtnText,
+      });
+      expect(screen.getByText(title)).toBeInTheDocument();
+      expect(screen.getByText(createNewFilterText)).toBeInTheDocument();
+      expect(screen.getByText(submitBtnText)).toBeInTheDocument();
+    });
   });
 });
