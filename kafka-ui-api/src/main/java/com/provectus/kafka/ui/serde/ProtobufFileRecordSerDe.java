@@ -26,16 +26,16 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
-//TODO: currently we assume that keys for this serde are always string - need to discuss if it is ok
 public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final ProtobufSchema protobufSchema;
   private final Path protobufSchemaPath;
   private final ProtobufSchemaConverter schemaConverter = new ProtobufSchemaConverter();
   private final Map<String, Descriptor> messageDescriptorMap;
+  private final Map<String, Descriptor> keyMessageDescriptorMap;
   private final Descriptor defaultMessageDescriptor;
 
   public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
-                                 String defaultMessageName)
+                                 Map<String, String> keyMessageNameMap, String defaultMessageName)
       throws IOException {
     this.protobufSchemaPath = protobufSchemaPath;
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
@@ -49,16 +49,24 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
       }
       this.messageDescriptorMap = new HashMap<>();
       if (messageNameMap != null) {
-        for (Map.Entry<String, String> entry : messageNameMap.entrySet()) {
-          var descriptor = Objects.requireNonNull(protobufSchema.toDescriptor(entry.getValue()),
-              "The given message type is not found in protobuf definition: "
-                  + entry.getValue());
-          messageDescriptorMap.put(entry.getKey(), descriptor);
-        }
+        populateDescriptors(messageNameMap, messageDescriptorMap);
+      }
+      this.keyMessageDescriptorMap = new HashMap<>();
+      if (keyMessageNameMap != null) {
+        populateDescriptors(keyMessageNameMap, keyMessageDescriptorMap);
       }
       defaultMessageDescriptor = Objects.requireNonNull(protobufSchema.toDescriptor(),
           "The given message type is not found in protobuf definition: "
               + defaultMessageName);
+    }
+  }
+
+  private void populateDescriptors(Map<String, String> messageNameMap, Map<String, Descriptor> messageDescriptorMap) {
+    for (Map.Entry<String, String> entry : messageNameMap.entrySet()) {
+      var descriptor = Objects.requireNonNull(protobufSchema.toDescriptor(entry.getValue()),
+          "The given message type is not found in protobuf definition: "
+              + entry.getValue());
+      messageDescriptorMap.put(entry.getKey(), descriptor);
     }
   }
 
@@ -67,8 +75,14 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     try {
       var builder = DeserializedKeyValue.builder();
       if (msg.key() != null) {
-        builder.key(new String(msg.key().get()));
-        builder.keyFormat(MessageFormat.UNKNOWN);
+        Descriptor descriptor = keyMessageDescriptorMap.get(msg.topic());
+        if (descriptor == null) {
+          builder.key(new String(msg.key().get()));
+          builder.keyFormat(MessageFormat.UNKNOWN);
+        } else {
+          builder.key(parse(msg.key().get(), descriptor));
+          builder.keyFormat(MessageFormat.PROTOBUF);
+        }
       }
       if (msg.value() != null) {
         builder.value(parse(msg.value().get(), getDescriptor(msg.topic())));

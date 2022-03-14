@@ -32,6 +32,7 @@ public class ClustersProperties {
     String protobufFile;
     String protobufMessageName;
     Map<String, String> protobufMessageNameByTopic;
+    Map<String, String> protobufMessageNameForKeyByTopic;
     List<ConnectCluster> kafkaConnect;
     int jmxPort;
     boolean jmxSsl;
