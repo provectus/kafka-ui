@@ -19,10 +19,10 @@ export interface AddEditFilterContainerProps {
   title: string;
   cancelBtnHandler: () => void;
   submitBtnText: string;
-  toggleSaveFilter?: boolean;
   inputDisplayNameDefaultValue?: string;
   inputCodeDefaultValue?: string;
-  setToggleSaveFilter?: () => void;
+  toggleSaveFilterValue?: boolean;
+  toggleSaveFilterSetter?: () => void;
   createNewFilterText?: string;
   submitCallback?: (values: MessageFilters) => void;
   submitCallbackWithReset?: boolean;
@@ -32,10 +32,10 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
   title,
   cancelBtnHandler,
   submitBtnText,
-  toggleSaveFilter,
   inputDisplayNameDefaultValue = '',
   inputCodeDefaultValue = '',
-  setToggleSaveFilter,
+  toggleSaveFilterValue,
+  toggleSaveFilterSetter,
   createNewFilterText,
   submitCallback,
   submitCallbackWithReset,
@@ -99,12 +99,12 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
           <div>
             <ErrorMessage errors={errors} name="code" />
           </div>
-          {toggleSaveFilter && setToggleSaveFilter && (
+          {!!toggleSaveFilterSetter && (
             <S.CheckboxWrapper>
               <input
                 type="checkbox"
-                checked={toggleSaveFilter}
-                onChange={setToggleSaveFilter}
+                checked={toggleSaveFilterValue}
+                onChange={toggleSaveFilterSetter}
               />
               <InputLabel>Save this filter</InputLabel>
             </S.CheckboxWrapper>

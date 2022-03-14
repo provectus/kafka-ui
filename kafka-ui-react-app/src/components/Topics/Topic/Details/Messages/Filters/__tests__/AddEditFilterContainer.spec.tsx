@@ -18,7 +18,7 @@ describe('AddEditFilterContainer component', () => {
         cancelBtnHandler={jest.fn()}
         submitBtnText={submitBtnText || defaultSubmitBtn}
         createNewFilterText={createNewFilterText || defaultNewFilter}
-        setToggleSaveFilter={jest.fn()}
+        toggleSaveFilterSetter={jest.fn()}
         {...props}
       />
     );

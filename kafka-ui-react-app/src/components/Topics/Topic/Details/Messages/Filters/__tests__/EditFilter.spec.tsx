@@ -32,7 +32,7 @@ describe('EditFilter component', () => {
     userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
   });
-  it('save edited fileds and close modal', async () => {
+  it('save edited fields and close modal', async () => {
     const toggleEditModal = jest.fn();
     const editSavedFilter = jest.fn();
     setupComponent({ toggleEditModal, editSavedFilter });
