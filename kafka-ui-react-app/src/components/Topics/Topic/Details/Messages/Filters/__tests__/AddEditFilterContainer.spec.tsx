@@ -5,23 +5,37 @@ import AddEditFilterContainer, {
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';
 
-const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) => {
-  const { title, submitBtnText, createNewFilterText } = props;
-  render(
-    <AddEditFilterContainer
-      title={title || 'Test Title'}
-      cancelBtnHandler={jest.fn()}
-      submitBtnText={submitBtnText || 'Submit Button'}
-      createNewFilterText={createNewFilterText || 'Create New Filters'}
-      setToggleSaveFilter={jest.fn()}
-      {...props}
-    />
-  );
-};
-
 describe('AddEditFilterContainer component', () => {
-  it('should render the components', () => {
-    setupComponent();
-    expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
+  const defaultTitle = 'Test Title';
+  const defaultSubmitBtn = 'Submit Button';
+  const defaultNewFilter = 'Create New Filters';
+
+  const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) => {
+    const { title, submitBtnText, createNewFilterText } = props;
+    render(
+      <AddEditFilterContainer
+        title={title || defaultTitle}
+        cancelBtnHandler={jest.fn()}
+        submitBtnText={submitBtnText || defaultSubmitBtn}
+        createNewFilterText={createNewFilterText || defaultNewFilter}
+        setToggleSaveFilter={jest.fn()}
+        {...props}
+      />
+    );
+  };
+
+  describe('default Component Parameters', () => {
+    beforeEach(() => {
+      setupComponent();
+    });
+    it('should render the components', () => {
+      expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
+    });
+
+    it('should check the default parameters values', () => {
+      expect(screen.getByText(defaultTitle)).toBeInTheDocument();
+      expect(screen.getByText(defaultSubmitBtn)).toBeInTheDocument();
+      expect(screen.getByText(defaultNewFilter)).toBeInTheDocument();
+    });
   });
 });
