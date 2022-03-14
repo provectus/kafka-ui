@@ -1,6 +1,5 @@
 package com.provectus.kafka.ui.model;
 
-import java.util.List;
 import lombok.Builder;
 import lombok.Data;
 
@@ -9,10 +8,21 @@ import lombok.Data;
 public class InternalSchemaRegistry {
   private final String username;
   private final String password;
-  private final List<String> url;
+  private final FailoverUrlList url;
 
-  public String getFirstUrl() {
-    return url != null && !url.isEmpty() ? url.iterator().next() : null;
+  public String getPrimaryNodeUri() {
+    return url.get(0);
   }
 
+  public String getUri() {
+    return url.current();
+  }
+
+  public void markAsUnavailable(String url) {
+    this.url.fail(url);
+  }
+
+  public boolean isFailoverAvailable() {
+    return this.url.isFailoverAvailable();
+  }
 }

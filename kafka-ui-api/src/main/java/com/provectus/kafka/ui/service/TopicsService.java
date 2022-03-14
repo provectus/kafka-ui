@@ -428,6 +428,18 @@ public class TopicsService {
         .getTopicSchema(topicName);
   }
 
+  public Mono<TopicDTO> cloneTopic(
+      KafkaCluster cluster, String topicName, String newTopicName) {
+    return loadTopic(cluster, topicName).flatMap(topic ->
+        adminClientService.get(cluster).flatMap(ac -> ac.createTopic(newTopicName,
+            topic.getPartitionCount(),
+            (short) topic.getReplicationFactor(),
+            topic.getTopicConfigs()
+                .stream()
+                .collect(Collectors.toMap(InternalTopicConfig::getName, InternalTopicConfig::getValue)))
+        ).thenReturn(newTopicName).flatMap(a -> loadTopic(cluster, newTopicName)).map(clusterMapper::toTopic));
+  }
+
   @VisibleForTesting
   @lombok.Value
   static class Pagination {
