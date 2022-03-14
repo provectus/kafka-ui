@@ -147,4 +147,45 @@ describe('AddFilter component', () => {
       expect(toggleOpenMock).toHaveBeenCalled();
     });
   });
+  describe('onSubmit with Filter being saved', () => {
+    let addFilterMock: (values: MessageFilters) => void;
+    let activeFilterHandlerMock: (
+      activeFilter: MessageFilters,
+      index: number
+    ) => void;
+    beforeEach(async () => {
+      addFilterMock = jest.fn() as (values: MessageFilters) => void;
+      activeFilterHandlerMock = jest.fn() as (
+        activeFilter: MessageFilters,
+        index: number
+      ) => void;
+      setupComponent({
+        addFilter: addFilterMock,
+        activeFilterHandler: activeFilterHandlerMock,
+      });
+      userEvent.click(screen.getByText(/New filter/i));
+      await waitFor(() => {
+        userEvent.type(screen.getAllByRole('textbox')[0], 'filter name');
+        userEvent.type(screen.getAllByRole('textbox')[1], 'filter code');
+      });
+    });
+
+    it('OnSubmit condition with checkbox off functionality', async () => {
+      userEvent.click(screen.getAllByRole('button')[1]);
+      await waitFor(() => {
+        expect(activeFilterHandlerMock).toHaveBeenCalled();
+        expect(addFilterMock).not.toHaveBeenCalled();
+      });
+    });
+
+    it('OnSubmit condition with checkbox on functionality', async () => {
+      userEvent.click(screen.getByRole('checkbox'));
+
+      userEvent.click(screen.getAllByRole('button')[1]);
+      await waitFor(() => {
+        expect(activeFilterHandlerMock).not.toHaveBeenCalled();
+        expect(addFilterMock).toHaveBeenCalled();
+      });
+    });
+  });
 });
