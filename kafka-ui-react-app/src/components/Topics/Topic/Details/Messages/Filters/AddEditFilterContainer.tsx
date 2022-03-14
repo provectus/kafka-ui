@@ -6,6 +6,7 @@ import { Textarea } from 'components/common/Textbox/Textarea.styled';
 import { FormProvider, Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from 'components/common/Button/Button';
+import { FormError } from 'components/common/Input/Input.styled';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
@@ -83,7 +84,9 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
             />
           </div>
           <div>
-            <ErrorMessage errors={errors} name="name" />
+            <FormError>
+              <ErrorMessage errors={errors} name="name" />
+            </FormError>
           </div>
           <div>
             <InputLabel>Filter code</InputLabel>
@@ -97,7 +100,9 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
             />
           </div>
           <div>
-            <ErrorMessage errors={errors} name="code" />
+            <FormError>
+              <ErrorMessage errors={errors} name="code" />
+            </FormError>
           </div>
           {!!toggleSaveFilterSetter && (
             <S.CheckboxWrapper>
