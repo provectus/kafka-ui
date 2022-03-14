@@ -21,8 +21,8 @@ export interface AddEditFilterContainerProps {
   submitBtnText: string;
   toggleSaveFilter?: boolean;
   inputDisplayNameDefaultValue?: string;
-  setToggleSaveFilter?: () => void;
   inputCodeDefaultValue?: string;
+  setToggleSaveFilter?: () => void;
   createNewFilterText?: string;
   submitCallback?: (values: MessageFilters) => void;
   submitCallbackWithReset?: boolean;
@@ -33,10 +33,10 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
   cancelBtnHandler,
   submitBtnText,
   toggleSaveFilter,
-  setToggleSaveFilter,
-  createNewFilterText,
   inputDisplayNameDefaultValue = '',
   inputCodeDefaultValue = '',
+  setToggleSaveFilter,
+  createNewFilterText,
   submitCallback,
   submitCallbackWithReset,
 }) => {
