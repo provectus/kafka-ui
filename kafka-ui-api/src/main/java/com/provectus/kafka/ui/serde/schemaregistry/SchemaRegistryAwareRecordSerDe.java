@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,10 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
           "You specified password but do not specified username");
     }
     return new CachedSchemaRegistryClient(
-        cluster.getSchemaRegistry().getUrl(),
+        cluster.getSchemaRegistry()
+                .getUrl()
+                .stream()
+                .collect(Collectors.toUnmodifiableList()),
         1_000,
         schemaProviders,
         configs
@@ -224,7 +228,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry().getFirstUrl())
+    URI basePath = new URI(cluster.getSchemaRegistry().getPrimaryNodeUri())
         .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
 
