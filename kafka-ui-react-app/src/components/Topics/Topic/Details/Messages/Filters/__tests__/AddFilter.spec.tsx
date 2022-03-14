@@ -121,14 +121,30 @@ describe('AddFilter component', () => {
       expect(toggleEditModal).toHaveBeenCalledTimes(1);
     });
   });
-  describe('save filter checkbox', () => {
-    it('check uncheck save filter checkbox', () => {
-      setupComponent();
-      userEvent.click(screen.getByText('New filter'));
-      expect(screen.getByText('Create a new filter')).toBeInTheDocument();
-      expect(screen.getByRole('checkbox')).not.toBeChecked();
-      userEvent.click(screen.getByRole('checkbox'));
-      expect(screen.getByRole('checkbox')).toBeChecked();
+  describe('Selecting a filter', () => {
+    it('should mock the select function if the filter is check no otherwise', () => {
+      const toggleOpenMock = jest.fn();
+      const activeFilterMock = jest.fn() as (
+        activeFilter: MessageFilters,
+        index: number
+      ) => void;
+      setupComponent({
+        filters,
+        toggleIsOpen: toggleOpenMock,
+        activeFilterHandler: activeFilterMock,
+      });
+      const selectFilterButton = screen.getByText(/Select filter/i);
+
+      userEvent.click(selectFilterButton);
+      expect(activeFilterMock).not.toHaveBeenCalled();
+      expect(toggleOpenMock).not.toHaveBeenCalled();
+
+      const savedFilterElement = screen.getByRole('savedFilter');
+      userEvent.click(savedFilterElement);
+      userEvent.click(selectFilterButton);
+
+      expect(activeFilterMock).toHaveBeenCalled();
+      expect(toggleOpenMock).toHaveBeenCalled();
     });
   });
 });
