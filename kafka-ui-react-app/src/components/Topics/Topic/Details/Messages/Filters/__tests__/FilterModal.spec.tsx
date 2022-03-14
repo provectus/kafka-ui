@@ -22,12 +22,13 @@ const setupWrapper = (props?: Partial<FilterModalProps>) =>
     />
   );
 describe('FilterModal component', () => {
-  it('renders component with add filter modal', () => {
+  beforeEach(() => {
     setupWrapper();
+  });
+  it('renders component with add filter modal', () => {
     expect(screen.getByText('Add filter')).toBeInTheDocument();
   });
   it('renders component with edit filter modal', async () => {
-    setupWrapper();
     await waitFor(() => userEvent.click(screen.getByText('Edit')));
     expect(screen.getByText('Edit saved filter')).toBeInTheDocument();
   });
