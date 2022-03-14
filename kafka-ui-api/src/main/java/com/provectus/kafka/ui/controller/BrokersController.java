@@ -25,7 +25,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
 
   @Override
   public Mono<ResponseEntity<BrokerMetricsDTO>> getBrokersMetrics(String clusterName, Integer id,
-                                                               ServerWebExchange exchange) {
+                                                                  ServerWebExchange exchange) {
     return brokerService.getBrokerMetrics(getCluster(clusterName), id)
         .map(ResponseEntity::ok)
         .onErrorReturn(ResponseEntity.notFound().build());
@@ -33,14 +33,14 @@ public class BrokersController extends AbstractController implements BrokersApi 
 
   @Override
   public Mono<ResponseEntity<Flux<BrokerDTO>>> getBrokers(String clusterName,
-                                                       ServerWebExchange exchange) {
+                                                          ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(brokerService.getBrokers(getCluster(clusterName))));
   }
 
   @Override
   public Mono<ResponseEntity<Flux<BrokersLogdirsDTO>>> getAllBrokersLogdirs(String clusterName,
-                                                                         List<Integer> brokers,
-                                                                         ServerWebExchange exchange
+                                                                            List<Integer> brokers,
+                                                                            ServerWebExchange exchange
   ) {
     return Mono.just(ResponseEntity.ok(
         brokerService.getAllBrokersLogdirs(getCluster(clusterName), brokers)));
@@ -48,7 +48,7 @@ public class BrokersController extends AbstractController implements BrokersApi 
 
   @Override
   public Mono<ResponseEntity<Flux<BrokerConfigDTO>>> getBrokerConfig(String clusterName, Integer id,
-                                                                  ServerWebExchange exchange) {
+                                                                     ServerWebExchange exchange) {
     return Mono.just(ResponseEntity.ok(
         brokerService.getBrokerConfig(getCluster(clusterName), id)));
   }

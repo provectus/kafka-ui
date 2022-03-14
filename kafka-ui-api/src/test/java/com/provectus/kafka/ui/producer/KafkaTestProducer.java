@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.producer;
 
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -25,12 +26,20 @@ public class KafkaTestProducer<KeyT, ValueT> implements AutoCloseable {
     )));
   }
 
-  public Future<RecordMetadata> send(String topic, ValueT value) {
-    return producer.send(new ProducerRecord<>(topic, value));
+  public CompletableFuture<RecordMetadata> send(String topic, ValueT value) {
+    return send(new ProducerRecord<>(topic, value));
   }
 
-  public Future<RecordMetadata> send(ProducerRecord<KeyT, ValueT> record) {
-    return producer.send(record);
+  public CompletableFuture<RecordMetadata> send(ProducerRecord<KeyT, ValueT> record) {
+    CompletableFuture<RecordMetadata> cf = new CompletableFuture<>();
+    producer.send(record, (m, e) -> {
+      if (e != null) {
+        cf.completeExceptionally(e);
+      } else {
+        cf.complete(m);
+      }
+    });
+    return cf;
   }
 
   @Override

@@ -1,8 +1,10 @@
 import styled, { css } from 'styled-components';
 import { ServerStatus } from 'generated-sources';
 
-export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
-  ({ theme }) => css`
+export const Wrapper = styled.li.attrs({ role: 'menuitem' })<{
+  isOpen: boolean;
+}>(
+  ({ theme, isOpen }) => css`
     font-size: 14px;
     font-weight: 500;
     user-select: none;
@@ -18,7 +20,7 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
     margin: 0;
     line-height: 20px;
     align-items: center;
-    color: ${theme.menu.color.normal};
+    color: ${isOpen ? theme.menu.color.isOpen : theme.menu.color.normal};
     background-color: ${theme.menu.backgroundColor.normal};
 
     &:hover {
@@ -28,8 +30,12 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })(
   `
 );
 
-export const Title = styled.span`
+export const Title = styled.div`
   grid-area: title;
+  white-space: nowrap;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const StatusIconWrapper = styled.svg.attrs({

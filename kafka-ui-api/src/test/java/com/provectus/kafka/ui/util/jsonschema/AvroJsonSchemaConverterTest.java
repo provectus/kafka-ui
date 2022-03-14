@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonschema.core.exceptions.ProcessingException;
 import com.github.fge.jsonschema.core.report.ProcessingReport;
 import com.github.fge.jsonschema.main.JsonSchemaFactory;
-import com.provectus.kafka.ui.serde.schemaregistry.AvroMessageFormatter;
 import io.confluent.kafka.schemaregistry.avro.AvroSchemaUtils;
 import java.io.IOException;
 import java.net.URI;
@@ -103,7 +102,7 @@ public class AvroJsonSchemaConverterTest {
     Assertions.assertEquals(
         om.readTree(expected),
         om.readTree(
-            convertRecord.toJson(om)
+            convertRecord.toJson()
         )
     );
 
@@ -160,9 +159,7 @@ public class AvroJsonSchemaConverterTest {
     final JsonSchema convert = converter.convert(basePath, recordSchema);
     Assertions.assertEquals(
         objectMapper.readTree(expected),
-        objectMapper.readTree(
-            convert.toJson(objectMapper)
-        )
+        objectMapper.readTree(convert.toJson())
     );
 
 

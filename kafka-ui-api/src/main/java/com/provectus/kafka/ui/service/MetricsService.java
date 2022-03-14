@@ -56,11 +56,11 @@ public class MetricsService {
         .doOnError(e ->
             log.error("Failed to collect cluster {} info", cluster.getName(), e))
         .onErrorResume(
-            e -> Mono.just(MetricsCache.empty().toBuilder().lastKafkaException(e).build()));
+            e -> Mono.just(MetricsCache.Metrics.empty().toBuilder().lastKafkaException(e).build()));
   }
 
   private Mono<InternalLogDirStats> getLogDirInfo(KafkaCluster cluster, ReactiveAdminClient c) {
-    if (cluster.getDisableLogDirsCollection() == null || !cluster.getDisableLogDirsCollection()) {
+    if (!cluster.isDisableLogDirsCollection()) {
       return c.describeLogDirs().map(InternalLogDirStats::new);
     }
     return Mono.just(InternalLogDirStats.empty());

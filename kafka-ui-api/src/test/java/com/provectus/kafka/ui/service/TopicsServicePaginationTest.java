@@ -29,7 +29,7 @@ class TopicsServicePaginationTest {
             .collect(Collectors.toSet())))
         .getMock();
 
-    MetricsCache.Metrics metricsCache = MetricsCache.empty().toBuilder()
+    MetricsCache.Metrics metricsCache = MetricsCache.Metrics.empty().toBuilder()
         .topicDescriptions(
             topicsInCache.stream().collect(Collectors.toMap(TopicDescription::name, d -> d)))
         .build();
