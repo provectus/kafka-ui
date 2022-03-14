@@ -7,7 +7,7 @@ export interface TableState<T, TId extends IdType, OT = never> {
   totalPages?: number;
   idSelector: (row: T) => TId;
   isRowSelectable: (row: T) => boolean;
-  selectedCount: () => number;
+  selectedCount: number;
   setRowsSelection: (rows: T[], selected: boolean) => void;
   toggleSelection: (selected: boolean) => void;
   orderable?: OrderableProps<OT>;
@@ -26,9 +26,7 @@ export const useTableState = <T, TId extends IdType, OT = never>(
 
   const { idSelector, totalPages, isRowSelectable = () => true } = options;
 
-  const selectedCount = useCallback(() => {
-    return selectedIds.size;
-  }, [selectedIds.size]);
+  const selectedCount = selectedIds.size;
 
   const setRowsSelection = useCallback(
     (rows: T[], selected: boolean) => {
@@ -60,9 +58,9 @@ export const useTableState = <T, TId extends IdType, OT = never>(
       totalPages,
       selectedIds,
       orderable,
+      selectedCount,
       idSelector,
       isRowSelectable,
-      selectedCount,
       setRowsSelection,
       toggleSelection,
     };
@@ -71,9 +69,9 @@ export const useTableState = <T, TId extends IdType, OT = never>(
     orderable,
     selectedIds,
     totalPages,
+    selectedCount,
     idSelector,
     isRowSelectable,
-    selectedCount,
     setRowsSelection,
     toggleSelection,
   ]);
