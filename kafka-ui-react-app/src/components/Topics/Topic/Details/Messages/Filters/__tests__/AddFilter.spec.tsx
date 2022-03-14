@@ -4,7 +4,7 @@ import AddFilter, {
 } from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
 import { render } from 'lib/testHelpers';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
@@ -36,48 +36,36 @@ describe('AddFilter component', () => {
     expect(screen.getByText('Created filters')).toBeInTheDocument();
   });
   describe('Filter deletion', () => {
-    it('open deletion modal', async () => {
+    it('open deletion modal', () => {
       setupComponent();
       userEvent.hover(screen.getByRole('savedFilter'));
-      await act(() => {
-        userEvent.click(screen.getByTestId('deleteIcon'));
-      });
+      userEvent.click(screen.getByTestId('deleteIcon'));
       expect(screen.getByRole('deletionModal')).toBeInTheDocument();
     });
-    it('close deletion modal with button', async () => {
+    it('close deletion modal with button', () => {
       setupComponent();
       userEvent.hover(screen.getByRole('savedFilter'));
-      await act(() => {
-        userEvent.click(screen.getByTestId('deleteIcon'));
-      });
+      userEvent.click(screen.getByTestId('deleteIcon'));
       expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-      await act(() => {
-        const cancelButton = screen.getAllByRole('button', { name: /Cancel/i });
-        userEvent.click(cancelButton[0]);
-      });
+      const cancelButton = screen.getAllByRole('button', { name: /Cancel/i });
+      userEvent.click(cancelButton[0]);
       expect(screen.getByText('Created filters')).toBeInTheDocument();
     });
-    it('close deletion modal with close icon', async () => {
+    it('close deletion modal with close icon', () => {
       setupComponent();
       userEvent.hover(screen.getByRole('savedFilter'));
-      await act(() => {
-        userEvent.click(screen.getByTestId('deleteIcon'));
-      });
+      userEvent.click(screen.getByTestId('deleteIcon'));
       expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-      await act(() => {
-        userEvent.click(screen.getByTestId('closeDeletionModalIcon'));
-      });
+      userEvent.click(screen.getByTestId('closeDeletionModalIcon'));
       expect(screen.getByText('Created filters')).toBeInTheDocument();
     });
-    it('delete filter', async () => {
+    it('delete filter', () => {
       const deleteFilter = jest.fn();
       setupComponent({ filters, deleteFilter });
       userEvent.hover(screen.getByRole('savedFilter'));
       userEvent.click(screen.getByTestId('deleteIcon'));
-      await act(() => {
-        userEvent.click(screen.getByRole('button', { name: /Delete/i }));
-        expect(deleteFilter).toHaveBeenCalledTimes(1);
-      });
+      userEvent.click(screen.getByRole('button', { name: /Delete/i }));
+      expect(deleteFilter).toHaveBeenCalledTimes(1);
       expect(screen.getByText('Created filters')).toBeInTheDocument();
     });
   });
@@ -85,8 +73,10 @@ describe('AddFilter component', () => {
     beforeEach(() => {
       setupComponent();
     });
-    it('renders add new filter modal', () => {
-      userEvent.click(screen.getByText('New filter'));
+    it('renders add new filter modal', async () => {
+      await waitFor(() => {
+        userEvent.click(screen.getByText('New filter'));
+      });
       expect(screen.getByText('Create a new filter')).toBeInTheDocument();
     });
     it('adding new filter', async () => {
