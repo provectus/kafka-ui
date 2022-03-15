@@ -62,11 +62,11 @@ export interface ActiveMessageFilter {
 
 const PER_PAGE = 100;
 
-const SeekTypeOptions = [
+export const SeekTypeOptions = [
   { value: SeekType.OFFSET, label: 'Offset' },
   { value: SeekType.TIMESTAMP, label: 'Timestamp' },
 ];
-const SeekDirectionOptions = [
+export const SeekDirectionOptions = [
   { value: SeekDirection.FORWARD, label: 'Oldest First', isLive: false },
   { value: SeekDirection.BACKWARD, label: 'Newest First', isLive: false },
   { value: SeekDirection.TAILING, label: 'Live Mode', isLive: true },
