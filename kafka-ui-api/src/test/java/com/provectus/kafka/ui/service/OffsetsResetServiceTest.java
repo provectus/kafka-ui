@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.exception.NotFoundException;
 import com.provectus.kafka.ui.exception.ValidationException;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -30,12 +30,10 @@ import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-public class OffsetsResetServiceTest extends AbstractBaseTest {
+public class OffsetsResetServiceTest extends AbstractIntegrationTest {
 
   private static final int PARTITIONS = 5;
 

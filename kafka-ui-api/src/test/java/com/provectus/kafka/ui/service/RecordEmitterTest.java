@@ -7,7 +7,7 @@ import static com.provectus.kafka.ui.model.SeekTypeDTO.OFFSET;
 import static com.provectus.kafka.ui.model.SeekTypeDTO.TIMESTAMP;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.provectus.kafka.ui.AbstractBaseTest;
+import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.emitter.BackwardRecordEmitter;
 import com.provectus.kafka.ui.emitter.ForwardRecordEmitter;
 import com.provectus.kafka.ui.model.ConsumerPosition;
@@ -40,14 +40,12 @@ import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.context.ContextConfiguration;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.test.StepVerifier;
 
 @Slf4j
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
-class RecordEmitterTest extends AbstractBaseTest {
+class RecordEmitterTest extends AbstractIntegrationTest {
 
   static final int PARTITIONS = 5;
   static final int MSGS_PER_PARTITION = 100;
