@@ -76,4 +76,32 @@ public class KafkaTopicCreateTests extends AbstractIntegrationTest {
             .jsonPath("replicationFactor").isEqualTo(topicCreation.getReplicationFactor().toString())
             .jsonPath("name").isEqualTo(topicCreation.getName());
   }
+
+  @Test
+  void shouldCloneExistingTopicSuccessfully() {
+    TopicCreationDTO topicCreation = new TopicCreationDTO()
+        .replicationFactor(1)
+        .partitions(3)
+        .name(UUID.randomUUID().toString());
+    String clonedTopicName = UUID.randomUUID().toString();
+
+    webTestClient.post()
+        .uri("/api/clusters/{clusterName}/topics", LOCAL)
+        .bodyValue(topicCreation)
+        .exchange()
+        .expectStatus()
+        .isOk();
+
+    webTestClient.post()
+        .uri("/api/clusters/{clusterName}/topics/{topicName}/clone?newTopicName=" + clonedTopicName,
+            LOCAL, topicCreation.getName())
+        .exchange()
+        .expectStatus()
+        .isCreated()
+        .expectBody()
+        .jsonPath("partitionCount").isEqualTo(topicCreation.getPartitions().toString())
+        .jsonPath("replicationFactor").isEqualTo(topicCreation.getReplicationFactor().toString())
+        .jsonPath("name").isEqualTo(clonedTopicName);
+  }
+
 }

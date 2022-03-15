@@ -47,6 +47,13 @@ public class TopicsController extends AbstractController implements TopicsApi {
   }
 
   @Override
+  public Mono<ResponseEntity<TopicDTO>> cloneTopic(
+      String clusterName, String topicName, String newTopicName, ServerWebExchange exchange) {
+    return topicsService.cloneTopic(getCluster(clusterName), topicName, newTopicName)
+        .map(s -> new ResponseEntity<>(s, HttpStatus.CREATED));
+  }
+
+  @Override
   public Mono<ResponseEntity<Void>> deleteTopic(
       String clusterName, String topicName, ServerWebExchange exchange) {
     return topicsService.deleteTopic(getCluster(clusterName), topicName).map(ResponseEntity::ok);
