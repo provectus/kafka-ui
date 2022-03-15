@@ -23,7 +23,6 @@ public class ClustersProperties {
   public static class Cluster {
     String name;
     String bootstrapServers;
-    String zookeeper;
     String schemaRegistry;
     SchemaRegistryAuth schemaRegistryAuth;
     String ksqldbServer;
