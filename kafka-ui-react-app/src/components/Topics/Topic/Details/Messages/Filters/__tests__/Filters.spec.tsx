@@ -3,7 +3,7 @@ import Filters, {
   FiltersProps,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { render } from 'lib/testHelpers';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const setupWrapper = (props?: Partial<FiltersProps>) =>
@@ -112,7 +112,7 @@ describe('Filters component', () => {
   });
 
   describe('when there is active smart filter', () => {
-    it('shows saved smart filter', async () => {
+    beforeEach(async () => {
       setupWrapper();
 
       await waitFor(() => userEvent.click(screen.getByTestId('addFilterIcon')));
@@ -126,7 +126,22 @@ describe('Filters component', () => {
       await waitFor(() =>
         userEvent.click(screen.getByRole('button', { name: /Add Filter/i }))
       );
+    });
+    it('shows saved smart filter', () => {
       expect(screen.getByTestId('activeSmartFilter')).toBeInTheDocument();
+    });
+    it('delete the active smart Filter', async () => {
+      const smartFilterElement = screen.getByTestId('activeSmartFilter');
+      const deleteIcon = within(smartFilterElement).getByTestId(
+        'activeSmartFilterCloseIcon'
+      );
+      await waitFor(() => {
+        userEvent.click(deleteIcon);
+      });
+
+      const anotherSmartFilterElement =
+        screen.queryByTestId('activeSmartFilter');
+      expect(anotherSmartFilterElement).not.toBeInTheDocument();
     });
   });
 });

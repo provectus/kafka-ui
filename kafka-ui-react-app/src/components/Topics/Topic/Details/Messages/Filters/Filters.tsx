@@ -448,7 +448,10 @@ const Filters: React.FC<FiltersProps> = ({
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
             <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
-              <i className="fas fa-times" />
+              <i
+                className="fas fa-times"
+                data-testid="activeSmartFilterCloseIcon"
+              />
             </S.DeleteSavedFilterIcon>
           </S.ActiveSmartFilter>
         )}
