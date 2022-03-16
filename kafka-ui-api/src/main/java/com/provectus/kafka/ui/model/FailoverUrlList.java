@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
 import lombok.experimental.Delegate;
 
 public class FailoverUrlList {
@@ -24,7 +26,9 @@ public class FailoverUrlList {
 
   public FailoverUrlList(List<String> urls, int retryGracePeriodInMs) {
     if (urls != null && !urls.isEmpty()) {
-      this.urls = new ArrayList<>(urls);
+      this.urls = urls.stream()
+              .map(String::trim)
+              .collect(Collectors.toUnmodifiableList());
     } else {
       throw new IllegalArgumentException("Expected at least one URL to be passed in constructor");
     }

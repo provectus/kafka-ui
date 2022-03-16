@@ -61,7 +61,7 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.0.name", LOCAL);
       System.setProperty("kafka.clusters.0.bootstrapServers", kafka.getBootstrapServers());
       // List unavailable hosts to verify failover
-      System.setProperty("kafka.clusters.0.schemaRegistry", String.format("http://localhost:%1$s,http://localhost:%1$s,%2$s",
+      System.setProperty("kafka.clusters.0.schemaRegistry", String.format("http://localhost:%1$s , http://localhost:%1$s,%2$s",
               SocketUtils.findAvailableTcpPort(), schemaRegistry.getUrl()));
       System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
