@@ -1,12 +1,14 @@
 import React from 'react';
-import { shallow } from 'enzyme';
-import ConsumerGroups from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
+import { render } from 'lib/testHelpers';
+import { screen } from '@testing-library/react';
+import ConsumerGroups, {
+  Props,
+} from 'components/Topics/Topic/Details/ConsumerGroups/TopicConsumerGroups';
 import { ConsumerGroupState } from 'generated-sources';
 
-describe('Details', () => {
-  const mockFn = jest.fn();
-  const mockClusterName = 'local';
-  const mockTopicName = 'local';
+describe('TopicConsumerGroups', () => {
+  const mockClusterName = 'localClusterName';
+  const mockTopicName = 'localTopicName';
   const mockWithConsumerGroup = [
     {
       groupId: 'amazon.msk.canary.group.broker-7',
@@ -30,29 +32,40 @@ describe('Details', () => {
     },
   ];
 
-  it("don't render ConsumerGroups in Topic", () => {
-    const component = shallow(
+  const setUpComponent = (props: Partial<Props> = {}) => {
+    const { name, topicName, consumerGroups, isFetched } = props;
+
+    return render(
       <ConsumerGroups
         clusterName={mockClusterName}
-        consumerGroups={[]}
-        name={mockTopicName}
-        fetchTopicConsumerGroups={mockFn}
-        topicName={mockTopicName}
+        consumerGroups={consumerGroups?.length ? consumerGroups : []}
+        name={name || mockTopicName}
+        fetchTopicConsumerGroups={jest.fn()}
+        topicName={topicName || mockTopicName}
+        isFetched={'isFetched' in props ? !!isFetched : false}
       />
     );
-    expect(component.find('td').text()).toEqual('No active consumer groups');
+  };
+
+  describe('Default Setup', () => {
+    beforeEach(() => {
+      setUpComponent();
+    });
+    it('should view the Page loader when it is fetching state', () => {
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
+  });
+
+  it("don't render ConsumerGroups in Topic", () => {
+    setUpComponent({ isFetched: true });
+    expect(screen.getByText(/No active consumer groups/i)).toBeInTheDocument();
   });
 
   it('render ConsumerGroups in Topic', () => {
-    const component = shallow(
-      <ConsumerGroups
-        clusterName={mockClusterName}
-        consumerGroups={mockWithConsumerGroup}
-        name={mockTopicName}
-        fetchTopicConsumerGroups={mockFn}
-        topicName={mockTopicName}
-      />
-    );
-    expect(component.exists('tbody')).toBeTruthy();
+    setUpComponent({
+      consumerGroups: mockWithConsumerGroup,
+      isFetched: true,
+    });
+    expect(screen.getAllByRole('rowgroup')).toHaveLength(2);
   });
 });
