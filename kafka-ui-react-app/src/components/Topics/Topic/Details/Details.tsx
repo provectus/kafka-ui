@@ -22,6 +22,7 @@ import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
+import * as S from 'components/Topics/Topic/Details/Details.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -64,19 +65,19 @@ const Details: React.FC<Props> = ({
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
-  }, [clusterName, deleteTopic, topicName]);
+  }, [clusterName, topicName, deleteTopic]);
 
   React.useEffect(() => {
     if (isDeleted) {
       dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
-  }, [clusterName, dispatch, history, isDeleted]);
+  }, [isDeleted, clusterName, dispatch, history]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
     setClearTopicConfirmationVisible(false);
-  }, [clearTopicMessages, clusterName, topicName]);
+  }, [clusterName, topicName, clearTopicMessages]);
 
   return (
     <div>
@@ -101,6 +102,11 @@ const Details: React.FC<Props> = ({
                   }
                 >
                   Edit settings
+                  <S.DropdownExtraMessage>
+                    Pay attention! This operation has
+                    <br />
+                    especially important consequences.
+                  </S.DropdownExtraMessage>
                 </DropdownItem>
                 {isDeletePolicy && (
                   <DropdownItem

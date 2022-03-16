@@ -7,6 +7,7 @@ export const Colors = {
     '10': '#E3E6E8',
     '15': '#D5DADD',
     '20': '#C7CED1',
+    '25': '#C4C4C4',
     '30': '#ABB5BA',
     '40': '#8F9CA3',
     '50': '#73848C',
@@ -195,6 +196,7 @@ const theme = {
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
+    deletionTextColor: Colors.neutral[70],
   },
   table: {
     th: {
@@ -430,9 +432,17 @@ const theme = {
       circleBig: Colors.red[10],
       circleSmall: Colors.red[50],
     },
+    newFilterIcon: Colors.brand[50],
+    closeModalIcon: Colors.neutral[25],
   },
   viewer: {
     wrapper: Colors.neutral[3],
+  },
+  savedFilterDivider: {
+    color: Colors.neutral[15],
+  },
+  editFilterText: {
+    color: Colors.brand[50],
   },
 };
 
