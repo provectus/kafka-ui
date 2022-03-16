@@ -164,7 +164,7 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_CLUSTERS_0_ZOOKEEPER` 	| Zookeeper service address 
 |`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address 
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
-|`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|Comma separated list of SchemaRegistries full addresses (scheme + host + port). When provided a list the first registry will act as the primary node the others will acts as failover registries and will not be called unless the first one fails. Upon failure the next node will act as primary node untill restart or it also fails.
+|`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|Single value or comma separated list of SchemaRegistries full addresses (scheme + host + port). When provided a list the first registry will act as the primary node the others will acts as failover registries and will not be called unless the first one fails. Upon failure the next node will act as primary node untill restart or it also fails.
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_USERNAME`   	|SchemaRegistry's basic authentication username
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRYAUTH_PASSWORD`   	|SchemaRegistry's basic authentication password
 |`KAFKA_CLUSTERS_0_SCHEMANAMETEMPLATE` |How keys are saved to schemaRegistry
