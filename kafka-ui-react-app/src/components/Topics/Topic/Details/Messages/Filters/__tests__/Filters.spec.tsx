@@ -1,9 +1,11 @@
 import React from 'react';
 import Filters, {
   FiltersProps,
+  SeekDirectionOptions,
+  SeekTypeOptions,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { render } from 'lib/testHelpers';
-import { screen } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const setupWrapper = (props?: Partial<FiltersProps>) =>
@@ -71,23 +73,35 @@ describe('Filters component', () => {
     });
   });
   describe('Select elements', () => {
-    it('seekType select', () => {
+    let seekTypeSelects: HTMLElement[];
+    let options: HTMLElement[];
+    const selectedDirectionOptionValue = SeekDirectionOptions[0];
+
+    const mockDirectionOptionSelectLabel = selectedDirectionOptionValue.label;
+
+    const selectTypeOptionValue = SeekTypeOptions[0];
+
+    const mockTypeOptionSelectLabel = selectTypeOptionValue.label;
+
+    beforeEach(() => {
       setupWrapper();
-      const seekTypeSelect = screen.getAllByRole('listbox');
-      const option = screen.getAllByRole('option');
-      expect(option[0]).toHaveTextContent('Offset');
-      userEvent.click(seekTypeSelect[0]);
-      userEvent.selectOptions(seekTypeSelect[0], ['Timestamp']);
-      expect(option[0]).toHaveTextContent('Timestamp');
+      seekTypeSelects = screen.getAllByRole('listbox');
+      options = screen.getAllByRole('option');
+    });
+
+    it('seekType select', () => {
+      expect(options[0]).toHaveTextContent('Offset');
+      userEvent.click(seekTypeSelects[0]);
+      userEvent.selectOptions(seekTypeSelects[0], [mockTypeOptionSelectLabel]);
+      expect(options[0]).toHaveTextContent(mockTypeOptionSelectLabel);
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
     it('seekDirection select', () => {
-      setupWrapper();
-      const seekDirectionSelect = screen.getAllByRole('listbox');
-      const option = screen.getAllByRole('option');
-      userEvent.click(seekDirectionSelect[1]);
-      userEvent.selectOptions(seekDirectionSelect[1], ['Newest First']);
-      expect(option[1]).toHaveTextContent('Newest First');
+      userEvent.click(seekTypeSelects[1]);
+      userEvent.selectOptions(seekTypeSelects[1], [
+        mockDirectionOptionSelectLabel,
+      ]);
+      expect(options[1]).toHaveTextContent(mockDirectionOptionSelectLabel);
     });
   });
 
@@ -100,6 +114,48 @@ describe('Filters component', () => {
       const option = screen.getAllByRole('option');
       expect(option[1]).toHaveTextContent('Oldest First');
       expect(screen.getByText('Submit')).toBeInTheDocument();
+    });
+  });
+
+  describe('add new filter modal', () => {
+    it('renders addFilter modal', () => {
+      setupWrapper();
+      userEvent.click(screen.getByTestId('addFilterIcon'));
+      expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
+    });
+  });
+
+  describe('when there is active smart filter', () => {
+    beforeEach(async () => {
+      setupWrapper();
+
+      await waitFor(() => userEvent.click(screen.getByTestId('addFilterIcon')));
+      userEvent.click(screen.getByText('New filter'));
+      await waitFor(() => {
+        userEvent.type(screen.getAllByRole('textbox')[2], 'filter name');
+        userEvent.type(screen.getAllByRole('textbox')[3], 'filter code');
+      });
+      expect(screen.getAllByRole('textbox')[2]).toHaveValue('filter name');
+      expect(screen.getAllByRole('textbox')[3]).toHaveValue('filter code');
+      await waitFor(() =>
+        userEvent.click(screen.getByRole('button', { name: /Add Filter/i }))
+      );
+    });
+    it('shows saved smart filter', () => {
+      expect(screen.getByTestId('activeSmartFilter')).toBeInTheDocument();
+    });
+    it('delete the active smart Filter', async () => {
+      const smartFilterElement = screen.getByTestId('activeSmartFilter');
+      const deleteIcon = within(smartFilterElement).getByTestId(
+        'activeSmartFilterCloseIcon'
+      );
+      await waitFor(() => {
+        userEvent.click(deleteIcon);
+      });
+
+      const anotherSmartFilterElement =
+        screen.queryByTestId('activeSmartFilter');
+      expect(anotherSmartFilterElement).not.toBeInTheDocument();
     });
   });
 });
