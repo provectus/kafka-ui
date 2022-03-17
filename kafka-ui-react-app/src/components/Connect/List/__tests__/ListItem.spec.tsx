@@ -93,9 +93,4 @@ describe('Connectors ListItem', () => {
     modalProps.onConfirm();
     expect(mockDeleteConnector).toHaveBeenCalledTimes(0);
   });
-
-  it('matches snapshot', () => {
-    const wrapper = mount(setupWrapper());
-    expect(wrapper).toMatchSnapshot();
-  });
 });

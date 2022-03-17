@@ -76,7 +76,7 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
             rowIndex={-1}
             el="th"
             selectable
-            selected={tableState.selectedCount() === tableState.data.length}
+            selected={tableState.selectedCount === tableState.data.length}
             onChange={tableState.toggleSelection}
           />
         ) : (

@@ -41,7 +41,7 @@ describe('Details', () => {
 
   describe('when it has readonly flag', () => {
     it('does not render the Action button a Topic', () => {
-      const { baseElement } = render(
+      render(
         <ClusterContext.Provider
           value={{
             isReadOnly: true,
@@ -65,7 +65,6 @@ describe('Details', () => {
       );
 
       expect(screen.queryByText('Produce Message')).not.toBeInTheDocument();
-      expect(baseElement).toMatchSnapshot();
     });
   });
 

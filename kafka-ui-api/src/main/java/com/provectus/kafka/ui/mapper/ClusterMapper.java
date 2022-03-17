@@ -12,6 +12,7 @@ import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.ConfigSourceDTO;
 import com.provectus.kafka.ui.model.ConfigSynonymDTO;
 import com.provectus.kafka.ui.model.ConnectDTO;
+import com.provectus.kafka.ui.model.FailoverUrlList;
 import com.provectus.kafka.ui.model.Feature;
 import com.provectus.kafka.ui.model.InternalBrokerConfig;
 import com.provectus.kafka.ui.model.InternalBrokerDiskUsage;
@@ -97,8 +98,8 @@ public interface ClusterMapper {
 
     internalSchemaRegistry.url(
         clusterProperties.getSchemaRegistry() != null
-            ? Arrays.asList(clusterProperties.getSchemaRegistry().split(","))
-            : Collections.emptyList()
+            ? new FailoverUrlList(Arrays.asList(clusterProperties.getSchemaRegistry().split(",")))
+            : new FailoverUrlList(Collections.emptyList())
     );
 
     if (clusterProperties.getSchemaRegistryAuth() != null) {

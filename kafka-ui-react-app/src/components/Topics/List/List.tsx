@@ -272,7 +272,7 @@ const List: React.FC<TopicsListProps> = ({
         <PageLoader />
       ) : (
         <div>
-          {tableState.selectedCount() > 0 && (
+          {tableState.selectedCount > 0 && (
             <>
               <ControlPanelWrapper data-testid="delete-buttons">
                 <Button
