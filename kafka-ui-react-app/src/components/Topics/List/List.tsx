@@ -10,23 +10,35 @@ import { clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import Pagination from 'components/common/Pagination/Pagination';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import {
+  CleanUpPolicy,
   GetTopicsRequest,
   SortOrder,
   TopicColumnsToSort,
 } from 'generated-sources';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import Search from 'components/common/Search/Search';
 import { PER_PAGE } from 'lib/constants';
-import { Table } from 'components/common/table/Table/Table.styled';
 import { Button } from 'components/common/Button/Button';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Switch from 'components/common/Switch/Switch';
+import { SmartTable } from 'components/common/SmartTable/SmartTable';
+import {
+  TableCellProps,
+  TableColumn,
+} from 'components/common/SmartTable/TableColumn';
+import { useTableState } from 'lib/hooks/useTableState';
+import Dropdown from 'components/common/Dropdown/Dropdown';
+import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
+import DropdownItem from 'components/common/Dropdown/DropdownItem';
 
-import ListItem from './ListItem';
+import {
+  MessagesCell,
+  OutOfSyncReplicasCell,
+  TitleCell,
+  TopicSizeCell,
+} from './TopicsTableCells';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -63,7 +75,8 @@ const List: React.FC<TopicsListProps> = ({
   setTopicsSearch,
   setTopicsOrderBy,
 }) => {
-  const { isReadOnly } = React.useContext(ClusterContext);
+  const { isReadOnly, isTopicDeletionAllowed } =
+    React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage, pathname } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
@@ -90,6 +103,24 @@ const List: React.FC<TopicsListProps> = ({
     showInternal,
   ]);
 
+  const tableState = useTableState<
+    TopicWithDetailedInfo,
+    string,
+    TopicColumnsToSort
+  >(
+    topics,
+    {
+      idSelector: (topic) => topic.name,
+      totalPages,
+      isRowSelectable: (topic) => !topic.internal,
+    },
+    {
+      handleOrderBy: setTopicsOrderBy,
+      orderBy,
+      sortOrder,
+    }
+  );
+
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
     history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
@@ -103,42 +134,79 @@ const List: React.FC<TopicsListProps> = ({
     setConfirmationModal('');
   };
 
-  const [selectedTopics, setSelectedTopics] = React.useState<Set<string>>(
-    new Set()
-  );
-
-  const clearSelectedTopics = () => {
-    setSelectedTopics(new Set());
-  };
-
-  const toggleTopicSelected = (topicName: string) => {
-    setSelectedTopics((prevState) => {
-      const newState = new Set(prevState);
-      if (newState.has(topicName)) {
-        newState.delete(topicName);
-      } else {
-        newState.add(topicName);
-      }
-      return newState;
-    });
-  };
+  const clearSelectedTopics = React.useCallback(() => {
+    tableState.toggleSelection(false);
+  }, [tableState]);
 
   const deleteTopicsHandler = React.useCallback(() => {
-    deleteTopics(clusterName, Array.from(selectedTopics));
+    deleteTopics(clusterName, Array.from(tableState.selectedIds));
     closeConfirmationModal();
     clearSelectedTopics();
-  }, [clusterName, deleteTopics, selectedTopics]);
+  }, [clearSelectedTopics, clusterName, deleteTopics, tableState.selectedIds]);
   const purgeMessagesHandler = React.useCallback(() => {
-    clearTopicsMessages(clusterName, Array.from(selectedTopics));
+    clearTopicsMessages(clusterName, Array.from(tableState.selectedIds));
     closeConfirmationModal();
     clearSelectedTopics();
-  }, [clearTopicsMessages, clusterName, selectedTopics]);
+  }, [
+    clearSelectedTopics,
+    clearTopicsMessages,
+    clusterName,
+    tableState.selectedIds,
+  ]);
+
   const searchHandler = React.useCallback(
     (searchString: string) => {
       setTopicsSearch(searchString);
       history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
     },
     [setTopicsSearch, history, pathname, perPage]
+  );
+
+  const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
+    ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
+      const [
+        isDeleteTopicConfirmationVisible,
+        setDeleteTopicConfirmationVisible,
+      ] = React.useState(false);
+
+      const deleteTopicHandler = React.useCallback(() => {
+        deleteTopic(clusterName, name);
+      }, [name]);
+
+      const clearTopicMessagesHandler = React.useCallback(() => {
+        clearTopicMessages(clusterName, name);
+      }, [name]);
+      return (
+        <>
+          {!internal && !isReadOnly && hovered ? (
+            <div className="has-text-right">
+              <Dropdown label={<VerticalElipsisIcon />} right>
+                {cleanUpPolicy === CleanUpPolicy.DELETE && (
+                  <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                    Clear Messages
+                  </DropdownItem>
+                )}
+                {isTopicDeletionAllowed && (
+                  <DropdownItem
+                    onClick={() => setDeleteTopicConfirmationVisible(true)}
+                    danger
+                  >
+                    Remove Topic
+                  </DropdownItem>
+                )}
+              </Dropdown>
+            </div>
+          ) : null}
+          <ConfirmationModal
+            isOpen={isDeleteTopicConfirmationVisible}
+            onCancel={() => setDeleteTopicConfirmationVisible(false)}
+            onConfirm={deleteTopicHandler}
+          >
+            Are you sure want to remove <b>{name}</b> topic?
+          </ConfirmationModal>
+        </>
+      );
+    }
   );
 
   return (
@@ -178,7 +246,7 @@ const List: React.FC<TopicsListProps> = ({
         <PageLoader />
       ) : (
         <div>
-          {selectedTopics.size > 0 && (
+          {tableState.selectedCount > 0 && (
             <>
               <ControlPanelWrapper data-testid="delete-buttons">
                 <Button
@@ -215,62 +283,43 @@ const List: React.FC<TopicsListProps> = ({
               </ConfirmationModal>
             </>
           )}
-          <Table isFullwidth>
-            <thead>
-              <tr>
-                {!isReadOnly && <TableHeaderCell />}
-                <TableHeaderCell
-                  title="Topic Name"
-                  orderValue={TopicColumnsToSort.NAME}
-                  orderBy={orderBy}
-                  sortOrder={sortOrder}
-                  handleOrderBy={setTopicsOrderBy}
-                />
-                <TableHeaderCell
-                  title="Total Partitions"
-                  orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
-                  orderBy={orderBy}
-                  sortOrder={sortOrder}
-                  handleOrderBy={setTopicsOrderBy}
-                />
-                <TableHeaderCell
-                  title="Out of sync replicas"
-                  orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
-                  orderBy={orderBy}
-                  sortOrder={sortOrder}
-                  handleOrderBy={setTopicsOrderBy}
-                />
-                <TableHeaderCell title="Replication Factor" />
-                <TableHeaderCell title="Number of messages" />
-                <TableHeaderCell
-                  title="Size"
-                  orderValue={TopicColumnsToSort.SIZE}
-                  orderBy={orderBy}
-                  sortOrder={sortOrder}
-                  handleOrderBy={setTopicsOrderBy}
-                />
-              </tr>
-            </thead>
-            <tbody>
-              {topics.map((topic) => (
-                <ListItem
-                  clusterName={clusterName}
-                  key={topic.name}
-                  topic={topic}
-                  selected={selectedTopics.has(topic.name)}
-                  toggleTopicSelected={toggleTopicSelected}
-                  deleteTopic={deleteTopic}
-                  clearTopicMessages={clearTopicMessages}
-                />
-              ))}
-              {topics.length === 0 && (
-                <tr>
-                  <td colSpan={10}>No topics found</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-          <Pagination totalPages={totalPages} />
+          <SmartTable
+            selectable={!isReadOnly}
+            tableState={tableState}
+            placeholder="No topics found"
+            isFullwidth
+            paginated
+            hoverable
+          >
+            <TableColumn
+              width="44%"
+              title="Topic Name"
+              cell={TitleCell}
+              orderValue={TopicColumnsToSort.NAME}
+            />
+            <TableColumn
+              title="Total Partitions"
+              field="partitions.length"
+              orderValue={TopicColumnsToSort.TOTAL_PARTITIONS}
+            />
+            <TableColumn
+              title="Out of sync replicas"
+              cell={OutOfSyncReplicasCell}
+              orderValue={TopicColumnsToSort.OUT_OF_SYNC_REPLICAS}
+            />
+            <TableColumn title="Replication Factor" field="replicationFactor" />
+            <TableColumn title="Number of messages" cell={MessagesCell} />
+            <TableColumn
+              title="Size"
+              cell={TopicSizeCell}
+              orderValue={TopicColumnsToSort.SIZE}
+            />
+            <TableColumn
+              width="4%"
+              className="topic-action-block"
+              cell={ActionsCell}
+            />
+          </SmartTable>
         </div>
       )}
     </div>
