@@ -1,7 +1,9 @@
+import Heading from 'components/common/heading/Heading.styled';
+import React from 'react';
 import styled from 'styled-components';
 import theme from 'theme/theme';
 
-export const LatestVersionWrapper = styled.div`
+export const Wrapper = styled.div`
   width: 100%;
   background-color: ${theme.layout.stuffColor};
   padding: 16px;
@@ -20,11 +22,6 @@ export const LatestVersionWrapper = styled.div`
   & > div:first-child {
     border-radius: 8px 0 0 8px;
     flex-grow: 2;
-
-    & > h1 {
-      font-size: 16px;
-      font-weight: 500;
-    }
   }
 
   & > div:last-child {
@@ -39,8 +36,9 @@ export const LatestVersionWrapper = styled.div`
   }
 `;
 
-export const MetaDataLabel = styled.h3`
-  color: ${theme.heading.h3.color};
+export const MetaDataLabel = styled((props) => (
+  <Heading level={4} {...props} />
+))`
+  color: ${theme.lastestVersionItem.metaDataLabel.color};
   width: 110px;
-  font-size: ${theme.heading.h3.fontSize};
 `;

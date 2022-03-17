@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Details view matches snapshot 1`] = `
-.c1 {
+.c2 {
   display: -webkit-box;
   display: -webkit-flex;
   display: -ms-flexbox;
@@ -9,7 +9,7 @@ exports[`Details view matches snapshot 1`] = `
   border-bottom: 1px #E3E6E8 solid;
 }
 
-.c1 a {
+.c2 a {
   height: 40px;
   width: 96px;
   display: -webkit-box;
@@ -30,14 +30,23 @@ exports[`Details view matches snapshot 1`] = `
   border-bottom: 1px transparent solid;
 }
 
-.c1 a.is-active {
+.c2 a.is-active {
   border-bottom: 1px #4C4CFF solid;
   color: #171A1C;
 }
 
-.c1 a:hover:not(.is-active) {
+.c2 a:hover:not(.is-active) {
   border-bottom: 1px transparent solid;
   color: #171A1C;
+}
+
+.c1 {
+  font-family: Inter,sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  color: #000;
+  font-size: 24px;
+  line-height: 32px;
 }
 
 .c0 {
@@ -57,13 +66,6 @@ exports[`Details view matches snapshot 1`] = `
   padding: 0px 16px;
 }
 
-.c0 h1 {
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 32px;
-  color: #171A1C;
-}
-
 .c0 > div {
   display: -webkit-box;
   display: -webkit-flex;
@@ -76,7 +78,9 @@ exports[`Details view matches snapshot 1`] = `
   <div
     className="c0"
   >
-    <h1>
+    <h1
+      className="c1"
+    >
       my-connector
     </h1>
     <div>
@@ -84,7 +88,7 @@ exports[`Details view matches snapshot 1`] = `
     </div>
   </div>
   <nav
-    className="c1"
+    className="c2"
     role="navigation"
   >
     <a
