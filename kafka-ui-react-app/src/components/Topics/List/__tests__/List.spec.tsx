@@ -155,7 +155,7 @@ describe('List', () => {
       </StaticRouter>
     );
     const getCheckboxInput = (at: number) =>
-      component.find('ListItem').at(at).find('input[type="checkbox"]').at(0);
+      component.find('TableRow').at(at).find('input[type="checkbox"]').at(0);
 
     const getConfirmationModal = () =>
       component.find('mock-ConfirmationModal').at(0);
@@ -166,12 +166,12 @@ describe('List', () => {
       expect(component.find('.buttons').length).toEqual(0);
 
       // check first item
-      getCheckboxInput(0).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: true } });
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
 
       // check second item
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(1).simulate('change', { target: { checked: true } });
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeTruthy();
       expect(
@@ -179,7 +179,7 @@ describe('List', () => {
       ).toEqual(1);
 
       // uncheck second item
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(1).simulate('change', { target: { checked: false } });
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
       expect(
@@ -187,7 +187,7 @@ describe('List', () => {
       ).toEqual(1);
 
       // uncheck first item
-      getCheckboxInput(0).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: false } });
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
       expect(
@@ -203,8 +203,8 @@ describe('List', () => {
           : 'Are you sure you want to purge messages of selected topics?';
       const mockFn =
         action === 'deleteTopics' ? mockDeleteTopics : mockClearTopicsMessages;
-      getCheckboxInput(0).simulate('change');
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: true } });
+      getCheckboxInput(1).simulate('change', { target: { checked: true } });
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
       component
@@ -240,8 +240,8 @@ describe('List', () => {
     });
 
     it('closes ConfirmationModal when clicked on the cancel button', async () => {
-      getCheckboxInput(0).simulate('change');
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: true } });
+      getCheckboxInput(1).simulate('change', { target: { checked: true } });
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
       component
