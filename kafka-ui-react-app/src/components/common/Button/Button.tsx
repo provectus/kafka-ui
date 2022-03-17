@@ -8,7 +8,7 @@ interface Props
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     ButtonProps {
   isLink?: boolean;
-  to?: string;
+  to?: string | object;
 }
 
 export const Button: React.FC<Props> = ({ isLink, to, ...props }) => {

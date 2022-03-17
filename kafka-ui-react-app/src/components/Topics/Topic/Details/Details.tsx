@@ -22,6 +22,7 @@ import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import styled from 'styled-components';
 import Navbar from 'components/common/Navigation/Navbar.styled';
+import * as S from 'components/Topics/Topic/Details/Details.styled';
 
 import OverviewContainer from './Overview/OverviewContainer';
 import TopicConsumerGroupsContainer from './ConsumerGroups/TopicConsumerGroupsContainer';
@@ -64,28 +65,25 @@ const Details: React.FC<Props> = ({
     React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
-  }, [clusterName, topicName]);
+  }, [clusterName, topicName, deleteTopic]);
 
   React.useEffect(() => {
     if (isDeleted) {
       dispatch(deleteTopicAction.cancel());
       history.push(clusterTopicsPath(clusterName));
     }
-  }, [isDeleted]);
+  }, [isDeleted, clusterName, dispatch, history]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, topicName);
     setClearTopicConfirmationVisible(false);
-  }, [clusterName, topicName]);
+  }, [clusterName, topicName, clearTopicMessages]);
 
   return (
     <div>
       <PageHeading text={topicName}>
         <HeaderControlsWrapper>
-          <Route
-            exact
-            path="/ui/clusters/:clusterName/topics/:topicName/messages"
-          >
+          <Route exact path="/clusters/:clusterName/topics/:topicName/messages">
             <Button
               buttonSize="M"
               buttonType="primary"
@@ -96,7 +94,7 @@ const Details: React.FC<Props> = ({
             </Button>
           </Route>
           {!isReadOnly && !isInternal && (
-            <Route path="/ui/clusters/:clusterName/topics/:topicName">
+            <Route path="/clusters/:clusterName/topics/:topicName">
               <Dropdown label={<VerticalElipsisIcon />} right>
                 <DropdownItem
                   onClick={() =>
@@ -104,6 +102,11 @@ const Details: React.FC<Props> = ({
                   }
                 >
                   Edit settings
+                  <S.DropdownExtraMessage>
+                    Pay attention! This operation has
+                    <br />
+                    especially important consequences.
+                  </S.DropdownExtraMessage>
                 </DropdownItem>
                 {isDeletePolicy && (
                   <DropdownItem
@@ -173,22 +176,22 @@ const Details: React.FC<Props> = ({
       <Switch>
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/messages"
+          path="/clusters/:clusterName/topics/:topicName/messages"
           component={Messages}
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/settings"
+          path="/clusters/:clusterName/topics/:topicName/settings"
           component={SettingsContainer}
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName"
+          path="/clusters/:clusterName/topics/:topicName"
           component={OverviewContainer}
         />
         <Route
           exact
-          path="/ui/clusters/:clusterName/topics/:topicName/consumer-groups"
+          path="/clusters/:clusterName/topics/:topicName/consumer-groups"
           component={TopicConsumerGroupsContainer}
         />
       </Switch>

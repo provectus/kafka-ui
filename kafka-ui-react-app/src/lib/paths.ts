@@ -12,7 +12,7 @@ export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
 
 export const clusterPath = (clusterName: ClusterName) =>
-  `/ui/clusters/${clusterName}`;
+  `/clusters/${clusterName}`;
 
 // Brokers
 export const clusterBrokersPath = (clusterName: ClusterName) =>
@@ -43,6 +43,10 @@ export const clusterSchemaEditPath = (
   clusterName: ClusterName,
   subject: SchemaName
 ) => `${clusterSchemasPath(clusterName)}/${subject}/edit`;
+export const clusterSchemaSchemaDiffPath = (
+  clusterName: ClusterName,
+  subject: SchemaName
+) => `${clusterSchemaPath(clusterName, subject)}/diff`;
 
 // Topics
 export const clusterTopicsPath = (clusterName: ClusterName) =>
@@ -81,7 +85,7 @@ export const clusterConnectorsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/connectors`;
 export const clusterConnectorNewPath = (clusterName: ClusterName) =>
   `${clusterConnectorsPath(clusterName)}/create-new`;
-const clusterConnectConnectorsPath = (
+export const clusterConnectConnectorsPath = (
   clusterName: ClusterName,
   connectName: ConnectName
 ) => `${clusterConnectsPath(clusterName)}/${connectName}/connectors`;

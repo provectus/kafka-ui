@@ -15,7 +15,6 @@ import org.apache.zookeeper.ZooKeeper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 @Service
 @RequiredArgsConstructor
@@ -57,12 +56,22 @@ public class ZookeeperService {
       zkClient.getChildren("/brokers/ids", null);
     } catch (KeeperException e) {
       log.error("A zookeeper exception has occurred", e);
+      closeZkClientSession(zkClient, e);
       return false;
     } catch (InterruptedException e) {
       log.error("Interrupted: ", e);
       Thread.currentThread().interrupt();
     }
     return true;
+  }
+
+  private void closeZkClientSession(ZooKeeper zkClient, KeeperException e) {
+    try {
+      zkClient.close();
+    } catch (InterruptedException ex) {
+      log.error("Unable to close zkClient session: ", e);
+      Thread.currentThread().interrupt();
+    }
   }
 
   @Nullable
@@ -82,10 +91,11 @@ public class ZookeeperService {
 
   private ZooKeeper createClient(KafkaCluster cluster) {
     try {
-      return new ZooKeeper(cluster.getZookeeper(), 60 * 1000, watchedEvent -> {});
+      return new ZooKeeper(cluster.getZookeeper(), 60 * 1000, watchedEvent -> {
+      });
     } catch (IOException e) {
       log.error("Error while creating a zookeeper client for cluster [{}]",
-              cluster.getName());
+          cluster.getName());
       throw new ZooKeeperException(e);
     }
   }

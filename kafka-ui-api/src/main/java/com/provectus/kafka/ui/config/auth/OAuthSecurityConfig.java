@@ -39,14 +39,14 @@ public class OAuthSecurityConfig extends AbstractAuthSecurityConfig {
         .authenticated();
 
     if (IS_OAUTH2_PRESENT && OAuth2ClasspathGuard.shouldConfigure(this.context)) {
-      OAuth2ClasspathGuard.configure(this.context, http);
+      OAuth2ClasspathGuard.configure(http);
     }
 
     return http.csrf().disable().build();
   }
 
   private static class OAuth2ClasspathGuard {
-    static void configure(ApplicationContext context, ServerHttpSecurity http) {
+    static void configure(ServerHttpSecurity http) {
       http
           .oauth2Login()
           .and()

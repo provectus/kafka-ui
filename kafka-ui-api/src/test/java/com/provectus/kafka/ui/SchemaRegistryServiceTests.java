@@ -13,18 +13,14 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
 import reactor.core.publisher.Mono;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 @Slf4j
-@AutoConfigureWebTestClient(timeout = "10000")
-class SchemaRegistryServiceTests extends AbstractBaseTest {
+class SchemaRegistryServiceTests extends AbstractIntegrationTest {
   @Autowired
   WebTestClient webTestClient;
   String subject;

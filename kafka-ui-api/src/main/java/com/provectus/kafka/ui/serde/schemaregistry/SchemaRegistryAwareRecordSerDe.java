@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +72,10 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
           "You specified password but do not specified username");
     }
     return new CachedSchemaRegistryClient(
-        cluster.getSchemaRegistry().getUrl(),
+        cluster.getSchemaRegistry()
+                .getUrl()
+                .stream()
+                .collect(Collectors.toUnmodifiableList()),
         1_000,
         schemaProviders,
         configs
@@ -113,7 +117,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
                                          DeserializedKeyValueBuilder builder) {
     Optional<Integer> schemaId = extractSchemaIdFromMsg(rec, isKey);
     Optional<MessageFormat> format = schemaId.flatMap(this::getMessageFormatBySchemaId);
-    if (format.isPresent() && schemaRegistryFormatters.containsKey(format.get())) {
+    if (schemaId.isPresent() && format.isPresent() && schemaRegistryFormatters.containsKey(format.get())) {
       var formatter = schemaRegistryFormatters.get(format.get());
       try {
         var deserialized = formatter.format(rec.topic(), isKey ? rec.key().get() : rec.value().get());
@@ -135,12 +139,13 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
     // fallback
     if (isKey) {
-      builder.key(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.key(FALLBACK_FORMATTER.format(rec.topic(), rec.key().get()));
       builder.keyFormat(FALLBACK_FORMATTER.getFormat());
     } else {
-      builder.value(FALLBACK_FORMATTER.format(rec.topic(), isKey ? rec.key().get() : rec.value().get()));
+      builder.value(FALLBACK_FORMATTER.format(rec.topic(), rec.value().get()));
       builder.valueFormat(FALLBACK_FORMATTER.getFormat());
     }
+
   }
 
   @Override
@@ -202,14 +207,14 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(maybeKeySchema.map(
-            (s) -> schemaSubject(topic, true)
+            s -> schemaSubject(topic, true)
         ).orElse("unknown"))
         .source(MessageSchemaDTO.SourceEnum.SCHEMA_REGISTRY)
         .schema(sourceKeySchema);
 
     final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(maybeValueSchema.map(
-            (s) -> schemaSubject(topic, false)
+            s -> schemaSubject(topic, false)
         ).orElse("unknown"))
         .source(MessageSchemaDTO.SourceEnum.SCHEMA_REGISTRY)
         .schema(sourceValueSchema);
@@ -223,7 +228,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private String convertSchema(SchemaMetadata schema) {
 
     String jsonSchema;
-    URI basePath = new URI(cluster.getSchemaRegistry().getFirstUrl())
+    URI basePath = new URI(cluster.getSchemaRegistry().getPrimaryNodeUri())
         .resolve(Integer.toString(schema.getId()));
     final ParsedSchema schemaById = schemaRegistryClient.getSchemaById(schema.getId());
 
