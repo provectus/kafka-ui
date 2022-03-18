@@ -7,17 +7,17 @@ import List from 'components/ConsumerGroups/List/List';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
-  fetchConsumerGroups,
-  getAreConsumerGroupsFulfilled,
+  fetchConsumerGroupsPaged,
+  getAreConsumerGroupsPagedFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
 const ConsumerGroups: React.FC = () => {
   const dispatch = useAppDispatch();
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
-  const isFetched = useAppSelector(getAreConsumerGroupsFulfilled);
+  const isFetched = useAppSelector(getAreConsumerGroupsPagedFulfilled);
   React.useEffect(() => {
-    dispatch(fetchConsumerGroups(clusterName));
+    dispatch(fetchConsumerGroupsPaged({ clusterName }));
   }, [clusterName, dispatch]);
 
   if (isFetched) {

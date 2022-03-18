@@ -36,7 +36,7 @@ describe('ConsumerGroup', () => {
 
   it('renders with 404 from consumer groups', async () => {
     const consumerGroupsMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/consumer-groups`,
+      `/api/clusters/${clusterName}/consumer-groups/paged`,
       404
     );
 
@@ -50,8 +50,11 @@ describe('ConsumerGroup', () => {
 
   it('renders with 200 from consumer groups', async () => {
     const consumerGroupsMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/consumer-groups`,
-      consumerGroups
+      `/api/clusters/${clusterName}/consumer-groups/paged`,
+      {
+        pagedCount: 1,
+        consumerGroups,
+      }
     );
 
     renderComponent();

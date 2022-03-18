@@ -46,8 +46,8 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
   ConsumerGroupsPageResponse,
   {
     clusterName: ClusterName;
-    orderBy: ConsumerGroupOrdering;
-    sortOrder: SortOrder;
+    orderBy?: ConsumerGroupOrdering;
+    sortOrder?: SortOrder;
   }
 >(
   'consumerGroups/fetchConsumerGroupsPaged',
