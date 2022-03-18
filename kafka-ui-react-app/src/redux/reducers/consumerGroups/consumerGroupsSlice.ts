@@ -8,7 +8,10 @@ import {
   Configuration,
   ConsumerGroup,
   ConsumerGroupDetails,
+  ConsumerGroupOrdering,
   ConsumerGroupsApi,
+  ConsumerGroupsPageResponse,
+  SortOrder,
 } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
@@ -33,6 +36,29 @@ export const fetchConsumerGroups = createAsyncThunk<
       return await api.getConsumerGroups({
         clusterName,
       });
+    } catch (error) {
+      return rejectWithValue(await getResponse(error as Response));
+    }
+  }
+);
+
+export const fetchConsumerGroupsPaged = createAsyncThunk<
+  ConsumerGroupsPageResponse,
+  {
+    clusterName: ClusterName;
+    orderBy: ConsumerGroupOrdering;
+    sortOrder: SortOrder;
+  }
+>(
+  'consumerGroups/fetchConsumerGroupsPaged',
+  async ({ clusterName, orderBy, sortOrder }, { rejectWithValue }) => {
+    try {
+      const response = await api.getConsumerGroupsPageRaw({
+        clusterName,
+        orderBy,
+        sortOrder,
+      });
+      return await response.value();
     } catch (error) {
       return rejectWithValue(await getResponse(error as Response));
     }
@@ -105,16 +131,29 @@ export const resetConsumerGroupOffsets = createAsyncThunk<
     }
   }
 );
+const SCHEMAS_PAGE_COUNT = 1;
 
 const consumerGroupsAdapter = createEntityAdapter<ConsumerGroupDetails>({
   selectId: (consumerGroup) => consumerGroup.groupId,
 });
 
+const initialState = {
+  totalPages: SCHEMAS_PAGE_COUNT,
+  ...consumerGroupsAdapter.getInitialState(),
+};
+
 const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
-  initialState: consumerGroupsAdapter.getInitialState(),
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
+    builder.addCase(
+      fetchConsumerGroupsPaged.fulfilled,
+      (state, { payload }) => {
+        state.totalPages = payload.pageCount || SCHEMAS_PAGE_COUNT;
+        consumerGroupsAdapter.setAll(state, payload.consumerGroups || []);
+      }
+    );
     builder.addCase(fetchConsumerGroups.fulfilled, (state, { payload }) => {
       consumerGroupsAdapter.setAll(state, payload);
     });
@@ -131,6 +170,11 @@ export const { selectAll, selectById } =
   consumerGroupsAdapter.getSelectors<RootState>(
     ({ consumerGroups }) => consumerGroups
   );
+
+export const getAreConsumerGroupsPagedFulfilled = createSelector(
+  createFetchingSelector('consumerGroups/fetchConsumerGroupsPaged'),
+  (status) => status === 'fulfilled'
+);
 
 export const getAreConsumerGroupsFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroups'),
