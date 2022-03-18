@@ -4,11 +4,22 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { ConsumerGroupDetails } from 'generated-sources';
+import {
+  ConsumerGroupDetails,
+  ConsumerGroupOrdering,
+  SortOrder,
+} from 'generated-sources';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
 
-interface Props {
+export interface Props {
   consumerGroups: ConsumerGroupDetails[];
+  orderBy: ConsumerGroupOrdering | null;
+  sortOrder: SortOrder;
+  setConsumerGroupsOrder(orderBy: ConsumerGroupOrdering | null): void;
+  setConsumerSortOrder(obj: {
+    sortOrder: SortOrder;
+    orderBy: ConsumerGroupOrdering | null;
+  }): void;
 }
 
 const List: React.FC<Props> = ({ consumerGroups }) => {

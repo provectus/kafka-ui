@@ -1,19 +1,33 @@
 import React from 'react';
-import List from 'components/ConsumerGroups/List/List';
+import List, { Props } from 'components/ConsumerGroups/List/List';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import { consumerGroups as consumerGroupMock } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import { SortOrder } from 'generated-sources';
 
 describe('List', () => {
+  const setUpComponent = (props: Partial<Props> = {}) => {
+    const { consumerGroups, orderBy, sortOrder } = props;
+    return render(
+      <List
+        consumerGroups={consumerGroups || []}
+        orderBy={orderBy || null}
+        sortOrder={sortOrder || SortOrder.ASC}
+        setConsumerGroupsOrder={jest.fn()}
+        setConsumerSortOrder={jest.fn()}
+      />
+    );
+  };
+
   it('renders empty table', () => {
-    render(<List consumerGroups={[]} />);
+    setUpComponent();
     expect(screen.getByRole('table')).toBeInTheDocument();
     expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
   });
 
   describe('consumerGroups are fetched', () => {
-    beforeEach(() => render(<List consumerGroups={consumerGroups} />));
+    beforeEach(() => setUpComponent({ consumerGroups: consumerGroupMock }));
 
     it('renders all rows with consumers', () => {
       expect(screen.getByText('groupId1')).toBeInTheDocument();

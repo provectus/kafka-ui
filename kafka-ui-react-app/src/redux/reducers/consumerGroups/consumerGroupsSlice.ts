@@ -3,6 +3,7 @@ import {
   createEntityAdapter,
   createSlice,
   createSelector,
+  PayloadAction,
 } from '@reduxjs/toolkit';
 import {
   Configuration,
@@ -22,6 +23,7 @@ import {
   RootState,
 } from 'redux/interfaces';
 import { createFetchingSelector } from 'redux/reducers/loader/selectors';
+import { EntityState } from '@reduxjs/toolkit/src/entities/models';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const api = new ConsumerGroupsApi(apiClientConf);
@@ -137,7 +139,15 @@ const consumerGroupsAdapter = createEntityAdapter<ConsumerGroupDetails>({
   selectId: (consumerGroup) => consumerGroup.groupId,
 });
 
-const initialState = {
+interface ConsumerGroupState extends EntityState<ConsumerGroupDetails> {
+  orderBy: ConsumerGroupOrdering | null;
+  sortOrder: SortOrder;
+  totalPages: number;
+}
+
+const initialState: ConsumerGroupState = {
+  orderBy: null,
+  sortOrder: SortOrder.ASC,
   totalPages: SCHEMAS_PAGE_COUNT,
   ...consumerGroupsAdapter.getInitialState(),
 };
@@ -145,7 +155,25 @@ const initialState = {
 const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
   initialState,
-  reducers: {},
+  reducers: {
+    orderBy: (state, action: PayloadAction<ConsumerGroupOrdering | null>) => {
+      state.orderBy = action.payload;
+    },
+    sortBy: (
+      state,
+      action: PayloadAction<{
+        orderBy: ConsumerGroupOrdering;
+        sortOrder: SortOrder;
+      }>
+    ) => {
+      state.orderBy = action.payload.orderBy;
+      state.sortOrder =
+        state.orderBy === action.payload.orderBy &&
+        state.sortOrder === SortOrder.ASC
+          ? SortOrder.DESC
+          : SortOrder.ASC;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(
       fetchConsumerGroupsPaged.fulfilled,
@@ -166,10 +194,14 @@ const consumerGroupsSlice = createSlice({
   },
 });
 
+export const consumerGroupsActions = consumerGroupsSlice.actions;
+
+const consumerGroupsState = ({
+  consumerGroups,
+}: RootState): ConsumerGroupState => consumerGroups;
+
 export const { selectAll, selectById } =
-  consumerGroupsAdapter.getSelectors<RootState>(
-    ({ consumerGroups }) => consumerGroups
-  );
+  consumerGroupsAdapter.getSelectors<RootState>(consumerGroupsState);
 
 export const getAreConsumerGroupsPagedFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupsPaged'),
@@ -194,6 +226,16 @@ export const getAreConsumerGroupDetailsFulfilled = createSelector(
 export const getIsOffsetReseted = createSelector(
   createFetchingSelector('consumerGroups/resetConsumerGroupOffsets'),
   (status) => status === 'fulfilled'
+);
+
+export const getConsumerGroupsOrderBy = createSelector(
+  consumerGroupsState,
+  (state) => state.orderBy
+);
+
+export const getConsumerGroupsSortOrder = createSelector(
+  consumerGroupsState,
+  (state) => state.sortOrder
 );
 
 export default consumerGroupsSlice.reducer;
