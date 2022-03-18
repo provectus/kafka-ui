@@ -67,7 +67,7 @@ const List: FC = () => {
           <Table isFullwidth>
             <thead>
               <tr>
-                <th> </th>
+                <TableHeaderCell title={' '} key="empty cell" />
                 {headers.map(({ Header, accessor }) => (
                   <TableHeaderCell title={Header} key={accessor} />
                 ))}
