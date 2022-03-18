@@ -4,8 +4,8 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { store } from 'redux/store';
-import { fetchConsumerGroups } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
-import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import { fetchConsumerGroupsPaged } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import { consumerGroupsPage } from 'redux/reducers/consumerGroups/__test__/fixtures';
 
 describe('List', () => {
   beforeEach(() => render(<List />, { store }));
@@ -18,8 +18,8 @@ describe('List', () => {
   describe('consumerGroups are fetched', () => {
     beforeEach(() => {
       store.dispatch({
-        type: fetchConsumerGroups.fulfilled.type,
-        payload: consumerGroups,
+        type: fetchConsumerGroupsPaged.fulfilled.type,
+        payload: consumerGroupsPage,
       });
     });
 
