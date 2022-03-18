@@ -8,7 +8,7 @@ import { SortOrder } from 'generated-sources';
 
 describe('List', () => {
   const setUpComponent = (props: Partial<Props> = {}) => {
-    const { consumerGroups, orderBy, sortOrder } = props;
+    const { consumerGroups, orderBy, sortOrder, totalPages } = props;
     return render(
       <List
         consumerGroups={consumerGroups || []}
@@ -16,6 +16,7 @@ describe('List', () => {
         sortOrder={sortOrder || SortOrder.ASC}
         setConsumerGroupsOrder={jest.fn()}
         setConsumerSortOrder={jest.fn()}
+        totalPages={totalPages || 1}
       />
     );
   };

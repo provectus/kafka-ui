@@ -15,6 +15,7 @@ export interface Props {
   consumerGroups: ConsumerGroupDetails[];
   orderBy: ConsumerGroupOrdering | null;
   sortOrder: SortOrder;
+  totalPages: number;
   setConsumerGroupsOrder(orderBy: ConsumerGroupOrdering | null): void;
   setConsumerSortOrder(obj: {
     sortOrder: SortOrder;

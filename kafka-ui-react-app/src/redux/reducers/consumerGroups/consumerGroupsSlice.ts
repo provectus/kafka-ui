@@ -238,4 +238,9 @@ export const getConsumerGroupsSortOrder = createSelector(
   (state) => state.sortOrder
 );
 
+export const getConsumerGroupsTotalPages = createSelector(
+  consumerGroupsState,
+  (state) => state.totalPages
+);
+
 export default consumerGroupsSlice.reducer;
