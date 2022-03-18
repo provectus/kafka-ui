@@ -4,13 +4,14 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { useAppSelector } from 'lib/hooks/redux';
-import { selectAll } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import { ConsumerGroupDetails } from 'generated-sources';
+import ListItem from 'components/ConsumerGroups/List/ListItem';
 
-import ListItem from './ListItem';
+interface Props {
+  consumerGroups: ConsumerGroupDetails[];
+}
 
-const List: React.FC = () => {
-  const consumerGroups = useAppSelector(selectAll);
+const List: React.FC<Props> = ({ consumerGroups }) => {
   const [searchText, setSearchText] = React.useState<string>('');
 
   const handleInputChange = (search: string) => {

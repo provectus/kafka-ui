@@ -3,7 +3,7 @@ import { ClusterName } from 'redux/interfaces';
 import { Switch, useParams } from 'react-router-dom';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import Details from 'components/ConsumerGroups/Details/Details';
-import List from 'components/ConsumerGroups/List/List';
+import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
 import {
@@ -26,7 +26,7 @@ const ConsumerGroups: React.FC = () => {
         <BreadcrumbRoute
           exact
           path="/ui/clusters/:clusterName/consumer-groups"
-          component={List}
+          component={ListContainer}
         />
         <BreadcrumbRoute
           exact
