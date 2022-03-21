@@ -32,6 +32,7 @@ describe('List', () => {
         deleteTopics={jest.fn()}
         clearTopicsMessages={jest.fn()}
         clearTopicMessages={jest.fn()}
+        recreateTopic={jest.fn()}
         search=""
         orderBy={null}
         sortOrder={SortOrder.ASC}

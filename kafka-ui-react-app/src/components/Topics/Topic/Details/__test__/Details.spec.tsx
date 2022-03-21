@@ -12,6 +12,7 @@ describe('Details', () => {
   const mockClusterName = 'local';
   const mockClearTopicMessages = jest.fn();
   const mockInternalTopicPayload = internalTopicPayload.internal;
+  const mockRecreateTopic = jest.fn();
 
   const setupComponent = (pathname: string) =>
     render(
@@ -29,6 +30,7 @@ describe('Details', () => {
           name={internalTopicPayload.name}
           isInternal={false}
           deleteTopic={mockDelete}
+          recreateTopic={mockRecreateTopic}
           clearTopicMessages={mockClearTopicMessages}
           isDeleted={false}
           isDeletePolicy
@@ -54,6 +56,7 @@ describe('Details', () => {
             name={internalTopicPayload.name}
             isInternal={mockInternalTopicPayload}
             deleteTopic={mockDelete}
+            recreateTopic={mockRecreateTopic}
             clearTopicMessages={mockClearTopicMessages}
             isDeleted={false}
             isDeletePolicy
@@ -76,5 +79,41 @@ describe('Details', () => {
     expect(
       getByText(/Are you sure want to clear topic messages?/i)
     ).toBeInTheDocument();
+  });
+
+  it('shows a confirmation popup on recreating topic', () => {
+    setupComponent(
+      clusterTopicPath(mockClusterName, internalTopicPayload.name)
+    );
+    const recreateTopicButton = screen.getByText(/Recreate topic/i);
+    userEvent.click(recreateTopicButton);
+
+    expect(
+      screen.getByText(/Are you sure want to recreate topic?/i)
+    ).toBeInTheDocument();
+  });
+
+  it('calling recreation function after click on Submit button', () => {
+    setupComponent(
+      clusterTopicPath(mockClusterName, internalTopicPayload.name)
+    );
+    const recreateTopicButton = screen.getByText(/Recreate topic/i);
+    userEvent.click(recreateTopicButton);
+    const confirmBtn = screen.getByRole('button', { name: /submit/i });
+    userEvent.click(confirmBtn);
+    expect(mockRecreateTopic).toBeCalledTimes(1);
+  });
+
+  it('close popup confirmation window after click on Cancel button', () => {
+    setupComponent(
+      clusterTopicPath(mockClusterName, internalTopicPayload.name)
+    );
+    const recreateTopicButton = screen.getByText(/Recreate topic/i);
+    userEvent.click(recreateTopicButton);
+    const cancelBtn = screen.getByRole('button', { name: /cancel/i });
+    userEvent.click(cancelBtn);
+    expect(
+      screen.queryByText(/Are you sure want to recreate topic?/i)
+    ).not.toBeInTheDocument();
   });
 });

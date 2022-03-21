@@ -20,6 +20,7 @@ export interface ListItemProps {
   selected: boolean;
   toggleTopicSelected(topicName: TopicName): void;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
   clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
 }
@@ -36,6 +37,7 @@ const ListItem: React.FC<ListItemProps> = ({
   selected,
   toggleTopicSelected,
   deleteTopic,
+  recreateTopic,
   clusterName,
   clearTopicMessages,
 }) => {
@@ -44,6 +46,11 @@ const ListItem: React.FC<ListItemProps> = ({
 
   const [isDeleteTopicConfirmationVisible, setDeleteTopicConfirmationVisible] =
     React.useState(false);
+
+  const [
+    isRecreateTopicConfirmationVisible,
+    setRecreateTopicConfirmationVisible,
+  ] = React.useState(false);
 
   const { outOfSyncReplicas, numberOfMessages } = React.useMemo(() => {
     if (partitions === undefined || partitions.length === 0) {
@@ -71,6 +78,11 @@ const ListItem: React.FC<ListItemProps> = ({
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, name);
   }, [clusterName, deleteTopic, name]);
+
+  const recreateTopicHandler = React.useCallback(() => {
+    recreateTopic(clusterName, name);
+    setRecreateTopicConfirmationVisible(false);
+  }, [recreateTopic, clusterName, name]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
     clearTopicMessages(clusterName, name);
@@ -125,6 +137,12 @@ const ListItem: React.FC<ListItemProps> = ({
                   Remove Topic
                 </DropdownItem>
               )}
+              <DropdownItem
+                onClick={() => setRecreateTopicConfirmationVisible(true)}
+                danger
+              >
+                Recreate Topic
+              </DropdownItem>
             </Dropdown>
           </div>
         ) : null}
@@ -134,6 +152,13 @@ const ListItem: React.FC<ListItemProps> = ({
           onConfirm={deleteTopicHandler}
         >
           Are you sure want to remove <b>{name}</b> topic?
+        </ConfirmationModal>
+        <ConfirmationModal
+          isOpen={isRecreateTopicConfirmationVisible}
+          onCancel={() => setRecreateTopicConfirmationVisible(false)}
+          onConfirm={recreateTopicHandler}
+        >
+          Are you sure to recreate <b>{name}</b> topic?
         </ConfirmationModal>
       </td>
     </tr>
