@@ -81,12 +81,24 @@ const List: React.FC<Props> = ({
         placeholder="No active consumer groups"
         hoverable
       >
-        <TableColumn title="Consumer Group ID" cell={GroupIDCell} />
-        <TableColumn title="Num Of Members" field="members" />
+        <TableColumn
+          title="Consumer Group ID"
+          cell={GroupIDCell}
+          orderValue={ConsumerGroupOrdering.NAME}
+        />
+        <TableColumn
+          title="Num Of Members"
+          field="members"
+          orderValue={ConsumerGroupOrdering.MEMBERS}
+        />
         <TableColumn title="Num Of Topics" field="topics" />
         <TableColumn title="Messages Behind" field="messagesBehind" />
         <TableColumn title="Coordinator" cell={CoordinatorCell} />
-        <TableColumn title="State" cell={StatusCell} />
+        <TableColumn
+          title="State"
+          cell={StatusCell}
+          orderValue={ConsumerGroupOrdering.STATE}
+        />
       </SmartTable>
     </div>
   );
