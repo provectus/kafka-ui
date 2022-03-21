@@ -12,7 +12,7 @@ export const gitCommitPath = (commit: string) =>
   `${GIT_REPO_LINK}/commit/${commit}`;
 
 export const clusterPath = (clusterName: ClusterName) =>
-  `/clusters/${clusterName}`;
+  `/ui/clusters/${clusterName}`;
 
 // Brokers
 export const clusterBrokersPath = (clusterName: ClusterName) =>

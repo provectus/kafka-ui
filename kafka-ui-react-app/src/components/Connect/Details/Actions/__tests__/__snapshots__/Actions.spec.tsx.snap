@@ -145,7 +145,7 @@ exports[`Actions view matches snapshot 1`] = `
     </span>
   </button>
   <a
-    href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
     <button
@@ -338,7 +338,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     </span>
   </button>
   <a
-    href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
     <button
@@ -516,7 +516,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
     </span>
   </button>
   <a
-    href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
     <button
@@ -709,7 +709,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
     </span>
   </button>
   <a
-    href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
     <button
@@ -902,7 +902,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
     </span>
   </button>
   <a
-    href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
     <button
@@ -1080,7 +1080,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
     </span>
   </button>
   <a
-    href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
+    href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
   >
     <button

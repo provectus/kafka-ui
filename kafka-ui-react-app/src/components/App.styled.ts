@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components';
-import { Link } from 'react-router-dom';
 
 export const Layout = styled.div`
   min-width: 1200px;
@@ -167,7 +166,7 @@ export const Span = styled.span(
   `
 );
 
-export const Hyperlink = styled(Link)(
+export const Hyperlink = styled.a(
   ({ theme }) => css`
     position: relative;
 

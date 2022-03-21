@@ -58,7 +58,7 @@ const App: React.FC = () => {
               <S.Span role="separator" />
             </S.NavbarBurger>
 
-            <S.Hyperlink to="/">
+            <S.Hyperlink href="/ui">
               <Logo />
               UI for Apache Kafka
             </S.Hyperlink>
@@ -86,8 +86,12 @@ const App: React.FC = () => {
           />
           {areClustersFulfilled ? (
             <Switch>
-              <Route exact path={['/', '/clusters']} component={Dashboard} />
-              <Route path="/clusters/:clusterName" component={ClusterPage} />
+              <Route
+                exact
+                path={['/', '/ui', '/ui/clusters']}
+                component={Dashboard}
+              />
+              <Route path="/ui/clusters/:clusterName" component={ClusterPage} />
             </Switch>
           ) : (
             <PageLoader />

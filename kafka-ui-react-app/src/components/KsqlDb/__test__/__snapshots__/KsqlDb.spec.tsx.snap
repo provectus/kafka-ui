@@ -5,7 +5,7 @@ exports[`KsqlDb Component KsqlDb matches snapshot 1`] = `
   context={Object {}}
   location={
     Object {
-      "pathname": "clusters/local/ksql-db",
+      "pathname": "ui/clusters/local/ksql-db",
     }
   }
 >
@@ -21,7 +21,7 @@ exports[`KsqlDb Component KsqlDb matches snapshot 1`] = `
         "listen": [Function],
         "location": Object {
           "hash": "",
-          "pathname": "clusters/local/ksql-db",
+          "pathname": "ui/clusters/local/ksql-db",
           "search": "",
         },
         "push": [Function],

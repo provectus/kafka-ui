@@ -25,16 +25,16 @@ const ConsumerGroups: React.FC = () => {
       <Switch>
         <BreadcrumbRoute
           exact
-          path="/clusters/:clusterName/consumer-groups"
+          path="/ui/clusters/:clusterName/consumer-groups"
           component={List}
         />
         <BreadcrumbRoute
           exact
-          path="/clusters/:clusterName/consumer-groups/:consumerGroupID"
+          path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID"
           component={Details}
         />
         <BreadcrumbRoute
-          path="/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
+          path="/ui/clusters/:clusterName/consumer-groups/:consumerGroupID/reset-offsets"
           component={ResetOffsets}
         />
       </Switch>
