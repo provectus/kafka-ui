@@ -58,7 +58,7 @@ const App: React.FC = () => {
               <S.Span role="separator" />
             </S.NavbarBurger>
 
-            <S.Hyperlink to="/ui">
+            <S.Hyperlink to="/">
               <Logo />
               UI for Apache Kafka
             </S.Hyperlink>
