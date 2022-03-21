@@ -1,12 +1,13 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
 import {
-  StatusCell,
-  GroupIDCell,
   CoordinatorCell,
+  GroupIDCell,
+  StatusCell,
 } from 'components/ConsumerGroups/List/ConsumerGroupsTableCells';
 import { TableState } from 'lib/hooks/useTableState';
-import { ConsumerGroup } from 'generated-sources';
+import { ConsumerGroup, ConsumerGroupState } from 'generated-sources';
+import { screen } from '@testing-library/react';
 
 describe('Consumer Groups Table Cells', () => {
   const consumerGroup: ConsumerGroup = {
@@ -14,6 +15,10 @@ describe('Consumer Groups Table Cells', () => {
     members: 1,
     topics: 1,
     simple: true,
+    state: ConsumerGroupState.STABLE,
+    coordinator: {
+      id: 6598,
+    },
   };
   const mockTableState: TableState<ConsumerGroup, string, never> = {
     data: [consumerGroup],
@@ -34,6 +39,12 @@ describe('Consumer Groups Table Cells', () => {
           tableState={mockTableState}
         />
       );
+      const linkElement = screen.getByRole('link');
+      expect(linkElement).toBeInTheDocument();
+      expect(linkElement).toHaveAttribute(
+        'href',
+        `/consumer-groups/${consumerGroup.groupId}`
+      );
     });
   });
 
@@ -46,6 +57,9 @@ describe('Consumer Groups Table Cells', () => {
           tableState={mockTableState}
         />
       );
+      expect(
+        screen.getByText(consumerGroup.state as string)
+      ).toBeInTheDocument();
     });
   });
   describe('CoordinatorCell', () => {
@@ -57,6 +71,8 @@ describe('Consumer Groups Table Cells', () => {
           tableState={mockTableState}
         />
       );
+      const text = consumerGroup.coordinator?.id.toString();
+      expect(screen.getByText(text || '')).toBeInTheDocument();
     });
   });
 });

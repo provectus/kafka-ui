@@ -80,8 +80,6 @@ const List: React.FC<Props> = ({
         isFullwidth
         placeholder="No active consumer groups"
         hoverable
-        selectable
-        allSelectable
       >
         <TableColumn title="Consumer Group ID" cell={GroupIDCell} />
         <TableColumn title="Num Of Members" field="members" />
