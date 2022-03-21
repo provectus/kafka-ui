@@ -35,16 +35,16 @@ const Topic: React.FC<TopicProps> = ({
     <Switch>
       <Route
         exact
-        path="/clusters/:clusterName/topics/:topicName/edit"
+        path="/ui/clusters/:clusterName/topics/:topicName/edit"
         component={EditContainer}
       />
       <Route
         exact
-        path="/clusters/:clusterName/topics/:topicName/message"
+        path="/ui/clusters/:clusterName/topics/:topicName/message"
         component={SendMessage}
       />
       <Route
-        path="/clusters/:clusterName/topics/:topicName"
+        path="/ui/clusters/:clusterName/topics/:topicName"
         component={DetailsContainer}
       />
     </Switch>
