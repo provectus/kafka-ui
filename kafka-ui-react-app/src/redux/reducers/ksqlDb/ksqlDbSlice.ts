@@ -3,7 +3,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { BASE_PARAMS } from 'lib/constants';
 import {
   Configuration,
-  ExecuteKsqlCommandRequest,
+  ExecuteKsqlRequest,
   KsqlApi,
   Table as KsqlTable,
 } from 'generated-sources';
@@ -40,8 +40,10 @@ const getStreams = (clusterName: ClusterName) =>
 export const fetchKsqlDbTables = createAsyncThunk(
   'ksqlDb/fetchKsqlDbTables',
   async (clusterName: ClusterName) => {
-    const tables = await getTables(clusterName);
-    const streams = await getStreams(clusterName);
+    const [tables, streams] = await Promise.all([
+      getTables(clusterName),
+      getStreams(clusterName),
+    ]);
 
     return {
       tables: tables.data ? transformKsqlResponse(tables.data) : [],
@@ -52,8 +54,7 @@ export const fetchKsqlDbTables = createAsyncThunk(
 
 export const executeKsql = createAsyncThunk(
   'ksqlDb/executeKsql',
-  (params: ExecuteKsqlCommandRequest) =>
-    ksqlDbApiClient.executeKsqlCommand(params)
+  (params: ExecuteKsqlRequest) => ksqlDbApiClient.executeKsql(params)
 );
 
 export const initialState: KsqlState = {

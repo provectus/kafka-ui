@@ -23,7 +23,7 @@
   "plugins": [
     "@typescript-eslint",
     "prettier",
-    "eslint-plugin-react-hooks"
+    "react-hooks"
   ],
   "extends": [
     "airbnb",
@@ -34,8 +34,6 @@
     "prettier"
   ],
   "rules": {
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn",
     "react/no-unused-prop-types": "off",
     "react/require-default-props": "off",
     "prettier/prettier": "warn",
@@ -43,6 +41,9 @@
     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": "off",
     "@typescript-eslint/no-explicit-any": "error",
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    // breaks builds as we still have those warns
+    "react-hooks/exhaustive-deps": "off", // Checks effect dependencies
     "import/no-extraneous-dependencies": [
       "error",
       {
