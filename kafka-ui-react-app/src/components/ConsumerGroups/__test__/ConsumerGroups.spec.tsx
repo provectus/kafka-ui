@@ -10,7 +10,7 @@ import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures'
 import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
 import { Route } from 'react-router';
-import { SortOrder } from 'generated-sources';
+import { ConsumerGroupOrdering, SortOrder } from 'generated-sources';
 
 const clusterName = 'cluster1';
 
@@ -35,35 +35,32 @@ describe('ConsumerGroup', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  it('renders with 404 from consumer groups', async () => {
-    const consumerGroupsMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/consumer-groups/paged?sortOrder=${SortOrder.ASC}`,
-      404
-    );
+  describe('Fetching Mock', () => {
+    const url = `/api/clusters/${clusterName}/consumer-groups/paged?orderBy=${ConsumerGroupOrdering.NAME}&sortOrder=${SortOrder.ASC}`;
+    it('renders with 404 from consumer groups', async () => {
+      const consumerGroupsMock = fetchMock.getOnce(url, 404);
 
-    renderComponent();
+      renderComponent();
 
-    await waitFor(() => expect(consumerGroupsMock.called()).toBeTruthy());
+      await waitFor(() => expect(consumerGroupsMock.called()).toBeTruthy());
 
-    expect(screen.queryByText('Consumers')).not.toBeInTheDocument();
-    expect(screen.queryByRole('table')).not.toBeInTheDocument();
-  });
+      expect(screen.queryByText('Consumers')).not.toBeInTheDocument();
+      expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    });
 
-  it('renders with 200 from consumer groups', async () => {
-    const consumerGroupsMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/consumer-groups/paged?sortOrder=${SortOrder.ASC}`,
-      {
+    it('renders with 200 from consumer groups', async () => {
+      const consumerGroupsMock = fetchMock.getOnce(url, {
         pagedCount: 1,
         consumerGroups,
-      }
-    );
+      });
 
-    renderComponent();
+      renderComponent();
 
-    await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
-    await waitFor(() => expect(consumerGroupsMock.called()).toBeTruthy());
+      await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
+      await waitFor(() => expect(consumerGroupsMock.called()).toBeTruthy());
 
-    expect(screen.getByText('Consumers')).toBeInTheDocument();
-    expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByText('Consumers')).toBeInTheDocument();
+      expect(screen.getByRole('table')).toBeInTheDocument();
+    });
   });
 });

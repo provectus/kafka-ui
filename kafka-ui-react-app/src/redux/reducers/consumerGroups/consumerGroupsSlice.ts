@@ -146,7 +146,7 @@ interface ConsumerGroupState extends EntityState<ConsumerGroupDetails> {
 }
 
 const initialState: ConsumerGroupState = {
-  orderBy: null,
+  orderBy: ConsumerGroupOrdering.NAME,
   sortOrder: SortOrder.ASC,
   totalPages: SCHEMAS_PAGE_COUNT,
   ...consumerGroupsAdapter.getInitialState(),
