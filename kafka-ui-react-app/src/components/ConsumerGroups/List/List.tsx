@@ -21,7 +21,7 @@ export interface Props {
   orderBy: ConsumerGroupOrdering | null;
   sortOrder: SortOrder;
   totalPages: number;
-  setConsumerSortOrderBy(orderBy: ConsumerGroupOrdering | null): void;
+  setConsumerGroupsSortOrderBy(orderBy: ConsumerGroupOrdering | null): void;
 }
 
 const List: React.FC<Props> = ({
@@ -29,7 +29,7 @@ const List: React.FC<Props> = ({
   sortOrder,
   orderBy,
   totalPages,
-  setConsumerSortOrderBy,
+  setConsumerGroupsSortOrderBy,
 }) => {
   const [searchText, setSearchText] = React.useState<string>('');
 
@@ -51,7 +51,7 @@ const List: React.FC<Props> = ({
       idSelector: (consumerGroup) => consumerGroup.groupId,
     },
     {
-      handleOrderBy: setConsumerSortOrderBy,
+      handleOrderBy: setConsumerGroupsSortOrderBy,
       orderBy,
       sortOrder,
     }

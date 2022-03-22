@@ -17,7 +17,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const mapDispatchToProps = {
-  setConsumerSortOrder: sortBy,
+  setConsumerGroupsSortOrderBy: sortBy,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

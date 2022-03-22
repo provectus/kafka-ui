@@ -156,17 +156,10 @@ const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
   initialState,
   reducers: {
-    sortBy: (
-      state,
-      action: PayloadAction<{
-        orderBy: ConsumerGroupOrdering;
-        sortOrder: SortOrder;
-      }>
-    ) => {
-      state.orderBy = action.payload.orderBy;
+    sortBy: (state, action: PayloadAction<ConsumerGroupOrdering>) => {
+      state.orderBy = action.payload;
       state.sortOrder =
-        state.orderBy === action.payload.orderBy &&
-        state.sortOrder === SortOrder.ASC
+        state.orderBy === action.payload && state.sortOrder === SortOrder.ASC
           ? SortOrder.DESC
           : SortOrder.ASC;
     },
