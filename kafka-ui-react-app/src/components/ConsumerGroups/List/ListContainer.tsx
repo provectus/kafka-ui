@@ -4,7 +4,7 @@ import {
   getConsumerGroupsOrderBy,
   getConsumerGroupsSortOrder,
   getConsumerGroupsTotalPages,
-  consumerGroupsActions,
+  sortBy,
   selectAll,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import List from 'components/ConsumerGroups/List/List';
@@ -17,8 +17,7 @@ const mapStateToProps = (state: RootState) => ({
 });
 
 const mapDispatchToProps = {
-  setConsumerGroupsOrder: consumerGroupsActions.orderBy,
-  setConsumerSortOrder: consumerGroupsActions.sortBy,
+  setConsumerSortOrder: sortBy,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(List);

@@ -14,8 +14,7 @@ describe('List', () => {
         consumerGroups={consumerGroups || []}
         orderBy={orderBy || null}
         sortOrder={sortOrder || SortOrder.ASC}
-        setConsumerGroupsOrder={jest.fn()}
-        setConsumerSortOrder={jest.fn()}
+        setConsumerSortOrderBy={jest.fn()}
         totalPages={totalPages || 1}
       />
     );

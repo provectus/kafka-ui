@@ -25,10 +25,6 @@ const renderComponent = () =>
   );
 
 describe('ConsumerGroup', () => {
-  afterEach(() => {
-    fetchMock.reset();
-  });
-
   it('renders with initial state', async () => {
     renderComponent();
 
@@ -37,6 +33,9 @@ describe('ConsumerGroup', () => {
 
   describe('Fetching Mock', () => {
     const url = `/api/clusters/${clusterName}/consumer-groups/paged?orderBy=${ConsumerGroupOrdering.NAME}&sortOrder=${SortOrder.ASC}`;
+    afterEach(() => {
+      fetchMock.reset();
+    });
     it('renders with 404 from consumer groups', async () => {
       const consumerGroupsMock = fetchMock.getOnce(url, 404);
 
