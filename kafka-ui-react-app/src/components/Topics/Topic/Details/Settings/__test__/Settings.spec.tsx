@@ -33,7 +33,7 @@ describe('Settings', () => {
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
   });
 
-  it('should check and return null if it is not fetched and config is given', () => {
+  it('should show Page loader when it is in fetching state and config is given', () => {
     render(
       <Settings
         clusterName={mockClusterName}
@@ -45,6 +45,7 @@ describe('Settings', () => {
     );
 
     expect(screen.queryByRole('table')).not.toBeInTheDocument();
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
   it('should check and return null if it is not fetched and config is not given', () => {
