@@ -10,6 +10,7 @@ import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures'
 import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
 import { Route } from 'react-router';
+import { SortOrder } from 'generated-sources';
 
 const clusterName = 'cluster1';
 
@@ -36,7 +37,7 @@ describe('ConsumerGroup', () => {
 
   it('renders with 404 from consumer groups', async () => {
     const consumerGroupsMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/consumer-groups/paged`,
+      `/api/clusters/${clusterName}/consumer-groups/paged?sortOrder=${SortOrder.ASC}`,
       404
     );
 
@@ -50,7 +51,7 @@ describe('ConsumerGroup', () => {
 
   it('renders with 200 from consumer groups', async () => {
     const consumerGroupsMock = fetchMock.getOnce(
-      `/api/clusters/${clusterName}/consumer-groups/paged`,
+      `/api/clusters/${clusterName}/consumer-groups/paged?sortOrder=${SortOrder.ASC}`,
       {
         pagedCount: 1,
         consumerGroups,
