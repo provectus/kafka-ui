@@ -36,6 +36,14 @@ describe('Consumer Groups Slice', () => {
 
       expect(getAreConsumerGroupsPagedFulfilled(store.getState())).toBeTruthy();
       expect(selectAll(store.getState())).toEqual(consumerGroups);
+
+      store.dispatch({
+        type: fetchConsumerGroupsPaged.fulfilled.type,
+        payload: {
+          consumerGroups: null,
+        },
+      });
+      expect(selectAll(store.getState())).toEqual([]);
     });
   });
 });
