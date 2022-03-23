@@ -46,12 +46,30 @@ describe('List', () => {
         await waitFor(() => {
           userEvent.type(
             screen.getByPlaceholderText('Search by Consumer Group ID'),
-            'groupId1'
+            consumerGroupMock[0].groupId
           );
         });
 
-        expect(screen.getByText('groupId1')).toBeInTheDocument();
-        expect(screen.getByText('groupId2')).toBeInTheDocument();
+        expect(
+          screen.getByText(consumerGroupMock[0].groupId)
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(consumerGroupMock[1].groupId)
+        ).toBeInTheDocument();
+      });
+
+      it('renders will not render a list since not found in the list', async () => {
+        await waitFor(() => {
+          userEvent.type(
+            screen.getByPlaceholderText('Search by Consumer Group ID'),
+            'NotFoundedText'
+          );
+        });
+        await waitFor(() => {
+          expect(
+            screen.getByText(/No active consumer groups/i)
+          ).toBeInTheDocument();
+        });
       });
     });
 
