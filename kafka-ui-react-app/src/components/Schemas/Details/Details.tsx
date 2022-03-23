@@ -30,10 +30,10 @@ import {
 import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
+import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
-import { OldVersionsTitle } from './SchemaVersion/SchemaVersion.styled';
 
 const Details: React.FC = () => {
   const history = useHistory();
@@ -124,7 +124,7 @@ const Details: React.FC = () => {
         )}
       </PageHeading>
       <LatestVersionItem schema={schema} />
-      <OldVersionsTitle>Old versions</OldVersionsTitle>
+      <TableTitle>Old versions</TableTitle>
       {areVersionsFetched ? (
         <Table isFullwidth>
           <thead>

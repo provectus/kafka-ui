@@ -12,6 +12,7 @@ import {
   FullConnectorInfo,
   Connect,
   Task,
+  Topic,
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
@@ -59,6 +60,13 @@ export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__FAILURE',
   'DELETE_TOPIC__CANCEL'
 )<undefined, TopicName, undefined, undefined>();
+
+export const recreateTopicAction = createAsyncAction(
+  'RECREATE_TOPIC__REQUEST',
+  'RECREATE_TOPIC__SUCCESS',
+  'RECREATE_TOPIC__FAILURE',
+  'RECREATE_TOPIC__CANCEL'
+)<undefined, Topic, undefined, undefined>();
 
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
 

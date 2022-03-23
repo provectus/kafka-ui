@@ -32,6 +32,14 @@ const reducer = (state = initialState, action: Action): TopicsState => {
       );
       return newState;
     }
+    case getType(actions.recreateTopicAction.success):
+      return {
+        ...state,
+        byName: {
+          ...state.byName,
+          [action.payload.name]: { ...action.payload },
+        },
+      };
     case getType(actions.setTopicsSearchAction): {
       return {
         ...state,

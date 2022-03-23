@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const SchemaVersionWrapper = styled.tr`
+export const Wrapper = styled.tr`
   background-color: ${({ theme }) => theme.schema.backgroundColor.tr};
   & > td {
     padding: 16px !important;
@@ -10,11 +10,4 @@ export const SchemaVersionWrapper = styled.tr`
       padding: 24px;
     }
   }
-`;
-
-export const OldVersionsTitle = styled.h1`
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 24px;
-  padding: 16px;
 `;

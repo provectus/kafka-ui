@@ -8,8 +8,9 @@ import {
   TopicMessageConsuming,
   TopicMessageEvent,
   TopicMessageEventTypeEnum,
+  MessageFilterType,
 } from 'generated-sources';
-import * as React from 'react';
+import React from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
@@ -21,6 +22,9 @@ import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
+import FilterModal, {
+  FilterEdit,
+} from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 
 import * as S from './Filters.styled';
 import {
@@ -45,14 +49,24 @@ export interface FiltersProps {
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
 }
+export interface MessageFilters {
+  name: string;
+  code: string;
+}
+
+export interface ActiveMessageFilter {
+  index: number;
+  name: string;
+  code: string;
+}
 
 const PER_PAGE = 100;
 
-const SeekTypeOptions = [
+export const SeekTypeOptions = [
   { value: SeekType.OFFSET, label: 'Offset' },
   { value: SeekType.TIMESTAMP, label: 'Timestamp' },
 ];
-const SeekDirectionOptions = [
+export const SeekDirectionOptions = [
   { value: SeekDirection.FORWARD, label: 'Oldest First', isLive: false },
   { value: SeekDirection.BACKWARD, label: 'Newest First', isLive: false },
   { value: SeekDirection.TAILING, label: 'Live Mode', isLive: true },
@@ -73,6 +87,9 @@ const Filters: React.FC<FiltersProps> = ({
 }) => {
   const location = useLocation();
   const history = useHistory();
+
+  const [isOpen, setIsOpen] = React.useState(false);
+  const toggleIsOpen = () => setIsOpen(!isOpen);
 
   const source = React.useRef<EventSource | null>(null);
 
@@ -95,6 +112,24 @@ const Filters: React.FC<FiltersProps> = ({
 
   const [timestamp, setTimestamp] = React.useState<Date | null>(
     getTimestampFromSeekToParam(searchParams)
+  );
+
+  const [savedFilters, setSavedFilters] = React.useState<MessageFilters[]>(
+    JSON.parse(localStorage.getItem('savedFilters') ?? '[]')
+  );
+
+  let storageActiveFilter = localStorage.getItem('activeFilter');
+  storageActiveFilter =
+    storageActiveFilter ?? JSON.stringify({ name: '', code: '', index: -1 });
+
+  const [activeFilter, setActiveFilter] = React.useState<ActiveMessageFilter>(
+    JSON.parse(storageActiveFilter)
+  );
+
+  const [queryType, setQueryType] = React.useState<MessageFilterType>(
+    activeFilter.name
+      ? MessageFilterType.GROOVY_SCRIPT
+      : MessageFilterType.STRING_CONTAINS
   );
   const [query, setQuery] = React.useState<string>(searchParams.get('q') || '');
   const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
@@ -126,15 +161,21 @@ const Filters: React.FC<FiltersProps> = ({
     [partitions]
   );
 
-  const handleFiltersSubmit = React.useCallback(() => {
-    setAttempt(attempt + 1);
-
-    const props: Query = {
-      q: query,
+  const props: Query = React.useMemo(() => {
+    return {
+      q:
+        queryType === MessageFilterType.GROOVY_SCRIPT
+          ? `valueAsText.contains('${activeFilter.code}')`
+          : query,
+      filterQueryType: queryType,
       attempt,
       limit: PER_PAGE,
       seekDirection,
     };
+  }, [attempt, query, queryType, seekDirection, activeFilter]);
+
+  const handleFiltersSubmit = React.useCallback(() => {
+    setAttempt(attempt + 1);
 
     if (isSeekTypeControlVisible) {
       props.seekType = currentSeekType;
@@ -167,7 +208,7 @@ const Filters: React.FC<FiltersProps> = ({
       search: `?${qs}`,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seekDirection]);
+  }, [seekDirection, queryType, activeFilter]);
 
   const toggleSeekDirection = (val: string) => {
     switch (val) {
@@ -191,6 +232,60 @@ const Filters: React.FC<FiltersProps> = ({
     source.current.close();
   };
 
+  const addFilter = (newFilter: MessageFilters) => {
+    const filters = [...savedFilters];
+    filters.push(newFilter);
+    setSavedFilters(filters);
+    localStorage.setItem('savedFilters', JSON.stringify(filters));
+  };
+  const deleteFilter = (index: number) => {
+    const filters = [...savedFilters];
+    if (activeFilter.name && activeFilter.index === index) {
+      localStorage.removeItem('activeFilter');
+      setActiveFilter({ name: '', code: '', index: -1 });
+      setQueryType(MessageFilterType.STRING_CONTAINS);
+    }
+    filters.splice(index, 1);
+    localStorage.setItem('savedFilters', JSON.stringify(filters));
+    setSavedFilters(filters);
+  };
+  const deleteActiveFilter = () => {
+    setActiveFilter({ name: '', code: '', index: -1 });
+    localStorage.removeItem('activeFilter');
+    setQueryType(MessageFilterType.STRING_CONTAINS);
+  };
+  const activeFilterHandler = (
+    newActiveFilter: MessageFilters,
+    index: number
+  ) => {
+    localStorage.setItem(
+      'activeFilter',
+      JSON.stringify({ index, ...newActiveFilter })
+    );
+    setActiveFilter({ index, ...newActiveFilter });
+    setQueryType(MessageFilterType.GROOVY_SCRIPT);
+  };
+  const editSavedFilter = (filter: FilterEdit) => {
+    const filters = [...savedFilters];
+    filters[filter.index] = filter.filter;
+    if (activeFilter.name && activeFilter.index === filter.index) {
+      setActiveFilter({
+        index: filter.index,
+        name: filter.filter.name,
+        code: filter.filter.code,
+      });
+      localStorage.setItem(
+        'activeFilter',
+        JSON.stringify({
+          index: filter.index,
+          name: filter.filter.name,
+          code: filter.filter.code,
+        })
+      );
+    }
+    localStorage.setItem('savedFilters', JSON.stringify(filters));
+    setSavedFilters(filters);
+  };
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
     if (location.search.length !== 0) {
@@ -237,19 +332,17 @@ const Filters: React.FC<FiltersProps> = ({
     topicName,
     seekDirection,
     location,
-    setIsFetching,
-    resetMessages,
     addMessage,
-    updatePhase,
+    resetMessages,
+    setIsFetching,
     updateMeta,
+    updatePhase,
   ]);
-
   React.useEffect(() => {
     if (location.search.length === 0) {
       handleFiltersSubmit();
     }
   }, [handleFiltersSubmit, location]);
-
   React.useEffect(() => {
     handleFiltersSubmit();
   }, [handleFiltersSubmit, seekDirection]);
@@ -313,6 +406,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
           />
+          <S.ClearAll>Clear all</S.ClearAll>
           {isFetching ? (
             <Button
               type="button"
@@ -346,6 +440,32 @@ const Filters: React.FC<FiltersProps> = ({
           isLive={seekDirection === SeekDirection.TAILING}
         />
       </div>
+      <S.ActiveSmartFilterWrapper>
+        <S.AddFiltersIcon data-testid="addFilterIcon" onClick={toggleIsOpen}>
+          <i className="fas fa-plus fa-sm" />
+        </S.AddFiltersIcon>
+        {activeFilter.name && (
+          <S.ActiveSmartFilter data-testid="activeSmartFilter">
+            {activeFilter.name}
+            <S.DeleteSavedFilterIcon onClick={deleteActiveFilter}>
+              <i
+                className="fas fa-times"
+                data-testid="activeSmartFilterCloseIcon"
+              />
+            </S.DeleteSavedFilterIcon>
+          </S.ActiveSmartFilter>
+        )}
+      </S.ActiveSmartFilterWrapper>
+      {isOpen && (
+        <FilterModal
+          toggleIsOpen={toggleIsOpen}
+          filters={savedFilters}
+          addFilter={addFilter}
+          deleteFilter={deleteFilter}
+          activeFilterHandler={activeFilterHandler}
+          editSavedFilter={editSavedFilter}
+        />
+      )}
       <S.FiltersMetrics>
         <p style={{ fontSize: 14 }}>
           {seekDirection !== SeekDirection.TAILING &&

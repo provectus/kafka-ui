@@ -25,9 +25,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
     }
   }, [isConfirming, onCancel]);
 
-  if (!isOpen) return null;
-
-  return (
+  return isOpen ? (
     <ConfirmationModalWrapper>
       <div onClick={cancelHandler} aria-hidden="true" />
       <div>
@@ -58,7 +56,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         </footer>
       </div>
     </ConfirmationModalWrapper>
-  );
+  ) : null;
 };
 
 export default ConfirmationModal;

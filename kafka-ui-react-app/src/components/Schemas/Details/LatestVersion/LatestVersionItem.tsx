@@ -1,11 +1,9 @@
 import React from 'react';
 import { SchemaSubject } from 'generated-sources';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
+import Heading from 'components/common/heading/Heading.styled';
 
-import {
-  LatestVersionWrapper,
-  MetaDataLabel,
-} from './LatestVersionItem.styled';
+import * as S from './LatestVersionItem.styled';
 
 interface LatestVersionProps {
   schema: SchemaSubject;
@@ -14,30 +12,30 @@ interface LatestVersionProps {
 const LatestVersionItem: React.FC<LatestVersionProps> = ({
   schema: { id, subject, schema, compatibilityLevel, version, schemaType },
 }) => (
-  <LatestVersionWrapper>
+  <S.Wrapper>
     <div>
-      <h1>Relevant version</h1>
+      <Heading level={3}>Relevant version</Heading>
       <EditorViewer data={schema} schemaType={schemaType} maxLines={28} />
     </div>
     <div data-testid="meta-data">
       <div>
-        <MetaDataLabel>Latest version</MetaDataLabel>
+        <S.MetaDataLabel>Latest version</S.MetaDataLabel>
         <p>{version}</p>
       </div>
       <div>
-        <MetaDataLabel>ID</MetaDataLabel>
+        <S.MetaDataLabel>ID</S.MetaDataLabel>
         <p>{id}</p>
       </div>
       <div>
-        <MetaDataLabel>Subject</MetaDataLabel>
+        <S.MetaDataLabel>Subject</S.MetaDataLabel>
         <p>{subject}</p>
       </div>
       <div>
-        <MetaDataLabel>Compatibility</MetaDataLabel>
+        <S.MetaDataLabel>Compatibility</S.MetaDataLabel>
         <p>{compatibilityLevel}</p>
       </div>
     </div>
-  </LatestVersionWrapper>
+  </S.Wrapper>
 );
 
 export default LatestVersionItem;
