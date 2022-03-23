@@ -135,7 +135,7 @@ const initialState: ConsumerGroupState = {
   ...consumerGroupsAdapter.getInitialState(),
 };
 
-const consumerGroupsSlice = createSlice({
+export const consumerGroupsSlice = createSlice({
   name: 'consumerGroups',
   initialState,
   reducers: {
