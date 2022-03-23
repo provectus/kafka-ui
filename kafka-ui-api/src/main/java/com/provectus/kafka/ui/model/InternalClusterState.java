@@ -2,7 +2,6 @@ package com.provectus.kafka.ui.model;
 
 import com.google.common.base.Throwables;
 import com.provectus.kafka.ui.service.MetricsCache;
-import com.provectus.kafka.ui.util.ClusterUtil;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +15,6 @@ public class InternalClusterState {
   private MetricsCollectionErrorDTO lastError;
   private Integer topicCount;
   private Integer brokerCount;
-  private Integer zooKeeperStatus;
   private Integer activeControllers;
   private Integer onlinePartitionCount;
   private Integer offlinePartitionCount;
@@ -40,7 +38,6 @@ public class InternalClusterState {
         .orElse(null);
     topicCount = metrics.getTopicDescriptions().size();
     brokerCount = metrics.getClusterDescription().getNodes().size();
-    zooKeeperStatus = ClusterUtil.convertToIntServerStatus(metrics.getZkStatus().getStatus());
     activeControllers = metrics.getClusterDescription().getController() != null ? 1 : 0;
     version = metrics.getVersion();
 
