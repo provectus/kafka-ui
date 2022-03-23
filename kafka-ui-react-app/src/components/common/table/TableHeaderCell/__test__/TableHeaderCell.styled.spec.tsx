@@ -5,7 +5,7 @@ import { SortOrder } from 'generated-sources';
 import { screen } from '@testing-library/react';
 import theme from 'theme/theme';
 
-describe('TableHeadeCell.Styled', () => {
+describe('TableHeaderCell.Styled', () => {
   describe('Title Component', () => {
     const DEFAULT_TITLE_TEXT = 'Text';
     const setUpComponent = (

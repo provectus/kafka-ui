@@ -7,7 +7,6 @@ import {
 } from '@reduxjs/toolkit';
 import {
   Configuration,
-  ConsumerGroup,
   ConsumerGroupDetails,
   ConsumerGroupOrdering,
   ConsumerGroupsApi,
@@ -27,22 +26,6 @@ import { EntityState } from '@reduxjs/toolkit/src/entities/models';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const api = new ConsumerGroupsApi(apiClientConf);
-
-export const fetchConsumerGroups = createAsyncThunk<
-  ConsumerGroup[],
-  ClusterName
->(
-  'consumerGroups/fetchConsumerGroups',
-  async (clusterName: ClusterName, { rejectWithValue }) => {
-    try {
-      return await api.getConsumerGroups({
-        clusterName,
-      });
-    } catch (error) {
-      return rejectWithValue(await getResponse(error as Response));
-    }
-  }
-);
 
 export const fetchConsumerGroupsPaged = createAsyncThunk<
   ConsumerGroupsPageResponse,
@@ -172,9 +155,6 @@ const consumerGroupsSlice = createSlice({
         consumerGroupsAdapter.setAll(state, payload.consumerGroups || []);
       }
     );
-    builder.addCase(fetchConsumerGroups.fulfilled, (state, { payload }) => {
-      consumerGroupsAdapter.setAll(state, payload);
-    });
     builder.addCase(fetchConsumerGroupDetails.fulfilled, (state, { payload }) =>
       consumerGroupsAdapter.upsertOne(state, payload)
     );
@@ -195,11 +175,6 @@ export const { selectAll, selectById } =
 
 export const getAreConsumerGroupsPagedFulfilled = createSelector(
   createFetchingSelector('consumerGroups/fetchConsumerGroupsPaged'),
-  (status) => status === 'fulfilled'
-);
-
-export const getAreConsumerGroupsFulfilled = createSelector(
-  createFetchingSelector('consumerGroups/fetchConsumerGroups'),
   (status) => status === 'fulfilled'
 );
 
