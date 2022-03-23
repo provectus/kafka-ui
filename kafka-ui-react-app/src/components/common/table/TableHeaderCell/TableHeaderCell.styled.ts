@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { SortOrder } from 'generated-sources';
 
-interface TitleProps {
+export interface TitleProps {
   isOrderable?: boolean;
   isOrdered?: boolean;
   sortOrder?: SortOrder;
@@ -51,7 +51,7 @@ const ASCMixin = css(
   ({ theme: { table } }) => `
     color: ${table.th.color.active};
 
-    &::before {
+    &:before {
         border-bottom-color: ${table.th.color.active};
     }
   `
@@ -61,7 +61,7 @@ const DESCMixin = css(
   ({ theme: { table } }) => `
     color: ${table.th.color.active};
 
-    &::after {
+    &:after {
         border-top-color: ${table.th.color.active};
     }
   `
