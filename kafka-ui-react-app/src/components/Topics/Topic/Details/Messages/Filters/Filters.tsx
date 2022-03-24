@@ -85,7 +85,7 @@ const Filters: React.FC<FiltersProps> = ({
   const location = useLocation();
   const history = useHistory();
 
-  const { searchParams, seekDirection, toggleSeekDirection } =
+  const { searchParams, seekDirection, isLive, toggleSeekDirection } =
     useContext(TopicMessagesContext);
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -413,7 +413,7 @@ const Filters: React.FC<FiltersProps> = ({
           value={seekDirection}
           minWidth="120px"
           options={SeekDirectionOptions}
-          isLive={seekDirection === SeekDirection.TAILING}
+          isLive={isLive}
         />
       </div>
       <S.ActiveSmartFilterWrapper>
@@ -448,7 +448,7 @@ const Filters: React.FC<FiltersProps> = ({
             isFetching &&
             phaseMessage}
         </p>
-        <S.MessageLoading isLive={seekDirection === SeekDirection.TAILING}>
+        <S.MessageLoading isLive={isLive}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
           Loading messages.
           <S.StopLoading
