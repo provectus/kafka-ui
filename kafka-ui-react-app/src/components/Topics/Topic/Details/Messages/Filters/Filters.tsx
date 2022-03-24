@@ -10,7 +10,7 @@ import {
   TopicMessageEventTypeEnum,
   MessageFilterType,
 } from 'generated-sources';
-import React from 'react';
+import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
@@ -25,6 +25,8 @@ import { Button } from 'components/common/Button/Button';
 import FilterModal, {
   FilterEdit,
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
+import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
+import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 
 import * as S from './Filters.styled';
 import {
@@ -66,11 +68,6 @@ export const SeekTypeOptions = [
   { value: SeekType.OFFSET, label: 'Offset' },
   { value: SeekType.TIMESTAMP, label: 'Timestamp' },
 ];
-export const SeekDirectionOptions = [
-  { value: SeekDirection.FORWARD, label: 'Oldest First', isLive: false },
-  { value: SeekDirection.BACKWARD, label: 'Newest First', isLive: false },
-  { value: SeekDirection.TAILING, label: 'Live Mode', isLive: true },
-];
 
 const Filters: React.FC<FiltersProps> = ({
   clusterName,
@@ -88,15 +85,13 @@ const Filters: React.FC<FiltersProps> = ({
   const location = useLocation();
   const history = useHistory();
 
+  const { searchParams, seekDirection, toggleSeekDirection } =
+    useContext(TopicMessagesContext);
+
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
   const source = React.useRef<EventSource | null>(null);
-
-  const searchParams = React.useMemo(
-    () => new URLSearchParams(location.search),
-    [location]
-  );
 
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
     getSelectedPartitionsFromSeekToParam(searchParams, partitions)
@@ -132,10 +127,6 @@ const Filters: React.FC<FiltersProps> = ({
       : MessageFilterType.STRING_CONTAINS
   );
   const [query, setQuery] = React.useState<string>(searchParams.get('q') || '');
-  const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
-    (searchParams.get('seekDirection') as SeekDirection) ||
-      SeekDirection.FORWARD
-  );
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
@@ -209,21 +200,6 @@ const Filters: React.FC<FiltersProps> = ({
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [seekDirection, queryType, activeFilter]);
-
-  const toggleSeekDirection = (val: string) => {
-    switch (val) {
-      case SeekDirection.FORWARD:
-        setSeekDirection(SeekDirection.FORWARD);
-        break;
-      case SeekDirection.BACKWARD:
-        setSeekDirection(SeekDirection.BACKWARD);
-        break;
-      case SeekDirection.TAILING:
-        setSeekDirection(SeekDirection.TAILING);
-        break;
-      default:
-    }
-  };
 
   const handleSSECancel = () => {
     if (!source.current) return;
@@ -477,7 +453,7 @@ const Filters: React.FC<FiltersProps> = ({
           Loading messages.
           <S.StopLoading
             onClick={() => {
-              setSeekDirection(SeekDirection.FORWARD);
+              toggleSeekDirection(SeekDirection.FORWARD);
               setIsFetching(false);
             }}
           >

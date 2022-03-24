@@ -1,29 +1,41 @@
 import React from 'react';
+import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import Filters, {
   FiltersProps,
-  SeekDirectionOptions,
   SeekTypeOptions,
 } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { render } from 'lib/testHelpers';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import { SeekDirection } from 'generated-sources';
 
-const setupWrapper = (props?: Partial<FiltersProps>) =>
+const setupWrapper = (props?: Partial<FiltersProps>) => {
   render(
-    <Filters
-      clusterName="test-cluster"
-      topicName="test-topic"
-      partitions={[{ partition: 0, offsetMin: 0, offsetMax: 100 }]}
-      meta={{}}
-      isFetching={false}
-      addMessage={jest.fn()}
-      resetMessages={jest.fn()}
-      updatePhase={jest.fn()}
-      updateMeta={jest.fn()}
-      setIsFetching={jest.fn()}
-      {...props}
-    />
+    <TopicMessagesContext.Provider
+      value={{
+        isLive: false,
+        seekDirection: SeekDirection.FORWARD,
+        searchParams: new URLSearchParams(''),
+        toggleSeekDirection: jest.fn(),
+      }}
+    >
+      <Filters
+        clusterName="test-cluster"
+        topicName="test-topic"
+        partitions={[{ partition: 0, offsetMin: 0, offsetMax: 100 }]}
+        meta={{}}
+        isFetching={false}
+        addMessage={jest.fn()}
+        resetMessages={jest.fn()}
+        updatePhase={jest.fn()}
+        updateMeta={jest.fn()}
+        setIsFetching={jest.fn()}
+        {...props}
+      />
+    </TopicMessagesContext.Provider>
   );
+};
 describe('Filters component', () => {
   it('renders component', () => {
     setupWrapper();
