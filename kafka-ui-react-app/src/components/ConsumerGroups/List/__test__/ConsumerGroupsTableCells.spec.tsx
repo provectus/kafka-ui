@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from 'lib/testHelpers';
 import {
-  CoordinatorCell,
   GroupIDCell,
   StatusCell,
 } from 'components/ConsumerGroups/List/ConsumerGroupsTableCells';
@@ -60,19 +59,6 @@ describe('Consumer Groups Table Cells', () => {
       expect(
         screen.getByText(consumerGroup.state as string)
       ).toBeInTheDocument();
-    });
-  });
-  describe('CoordinatorCell', () => {
-    it('should GroupIdCell props render normally', () => {
-      render(
-        <CoordinatorCell
-          rowIndex={1}
-          dataItem={consumerGroup}
-          tableState={mockTableState}
-        />
-      );
-      const text = consumerGroup.coordinator?.id.toString();
-      expect(screen.getByText(text || '')).toBeInTheDocument();
     });
   });
 });

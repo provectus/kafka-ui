@@ -11,7 +11,6 @@ import { useTableState } from 'lib/hooks/useTableState';
 import { SmartTable } from 'components/common/SmartTable/SmartTable';
 import { TableColumn } from 'components/common/SmartTable/TableColumn';
 import {
-  CoordinatorCell,
   GroupIDCell,
   StatusCell,
 } from 'components/ConsumerGroups/List/ConsumerGroupsTableCells';
@@ -89,7 +88,7 @@ const List: React.FC<Props> = ({
         />
         <TableColumn title="Num Of Topics" field="topics" />
         <TableColumn title="Messages Behind" field="messagesBehind" />
-        <TableColumn title="Coordinator" cell={CoordinatorCell} />
+        <TableColumn title="Coordinator" field="coordinator.id" />
         <TableColumn
           title="State"
           cell={StatusCell}

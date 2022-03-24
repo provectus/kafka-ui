@@ -21,9 +21,3 @@ export const GroupIDCell: React.FC<TableCellProps<ConsumerGroup, string>> = ({
     </SmartTableKeyLink>
   );
 };
-
-export const CoordinatorCell: React.FC<
-  TableCellProps<ConsumerGroup, string>
-> = ({ dataItem: { coordinator } }) => {
-  return <span>{coordinator?.id}</span>;
-};
