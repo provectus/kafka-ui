@@ -71,8 +71,8 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
     });
     let checkboxElement = null;
 
-    if (allSelectable) {
-      checkboxElement = (
+    if (selectable) {
+      checkboxElement = allSelectable ? (
         <SelectCell
           rowIndex={-1}
           el="th"
@@ -80,9 +80,9 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
           selected={tableState.selectedCount === tableState.data.length}
           onChange={tableState.toggleSelection}
         />
+      ) : (
+        <S.TableHeaderCell />
       );
-    } else if (selectable) {
-      checkboxElement = <S.TableHeaderCell />;
     }
 
     return (
