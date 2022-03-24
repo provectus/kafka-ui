@@ -345,7 +345,7 @@ const Filters: React.FC<FiltersProps> = ({
                 selectSize="M"
                 minWidth="100px"
                 options={SeekTypeOptions}
-                disabled={seekDirection === SeekDirection.TAILING}
+                disabled={isLive}
               />
               {currentSeekType === SeekType.OFFSET ? (
                 <Input
@@ -356,7 +356,7 @@ const Filters: React.FC<FiltersProps> = ({
                   className="offset-selector"
                   placeholder="Offset"
                   onChange={({ target: { value } }) => setOffset(value)}
-                  disabled={seekDirection === SeekDirection.TAILING}
+                  disabled={isLive}
                 />
               ) : (
                 <DatePicker
@@ -367,7 +367,7 @@ const Filters: React.FC<FiltersProps> = ({
                   dateFormat="MMMM d, yyyy HH:mm"
                   className="date-picker"
                   placeholderText="Select timestamp"
-                  disabled={seekDirection === SeekDirection.TAILING}
+                  disabled={isLive}
                 />
               )}
             </S.SeekTypeSelectorWrapper>
