@@ -36,11 +36,13 @@ const Messages: React.FC = () => {
 
   const defaultSeekValue = SeekDirectionOptions[0];
 
-  const [isLive, setIsLive] = useState<boolean>(defaultSeekValue.isLive);
-
   const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
     (searchParams.get('seekDirection') as SeekDirection) ||
       defaultSeekValue.value
+  );
+
+  const [isLive, setIsLive] = useState<boolean>(
+    SeekDirectionOptionsObj[seekDirection].isLive
   );
 
   const toggleSeekDirection = useCallback((val: string) => {
