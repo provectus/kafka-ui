@@ -1,8 +1,10 @@
 import styled, { css } from 'styled-components';
+import { SortOrder } from 'generated-sources';
 
-interface TitleProps {
+export interface TitleProps {
   isOrderable?: boolean;
   isOrdered?: boolean;
+  sortOrder?: SortOrder;
 }
 
 const orderableMixin = css(
@@ -45,20 +47,28 @@ const orderableMixin = css(
   `
 );
 
-const orderedMixin = css(
+const ASCMixin = css(
   ({ theme: { table } }) => `
-  color: ${table.th.color.active};
-      &::before {
+    color: ${table.th.color.active};
+
+    &:before {
         border-bottom-color: ${table.th.color.active};
-      }
-      &::after {
+    }
+  `
+);
+
+const DESCMixin = css(
+  ({ theme: { table } }) => `
+    color: ${table.th.color.active};
+
+    &:after {
         border-top-color: ${table.th.color.active};
-      }
+    }
   `
 );
 
 export const Title = styled.span<TitleProps>(
-  ({ isOrderable, isOrdered, theme: { table } }) => css`
+  ({ isOrderable, isOrdered, sortOrder, theme: { table } }) => css`
     font-family: Inter, sans-serif;
     font-size: 12px;
     font-style: normal;
@@ -75,7 +85,9 @@ export const Title = styled.span<TitleProps>(
 
     ${isOrderable && orderableMixin}
 
-    ${isOrderable && isOrdered && orderedMixin}
+    ${isOrderable && isOrdered && sortOrder === SortOrder.ASC && ASCMixin}
+
+    ${isOrderable && isOrdered && sortOrder === SortOrder.DESC && DESCMixin}
   `
 );
 
