@@ -25,7 +25,7 @@ jobs:
         with:
           node-version: "14"
       - name: Cache node dependency
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: kafka-ui-react-app/node_modules
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
