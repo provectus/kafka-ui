@@ -3,6 +3,7 @@ package com.provectus.kafka.ui.serde.schemaregistry;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
+import com.google.protobuf.Descriptors.FileDescriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
 import com.google.protobuf.util.JsonFormat;
@@ -43,6 +44,18 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
     final Optional<Descriptor> descriptor;
   }
 
+  @Data
+  private class CachedFileDescriptors {
+    final Date timeCached;
+    final Optional<List<FileDescriptor>> fileDescriptors;
+  }
+
+  @Data
+  private class BufRepoInfo {
+    final String owner;
+    final String repo;
+  }
+
   private final SchemaRegistryAwareRecordSerDe schemaRegistryAwareRecordSerDe;
   private final BufSchemaRegistryClient bufClient;
 
@@ -52,7 +65,10 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private final Map<String, String> protobufKeyMessageNameByTopic;
 
   private final Map<String, CachedDescriptor> cachedMessageDescriptorMap;
+  private final Map<String, CachedDescriptor> cachedFileDescriptorsMap;
   private final int cachedMessageDescriptorRetentionSeconds;
+
+  private final String googleProtobufAnyType = "google.protobuf.Any";
 
   public BufAndSchemaRegistryAwareRecordSerDe(KafkaCluster cluster) {
     this(cluster, null, createBufRegistryClient(cluster));
@@ -98,6 +114,7 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
     }
 
     this.cachedMessageDescriptorMap = new HashMap<>();
+    this.cachedFileDescriptorsMap = new HashMap<>();
 
     log.info("Will cache descriptors from buf for {} seconds", this.cachedMessageDescriptorRetentionSeconds);
   }
@@ -250,16 +267,7 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
     return timeUnit.convert(diffInMillis, TimeUnit.MILLISECONDS);
   }
 
-  private Optional<Descriptor> getDescriptor(String fullyQualifiedTypeName) {
-    Date currentDate = new Date();
-    CachedDescriptor cachedDescriptor = cachedMessageDescriptorMap.get(fullyQualifiedTypeName);
-    if (cachedDescriptor != null) {
-      if (getDateDiffMinutes(cachedDescriptor.getTimeCached(), currentDate,
-          TimeUnit.SECONDS) < cachedMessageDescriptorRetentionSeconds) {
-        return cachedDescriptor.getDescriptor();
-      }
-    }
-
+  private Optional<BufRepoInfo> getBufRepoInfo(String fullyQualifiedTypeName) {
     String bufOwner = bufDefaultOwner;
     String bufRepo = "";
 
@@ -271,8 +279,7 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
         log.error("Cannot parse Buf owner and repo info from {}, make sure it is in the 'owner/repo' format",
             bufOwnerRepoInfo);
       } else {
-        bufOwner = parts[0];
-        bufRepo = parts[1];
+        return Optional.of(new BufRepoInfo(parts[0], parts[1]));
       }
     } else {
       String[] parts = fullyQualifiedTypeName.split("\\.");
@@ -280,13 +287,37 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
       if (parts.length == 0) {
         log.warn("Cannot infer Buf repo name from type {}", fullyQualifiedTypeName);
       } else {
-        bufRepo = parts[0];
+        return Optional.of(new BufRepoInfo(bufDefaultOwner, parts[0]));
       }
     }
 
-    log.info("Get descriptor from Buf {}/{}@{}", bufOwner, bufRepo, fullyQualifiedTypeName);
+    return Optional.empty();
+  }
 
-    Optional<Descriptor> descriptor = bufClient.getDescriptor(bufOwner, bufRepo, fullyQualifiedTypeName);
+  private Optional<Descriptor> getDescriptor(String fullyQualifiedTypeName) {
+    if (fullyQualifiedTypeName == googleProtobufAnyType) {
+      return Optional.of(Any.getDescriptor());
+    }
+
+    Date currentDate = new Date();
+    CachedDescriptor cachedDescriptor = cachedMessageDescriptorMap.get(fullyQualifiedTypeName);
+    if (cachedDescriptor != null) {
+      if (getDateDiffMinutes(cachedDescriptor.getTimeCached(), currentDate,
+          TimeUnit.SECONDS) < cachedMessageDescriptorRetentionSeconds) {
+        return cachedDescriptor.getDescriptor();
+      }
+    }
+
+    Optional<BufRepoInfo> bufRepoInfo = getBufRepoInfo(fullyQualifiedTypeName);
+    if (bufRepoInfo.empty()) {
+      log.error("could not get Buf repo info for {}", fullyQualifiedTypeName);
+      return Optional.empty();
+    }
+
+    log.info("Get descriptor from Buf {}/{}@{}", bufRepoInfo.getOwner(), bufRepoInfo.getRepo(), fullyQualifiedTypeName);
+
+    Optional<Descriptor> descriptor = bufClient.getDescriptor(bufRepoInfo.getOwner(), bufRepoInfo.getRepo(),
+        fullyQualifiedTypeName);
 
     cachedDescriptor = new CachedDescriptor(currentDate, descriptor);
     cachedMessageDescriptorMap.put(fullyQualifiedTypeName, cachedDescriptor);
@@ -318,6 +349,35 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
      */
 
     try {
+      if (descriptor.getFullName() == googleProtobufAnyType) {
+        Any anyMsg = Any.parseFrom(value);
+
+        // Get the fully qualified type name from a URL like
+        // type.googleapis.com/google.protobuf.Duration.
+        String type = anyMsg.getTypeUrl();
+        String[] parts = anyMsg.getTypeUrl().split("/");
+        if (parts.length == 2) {
+          type = parts[1];
+        }
+        Optional<Descriptor> valueDescriptor = getDescriptor(type);
+
+        if (valueDescriptor.isPresent()) {
+          DynamicMessage protoMsg = DynamicMessage.parseFrom(
+              descriptor,
+              new ByteArrayInputStream(value));
+
+          JsonFormat.TypeRegistry typeRegistry = JsonFormat.TypeRegistry.newBuilder()
+              .add(valueDescriptor.get())
+              .build();
+
+          JsonFormat.Printer printer = JsonFormat.printer().usingTypeRegistry(typeRegistry);
+
+          return printer.print(protoMsg);
+        }
+      } else {
+        // TODO: Get file descriptors
+      }
+
       DynamicMessage protoMsg = DynamicMessage.parseFrom(
           descriptor,
           new ByteArrayInputStream(value));

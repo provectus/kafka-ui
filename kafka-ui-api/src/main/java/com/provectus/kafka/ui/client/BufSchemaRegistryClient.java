@@ -43,19 +43,7 @@ public class BufSchemaRegistryClient {
     bufClient = bufClient.withInterceptors(MetadataUtils.newAttachHeadersInterceptor(headers));
   }
 
-  public Optional<Descriptor> getDescriptor(String owner, String repo, String fullyQualifiedTypeName) {
-    List<String> parts = Arrays.asList(fullyQualifiedTypeName.split("\\."));
-
-    if (parts.isEmpty()) {
-      log.warn("Cannot get package name and type name from {}", fullyQualifiedTypeName);
-      return Optional.empty();
-    }
-
-    String packageName = String.join(".", parts.subList(0, parts.size() - 1));
-    String typeName = parts.get(parts.size() - 1);
-
-    log.info("Looking for type {} in package {}", typeName, packageName);
-
+  public Optional<List<FileDescriptor>> getFileDescriptors(String owner, String repo) {
     Image image;
 
     try {
@@ -82,17 +70,38 @@ public class BufSchemaRegistryClient {
 
     final Map<String, FileDescriptor> descriptorCache = new HashMap<>();
 
-    final Map<String, FileDescriptor> allFileDescriptors = new HashMap<>();
+    final List<FileDescriptor> allFileDescriptors = new ArrayList<>();
     try {
       for (int i = 0; i < fileDescriptorSet.getFileCount(); i++) {
         FileDescriptor desc = descriptorFromProto(fileDescriptorSet.getFile(i), descriptorProtoIndex, descriptorCache);
-        allFileDescriptors.put(desc.getName(), desc);
+        allFileDescriptors.add(desc);
       }
     } catch (DescriptorValidationException e) {
       log.error("Failed to create dependencies map {}", e);
     }
 
-    return Optional.ofNullable(allFileDescriptors.values()
+    return Optional.of(allFileDescriptors);
+  }
+
+  public Optional<Descriptor> getDescriptor(String owner, String repo, String fullyQualifiedTypeName) {
+    List<String> parts = Arrays.asList(fullyQualifiedTypeName.split("\\."));
+
+    if (parts.isEmpty()) {
+      log.warn("Cannot get package name and type name from {}", fullyQualifiedTypeName);
+      return Optional.empty();
+    }
+
+    String packageName = String.join(".", parts.subList(0, parts.size() - 1));
+    String typeName = parts.get(parts.size() - 1);
+
+    log.info("Looking for type {} in package {}", typeName, packageName);
+
+    Optional<List<FileDescriptor>> fileDescriptors = getFileDescriptors(owner, repo);
+    if (fileDescriptors.isEmpty()) {
+      return Optional.empty();
+    }
+
+    return Optional.ofNullable(fileDescriptors.get()
         .stream()
         .filter(f -> f.getPackage().equals(packageName))
         .map(f -> f.findMessageTypeByName(typeName))
