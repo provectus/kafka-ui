@@ -69,19 +69,25 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
         />
       );
     });
+    let checkboxElement = null;
+
+    if (selectable) {
+      checkboxElement = allSelectable ? (
+        <SelectCell
+          rowIndex={-1}
+          el="th"
+          selectable
+          selected={tableState.selectedCount === tableState.data.length}
+          onChange={tableState.toggleSelection}
+        />
+      ) : (
+        <S.TableHeaderCell />
+      );
+    }
+
     return (
       <tr>
-        {allSelectable ? (
-          <SelectCell
-            rowIndex={-1}
-            el="th"
-            selectable
-            selected={tableState.selectedCount === tableState.data.length}
-            onChange={tableState.toggleSelection}
-          />
-        ) : (
-          <S.TableHeaderCell />
-        )}
+        {checkboxElement}
         {headerCells}
       </tr>
     );
