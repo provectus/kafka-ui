@@ -298,7 +298,7 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
     return descriptor;
   }
 
-  private String parse(byte[] value, Descriptor descriptor) throws IOException {
+  private String parse(byte[] value, Descriptor descriptor) {
     /*
      * DynamicMessage protoMsg = DynamicMessage.parseFrom(
      * Any.getDescriptor(), // descriptor
