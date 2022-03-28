@@ -1,6 +1,7 @@
 package com.provectus.kafka.ui.serde.schemaregistry;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.protobuf.Any;
 import com.google.protobuf.Descriptors.Descriptor;
 import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -298,11 +299,40 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
   }
 
   private String parse(byte[] value, Descriptor descriptor) throws IOException {
-    DynamicMessage protoMsg = DynamicMessage.parseFrom(
-        descriptor,
-        new ByteArrayInputStream(value));
-    byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
-    return new String(jsonFromProto, StandardCharsets.UTF_8);
+    /*
+     * DynamicMessage protoMsg = DynamicMessage.parseFrom(
+     * Any.getDescriptor(), // descriptor
+     * new ByteArrayInputStream(value));
+     * 
+     * JsonFormat.TypeRegistry typeRegistry = JsonFormat.TypeRegistry.newBuilder()
+     * .add(descriptor)
+     * .build();
+     * 
+     * JsonFormat.Printer printer =
+     * JsonFormat.printer().usingTypeRegistry(typeRegistry);
+     * 
+     * // JsonFormat formatter = new JsonFormat();
+     * 
+     * String jsonString = printer.print(protoMsg);
+     * // JsonFormat.printer().print(protoMsg);
+     * 
+     * log.info("parsed: {}", jsonString);
+     * 
+     * return jsonString;
+     */
+
+    try {
+      DynamicMessage protoMsg = DynamicMessage.parseFrom(
+          descriptor,
+          new ByteArrayInputStream(value));
+
+      byte[] jsonFromProto = ProtobufSchemaUtils.toJson(protoMsg);
+      return new String(jsonFromProto, StandardCharsets.UTF_8);
+    } catch (IOException e) {
+      log.error("failed protobuf derserialization: {}", e);
+    }
+
+    return new String(value, StandardCharsets.UTF_8);
   }
 
   @Override
