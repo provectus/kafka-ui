@@ -169,7 +169,7 @@ const Filters: React.FC<FiltersProps> = ({
     setAttempt(attempt + 1);
 
     if (isSeekTypeControlVisible) {
-      props.seekType = currentSeekType;
+      props.seekType = isLive ? SeekType.LATEST : currentSeekType;
       props.seekTo = selectedPartitions.map(({ value }) => {
         let seekToOffset;
 
