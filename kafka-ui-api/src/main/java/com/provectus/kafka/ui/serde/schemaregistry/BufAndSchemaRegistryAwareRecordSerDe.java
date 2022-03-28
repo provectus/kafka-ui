@@ -223,30 +223,26 @@ public class BufAndSchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private DeserializedKeyValue deserializeProtobuf(ConsumerRecord<Bytes, Bytes> msg,
       Optional<Descriptor> keyDescriptor,
       Optional<Descriptor> valueDescriptor) {
-    try {
-      var builder = DeserializedKeyValue.builder();
-      if (msg.key() != null) {
-        if (keyDescriptor.isPresent()) {
-          builder.key(parse(msg.key().get(), keyDescriptor.get()));
-          builder.keyFormat(MessageFormat.PROTOBUF);
-        } else {
-          builder.key(new String(msg.key().get(), StandardCharsets.UTF_8));
-          builder.keyFormat(MessageFormat.UNKNOWN);
-        }
+    var builder = DeserializedKeyValue.builder();
+    if (msg.key() != null) {
+      if (keyDescriptor.isPresent()) {
+        builder.key(parse(msg.key().get(), keyDescriptor.get()));
+        builder.keyFormat(MessageFormat.PROTOBUF);
+      } else {
+        builder.key(new String(msg.key().get(), StandardCharsets.UTF_8));
+        builder.keyFormat(MessageFormat.UNKNOWN);
       }
-      if (msg.value() != null) {
-        if (valueDescriptor.isPresent()) {
-          builder.value(parse(msg.value().get(), valueDescriptor.get()));
-          builder.valueFormat(MessageFormat.PROTOBUF);
-        } else {
-          builder.value(new String(msg.value().get(), StandardCharsets.UTF_8));
-          builder.valueFormat(MessageFormat.UNKNOWN);
-        }
-      }
-      return builder.build();
-    } catch (IOException e) {
-      throw new UncheckedIOException("Failed to parse record from topic " + msg.topic(), e);
     }
+    if (msg.value() != null) {
+      if (valueDescriptor.isPresent()) {
+        builder.value(parse(msg.value().get(), valueDescriptor.get()));
+        builder.valueFormat(MessageFormat.PROTOBUF);
+      } else {
+        builder.value(new String(msg.value().get(), StandardCharsets.UTF_8));
+        builder.valueFormat(MessageFormat.UNKNOWN);
+      }
+    }
+    return builder.build();
   }
 
   private static long getDateDiffMinutes(Date date1, Date date2, TimeUnit timeUnit) {
