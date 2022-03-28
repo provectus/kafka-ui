@@ -1,17 +1,60 @@
-import React from 'react';
-import { Table } from 'components/common/table/Table/Table.styled';
-import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
+import React, { useMemo } from 'react';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import { useAppSelector } from 'lib/hooks/redux';
-import { selectAll } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import {
+  ConsumerGroupDetails,
+  ConsumerGroupOrdering,
+  SortOrder,
+} from 'generated-sources';
+import { useTableState } from 'lib/hooks/useTableState';
+import { SmartTable } from 'components/common/SmartTable/SmartTable';
+import { TableColumn } from 'components/common/SmartTable/TableColumn';
+import {
+  GroupIDCell,
+  StatusCell,
+} from 'components/ConsumerGroups/List/ConsumerGroupsTableCells';
 
-import ListItem from './ListItem';
+export interface Props {
+  consumerGroups: ConsumerGroupDetails[];
+  orderBy: ConsumerGroupOrdering | null;
+  sortOrder: SortOrder;
+  totalPages: number;
+  setConsumerGroupsSortOrderBy(orderBy: ConsumerGroupOrdering | null): void;
+}
 
-const List: React.FC = () => {
-  const consumerGroups = useAppSelector(selectAll);
+const List: React.FC<Props> = ({
+  consumerGroups,
+  sortOrder,
+  orderBy,
+  totalPages,
+  setConsumerGroupsSortOrderBy,
+}) => {
   const [searchText, setSearchText] = React.useState<string>('');
+
+  const tableData = useMemo(() => {
+    return consumerGroups.filter(
+      (consumerGroup) =>
+        !searchText || consumerGroup?.groupId?.indexOf(searchText) >= 0
+    );
+  }, [searchText, consumerGroups]);
+
+  const tableState = useTableState<
+    ConsumerGroupDetails,
+    string,
+    ConsumerGroupOrdering
+  >(
+    tableData,
+    {
+      totalPages,
+      idSelector: (consumerGroup) => consumerGroup.groupId,
+    },
+    {
+      handleOrderBy: setConsumerGroupsSortOrderBy,
+      orderBy,
+      sortOrder,
+    }
+  );
 
   const handleInputChange = (search: string) => {
     setSearchText(search);
@@ -27,36 +70,31 @@ const List: React.FC = () => {
           handleSearch={handleInputChange}
         />
       </ControlPanelWrapper>
-      <Table isFullwidth>
-        <thead>
-          <tr>
-            <TableHeaderCell title="Consumer Group ID" />
-            <TableHeaderCell title="Num Of Members" />
-            <TableHeaderCell title="Num Of Topics" />
-            <TableHeaderCell title="Messages Behind" />
-            <TableHeaderCell title="Coordinator" />
-            <TableHeaderCell title="State" />
-          </tr>
-        </thead>
-        <tbody>
-          {consumerGroups
-            .filter(
-              (consumerGroup) =>
-                !searchText || consumerGroup?.groupId?.indexOf(searchText) >= 0
-            )
-            .map((consumerGroup) => (
-              <ListItem
-                key={consumerGroup.groupId}
-                consumerGroup={consumerGroup}
-              />
-            ))}
-          {consumerGroups.length === 0 && (
-            <tr>
-              <td colSpan={10}>No active consumer groups</td>
-            </tr>
-          )}
-        </tbody>
-      </Table>
+      <SmartTable
+        tableState={tableState}
+        isFullwidth
+        placeholder="No active consumer groups"
+        hoverable
+      >
+        <TableColumn
+          title="Consumer Group ID"
+          cell={GroupIDCell}
+          orderValue={ConsumerGroupOrdering.NAME}
+        />
+        <TableColumn
+          title="Num Of Members"
+          field="members"
+          orderValue={ConsumerGroupOrdering.MEMBERS}
+        />
+        <TableColumn title="Num Of Topics" field="topics" />
+        <TableColumn title="Messages Behind" field="messagesBehind" />
+        <TableColumn title="Coordinator" field="coordinator.id" />
+        <TableColumn
+          title="State"
+          cell={StatusCell}
+          orderValue={ConsumerGroupOrdering.STATE}
+        />
+      </SmartTable>
     </div>
   );
 };

@@ -36,6 +36,7 @@ interface Props extends Topic, TopicDetails {
   isDeleted: boolean;
   isDeletePolicy: boolean;
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
+  recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clearTopicMessages(clusterName: ClusterName, topicName: TopicName): void;
 }
 
@@ -53,6 +54,7 @@ const Details: React.FC<Props> = ({
   isDeleted,
   isDeletePolicy,
   deleteTopic,
+  recreateTopic,
   clearTopicMessages,
 }) => {
   const history = useHistory();
@@ -63,6 +65,10 @@ const Details: React.FC<Props> = ({
     React.useState(false);
   const [isClearTopicConfirmationVisible, setClearTopicConfirmationVisible] =
     React.useState(false);
+  const [
+    isRecreateTopicConfirmationVisible,
+    setRecreateTopicConfirmationVisible,
+  ] = React.useState(false);
   const deleteTopicHandler = React.useCallback(() => {
     deleteTopic(clusterName, topicName);
   }, [clusterName, topicName, deleteTopic]);
@@ -79,11 +85,19 @@ const Details: React.FC<Props> = ({
     setClearTopicConfirmationVisible(false);
   }, [clusterName, topicName, clearTopicMessages]);
 
+  const recreateTopicHandler = React.useCallback(() => {
+    recreateTopic(clusterName, topicName);
+    setRecreateTopicConfirmationVisible(false);
+  }, [recreateTopic, clusterName, topicName]);
+
   return (
     <div>
       <PageHeading text={topicName}>
         <HeaderControlsWrapper>
-          <Route exact path="/clusters/:clusterName/topics/:topicName/messages">
+          <Route
+            exact
+            path="/ui/clusters/:clusterName/topics/:topicName/messages"
+          >
             <Button
               buttonSize="M"
               buttonType="primary"
@@ -94,7 +108,7 @@ const Details: React.FC<Props> = ({
             </Button>
           </Route>
           {!isReadOnly && !isInternal && (
-            <Route path="/clusters/:clusterName/topics/:topicName">
+            <Route path="/ui/clusters/:clusterName/topics/:topicName">
               <Dropdown label={<VerticalElipsisIcon />} right>
                 <DropdownItem
                   onClick={() =>
@@ -116,6 +130,12 @@ const Details: React.FC<Props> = ({
                     Clear messages
                   </DropdownItem>
                 )}
+                <DropdownItem
+                  onClick={() => setRecreateTopicConfirmationVisible(true)}
+                  danger
+                >
+                  Recreate Topic
+                </DropdownItem>
                 {isTopicDeletionAllowed && (
                   <DropdownItem
                     onClick={() => setDeleteTopicConfirmationVisible(true)}
@@ -142,6 +162,13 @@ const Details: React.FC<Props> = ({
         onConfirm={clearTopicMessagesHandler}
       >
         Are you sure want to clear topic messages?
+      </ConfirmationModal>
+      <ConfirmationModal
+        isOpen={isRecreateTopicConfirmationVisible}
+        onCancel={() => setRecreateTopicConfirmationVisible(false)}
+        onConfirm={recreateTopicHandler}
+      >
+        Are you sure want to recreate <b>{topicName}</b> topic?
       </ConfirmationModal>
       <Navbar role="navigation">
         <NavLink
@@ -176,22 +203,22 @@ const Details: React.FC<Props> = ({
       <Switch>
         <Route
           exact
-          path="/clusters/:clusterName/topics/:topicName/messages"
+          path="/ui/clusters/:clusterName/topics/:topicName/messages"
           component={Messages}
         />
         <Route
           exact
-          path="/clusters/:clusterName/topics/:topicName/settings"
+          path="/ui/clusters/:clusterName/topics/:topicName/settings"
           component={SettingsContainer}
         />
         <Route
           exact
-          path="/clusters/:clusterName/topics/:topicName"
+          path="/ui/clusters/:clusterName/topics/:topicName"
           component={OverviewContainer}
         />
         <Route
           exact
-          path="/clusters/:clusterName/topics/:topicName/consumer-groups"
+          path="/ui/clusters/:clusterName/topics/:topicName/consumer-groups"
           component={TopicConsumerGroupsContainer}
         />
       </Switch>

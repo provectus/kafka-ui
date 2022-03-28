@@ -87,7 +87,6 @@ kafka:
     -
       name: local
       bootstrapServers: localhost:29091
-      zookeeper: localhost:2183
       schemaRegistry: http://localhost:8085
       schemaRegistryAuth:
         username: username
@@ -99,7 +98,6 @@ kafka:
 
 * `name`: cluster name
 * `bootstrapServers`: where to connect
-* `zookeeper`: zookeeper service address
 * `schemaRegistry`: schemaRegistry's address
 * `schemaRegistryAuth.username`: schemaRegistry's basic authentication username
 * `schemaRegistryAuth.password`: schemaRegistry's basic authentication password
@@ -161,7 +159,6 @@ For example, if you want to use an environment variable to set the `name` parame
 |`KAFKA_ADMIN-CLIENT-TIMEOUT` | Kafka API timeout in ms. Default: `30000`
 |`KAFKA_CLUSTERS_0_NAME` | Cluster name
 |`KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS` 	|Address where to connect 
-|`KAFKA_CLUSTERS_0_ZOOKEEPER` 	| Zookeeper service address 
 |`KAFKA_CLUSTERS_0_KSQLDBSERVER` 	| KSQL DB server address 
 |`KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL` 	|Security protocol to connect to the brokers. For SSL connection use "SSL", for plaintext connection don't set this environment variable
 |`KAFKA_CLUSTERS_0_SCHEMAREGISTRY`   	|SchemaRegistry's address

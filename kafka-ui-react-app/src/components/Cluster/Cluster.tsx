@@ -99,8 +99,8 @@ const Cluster: React.FC = () => {
             />
           )}
           <Redirect
-            from="/clusters/:clusterName"
-            to="/clusters/:clusterName/brokers"
+            from="/ui/clusters/:clusterName"
+            to="/ui/clusters/:clusterName/brokers"
           />
         </Switch>
       </ClusterContext.Provider>

@@ -94,7 +94,7 @@ exports[`Details view matches snapshot 1`] = `
     <a
       aria-current="page"
       className="is-active"
-      href="/clusters/my-cluster/connects/my-connect/connectors/my-connector"
+      href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector"
       onClick={[Function]}
       style={Object {}}
     >
@@ -102,14 +102,14 @@ exports[`Details view matches snapshot 1`] = `
     </a>
     <a
       aria-current={null}
-      href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/tasks"
+      href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/tasks"
       onClick={[Function]}
     >
       Tasks
     </a>
     <a
       aria-current={null}
-      href="/clusters/my-cluster/connects/my-connect/connectors/my-connector/config"
+      href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/config"
       onClick={[Function]}
     >
       Config
@@ -126,7 +126,7 @@ exports[`Details view matches snapshot 1`] = `
           Object {
             "hash": "",
             "key": "test",
-            "pathname": "/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+            "pathname": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
             "search": "",
           },
         ],
@@ -139,7 +139,7 @@ exports[`Details view matches snapshot 1`] = `
         "location": Object {
           "hash": "",
           "key": "test",
-          "pathname": "/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+          "pathname": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
           "search": "",
         },
         "push": [Function],
@@ -150,7 +150,7 @@ exports[`Details view matches snapshot 1`] = `
       Object {
         "hash": "",
         "key": "test",
-        "pathname": "/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+        "pathname": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
         "search": "",
       }
     }
@@ -162,8 +162,8 @@ exports[`Details view matches snapshot 1`] = `
           "connectName": "my-connect",
           "connectorName": "my-connector",
         },
-        "path": "/clusters/:clusterName/connects/:connectName/connectors/:connectorName",
-        "url": "/clusters/my-cluster/connects/my-connect/connectors/my-connector",
+        "path": "/ui/clusters/:clusterName/connects/:connectName/connectors/:connectorName",
+        "url": "/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector",
       }
     }
   />

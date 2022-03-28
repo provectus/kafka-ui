@@ -17,7 +17,6 @@ public class InternalClusterMetrics {
         .brokers(List.of())
         .topics(Map.of())
         .status(ServerStatusDTO.OFFLINE)
-        .zookeeperStatus(ServerStatusDTO.OFFLINE)
         .internalBrokerMetrics(Map.of())
         .metrics(List.of())
         .version("unknown")
@@ -35,12 +34,6 @@ public class InternalClusterMetrics {
 
   private final int topicCount;
   private final Map<String, InternalTopic> topics;
-
-  // zk stats
-  @Deprecated //use 'zookeeperStatus' field with enum type instead
-  private final int zooKeeperStatusEnum;
-  private final ServerStatusDTO zookeeperStatus;
-  private final Throwable lastZookeeperException;
 
   // partitions stats
   private final int underReplicatedPartitionCount;

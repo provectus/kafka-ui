@@ -1,6 +1,8 @@
 import React from 'react';
 import { TableState } from 'lib/hooks/useTableState';
 import { SortOrder } from 'generated-sources';
+import * as S from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
+import { DefaultTheme, StyledComponent } from 'styled-components';
 
 export interface OrderableProps<OT> {
   orderBy: OT | null;
@@ -77,7 +79,12 @@ export const SelectCell: React.FC<SelectCellProps> = ({
     onChange(e.target.checked);
   };
 
-  const El = el;
+  let El: 'td' | StyledComponent<'th', DefaultTheme>;
+  if (el === 'th') {
+    El = S.TableHeaderCell;
+  } else {
+    El = el;
+  }
 
   return (
     <El>

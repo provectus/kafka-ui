@@ -10,6 +10,7 @@ import {
   setTopicsOrderByAction,
   fetchTopicConsumerGroupsAction,
   fetchTopicMessageSchemaAction,
+  recreateTopicAction,
 } from 'redux/actions';
 import reducer from 'redux/reducers/topics/reducer';
 
@@ -93,6 +94,15 @@ describe('topics reducer', () => {
 
     it('delete topic messages on CLEAR_TOPIC_MESSAGES__SUCCESS', () => {
       expect(reducer(state, clearMessagesTopicAction.success())).toEqual(state);
+    });
+
+    it('recreate topic', () => {
+      expect(reducer(state, recreateTopicAction.success(topic))).toEqual({
+        ...state,
+        byName: {
+          [topic.name]: topic,
+        },
+      });
     });
   });
 
