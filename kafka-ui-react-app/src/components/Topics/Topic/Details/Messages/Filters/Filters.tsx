@@ -264,7 +264,7 @@ const Filters: React.FC<FiltersProps> = ({
   };
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
-    if (location.search.length !== 0) {
+    if (location.search?.length !== 0) {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
       const sse = new EventSource(url);
 
@@ -315,7 +315,7 @@ const Filters: React.FC<FiltersProps> = ({
     updatePhase,
   ]);
   React.useEffect(() => {
-    if (location.search.length === 0) {
+    if (location.search?.length === 0) {
       handleFiltersSubmit();
     }
   }, [handleFiltersSubmit, location]);

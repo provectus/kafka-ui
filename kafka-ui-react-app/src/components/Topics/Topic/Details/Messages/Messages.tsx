@@ -6,7 +6,7 @@ import { useLocation } from 'react-router';
 import FiltersContainer from './Filters/FiltersContainer';
 import MessagesTable from './MessagesTable';
 
-const SeekDirectionOptionsObj = {
+export const SeekDirectionOptionsObj = {
   [SeekDirection.FORWARD]: {
     value: SeekDirection.FORWARD,
     label: 'Oldest First',
