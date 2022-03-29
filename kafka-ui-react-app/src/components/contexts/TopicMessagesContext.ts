@@ -4,7 +4,7 @@ import { SeekDirection } from 'generated-sources';
 export interface ContextProps {
   seekDirection: SeekDirection;
   searchParams: URLSearchParams;
-  toggleSeekDirection(val: string): void;
+  changeSeekDirection(val: string): void;
   isLive: boolean;
 }
 

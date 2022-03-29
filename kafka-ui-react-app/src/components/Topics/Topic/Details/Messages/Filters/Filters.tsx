@@ -85,7 +85,7 @@ const Filters: React.FC<FiltersProps> = ({
   const location = useLocation();
   const history = useHistory();
 
-  const { searchParams, seekDirection, isLive, toggleSeekDirection } =
+  const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
 
   const [isOpen, setIsOpen] = React.useState(false);
@@ -409,7 +409,7 @@ const Filters: React.FC<FiltersProps> = ({
         </S.FilterInputs>
         <Select
           selectSize="M"
-          onChange={(option) => toggleSeekDirection(option as string)}
+          onChange={(option) => changeSeekDirection(option as string)}
           value={seekDirection}
           minWidth="120px"
           options={SeekDirectionOptions}
@@ -453,7 +453,7 @@ const Filters: React.FC<FiltersProps> = ({
           Loading messages.
           <S.StopLoading
             onClick={() => {
-              toggleSeekDirection(SeekDirection.FORWARD);
+              changeSeekDirection(SeekDirection.FORWARD);
               setIsFetching(false);
             }}
           >

@@ -45,7 +45,7 @@ const Messages: React.FC = () => {
     SeekDirectionOptionsObj[seekDirection].isLive
   );
 
-  const toggleSeekDirection = useCallback((val: string) => {
+  const changeSeekDirection = useCallback((val: string) => {
     switch (val) {
       case SeekDirection.FORWARD:
         setSeekDirection(SeekDirection.FORWARD);
@@ -67,10 +67,10 @@ const Messages: React.FC = () => {
     () => ({
       seekDirection,
       searchParams,
-      toggleSeekDirection,
+      changeSeekDirection,
       isLive,
     }),
-    [seekDirection, searchParams, toggleSeekDirection]
+    [seekDirection, searchParams, changeSeekDirection]
   );
 
   return (

@@ -12,11 +12,11 @@ import TopicMessagesContext, {
 } from 'components/contexts/TopicMessagesContext';
 import { SeekDirection } from 'generated-sources';
 
-const defaultContextValue = {
+const defaultContextValue: ContextProps = {
   isLive: false,
   seekDirection: SeekDirection.FORWARD,
   searchParams: new URLSearchParams(''),
-  toggleSeekDirection: jest.fn(),
+  changeSeekDirection: jest.fn(),
 };
 
 const setupWrapper = (
