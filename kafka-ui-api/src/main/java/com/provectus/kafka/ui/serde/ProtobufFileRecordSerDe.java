@@ -96,7 +96,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
           builder.key(parse(msg.key().get(), descriptor));
           builder.keyFormat(MessageFormat.PROTOBUF);
         } catch (Throwable e) {
-          log.error("failed to deserialize key as protobuf, falling back to string formatter", e);
+          log.error("Failed to deserialize key as protobuf, falling back to string formatter", e);
           builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.key().get()));
           builder.keyFormat(FALLBACK_FORMATTER.getFormat());
         }
@@ -108,7 +108,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         builder.value(parse(msg.value().get(), getDescriptor(msg.topic())));
         builder.valueFormat(MessageFormat.PROTOBUF);
       } catch (Throwable e) {
-        log.error("failed to deserialize value as protobuf, falling back to string formatter", e);
+        log.error("Failed to deserialize value as protobuf, falling back to string formatter", e);
         builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.value().get()));
         builder.keyFormat(FALLBACK_FORMATTER.getFormat());
       }
@@ -140,40 +140,67 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
                                                   @Nullable String key,
                                                   @Nullable String data,
                                                   @Nullable Integer partition) {
-    if (data == null) {
-      return new ProducerRecord<>(topic, partition, Objects.requireNonNull(key).getBytes(), null);
+    byte[] keyPayload = null;
+    byte[] valuePayload = null;
+
+    if (key != null) {
+      Descriptor keyDescriptor = getKeyDescriptor(topic);
+      if (keyDescriptor == null) {
+        keyPayload = key.getBytes();
+      } else {
+        DynamicMessage.Builder builder = DynamicMessage.newBuilder(keyDescriptor);
+        try {
+          JsonFormat.parser().merge(key, builder);
+          keyPayload = builder.build().toByteArray();
+        } catch (Throwable e) {
+          throw new RuntimeException("Failed to merge record key for topic " + topic, e);
+        }
+      }
     }
-    DynamicMessage.Builder builder = DynamicMessage.newBuilder(getDescriptor(topic));
-    try {
-      JsonFormat.parser().merge(data, builder);
-      final DynamicMessage message = builder.build();
-      return new ProducerRecord<>(
-          topic,
-          partition,
-          Optional.ofNullable(key).map(String::getBytes).orElse(null),
-          message.toByteArray()
-      );
-    } catch (Throwable e) {
-      throw new RuntimeException("Failed to merge record for topic " + topic, e);
+
+    if (data != null) {
+      DynamicMessage.Builder builder = DynamicMessage.newBuilder(getDescriptor(topic));
+      try {
+        JsonFormat.parser().merge(data, builder);
+        valuePayload = builder.build().toByteArray();
+      } catch (Throwable e) {
+        throw new RuntimeException("Failed to merge record value for topic " + topic, e);
+      }
     }
+
+    return new ProducerRecord<>(
+        topic,
+        partition,
+        keyPayload,
+        valuePayload);
   }
 
   @Override
   public TopicMessageSchemaDTO getTopicSchema(String topic) {
+    JsonSchema keyJsonSchema;
 
-    final JsonSchema jsonSchema = schemaConverter.convert(
-        protobufSchemaPath.toUri(),
-        getDescriptor(topic)
-    );
+    Descriptor keyDescriptor = getKeyDescriptor(topic);
+    if (keyDescriptor == null) {
+      keyJsonSchema = JsonSchema.stringSchema();
+    } else {
+      keyJsonSchema = schemaConverter.convert(
+          protobufSchemaPath.toUri(),
+          keyDescriptor);
+    }
+
     final MessageSchemaDTO keySchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
         .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
-        .schema(JsonSchema.stringSchema().toJson());
+        .schema(keyJsonSchema.toJson());
+
+    final JsonSchema valueJsonSchema = schemaConverter.convert(
+        protobufSchemaPath.toUri(),
+        getDescriptor(topic));
 
     final MessageSchemaDTO valueSchema = new MessageSchemaDTO()
         .name(protobufSchema.fullName())
         .source(MessageSchemaDTO.SourceEnum.PROTO_FILE)
-        .schema(jsonSchema.toJson());
+        .schema(valueJsonSchema.toJson());
 
     return new TopicMessageSchemaDTO()
         .key(keySchema)

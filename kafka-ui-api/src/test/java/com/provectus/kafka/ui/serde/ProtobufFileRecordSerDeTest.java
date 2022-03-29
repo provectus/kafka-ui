@@ -111,4 +111,15 @@ class ProtobufFileRecordSerDeTest {
     var serialized = serializer.serialize("topic1", "key1", "{\"name\":\"MyName\"}", 0);
     assertNotNull(serialized.value());
   }
+
+  @Test
+  void testSerializeKeyAndValue() throws IOException {
+    var messageNameMap = Map.of("topic1", "test.Person");
+    var serializer =
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, messageNameMap, "test.AddressBook",
+                "test.AddressBook");
+    var serialized = serializer.serialize("topic1", "{\"name\":\"MyName\"}", "{\"name\":\"MyName\"}", 0);
+    assertNotNull(serialized.key());
+    assertNotNull(serialized.value());
+  }
 }
