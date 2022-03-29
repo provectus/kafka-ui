@@ -6,6 +6,7 @@ import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
+import com.provectus.kafka.ui.serde.schemaregistry.StringMessageFormatter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -22,11 +23,15 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.utils.Bytes;
 
+@Slf4j
 public class ProtobufFileRecordSerDe implements RecordSerDe {
+  private static final StringMessageFormatter FALLBACK_FORMATTER = new StringMessageFormatter();
+
   private final ProtobufSchema protobufSchema;
   private final Path protobufSchemaPath;
   private final ProtobufSchemaConverter schemaConverter = new ProtobufSchemaConverter();
@@ -79,26 +84,37 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
 
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
-    try {
-      var builder = DeserializedKeyValue.builder();
-      if (msg.key() != null) {
-        Descriptor descriptor = getKeyDescriptor(msg.topic());
-        if (descriptor == null) {
-          builder.key(new String(msg.key().get()));
-          builder.keyFormat(MessageFormat.UNKNOWN);
-        } else {
+    var builder = DeserializedKeyValue.builder();
+
+    if (msg.key() != null) {
+      Descriptor descriptor = getKeyDescriptor(msg.topic());
+      if (descriptor == null) {
+        builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.key().get()));
+        builder.keyFormat(FALLBACK_FORMATTER.getFormat());
+      } else {
+        try {
           builder.key(parse(msg.key().get(), descriptor));
           builder.keyFormat(MessageFormat.PROTOBUF);
+        } catch (Throwable e) {
+          log.error("failed to deserialize key as protobuf, falling back to string formatter", e);
+          builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.key().get()));
+          builder.keyFormat(FALLBACK_FORMATTER.getFormat());
         }
       }
-      if (msg.value() != null) {
+    }
+
+    if (msg.value() != null) {
+      try {
         builder.value(parse(msg.value().get(), getDescriptor(msg.topic())));
         builder.valueFormat(MessageFormat.PROTOBUF);
+      } catch (Throwable e) {
+        log.error("failed to deserialize value as protobuf, falling back to string formatter", e);
+        builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.value().get()));
+        builder.keyFormat(FALLBACK_FORMATTER.getFormat());
       }
-      return builder.build();
-    } catch (Throwable e) {
-      throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
+
+    return builder.build();
   }
 
   private Descriptor getKeyDescriptor(String topic) {
