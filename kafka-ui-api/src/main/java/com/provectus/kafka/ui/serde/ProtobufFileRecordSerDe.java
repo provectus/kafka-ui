@@ -33,9 +33,11 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
   private final Map<String, Descriptor> messageDescriptorMap;
   private final Map<String, Descriptor> keyMessageDescriptorMap;
   private final Descriptor defaultMessageDescriptor;
+  private final Descriptor defaultKeyMessageDescriptor;
 
   public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
-                                 Map<String, String> keyMessageNameMap, String defaultMessageName)
+                                 Map<String, String> keyMessageNameMap, String defaultMessageName,
+                                 String defaultKeyMessageName)
       throws IOException {
     this.protobufSchemaPath = protobufSchemaPath;
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
@@ -58,6 +60,11 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
       defaultMessageDescriptor = Objects.requireNonNull(protobufSchema.toDescriptor(),
           "The given message type is not found in protobuf definition: "
               + defaultMessageName);
+      if (defaultKeyMessageName != null) {
+        defaultKeyMessageDescriptor = schema.copy(defaultKeyMessageName).toDescriptor();
+      } else {
+        defaultKeyMessageDescriptor = null;
+      }
     }
   }
 
@@ -75,7 +82,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     try {
       var builder = DeserializedKeyValue.builder();
       if (msg.key() != null) {
-        Descriptor descriptor = keyMessageDescriptorMap.get(msg.topic());
+        Descriptor descriptor = getKeyDescriptor(msg.topic());
         if (descriptor == null) {
           builder.key(new String(msg.key().get()));
           builder.keyFormat(MessageFormat.UNKNOWN);
@@ -92,6 +99,10 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     } catch (Throwable e) {
       throw new RuntimeException("Failed to parse record from topic " + msg.topic(), e);
     }
+  }
+
+  private Descriptor getKeyDescriptor(String topic) {
+    return keyMessageDescriptorMap.getOrDefault(topic, defaultKeyMessageDescriptor);
   }
 
   private Descriptor getDescriptor(String topic) {
