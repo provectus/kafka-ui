@@ -38,7 +38,7 @@ describe('MessagesTable', () => {
     );
   };
 
-  describe('Default Setup', () => {
+  describe('Default props Setup for MessagesTable component', () => {
     beforeEach(() => {
       setUpComponent();
     });
@@ -59,7 +59,7 @@ describe('MessagesTable', () => {
     });
   });
 
-  describe('Custom Setup', () => {
+  describe('Custom Setup with different props value', () => {
     it('should check if next click is gone during isLive Param', () => {
       setUpComponent(searchParams, { ...contextValue, isLive: true });
       expect(screen.queryByText(/next/i)).not.toBeInTheDocument();

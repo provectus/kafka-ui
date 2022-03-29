@@ -30,11 +30,11 @@ describe('Messages', () => {
       value: EventSourceMock,
     });
   });
-  describe('Default behavior with the search params', () => {
+  describe('component rendering default behavior with the search params', () => {
     beforeEach(() => {
       setUpComponent();
     });
-    it('should check default seekDirection if they actually take the value from the url', () => {
+    it('should check default seekDirection if it actually take the value from the url', () => {
       expect(screen.getByRole('listbox')).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
       );
@@ -64,8 +64,8 @@ describe('Messages', () => {
     });
   });
 
-  describe('Custom search Params', () => {
-    it('should check custom seekDirection if they actually take the value from the url', () => {
+  describe('Component rendering with custom Url search params', () => {
+    it('reacts to a change of seekDirection in the url which make the select pick up different value', () => {
       setUpComponent(
         searchParams.replace(SeekDirection.FORWARD, SeekDirection.BACKWARD)
       );
