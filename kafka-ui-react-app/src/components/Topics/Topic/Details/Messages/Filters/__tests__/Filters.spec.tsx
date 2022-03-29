@@ -7,19 +7,24 @@ import Filters, {
 import { render } from 'lib/testHelpers';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import TopicMessagesContext, {
+  ContextProps,
+} from 'components/contexts/TopicMessagesContext';
 import { SeekDirection } from 'generated-sources';
 
-const setupWrapper = (props?: Partial<FiltersProps>) => {
+const defaultContextValue = {
+  isLive: false,
+  seekDirection: SeekDirection.FORWARD,
+  searchParams: new URLSearchParams(''),
+  toggleSeekDirection: jest.fn(),
+};
+
+const setupWrapper = (
+  props: Partial<FiltersProps> = {},
+  ctx: ContextProps = defaultContextValue
+) => {
   render(
-    <TopicMessagesContext.Provider
-      value={{
-        isLive: false,
-        seekDirection: SeekDirection.FORWARD,
-        searchParams: new URLSearchParams(''),
-        toggleSeekDirection: jest.fn(),
-      }}
-    >
+    <TopicMessagesContext.Provider value={ctx}>
       <Filters
         clusterName="test-cluster"
         topicName="test-topic"
