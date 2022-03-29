@@ -44,12 +44,9 @@ describe('Messages', () => {
       const seekDirectionSelect = screen.getByRole('listbox');
       const seekDirectionOption = screen.getByRole('option');
 
-      const labelValue0 = SeekDirectionOptions[0].label;
-      userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [
-        SeekDirectionOptions[0].label,
-      ]);
-      expect(seekDirectionOption).toHaveTextContent(labelValue0);
+      expect(seekDirectionOption).toHaveTextContent(
+        SeekDirectionOptionsObj[SeekDirection.FORWARD].label
+      );
 
       const labelValue1 = SeekDirectionOptions[1].label;
       userEvent.click(seekDirectionSelect);
@@ -57,6 +54,13 @@ describe('Messages', () => {
         SeekDirectionOptions[1].label,
       ]);
       expect(seekDirectionOption).toHaveTextContent(labelValue1);
+
+      const labelValue0 = SeekDirectionOptions[0].label;
+      userEvent.click(seekDirectionSelect);
+      userEvent.selectOptions(seekDirectionSelect, [
+        SeekDirectionOptions[0].label,
+      ]);
+      expect(seekDirectionOption).toHaveTextContent(labelValue0);
     });
   });
 
