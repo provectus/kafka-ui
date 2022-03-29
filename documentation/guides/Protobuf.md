@@ -13,14 +13,21 @@ kafka:
     - # Cluster configuration omitted.
       # protobufFile is the path to the protobuf schema.
       protobufFile: path/to/my.proto
+      # protobufMessageName is the default protobuf type that is used to deserilize
+      # the message's value if the topic is not found in protobufMessageNameByTopic.
+      protobufMessageName: my.Type1
       # protobufMessageNameByTopic is a mapping of topic names to protobuf types.
       # This mapping is required and is used to deserialize the Kafka message's value.
       protobufMessageNameByTopic:
         topic1: my.Type1
         topic2: my.Type2
+      # protobufMessageNameForKey is the default protobuf type that is used to deserilize
+      # the message's key if the topic is not found in protobufMessageNameForKeyByTopic.
+      protobufMessageNameForKey: my.Type1
       # protobufMessageNameForKeyByTopic is a mapping of topic names to protobuf types.
       # This mapping is optional and is used to deserialize the Kafka message's key.
-      # If a protobuf type is not found for a topic's key, the key is deserialized as a string.
+      # If a protobuf type is not found for a topic's key, the key is deserialized as a string,
+      # unless protobufMessageNameForKey is specified.
       protobufMessageNameForKeyByTopic:
         topic1: my.KeyType1
 ```
