@@ -64,5 +64,10 @@ describe('MessagesTable', () => {
       setUpComponent(searchParams, { ...contextValue, isLive: true });
       expect(screen.queryByText(/next/i)).not.toBeInTheDocument();
     });
+
+    it('should check the display of the loader element', () => {
+      setUpComponent(searchParams, { ...contextValue, isLive: true });
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+    });
   });
 });

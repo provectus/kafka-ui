@@ -91,7 +91,7 @@ const MessagesTable: React.FC = () => {
               message={message}
             />
           ))}
-          {isFetching && (
+          {(isFetching || isLive) && !messages.length && (
             <tr>
               <td colSpan={10}>
                 <PageLoader />
