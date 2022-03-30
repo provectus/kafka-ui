@@ -16,7 +16,7 @@ const TimeToRetainBtn: React.FC<Props> = ({ inputName, text, value }) => {
 
   return (
     <S.Button
-      isActive={watchedValue === value}
+      isActive={parseFloat(watchedValue) === value}
       type="button"
       onClick={() => setValue(inputName, value)}
     >

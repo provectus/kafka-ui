@@ -51,10 +51,10 @@ describe('TimeToRetainBtn', () => {
 
   describe('Component rendering with its Default Props Setups', () => {
     it('should test the active state of the button and its styling', () => {
-      SetUpComponent({ value: 1000 });
+      SetUpComponent({ value: 604800000 });
       const buttonElement = screen.getByRole('button');
       expect(buttonElement).toHaveStyle(
-        `background-color:${theme.button.primary.backgroundColor.normal}`
+        `background-color:${theme.button.primary.backgroundColor.active}`
       );
       expect(buttonElement).toHaveStyle(
         `border:1px solid ${theme.button.primary.color}`
