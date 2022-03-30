@@ -4,7 +4,7 @@ import { MILLISECONDS_IN_WEEK } from 'lib/constants';
 
 import * as S from './TopicForm.styled';
 
-interface Props {
+export interface Props {
   inputName: string;
   text: string;
   value: number;
