@@ -6,6 +6,7 @@ import TimeToRetainBtn, {
 } from 'components/Topics/shared/Form/TimeToRetainBtn';
 import { useForm, FormProvider } from 'react-hook-form';
 import theme from 'theme/theme';
+import userEvent from '@testing-library/user-event';
 
 describe('TimeToRetainBtn', () => {
   const defaultProps: Props = {
@@ -47,6 +48,16 @@ describe('TimeToRetainBtn', () => {
         `border:1px solid ${theme.button.primary.color}`
       );
     });
+    it('should test the non active state with click becoming active', () => {
+      const buttonElement = screen.getByRole('button');
+      userEvent.click(buttonElement);
+      expect(buttonElement).toHaveStyle(
+        `background-color:${theme.button.primary.backgroundColor.active}`
+      );
+      expect(buttonElement).toHaveStyle(
+        `border:1px solid ${theme.button.border.active}`
+      );
+    });
   });
 
   describe('Component rendering with its Default Props Setups', () => {
@@ -57,7 +68,7 @@ describe('TimeToRetainBtn', () => {
         `background-color:${theme.button.primary.backgroundColor.active}`
       );
       expect(buttonElement).toHaveStyle(
-        `border:1px solid ${theme.button.primary.color}`
+        `border:1px solid ${theme.button.border.active}`
       );
     });
   });
