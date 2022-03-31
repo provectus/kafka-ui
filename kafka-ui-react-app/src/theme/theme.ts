@@ -225,6 +225,7 @@ const theme = {
     statusIconColor: {
       online: Colors.green[40],
       offline: Colors.red[50],
+      initializing: Colors.yellow[20],
     },
     chevronIconColor: Colors.neutral[50],
   },
