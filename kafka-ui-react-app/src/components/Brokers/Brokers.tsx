@@ -1,9 +1,8 @@
 import React from 'react';
-import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
+import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
-import { Tag } from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -21,7 +20,6 @@ const Brokers: React.FC = () => {
   const {
     brokerCount,
     activeControllers,
-    zooKeeperStatus,
     onlinePartitionCount,
     offlinePartitionCount,
     inSyncReplicasCount,
@@ -45,7 +43,6 @@ const Brokers: React.FC = () => {
     fetchBrokers(clusterName);
   }, 5000);
 
-  const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
   return (
     <>
       <PageHeading text="Brokers" />
@@ -56,11 +53,6 @@ const Brokers: React.FC = () => {
           </Metrics.Indicator>
           <Metrics.Indicator label="Active Controllers">
             {activeControllers}
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Zookeeper Status">
-            <Tag color={zkOnline ? 'green' : 'gray'}>
-              {zkOnline ? 'online' : 'offline'}
-            </Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
