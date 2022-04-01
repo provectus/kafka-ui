@@ -9,7 +9,6 @@ import {
 
 export const clusterStats: ClusterStats = {
   brokerCount: 1,
-  zooKeeperStatus: 1,
   activeControllers: 1,
   onlinePartitionCount: 6,
   offlinePartitionCount: 0,

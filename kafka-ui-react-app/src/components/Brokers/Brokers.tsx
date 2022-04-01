@@ -1,9 +1,8 @@
 import React from 'react';
-import { ClusterName, ZooKeeperStatus } from 'redux/interfaces';
+import { ClusterName } from 'redux/interfaces';
 import useInterval from 'lib/hooks/useInterval';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
 import { useParams } from 'react-router';
-import { Tag } from 'components/common/Tag/Tag.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { Table } from 'components/common/table/Table/Table.styled';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -21,7 +20,6 @@ const Brokers: React.FC = () => {
   const {
     brokerCount,
     activeControllers,
-    zooKeeperStatus,
     onlinePartitionCount,
     offlinePartitionCount,
     inSyncReplicasCount,
@@ -32,8 +30,8 @@ const Brokers: React.FC = () => {
     items,
   } = useAppSelector(selectStats);
 
-  let replicas = inSyncReplicasCount ?? 0;
-  replicas += outOfSyncReplicasCount ?? 0;
+  const replicas = inSyncReplicasCount ?? 0 + (outOfSyncReplicasCount ?? 0);
+  const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
 
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
@@ -45,7 +43,6 @@ const Brokers: React.FC = () => {
     fetchBrokers(clusterName);
   }, 5000);
 
-  const zkOnline = zooKeeperStatus === ZooKeeperStatus.online;
   return (
     <>
       <PageHeading text="Brokers" />
@@ -56,11 +53,6 @@ const Brokers: React.FC = () => {
           </Metrics.Indicator>
           <Metrics.Indicator label="Active Controllers">
             {activeControllers}
-          </Metrics.Indicator>
-          <Metrics.Indicator label="Zookeeper Status">
-            <Tag color={zkOnline ? 'green' : 'gray'}>
-              {zkOnline ? 'online' : 'offline'}
-            </Tag>
           </Metrics.Indicator>
           <Metrics.Indicator label="Version">{version}</Metrics.Indicator>
         </Metrics.Section>
@@ -103,14 +95,12 @@ const Brokers: React.FC = () => {
           <Metrics.Indicator
             label="In Sync Replicas"
             isAlert
-            alertType={inSyncReplicasCount === replicas ? 'success' : 'error'}
+            alertType={areAllInSync ? 'success' : 'error'}
           >
-            {inSyncReplicasCount &&
-            replicas &&
-            inSyncReplicasCount < replicas ? (
-              <Metrics.RedText>{inSyncReplicasCount}</Metrics.RedText>
+            {areAllInSync ? (
+              replicas
             ) : (
-              inSyncReplicasCount
+              <Metrics.RedText>{inSyncReplicasCount}</Metrics.RedText>
             )}
             <Metrics.LightText> of {replicas}</Metrics.LightText>
           </Metrics.Indicator>
@@ -130,7 +120,14 @@ const Brokers: React.FC = () => {
           </tr>
         </thead>
         <tbody>
-          {diskUsage && diskUsage.length !== 0 ? (
+          {(!diskUsage || diskUsage.length === 0) && (
+            <tr>
+              <td colSpan={10}>Disk usage data not available</td>
+            </tr>
+          )}
+
+          {diskUsage &&
+            diskUsage.length !== 0 &&
             diskUsage.map(({ brokerId, segmentSize, segmentCount }) => (
               <tr key={brokerId}>
                 <td>{brokerId}</td>
@@ -141,12 +138,7 @@ const Brokers: React.FC = () => {
                 <td>{items && items[brokerId]?.port}</td>
                 <td>{items && items[brokerId]?.host}</td>
               </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={10}>Disk usage data not available</td>
-            </tr>
-          )}
+            ))}
         </tbody>
       </Table>
     </>

@@ -57,7 +57,7 @@ describe('TopicForm', () => {
 
     expectByRoleAndNameToBeInDocument('heading', 'Custom parameters');
 
-    expectByRoleAndNameToBeInDocument('button', 'Send');
+    expectByRoleAndNameToBeInDocument('button', 'Submit');
   });
 
   it('submits', () => {
@@ -66,7 +66,7 @@ describe('TopicForm', () => {
       onSubmit: onSubmit.mockImplementation((e) => e.preventDefault()),
     });
 
-    userEvent.click(screen.getByRole('button', { name: 'Send' }));
+    userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     expect(onSubmit).toBeCalledTimes(1);
   });
 });

@@ -26,7 +26,7 @@ import {
   getIsConsumerGroupDeleted,
   getAreConsumerGroupDetailsFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
-import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 import ListItem from './ListItem';
 
