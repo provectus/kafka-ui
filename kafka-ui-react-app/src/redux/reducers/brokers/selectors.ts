@@ -7,10 +7,6 @@ export const getBrokerCount = createSelector(
   brokersState,
   ({ brokerCount }) => brokerCount
 );
-export const getZooKeeperStatus = createSelector(
-  brokersState,
-  ({ zooKeeperStatus }) => zooKeeperStatus
-);
 export const getActiveControllers = createSelector(
   brokersState,
   ({ activeControllers }) => activeControllers
