@@ -6,6 +6,7 @@ import static ksql.KsqlGrammarParser.SingleStatementContext;
 import static ksql.KsqlGrammarParser.UndefineVariableContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
@@ -18,6 +19,9 @@ import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.codec.DecodingException;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
@@ -55,7 +59,20 @@ public class KsqlApiClient {
   }
 
   private WebClient webClient() {
-    return WebClient.create();
+    var exchangeStrategies = ExchangeStrategies.builder()
+        .codecs(configurer -> {
+          configurer.customCodecs()
+              .register(
+                  new Jackson2JsonDecoder(
+                      new ObjectMapper(),
+                      // some ksqldb versions do not set content-type header in response,
+                      // but we still need to use JsonDecoder for it
+                      MimeTypeUtils.APPLICATION_OCTET_STREAM));
+        })
+        .build();
+    return WebClient.builder()
+        .exchangeStrategies(exchangeStrategies)
+        .build();
   }
 
   private String baseKsqlDbUri() {
@@ -84,9 +101,10 @@ public class KsqlApiClient {
   }
 
   /**
-   * Current version of ksqldb (0.24) can cut off json streaming without respect proper array ending like <p/>
+   * Some version of ksqldb (?..0.24) can cut off json streaming without respect proper array ending like <p/>
    * <code>[{"header":{"queryId":"...","schema":"..."}}, ]</code>
    * which will cause json parsing error and will be propagated to UI.
+   * This is a know issue(https://github.com/confluentinc/ksql/issues/8746), but we don't know when it will be fixed.
    * To workaround this we need to check DecodingException err msg.
    */
   private boolean isUnexpectedJsonArrayEndCharException(Throwable th) {

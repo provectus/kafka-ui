@@ -260,7 +260,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private Optional<Integer> extractSchemaIdFromMsg(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
     Bytes bytes = isKey ? msg.key() : msg.value();
     ByteBuffer buffer = ByteBuffer.wrap(bytes.get());
-    if (buffer.get() == 0 && buffer.remaining() > 4) {
+    if (buffer.remaining() > 5 && buffer.get() == 0) {
       int id = buffer.getInt();
       return Optional.of(id);
     }
