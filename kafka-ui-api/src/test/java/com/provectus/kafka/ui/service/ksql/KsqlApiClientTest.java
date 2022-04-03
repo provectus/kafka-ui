@@ -10,11 +10,9 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.AbstractIntegrationTest;
 import com.provectus.kafka.ui.container.KsqlDbContainer;
 import com.provectus.kafka.ui.model.KafkaCluster;
-
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -72,9 +70,9 @@ class KsqlApiClientTest extends AbstractIntegrationTest {
         .untilAsserted(() -> assertLastKsqTutorialQueryResult(client));
   }
 
-  void assertLastKsqTutorialQueryResult(KsqlApiClient client) {
+  private void assertLastKsqTutorialQueryResult(KsqlApiClient client) {
     // expected results:
-    //{"header":"Schema","columnNames":["`DISTANCEINMILES` DOUBLE KEY","`RIDERS` ARRAY<STRING>","`COUNT` BIGINT"],"values":null}
+    //{"header":"Schema","columnNames":[...],"values":null}
     //{"header":"Row","columnNames":null,"values":[[0.0,["4ab5cbad","8b6eae59","4a7c7b41"],3]]}
     //{"header":"Row","columnNames":null,"values":[[10.0,["18f4ea86"],1]]}
     StepVerifier.create(
@@ -121,7 +119,7 @@ class KsqlApiClientTest extends AbstractIntegrationTest {
         .verifyComplete();
   }
 
-  void execCommandSync(KsqlApiClient client, String... ksqls) {
+  private void execCommandSync(KsqlApiClient client, String... ksqls) {
     for (String ksql : ksqls) {
       client.execute(ksql, Map.of()).collectList().block();
     }
