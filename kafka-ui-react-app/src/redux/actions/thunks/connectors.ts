@@ -18,6 +18,7 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { getResponse } from 'lib/errorHandling';
+import { batch } from 'react-redux';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
@@ -219,10 +220,12 @@ export const restartTasks =
         connectorName,
         action,
       });
-      dispatch(actions.restartTasksAction.success());
-      dispatch(
-        fetchConnectorTasks(clusterName, connectName, connectorName, true)
-      );
+      batch(() => {
+        dispatch(actions.restartTasksAction.success());
+        dispatch(
+          fetchConnectorTasks(clusterName, connectName, connectorName, true)
+        );
+      });
     } catch (error) {
       const response = await getResponse(error);
       const alert: FailurePayload = {
