@@ -12,7 +12,7 @@ import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationM
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import getTagColor from 'components/Connect/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 import * as S from './List.styled';
 

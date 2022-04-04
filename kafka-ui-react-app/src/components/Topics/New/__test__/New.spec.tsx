@@ -50,7 +50,7 @@ describe('New', () => {
     renderComponent(mockedHistory);
 
     await waitFor(() => {
-      userEvent.click(screen.getByText('Send'));
+      userEvent.click(screen.getByText(/submit/i));
     });
     await waitFor(() => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('New', () => {
 
     await waitFor(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
-      userEvent.click(screen.getByText('Send'));
+      userEvent.click(screen.getByText(/submit/i));
     });
 
     await waitFor(() =>
