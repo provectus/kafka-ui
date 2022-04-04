@@ -208,7 +208,14 @@ const Filters: React.FC<FiltersProps> = ({
       search: `?${qs}`,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seekDirection, queryType, activeFilter]);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+  ]);
 
   const toggleSeekDirection = (val: string) => {
     switch (val) {
