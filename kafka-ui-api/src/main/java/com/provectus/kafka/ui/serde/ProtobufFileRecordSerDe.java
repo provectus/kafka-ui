@@ -42,7 +42,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
 
   public ProtobufFileRecordSerDe(Path protobufSchemaPath, Map<String, String> messageNameMap,
                                  Map<String, String> keyMessageNameMap, String defaultMessageName,
-                                 String defaultKeyMessageName)
+                                 @Nullable String defaultKeyMessageName)
       throws IOException {
     this.protobufSchemaPath = protobufSchemaPath;
     try (final Stream<String> lines = Files.lines(protobufSchemaPath)) {
@@ -96,7 +96,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
           builder.key(parse(msg.key().get(), descriptor));
           builder.keyFormat(MessageFormat.PROTOBUF);
         } catch (Throwable e) {
-          log.error("Failed to deserialize key as protobuf, falling back to string formatter", e);
+          log.debug("Failed to deserialize key as protobuf, falling back to string formatter", e);
           builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.key().get()));
           builder.keyFormat(FALLBACK_FORMATTER.getFormat());
         }
@@ -108,7 +108,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
         builder.value(parse(msg.value().get(), getDescriptor(msg.topic())));
         builder.valueFormat(MessageFormat.PROTOBUF);
       } catch (Throwable e) {
-        log.error("Failed to deserialize value as protobuf, falling back to string formatter", e);
+        log.debug("Failed to deserialize value as protobuf, falling back to string formatter", e);
         builder.key(FALLBACK_FORMATTER.format(msg.topic(), msg.value().get()));
         builder.keyFormat(FALLBACK_FORMATTER.getFormat());
       }
@@ -117,6 +117,7 @@ public class ProtobufFileRecordSerDe implements RecordSerDe {
     return builder.build();
   }
 
+  @Nullable
   private Descriptor getKeyDescriptor(String topic) {
     return keyMessageDescriptorMap.getOrDefault(topic, defaultKeyMessageDescriptor);
   }
