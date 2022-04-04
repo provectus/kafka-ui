@@ -75,6 +75,7 @@ const List: React.FC<Props> = ({
         isFullwidth
         placeholder="No active consumer groups"
         hoverable
+        paginated
       >
         <TableColumn
           title="Consumer Group ID"

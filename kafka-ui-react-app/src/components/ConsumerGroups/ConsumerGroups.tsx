@@ -6,6 +6,7 @@ import Details from 'components/ConsumerGroups/Details/Details';
 import ListContainer from 'components/ConsumerGroups/List/ListContainer';
 import ResetOffsets from 'components/ConsumerGroups/Details/ResetOffsets/ResetOffsets';
 import { useAppDispatch, useAppSelector } from 'lib/hooks/redux';
+import usePagination from 'lib/hooks/usePagination';
 import {
   fetchConsumerGroupsPaged,
   getAreConsumerGroupsPagedFulfilled,
@@ -20,15 +21,19 @@ const ConsumerGroups: React.FC = () => {
   const isFetched = useAppSelector(getAreConsumerGroupsPagedFulfilled);
   const orderBy = useAppSelector(getConsumerGroupsOrderBy);
   const sortOrder = useAppSelector(getConsumerGroupsSortOrder);
+  const { page, perPage } = usePagination();
+
   React.useEffect(() => {
     dispatch(
       fetchConsumerGroupsPaged({
         clusterName,
         orderBy: orderBy || undefined,
         sortOrder,
+        page,
+        perPage,
       })
     );
-  }, [clusterName, orderBy, sortOrder, dispatch]);
+  }, [clusterName, orderBy, sortOrder, page, perPage, dispatch]);
 
   if (isFetched) {
     return (

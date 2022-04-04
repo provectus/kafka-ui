@@ -33,15 +33,22 @@ export const fetchConsumerGroupsPaged = createAsyncThunk<
     clusterName: ClusterName;
     orderBy?: ConsumerGroupOrdering;
     sortOrder?: SortOrder;
+    page?: number;
+    perPage?: number;
   }
 >(
   'consumerGroups/fetchConsumerGroupsPaged',
-  async ({ clusterName, orderBy, sortOrder }, { rejectWithValue }) => {
+  async (
+    { clusterName, orderBy, sortOrder, page, perPage },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await api.getConsumerGroupsPageRaw({
         clusterName,
         orderBy,
         sortOrder,
+        page,
+        perPage,
       });
       return await response.value();
     } catch (error) {
