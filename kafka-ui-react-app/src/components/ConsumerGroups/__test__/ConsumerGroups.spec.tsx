@@ -6,7 +6,10 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import ConsumerGroups from 'components/ConsumerGroups/ConsumerGroups';
-import { consumerGroups } from 'redux/reducers/consumerGroups/__test__/fixtures';
+import {
+  consumerGroups,
+  noConsumerGroupsResponse,
+} from 'redux/reducers/consumerGroups/__test__/fixtures';
 import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
 import { Route } from 'react-router';
@@ -36,6 +39,22 @@ describe('ConsumerGroup', () => {
     afterEach(() => {
       fetchMock.reset();
     });
+
+    it('renders empty table on no consumer group response', async () => {
+      fetchMock.getOnce(url, noConsumerGroupsResponse, {
+        query: {
+          orderBy: ConsumerGroupOrdering.NAME,
+          sortOrder: SortOrder.ASC,
+        },
+      });
+
+      renderComponent();
+      await waitFor(() => expect(fetchMock.calls().length).toBe(1));
+
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.getByText('No active consumer groups')).toBeInTheDocument();
+    });
+
     it('renders with 404 from consumer groups', async () => {
       const consumerGroupsMock = fetchMock.getOnce(url, 404, {
         query: {
