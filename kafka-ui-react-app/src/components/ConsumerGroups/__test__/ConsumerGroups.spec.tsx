@@ -32,12 +32,17 @@ describe('ConsumerGroup', () => {
   });
 
   describe('Fetching Mock', () => {
-    const url = `/api/clusters/${clusterName}/consumer-groups/paged?orderBy=${ConsumerGroupOrdering.NAME}&sortOrder=${SortOrder.ASC}`;
+    const url = `/api/clusters/${clusterName}/consumer-groups/paged`;
     afterEach(() => {
       fetchMock.reset();
     });
     it('renders with 404 from consumer groups', async () => {
-      const consumerGroupsMock = fetchMock.getOnce(url, 404);
+      const consumerGroupsMock = fetchMock.getOnce(url, 404, {
+        query: {
+          orderBy: ConsumerGroupOrdering.NAME,
+          sortOrder: SortOrder.ASC,
+        },
+      });
 
       renderComponent();
 
@@ -48,10 +53,19 @@ describe('ConsumerGroup', () => {
     });
 
     it('renders with 200 from consumer groups', async () => {
-      const consumerGroupsMock = fetchMock.getOnce(url, {
-        pagedCount: 1,
-        consumerGroups,
-      });
+      const consumerGroupsMock = fetchMock.getOnce(
+        url,
+        {
+          pagedCount: 1,
+          consumerGroups,
+        },
+        {
+          query: {
+            orderBy: ConsumerGroupOrdering.NAME,
+            sortOrder: SortOrder.ASC,
+          },
+        }
+      );
 
       renderComponent();
 
