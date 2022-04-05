@@ -28,6 +28,8 @@ public class KafkaCluster {
   private final Path protobufFile;
   private final String protobufMessageName;
   private final Map<String, String> protobufMessageNameByTopic;
+  private final String protobufMessageNameForKey;
+  private final Map<String, String> protobufMessageNameForKeyByTopic;
   private final Properties properties;
   private final boolean readOnly;
   private final boolean disableLogDirsCollection;
