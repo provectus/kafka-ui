@@ -34,14 +34,14 @@ const renderComponent = (history = historyMock) =>
     }
   );
 
-describe('ConsumerGroup', () => {
+describe('ConsumerGroups', () => {
   it('renders with initial state', async () => {
     renderComponent();
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 
-  describe('Fetching Consumer Groups', () => {
+  describe('Default Route and Fetching Consumer Groups', () => {
     const url = `/api/clusters/${clusterName}/consumer-groups/paged`;
     afterEach(() => {
       fetchMock.reset();
@@ -102,6 +102,41 @@ describe('ConsumerGroup', () => {
       expect(screen.getByRole('table')).toBeInTheDocument();
       expect(screen.getByText(consumerGroups[0].groupId)).toBeInTheDocument();
       expect(screen.getByText(consumerGroups[1].groupId)).toBeInTheDocument();
+    });
+
+    it('renders with 200 from consumer groups with Searched Query ', async () => {
+      const searchResult = consumerGroups[0];
+      const searchText = searchResult.groupId;
+
+      const consumerGroupsMock = fetchMock.getOnce(
+        url,
+        {
+          pagedCount: 1,
+          consumerGroups: [searchResult],
+        },
+        {
+          query: {
+            orderBy: ConsumerGroupOrdering.NAME,
+            sortOrder: SortOrder.ASC,
+            search: searchText,
+          },
+        }
+      );
+
+      const mockedHistory = createMemoryHistory({
+        initialEntries: [
+          `${clusterConsumerGroupsPath(clusterName)}?q=${searchText}`,
+        ],
+      });
+      renderComponent(mockedHistory);
+
+      await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
+      await waitFor(() => expect(consumerGroupsMock.called()).toBeTruthy());
+
+      expect(screen.getByText(searchText)).toBeInTheDocument();
+      expect(
+        screen.queryByText(consumerGroups[1].groupId)
+      ).not.toBeInTheDocument();
     });
   });
 });

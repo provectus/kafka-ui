@@ -14,9 +14,7 @@ describe('List', () => {
       orderBy,
       sortOrder,
       totalPages,
-      search,
       setConsumerGroupsSortOrderBy,
-      setConsumerGroupsSearch,
     } = props;
     return render(
       <List
@@ -25,8 +23,7 @@ describe('List', () => {
         sortOrder={sortOrder || SortOrder.ASC}
         setConsumerGroupsSortOrderBy={setConsumerGroupsSortOrderBy || jest.fn()}
         totalPages={totalPages || 1}
-        search={search || ''}
-        setConsumerGroupsSearch={setConsumerGroupsSearch || jest.fn()}
+        isFetched={'isFetched' in props ? !!props.isFetched : true}
       />
     );
   };
@@ -76,20 +73,6 @@ describe('List', () => {
       expect(screen.getByText(/num of members/i)).toHaveStyle(
         `color:${theme.table.th.color.active}`
       );
-    });
-
-    it('should view the correct SearchText in table', () => {
-      const consumerGroupMockSearched = [consumerGroupMock[0]];
-      const searchText = consumerGroupMockSearched[0].groupId;
-      setUpComponent({
-        consumerGroups: consumerGroupMockSearched,
-        search: consumerGroupMock[0].groupId,
-      });
-      expect(screen.getByText(searchText)).toBeInTheDocument();
-
-      expect(
-        screen.queryByText(consumerGroupMock[1].groupId)
-      ).not.toBeInTheDocument();
     });
   });
 });

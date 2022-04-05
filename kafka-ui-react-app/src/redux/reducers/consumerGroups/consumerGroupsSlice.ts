@@ -134,14 +134,12 @@ const consumerGroupsAdapter = createEntityAdapter<ConsumerGroupDetails>({
 interface ConsumerGroupState extends EntityState<ConsumerGroupDetails> {
   orderBy: ConsumerGroupOrdering | null;
   sortOrder: SortOrder;
-  search: string;
   totalPages: number;
 }
 
 const initialState: ConsumerGroupState = {
   orderBy: ConsumerGroupOrdering.NAME,
   sortOrder: SortOrder.ASC,
-  search: '',
   totalPages: SCHEMAS_PAGE_COUNT,
   ...consumerGroupsAdapter.getInitialState(),
 };
@@ -156,9 +154,6 @@ export const consumerGroupsSlice = createSlice({
         state.orderBy === action.payload && state.sortOrder === SortOrder.ASC
           ? SortOrder.DESC
           : SortOrder.ASC;
-    },
-    search: (state, action: PayloadAction<string>) => {
-      state.search = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -178,7 +173,7 @@ export const consumerGroupsSlice = createSlice({
   },
 });
 
-export const { sortBy, search } = consumerGroupsSlice.actions;
+export const { sortBy } = consumerGroupsSlice.actions;
 
 const consumerGroupsState = ({
   consumerGroups,
@@ -210,11 +205,6 @@ export const getIsOffsetReseted = createSelector(
 export const getConsumerGroupsOrderBy = createSelector(
   consumerGroupsState,
   (state) => state.orderBy
-);
-
-export const getConsumerGroupsSearch = createSelector(
-  consumerGroupsState,
-  (state) => state.search
 );
 
 export const getConsumerGroupsSortOrder = createSelector(

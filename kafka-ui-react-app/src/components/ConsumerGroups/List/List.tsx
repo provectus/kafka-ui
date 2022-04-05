@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router';
+import { useParams } from 'react-router-dom';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
@@ -15,17 +15,20 @@ import {
   GroupIDCell,
   StatusCell,
 } from 'components/ConsumerGroups/List/ConsumerGroupsTableCells';
-import { PER_PAGE } from 'lib/constants';
 import usePagination from 'lib/hooks/usePagination';
+import useSearch from 'lib/hooks/useSearch';
+import { useAppDispatch } from 'lib/hooks/redux';
+import { ClusterName } from 'redux/interfaces';
+import { fetchConsumerGroupsPaged } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
+import PageLoader from 'components/common/PageLoader/PageLoader';
 
 export interface Props {
   consumerGroups: ConsumerGroupDetails[];
   orderBy: ConsumerGroupOrdering | null;
   sortOrder: SortOrder;
   totalPages: number;
-  search: string;
+  isFetched: boolean;
   setConsumerGroupsSortOrderBy(orderBy: ConsumerGroupOrdering | null): void;
-  setConsumerGroupsSearch(str: string): void;
 }
 
 const List: React.FC<Props> = ({
@@ -33,12 +36,26 @@ const List: React.FC<Props> = ({
   sortOrder,
   orderBy,
   totalPages,
-  search,
+  isFetched,
   setConsumerGroupsSortOrderBy,
-  setConsumerGroupsSearch,
 }) => {
-  const history = useHistory();
-  const { perPage, pathname } = usePagination();
+  const { page, perPage } = usePagination();
+  const [searchText, handleSearchText] = useSearch();
+  const dispatch = useAppDispatch();
+  const { clusterName } = useParams<{ clusterName: ClusterName }>();
+
+  React.useEffect(() => {
+    dispatch(
+      fetchConsumerGroupsPaged({
+        clusterName,
+        orderBy: orderBy || undefined,
+        sortOrder,
+        page,
+        perPage,
+        search: searchText,
+      })
+    );
+  }, [clusterName, orderBy, searchText, sortOrder, page, perPage, dispatch]);
 
   const tableState = useTableState<
     ConsumerGroupDetails,
@@ -57,10 +74,9 @@ const List: React.FC<Props> = ({
     }
   );
 
-  const handleInputChange = (searchText: string) => {
-    setConsumerGroupsSearch(searchText);
-    history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
-  };
+  if (!isFetched) {
+    return <PageLoader />;
+  }
 
   return (
     <div>
@@ -68,8 +84,8 @@ const List: React.FC<Props> = ({
       <ControlPanelWrapper hasInput>
         <Search
           placeholder="Search by Consumer Group ID"
-          value={search}
-          handleSearch={handleInputChange}
+          value={searchText}
+          handleSearch={handleSearchText}
         />
       </ControlPanelWrapper>
       <SmartTable
