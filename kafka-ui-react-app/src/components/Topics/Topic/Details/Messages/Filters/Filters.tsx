@@ -10,7 +10,7 @@ import {
   TopicMessageEventTypeEnum,
   MessageFilterType,
 } from 'generated-sources';
-import React from 'react';
+import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
@@ -25,6 +25,8 @@ import { Button } from 'components/common/Button/Button';
 import FilterModal, {
   FilterEdit,
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
+import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
+import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 
 import * as S from './Filters.styled';
 import {
@@ -66,11 +68,6 @@ export const SeekTypeOptions = [
   { value: SeekType.OFFSET, label: 'Offset' },
   { value: SeekType.TIMESTAMP, label: 'Timestamp' },
 ];
-export const SeekDirectionOptions = [
-  { value: SeekDirection.FORWARD, label: 'Oldest First', isLive: false },
-  { value: SeekDirection.BACKWARD, label: 'Newest First', isLive: false },
-  { value: SeekDirection.TAILING, label: 'Live Mode', isLive: true },
-];
 
 const Filters: React.FC<FiltersProps> = ({
   clusterName,
@@ -88,15 +85,13 @@ const Filters: React.FC<FiltersProps> = ({
   const location = useLocation();
   const history = useHistory();
 
+  const { searchParams, seekDirection, isLive, changeSeekDirection } =
+    useContext(TopicMessagesContext);
+
   const [isOpen, setIsOpen] = React.useState(false);
   const toggleIsOpen = () => setIsOpen(!isOpen);
 
   const source = React.useRef<EventSource | null>(null);
-
-  const searchParams = React.useMemo(
-    () => new URLSearchParams(location.search),
-    [location]
-  );
 
   const [selectedPartitions, setSelectedPartitions] = React.useState<Option[]>(
     getSelectedPartitionsFromSeekToParam(searchParams, partitions)
@@ -132,10 +127,6 @@ const Filters: React.FC<FiltersProps> = ({
       : MessageFilterType.STRING_CONTAINS
   );
   const [query, setQuery] = React.useState<string>(searchParams.get('q') || '');
-  const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
-    (searchParams.get('seekDirection') as SeekDirection) ||
-      SeekDirection.FORWARD
-  );
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
@@ -178,7 +169,7 @@ const Filters: React.FC<FiltersProps> = ({
     setAttempt(attempt + 1);
 
     if (isSeekTypeControlVisible) {
-      props.seekType = currentSeekType;
+      props.seekType = isLive ? SeekType.LATEST : currentSeekType;
       props.seekTo = selectedPartitions.map(({ value }) => {
         let seekToOffset;
 
@@ -216,21 +207,6 @@ const Filters: React.FC<FiltersProps> = ({
     timestamp,
     query,
   ]);
-
-  const toggleSeekDirection = (val: string) => {
-    switch (val) {
-      case SeekDirection.FORWARD:
-        setSeekDirection(SeekDirection.FORWARD);
-        break;
-      case SeekDirection.BACKWARD:
-        setSeekDirection(SeekDirection.BACKWARD);
-        break;
-      case SeekDirection.TAILING:
-        setSeekDirection(SeekDirection.TAILING);
-        break;
-      default:
-    }
-  };
 
   const handleSSECancel = () => {
     if (!source.current) return;
@@ -295,7 +271,7 @@ const Filters: React.FC<FiltersProps> = ({
   };
   // eslint-disable-next-line consistent-return
   React.useEffect(() => {
-    if (location.search.length !== 0) {
+    if (location.search?.length !== 0) {
       const url = `${BASE_PARAMS.basePath}/api/clusters/${clusterName}/topics/${topicName}/messages${location.search}`;
       const sse = new EventSource(url);
 
@@ -346,7 +322,7 @@ const Filters: React.FC<FiltersProps> = ({
     updatePhase,
   ]);
   React.useEffect(() => {
-    if (location.search.length === 0) {
+    if (location.search?.length === 0) {
       handleFiltersSubmit();
     }
   }, [handleFiltersSubmit, location]);
@@ -376,7 +352,7 @@ const Filters: React.FC<FiltersProps> = ({
                 selectSize="M"
                 minWidth="100px"
                 options={SeekTypeOptions}
-                disabled={seekDirection === SeekDirection.TAILING}
+                disabled={isLive}
               />
               {currentSeekType === SeekType.OFFSET ? (
                 <Input
@@ -387,7 +363,7 @@ const Filters: React.FC<FiltersProps> = ({
                   className="offset-selector"
                   placeholder="Offset"
                   onChange={({ target: { value } }) => setOffset(value)}
-                  disabled={seekDirection === SeekDirection.TAILING}
+                  disabled={isLive}
                 />
               ) : (
                 <DatePicker
@@ -398,7 +374,7 @@ const Filters: React.FC<FiltersProps> = ({
                   dateFormat="MMMM d, yyyy HH:mm"
                   className="date-picker"
                   placeholderText="Select timestamp"
-                  disabled={seekDirection === SeekDirection.TAILING}
+                  disabled={isLive}
                 />
               )}
             </S.SeekTypeSelectorWrapper>
@@ -440,11 +416,11 @@ const Filters: React.FC<FiltersProps> = ({
         </S.FilterInputs>
         <Select
           selectSize="M"
-          onChange={(option) => toggleSeekDirection(option as string)}
+          onChange={(option) => changeSeekDirection(option as string)}
           value={seekDirection}
           minWidth="120px"
           options={SeekDirectionOptions}
-          isLive={seekDirection === SeekDirection.TAILING}
+          isLive={isLive}
         />
       </div>
       <S.ActiveSmartFilterWrapper>
@@ -479,12 +455,12 @@ const Filters: React.FC<FiltersProps> = ({
             isFetching &&
             phaseMessage}
         </p>
-        <S.MessageLoading isLive={seekDirection === SeekDirection.TAILING}>
+        <S.MessageLoading isLive={isLive}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
           Loading messages.
           <S.StopLoading
             onClick={() => {
-              setSeekDirection(SeekDirection.FORWARD);
+              changeSeekDirection(SeekDirection.FORWARD);
               setIsFetching(false);
             }}
           >
