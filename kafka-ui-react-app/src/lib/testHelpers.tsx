@@ -101,3 +101,23 @@ const customRender = (
 };
 
 export { customRender as render };
+
+export class EventSourceMock {
+  url: string;
+
+  close: () => void;
+
+  open: () => void;
+
+  error: () => void;
+
+  onmessage: () => void;
+
+  constructor(url: string) {
+    this.url = url;
+    this.open = jest.fn();
+    this.error = jest.fn();
+    this.onmessage = jest.fn();
+    this.close = jest.fn();
+  }
+}
