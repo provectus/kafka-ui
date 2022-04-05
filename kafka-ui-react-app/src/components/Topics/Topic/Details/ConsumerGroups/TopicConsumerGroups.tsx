@@ -7,8 +7,8 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import { Link } from 'react-router-dom';
-import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 export interface Props extends Topic, TopicDetails {
   clusterName: ClusterName;
