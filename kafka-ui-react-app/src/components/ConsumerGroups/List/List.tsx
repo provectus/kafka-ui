@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { useHistory } from 'react-router';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import Search from 'components/common/Search/Search';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
@@ -14,13 +15,17 @@ import {
   GroupIDCell,
   StatusCell,
 } from 'components/ConsumerGroups/List/ConsumerGroupsTableCells';
+import { PER_PAGE } from 'lib/constants';
+import usePagination from 'lib/hooks/usePagination';
 
 export interface Props {
   consumerGroups: ConsumerGroupDetails[];
   orderBy: ConsumerGroupOrdering | null;
   sortOrder: SortOrder;
   totalPages: number;
+  search: string;
   setConsumerGroupsSortOrderBy(orderBy: ConsumerGroupOrdering | null): void;
+  setConsumerGroupsSearch(str: string): void;
 }
 
 const List: React.FC<Props> = ({
@@ -28,23 +33,19 @@ const List: React.FC<Props> = ({
   sortOrder,
   orderBy,
   totalPages,
+  search,
   setConsumerGroupsSortOrderBy,
+  setConsumerGroupsSearch,
 }) => {
-  const [searchText, setSearchText] = React.useState<string>('');
-
-  const tableData = useMemo(() => {
-    return consumerGroups.filter(
-      (consumerGroup) =>
-        !searchText || consumerGroup?.groupId?.indexOf(searchText) >= 0
-    );
-  }, [searchText, consumerGroups]);
+  const history = useHistory();
+  const { perPage, pathname } = usePagination();
 
   const tableState = useTableState<
     ConsumerGroupDetails,
     string,
     ConsumerGroupOrdering
   >(
-    tableData,
+    consumerGroups,
     {
       totalPages,
       idSelector: (consumerGroup) => consumerGroup.groupId,
@@ -56,8 +57,9 @@ const List: React.FC<Props> = ({
     }
   );
 
-  const handleInputChange = (search: string) => {
-    setSearchText(search);
+  const handleInputChange = (searchText: string) => {
+    setConsumerGroupsSearch(searchText);
+    history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
   };
 
   return (
@@ -66,7 +68,7 @@ const List: React.FC<Props> = ({
       <ControlPanelWrapper hasInput>
         <Search
           placeholder="Search by Consumer Group ID"
-          value={searchText}
+          value={search}
           handleSearch={handleInputChange}
         />
       </ControlPanelWrapper>

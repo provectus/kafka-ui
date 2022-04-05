@@ -12,6 +12,7 @@ import {
   getAreConsumerGroupsPagedFulfilled,
   getConsumerGroupsOrderBy,
   getConsumerGroupsSortOrder,
+  getConsumerGroupsSearch,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 
@@ -21,6 +22,7 @@ const ConsumerGroups: React.FC = () => {
   const isFetched = useAppSelector(getAreConsumerGroupsPagedFulfilled);
   const orderBy = useAppSelector(getConsumerGroupsOrderBy);
   const sortOrder = useAppSelector(getConsumerGroupsSortOrder);
+  const search = useAppSelector(getConsumerGroupsSearch);
   const { page, perPage } = usePagination();
 
   React.useEffect(() => {
@@ -31,9 +33,10 @@ const ConsumerGroups: React.FC = () => {
         sortOrder,
         page,
         perPage,
+        search,
       })
     );
-  }, [clusterName, orderBy, sortOrder, page, perPage, dispatch]);
+  }, [clusterName, orderBy, search, sortOrder, page, perPage, dispatch]);
 
   if (isFetched) {
     return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import List, { Props } from 'components/ConsumerGroups/List/List';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 import { consumerGroups as consumerGroupMock } from 'redux/reducers/consumerGroups/__test__/fixtures';
@@ -14,7 +14,9 @@ describe('List', () => {
       orderBy,
       sortOrder,
       totalPages,
+      search,
       setConsumerGroupsSortOrderBy,
+      setConsumerGroupsSearch,
     } = props;
     return render(
       <List
@@ -23,6 +25,8 @@ describe('List', () => {
         sortOrder={sortOrder || SortOrder.ASC}
         setConsumerGroupsSortOrderBy={setConsumerGroupsSortOrderBy || jest.fn()}
         totalPages={totalPages || 1}
+        search={search || ''}
+        setConsumerGroupsSearch={setConsumerGroupsSearch || jest.fn()}
       />
     );
   };
@@ -39,38 +43,6 @@ describe('List', () => {
     it('renders all rows with consumers', () => {
       expect(screen.getByText('groupId1')).toBeInTheDocument();
       expect(screen.getByText('groupId2')).toBeInTheDocument();
-    });
-
-    describe('when searched', () => {
-      it('renders only searched consumers', async () => {
-        await waitFor(() => {
-          userEvent.type(
-            screen.getByPlaceholderText('Search by Consumer Group ID'),
-            consumerGroupMock[0].groupId
-          );
-        });
-
-        expect(
-          screen.getByText(consumerGroupMock[0].groupId)
-        ).toBeInTheDocument();
-        expect(
-          screen.getByText(consumerGroupMock[1].groupId)
-        ).toBeInTheDocument();
-      });
-
-      it('renders will not render a list since not found in the list', async () => {
-        await waitFor(() => {
-          userEvent.type(
-            screen.getByPlaceholderText('Search by Consumer Group ID'),
-            'NotFoundedText'
-          );
-        });
-        await waitFor(() => {
-          expect(
-            screen.getByText(/No active consumer groups/i)
-          ).toBeInTheDocument();
-        });
-      });
     });
 
     describe('Testing the Ordering', () => {
@@ -104,6 +76,20 @@ describe('List', () => {
       expect(screen.getByText(/num of members/i)).toHaveStyle(
         `color:${theme.table.th.color.active}`
       );
+    });
+
+    it('should view the correct SearchText in table', () => {
+      const consumerGroupMockSearched = [consumerGroupMock[0]];
+      const searchText = consumerGroupMockSearched[0].groupId;
+      setUpComponent({
+        consumerGroups: consumerGroupMockSearched,
+        search: consumerGroupMock[0].groupId,
+      });
+      expect(screen.getByText(searchText)).toBeInTheDocument();
+
+      expect(
+        screen.queryByText(consumerGroupMock[1].groupId)
+      ).not.toBeInTheDocument();
     });
   });
 });
