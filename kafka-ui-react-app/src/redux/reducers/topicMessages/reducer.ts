@@ -19,7 +19,7 @@ const reducer = (state = initialState, action: Action): TopicMessagesState => {
     case getType(actions.addTopicMessage): {
       return {
         ...state,
-        messages: [...state.messages, action.payload],
+        messages: [action.payload, ...state.messages],
       };
     }
     case getType(actions.resetTopicMessages):

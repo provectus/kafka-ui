@@ -4,7 +4,7 @@ import { MILLISECONDS_IN_WEEK } from 'lib/constants';
 
 import * as S from './TopicForm.styled';
 
-interface Props {
+export interface Props {
   inputName: string;
   text: string;
   value: number;
@@ -16,7 +16,7 @@ const TimeToRetainBtn: React.FC<Props> = ({ inputName, text, value }) => {
 
   return (
     <S.Button
-      isActive={watchedValue === value}
+      isActive={parseFloat(watchedValue) === value}
       type="button"
       onClick={() => setValue(inputName, value)}
     >

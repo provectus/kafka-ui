@@ -43,6 +43,9 @@ import org.apache.kafka.common.utils.Bytes;
 @Slf4j
 public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
 
+  private static final byte SR_RECORD_MAGIC_BYTE = (byte) 0;
+  private static final int SR_RECORD_PREFIX_LENGTH = 5;
+
   private static final StringMessageFormatter FALLBACK_FORMATTER = new StringMessageFormatter();
 
   private static final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
@@ -260,7 +263,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private Optional<Integer> extractSchemaIdFromMsg(ConsumerRecord<Bytes, Bytes> msg, boolean isKey) {
     Bytes bytes = isKey ? msg.key() : msg.value();
     ByteBuffer buffer = ByteBuffer.wrap(bytes.get());
-    if (buffer.get() == 0 && buffer.remaining() > 4) {
+    if (buffer.remaining() > SR_RECORD_PREFIX_LENGTH && buffer.get() == SR_RECORD_MAGIC_BYTE) {
       int id = buffer.getInt();
       return Optional.of(id);
     }

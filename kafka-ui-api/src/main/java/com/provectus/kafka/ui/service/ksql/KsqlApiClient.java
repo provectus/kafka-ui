@@ -6,6 +6,7 @@ import static ksql.KsqlGrammarParser.SingleStatementContext;
 import static ksql.KsqlGrammarParser.UndefineVariableContext;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.provectus.kafka.ui.model.KafkaCluster;
 import com.provectus.kafka.ui.service.ksql.response.ResponseParser;
@@ -16,10 +17,15 @@ import java.util.Set;
 import lombok.Builder;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.codec.DecodingException;
 import org.springframework.http.MediaType;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.util.MimeTypeUtils;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 public class KsqlApiClient {
@@ -53,7 +59,20 @@ public class KsqlApiClient {
   }
 
   private WebClient webClient() {
-    return WebClient.create();
+    var exchangeStrategies = ExchangeStrategies.builder()
+        .codecs(configurer -> {
+          configurer.customCodecs()
+              .register(
+                  new Jackson2JsonDecoder(
+                      new ObjectMapper(),
+                      // some ksqldb versions do not set content-type header in response,
+                      // but we still need to use JsonDecoder for it
+                      MimeTypeUtils.APPLICATION_OCTET_STREAM));
+        })
+        .build();
+    return WebClient.builder()
+        .exchangeStrategies(exchangeStrategies)
+        .build();
   }
 
   private String baseKsqlDbUri() {
@@ -69,15 +88,28 @@ public class KsqlApiClient {
         .post()
         .uri(baseKsqlDbUri() + "/query")
         .accept(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
-        .contentType(MediaType.parseMediaType("application/json"))
+        .contentType(MediaType.parseMediaType("application/vnd.ksql.v1+json"))
         .bodyValue(ksqlRequest(ksql, streamProperties))
         .retrieve()
         .bodyToFlux(JsonNode.class)
+        .onErrorResume(this::isUnexpectedJsonArrayEndCharException, th -> Mono.empty())
         .map(ResponseParser::parseSelectResponse)
         .filter(Optional::isPresent)
         .map(Optional::get)
         .onErrorResume(WebClientResponseException.class,
             e -> Flux.just(ResponseParser.parseErrorResponse(e)));
+  }
+
+  /**
+   * Some version of ksqldb (?..0.24) can cut off json streaming without respect proper array ending like <p/>
+   * <code>[{"header":{"queryId":"...","schema":"..."}}, ]</code>
+   * which will cause json parsing error and will be propagated to UI.
+   * This is a know issue(https://github.com/confluentinc/ksql/issues/8746), but we don't know when it will be fixed.
+   * To workaround this we need to check DecodingException err msg.
+   */
+  private boolean isUnexpectedJsonArrayEndCharException(Throwable th) {
+    return th instanceof DecodingException
+        && th.getMessage().contains("Unexpected character (']'");
   }
 
   private Flux<KsqlResponseTable> executeStatement(String ksql,
@@ -126,7 +158,7 @@ public class KsqlApiClient {
     }
     Flux<KsqlResponseTable> outputFlux;
     if (KsqlGrammar.isSelect(statements.get(0))) {
-      outputFlux =  executeSelect(ksql, streamProperties);
+      outputFlux = executeSelect(ksql, streamProperties);
     } else {
       outputFlux = executeStatement(ksql, streamProperties);
     }
@@ -137,7 +169,7 @@ public class KsqlApiClient {
         });
   }
 
-  private  Flux<KsqlResponseTable> errorTableFlux(String errorText) {
+  private Flux<KsqlResponseTable> errorTableFlux(String errorText) {
     return Flux.just(ResponseParser.errorTableWithTextMsg(errorText));
   }
 

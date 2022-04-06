@@ -12,7 +12,7 @@ export const Wrapper = styled.li.attrs({ role: 'menuitem' })<{
     display: grid;
     grid-template-columns: min-content min-content auto min-content;
     grid-template-areas: 'title status . chevron';
-    gap: 0px 5px;
+    gap: 0 5px;
 
     padding: 0.5em 0.75em;
     cursor: pointer;
@@ -52,13 +52,20 @@ export const StatusIcon = styled.circle.attrs({
   cx: 2,
   cy: 2,
   r: 2,
-})<{ status: ServerStatus }>(
-  ({ theme, status }) => css`
-    fill: ${status === ServerStatus.ONLINE
-      ? theme.menu.statusIconColor.online
-      : theme.menu.statusIconColor.offline};
-  `
-);
+  role: 'status-circle',
+})<{ status: ServerStatus }>(({ theme, status }) => {
+  const statusColor: {
+    [k in ServerStatus]: string;
+  } = {
+    [ServerStatus.ONLINE]: theme.menu.statusIconColor.online,
+    [ServerStatus.OFFLINE]: theme.menu.statusIconColor.offline,
+    [ServerStatus.INITIALIZING]: theme.menu.statusIconColor.initializing,
+  };
+
+  return css`
+    fill: ${statusColor[status]};
+  `;
+});
 
 export const ChevronWrapper = styled.svg.attrs({
   viewBox: '0 0 10 6',
