@@ -18,6 +18,6 @@ jobs:
         uses: urlstechie/urlchecker-action@0.2.31
         with:
           exclude_patterns: localhost,127.0.,192.168.
-          exclude_urls: https://api.server,https://graph.microsoft.com/User.Read,https://dev-a63ggcut.auth0.com
+          exclude_urls: https://api.server,https://graph.microsoft.com/User.Read,https://dev-a63ggcut.auth0.com/
           print_all: false
           file_types: .md

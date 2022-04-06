@@ -51,8 +51,10 @@ class ProtobufFileRecordSerDeTest {
     var messageNameMap = Map.of(
         "topic1", "test.Person",
         "topic2", "test.AddressBook");
+    var keyMessageNameMap = Map.of(
+        "topic2", "test.Person");
     var deserializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, null);
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, keyMessageNameMap, null, null);
     var msg1 = deserializer
         .deserialize(new ConsumerRecord<>("topic1", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(personMessage)));
@@ -60,8 +62,10 @@ class ProtobufFileRecordSerDeTest {
     assertTrue(msg1.getValue().contains("user1@example.com"));
 
     var msg2 = deserializer
-        .deserialize(new ConsumerRecord<>("topic2", 1, 1, Bytes.wrap("key".getBytes()),
+        .deserialize(new ConsumerRecord<>("topic2", 1, 1, Bytes.wrap(personMessage),
             Bytes.wrap(addressBookMessage)));
+    assertEquals(MessageFormat.PROTOBUF, msg2.getKeyFormat());
+    assertTrue(msg2.getKey().contains("user1@example.com"));
     assertTrue(msg2.getValue().contains("user2@example.com"));
   }
 
@@ -69,7 +73,7 @@ class ProtobufFileRecordSerDeTest {
   void testNoDefaultMessageName() throws IOException {
     // by default the first message type defined in proto definition is used
     var deserializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, Collections.emptyMap(), null);
+        new ProtobufFileRecordSerDe(protobufSchemaPath, Collections.emptyMap(), null, null, null);
     var msg = deserializer
         .deserialize(new ConsumerRecord<>("topic", 1, 0, Bytes.wrap("key".getBytes()),
             Bytes.wrap(personMessage)));
@@ -80,19 +84,42 @@ class ProtobufFileRecordSerDeTest {
   void testDefaultMessageName() throws IOException {
     var messageNameMap = Map.of("topic1", "test.Person");
     var deserializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook");
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, null, "test.AddressBook", null);
     var msg = deserializer
-        .deserialize(new ConsumerRecord<>("a_random_topic", 1, 0, Bytes.wrap("key".getBytes()),
+        .deserialize(new ConsumerRecord<>("a_random_topic", 1, 0, Bytes.wrap(addressBookMessage),
             Bytes.wrap(addressBookMessage)));
     assertTrue(msg.getValue().contains("user2@example.com"));
+  }
+
+  @Test
+  void testDefaultKeyMessageName() throws IOException {
+    var messageNameMap = Map.of("topic1", "test.Person");
+    var deserializer =
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, messageNameMap, "test.AddressBook",
+            "test.AddressBook");
+    var msg = deserializer
+        .deserialize(new ConsumerRecord<>("a_random_topic", 1, 0, Bytes.wrap(addressBookMessage),
+            Bytes.wrap(addressBookMessage)));
+    assertTrue(msg.getKey().contains("user2@example.com"));
   }
 
   @Test
   void testSerialize() throws IOException {
     var messageNameMap = Map.of("topic1", "test.Person");
     var serializer =
-        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, "test.AddressBook");
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, null, "test.AddressBook", null);
     var serialized = serializer.serialize("topic1", "key1", "{\"name\":\"MyName\"}", 0);
+    assertNotNull(serialized.value());
+  }
+
+  @Test
+  void testSerializeKeyAndValue() throws IOException {
+    var messageNameMap = Map.of("topic1", "test.Person");
+    var serializer =
+        new ProtobufFileRecordSerDe(protobufSchemaPath, messageNameMap, messageNameMap, "test.AddressBook",
+                "test.AddressBook");
+    var serialized = serializer.serialize("topic1", "{\"name\":\"MyName\"}", "{\"name\":\"MyName\"}", 0);
+    assertNotNull(serialized.key());
     assertNotNull(serialized.value());
   }
 }
