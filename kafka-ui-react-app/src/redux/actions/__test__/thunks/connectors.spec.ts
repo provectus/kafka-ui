@@ -323,7 +323,7 @@ describe('Thunks', () => {
         actions.restartConnectorAction.failure({
           alert: {
             subject: 'local-first-hdfs-source-connector',
-            title: 'Kafka Connect Connector Tasks Restart',
+            title: 'Kafka Connect Connector Restart',
             response: {
               status: 404,
               statusText: 'Not Found',

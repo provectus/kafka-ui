@@ -76,4 +76,4 @@ jobs:
           target_url: https://${{ github.repository_owner }}.github.io/kafka-ui/allure/allure-results/${{ github.run_number }}
       - name: Dump docker logs on failure
         if: failure()
-        uses: jwalton/gh-docker-logs@v2.0.2
+        uses: jwalton/gh-docker-logs@v2.2.0

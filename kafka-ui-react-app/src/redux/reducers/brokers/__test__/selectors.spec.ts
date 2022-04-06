@@ -14,9 +14,6 @@ describe('Brokers selectors', () => {
     it('returns broker count', () => {
       expect(selectors.getBrokerCount(getState())).toEqual(0);
     });
-    it('returns zooKeeper status', () => {
-      expect(selectors.getZooKeeperStatus(getState())).toEqual(0);
-    });
     it('returns active controllers', () => {
       expect(selectors.getActiveControllers(getState())).toEqual(0);
     });
@@ -54,9 +51,6 @@ describe('Brokers selectors', () => {
 
     it('returns broker count', () => {
       expect(selectors.getBrokerCount(getState())).toEqual(2);
-    });
-    it('returns zooKeeper status', () => {
-      expect(selectors.getZooKeeperStatus(getState())).toEqual(1);
     });
     it('returns active controllers', () => {
       expect(selectors.getActiveControllers(getState())).toEqual(1);

@@ -198,7 +198,7 @@ const TopicForm: React.FC<Props> = ({
         <CustomParamsContainer isSubmitting={isSubmitting} />
 
         <Button type="submit" buttonType="primary" buttonSize="L">
-          Send
+          Submit
         </Button>
       </fieldset>
     </StyledForm>

@@ -9,11 +9,14 @@ jobs:
     steps:
       - uses: actions/stale@v4
         with:
-          days-before-stale: 0
-          days-before-close: 0
           days-before-issue-stale: 7
           days-before-issue-close: 3
-          stale-issue-message: 'This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 5 days.'
+          days-before-pr-stale: 7
+          days-before-pr-close: 7
+          stale-issue-message: 'This issue has been automatically marked as stale because no requested feedback has been provided. It will be closed if no further activity occurs. Thank you for your contributions.'
+          stale-pr-message: 'This PR has been automatically marked as stale because no requested changes have been applied. It will be closed if no further activity occurs. Thank you for your contributions.'
           stale-issue-label: 'status/stale'
+          stale-pr-label: 'status/stale'
           only-labels: 'status/pending'
           remove-issue-stale-when-updated: true
+          labels-to-remove-when-unstale: 'status/pending'

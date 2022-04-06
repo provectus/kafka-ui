@@ -4,13 +4,14 @@ import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeader
 import { SeekDirection, TopicMessage } from 'generated-sources';
 import styled from 'styled-components';
 import { compact, concat, groupBy, map, maxBy, minBy } from 'lodash';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory } from 'react-router';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
 } from 'redux/reducers/topicMessages/selectors';
+import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 
 import Message from './Message';
 import * as S from './MessageContent/MessageContent.styled';
@@ -22,13 +23,9 @@ const MessagesPaginationWrapperStyled = styled.div`
 `;
 
 const MessagesTable: React.FC = () => {
-  const location = useLocation();
   const history = useHistory();
 
-  const searchParams = React.useMemo(
-    () => new URLSearchParams(location.search),
-    [location]
-  );
+  const { searchParams, isLive } = useContext(TopicMessagesContext);
 
   const messages = useSelector(getTopicMessges);
   const isFetching = useSelector(getIsTopicMessagesFetching);
@@ -94,7 +91,7 @@ const MessagesTable: React.FC = () => {
               message={message}
             />
           ))}
-          {isFetching && (
+          {(isFetching || isLive) && !messages.length && (
             <tr>
               <td colSpan={10}>
                 <PageLoader />
@@ -108,9 +105,13 @@ const MessagesTable: React.FC = () => {
           )}
         </tbody>
       </Table>
-      <MessagesPaginationWrapperStyled>
-        <S.PaginationButton onClick={handleNextClick}>Next</S.PaginationButton>
-      </MessagesPaginationWrapperStyled>
+      {!isLive && (
+        <MessagesPaginationWrapperStyled>
+          <S.PaginationButton onClick={handleNextClick}>
+            Next
+          </S.PaginationButton>
+        </MessagesPaginationWrapperStyled>
+      )}
     </>
   );
 };

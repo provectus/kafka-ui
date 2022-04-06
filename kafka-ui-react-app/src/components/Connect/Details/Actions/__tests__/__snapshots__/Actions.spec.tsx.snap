@@ -144,6 +144,36 @@ exports[`Actions view matches snapshot 1`] = `
       Restart Connector
     </span>
   </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
+    </span>
+  </button>
   <a
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
@@ -337,6 +367,36 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
       Restart Connector
     </span>
   </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
+    </span>
+  </button>
   <a
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
@@ -513,6 +573,36 @@ exports[`Actions view matches snapshot when failed 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
@@ -708,6 +798,36 @@ exports[`Actions view matches snapshot when paused 1`] = `
       Restart Connector
     </span>
   </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
+    </span>
+  </button>
   <a
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
@@ -901,6 +1021,36 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
       Restart Connector
     </span>
   </button>
+  <button
+    className="c1"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
+    </span>
+  </button>
   <a
     href="/ui/clusters/my-cluster/connects/my-connect/connectors/my-connector/edit"
     onClick={[Function]}
@@ -1077,6 +1227,36 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
