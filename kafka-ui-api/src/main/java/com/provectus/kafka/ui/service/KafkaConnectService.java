@@ -326,9 +326,8 @@ public class KafkaConnectService {
   private Mono<KafkaConnectClientApi> withConnectClient(KafkaCluster cluster, String connectName) {
     return Mono.justOrEmpty(cluster.getKafkaConnect().stream()
             .filter(connect -> connect.getName().equals(connectName))
-            .findFirst()
-            .map(KafkaConnectCluster::getAddress))
+            .findFirst())
         .switchIfEmpty(Mono.error(ConnectNotFoundException::new))
-        .map(KafkaConnectClients::withBaseUrl);
+        .map(KafkaConnectClients::withKafkaConnectConfig);
   }
 }
