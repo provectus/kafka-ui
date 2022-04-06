@@ -106,6 +106,12 @@ export const restartConnectorAction = createAsyncAction(
   'RESTART_CONNECTOR__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
 
+export const restartTasksAction = createAsyncAction(
+  'RESTART_TASKS__REQUEST',
+  'RESTART_TASKS__SUCCESS',
+  'RESTART_TASKS__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
 export const pauseConnectorAction = createAsyncAction(
   'PAUSE_CONNECTOR__REQUEST',
   'PAUSE_CONNECTOR__SUCCESS',

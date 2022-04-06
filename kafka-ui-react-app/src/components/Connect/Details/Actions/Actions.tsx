@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
-import { ConnectorState } from 'generated-sources';
+import { ConnectorState, ConnectorAction } from 'generated-sources';
 import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import {
   clusterConnectConnectorEditPath,
@@ -34,6 +34,12 @@ export interface ActionsProps {
     connectName: ConnectName,
     connectorName: ConnectorName
   ): void;
+  restartTasks(
+    clusterName: ClusterName,
+    connectName: ConnectName,
+    connectorName: ConnectorName,
+    action: ConnectorAction
+  ): void;
   pauseConnector(
     clusterName: ClusterName,
     connectName: ConnectName,
@@ -52,11 +58,13 @@ const Actions: React.FC<ActionsProps> = ({
   isConnectorDeleting,
   connectorStatus,
   restartConnector,
+  restartTasks,
   pauseConnector,
   resumeConnector,
   isConnectorActionRunning,
 }) => {
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
+
   const history = useHistory();
   const [
     isDeleteConnectorConfirmationVisible,
@@ -75,6 +83,13 @@ const Actions: React.FC<ActionsProps> = ({
   const restartConnectorHandler = React.useCallback(() => {
     restartConnector(clusterName, connectName, connectorName);
   }, [restartConnector, clusterName, connectName, connectorName]);
+
+  const restartTasksHandler = React.useCallback(
+    (actionType) => {
+      restartTasks(clusterName, connectName, connectorName, actionType);
+    },
+    [restartTasks, clusterName, connectName, connectorName]
+  );
 
   const pauseConnectorHandler = React.useCallback(() => {
     pauseConnector(clusterName, connectName, connectorName);
@@ -127,6 +142,32 @@ const Actions: React.FC<ActionsProps> = ({
           <i className="fas fa-sync-alt" />
         </span>
         <span>Restart Connector</span>
+      </Button>
+      <Button
+        buttonSize="M"
+        buttonType="primary"
+        type="button"
+        onClick={() => restartTasksHandler(ConnectorAction.RESTART_ALL_TASKS)}
+        disabled={isConnectorActionRunning}
+      >
+        <span>
+          <i className="fas fa-sync-alt" />
+        </span>
+        <span>Restart All Tasks</span>
+      </Button>
+      <Button
+        buttonSize="M"
+        buttonType="primary"
+        type="button"
+        onClick={() =>
+          restartTasksHandler(ConnectorAction.RESTART_FAILED_TASKS)
+        }
+        disabled={isConnectorActionRunning}
+      >
+        <span>
+          <i className="fas fa-sync-alt" />
+        </span>
+        <span>Restart Failed Tasks</span>
       </Button>
       <Button
         buttonSize="M"
