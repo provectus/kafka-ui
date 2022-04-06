@@ -8,8 +8,6 @@ import com.provectus.kafka.ui.exception.SchemaNotFoundException;
 import com.provectus.kafka.ui.exception.SchemaTypeNotSupportedException;
 import com.provectus.kafka.ui.exception.UnprocessableEntityException;
 import com.provectus.kafka.ui.exception.ValidationException;
-import com.provectus.kafka.ui.mapper.ClusterMapper;
-import com.provectus.kafka.ui.model.CompatibilityCheckResponseDTO;
 import com.provectus.kafka.ui.model.CompatibilityLevelDTO;
 import com.provectus.kafka.ui.model.InternalSchemaRegistry;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -65,7 +63,6 @@ public class SchemaRegistryService {
 
   private static final String UNRECOGNIZED_FIELD_SCHEMA_TYPE = "Unrecognized field: schemaType";
 
-  private final ClusterMapper mapper;
   private final WebClient webClient;
 
   public Mono<List<SchemaSubjectDTO>> getAllLatestVersionSchemas(KafkaCluster cluster,
@@ -132,7 +129,7 @@ public class SchemaRegistryService {
         .zipWith(getSchemaCompatibilityInfoOrGlobal(cluster, schemaName))
         .map(tuple -> {
           SchemaSubjectDTO schema = tuple.getT1();
-          String compatibilityLevel = tuple.getT2().getCompatibility().getValue();
+          String compatibilityLevel = tuple.getT2().getCompatibilityLevel();
           schema.setCompatibilityLevel(compatibilityLevel);
           return schema;
         })
@@ -266,7 +263,7 @@ public class SchemaRegistryService {
     return updateSchemaCompatibility(cluster, null, compatibilityLevel);
   }
 
-  public Mono<CompatibilityLevelDTO> getSchemaCompatibilityLevel(KafkaCluster cluster,
+  public Mono<InternalCompatibilityLevel> getSchemaCompatibilityLevel(KafkaCluster cluster,
                                                                  String schemaName) {
     String globalConfig = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
     final var values = new LinkedMultiValueMap<String, String>();
@@ -279,21 +276,20 @@ public class SchemaRegistryService {
         values)
         .retrieve()
         .bodyToMono(InternalCompatibilityLevel.class)
-        .map(mapper::toCompatibilityLevel)
         .onErrorResume(error -> Mono.empty());
   }
 
-  public Mono<CompatibilityLevelDTO> getGlobalSchemaCompatibilityLevel(KafkaCluster cluster) {
+  public Mono<InternalCompatibilityLevel> getGlobalSchemaCompatibilityLevel(KafkaCluster cluster) {
     return this.getSchemaCompatibilityLevel(cluster, null);
   }
 
-  private Mono<CompatibilityLevelDTO> getSchemaCompatibilityInfoOrGlobal(KafkaCluster cluster,
+  private Mono<InternalCompatibilityLevel> getSchemaCompatibilityInfoOrGlobal(KafkaCluster cluster,
                                                                          String schemaName) {
     return this.getSchemaCompatibilityLevel(cluster, schemaName)
         .switchIfEmpty(this.getGlobalSchemaCompatibilityLevel(cluster));
   }
 
-  public Mono<CompatibilityCheckResponseDTO> checksSchemaCompatibility(
+  public Mono<InternalCompatibilityCheck> checksSchemaCompatibility(
       KafkaCluster cluster, String schemaName, Mono<NewSchemaSubjectDTO> newSchemaSubject) {
     return configuredWebClient(
             cluster,
@@ -306,7 +302,6 @@ public class SchemaRegistryService {
             .onStatus(NOT_FOUND::equals,
                 throwIfNotFoundStatus(formatted(NO_SUCH_SCHEMA, schemaName)))
             .bodyToMono(InternalCompatibilityCheck.class)
-            .map(mapper::toCompatibilityCheckResponse)
             .as(m -> failoverAble(m, new FailoverMono<>(cluster.getSchemaRegistry(),
                 () -> this.checksSchemaCompatibility(cluster, schemaName, newSchemaSubject))));
   }
