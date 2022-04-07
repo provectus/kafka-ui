@@ -1,7 +1,7 @@
 import React from 'react';
 import { propertyLookup } from 'lib/propertyLookup';
 import { TableState } from 'lib/hooks/useTableState';
-import styled from 'styled-components';
+import { Td } from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 
 import { isColumnElement, SelectCell, TableCellProps } from './TableColumn';
 
@@ -14,12 +14,6 @@ interface TableRowProps<T, TId extends IdType = never, OT = never> {
   selectable: boolean;
   onSelectChange?: (row: T, checked: boolean) => void;
 }
-
-const Td = styled.td<{ maxWidth?: string }>`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: ${(props) => props.maxWidth};
-`;
 
 export const TableRow = <T, TId extends IdType, OT = never>({
   children,
