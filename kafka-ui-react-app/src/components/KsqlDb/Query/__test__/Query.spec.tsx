@@ -1,4 +1,4 @@
-import { render } from 'lib/testHelpers';
+import { render, EventSourceMock } from 'lib/testHelpers';
 import React from 'react';
 import Query, {
   getFormattedErrorFromTableData,
@@ -19,27 +19,6 @@ const renderComponent = () =>
       pathname: clusterKsqlDbQueryPath(clusterName),
     }
   );
-
-// Small mock to get rid of reference error
-class EventSourceMock {
-  url: string;
-
-  close: () => void;
-
-  open: () => void;
-
-  error: () => void;
-
-  onmessage: () => void;
-
-  constructor(url: string) {
-    this.url = url;
-    this.open = jest.fn();
-    this.error = jest.fn();
-    this.onmessage = jest.fn();
-    this.close = jest.fn();
-  }
-}
 
 describe('Query', () => {
   it('renders', () => {

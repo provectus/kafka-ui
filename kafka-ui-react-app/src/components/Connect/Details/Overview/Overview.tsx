@@ -2,7 +2,7 @@ import React from 'react';
 import { Connector } from 'generated-sources';
 import * as C from 'components/common/Tag/Tag.styled';
 import * as Metrics from 'components/common/Metrics';
-import getTagColor from 'components/Connect/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 export interface OverviewProps {
   connector: Connector | null;

@@ -93,7 +93,7 @@ jobs:
 
       - name: make comment with private deployment link
         if: ${{ github.event.label.name == 'status/feature_testing' }}
-        uses: peter-evans/create-or-update-comment@v1.4.5
+        uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |
@@ -101,7 +101,7 @@ jobs:
 
       - name: make comment with public deployment link
         if: ${{ github.event.label.name == 'status/feature_testing_public' }}
-        uses: peter-evans/create-or-update-comment@v1.4.5
+        uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |

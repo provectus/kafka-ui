@@ -18,6 +18,7 @@ import {
 } from 'redux/interfaces';
 import * as actions from 'redux/actions';
 import { getResponse } from 'lib/errorHandling';
+import { batch } from 'react-redux';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
@@ -196,10 +197,43 @@ export const restartConnector =
       const response = await getResponse(error);
       const alert: FailurePayload = {
         subject: [clusterName, connectName, connectorName].join('-'),
-        title: `Kafka Connect Connector Tasks Restart`,
+        title: `Kafka Connect Connector Restart`,
         response,
       };
       dispatch(actions.restartConnectorAction.failure({ alert }));
+    }
+  };
+
+export const restartTasks =
+  (
+    clusterName: ClusterName,
+    connectName: ConnectName,
+    connectorName: ConnectorName,
+    action: ConnectorAction
+  ): PromiseThunkResult<void> =>
+  async (dispatch) => {
+    dispatch(actions.restartTasksAction.request());
+    try {
+      await kafkaConnectApiClient.updateConnectorState({
+        clusterName,
+        connectName,
+        connectorName,
+        action,
+      });
+      batch(() => {
+        dispatch(actions.restartTasksAction.success());
+        dispatch(
+          fetchConnectorTasks(clusterName, connectName, connectorName, true)
+        );
+      });
+    } catch (error) {
+      const response = await getResponse(error);
+      const alert: FailurePayload = {
+        subject: [clusterName, connectName, connectorName].join('-'),
+        title: `Kafka Connect Connector Tasks Restart`,
+        response,
+      };
+      dispatch(actions.restartTasksAction.failure({ alert }));
     }
   };
 

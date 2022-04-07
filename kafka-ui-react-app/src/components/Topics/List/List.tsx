@@ -318,7 +318,7 @@ const List: React.FC<TopicsListProps> = ({
             hoverable
           >
             <TableColumn
-              width="44%"
+              maxWidth="350px"
               title="Topic Name"
               cell={TitleCell}
               orderValue={TopicColumnsToSort.NAME}
@@ -341,7 +341,7 @@ const List: React.FC<TopicsListProps> = ({
               orderValue={TopicColumnsToSort.SIZE}
             />
             <TableColumn
-              width="4%"
+              maxWidth="4%"
               className="topic-action-block"
               cell={ActionsCell}
             />

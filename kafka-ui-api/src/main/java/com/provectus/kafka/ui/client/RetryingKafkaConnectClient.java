@@ -6,6 +6,7 @@ import com.provectus.kafka.ui.connect.model.Connector;
 import com.provectus.kafka.ui.connect.model.NewConnector;
 import com.provectus.kafka.ui.exception.KafkaConnectConflictReponseException;
 import com.provectus.kafka.ui.exception.ValidationException;
+import com.provectus.kafka.ui.model.KafkaConnectCluster;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +27,8 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   private static final int MAX_RETRIES = 5;
   private static final Duration RETRIES_DELAY = Duration.ofMillis(200);
 
-  public RetryingKafkaConnectClient(String basePath) {
-    super(new RetryingApiClient().setBasePath(basePath));
+  public RetryingKafkaConnectClient(KafkaConnectCluster config) {
+    super(new RetryingApiClient(config));
   }
 
   private static Retry conflictCodeRetry() {
@@ -71,6 +72,14 @@ public class RetryingKafkaConnectClient extends KafkaConnectClientApi {
   }
 
   private static class RetryingApiClient extends ApiClient {
+
+    public RetryingApiClient(KafkaConnectCluster config) {
+      super();
+      setBasePath(config.getAddress());
+      setUsername(config.getUserName());
+      setPassword(config.getPassword());
+    }
+
     @Override
     public <T> Mono<T> invokeAPI(String path, HttpMethod method, Map<String, Object> pathParams,
                                  MultiValueMap<String, String> queryParams, Object body,

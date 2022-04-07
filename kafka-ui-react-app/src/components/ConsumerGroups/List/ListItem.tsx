@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ConsumerGroup } from 'generated-sources';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
-import getTagColor from 'components/ConsumerGroups/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 const ListItem: React.FC<{ consumerGroup: ConsumerGroup }> = ({
   consumerGroup,

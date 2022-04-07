@@ -6,6 +6,7 @@ import {
   getConsumerGroupsTotalPages,
   sortBy,
   selectAll,
+  getAreConsumerGroupsPagedFulfilled,
 } from 'redux/reducers/consumerGroups/consumerGroupsSlice';
 import List from 'components/ConsumerGroups/List/List';
 
@@ -14,6 +15,7 @@ const mapStateToProps = (state: RootState) => ({
   orderBy: getConsumerGroupsOrderBy(state),
   sortOrder: getConsumerGroupsSortOrder(state),
   totalPages: getConsumerGroupsTotalPages(state),
+  isFetched: getAreConsumerGroupsPagedFulfilled(state),
 });
 
 const mapDispatchToProps = {
