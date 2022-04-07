@@ -1,6 +1,7 @@
 import React from 'react';
 import { propertyLookup } from 'lib/propertyLookup';
 import { TableState } from 'lib/hooks/useTableState';
+import styled from 'styled-components';
 
 import { isColumnElement, SelectCell, TableCellProps } from './TableColumn';
 
@@ -13,6 +14,12 @@ interface TableRowProps<T, TId extends IdType = never, OT = never> {
   selectable: boolean;
   onSelectChange?: (row: T, checked: boolean) => void;
 }
+
+const Td = styled.td<{ maxWidth?: string }>`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: ${(props) => props.maxWidth};
+`;
 
 export const TableRow = <T, TId extends IdType, OT = never>({
   children,
@@ -61,23 +68,23 @@ export const TableRow = <T, TId extends IdType, OT = never>({
         if (!isColumnElement<T, TId>(child)) {
           return child;
         }
-        const { cell, field, width, className } = child.props;
+        const { cell, field, maxWidth, className } = child.props;
 
         const Cell = cell as React.FC<TableCellProps<T, TId, OT>> | undefined;
 
         return Cell ? (
-          <td className={className} style={{ width }}>
+          <Td className={className} maxWidth={maxWidth}>
             <Cell
               tableState={tableState}
               hovered={hovered}
               rowIndex={index}
               dataItem={dataItem}
             />
-          </td>
+          </Td>
         ) : (
-          <td className={className} style={{ width }}>
+          <Td className={className} maxWidth={maxWidth}>
             {field && propertyLookup(field, dataItem)}
-          </td>
+          </Td>
         );
       })}
     </tr>
