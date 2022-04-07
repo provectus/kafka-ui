@@ -33,7 +33,7 @@ interface TableColumnProps<T, TId extends IdType, OT = never> {
   headerCell?: React.FC<TableHeaderCellProps<T, TId, OT>>;
   field?: string;
   title?: string;
-  width?: string;
+  maxWidth?: string;
   className?: string;
   orderValue?: OT;
 }

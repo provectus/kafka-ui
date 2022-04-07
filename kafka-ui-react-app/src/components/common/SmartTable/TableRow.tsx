@@ -1,6 +1,7 @@
 import React from 'react';
 import { propertyLookup } from 'lib/propertyLookup';
 import { TableState } from 'lib/hooks/useTableState';
+import { Td } from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 
 import { isColumnElement, SelectCell, TableCellProps } from './TableColumn';
 
@@ -61,23 +62,23 @@ export const TableRow = <T, TId extends IdType, OT = never>({
         if (!isColumnElement<T, TId>(child)) {
           return child;
         }
-        const { cell, field, width, className } = child.props;
+        const { cell, field, maxWidth, className } = child.props;
 
         const Cell = cell as React.FC<TableCellProps<T, TId, OT>> | undefined;
 
         return Cell ? (
-          <td className={className} style={{ width }}>
+          <Td className={className} maxWidth={maxWidth}>
             <Cell
               tableState={tableState}
               hovered={hovered}
               rowIndex={index}
               dataItem={dataItem}
             />
-          </td>
+          </Td>
         ) : (
-          <td className={className} style={{ width }}>
+          <Td className={className} maxWidth={maxWidth}>
             {field && propertyLookup(field, dataItem)}
-          </td>
+          </Td>
         );
       })}
     </tr>
