@@ -10,7 +10,7 @@ import {
   TopicMessageEventTypeEnum,
   MessageFilterType,
 } from 'generated-sources';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
@@ -164,6 +164,19 @@ const Filters: React.FC<FiltersProps> = ({
       seekDirection,
     };
   }, [attempt, query, queryType, seekDirection, activeFilter]);
+
+  const handleClearAllFilters = () => {
+    setCurrentSeekType(SeekType.OFFSET);
+    setQuery('');
+    setSelectedPartitions(
+      partitions.map((partition: Partition) => {
+        return {
+          value: partition.partition,
+          label: String(partition.partition),
+        };
+      })
+    );
+  };
 
   const handleFiltersSubmit = React.useCallback(() => {
     setAttempt(attempt + 1);
@@ -389,7 +402,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
           />
-          <S.ClearAll>Clear all</S.ClearAll>
+          <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
             <Button
               type="button"
