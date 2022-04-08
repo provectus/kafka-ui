@@ -4,6 +4,11 @@ interface Props {
   isFullwidth?: boolean;
 }
 
+export const TableContainer = styled.div`
+  width: 100%;
+  overflow: scroll;
+`;
+
 export const Table = styled.table<Props>`
   width: ${(props) => (props.isFullwidth ? '100%' : 'auto')};
 
