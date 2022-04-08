@@ -3,8 +3,10 @@ import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.sty
 import { Button } from 'components/common/Button/Button';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
+import useModal from 'lib/hooks/useModal';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
+import DeleteFilterModal from './DeleteFilterModal';
 
 export interface FilterModalProps {
   toggleIsOpen(): void;
@@ -28,12 +30,11 @@ const AddFilter: React.FC<FilterModalProps> = ({
   const [addNewFilter, setAddNewFilter] = React.useState(false);
   const [toggleSaveFilter, setToggleSaveFilter] = React.useState(false);
   const [selectedFilter, setSelectedFilter] = React.useState(-1);
-  const [toggleDeletionModal, setToggleDeletionModal] =
-    React.useState<boolean>(false);
+  const { isOpen, setOpen, setClose } = useModal();
   const [deleteIndex, setDeleteIndex] = React.useState<number>(-1);
 
   const deleteFilterHandler = (index: number) => {
-    setToggleDeletionModal(!toggleDeletionModal);
+    setOpen();
     setDeleteIndex(index);
   };
   const activeFilter = () => {
@@ -61,43 +62,15 @@ const AddFilter: React.FC<FilterModalProps> = ({
         <i className="fas fa-plus fa-sm" /> New filter
       </S.NewFilterIcon>
       <S.CreatedFilter>Created filters</S.CreatedFilter>
-      {toggleDeletionModal && (
-        <S.ConfirmDeletionModal>
-          <S.ConfirmDeletionModalHeader>
-            <S.ConfirmDeletionTitle>Confirm deletion</S.ConfirmDeletionTitle>
-            <S.CloseDeletionModalIcon
-              data-testid="closeDeletionModalIcon"
-              onClick={() => setToggleDeletionModal(!toggleDeletionModal)}
-            >
-              <i className="fas fa-times-circle" />
-            </S.CloseDeletionModalIcon>
-          </S.ConfirmDeletionModalHeader>
-          <S.ConfirmDeletionText>
-            Are you sure want to remove {filters[deleteIndex].name}?
-          </S.ConfirmDeletionText>
-          <S.FilterButtonWrapper>
-            <Button
-              buttonSize="M"
-              buttonType="secondary"
-              type="button"
-              onClick={() => setToggleDeletionModal(!toggleDeletionModal)}
-            >
-              Cancel
-            </Button>
-            <Button
-              buttonSize="M"
-              buttonType="primary"
-              type="button"
-              onClick={() => {
-                deleteFilter(deleteIndex);
-                setToggleDeletionModal(!toggleDeletionModal);
-              }}
-            >
-              Delete
-            </Button>
-          </S.FilterButtonWrapper>
-        </S.ConfirmDeletionModal>
-      )}
+      <DeleteFilterModal
+        isOpen={isOpen}
+        name={filters[deleteIndex]?.name}
+        onDelete={() => {
+          deleteFilter(deleteIndex);
+          setClose();
+        }}
+        onClose={setClose}
+      />
       <S.SavedFiltersContainer>
         {filters.length === 0 && <p>no saved filter(s)</p>}
         {filters.map((filter, index) => (
@@ -132,7 +105,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
           buttonType="secondary"
           type="button"
           onClick={toggleIsOpen}
-          disabled={toggleDeletionModal}
+          disabled={isOpen}
         >
           Cancel
         </Button>
@@ -141,7 +114,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
           buttonType="primary"
           type="button"
           onClick={activeFilter}
-          disabled={toggleDeletionModal}
+          disabled={isOpen}
         >
           Select filter
         </Button>
