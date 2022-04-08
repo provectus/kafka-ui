@@ -4,7 +4,7 @@ import AddFilter, {
 } from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
 import { render } from 'lib/testHelpers';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const filters: MessageFilters[] = [{ name: 'name', code: 'code' }];
@@ -40,25 +40,26 @@ describe('AddFilter component', () => {
       setupComponent();
       userEvent.hover(screen.getByRole('savedFilter'));
       userEvent.click(screen.getByTestId('deleteIcon'));
-      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
+      const modelDialog = screen.getByRole('dialog');
+      expect(modelDialog).toBeInTheDocument();
+      expect(
+        within(modelDialog).getByText(/Confirm deletion/i)
+      ).toBeInTheDocument();
     });
+
     it('close deletion modal with button', () => {
       setupComponent();
       userEvent.hover(screen.getByRole('savedFilter'));
       userEvent.click(screen.getByTestId('deleteIcon'));
-      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-      const cancelButton = screen.getAllByRole('button', { name: /Cancel/i });
-      userEvent.click(cancelButton[0]);
-      expect(screen.getByText('Created filters')).toBeInTheDocument();
+      const modelDialog = screen.getByRole('dialog');
+      expect(modelDialog).toBeInTheDocument();
+      const cancelButton = within(modelDialog).getByRole('button', {
+        name: /Cancel/i,
+      });
+      userEvent.click(cancelButton);
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
-    it('close deletion modal with close icon', () => {
-      setupComponent();
-      userEvent.hover(screen.getByRole('savedFilter'));
-      userEvent.click(screen.getByTestId('deleteIcon'));
-      expect(screen.getByRole('deletionModal')).toBeInTheDocument();
-      userEvent.click(screen.getByTestId('closeDeletionModalIcon'));
-      expect(screen.getByText('Created filters')).toBeInTheDocument();
-    });
+
     it('delete filter', () => {
       const deleteFilter = jest.fn();
       setupComponent({ filters, deleteFilter });
