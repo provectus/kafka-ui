@@ -20,7 +20,7 @@ const Dropdown: React.FC<DropdownProps> = ({ label, right, up, children }) => {
       cx('dropdown', {
         'is-active': active,
         'is-right': right,
-        'is-up': up,
+        'is-up': true,
       }),
     [active, right, up]
   );

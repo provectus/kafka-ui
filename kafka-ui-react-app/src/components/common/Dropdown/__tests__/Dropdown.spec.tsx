@@ -32,7 +32,7 @@ describe('Dropdown', () => {
 
     expect(wrapper.querySelector('.dropdown.is-active')).toBeFalsy();
     expect(wrapper.querySelector('.dropdown.is-right')).toBeFalsy();
-    expect(wrapper.querySelector('.dropdown.is-up')).toBeFalsy();
+    expect(wrapper.querySelector('.dropdown.is-up')).toBeTruthy();
 
     expect(wrapper.querySelector('.dropdown-content')).toBeTruthy();
     expect(wrapper.querySelector('.dropdown-content')).toHaveTextContent('');
