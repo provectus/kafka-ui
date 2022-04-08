@@ -10,7 +10,7 @@ import {
   TopicMessageEventTypeEnum,
   MessageFilterType,
 } from 'generated-sources';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
 import { useHistory, useLocation } from 'react-router';
 import DatePicker from 'react-datepicker';
@@ -45,12 +45,18 @@ export interface FiltersProps {
   partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
+
   addMessage(message: TopicMessage): void;
+
   resetMessages(): void;
+
   updatePhase(phase: string): void;
+
   updateMeta(meta: TopicMessageConsuming): void;
+
   setIsFetching(status: boolean): void;
 }
+
 export interface MessageFilters {
   name: string;
   code: string;
@@ -168,7 +174,10 @@ const Filters: React.FC<FiltersProps> = ({
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
     setQuery('');
+    getSelectedPartitionsFromSeekToParam(searchParams, partitions);
     setSelectedPartitions(
+      // getSelectedPartitionsFromSeekToParam(searchParams, partitions)
+
       partitions.map((partition: Partition) => {
         return {
           value: partition.partition,
