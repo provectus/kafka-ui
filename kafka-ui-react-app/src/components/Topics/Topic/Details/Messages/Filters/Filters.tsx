@@ -424,9 +424,10 @@ const Filters: React.FC<FiltersProps> = ({
         />
       </div>
       <S.ActiveSmartFilterWrapper>
-        <S.AddFiltersIcon data-testid="addFilterIcon" onClick={toggleIsOpen}>
+        <Button buttonType="primary" buttonSize="M" onClick={toggleIsOpen}>
           <i className="fas fa-plus fa-sm" />
-        </S.AddFiltersIcon>
+          Add Filters
+        </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
