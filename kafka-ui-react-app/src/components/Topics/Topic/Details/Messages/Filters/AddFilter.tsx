@@ -4,9 +4,9 @@ import { Button } from 'components/common/Button/Button';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import useModal from 'lib/hooks/useModal';
+import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
-import DeleteFilterModal from './DeleteFilterModal';
 
 export interface FilterModalProps {
   toggleIsOpen(): void;
@@ -62,15 +62,20 @@ const AddFilter: React.FC<FilterModalProps> = ({
         <i className="fas fa-plus fa-sm" /> New filter
       </S.NewFilterIcon>
       <S.CreatedFilter>Created filters</S.CreatedFilter>
-      <DeleteFilterModal
+      <ConfirmationModal
         isOpen={isOpen}
-        name={filters[deleteIndex]?.name}
-        onDelete={() => {
+        title="Confirm deletion"
+        onConfirm={() => {
           deleteFilter(deleteIndex);
           setClose();
         }}
-        onClose={setClose}
-      />
+        onCancel={setClose}
+        submitBtnText="Delete"
+      >
+        <S.ConfirmDeletionText>
+          Are you sure want to remove {filters[deleteIndex]?.name}?
+        </S.ConfirmDeletionText>
+      </ConfirmationModal>
       <S.SavedFiltersContainer>
         {filters.length === 0 && <p>no saved filter(s)</p>}
         {filters.map((filter, index) => (
