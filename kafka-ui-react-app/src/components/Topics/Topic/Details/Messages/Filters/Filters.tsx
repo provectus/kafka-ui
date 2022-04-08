@@ -176,8 +176,6 @@ const Filters: React.FC<FiltersProps> = ({
     setQuery('');
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
     setSelectedPartitions(
-      // getSelectedPartitionsFromSeekToParam(searchParams, partitions)
-
       partitions.map((partition: Partition) => {
         return {
           value: partition.partition,
