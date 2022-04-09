@@ -34,6 +34,18 @@ describe('AddFilter component', () => {
     expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
   });
 
+  it('should test click on return to custom filter redirects to Add filters', () => {
+    setupComponent();
+    userEvent.click(screen.getByRole('savedFilterText'));
+    expect(screen.getByText('Saved filters')).toBeInTheDocument();
+    expect(screen.queryByRole('savedFilterText')).not.toBeInTheDocument();
+    expect(screen.getAllByRole('savedFilter')).toHaveLength(2);
+
+    userEvent.click(screen.getByText(/back to custom filters/i));
+    expect(screen.queryByText('Saved filters')).not.toBeInTheDocument();
+    expect(screen.getByRole('savedFilterText')).toBeInTheDocument();
+  });
+
   describe('Add new filter', () => {
     beforeEach(() => {
       setupComponent();

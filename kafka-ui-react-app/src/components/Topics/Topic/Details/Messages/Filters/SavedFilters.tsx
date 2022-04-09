@@ -55,7 +55,7 @@ const SavedFilters: FC<Props> = ({
         </S.ConfirmDeletionText>
       </ConfirmationModal>
       <S.BackToCustomText onClick={onGoBack}>
-        Back To custom filtera
+        Back To custom filters
       </S.BackToCustomText>
       <S.SavedFiltersContainer>
         <S.CreatedFilter>Saved filters</S.CreatedFilter>
