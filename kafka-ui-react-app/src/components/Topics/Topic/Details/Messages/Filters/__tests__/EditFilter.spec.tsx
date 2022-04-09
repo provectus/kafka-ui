@@ -43,10 +43,10 @@ describe('EditFilter component', () => {
   it('checks input values to match', () => {
     setupComponent();
     expect(screen.getAllByRole('textbox')[0]).toHaveValue(
-      editFilter.filter.name
+      editFilter.filter.code
     );
     expect(screen.getAllByRole('textbox')[1]).toHaveValue(
-      editFilter.filter.code
+      editFilter.filter.name
     );
   });
 });

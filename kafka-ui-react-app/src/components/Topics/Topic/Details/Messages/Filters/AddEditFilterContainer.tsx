@@ -61,21 +61,6 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
       )}
       <form onSubmit={handleSubmit(onSubmit)} aria-label="Filters submit Form">
         <div>
-          <InputLabel>Display name</InputLabel>
-          <Input
-            inputSize="M"
-            placeholder="Enter Name"
-            autoComplete="off"
-            name="name"
-            defaultValue={inputDisplayNameDefaultValue}
-          />
-        </div>
-        <div>
-          <FormError>
-            <ErrorMessage errors={errors} name="name" />
-          </FormError>
-        </div>
-        <div>
           <InputLabel>Filter code</InputLabel>
           <Controller
             control={control}
@@ -99,6 +84,21 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
           />
           <InputLabel>Save this filter</InputLabel>
         </S.CheckboxWrapper>
+        <div>
+          <InputLabel>Display name</InputLabel>
+          <Input
+            inputSize="M"
+            placeholder="Enter Name"
+            autoComplete="off"
+            name="name"
+            defaultValue={inputDisplayNameDefaultValue}
+          />
+        </div>
+        <div>
+          <FormError>
+            <ErrorMessage errors={errors} name="name" />
+          </FormError>
+        </div>
         <S.FilterButtonWrapper>
           <Button
             buttonSize="M"

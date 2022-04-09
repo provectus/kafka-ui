@@ -44,11 +44,11 @@ describe('AddEditFilterContainer component', () => {
 
       const inputs = screen.getAllByRole('textbox');
 
-      const inputNameElement = inputs[0];
-      userEvent.type(inputNameElement, 'Hello World!');
-
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
       userEvent.type(textAreaElement, 'Hello World With TextArea');
+
+      const inputNameElement = inputs[1];
+      userEvent.type(inputNameElement, 'Hello World!');
 
       await waitFor(() => {
         expect(submitButtonElem).toBeEnabled();
@@ -64,11 +64,11 @@ describe('AddEditFilterContainer component', () => {
     it('should view the error message after typing and clearing the input', async () => {
       const inputs = screen.getAllByRole('textbox');
 
-      const inputNameElement = inputs[0];
-      userEvent.type(inputNameElement, 'Hello World!');
-
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
       userEvent.type(textAreaElement, 'Hello World With TextArea');
+
+      const inputNameElement = inputs[1];
+      userEvent.type(inputNameElement, 'Hello World!');
 
       userEvent.clear(inputNameElement);
       userEvent.clear(textAreaElement);
@@ -89,8 +89,8 @@ describe('AddEditFilterContainer component', () => {
       });
 
       const inputs = screen.getAllByRole('textbox');
-      const inputNameElement = inputs[0];
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
+      const inputNameElement = inputs[1];
 
       expect(inputNameElement).toHaveValue(mockData.name);
       expect(textAreaElement).toHaveValue(mockData.code);
@@ -114,11 +114,11 @@ describe('AddEditFilterContainer component', () => {
 
       const inputs = screen.getAllByRole('textbox');
 
-      const inputNameElement = inputs[0];
-      userEvent.type(inputNameElement, 'Hello World!');
-
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
       userEvent.type(textAreaElement, 'Hello World With TextArea');
+
+      const inputNameElement = inputs[1];
+      userEvent.type(inputNameElement, 'Hello World!');
 
       const submitBtnElement = screen.getByText(defaultSubmitBtn);
 
