@@ -99,7 +99,6 @@ export const ClearAll = styled.span`
   color: ${({ theme }) => theme.metrics.filters.color.normal};
   font-size: 12px;
   cursor: pointer;
-  font-family: Inter;
 `;
 
 export const MessageFilterModal = styled.div`
@@ -117,7 +116,6 @@ export const MessageFilterModal = styled.div`
 
 export const FilterTitle = styled.h3`
   line-height: 32px;
-  font-family: Inter;
   font-size: 20px;
   margin-bottom: 40px;
 `;
