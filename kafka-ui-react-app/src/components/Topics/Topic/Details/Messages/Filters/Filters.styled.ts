@@ -207,6 +207,7 @@ export const SavedFilter = styled.div.attrs({
   height: 32px;
   align-items: center;
   cursor: pointer;
+  border-top: 1px solid #f1f2f3;
   &:hover ${FilterOptions} {
     display: flex;
   }
