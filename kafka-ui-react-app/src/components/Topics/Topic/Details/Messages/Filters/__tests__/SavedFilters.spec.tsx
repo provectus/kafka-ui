@@ -40,7 +40,7 @@ describe('SavedFilter Component', () => {
     expect(onGoBackMock).toHaveBeenCalled();
   });
 
-  describe('Empty Filters', () => {
+  describe('Empty Filters Rendering', () => {
     beforeEach(() => {
       setUpComponent({ filters: [] });
     });
@@ -110,7 +110,7 @@ describe('SavedFilter Component', () => {
       deleteMock.mockClear();
     });
 
-    it('Open deletion modal', () => {
+    it('Open Confirmation for the deletion modal', () => {
       const savedFilters = screen.getAllByRole('savedFilter');
       const deleteIcons = screen.getAllByTestId('deleteIcon');
       userEvent.hover(savedFilters[0]);
@@ -122,7 +122,7 @@ describe('SavedFilter Component', () => {
       ).toBeInTheDocument();
     });
 
-    it('Close deletion modal with button', () => {
+    it('Close Confirmations deletion modal with button', () => {
       const savedFilters = screen.getAllByRole('savedFilter');
       const deleteIcons = screen.getAllByTestId('deleteIcon');
 
@@ -138,7 +138,7 @@ describe('SavedFilter Component', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     });
 
-    it('delete filter', () => {
+    it('Delete the saved filter', () => {
       const savedFilters = screen.getAllByRole('savedFilter');
       const deleteIcons = screen.getAllByTestId('deleteIcon');
 
