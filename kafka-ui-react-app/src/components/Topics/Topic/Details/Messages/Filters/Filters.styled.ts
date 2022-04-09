@@ -118,6 +118,17 @@ export const FilterTitle = styled.h3`
   line-height: 32px;
   font-size: 20px;
   margin-bottom: 40px;
+  position: relative;
+  &:after {
+    content: '';
+    width: calc(100% + 32px);
+    height: 1px;
+    position: absolute;
+    top: 40px;
+    left: -16px;
+    display: inline-block;
+    background-color: #f1f2f3;
+  }
 `;
 
 export const CreatedFilter = styled.p`
@@ -145,8 +156,20 @@ export const SavedFilterName = styled.div`
 export const FilterButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 25px;
+  margin-top: 10px;
   gap: 10px;
+  padding-top: 16px;
+  position: relative;
+  &:before {
+    content: '';
+    width: calc(100% + 32px);
+    height: 1px;
+    position: absolute;
+    top: 0;
+    left: -16px;
+    display: inline-block;
+    background-color: #f1f2f3;
+  }
 `;
 
 export const ActiveSmartFilterWrapper = styled.div`
