@@ -165,7 +165,7 @@ describe('Filters component', () => {
           })
         )
       );
-      userEvent.click(screen.getByText('New filter'));
+
       const filterName = 'filter name';
       const filterCode = 'filter code';
 

@@ -8,7 +8,6 @@ import userEvent from '@testing-library/user-event';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 
 describe('AddEditFilterContainer component', () => {
-  const defaultTitle = 'Test Title';
   const defaultSubmitBtn = 'Submit Button';
   const defaultNewFilter = 'Create New Filters';
 
@@ -18,14 +17,12 @@ describe('AddEditFilterContainer component', () => {
   };
 
   const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) => {
-    const { title, submitBtnText, createNewFilterText } = props;
+    const { submitBtnText, createNewFilterText } = props;
     return render(
       <AddEditFilterContainer
-        title={title || defaultTitle}
         cancelBtnHandler={jest.fn()}
         submitBtnText={submitBtnText || defaultSubmitBtn}
         createNewFilterText={createNewFilterText || defaultNewFilter}
-        toggleSaveFilterSetter={jest.fn()}
         {...props}
       />
     );
@@ -35,12 +32,8 @@ describe('AddEditFilterContainer component', () => {
     beforeEach(() => {
       setupComponent();
     });
-    it('should render the components', () => {
-      expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
-    });
 
     it('should check the default parameters values', () => {
-      expect(screen.getByText(defaultTitle)).toBeInTheDocument();
       expect(screen.getByText(defaultSubmitBtn)).toBeInTheDocument();
       expect(screen.getByText(defaultNewFilter)).toBeInTheDocument();
     });
@@ -140,47 +133,22 @@ describe('AddEditFilterContainer component', () => {
       });
     });
 
-    it('should display the checkbox if the props is passed and click stay checking', async () => {
-      const setCheckboxMock = jest.fn();
-      setupComponent({
-        toggleSaveFilterSetter: setCheckboxMock,
-      });
-
-      const checkbox = screen.getByRole('checkbox');
-      expect(checkbox).toBeInTheDocument();
-
-      userEvent.click(checkbox);
-
-      await waitFor(() => {
-        expect(checkbox).toBeChecked();
-      });
-
-      await waitFor(() => {
-        expect(setCheckboxMock).toBeCalled();
-      });
-    });
-
     it('should display the checkbox if the props is passed and initially check state', () => {
-      setupComponent({
-        toggleSaveFilterSetter: jest.fn(),
-        toggleSaveFilterValue: true,
-      });
-
+      setupComponent();
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
+      expect(checkbox).not.toBeChecked();
+      userEvent.click(checkbox);
       expect(checkbox).toBeChecked();
     });
 
-    it('should pass and render the view props', () => {
-      const title = 'titleTest';
+    it('should pass and render the correct button text and header', () => {
       const createNewFilterText = 'createNewFilterTextTest';
       const submitBtnText = 'submitBtnTextTest';
       setupComponent({
-        title,
         createNewFilterText,
         submitBtnText,
       });
-      expect(screen.getByText(title)).toBeInTheDocument();
       expect(screen.getByText(createNewFilterText)).toBeInTheDocument();
       expect(screen.getByText(submitBtnText)).toBeInTheDocument();
     });

@@ -1,10 +1,9 @@
 import React from 'react';
 import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
-import { Button } from 'components/common/Button/Button';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
-import useModal from 'lib/hooks/useModal';
-import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
+import SavedFilters from 'components/Topics/Topic/Details/Messages/Filters/SavedFilters';
+import SavedIcon from 'components/common/Icons/SavedIcon';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
 
@@ -27,115 +26,50 @@ const AddFilter: React.FC<FilterModalProps> = ({
   toggleEditModal,
   editFilter,
 }) => {
-  const [addNewFilter, setAddNewFilter] = React.useState(false);
-  const [toggleSaveFilter, setToggleSaveFilter] = React.useState(false);
-  const [selectedFilter, setSelectedFilter] = React.useState(-1);
-  const { isOpen, setOpen, setClose } = useModal();
-  const [deleteIndex, setDeleteIndex] = React.useState<number>(-1);
-
-  const deleteFilterHandler = (index: number) => {
-    setOpen();
-    setDeleteIndex(index);
-  };
-  const activeFilter = () => {
-    if (selectedFilter > -1) {
-      activeFilterHandler(filters[selectedFilter], selectedFilter);
-      toggleIsOpen();
-    }
-  };
+  const [savedFilterState, setSavedFilterState] =
+    React.useState<boolean>(false);
 
   const onSubmit = React.useCallback(
-    async (values: MessageFilters) => {
-      if (!toggleSaveFilter) {
-        activeFilterHandler(values, -1);
-      } else {
+    async (values: MessageFilters, saveFilter) => {
+      if (saveFilter) {
         addFilter(values);
+      } else {
+        activeFilterHandler(values, -1);
       }
-      setAddNewFilter(!addNewFilter);
     },
-    [addNewFilter, toggleSaveFilter, activeFilterHandler, addFilter]
+    [activeFilterHandler, addFilter]
   );
-  return !addNewFilter ? (
+  return (
     <>
       <S.FilterTitle>Add filter</S.FilterTitle>
-      <S.NewFilterIcon onClick={() => setAddNewFilter(!addNewFilter)}>
-        <i className="fas fa-plus fa-sm" /> New filter
-      </S.NewFilterIcon>
-      <S.CreatedFilter>Created filters</S.CreatedFilter>
-      <ConfirmationModal
-        isOpen={isOpen}
-        title="Confirm deletion"
-        onConfirm={() => {
-          deleteFilter(deleteIndex);
-          setClose();
-        }}
-        onCancel={setClose}
-        submitBtnText="Delete"
-      >
-        <S.ConfirmDeletionText>
-          Are you sure want to remove {filters[deleteIndex]?.name}?
-        </S.ConfirmDeletionText>
-      </ConfirmationModal>
-      <S.SavedFiltersContainer>
-        {filters.length === 0 && <p>no saved filter(s)</p>}
-        {filters.map((filter, index) => (
-          <S.SavedFilter
-            key={Symbol(filter.name).toString()}
-            selected={selectedFilter === index}
-            onClick={() => setSelectedFilter(index)}
+      {savedFilterState ? (
+        <SavedFilters
+          deleteFilter={deleteFilter}
+          activeFilterHandler={activeFilterHandler}
+          onCancelBtn={toggleIsOpen}
+          onGoBack={() => setSavedFilterState(false)}
+          filters={filters}
+          onEdit={(index, filter) => {
+            toggleEditModal();
+            editFilter({ index, filter });
+          }}
+        />
+      ) : (
+        <>
+          <S.SavedFiltersTextContainer
+            onClick={() => setSavedFilterState(true)}
           >
-            <S.SavedFilterName>{filter.name}</S.SavedFilterName>
-            <S.FilterOptions>
-              <S.FilterEdit
-                onClick={() => {
-                  toggleEditModal();
-                  editFilter({ index, filter });
-                }}
-              >
-                Edit
-              </S.FilterEdit>
-              <S.DeleteSavedFilter
-                data-testid="deleteIcon"
-                onClick={() => deleteFilterHandler(index)}
-              >
-                <i className="fas fa-times" />
-              </S.DeleteSavedFilter>
-            </S.FilterOptions>
-          </S.SavedFilter>
-        ))}
-      </S.SavedFiltersContainer>
-      <S.FilterButtonWrapper>
-        <Button
-          buttonSize="M"
-          buttonType="secondary"
-          type="button"
-          onClick={toggleIsOpen}
-          disabled={isOpen}
-        >
-          Cancel
-        </Button>
-        <Button
-          buttonSize="M"
-          buttonType="primary"
-          type="button"
-          onClick={activeFilter}
-          disabled={isOpen}
-        >
-          Select filter
-        </Button>
-      </S.FilterButtonWrapper>
+            <SavedIcon /> <S.SavedFiltersText>Saved Filters</S.SavedFiltersText>
+          </S.SavedFiltersTextContainer>
+          <AddEditFilterContainer
+            cancelBtnHandler={toggleIsOpen}
+            submitBtnText="Add filter"
+            submitCallback={onSubmit}
+            createNewFilterText="Create a new filter"
+          />
+        </>
+      )}
     </>
-  ) : (
-    <AddEditFilterContainer
-      title="Add filter"
-      cancelBtnHandler={() => setAddNewFilter(!addNewFilter)}
-      submitBtnText="Add filter"
-      submitCallback={onSubmit}
-      submitCallbackWithReset
-      createNewFilterText="Create a new filter"
-      toggleSaveFilterValue={toggleSaveFilter}
-      toggleSaveFilterSetter={() => setToggleSaveFilter(!toggleSaveFilter)}
-    />
   );
 };
 
