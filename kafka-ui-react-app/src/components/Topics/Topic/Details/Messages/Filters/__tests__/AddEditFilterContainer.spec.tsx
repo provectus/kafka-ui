@@ -131,7 +131,7 @@ describe('AddEditFilterContainer component', () => {
     });
 
     it('should display the checkbox if the props is passed and initially check state', () => {
-      setupComponent();
+      setupComponent({ isAdd: true });
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
       expect(checkbox).not.toBeChecked();

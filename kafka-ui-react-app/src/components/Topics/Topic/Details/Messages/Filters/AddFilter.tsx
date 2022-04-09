@@ -65,6 +65,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
             cancelBtnHandler={toggleIsOpen}
             submitBtnText="Add filter"
             submitCallback={onSubmit}
+            isAdd
           />
         </>
       )}

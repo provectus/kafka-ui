@@ -21,6 +21,7 @@ export interface AddEditFilterContainerProps {
   submitBtnText: string;
   inputDisplayNameDefaultValue?: string;
   inputCodeDefaultValue?: string;
+  isAdd?: boolean;
   submitCallback?: (values: MessageFilters, saveFilter: boolean) => void;
 }
 
@@ -30,6 +31,7 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
   inputDisplayNameDefaultValue = '',
   inputCodeDefaultValue = '',
   submitCallback,
+  isAdd,
 }) => {
   const methods = useForm<MessageFilters>({
     mode: 'onChange',
@@ -71,14 +73,16 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
             <ErrorMessage errors={errors} name="code" />
           </FormError>
         </div>
-        <S.CheckboxWrapper>
-          <input
-            type="checkbox"
-            checked={saveFilterCheckbox}
-            onChange={(event) => setSaveFilterCheckbox(event.target.checked)}
-          />
-          <InputLabel>Save this filter</InputLabel>
-        </S.CheckboxWrapper>
+        {isAdd && (
+          <S.CheckboxWrapper>
+            <input
+              type="checkbox"
+              checked={saveFilterCheckbox}
+              onChange={(event) => setSaveFilterCheckbox(event.target.checked)}
+            />
+            <InputLabel>Save this filter</InputLabel>
+          </S.CheckboxWrapper>
+        )}
         <div>
           <InputLabel>Display name</InputLabel>
           <Input
