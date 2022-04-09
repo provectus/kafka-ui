@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface SavedFilterProps {
   selected: boolean;
@@ -122,13 +122,6 @@ export const FilterTitle = styled.h3`
   margin-bottom: 40px;
 `;
 
-export const NewFilterIcon = styled.div`
-  color: ${({ theme }) => theme.icons.newFilterIcon};
-  padding-right: 6px;
-  height: 12px;
-  cursor: pointer;
-`;
-
 export const CreatedFilter = styled.p`
   margin: 25px 0 10px;
   color: ${({ theme }) => theme.breadcrumb};
@@ -156,13 +149,6 @@ export const FilterButtonWrapper = styled.div`
   justify-content: flex-end;
   margin-top: 25px;
   gap: 10px;
-`;
-
-export const AddFiltersIcon = styled.div`
-  color: ${({ theme }) => theme.metrics.filters.color.icon};
-  padding-right: 6px;
-  height: 20px;
-  cursor: pointer;
 `;
 
 export const ActiveSmartFilterWrapper = styled.div`
@@ -240,37 +226,6 @@ export const DeleteSavedFilterIcon = styled.div`
   cursor: pointer;
 `;
 
-export const ConfirmDeletionModal = styled.div.attrs({ role: 'deletionModal' })`
-  height: auto;
-  width: 348px;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.modal.backgroundColor};
-  position: absolute;
-  left: 20%;
-  border: 1px solid ${({ theme }) => theme.breadcrumb};
-  box-shadow: ${({ theme }) => theme.modal.shadow};
-  padding: 16px;
-  z-index: 2;
-`;
-
-export const ConfirmDeletionModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 48px;
-`;
-
-export const ConfirmDeletionTitle = styled.h3`
-  font-size: 20px;
-  line-height: 32px;
-`;
-
-export const CloseDeletionModalIcon = styled.div`
-  color: ${({ theme }) => theme.icons.closeModalIcon};
-  height: 20px;
-  cursor: pointer;
-`;
-
 export const ConfirmDeletionText = styled.h3`
   color: ${({ theme }) => theme.modal.deletionTextColor};
   font-size: 14px;
@@ -309,4 +264,28 @@ export const MessageLoadingSpinner = styled.div<MessageLoadingSpinnerProps>`
       transform: rotate(360deg);
     }
   }
+`;
+
+export const SavedFiltersTextContainer = styled.div.attrs({
+  role: 'savedFilterText',
+})`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+`;
+
+const textStyle = css`
+  font-size: 14px;
+  color: ${({ theme }) => theme.editFilterText.color};
+  font-weight: 500;
+`;
+
+export const SavedFiltersText = styled.div`
+  ${textStyle};
+  margin-left: 7px;
+`;
+
+export const BackToCustomText = styled.div`
+  ${textStyle};
+  cursor: pointer;
 `;
