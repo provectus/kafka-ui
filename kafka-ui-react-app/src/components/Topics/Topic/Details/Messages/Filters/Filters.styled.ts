@@ -270,6 +270,7 @@ export const SavedFiltersTextContainer = styled.div.attrs({
   display: flex;
   align-items: center;
   cursor: pointer;
+  margin-bottom: 15px;
 `;
 
 const textStyle = css`

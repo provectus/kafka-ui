@@ -9,7 +9,6 @@ import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters
 
 describe('AddEditFilterContainer component', () => {
   const defaultSubmitBtn = 'Submit Button';
-  const defaultNewFilter = 'Create New Filters';
 
   const mockData: MessageFilters = {
     name: 'mockName',
@@ -17,12 +16,11 @@ describe('AddEditFilterContainer component', () => {
   };
 
   const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) => {
-    const { submitBtnText, createNewFilterText } = props;
+    const { submitBtnText } = props;
     return render(
       <AddEditFilterContainer
         cancelBtnHandler={jest.fn()}
         submitBtnText={submitBtnText || defaultSubmitBtn}
-        createNewFilterText={createNewFilterText || defaultNewFilter}
         {...props}
       />
     );
@@ -33,9 +31,8 @@ describe('AddEditFilterContainer component', () => {
       setupComponent();
     });
 
-    it('should check the default parameters values', () => {
+    it('should check the default Button text', () => {
       expect(screen.getByText(defaultSubmitBtn)).toBeInTheDocument();
-      expect(screen.getByText(defaultNewFilter)).toBeInTheDocument();
     });
 
     it('should check whether the submit Button is disabled when the form is pristine and disabled if dirty', async () => {
@@ -142,14 +139,11 @@ describe('AddEditFilterContainer component', () => {
       expect(checkbox).toBeChecked();
     });
 
-    it('should pass and render the correct button text and header', () => {
-      const createNewFilterText = 'createNewFilterTextTest';
+    it('should pass and render the correct button text', () => {
       const submitBtnText = 'submitBtnTextTest';
       setupComponent({
-        createNewFilterText,
         submitBtnText,
       });
-      expect(screen.getByText(createNewFilterText)).toBeInTheDocument();
       expect(screen.getByText(submitBtnText)).toBeInTheDocument();
     });
   });

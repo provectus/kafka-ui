@@ -44,12 +44,12 @@ describe('AddFilter component', () => {
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], 'filter name');
-        userEvent.type(screen.getAllByRole('textbox')[1], 'filter code');
+        userEvent.type(screen.getAllByRole('textbox')[0], 'filter code');
+        userEvent.type(screen.getAllByRole('textbox')[1], 'filter name');
       });
       expect(addFilterBtn).toBeEnabled();
-      expect(screen.getAllByRole('textbox')[0]).toHaveValue('filter name');
-      expect(screen.getAllByRole('textbox')[1]).toHaveValue('filter code');
+      expect(screen.getAllByRole('textbox')[0]).toHaveValue('filter code');
+      expect(screen.getAllByRole('textbox')[1]).toHaveValue('filter name');
     });
   });
 
@@ -70,10 +70,10 @@ describe('AddFilter component', () => {
         addFilter: addFilterMock,
         activeFilterHandler: activeFilterHandlerMock,
       });
-      userEvent.click(screen.getByText(/New filter/i));
+
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], 'filter name');
-        userEvent.type(screen.getAllByRole('textbox')[1], 'filter code');
+        userEvent.type(screen.getAllByRole('textbox')[0], 'filter code');
+        userEvent.type(screen.getAllByRole('textbox')[1], 'filter name');
       });
     });
 

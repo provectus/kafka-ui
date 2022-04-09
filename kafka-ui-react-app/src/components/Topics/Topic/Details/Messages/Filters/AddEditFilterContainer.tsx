@@ -21,7 +21,6 @@ export interface AddEditFilterContainerProps {
   submitBtnText: string;
   inputDisplayNameDefaultValue?: string;
   inputCodeDefaultValue?: string;
-  createNewFilterText?: string;
   submitCallback?: (values: MessageFilters, saveFilter: boolean) => void;
 }
 
@@ -30,7 +29,6 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
   submitBtnText,
   inputDisplayNameDefaultValue = '',
   inputCodeDefaultValue = '',
-  createNewFilterText,
   submitCallback,
 }) => {
   const methods = useForm<MessageFilters>({
@@ -56,9 +54,6 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
 
   return (
     <FormProvider {...methods}>
-      {createNewFilterText && (
-        <S.CreatedFilter>{createNewFilterText}</S.CreatedFilter>
-      )}
       <form onSubmit={handleSubmit(onSubmit)} aria-label="Filters submit Form">
         <div>
           <InputLabel>Filter code</InputLabel>
