@@ -36,7 +36,7 @@ describe('SavedFilter Component', () => {
   it('should check on go back button click', () => {
     const onGoBackMock = jest.fn();
     setUpComponent({ onGoBack: onGoBackMock });
-    userEvent.click(screen.getByText(/back to custom filter/i));
+    userEvent.click(screen.getByText(/back to custom filters/i));
     expect(onGoBackMock).toHaveBeenCalled();
   });
 
