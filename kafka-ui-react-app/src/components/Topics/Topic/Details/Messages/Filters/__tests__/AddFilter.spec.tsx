@@ -54,28 +54,34 @@ describe('AddFilter component', () => {
     it('adding new filter', async () => {
       const codeValue = 'filter code';
       const nameValue = 'filter name';
+      const textBoxes = screen.getAllByRole('textbox');
+
+      const codeTextBox = textBoxes[0];
+      const nameTextBox = textBoxes[1];
+
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], codeValue);
-        userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
+        userEvent.type(codeTextBox, codeValue);
+        userEvent.type(nameTextBox, nameValue);
       });
       expect(addFilterBtn).toBeEnabled();
-      expect(screen.getAllByRole('textbox')[0]).toHaveValue(codeValue);
-      expect(screen.getAllByRole('textbox')[1]).toHaveValue(nameValue);
+      expect(codeTextBox).toHaveValue(codeValue);
+      expect(nameTextBox).toHaveValue(nameValue);
     });
 
     it('should check unSaved filter without name', async () => {
+      const codeTextBox = screen.getAllByRole('textbox')[0];
       const code = 'filter code';
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], code);
+        userEvent.type(codeTextBox, code);
       });
       expect(addFilterBtn).toBeEnabled();
-      expect(screen.getAllByRole('textbox')[0]).toHaveValue(code);
+      expect(codeTextBox).toHaveValue(code);
     });
   });
 
@@ -104,7 +110,11 @@ describe('AddFilter component', () => {
     });
 
     it('OnSubmit condition with checkbox off functionality', async () => {
-      userEvent.click(screen.getAllByRole('button')[1]);
+      // since both values are in it
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+      expect(addFilterBtn).toBeEnabled();
+      userEvent.click(addFilterBtn);
+
       await waitFor(() => {
         expect(activeFilterHandlerMock).toHaveBeenCalled();
         expect(addFilterMock).not.toHaveBeenCalled();
@@ -123,18 +133,33 @@ describe('AddFilter component', () => {
 
     it('should check the state submit button when checkbox state changes so is name input value', async () => {
       const checkbox = screen.getByRole('checkbox');
+      const codeTextBox = screen.getAllByRole('textbox')[0];
       const nameTextBox = screen.getAllByRole('textbox')[1];
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
-
-      userEvent.click(checkbox);
-      expect(addFilterBtn).toBeEnabled();
 
       userEvent.clear(nameTextBox);
       expect(nameTextBox).toHaveValue('');
 
+      userEvent.click(addFilterBtn);
       await waitFor(() => {
-        expect(addFilterBtn).toBeDisabled();
+        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+        expect(activeFilterHandlerMock).toHaveBeenCalledWith(
+          {
+            name: 'Unsaved filter',
+            code: codeValue,
+            saveFilter: false,
+          },
+          -1
+        );
+        // get reset-ed
+        expect(codeTextBox).toHaveValue('');
       });
+
+      userEvent.type(codeTextBox, codeValue);
+      expect(codeTextBox).toHaveValue(codeValue);
+
+      userEvent.click(checkbox);
+      expect(addFilterBtn).toBeDisabled();
 
       userEvent.type(nameTextBox, nameValue);
       expect(nameTextBox).toHaveValue(nameValue);
@@ -143,12 +168,15 @@ describe('AddFilter component', () => {
         expect(addFilterBtn).toBeEnabled();
       });
 
-      userEvent.click(checkbox);
-
       userEvent.click(addFilterBtn);
+
       await waitFor(() => {
-        expect(activeFilterHandlerMock).toHaveBeenCalled();
-        expect(addFilterMock).not.toHaveBeenCalled();
+        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+        expect(addFilterMock).toHaveBeenCalledWith({
+          name: nameValue,
+          code: codeValue,
+          saveFilter: true,
+        });
       });
     });
   });
