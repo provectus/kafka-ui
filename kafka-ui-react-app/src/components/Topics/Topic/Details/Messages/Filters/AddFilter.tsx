@@ -17,6 +17,10 @@ export interface FilterModalProps {
   editFilter(value: FilterEdit): void;
 }
 
+export interface AddMessageFilters extends MessageFilters {
+  saveFilter: boolean;
+}
+
 const AddFilter: React.FC<FilterModalProps> = ({
   toggleIsOpen,
   filters,
@@ -30,11 +34,13 @@ const AddFilter: React.FC<FilterModalProps> = ({
     React.useState<boolean>(false);
 
   const onSubmit = React.useCallback(
-    async (values: MessageFilters, saveFilter) => {
-      if (saveFilter) {
-        addFilter(values);
+    async (values: AddMessageFilters) => {
+      const data = { ...values };
+      if (data.saveFilter) {
+        addFilter(data);
       } else {
-        activeFilterHandler(values, -1);
+        data.name = data.name ? data.name : 'Unsaved filter';
+        activeFilterHandler(data, -1);
       }
     },
     [activeFilterHandler, addFilter]
@@ -49,7 +55,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
           onCancelBtn={toggleIsOpen}
           onGoBack={() => setSavedFilterState(false)}
           filters={filters}
-          onEdit={(index, filter) => {
+          onEdit={(index: number, filter: MessageFilters) => {
             toggleEditModal();
             editFilter({ index, filter });
           }}
