@@ -76,8 +76,6 @@ describe('AddEditFilterContainer component', () => {
         expect(requiredFieldTextElements).toHaveLength(2);
       });
     });
-
-    it('should ', () => {});
   });
 
   describe('Custom setup for the component', () => {
@@ -106,7 +104,7 @@ describe('AddEditFilterContainer component', () => {
     });
 
     it('should test whether the submit Callback is being called', async () => {
-      const submitCallback = jest.fn() as (v: MessageFilters) => void;
+      const submitCallback = jest.fn();
       setupComponent({
         submitCallback,
       });
