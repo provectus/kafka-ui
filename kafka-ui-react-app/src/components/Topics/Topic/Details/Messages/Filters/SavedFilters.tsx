@@ -59,7 +59,7 @@ const SavedFilters: FC<Props> = ({
       </S.BackToCustomText>
       <S.SavedFiltersContainer>
         <S.CreatedFilter>Saved filters</S.CreatedFilter>
-        {filters.length === 0 && <p>no saved filter(s)</p>}
+        {filters.length === 0 && <p>No saved filter(s)</p>}
         {filters.map((filter, index) => (
           <S.SavedFilter
             key={Symbol(filter.name).toString()}
