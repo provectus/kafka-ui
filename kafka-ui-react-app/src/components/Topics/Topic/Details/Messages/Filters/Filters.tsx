@@ -45,15 +45,10 @@ export interface FiltersProps {
   partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
-
   addMessage(message: TopicMessage): void;
-
   resetMessages(): void;
-
   updatePhase(phase: string): void;
-
   updateMeta(meta: TopicMessageConsuming): void;
-
   setIsFetching(status: boolean): void;
 }
 
