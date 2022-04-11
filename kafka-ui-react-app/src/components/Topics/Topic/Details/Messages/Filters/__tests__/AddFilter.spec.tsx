@@ -52,41 +52,55 @@ describe('AddFilter component', () => {
     });
 
     it('adding new filter', async () => {
+      const codeValue = 'filter code';
+      const nameValue = 'filter name';
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], 'filter code');
-        userEvent.type(screen.getAllByRole('textbox')[1], 'filter name');
+        userEvent.type(screen.getAllByRole('textbox')[0], codeValue);
+        userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
       });
       expect(addFilterBtn).toBeEnabled();
-      expect(screen.getAllByRole('textbox')[0]).toHaveValue('filter code');
-      expect(screen.getAllByRole('textbox')[1]).toHaveValue('filter name');
+      expect(screen.getAllByRole('textbox')[0]).toHaveValue(codeValue);
+      expect(screen.getAllByRole('textbox')[1]).toHaveValue(nameValue);
+    });
+
+    it('should check unSaved filter without name', async () => {
+      const code = 'filter code';
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+      expect(addFilterBtn).toBeDisabled();
+      expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
+      await waitFor(() => {
+        userEvent.type(screen.getAllByRole('textbox')[0], code);
+      });
+      expect(addFilterBtn).toBeEnabled();
+      expect(screen.getAllByRole('textbox')[0]).toHaveValue(code);
     });
   });
 
   describe('onSubmit with Filter being saved', () => {
-    let addFilterMock: (values: MessageFilters) => void;
-    let activeFilterHandlerMock: (
-      activeFilter: MessageFilters,
-      index: number
-    ) => void;
+    const addFilterMock = jest.fn();
+    const activeFilterHandlerMock = jest.fn();
+
+    const codeValue = 'filter code';
+    const nameValue = 'filter name';
 
     beforeEach(async () => {
-      addFilterMock = jest.fn() as (values: MessageFilters) => void;
-      activeFilterHandlerMock = jest.fn() as (
-        activeFilter: MessageFilters,
-        index: number
-      ) => void;
       setupComponent({
         addFilter: addFilterMock,
         activeFilterHandler: activeFilterHandlerMock,
       });
 
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], 'filter code');
-        userEvent.type(screen.getAllByRole('textbox')[1], 'filter name');
+        userEvent.type(screen.getAllByRole('textbox')[0], codeValue);
+        userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
       });
+    });
+
+    afterEach(() => {
+      addFilterMock.mockClear();
+      activeFilterHandlerMock.mockClear();
     });
 
     it('OnSubmit condition with checkbox off functionality', async () => {
@@ -104,6 +118,37 @@ describe('AddFilter component', () => {
       await waitFor(() => {
         expect(activeFilterHandlerMock).not.toHaveBeenCalled();
         expect(addFilterMock).toHaveBeenCalled();
+      });
+    });
+
+    it('should check the state submit button when checkbox state changes so is name input value', async () => {
+      const checkbox = screen.getByRole('checkbox');
+      const nameTextBox = screen.getAllByRole('textbox')[1];
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+
+      userEvent.click(checkbox);
+      expect(addFilterBtn).toBeEnabled();
+
+      userEvent.clear(nameTextBox);
+      expect(nameTextBox).toHaveValue('');
+
+      await waitFor(() => {
+        expect(addFilterBtn).toBeDisabled();
+      });
+
+      userEvent.type(nameTextBox, nameValue);
+      expect(nameTextBox).toHaveValue(nameValue);
+
+      await waitFor(() => {
+        expect(addFilterBtn).toBeEnabled();
+      });
+
+      userEvent.click(checkbox);
+
+      userEvent.click(addFilterBtn);
+      await waitFor(() => {
+        expect(activeFilterHandlerMock).toHaveBeenCalled();
+        expect(addFilterMock).not.toHaveBeenCalled();
       });
     });
   });

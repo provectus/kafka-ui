@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
@@ -7,13 +7,18 @@ import { FormProvider, Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from 'components/common/Button/Button';
 import { FormError } from 'components/common/Input/Input.styled';
-import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
+import { AddMessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required(),
+  saveFilter: yup.boolean(),
   code: yup.string().required(),
+  name: yup.string().when('saveFilter', {
+    is: (value: boolean | undefined) => typeof value === 'undefined' || value,
+    then: (schema) => schema.required(),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 export interface AddEditFilterContainerProps {
@@ -22,7 +27,7 @@ export interface AddEditFilterContainerProps {
   inputDisplayNameDefaultValue?: string;
   inputCodeDefaultValue?: string;
   isAdd?: boolean;
-  submitCallback?: (values: MessageFilters, saveFilter: boolean) => void;
+  submitCallback?: (values: AddMessageFilters) => void;
 }
 
 const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
@@ -33,7 +38,7 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
   submitCallback,
   isAdd,
 }) => {
-  const methods = useForm<MessageFilters>({
+  const methods = useForm<AddMessageFilters>({
     mode: 'onChange',
     resolver: yupResolver(validationSchema),
   });
@@ -44,14 +49,12 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
     reset,
   } = methods;
 
-  const [saveFilterCheckbox, setSaveFilterCheckbox] = useState<boolean>(false);
-
   const onSubmit = React.useCallback(
-    (values: MessageFilters) => {
-      submitCallback?.(values, saveFilterCheckbox);
-      reset({ name: '', code: '' });
+    (values: AddMessageFilters) => {
+      submitCallback?.(values);
+      reset({ name: '', code: '', saveFilter: false });
     },
-    [reset, saveFilterCheckbox, submitCallback]
+    [isAdd, reset, submitCallback]
   );
 
   return (
@@ -76,9 +79,9 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
         {isAdd && (
           <S.CheckboxWrapper>
             <input
+              {...methods.register('saveFilter')}
+              name="saveFilter"
               type="checkbox"
-              checked={saveFilterCheckbox}
-              onChange={(event) => setSaveFilterCheckbox(event.target.checked)}
             />
             <InputLabel>Save this filter</InputLabel>
           </S.CheckboxWrapper>
