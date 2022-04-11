@@ -44,20 +44,29 @@ export interface TopicsListProps {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
   totalPages: number;
+
   fetchTopicsList(props: GetTopicsRequest): void;
+
   deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
+
   deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
+
   recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
+
   clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
+
   clearTopicMessages(
     topicName: TopicName,
     clusterName: ClusterName,
     partitions?: number[]
   ): void;
+
   search: string;
   orderBy: TopicColumnsToSort | null;
   sortOrder: SortOrder;
+
   setTopicsSearch(search: string): void;
+
   setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
 }
 
@@ -122,6 +131,13 @@ const List: React.FC<TopicsListProps> = ({
       sortOrder,
     }
   );
+
+  const handleCopyTopic = () => {
+    const name = Array.from(tableState.selectedIds)[0];
+    const selectedTopic = tableState.data.find(
+      (topic: TopicWithDetailedInfo) => topic.name === name
+    );
+  };
 
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
@@ -284,6 +300,18 @@ const List: React.FC<TopicsListProps> = ({
                 >
                   Delete selected topics
                 </Button>
+                {tableState.selectedCount === 1 ? (
+                  <Button
+                    buttonSize="M"
+                    buttonType="secondary"
+                    onClick={() => {
+                      handleCopyTopic();
+                    }}
+                  >
+                    Copy selected topic
+                  </Button>
+                ) : null}
+
                 <Button
                   buttonSize="M"
                   buttonType="secondary"
