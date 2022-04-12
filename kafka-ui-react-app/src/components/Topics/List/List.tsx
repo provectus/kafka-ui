@@ -6,7 +6,7 @@ import {
   TopicName,
 } from 'redux/interfaces';
 import { useParams } from 'react-router-dom';
-import { clusterTopicNewPath } from 'lib/paths';
+import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -132,11 +132,19 @@ const List: React.FC<TopicsListProps> = ({
     }
   );
 
-  const handleCopyTopic = () => {
+  const getSelectedTopic = (): string => {
     const name = Array.from(tableState.selectedIds)[0];
-    const selectedTopic = tableState.data.find(
-      (topic: TopicWithDetailedInfo) => topic.name === name
-    );
+    const selectedTopic =
+      tableState.data.find(
+        (topic: TopicWithDetailedInfo) => topic.name === name
+      ) || {};
+
+    return Object.keys(selectedTopic)
+      .map((x: string) => {
+        const value = selectedTopic[x as keyof typeof selectedTopic];
+        return value && x !== 'partitions' ? `${x}=${value}` : null;
+      })
+      .join('&');
   };
 
   const handleSwitch = React.useCallback(() => {
@@ -304,9 +312,10 @@ const List: React.FC<TopicsListProps> = ({
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
-                    onClick={() => {
-                      handleCopyTopic();
-                    }}
+                    isLink
+                    to={clusterTopicCopyPath(
+                      `${clusterName}/topics/copy/?${getSelectedTopic()}`
+                    )}
                   >
                     Copy selected topic
                   </Button>

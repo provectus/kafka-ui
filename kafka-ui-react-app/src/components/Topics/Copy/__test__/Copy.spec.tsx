@@ -1,5 +1,5 @@
 import React from 'react';
-import New from 'components/Topics/New/New';
+import Copy from 'components/Topics/Copy/Copy';
 import { Route, Router } from 'react-router';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
@@ -7,47 +7,48 @@ import { Provider } from 'react-redux';
 import { screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
-import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
+import { clusterTopicCopyPath, clusterTopicPath } from 'lib/paths';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
 import { createTopicPayload, createTopicResponsePayload } from './fixtures';
 
-const mockStore = configureStore();
+const mockCopyStore = configureStore();
 
 const clusterName = 'local';
-const topicName = 'create-new';
-
+const topicName = 'test-topic';
 const initialState: Partial<RootState> = {};
-const storeMock = mockStore(initialState);
-const historyMock = createMemoryHistory();
+const storeMock = mockCopyStore(initialState);
+const historyCopyMock = createMemoryHistory();
 const createTopicAPIPath = `/api/clusters/${clusterName}/topics`;
 
-const renderComponent = (history = historyMock, store = storeMock) =>
+const renderComponent = (history = historyCopyMock, store = storeMock) =>
   render(
     <Router history={history}>
-      <Route path={clusterTopicNewPath(':clusterName')}>
+      <Route path={clusterTopicCopyPath(clusterName)}>
         <Provider store={store}>
-          <New />
+          <Copy />
         </Provider>
       </Route>
-      <Route path={clusterTopicPath(':clusterName', topicName)}>
-        New topic path
+      <Route path={clusterTopicPath(':clusterName', ':topicName')}>
+        Copy topic path
       </Route>
     </Router>
   );
 
-describe('New', () => {
+describe('Copy', () => {
   beforeEach(() => {
     fetchMock.reset();
   });
 
   it('validates form', async () => {
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
+    const mockedCopyHistory = createMemoryHistory({
+      initialEntries: [
+        `${clusterTopicCopyPath(clusterName)}/topics/test-topic`,
+      ],
     });
-    jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
+    jest.spyOn(mockedCopyHistory, 'push');
+    renderComponent(mockedCopyHistory);
 
     await waitFor(() => {
       userEvent.click(screen.getByText(/submit/i));
@@ -56,7 +57,7 @@ describe('New', () => {
       expect(screen.getByText('name is a required field')).toBeInTheDocument();
     });
     await waitFor(() => {
-      expect(mockedHistory.push).toBeCalledTimes(0);
+      expect(mockedCopyHistory.push).toBeCalledTimes(0);
     });
   });
 
@@ -68,11 +69,13 @@ describe('New', () => {
         body: createTopicPayload,
       }
     );
-    const mockedHistory = createMemoryHistory({
-      initialEntries: [clusterTopicNewPath(clusterName)],
+    const mockedCopyHistory = createMemoryHistory({
+      initialEntries: [
+        `${clusterTopicCopyPath(clusterName)}/topics/test-topic`,
+      ],
     });
-    jest.spyOn(mockedHistory, 'push');
-    renderComponent(mockedHistory);
+    jest.spyOn(mockedCopyHistory, 'push');
+    renderComponent(mockedCopyHistory);
 
     await waitFor(() => {
       userEvent.type(screen.getByPlaceholderText('Topic Name'), topicName);
@@ -80,11 +83,11 @@ describe('New', () => {
     });
 
     await waitFor(() => {
-      return expect(mockedHistory.location.pathname).toBe(
+      return expect(mockedCopyHistory.location.pathname).toBe(
         `${clusterTopicPath(clusterName, topicName)}`
       );
     });
-    expect(mockedHistory.push).toBeCalledTimes(0);
+    expect(mockedCopyHistory.push).toBeCalledTimes(0);
     expect(createTopicAPIPathMock.called()).toBeFalsy();
   });
 });
