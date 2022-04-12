@@ -132,6 +132,8 @@ const List: React.FC<TopicsListProps> = ({
     '' | 'deleteTopics' | 'purgeMessages'
   >('');
 
+  const [confirmationModalText, setConfirmationModalText] =
+    React.useState<string>('');
   const closeConfirmationModal = () => {
     setConfirmationModal('');
   };
@@ -280,6 +282,9 @@ const List: React.FC<TopicsListProps> = ({
                   buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('deleteTopics');
+                    setConfirmationModalText(
+                      'Are you sure you want to remove selected topics?'
+                    );
                   }}
                 >
                   Delete selected topics
@@ -289,6 +294,9 @@ const List: React.FC<TopicsListProps> = ({
                   buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('purgeMessages');
+                    setConfirmationModalText(
+                      'Are you sure you want to purge messages of selected topics?'
+                    );
                   }}
                 >
                   Purge messages of selected topics
@@ -303,9 +311,7 @@ const List: React.FC<TopicsListProps> = ({
                     : purgeMessagesHandler
                 }
               >
-                {confirmationModal === 'deleteTopics'
-                  ? 'Are you sure you want to remove selected topics?'
-                  : 'Are you sure you want to purge messages of selected topics?'}
+                {confirmationModalText}
               </ConfirmationModal>
             </>
           )}
