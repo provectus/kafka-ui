@@ -45,7 +45,7 @@ export interface FiltersProps {
   partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
-  addMessage(message: TopicMessage): void;
+  addMessage(content: { message: TopicMessage; isLive: boolean }): void;
   resetMessages(): void;
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
@@ -288,7 +288,7 @@ const Filters: React.FC<FiltersProps> = ({
 
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
-            if (message) addMessage(message);
+            if (message) addMessage({ message, isLive });
             break;
           case TopicMessageEventTypeEnum.PHASE:
             if (phase?.name) updatePhase(phase.name);

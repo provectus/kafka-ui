@@ -87,10 +87,12 @@ describe('Actions', () => {
 
   describe('topic messages', () => {
     it('creates ADD_TOPIC_MESSAGE', () => {
-      expect(actions.addTopicMessage(topicMessagePayload)).toEqual({
-        type: 'ADD_TOPIC_MESSAGE',
-        payload: topicMessagePayload,
-      });
+      expect(actions.addTopicMessage({ message: topicMessagePayload })).toEqual(
+        {
+          type: 'ADD_TOPIC_MESSAGE',
+          payload: { message: topicMessagePayload },
+        }
+      );
     });
 
     it('creates RESET_TOPIC_MESSAGES', () => {

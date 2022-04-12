@@ -10,12 +10,18 @@ import { topicMessagePayload, topicMessagesMetaPayload } from './fixtures';
 
 describe('TopicMessages reducer', () => {
   it('Adds new message', () => {
-    const state = reducer(undefined, addTopicMessage(topicMessagePayload));
+    const state = reducer(
+      undefined,
+      addTopicMessage({ message: topicMessagePayload })
+    );
     expect(state.messages.length).toEqual(1);
     expect(state).toMatchSnapshot();
   });
   it('Clears messages', () => {
-    const state = reducer(undefined, addTopicMessage(topicMessagePayload));
+    const state = reducer(
+      undefined,
+      addTopicMessage({ message: topicMessagePayload })
+    );
     expect(state.messages.length).toEqual(1);
 
     const newState = reducer(state, resetTopicMessages());
