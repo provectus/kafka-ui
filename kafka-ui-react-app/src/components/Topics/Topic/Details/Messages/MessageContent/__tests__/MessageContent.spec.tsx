@@ -28,6 +28,9 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
   );
 };
 
+const proto =
+  'syntax = "proto3";\npackage com.provectus;\n\nmessage TestProtoRecord {\n  string f1 = 1;\n  int32 f2 = 2;\n}\n';
+
 global.TextEncoder = TextEncoder;
 
 describe('MessageContent screen', () => {
@@ -76,5 +79,52 @@ describe('MessageContent screen', () => {
       userEvent.click(contentTab[0]);
       expect(contentTab[0]).toHaveClass('is-active');
     });
+  });
+});
+
+describe('render with different types of content', () => {
+  it('renders with JSON', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'JSON',
+        messageContent: '{"data": "test"}',
+      })
+    );
+    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
+      'JSON'
+    );
+  });
+  it('renders with AVRO', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'AVRO',
+        messageContent: '{"data": "test"}',
+      })
+    );
+    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
+      'AVRO'
+    );
+  });
+  it('renders with PROTOBUF', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'PROTOBUF',
+        messageContent: proto,
+      })
+    );
+    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
+      'PROTOBUF'
+    );
+  });
+  it('renders with no type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'PROTOBUF',
+        messageContent: '',
+      })
+    );
+    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
+      'PROTOBUF'
+    );
   });
 });
