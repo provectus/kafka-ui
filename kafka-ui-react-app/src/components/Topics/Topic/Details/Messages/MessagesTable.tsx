@@ -65,6 +65,10 @@ const MessagesTable: React.FC = () => {
     }
   }, [searchParams, history, messages]);
 
+  const handlePrevClick = React.useCallback(() => {
+    history.goBack();
+  }, [history]);
+
   return (
     <>
       <Table isFullwidth>
@@ -107,6 +111,9 @@ const MessagesTable: React.FC = () => {
       </Table>
       {!isLive && (
         <MessagesPaginationWrapperStyled>
+          <S.PaginationButton onClick={handlePrevClick}>
+            Previous
+          </S.PaginationButton>
           <S.PaginationButton onClick={handleNextClick}>
             Next
           </S.PaginationButton>
