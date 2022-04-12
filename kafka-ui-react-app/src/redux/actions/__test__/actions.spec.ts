@@ -68,7 +68,7 @@ describe('Actions', () => {
   });
 
   describe('setTopicsSearchAction', () => {
-    it('creartes SET_TOPICS_SEARCH', () => {
+    it('creates SET_TOPICS_SEARCH', () => {
       expect(actions.setTopicsSearchAction('test')).toEqual({
         type: 'SET_TOPICS_SEARCH',
         payload: 'test',
@@ -77,7 +77,7 @@ describe('Actions', () => {
   });
 
   describe('setTopicsOrderByAction', () => {
-    it('creartes SET_TOPICS_ORDER_BY', () => {
+    it('creates SET_TOPICS_ORDER_BY', () => {
       expect(actions.setTopicsOrderByAction(TopicColumnsToSort.NAME)).toEqual({
         type: 'SET_TOPICS_ORDER_BY',
         payload: TopicColumnsToSort.NAME,

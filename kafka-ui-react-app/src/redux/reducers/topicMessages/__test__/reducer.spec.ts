@@ -6,7 +6,11 @@ import {
 } from 'redux/actions';
 import reducer from 'redux/reducers/topicMessages/reducer';
 
-import { topicMessagePayload, topicMessagesMetaPayload } from './fixtures';
+import {
+  topicMessagePayload,
+  topicMessagePayloadV2,
+  topicMessagesMetaPayload,
+} from './fixtures';
 
 describe('TopicMessages reducer', () => {
   it('Adds new message', () => {
@@ -17,6 +21,39 @@ describe('TopicMessages reducer', () => {
     expect(state.messages.length).toEqual(1);
     expect(state).toMatchSnapshot();
   });
+
+  it('Adds new message with live tailing one', () => {
+    const state = reducer(
+      undefined,
+      addTopicMessage({ message: topicMessagePayload })
+    );
+    const modifiedState = reducer(
+      state,
+      addTopicMessage({ message: topicMessagePayloadV2, isLive: true })
+    );
+    expect(modifiedState.messages.length).toEqual(2);
+    expect(modifiedState.messages).toEqual([
+      topicMessagePayloadV2,
+      topicMessagePayload,
+    ]);
+  });
+
+  it('Adds new message with live tailing off', () => {
+    const state = reducer(
+      undefined,
+      addTopicMessage({ message: topicMessagePayload })
+    );
+    const modifiedState = reducer(
+      state,
+      addTopicMessage({ message: topicMessagePayloadV2 })
+    );
+    expect(modifiedState.messages.length).toEqual(2);
+    expect(modifiedState.messages).toEqual([
+      topicMessagePayload,
+      topicMessagePayloadV2,
+    ]);
+  });
+
   it('Clears messages', () => {
     const state = reducer(
       undefined,

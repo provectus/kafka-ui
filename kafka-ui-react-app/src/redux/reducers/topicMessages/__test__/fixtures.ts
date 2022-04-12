@@ -15,6 +15,17 @@ export const topicMessagePayload: TopicMessage = {
     '{"host":"schemaregistry1","port":8085,"master_eligibility":true,"scheme":"http","version":1}',
 };
 
+export const topicMessagePayloadV2: TopicMessage = {
+  partition: 28,
+  offset: 88,
+  timestamp: new Date('2021-07-21T23:25:14.865Z'),
+  timestampType: TopicMessageTimestampTypeEnum.CREATE_TIME,
+  key: 'schema-registry',
+  headers: {},
+  content:
+    '{"host":"schemaregistry1","port":8085,"master_eligibility":true,"scheme":"http","version":1}',
+};
+
 export const topicMessagesMetaPayload: TopicMessageConsuming = {
   bytesConsumed: 1830,
   elapsedMs: 440,
