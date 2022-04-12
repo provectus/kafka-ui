@@ -82,8 +82,8 @@ describe('MessageContent screen', () => {
   });
 });
 
-describe('render with different types of content', () => {
-  it('renders with JSON', () => {
+describe('checking content type depend on message type', () => {
+  it('renders component with message having JSON type', () => {
     render(
       setupWrapper({
         messageContentFormat: 'JSON',
@@ -94,7 +94,7 @@ describe('render with different types of content', () => {
       'JSON'
     );
   });
-  it('renders with AVRO', () => {
+  it('renders component with message having AVRO type', () => {
     render(
       setupWrapper({
         messageContentFormat: 'AVRO',
@@ -105,7 +105,7 @@ describe('render with different types of content', () => {
       'AVRO'
     );
   });
-  it('renders with PROTOBUF', () => {
+  it('renders component with message having PROTOBUF type', () => {
     render(
       setupWrapper({
         messageContentFormat: 'PROTOBUF',
@@ -116,7 +116,7 @@ describe('render with different types of content', () => {
       'PROTOBUF'
     );
   });
-  it('renders with no type', () => {
+  it('renders component with message having no type which is equal to having PROTOBUF type', () => {
     render(
       setupWrapper({
         messageContentFormat: 'PROTOBUF',

@@ -32,11 +32,11 @@ const MessageContent: React.FC<MessageContentProps> = ({
   const activeTabContent = () => {
     switch (activeTab) {
       case 'content':
-        return messageContent ?? '';
+        return messageContent;
       case 'key':
-        return messageKey ?? '';
+        return messageKey;
       default:
-        return JSON.stringify(headers) ?? '';
+        return JSON.stringify(headers);
     }
   };
   const handleKeyTabClick = (e: React.MouseEvent) => {
@@ -86,7 +86,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
               </button>
             </SecondaryTabs>
             <EditorViewer
-              data={activeTabContent()}
+              data={activeTabContent() || ''}
               maxLines={28}
               schemaType={contentType}
             />
