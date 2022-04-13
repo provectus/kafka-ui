@@ -157,7 +157,7 @@ const Filters: React.FC<FiltersProps> = ({
     return {
       q:
         queryType === MessageFilterType.GROOVY_SCRIPT
-          ? `valueAsText.contains('${activeFilter.code}')`
+          ? activeFilter.code
           : query,
       filterQueryType: queryType,
       attempt,
