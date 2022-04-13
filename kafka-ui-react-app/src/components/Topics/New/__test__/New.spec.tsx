@@ -81,7 +81,7 @@ describe('New', () => {
 
     await waitFor(() => {
       return expect(mockedHistory.location.pathname).toBe(
-        `${clusterTopicPath(clusterName, topicName)}`
+        clusterTopicPath(clusterName, topicName)
       );
     });
     expect(mockedHistory.push).toBeCalledTimes(0);
