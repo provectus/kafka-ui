@@ -105,9 +105,7 @@ const MessageContent: React.FC<MessageContentProps> = ({
             <S.Metadata>
               <S.MetadataLabel>Content</S.MetadataLabel>
               <span>
-                <S.MetadataValue data-testId="message-content-format">
-                  {messageContentFormat}
-                </S.MetadataValue>
+                <S.MetadataValue>{messageContentFormat}</S.MetadataValue>
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
                 </S.MetadataMeta>

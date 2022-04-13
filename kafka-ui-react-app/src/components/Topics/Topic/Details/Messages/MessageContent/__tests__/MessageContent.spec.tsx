@@ -90,9 +90,7 @@ describe('checking content type depend on message type', () => {
         messageContent: '{"data": "test"}',
       })
     );
-    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
-      'JSON'
-    );
+    expect(screen.getAllByText('JSON')[1]).toBeInTheDocument();
   });
   it('renders component with message having AVRO type', () => {
     render(
@@ -101,9 +99,7 @@ describe('checking content type depend on message type', () => {
         messageContent: '{"data": "test"}',
       })
     );
-    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
-      'AVRO'
-    );
+    expect(screen.getByText('AVRO')).toBeInTheDocument();
   });
   it('renders component with message having PROTOBUF type', () => {
     render(
@@ -112,9 +108,7 @@ describe('checking content type depend on message type', () => {
         messageContent: proto,
       })
     );
-    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
-      'PROTOBUF'
-    );
+    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });
   it('renders component with message having no type which is equal to having PROTOBUF type', () => {
     render(
@@ -123,8 +117,6 @@ describe('checking content type depend on message type', () => {
         messageContent: '',
       })
     );
-    expect(screen.getByTestId('message-content-format')).toHaveTextContent(
-      'PROTOBUF'
-    );
+    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });
 });
