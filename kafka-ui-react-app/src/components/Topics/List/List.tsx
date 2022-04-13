@@ -44,29 +44,20 @@ export interface TopicsListProps {
   areTopicsFetching: boolean;
   topics: TopicWithDetailedInfo[];
   totalPages: number;
-
   fetchTopicsList(props: GetTopicsRequest): void;
-
   deleteTopic(topicName: TopicName, clusterName: ClusterName): void;
-
   deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
-
   recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
-
   clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
-
   clearTopicMessages(
     topicName: TopicName,
     clusterName: ClusterName,
     partitions?: number[]
   ): void;
-
   search: string;
   orderBy: TopicColumnsToSort | null;
   sortOrder: SortOrder;
-
   setTopicsSearch(search: string): void;
-
   setTopicsOrderBy(orderBy: TopicColumnsToSort | null): void;
 }
 
