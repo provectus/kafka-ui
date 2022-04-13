@@ -62,12 +62,12 @@ export const TableRow = <T, TId extends IdType, OT = never>({
         if (!isColumnElement<T, TId>(child)) {
           return child;
         }
-        const { cell, field, maxWidth, className } = child.props;
+        const { cell, field, maxWidth, className, style } = child.props;
 
         const Cell = cell as React.FC<TableCellProps<T, TId, OT>> | undefined;
 
         return Cell ? (
-          <Td className={className} maxWidth={maxWidth}>
+          <Td className={className} style={style} maxWidth={maxWidth}>
             <Cell
               tableState={tableState}
               hovered={hovered}

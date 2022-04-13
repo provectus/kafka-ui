@@ -342,8 +342,8 @@ const List: React.FC<TopicsListProps> = ({
             />
             <TableColumn
               maxWidth="4%"
-              className="topic-action-block"
               cell={ActionsCell}
+              style={{ overflow: 'visible' }}
             />
           </SmartTable>
         </div>
