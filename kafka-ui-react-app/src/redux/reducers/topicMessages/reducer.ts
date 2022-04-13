@@ -18,7 +18,7 @@ export const initialState: TopicMessagesState = {
 const reducer = (state = initialState, action: Action): TopicMessagesState => {
   switch (action.type) {
     case getType(actions.addTopicMessage): {
-      const messages: TopicMessage[] = action.payload.isLive
+      const messages: TopicMessage[] = action.payload.prepend
         ? [action.payload.message, ...state.messages]
         : [...state.messages, action.payload.message];
 

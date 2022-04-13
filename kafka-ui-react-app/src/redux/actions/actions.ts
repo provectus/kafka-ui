@@ -163,7 +163,7 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
 
 export const addTopicMessage = createAction('ADD_TOPIC_MESSAGE')<{
   message: TopicMessage;
-  isLive?: boolean;
+  prepend?: boolean;
 }>();
 
 export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();

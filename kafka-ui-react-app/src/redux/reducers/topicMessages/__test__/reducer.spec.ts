@@ -29,7 +29,7 @@ describe('TopicMessages reducer', () => {
     );
     const modifiedState = reducer(
       state,
-      addTopicMessage({ message: topicMessagePayloadV2, isLive: true })
+      addTopicMessage({ message: topicMessagePayloadV2, prepend: true })
     );
     expect(modifiedState.messages.length).toEqual(2);
     expect(modifiedState.messages).toEqual([
