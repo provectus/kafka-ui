@@ -10,10 +10,7 @@ import * as Metrics from 'components/common/Metrics';
 import PageHeading from 'components/common/PageHeading/PageHeading';
 import { Button } from 'components/common/Button/Button';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
-import {
-  Table,
-  TableContainer,
-} from 'components/common/table/Table/Table.styled';
+import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import ListItem from './ListItem';
@@ -87,7 +84,7 @@ const List: React.FC<ListProps> = ({
       {areConnectorsFetching ? (
         <PageLoader />
       ) : (
-        <TableContainer>
+        <div>
           <Table isFullwidth>
             <thead>
               <tr>
@@ -118,7 +115,7 @@ const List: React.FC<ListProps> = ({
               ))}
             </tbody>
           </Table>
-        </TableContainer>
+        </div>
       )}
     </>
   );
