@@ -51,6 +51,7 @@ export interface FiltersProps {
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
 }
+
 export interface MessageFilters {
   name: string;
   code: string;
@@ -164,6 +165,21 @@ const Filters: React.FC<FiltersProps> = ({
       seekDirection,
     };
   }, [attempt, query, queryType, seekDirection, activeFilter]);
+
+  const handleClearAllFilters = () => {
+    setCurrentSeekType(SeekType.OFFSET);
+    setQuery('');
+    changeSeekDirection(SeekDirection.FORWARD);
+    getSelectedPartitionsFromSeekToParam(searchParams, partitions);
+    setSelectedPartitions(
+      partitions.map((partition: Partition) => {
+        return {
+          value: partition.partition,
+          label: String(partition.partition),
+        };
+      })
+    );
+  };
 
   const handleFiltersSubmit = React.useCallback(() => {
     setAttempt(attempt + 1);
@@ -389,7 +405,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
           />
-          <S.ClearAll>Clear all</S.ClearAll>
+          <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
             <Button
               type="button"
