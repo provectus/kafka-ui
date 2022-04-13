@@ -8,6 +8,7 @@ import {
 } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import {
+  AppDispatch,
   ClusterName,
   ConnectName,
   ConnectorConfig,
@@ -19,6 +20,7 @@ import {
 import * as actions from 'redux/actions';
 import { getResponse } from 'lib/errorHandling';
 import { batch } from 'react-redux';
+import { showSuccessToast } from 'redux/actions/utils';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
@@ -311,6 +313,12 @@ export const restartConnectorTask =
       dispatch(
         fetchConnectorTasks(clusterName, connectName, connectorName, true)
       );
+
+      showSuccessToast(
+        dispatch as AppDispatch,
+        `connect-${connectName}-${clusterName}`,
+        'Tasks successfully restarted.'
+      );
     } catch (error) {
       const response = await getResponse(error);
       const alert: FailurePayload = {
@@ -366,6 +374,13 @@ export const updateConnectorConfig =
         requestBody: connectorConfig,
       });
       dispatch(actions.updateConnectorConfigAction.success({ connector }));
+
+      showSuccessToast(
+        dispatch as AppDispatch,
+        `connector-${connectorName}-${clusterName}`,
+        'Connector config updated.'
+      );
+
       return connector;
     } catch (error) {
       const response = await getResponse(error);
@@ -374,6 +389,7 @@ export const updateConnectorConfig =
         title: `Kafka Connect Connector Config Update`,
         response,
       };
+
       dispatch(actions.updateConnectorConfigAction.failure({ alert }));
     }
     return undefined;

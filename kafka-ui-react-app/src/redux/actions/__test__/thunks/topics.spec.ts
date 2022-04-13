@@ -7,6 +7,7 @@ import { MessageSchemaSourceEnum, TopicMessageSchema } from 'generated-sources';
 import { FailurePayload } from 'redux/interfaces';
 import { getResponse } from 'lib/errorHandling';
 import { internalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import { getAlertAction } from 'redux/actions/utils';
 
 const store = mockStoreCreator;
 
@@ -60,6 +61,7 @@ describe('Thunks', () => {
       expect(store.getActions()).toEqual([
         actions.recreateTopicAction.request(),
         actions.recreateTopicAction.success(internalTopicPayload),
+        getAlertAction(store),
       ]);
     });
 
@@ -91,6 +93,7 @@ describe('Thunks', () => {
       expect(store.getActions()).toEqual([
         actions.clearMessagesTopicAction.request(),
         actions.clearMessagesTopicAction.success(),
+        getAlertAction(store),
       ]);
     });
 
