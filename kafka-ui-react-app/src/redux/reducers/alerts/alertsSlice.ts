@@ -71,22 +71,30 @@ export const { alertDissmissed, alertAdded, serverErrorAlertAdded } =
   alertsSlice.actions;
 
 export const showSuccessAlert = createAsyncThunk<
-  void,
-  { id: string; message: string }
->('alerts/showSuccessAlert', async ({ id, message }, { dispatch }) => {
-  dispatch(
-    alertAdded({
-      id,
-      message,
-      title: '',
-      type: 'success',
-      createdAt: Date.now(),
-    })
-  );
+  number,
+  { id: string; message: string },
+  { fulfilledMeta: null }
+>(
+  'alerts/showSuccessAlert',
+  async ({ id, message }, { dispatch, fulfillWithValue }) => {
+    const creationDate = Date.now();
 
-  setTimeout(() => {
-    dispatch(alertDissmissed(id));
-  }, 3000);
-});
+    dispatch(
+      alertAdded({
+        id,
+        message,
+        title: '',
+        type: 'success',
+        createdAt: creationDate,
+      })
+    );
+
+    setTimeout(() => {
+      dispatch(alertDissmissed(id));
+    }, 3000);
+
+    return fulfillWithValue(creationDate, null);
+  }
+);
 
 export default alertsSlice.reducer;
