@@ -43,6 +43,10 @@ const List: React.FC<ListProps> = ({
     fetchConnectors(clusterName);
   }, [fetchConnects, fetchConnectors, clusterName]);
 
+  const failedConnectors = connectors.filter((connector: FullConnectorInfo) => {
+    return connector.status.state === 'FAILED';
+  });
+
   const handleSearch = (value: string) =>
     setConnectorSearch({
       clusterName,
@@ -71,6 +75,13 @@ const List: React.FC<ListProps> = ({
             fetching={areConnectsFetching}
           >
             {connectors.length}
+          </Metrics.Indicator>
+          <Metrics.Indicator
+            label="Failed"
+            title="Failed"
+            fetching={areConnectsFetching}
+          >
+            {failedConnectors.length}
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
