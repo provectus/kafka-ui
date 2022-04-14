@@ -143,22 +143,6 @@ const List: React.FC<TopicsListProps> = ({
     tableState.toggleSelection(false);
   }, [tableState]);
 
-  const deleteTopicsHandler = React.useCallback(() => {
-    deleteTopics(clusterName, Array.from(tableState.selectedIds));
-    closeConfirmationModal();
-    clearSelectedTopics();
-  }, [clearSelectedTopics, clusterName, deleteTopics, tableState.selectedIds]);
-  const purgeMessagesHandler = React.useCallback(() => {
-    clearTopicsMessages(clusterName, Array.from(tableState.selectedIds));
-    closeConfirmationModal();
-    clearSelectedTopics();
-  }, [
-    clearSelectedTopics,
-    clearTopicsMessages,
-    clusterName,
-    tableState.selectedIds,
-  ]);
-
   const searchHandler = React.useCallback(
     (searchString: string) => {
       setTopicsSearch(searchString);
@@ -173,6 +157,22 @@ const List: React.FC<TopicsListProps> = ({
     },
     [setTopicsSearch, history, pathname, perPage, page]
   );
+  const deleteOrPurgeConfirmationHandler = React.useCallback(() => {
+    if (confirmationModal === 'deleteTopics') {
+      deleteTopics(clusterName, Array.from(tableState.selectedIds));
+    } else {
+      clearTopicsMessages(clusterName, Array.from(tableState.selectedIds));
+    }
+    closeConfirmationModal();
+    clearSelectedTopics();
+  }, [
+    confirmationModal,
+    clearSelectedTopics,
+    clusterName,
+    deleteTopics,
+    clearTopicsMessages,
+    tableState.selectedIds,
+  ]);
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
     ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
@@ -313,11 +313,7 @@ const List: React.FC<TopicsListProps> = ({
               <ConfirmationModal
                 isOpen={confirmationModal !== ''}
                 onCancel={closeConfirmationModal}
-                onConfirm={
-                  confirmationModal === 'deleteTopics'
-                    ? deleteTopicsHandler
-                    : purgeMessagesHandler
-                }
+                onConfirm={deleteOrPurgeConfirmationHandler}
               >
                 {confirmationModalText}
               </ConfirmationModal>
