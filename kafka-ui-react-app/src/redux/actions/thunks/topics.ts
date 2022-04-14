@@ -24,7 +24,7 @@ import {
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
 import { getResponse } from 'lib/errorHandling';
-import { showSuccessToast } from 'redux/actions/utils';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const topicsApiClient = new TopicsApi(apiClientConf);
@@ -79,10 +79,11 @@ export const clearTopicMessages =
       });
       dispatch(actions.clearMessagesTopicAction.success());
 
-      showSuccessToast(
-        dispatch as AppDispatch,
-        `message-${topicName}-${clusterName}-${partitions}`,
-        'Messages successfully cleared!'
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: `message-${topicName}-${clusterName}-${partitions}`,
+          message: 'Messages successfully cleared!',
+        })
       );
     } catch (e) {
       const response = await getResponse(e);
@@ -278,10 +279,11 @@ export const recreateTopic =
       });
       dispatch(actions.recreateTopicAction.success(topic));
 
-      showSuccessToast(
-        dispatch as AppDispatch,
-        topicName,
-        'Topic successfully recreated!'
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: topicName,
+          message: 'Topic successfully recreated!',
+        })
       );
     } catch (e) {
       dispatch(actions.recreateTopicAction.failure());

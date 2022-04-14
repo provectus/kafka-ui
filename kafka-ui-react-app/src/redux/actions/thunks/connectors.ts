@@ -20,7 +20,7 @@ import {
 import * as actions from 'redux/actions';
 import { getResponse } from 'lib/errorHandling';
 import { batch } from 'react-redux';
-import { showSuccessToast } from 'redux/actions/utils';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
@@ -314,10 +314,11 @@ export const restartConnectorTask =
         fetchConnectorTasks(clusterName, connectName, connectorName, true)
       );
 
-      showSuccessToast(
-        dispatch as AppDispatch,
-        `connect-${connectName}-${clusterName}`,
-        'Tasks successfully restarted.'
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: `connect-${connectName}-${clusterName}`,
+          message: 'Tasks successfully restarted.',
+        })
       );
     } catch (error) {
       const response = await getResponse(error);
@@ -375,10 +376,11 @@ export const updateConnectorConfig =
       });
       dispatch(actions.updateConnectorConfigAction.success({ connector }));
 
-      showSuccessToast(
-        dispatch as AppDispatch,
-        `connector-${connectorName}-${clusterName}`,
-        'Connector config updated.'
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: `connector-${connectorName}-${clusterName}`,
+          message: 'Connector config updated.',
+        })
       );
 
       return connector;

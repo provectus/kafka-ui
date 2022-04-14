@@ -12,7 +12,7 @@ import {
   tasks,
 } from 'redux/reducers/connect/__test__/fixtures';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
-import { getAlertAction } from 'redux/actions/utils';
+import { getAlertActions } from 'lib/testHelpers';
 
 const store = mockStoreCreator;
 const clusterName = 'local';
@@ -438,7 +438,7 @@ describe('Thunks', () => {
       expect(store.getActions()).toEqual([
         actions.restartConnectorTaskAction.request(),
         actions.restartConnectorTaskAction.success(),
-        getAlertAction(store),
+        ...getAlertActions(store),
       ]);
     });
 
@@ -532,7 +532,7 @@ describe('Thunks', () => {
       expect(store.getActions()).toEqual([
         actions.updateConnectorConfigAction.request(),
         actions.updateConnectorConfigAction.success({ connector }),
-        getAlertAction(store),
+        ...getAlertActions(store),
       ]);
     });
 
