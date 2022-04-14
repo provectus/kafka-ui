@@ -28,6 +28,15 @@ export const getConnectors = createSelector(
   ({ connectors }) => connectors
 );
 
+export const getFailedConnectors = createSelector(
+  connectState,
+  ({ connectors }) => {
+    return connectors.filter(
+      (connector) => connector.status.state === 'FAILED'
+    );
+  }
+);
+
 const getConnectorFetchingStatus =
   createLeagcyFetchingSelector('GET_CONNECTOR');
 export const getIsConnectorFetching = createSelector(

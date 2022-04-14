@@ -47,6 +47,7 @@ describe('Connectors List', () => {
                 areConnectsFetching
                 connectors={[]}
                 connects={[]}
+                failed={[]}
                 fetchConnects={fetchConnects}
                 fetchConnectors={fetchConnectors}
                 search=""
