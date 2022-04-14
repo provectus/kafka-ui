@@ -82,6 +82,7 @@ const List: React.FC<TopicsListProps> = ({
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage, pathname } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
+  const [cachedPage, setCachedPage] = React.useState<number | null>(null);
   const history = useHistory();
 
   React.useEffect(() => {
@@ -159,9 +160,16 @@ const List: React.FC<TopicsListProps> = ({
   const searchHandler = React.useCallback(
     (searchString: string) => {
       setTopicsSearch(searchString);
-      history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
+
+      setCachedPage(page || null);
+
+      const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
+
+      history.push(
+        `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
+      );
     },
-    [setTopicsSearch, history, pathname, perPage]
+    [setTopicsSearch, history, pathname, perPage, page]
   );
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
