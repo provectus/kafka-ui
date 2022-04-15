@@ -161,8 +161,10 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
 
-export const addTopicMessage =
-  createAction('ADD_TOPIC_MESSAGE')<TopicMessage>();
+export const addTopicMessage = createAction('ADD_TOPIC_MESSAGE')<{
+  message: TopicMessage;
+  prepend?: boolean;
+}>();
 
 export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
 
