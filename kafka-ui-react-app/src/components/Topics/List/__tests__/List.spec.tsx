@@ -76,6 +76,7 @@ describe('List', () => {
   describe('when it does not have readonly flag', () => {
     let fetchTopicsList = jest.fn();
     let component: ReactWrapper;
+    const internalTopicsSwitchName = 'input[name="ShowInternalTopics"]';
 
     jest.useFakeTimers();
 
@@ -102,7 +103,7 @@ describe('List', () => {
     });
 
     it('show internal toggle state should be true if user has not used it yet', () => {
-      const toggle = component.find('input[name="ShowInternalTopics"]');
+      const toggle = component.find(internalTopicsSwitchName);
       const { checked } = toggle.props();
 
       expect(checked).toEqual(true);
@@ -115,7 +116,7 @@ describe('List', () => {
         { fetchTopicsList }
       );
 
-      const toggle = component.find('input[name="ShowInternalTopics"]');
+      const toggle = component.find(internalTopicsSwitchName);
       const { checked } = toggle.props();
 
       expect(checked).toEqual(false);
@@ -123,7 +124,7 @@ describe('List', () => {
 
     it('should refetch topics on show internal toggle change', () => {
       jest.clearAllMocks();
-      const toggle = component.find('input[name="ShowInternalTopics"]');
+      const toggle = component.find(internalTopicsSwitchName);
       const { checked } = toggle.props();
       toggle.simulate('change');
 
@@ -143,7 +144,7 @@ describe('List', () => {
         mockedHistory
       );
 
-      const toggle = component.find('input[name="ShowInternalTopics"]');
+      const toggle = component.find(internalTopicsSwitchName);
       toggle.simulate('change');
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
