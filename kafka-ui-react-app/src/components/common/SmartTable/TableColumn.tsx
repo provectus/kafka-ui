@@ -36,7 +36,6 @@ interface TableColumnProps<T, TId extends IdType, OT = never> {
   maxWidth?: string;
   className?: string;
   orderValue?: OT;
-  style?: React.CSSProperties;
   customTd?: typeof S.Td;
 }
 
