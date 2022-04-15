@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { RootState } from 'redux/interfaces';
-import { fetchTopicDetails } from 'redux/actions';
+import { fetchTopicDetails, resetTopicMessages } from 'redux/actions';
 import { getIsTopicDetailsFetching } from 'redux/reducers/topics/selectors';
 
 import Topic from './Topic';
@@ -11,6 +11,7 @@ const mapStateToProps = (state: RootState) => ({
 
 const mapDispatchToProps = {
   fetchTopicDetails,
+  resetTopicMessages,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Topic);
