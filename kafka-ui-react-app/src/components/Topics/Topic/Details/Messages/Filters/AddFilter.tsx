@@ -39,11 +39,13 @@ const AddFilter: React.FC<FilterModalProps> = ({
       if (data.saveFilter) {
         addFilter(data);
       } else {
+        // other case is not applying the filter
         data.name = data.name ? data.name : 'Unsaved filter';
         activeFilterHandler(data, -1);
+        toggleIsOpen();
       }
     },
-    [activeFilterHandler, addFilter]
+    [activeFilterHandler, addFilter, toggleIsOpen]
   );
   return (
     <>
@@ -52,7 +54,7 @@ const AddFilter: React.FC<FilterModalProps> = ({
         <SavedFilters
           deleteFilter={deleteFilter}
           activeFilterHandler={activeFilterHandler}
-          onCancelBtn={toggleIsOpen}
+          closeModal={toggleIsOpen}
           onGoBack={() => setSavedFilterState(false)}
           filters={filters}
           onEdit={(index: number, filter: MessageFilters) => {

@@ -11,7 +11,7 @@ export interface Props {
   onEdit(index: number, filter: MessageFilters): void;
   deleteFilter(index: number): void;
   activeFilterHandler(activeFilter: MessageFilters, index: number): void;
-  onCancelBtn(): void;
+  closeModal(): void;
   onGoBack(): void;
 }
 
@@ -20,7 +20,7 @@ const SavedFilters: FC<Props> = ({
   onEdit,
   deleteFilter,
   activeFilterHandler,
-  onCancelBtn,
+  closeModal,
   onGoBack,
 }) => {
   const { isOpen, setOpen, setClose } = useModal();
@@ -31,6 +31,7 @@ const SavedFilters: FC<Props> = ({
     if (selectedFilter > -1) {
       activeFilterHandler(filters[selectedFilter], selectedFilter);
     }
+    closeModal();
   };
 
   const deleteFilterHandler = (index: number) => {
@@ -86,7 +87,7 @@ const SavedFilters: FC<Props> = ({
           buttonSize="M"
           buttonType="secondary"
           type="button"
-          onClick={onCancelBtn}
+          onClick={closeModal}
           disabled={isOpen}
         >
           Cancel

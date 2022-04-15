@@ -88,6 +88,7 @@ describe('AddFilter component', () => {
   describe('onSubmit with Filter being saved', () => {
     const addFilterMock = jest.fn();
     const activeFilterHandlerMock = jest.fn();
+    const toggleModelMock = jest.fn();
 
     const codeValue = 'filter code';
     const nameValue = 'filter name';
@@ -96,6 +97,7 @@ describe('AddFilter component', () => {
       setupComponent({
         addFilter: addFilterMock,
         activeFilterHandler: activeFilterHandlerMock,
+        toggleIsOpen: toggleModelMock,
       });
 
       await waitFor(() => {
@@ -107,6 +109,7 @@ describe('AddFilter component', () => {
     afterEach(() => {
       addFilterMock.mockClear();
       activeFilterHandlerMock.mockClear();
+      toggleModelMock.mockClear();
     });
 
     it('OnSubmit condition with checkbox off functionality', async () => {
@@ -128,6 +131,7 @@ describe('AddFilter component', () => {
       await waitFor(() => {
         expect(activeFilterHandlerMock).not.toHaveBeenCalled();
         expect(addFilterMock).toHaveBeenCalled();
+        expect(toggleModelMock).not.toHaveBeenCalled();
       });
     });
 
@@ -153,6 +157,7 @@ describe('AddFilter component', () => {
         );
         // get reset-ed
         expect(codeTextBox).toHaveValue('');
+        expect(toggleModelMock).toHaveBeenCalled();
       });
 
       userEvent.type(codeTextBox, codeValue);

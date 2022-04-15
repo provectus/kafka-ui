@@ -18,7 +18,7 @@ describe('SavedFilter Component', () => {
       <SavedFilters
         filters={props.filters || mockFilters}
         onEdit={props.onEdit || jest.fn()}
-        onCancelBtn={props.onCancelBtn || jest.fn()}
+        closeModal={props.closeModal || jest.fn()}
         onGoBack={props.onGoBack || jest.fn()}
         activeFilterHandler={props.activeFilterHandler || jest.fn()}
         deleteFilter={props.deleteFilter || jest.fn()}
@@ -28,7 +28,7 @@ describe('SavedFilter Component', () => {
 
   it('should check the Cancel button click', () => {
     const cancelMock = jest.fn();
-    setUpComponent({ onCancelBtn: cancelMock });
+    setUpComponent({ closeModal: cancelMock });
     userEvent.click(screen.getByText(/cancel/i));
     expect(cancelMock).toHaveBeenCalled();
   });
@@ -53,17 +53,20 @@ describe('SavedFilter Component', () => {
   describe('Saved Filters Deleting Editing', () => {
     const onEditMock = jest.fn();
     const activeFilterMock = jest.fn();
+    const cancelMock = jest.fn();
 
     beforeEach(() => {
       setUpComponent({
         onEdit: onEditMock,
         activeFilterHandler: activeFilterMock,
+        closeModal: cancelMock,
       });
     });
 
     afterEach(() => {
       onEditMock.mockClear();
       activeFilterMock.mockClear();
+      cancelMock.mockClear();
     });
 
     it('should check the normal data rendering', () => {
@@ -96,6 +99,7 @@ describe('SavedFilter Component', () => {
       userEvent.click(selectFilterButton);
 
       expect(activeFilterMock).toHaveBeenCalled();
+      expect(cancelMock).toHaveBeenCalled();
     });
   });
 
