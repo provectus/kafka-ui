@@ -158,10 +158,11 @@ const List: React.FC<TopicsListProps> = ({
     [setTopicsSearch, history, pathname, perPage, page]
   );
   const deleteOrPurgeConfirmationHandler = React.useCallback(() => {
+    const selectedIds = Array.from(tableState.selectedIds);
     if (confirmationModal === 'deleteTopics') {
-      deleteTopics(clusterName, Array.from(tableState.selectedIds));
+      deleteTopics(clusterName, selectedIds);
     } else {
-      clearTopicsMessages(clusterName, Array.from(tableState.selectedIds));
+      clearTopicsMessages(clusterName, selectedIds);
     }
     closeConfirmationModal();
     clearSelectedTopics();
