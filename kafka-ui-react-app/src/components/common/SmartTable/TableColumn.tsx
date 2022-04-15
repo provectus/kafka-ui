@@ -37,11 +37,12 @@ interface TableColumnProps<T, TId extends IdType, OT = never> {
   className?: string;
   orderValue?: OT;
   style?: React.CSSProperties;
+  customTd?: typeof S.Td;
 }
 
 export const TableColumn = <T, TId extends IdType, OT = never>(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  props: React.PropsWithChildren<TableColumnProps<T, TId, OT>>
+  _props: React.PropsWithChildren<TableColumnProps<T, TId, OT>>
 ): React.ReactElement => {
   return <td />;
 };
