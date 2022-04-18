@@ -10,7 +10,7 @@ import {
 } from 'redux/actions';
 import { useDispatch } from 'react-redux';
 import { getResponse } from 'lib/errorHandling';
-import { useHistory, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { topicFormValidationSchema } from 'lib/yupExtended';
 import PageHeading from 'components/common/PageHeading/PageHeading';
@@ -28,6 +28,15 @@ const New: React.FC = () => {
   const { clusterName } = useParams<RouterParams>();
   const history = useHistory();
   const dispatch = useDispatch();
+
+  const { search } = useLocation();
+  const name = new URLSearchParams(search).get('name') || '';
+  const partitionCount = new URLSearchParams(search).get('partitionCount') || 1;
+  const replicationFactor =
+    new URLSearchParams(search).get('replicationFactor') || 1;
+  const inSyncReplicas = new URLSearchParams(search).get('inSyncReplicas') || 1;
+  const cleanUpPolicy =
+    new URLSearchParams(search).get('cleanUpPolicy') || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
     try {
@@ -50,9 +59,14 @@ const New: React.FC = () => {
 
   return (
     <>
-      <PageHeading text="Create new Topic" />
+      <PageHeading text={search ? 'Copy Topic' : 'Create new Topic'} />
       <FormProvider {...methods}>
         <TopicForm
+          topicName={name}
+          cleanUpPolicy={cleanUpPolicy}
+          partitionCount={Number(partitionCount)}
+          replicationFactor={Number(replicationFactor)}
+          inSyncReplicas={Number(inSyncReplicas)}
           isSubmitting={methods.formState.isSubmitting}
           onSubmit={methods.handleSubmit(onSubmit)}
         />

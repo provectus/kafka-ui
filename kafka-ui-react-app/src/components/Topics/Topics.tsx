@@ -11,7 +11,6 @@ import { BreadcrumbRoute } from 'components/common/Breadcrumb/Breadcrumb.route';
 import ListContainer from './List/ListContainer';
 import TopicContainer from './Topic/TopicContainer';
 import New from './New/New';
-import Copy from './Copy/Copy';
 
 const Topics: React.FC = () => (
   <Switch>
@@ -26,8 +25,9 @@ const Topics: React.FC = () => (
       component={New}
     />
     <BreadcrumbRoute
-      path={clusterTopicCopyPath(':clusterName/topics/copy')}
-      component={Copy}
+      exact
+      path={clusterTopicCopyPath(':clusterName')}
+      component={New}
     />
     <BreadcrumbRoute
       path={clusterTopicPath(':clusterName', ':topicName')}

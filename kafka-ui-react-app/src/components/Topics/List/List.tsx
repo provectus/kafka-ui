@@ -304,9 +304,10 @@ const List: React.FC<TopicsListProps> = ({
                     buttonSize="M"
                     buttonType="secondary"
                     isLink
-                    to={clusterTopicCopyPath(
-                      `${clusterName}/topics/copy/?${getSelectedTopic()}`
-                    )}
+                    to={{
+                      pathname: clusterTopicCopyPath(clusterName),
+                      search: `?${getSelectedTopic()}`,
+                    }}
                   >
                     Copy selected topic
                   </Button>

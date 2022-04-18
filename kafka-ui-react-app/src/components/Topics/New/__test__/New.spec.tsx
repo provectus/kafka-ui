@@ -16,7 +16,7 @@ import { createTopicPayload, createTopicResponsePayload } from './fixtures';
 const mockStore = configureStore();
 
 const clusterName = 'local';
-const topicName = 'create-new';
+const topicName = 'test-topic';
 
 const initialState: Partial<RootState> = {};
 const storeMock = mockStore(initialState);
@@ -31,7 +31,7 @@ const renderComponent = (history = historyMock, store = storeMock) =>
           <New />
         </Provider>
       </Route>
-      <Route path={clusterTopicPath(':clusterName', topicName)}>
+      <Route path={clusterTopicPath(':clusterName', ':topicName')}>
         New topic path
       </Route>
     </Router>
@@ -79,12 +79,12 @@ describe('New', () => {
       userEvent.click(screen.getByText(/submit/i));
     });
 
-    await waitFor(() => {
-      return expect(mockedHistory.location.pathname).toBe(
+    await waitFor(() =>
+      expect(mockedHistory.location.pathname).toBe(
         clusterTopicPath(clusterName, topicName)
-      );
-    });
-    expect(mockedHistory.push).toBeCalledTimes(0);
-    expect(createTopicAPIPathMock.called()).toBeFalsy();
+      )
+    );
+    expect(mockedHistory.push).toBeCalledTimes(1);
+    expect(createTopicAPIPathMock.called()).toBeTruthy();
   });
 });
