@@ -181,48 +181,44 @@ const Filters: React.FC<FiltersProps> = ({
     );
   };
 
-  const handleFiltersSubmit = React.useCallback(() => {
-    setAttempt(attempt + 1);
+  const handleFiltersSubmit = React.useCallback(
+    (currentOffset: string) => {
+      setAttempt(attempt + 1);
 
-    if (isSeekTypeControlVisible) {
-      props.seekType = isLive ? SeekType.LATEST : currentSeekType;
-      props.seekTo = selectedPartitions.map(({ value }) => {
-        let seekToOffset;
+      if (isSeekTypeControlVisible) {
+        props.seekType = isLive ? SeekType.LATEST : currentSeekType;
+        props.seekTo = selectedPartitions.map(({ value }) => {
+          let seekToOffset;
 
-        if (currentSeekType === SeekType.OFFSET) {
-          if (offset) {
-            seekToOffset = offset;
-          } else {
-            seekToOffset =
-              seekDirection === SeekDirection.FORWARD
-                ? partitionMap[value].offsetMin
-                : partitionMap[value].offsetMax;
+          if (currentSeekType === SeekType.OFFSET) {
+            if (offset) {
+              seekToOffset = currentOffset;
+            } else {
+              seekToOffset =
+                seekDirection === SeekDirection.FORWARD
+                  ? partitionMap[value].offsetMin
+                  : partitionMap[value].offsetMax;
+            }
+          } else if (timestamp) {
+            seekToOffset = timestamp.getTime();
           }
-        } else if (timestamp) {
-          seekToOffset = timestamp.getTime();
-        }
 
-        return `${value}::${seekToOffset || '0'}`;
+          return `${value}::${seekToOffset || '0'}`;
+        });
+      }
+
+      const newProps = omitBy(props, (v) => v === undefined || v === '');
+      const qs = Object.keys(newProps)
+        .map((key) => `${key}=${newProps[key]}`)
+        .join('&');
+
+      history.push({
+        search: `?${qs}`,
       });
-    }
-
-    const newProps = omitBy(props, (v) => v === undefined || v === '');
-    const qs = Object.keys(newProps)
-      .map((key) => `${key}=${newProps[key]}`)
-      .join('&');
-
-    history.push({
-      search: `?${qs}`,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    seekDirection,
-    queryType,
-    activeFilter,
-    currentSeekType,
-    timestamp,
-    query,
-  ]);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    [seekDirection, queryType, activeFilter, currentSeekType, timestamp, query]
+  );
 
   const handleSSECancel = () => {
     if (!source.current) return;
@@ -344,11 +340,11 @@ const Filters: React.FC<FiltersProps> = ({
   ]);
   React.useEffect(() => {
     if (location.search?.length === 0) {
-      handleFiltersSubmit();
+      handleFiltersSubmit(offset);
     }
   }, [handleFiltersSubmit, location]);
   React.useEffect(() => {
-    handleFiltersSubmit();
+    handleFiltersSubmit(offset);
   }, [handleFiltersSubmit, seekDirection]);
 
   return (
@@ -428,7 +424,7 @@ const Filters: React.FC<FiltersProps> = ({
               buttonType="secondary"
               buttonSize="M"
               disabled={isSubmitDisabled}
-              onClick={handleFiltersSubmit}
+              onClick={() => handleFiltersSubmit(offset)}
               style={{ fontWeight: 500 }}
             >
               Submit
