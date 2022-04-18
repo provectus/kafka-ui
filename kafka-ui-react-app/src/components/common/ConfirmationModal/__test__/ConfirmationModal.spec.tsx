@@ -9,7 +9,7 @@ import theme from 'theme/theme';
 const confirmMock = jest.fn();
 const cancelMock = jest.fn();
 const body = 'Please Confirm the action!';
-describe('ConfiramationModal', () => {
+describe('ConfirmationModal', () => {
   const setupWrapper = (props: Partial<ConfirmationModalProps> = {}) => (
     <ThemeProvider theme={theme}>
       <ConfirmationModal
@@ -49,12 +49,24 @@ describe('ConfiramationModal', () => {
       title
     );
   });
+
+  it('Check the text on the submit button default behavior', () => {
+    const wrapper = mount(setupWrapper({ isOpen: true }));
+    expect(wrapper.exists({ children: 'Submit' })).toBeTruthy();
+  });
+
   it('handles onConfirm when user clicks confirm button', () => {
     const wrapper = mount(setupWrapper({ isOpen: true }));
     const confirmBtn = wrapper.find({ children: 'Submit' });
     confirmBtn.at(2).simulate('click');
     expect(cancelMock).toHaveBeenCalledTimes(0);
     expect(confirmMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('Check the text on the submit button', () => {
+    const submitBtnText = 'Submit btn Text';
+    const wrapper = mount(setupWrapper({ isOpen: true, submitBtnText }));
+    expect(wrapper.exists({ children: submitBtnText })).toBeTruthy();
   });
 
   describe('cancellation', () => {
