@@ -3,7 +3,10 @@ import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
 import { store } from 'redux/store';
-import { connectors } from 'redux/reducers/connect/__test__/fixtures';
+import {
+  connectors,
+  failedConnectors,
+} from 'redux/reducers/connect/__test__/fixtures';
 import ClusterContext, {
   ContextProps,
   initialValue,
@@ -12,6 +15,7 @@ import ListContainer from 'components/Connect/List/ListContainer';
 import List, { ListProps } from 'components/Connect/List/List';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render, screen } from '@testing-library/react';
 
 describe('Connectors List', () => {
   describe('Container', () => {
@@ -37,28 +41,30 @@ describe('Connectors List', () => {
     const setupComponent = (
       props: Partial<ListProps> = {},
       contextValue: ContextProps = initialValue
-    ) => (
-      <ThemeProvider theme={theme}>
-        <Provider store={store}>
-          <StaticRouter>
-            <ClusterContext.Provider value={contextValue}>
-              <List
-                areConnectorsFetching
-                areConnectsFetching
-                connectors={[]}
-                connects={[]}
-                failed={[]}
-                fetchConnects={fetchConnects}
-                fetchConnectors={fetchConnectors}
-                search=""
-                setConnectorSearch={setConnectorSearch}
-                {...props}
-              />
-            </ClusterContext.Provider>
-          </StaticRouter>
-        </Provider>
-      </ThemeProvider>
-    );
+    ) => {
+      return (
+        <ThemeProvider theme={theme}>
+          <Provider store={store}>
+            <StaticRouter>
+              <ClusterContext.Provider value={contextValue}>
+                <List
+                  areConnectorsFetching
+                  areConnectsFetching
+                  connectors={[]}
+                  connects={[]}
+                  failedConnectors={props.failedConnectors || []}
+                  fetchConnects={fetchConnects}
+                  fetchConnectors={fetchConnectors}
+                  search=""
+                  setConnectorSearch={setConnectorSearch}
+                  {...props}
+                />
+              </ClusterContext.Provider>
+            </StaticRouter>
+          </Provider>
+        </ThemeProvider>
+      );
+    };
 
     it('renders PageLoader', () => {
       const wrapper = mount(setupComponent({ areConnectorsFetching: true }));
@@ -82,6 +88,17 @@ describe('Connectors List', () => {
       expect(wrapper.exists('PageLoader')).toBeFalsy();
       expect(wrapper.exists('table')).toBeTruthy();
       expect(wrapper.find('ListItem').length).toEqual(2);
+    });
+
+    it('renders failed connectors list', () => {
+      render(
+        setupComponent({
+          areConnectorsFetching: false,
+          failedConnectors,
+        })
+      );
+      expect(screen.queryByRole('PageLoader')).not.toBeInTheDocument();
+      expect(screen.getByTitle('Failed')).toBeInTheDocument();
     });
 
     it('handles fetchConnects and fetchConnectors', () => {

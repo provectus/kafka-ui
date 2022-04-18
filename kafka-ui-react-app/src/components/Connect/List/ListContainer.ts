@@ -19,7 +19,7 @@ const mapStateToProps = (state: RootState) => ({
   areConnectsFetching: getAreConnectsFetching(state),
   areConnectorsFetching: getAreConnectorsFetching(state),
   connects: getConnects(state),
-  failed: getFailedConnectors(state),
+  failedConnectors: getFailedConnectors(state),
   connectors: getConnectors(state),
   search: getConnectorSearch(state),
 });
