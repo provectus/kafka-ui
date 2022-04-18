@@ -299,7 +299,7 @@ const List: React.FC<TopicsListProps> = ({
                 >
                   Delete selected topics
                 </Button>
-                {tableState.selectedCount === 1 ? (
+                {tableState.selectedCount === 1 && (
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
@@ -311,7 +311,7 @@ const List: React.FC<TopicsListProps> = ({
                   >
                     Copy selected topic
                   </Button>
-                ) : null}
+                )}
 
                 <Button
                   buttonSize="M"
