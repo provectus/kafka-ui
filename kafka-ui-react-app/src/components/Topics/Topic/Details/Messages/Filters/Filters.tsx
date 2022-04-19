@@ -188,20 +188,14 @@ const Filters: React.FC<FiltersProps> = ({
       if (isSeekTypeControlVisible) {
         props.seekType = isLive ? SeekType.LATEST : currentSeekType;
         props.seekTo = selectedPartitions.map(({ value }) => {
-          let seekToOffset;
-
-          if (currentSeekType === SeekType.OFFSET) {
-            if (offset) {
-              seekToOffset = currentOffset;
-            } else {
-              seekToOffset =
-                seekDirection === SeekDirection.FORWARD
-                  ? partitionMap[value].offsetMin
-                  : partitionMap[value].offsetMax;
-            }
-          } else if (timestamp) {
-            seekToOffset = timestamp.getTime();
-          }
+          const offsetProperty =
+            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+          const offsetBasedSeekTo =
+            currentOffset || partitionMap[value][offsetProperty];
+          const seekToOffset =
+            currentSeekType === SeekType.OFFSET
+              ? offsetBasedSeekTo
+              : timestamp?.getTime();
 
           return `${value}::${seekToOffset || '0'}`;
         });
@@ -215,7 +209,6 @@ const Filters: React.FC<FiltersProps> = ({
       history.push({
         search: `?${qs}`,
       });
-      // eslint-disable-next-line react-hooks/exhaustive-deps
     },
     [seekDirection, queryType, activeFilter, currentSeekType, timestamp, query]
   );
