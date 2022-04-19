@@ -82,7 +82,11 @@ const Select: React.FC<SelectProps> = ({
                 value={option.value}
                 key={option.value}
                 disabled={option.disabled}
-                onClick={() => updateSelectedOption(option)}
+                onClick={() => {
+                  if (!option.disabled) {
+                    updateSelectedOption(option);
+                  }
+                }}
                 tabIndex={0}
                 role="option"
               >
