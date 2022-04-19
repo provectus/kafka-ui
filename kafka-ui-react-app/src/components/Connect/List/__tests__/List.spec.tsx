@@ -98,7 +98,7 @@ describe('Connectors List', () => {
         })
       );
       expect(screen.queryByRole('PageLoader')).not.toBeInTheDocument();
-      expect(screen.getByTitle('Failed')).toBeInTheDocument();
+      expect(screen.getByTitle('Failed Connectors')).toBeInTheDocument();
     });
 
     it('handles fetchConnects and fetchConnectors', () => {

@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit';
 import { ConnectState, RootState } from 'redux/interfaces';
 import { createLeagcyFetchingSelector } from 'redux/reducers/loader/selectors';
-import { ConnectorTaskStatus } from 'generated-sources';
+import { ConnectorState, ConnectorTaskStatus } from 'generated-sources';
 
 const connectState = ({ connect }: RootState): ConnectState => connect;
 
@@ -32,7 +32,7 @@ export const getFailedConnectors = createSelector(
   connectState,
   ({ connectors }) => {
     return connectors.filter(
-      (connector) => connector.status.state === 'FAILED'
+      (connector) => connector.status.state === ConnectorState.FAILED
     );
   }
 );
