@@ -85,7 +85,6 @@ const ListItem: React.FC<ListItemProps> = ({
       <td>
         <div>
           <Dropdown label={<VerticalElipsisIcon />} right up>
-            <DropdownDivider />
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
               danger
