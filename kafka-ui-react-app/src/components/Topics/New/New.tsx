@@ -30,13 +30,12 @@ const New: React.FC = () => {
   const dispatch = useDispatch();
 
   const { search } = useLocation();
-  const name = new URLSearchParams(search).get('name') || '';
-  const partitionCount = new URLSearchParams(search).get('partitionCount') || 1;
-  const replicationFactor =
-    new URLSearchParams(search).get('replicationFactor') || 1;
-  const inSyncReplicas = new URLSearchParams(search).get('inSyncReplicas') || 1;
-  const cleanUpPolicy =
-    new URLSearchParams(search).get('cleanUpPolicy') || 'Delete';
+  const params = new URLSearchParams(search);
+  const name = params.get('name') || '';
+  const partitionCount = params.get('partitionCount') || 1;
+  const replicationFactor = params.get('replicationFactor') || 1;
+  const inSyncReplicas = params.get('inSyncReplicas') || 1;
+  const cleanUpPolicy = params.get('cleanUpPolicy') || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
     try {
