@@ -76,7 +76,7 @@ const List: React.FC<ListProps> = ({
           </Metrics.Indicator>
           <Metrics.Indicator
             label="Failed"
-            title="Failed"
+            title="Failed Connectors"
             fetching={areConnectsFetching}
           >
             {failedConnectors.length}
