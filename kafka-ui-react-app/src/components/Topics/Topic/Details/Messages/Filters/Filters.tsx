@@ -301,7 +301,10 @@ const Filters: React.FC<FiltersProps> = ({
             }
             break;
           case TopicMessageEventTypeEnum.PHASE:
-            if (phase?.name) updatePhase(phase.name);
+            if (phase?.name) {
+              updatePhase(phase.name);
+              setIsFetching(false);
+            }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
             if (consuming) updateMeta(consuming);
