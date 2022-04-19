@@ -48,12 +48,17 @@ const Select: React.FC<SelectProps> = ({
   useClickOutside(selectContainerRef, clickOutsideHandler);
 
   const updateSelectedOption = (option: SelectOption) => {
-    if (disabled) return;
+    if (!option.disabled) {
+      setSelectedOption(option.value);
 
-    setSelectedOption(option.value);
-    if (onChange) onChange(option.value);
-    setShowOptions(false);
+      if (onChange) {
+        onChange(option.value);
+      }
+
+      setShowOptions(false);
+    }
   };
+
   React.useEffect(() => {
     setSelectedOption(value);
   }, [isLive, value]);
@@ -82,11 +87,7 @@ const Select: React.FC<SelectProps> = ({
                 value={option.value}
                 key={option.value}
                 disabled={option.disabled}
-                onClick={() => {
-                  if (!option.disabled) {
-                    updateSelectedOption(option);
-                  }
-                }}
+                onClick={() => updateSelectedOption(option)}
                 tabIndex={0}
                 role="option"
               >
