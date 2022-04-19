@@ -2,17 +2,17 @@
 
 
 # BACKEND
-pom.xml                     @provectus/kafka-backend
+/pom.xml                    @provectus/kafka-backend
 
-kafka-ui-contract/*         @provectus/kafka-backend
+/kafka-ui-contract/         @provectus/kafka-backend
 
-kafka-ui-api/*              @provectus/kafka-backend
+/kafka-ui-api/              @provectus/kafka-backend
 
 # FRONTEND
-kafka-ui-react-app/*        @provectus/kafka-frontend
+/kafka-ui-react-app/        @provectus/kafka-frontend
 
 # TESTS
-kafka-ui-e2e-checks/*       @provectus/kafka-qa
+/kafka-ui-e2e-checks/       @provectus/kafka-qa
 
 # HELM CHARTS
-charts/*                    @provectus/kafka-devops
+/charts/                    @provectus/kafka-devops
