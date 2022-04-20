@@ -8,13 +8,7 @@ import {
 import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/connect/selectors';
 
-import {
-  connects,
-  connectors,
-  connector,
-  tasks,
-  failedConnectors,
-} from './fixtures';
+import { connects, connectors, connector, tasks } from './fixtures';
 
 describe('Connect selectors', () => {
   describe('Initial State', () => {
