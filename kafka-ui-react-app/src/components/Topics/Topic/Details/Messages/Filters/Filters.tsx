@@ -1,6 +1,7 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
 import {
+  MessageFilterType,
   Partition,
   SeekDirection,
   SeekType,
@@ -8,7 +9,6 @@ import {
   TopicMessageConsuming,
   TopicMessageEvent,
   TopicMessageEventTypeEnum,
-  MessageFilterType,
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
@@ -17,7 +17,7 @@ import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { TopicName, ClusterName } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
@@ -27,6 +27,7 @@ import FilterModal, {
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import useModal from 'lib/hooks/useModal';
 
 import * as S from './Filters.styled';
 import {
@@ -45,7 +46,7 @@ export interface FiltersProps {
   partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
-  addMessage(message: TopicMessage): void;
+  addMessage(content: { message: TopicMessage; prepend: boolean }): void;
   resetMessages(): void;
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
@@ -89,8 +90,7 @@ const Filters: React.FC<FiltersProps> = ({
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const toggleIsOpen = () => setIsOpen(!isOpen);
+  const { isOpen, toggle } = useModal();
 
   const source = React.useRef<EventSource | null>(null);
 
@@ -157,7 +157,7 @@ const Filters: React.FC<FiltersProps> = ({
     return {
       q:
         queryType === MessageFilterType.GROOVY_SCRIPT
-          ? `valueAsText.contains('${activeFilter.code}')`
+          ? activeFilter.code
           : query,
       filterQueryType: queryType,
       attempt,
@@ -168,6 +168,7 @@ const Filters: React.FC<FiltersProps> = ({
 
   const handleClearAllFilters = () => {
     setCurrentSeekType(SeekType.OFFSET);
+    setOffset('');
     setQuery('');
     changeSeekDirection(SeekDirection.FORWARD);
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
@@ -304,7 +305,12 @@ const Filters: React.FC<FiltersProps> = ({
 
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
-            if (message) addMessage(message);
+            if (message) {
+              addMessage({
+                message,
+                prepend: isLive,
+              });
+            }
             break;
           case TopicMessageEventTypeEnum.PHASE:
             if (phase?.name) updatePhase(phase.name);
@@ -440,9 +446,10 @@ const Filters: React.FC<FiltersProps> = ({
         />
       </div>
       <S.ActiveSmartFilterWrapper>
-        <S.AddFiltersIcon data-testid="addFilterIcon" onClick={toggleIsOpen}>
+        <Button buttonType="primary" buttonSize="M" onClick={toggle}>
           <i className="fas fa-plus fa-sm" />
-        </S.AddFiltersIcon>
+          Add Filters
+        </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
@@ -457,7 +464,7 @@ const Filters: React.FC<FiltersProps> = ({
       </S.ActiveSmartFilterWrapper>
       {isOpen && (
         <FilterModal
-          toggleIsOpen={toggleIsOpen}
+          toggleIsOpen={toggle}
           filters={savedFilters}
           addFilter={addFilter}
           deleteFilter={deleteFilter}

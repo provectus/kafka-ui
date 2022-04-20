@@ -35,6 +35,7 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
@@ -69,8 +70,12 @@ public class JmxClusterUtil {
 
   public Mono<JmxMetrics> getBrokerMetrics(KafkaCluster cluster, Collection<Node> nodes) {
     return Flux.fromIterable(nodes)
+        // jmx is a blocking api, so we trying to parallelize its execution on boundedElastic scheduler
+        .parallel()
+        .runOn(Schedulers.boundedElastic())
         .map(n -> Map.entry(n.id(),
             JmxBrokerMetrics.builder().metrics(getJmxMetric(cluster, n)).build()))
+        .sequential()
         .collectMap(Map.Entry::getKey, Map.Entry::getValue)
         .map(this::collectMetrics);
   }
