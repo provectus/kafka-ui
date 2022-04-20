@@ -40,10 +40,10 @@ const MessagesTable: React.FC = () => {
       });
 
       const seekDirection = searchParams.get('seekDirection');
-      const isOldestFirst = seekDirection === SeekDirection.BACKWARD;
+      const isBackward = seekDirection === SeekDirection.BACKWARD;
 
       const messageUniqs = map(groupBy(messages, 'partition'), (v) =>
-        isOldestFirst ? minBy(v, 'offset') : maxBy(v, 'offset')
+        isBackward ? minBy(v, 'offset') : maxBy(v, 'offset')
       ).map((message) => ({
         offset: message?.offset || 0,
         partition: message?.partition || 0,
@@ -56,7 +56,7 @@ const MessagesTable: React.FC = () => {
         )
       )
         .map(({ offset, partition }) => {
-          const offsetQuery = isOldestFirst ? offset : offset + 1;
+          const offsetQuery = isBackward ? offset : offset + 1;
 
           return `${partition}::${offsetQuery}`;
         })
