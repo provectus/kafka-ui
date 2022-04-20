@@ -77,7 +77,7 @@ export const failedConnectors: FullConnectorInfo[] = [
     type: ConnectorType.SOURCE,
     topics: ['test-topic'],
     status: {
-      state: ConnectorState.RUNNING,
+      state: ConnectorState.FAILED,
     },
     tasksCount: 2,
     failedTasksCount: 0,

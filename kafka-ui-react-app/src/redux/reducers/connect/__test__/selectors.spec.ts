@@ -8,7 +8,13 @@ import {
 import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/connect/selectors';
 
-import { connects, connectors, connector, tasks } from './fixtures';
+import {
+  connects,
+  connectors,
+  connector,
+  tasks,
+  failedConnectors,
+} from './fixtures';
 
 describe('Connect selectors', () => {
   describe('Initial State', () => {
@@ -19,6 +25,7 @@ describe('Connect selectors', () => {
         false
       );
       expect(selectors.getConnectors(store.getState())).toEqual([]);
+      expect(selectors.getFailedConnectors(store.getState())).toEqual([]);
       expect(selectors.getIsConnectorFetching(store.getState())).toEqual(false);
       expect(selectors.getConnector(store.getState())).toEqual(null);
       expect(selectors.getConnectorStatus(store.getState())).toEqual(undefined);
@@ -57,6 +64,11 @@ describe('Connect selectors', () => {
     it('returns connectors', () => {
       store.dispatch(fetchConnectorsAction.success({ connectors }));
       expect(selectors.getConnectors(store.getState())).toEqual(connectors);
+    });
+
+    it('returns failed connectors', () => {
+      store.dispatch(fetchConnectorsAction.success({ connectors }));
+      expect(selectors.getFailedConnectors(store.getState()).length).toEqual(1);
     });
 
     it('returns connector', () => {
