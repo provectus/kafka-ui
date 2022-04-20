@@ -95,7 +95,7 @@ public class SchemasController extends AbstractController implements SchemasApi 
   public Mono<ResponseEntity<CompatibilityLevelDTO>> getGlobalSchemaCompatibilityLevel(
       String clusterName, ServerWebExchange exchange) {
     return schemaRegistryService.getGlobalSchemaCompatibilityLevel(getCluster(clusterName))
-        .map(mapper::toCompatibilityLevelDTO)
+        .map(mapper::toCompatibilityLevelDto)
         .map(ResponseEntity::ok)
         .defaultIfEmpty(ResponseEntity.notFound().build());
   }
