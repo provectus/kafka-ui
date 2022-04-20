@@ -157,8 +157,14 @@ public class SendAndReadTests extends AbstractIntegrationTest {
                 .content("{ \"f1\": 222, \"f2\": \"testStr2\" }")
         )
         .doAssert(polled -> {
-          assertThat(polled.getKey()).isEqualTo("{ \"f1\": 111, \"f2\": \"testStr1\" }");
-          assertThat(polled.getContent()).isEqualTo("{ \"f1\": 222, \"f2\": \"testStr2\" }");
+          assertThat(polled.getKey()).isEqualTo("{\n"
+                  + "  \"f1\" : 111,\n"
+                  + "  \"f2\" : \"testStr1\"\n"
+                  + "}");
+          assertThat(polled.getContent()).isEqualTo("{\n"
+                  + "  \"f1\" : 222,\n"
+                  + "  \"f2\" : \"testStr2\"\n"
+                  + "}");
         });
   }
 

@@ -5,8 +5,8 @@ import com.google.protobuf.DynamicMessage;
 import com.google.protobuf.util.JsonFormat;
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
+import com.provectus.kafka.ui.serde.schemaregistry.FallbackMessageFormatter;
 import com.provectus.kafka.ui.serde.schemaregistry.MessageFormat;
-import com.provectus.kafka.ui.serde.schemaregistry.StringMessageFormatter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import com.provectus.kafka.ui.util.jsonschema.ProtobufSchemaConverter;
 import io.confluent.kafka.schemaregistry.protobuf.ProtobufSchema;
@@ -18,7 +18,6 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.annotation.Nullable;
@@ -30,7 +29,7 @@ import org.apache.kafka.common.utils.Bytes;
 
 @Slf4j
 public class ProtobufFileRecordSerDe implements RecordSerDe {
-  private static final StringMessageFormatter FALLBACK_FORMATTER = new StringMessageFormatter();
+  private static final FallbackMessageFormatter FALLBACK_FORMATTER = new FallbackMessageFormatter();
 
   private final ProtobufSchema protobufSchema;
   private final Path protobufSchemaPath;

@@ -46,7 +46,7 @@ public class SchemaRegistryAwareRecordSerDe implements RecordSerDe {
   private static final byte SR_RECORD_MAGIC_BYTE = (byte) 0;
   private static final int SR_RECORD_PREFIX_LENGTH = 5;
 
-  private static final StringMessageFormatter FALLBACK_FORMATTER = new StringMessageFormatter();
+  private static final FallbackMessageFormatter FALLBACK_FORMATTER = new FallbackMessageFormatter();
 
   private static final ProtobufSchemaConverter protoSchemaConverter = new ProtobufSchemaConverter();
   private static final AvroJsonSchemaConverter avroSchemaConverter = new AvroJsonSchemaConverter();

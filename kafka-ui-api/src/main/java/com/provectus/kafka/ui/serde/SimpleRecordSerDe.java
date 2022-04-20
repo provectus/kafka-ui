@@ -2,7 +2,7 @@ package com.provectus.kafka.ui.serde;
 
 import com.provectus.kafka.ui.model.MessageSchemaDTO;
 import com.provectus.kafka.ui.model.TopicMessageSchemaDTO;
-import com.provectus.kafka.ui.serde.schemaregistry.StringMessageFormatter;
+import com.provectus.kafka.ui.serde.schemaregistry.FallbackMessageFormatter;
 import com.provectus.kafka.ui.util.jsonschema.JsonSchema;
 import javax.annotation.Nullable;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -11,7 +11,7 @@ import org.apache.kafka.common.utils.Bytes;
 
 public class SimpleRecordSerDe implements RecordSerDe {
 
-  private static final StringMessageFormatter FORMATTER = new StringMessageFormatter();
+  private static final FallbackMessageFormatter FORMATTER = new FallbackMessageFormatter();
 
   @Override
   public DeserializedKeyValue deserialize(ConsumerRecord<Bytes, Bytes> msg) {
