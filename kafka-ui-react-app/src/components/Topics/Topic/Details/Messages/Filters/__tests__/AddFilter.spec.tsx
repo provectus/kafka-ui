@@ -56,32 +56,34 @@ describe('AddFilter component', () => {
       const nameValue = 'filter name';
       const textBoxes = screen.getAllByRole('textbox');
 
-      const codeTextBox = textBoxes[0];
+      const codeTextBox = textBoxes[0] as HTMLTextAreaElement;
       const nameTextBox = textBoxes[1];
 
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
       await waitFor(() => {
-        userEvent.type(codeTextBox, codeValue);
+        userEvent.paste(codeTextBox, codeValue);
         userEvent.type(nameTextBox, nameValue);
       });
       expect(addFilterBtn).toBeEnabled();
-      expect(codeTextBox).toHaveValue(codeValue);
+      expect(codeTextBox.value).toEqual(`${codeValue}\n\n`);
       expect(nameTextBox).toHaveValue(nameValue);
     });
 
     it('should check unSaved filter without name', async () => {
-      const codeTextBox = screen.getAllByRole('textbox')[0];
+      const codeTextBox = screen.getAllByRole(
+        'textbox'
+      )[0] as HTMLTextAreaElement;
       const code = 'filter code';
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
       expect(addFilterBtn).toBeDisabled();
       expect(screen.getByPlaceholderText('Enter Name')).toBeInTheDocument();
       await waitFor(() => {
-        userEvent.type(codeTextBox, code);
+        userEvent.paste(codeTextBox, code);
       });
       expect(addFilterBtn).toBeEnabled();
-      expect(codeTextBox).toHaveValue(code);
+      expect(codeTextBox).toHaveValue(`${code}\n\n`);
     });
   });
 
@@ -101,7 +103,10 @@ describe('AddFilter component', () => {
       });
 
       await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[0], codeValue);
+        userEvent.paste(
+          screen.getAllByRole('textbox')[0] as HTMLTextAreaElement,
+          codeValue
+        );
         userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
       });
     });
@@ -137,7 +142,9 @@ describe('AddFilter component', () => {
 
     it('should check the state submit button when checkbox state changes so is name input value', async () => {
       const checkbox = screen.getByRole('checkbox');
-      const codeTextBox = screen.getAllByRole('textbox')[0];
+      const codeTextBox = screen.getAllByRole(
+        'textbox'
+      )[0] as HTMLTextAreaElement;
       const nameTextBox = screen.getAllByRole('textbox')[1];
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
 
@@ -156,12 +163,12 @@ describe('AddFilter component', () => {
           -1
         );
         // get reset-ed
-        expect(codeTextBox).toHaveValue('');
+        expect(codeTextBox.value).toEqual(``);
         expect(toggleModelMock).toHaveBeenCalled();
       });
 
-      userEvent.type(codeTextBox, codeValue);
-      expect(codeTextBox).toHaveValue(codeValue);
+      userEvent.paste(codeTextBox, codeValue);
+      expect(codeTextBox).toHaveValue(`${codeValue}\n\n`);
 
       userEvent.click(checkbox);
       expect(addFilterBtn).toBeDisabled();
