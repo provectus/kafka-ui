@@ -102,27 +102,27 @@ public class TopicsController extends AbstractController implements TopicsApi {
                                                            @Valid SortOrderDTO sortOrder,
                                                            ServerWebExchange exchange) {
     return topicsService.getTopicsForPagination(getCluster(clusterName))
-        .flatMap(paginatingTopics -> {
+        .flatMap(existingTopics -> {
           int pageSize = perPage != null && perPage > 0 ? perPage : DEFAULT_PAGE_SIZE;
           var topicsToSkip = ((page != null && page > 0 ? page : 1) - 1) * pageSize;
           var comparator = sortOrder == null || !sortOrder.equals(SortOrderDTO.DESC)
               ? getComparatorForTopic(orderBy) : getComparatorForTopic(orderBy).reversed();
-          List<InternalTopic> topics = paginatingTopics.stream()
+          List<InternalTopic> filtered = existingTopics.stream()
               .filter(topic -> !topic.isInternal()
                   || showInternal != null && showInternal)
               .filter(topic -> search == null || StringUtils.contains(topic.getName(), search))
               .sorted(comparator)
               .collect(toList());
-          var totalPages = (topics.size() / pageSize)
-              + (topics.size() % pageSize == 0 ? 0 : 1);
+          var totalPages = (filtered.size() / pageSize)
+              + (filtered.size() % pageSize == 0 ? 0 : 1);
 
-          List<String> filteredTopics = topics.stream()
+          List<String> topicsPage = filtered.stream()
               .skip(topicsToSkip)
               .limit(pageSize)
               .map(InternalTopic::getName)
               .collect(toList());
 
-          return topicsService.loadTopics(getCluster(clusterName), filteredTopics)
+          return topicsService.loadTopics(getCluster(clusterName), topicsPage)
               .map(topicsToRender ->
                   new TopicsResponseDTO()
                       .topics(topicsToRender.stream().map(clusterMapper::toTopic).collect(toList()))
