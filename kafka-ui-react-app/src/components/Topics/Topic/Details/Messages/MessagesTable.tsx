@@ -74,8 +74,8 @@ const MessagesTable: React.FC = () => {
             <TableHeaderCell title="Offset" />
             <TableHeaderCell title="Partition" />
             <TableHeaderCell title="Timestamp" />
-            <TableHeaderCell title="Key" previewText="Preview" />
-            <TableHeaderCell title="Content" previewText="Preview" />
+            <TableHeaderCell title="Key" />
+            <TableHeaderCell title="Content" />
             <TableHeaderCell> </TableHeaderCell>
           </tr>
         </thead>
