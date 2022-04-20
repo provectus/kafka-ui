@@ -106,6 +106,12 @@ export const restartConnectorAction = createAsyncAction(
   'RESTART_CONNECTOR__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
 
+export const restartTasksAction = createAsyncAction(
+  'RESTART_TASKS__REQUEST',
+  'RESTART_TASKS__SUCCESS',
+  'RESTART_TASKS__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
 export const pauseConnectorAction = createAsyncAction(
   'PAUSE_CONNECTOR__REQUEST',
   'PAUSE_CONNECTOR__SUCCESS',
@@ -155,8 +161,10 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
 
-export const addTopicMessage =
-  createAction('ADD_TOPIC_MESSAGE')<TopicMessage>();
+export const addTopicMessage = createAction('ADD_TOPIC_MESSAGE')<{
+  message: TopicMessage;
+  prepend?: boolean;
+}>();
 
 export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
 

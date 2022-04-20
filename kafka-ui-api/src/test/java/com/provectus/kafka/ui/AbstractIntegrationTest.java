@@ -64,6 +64,8 @@ public abstract class AbstractIntegrationTest {
       System.setProperty("kafka.clusters.0.schemaRegistry", String.format("http://localhost:%1$s,http://localhost:%1$s,%2$s",
               SocketUtils.findAvailableTcpPort(), schemaRegistry.getUrl()));
       System.setProperty("kafka.clusters.0.kafkaConnect.0.name", "kafka-connect");
+      System.setProperty("kafka.clusters.0.kafkaConnect.0.userName", "kafka-connect");
+      System.setProperty("kafka.clusters.0.kafkaConnect.0.password", "kafka-connect");
       System.setProperty("kafka.clusters.0.kafkaConnect.0.address", kafkaConnect.getTarget());
 
       System.setProperty("kafka.clusters.1.name", SECOND_LOCAL);

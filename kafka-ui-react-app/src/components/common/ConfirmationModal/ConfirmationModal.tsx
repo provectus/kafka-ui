@@ -9,15 +9,17 @@ export interface ConfirmationModalProps {
   onConfirm(): void;
   onCancel(): void;
   isConfirming?: boolean;
+  submitBtnText?: string;
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   isOpen,
   children,
-  title,
+  title = 'Confirm the action',
   onCancel,
   onConfirm,
   isConfirming = false,
+  submitBtnText = 'Submit',
 }) => {
   const cancelHandler = React.useCallback(() => {
     if (!isConfirming) {
@@ -30,7 +32,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
       <div onClick={cancelHandler} aria-hidden="true" />
       <div>
         <header>
-          <p>{title || 'Confirm the action'}</p>
+          <p>{title}</p>
         </header>
         <section>{children}</section>
         <footer>
@@ -51,7 +53,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             type="button"
             disabled={isConfirming}
           >
-            Submit
+            {submitBtnText}
           </Button>
         </footer>
       </div>

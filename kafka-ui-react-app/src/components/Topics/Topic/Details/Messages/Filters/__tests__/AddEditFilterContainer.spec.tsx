@@ -8,9 +8,7 @@ import userEvent from '@testing-library/user-event';
 import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/Filters';
 
 describe('AddEditFilterContainer component', () => {
-  const defaultTitle = 'Test Title';
   const defaultSubmitBtn = 'Submit Button';
-  const defaultNewFilter = 'Create New Filters';
 
   const mockData: MessageFilters = {
     name: 'mockName',
@@ -18,14 +16,11 @@ describe('AddEditFilterContainer component', () => {
   };
 
   const setupComponent = (props: Partial<AddEditFilterContainerProps> = {}) => {
-    const { title, submitBtnText, createNewFilterText } = props;
+    const { submitBtnText } = props;
     return render(
       <AddEditFilterContainer
-        title={title || defaultTitle}
         cancelBtnHandler={jest.fn()}
         submitBtnText={submitBtnText || defaultSubmitBtn}
-        createNewFilterText={createNewFilterText || defaultNewFilter}
-        toggleSaveFilterSetter={jest.fn()}
         {...props}
       />
     );
@@ -35,14 +30,9 @@ describe('AddEditFilterContainer component', () => {
     beforeEach(() => {
       setupComponent();
     });
-    it('should render the components', () => {
-      expect(screen.getByRole('heading', { level: 3 })).toBeInTheDocument();
-    });
 
-    it('should check the default parameters values', () => {
-      expect(screen.getByText(defaultTitle)).toBeInTheDocument();
+    it('should check the default Button text', () => {
       expect(screen.getByText(defaultSubmitBtn)).toBeInTheDocument();
-      expect(screen.getByText(defaultNewFilter)).toBeInTheDocument();
     });
 
     it('should check whether the submit Button is disabled when the form is pristine and disabled if dirty', async () => {
@@ -51,11 +41,11 @@ describe('AddEditFilterContainer component', () => {
 
       const inputs = screen.getAllByRole('textbox');
 
-      const inputNameElement = inputs[0];
-      userEvent.type(inputNameElement, 'Hello World!');
-
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
       userEvent.type(textAreaElement, 'Hello World With TextArea');
+
+      const inputNameElement = inputs[1];
+      userEvent.type(inputNameElement, 'Hello World!');
 
       await waitFor(() => {
         expect(submitButtonElem).toBeEnabled();
@@ -71,11 +61,11 @@ describe('AddEditFilterContainer component', () => {
     it('should view the error message after typing and clearing the input', async () => {
       const inputs = screen.getAllByRole('textbox');
 
-      const inputNameElement = inputs[0];
-      userEvent.type(inputNameElement, 'Hello World!');
-
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
       userEvent.type(textAreaElement, 'Hello World With TextArea');
+
+      const inputNameElement = inputs[1];
+      userEvent.type(inputNameElement, 'Hello World!');
 
       userEvent.clear(inputNameElement);
       userEvent.clear(textAreaElement);
@@ -96,8 +86,8 @@ describe('AddEditFilterContainer component', () => {
       });
 
       const inputs = screen.getAllByRole('textbox');
-      const inputNameElement = inputs[0];
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
+      const inputNameElement = inputs[1];
 
       expect(inputNameElement).toHaveValue(mockData.name);
       expect(textAreaElement).toHaveValue(mockData.code);
@@ -114,18 +104,18 @@ describe('AddEditFilterContainer component', () => {
     });
 
     it('should test whether the submit Callback is being called', async () => {
-      const submitCallback = jest.fn() as (v: MessageFilters) => void;
+      const submitCallback = jest.fn();
       setupComponent({
         submitCallback,
       });
 
       const inputs = screen.getAllByRole('textbox');
 
-      const inputNameElement = inputs[0];
-      userEvent.type(inputNameElement, 'Hello World!');
-
-      const textAreaElement = inputs[1];
+      const textAreaElement = inputs[0];
       userEvent.type(textAreaElement, 'Hello World With TextArea');
+
+      const inputNameElement = inputs[1];
+      userEvent.type(inputNameElement, 'Hello World!');
 
       const submitBtnElement = screen.getByText(defaultSubmitBtn);
 
@@ -140,48 +130,20 @@ describe('AddEditFilterContainer component', () => {
       });
     });
 
-    it('should display the checkbox if the props is passed and click stay checking', async () => {
-      const setCheckboxMock = jest.fn();
-      setupComponent({
-        toggleSaveFilterSetter: setCheckboxMock,
-      });
-
-      const checkbox = screen.getByRole('checkbox');
-      expect(checkbox).toBeInTheDocument();
-
-      userEvent.click(checkbox);
-
-      await waitFor(() => {
-        expect(checkbox).toBeChecked();
-      });
-
-      await waitFor(() => {
-        expect(setCheckboxMock).toBeCalled();
-      });
-    });
-
     it('should display the checkbox if the props is passed and initially check state', () => {
-      setupComponent({
-        toggleSaveFilterSetter: jest.fn(),
-        toggleSaveFilterValue: true,
-      });
-
+      setupComponent({ isAdd: true });
       const checkbox = screen.getByRole('checkbox');
       expect(checkbox).toBeInTheDocument();
+      expect(checkbox).not.toBeChecked();
+      userEvent.click(checkbox);
       expect(checkbox).toBeChecked();
     });
 
-    it('should pass and render the view props', () => {
-      const title = 'titleTest';
-      const createNewFilterText = 'createNewFilterTextTest';
+    it('should pass and render the correct button text', () => {
       const submitBtnText = 'submitBtnTextTest';
       setupComponent({
-        title,
-        createNewFilterText,
         submitBtnText,
       });
-      expect(screen.getByText(title)).toBeInTheDocument();
-      expect(screen.getByText(createNewFilterText)).toBeInTheDocument();
       expect(screen.getByText(submitBtnText)).toBeInTheDocument();
     });
   });

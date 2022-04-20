@@ -46,7 +46,7 @@ jobs:
           tag: ${{ github.event.release.tag_name }}
 
       - name: Archive JAR
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: kafka-ui-${{ steps.build.outputs.version }}
           path: kafka-ui-api/target/kafka-ui-api-${{ steps.build.outputs.version }}.jar

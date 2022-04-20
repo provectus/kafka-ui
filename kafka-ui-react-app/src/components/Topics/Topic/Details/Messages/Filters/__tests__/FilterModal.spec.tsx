@@ -26,10 +26,15 @@ describe('FilterModal component', () => {
     setupWrapper();
   });
   it('renders component with add filter modal', () => {
-    expect(screen.getByText('Add filter')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /add filter/i, level: 3 })
+    ).toBeInTheDocument();
   });
   it('renders component with edit filter modal', async () => {
+    await waitFor(() => userEvent.click(screen.getByRole('savedFilterText')));
     await waitFor(() => userEvent.click(screen.getByText('Edit')));
-    expect(screen.getByText('Edit saved filter')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /edit saved filter/i, level: 3 })
+    ).toBeInTheDocument();
   });
 });
