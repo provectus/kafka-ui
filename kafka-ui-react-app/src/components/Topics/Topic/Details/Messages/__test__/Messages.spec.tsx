@@ -35,14 +35,14 @@ describe('Messages', () => {
       setUpComponent();
     });
     it('should check default seekDirection if it actually take the value from the url', () => {
-      expect(screen.getByRole('listbox')).toHaveTextContent(
+      expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
       );
     });
 
     it('should check the SeekDirection select changes', () => {
-      const seekDirectionSelect = screen.getByRole('listbox');
-      const seekDirectionOption = screen.getByRole('option');
+      const seekDirectionSelect = screen.getAllByRole('listbox')[1];
+      const seekDirectionOption = screen.getAllByRole('option')[1];
 
       expect(seekDirectionOption).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
@@ -69,7 +69,7 @@ describe('Messages', () => {
       setUpComponent(
         searchParams.replace(SeekDirection.FORWARD, SeekDirection.BACKWARD)
       );
-      expect(screen.getByRole('listbox')).toHaveTextContent(
+      expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.BACKWARD].label
       );
     });
