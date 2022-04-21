@@ -24,4 +24,5 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })<{
 
 export const ActionsTd = styled(Td)`
   overflow: visible;
+  width: 50px;
 `;
