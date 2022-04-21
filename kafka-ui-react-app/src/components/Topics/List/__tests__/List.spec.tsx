@@ -1,13 +1,12 @@
 import React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
-import { Route, Router } from 'react-router-dom';
+import { Route, Router, StaticRouter } from 'react-router-dom';
 import { act } from 'react-dom/test-utils';
 import ClusterContext, {
   ContextProps,
 } from 'components/contexts/ClusterContext';
 import List, { TopicsListProps } from 'components/Topics/List/List';
 import { createMemoryHistory } from 'history';
-import { StaticRouter } from 'react-router-dom';
 import Search from 'components/common/Search/Search';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import { ConfirmationModalProps } from 'components/common/ConfirmationModal/ConfirmationModal';
