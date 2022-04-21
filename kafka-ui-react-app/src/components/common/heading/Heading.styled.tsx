@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import styled from 'styled-components';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
@@ -13,7 +13,10 @@ const HeadingBase = styled.h1<HeadingBaseProps>`
 export interface Props {
   level?: HeadingLevel;
 }
-const Heading: React.FC<Props> = ({ level = 1, ...rest }) => {
+const Heading: React.FC<PropsWithChildren<Props>> = ({
+  level = 1,
+  ...rest
+}) => {
   return <HeadingBase as={`h${level}`} $level={level} {...rest} />;
 };
 

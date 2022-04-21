@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Button } from 'components/common/Button/Button';
 
 import { ConfirmationModalWrapper } from './ConfirmationModal.styled';
@@ -12,7 +12,9 @@ export interface ConfirmationModalProps {
   submitBtnText?: string;
 }
 
-const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+const ConfirmationModal: React.FC<
+  PropsWithChildren<ConfirmationModalProps>
+> = ({
   isOpen,
   children,
   title = 'Confirm the action',
