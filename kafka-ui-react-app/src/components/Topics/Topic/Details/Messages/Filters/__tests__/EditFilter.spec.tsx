@@ -25,13 +25,16 @@ const setupComponent = (props?: Partial<EditFilterProps>) =>
 describe('EditFilter component', () => {
   it('renders component', () => {
     setupComponent();
+    expect(screen.getByText(/edit saved filter/i)).toBeInTheDocument();
   });
+
   it('closes editFilter modal', () => {
     const toggleEditModal = jest.fn();
     setupComponent({ toggleEditModal });
     userEvent.click(screen.getByRole('button', { name: /Cancel/i }));
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
   });
+
   it('save edited fields and close modal', async () => {
     const toggleEditModal = jest.fn();
     const editSavedFilter = jest.fn();
@@ -40,13 +43,14 @@ describe('EditFilter component', () => {
     expect(toggleEditModal).toHaveBeenCalledTimes(1);
     expect(editSavedFilter).toHaveBeenCalledTimes(1);
   });
+
   it('checks input values to match', () => {
     setupComponent();
     expect(screen.getAllByRole('textbox')[0]).toHaveValue(
-      editFilter.filter.name
+      editFilter.filter.code
     );
     expect(screen.getAllByRole('textbox')[1]).toHaveValue(
-      editFilter.filter.code
+      editFilter.filter.name
     );
   });
 });

@@ -39,6 +39,7 @@ import {
   TitleCell,
   TopicSizeCell,
 } from './TopicsTableCells';
+import { ActionsTd } from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -350,8 +351,8 @@ const List: React.FC<TopicsListProps> = ({
             />
             <TableColumn
               maxWidth="4%"
-              className="topic-action-block"
               cell={ActionsCell}
+              customTd={ActionsTd}
             />
           </SmartTable>
         </div>
