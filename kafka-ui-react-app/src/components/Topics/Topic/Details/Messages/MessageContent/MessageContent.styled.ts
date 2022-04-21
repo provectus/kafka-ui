@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
 export const Wrapper = styled.tr`
   background-color: ${({ theme }) => theme.topicMetaData.backgroundColor};
@@ -78,5 +77,3 @@ export const PaginationButton = styled.button`
   cursor: pointer;
   font-size: 14px;
 `;
-
-export const SchemaLink = styled(Link)``;

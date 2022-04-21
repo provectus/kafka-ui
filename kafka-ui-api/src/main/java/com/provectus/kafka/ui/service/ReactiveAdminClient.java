@@ -52,6 +52,7 @@ import org.apache.kafka.common.errors.GroupNotEmptyException;
 import org.apache.kafka.common.errors.UnknownTopicOrPartitionException;
 import org.apache.kafka.common.requests.DescribeLogDirsResponse;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 import reactor.util.function.Tuple2;
 import reactor.util.function.Tuples;
 
@@ -98,7 +99,13 @@ public class ReactiveAdminClient implements Closeable {
       } else {
         sink.success(res);
       }
-    })).doOnCancel(() -> future.cancel(true));
+    })).doOnCancel(() -> future.cancel(true))
+        // AdminClient is using single thread for kafka communication
+        // and by default all downstream operations (like map(..)) on created Mono will be executed on this thread.
+        // If some of downstream operation are blocking (by mistake) this can lead to
+        // other AdminClient's requests stucking, which can cause timeout exceptions.
+        // So, we explicitly setting Scheduler for downstream processing.
+        .publishOn(Schedulers.parallel());
   }
 
   //---------------------------------------------------------------------------------
@@ -171,7 +178,7 @@ public class ReactiveAdminClient implements Closeable {
   /**
    * Kafka API often returns Map responses with KafkaFuture values. If we do allOf()
    * logic resulting Mono will be failing if any of Futures finished with error.
-   * In some situations it is not what we what, ex. we call describeTopics(List names) method and
+   * In some situations it is not what we want, ex. we call describeTopics(List names) method and
    * we getting UnknownTopicOrPartitionException for unknown topics and we what to just not put
    * such topics in resulting map.
    * <p/>
