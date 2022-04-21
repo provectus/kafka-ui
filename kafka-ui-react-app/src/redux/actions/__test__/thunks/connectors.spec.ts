@@ -192,7 +192,7 @@ describe('Thunks', () => {
         actions.createConnectorAction.failure({
           alert: {
             subject: 'local-first',
-            title: 'Kafka Connect Connector Create',
+            title: `Connector with name ${connectorName} already exists`,
             response: {
               status: 404,
               statusText: 'Not Found',
