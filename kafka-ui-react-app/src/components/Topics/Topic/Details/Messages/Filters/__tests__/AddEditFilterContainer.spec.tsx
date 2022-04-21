@@ -78,18 +78,18 @@ describe('AddEditFilterContainer component', () => {
   });
 
   describe('Custom setup for the component', () => {
-    it('should render the input with default data if they are passed', () => {
+    it('should render the input with default data if they are passed', async () => {
       setupComponent({
-        inputDisplayNameDefaultValue: '',
-        inputCodeDefaultValue: '',
+        inputDisplayNameDefaultValue: mockData.name,
+        inputCodeDefaultValue: mockData.code,
       });
-
       const inputs = screen.getAllByRole('textbox');
       const textAreaElement = inputs[0] as HTMLTextAreaElement;
       const inputNameElement = inputs[1];
-
-      expect(inputNameElement).toHaveValue('');
-      expect(textAreaElement.value).toEqual('');
+      await waitFor(() => {
+        expect(inputNameElement).toHaveValue(mockData.name);
+        expect(textAreaElement.value).toEqual('');
+      });
     });
 
     it('should test whether the cancel callback is being called', async () => {
