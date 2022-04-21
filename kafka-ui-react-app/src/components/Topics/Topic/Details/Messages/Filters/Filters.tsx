@@ -12,7 +12,7 @@ import {
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
-import { useHistory, useLocation } from 'react-router';
+import { useHistory, useLocation } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';

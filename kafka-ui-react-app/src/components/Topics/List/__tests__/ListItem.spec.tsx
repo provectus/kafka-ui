@@ -1,5 +1,5 @@
 import React from 'react';
-import { StaticRouter } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 import { mount } from 'enzyme';
 import {
   externalTopicPayload,

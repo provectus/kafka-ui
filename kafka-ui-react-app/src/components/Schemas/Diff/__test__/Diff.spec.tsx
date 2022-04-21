@@ -1,7 +1,7 @@
 import React from 'react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
-import { StaticRouter } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 import Diff, { DiffProps } from 'components/Schemas/Diff/Diff';
 import { render } from 'lib/testHelpers';
 import { screen } from '@testing-library/react';

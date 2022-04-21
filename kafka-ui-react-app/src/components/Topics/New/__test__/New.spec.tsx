@@ -1,6 +1,6 @@
 import React from 'react';
 import New from 'components/Topics/New/New';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import configureStore from 'redux-mock-store';
 import { RootState } from 'redux/interfaces';
 import { Provider } from 'react-redux';

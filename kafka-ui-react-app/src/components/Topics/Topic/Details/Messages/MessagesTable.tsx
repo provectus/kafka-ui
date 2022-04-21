@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { compact, concat, groupBy, map, maxBy, minBy } from 'lodash';
 import React, { useContext } from 'react';
 import { useSelector } from 'react-redux';
-import { useHistory } from 'react-router';
+import { useHistory } from 'react-router-dom';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,

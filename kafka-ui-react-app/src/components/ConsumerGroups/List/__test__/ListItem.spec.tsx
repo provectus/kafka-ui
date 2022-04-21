@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { StaticRouter } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
 
 describe('List', () => {

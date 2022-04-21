@@ -6,7 +6,7 @@ import {
   schemasInitialState,
   schemaVersion,
 } from 'redux/reducers/schemas/__test__/fixtures';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/dom';
 import ClusterContext, {
   ContextProps,

@@ -7,7 +7,7 @@ import {
 import EditContainer from 'components/Connect/Edit/EditContainer';
 import Edit, { EditProps } from 'components/Connect/Edit/Edit';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { waitFor } from '@testing-library/dom';
 import { fireEvent, screen } from '@testing-library/react';
 

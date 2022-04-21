@@ -1,7 +1,7 @@
 import React from 'react';
 import List from 'components/Schemas/List/List';
 import { render } from 'lib/testHelpers';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { clusterSchemasPath } from 'lib/paths';
 import { screen, waitFor } from '@testing-library/dom';
 import {

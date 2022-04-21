@@ -1,7 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import KsqlDb from 'components/KsqlDb/KsqlDb';
-import { StaticRouter } from 'react-router';
+import { StaticRouter } from 'react-router-dom';
 
 describe('KsqlDb Component', () => {
   const pathname = `ui/clusters/local/ksql-db`;

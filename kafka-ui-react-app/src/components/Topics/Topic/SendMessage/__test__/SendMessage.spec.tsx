@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
 import { createMemoryHistory } from 'history';
 import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import {
   clusterTopicMessagesPath,
   clusterTopicSendMessagePath,

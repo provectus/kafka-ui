@@ -12,7 +12,7 @@ import {
 } from 'redux/reducers/consumerGroups/__test__/fixtures';
 import { render } from 'lib/testHelpers';
 import fetchMock from 'fetch-mock';
-import { Route, Router } from 'react-router';
+import { Route, Router } from 'react-router-dom';
 import { ConsumerGroupOrdering, SortOrder } from 'generated-sources';
 import { createMemoryHistory } from 'history';
 

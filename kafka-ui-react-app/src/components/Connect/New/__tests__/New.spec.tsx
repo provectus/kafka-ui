@@ -7,7 +7,7 @@ import {
 import NewContainer from 'components/Connect/New/NewContainer';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
-import { Route } from 'react-router';
+import { Route } from 'react-router-dom';
 import { act, fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
