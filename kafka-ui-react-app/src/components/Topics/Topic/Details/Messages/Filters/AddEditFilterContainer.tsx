@@ -69,7 +69,6 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
             render={({ field: { onChange, value } }) => (
               <Editor
                 value={value}
-                defaultValue={value}
                 minLines={5}
                 maxLines={28}
                 onChange={onChange}

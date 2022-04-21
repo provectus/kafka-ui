@@ -1,5 +1,3 @@
-import { resolve } from 'path';
-
 import React from 'react';
 import EditFilter, {
   EditFilterProps,
