@@ -349,7 +349,7 @@ public class SchemaRegistryService {
   }
 
   private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
-                                                        String uri, String uriVariable) {
+                                                        String uri, @Nullable String uriVariable) {
     List<String> uriVariables = uriVariable == null ? Collections.emptyList() : List.of(uriVariable);
     return configuredWebClient(cluster, method, uri, uriVariables, new LinkedMultiValueMap<>());
   }
