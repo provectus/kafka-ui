@@ -6,7 +6,6 @@ import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { deleteConnector } from 'redux/actions';
 import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { Tag } from 'components/common/Tag/Tag.styled';
