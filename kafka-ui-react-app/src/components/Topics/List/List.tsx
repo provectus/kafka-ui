@@ -203,7 +203,7 @@ const List: React.FC<TopicsListProps> = ({
       return (
         <>
           <div className="has-text-right">
-            {isHidden && (
+            {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
                   <DropdownItem onClick={clearTopicMessagesHandler} danger>
