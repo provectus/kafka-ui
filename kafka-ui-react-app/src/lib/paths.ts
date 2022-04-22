@@ -53,6 +53,8 @@ export const clusterTopicsPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics`;
 export const clusterTopicNewPath = (clusterName: ClusterName) =>
   `${clusterPath(clusterName)}/topics/create-new`;
+export const clusterTopicCopyPath = (clusterName: ClusterName) =>
+  `${clusterPath(clusterName)}/topics/copy`;
 export const clusterTopicPath = (
   clusterName: ClusterName,
   topicName: TopicName
