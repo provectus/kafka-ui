@@ -6,7 +6,7 @@ import {
   TopicName,
 } from 'redux/interfaces';
 import { useParams } from 'react-router-dom';
-import { clusterTopicNewPath } from 'lib/paths';
+import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -124,6 +124,21 @@ const List: React.FC<TopicsListProps> = ({
       sortOrder,
     }
   );
+
+  const getSelectedTopic = (): string => {
+    const name = Array.from(tableState.selectedIds)[0];
+    const selectedTopic =
+      tableState.data.find(
+        (topic: TopicWithDetailedInfo) => topic.name === name
+      ) || {};
+
+    return Object.keys(selectedTopic)
+      .map((x: string) => {
+        const value = selectedTopic[x as keyof typeof selectedTopic];
+        return value && x !== 'partitions' ? `${x}=${value}` : null;
+      })
+      .join('&');
+  };
 
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
@@ -295,6 +310,20 @@ const List: React.FC<TopicsListProps> = ({
                 >
                   Delete selected topics
                 </Button>
+                {tableState.selectedCount === 1 && (
+                  <Button
+                    buttonSize="M"
+                    buttonType="secondary"
+                    isLink
+                    to={{
+                      pathname: clusterTopicCopyPath(clusterName),
+                      search: `?${getSelectedTopic()}`,
+                    }}
+                  >
+                    Copy selected topic
+                  </Button>
+                )}
+
                 <Button
                   buttonSize="M"
                   buttonType="secondary"

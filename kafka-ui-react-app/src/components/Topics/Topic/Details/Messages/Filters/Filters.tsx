@@ -22,6 +22,7 @@ import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
 import { Button } from 'components/common/Button/Button';
+import Search from 'components/common/Search/Search';
 import FilterModal, {
   FilterEdit,
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
@@ -348,14 +349,10 @@ const Filters: React.FC<FiltersProps> = ({
     <S.FiltersWrapper>
       <div>
         <S.FilterInputs>
-          <Input
-            inputSize="M"
-            id="searchText"
-            type="text"
-            leftIcon="fas fa-search"
+          <Search
             placeholder="Search"
             value={query}
-            onChange={({ target: { value } }) => setQuery(value)}
+            handleSearch={(value: string) => setQuery(value)}
           />
           <S.SeekTypeSelectorWrapper>
             <Select
