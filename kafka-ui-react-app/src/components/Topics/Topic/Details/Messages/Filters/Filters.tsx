@@ -357,42 +357,40 @@ const Filters: React.FC<FiltersProps> = ({
             value={query}
             onChange={({ target: { value } }) => setQuery(value)}
           />
-          {isSeekTypeControlVisible && (
-            <S.SeekTypeSelectorWrapper>
-              <Select
-                id="selectSeekType"
-                onChange={(option) => setCurrentSeekType(option as SeekType)}
-                value={currentSeekType}
-                selectSize="M"
-                minWidth="100px"
-                options={SeekTypeOptions}
+          <S.SeekTypeSelectorWrapper>
+            <Select
+              id="selectSeekType"
+              onChange={(option) => setCurrentSeekType(option as SeekType)}
+              value={currentSeekType}
+              selectSize="M"
+              minWidth="100px"
+              options={SeekTypeOptions}
+              disabled={isLive}
+            />
+            {currentSeekType === SeekType.OFFSET ? (
+              <Input
+                id="offset"
+                type="text"
+                inputSize="M"
+                value={offset}
+                className="offset-selector"
+                placeholder="Offset"
+                onChange={({ target: { value } }) => setOffset(value)}
                 disabled={isLive}
               />
-              {currentSeekType === SeekType.OFFSET ? (
-                <Input
-                  id="offset"
-                  type="text"
-                  inputSize="M"
-                  value={offset}
-                  className="offset-selector"
-                  placeholder="Offset"
-                  onChange={({ target: { value } }) => setOffset(value)}
-                  disabled={isLive}
-                />
-              ) : (
-                <DatePicker
-                  selected={timestamp}
-                  onChange={(date: Date | null) => setTimestamp(date)}
-                  showTimeInput
-                  timeInputLabel="Time:"
-                  dateFormat="MMMM d, yyyy HH:mm"
-                  className="date-picker"
-                  placeholderText="Select timestamp"
-                  disabled={isLive}
-                />
-              )}
-            </S.SeekTypeSelectorWrapper>
-          )}
+            ) : (
+              <DatePicker
+                selected={timestamp}
+                onChange={(date: Date | null) => setTimestamp(date)}
+                showTimeInput
+                timeInputLabel="Time:"
+                dateFormat="MMMM d, yyyy HH:mm"
+                className="date-picker"
+                placeholderText="Select timestamp"
+                disabled={isLive}
+              />
+            )}
+          </S.SeekTypeSelectorWrapper>
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,
