@@ -73,38 +73,32 @@ describe('Connectors List', () => {
     });
 
     it('renders connectors list', () => {
-      const wrapper = mount(
+      render(
         setupComponent({
           areConnectorsFetching: false,
           connectors,
         })
       );
-      expect(wrapper.exists('PageLoader')).toBeFalsy();
-      expect(wrapper.exists('table')).toBeTruthy();
-      expect(wrapper.find('ListItem').length).toEqual(2);
+      expect(screen.queryAllByRole('progressbar').length).toBeFalsy();
+      expect(screen.getByRole('table')).toBeInTheDocument();
+      expect(screen.queryAllByRole('row').length).toEqual(3);
     });
 
     it('handles fetchConnects and fetchConnectors', () => {
-      mount(setupComponent());
+      render(setupComponent());
       expect(fetchConnects).toHaveBeenCalledTimes(1);
       expect(fetchConnectors).toHaveBeenCalledTimes(1);
     });
 
     it('renders actions if cluster is not readonly', () => {
-      const wrapper = mount(
-        setupComponent({}, { ...initialValue, isReadOnly: false })
-      );
-      expect(wrapper.exists('button')).toBeTruthy();
+      render(setupComponent({}, { ...initialValue, isReadOnly: false }));
+      expect(screen.getByRole('button')).toBeInTheDocument();
     });
 
     describe('readonly cluster', () => {
       it('does not render actions if cluster is readonly', () => {
-        const wrapper = mount(
-          setupComponent({}, { ...initialValue, isReadOnly: true })
-        );
-        expect(
-          wrapper.exists('.level-item.level-right > .button.is-primary')
-        ).toBeFalsy();
+        render(setupComponent({}, { ...initialValue, isReadOnly: true }));
+        expect(screen.queryAllByRole('button').length).toBeFalsy();
       });
     });
   });
