@@ -125,6 +125,31 @@ describe('List', () => {
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
     });
+
+    it('should set cached page query param on show internal toggle change', async () => {
+      const mockedHistory = createMemoryHistory();
+      jest.spyOn(mockedHistory, 'push');
+      component = mountComponentWithProviders(
+        { isReadOnly: false },
+        { fetchTopicsList, totalPages: 10 },
+        mockedHistory
+      );
+
+      const cachedPage = 5;
+
+      mockedHistory.push(`/?page=${cachedPage}&perPage=25`);
+
+      const input = component.find(Search);
+      input.props().handleSearch('nonEmptyString');
+
+      expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+
+      input.props().handleSearch('');
+
+      expect(mockedHistory.push).toHaveBeenCalledWith(
+        `/?page=${cachedPage}&perPage=25`
+      );
+    });
   });
 
   describe('when some list items are selected', () => {

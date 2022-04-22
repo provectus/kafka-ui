@@ -1,6 +1,7 @@
 import { Action, TopicMessagesState } from 'redux/interfaces';
 import { getType } from 'typesafe-actions';
 import * as actions from 'redux/actions';
+import { TopicMessage } from 'generated-sources';
 
 export const initialState: TopicMessagesState = {
   messages: [],
@@ -17,9 +18,13 @@ export const initialState: TopicMessagesState = {
 const reducer = (state = initialState, action: Action): TopicMessagesState => {
   switch (action.type) {
     case getType(actions.addTopicMessage): {
+      const messages: TopicMessage[] = action.payload.prepend
+        ? [action.payload.message, ...state.messages]
+        : [...state.messages, action.payload.message];
+
       return {
         ...state,
-        messages: [action.payload, ...state.messages],
+        messages,
       };
     }
     case getType(actions.resetTopicMessages):
