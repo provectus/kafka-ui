@@ -21,6 +21,7 @@ import reducer, {
 } from 'redux/reducers/connect/connectSlice';
 import fetchMock from 'fetch-mock-jest';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
+import { getTypeAndPayload } from 'lib/testHelpers';
 
 import {
   connects,
@@ -233,9 +234,7 @@ describe('Connect slice', () => {
           fetchMock.getOnce(`/api/clusters/${clusterName}/connects`, connects);
           await store.dispatch(fetchConnects(clusterName));
 
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnects.pending.type },
             {
               type: fetchConnects.fulfilled.type,
@@ -246,9 +245,7 @@ describe('Connect slice', () => {
         it('creates fetchConnects/rejected', async () => {
           fetchMock.getOnce(`/api/clusters/${clusterName}/connects`, 404);
           await store.dispatch(fetchConnects(clusterName));
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnects.pending.type },
             {
               type: fetchConnects.rejected.type,
@@ -270,9 +267,7 @@ describe('Connect slice', () => {
             { query: { search: '' } }
           );
           await store.dispatch(fetchConnectors({ clusterName }));
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnectors.pending.type },
             {
               type: fetchConnectors.fulfilled.type,
@@ -285,9 +280,7 @@ describe('Connect slice', () => {
             query: { search: '' },
           });
           await store.dispatch(fetchConnectors({ clusterName }));
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnectors.pending.type },
             {
               type: fetchConnectors.rejected.type,
@@ -311,9 +304,7 @@ describe('Connect slice', () => {
             fetchConnector({ clusterName, connectName, connectorName })
           );
 
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnector.pending.type },
             {
               type: fetchConnector.fulfilled.type,
@@ -329,9 +320,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             fetchConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnector.pending.type },
             {
               type: fetchConnector.rejected.type,
@@ -367,9 +356,7 @@ describe('Connect slice', () => {
               },
             })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: createConnector.pending.type },
             {
               type: createConnector.fulfilled.type,
@@ -398,9 +385,7 @@ describe('Connect slice', () => {
               },
             })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: createConnector.pending.type },
             {
               type: createConnector.rejected.type,
@@ -427,9 +412,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             deleteConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: deleteConnector.pending.type },
             { type: fetchConnectors.pending.type },
             {
@@ -448,9 +431,7 @@ describe('Connect slice', () => {
               deleteConnector({ clusterName, connectName, connectorName })
             );
           } catch {
-            expect(
-              store.getActions().map(({ type, payload }) => ({ type, payload }))
-            ).toEqual([
+            expect(getTypeAndPayload(store)).toEqual([
               { type: deleteConnector.pending.type },
               {
                 type: deleteConnector.rejected.type,
@@ -479,9 +460,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             fetchConnectorTasks({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnectorTasks.pending.type },
             {
               type: fetchConnectorTasks.fulfilled.type,
@@ -497,9 +476,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             fetchConnectorTasks({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnectorTasks.pending.type },
             {
               type: fetchConnectorTasks.rejected.type,
@@ -526,9 +503,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             restartConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: restartConnector.pending.type },
             { type: fetchConnectorTasks.pending.type },
             { type: restartConnector.fulfilled.type },
@@ -542,9 +517,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             restartConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: restartConnector.pending.type },
             {
               type: restartConnector.rejected.type,
@@ -567,9 +540,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             pauseConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: pauseConnector.pending.type },
             {
               type: setConnectorStatusState.type,
@@ -589,9 +560,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             pauseConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: pauseConnector.pending.type },
             {
               type: pauseConnector.rejected.type,
@@ -613,9 +582,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             resumeConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: resumeConnector.pending.type },
             {
               type: setConnectorStatusState.type,
@@ -635,9 +602,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             resumeConnector({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: resumeConnector.pending.type },
             {
               type: resumeConnector.rejected.type,
@@ -668,9 +633,7 @@ describe('Connect slice', () => {
               taskId,
             })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: restartConnectorTask.pending.type },
             { type: fetchConnectorTasks.pending.type },
             { type: restartConnectorTask.fulfilled.type },
@@ -689,9 +652,7 @@ describe('Connect slice', () => {
               taskId,
             })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: restartConnectorTask.pending.type },
             {
               type: restartConnectorTask.rejected.type,
@@ -713,9 +674,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             fetchConnectorConfig({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnectorConfig.pending.type },
             {
               type: fetchConnectorConfig.fulfilled.type,
@@ -731,9 +690,7 @@ describe('Connect slice', () => {
           await store.dispatch(
             fetchConnectorConfig({ clusterName, connectName, connectorName })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: fetchConnectorConfig.pending.type },
             {
               type: fetchConnectorConfig.rejected.type,
@@ -761,9 +718,7 @@ describe('Connect slice', () => {
               connectorConfig: connector.config,
             })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: updateConnectorConfig.pending.type },
             {
               type: updateConnectorConfig.fulfilled.type,
@@ -784,9 +739,7 @@ describe('Connect slice', () => {
               connectorConfig: connector.config,
             })
           );
-          expect(
-            store.getActions().map(({ type, payload }) => ({ type, payload }))
-          ).toEqual([
+          expect(getTypeAndPayload(store)).toEqual([
             { type: updateConnectorConfig.pending.type },
             {
               type: updateConnectorConfig.rejected.type,
