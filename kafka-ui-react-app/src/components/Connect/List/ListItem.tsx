@@ -4,7 +4,7 @@ import { clusterConnectConnectorPath, clusterTopicPath } from 'lib/paths';
 import { ClusterName } from 'redux/interfaces';
 import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { deleteConnector } from 'redux/actions';
+import { deleteConnector } from 'redux/reducers/connect/connectSlice';
 import Dropdown from 'components/common/Dropdown/Dropdown';
 import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
@@ -42,7 +42,13 @@ const ListItem: React.FC<ListItemProps> = ({
 
   const handleDelete = React.useCallback(() => {
     if (clusterName && connect && name) {
-      dispatch(deleteConnector(clusterName, connect, name));
+      dispatch(
+        deleteConnector({
+          clusterName,
+          connectName: connect,
+          connectorName: name,
+        })
+      );
     }
     setDeleteConnectorConfirmationVisible(false);
   }, [clusterName, connect, dispatch, name]);

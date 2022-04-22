@@ -3,7 +3,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import { Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Connector } from 'generated-sources';
 import {
   ClusterName,
   ConnectName,
@@ -36,19 +35,19 @@ interface FormValues {
 }
 
 export interface EditProps {
-  fetchConfig(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): Promise<void>;
+  fetchConfig(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): Promise<unknown>;
   isConfigFetching: boolean;
   config: ConnectorConfig | null;
-  updateConfig(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    connectorConfig: ConnectorConfig
-  ): Promise<Connector | undefined>;
+  updateConfig(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+    connectorConfig: ConnectorConfig;
+  }): Promise<unknown>;
 }
 
 const Edit: React.FC<EditProps> = ({
@@ -73,7 +72,7 @@ const Edit: React.FC<EditProps> = ({
   });
 
   React.useEffect(() => {
-    fetchConfig(clusterName, connectName, connectorName);
+    fetchConfig({ clusterName, connectName, connectorName });
   }, [fetchConfig, clusterName, connectName, connectorName]);
 
   React.useEffect(() => {
@@ -84,12 +83,12 @@ const Edit: React.FC<EditProps> = ({
 
   const onSubmit = React.useCallback(
     async (values: FormValues) => {
-      const connector = await updateConfig(
+      const connector = await updateConfig({
         clusterName,
         connectName,
         connectorName,
-        JSON.parse(values.config.trim())
-      );
+        connectorConfig: JSON.parse(values.config.trim()),
+      });
       if (connector) {
         history.push(
           clusterConnectConnectorConfigPath(

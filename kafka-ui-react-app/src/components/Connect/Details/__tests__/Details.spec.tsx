@@ -90,22 +90,22 @@ describe('Details', () => {
       const fetchConnector = jest.fn();
       render(setupWrapper({ fetchConnector }));
       expect(fetchConnector).toHaveBeenCalledTimes(1);
-      expect(fetchConnector).toHaveBeenCalledWith(
+      expect(fetchConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('fetches tasks on mount', () => {
       const fetchTasks = jest.fn();
       render(setupWrapper({ fetchTasks }));
       expect(fetchTasks).toHaveBeenCalledTimes(1);
-      expect(fetchTasks).toHaveBeenCalledWith(
+      expect(fetchTasks).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
   });
 });
