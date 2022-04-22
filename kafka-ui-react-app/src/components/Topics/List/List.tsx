@@ -39,6 +39,7 @@ import {
   TitleCell,
   TopicSizeCell,
 } from './TopicsTableCells';
+import { ActionsTd } from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -184,6 +185,8 @@ const List: React.FC<TopicsListProps> = ({
         setRecreateTopicConfirmationVisible,
       ] = React.useState(false);
 
+      const isHidden = internal || isReadOnly || !hovered;
+
       const deleteTopicHandler = React.useCallback(() => {
         deleteTopic(clusterName, name);
       }, [name]);
@@ -199,8 +202,8 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          {!internal && !isReadOnly && hovered ? (
-            <div className="has-text-right">
+          <div className="has-text-right">
+            {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
                   <DropdownItem onClick={clearTopicMessagesHandler} danger>
@@ -222,8 +225,8 @@ const List: React.FC<TopicsListProps> = ({
                   Recreate Topic
                 </DropdownItem>
               </Dropdown>
-            </div>
-          ) : null}
+            )}
+          </div>
           <ConfirmationModal
             isOpen={isDeleteTopicConfirmationVisible}
             onCancel={() => setDeleteTopicConfirmationVisible(false)}
@@ -350,8 +353,8 @@ const List: React.FC<TopicsListProps> = ({
             />
             <TableColumn
               maxWidth="4%"
-              className="topic-action-block"
               cell={ActionsCell}
+              customTd={ActionsTd}
             />
           </SmartTable>
         </div>
