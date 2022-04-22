@@ -19,6 +19,14 @@ interface RouterParams {
   clusterName: ClusterName;
 }
 
+enum Filters {
+  NAME = 'name',
+  PARTITION_COUNT = 'partitionCount',
+  REPLICATION_FACTOR = 'replicationFactor',
+  INSYNC_REPLICAS = 'inSyncReplicas',
+  CLEANUP_POLICY = 'Delete',
+}
+
 const New: React.FC = () => {
   const methods = useForm<TopicFormData>({
     mode: 'all',
@@ -31,11 +39,12 @@ const New: React.FC = () => {
 
   const { search } = useLocation();
   const params = new URLSearchParams(search);
-  const name = params.get('name') || '';
-  const partitionCount = params.get('partitionCount') || 1;
-  const replicationFactor = params.get('replicationFactor') || 1;
-  const inSyncReplicas = params.get('inSyncReplicas') || 1;
-  const cleanUpPolicy = params.get('cleanUpPolicy') || 'Delete';
+
+  const name = params.get(Filters.NAME) || '';
+  const partitionCount = params.get(Filters.PARTITION_COUNT) || 1;
+  const replicationFactor = params.get(Filters.REPLICATION_FACTOR) || 1;
+  const inSyncReplicas = params.get(Filters.INSYNC_REPLICAS) || 1;
+  const cleanUpPolicy = params.get(Filters.CLEANUP_POLICY) || 'Delete';
 
   const onSubmit = async (data: TopicFormData) => {
     try {
