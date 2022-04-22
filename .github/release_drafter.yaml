@@ -7,7 +7,12 @@ template: |
   $CONTRIBUTORS
 
 exclude-labels:
-  - 'skip-changelog'
+  - 'scope/infrastructure'
+  - 'scope/QA'
+  - 'type/dependencies'
+  - 'type/chore'
+  - 'type/documentation'
+  - 'type/refactoring'
 
 categories:
   - title: '⚙️Features'
