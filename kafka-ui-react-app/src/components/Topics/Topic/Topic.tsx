@@ -14,18 +14,26 @@ interface RouterParams {
 
 interface TopicProps {
   isTopicFetching: boolean;
+  resetTopicMessages: () => void;
   fetchTopicDetails: (clusterName: ClusterName, topicName: TopicName) => void;
 }
 
 const Topic: React.FC<TopicProps> = ({
   isTopicFetching,
   fetchTopicDetails,
+  resetTopicMessages,
 }) => {
   const { clusterName, topicName } = useParams<RouterParams>();
 
   React.useEffect(() => {
     fetchTopicDetails(clusterName, topicName);
   }, [fetchTopicDetails, clusterName, topicName]);
+
+  React.useEffect(() => {
+    return () => {
+      resetTopicMessages();
+    };
+  }, []);
 
   if (isTopicFetching) {
     return <PageLoader />;
