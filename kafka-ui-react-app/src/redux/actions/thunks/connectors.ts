@@ -111,7 +111,7 @@ export const createConnector =
       const response = await getResponse(error);
       const alert: FailurePayload = {
         subject: [clusterName, connectName].join('-'),
-        title: `Kafka Connect Connector Create`,
+        title: `Connector with name ${newConnector.name} already exists`,
         response,
       };
       dispatch(actions.createConnectorAction.failure({ alert }));
