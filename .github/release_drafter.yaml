@@ -24,6 +24,9 @@ categories:
   - title: '🔨Bug Fixes'
     labels:
       - 'type/bug'
+  - title: '⎈ Helm/K8S Changes'
+    labels:
+      - 'scope/k8s'
 
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 
