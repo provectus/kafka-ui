@@ -200,6 +200,8 @@ const List: React.FC<TopicsListProps> = ({
         setRecreateTopicConfirmationVisible,
       ] = React.useState(false);
 
+      const isHidden = internal || isReadOnly || !hovered;
+
       const deleteTopicHandler = React.useCallback(() => {
         deleteTopic(clusterName, name);
       }, [name]);
@@ -215,8 +217,8 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          {!internal && !isReadOnly && hovered ? (
-            <div className="has-text-right">
+          <div className="has-text-right">
+            {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
                   <DropdownItem onClick={clearTopicMessagesHandler} danger>
@@ -238,8 +240,8 @@ const List: React.FC<TopicsListProps> = ({
                   Recreate Topic
                 </DropdownItem>
               </Dropdown>
-            </div>
-          ) : null}
+            )}
+          </div>
           <ConfirmationModal
             isOpen={isDeleteTopicConfirmationVisible}
             onCancel={() => setDeleteTopicConfirmationVisible(false)}

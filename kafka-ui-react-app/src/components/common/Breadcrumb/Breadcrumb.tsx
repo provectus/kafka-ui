@@ -2,11 +2,16 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import cn from 'classnames';
 import { clusterPath } from 'lib/paths';
+import { BREADCRUMB_DEFINITIONS } from 'lib/constants';
 
 import { BreadcrumbWrapper } from './Breadcrumb.styled';
 import { BreadcrumbContext } from './Breadcrumb.context';
 
 const basePathEntriesLength = clusterPath(':clusterName').split('/').length;
+
+export interface BreadcrumbDefinitions {
+  [key: string]: string;
+}
 
 const Breadcrumb: React.FC = () => {
   const breadcrumbContext = useContext(BreadcrumbContext);
@@ -33,7 +38,9 @@ const Breadcrumb: React.FC = () => {
     <BreadcrumbWrapper role="list">
       {links.slice(0, links.length - 1).map((link, index) => (
         <li key={link}>
-          <Link to={getPathPredicate(index)}>{link}</Link>
+          <Link to={getPathPredicate(index)}>
+            {BREADCRUMB_DEFINITIONS[link] || link}
+          </Link>
         </li>
       ))}
       <li
