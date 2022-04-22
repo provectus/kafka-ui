@@ -106,7 +106,6 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={contentSize} />
                 </S.MetadataMeta>
-                <S.SchemaLink to="/">SchemaLink</S.SchemaLink>
               </span>
             </S.Metadata>
 
@@ -117,7 +116,6 @@ const MessageContent: React.FC<MessageContentProps> = ({
                 <S.MetadataMeta>
                   Size: <BytesFormatted value={keySize} />
                 </S.MetadataMeta>
-                <S.SchemaLink to="/">SchemaLink</S.SchemaLink>
               </span>
             </S.Metadata>
           </S.MetadataWrapper>

@@ -1,6 +1,7 @@
 import 'react-datepicker/dist/react-datepicker.css';
 
 import {
+  MessageFilterType,
   Partition,
   SeekDirection,
   SeekType,
@@ -8,7 +9,6 @@ import {
   TopicMessageConsuming,
   TopicMessageEvent,
   TopicMessageEventTypeEnum,
-  MessageFilterType,
 } from 'generated-sources';
 import React, { useContext } from 'react';
 import { omitBy } from 'lodash';
@@ -17,7 +17,7 @@ import DatePicker from 'react-datepicker';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component/dist/lib/interfaces';
 import BytesFormatted from 'components/common/BytesFormatted/BytesFormatted';
-import { TopicName, ClusterName } from 'redux/interfaces';
+import { ClusterName, TopicName } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import Input from 'components/common/Input/Input';
 import Select from 'components/common/Select/Select';
@@ -27,6 +27,7 @@ import FilterModal, {
 } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 import { SeekDirectionOptions } from 'components/Topics/Topic/Details/Messages/Messages';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
+import useModal from 'lib/hooks/useModal';
 
 import * as S from './Filters.styled';
 import {
@@ -45,12 +46,13 @@ export interface FiltersProps {
   partitions: Partition[];
   meta: TopicMessageConsuming;
   isFetching: boolean;
-  addMessage(message: TopicMessage): void;
+  addMessage(content: { message: TopicMessage; prepend: boolean }): void;
   resetMessages(): void;
   updatePhase(phase: string): void;
   updateMeta(meta: TopicMessageConsuming): void;
   setIsFetching(status: boolean): void;
 }
+
 export interface MessageFilters {
   name: string;
   code: string;
@@ -88,8 +90,7 @@ const Filters: React.FC<FiltersProps> = ({
   const { searchParams, seekDirection, isLive, changeSeekDirection } =
     useContext(TopicMessagesContext);
 
-  const [isOpen, setIsOpen] = React.useState(false);
-  const toggleIsOpen = () => setIsOpen(!isOpen);
+  const { isOpen, toggle } = useModal();
 
   const source = React.useRef<EventSource | null>(null);
 
@@ -156,7 +157,7 @@ const Filters: React.FC<FiltersProps> = ({
     return {
       q:
         queryType === MessageFilterType.GROOVY_SCRIPT
-          ? `valueAsText.contains('${activeFilter.code}')`
+          ? activeFilter.code
           : query,
       filterQueryType: queryType,
       attempt,
@@ -165,48 +166,53 @@ const Filters: React.FC<FiltersProps> = ({
     };
   }, [attempt, query, queryType, seekDirection, activeFilter]);
 
-  const handleFiltersSubmit = React.useCallback(() => {
-    setAttempt(attempt + 1);
+  const handleClearAllFilters = () => {
+    setCurrentSeekType(SeekType.OFFSET);
+    setOffset('');
+    setQuery('');
+    changeSeekDirection(SeekDirection.FORWARD);
+    getSelectedPartitionsFromSeekToParam(searchParams, partitions);
+    setSelectedPartitions(
+      partitions.map((partition: Partition) => {
+        return {
+          value: partition.partition,
+          label: String(partition.partition),
+        };
+      })
+    );
+  };
 
-    if (isSeekTypeControlVisible) {
-      props.seekType = isLive ? SeekType.LATEST : currentSeekType;
-      props.seekTo = selectedPartitions.map(({ value }) => {
-        let seekToOffset;
+  const handleFiltersSubmit = React.useCallback(
+    (currentOffset: string) => {
+      setAttempt(attempt + 1);
 
-        if (currentSeekType === SeekType.OFFSET) {
-          if (offset) {
-            seekToOffset = offset;
-          } else {
-            seekToOffset =
-              seekDirection === SeekDirection.FORWARD
-                ? partitionMap[value].offsetMin
-                : partitionMap[value].offsetMax;
-          }
-        } else if (timestamp) {
-          seekToOffset = timestamp.getTime();
-        }
+      if (isSeekTypeControlVisible) {
+        props.seekType = isLive ? SeekType.LATEST : currentSeekType;
+        props.seekTo = selectedPartitions.map(({ value }) => {
+          const offsetProperty =
+            seekDirection === SeekDirection.FORWARD ? 'offsetMin' : 'offsetMax';
+          const offsetBasedSeekTo =
+            currentOffset || partitionMap[value][offsetProperty];
+          const seekToOffset =
+            currentSeekType === SeekType.OFFSET
+              ? offsetBasedSeekTo
+              : timestamp?.getTime();
 
-        return `${value}::${seekToOffset || '0'}`;
+          return `${value}::${seekToOffset || '0'}`;
+        });
+      }
+
+      const newProps = omitBy(props, (v) => v === undefined || v === '');
+      const qs = Object.keys(newProps)
+        .map((key) => `${key}=${newProps[key]}`)
+        .join('&');
+
+      history.push({
+        search: `?${qs}`,
       });
-    }
-
-    const newProps = omitBy(props, (v) => v === undefined || v === '');
-    const qs = Object.keys(newProps)
-      .map((key) => `${key}=${newProps[key]}`)
-      .join('&');
-
-    history.push({
-      search: `?${qs}`,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    seekDirection,
-    queryType,
-    activeFilter,
-    currentSeekType,
-    timestamp,
-    query,
-  ]);
+    },
+    [seekDirection, queryType, activeFilter, currentSeekType, timestamp, query]
+  );
 
   const handleSSECancel = () => {
     if (!source.current) return;
@@ -288,10 +294,18 @@ const Filters: React.FC<FiltersProps> = ({
 
         switch (type) {
           case TopicMessageEventTypeEnum.MESSAGE:
-            if (message) addMessage(message);
+            if (message) {
+              addMessage({
+                message,
+                prepend: isLive,
+              });
+            }
             break;
           case TopicMessageEventTypeEnum.PHASE:
-            if (phase?.name) updatePhase(phase.name);
+            if (phase?.name) {
+              updatePhase(phase.name);
+              setIsFetching(false);
+            }
             break;
           case TopicMessageEventTypeEnum.CONSUMING:
             if (consuming) updateMeta(consuming);
@@ -323,11 +337,11 @@ const Filters: React.FC<FiltersProps> = ({
   ]);
   React.useEffect(() => {
     if (location.search?.length === 0) {
-      handleFiltersSubmit();
+      handleFiltersSubmit(offset);
     }
   }, [handleFiltersSubmit, location]);
   React.useEffect(() => {
-    handleFiltersSubmit();
+    handleFiltersSubmit(offset);
   }, [handleFiltersSubmit, seekDirection]);
 
   return (
@@ -343,42 +357,40 @@ const Filters: React.FC<FiltersProps> = ({
             value={query}
             onChange={({ target: { value } }) => setQuery(value)}
           />
-          {isSeekTypeControlVisible && (
-            <S.SeekTypeSelectorWrapper>
-              <Select
-                id="selectSeekType"
-                onChange={(option) => setCurrentSeekType(option as SeekType)}
-                value={currentSeekType}
-                selectSize="M"
-                minWidth="100px"
-                options={SeekTypeOptions}
+          <S.SeekTypeSelectorWrapper>
+            <Select
+              id="selectSeekType"
+              onChange={(option) => setCurrentSeekType(option as SeekType)}
+              value={currentSeekType}
+              selectSize="M"
+              minWidth="100px"
+              options={SeekTypeOptions}
+              disabled={isLive}
+            />
+            {currentSeekType === SeekType.OFFSET ? (
+              <Input
+                id="offset"
+                type="text"
+                inputSize="M"
+                value={offset}
+                className="offset-selector"
+                placeholder="Offset"
+                onChange={({ target: { value } }) => setOffset(value)}
                 disabled={isLive}
               />
-              {currentSeekType === SeekType.OFFSET ? (
-                <Input
-                  id="offset"
-                  type="text"
-                  inputSize="M"
-                  value={offset}
-                  className="offset-selector"
-                  placeholder="Offset"
-                  onChange={({ target: { value } }) => setOffset(value)}
-                  disabled={isLive}
-                />
-              ) : (
-                <DatePicker
-                  selected={timestamp}
-                  onChange={(date: Date | null) => setTimestamp(date)}
-                  showTimeInput
-                  timeInputLabel="Time:"
-                  dateFormat="MMMM d, yyyy HH:mm"
-                  className="date-picker"
-                  placeholderText="Select timestamp"
-                  disabled={isLive}
-                />
-              )}
-            </S.SeekTypeSelectorWrapper>
-          )}
+            ) : (
+              <DatePicker
+                selected={timestamp}
+                onChange={(date: Date | null) => setTimestamp(date)}
+                showTimeInput
+                timeInputLabel="Time:"
+                dateFormat="MMMM d, yyyy HH:mm"
+                className="date-picker"
+                placeholderText="Select timestamp"
+                disabled={isLive}
+              />
+            )}
+          </S.SeekTypeSelectorWrapper>
           <MultiSelect
             options={partitions.map((p) => ({
               label: `Partition #${p.partition.toString()}`,
@@ -389,7 +401,7 @@ const Filters: React.FC<FiltersProps> = ({
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
           />
-          <S.ClearAll>Clear all</S.ClearAll>
+          <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
             <Button
               type="button"
@@ -407,7 +419,7 @@ const Filters: React.FC<FiltersProps> = ({
               buttonType="secondary"
               buttonSize="M"
               disabled={isSubmitDisabled}
-              onClick={handleFiltersSubmit}
+              onClick={() => handleFiltersSubmit(offset)}
               style={{ fontWeight: 500 }}
             >
               Submit
@@ -424,9 +436,10 @@ const Filters: React.FC<FiltersProps> = ({
         />
       </div>
       <S.ActiveSmartFilterWrapper>
-        <S.AddFiltersIcon data-testid="addFilterIcon" onClick={toggleIsOpen}>
+        <Button buttonType="primary" buttonSize="M" onClick={toggle}>
           <i className="fas fa-plus fa-sm" />
-        </S.AddFiltersIcon>
+          Add Filters
+        </Button>
         {activeFilter.name && (
           <S.ActiveSmartFilter data-testid="activeSmartFilter">
             {activeFilter.name}
@@ -441,7 +454,7 @@ const Filters: React.FC<FiltersProps> = ({
       </S.ActiveSmartFilterWrapper>
       {isOpen && (
         <FilterModal
-          toggleIsOpen={toggleIsOpen}
+          toggleIsOpen={toggle}
           filters={savedFilters}
           addFilter={addFilter}
           deleteFilter={deleteFilter}

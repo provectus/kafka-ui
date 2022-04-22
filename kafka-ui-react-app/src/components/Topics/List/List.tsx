@@ -39,6 +39,7 @@ import {
   TitleCell,
   TopicSizeCell,
 } from './TopicsTableCells';
+import { ActionsTd } from './List.styled';
 
 export interface TopicsListProps {
   areTopicsFetching: boolean;
@@ -82,6 +83,7 @@ const List: React.FC<TopicsListProps> = ({
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage, pathname } = usePagination();
   const [showInternal, setShowInternal] = React.useState<boolean>(true);
+  const [cachedPage, setCachedPage] = React.useState<number | null>(null);
   const history = useHistory();
 
   React.useEffect(() => {
@@ -159,9 +161,16 @@ const List: React.FC<TopicsListProps> = ({
   const searchHandler = React.useCallback(
     (searchString: string) => {
       setTopicsSearch(searchString);
-      history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
+
+      setCachedPage(page || null);
+
+      const newPageQuery = !searchString && cachedPage ? cachedPage : 1;
+
+      history.push(
+        `${pathname}?page=${newPageQuery}&perPage=${perPage || PER_PAGE}`
+      );
     },
-    [setTopicsSearch, history, pathname, perPage]
+    [setTopicsSearch, history, pathname, perPage, page]
   );
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
@@ -175,6 +184,8 @@ const List: React.FC<TopicsListProps> = ({
         isRecreateTopicConfirmationVisible,
         setRecreateTopicConfirmationVisible,
       ] = React.useState(false);
+
+      const isHidden = internal || isReadOnly || !hovered;
 
       const deleteTopicHandler = React.useCallback(() => {
         deleteTopic(clusterName, name);
@@ -191,8 +202,8 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          {!internal && !isReadOnly && hovered ? (
-            <div className="has-text-right">
+          <div className="has-text-right">
+            {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
                   <DropdownItem onClick={clearTopicMessagesHandler} danger>
@@ -214,8 +225,8 @@ const List: React.FC<TopicsListProps> = ({
                   Recreate Topic
                 </DropdownItem>
               </Dropdown>
-            </div>
-          ) : null}
+            )}
+          </div>
           <ConfirmationModal
             isOpen={isDeleteTopicConfirmationVisible}
             onCancel={() => setDeleteTopicConfirmationVisible(false)}
@@ -342,8 +353,8 @@ const List: React.FC<TopicsListProps> = ({
             />
             <TableColumn
               maxWidth="4%"
-              className="topic-action-block"
               cell={ActionsCell}
+              customTd={ActionsTd}
             />
           </SmartTable>
         </div>

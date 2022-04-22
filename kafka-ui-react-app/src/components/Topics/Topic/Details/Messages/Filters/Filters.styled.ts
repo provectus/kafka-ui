@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 interface SavedFilterProps {
   selected: boolean;
@@ -99,7 +99,6 @@ export const ClearAll = styled.span`
   color: ${({ theme }) => theme.metrics.filters.color.normal};
   font-size: 12px;
   cursor: pointer;
-  font-family: Inter;
 `;
 
 export const MessageFilterModal = styled.div`
@@ -117,16 +116,19 @@ export const MessageFilterModal = styled.div`
 
 export const FilterTitle = styled.h3`
   line-height: 32px;
-  font-family: Inter;
   font-size: 20px;
   margin-bottom: 40px;
-`;
-
-export const NewFilterIcon = styled.div`
-  color: ${({ theme }) => theme.icons.newFilterIcon};
-  padding-right: 6px;
-  height: 12px;
-  cursor: pointer;
+  position: relative;
+  &:after {
+    content: '';
+    width: calc(100% + 32px);
+    height: 1px;
+    position: absolute;
+    top: 40px;
+    left: -16px;
+    display: inline-block;
+    background-color: #f1f2f3;
+  }
 `;
 
 export const CreatedFilter = styled.p`
@@ -154,15 +156,20 @@ export const SavedFilterName = styled.div`
 export const FilterButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: 25px;
+  margin-top: 10px;
   gap: 10px;
-`;
-
-export const AddFiltersIcon = styled.div`
-  color: ${({ theme }) => theme.metrics.filters.color.icon};
-  padding-right: 6px;
-  height: 20px;
-  cursor: pointer;
+  padding-top: 16px;
+  position: relative;
+  &:before {
+    content: '';
+    width: calc(100% + 32px);
+    height: 1px;
+    position: absolute;
+    top: 0;
+    left: -16px;
+    display: inline-block;
+    background-color: #f1f2f3;
+  }
 `;
 
 export const ActiveSmartFilterWrapper = styled.div`
@@ -200,6 +207,7 @@ export const SavedFilter = styled.div.attrs({
   height: 32px;
   align-items: center;
   cursor: pointer;
+  border-top: 1px solid #f1f2f3;
   &:hover ${FilterOptions} {
     display: flex;
   }
@@ -237,37 +245,6 @@ export const DeleteSavedFilterIcon = styled.div`
   align-items: center;
   padding-left: 5px;
   height: 24px;
-  cursor: pointer;
-`;
-
-export const ConfirmDeletionModal = styled.div.attrs({ role: 'deletionModal' })`
-  height: auto;
-  width: 348px;
-  border-radius: 8px;
-  background: ${({ theme }) => theme.modal.backgroundColor};
-  position: absolute;
-  left: 20%;
-  border: 1px solid ${({ theme }) => theme.breadcrumb};
-  box-shadow: ${({ theme }) => theme.modal.shadow};
-  padding: 16px;
-  z-index: 2;
-`;
-
-export const ConfirmDeletionModalHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 48px;
-`;
-
-export const ConfirmDeletionTitle = styled.h3`
-  font-size: 20px;
-  line-height: 32px;
-`;
-
-export const CloseDeletionModalIcon = styled.div`
-  color: ${({ theme }) => theme.icons.closeModalIcon};
-  height: 20px;
   cursor: pointer;
 `;
 
@@ -309,4 +286,29 @@ export const MessageLoadingSpinner = styled.div<MessageLoadingSpinnerProps>`
       transform: rotate(360deg);
     }
   }
+`;
+
+export const SavedFiltersTextContainer = styled.div.attrs({
+  role: 'savedFilterText',
+})`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 15px;
+`;
+
+const textStyle = css`
+  font-size: 14px;
+  color: ${({ theme }) => theme.editFilterText.color};
+  font-weight: 500;
+`;
+
+export const SavedFiltersText = styled.div`
+  ${textStyle};
+  margin-left: 7px;
+`;
+
+export const BackToCustomText = styled.div`
+  ${textStyle};
+  cursor: pointer;
 `;
