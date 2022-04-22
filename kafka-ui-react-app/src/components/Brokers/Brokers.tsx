@@ -128,17 +128,21 @@ const Brokers: React.FC = () => {
 
           {diskUsage &&
             diskUsage.length !== 0 &&
-            diskUsage.map(({ brokerId, segmentSize, segmentCount }) => (
-              <tr key={brokerId}>
-                <td>{brokerId}</td>
-                <td>
-                  <BytesFormatted value={segmentSize} />
-                </td>
-                <td>{segmentCount}</td>
-                <td>{items && items[brokerId]?.port}</td>
-                <td>{items && items[brokerId]?.host}</td>
-              </tr>
-            ))}
+            diskUsage.map(({ brokerId, segmentSize, segmentCount }) => {
+              const brokerItem = items?.find((item) => item.id === brokerId);
+
+              return (
+                <tr key={brokerId}>
+                  <td>{brokerId}</td>
+                  <td>
+                    <BytesFormatted value={segmentSize} />
+                  </td>
+                  <td>{segmentCount}</td>
+                  <td>{brokerItem?.port}</td>
+                  <td>{brokerItem?.host}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </Table>
     </>
