@@ -82,6 +82,7 @@
     "@openapitools/openapi-generator-cli": "^2.4.15",
     "@testing-library/dom": "^8.11.1",
     "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react-hooks": "^7.0.2",
     "@testing-library/user-event": "^13.5.0",
     "@types/classnames": "^2.2.11",
     "@types/enzyme": "^3.10.9",

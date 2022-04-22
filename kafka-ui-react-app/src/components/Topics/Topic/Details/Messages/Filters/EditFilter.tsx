@@ -3,6 +3,7 @@ import { MessageFilters } from 'components/Topics/Topic/Details/Messages/Filters
 import { FilterEdit } from 'components/Topics/Topic/Details/Messages/Filters/FilterModal';
 
 import AddEditFilterContainer from './AddEditFilterContainer';
+import * as S from './Filters.styled';
 
 export interface EditFilterProps {
   editFilter: FilterEdit;
@@ -23,14 +24,16 @@ const EditFilter: React.FC<EditFilterProps> = ({
     [editSavedFilter, editFilter.index, toggleEditModal]
   );
   return (
-    <AddEditFilterContainer
-      title="Edit saved filter"
-      cancelBtnHandler={() => toggleEditModal()}
-      submitBtnText="Save"
-      inputDisplayNameDefaultValue={editFilter.filter.name}
-      inputCodeDefaultValue={editFilter.filter.code}
-      submitCallback={onSubmit}
-    />
+    <>
+      <S.FilterTitle>Edit saved filter</S.FilterTitle>
+      <AddEditFilterContainer
+        cancelBtnHandler={() => toggleEditModal()}
+        submitBtnText="Save"
+        inputDisplayNameDefaultValue={editFilter.filter.name}
+        inputCodeDefaultValue={editFilter.filter.code}
+        submitCallback={onSubmit}
+      />
+    </>
   );
 };
 

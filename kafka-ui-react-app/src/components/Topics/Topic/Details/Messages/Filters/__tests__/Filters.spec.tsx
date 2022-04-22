@@ -45,35 +45,42 @@ describe('Filters component', () => {
   it('renders component', () => {
     setupWrapper();
   });
+
   describe('when fetching', () => {
     it('shows cancel button while fetching', () => {
       setupWrapper({ isFetching: true });
       expect(screen.getByText('Cancel')).toBeInTheDocument();
     });
   });
+
   describe('when fetching is over', () => {
     it('shows submit button while fetching is over', () => {
       setupWrapper();
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
   });
+
   describe('Input elements', () => {
+    const inputValue = 'Hello World!';
+
     it('search input', () => {
       setupWrapper();
       const SearchInput = screen.getByPlaceholderText('Search');
       expect(SearchInput).toBeInTheDocument();
       expect(SearchInput).toHaveValue('');
-      userEvent.type(SearchInput, 'Hello World!');
-      expect(SearchInput).toHaveValue('Hello World!');
+      userEvent.type(SearchInput, inputValue);
+      expect(SearchInput).toHaveValue(inputValue);
     });
+
     it('offset input', () => {
       setupWrapper();
       const OffsetInput = screen.getByPlaceholderText('Offset');
       expect(OffsetInput).toBeInTheDocument();
       expect(OffsetInput).toHaveValue('');
-      userEvent.type(OffsetInput, 'Hello World!');
-      expect(OffsetInput).toHaveValue('Hello World!');
+      userEvent.type(OffsetInput, inputValue);
+      expect(OffsetInput).toHaveValue(inputValue);
     });
+
     it('timestamp input', () => {
       setupWrapper();
       const seekTypeSelect = screen.getAllByRole('listbox');
@@ -84,11 +91,12 @@ describe('Filters component', () => {
       const TimestampInput = screen.getByPlaceholderText('Select timestamp');
       expect(TimestampInput).toBeInTheDocument();
       expect(TimestampInput).toHaveValue('');
-      userEvent.type(TimestampInput, 'Hello World!');
-      expect(TimestampInput).toHaveValue('Hello World!');
+      userEvent.type(TimestampInput, inputValue);
+      expect(TimestampInput).toHaveValue(inputValue);
       expect(screen.getByText('Submit')).toBeInTheDocument();
     });
   });
+
   describe('Select elements', () => {
     let seekTypeSelects: HTMLElement[];
     let options: HTMLElement[];
@@ -137,7 +145,11 @@ describe('Filters component', () => {
   describe('add new filter modal', () => {
     it('renders addFilter modal', () => {
       setupWrapper();
-      userEvent.click(screen.getByTestId('addFilterIcon'));
+      userEvent.click(
+        screen.getByRole('button', {
+          name: /add filters/i,
+        })
+      );
       expect(screen.getByTestId('messageFilterModal')).toBeInTheDocument();
     });
   });
@@ -146,21 +158,43 @@ describe('Filters component', () => {
     beforeEach(async () => {
       setupWrapper();
 
-      await waitFor(() => userEvent.click(screen.getByTestId('addFilterIcon')));
-      userEvent.click(screen.getByText('New filter'));
-      await waitFor(() => {
-        userEvent.type(screen.getAllByRole('textbox')[2], 'filter name');
-        userEvent.type(screen.getAllByRole('textbox')[3], 'filter code');
-      });
-      expect(screen.getAllByRole('textbox')[2]).toHaveValue('filter name');
-      expect(screen.getAllByRole('textbox')[3]).toHaveValue('filter code');
       await waitFor(() =>
-        userEvent.click(screen.getByRole('button', { name: /Add Filter/i }))
+        userEvent.click(
+          screen.getByRole('button', {
+            name: /add filters/i,
+          })
+        )
       );
+
+      const filterName = 'filter name';
+      const filterCode = 'filter code';
+
+      const messageFilterModal = screen.getByTestId('messageFilterModal');
+
+      await waitFor(() => {
+        const textBoxElements =
+          within(messageFilterModal).getAllByRole('textbox');
+        userEvent.type(textBoxElements[0], filterName);
+        userEvent.type(textBoxElements[1], filterCode);
+      });
+      const textBoxElements =
+        within(messageFilterModal).getAllByRole('textbox');
+      expect(textBoxElements[0]).toHaveValue(filterName);
+      expect(textBoxElements[1]).toHaveValue(filterCode);
+
+      await waitFor(() => {
+        return userEvent.click(
+          within(messageFilterModal).getByRole('button', {
+            name: /add filter/i,
+          })
+        );
+      });
     });
+
     it('shows saved smart filter', () => {
       expect(screen.getByTestId('activeSmartFilter')).toBeInTheDocument();
     });
+
     it('delete the active smart Filter', async () => {
       const smartFilterElement = screen.getByTestId('activeSmartFilter');
       const deleteIcon = within(smartFilterElement).getByTestId(
