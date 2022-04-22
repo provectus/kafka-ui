@@ -12,11 +12,12 @@ import ListContainer from 'components/Connect/List/ListContainer';
 import List, { ListProps } from 'components/Connect/List/List';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render, screen } from '@testing-library/react';
 
 describe('Connectors List', () => {
   describe('Container', () => {
     it('renders view with initial state of storage', () => {
-      const wrapper = mount(
+      render(
         <ThemeProvider theme={theme}>
           <Provider store={store}>
             <StaticRouter>
@@ -26,7 +27,7 @@ describe('Connectors List', () => {
         </ThemeProvider>
       );
 
-      expect(wrapper.exists(List)).toBeTruthy();
+      expect(screen.getByRole('heading')).toHaveTextContent('Connectors');
     });
   });
 
@@ -60,15 +61,15 @@ describe('Connectors List', () => {
     );
 
     it('renders PageLoader', () => {
-      const wrapper = mount(setupComponent({ areConnectorsFetching: true }));
-      expect(wrapper.exists('PageLoader')).toBeTruthy();
-      expect(wrapper.exists('table')).toBeFalsy();
+      render(setupComponent({ areConnectorsFetching: true }));
+      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(screen.queryAllByRole('row').length).toBeFalsy();
     });
 
     it('renders table', () => {
-      const wrapper = mount(setupComponent({ areConnectorsFetching: false }));
-      expect(wrapper.exists('PageLoader')).toBeFalsy();
-      expect(wrapper.exists('table')).toBeTruthy();
+      render(setupComponent({ areConnectorsFetching: false }));
+      expect(screen.queryAllByRole('progressbar').length).toBeFalsy();
+      expect(screen.getByRole('table')).toBeInTheDocument();
     });
 
     it('renders connectors list', () => {
