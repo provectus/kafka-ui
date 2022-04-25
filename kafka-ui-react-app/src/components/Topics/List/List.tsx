@@ -86,8 +86,8 @@ const List: React.FC<TopicsListProps> = ({
   const [cachedPage, setCachedPage] = React.useState<number | null>(null);
   const history = useHistory();
 
-  React.useEffect(() => {
-    fetchTopicsList({
+  const fetchTopicsListParams = React.useMemo(
+    () => ({
       clusterName,
       page,
       perPage,
@@ -95,17 +95,13 @@ const List: React.FC<TopicsListProps> = ({
       sortOrder,
       search,
       showInternal,
-    });
-  }, [
-    fetchTopicsList,
-    clusterName,
-    page,
-    perPage,
-    orderBy,
-    sortOrder,
-    search,
-    showInternal,
-  ]);
+    }),
+    [clusterName, page, perPage, orderBy, sortOrder, search, showInternal]
+  );
+
+  React.useEffect(() => {
+    fetchTopicsList(fetchTopicsListParams);
+  }, [fetchTopicsList, fetchTopicsListParams]);
 
   const tableState = useTableState<
     TopicWithDetailedInfo,
@@ -200,6 +196,11 @@ const List: React.FC<TopicsListProps> = ({
         setRecreateTopicConfirmationVisible,
       ] = React.useState(false);
 
+      const [
+        isClearMessagesConfirmationVisible,
+        setClearMessagesConfirmationVisible,
+      ] = React.useState(false);
+
       const isHidden = internal || isReadOnly || !hovered;
 
       const deleteTopicHandler = React.useCallback(() => {
@@ -208,6 +209,8 @@ const List: React.FC<TopicsListProps> = ({
 
       const clearTopicMessagesHandler = React.useCallback(() => {
         clearTopicMessages(clusterName, name);
+        fetchTopicsList(fetchTopicsListParams);
+        setClearMessagesConfirmationVisible(false);
       }, [name]);
 
       const recreateTopicHandler = React.useCallback(() => {
@@ -221,7 +224,10 @@ const List: React.FC<TopicsListProps> = ({
             {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
-                  <DropdownItem onClick={clearTopicMessagesHandler} danger>
+                  <DropdownItem
+                    onClick={() => setClearMessagesConfirmationVisible(true)}
+                    danger
+                  >
                     Clear Messages
                   </DropdownItem>
                 )}
@@ -242,6 +248,13 @@ const List: React.FC<TopicsListProps> = ({
               </Dropdown>
             )}
           </div>
+          <ConfirmationModal
+            isOpen={isClearMessagesConfirmationVisible}
+            onCancel={() => setClearMessagesConfirmationVisible(false)}
+            onConfirm={clearTopicMessagesHandler}
+          >
+            Are you sure want to clear topic messages?
+          </ConfirmationModal>
           <ConfirmationModal
             isOpen={isDeleteTopicConfirmationVisible}
             onCancel={() => setDeleteTopicConfirmationVisible(false)}
