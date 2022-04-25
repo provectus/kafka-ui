@@ -211,7 +211,7 @@ const List: React.FC<TopicsListProps> = ({
         clearTopicMessages(clusterName, name);
         fetchTopicsList(topicsListParams);
         setClearMessagesConfirmationVisible(false);
-      }, [name]);
+      }, [name, fetchTopicsList, topicsListParams]);
 
       const recreateTopicHandler = React.useCallback(() => {
         recreateTopic(clusterName, name);
