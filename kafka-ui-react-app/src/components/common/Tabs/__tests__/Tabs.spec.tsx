@@ -1,15 +1,16 @@
-import { mount, shallow } from 'enzyme';
 import React from 'react';
 import Tabs from 'components/common/Tabs/Tabs';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 describe('Tabs component', () => {
   const tabs: string[] = ['Tab 1', 'Tab 2', 'Tab 3'];
 
-  const child1 = <div className="child_1" />;
-  const child2 = <div className="child_2" />;
-  const child3 = <div className="child_3" />;
+  const child1 = <div className="child_1" data-testid="child_1" />;
+  const child2 = <div className="child_2" data-testid="child_2" />;
+  const child3 = <div className="child_3" data-testid="child_2" />;
 
-  const component = mount(
+  render(
     <Tabs tabs={tabs}>
       {child1}
       {child2}
@@ -17,27 +18,28 @@ describe('Tabs component', () => {
     </Tabs>
   );
 
-  it('renders the tabs with default index 0', () =>
-    expect(component.find(`li`).at(0).hasClass('is-active')).toBeTruthy());
+  it('renders the tabs with default index 0', () => {
+    expect(screen.queryAllByRole('listitem')[0]).toHaveClass('is-active');
+  });
   it('renders the list of tabs', () => {
-    component.find(`a`).forEach((link, idx) => {
-      expect(link.contains(tabs[idx])).toBeTruthy();
+    screen.queryAllByRole('button').forEach((link, idx) => {
+      expect(link).toHaveTextContent(tabs[idx]);
     });
   });
   it('renders the children', () => {
-    component.find(`a`).forEach((link, idx) => {
-      link.simulate('click');
-      expect(component.find(`.child_${idx + 1}`).exists()).toBeTruthy();
+    screen.queryAllByRole('button').forEach((link, idx) => {
+      userEvent.click(link);
+      expect(screen.getByTestId(`.child_${idx + 1}`)).toBeInTheDocument();
     });
   });
   it('matches the snapshot', () => {
-    const shallowComponent = shallow(
+    render(
       <Tabs tabs={tabs}>
         {child1}
         {child2}
         {child3}
       </Tabs>
     );
-    expect(shallowComponent).toMatchSnapshot();
+    expect(screen).toMatchSnapshot();
   });
 });
