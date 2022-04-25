@@ -12,6 +12,8 @@ exports[`Tasks view matches snapshot 1`] = `
   padding: 8px 8px 8px 24px;
   color: #171A1C;
   vertical-align: middle;
+  max-width: 350px;
+  word-wrap: break-word;
 }
 
 .c0 tbody > tr:hover {
@@ -182,6 +184,8 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
   padding: 8px 8px 8px 24px;
   color: #171A1C;
   vertical-align: middle;
+  max-width: 350px;
+  word-wrap: break-word;
 }
 
 .c0 tbody > tr:hover {

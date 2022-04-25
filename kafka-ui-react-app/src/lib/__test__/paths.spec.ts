@@ -179,12 +179,12 @@ describe('Paths', () => {
 
   it('clusterKsqlDbPath', () => {
     expect(paths.clusterKsqlDbPath(clusterName)).toEqual(
-      `${paths.clusterPath(clusterName)}/ksql-db`
+      `${paths.clusterPath(clusterName)}/ksqldb`
     );
   });
   it('clusterKsqlDbPath with default value', () => {
     expect(paths.clusterKsqlDbPath()).toEqual(
-      `${paths.clusterPath(':clusterName')}/ksql-db`
+      `${paths.clusterPath(':clusterName')}/ksqldb`
     );
   });
   it('clusterKsqlDbQueryPath', () => {

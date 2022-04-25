@@ -124,10 +124,6 @@ const Query: FC = () => {
                   createdAt: now(),
                 })
               );
-
-              setTimeout(() => {
-                dispatch(alertDissmissed(id));
-              }, AUTO_DISMISS_TIME);
               break;
             }
             case 'Schema': {
