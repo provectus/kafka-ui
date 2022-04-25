@@ -50,11 +50,11 @@ export interface TopicsListProps {
   deleteTopics(topicName: TopicName, clusterNames: ClusterName[]): void;
   recreateTopic(topicName: TopicName, clusterName: ClusterName): void;
   clearTopicsMessages(topicName: TopicName, clusterNames: ClusterName[]): void;
-  clearTopicMessages(
-    topicName: TopicName,
-    clusterName: ClusterName,
-    partitions?: number[]
-  ): void;
+  clearTopicMessages(params: {
+    topicName: TopicName;
+    clusterName: ClusterName;
+    partitions?: number[];
+  }): void;
   search: string;
   orderBy: TopicColumnsToSort | null;
   sortOrder: SortOrder;
@@ -207,7 +207,7 @@ const List: React.FC<TopicsListProps> = ({
       }, [name]);
 
       const clearTopicMessagesHandler = React.useCallback(() => {
-        clearTopicMessages(clusterName, name);
+        clearTopicMessages({ clusterName, topicName: name });
       }, [name]);
 
       const recreateTopicHandler = React.useCallback(() => {

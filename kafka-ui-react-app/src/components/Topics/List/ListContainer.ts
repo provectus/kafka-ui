@@ -6,10 +6,10 @@ import {
   deleteTopics,
   recreateTopic,
   clearTopicsMessages,
-  clearTopicMessages,
   setTopicsSearchAction,
   setTopicsOrderByAction,
 } from 'redux/actions';
+import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import {
   getTopicList,
   getAreTopicsFetching,

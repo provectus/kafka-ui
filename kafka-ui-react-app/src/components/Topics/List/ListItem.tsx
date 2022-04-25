@@ -22,7 +22,10 @@ export interface ListItemProps {
   deleteTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   recreateTopic: (clusterName: ClusterName, topicName: TopicName) => void;
   clusterName: ClusterName;
-  clearTopicMessages(topicName: TopicName, clusterName: ClusterName): void;
+  clearTopicMessages(params: {
+    topicName: TopicName;
+    clusterName: ClusterName;
+  }): void;
 }
 
 const ListItem: React.FC<ListItemProps> = ({
@@ -85,7 +88,7 @@ const ListItem: React.FC<ListItemProps> = ({
   }, [recreateTopic, clusterName, name]);
 
   const clearTopicMessagesHandler = React.useCallback(() => {
-    clearTopicMessages(clusterName, name);
+    clearTopicMessages({ clusterName, topicName: name });
   }, [clearTopicMessages, clusterName, name]);
   const [vElipsisVisble, setVElipsisVisble] = React.useState(false);
 

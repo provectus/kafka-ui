@@ -127,10 +127,10 @@ describe('Details', () => {
       const submitButton = screen.getAllByText('Submit')[0];
       userEvent.click(submitButton);
 
-      expect(mockClearTopicMessages).toHaveBeenCalledWith(
-        mockClusterName,
-        internalTopicPayload.name
-      );
+      expect(mockClearTopicMessages).toHaveBeenCalledWith({
+        clusterName: mockClusterName,
+        topicName: internalTopicPayload.name,
+      });
     });
 
     it('closes the modal when cancel button is clicked', () => {

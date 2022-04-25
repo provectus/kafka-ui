@@ -1,10 +1,9 @@
-import {
+import reducer, {
   addTopicMessage,
   resetTopicMessages,
   updateTopicMessagesMeta,
   updateTopicMessagesPhase,
-} from 'redux/actions';
-import reducer from 'redux/reducers/topicMessages/reducer';
+} from 'redux/reducers/topicMessages/topicMessagesSlice';
 
 import {
   topicMessagePayload,
@@ -19,7 +18,6 @@ describe('TopicMessages reducer', () => {
       addTopicMessage({ message: topicMessagePayload })
     );
     expect(state.messages.length).toEqual(1);
-    expect(state).toMatchSnapshot();
   });
 
   it('Adds new message with live tailing one', () => {

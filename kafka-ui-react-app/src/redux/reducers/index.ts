@@ -6,7 +6,7 @@ import alerts from 'redux/reducers/alerts/alertsSlice';
 import schemas from 'redux/reducers/schemas/schemasSlice';
 
 import topics from './topics/reducer';
-import topicMessages from './topicMessages/reducer';
+import topicMessages from './topicMessages/topicMessagesSlice';
 import consumerGroups from './consumerGroups/consumerGroupsSlice';
 import connect from './connect/reducer';
 import ksqlDb from './ksqlDb/ksqlDbSlice';
