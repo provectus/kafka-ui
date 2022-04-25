@@ -352,6 +352,7 @@ const Filters: React.FC<FiltersProps> = ({
           <Search
             placeholder="Search"
             value={query}
+            disabled={isLive}
             handleSearch={(value: string) => setQuery(value)}
           />
           <S.SeekTypeSelectorWrapper>
@@ -397,6 +398,7 @@ const Filters: React.FC<FiltersProps> = ({
             value={selectedPartitions}
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
+            disabled={isLive}
           />
           <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
