@@ -46,6 +46,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={cancelHandler}
             type="button"
             disabled={isConfirming}
+            data-testid="ConfirmationModal_cancelButton"
           >
             Cancel
           </Button>
@@ -56,6 +57,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onConfirm}
             type="button"
             disabled={isConfirming}
+            data-testId="ConfirmationModal_confirmButton"
           >
             {submitBtnText}
           </Button>
