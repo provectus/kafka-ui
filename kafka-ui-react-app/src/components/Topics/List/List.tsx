@@ -86,7 +86,7 @@ const List: React.FC<TopicsListProps> = ({
   const [cachedPage, setCachedPage] = React.useState<number | null>(null);
   const history = useHistory();
 
-  const fetchTopicsListParams = React.useMemo(
+  const topicsListParams = React.useMemo(
     () => ({
       clusterName,
       page,
@@ -100,8 +100,8 @@ const List: React.FC<TopicsListProps> = ({
   );
 
   React.useEffect(() => {
-    fetchTopicsList(fetchTopicsListParams);
-  }, [fetchTopicsList, fetchTopicsListParams]);
+    fetchTopicsList(topicsListParams);
+  }, [fetchTopicsList, topicsListParams]);
 
   const tableState = useTableState<
     TopicWithDetailedInfo,
@@ -209,7 +209,7 @@ const List: React.FC<TopicsListProps> = ({
 
       const clearTopicMessagesHandler = React.useCallback(() => {
         clearTopicMessages(clusterName, name);
-        fetchTopicsList(fetchTopicsListParams);
+        fetchTopicsList(topicsListParams);
         setClearMessagesConfirmationVisible(false);
       }, [name]);
 
