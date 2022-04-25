@@ -8,6 +8,7 @@ import {
 import { useParams } from 'react-router-dom';
 import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
+import useModal from 'lib/hooks/useModal';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
@@ -186,20 +187,23 @@ const List: React.FC<TopicsListProps> = ({
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
     ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
-      const [
-        isDeleteTopicConfirmationVisible,
-        setDeleteTopicConfirmationVisible,
-      ] = React.useState(false);
+      const {
+        isOpen: isDeleteTopicModalOpen,
+        setClose: closeDeleteTopicModal,
+        setOpen: openDeleteTopicModal,
+      } = useModal(false);
 
-      const [
-        isRecreateTopicConfirmationVisible,
-        setRecreateTopicConfirmationVisible,
-      ] = React.useState(false);
+      const {
+        isOpen: isRecreateTopicModalOpen,
+        setClose: closeRecreateTopicModal,
+        setOpen: openRecreateTopicModal,
+      } = useModal(false);
 
-      const [
-        isClearMessagesConfirmationVisible,
-        setClearMessagesConfirmationVisible,
-      ] = React.useState(false);
+      const {
+        isOpen: isClearMessagesModalOpen,
+        setClose: closeClearMessagesModal,
+        setOpen: openClearMessagesModal,
+      } = useModal(false);
 
       const isHidden = internal || isReadOnly || !hovered;
 
@@ -210,12 +214,12 @@ const List: React.FC<TopicsListProps> = ({
       const clearTopicMessagesHandler = React.useCallback(() => {
         clearTopicMessages(clusterName, name);
         fetchTopicsList(topicsListParams);
-        setClearMessagesConfirmationVisible(false);
+        closeClearMessagesModal();
       }, [name, fetchTopicsList, topicsListParams]);
 
       const recreateTopicHandler = React.useCallback(() => {
         recreateTopic(clusterName, name);
-        setRecreateTopicConfirmationVisible(false);
+        closeRecreateTopicModal();
       }, [name]);
 
       return (
@@ -224,47 +228,38 @@ const List: React.FC<TopicsListProps> = ({
             {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
-                  <DropdownItem
-                    onClick={() => setClearMessagesConfirmationVisible(true)}
-                    danger
-                  >
+                  <DropdownItem onClick={openClearMessagesModal} danger>
                     Clear Messages
                   </DropdownItem>
                 )}
                 {isTopicDeletionAllowed && (
-                  <DropdownItem
-                    onClick={() => setDeleteTopicConfirmationVisible(true)}
-                    danger
-                  >
+                  <DropdownItem onClick={openDeleteTopicModal} danger>
                     Remove Topic
                   </DropdownItem>
                 )}
-                <DropdownItem
-                  onClick={() => setRecreateTopicConfirmationVisible(true)}
-                  danger
-                >
+                <DropdownItem onClick={openRecreateTopicModal} danger>
                   Recreate Topic
                 </DropdownItem>
               </Dropdown>
             )}
           </div>
           <ConfirmationModal
-            isOpen={isClearMessagesConfirmationVisible}
-            onCancel={() => setClearMessagesConfirmationVisible(false)}
+            isOpen={isClearMessagesModalOpen}
+            onCancel={closeClearMessagesModal}
             onConfirm={clearTopicMessagesHandler}
           >
             Are you sure want to clear topic messages?
           </ConfirmationModal>
           <ConfirmationModal
-            isOpen={isDeleteTopicConfirmationVisible}
-            onCancel={() => setDeleteTopicConfirmationVisible(false)}
+            isOpen={isDeleteTopicModalOpen}
+            onCancel={closeDeleteTopicModal}
             onConfirm={deleteTopicHandler}
           >
             Are you sure want to remove <b>{name}</b> topic?
           </ConfirmationModal>
           <ConfirmationModal
-            isOpen={isRecreateTopicConfirmationVisible}
-            onCancel={() => setRecreateTopicConfirmationVisible(false)}
+            isOpen={isRecreateTopicModalOpen}
+            onCancel={closeRecreateTopicModal}
             onConfirm={recreateTopicHandler}
           >
             Are you sure to recreate <b>{name}</b> topic?
