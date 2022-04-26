@@ -1,10 +1,10 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import ListItem from 'components/ConsumerGroups/List/ListItem';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { StaticRouter } from 'react-router';
 import { ConsumerGroupState, ConsumerGroup } from 'generated-sources';
+import { render, screen } from '@testing-library/react';
 
 describe('List', () => {
   const mockConsumerGroup = {
@@ -29,7 +29,7 @@ describe('List', () => {
       },
     ],
   };
-  const component = mount(
+  const component = render(
     <StaticRouter>
       <ThemeProvider theme={theme}>
         <table>
@@ -54,50 +54,55 @@ describe('List', () => {
   );
 
   it('render empty ListItem', () => {
-    expect(component.exists('tr')).toBeTruthy();
+    expect(component.getByRole('row')).toBeInTheDocument();
   });
 
   it('renders item with stable status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.STABLE,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.STABLE);
+    expect(screen.getByRole('row')).toHaveTextContent(
+      ConsumerGroupState.STABLE
+    );
   });
 
   it('renders item with dead status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.DEAD,
       })
     );
 
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.DEAD);
+    expect(screen.queryAllByRole('cell')[5]).toHaveTextContent(
+      ConsumerGroupState.DEAD
+    );
   });
 
   it('renders item with empty status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.EMPTY,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.EMPTY);
+    expect(screen.queryAllByRole('cell')[5]).toHaveTextContent(
+      ConsumerGroupState.EMPTY
+    );
   });
 
   it('renders item with empty-string status', () => {
-    const wrapper = mount(
+    render(
       setupWrapper({
         ...mockConsumerGroup,
         state: ConsumerGroupState.UNKNOWN,
       })
     );
-
-    expect(wrapper.find('td').at(5).text()).toBe(ConsumerGroupState.UNKNOWN);
+    expect(screen.queryAllByRole('cell')[5]).toHaveTextContent(
+      ConsumerGroupState.UNKNOWN
+    );
   });
 });

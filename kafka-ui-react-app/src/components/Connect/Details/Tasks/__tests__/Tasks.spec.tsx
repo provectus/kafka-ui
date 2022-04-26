@@ -1,6 +1,5 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
 import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
@@ -8,6 +7,7 @@ import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render } from '@testing-library/react';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -62,7 +62,7 @@ describe('Tasks', () => {
 
     it('fetches tasks on mount', () => {
       const fetchTasks = jest.fn();
-      mount(setupWrapper({ fetchTasks }));
+      render(setupWrapper({ fetchTasks }));
       expect(fetchTasks).toHaveBeenCalledTimes(1);
       expect(fetchTasks).toHaveBeenCalledWith(
         clusterName,

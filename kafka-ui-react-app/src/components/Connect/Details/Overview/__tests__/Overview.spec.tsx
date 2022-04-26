@@ -1,6 +1,5 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
 import { containerRendersView } from 'lib/testHelpers';
 import OverviewContainer from 'components/Connect/Details/Overview/OverviewContainer';
 import Overview, {
@@ -9,12 +8,13 @@ import Overview, {
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render } from '@testing-library/react';
 
 describe('Overview', () => {
   containerRendersView(<OverviewContainer />, Overview);
 
   describe('view', () => {
-    const setupWrapper = (props: Partial<OverviewProps> = {}) => (
+    const component = (props: Partial<OverviewProps> = {}) => (
       <ThemeProvider theme={theme}>
         <Overview
           connector={connector}
@@ -26,13 +26,13 @@ describe('Overview', () => {
     );
 
     it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
+      const wrapper = create(component());
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
     it('is empty when no connector', () => {
-      const wrapper = mount(setupWrapper({ connector: null }));
-      expect(wrapper.html()).toEqual('');
+      const { container } = render(component({ connector: null }));
+      expect(container).toBeEmptyDOMElement();
     });
   });
 });

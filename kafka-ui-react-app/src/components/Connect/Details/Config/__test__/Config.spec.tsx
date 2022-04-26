@@ -1,6 +1,5 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
 import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
 import { clusterConnectConnectorConfigPath } from 'lib/paths';
 import ConfigContainer from 'components/Connect/Details/Config/ConfigContainer';
@@ -8,6 +7,7 @@ import Config, { ConfigProps } from 'components/Connect/Details/Config/Config';
 import { connector } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render } from '@testing-library/react';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -26,7 +26,7 @@ describe('Config', () => {
     const connectName = 'my-connect';
     const connectorName = 'my-connector';
 
-    const setupWrapper = (props: Partial<ConfigProps> = {}) => (
+    const component = (props: Partial<ConfigProps> = {}) => (
       <TestRouterWrapper
         pathname={pathname}
         urlParams={{ clusterName, connectName, connectorName }}
@@ -43,23 +43,23 @@ describe('Config', () => {
     );
 
     it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
+      const wrapper = create(component());
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
     it('matches snapshot when fetching config', () => {
-      const wrapper = create(setupWrapper({ isConfigFetching: true }));
+      const wrapper = create(component({ isConfigFetching: true }));
       expect(wrapper.toJSON()).toMatchSnapshot();
     });
 
     it('is empty when no config', () => {
-      const wrapper = mount(setupWrapper({ config: null }));
-      expect(wrapper.html()).toEqual('');
+      const { container } = render(component({ config: null }));
+      expect(container).toBeEmptyDOMElement();
     });
 
     it('fetches config on mount', () => {
       const fetchConfig = jest.fn();
-      mount(setupWrapper({ fetchConfig }));
+      render(component({ fetchConfig }));
       expect(fetchConfig).toHaveBeenCalledTimes(1);
       expect(fetchConfig).toHaveBeenCalledWith(
         clusterName,
