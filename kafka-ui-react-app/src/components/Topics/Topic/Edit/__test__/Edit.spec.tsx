@@ -5,7 +5,7 @@ import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
-import { clusterTopicsPath } from 'lib/paths';
+import { clusterTopicPath, clusterTopicsPath } from 'lib/paths';
 
 import { topicName, clusterName, topicWithInfo } from './fixtures';
 
@@ -125,6 +125,9 @@ describe('Edit Component', () => {
       expect(updateTopicMock).toHaveBeenCalledTimes(1);
       await waitFor(() => {
         expect(mocked.push).toHaveBeenCalled();
+        expect(mocked.location.pathname).toBe(
+          clusterTopicPath(clusterName, topicName)
+        );
       });
     });
   });
