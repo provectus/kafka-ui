@@ -1,6 +1,5 @@
 import React from 'react';
 import { StaticRouter } from 'react-router';
-import { mount } from 'enzyme';
 import {
   externalTopicPayload,
   internalTopicPayload,
@@ -8,6 +7,8 @@ import {
 import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 const mockDelete = jest.fn();
 const clusterName = 'local';
@@ -47,34 +48,32 @@ describe('ListItem', () => {
   );
 
   it('renders without checkbox for internal topic', () => {
-    const wrapper = mount(setupComponent());
+    render(setupComponent());
 
-    expect(wrapper.find('td').at(0).html()).toEqual('<td></td>');
+    expect(screen.queryAllByRole('cell').length).toBeTruthy();
   });
 
   it('renders with checkbox for external topic', () => {
-    const wrapper = mount(setupComponent({ topic: externalTopicPayload }));
+    render(setupComponent({ topic: externalTopicPayload }));
 
-    expect(wrapper.find('td').at(0).html()).toEqual(
-      '<td><input type="checkbox"></td>'
-    );
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
   });
 
   it('triggers the toggleTopicSelected when clicked on the checkbox input', () => {
-    const wrapper = mount(setupComponent({ topic: externalTopicPayload }));
-    expect(wrapper.exists('input')).toBeTruthy();
-    wrapper.find('input[type="checkbox"]').at(0).simulate('change');
+    render(setupComponent({ topic: externalTopicPayload }));
+    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+    userEvent.click(screen.getByRole('checkbox'));
     expect(mockToggleTopicSelected).toBeCalledTimes(1);
     expect(mockToggleTopicSelected).toBeCalledWith(externalTopicPayload.name);
   });
 
   it('renders correct out of sync replicas number', () => {
-    const wrapper = mount(
+    render(
       setupComponent({
         topic: { ...externalTopicPayload, partitions: undefined },
       })
     );
 
-    expect(wrapper.find('td').at(3).text()).toEqual('0');
+    expect(screen.queryAllByRole('cell', { name: '0' }).length).toBeTruthy();
   });
 });
