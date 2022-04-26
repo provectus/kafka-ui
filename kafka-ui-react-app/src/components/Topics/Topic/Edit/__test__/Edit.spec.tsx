@@ -1,5 +1,5 @@
 import React from 'react';
-import Edit, { Props } from 'components/Topics/Topic/Edit/Edit';
+import Edit, { DEFAULTS, Props } from 'components/Topics/Topic/Edit/Edit';
 import { screen, waitFor } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 import userEvent from '@testing-library/user-event';
@@ -74,6 +74,26 @@ describe('Edit Component', () => {
     expect(
       screen.queryByRole('heading', { name: `Danger Zone` })
     ).not.toBeInTheDocument();
+  });
+
+  describe('Edit Component with its topic default and modified values', () => {
+    it('should check the default partitions value in the DangerZone', () => {
+      renderComponent({
+        topic: { ...topicWithInfo, partitionCount: undefined },
+      });
+      expect(screen.getByPlaceholderText('Number of partitions')).toHaveValue(
+        DEFAULTS.partitions
+      );
+    });
+
+    it('should check the default partitions value in the DangerZone', () => {
+      renderComponent({
+        topic: { ...topicWithInfo, replicationFactor: undefined },
+      });
+      expect(screen.getByPlaceholderText('Replication Factor')).toHaveValue(
+        DEFAULTS.replicationFactor
+      );
+    });
   });
 
   describe('Submit Case of the Edit Component', () => {
