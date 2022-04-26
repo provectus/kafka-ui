@@ -10,13 +10,16 @@ import {
   clusterName,
 } from 'components/Topics/Topic/Edit/__test__/fixtures';
 
+const defaultPartitions = 3;
+const defaultReplicationFactor = 3;
+
 const renderComponent = (props?: Partial<Props>) =>
   render(
     <DangerZone
       clusterName={clusterName}
       topicName={topicName}
-      defaultPartitions={3}
-      defaultReplicationFactor={3}
+      defaultPartitions={defaultPartitions}
+      defaultReplicationFactor={defaultReplicationFactor}
       partitionsCountIncreased={false}
       replicationFactorUpdated={false}
       updateTopicPartitionsCount={jest.fn()}
@@ -34,7 +37,7 @@ const clickOnDialogSubmitButton = () => {
 };
 
 describe('DangerZone', () => {
-  it('renders', () => {
+  it('renders the component', () => {
     renderComponent();
 
     const numberOfPartitionsEditForm = screen.getByRole('form', {
@@ -115,5 +118,56 @@ describe('DangerZone', () => {
     await waitFor(() => {
       expect(mockUpdateTopicReplicationFactor).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('should view the validation error when partition value is lower than the default passed or empty', async () => {
+    renderComponent();
+    const partitionInput = screen.getByPlaceholderText('Number of partitions');
+    const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
+    const value = (defaultPartitions - 4).toString();
+
+    expect(partitionInputSubmitBtn).toBeDisabled();
+    await waitFor(() => {
+      userEvent.clear(partitionInput);
+      userEvent.type(partitionInput, value);
+    });
+
+    expect(partitionInput).toHaveValue(+value);
+    expect(partitionInputSubmitBtn).toBeEnabled();
+    userEvent.click(partitionInputSubmitBtn);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/You can only increase the number of partitions!/i)
+      ).toBeInTheDocument();
+    });
+
+    await waitFor(() => {
+      userEvent.clear(partitionInput);
+    });
+    expect(screen.getByText(/are required/i)).toBeInTheDocument();
+  });
+
+  it('should view the validation error when Replication Facto value is lower than the default passed or empty', async () => {
+    renderComponent();
+    const replicatorFactorInput =
+      screen.getByPlaceholderText('Replication Factor');
+    const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];
+
+    await waitFor(() => {
+      userEvent.clear(replicatorFactorInput);
+    });
+
+    expect(replicatorFactorInputSubmitBtn).toBeEnabled();
+    await waitFor(() => {
+      userEvent.click(replicatorFactorInputSubmitBtn);
+    });
+
+    expect(screen.getByText(/are required/i)).toBeInTheDocument();
+
+    await waitFor(() => {
+      userEvent.type(replicatorFactorInput, '1');
+    });
+    expect(screen.queryByText(/are required/i)).not.toBeInTheDocument();
   });
 });
