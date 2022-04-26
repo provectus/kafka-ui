@@ -5,8 +5,10 @@ import DangerZone, {
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
-
-import { topicName, clusterName } from './fixtures';
+import {
+  topicName,
+  clusterName,
+} from 'components/Topics/Topic/Edit/__test__/fixtures';
 
 const renderComponent = (props?: Partial<Props>) =>
   render(
@@ -30,6 +32,7 @@ const clickOnDialogSubmitButton = () => {
     })
   );
 };
+
 describe('DangerZone', () => {
   it('renders', () => {
     renderComponent();
