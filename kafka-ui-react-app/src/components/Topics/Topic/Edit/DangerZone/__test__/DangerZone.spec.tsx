@@ -13,8 +13,8 @@ import {
 const defaultPartitions = 3;
 const defaultReplicationFactor = 3;
 
-const renderComponent = (props?: Partial<Props>) =>
-  render(
+const renderComponent = (props?: Partial<Props>) => {
+  return render(
     <DangerZone
       clusterName={clusterName}
       topicName={topicName}
@@ -27,6 +27,7 @@ const renderComponent = (props?: Partial<Props>) =>
       {...props}
     />
   );
+};
 
 const clickOnDialogSubmitButton = () => {
   userEvent.click(
@@ -169,5 +170,72 @@ describe('DangerZone', () => {
       userEvent.type(replicatorFactorInput, '1');
     });
     expect(screen.queryByText(/are required/i)).not.toBeInTheDocument();
+  });
+
+  it('should close any popup if the partitionsCount is Increased ', () => {
+    renderComponent({ partitionsCountIncreased: true });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('should close any popup if the replicationFactor is Updated', () => {
+    renderComponent({ replicationFactorUpdated: true });
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+  });
+
+  it('should already opened Confirmation popup if partitionsCount is Increased', async () => {
+    const { rerender } = renderComponent();
+    const partitionInput = screen.getByPlaceholderText('Number of partitions');
+    const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
+
+    await waitFor(() => {
+      userEvent.type(partitionInput, '5');
+    });
+
+    userEvent.click(partitionInputSubmitBtn);
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+    rerender(
+      <DangerZone
+        clusterName={clusterName}
+        topicName={topicName}
+        defaultPartitions={defaultPartitions}
+        defaultReplicationFactor={defaultReplicationFactor}
+        partitionsCountIncreased
+        replicationFactorUpdated={false}
+        updateTopicPartitionsCount={jest.fn()}
+        updateTopicReplicationFactor={jest.fn()}
+      />
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    );
+  });
+
+  it('should already opened Confirmation popup if replicationFactor is Increased', async () => {
+    const { rerender } = renderComponent();
+    const replicatorFactorInput =
+      screen.getByPlaceholderText('Replication Factor');
+    const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];
+
+    await waitFor(() => {
+      userEvent.type(replicatorFactorInput, '5');
+    });
+
+    userEvent.click(replicatorFactorInputSubmitBtn);
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeInTheDocument());
+    rerender(
+      <DangerZone
+        clusterName={clusterName}
+        topicName={topicName}
+        defaultPartitions={defaultPartitions}
+        defaultReplicationFactor={defaultReplicationFactor}
+        partitionsCountIncreased={false}
+        replicationFactorUpdated
+        updateTopicPartitionsCount={jest.fn()}
+        updateTopicReplicationFactor={jest.fn()}
+      />
+    );
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    );
   });
 });
