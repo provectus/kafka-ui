@@ -40,7 +40,10 @@ const AddFilter: React.FC<FilterModalProps> = ({
         addFilter(data);
       } else {
         // other case is not applying the filter
-        data.name = data.name ? data.name : 'Unsaved filter';
+        const dataCodeLabel =
+          data.code.length > 16 ? `${data.code.slice(0, 16)}...` : data.code;
+        data.name = data.name || dataCodeLabel;
+
         activeFilterHandler(data, -1);
         toggleIsOpen();
       }
