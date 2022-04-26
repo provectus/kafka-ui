@@ -1,23 +1,35 @@
 import React from 'react';
 import Edit, { Props } from 'components/Topics/Topic/Edit/Edit';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
+import userEvent from '@testing-library/user-event';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+import { clusterTopicsPath } from 'lib/paths';
 
 import { topicName, clusterName, topicWithInfo } from './fixtures';
 
-const renderComponent = (props: Partial<Props> = {}) =>
+const historyMock = createMemoryHistory();
+
+const renderComponent = (props: Partial<Props> = {}, history = historyMock) =>
   render(
-    <Edit
-      clusterName={props.clusterName || clusterName}
-      topicName={props.topicName || topicName}
-      topic={'topic' in props ? props.topic : topicWithInfo}
-      isFetched={'isFetched' in props ? !!props.isFetched : true}
-      isTopicUpdated={false}
-      fetchTopicConfig={jest.fn()}
-      updateTopic={props.updateTopic || jest.fn()}
-      updateTopicPartitionsCount={props.updateTopicPartitionsCount || jest.fn()}
-      {...props}
-    />
+    <Router history={history}>
+      <Edit
+        clusterName={props.clusterName || clusterName}
+        topicName={props.topicName || topicName}
+        topic={'topic' in props ? props.topic : topicWithInfo}
+        isFetched={'isFetched' in props ? !!props.isFetched : true}
+        isTopicUpdated={
+          'isTopicUpdated' in props ? !!props.isTopicUpdated : false
+        }
+        fetchTopicConfig={jest.fn()}
+        updateTopic={props.updateTopic || jest.fn()}
+        updateTopicPartitionsCount={
+          props.updateTopicPartitionsCount || jest.fn()
+        }
+        {...props}
+      />
+    </Router>
   );
 
 describe('Edit Component', () => {
@@ -62,5 +74,58 @@ describe('Edit Component', () => {
     expect(
       screen.queryByRole('heading', { name: `Danger Zone` })
     ).not.toBeInTheDocument();
+  });
+
+  describe('Submit Case of the Edit Component', () => {
+    it('should check the submit functionality when topic updated is false', async () => {
+      const updateTopicMock = jest.fn();
+      const mocked = createMemoryHistory({
+        initialEntries: [`${clusterTopicsPath(clusterName)}/${topicName}/edit`],
+      });
+
+      jest.spyOn(mocked, 'push');
+      renderComponent({ updateTopic: updateTopicMock }, mocked);
+
+      const btn = screen.getAllByText(/submit/i)[0];
+      expect(btn).toBeEnabled();
+
+      await waitFor(() => {
+        userEvent.type(
+          screen.getByPlaceholderText('Min In Sync Replicas'),
+          '1'
+        );
+        userEvent.click(btn);
+      });
+      expect(updateTopicMock).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(mocked.push).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should check the submit functionality when topic updated is true', async () => {
+      const updateTopicMock = jest.fn();
+      const mocked = createMemoryHistory({
+        initialEntries: [`${clusterTopicsPath(clusterName)}/${topicName}/edit`],
+      });
+      jest.spyOn(mocked, 'push');
+      renderComponent(
+        { updateTopic: updateTopicMock, isTopicUpdated: true },
+        mocked
+      );
+
+      const btn = screen.getAllByText(/submit/i)[0];
+
+      await waitFor(() => {
+        userEvent.type(
+          screen.getByPlaceholderText('Min In Sync Replicas'),
+          '1'
+        );
+        userEvent.click(btn);
+      });
+      expect(updateTopicMock).toHaveBeenCalledTimes(1);
+      await waitFor(() => {
+        expect(mocked.push).toHaveBeenCalled();
+      });
+    });
   });
 });
