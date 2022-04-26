@@ -37,6 +37,19 @@ const clickOnDialogSubmitButton = () => {
   );
 };
 
+const checkDialogThenPressCancel = async () => {
+  const dialog = screen.getByRole('dialog');
+  expect(screen.getByRole('dialog')).toBeInTheDocument();
+
+  await waitFor(() => {
+    userEvent.click(within(dialog).getByText(/cancel/i));
+  });
+
+  await waitFor(() =>
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+  );
+};
+
 describe('DangerZone', () => {
   it('renders the component', () => {
     renderComponent();
@@ -237,5 +250,38 @@ describe('DangerZone', () => {
     await waitFor(() =>
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     );
+  });
+
+  it('should close the partitions dialog if he cancel button is pressed', async () => {
+    renderComponent();
+    const partitionInput = screen.getByPlaceholderText('Number of partitions');
+    const partitionInputSubmitBtn = screen.getAllByText(/submit/i)[0];
+
+    await waitFor(() => {
+      userEvent.type(partitionInput, '5');
+    });
+
+    await waitFor(() => {
+      userEvent.click(partitionInputSubmitBtn);
+    });
+
+    await checkDialogThenPressCancel();
+  });
+
+  it('should close the replicator dialog if he cancel button is pressed', async () => {
+    renderComponent();
+    const replicatorFactorInput =
+      screen.getByPlaceholderText('Replication Factor');
+    const replicatorFactorInputSubmitBtn = screen.getAllByText(/submit/i)[1];
+
+    await waitFor(() => {
+      userEvent.type(replicatorFactorInput, '5');
+    });
+
+    await waitFor(() => {
+      userEvent.click(replicatorFactorInputSubmitBtn);
+    });
+
+    await checkDialogThenPressCancel();
   });
 });
