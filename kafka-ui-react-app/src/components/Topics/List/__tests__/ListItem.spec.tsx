@@ -77,6 +77,4 @@ describe('ListItem', () => {
 
     expect(wrapper.find('td').at(3).text()).toEqual('0');
   });
-
-  it('delete', () => {});
 });
