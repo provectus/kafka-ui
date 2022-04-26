@@ -8,6 +8,7 @@ import {
 import ListItem, { ListItemProps } from 'components/Topics/List/ListItem';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
+import { screen } from '@testing-library/react';
 
 const mockDelete = jest.fn();
 const clusterName = 'local';
@@ -77,4 +78,6 @@ describe('ListItem', () => {
 
     expect(wrapper.find('td').at(3).text()).toEqual('0');
   });
+
+  it('delete', () => {});
 });
