@@ -1,9 +1,9 @@
 import React from 'react';
-import { mount } from 'enzyme';
 import { Provider } from 'react-redux';
 import { StaticRouter } from 'react-router-dom';
 import { store } from 'redux/store';
 import FiltersContainer from 'components/Topics/Topic/Details/Messages/Filters/FiltersContainer';
+import { render, screen } from '@testing-library/react';
 
 jest.mock(
   'components/Topics/Topic/Details/Messages/Filters/Filters',
@@ -12,14 +12,13 @@ jest.mock(
 
 describe('FiltersContainer', () => {
   it('renders view with initial state of storage', () => {
-    const wrapper = mount(
+    const { container } = render(
       <Provider store={store}>
         <StaticRouter>
           <FiltersContainer />
         </StaticRouter>
       </Provider>
     );
-
-    expect(wrapper.exists('mock-Filters')).toBeTruthy();
+    expect(container.innerHTML.toString().indexOf('mock-filters')).toBeTruthy();
   });
 });
