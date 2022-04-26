@@ -1,12 +1,11 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import {
   TopicWithDetailedInfo,
   ClusterName,
   TopicName,
 } from 'redux/interfaces';
-import { useParams } from 'react-router-dom';
-import { clusterTopicNewPath } from 'lib/paths';
+import { useHistory, useParams } from 'react-router-dom';
+import { clusterTopicCopyPath, clusterTopicNewPath } from 'lib/paths';
 import usePagination from 'lib/hooks/usePagination';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -125,6 +124,21 @@ const List: React.FC<TopicsListProps> = ({
     }
   );
 
+  const getSelectedTopic = (): string => {
+    const name = Array.from(tableState.selectedIds)[0];
+    const selectedTopic =
+      tableState.data.find(
+        (topic: TopicWithDetailedInfo) => topic.name === name
+      ) || {};
+
+    return Object.keys(selectedTopic)
+      .map((x: string) => {
+        const value = selectedTopic[x as keyof typeof selectedTopic];
+        return value && x !== 'partitions' ? `${x}=${value}` : null;
+      })
+      .join('&');
+  };
+
   const handleSwitch = React.useCallback(() => {
     setShowInternal(!showInternal);
     history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
@@ -185,6 +199,8 @@ const List: React.FC<TopicsListProps> = ({
         setRecreateTopicConfirmationVisible,
       ] = React.useState(false);
 
+      const isHidden = internal || isReadOnly || !hovered;
+
       const deleteTopicHandler = React.useCallback(() => {
         deleteTopic(clusterName, name);
       }, [name]);
@@ -200,8 +216,8 @@ const List: React.FC<TopicsListProps> = ({
 
       return (
         <>
-          {!internal && !isReadOnly && hovered ? (
-            <div className="has-text-right">
+          <div className="has-text-right">
+            {!isHidden && (
               <Dropdown label={<VerticalElipsisIcon />} right>
                 {cleanUpPolicy === CleanUpPolicy.DELETE && (
                   <DropdownItem onClick={clearTopicMessagesHandler} danger>
@@ -223,8 +239,8 @@ const List: React.FC<TopicsListProps> = ({
                   Recreate Topic
                 </DropdownItem>
               </Dropdown>
-            </div>
-          ) : null}
+            )}
+          </div>
           <ConfirmationModal
             isOpen={isDeleteTopicConfirmationVisible}
             onCancel={() => setDeleteTopicConfirmationVisible(false)}
@@ -293,6 +309,20 @@ const List: React.FC<TopicsListProps> = ({
                 >
                   Delete selected topics
                 </Button>
+                {tableState.selectedCount === 1 && (
+                  <Button
+                    buttonSize="M"
+                    buttonType="secondary"
+                    isLink
+                    to={{
+                      pathname: clusterTopicCopyPath(clusterName),
+                      search: `?${getSelectedTopic()}`,
+                    }}
+                  >
+                    Copy selected topic
+                  </Button>
+                )}
+
                 <Button
                   buttonSize="M"
                   buttonType="secondary"

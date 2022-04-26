@@ -7,7 +7,11 @@ import { Provider } from 'react-redux';
 import { screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import fetchMock from 'fetch-mock-jest';
-import { clusterTopicNewPath, clusterTopicPath } from 'lib/paths';
+import {
+  clusterTopicCopyPath,
+  clusterTopicNewPath,
+  clusterTopicPath,
+} from 'lib/paths';
 import userEvent from '@testing-library/user-event';
 import { render } from 'lib/testHelpers';
 
@@ -31,6 +35,11 @@ const renderComponent = (history = historyMock, store = storeMock) =>
           <New />
         </Provider>
       </Route>
+      <Route path={clusterTopicCopyPath(':clusterName')}>
+        <Provider store={store}>
+          <New />
+        </Provider>
+      </Route>
       <Route path={clusterTopicPath(':clusterName', ':topicName')}>
         New topic path
       </Route>
@@ -40,6 +49,32 @@ const renderComponent = (history = historyMock, store = storeMock) =>
 describe('New', () => {
   beforeEach(() => {
     fetchMock.reset();
+  });
+
+  it('checks header for create new', async () => {
+    const mockedHistory = createMemoryHistory({
+      initialEntries: [clusterTopicNewPath(clusterName)],
+    });
+    renderComponent(mockedHistory);
+    expect(
+      screen.getByRole('heading', { name: 'Create new Topic' })
+    ).toHaveTextContent('Create new Topic');
+  });
+
+  it('checks header for copy', async () => {
+    const mockedHistory = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: clusterTopicCopyPath(clusterName),
+          search: `?name=test`,
+        },
+      ],
+    });
+
+    renderComponent(mockedHistory);
+    expect(
+      screen.getByRole('heading', { name: 'Copy Topic' })
+    ).toHaveTextContent('Copy Topic');
   });
 
   it('validates form', async () => {
