@@ -9,64 +9,78 @@ import {
   clusterTopicSendMessagePath,
 } from 'lib/paths';
 
+const TopicText = {
+  edit: 'Edit Container',
+  send: 'Send Message',
+  detail: 'Details Container',
+  loading: 'Loading',
+};
+
 jest.mock('components/Topics/Topic/Edit/EditContainer', () => () => (
-  <div>Edit Container</div>
+  <div>{TopicText.edit}</div>
 ));
 jest.mock('components/Topics/Topic/SendMessage/SendMessage', () => () => (
-  <div>Send Message</div>
+  <div>{TopicText.send}</div>
 ));
 jest.mock('components/Topics/Topic/Details/DetailsContainer', () => () => (
-  <div>Details Container</div>
+  <div>{TopicText.detail}</div>
 ));
 jest.mock('components/common/PageLoader/PageLoader', () => () => (
-  <div>Loading</div>
+  <div>{TopicText.loading}</div>
 ));
 
-const resetTopicMessages = jest.fn();
-const fetchTopicDetailsMock = jest.fn();
+describe('Topic Component', () => {
+  const resetTopicMessages = jest.fn();
+  const fetchTopicDetailsMock = jest.fn();
 
-const renderComponent = (pathname: string, topicFetching: boolean) =>
-  render(
-    <Route path={clusterTopicPath(':clusterName', ':topicName')}>
-      <Topic
-        isTopicFetching={topicFetching}
-        resetTopicMessages={resetTopicMessages}
-        fetchTopicDetails={fetchTopicDetailsMock}
-      />
-    </Route>,
-    { pathname }
-  );
+  const renderComponent = (pathname: string, topicFetching: boolean) =>
+    render(
+      <Route path={clusterTopicPath(':clusterName', ':topicName')}>
+        <Topic
+          isTopicFetching={topicFetching}
+          resetTopicMessages={resetTopicMessages}
+          fetchTopicDetails={fetchTopicDetailsMock}
+        />
+      </Route>,
+      { pathname }
+    );
 
-it('renders Edit page', () => {
-  renderComponent(clusterTopicEditPath('local', 'myTopicName'), false);
-  expect(screen.getByText('Edit Container')).toBeInTheDocument();
-});
+  afterEach(() => {
+    resetTopicMessages.mockClear();
+    fetchTopicDetailsMock.mockClear();
+  });
 
-it('renders Send Message page', () => {
-  renderComponent(clusterTopicSendMessagePath('local', 'myTopicName'), false);
-  expect(screen.getByText('Send Message')).toBeInTheDocument();
-});
+  it('renders Edit page', () => {
+    renderComponent(clusterTopicEditPath('local', 'myTopicName'), false);
+    expect(screen.getByText(TopicText.edit)).toBeInTheDocument();
+  });
 
-it('renders Details Container page', () => {
-  renderComponent(clusterTopicPath('local', 'myTopicName'), false);
-  expect(screen.getByText('Details Container')).toBeInTheDocument();
-});
+  it('renders Send Message page', () => {
+    renderComponent(clusterTopicSendMessagePath('local', 'myTopicName'), false);
+    expect(screen.getByText(TopicText.send)).toBeInTheDocument();
+  });
 
-it('renders Page loader', () => {
-  renderComponent(clusterTopicPath('local', 'myTopicName'), true);
-  expect(screen.getByText('Loading')).toBeInTheDocument();
-});
+  it('renders Details Container page', () => {
+    renderComponent(clusterTopicPath('local', 'myTopicName'), false);
+    expect(screen.getByText(TopicText.detail)).toBeInTheDocument();
+  });
 
-it('fetches topicDetails', () => {
-  renderComponent(clusterTopicPath('local', 'myTopicName'), false);
-  expect(fetchTopicDetailsMock).toHaveBeenCalledTimes(1);
-});
+  it('renders Page loader', () => {
+    renderComponent(clusterTopicPath('local', 'myTopicName'), true);
+    expect(screen.getByText(TopicText.loading)).toBeInTheDocument();
+  });
 
-it('resets topic messages after unmount', () => {
-  const component = renderComponent(
-    clusterTopicPath('local', 'myTopicName'),
-    false
-  );
-  component.unmount();
-  expect(resetTopicMessages).toHaveBeenCalledTimes(1);
+  it('fetches topicDetails', () => {
+    renderComponent(clusterTopicPath('local', 'myTopicName'), false);
+    expect(fetchTopicDetailsMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('resets topic messages after unmount', () => {
+    const component = renderComponent(
+      clusterTopicPath('local', 'myTopicName'),
+      false
+    );
+    component.unmount();
+    expect(resetTopicMessages).toHaveBeenCalledTimes(1);
+  });
 });
