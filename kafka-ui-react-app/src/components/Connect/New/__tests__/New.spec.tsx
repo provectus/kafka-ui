@@ -79,18 +79,18 @@ describe('New', () => {
       renderComponent({ createConnector });
       await simulateFormSubmit();
       expect(createConnector).toHaveBeenCalledTimes(1);
-      expect(createConnector).toHaveBeenCalledWith(
+      expect(createConnector).toHaveBeenCalledWith({
         clusterName,
-        connects[0].name,
-        {
+        connectName: connects[0].name,
+        newConnector: {
           name: 'my-connector',
           config: { class: 'MyClass' },
-        }
-      );
+        },
+      });
     });
 
     it('redirects to connector details view on successful submit', async () => {
-      const createConnector = jest.fn().mockResolvedValue(connector);
+      const createConnector = jest.fn().mockResolvedValue({ connector });
       renderComponent({ createConnector });
       await simulateFormSubmit();
       expect(mockHistoryPush).toHaveBeenCalledTimes(1);

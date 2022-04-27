@@ -15,12 +15,11 @@ interface RouterParams {
 }
 
 export interface TasksProps {
-  fetchTasks(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    silent?: boolean
-  ): void;
+  fetchTasks(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
   areTasksFetching: boolean;
   tasks: Task[];
 }
@@ -33,7 +32,7 @@ const Tasks: React.FC<TasksProps> = ({
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
 
   React.useEffect(() => {
-    fetchTasks(clusterName, connectName, connectorName, true);
+    fetchTasks({ clusterName, connectName, connectorName });
   }, [fetchTasks, clusterName, connectName, connectorName]);
 
   if (areTasksFetching) {

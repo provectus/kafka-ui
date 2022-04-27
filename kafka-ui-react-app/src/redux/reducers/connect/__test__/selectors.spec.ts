@@ -1,10 +1,10 @@
 import {
-  fetchConnectorAction,
-  fetchConnectorConfigAction,
-  fetchConnectorsAction,
-  fetchConnectorTasksAction,
-  fetchConnectsAction,
-} from 'redux/actions';
+  fetchConnector,
+  fetchConnectorConfig,
+  fetchConnectors,
+  fetchConnectorTasks,
+  fetchConnects,
+} from 'redux/reducers/connect/connectSlice';
 import { store } from 'redux/store';
 import * as selectors from 'redux/reducers/connect/selectors';
 
@@ -50,17 +50,26 @@ describe('Connect selectors', () => {
 
   describe('state', () => {
     it('returns connects', () => {
-      store.dispatch(fetchConnectsAction.success({ connects }));
+      store.dispatch({
+        type: fetchConnects.fulfilled.type,
+        payload: { connects },
+      });
       expect(selectors.getConnects(store.getState())).toEqual(connects);
     });
 
     it('returns connectors', () => {
-      store.dispatch(fetchConnectorsAction.success({ connectors }));
+      store.dispatch({
+        type: fetchConnectors.fulfilled.type,
+        payload: { connectors },
+      });
       expect(selectors.getConnectors(store.getState())).toEqual(connectors);
     });
 
     it('returns connector', () => {
-      store.dispatch(fetchConnectorAction.success({ connector }));
+      store.dispatch({
+        type: fetchConnector.fulfilled.type,
+        payload: { connector },
+      });
       expect(selectors.getConnector(store.getState())).toEqual(connector);
       expect(selectors.getConnectorStatus(store.getState())).toEqual(
         connector.status.state
@@ -68,7 +77,10 @@ describe('Connect selectors', () => {
     });
 
     it('returns connector tasks', () => {
-      store.dispatch(fetchConnectorTasksAction.success({ tasks }));
+      store.dispatch({
+        type: fetchConnectorTasks.fulfilled.type,
+        payload: { tasks },
+      });
       expect(selectors.getConnectorTasks(store.getState())).toEqual(tasks);
       expect(selectors.getConnectorRunningTasksCount(store.getState())).toEqual(
         2
@@ -79,9 +91,10 @@ describe('Connect selectors', () => {
     });
 
     it('returns connector config', () => {
-      store.dispatch(
-        fetchConnectorConfigAction.success({ config: connector.config })
-      );
+      store.dispatch({
+        type: fetchConnectorConfig.fulfilled.type,
+        payload: { config: connector.config },
+      });
       expect(selectors.getConnectorConfig(store.getState())).toEqual(
         connector.config
       );

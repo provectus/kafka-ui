@@ -60,11 +60,11 @@ describe('Edit', () => {
       const fetchConfig = jest.fn();
       renderComponent({ fetchConfig });
       expect(fetchConfig).toHaveBeenCalledTimes(1);
-      expect(fetchConfig).toHaveBeenCalledWith(
+      expect(fetchConfig).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('calls updateConfig on form submit', async () => {
@@ -72,12 +72,12 @@ describe('Edit', () => {
       renderComponent({ updateConfig });
       await waitFor(() => fireEvent.submit(screen.getByRole('form')));
       expect(updateConfig).toHaveBeenCalledTimes(1);
-      expect(updateConfig).toHaveBeenCalledWith(
+      expect(updateConfig).toHaveBeenCalledWith({
         clusterName,
         connectName,
         connectorName,
-        connector.config
-      );
+        connectorConfig: connector.config,
+      });
     });
 
     it('redirects to connector config view on successful submit', async () => {
