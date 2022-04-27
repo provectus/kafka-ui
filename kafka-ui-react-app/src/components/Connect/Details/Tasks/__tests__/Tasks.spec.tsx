@@ -1,6 +1,5 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import { mount } from 'enzyme';
 import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
@@ -35,12 +34,7 @@ describe('Tasks', () => {
           pathname={pathname}
           urlParams={{ clusterName, connectName, connectorName }}
         >
-          <Tasks
-            fetchTasks={jest.fn()}
-            areTasksFetching={false}
-            tasks={tasks}
-            {...props}
-          />
+          <Tasks areTasksFetching={false} tasks={tasks} {...props} />
         </TestRouterWrapper>
       </ThemeProvider>
     );
@@ -58,17 +52,6 @@ describe('Tasks', () => {
     it('matches snapshot when no tasks', () => {
       const wrapper = create(setupWrapper({ tasks: [] }));
       expect(wrapper.toJSON()).toMatchSnapshot();
-    });
-
-    it('fetches tasks on mount', () => {
-      const fetchTasks = jest.fn();
-      mount(setupWrapper({ fetchTasks }));
-      expect(fetchTasks).toHaveBeenCalledTimes(1);
-      expect(fetchTasks).toHaveBeenCalledWith({
-        clusterName,
-        connectName,
-        connectorName,
-      });
     });
   });
 });

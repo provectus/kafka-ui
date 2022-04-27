@@ -33,7 +33,7 @@ const Brokers: React.FC = () => {
 
   const replicas = inSyncReplicasCount ?? 0 + (outOfSyncReplicasCount ?? 0);
   const areAllInSync = inSyncReplicasCount && replicas === inSyncReplicasCount;
-
+  const partitionIsOffline = offlinePartitionCount && offlinePartitionCount > 0;
   React.useEffect(() => {
     dispatch(fetchClusterStats(clusterName));
     dispatch(fetchBrokers(clusterName));
@@ -61,13 +61,9 @@ const Brokers: React.FC = () => {
           <Metrics.Indicator
             label="Online"
             isAlert
-            alertType={
-              offlinePartitionCount && offlinePartitionCount > 0
-                ? 'error'
-                : 'success'
-            }
+            alertType={partitionIsOffline ? 'error' : 'success'}
           >
-            {offlinePartitionCount && offlinePartitionCount > 0 ? (
+            {partitionIsOffline ? (
               <Metrics.RedText>{onlinePartitionCount}</Metrics.RedText>
             ) : (
               onlinePartitionCount
@@ -81,11 +77,9 @@ const Brokers: React.FC = () => {
             label="URP"
             title="Under replicated partitions"
             isAlert
-            alertType={
-              underReplicatedPartitionCount === 0 ? 'success' : 'error'
-            }
+            alertType={!underReplicatedPartitionCount ? 'success' : 'error'}
           >
-            {underReplicatedPartitionCount === 0 ? (
+            {!underReplicatedPartitionCount ? (
               <Metrics.LightText>
                 {underReplicatedPartitionCount}
               </Metrics.LightText>
