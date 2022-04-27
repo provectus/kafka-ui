@@ -124,14 +124,6 @@ describe('AddFilter component', () => {
         activeFilterHandler: activeFilterHandlerMock,
         toggleIsOpen: toggleModelMock,
       });
-
-      await waitFor(() => {
-        userEvent.paste(
-          screen.getAllByRole('textbox')[0] as HTMLTextAreaElement,
-          codeValue
-        );
-        userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
-      });
     });
 
     afterEach(() => {
@@ -140,31 +132,98 @@ describe('AddFilter component', () => {
       toggleModelMock.mockClear();
     });
 
-    it('OnSubmit condition with checkbox off functionality', async () => {
-      // since both values are in it
-      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
-      expect(addFilterBtn).toBeEnabled();
-      userEvent.click(addFilterBtn);
+    describe('OnSubmit conditions with codeValue and nameValue in fields', () => {
+      beforeEach(async () => {
+        await waitFor(() => {
+          userEvent.paste(
+            screen.getAllByRole('textbox')[0] as HTMLTextAreaElement,
+            codeValue
+          );
+          userEvent.type(screen.getAllByRole('textbox')[1], nameValue);
+        });
+      });
 
-      await waitFor(() => {
-        expect(activeFilterHandlerMock).toHaveBeenCalled();
-        expect(addFilterMock).not.toHaveBeenCalled();
+      it('OnSubmit condition with checkbox off functionality', async () => {
+        // since both values are in it
+        const addFilterBtn = screen.getByRole('button', {
+          name: /Add filter/i,
+        });
+        expect(addFilterBtn).toBeEnabled();
+        userEvent.click(addFilterBtn);
+
+        await waitFor(() => {
+          expect(activeFilterHandlerMock).toHaveBeenCalled();
+          expect(addFilterMock).not.toHaveBeenCalled();
+        });
+      });
+
+      it('OnSubmit condition with checkbox on functionality', async () => {
+        userEvent.click(screen.getByRole('checkbox'));
+
+        userEvent.click(screen.getAllByRole('button')[1]);
+        await waitFor(() => {
+          expect(activeFilterHandlerMock).not.toHaveBeenCalled();
+          expect(addFilterMock).toHaveBeenCalled();
+          expect(toggleModelMock).not.toHaveBeenCalled();
+        });
+      });
+
+      it('should check the state submit button when checkbox state changes so is name input value', async () => {
+        const checkbox = screen.getByRole('checkbox');
+        const codeTextBox = screen.getAllByRole(
+          'textbox'
+        )[0] as HTMLTextAreaElement;
+        const nameTextBox = screen.getAllByRole('textbox')[1];
+        const addFilterBtn = screen.getByRole('button', {
+          name: /Add filter/i,
+        });
+
+        userEvent.clear(nameTextBox);
+        expect(nameTextBox).toHaveValue('');
+
+        userEvent.click(addFilterBtn);
+        await waitFor(() => {
+          expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+          expect(activeFilterHandlerMock).toHaveBeenCalledWith(
+            {
+              name: codeValue,
+              code: codeValue,
+              saveFilter: false,
+            },
+            -1
+          );
+          // get reset-ed
+          expect(codeTextBox.value).toEqual(``);
+          expect(toggleModelMock).toHaveBeenCalled();
+        });
+
+        userEvent.paste(codeTextBox, codeValue);
+        expect(codeTextBox).toHaveValue(`${codeValue}\n\n`);
+
+        userEvent.click(checkbox);
+        expect(addFilterBtn).toBeDisabled();
+
+        userEvent.type(nameTextBox, nameValue);
+        expect(nameTextBox).toHaveValue(nameValue);
+
+        await waitFor(() => {
+          expect(addFilterBtn).toBeEnabled();
+        });
+
+        userEvent.click(addFilterBtn);
+
+        await waitFor(() => {
+          expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+          expect(addFilterMock).toHaveBeenCalledWith({
+            name: nameValue,
+            code: codeValue,
+            saveFilter: true,
+          });
+        });
       });
     });
 
-    it('OnSubmit condition with checkbox on functionality', async () => {
-      userEvent.click(screen.getByRole('checkbox'));
-
-      userEvent.click(screen.getAllByRole('button')[1]);
-      await waitFor(() => {
-        expect(activeFilterHandlerMock).not.toHaveBeenCalled();
-        expect(addFilterMock).toHaveBeenCalled();
-        expect(toggleModelMock).not.toHaveBeenCalled();
-      });
-    });
-
-    it('should check the state submit button when checkbox state changes so is name input value', async () => {
-      const checkbox = screen.getByRole('checkbox');
+    it('should use sliced code as the filter name if filter name is empty', async () => {
       const codeTextBox = screen.getAllByRole(
         'textbox'
       )[0] as HTMLTextAreaElement;
@@ -172,60 +231,14 @@ describe('AddFilter component', () => {
       const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
 
       userEvent.clear(nameTextBox);
-      expect(nameTextBox).toHaveValue('');
-
-      userEvent.click(addFilterBtn);
-      await waitFor(() => {
-        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
-        expect(activeFilterHandlerMock).toHaveBeenCalledWith(
-          {
-            name: codeValue,
-            code: codeValue,
-            saveFilter: false,
-          },
-          -1
-        );
-        // get reset-ed
-        expect(codeTextBox.value).toEqual(``);
-        expect(toggleModelMock).toHaveBeenCalled();
-      });
-
-      userEvent.paste(codeTextBox, codeValue);
-      expect(codeTextBox).toHaveValue(`${codeValue}\n\n`);
-
-      userEvent.click(checkbox);
-      expect(addFilterBtn).toBeDisabled();
-
-      userEvent.type(nameTextBox, nameValue);
-      expect(nameTextBox).toHaveValue(nameValue);
-
-      await waitFor(() => {
-        expect(addFilterBtn).toBeEnabled();
-      });
-
-      userEvent.click(addFilterBtn);
-
-      await waitFor(() => {
-        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
-        expect(addFilterMock).toHaveBeenCalledWith({
-          name: nameValue,
-          code: codeValue,
-          saveFilter: true,
-        });
-      });
-    });
-
-    it('should use sliced code as the filter name if filter name is empty', async () => {
-      const codeTextBox = screen.getAllByRole('textbox')[0];
-      const nameTextBox = screen.getAllByRole('textbox')[1];
-      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
-
-      userEvent.clear(nameTextBox);
       userEvent.clear(codeTextBox);
-      userEvent.paste(codeTextBox, longCodeValue);
+
+      await waitFor(() => {
+        userEvent.paste(codeTextBox, longCodeValue);
+      });
 
       expect(nameTextBox).toHaveValue('');
-      expect(codeTextBox).toHaveValue(longCodeValue);
+      expect(codeTextBox).toHaveValue(`${longCodeValue}\n\n`);
 
       userEvent.click(addFilterBtn);
 
@@ -241,7 +254,7 @@ describe('AddFilter component', () => {
           },
           -1
         );
-        expect(codeTextBox).toHaveValue('');
+        expect(codeTextBox.value).toEqual('');
         expect(toggleModelMock).toHaveBeenCalled();
       });
     });
