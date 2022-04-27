@@ -22,6 +22,7 @@ import {
   ConnectorSearch,
   ConnectState,
 } from 'redux/interfaces';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const kafkaConnectApiClient = new KafkaConnectApi(apiClientConf);
@@ -254,11 +255,18 @@ export const restartConnectorTask = createAsyncThunk<
         taskId: Number(taskId),
       });
 
-      dispatch(
+      await dispatch(
         fetchConnectorTasks({
           clusterName,
           connectName,
           connectorName,
+        })
+      );
+
+      dispatch(
+        showSuccessAlert({
+          id: `connect-${connectName}-${clusterName}`,
+          message: 'Tasks successfully restarted.',
         })
       );
 
@@ -305,7 +313,7 @@ export const updateConnectorConfig = createAsyncThunk<
   'connect/updateConnectorConfig',
   async (
     { clusterName, connectName, connectorName, connectorConfig },
-    { rejectWithValue }
+    { rejectWithValue, dispatch }
   ) => {
     try {
       const connector = await kafkaConnectApiClient.setConnectorConfig({
@@ -314,6 +322,13 @@ export const updateConnectorConfig = createAsyncThunk<
         connectorName,
         requestBody: connectorConfig,
       });
+
+      dispatch(
+        showSuccessAlert({
+          id: `connector-${connectorName}-${clusterName}`,
+          message: 'Connector config updated.',
+        })
+      );
 
       return { connector };
     } catch (err) {
