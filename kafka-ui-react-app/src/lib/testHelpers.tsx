@@ -11,6 +11,7 @@ import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
 import rootReducer from 'redux/reducers';
+import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 
 interface TestRouterWrapperProps {
   pathname: string;
@@ -121,3 +122,7 @@ export class EventSourceMock {
     this.close = jest.fn();
   }
 }
+
+export const getTypeAndPayload = (store: typeof mockStoreCreator) => {
+  return store.getActions().map(({ type, payload }) => ({ type, payload }));
+};
