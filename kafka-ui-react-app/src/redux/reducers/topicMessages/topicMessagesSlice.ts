@@ -3,6 +3,7 @@ import { TopicMessagesState, ClusterName, TopicName } from 'redux/interfaces';
 import { TopicMessage, Configuration, MessagesApi } from 'generated-sources';
 import { BASE_PARAMS } from 'lib/constants';
 import { getResponse } from 'lib/errorHandling';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const messagesApiClient = new MessagesApi(apiClientConf);
@@ -12,13 +13,24 @@ export const clearTopicMessages = createAsyncThunk<
   { clusterName: ClusterName; topicName: TopicName; partitions?: number[] }
 >(
   'topicMessages/clearTopicMessages',
-  async ({ clusterName, topicName, partitions }, { rejectWithValue }) => {
+  async (
+    { clusterName, topicName, partitions },
+    { rejectWithValue, dispatch }
+  ) => {
     try {
       await messagesApiClient.deleteTopicMessages({
         clusterName,
         topicName,
         partitions,
       });
+
+      dispatch(
+        showSuccessAlert({
+          id: `message-${topicName}-${clusterName}-${partitions}`,
+          message: 'Messages successfully cleared!',
+        })
+      );
+
       return undefined;
     } catch (err) {
       return rejectWithValue(await getResponse(err as Response));

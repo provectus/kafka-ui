@@ -19,11 +19,13 @@ import {
   TopicsState,
   FailurePayload,
   TopicFormData,
+  AppDispatch,
 } from 'redux/interfaces';
 import { clearTopicMessages } from 'redux/reducers/topicMessages/topicMessagesSlice';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
 import { getResponse } from 'lib/errorHandling';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const topicsApiClient = new TopicsApi(apiClientConf);
@@ -245,6 +247,13 @@ export const recreateTopic =
         topicName,
       });
       dispatch(actions.recreateTopicAction.success(topic));
+
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: topicName,
+          message: 'Topic successfully recreated!',
+        })
+      );
     } catch (e) {
       dispatch(actions.recreateTopicAction.failure());
     }

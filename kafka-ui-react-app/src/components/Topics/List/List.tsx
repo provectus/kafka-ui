@@ -149,6 +149,8 @@ const List: React.FC<TopicsListProps> = ({
     '' | 'deleteTopics' | 'purgeMessages'
   >('');
 
+  const [confirmationModalText, setConfirmationModalText] =
+    React.useState<string>('');
   const closeConfirmationModal = () => {
     setConfirmationModal('');
   };
@@ -156,22 +158,6 @@ const List: React.FC<TopicsListProps> = ({
   const clearSelectedTopics = React.useCallback(() => {
     tableState.toggleSelection(false);
   }, [tableState]);
-
-  const deleteTopicsHandler = React.useCallback(() => {
-    deleteTopics(clusterName, Array.from(tableState.selectedIds));
-    closeConfirmationModal();
-    clearSelectedTopics();
-  }, [clearSelectedTopics, clusterName, deleteTopics, tableState.selectedIds]);
-  const purgeMessagesHandler = React.useCallback(() => {
-    clearTopicsMessages(clusterName, Array.from(tableState.selectedIds));
-    closeConfirmationModal();
-    clearSelectedTopics();
-  }, [
-    clearSelectedTopics,
-    clearTopicsMessages,
-    clusterName,
-    tableState.selectedIds,
-  ]);
 
   const searchHandler = React.useCallback(
     (searchString: string) => {
@@ -187,6 +173,23 @@ const List: React.FC<TopicsListProps> = ({
     },
     [setTopicsSearch, history, pathname, perPage, page]
   );
+  const deleteOrPurgeConfirmationHandler = React.useCallback(() => {
+    const selectedIds = Array.from(tableState.selectedIds);
+    if (confirmationModal === 'deleteTopics') {
+      deleteTopics(clusterName, selectedIds);
+    } else {
+      clearTopicsMessages(clusterName, selectedIds);
+    }
+    closeConfirmationModal();
+    clearSelectedTopics();
+  }, [
+    confirmationModal,
+    clearSelectedTopics,
+    clusterName,
+    deleteTopics,
+    clearTopicsMessages,
+    tableState.selectedIds,
+  ]);
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
     ({ hovered, dataItem: { internal, cleanUpPolicy, name } }) => {
@@ -306,6 +309,9 @@ const List: React.FC<TopicsListProps> = ({
                   buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('deleteTopics');
+                    setConfirmationModalText(
+                      'Are you sure you want to remove selected topics?'
+                    );
                   }}
                 >
                   Delete selected topics
@@ -329,6 +335,9 @@ const List: React.FC<TopicsListProps> = ({
                   buttonType="secondary"
                   onClick={() => {
                     setConfirmationModal('purgeMessages');
+                    setConfirmationModalText(
+                      'Are you sure you want to purge messages of selected topics?'
+                    );
                   }}
                 >
                   Purge messages of selected topics
@@ -337,15 +346,9 @@ const List: React.FC<TopicsListProps> = ({
               <ConfirmationModal
                 isOpen={confirmationModal !== ''}
                 onCancel={closeConfirmationModal}
-                onConfirm={
-                  confirmationModal === 'deleteTopics'
-                    ? deleteTopicsHandler
-                    : purgeMessagesHandler
-                }
+                onConfirm={deleteOrPurgeConfirmationHandler}
               >
-                {confirmationModal === 'deleteTopics'
-                  ? 'Are you sure you want to remove selected topics?'
-                  : 'Are you sure you want to purge messages of selected topics?'}
+                {confirmationModalText}
               </ConfirmationModal>
             </>
           )}
