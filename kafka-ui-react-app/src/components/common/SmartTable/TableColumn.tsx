@@ -36,6 +36,7 @@ interface TableColumnProps<T, TId extends IdType, OT = never> {
   maxWidth?: string;
   className?: string;
   orderValue?: OT;
+  customTd?: typeof S.Td;
 }
 
 export const TableColumn = <T, TId extends IdType, OT = never>(

@@ -39,6 +39,14 @@ const CustomParamField: React.FC<Props> = ({
   const nameValue = watch(`customParams.${index}.name`);
   const prevName = useRef(nameValue);
 
+  const options = Object.keys(TOPIC_CUSTOM_PARAMS)
+    .sort()
+    .map((option) => ({
+      value: option,
+      label: option,
+      disabled: existingFields.includes(option),
+    }));
+
   React.useEffect(() => {
     if (nameValue !== prevName.current) {
       let newExistingFields = [...existingFields];
@@ -72,13 +80,7 @@ const CustomParamField: React.FC<Props> = ({
               minWidth="270px"
               onChange={onChange}
               value={value}
-              options={Object.keys(TOPIC_CUSTOM_PARAMS)
-                .sort()
-                .map((opt) => ({
-                  value: opt,
-                  label: opt,
-                  disabled: existingFields.includes(opt),
-                }))}
+              options={options}
             />
           )}
         />
