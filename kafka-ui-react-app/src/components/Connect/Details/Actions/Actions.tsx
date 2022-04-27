@@ -22,34 +22,34 @@ const ConnectorActionsWrapperStyled = styled.div`
 `;
 
 export interface ActionsProps {
-  deleteConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): Promise<void>;
+  deleteConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): Promise<unknown>;
   isConnectorDeleting: boolean;
   connectorStatus?: ConnectorState;
-  restartConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  restartTasks(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    action: ConnectorAction
-  ): void;
-  pauseConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  resumeConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
+  restartConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
+  restartTasks(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+    action: ConnectorAction;
+  }): void;
+  pauseConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
+  resumeConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
   isConnectorActionRunning: boolean;
 }
 
@@ -73,7 +73,7 @@ const Actions: React.FC<ActionsProps> = ({
 
   const deleteConnectorHandler = React.useCallback(async () => {
     try {
-      await deleteConnector(clusterName, connectName, connectorName);
+      await deleteConnector({ clusterName, connectName, connectorName });
       history.push(clusterConnectorsPath(clusterName));
     } catch {
       // do not redirect
@@ -81,22 +81,27 @@ const Actions: React.FC<ActionsProps> = ({
   }, [deleteConnector, clusterName, connectName, connectorName, history]);
 
   const restartConnectorHandler = React.useCallback(() => {
-    restartConnector(clusterName, connectName, connectorName);
+    restartConnector({ clusterName, connectName, connectorName });
   }, [restartConnector, clusterName, connectName, connectorName]);
 
   const restartTasksHandler = React.useCallback(
     (actionType) => {
-      restartTasks(clusterName, connectName, connectorName, actionType);
+      restartTasks({
+        clusterName,
+        connectName,
+        connectorName,
+        action: actionType,
+      });
     },
     [restartTasks, clusterName, connectName, connectorName]
   );
 
   const pauseConnectorHandler = React.useCallback(() => {
-    pauseConnector(clusterName, connectName, connectorName);
+    pauseConnector({ clusterName, connectName, connectorName });
   }, [pauseConnector, clusterName, connectName, connectorName]);
 
   const resumeConnectorHandler = React.useCallback(() => {
-    resumeConnector(clusterName, connectName, connectorName);
+    resumeConnector({ clusterName, connectName, connectorName });
   }, [resumeConnector, clusterName, connectName, connectorName]);
 
   return (

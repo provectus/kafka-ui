@@ -21,7 +21,7 @@ export interface ListProps {
   connectors: FullConnectorInfo[];
   connects: Connect[];
   fetchConnects(clusterName: ClusterName): void;
-  fetchConnectors(clusterName: ClusterName): void;
+  fetchConnectors({ clusterName }: { clusterName: ClusterName }): void;
   search: string;
   setConnectorSearch(value: ConnectorSearch): void;
 }
@@ -40,7 +40,7 @@ const List: React.FC<ListProps> = ({
 
   React.useEffect(() => {
     fetchConnects(clusterName);
-    fetchConnectors(clusterName);
+    fetchConnectors({ clusterName });
   }, [fetchConnects, fetchConnectors, clusterName]);
 
   const handleSearch = (value: string) =>

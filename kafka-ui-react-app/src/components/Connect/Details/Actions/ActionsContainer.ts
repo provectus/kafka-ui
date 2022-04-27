@@ -7,7 +7,7 @@ import {
   restartTasks,
   pauseConnector,
   resumeConnector,
-} from 'redux/actions';
+} from 'redux/reducers/connect/connectSlice';
 import {
   getIsConnectorDeleting,
   getConnectorStatus,

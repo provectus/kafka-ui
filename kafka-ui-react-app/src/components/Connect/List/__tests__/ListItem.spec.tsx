@@ -11,8 +11,8 @@ import theme from 'theme/theme';
 
 const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
 
-jest.mock('redux/actions', () => ({
-  ...jest.requireActual('redux/actions'),
+jest.mock('redux/reducers/connect/connectSlice', () => ({
+  ...jest.requireActual('redux/reducers/connect/connectSlice'),
   deleteConnector: () => mockDeleteConnector,
 }));
 
