@@ -2,12 +2,12 @@ import React from 'react';
 import * as S from 'components/Topics/Topic/Details/Messages/Filters/Filters.styled';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
 import Input from 'components/common/Input/Input';
-import { Textarea } from 'components/common/Textbox/Textarea.styled';
 import { FormProvider, Controller, useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { Button } from 'components/common/Button/Button';
 import { FormError } from 'components/common/Input/Input.styled';
 import { AddMessageFilters } from 'components/Topics/Topic/Details/Messages/Filters/AddFilter';
+import Editor from 'components/common/Editor/Editor';
 import { yupResolver } from '@hookform/resolvers/yup';
 import yup from 'lib/yupExtended';
 
@@ -66,8 +66,16 @@ const AddEditFilterContainer: React.FC<AddEditFilterContainerProps> = ({
             control={control}
             name="code"
             defaultValue={inputCodeDefaultValue}
-            render={({ field: { onChange, ref } }) => (
-              <Textarea ref={ref} onChange={onChange} />
+            render={({ field: { onChange, value } }) => (
+              <Editor
+                value={value}
+                minLines={5}
+                maxLines={28}
+                onChange={onChange}
+                setOptions={{
+                  showLineNumbers: false,
+                }}
+              />
             )}
           />
         </div>
