@@ -52,7 +52,6 @@ const List: React.FC = () => {
             <Button
               buttonSize="M"
               buttonType="primary"
-              isLink
               to={clusterSchemaNewPath(clusterName)}
             >
               <i className="fas fa-plus" /> Create Schema

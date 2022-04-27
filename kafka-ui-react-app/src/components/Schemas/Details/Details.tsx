@@ -31,6 +31,7 @@ import { serverErrorAlertAdded } from 'redux/reducers/alerts/alertsSlice';
 import { getResponse } from 'lib/errorHandling';
 import { resetLoaderById } from 'redux/reducers/loader/loaderSlice';
 import { TableTitle } from 'components/common/table/TableTitle/TableTitle.styled';
+import { createPath } from 'history';
 
 import LatestVersionItem from './LatestVersion/LatestVersionItem';
 import SchemaVersion from './SchemaVersion/SchemaVersion';
@@ -87,18 +88,16 @@ const Details: React.FC = () => {
         {!isReadOnly && (
           <>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
-              to={{
+              to={createPath({
                 pathname: clusterSchemaSchemaDiffPath(clusterName, subject),
                 search: `leftVersion=${versions[0]?.version}&rightVersion=${versions[0]?.version}`,
-              }}
+              })}
             >
               Compare Versions
             </Button>
             <Button
-              isLink
               buttonSize="M"
               buttonType="primary"
               to={clusterSchemaEditPath(clusterName, subject)}

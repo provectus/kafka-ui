@@ -268,7 +268,6 @@ const List: React.FC<TopicsListProps> = ({
             <Button
               buttonType="primary"
               buttonSize="M"
-              isLink
               to={clusterTopicNewPath(clusterName)}
             >
               <i className="fas fa-plus" /> Add a Topic
@@ -313,7 +312,6 @@ const List: React.FC<TopicsListProps> = ({
                   <Button
                     buttonSize="M"
                     buttonType="secondary"
-                    isLink
                     to={{
                       pathname: clusterTopicCopyPath(clusterName),
                       search: `?${getSelectedTopic()}`,

@@ -38,7 +38,6 @@ const List: FC = () => {
     <>
       <PageHeading text="KSQL DB">
         <Button
-          isLink
           to={clusterKsqlDbQueryPath(clusterName)}
           buttonType="primary"
           buttonSize="M"
