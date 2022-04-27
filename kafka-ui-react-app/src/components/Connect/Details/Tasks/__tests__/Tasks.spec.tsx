@@ -64,12 +64,11 @@ describe('Tasks', () => {
       const fetchTasks = jest.fn();
       mount(setupWrapper({ fetchTasks }));
       expect(fetchTasks).toHaveBeenCalledTimes(1);
-      expect(fetchTasks).toHaveBeenCalledWith(
+      expect(fetchTasks).toHaveBeenCalledWith({
         clusterName,
         connectName,
         connectorName,
-        true
-      );
+      });
     });
   });
 });

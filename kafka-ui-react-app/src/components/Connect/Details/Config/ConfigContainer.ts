@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
-import { fetchConnectorConfig } from 'redux/actions';
+import { fetchConnectorConfig } from 'redux/reducers/connect/connectSlice';
 import {
   getIsConnectorConfigFetching,
   getConnectorConfig,
