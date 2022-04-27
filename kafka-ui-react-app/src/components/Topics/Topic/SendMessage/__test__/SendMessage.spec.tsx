@@ -1,15 +1,15 @@
 import React from 'react';
 import SendMessage from 'components/Topics/Topic/SendMessage/SendMessage';
 import {
+  act,
   screen,
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import fetchMock from 'fetch-mock';
-import { createMemoryHistory } from 'history';
 import { render } from 'lib/testHelpers';
-import { Route, Router } from 'react-router-dom';
+import { MemoryRouter, Route } from 'react-router-dom';
 import {
   clusterTopicMessagesPath,
   clusterTopicSendMessagePath,
@@ -18,6 +18,7 @@ import { store } from 'redux/store';
 import { fetchTopicDetailsAction } from 'redux/actions';
 import { initialState } from 'redux/reducers/topics/reducer';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import { Location } from 'history';
 
 import { testSchema } from './fixtures';
 
@@ -32,16 +33,16 @@ jest.mock('json-schema-faker', () => ({
 
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
-const history = createMemoryHistory();
 
 const renderComponent = () => {
-  history.push(clusterTopicSendMessagePath(clusterName, topicName));
   render(
-    <Router history={history}>
+    <MemoryRouter
+      initialEntries={[clusterTopicSendMessagePath(clusterName, topicName)]}
+    >
       <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
         <SendMessage />
       </Route>
-    </Router>,
+    </MemoryRouter>,
     { store }
   );
 };
@@ -61,12 +62,14 @@ describe('SendMessage', () => {
     fetchMock.reset();
   });
 
-  it('fetches schema on first render', () => {
+  it('fetches schema on first render', async () => {
     const fetchTopicMessageSchemaMock = fetchMock.getOnce(
       `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
       testSchema
     );
-    renderComponent();
+    await act(async () => {
+      renderComponent();
+    });
     expect(fetchTopicMessageSchemaMock.called()).toBeTruthy();
   });
 
@@ -79,19 +82,40 @@ describe('SendMessage', () => {
     });
 
     it('calls sendTopicMessage on submit', async () => {
+      let testLocation: Partial<Location>;
       const sendTopicMessageMock = fetchMock.postOnce(
         `/api/clusters/${clusterName}/topics/${topicName}/messages`,
         200
       );
-      renderComponent();
+      render(
+        <MemoryRouter
+          initialEntries={[clusterTopicSendMessagePath(clusterName, topicName)]}
+        >
+          <Route
+            path={clusterTopicSendMessagePath(':clusterName', ':topicName')}
+          >
+            <SendMessage />
+          </Route>
+          <Route
+            path="*"
+            render={({ location }) => {
+              testLocation = location;
+              return null;
+            }}
+          />
+        </MemoryRouter>,
+        { store }
+      );
       await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
 
       userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
       await screen.findByText('Send');
       userEvent.click(screen.getByText('Send'));
       await waitFor(() => expect(sendTopicMessageMock.called()).toBeTruthy());
-      expect(history.location.pathname).toEqual(
-        clusterTopicMessagesPath(clusterName, topicName)
+      await waitFor(() =>
+        expect(testLocation.pathname).toEqual(
+          clusterTopicMessagesPath(clusterName, topicName)
+        )
       );
     });
   });

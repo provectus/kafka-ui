@@ -1,27 +1,25 @@
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor, prettyDOM } from '@testing-library/react';
 import { render, EventSourceMock } from 'lib/testHelpers';
 import Messages, {
   SeekDirectionOptions,
   SeekDirectionOptionsObj,
 } from 'components/Topics/Topic/Details/Messages/Messages';
-import { Router } from 'react-router-dom';
-import { createMemoryHistory } from 'history';
+import { MemoryRouter } from 'react-router-dom';
+import { createPath } from 'history';
 import { SeekDirection, SeekType } from 'generated-sources';
 import userEvent from '@testing-library/user-event';
 
 describe('Messages', () => {
-  const searchParams = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`;
+  const search = `?filterQueryType=STRING_CONTAINS&attempt=0&limit=100&seekDirection=${SeekDirection.FORWARD}&seekType=${SeekType.OFFSET}&seekTo=0::9`;
 
-  const setUpComponent = (param: string = searchParams) => {
-    const history = createMemoryHistory();
-    history.push({
-      search: new URLSearchParams(param).toString(),
-    });
+  const setUpComponent = (
+    initialEntries: string[] = [createPath({ search })]
+  ) => {
     return render(
-      <Router history={history}>
+      <MemoryRouter initialEntries={initialEntries}>
         <Messages />
-      </Router>
+      </MemoryRouter>
     );
   };
 
@@ -40,35 +38,43 @@ describe('Messages', () => {
       );
     });
 
-    it('should check the SeekDirection select changes', () => {
+    it('should check the SeekDirection select changes', async () => {
       const seekDirectionSelect = screen.getAllByRole('listbox')[1];
       const seekDirectionOption = screen.getAllByRole('option')[1];
 
       expect(seekDirectionOption).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.FORWARD].label
       );
-
       const labelValue1 = SeekDirectionOptions[1].label;
-      userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [
-        SeekDirectionOptions[1].label,
-      ]);
+      await waitFor(() => userEvent.click(seekDirectionSelect));
+
+      await waitFor(() =>
+        userEvent.selectOptions(seekDirectionSelect, [
+          SeekDirectionOptions[1].label,
+        ])
+      );
+
       expect(seekDirectionOption).toHaveTextContent(labelValue1);
 
       const labelValue0 = SeekDirectionOptions[0].label;
-      userEvent.click(seekDirectionSelect);
-      userEvent.selectOptions(seekDirectionSelect, [
-        SeekDirectionOptions[0].label,
-      ]);
+      await waitFor(() => userEvent.click(seekDirectionSelect));
+      await waitFor(() =>
+        userEvent.selectOptions(seekDirectionSelect, [
+          SeekDirectionOptions[0].label,
+        ])
+      );
+
       expect(seekDirectionOption).toHaveTextContent(labelValue0);
     });
   });
 
   describe('Component rendering with custom Url search params', () => {
     it('reacts to a change of seekDirection in the url which make the select pick up different value', () => {
-      setUpComponent(
-        searchParams.replace(SeekDirection.FORWARD, SeekDirection.BACKWARD)
-      );
+      setUpComponent([
+        createPath({
+          search: search.replace(SeekDirection.FORWARD, SeekDirection.BACKWARD),
+        }),
+      ]);
       expect(screen.getAllByRole('listbox')[1]).toHaveTextContent(
         SeekDirectionOptionsObj[SeekDirection.BACKWARD].label
       );
