@@ -1,40 +1,17 @@
 import React from 'react';
-import { useParams } from 'react-router';
 import { Task } from 'generated-sources';
-import { ClusterName, ConnectName, ConnectorName } from 'redux/interfaces';
 import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 
 import ListItemContainer from './ListItem/ListItemContainer';
 
-interface RouterParams {
-  clusterName: ClusterName;
-  connectName: ConnectName;
-  connectorName: ConnectorName;
-}
-
 export interface TasksProps {
-  fetchTasks(payload: {
-    clusterName: ClusterName;
-    connectName: ConnectName;
-    connectorName: ConnectorName;
-  }): void;
   areTasksFetching: boolean;
   tasks: Task[];
 }
 
-const Tasks: React.FC<TasksProps> = ({
-  fetchTasks,
-  areTasksFetching,
-  tasks,
-}) => {
-  const { clusterName, connectName, connectorName } = useParams<RouterParams>();
-
-  React.useEffect(() => {
-    fetchTasks({ clusterName, connectName, connectorName });
-  }, [fetchTasks, clusterName, connectName, connectorName]);
-
+const Tasks: React.FC<TasksProps> = ({ areTasksFetching, tasks }) => {
   if (areTasksFetching) {
     return <PageLoader />;
   }

@@ -19,10 +19,12 @@ import {
   TopicsState,
   FailurePayload,
   TopicFormData,
+  AppDispatch,
 } from 'redux/interfaces';
 import { BASE_PARAMS } from 'lib/constants';
 import * as actions from 'redux/actions/actions';
 import { getResponse } from 'lib/errorHandling';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
 
 const apiClientConf = new Configuration(BASE_PARAMS);
 export const topicsApiClient = new TopicsApi(apiClientConf);
@@ -76,6 +78,13 @@ export const clearTopicMessages =
         partitions,
       });
       dispatch(actions.clearMessagesTopicAction.success());
+
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: `message-${topicName}-${clusterName}-${partitions}`,
+          message: 'Messages successfully cleared!',
+        })
+      );
     } catch (e) {
       const response = await getResponse(e);
       const alert: FailurePayload = {
@@ -269,6 +278,13 @@ export const recreateTopic =
         topicName,
       });
       dispatch(actions.recreateTopicAction.success(topic));
+
+      (dispatch as AppDispatch)(
+        showSuccessAlert({
+          id: topicName,
+          message: 'Topic successfully recreated!',
+        })
+      );
     } catch (e) {
       dispatch(actions.recreateTopicAction.failure());
     }

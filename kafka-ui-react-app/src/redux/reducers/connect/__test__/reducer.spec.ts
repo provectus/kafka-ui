@@ -21,7 +21,7 @@ import reducer, {
 } from 'redux/reducers/connect/connectSlice';
 import fetchMock from 'fetch-mock-jest';
 import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
-import { getTypeAndPayload } from 'lib/testHelpers';
+import { getTypeAndPayload, getAlertActions } from 'lib/testHelpers';
 
 import {
   connects,
@@ -636,6 +636,11 @@ describe('Connect slice', () => {
           expect(getTypeAndPayload(store)).toEqual([
             { type: restartConnectorTask.pending.type },
             { type: fetchConnectorTasks.pending.type },
+            {
+              type: fetchConnectorTasks.fulfilled.type,
+              payload: { tasks },
+            },
+            ...getAlertActions(store),
             { type: restartConnectorTask.fulfilled.type },
           ]);
         });
@@ -710,6 +715,7 @@ describe('Connect slice', () => {
             `/api/clusters/${clusterName}/connects/${connectName}/connectors/${connectorName}/config`,
             connectorServerPayload
           );
+
           await store.dispatch(
             updateConnectorConfig({
               clusterName,
@@ -719,7 +725,8 @@ describe('Connect slice', () => {
             })
           );
           expect(getTypeAndPayload(store)).toEqual([
-            { type: updateConnectorConfig.pending.type },
+            { type: updateConnectorConfig.pending.type, payload: undefined },
+            ...getAlertActions(store),
             {
               type: updateConnectorConfig.fulfilled.type,
               payload: { connector },

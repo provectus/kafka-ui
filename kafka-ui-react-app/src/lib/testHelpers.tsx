@@ -126,3 +126,8 @@ export class EventSourceMock {
 export const getTypeAndPayload = (store: typeof mockStoreCreator) => {
   return store.getActions().map(({ type, payload }) => ({ type, payload }));
 };
+
+export const getAlertActions = (mockStore: typeof mockStoreCreator) =>
+  getTypeAndPayload(mockStore).filter((currentAction: AnyAction) =>
+    currentAction.type.startsWith('alerts')
+  );
