@@ -138,11 +138,13 @@ const Filters: React.FC<FiltersProps> = ({
 
   const isSubmitDisabled = React.useMemo(() => {
     if (isSeekTypeControlVisible) {
-      return currentSeekType === SeekType.TIMESTAMP && !timestamp;
+      return (
+        (currentSeekType === SeekType.TIMESTAMP && !timestamp) || isTailing
+      );
     }
 
     return false;
-  }, [isSeekTypeControlVisible, currentSeekType, timestamp]);
+  }, [isSeekTypeControlVisible, currentSeekType, timestamp, isTailing]);
 
   const partitionMap = React.useMemo(
     () =>
