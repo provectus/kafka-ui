@@ -40,6 +40,8 @@ describe('Brokers Component', () => {
       renderComponent();
       await waitFor(() => {
         expect(fetchStatsMock.called()).toBeTruthy();
+      });
+      await waitFor(() => {
         expect(fetchBrokersMock.called()).toBeTruthy();
       });
       expect(screen.getByRole('table')).toBeInTheDocument();
@@ -55,6 +57,8 @@ describe('Brokers Component', () => {
       renderComponent();
       await waitFor(() => {
         expect(fetchStatsMock.called()).toBeTruthy();
+      });
+      await waitFor(() => {
         expect(fetchBrokersMock.called()).toBeTruthy();
       });
       const onlineWidget = screen.getByText(
