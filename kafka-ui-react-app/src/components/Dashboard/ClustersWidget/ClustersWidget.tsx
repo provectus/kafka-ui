@@ -71,7 +71,7 @@ const ClustersWidget: React.FC<Props> = ({
       {clusterList.map((chunkItem) => (
         <Table key={chunkItem.id} isFullwidth>
           <thead>
-            <tr>
+            <tr data-testid="clustersWidget_view">
               <TableHeaderCell title="Cluster name" />
               <TableHeaderCell title="Version" />
               <TableHeaderCell title="Brokers count" />

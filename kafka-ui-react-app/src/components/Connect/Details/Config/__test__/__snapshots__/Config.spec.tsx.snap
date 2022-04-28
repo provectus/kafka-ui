@@ -1,12 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Config view matches snapshot 1`] = `
+exports[`Config matches snapshot 1`] = `
 .c0 {
   margin: 16px;
 }
 
 <div
   className="c0"
+  data-testid="config_view"
 >
   <mock-Editor
     highlightActiveLine={false}
@@ -22,4 +23,4 @@ exports[`Config view matches snapshot 1`] = `
 </div>
 `;
 
-exports[`Config view matches snapshot when fetching config 1`] = `<mock-PageLoader />`;
+exports[`Config matches snapshot when fetching config 1`] = `<mock-PageLoader />`;

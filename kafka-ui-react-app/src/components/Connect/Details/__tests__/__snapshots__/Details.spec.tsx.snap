@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Details view matches snapshot 1`] = `
+exports[`Details matches snapshot 1`] = `
 .c2 {
   display: -webkit-box;
   display: -webkit-flex;
@@ -170,6 +170,6 @@ exports[`Details view matches snapshot 1`] = `
 </div>
 `;
 
-exports[`Details view matches snapshot when fetching connector 1`] = `<mock-PageLoader />`;
+exports[`Details matches snapshot when fetching connector 1`] = `<mock-PageLoader />`;
 
-exports[`Details view matches snapshot when fetching tasks 1`] = `<mock-PageLoader />`;
+exports[`Details matches snapshot when fetching tasks 1`] = `<mock-PageLoader />`;

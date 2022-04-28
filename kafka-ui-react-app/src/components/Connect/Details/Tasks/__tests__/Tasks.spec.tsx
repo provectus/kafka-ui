@@ -1,13 +1,17 @@
 import React from 'react';
 import { create } from 'react-test-renderer';
-import { containerRendersView, TestRouterWrapper } from 'lib/testHelpers';
+import { TestRouterWrapper } from 'lib/testHelpers';
 import { clusterConnectConnectorTasksPath } from 'lib/paths';
 import TasksContainer from 'components/Connect/Details/Tasks/TasksContainer';
 import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import { Provider } from 'react-redux';
+import { store } from 'redux/store';
+import { Router } from 'react-router';
+import { createMemoryHistory } from 'history';
 
 jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
@@ -16,8 +20,31 @@ jest.mock(
   () => 'tr' // need to mock as `tr` to let dom validtion pass
 );
 
+const history = createMemoryHistory();
+
 describe('Tasks', () => {
-  containerRendersView(<TasksContainer />, Tasks);
+  const tasksContainer = (props: Partial<TasksProps> = {}) => (
+    <ThemeProvider theme={theme}>
+      <Provider store={store}>
+        <Router history={history}>
+          <TasksContainer>
+            <Tasks
+              data-testId="tasks_view"
+              fetchTasks={jest.fn()}
+              areTasksFetching={false}
+              tasks={tasks}
+              {...props}
+            />
+          </TasksContainer>
+        </Router>
+      </Provider>
+    </ThemeProvider>
+  );
+
+  it('container renders view', () => {
+    render(tasksContainer());
+    expect(screen.getByTestId('tasks_view')).toBeInTheDocument();
+  });
 
   describe('view', () => {
     const pathname = clusterConnectConnectorTasksPath(

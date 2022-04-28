@@ -2,8 +2,6 @@ import React, { ReactElement } from 'react';
 import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { mount } from 'enzyme';
-import { act } from 'react-dom/test-utils';
-import { store as appStore } from 'redux/store';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { render, RenderOptions } from '@testing-library/react';
@@ -38,29 +36,6 @@ export const TestRouterWrapper: React.FC<TestRouterWrapperProps> = ({
     <Route path={pathname}>{children}</Route>
   </MemoryRouter>
 );
-
-export const containerRendersView = (
-  reactContainer: React.ReactElement,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  view: React.FC<any>
-) => {
-  describe('container', () => {
-    it('renders view', async () => {
-      let container = render(<div />);
-      await act(async () => {
-        container = render(
-          <Provider store={appStore}>
-            <StaticRouter>
-              <ThemeProvider theme={theme}>{reactContainer}</ThemeProvider>
-            </StaticRouter>
-          </Provider>
-        );
-      });
-      // Todo Find out how to test it
-      //   expect(container.exists(view)).toBeTruthy();
-    });
-  });
-};
 
 export function mountWithTheme(child: ReactElement) {
   return mount(child, {

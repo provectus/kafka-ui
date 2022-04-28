@@ -51,6 +51,7 @@ exports[`Tasks view matches snapshot 1`] = `
 
 <table
   className="c0"
+  data-testId="tasks_view"
 >
   <thead>
     <tr>
@@ -221,6 +222,7 @@ exports[`Tasks view matches snapshot when no tasks 1`] = `
 
 <table
   className="c0"
+  data-testId="tasks_view"
 >
   <thead>
     <tr>
