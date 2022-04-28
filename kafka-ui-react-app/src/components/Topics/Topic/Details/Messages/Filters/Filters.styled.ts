@@ -235,7 +235,7 @@ export const ActiveSmartFilter = styled.div`
   align-items: center;
   justify-content: space-between;
   color: ${({ theme }) => theme.input.label.color};
-  padding: 10px 2px;
+  padding: 16px 8px;
 `;
 
 export const DeleteSavedFilterIcon = styled.div`
@@ -243,9 +243,10 @@ export const DeleteSavedFilterIcon = styled.div`
   border-left: 1px solid ${({ theme }) => theme.savedFilterDivider.color};
   display: flex;
   align-items: center;
-  padding-left: 5px;
+  padding-left: 6px;
   height: 24px;
   cursor: pointer;
+  margin-left: 4px;
 `;
 
 export const ConfirmDeletionText = styled.h3`

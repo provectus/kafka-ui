@@ -48,10 +48,9 @@ export const SmartTable = <T, TId extends IdType, OT = never>({
 
       const { headerCell, title, orderValue } = child.props;
 
-      const HeaderCell = headerCell as
-        | React.FC<TableHeaderCellProps<T, TId, OT>>
-        | undefined;
-
+      const HeaderCell = headerCell as React.FC<
+        TableHeaderCellProps<T, TId, OT>
+      >;
       return HeaderCell ? (
         <S.TableHeaderCell>
           <HeaderCell
