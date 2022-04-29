@@ -28,6 +28,9 @@ const setupWrapper = (props?: Partial<MessageContentProps>) => {
   );
 };
 
+const proto =
+  'syntax = "proto3";\npackage com.provectus;\n\nmessage TestProtoRecord {\n  string f1 = 1;\n  int32 f2 = 2;\n}\n';
+
 global.TextEncoder = TextEncoder;
 
 describe('MessageContent screen', () => {
@@ -76,5 +79,44 @@ describe('MessageContent screen', () => {
       userEvent.click(contentTab[0]);
       expect(contentTab[0]).toHaveClass('is-active');
     });
+  });
+});
+
+describe('checking content type depend on message type', () => {
+  it('renders component with message having JSON type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'JSON',
+        messageContent: '{"data": "test"}',
+      })
+    );
+    expect(screen.getAllByText('JSON')[1]).toBeInTheDocument();
+  });
+  it('renders component with message having AVRO type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'AVRO',
+        messageContent: '{"data": "test"}',
+      })
+    );
+    expect(screen.getByText('AVRO')).toBeInTheDocument();
+  });
+  it('renders component with message having PROTOBUF type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'PROTOBUF',
+        messageContent: proto,
+      })
+    );
+    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
+  });
+  it('renders component with message having no type which is equal to having PROTOBUF type', () => {
+    render(
+      setupWrapper({
+        messageContentFormat: 'PROTOBUF',
+        messageContent: '',
+      })
+    );
+    expect(screen.getByText('PROTOBUF')).toBeInTheDocument();
   });
 });
