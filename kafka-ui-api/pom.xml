@@ -255,8 +255,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine> --illegal-access=permit
-                    </argLine>
+                    <argLine>@{argLine} --illegal-access=permit ${itCoverageAgent}</argLine>
                 </configuration>
             </plugin>
             <plugin>
