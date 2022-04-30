@@ -256,6 +256,8 @@
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
                     <argLine>@{argLine} --illegal-access=permit ${itCoverageAgent}</argLine>
+                    <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
+                    <forkCount>1</forkCount>
                 </configuration>
             </plugin>
             <plugin>
