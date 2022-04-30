@@ -308,11 +308,11 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.8</version>
-                <configuration>
-                    <skip>${maven.test.skip}</skip>
-                    <output>file</output>
-                    <append>true</append>
-                </configuration>
+<!--                <configuration>-->
+<!--                    <skip>${maven.test.skip}</skip>-->
+<!--                    <output>file</output>-->
+<!--                    <append>true</append>-->
+<!--                </configuration>-->
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
