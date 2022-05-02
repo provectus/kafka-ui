@@ -18,8 +18,11 @@ import { store } from 'redux/store';
 import { fetchTopicDetailsAction } from 'redux/actions';
 import { initialState } from 'redux/reducers/topics/reducer';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
+import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
 
 import { testSchema } from './fixtures';
+
+import Mock = jest.Mock;
 
 jest.mock('json-schema-faker', () => ({
   generate: () => ({
@@ -29,6 +32,10 @@ jest.mock('json-schema-faker', () => ({
   }),
   option: jest.fn(),
 }));
+
+jest.mock('components/Topics/Topic/SendMessage/validateMessage', () =>
+  jest.fn()
+);
 
 const clusterName = 'testCluster';
 const topicName = externalTopicPayload.name;
@@ -44,6 +51,16 @@ const renderComponent = () => {
     </Router>,
     { store }
   );
+};
+
+const RenderAndSubmitData = async (error: string[] = []) => {
+  renderComponent();
+  await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
+
+  userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
+  const sendBtn = await screen.findByText('Send');
+  (validateMessage as Mock).mockImplementation(() => error);
+  userEvent.click(sendBtn);
 };
 
 describe('SendMessage', () => {
@@ -71,6 +88,8 @@ describe('SendMessage', () => {
   });
 
   describe('when schema is fetched', () => {
+    const url = `/api/clusters/${clusterName}/topics/${topicName}/messages`;
+
     beforeEach(() => {
       fetchMock.getOnce(
         `/api/clusters/${clusterName}/topics/${topicName}/messages/schema`,
@@ -79,18 +98,36 @@ describe('SendMessage', () => {
     });
 
     it('calls sendTopicMessage on submit', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(
-        `/api/clusters/${clusterName}/topics/${topicName}/messages`,
-        200
-      );
-      renderComponent();
-      await waitForElementToBeRemoved(() => screen.getByRole('progressbar'));
+      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      await RenderAndSubmitData();
 
-      userEvent.selectOptions(screen.getByLabelText('Partition'), '0');
-      await screen.findByText('Send');
-      userEvent.click(screen.getByText('Send'));
-      await waitFor(() => expect(sendTopicMessageMock.called()).toBeTruthy());
+      await waitFor(() =>
+        expect(sendTopicMessageMock.called(url)).toBeTruthy()
+      );
       expect(history.location.pathname).toEqual(
+        clusterTopicMessagesPath(clusterName, topicName)
+      );
+    });
+
+    it('should make the sendTopicMessage but most find an error within it', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(url, () => {
+        return new Error('Something Went Wrong');
+      });
+      await RenderAndSubmitData();
+      await waitFor(() => {
+        expect(sendTopicMessageMock.called(url)).toBeTruthy();
+      });
+      expect(history.location.pathname).toEqual(
+        clusterTopicMessagesPath(clusterName, topicName)
+      );
+    });
+
+    it('should check and view validation error message when is not valid', async () => {
+      const sendTopicMessageMock = fetchMock.postOnce(url, 200);
+      await RenderAndSubmitData(['error']);
+
+      await waitFor(() => expect(sendTopicMessageMock.called(url)).toBeFalsy());
+      expect(history.location.pathname).not.toEqual(
         clusterTopicMessagesPath(clusterName, topicName)
       );
     });
