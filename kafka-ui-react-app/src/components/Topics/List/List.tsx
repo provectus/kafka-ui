@@ -88,8 +88,8 @@ const List: React.FC<TopicsListProps> = ({
   const [cachedPage, setCachedPage] = React.useState<number | null>(null);
   const history = useHistory();
 
-  React.useEffect(() => {
-    fetchTopicsList({
+  const topicsListParams = React.useMemo(
+    () => ({
       clusterName,
       page,
       perPage,
@@ -97,17 +97,13 @@ const List: React.FC<TopicsListProps> = ({
       sortOrder,
       search,
       showInternal,
-    });
-  }, [
-    fetchTopicsList,
-    clusterName,
-    page,
-    perPage,
-    orderBy,
-    sortOrder,
-    search,
-    showInternal,
-  ]);
+    }),
+    [clusterName, page, perPage, orderBy, sortOrder, search, showInternal]
+  );
+
+  React.useEffect(() => {
+    fetchTopicsList(topicsListParams);
+  }, [fetchTopicsList, topicsListParams]);
 
   const tableState = useTableState<
     TopicWithDetailedInfo,
@@ -190,6 +186,7 @@ const List: React.FC<TopicsListProps> = ({
     }
     closeConfirmationModal();
     clearSelectedTopics();
+    fetchTopicsList(topicsListParams);
   }, [
     confirmationModal,
     clearSelectedTopics,
@@ -197,6 +194,8 @@ const List: React.FC<TopicsListProps> = ({
     deleteTopics,
     clearTopicsMessages,
     tableState.selectedIds,
+    fetchTopicsList,
+    topicsListParams,
   ]);
 
   const ActionsCell = React.memo<TableCellProps<TopicWithDetailedInfo, string>>(
