@@ -100,7 +100,7 @@ const Actions: React.FC<ActionsProps> = ({
   }, [resumeConnector, clusterName, connectName, connectorName]);
 
   return (
-    <ConnectorActionsWrapperStyled data-testid="actions_view">
+    <ConnectorActionsWrapperStyled>
       {connectorStatus === ConnectorState.RUNNING && (
         <Button
           buttonSize="M"

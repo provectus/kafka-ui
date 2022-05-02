@@ -49,8 +49,8 @@ describe('Actions', () => {
   );
 
   it('container renders view', () => {
-    render(actionsContainer());
-    expect(screen.getByTestId('actions_view')).toBeInTheDocument();
+    const { container } = render(actionsContainer());
+    expect(container).toBeInTheDocument();
   });
 
   describe('view', () => {
