@@ -82,7 +82,9 @@ const List: React.FC<TopicsListProps> = ({
     React.useContext(ClusterContext);
   const { clusterName } = useParams<{ clusterName: ClusterName }>();
   const { page, perPage, pathname } = usePagination();
-  const [showInternal, setShowInternal] = React.useState<boolean>(true);
+  const [showInternal, setShowInternal] = React.useState<boolean>(
+    !localStorage.getItem('hideInternalTopics') && true
+  );
   const [cachedPage, setCachedPage] = React.useState<number | null>(null);
   const history = useHistory();
 
@@ -141,6 +143,12 @@ const List: React.FC<TopicsListProps> = ({
   };
 
   const handleSwitch = React.useCallback(() => {
+    if (showInternal) {
+      localStorage.setItem('hideInternalTopics', 'true');
+    } else {
+      localStorage.removeItem('hideInternalTopics');
+    }
+
     setShowInternal(!showInternal);
     history.push(`${pathname}?page=1&perPage=${perPage || PER_PAGE}`);
   }, [history, pathname, perPage, showInternal]);
