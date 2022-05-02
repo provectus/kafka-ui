@@ -63,11 +63,11 @@ describe('ListItem', () => {
     userEvent.click(screen.getByRole('button'));
     userEvent.click(screen.getByRole('menuitem'));
     expect(restartTask).toBeCalledTimes(1);
-    expect(restartTask).toHaveBeenCalledWith(
+    expect(restartTask).toHaveBeenCalledWith({
       clusterName,
       connectName,
       connectorName,
-      task.id?.task
-    );
+      taskId: task.id?.task,
+    });
   });
 });

@@ -121,11 +121,11 @@ describe('Actions', () => {
         wrapper.find('mock-ConfirmationModal').props() as ConfirmationModalProps
       ).onConfirm();
       expect(deleteConnector).toHaveBeenCalledTimes(1);
-      expect(deleteConnector).toHaveBeenCalledWith(
+      expect(deleteConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('redirects after delete', async () => {
@@ -151,11 +151,11 @@ describe('Actions', () => {
       const wrapper = mount(setupWrapper({ restartConnector }));
       wrapper.find({ children: 'Restart Connector' }).simulate('click');
       expect(restartConnector).toHaveBeenCalledTimes(1);
-      expect(restartConnector).toHaveBeenCalledWith(
+      expect(restartConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('calls pauseConnector when pause button clicked', () => {
@@ -168,11 +168,11 @@ describe('Actions', () => {
       );
       wrapper.find({ children: 'Pause' }).simulate('click');
       expect(pauseConnector).toHaveBeenCalledTimes(1);
-      expect(pauseConnector).toHaveBeenCalledWith(
+      expect(pauseConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('calls resumeConnector when resume button clicked', () => {
@@ -185,11 +185,11 @@ describe('Actions', () => {
       );
       wrapper.find({ children: 'Resume' }).simulate('click');
       expect(resumeConnector).toHaveBeenCalledTimes(1);
-      expect(resumeConnector).toHaveBeenCalledWith(
+      expect(resumeConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
   });
 });

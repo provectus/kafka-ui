@@ -16,19 +16,24 @@ interface RouterParams {
 
 export interface ListItemProps {
   task: Task;
-  restartTask(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    taskId: TaskId['task']
-  ): Promise<void>;
+  restartTask(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+    taskId: TaskId['task'];
+  }): Promise<unknown>;
 }
 
 const ListItem: React.FC<ListItemProps> = ({ task, restartTask }) => {
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
 
   const restartTaskHandler = React.useCallback(async () => {
-    await restartTask(clusterName, connectName, connectorName, task.id?.task);
+    await restartTask({
+      clusterName,
+      connectName,
+      connectorName,
+      taskId: task.id?.task,
+    });
   }, [restartTask, clusterName, connectName, connectorName, task.id?.task]);
 
   return (
