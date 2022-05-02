@@ -364,7 +364,7 @@ const Filters: React.FC<FiltersProps> = ({
             handleSearch={(value: string) => setQuery(value)}
           />
           <S.SeekTypeSelectorWrapper>
-            <Select
+            <S.SeekTypeSelect
               id="selectSeekType"
               onChange={(option) => setCurrentSeekType(option as SeekType)}
               value={currentSeekType}
