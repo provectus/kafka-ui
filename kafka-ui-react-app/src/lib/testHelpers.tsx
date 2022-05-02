@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { mount } from 'enzyme';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { render, RenderOptions } from '@testing-library/react';
@@ -36,14 +35,6 @@ export const TestRouterWrapper: React.FC<TestRouterWrapperProps> = ({
     <Route path={pathname}>{children}</Route>
   </MemoryRouter>
 );
-
-export function mountWithTheme(child: ReactElement) {
-  return mount(child, {
-    wrappingComponent: ({ children }) => (
-      <ThemeProvider theme={theme}>{children}</ThemeProvider>
-    ),
-  });
-}
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
