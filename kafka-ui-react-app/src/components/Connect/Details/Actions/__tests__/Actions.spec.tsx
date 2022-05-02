@@ -1,5 +1,5 @@
 import React from 'react';
-import { TestRouterWrapper } from 'lib/testHelpers';
+import { TestRouterWrapper, render } from 'lib/testHelpers';
 import { clusterConnectConnectorPath, clusterConnectorsPath } from 'lib/paths';
 import ActionsContainer from 'components/Connect/Details/Actions/ActionsContainer';
 import Actions, {
@@ -8,21 +8,15 @@ import Actions, {
 import { ConnectorState } from 'generated-sources';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ConfirmationModal, {
   ConfirmationModalProps,
 } from 'components/common/ConfirmationModal/ConfirmationModal';
-import { store } from 'redux/store';
-import { createMemoryHistory } from 'history';
-import { Provider } from 'react-redux';
-import { Router } from 'react-router';
 
 const mockHistoryPush = jest.fn();
 const deleteConnector = jest.fn();
 const cancelMock = jest.fn();
-
-const history = createMemoryHistory();
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -38,26 +32,20 @@ jest.mock(
 
 describe('Actions', () => {
   const actionsContainer = (props: Partial<ActionsProps> = {}) => (
-    <ThemeProvider theme={theme}>
-      <Provider store={store}>
-        <Router history={history}>
-          <ActionsContainer>
-            <Actions
-              data-testid="actions_view"
-              deleteConnector={jest.fn()}
-              isConnectorDeleting={false}
-              connectorStatus={ConnectorState.RUNNING}
-              restartConnector={jest.fn()}
-              restartTasks={jest.fn()}
-              pauseConnector={jest.fn()}
-              resumeConnector={jest.fn()}
-              isConnectorActionRunning={false}
-              {...props}
-            />
-          </ActionsContainer>
-        </Router>
-      </Provider>
-    </ThemeProvider>
+    <ActionsContainer>
+      <Actions
+        data-testid="actions_view"
+        deleteConnector={jest.fn()}
+        isConnectorDeleting={false}
+        connectorStatus={ConnectorState.RUNNING}
+        restartConnector={jest.fn()}
+        restartTasks={jest.fn()}
+        pauseConnector={jest.fn()}
+        resumeConnector={jest.fn()}
+        isConnectorActionRunning={false}
+        {...props}
+      />
+    </ActionsContainer>
   );
 
   it('container renders view', () => {
