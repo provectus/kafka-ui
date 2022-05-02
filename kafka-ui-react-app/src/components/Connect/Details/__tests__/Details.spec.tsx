@@ -59,18 +59,18 @@ describe('Details', () => {
   );
 
   it('matches snapshot', () => {
-    const wrapper = create(setupWrapper());
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    const { container } = render(setupWrapper());
+    expect(container).toBeInTheDocument();
   });
 
   it('matches snapshot when fetching connector', () => {
-    const wrapper = create(setupWrapper({ isConnectorFetching: true }));
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    const { container } = render(setupWrapper({ isConnectorFetching: true }));
+    expect(container).toBeInTheDocument();
   });
 
   it('matches snapshot when fetching tasks', () => {
-    const wrapper = create(setupWrapper({ areTasksFetching: true }));
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    const { container } = render(setupWrapper({ areTasksFetching: true }));
+    expect(container).toBeInTheDocument();
   });
 
   it('is empty when no connector', () => {

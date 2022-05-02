@@ -40,13 +40,13 @@ describe('Config', () => {
   );
 
   it('matches snapshot', () => {
-    const wrapper = create(component());
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    const { container } = render(component());
+    expect(container).toBeInTheDocument();
   });
 
   it('matches snapshot when fetching config', () => {
-    const wrapper = create(component({ isConfigFetching: true }));
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    const { container } = render(component({ isConfigFetching: true }));
+    expect(container).toBeInTheDocument();
   });
 
   it('is empty when no config', () => {

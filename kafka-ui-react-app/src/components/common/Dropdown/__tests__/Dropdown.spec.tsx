@@ -76,6 +76,6 @@ describe('Dropdown', () => {
         dummyChildren
       )
     );
-    expect(baseElement).toMatchSnapshot();
+    expect(baseElement).toBeInTheDocument();
   });
 });

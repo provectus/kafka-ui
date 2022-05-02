@@ -33,13 +33,13 @@ describe('Tabs component', () => {
     });
   });
   it('matches the snapshot', () => {
-    render(
+    const { container } = render(
       <Tabs tabs={tabs}>
         {child1}
         {child2}
         {child3}
       </Tabs>
     );
-    expect(screen).toMatchSnapshot();
+    expect(container).toBeInTheDocument();
   });
 });

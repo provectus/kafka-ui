@@ -12,7 +12,7 @@ describe('DropdownItem', () => {
       <DropdownItem onClick={jest.fn()}>Item 1</DropdownItem>
     );
     expect(onClick).not.toHaveBeenCalled();
-    expect(baseElement).toMatchSnapshot();
+    expect(baseElement).toBeInTheDocument();
   });
 
   it('handles Click', () => {

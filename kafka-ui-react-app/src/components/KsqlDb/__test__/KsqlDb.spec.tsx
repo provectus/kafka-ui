@@ -14,7 +14,8 @@ describe('KsqlDb Component', () => {
     );
 
     it('matches snapshot', () => {
-      expect(render(setupComponent())).toMatchSnapshot();
+      const { container } = render(setupComponent());
+      expect(container).toBeInTheDocument();
     });
   });
 });

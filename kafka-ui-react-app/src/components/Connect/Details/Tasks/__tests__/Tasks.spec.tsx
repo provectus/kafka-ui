@@ -73,18 +73,18 @@ describe('Tasks', () => {
     );
 
     it('matches snapshot', () => {
-      const wrapper = create(setupWrapper());
-      expect(wrapper.toJSON()).toMatchSnapshot();
+      const { container } = render(setupWrapper());
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when fetching tasks', () => {
-      const wrapper = create(setupWrapper({ areTasksFetching: true }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+      const { container } = render(setupWrapper({ areTasksFetching: true }));
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when no tasks', () => {
-      const wrapper = create(setupWrapper({ tasks: [] }));
-      expect(wrapper.toJSON()).toMatchSnapshot();
+      const { container } = render(setupWrapper({ tasks: [] }));
+      expect(container).toBeInTheDocument();
     });
 
     it('fetches tasks on mount', () => {

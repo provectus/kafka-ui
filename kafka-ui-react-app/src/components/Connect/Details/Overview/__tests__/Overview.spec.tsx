@@ -22,8 +22,8 @@ const component = (props: Partial<OverviewProps> = {}) => (
 
 describe('Overview', () => {
   it('matches snapshot', () => {
-    const wrapper = create(component());
-    expect(wrapper.toJSON()).toMatchSnapshot();
+    const { container } = render(component());
+    expect(container).toBeInTheDocument();
   });
 
   it('is empty when no connector', () => {

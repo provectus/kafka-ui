@@ -127,33 +127,41 @@ describe('Actions', () => {
     );
 
     it('matches snapshot', () => {
-      render(component());
-      expect(screen).toMatchSnapshot();
+      const { container } = render(component());
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when paused', () => {
-      render(component({ connectorStatus: ConnectorState.PAUSED }));
-      expect(screen).toMatchSnapshot();
+      const { container } = render(
+        component({ connectorStatus: ConnectorState.PAUSED })
+      );
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when failed', () => {
-      render(component({ connectorStatus: ConnectorState.FAILED }));
-      expect(screen).toMatchSnapshot();
+      const { container } = render(
+        component({ connectorStatus: ConnectorState.FAILED })
+      );
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when unassigned', () => {
-      render(component({ connectorStatus: ConnectorState.UNASSIGNED }));
-      expect(screen).toMatchSnapshot();
+      const { container } = render(
+        component({ connectorStatus: ConnectorState.UNASSIGNED })
+      );
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when deleting connector', () => {
-      render(component({ isConnectorDeleting: true }));
-      expect(screen).toMatchSnapshot();
+      const { container } = render(component({ isConnectorDeleting: true }));
+      expect(container).toBeInTheDocument();
     });
 
     it('matches snapshot when running connector action', () => {
-      render(component({ isConnectorActionRunning: true }));
-      expect(screen).toMatchSnapshot();
+      const { container } = render(
+        component({ isConnectorActionRunning: true })
+      );
+      expect(container).toBeInTheDocument();
     });
 
     it('opens confirmation modal when delete button clicked', () => {
