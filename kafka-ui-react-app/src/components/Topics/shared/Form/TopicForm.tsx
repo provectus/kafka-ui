@@ -16,6 +16,10 @@ import * as S from './TopicForm.styled';
 
 export interface Props {
   topicName?: TopicName;
+  partitionCount?: number;
+  replicationFactor?: number;
+  inSyncReplicas?: number;
+  cleanUpPolicy?: string;
   isEditing?: boolean;
   isSubmitting: boolean;
   onSubmit: (e: React.BaseSyntheticEvent) => Promise<void>;
@@ -40,11 +44,19 @@ const TopicForm: React.FC<Props> = ({
   isEditing,
   isSubmitting,
   onSubmit,
+  partitionCount,
+  replicationFactor,
+  inSyncReplicas,
+  cleanUpPolicy,
 }) => {
   const {
     control,
     formState: { errors },
   } = useFormContext();
+  const getCleanUpPolicy =
+    CleanupPolicyOptions.find((option: SelectOption) => {
+      return option.value === cleanUpPolicy?.toLowerCase();
+    })?.value || CleanupPolicyOptions[0].value;
   return (
     <StyledForm onSubmit={onSubmit}>
       <fieldset disabled={isSubmitting}>
@@ -75,7 +87,7 @@ const TopicForm: React.FC<Props> = ({
                   type="number"
                   placeholder="Number of partitions"
                   min="1"
-                  defaultValue="1"
+                  defaultValue={partitionCount}
                   name="partitions"
                 />
                 <FormError>
@@ -91,7 +103,7 @@ const TopicForm: React.FC<Props> = ({
                   type="number"
                   placeholder="Replication Factor"
                   min="1"
-                  defaultValue="1"
+                  defaultValue={replicationFactor}
                   name="replicationFactor"
                 />
                 <FormError>
@@ -112,7 +124,7 @@ const TopicForm: React.FC<Props> = ({
               type="number"
               placeholder="Min In Sync Replicas"
               min="1"
-              defaultValue="1"
+              defaultValue={inSyncReplicas}
               name="minInsyncReplicas"
             />
             <FormError>
@@ -135,7 +147,7 @@ const TopicForm: React.FC<Props> = ({
                   id="topicFormCleanupPolicy"
                   aria-labelledby="topicFormCleanupPolicyLabel"
                   name={name}
-                  value={CleanupPolicyOptions[0].value}
+                  value={getCleanUpPolicy}
                   onChange={onChange}
                   minWidth="250px"
                   options={CleanupPolicyOptions}

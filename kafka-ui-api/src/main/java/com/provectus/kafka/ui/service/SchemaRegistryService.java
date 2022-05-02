@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -243,7 +244,7 @@ public class SchemaRegistryService {
    * @param schemaName is a schema subject name
    * @see com.provectus.kafka.ui.model.CompatibilityLevelDTO.CompatibilityEnum
    */
-  public Mono<Void> updateSchemaCompatibility(KafkaCluster cluster, String schemaName,
+  public Mono<Void> updateSchemaCompatibility(KafkaCluster cluster, @Nullable String schemaName,
                                               Mono<CompatibilityLevelDTO> compatibilityLevel) {
     String configEndpoint = Objects.isNull(schemaName) ? "/config" : "/config/{schemaName}";
     return configuredWebClient(
@@ -348,9 +349,9 @@ public class SchemaRegistryService {
   }
 
   private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster, HttpMethod method,
-                                                        String uri, String uriVariable) {
-    return configuredWebClient(cluster, method, uri, List.of(uriVariable),
-        new LinkedMultiValueMap<>());
+                                                        String uri, @Nullable String uriVariable) {
+    List<String> uriVariables = uriVariable == null ? Collections.emptyList() : List.of(uriVariable);
+    return configuredWebClient(cluster, method, uri, uriVariables, new LinkedMultiValueMap<>());
   }
 
   private WebClient.RequestBodySpec configuredWebClient(KafkaCluster cluster,

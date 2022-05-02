@@ -10,7 +10,7 @@ interface OwnProps extends RouteComponentProps {
 }
 
 const mapStateToProps = (
-  state: RootState,
+  _state: RootState,
   { isSubmitting, config }: OwnProps
 ) => ({
   isSubmitting,

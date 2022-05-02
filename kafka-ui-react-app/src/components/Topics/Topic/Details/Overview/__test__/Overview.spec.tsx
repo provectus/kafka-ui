@@ -6,6 +6,8 @@ import Overview, {
 } from 'components/Topics/Topic/Details/Overview/Overview';
 import theme from 'theme/theme';
 import { CleanUpPolicy } from 'generated-sources';
+import ClusterContext from 'components/contexts/ClusterContext';
+import userEvent from '@testing-library/user-event';
 
 describe('Overview', () => {
   const mockClusterName = 'local';
@@ -26,45 +28,52 @@ describe('Overview', () => {
       offsetMin: 0,
     },
   ];
+  const defaultContextValues = {
+    isReadOnly: false,
+    hasKafkaConnectConfigured: true,
+    hasSchemaRegistryConfigured: true,
+    isTopicDeletionAllowed: true,
+  };
+  const defaultProps: OverviewProps = {
+    name: mockTopicName,
+    partitions: [],
+    internal: true,
+    clusterName: mockClusterName,
+    topicName: mockTopicName,
+    clearTopicMessages: mockClearTopicMessages,
+  };
 
   const setupComponent = (
-    props: OverviewProps,
+    props = defaultProps,
+    contextValues = defaultContextValues,
     underReplicatedPartitions?: number,
     inSyncReplicas?: number,
     replicas?: number
   ) =>
     render(
-      <Overview
-        underReplicatedPartitions={underReplicatedPartitions}
-        inSyncReplicas={inSyncReplicas}
-        replicas={replicas}
-        {...props}
-      />
+      <ClusterContext.Provider value={contextValues}>
+        <Overview
+          underReplicatedPartitions={underReplicatedPartitions}
+          inSyncReplicas={inSyncReplicas}
+          replicas={replicas}
+          {...props}
+        />
+      </ClusterContext.Provider>
     );
 
   describe('when it has internal flag', () => {
     it('does not render the Action button a Topic', () => {
       setupComponent({
-        name: mockTopicName,
+        ...defaultProps,
         partitions: mockPartitions,
         internal: false,
-        clusterName: mockClusterName,
-        topicName: mockTopicName,
         cleanUpPolicy: CleanUpPolicy.DELETE,
-        clearTopicMessages: mockClearTopicMessages,
       });
-      expect(screen.getByRole('menu')).toBeInTheDocument();
+      expect(screen.getAllByRole('menu')[0]).toBeInTheDocument();
     });
 
     it('does not render Partitions', () => {
-      setupComponent({
-        name: mockTopicName,
-        partitions: [],
-        internal: true,
-        clusterName: mockClusterName,
-        topicName: mockTopicName,
-        clearTopicMessages: mockClearTopicMessages,
-      });
+      setupComponent();
 
       expect(screen.getByText('No Partitions found')).toBeInTheDocument();
     });
@@ -72,26 +81,14 @@ describe('Overview', () => {
 
   describe('should render circular alert', () => {
     it('should be in document', () => {
-      setupComponent({
-        name: mockTopicName,
-        partitions: [],
-        internal: true,
-        clusterName: mockClusterName,
-        topicName: mockTopicName,
-        clearTopicMessages: mockClearTopicMessages,
-      });
+      setupComponent();
       const circles = screen.getAllByRole('circle');
       expect(circles.length).toEqual(2);
     });
 
     it('should be the appropriate color', () => {
       setupComponent({
-        name: mockTopicName,
-        partitions: [],
-        internal: true,
-        clusterName: mockClusterName,
-        topicName: mockTopicName,
-        clearTopicMessages: mockClearTopicMessages,
+        ...defaultProps,
         underReplicatedPartitions: 0,
         inSyncReplicas: 1,
         replicas: 2,
@@ -104,5 +101,19 @@ describe('Overview', () => {
         `fill: ${theme.circularAlert.color.error}`
       );
     });
+  });
+
+  describe('when Clear Messages is clicked', () => {
+    setupComponent({
+      ...defaultProps,
+      partitions: mockPartitions,
+      internal: false,
+      cleanUpPolicy: CleanUpPolicy.DELETE,
+    });
+
+    const clearMessagesButton = screen.getByText('Clear Messages');
+    userEvent.click(clearMessagesButton);
+
+    expect(mockClearTopicMessages).toHaveBeenCalledTimes(1);
   });
 });

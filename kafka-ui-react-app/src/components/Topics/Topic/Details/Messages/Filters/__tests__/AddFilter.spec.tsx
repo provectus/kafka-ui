@@ -12,6 +12,8 @@ const filters: MessageFilters[] = [
   { name: 'name2', code: 'code2' },
 ];
 
+const editFilterMock = jest.fn();
+
 const setupComponent = (props: Partial<FilterModalProps> = {}) =>
   render(
     <AddFilter
@@ -20,7 +22,7 @@ const setupComponent = (props: Partial<FilterModalProps> = {}) =>
       deleteFilter={jest.fn()}
       activeFilterHandler={jest.fn()}
       toggleEditModal={jest.fn()}
-      editFilter={jest.fn()}
+      editFilter={editFilterMock}
       filters={props.filters || filters}
       {...props}
     />
@@ -83,6 +85,26 @@ describe('AddFilter component', () => {
       expect(addFilterBtn).toBeEnabled();
       expect(codeTextBox).toHaveValue(code);
     });
+
+    it('calls editFilter when edit button is clicked in saved filters', () => {
+      const savedFiltersButton = screen.getByText('Saved Filters');
+      expect(savedFiltersButton).toBeInTheDocument();
+
+      userEvent.click(savedFiltersButton);
+
+      const index = 0;
+
+      const editButton = screen.getAllByText('Edit')[index];
+      userEvent.click(editButton);
+
+      const { code, name } = filters[index];
+
+      expect(editFilterMock).toHaveBeenCalledTimes(1);
+      expect(editFilterMock).toHaveBeenCalledWith({
+        index,
+        filter: { code, name },
+      });
+    });
   });
 
   describe('onSubmit with Filter being saved', () => {
@@ -91,6 +113,7 @@ describe('AddFilter component', () => {
     const toggleModelMock = jest.fn();
 
     const codeValue = 'filter code';
+    const longCodeValue = 'a long filter code';
     const nameValue = 'filter name';
 
     beforeEach(async () => {
@@ -149,7 +172,7 @@ describe('AddFilter component', () => {
         expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
         expect(activeFilterHandlerMock).toHaveBeenCalledWith(
           {
-            name: 'Unsaved filter',
+            name: codeValue,
             code: codeValue,
             saveFilter: false,
           },
@@ -182,6 +205,37 @@ describe('AddFilter component', () => {
           code: codeValue,
           saveFilter: true,
         });
+      });
+    });
+
+    it('should use sliced code as the filter name if filter name is empty', async () => {
+      const codeTextBox = screen.getAllByRole('textbox')[0];
+      const nameTextBox = screen.getAllByRole('textbox')[1];
+      const addFilterBtn = screen.getByRole('button', { name: /Add filter/i });
+
+      userEvent.clear(nameTextBox);
+      userEvent.clear(codeTextBox);
+      userEvent.paste(codeTextBox, longCodeValue);
+
+      expect(nameTextBox).toHaveValue('');
+      expect(codeTextBox).toHaveValue(longCodeValue);
+
+      userEvent.click(addFilterBtn);
+
+      const filterName = `${longCodeValue.slice(0, 16)}...`;
+
+      await waitFor(() => {
+        expect(activeFilterHandlerMock).toHaveBeenCalledTimes(1);
+        expect(activeFilterHandlerMock).toHaveBeenCalledWith(
+          {
+            name: filterName,
+            code: longCodeValue,
+            saveFilter: false,
+          },
+          -1
+        );
+        expect(codeTextBox).toHaveValue('');
+        expect(toggleModelMock).toHaveBeenCalled();
       });
     });
   });

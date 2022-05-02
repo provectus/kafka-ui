@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch } from 'react-router-dom';
 import {
+  clusterTopicCopyPath,
   clusterTopicNewPath,
   clusterTopicPath,
   clusterTopicsPath,
@@ -21,6 +22,11 @@ const Topics: React.FC = () => (
     <BreadcrumbRoute
       exact
       path={clusterTopicNewPath(':clusterName')}
+      component={New}
+    />
+    <BreadcrumbRoute
+      exact
+      path={clusterTopicCopyPath(':clusterName')}
       component={New}
     />
     <BreadcrumbRoute
