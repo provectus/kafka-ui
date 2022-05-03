@@ -67,7 +67,7 @@ public class SchemaRegistryService {
   private static final String LATEST = "latest";
 
   private static final String UNRECOGNIZED_FIELD_SCHEMA_TYPE = "Unrecognized field: schemaType";
-  private static final String INCOMPATIBLE_WITH_AN_EARLIER_SCHEMA = "incompatible with an earlier schema";
+  private static final String INCOMPATIBLE_WITH_AN_EARLIER_SCHEMA = "incompatible with an earlier schema version";
 
   private final ClusterMapper mapper;
   private final WebClient webClient;
