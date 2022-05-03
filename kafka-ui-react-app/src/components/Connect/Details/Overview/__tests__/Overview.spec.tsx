@@ -1,6 +1,4 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
-import OverviewContainer from 'components/Connect/Details/Overview/OverviewContainer';
 import Overview, {
   OverviewProps,
 } from 'components/Connect/Details/Overview/Overview';

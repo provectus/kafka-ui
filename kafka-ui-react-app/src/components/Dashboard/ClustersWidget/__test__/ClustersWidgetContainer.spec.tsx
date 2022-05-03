@@ -1,6 +1,5 @@
 import React from 'react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
-import ClustersWidgetContainer from 'components/Dashboard/ClustersWidget/ClustersWidgetContainer';
 import theme from 'theme/theme';
 import { ThemeProvider } from 'styled-components';
 import { render, screen } from '@testing-library/react';

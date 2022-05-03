@@ -1,10 +1,8 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
 import { TestRouterWrapper } from 'lib/testHelpers';
 import { clusterConnectConnectorConfigPath } from 'lib/paths';
-import ConfigContainer from 'components/Connect/Details/Config/ConfigContainer';
 import Config, { ConfigProps } from 'components/Connect/Details/Config/Config';
-import { connector, tasks } from 'redux/reducers/connect/__test__/fixtures';
+import { connector } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
 import { render } from '@testing-library/react';

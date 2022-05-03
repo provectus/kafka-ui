@@ -3,17 +3,9 @@ import { Button } from 'components/common/Button/Button';
 import { ButtonProps } from 'components/common/Button/Button.styled';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 describe('StyledButton', () => {
-  const setupComponent = (props: ButtonProps) => {
-    return (
-      <ThemeProvider theme={theme}>
-        <Button {...props} />
-      </ThemeProvider>
-    );
-  };
-
   it('should render with props S and Primary', () => {
     const buttonProps: ButtonProps = {
       buttonSize: 'S',

@@ -1,5 +1,4 @@
 import React from 'react';
-import { create } from 'react-test-renderer';
 import { TestRouterWrapper, render } from 'lib/testHelpers';
 import { clusterConnectConnectorPath } from 'lib/paths';
 import Details, { DetailsProps } from 'components/Connect/Details/Details';
