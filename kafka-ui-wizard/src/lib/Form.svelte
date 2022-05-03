@@ -1,30 +1,44 @@
 <script type="ts">
-  import type { FormProps } from 'src/types';
-  import { createForm } from 'svelte-forms-lib';
-import BootstrapServers from './BootstrapServers.svelte';
-  import Checkbox from './Checkbox.svelte';
-  import Label from './Label.svelte';
-import PasswordInput from './PasswordInput.svelte';
-  import TextInput from './TextInput.svelte';
+  import type { FormProps } from "src/types";
+  import { createForm } from "svelte-forms-lib";
+  import BootstrapServers from "./BootstrapServers.svelte";
+  import CheckboxField from "./CheckboxField.svelte";
+  import Hr from "./Hr.svelte";
+  import Label from "./Label.svelte";
+  import PasswordField from "./PasswordField.svelte";
+  import SectionHeader from "./SectionHeader.svelte";
+  import SelectField from "./SelectField.svelte";
+  import TextField from "./TextField.svelte";
 
   const { form, handleChange, handleSubmit } = createForm<FormProps>({
     initialValues: {
       clusterName: "123",
       readonly: false,
-      bootstrapServers: [{
-        host: '',
-        port: undefined,
-      }],
+      bootstrapServers: [
+        {
+          host: "",
+          port: undefined,
+        },
+      ],
       sharedConfluentCloudCluster: false,
       securedWithSSL: false,
       selfSignedCA: false,
       selfSignedCATruststoreLocation: undefined,
       selfSignedCATruststorePassword: undefined,
       securedWithAuth: false,
+      authMethod: undefined,
+      saslJaasConfig: undefined,
+      saslMechanism: undefined,
+      sslTruststoreLocation: undefined,
+      sslTruststorePassword: undefined,
+      sslKeystoreLocation: undefined,
+      sslKeystorePassword: undefined,
+      useSpecificIAMProfile: false,
+      IAMProfile: undefined,
     },
-    onSubmit: values => {
+    onSubmit: (values) => {
       console.log(JSON.stringify(values));
-    }
+    },
   });
 </script>
 
@@ -32,87 +46,124 @@ import PasswordInput from './PasswordInput.svelte';
   <div class="shadow sm:rounded-md sm:overflow-hidden">
     <div class="px-4 py-5 bg-white space-y-6 sm:p-6">
       <div class="grid grid-cols-6 gap-6">
-        <div class="col-span-6">
-          <Label forTarget="clusterName">Cluster Name</Label>
-          <TextInput
-            name="clusterName"
-            bind:value={$form.clusterName}
-          />
-        </div>
-        <div class="col-span-6">
-          <div class="flex items-start">
-            <div class="flex items-center h-5">
-              <Checkbox name="readonly" bind:checked={$form.readonly} />
-            </div>
-            <div class="ml-3 text-sm">
-              <Label forTarget="readonly">Readonly?</Label>
-              <p class="text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-            </div>
-          </div>
-        </div>
+        <TextField
+          name="clusterName"
+          label="Cluster Name"
+          bind:value={$form.clusterName}
+        />
+        <CheckboxField
+          name="readonly"
+          label="Readonly?"
+          bind:checked={$form.readonly}
+        />
 
-        <hr class="col-span-6" />
+        <Hr />
         <div class="col-span-6">
           <Label forTarget="bootstrapServers">Bootstrap Servers</Label>
           <BootstrapServers bind:value={$form.bootstrapServers} />
         </div>
+        <CheckboxField
+          name="sharedConfluentCloudCluster"
+          label="Is it shared confluent cloud cluster?"
+          bind:checked={$form.sharedConfluentCloudCluster}
+        />
 
-        <div class="col-span-6">
-          <div class="flex items-start">
-            <div class="flex items-center h-5">
-              <Checkbox name="sharedConfluentCloudCluster" bind:checked={$form.sharedConfluentCloudCluster} />
-            </div>
-            <div class="ml-3 text-sm">
-              <Label forTarget="sharedConfluentCloudCluster">Is it shared confluent cloud cluster?</Label>
-              <p class="text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-            </div>
-          </div>
-        </div>
-
-        <hr class="col-span-6" />
-        <div class="col-span-6">
-          <div class="flex items-start">
-            <div class="flex items-center h-5">
-              <Checkbox name="securedWithSSL" bind:checked={$form.securedWithSSL} />
-            </div>
-            <div class="ml-3 text-sm">
-              <Label forTarget="securedWithSSL">Is it secured with SSL?</Label>
-              <p class="text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-            </div>
-          </div>
-        </div>
+        <Hr />
+        <SectionHeader>SSL</SectionHeader>
+        <CheckboxField
+          name="securedWithSSL"
+          label="Is it secured with SSL?"
+          bind:checked={$form.securedWithSSL}
+        />
         {#if $form.securedWithSSL}
-          <div class="col-span-6">
-            <div class="flex items-start">
-              <div class="flex items-center h-5">
-                <Checkbox name="selfSignedCA" bind:checked={$form.selfSignedCA} />
-              </div>
-              <div class="ml-3 text-sm">
-                <Label forTarget="selfSignedCA">Do you have self-signed certificate?</Label>
-                <p class="text-gray-500">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
-              </div>
-            </div>
-          </div>
+          <CheckboxField
+            name="selfSignedCA"
+            label="Do you have self-signed certificate?"
+            bind:checked={$form.selfSignedCA}
+          />
           {#if $form.selfSignedCA}
-            <div class="col-span-3">
-              <Label forTarget="selfSignedCATruststoreLocation">Truststore location</Label>
-              <TextInput
-                name="selfSignedCATruststoreLocation"
-                bind:value={$form.selfSignedCATruststoreLocation}
-              />
-            </div>
-            <div class="col-span-3">
-              <Label forTarget="selfSignedCATruststorePassword">Truststore password</Label>
-              <PasswordInput
-                name="selfSignedCATruststorePassword"
-                bind:value={$form.selfSignedCATruststorePassword}
-              />
-            </div>
+            <TextField
+              name="selfSignedCATruststoreLocation"
+              label="Truststore location"
+              containerClass="col-span-3"
+              bind:value={$form.selfSignedCATruststoreLocation}
+            />
+            <PasswordField
+              name="selfSignedCATruststorePassword"
+              label="Truststore password"
+              bind:value={$form.selfSignedCATruststorePassword}
+            />
           {/if}
         {/if}
 
-        <hr class="col-span-6" />
-
+        <Hr />
+        <SectionHeader>Authentication</SectionHeader>
+        <CheckboxField
+          name="securedWithAuth"
+          label="Is it secured with authentication?"
+          bind:checked={$form.securedWithAuth}
+        />
+        {#if $form.securedWithAuth}
+          <SelectField
+            name="authMethod"
+            bind:value={$form.authMethod}
+            label="Authentication method"
+            containerClass="col-span-2"
+          >
+            <option>SASL</option>
+            <option>SSL</option>
+            <option>IAM</option>
+          </SelectField>
+          {#if $form.authMethod === "SASL"}
+            <TextField
+              name="saslMechanism"
+              label="sasl_mechanism"
+              bind:value={$form.saslMechanism}
+            />
+            <TextField
+              name="saslJaasConfig"
+              label="sasl.jaas.config"
+              bind:value={$form.saslJaasConfig}
+            />
+          {:else if $form.authMethod === "SSL"}
+            <TextField
+              name="sslTruststoreLocation"
+              label="Truststore location"
+              containerClass="col-start-1 col-span-3"
+              bind:value={$form.sslTruststoreLocation}
+            />
+            <PasswordField
+              name="sslTruststorePassword"
+              label="Truststore password"
+              bind:value={$form.sslTruststorePassword}
+            />
+            <TextField
+              name="sslKeystoreLocation"
+              label="Keystore location"
+              containerClass="col-span-3"
+              bind:value={$form.sslKeystoreLocation}
+            />
+            <PasswordField
+              name="sslKeystorePassword"
+              label="Keystore password"
+              bind:value={$form.sslKeystorePassword}
+            />
+          {:else if $form.authMethod === "IAM"}
+            <CheckboxField
+              name="useSpecificIAMProfile"
+              label="Use specific profile?"
+              bind:checked={$form.useSpecificIAMProfile}
+            />
+            {#if $form.useSpecificIAMProfile}
+              <TextField
+                name="IAMProfile"
+                label="Profile name"
+                bind:value={$form.IAMProfile}
+              />
+            {/if}
+          {/if}
+        {/if}
+        <Hr />
       </div>
     </div>
 

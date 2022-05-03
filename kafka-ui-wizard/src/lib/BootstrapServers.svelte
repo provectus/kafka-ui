@@ -1,7 +1,5 @@
 <script type="ts">
   import type { BootstrapServer } from "src/types";
-  import TextInput from "./TextInput.svelte";
-
   export let value: BootstrapServer[];
 
   const add = () => {
@@ -16,10 +14,13 @@
 {#each value as server, index}
   <div class="grid grid-cols-6 gap-3">
     <div class="col-span-3">
-      <TextInput
+      <input
+        id={`value[${index}].host`}
         name={`value[${index}].host`}
-        bind:value={value[index].host}
         placeholder="Host"
+        type="text"
+        bind:value={value[index].host}
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
       />
     </div>
     <div class="col-span-1">

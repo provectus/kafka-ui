@@ -2,6 +2,7 @@
   import Form from "./lib/Form.svelte";
   import "./app.css";
 </script>
+
 <main class="container mx-auto px-5 py-10">
   <h1 class="order-1 text-gray-900 text-3xl font-extrabold tracking-tight mt-2 mb-8">Kafka UI Wizard</h1>
   <h2 class="font-medium text-gray-900 truncate mb-3">New cluster</h2>
@@ -17,19 +18,6 @@
             </p>
             <pre class="text-xs">
 New cluster ->
-  5. Is it secured with authentication
-  5.1 Choose (SASL, SSL, IAM)
-      SASL -> 5.1.1.1 Add sasl_mechanism
-      SASL -> 5.1.1.2 Add sasl.jaas.config
-      SSL -> 5.1.2.1 Truststore location
-      SSL -> 5.1.2.2 Truststore password
-      SSL -> 5.1.2.3 keystore location
-      SSL -> 5.1.2.4 keystore password
-      IAM -> 5.1.3.1 Use specific profile?
-          YES -> 5.1.3.1.1 Profile name
-
-  6. Do you want to monitor zookeeper?
-      YES -> 6.1 Zookeeper address
   7. Schema registry url?
   7.1 Schema registry is secured with auth?
       YES -> 7.1.1 Schema registry username

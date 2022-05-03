@@ -15,4 +15,13 @@ export interface FormProps {
   selfSignedCATruststoreLocation?: string;
   selfSignedCATruststorePassword?: string;
   securedWithAuth: boolean;
+  authMethod: 'SASL' | 'SSL' | 'IAM';
+  saslMechanism: string;
+  saslJaasConfig: string;
+  sslTruststoreLocation: string;
+  sslTruststorePassword: string;
+  sslKeystoreLocation: string;
+  sslKeystorePassword: string;
+  useSpecificIAMProfile: boolean;
+  IAMProfile: string;
 }
