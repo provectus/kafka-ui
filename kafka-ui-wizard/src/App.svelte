@@ -1,65 +1,64 @@
 <script lang="ts">
-  import logo from './assets/svelte.png'
-  import Counter from './lib/Counter.svelte'
+  import Form from "./lib/Form.svelte";
+  import "./app.css";
 </script>
+<main class="container mx-auto px-5 py-10">
+  <h1 class="order-1 text-gray-900 text-3xl font-extrabold tracking-tight mt-2 mb-8">Kafka UI Wizard</h1>
+  <h2 class="font-medium text-gray-900 truncate mb-3">New cluster</h2>
 
-<main>
-  <img src={logo} alt="Svelte Logo" />
-  <h1>Hello Typescript!</h1>
+  <div class="rounded-lg bg-gray-100 ring-1 ring-gray-900 ring-opacity-5">
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <div class="md:grid md:grid-cols-3 md:gap-6">
+        <div class="md:col-span-1">
+          <div class="px-4 sm:px-0">
+            <h3 class="text-lg font-medium leading-6 text-gray-900">New cluster</h3>
+            <p class="mt-1 text-sm text-gray-600">
+              This information will be displayed publicly so be careful what you share.
+            </p>
+            <pre class="text-xs">
+New cluster ->
+  5. Is it secured with authentication
+  5.1 Choose (SASL, SSL, IAM)
+      SASL -> 5.1.1.1 Add sasl_mechanism
+      SASL -> 5.1.1.2 Add sasl.jaas.config
+      SSL -> 5.1.2.1 Truststore location
+      SSL -> 5.1.2.2 Truststore password
+      SSL -> 5.1.2.3 keystore location
+      SSL -> 5.1.2.4 keystore password
+      IAM -> 5.1.3.1 Use specific profile?
+          YES -> 5.1.3.1.1 Profile name
 
-  <Counter />
+  6. Do you want to monitor zookeeper?
+      YES -> 6.1 Zookeeper address
+  7. Schema registry url?
+  7.1 Schema registry is secured with auth?
+      YES -> 7.1.1 Schema registry username
+      YES -> 7.1.2 Schema registry password
+  8. Kafka connect? (url)
+  8.1 Kafka connect is secured with auth?
+      YES -> 8.1.1 Schema registry username
+      YES -> 8.1.2 Schema registry password
 
-  <p>
-    Visit <a href="https://svelte.dev">svelte.dev</a> to learn how to build Svelte
-    apps.
-  </p>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme">SvelteKit</a> for
-    the officially supported framework, also powered by Vite!
-  </p>
+  9. JMX metrics?
+  9.1 JMX url
+  9.2 JMX SSL?
+  9.3 JMX is secured with auth?
+      YES -> 9.3.1 Schema registry username
+      YES -> 9.3.2 Schema registry password
+            </pre>
+          </div>
+        </div>
+        <div class="mt-5 md:mt-0 md:col-span-2">
+          <Form />
+        </div>
+      </div>
+    </div>
+  </div>
 </main>
 
 <style>
   :root {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
       Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  }
-
-  main {
-    text-align: center;
-    padding: 1em;
-    margin: 0 auto;
-  }
-
-  img {
-    height: 16rem;
-    width: 16rem;
-  }
-
-  h1 {
-    color: #ff3e00;
-    text-transform: uppercase;
-    font-size: 4rem;
-    font-weight: 100;
-    line-height: 1.1;
-    margin: 2rem auto;
-    max-width: 14rem;
-  }
-
-  p {
-    max-width: 14rem;
-    margin: 1rem auto;
-    line-height: 1.35;
-  }
-
-  @media (min-width: 480px) {
-    h1 {
-      max-width: none;
-    }
-
-    p {
-      max-width: none;
-    }
   }
 </style>
