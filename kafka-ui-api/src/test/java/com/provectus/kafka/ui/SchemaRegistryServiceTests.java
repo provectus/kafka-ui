@@ -155,8 +155,8 @@ class SchemaRegistryServiceTests extends AbstractIntegrationTest {
         .exchange()
         .expectStatus().isOk()
         .expectBody(SchemaSubjectDTO.class)
-        .returnResult().
-        getResponseBody();
+        .returnResult()
+        .getResponseBody();
 
     Assertions.assertNotNull(dto);
     Assertions.assertEquals("1", dto.getVersion());
