@@ -46,7 +46,7 @@ jobs:
         uses: thegabriele97/dockercompose-health-action@main
         with:
           timeout: '300'
-          workdir: 'kafka-ui-e2e-checks/docker/'
+          workdir: './kafka-ui-e2e-checks/docker/'
 
       - name: e2e run
         run: |
