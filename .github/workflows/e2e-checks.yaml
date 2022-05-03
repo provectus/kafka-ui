@@ -41,12 +41,12 @@ jobs:
         run: |
           docker-compose -f ./kafka-ui-e2e-checks/docker/docker-compose.yaml up -d
 
-      - name: check contaners readiness
-        id: readiness_check
-        uses: thegabriele97/dockercompose-health-action@main
-        with:
-          timeout: '300'
-          workdir: 'kafka-ui-e2e-checks/docker/'
+#      - name: check contaners readiness
+#        id: readiness_check
+#        uses: thegabriele97/dockercompose-health-action@main
+#        with:
+#          timeout: '300'
+#          workdir: './kafka-ui-e2e-checks/docker/'
 
       - name: e2e run
         run: |
