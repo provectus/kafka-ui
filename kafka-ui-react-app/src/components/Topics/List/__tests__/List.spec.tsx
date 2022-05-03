@@ -76,11 +76,13 @@ describe('List', () => {
   describe('when it does not have readonly flag', () => {
     let fetchTopicsList = jest.fn();
     let component: ReactWrapper;
+    const internalTopicsSwitchName = 'input[name="ShowInternalTopics"]';
 
     jest.useFakeTimers();
 
     beforeEach(() => {
       fetchTopicsList = jest.fn();
+
       component = mountComponentWithProviders(
         { isReadOnly: false },
         { fetchTopicsList }
@@ -100,13 +102,35 @@ describe('List', () => {
       expect(setTopicsSearch).toHaveBeenCalledWith(query);
     });
 
+    it('show internal toggle state should be true if user has not used it yet', () => {
+      const toggle = component.find(internalTopicsSwitchName);
+      const { checked } = toggle.props();
+
+      expect(checked).toEqual(true);
+    });
+
+    it('show internal toggle state should match user preference', () => {
+      localStorage.setItem('hideInternalTopics', 'true');
+      component = mountComponentWithProviders(
+        { isReadOnly: false },
+        { fetchTopicsList }
+      );
+
+      const toggle = component.find(internalTopicsSwitchName);
+      const { checked } = toggle.props();
+
+      expect(checked).toEqual(false);
+    });
+
     it('should refetch topics on show internal toggle change', () => {
       jest.clearAllMocks();
-      const toggle = component.find('input[name="ShowInternalTopics"]');
+      const toggle = component.find(internalTopicsSwitchName);
+      const { checked } = toggle.props();
       toggle.simulate('change');
+
       expect(fetchTopicsList).toHaveBeenLastCalledWith({
         search: '',
-        showInternal: false,
+        showInternal: !checked,
         sortOrder: SortOrder.ASC,
       });
     });
@@ -120,7 +144,7 @@ describe('List', () => {
         mockedHistory
       );
 
-      const toggle = component.find('input[name="ShowInternalTopics"]');
+      const toggle = component.find(internalTopicsSwitchName);
       toggle.simulate('change');
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');

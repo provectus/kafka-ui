@@ -22,25 +22,45 @@ describe('Brokers Component', () => {
     );
 
   describe('Brokers', () => {
+    let fetchBrokersMock: fetchMock.FetchMockStatic;
+    const fetchStatsUrl = `/api/clusters/${clusterName}/stats`;
+
+    beforeEach(() => {
+      fetchBrokersMock = fetchMock.getOnce(
+        `/api/clusters/${clusterName}/brokers`,
+        clusterStatsPayload
+      );
+    });
+
     it('renders', async () => {
-      const mock = fetchMock.getOnce(
-        `/api/clusters/${clusterName}/stats`,
+      const fetchStatsMock = fetchMock.getOnce(
+        fetchStatsUrl,
         clusterStatsPayload
       );
       renderComponent();
-      await waitFor(() => expect(mock.called()).toBeTruthy());
+      await waitFor(() => {
+        expect(fetchStatsMock.called()).toBeTruthy();
+      });
+      await waitFor(() => {
+        expect(fetchBrokersMock.called()).toBeTruthy();
+      });
       expect(screen.getByRole('table')).toBeInTheDocument();
       const rows = screen.getAllByRole('row');
       expect(rows.length).toEqual(3);
     });
 
     it('shows warning when offlinePartitionCount > 0', async () => {
-      const mock = fetchMock.getOnce(`/api/clusters/${clusterName}/stats`, {
+      const fetchStatsMock = fetchMock.getOnce(fetchStatsUrl, {
         ...clusterStatsPayload,
         offlinePartitionCount: 1345,
       });
       renderComponent();
-      await waitFor(() => expect(mock.called()).toBeTruthy());
+      await waitFor(() => {
+        expect(fetchStatsMock.called()).toBeTruthy();
+      });
+      await waitFor(() => {
+        expect(fetchBrokersMock.called()).toBeTruthy();
+      });
       const onlineWidget = screen.getByText(
         clusterStatsPayload.onlinePartitionCount
       );
