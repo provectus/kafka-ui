@@ -19,6 +19,8 @@ import { fetchTopicDetailsAction } from 'redux/actions';
 import { initialState } from 'redux/reducers/topics/reducer';
 import { externalTopicPayload } from 'redux/reducers/topics/__test__/fixtures';
 import validateMessage from 'components/Topics/Topic/SendMessage/validateMessage';
+import Alerts from 'components/Alerts/Alerts';
+import * as S from 'components/App.styled';
 
 import { testSchema } from './fixtures';
 
@@ -44,11 +46,16 @@ const history = createMemoryHistory();
 const renderComponent = () => {
   history.push(clusterTopicSendMessagePath(clusterName, topicName));
   render(
-    <Router history={history}>
-      <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
-        <SendMessage />
-      </Route>
-    </Router>,
+    <>
+      <Router history={history}>
+        <Route path={clusterTopicSendMessagePath(':clusterName', ':topicName')}>
+          <SendMessage />
+        </Route>
+      </Router>
+      <S.AlertsContainer role="toolbar">
+        <Alerts />
+      </S.AlertsContainer>
+    </>,
     { store }
   );
 };
@@ -116,6 +123,9 @@ describe('SendMessage', () => {
       await RenderAndSubmitData();
       await waitFor(() => {
         expect(sendTopicMessageMock.called(url)).toBeTruthy();
+      });
+      await waitFor(() => {
+        expect(screen.getByRole('alert')).toBeInTheDocument();
       });
       expect(history.location.pathname).toEqual(
         clusterTopicMessagesPath(clusterName, topicName)
