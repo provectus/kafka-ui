@@ -18,7 +18,7 @@ public class ConnectorsView {
 
     @Step
     public ConnectorsView goTo(String cluster, String connector) {
-        Selenide.open(TestConfiguration.BASE_URL + path.formatted(cluster, connector));
+        Selenide.open(TestConfiguration.BASE_DOCKER_URL + path.formatted(cluster, connector));
         return this;
     }
 

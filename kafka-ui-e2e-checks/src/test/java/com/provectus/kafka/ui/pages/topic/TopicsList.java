@@ -21,7 +21,7 @@ public class TopicsList {
 
     @Step
     public TopicsList goTo(String cluster) {
-        Selenide.open(TestConfiguration.BASE_URL + String.format(path, cluster));
+        Selenide.open(TestConfiguration.BASE_DOCKER_URL + String.format(path, cluster));
         return this;
     }
 

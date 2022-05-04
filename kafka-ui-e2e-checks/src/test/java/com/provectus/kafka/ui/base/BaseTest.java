@@ -94,14 +94,14 @@ public class BaseTest {
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         if (!TestConfiguration.USE_LOCAL_BROWSER) {
             Configuration.remote = remote;
-            TestConfiguration.BASE_URL =
-                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+//            TestConfiguration.BASE_URL =
+//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
         }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
         Configuration.reopenBrowserOnFail = TestConfiguration.REOPEN_BROWSER_ON_FAIL;
         Configuration.browser = TestConfiguration.BROWSER;
-        Configuration.baseUrl = TestConfiguration.BASE_URL;
+        Configuration.baseUrl = TestConfiguration.BASE_DOCKER_URL;
         Configuration.timeout = 10000;
         Configuration.browserSize = TestConfiguration.BROWSER_SIZE;
         SelenideLogger.addListener("allure", new AllureSelenide().savePageSource(false));

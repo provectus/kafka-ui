@@ -22,7 +22,7 @@ public class TopicView {
 
     @Step
     public TopicView goTo(String cluster, String topic) {
-        Selenide.open(TestConfiguration.BASE_URL + String.format(path, cluster, topic));
+        Selenide.open(TestConfiguration.BASE_DOCKER_URL + String.format(path, cluster, topic));
         return this;
     }
 
