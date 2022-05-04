@@ -1,3 +1,4 @@
+import { Td } from 'components/common/table/TableHeaderCell/TableHeaderCell.styled';
 import { NavLink } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -20,3 +21,8 @@ export const Link = styled(NavLink).attrs({ activeClassName: 'is-active' })<{
     }
   `
 );
+
+export const ActionsTd = styled(Td)`
+  overflow: visible;
+  width: 50px;
+`;

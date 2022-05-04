@@ -1,4 +1,5 @@
 import {
+  createAsyncThunk,
   createEntityAdapter,
   createSlice,
   nanoid,
@@ -68,5 +69,32 @@ export const { selectAll } = alertsAdapter.getSelectors<RootState>(
 
 export const { alertDissmissed, alertAdded, serverErrorAlertAdded } =
   alertsSlice.actions;
+
+export const showSuccessAlert = createAsyncThunk<
+  number,
+  { id: string; message: string },
+  { fulfilledMeta: null }
+>(
+  'alerts/showSuccessAlert',
+  async ({ id, message }, { dispatch, fulfillWithValue }) => {
+    const creationDate = Date.now();
+
+    dispatch(
+      alertAdded({
+        id,
+        message,
+        title: '',
+        type: 'success',
+        createdAt: creationDate,
+      })
+    );
+
+    setTimeout(() => {
+      dispatch(alertDissmissed(id));
+    }, 3000);
+
+    return fulfillWithValue(creationDate, null);
+  }
+);
 
 export default alertsSlice.reducer;

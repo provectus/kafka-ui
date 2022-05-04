@@ -22,6 +22,7 @@ jest.mock('components/common/PageLoader/PageLoader', () => () => (
   <div>Loading</div>
 ));
 
+const resetTopicMessages = jest.fn();
 const fetchTopicDetailsMock = jest.fn();
 
 const renderComponent = (pathname: string, topicFetching: boolean) =>
@@ -29,6 +30,7 @@ const renderComponent = (pathname: string, topicFetching: boolean) =>
     <Route path={clusterTopicPath(':clusterName', ':topicName')}>
       <Topic
         isTopicFetching={topicFetching}
+        resetTopicMessages={resetTopicMessages}
         fetchTopicDetails={fetchTopicDetailsMock}
       />
     </Route>,
@@ -58,4 +60,13 @@ it('renders Page loader', () => {
 it('fetches topicDetails', () => {
   renderComponent(clusterTopicPath('local', 'myTopicName'), false);
   expect(fetchTopicDetailsMock).toHaveBeenCalledTimes(1);
+});
+
+it('resets topic messages after unmount', () => {
+  const component = renderComponent(
+    clusterTopicPath('local', 'myTopicName'),
+    false
+  );
+  component.unmount();
+  expect(resetTopicMessages).toHaveBeenCalledTimes(1);
 });

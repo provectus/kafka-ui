@@ -94,9 +94,12 @@ export const Option = styled.li<OptionProps>`
   transition: all 0.2s ease-in-out;
   cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   gap: 5px;
+  color: ${(props) =>
+    props.theme.select.color[props.disabled ? 'disabled' : 'normal']};
 
   &:hover {
-    background-color: ${(props) => props.theme.select.backgroundColor.hover};
+    background-color: ${(props) =>
+      props.theme.select.backgroundColor[props.disabled ? 'normal' : 'hover']};
   }
 
   &:active {

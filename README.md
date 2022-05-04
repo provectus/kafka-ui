@@ -73,12 +73,7 @@ We have plenty of [docker-compose files](documentation/compose/DOCKER_COMPOSE.md
 - [SSO configuration](documentation/guides/SSO.md)
 - [AWS IAM configuration](documentation/guides/AWS_IAM.md)
 - [Docker-compose files](documentation/compose/DOCKER_COMPOSE.md)
-- [Connection to a secure broker]()
-
-## Connecting to a Secure Broker
-
-The app supports TLS (SSL) and SASL connections for [encryption and authentication](http://kafka.apache.org/090/documentation.html#security). <br/>
-An example is located [here](documentation/compose/kafka-ssl.yml).
+- [Connection to a secure broker](documentation/compose/SECURE_BROKER.md)
 
 ### Configuration File
 Example of how to configure clusters in the [application-local.yml](https://github.com/provectus/kafka-ui/blob/master/kafka-ui-api/src/main/resources/application-local.yml) configuration file:
