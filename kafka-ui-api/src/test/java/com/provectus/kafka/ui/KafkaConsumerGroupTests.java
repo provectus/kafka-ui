@@ -21,14 +21,10 @@ import org.apache.kafka.common.serialization.BytesDeserializer;
 import org.apache.kafka.common.utils.Bytes;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-@ContextConfiguration(initializers = {AbstractBaseTest.Initializer.class})
 @Slf4j
-@AutoConfigureWebTestClient(timeout = "10000")
-public class KafkaConsumerGroupTests extends AbstractBaseTest {
+public class KafkaConsumerGroupTests extends AbstractIntegrationTest {
   @Autowired
   WebTestClient webTestClient;
 

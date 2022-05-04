@@ -1,6 +1,6 @@
 import Editor from 'components/common/Editor/Editor';
 import PageLoader from 'components/common/PageLoader/PageLoader';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { useHistory, useParams } from 'react-router';
 import { clusterTopicMessagesPath } from 'lib/paths';
@@ -28,12 +28,6 @@ interface RouterParams {
 const SendMessage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { clusterName, topicName } = useParams<RouterParams>();
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, isDirty },
-    control,
-  } = useForm({ mode: 'onChange' });
   const history = useHistory();
 
   jsf.option('fillProperties', false);
@@ -41,7 +35,7 @@ const SendMessage: React.FC = () => {
 
   React.useEffect(() => {
     dispatch(fetchTopicMessageSchema(clusterName, topicName));
-  }, []);
+  }, [clusterName, dispatch, topicName]);
 
   const messageSchema = useAppSelector((state) =>
     getMessageSchemaByTopicName(state, topicName)
@@ -72,6 +66,29 @@ const SendMessage: React.FC = () => {
       '\t'
     );
   }, [messageSchema, schemaIsFetched]);
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, isDirty },
+    control,
+    reset,
+  } = useForm({
+    mode: 'onChange',
+    defaultValues: {
+      key: keyDefaultValue,
+      content: contentDefaultValue,
+      headers: undefined,
+      partition: undefined,
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      key: keyDefaultValue,
+      content: contentDefaultValue,
+    });
+  }, [keyDefaultValue, contentDefaultValue, reset]);
 
   const onSubmit = async (data: {
     key: string;
@@ -162,12 +179,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="key"
-              render={({ field: { name, onChange } }) => (
+              render={({ field: { name, onChange, value } }) => (
                 <Editor
                   readOnly={isSubmitting}
-                  defaultValue={keyDefaultValue}
                   name={name}
                   onChange={onChange}
+                  value={value}
                 />
               )}
             />
@@ -177,12 +194,12 @@ const SendMessage: React.FC = () => {
             <Controller
               control={control}
               name="content"
-              render={({ field: { name, onChange } }) => (
+              render={({ field: { name, onChange, value } }) => (
                 <Editor
                   readOnly={isSubmitting}
-                  defaultValue={contentDefaultValue}
                   name={name}
                   onChange={onChange}
+                  value={value}
                 />
               )}
             />

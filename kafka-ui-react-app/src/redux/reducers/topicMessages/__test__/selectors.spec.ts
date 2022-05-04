@@ -28,7 +28,7 @@ describe('TopicMessages selectors', () => {
 
   describe('state', () => {
     beforeAll(() => {
-      store.dispatch(addTopicMessage(topicMessagePayload));
+      store.dispatch(addTopicMessage({ message: topicMessagePayload }));
       store.dispatch(updateTopicMessagesPhase('consuming'));
       store.dispatch(updateTopicMessagesMeta(topicMessagesMetaPayload));
     });

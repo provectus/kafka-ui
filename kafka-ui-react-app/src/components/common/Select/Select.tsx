@@ -22,6 +22,7 @@ export interface SelectOption {
   label: string | number;
   value: string | number;
   disabled?: boolean;
+  isLive?: boolean;
 }
 
 const Select: React.FC<SelectProps> = ({
@@ -47,16 +48,23 @@ const Select: React.FC<SelectProps> = ({
   useClickOutside(selectContainerRef, clickOutsideHandler);
 
   const updateSelectedOption = (option: SelectOption) => {
-    if (disabled) return;
+    if (!option.disabled) {
+      setSelectedOption(option.value);
 
-    setSelectedOption(option.value);
-    if (onChange) onChange(option.value);
-    setShowOptions(false);
+      if (onChange) {
+        onChange(option.value);
+      }
+
+      setShowOptions(false);
+    }
   };
+
+  React.useEffect(() => {
+    setSelectedOption(value);
+  }, [isLive, value]);
 
   return (
     <div ref={selectContainerRef}>
-      {isLive && <LiveIcon />}
       <S.Select
         role="listbox"
         selectSize={selectSize}
@@ -66,6 +74,7 @@ const Select: React.FC<SelectProps> = ({
         onKeyDown={showOptionsHandler}
         {...props}
       >
+        {isLive && <LiveIcon />}
         <S.SelectedOption role="option" tabIndex={0}>
           {options.find(
             (option) => option.value === (defaultValue || selectedOption)
@@ -82,6 +91,7 @@ const Select: React.FC<SelectProps> = ({
                 tabIndex={0}
                 role="option"
               >
+                {option.isLive && <LiveIcon />}
                 {option.label}
               </S.Option>
             ))}

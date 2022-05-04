@@ -33,7 +33,7 @@ jobs:
           git add ../kafka-ui-from-branch/
           git commit -m "removed env:${{ needs.build.outputs.deploy }}" && git push || true
       - name: make comment with deployment link
-        uses: peter-evans/create-or-update-comment@v1.4.5
+        uses: peter-evans/create-or-update-comment@v2
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body: |

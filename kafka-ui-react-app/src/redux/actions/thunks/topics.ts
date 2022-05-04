@@ -259,6 +259,21 @@ export const deleteTopic =
     }
   };
 
+export const recreateTopic =
+  (clusterName: ClusterName, topicName: TopicName): PromiseThunkResult =>
+  async (dispatch) => {
+    dispatch(actions.recreateTopicAction.request());
+    try {
+      const topic = await topicsApiClient.recreateTopic({
+        clusterName,
+        topicName,
+      });
+      dispatch(actions.recreateTopicAction.success(topic));
+    } catch (e) {
+      dispatch(actions.recreateTopicAction.failure());
+    }
+  };
+
 export const deleteTopics =
   (clusterName: ClusterName, topicsName: TopicName[]): PromiseThunkResult =>
   async (dispatch) => {

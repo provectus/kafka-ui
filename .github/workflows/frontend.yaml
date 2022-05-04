@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Use Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3.1.1
         with:
           node-version: "14"
       - name: Cache node dependency
@@ -42,7 +42,7 @@ jobs:
       - name: Linter
         run: |
           cd kafka-ui-react-app/
-          npm run lint
+          npm run lint:CI
       - name: Tests
         run: |
           cd kafka-ui-react-app/

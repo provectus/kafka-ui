@@ -10,7 +10,7 @@ interface OwnProps extends RouteComponentProps {
   task: Task;
 }
 
-const mapStateToProps = (state: RootState, { task }: OwnProps) => ({
+const mapStateToProps = (_state: RootState, { task }: OwnProps) => ({
   task,
 });
 

@@ -30,20 +30,21 @@ import java.util.Map;
 
 public final class KafkaConstants {
 
+  private static final String LONG_MAX_STRING = Long.toString(Long.MAX_VALUE);
+
   public static final Map<String, String> TOPIC_DEFAULT_CONFIGS = Map.ofEntries(
       new AbstractMap.SimpleEntry<>(CLEANUP_POLICY_CONFIG, CLEANUP_POLICY_DELETE),
       new AbstractMap.SimpleEntry<>(COMPRESSION_TYPE_CONFIG, "producer"),
       new AbstractMap.SimpleEntry<>(DELETE_RETENTION_MS_CONFIG, "86400000"),
       new AbstractMap.SimpleEntry<>(FILE_DELETE_DELAY_MS_CONFIG, "60000"),
-      new AbstractMap.SimpleEntry<>(FLUSH_MESSAGES_INTERVAL_CONFIG, "9223372036854775807"),
-      new AbstractMap.SimpleEntry<>(FLUSH_MS_CONFIG, "9223372036854775807"),
+      new AbstractMap.SimpleEntry<>(FLUSH_MESSAGES_INTERVAL_CONFIG, LONG_MAX_STRING),
+      new AbstractMap.SimpleEntry<>(FLUSH_MS_CONFIG, LONG_MAX_STRING),
       new AbstractMap.SimpleEntry<>("follower.replication.throttled.replicas", ""),
       new AbstractMap.SimpleEntry<>(INDEX_INTERVAL_BYTES_CONFIG, "4096"),
       new AbstractMap.SimpleEntry<>("leader.replication.throttled.replicas", ""),
-      new AbstractMap.SimpleEntry<>(MAX_COMPACTION_LAG_MS_CONFIG, "9223372036854775807"),
+      new AbstractMap.SimpleEntry<>(MAX_COMPACTION_LAG_MS_CONFIG, LONG_MAX_STRING),
       new AbstractMap.SimpleEntry<>(MAX_MESSAGE_BYTES_CONFIG, "1000012"),
-      new AbstractMap.SimpleEntry<>(MESSAGE_TIMESTAMP_DIFFERENCE_MAX_MS_CONFIG,
-          "9223372036854775807"),
+      new AbstractMap.SimpleEntry<>(MESSAGE_TIMESTAMP_DIFFERENCE_MAX_MS_CONFIG, LONG_MAX_STRING),
       new AbstractMap.SimpleEntry<>(MESSAGE_TIMESTAMP_TYPE_CONFIG, "CreateTime"),
       new AbstractMap.SimpleEntry<>(MIN_CLEANABLE_DIRTY_RATIO_CONFIG, "0.5"),
       new AbstractMap.SimpleEntry<>(MIN_COMPACTION_LAG_MS_CONFIG, "0"),

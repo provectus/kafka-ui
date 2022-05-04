@@ -12,6 +12,7 @@ import {
   FullConnectorInfo,
   Connect,
   Task,
+  Topic,
   TopicMessage,
   TopicMessageConsuming,
   TopicMessageSchema,
@@ -60,6 +61,13 @@ export const deleteTopicAction = createAsyncAction(
   'DELETE_TOPIC__CANCEL'
 )<undefined, TopicName, undefined, undefined>();
 
+export const recreateTopicAction = createAsyncAction(
+  'RECREATE_TOPIC__REQUEST',
+  'RECREATE_TOPIC__SUCCESS',
+  'RECREATE_TOPIC__FAILURE',
+  'RECREATE_TOPIC__CANCEL'
+)<undefined, Topic, undefined, undefined>();
+
 export const dismissAlert = createAction('DISMISS_ALERT')<string>();
 
 export const fetchConnectsAction = createAsyncAction(
@@ -96,6 +104,12 @@ export const restartConnectorAction = createAsyncAction(
   'RESTART_CONNECTOR__REQUEST',
   'RESTART_CONNECTOR__SUCCESS',
   'RESTART_CONNECTOR__FAILURE'
+)<undefined, undefined, { alert?: FailurePayload }>();
+
+export const restartTasksAction = createAsyncAction(
+  'RESTART_TASKS__REQUEST',
+  'RESTART_TASKS__SUCCESS',
+  'RESTART_TASKS__FAILURE'
 )<undefined, undefined, { alert?: FailurePayload }>();
 
 export const pauseConnectorAction = createAsyncAction(
@@ -147,8 +161,10 @@ export const fetchTopicConsumerGroupsAction = createAsyncAction(
   'GET_TOPIC_CONSUMER_GROUPS__FAILURE'
 )<undefined, TopicsState, undefined>();
 
-export const addTopicMessage =
-  createAction('ADD_TOPIC_MESSAGE')<TopicMessage>();
+export const addTopicMessage = createAction('ADD_TOPIC_MESSAGE')<{
+  message: TopicMessage;
+  prepend?: boolean;
+}>();
 
 export const resetTopicMessages = createAction('RESET_TOPIC_MESSAGES')();
 

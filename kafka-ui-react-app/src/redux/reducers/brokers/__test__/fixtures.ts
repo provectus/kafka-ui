@@ -5,7 +5,6 @@ export const brokersPayload = [
 
 export const clusterStatsPayload = {
   brokerCount: 2,
-  zooKeeperStatus: 1,
   activeControllers: 1,
   onlinePartitionCount: 138,
   offlinePartitionCount: 0,
@@ -22,7 +21,6 @@ export const clusterStatsPayload = {
 export const initialBrokersReducerState = {
   items: brokersPayload,
   brokerCount: 2,
-  zooKeeperStatus: 1,
   activeControllers: 1,
   onlinePartitionCount: 138,
   offlinePartitionCount: 0,
@@ -39,7 +37,6 @@ export const initialBrokersReducerState = {
 export const updatedBrokersReducerState = {
   items: brokersPayload,
   brokerCount: 2,
-  zooKeeperStatus: 1,
   activeControllers: 1,
   onlinePartitionCount: 138,
   offlinePartitionCount: 0,

@@ -6,13 +6,12 @@ import { Link, NavLink } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { deleteConnector } from 'redux/actions';
 import Dropdown from 'components/common/Dropdown/Dropdown';
-import DropdownDivider from 'components/common/Dropdown/DropdownDivider';
 import DropdownItem from 'components/common/Dropdown/DropdownItem';
 import ConfirmationModal from 'components/common/ConfirmationModal/ConfirmationModal';
 import { Tag } from 'components/common/Tag/Tag.styled';
 import { TableKeyLink } from 'components/common/table/Table/TableKeyLink.styled';
 import VerticalElipsisIcon from 'components/common/Icons/VerticalElipsisIcon';
-import getTagColor from 'components/Connect/Utils/TagColor';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 import * as S from './List.styled';
 
@@ -45,7 +44,7 @@ const ListItem: React.FC<ListItemProps> = ({
       dispatch(deleteConnector(clusterName, connect, name));
     }
     setDeleteConnectorConfirmationVisible(false);
-  }, [clusterName, connect, name]);
+  }, [clusterName, connect, dispatch, name]);
 
   const runningTasks = React.useMemo(() => {
     if (!tasksCount) return null;
@@ -84,8 +83,7 @@ const ListItem: React.FC<ListItemProps> = ({
       </td>
       <td>
         <div>
-          <Dropdown label={<VerticalElipsisIcon />} right>
-            <DropdownDivider />
+          <Dropdown label={<VerticalElipsisIcon />} right up>
             <DropdownItem
               onClick={() => setDeleteConnectorConfirmationVisible(true)}
               danger

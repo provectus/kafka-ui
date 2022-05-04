@@ -32,6 +32,7 @@ describe('List', () => {
         deleteTopics={jest.fn()}
         clearTopicsMessages={jest.fn()}
         clearTopicMessages={jest.fn()}
+        recreateTopic={jest.fn()}
         search=""
         orderBy={null}
         sortOrder={SortOrder.ASC}
@@ -124,6 +125,31 @@ describe('List', () => {
 
       expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
     });
+
+    it('should set cached page query param on show internal toggle change', async () => {
+      const mockedHistory = createMemoryHistory();
+      jest.spyOn(mockedHistory, 'push');
+      component = mountComponentWithProviders(
+        { isReadOnly: false },
+        { fetchTopicsList, totalPages: 10 },
+        mockedHistory
+      );
+
+      const cachedPage = 5;
+
+      mockedHistory.push(`/?page=${cachedPage}&perPage=25`);
+
+      const input = component.find(Search);
+      input.props().handleSearch('nonEmptyString');
+
+      expect(mockedHistory.push).toHaveBeenCalledWith('/?page=1&perPage=25');
+
+      input.props().handleSearch('');
+
+      expect(mockedHistory.push).toHaveBeenCalledWith(
+        `/?page=${cachedPage}&perPage=25`
+      );
+    });
   });
 
   describe('when some list items are selected', () => {
@@ -155,7 +181,7 @@ describe('List', () => {
       </StaticRouter>
     );
     const getCheckboxInput = (at: number) =>
-      component.find('ListItem').at(at).find('input[type="checkbox"]').at(0);
+      component.find('TableRow').at(at).find('input[type="checkbox"]').at(0);
 
     const getConfirmationModal = () =>
       component.find('mock-ConfirmationModal').at(0);
@@ -166,12 +192,12 @@ describe('List', () => {
       expect(component.find('.buttons').length).toEqual(0);
 
       // check first item
-      getCheckboxInput(0).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: true } });
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
 
       // check second item
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(1).simulate('change', { target: { checked: true } });
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeTruthy();
       expect(
@@ -179,7 +205,7 @@ describe('List', () => {
       ).toEqual(1);
 
       // uncheck second item
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(1).simulate('change', { target: { checked: false } });
       expect(getCheckboxInput(0).props().checked).toBeTruthy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
       expect(
@@ -187,7 +213,7 @@ describe('List', () => {
       ).toEqual(1);
 
       // uncheck first item
-      getCheckboxInput(0).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: false } });
       expect(getCheckboxInput(0).props().checked).toBeFalsy();
       expect(getCheckboxInput(1).props().checked).toBeFalsy();
       expect(
@@ -203,8 +229,8 @@ describe('List', () => {
           : 'Are you sure you want to purge messages of selected topics?';
       const mockFn =
         action === 'deleteTopics' ? mockDeleteTopics : mockClearTopicsMessages;
-      getCheckboxInput(0).simulate('change');
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: true } });
+      getCheckboxInput(1).simulate('change', { target: { checked: true } });
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
       component
@@ -240,8 +266,8 @@ describe('List', () => {
     });
 
     it('closes ConfirmationModal when clicked on the cancel button', async () => {
-      getCheckboxInput(0).simulate('change');
-      getCheckboxInput(1).simulate('change');
+      getCheckboxInput(0).simulate('change', { target: { checked: true } });
+      getCheckboxInput(1).simulate('change', { target: { checked: true } });
       let modal = getConfirmationModal();
       expect(modal.prop('isOpen')).toBeFalsy();
       component

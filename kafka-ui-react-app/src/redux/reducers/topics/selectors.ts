@@ -33,6 +33,10 @@ const getReplicationFactorUpdateStatus = createLeagcyFetchingSelector(
 );
 const getTopicDeletingStatus = createLeagcyFetchingSelector('DELETE_TOPIC');
 
+const getTopicConsumerGroupsStatus = createLeagcyFetchingSelector(
+  'GET_TOPIC_CONSUMER_GROUPS'
+);
+
 export const getIsTopicDeleted = createSelector(
   getTopicDeletingStatus,
   (status) => status === 'fetched'
@@ -85,6 +89,11 @@ export const getTopicPartitionsCountIncreased = createSelector(
 
 export const getTopicReplicationFactorUpdated = createSelector(
   getReplicationFactorUpdateStatus,
+  (status) => status === 'fetched'
+);
+
+export const getTopicsConsumerGroupsFetched = createSelector(
+  getTopicConsumerGroupsStatus,
   (status) => status === 'fetched'
 );
 

@@ -16,9 +16,7 @@ public class ResultSizeLimiter implements Predicate<TopicMessageEventDTO> {
   public boolean test(TopicMessageEventDTO event) {
     if (event.getType().equals(TopicMessageEventDTO.TypeEnum.MESSAGE)) {
       final int i = processed.incrementAndGet();
-      if (i > limit) {
-        return false;
-      }
+      return i <= limit;
     }
     return true;
   }

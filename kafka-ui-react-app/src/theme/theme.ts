@@ -3,10 +3,12 @@ export const Colors = {
   neutral: {
     '0': '#FFFFFF',
     '3': '#f9fafa',
+    '4': '#f0f0f0',
     '5': '#F1F2F3',
     '10': '#E3E6E8',
     '15': '#D5DADD',
     '20': '#C7CED1',
+    '25': '#C4C4C4',
     '30': '#ABB5BA',
     '40': '#8F9CA3',
     '50': '#73848C',
@@ -14,6 +16,7 @@ export const Colors = {
     '70': '#454F54',
     '80': '#2F3639',
     '90': '#171A1C',
+    '100': '#000',
   },
   transparency: {
     '10': 'rgba(10, 10, 10, 0.1)',
@@ -28,14 +31,19 @@ export const Colors = {
     '60': '#29A352',
   },
   brand: {
+    '5': '#E8E8FC',
+    '10': '#D1D1FA',
     '20': '#A3A3F5',
-    '50': '#4F4FFF',
-    '55': '#1717CF',
-    '60': '#1414B8',
+    '50': '#4C4CFF',
+    '60': '#1717CF',
+    '70': '#1414B8',
   },
   red: {
     '10': '#FAD1D1',
+    '20': '#F5A3A3',
     '50': '#E51A1A',
+    '55': '#CF1717',
+    '60': '#B81414',
   },
   yellow: {
     '10': '#FFEECC',
@@ -66,6 +74,21 @@ const theme = {
   dropdown: {
     color: Colors.red[50],
   },
+  ksqlDb: {
+    query: {
+      editor: {
+        readonly: {
+          background: Colors.neutral[3],
+          selection: {
+            backgroundColor: 'transparent',
+          },
+          cursor: {
+            color: 'transparent',
+          },
+        },
+      },
+    },
+  },
   heading: {
     h1: {
       color: Colors.neutral[90],
@@ -73,6 +96,43 @@ const theme = {
     h3: {
       color: Colors.neutral[50],
       fontSize: '14px',
+    },
+    base: {
+      fontFamily: 'Inter, sans-serif',
+      fontStyle: 'normal',
+      fontWeight: 500,
+      color: Colors.neutral[100],
+    },
+    variants: {
+      1: {
+        fontSize: '24px',
+        lineHeight: '32px',
+      },
+      2: {
+        fontSize: '20px',
+        lineHeight: '32px',
+      },
+      3: {
+        fontSize: '16px',
+        lineHeight: '24px',
+      },
+      4: {
+        fontSize: '14px',
+        lineHeight: '20px',
+      },
+      5: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+      6: {
+        fontSize: '12px',
+        lineHeight: '16px',
+      },
+    },
+  },
+  lastestVersionItem: {
+    metaDataLabel: {
+      color: Colors.neutral[50],
     },
   },
   alert: {
@@ -95,14 +155,15 @@ const theme = {
   button: {
     primary: {
       backgroundColor: {
-        normal: Colors.brand[50],
-        hover: Colors.brand[55],
-        active: Colors.brand[60],
+        normal: Colors.brand[5],
+        hover: Colors.brand[10],
+        active: Colors.brand[20],
+        disabled: Colors.neutral[5],
       },
-      color: Colors.neutral[0],
+      color: Colors.neutral[90],
       invertedColors: {
         normal: Colors.brand[50],
-        hover: Colors.brand[55],
+        hover: Colors.brand[60],
         active: Colors.brand[60],
       },
     },
@@ -117,6 +178,20 @@ const theme = {
         normal: Colors.neutral[50],
         hover: Colors.neutral[70],
         active: Colors.neutral[90],
+      },
+    },
+    danger: {
+      backgroundColor: {
+        normal: Colors.red[50],
+        hover: Colors.red[55],
+        active: Colors.red[60],
+        disabled: Colors.red[20],
+      },
+      color: Colors.neutral[90],
+      invertedColors: {
+        normal: Colors.brand[50],
+        hover: Colors.brand[60],
+        active: Colors.brand[60],
       },
     },
     height: {
@@ -138,17 +213,19 @@ const theme = {
   menu: {
     backgroundColor: {
       normal: Colors.neutral[0],
-      hover: Colors.neutral[5],
-      active: Colors.neutral[10],
+      hover: Colors.neutral[3],
+      active: Colors.neutral[5],
     },
     color: {
       normal: Colors.neutral[50],
-      hover: Colors.neutral[50],
-      active: Colors.neutral[90],
+      hover: Colors.neutral[70],
+      active: Colors.brand[70],
+      isOpen: Colors.neutral[90],
     },
     statusIconColor: {
       online: Colors.green[40],
       offline: Colors.red[50],
+      initializing: Colors.yellow[20],
     },
     chevronIconColor: Colors.neutral[50],
   },
@@ -174,6 +251,7 @@ const theme = {
     },
     overlay: Colors.transparency[10],
     shadow: Colors.transparency[20],
+    deletionTextColor: Colors.neutral[70],
   },
   table: {
     th: {
@@ -330,9 +408,10 @@ const theme = {
     },
   },
   switch: {
-    unchecked: Colors.neutral[30],
-    checked: Colors.green[60],
+    unchecked: Colors.brand[20],
+    checked: Colors.brand[50],
     circle: Colors.neutral[0],
+    disabled: Colors.neutral[10],
   },
   pageLoader: {
     borderColor: Colors.brand[50],
@@ -398,16 +477,28 @@ const theme = {
   icons: {
     closeIcon: Colors.neutral[30],
     warningIcon: Colors.yellow[20],
-    messageToggleIconOpened: Colors.neutral[90],
-    messageToggleIconClosed: Colors.neutral[30],
+    messageToggleIcon: {
+      normal: Colors.brand[50],
+      hover: Colors.brand[20],
+      active: Colors.brand[60],
+    },
     verticalElipsisIcon: Colors.neutral[50],
     liveIcon: {
       circleBig: Colors.red[10],
       circleSmall: Colors.red[50],
     },
+    newFilterIcon: Colors.brand[50],
+    closeModalIcon: Colors.neutral[25],
+    savedIcon: Colors.brand[50],
   },
   viewer: {
     wrapper: Colors.neutral[3],
+  },
+  savedFilterDivider: {
+    color: Colors.neutral[15],
+  },
+  editFilterText: {
+    color: Colors.brand[50],
   },
 };
 

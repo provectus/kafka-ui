@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.autoconfigure.web.reactive.error.AbstractErrorWebExceptionHandler;
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.context.ApplicationContext;
@@ -36,10 +36,9 @@ import reactor.core.publisher.Mono;
 public class GlobalErrorWebExceptionHandler extends AbstractErrorWebExceptionHandler {
 
   public GlobalErrorWebExceptionHandler(ErrorAttributes errorAttributes,
-                                        ResourceProperties resourceProperties,
                                         ApplicationContext applicationContext,
                                         ServerCodecConfigurer codecConfigurer) {
-    super(errorAttributes, resourceProperties, applicationContext);
+    super(errorAttributes, new WebProperties.Resources(), applicationContext);
     this.setMessageWriters(codecConfigurer.getWriters());
   }
 

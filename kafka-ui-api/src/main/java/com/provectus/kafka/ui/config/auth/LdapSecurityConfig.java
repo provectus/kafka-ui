@@ -43,11 +43,11 @@ public class LdapSecurityConfig extends AbstractAuthSecurityConfig {
   public ReactiveAuthenticationManager authenticationManager(BaseLdapPathContextSource contextSource) {
     BindAuthenticator ba = new BindAuthenticator(contextSource);
     if (ldapUserDnPattern != null) {
-      ba.setUserDnPatterns(new String[]{ldapUserDnPattern});
+      ba.setUserDnPatterns(new String[] {ldapUserDnPattern});
     }
     if (userFilterSearchFilter != null) {
       LdapUserSearch userSearch =
-              new FilterBasedLdapUserSearch(userFilterSearchBase, userFilterSearchFilter, contextSource);
+          new FilterBasedLdapUserSearch(userFilterSearchBase, userFilterSearchFilter, contextSource);
       ba.setUserSearch(userSearch);
     }
 

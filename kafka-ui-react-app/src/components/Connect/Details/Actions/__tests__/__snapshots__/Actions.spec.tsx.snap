@@ -21,22 +21,22 @@ exports[`Actions view matches snapshot 1`] = `
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  background: #4F4FFF;
-  color: #FFFFFF;
+  background: #E8E8FC;
+  color: #171A1C;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
 }
 
 .c1:hover:enabled {
-  background: #1717CF;
-  color: #FFFFFF;
+  background: #D1D1FA;
+  color: #171A1C;
   cursor: pointer;
 }
 
 .c1:active:enabled {
-  background: #1414B8;
-  color: #FFFFFF;
+  background: #A3A3F5;
+  color: #171A1C;
 }
 
 .c1:disabled {
@@ -45,7 +45,7 @@ exports[`Actions view matches snapshot 1`] = `
 }
 
 .c1 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c1 i {
@@ -96,7 +96,7 @@ exports[`Actions view matches snapshot 1`] = `
 }
 
 .c2 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c2 i {
@@ -142,6 +142,36 @@ exports[`Actions view matches snapshot 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
@@ -214,22 +244,22 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  background: #4F4FFF;
-  color: #FFFFFF;
+  background: #E8E8FC;
+  color: #171A1C;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
 }
 
 .c1:hover:enabled {
-  background: #1717CF;
-  color: #FFFFFF;
+  background: #D1D1FA;
+  color: #171A1C;
   cursor: pointer;
 }
 
 .c1:active:enabled {
-  background: #1414B8;
-  color: #FFFFFF;
+  background: #A3A3F5;
+  color: #171A1C;
 }
 
 .c1:disabled {
@@ -238,7 +268,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
 }
 
 .c1 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c1 i {
@@ -289,7 +319,7 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
 }
 
 .c2 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c2 i {
@@ -335,6 +365,36 @@ exports[`Actions view matches snapshot when deleting connector 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
@@ -407,22 +467,22 @@ exports[`Actions view matches snapshot when failed 1`] = `
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  background: #4F4FFF;
-  color: #FFFFFF;
+  background: #E8E8FC;
+  color: #171A1C;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
 }
 
 .c1:hover:enabled {
-  background: #1717CF;
-  color: #FFFFFF;
+  background: #D1D1FA;
+  color: #171A1C;
   cursor: pointer;
 }
 
 .c1:active:enabled {
-  background: #1414B8;
-  color: #FFFFFF;
+  background: #A3A3F5;
+  color: #171A1C;
 }
 
 .c1:disabled {
@@ -431,7 +491,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
 }
 
 .c1 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c1 i {
@@ -482,7 +542,7 @@ exports[`Actions view matches snapshot when failed 1`] = `
 }
 
 .c2 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c2 i {
@@ -513,6 +573,36 @@ exports[`Actions view matches snapshot when failed 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
@@ -585,22 +675,22 @@ exports[`Actions view matches snapshot when paused 1`] = `
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  background: #4F4FFF;
-  color: #FFFFFF;
+  background: #E8E8FC;
+  color: #171A1C;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
 }
 
 .c1:hover:enabled {
-  background: #1717CF;
-  color: #FFFFFF;
+  background: #D1D1FA;
+  color: #171A1C;
   cursor: pointer;
 }
 
 .c1:active:enabled {
-  background: #1414B8;
-  color: #FFFFFF;
+  background: #A3A3F5;
+  color: #171A1C;
 }
 
 .c1:disabled {
@@ -609,7 +699,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
 }
 
 .c1 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c1 i {
@@ -660,7 +750,7 @@ exports[`Actions view matches snapshot when paused 1`] = `
 }
 
 .c2 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c2 i {
@@ -706,6 +796,36 @@ exports[`Actions view matches snapshot when paused 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
@@ -778,22 +898,22 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  background: #4F4FFF;
-  color: #FFFFFF;
+  background: #E8E8FC;
+  color: #171A1C;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
 }
 
 .c1:hover:enabled {
-  background: #1717CF;
-  color: #FFFFFF;
+  background: #D1D1FA;
+  color: #171A1C;
   cursor: pointer;
 }
 
 .c1:active:enabled {
-  background: #1414B8;
-  color: #FFFFFF;
+  background: #A3A3F5;
+  color: #171A1C;
 }
 
 .c1:disabled {
@@ -802,7 +922,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
 }
 
 .c1 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c1 i {
@@ -853,7 +973,7 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
 }
 
 .c2 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c2 i {
@@ -899,6 +1019,36 @@ exports[`Actions view matches snapshot when running connector action 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={true}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a
@@ -971,22 +1121,22 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
   border: none;
   border-radius: 4px;
   white-space: nowrap;
-  background: #4F4FFF;
-  color: #FFFFFF;
+  background: #E8E8FC;
+  color: #171A1C;
   font-size: 14px;
   font-weight: 500;
   height: 32px;
 }
 
 .c1:hover:enabled {
-  background: #1717CF;
-  color: #FFFFFF;
+  background: #D1D1FA;
+  color: #171A1C;
   cursor: pointer;
 }
 
 .c1:active:enabled {
-  background: #1414B8;
-  color: #FFFFFF;
+  background: #A3A3F5;
+  color: #171A1C;
 }
 
 .c1:disabled {
@@ -995,7 +1145,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
 }
 
 .c1 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c1 i {
@@ -1046,7 +1196,7 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
 }
 
 .c2 a {
-  color: #FFFFFF;
+  color: #171A1C;
 }
 
 .c2 i {
@@ -1077,6 +1227,36 @@ exports[`Actions view matches snapshot when unassigned 1`] = `
     </span>
     <span>
       Restart Connector
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart All Tasks
+    </span>
+  </button>
+  <button
+    className="c1"
+    disabled={false}
+    onClick={[Function]}
+    type="button"
+  >
+    <span>
+      <i
+        className="fas fa-sync-alt"
+      />
+    </span>
+    <span>
+      Restart Failed Tasks
     </span>
   </button>
   <a

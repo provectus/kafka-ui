@@ -4,7 +4,7 @@ import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import EditorViewer from 'components/common/EditorViewer/EditorViewer';
 
-import { SchemaVersionWrapper } from './SchemaVersion.styled';
+import * as S from './SchemaVersion.styled';
 
 interface SchemaVersionProps {
   version: SchemaSubject;
@@ -28,11 +28,11 @@ const SchemaVersion: React.FC<SchemaVersionProps> = ({
         <td>{id}</td>
       </tr>
       {isOpen && (
-        <SchemaVersionWrapper>
+        <S.Wrapper>
           <td colSpan={3}>
             <EditorViewer data={schema} schemaType={schemaType} />
           </td>
-        </SchemaVersionWrapper>
+        </S.Wrapper>
       )}
     </>
   );

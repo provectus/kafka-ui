@@ -32,7 +32,8 @@ public class DeserializationService {
       if (cluster.getProtobufFile() != null) {
         log.info("Using ProtobufFileRecordSerDe for cluster '{}'", cluster.getName());
         return new ProtobufFileRecordSerDe(cluster.getProtobufFile(),
-            cluster.getProtobufMessageNameByTopic(), cluster.getProtobufMessageName());
+            cluster.getProtobufMessageNameByTopic(), cluster.getProtobufMessageNameForKeyByTopic(),
+            cluster.getProtobufMessageName(), cluster.getProtobufMessageNameForKey());
       } else if (cluster.getSchemaRegistry() != null) {
         log.info("Using SchemaRegistryAwareRecordSerDe for cluster '{}'", cluster.getName());
         return new SchemaRegistryAwareRecordSerDe(cluster);
