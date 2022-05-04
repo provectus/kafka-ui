@@ -38,6 +38,21 @@ describe('validateMessage', () => {
     ).toEqual([`Error in parsing the "content" field schema`]);
   });
 
+  it('should return empty error data if schema type is string', () => {
+    const schema = cloneDeep(testSchema);
+    schema.key.schema = `{"type": "string"}`;
+    schema.value.schema = `{"type": "string"}`;
+    expect(
+      validateMessage(defaultValidKey, defaultValidContent, schema)
+    ).toEqual([]);
+  });
+
+  it('should return  error data if compile Ajv data throws an error', () => {
+    expect(
+      validateMessage(defaultValidKey, defaultValidContent, testSchema)
+    ).toEqual([]);
+  });
+
   it('returns no errors on correct input data', () => {
     expect(
       validateMessage(defaultValidContent, defaultValidContent, testSchema)

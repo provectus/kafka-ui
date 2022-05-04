@@ -110,8 +110,8 @@ describe('SendMessage', () => {
     });
 
     it('should make the sendTopicMessage but most find an error within it', async () => {
-      const sendTopicMessageMock = fetchMock.postOnce(url, () => {
-        return new Error('Something Went Wrong');
+      const sendTopicMessageMock = fetchMock.postOnce(url, {
+        throws: 'Error',
       });
       await RenderAndSubmitData();
       await waitFor(() => {
