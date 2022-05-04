@@ -5,7 +5,9 @@ import com.provectus.kafka.ui.model.NewSchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectDTO;
 import com.provectus.kafka.ui.model.SchemaSubjectsResponseDTO;
 import com.provectus.kafka.ui.model.SchemaTypeDTO;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,10 +15,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
+import org.testcontainers.shaded.org.hamcrest.MatcherAssert;
+import org.testcontainers.shaded.org.hamcrest.Matchers;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -94,6 +99,61 @@ class SchemaRegistryServiceTests extends AbstractIntegrationTest {
         .exchange()
         .expectStatus()
         .isOk()
+        .expectBody(SchemaSubjectDTO.class)
+        .returnResult()
+        .getResponseBody();
+
+    Assertions.assertNotNull(dto);
+    Assertions.assertEquals("1", dto.getVersion());
+  }
+
+  @Test
+  void shouldReturnCorrectMessageWhenIncompatibleSchema() {
+    String schema = "{\"subject\":\"%s\",\"schemaType\":\"JSON\",\"schema\":"
+        + "\"{\\\"type\\\": \\\"string\\\"," + "\\\"properties\\\": "
+        + "{\\\"f1\\\": {\\\"type\\\": \\\"integer\\\"}}}"
+        + "\"}";
+    String schema2 = "{\"subject\":\"%s\"," + "\"schemaType\":\"JSON\",\"schema\":"
+        + "\"{\\\"type\\\": \\\"string\\\"," + "\\\"properties\\\": "
+        + "{\\\"f1\\\": {\\\"type\\\": \\\"string\\\"},"
+        + "\\\"f2\\\": {" + "\\\"type\\\": \\\"string\\\"}}}"
+        + "\"}";
+
+    SchemaSubjectDTO dto =
+        webTestClient
+            .post()
+            .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(BodyInserters.fromValue(String.format(schema, subject)))
+            .exchange()
+            .expectStatus()
+            .isOk()
+            .expectBody(SchemaSubjectDTO.class)
+            .returnResult()
+            .getResponseBody();
+
+    Assertions.assertNotNull(dto);
+    Assertions.assertEquals("1", dto.getVersion());
+
+    webTestClient
+        .post()
+        .uri("/api/clusters/{clusterName}/schemas", LOCAL)
+        .contentType(MediaType.APPLICATION_JSON)
+        .body(BodyInserters.fromValue(String.format(schema2, subject)))
+        .exchange()
+        .expectStatus().isEqualTo(HttpStatus.UNPROCESSABLE_ENTITY)
+        .expectBody().consumeWith(body -> {
+          String responseBody = new String(Objects.requireNonNull(body.getResponseBody()), StandardCharsets.UTF_8);
+          MatcherAssert.assertThat("Must return correct message incompatible schema",
+              responseBody,
+              Matchers.containsString("Schema being registered is incompatible with an earlier schema"));
+        });
+
+    dto = webTestClient
+        .get()
+        .uri("/api/clusters/{clusterName}/schemas/{subject}/latest", LOCAL, subject)
+        .exchange()
+        .expectStatus().isOk()
         .expectBody(SchemaSubjectDTO.class)
         .returnResult()
         .getResponseBody();
