@@ -23,16 +23,16 @@ interface RouterParams {
 }
 
 export interface DetailsProps {
-  fetchConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
-  fetchTasks(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName
-  ): void;
+  fetchConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
+  fetchTasks(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
   isConnectorFetching: boolean;
   areTasksFetching: boolean;
   connector: Connector | null;
@@ -49,11 +49,11 @@ const Details: React.FC<DetailsProps> = ({
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
 
   React.useEffect(() => {
-    fetchConnector(clusterName, connectName, connectorName);
+    fetchConnector({ clusterName, connectName, connectorName });
   }, [fetchConnector, clusterName, connectName, connectorName]);
 
   React.useEffect(() => {
-    fetchTasks(clusterName, connectName, connectorName);
+    fetchTasks({ clusterName, connectName, connectorName });
   }, [fetchTasks, clusterName, connectName, connectorName]);
 
   if (isConnectorFetching || areTasksFetching) {

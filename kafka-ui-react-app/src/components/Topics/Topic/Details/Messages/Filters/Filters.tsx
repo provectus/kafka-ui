@@ -216,7 +216,15 @@ const Filters: React.FC<FiltersProps> = ({
         search: `?${qs}`,
       });
     },
-    [seekDirection, queryType, activeFilter, currentSeekType, timestamp, query]
+    [
+      seekDirection,
+      queryType,
+      activeFilter,
+      currentSeekType,
+      timestamp,
+      query,
+      selectedPartitions,
+    ]
   );
 
   const handleSSECancel = () => {
@@ -344,10 +352,26 @@ const Filters: React.FC<FiltersProps> = ({
     if (location.search?.length === 0) {
       handleFiltersSubmit(offset);
     }
-  }, [handleFiltersSubmit, location]);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+    location,
+  ]);
   React.useEffect(() => {
     handleFiltersSubmit(offset);
-  }, [handleFiltersSubmit, seekDirection]);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+    seekDirection,
+  ]);
 
   React.useEffect(() => {
     setIsTailing(isLive);
@@ -364,7 +388,7 @@ const Filters: React.FC<FiltersProps> = ({
             handleSearch={(value: string) => setQuery(value)}
           />
           <S.SeekTypeSelectorWrapper>
-            <Select
+            <S.SeekTypeSelect
               id="selectSeekType"
               onChange={(option) => setCurrentSeekType(option as SeekType)}
               value={currentSeekType}

@@ -1,7 +1,11 @@
 import { dismissAlert, createTopicAction } from 'redux/actions';
 import reducer from 'redux/reducers/alerts/reducer';
+import { showSuccessAlert } from 'redux/reducers/alerts/alertsSlice';
+import mockStoreCreator from 'redux/store/configureStore/mockStoreCreator';
 
 import { failurePayload1, failurePayload2 } from './fixtures';
+
+const store = mockStoreCreator;
 
 jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
@@ -61,6 +65,40 @@ describe('Alerts reducer', () => {
         title: 'title',
         type: 'error',
       },
+    });
+  });
+
+  describe('Alert thunks', () => {
+    afterEach(() => {
+      store.clearActions();
+    });
+
+    it('dismisses alert after showing success alert', async () => {
+      const passedPayload = { id: 'some-id', message: 'Alert message.' };
+
+      const { payload: creationDate } = await store.dispatch(
+        showSuccessAlert(passedPayload)
+      );
+
+      const actionsData = store
+        .getActions()
+        .map(({ type, payload }) => ({ type, payload }));
+
+      const expectedActions = [
+        { type: 'alerts/showSuccessAlert/pending', payload: undefined },
+        {
+          type: 'alerts/alertAdded',
+          payload: {
+            ...passedPayload,
+            title: '',
+            type: 'success',
+            createdAt: creationDate,
+          },
+        },
+        { type: 'alerts/showSuccessAlert/fulfilled', payload: creationDate },
+      ];
+
+      expect(actionsData).toEqual(expectedActions);
     });
   });
 });
