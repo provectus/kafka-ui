@@ -129,6 +129,8 @@ const Filters: React.FC<FiltersProps> = ({
       : MessageFilterType.STRING_CONTAINS
   );
   const [query, setQuery] = React.useState<string>(searchParams.get('q') || '');
+  const [isTailing, setIsTailing] = React.useState<boolean>(isLive);
+
   const isSeekTypeControlVisible = React.useMemo(
     () => selectedPartitions.length > 0,
     [selectedPartitions]
@@ -136,11 +138,13 @@ const Filters: React.FC<FiltersProps> = ({
 
   const isSubmitDisabled = React.useMemo(() => {
     if (isSeekTypeControlVisible) {
-      return currentSeekType === SeekType.TIMESTAMP && !timestamp;
+      return (
+        (currentSeekType === SeekType.TIMESTAMP && !timestamp) || isTailing
+      );
     }
 
     return false;
-  }, [isSeekTypeControlVisible, currentSeekType, timestamp]);
+  }, [isSeekTypeControlVisible, currentSeekType, timestamp, isTailing]);
 
   const partitionMap = React.useMemo(
     () =>
@@ -212,7 +216,15 @@ const Filters: React.FC<FiltersProps> = ({
         search: `?${qs}`,
       });
     },
-    [seekDirection, queryType, activeFilter, currentSeekType, timestamp, query]
+    [
+      seekDirection,
+      queryType,
+      activeFilter,
+      currentSeekType,
+      timestamp,
+      query,
+      selectedPartitions,
+    ]
   );
 
   const handleSSECancel = () => {
@@ -340,10 +352,30 @@ const Filters: React.FC<FiltersProps> = ({
     if (location.search?.length === 0) {
       handleFiltersSubmit(offset);
     }
-  }, [handleFiltersSubmit, location]);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+    location,
+  ]);
   React.useEffect(() => {
     handleFiltersSubmit(offset);
-  }, [handleFiltersSubmit, seekDirection]);
+  }, [
+    seekDirection,
+    queryType,
+    activeFilter,
+    currentSeekType,
+    timestamp,
+    query,
+    seekDirection,
+  ]);
+
+  React.useEffect(() => {
+    setIsTailing(isLive);
+  }, [isLive]);
 
   return (
     <S.FiltersWrapper>
@@ -352,17 +384,18 @@ const Filters: React.FC<FiltersProps> = ({
           <Search
             placeholder="Search"
             value={query}
+            disabled={isTailing}
             handleSearch={(value: string) => setQuery(value)}
           />
           <S.SeekTypeSelectorWrapper>
-            <Select
+            <S.SeekTypeSelect
               id="selectSeekType"
               onChange={(option) => setCurrentSeekType(option as SeekType)}
               value={currentSeekType}
               selectSize="M"
               minWidth="100px"
               options={SeekTypeOptions}
-              disabled={isLive}
+              disabled={isTailing}
             />
             {currentSeekType === SeekType.OFFSET ? (
               <Input
@@ -373,7 +406,7 @@ const Filters: React.FC<FiltersProps> = ({
                 className="offset-selector"
                 placeholder="Offset"
                 onChange={({ target: { value } }) => setOffset(value)}
-                disabled={isLive}
+                disabled={isTailing}
               />
             ) : (
               <DatePicker
@@ -384,7 +417,7 @@ const Filters: React.FC<FiltersProps> = ({
                 dateFormat="MMMM d, yyyy HH:mm"
                 className="date-picker"
                 placeholderText="Select timestamp"
-                disabled={isLive}
+                disabled={isTailing}
               />
             )}
           </S.SeekTypeSelectorWrapper>
@@ -397,6 +430,7 @@ const Filters: React.FC<FiltersProps> = ({
             value={selectedPartitions}
             onChange={setSelectedPartitions}
             labelledBy="Select partitions"
+            disabled={isTailing}
           />
           <S.ClearAll onClick={handleClearAllFilters}>Clear all</S.ClearAll>
           {isFetching ? (
@@ -465,13 +499,13 @@ const Filters: React.FC<FiltersProps> = ({
             isFetching &&
             phaseMessage}
         </p>
-        <S.MessageLoading isLive={isLive}>
+        <S.MessageLoading isLive={isTailing}>
           <S.MessageLoadingSpinner isFetching={isFetching} />
           Loading messages.
           <S.StopLoading
             onClick={() => {
-              changeSeekDirection(SeekDirection.FORWARD);
-              setIsFetching(false);
+              handleSSECancel();
+              setIsTailing(false);
             }}
           >
             Stop loading
