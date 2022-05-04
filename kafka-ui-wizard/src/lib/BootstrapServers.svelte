@@ -20,7 +20,7 @@
         placeholder="Host"
         type="text"
         bind:value={value[index].host}
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
       />
     </div>
     <div class="col-span-1">
@@ -30,7 +30,7 @@
         type="number"
         placeholder="Port"
         bind:value={value[index].port}
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
       />
     </div>
     <div class="col-span-2">
@@ -38,18 +38,18 @@
         <button
           type="button"
           on:click={add}
-          class="py-2 px-4 mt-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          class="py-2 px-4 mt-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-500 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-green-300"
         >
-          Add
+          +
         </button>
       {/if}
       {#if value.length !== 1}
         <button
           type="button"
           on:click={remove(index)}
-          class="py-2 px-4 mt-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+          class="py-2 px-4 mt-1 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-400 hover:bg-green-500 focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-green-300"
         >
-          Remove
+          -
         </button>
       {/if}
     </div>

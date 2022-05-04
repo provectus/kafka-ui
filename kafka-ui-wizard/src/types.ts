@@ -15,7 +15,7 @@ export interface FormProps {
   selfSignedCATruststoreLocation?: string;
   selfSignedCATruststorePassword?: string;
   securedWithAuth: boolean;
-  authMethod: 'SASL' | 'SSL' | 'IAM';
+  authMethod: 'None' | 'SASL' | 'SSL' | 'IAM';
   saslMechanism?: string;
   saslJaasConfig?: string;
   sslTruststoreLocation?: string;
@@ -24,15 +24,20 @@ export interface FormProps {
   sslKeystorePassword?: string;
   useSpecificIAMProfile: boolean;
   IAMProfile?: string;
+
+  schemaRegistryEnabled: boolean;
   schemaRegistryURL?: string;
   schemaRegistrySecuredWithAuth: boolean;
   schemaRegistryUsername?: string;
   schemaRegistryPassword?: string;
+
+  kafkaConnectEnabled: boolean;
   kafkaConnectURL: string;
   kafkaConnectSecuredWithAuth: boolean;
   kafkaConnectUsername: string;
   kafkaConnectPassword: string;
-  jmxMetrics: boolean;
+
+  jmxEnabled: boolean;
   jmxURL: string;
   jmxSSL: boolean;
   jmxSSLTruststoreLocation?: string;

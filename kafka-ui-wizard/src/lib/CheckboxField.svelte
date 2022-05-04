@@ -4,8 +4,7 @@
   export let name: string;
   export let checked: boolean;
   export let label: string;
-  export let hint: string =
-    "Lorem ipsum dolor, sit amet consectetur adipisicing elit.";
+  export let hint: string = undefined;
 </script>
 
 <div class="col-span-6">
@@ -21,7 +20,9 @@
     </div>
     <div class="ml-3 text-sm">
       <Label forTarget={name}>{label}</Label>
-      <p class="text-gray-500">{hint}</p>
+      {#if hint}
+        <p class="text-sm text-gray-500">{hint}</p>
+      {/if}
     </div>
   </div>
 </div>

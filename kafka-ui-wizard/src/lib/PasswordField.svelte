@@ -2,9 +2,9 @@
   import Label from "./Label.svelte";
 
   export let name: string;
-  export let value: string;
+  export let value: string = "";
   export let label: string;
-  export let placeholder: string = "";
+  export let placeholder: string = "********";
 </script>
 
 <div class="col-span-3">

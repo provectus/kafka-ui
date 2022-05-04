@@ -10,25 +10,9 @@
   <H1>Kafka UI Wizard</H1>
   <H2>New cluster</H2>
 
-  <div class="rounded-lg bg-gray-100 ring-1 ring-gray-900 ring-opacity-5">
-    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-      <div class="md:grid md:grid-cols-3 md:gap-6">
-        <div class="md:col-span-1">
-          <div class="px-4 sm:px-0">
-            <H3>Instruction</H3>
-            <p class="mt-1 text-sm text-gray-600">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-              Praesentium placeat voluptatem, ad illo impedit eos.
-              Reprehenderit, reiciendis. Reprehenderit obcaecati, doloribus
-              error non consequuntur, eligendi, ab saepe suscipit veritatis
-              pariatur officiis?
-            </p>
-          </div>
-        </div>
-        <div class="mt-5 md:mt-0 md:col-span-2">
-          <Form />
-        </div>
-      </div>
+  <div class="rounded-lg bg-gray-100 ring-1 ring-gray-300">
+    <div class="max-w-7xl mx-auto md:pt-6 md:py-6 md:px-6 lg:px-8">
+      <Form />
     </div>
   </div>
 </main>
