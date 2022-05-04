@@ -17,12 +17,11 @@ interface RouterParams {
 }
 
 export interface ConfigProps {
-  fetchConfig(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    connectorName: ConnectorName,
-    silent?: boolean
-  ): void;
+  fetchConfig(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    connectorName: ConnectorName;
+  }): void;
   isConfigFetching: boolean;
   config: ConnectorConfig | null;
 }
@@ -39,7 +38,7 @@ const Config: React.FC<ConfigProps> = ({
   const { clusterName, connectName, connectorName } = useParams<RouterParams>();
 
   React.useEffect(() => {
-    fetchConfig(clusterName, connectName, connectorName, true);
+    fetchConfig({ clusterName, connectName, connectorName });
   }, [fetchConfig, clusterName, connectName, connectorName]);
 
   if (isConfigFetching) {

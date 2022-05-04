@@ -61,12 +61,11 @@ describe('Config', () => {
       const fetchConfig = jest.fn();
       mount(setupWrapper({ fetchConfig }));
       expect(fetchConfig).toHaveBeenCalledTimes(1);
-      expect(fetchConfig).toHaveBeenCalledWith(
+      expect(fetchConfig).toHaveBeenCalledWith({
         clusterName,
         connectName,
         connectorName,
-        true
-      );
+      });
     });
   });
 });
