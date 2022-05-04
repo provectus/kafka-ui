@@ -94,8 +94,8 @@ public class BaseTest {
         Configuration.reportsFolder = TestConfiguration.REPORTS_FOLDER;
         if (!TestConfiguration.USE_LOCAL_BROWSER) {
             Configuration.remote = remote;
-//            TestConfiguration.BASE_URL =
-//                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
+            TestConfiguration.BASE_URL =
+                    TestConfiguration.BASE_URL.replace("localhost", "host.docker.internal");
         }
         Configuration.screenshots = TestConfiguration.SCREENSHOTS;
         Configuration.savePageSource = TestConfiguration.SAVE_PAGE_SOURCE;
