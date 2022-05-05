@@ -12,8 +12,8 @@ import userEvent from '@testing-library/user-event';
 
 const mockDeleteConnector = jest.fn(() => ({ type: 'test' }));
 
-jest.mock('redux/actions', () => ({
-  ...jest.requireActual('redux/actions'),
+jest.mock('redux/reducers/connect/connectSlice', () => ({
+  ...jest.requireActual('redux/reducers/connect/connectSlice'),
   deleteConnector: () => mockDeleteConnector,
 }));
 

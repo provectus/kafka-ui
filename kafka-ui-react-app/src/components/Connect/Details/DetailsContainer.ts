@@ -1,7 +1,10 @@
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { RootState } from 'redux/interfaces';
-import { fetchConnector, fetchConnectorTasks } from 'redux/actions';
+import {
+  fetchConnector,
+  fetchConnectorTasks,
+} from 'redux/reducers/connect/connectSlice';
 import {
   getIsConnectorFetching,
   getAreConnectorTasksFetching,

@@ -6,7 +6,7 @@ import Tasks, { TasksProps } from 'components/Connect/Details/Tasks/Tasks';
 import { tasks } from 'redux/reducers/connect/__test__/fixtures';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { store } from 'redux/store';
 import { Router } from 'react-router';
@@ -27,12 +27,7 @@ describe('Tasks', () => {
       <Provider store={store}>
         <Router history={history}>
           <TasksContainer>
-            <Tasks
-              fetchTasks={jest.fn()}
-              areTasksFetching={false}
-              tasks={tasks}
-              {...props}
-            />
+            <Tasks areTasksFetching={false} tasks={tasks} {...props} />
           </TasksContainer>
         </Router>
       </Provider>
@@ -60,12 +55,7 @@ describe('Tasks', () => {
           pathname={pathname}
           urlParams={{ clusterName, connectName, connectorName }}
         >
-          <Tasks
-            fetchTasks={jest.fn()}
-            areTasksFetching={false}
-            tasks={tasks}
-            {...props}
-          />
+          <Tasks areTasksFetching={false} tasks={tasks} {...props} />
         </TestRouterWrapper>
       </ThemeProvider>
     );
@@ -83,18 +73,6 @@ describe('Tasks', () => {
     it('matches snapshot when no tasks', () => {
       const { container } = render(setupWrapper({ tasks: [] }));
       expect(container).toBeInTheDocument();
-    });
-
-    it('fetches tasks on mount', () => {
-      const fetchTasks = jest.fn();
-      render(setupWrapper({ fetchTasks }));
-      expect(fetchTasks).toHaveBeenCalledTimes(1);
-      expect(fetchTasks).toHaveBeenCalledWith(
-        clusterName,
-        connectName,
-        connectorName,
-        true
-      );
     });
   });
 });

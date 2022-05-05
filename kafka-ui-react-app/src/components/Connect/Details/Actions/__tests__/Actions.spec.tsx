@@ -196,11 +196,11 @@ describe('Actions', () => {
         screen.getByRole('button', { name: 'Restart Connector' })
       );
       expect(restartConnector).toHaveBeenCalledTimes(1);
-      expect(restartConnector).toHaveBeenCalledWith(
+      expect(restartConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('calls pauseConnector when pause button clicked', () => {
@@ -213,11 +213,11 @@ describe('Actions', () => {
       );
       userEvent.click(screen.getByRole('button', { name: 'Pause' }));
       expect(pauseConnector).toHaveBeenCalledTimes(1);
-      expect(pauseConnector).toHaveBeenCalledWith(
+      expect(pauseConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
 
     it('calls resumeConnector when resume button clicked', () => {
@@ -230,11 +230,11 @@ describe('Actions', () => {
       );
       userEvent.click(screen.getByRole('button', { name: 'Resume' }));
       expect(resumeConnector).toHaveBeenCalledTimes(1);
-      expect(resumeConnector).toHaveBeenCalledWith(
+      expect(resumeConnector).toHaveBeenCalledWith({
         clusterName,
         connectName,
-        connectorName
-      );
+        connectorName,
+      });
     });
   });
 });

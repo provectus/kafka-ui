@@ -3,6 +3,7 @@ import { render } from 'lib/testHelpers';
 import {
   clusterConnectConnectorPath,
   clusterConnectorNewPath,
+  clusterConnectorsPath,
 } from 'lib/paths';
 import New, { NewProps } from 'components/Connect/New/New';
 import { connects, connector } from 'redux/reducers/connect/__test__/fixtures';
@@ -75,24 +76,29 @@ describe('New', () => {
     renderComponent({ createConnector });
     await simulateFormSubmit();
     expect(createConnector).toHaveBeenCalledTimes(1);
-    expect(createConnector).toHaveBeenCalledWith(
+    expect(createConnector).toHaveBeenCalledWith({
       clusterName,
-      connects[0].name,
-      {
+      connectName: connects[0].name,
+      newConnector: {
         name: 'my-connector',
         config: { class: 'MyClass' },
-      }
-    );
+      },
+    });
   });
 
   it('redirects to connector details view on successful submit', async () => {
     const createConnector = jest.fn().mockResolvedValue(connector);
+    const route = clusterConnectConnectorPath(
+      clusterName,
+      connects[0].name,
+      connector.name
+    );
     renderComponent({ createConnector });
+    mockHistoryPush(route);
+
     await simulateFormSubmit();
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
-    expect(mockHistoryPush).toHaveBeenCalledWith(
-      clusterConnectConnectorPath(clusterName, connects[0].name, connector.name)
-    );
+    expect(mockHistoryPush).toHaveBeenCalledWith(route);
   });
 
   it('does not redirect to connector details view on unsuccessful submit', async () => {

@@ -1,3 +1,4 @@
+import Select from 'components/common/Select/Select';
 import styled, { css } from 'styled-components';
 
 interface SavedFilterProps {
@@ -312,4 +313,10 @@ export const SavedFiltersText = styled.div`
 export const BackToCustomText = styled.div`
   ${textStyle};
   cursor: pointer;
+`;
+
+export const SeekTypeSelect = styled(Select)`
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  user-select: none;
 `;

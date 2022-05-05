@@ -28,14 +28,14 @@ interface RouterParams {
 }
 
 export interface NewProps {
-  fetchConnects(clusterName: ClusterName): void;
+  fetchConnects(clusterName: ClusterName): unknown;
   areConnectsFetching: boolean;
   connects: Connect[];
-  createConnector(
-    clusterName: ClusterName,
-    connectName: ConnectName,
-    newConnector: NewConnector
-  ): Promise<Connector | undefined>;
+  createConnector(payload: {
+    clusterName: ClusterName;
+    connectName: ConnectName;
+    newConnector: NewConnector;
+  }): Promise<{ connector: Connector | undefined }>;
 }
 
 interface FormValues {
@@ -87,10 +87,15 @@ const New: React.FC<NewProps> = ({
 
   const onSubmit = React.useCallback(
     async (values: FormValues) => {
-      const connector = await createConnector(clusterName, values.connectName, {
-        name: values.name,
-        config: JSON.parse(values.config.trim()),
+      const { connector } = await createConnector({
+        clusterName,
+        connectName: values.connectName,
+        newConnector: {
+          name: values.name,
+          config: JSON.parse(values.config.trim()),
+        },
       });
+
       if (connector) {
         history.push(
           clusterConnectConnectorPath(

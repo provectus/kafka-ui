@@ -37,12 +37,12 @@ describe('Config', () => {
     </TestRouterWrapper>
   );
 
-  it('matches snapshot', () => {
+  it('to be in the document', () => {
     const { container } = render(component());
     expect(container).toBeInTheDocument();
   });
 
-  it('matches snapshot when fetching config', () => {
+  it('to be in the document when fetching config', () => {
     const { container } = render(component({ isConfigFetching: true }));
     expect(container).toBeInTheDocument();
   });
@@ -56,11 +56,10 @@ describe('Config', () => {
     const fetchConfig = jest.fn();
     render(component({ fetchConfig }));
     expect(fetchConfig).toHaveBeenCalledTimes(1);
-    expect(fetchConfig).toHaveBeenCalledWith(
+    expect(fetchConfig).toHaveBeenCalledWith({
       clusterName,
       connectName,
       connectorName,
-      true
-    );
+    });
   });
 });
