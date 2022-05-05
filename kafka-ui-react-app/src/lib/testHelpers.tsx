@@ -3,7 +3,7 @@ import { MemoryRouter, Route, StaticRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import theme from 'theme/theme';
-import { render, RenderOptions } from '@testing-library/react';
+import { render, RenderOptions, screen } from '@testing-library/react';
 import { AnyAction, Store } from 'redux';
 import { RootState } from 'redux/interfaces';
 import { configureStore } from '@reduxjs/toolkit';
@@ -40,6 +40,17 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   preloadedState?: Partial<RootState>;
   store?: Store<Partial<RootState>, AnyAction>;
   pathname?: string;
+}
+
+export function getByTextContent(textMatch: string | RegExp): HTMLElement {
+  return screen.getByText((content, node) => {
+    const hasText = (nod: Element) => nod.textContent === textMatch;
+    const nodeHasText = hasText(node as Element);
+    const childrenDontHaveText = Array.from(node?.children || []).every(
+      (child) => !hasText(child)
+    );
+    return nodeHasText && childrenDontHaveText;
+  });
 }
 
 const customRender = (

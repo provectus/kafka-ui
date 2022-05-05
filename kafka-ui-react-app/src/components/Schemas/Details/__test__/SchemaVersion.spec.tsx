@@ -6,21 +6,25 @@ import userEvent from '@testing-library/user-event';
 
 import { versions } from './fixtures';
 
-const renderComponent = () => {
-  render(
-    <table>
-      <tbody>
-        <SchemaVersion version={versions[0]} />
-      </tbody>
-    </table>
-  );
-};
+const component = (
+  <table>
+    <tbody>
+      <SchemaVersion version={versions[0]} />
+    </tbody>
+  </table>
+);
+
+// const renderComponent = () => {
+//   render(component);
+// };
+
 describe('SchemaVersion', () => {
   it('renders versions', () => {
-    renderComponent();
+    const { container } = render(component);
+    // renderComponent();
     expect(screen.getAllByRole('cell')).toHaveLength(3);
     expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));
-    expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
   });
 });

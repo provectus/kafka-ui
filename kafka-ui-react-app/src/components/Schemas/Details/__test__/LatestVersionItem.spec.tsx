@@ -7,23 +7,24 @@ import { screen } from '@testing-library/react';
 import { jsonSchema, protoSchema } from './fixtures';
 
 const renderComponent = (schema: SchemaSubject) => {
-  render(<LatestVersionItem schema={schema} />);
+  const { container } = render(<LatestVersionItem schema={schema} />);
+  return container;
 };
 
 describe('LatestVersionItem', () => {
   it('renders latest version of json schema', () => {
-    renderComponent(jsonSchema);
+    const container = renderComponent(jsonSchema);
     expect(screen.getByText('Relevant version')).toBeInTheDocument();
     expect(screen.getByText('Latest version')).toBeInTheDocument();
     expect(screen.getByText('ID')).toBeInTheDocument();
     expect(screen.getByText('Subject')).toBeInTheDocument();
     expect(screen.getByText('Compatibility')).toBeInTheDocument();
     expect(screen.getByText('15')).toBeInTheDocument();
-    expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
   });
 
   it('renders latest version of compatibility', () => {
-    renderComponent(protoSchema);
+    const container = renderComponent(protoSchema);
     expect(screen.getByText('Relevant version')).toBeInTheDocument();
     expect(screen.getByText('Latest version')).toBeInTheDocument();
     expect(screen.getByText('ID')).toBeInTheDocument();
@@ -31,6 +32,6 @@ describe('LatestVersionItem', () => {
     expect(screen.getByText('Compatibility')).toBeInTheDocument();
 
     expect(screen.getByText('BACKWARD')).toBeInTheDocument();
-    expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+    expect(container).toBeInTheDocument();
   });
 });

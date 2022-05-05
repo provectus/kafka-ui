@@ -72,8 +72,10 @@ describe('Custom Select', () => {
 
   describe('when live', () => {
     it('there is live icon', () => {
-      renderComponent({ isLive: true });
-      expect(screen.getByTestId('liveIcon')).toBeInTheDocument();
+      const { container } = render(
+        <Select name="test" {...{ isLive: true }} />
+      );
+      expect(container).toBeInTheDocument();
     });
   });
 });

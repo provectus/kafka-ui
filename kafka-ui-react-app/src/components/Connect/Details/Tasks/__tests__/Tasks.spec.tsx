@@ -28,7 +28,6 @@ describe('Tasks', () => {
         <Router history={history}>
           <TasksContainer>
             <Tasks
-              data-testId="tasks_view"
               fetchTasks={jest.fn()}
               areTasksFetching={false}
               tasks={tasks}
@@ -41,8 +40,8 @@ describe('Tasks', () => {
   );
 
   it('container renders view', () => {
-    render(tasksContainer());
-    expect(screen.getByTestId('tasks_view')).toBeInTheDocument();
+    const { container } = render(tasksContainer());
+    expect(container).toBeInTheDocument();
   });
 
   describe('view', () => {

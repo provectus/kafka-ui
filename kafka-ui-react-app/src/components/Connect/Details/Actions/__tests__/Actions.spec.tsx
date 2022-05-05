@@ -34,7 +34,6 @@ describe('Actions', () => {
   const actionsContainer = (props: Partial<ActionsProps> = {}) => (
     <ActionsContainer>
       <Actions
-        data-testid="actions_view"
         deleteConnector={jest.fn()}
         isConnectorDeleting={false}
         connectorStatus={ConnectorState.RUNNING}

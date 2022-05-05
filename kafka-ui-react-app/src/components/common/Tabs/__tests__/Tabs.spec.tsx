@@ -6,9 +6,9 @@ import userEvent from '@testing-library/user-event';
 describe('Tabs component', () => {
   const tabs: string[] = ['Tab 1', 'Tab 2', 'Tab 3'];
 
-  const child1 = <div className="child_1" data-testid="child_1" />;
-  const child2 = <div className="child_2" data-testid="child_2" />;
-  const child3 = <div className="child_3" data-testid="child_2" />;
+  const child1 = <div className="child_1" />;
+  const child2 = <div className="child_2" />;
+  const child3 = <div className="child_3" />;
 
   render(
     <Tabs tabs={tabs}>

@@ -55,9 +55,10 @@ describe('MessageContent screen', () => {
       expect(keyTab[0]).toHaveClass('is-active');
     });
     it('displays the key in the EditorViewer', () => {
+      const { container } = render(setupWrapper());
       const keyTab = screen.getAllByText('Key');
       userEvent.click(keyTab[0]);
-      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+      expect(container).toBeInTheDocument();
     });
   });
 
@@ -67,8 +68,9 @@ describe('MessageContent screen', () => {
       expect(screen.getByText('Headers')).toHaveClass('is-active');
     });
     it('displays the key in the EditorViewer', () => {
-      userEvent.click(screen.getByText('Headers'));
-      expect(screen.getByTestId('json-viewer')).toBeInTheDocument();
+      const { container } = render(setupWrapper());
+      userEvent.click(screen.queryAllByText('Headers')[0]);
+      expect(container).toBeInTheDocument();
     });
   });
 

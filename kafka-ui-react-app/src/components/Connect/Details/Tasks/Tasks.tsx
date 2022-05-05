@@ -41,7 +41,7 @@ const Tasks: React.FC<TasksProps> = ({
   }
 
   return (
-    <Table isFullwidth data-testId="tasks_view">
+    <Table isFullwidth>
       <thead>
         <tr>
           <TableHeaderCell title="ID" />

@@ -48,7 +48,7 @@ const Config: React.FC<ConfigProps> = ({
 
   if (!config) return null;
   return (
-    <ConnectConfigWrapper data-testid="config_view">
+    <ConnectConfigWrapper>
       <Editor
         readOnly
         value={JSON.stringify(config, null, '\t')}

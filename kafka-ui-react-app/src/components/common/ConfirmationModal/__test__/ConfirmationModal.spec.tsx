@@ -72,7 +72,9 @@ describe('ConfirmationModal', () => {
       });
 
       it('handles onCancel when user clicks on modal-background', () => {
-        userEvent.click(screen.getByTestId('background'));
+        const { container } = render(setupWrapper({ isOpen: true }));
+
+        userEvent.click(container.children[0].children[0]);
         expect(cancelMock).toHaveBeenCalledTimes(1);
         expect(confirmMock).toHaveBeenCalledTimes(0);
       });

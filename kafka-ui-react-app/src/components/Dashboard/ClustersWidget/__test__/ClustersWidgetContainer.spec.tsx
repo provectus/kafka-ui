@@ -2,7 +2,8 @@ import React from 'react';
 import ClustersWidget from 'components/Dashboard/ClustersWidget/ClustersWidget';
 import theme from 'theme/theme';
 import { ThemeProvider } from 'styled-components';
-import { render, screen } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { getByTextContent } from 'lib/testHelpers';
 
 describe('ClustersWidgetContainer', () => {
   describe('view empty ClusterWidget', () => {
@@ -17,7 +18,7 @@ describe('ClustersWidgetContainer', () => {
     );
     it(' is empty when no online clusters', () => {
       render(setupEmptyWrapper());
-      expect(screen.getByTestId('onlineCount')).toHaveTextContent('0');
+      expect(getByTextContent('Online 0 clusters')).toBeInTheDocument();
     });
   });
 });

@@ -115,8 +115,9 @@ describe('SavedFilter Component', () => {
     });
 
     it('Open Confirmation for the deletion modal', () => {
+      const { container } = setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = screen.getAllByRole('savedFilter');
-      const deleteIcons = screen.getAllByTestId('deleteIcon');
+      const deleteIcons = container.getElementsByTagName('i');
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);
       const modelDialog = screen.getByRole('dialog');
@@ -127,8 +128,9 @@ describe('SavedFilter Component', () => {
     });
 
     it('Close Confirmations deletion modal with button', () => {
+      const { container } = setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = screen.getAllByRole('savedFilter');
-      const deleteIcons = screen.getAllByTestId('deleteIcon');
+      const deleteIcons = container.getElementsByTagName('i');
 
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);
@@ -143,8 +145,10 @@ describe('SavedFilter Component', () => {
     });
 
     it('Delete the saved filter', () => {
+      const { container } = setUpComponent({ deleteFilter: deleteMock });
       const savedFilters = screen.getAllByRole('savedFilter');
-      const deleteIcons = screen.getAllByTestId('deleteIcon');
+      const deleteIcons = container.getElementsByTagName('i');
+      // const deleteIcons = screen.getAllByTestId('deleteIcon');
 
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);

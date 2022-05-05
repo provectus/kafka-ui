@@ -29,11 +29,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 
   return isOpen ? (
     <ConfirmationModalWrapper>
-      <div
-        data-testId="background"
-        onClick={cancelHandler}
-        aria-hidden="true"
-      />
+      <div onClick={cancelHandler} aria-hidden="true" />
       <div>
         <header>
           <p>{title}</p>
@@ -46,7 +42,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={cancelHandler}
             type="button"
             disabled={isConfirming}
-            data-testid="ConfirmationModal_cancelButton"
           >
             Cancel
           </Button>
@@ -57,7 +52,6 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             onClick={onConfirm}
             type="button"
             disabled={isConfirming}
-            data-testId="ConfirmationModal_confirmButton"
           >
             {submitBtnText}
           </Button>
