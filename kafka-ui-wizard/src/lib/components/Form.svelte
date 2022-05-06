@@ -1,16 +1,18 @@
 <script type="ts">
-  import type { FormProps } from "src/types";
+  import type { FormProps } from "src/lib/types";
   import { createForm } from "svelte-forms-lib";
-  import BootstrapServers from "./BootstrapServers.svelte";
-  import CheckboxField from "./CheckboxField.svelte";
-  import Hr from "./Hr.svelte";
-  import Label from "./Label.svelte";
-  import PasswordField from "./PasswordField.svelte";
-  import SelectField from "./SelectField.svelte";
-  import TextField from "./TextField.svelte";
-  import FormSection from "./FormSection.svelte";
+  import BootstrapServers from "src/lib/components/BootstrapServers.svelte";
+  import CheckboxField from "src/lib/components/CheckboxField.svelte";
+  import Hr from "src/lib/components/Hr.svelte";
+  import Label from "src/lib/components/Label.svelte";
+  import PasswordField from "src/lib/components/PasswordField.svelte";
+  import SelectField from "src/lib/components/SelectField.svelte";
+  import TextField from "src/lib/components/TextField.svelte";
+  import FormSection from "src/lib/components/FormSection.svelte";
+  import NumberField from "src/lib/components/NumberField.svelte";
+  import clusterConfigurationSchema from "src/lib/clusterConfigurationSchema";
 
-  const { form, handleSubmit } = createForm<FormProps>({
+  const { form, errors, handleSubmit, handleChange } = createForm<FormProps>({
     initialValues: {
       clusterName: "",
       readonly: false,
@@ -25,8 +27,7 @@
       selfSignedCA: false,
       selfSignedCATruststoreLocation: undefined,
       selfSignedCATruststorePassword: undefined,
-      securedWithAuth: false,
-      authMethod: 'None',
+      authMethod: "None",
       saslJaasConfig: undefined,
       saslMechanism: undefined,
       sslTruststoreLocation: undefined,
@@ -46,7 +47,7 @@
       kafkaConnectUsername: undefined,
       kafkaConnectPassword: undefined,
       jmxEnabled: false,
-      jmxURL: undefined,
+      jmxPort: undefined,
       jmxSSL: false,
       jmxSSLTruststoreLocation: undefined,
       jmxSSLTruststorePassword: undefined,
@@ -56,6 +57,7 @@
       jmxUsername: undefined,
       jmxPassword: undefined,
     },
+    validationSchema: clusterConfigurationSchema,
     onSubmit: (values) => {
       console.log(values);
     },
@@ -73,7 +75,9 @@
           name="clusterName"
           label="Cluster Name"
           bind:value={$form.clusterName}
+          on:change={handleChange}
           placeholder="local"
+          errors={$errors.clusterName}
           hint="this name will help you recognize the cluster in the application interface"
         />
         <CheckboxField
@@ -91,7 +95,11 @@
               the list of Kafka brokers that you want to connect to
             </p>
           </div>
-          <BootstrapServers bind:value={$form.bootstrapServers} />
+          <BootstrapServers
+            bind:value={$form.bootstrapServers}
+            errors={$errors.bootstrapServers}
+            on:change={handleChange}
+          />
         </div>
         <CheckboxField
           name="sharedConfluentCloudCluster"
@@ -120,11 +128,15 @@
               label="Truststore location"
               containerClass="col-span-3"
               placeholder="/var/private/ssl/client.truststore.jks"
+              errors={$errors.selfSignedCATruststoreLocation}
+              on:change={handleChange}
               bind:value={$form.selfSignedCATruststoreLocation}
             />
             <PasswordField
               name="selfSignedCATruststorePassword"
               label="Truststore password"
+              errors={$errors.selfSignedCATruststorePassword}
+              on:change={handleChange}
               bind:value={$form.selfSignedCATruststorePassword}
             />
           {/if}
@@ -134,77 +146,81 @@
 
     <FormSection title="Authentication">
       <svelte:fragment slot="form">
-        <CheckboxField
-          name="securedWithAuth"
-          label="Is your cluster secured with authentication?"
-          bind:checked={$form.securedWithAuth}
-        />
-        {#if $form.securedWithAuth}
-          <SelectField
-            name="authMethod"
-            bind:value={$form.authMethod}
-            label="Authentication method"
-            containerClass="col-span-2"
-          >
-            <option>None</option>
-            <option>SASL</option>
-            <option>SSL</option>
-            <option>IAM</option>
-          </SelectField>
-          {#if $form.authMethod === "SASL"}
+        <SelectField
+          name="authMethod"
+          bind:value={$form.authMethod}
+          label=""
+          containerClass="col-span-2"
+        >
+          <option>None</option>
+          <option>SASL</option>
+          <option>SSL</option>
+          <option>IAM</option>
+        </SelectField>
+        {#if $form.authMethod === "SASL"}
+          <TextField
+            name="saslMechanism"
+            label="sasl_mechanism"
+            errors={$errors.saslMechanism}
+            on:change={handleChange}
+            bind:value={$form.saslMechanism}
+          />
+          <TextField
+            name="saslJaasConfig"
+            label="sasl.jaas.config"
+            errors={$errors.saslJaasConfig}
+            on:change={handleChange}
+            bind:value={$form.saslJaasConfig}
+          />
+        {:else if $form.authMethod === "SSL"}
+          <TextField
+            name="sslTruststoreLocation"
+            label="Truststore location"
+            containerClass="col-start-1 col-span-3"
+            errors={$errors.sslTruststoreLocation}
+            on:change={handleChange}
+            bind:value={$form.sslTruststoreLocation}
+          />
+          <PasswordField
+            name="sslTruststorePassword"
+            label="Truststore password"
+            errors={$errors.sslTruststorePassword}
+            bind:value={$form.sslTruststorePassword}
+          />
+          <TextField
+            name="sslKeystoreLocation"
+            label="Keystore location"
+            containerClass="col-span-3"
+            errors={$errors.sslKeystoreLocation}
+            on:change={handleChange}
+            bind:value={$form.sslKeystoreLocation}
+          />
+          <PasswordField
+            name="sslKeystorePassword"
+            label="Keystore password"
+            errors={$errors.sslKeystorePassword}
+            bind:value={$form.sslKeystorePassword}
+          />
+        {:else if $form.authMethod === "IAM"}
+          <CheckboxField
+            name="useSpecificIAMProfile"
+            label="Use specific profile?"
+            bind:checked={$form.useSpecificIAMProfile}
+          />
+          {#if $form.useSpecificIAMProfile}
             <TextField
-              name="saslMechanism"
-              label="sasl_mechanism"
-              bind:value={$form.saslMechanism}
+              name="IAMProfile"
+              label="Profile name"
+              errors={$errors.IAMProfile}
+              on:change={handleChange}
+              bind:value={$form.IAMProfile}
             />
-            <TextField
-              name="saslJaasConfig"
-              label="sasl.jaas.config"
-              bind:value={$form.saslJaasConfig}
-            />
-          {:else if $form.authMethod === "SSL"}
-            <TextField
-              name="sslTruststoreLocation"
-              label="Truststore location"
-              containerClass="col-start-1 col-span-3"
-              bind:value={$form.sslTruststoreLocation}
-            />
-            <PasswordField
-              name="sslTruststorePassword"
-              label="Truststore password"
-              bind:value={$form.sslTruststorePassword}
-            />
-            <TextField
-              name="sslKeystoreLocation"
-              label="Keystore location"
-              containerClass="col-span-3"
-              bind:value={$form.sslKeystoreLocation}
-            />
-            <PasswordField
-              name="sslKeystorePassword"
-              label="Keystore password"
-              bind:value={$form.sslKeystorePassword}
-            />
-          {:else if $form.authMethod === "IAM"}
-            <CheckboxField
-              name="useSpecificIAMProfile"
-              label="Use specific profile?"
-              bind:checked={$form.useSpecificIAMProfile}
-            />
-            {#if $form.useSpecificIAMProfile}
-              <TextField
-                name="IAMProfile"
-                label="Profile name"
-                bind:value={$form.IAMProfile}
-              />
-            {/if}
           {/if}
         {/if}
       </svelte:fragment>
     </FormSection>
 
     <FormSection title="Schema Registry">
-      <svelte:fragment></svelte:fragment>
       <svelte:fragment slot="form">
         <CheckboxField
           name="schemaRegistryEnabled"
@@ -217,6 +233,8 @@
             label="URL"
             hint=""
             placeholder="http://localhost:8081"
+            errors={$errors.schemaRegistryURL}
+            on:change={handleChange}
             bind:value={$form.schemaRegistryURL}
           />
           <CheckboxField
@@ -229,11 +247,14 @@
               name="schemaRegistryUsername"
               label="Username"
               containerClass="col-span-3"
+              errors={$errors.schemaRegistryUsername}
+              on:change={handleChange}
               bind:value={$form.schemaRegistryUsername}
             />
             <PasswordField
               name="schemaRegistryPassword"
               label="Password"
+              errors={$errors.schemaRegistryPassword}
               bind:value={$form.schemaRegistryPassword}
             />
           {/if}
@@ -252,6 +273,8 @@
           <TextField
             name="kafkaConnectURL"
             label="Kafka Connect URL"
+            errors={$errors.kafkaConnectURL}
+            on:change={handleChange}
             bind:value={$form.kafkaConnectURL}
           />
           <CheckboxField
@@ -264,11 +287,14 @@
               name="kafkaConnectUsername"
               label="Username"
               containerClass="col-span-3"
+              errors={$errors.kafkaConnectUsername}
+              on:change={handleChange}
               bind:value={$form.kafkaConnectUsername}
             />
             <PasswordField
               name="kafkaConnectPassword"
               label="Password"
+              errors={$errors.kafkaConnectPassword}
               bind:value={$form.kafkaConnectPassword}
             />
           {/if}
@@ -276,18 +302,24 @@
       </svelte:fragment>
     </FormSection>
 
-    <FormSection title="JMX">
+    <FormSection title="JMX Metrics">
       <svelte:fragment slot="form">
         <CheckboxField
           name="jmxEnabled"
-          label="JMX Enabled"
+          label="Enabled"
           bind:checked={$form.jmxEnabled}
         />
         {#if $form.jmxEnabled}
-          <TextField name="jmxURL" label="JMX URL" bind:value={$form.jmxURL} />
+          <NumberField
+            name="jmxPort"
+            label="Port"
+            errors={$errors.jmxPort}
+            on:change={handleChange}
+            bind:value={$form.jmxPort}
+          />
           <CheckboxField
             name="jmxSSL"
-            label="JMX SSL"
+            label="SSL"
             bind:checked={$form.jmxSSL}
           />
           {#if $form.jmxSSL}
@@ -295,29 +327,35 @@
               name="jmxSSLTruststoreLocation"
               label="Truststore location"
               containerClass="col-start-1 col-span-3"
+              errors={$errors.jmxSSLTruststoreLocation}
+              on:change={handleChange}
               bind:value={$form.jmxSSLTruststoreLocation}
             />
             <PasswordField
               name="jmxSSLTruststorePassword"
               label="Truststore password"
+              errors={$errors.jmxSSLTruststorePassword}
               bind:value={$form.jmxSSLTruststorePassword}
             />
             <TextField
               name="jmxSSLKeystoreLocation"
               label="Keystore location"
               containerClass="col-span-3"
+              errors={$errors.jmxSSLKeystoreLocation}
+              on:change={handleChange}
               bind:value={$form.jmxSSLKeystoreLocation}
             />
             <PasswordField
               name="jmxSSLKeystorePassword"
               label="Keystore password"
+              errors={$errors.jmxSSLKeystorePassword}
               bind:value={$form.jmxSSLKeystorePassword}
             />
           {/if}
 
           <CheckboxField
             name="jmxSecuredWithAuth"
-            label="JMX is secured with auth?"
+            label="Authentication"
             bind:checked={$form.jmxSecuredWithAuth}
           />
           {#if $form.jmxSecuredWithAuth}
@@ -325,11 +363,14 @@
               name="jmxUsername"
               label="Username"
               containerClass="col-span-3"
+              errors={$errors.jmxUsername}
+              on:change={handleChange}
               bind:value={$form.jmxUsername}
             />
             <PasswordField
               name="jmxPassword"
               label="Password"
+              errors={$errors.jmxPassword}
               bind:value={$form.jmxPassword}
             />
           {/if}

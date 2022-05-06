@@ -1,8 +1,14 @@
 import { boolean, string } from "yup";
 
+
 export interface BootstrapServer {
   host: string;
   port: number;
+}
+
+export interface BootstrapServerError {
+  host: string;
+  port: string;
 }
 
 export interface FormProps {
@@ -14,7 +20,6 @@ export interface FormProps {
   selfSignedCA: boolean;
   selfSignedCATruststoreLocation?: string;
   selfSignedCATruststorePassword?: string;
-  securedWithAuth: boolean;
   authMethod: 'None' | 'SASL' | 'SSL' | 'IAM';
   saslMechanism?: string;
   saslJaasConfig?: string;
@@ -38,7 +43,7 @@ export interface FormProps {
   kafkaConnectPassword: string;
 
   jmxEnabled: boolean;
-  jmxURL: string;
+  jmxPort: number;
   jmxSSL: boolean;
   jmxSSLTruststoreLocation?: string;
   jmxSSLTruststorePassword?: string;
@@ -47,5 +52,4 @@ export interface FormProps {
   jmxSecuredWithAuth: boolean;
   jmxUsername?: string;
   jmxPassword?: string;
-
 }

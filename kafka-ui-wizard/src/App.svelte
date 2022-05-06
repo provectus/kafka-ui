@@ -1,9 +1,8 @@
 <script lang="ts">
-  import Form from "./lib/Form.svelte";
   import "./app.css";
-  import H1 from "./lib/H1.svelte";
-  import H2 from "./lib/H2.svelte";
-  import H3 from "./lib/H3.svelte";
+  import Form from "./lib/components/Form.svelte";
+  import H1 from "./lib/components/H1.svelte";
+  import H2 from "./lib/components/H2.svelte";
 </script>
 
 <main class="container mx-auto px-5 py-10">

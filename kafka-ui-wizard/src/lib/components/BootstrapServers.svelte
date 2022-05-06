@@ -1,6 +1,7 @@
 <script type="ts">
-  import type { BootstrapServer } from "src/types";
+  import type { BootstrapServer, BootstrapServerError } from "src/lib/types";
   export let value: BootstrapServer[];
+  export let errors: BootstrapServerError[];
 
   const add = () => {
     value = [...value, { host: "", port: undefined }];
@@ -15,23 +16,31 @@
   <div class="grid grid-cols-6 gap-3">
     <div class="col-span-3">
       <input
-        id={`value[${index}].host`}
-        name={`value[${index}].host`}
+        id={`bootstrapServers[${index}].host`}
+        name={`bootstrapServers[${index}].host`}
         placeholder="Host"
         type="text"
+        on:change
         bind:value={value[index].host}
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors[index]?.host && 'border-red-500'}"
       />
+      {#if errors[index]?.host}
+        <p class="mt-1 text-xs text-red-700 block">{errors[index]?.host}</p>
+      {/if}
     </div>
     <div class="col-span-1">
       <input
-        id={`value[${index}].port`}
-        name={`value[${index}].port`}
+        id={`bootstrapServers[${index}].port`}
+        name={`bootstrapServers[${index}].port`}
         type="number"
         placeholder="Port"
+        on:change
         bind:value={value[index].port}
-        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md"
+        class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors[index]?.port && 'border-red-500'}"
       />
+      {#if errors[index]?.port}
+        <p class="mt-1 text-xs text-red-700 block">{errors[index]?.port}</p>
+      {/if}
     </div>
     <div class="col-span-2">
       {#if index === value.length - 1}
