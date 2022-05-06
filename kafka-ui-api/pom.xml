@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>kafka-ui</artifactId>
         <groupId>com.provectus</groupId>
@@ -9,6 +10,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>kafka-ui-api</artifactId>
+
+    <properties>
+        <jacoco.version>0.8.8</jacoco.version>
+        <sonar.java.coveragePlugin>jacoco</sonar.java.coveragePlugin>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.coverage.jacoco.xmlReportPaths>${project.basedir}/target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <sonar.language>java</sonar.language>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
@@ -37,7 +46,7 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-client</artifactId>	
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
         <dependency>
             <groupId>com.provectus</groupId>
@@ -255,9 +264,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <argLine>@{argLine} --illegal-access=permit ${itCoverageAgent}</argLine>
-                    <forkedProcessExitTimeoutInSeconds>60</forkedProcessExitTimeoutInSeconds>
-                    <forkCount>1</forkCount>
+                    <argLine>@{argLine} --illegal-access=permit</argLine>
                 </configuration>
             </plugin>
             <plugin>
@@ -308,16 +315,13 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.8</version>
-<!--                <configuration>-->
-<!--                    <skip>${maven.test.skip}</skip>-->
-<!--                    <output>file</output>-->
-<!--                    <append>true</append>-->
-<!--                </configuration>-->
+                <version>${jacoco.version}</version>
+                <configuration>
+                    <formats>XML</formats>
+                </configuration>
                 <executions>
                     <execution>
                         <id>prepare-agent</id>
-<!--                        <id>default-prepare-agent</id>-->
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
@@ -327,11 +331,13 @@
                         <goals>
                             <goal>report</goal>
                         </goals>
-                        <configuration>
-                            <formats>
-                                <format>XML</format>
-                            </formats>
-                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>report-aggregate</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>report-aggregate</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
