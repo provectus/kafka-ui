@@ -47,6 +47,8 @@ describe('ListItem', () => {
     </StaticRouter>
   );
 
+  const getCheckbox = () => screen.getByRole('checkbox');
+
   it('renders without checkbox for internal topic', () => {
     render(setupComponent());
 
@@ -56,13 +58,13 @@ describe('ListItem', () => {
   it('renders with checkbox for external topic', () => {
     render(setupComponent({ topic: externalTopicPayload }));
 
-    expect(screen.getByRole('checkbox')).toBeInTheDocument();
+    expect(getCheckbox()).toBeInTheDocument();
   });
 
   it('triggers the toggleTopicSelected when clicked on the checkbox input', () => {
     render(setupComponent({ topic: externalTopicPayload }));
-    expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    userEvent.click(screen.getByRole('checkbox'));
+    expect(getCheckbox()).toBeInTheDocument();
+    userEvent.click(getCheckbox());
     expect(mockToggleTopicSelected).toBeCalledTimes(1);
     expect(mockToggleTopicSelected).toBeCalledWith(externalTopicPayload.name);
   });

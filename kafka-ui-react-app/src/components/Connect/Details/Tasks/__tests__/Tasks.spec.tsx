@@ -16,7 +16,7 @@ jest.mock('components/common/PageLoader/PageLoader', () => 'mock-PageLoader');
 
 jest.mock(
   'components/Connect/Details/Tasks/ListItem/ListItemContainer',
-  () => 'tr' // need to mock as `tr` to let dom validtion pass
+  () => 'tr'
 );
 
 const history = createMemoryHistory();
