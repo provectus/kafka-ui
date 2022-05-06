@@ -21,7 +21,7 @@
         placeholder="Host"
         type="text"
         on:change
-        bind:value={value[index].host}
+        bind:value={server[index].host}
         class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors[index]?.host && 'border-red-500'}"
       />
       {#if errors[index]?.host}
@@ -35,7 +35,7 @@
         type="number"
         placeholder="Port"
         on:change
-        bind:value={value[index].port}
+        bind:value={server[index].port}
         class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full text-sm border border-gray-300 rounded-md {errors[index]?.port && 'border-red-500'}"
       />
       {#if errors[index]?.port}

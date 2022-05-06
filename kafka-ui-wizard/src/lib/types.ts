@@ -1,6 +1,3 @@
-import { boolean, string } from "yup";
-
-
 export interface BootstrapServer {
   host: string;
   port: number;
