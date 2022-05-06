@@ -37,11 +37,6 @@ describe('Config', () => {
     </TestRouterWrapper>
   );
 
-  it('to be in the document', () => {
-    const { container } = render(component());
-    expect(container).toBeInTheDocument();
-  });
-
   it('to be in the document when fetching config', () => {
     const { container } = render(component({ isConfigFetching: true }));
     expect(container).toBeInTheDocument();

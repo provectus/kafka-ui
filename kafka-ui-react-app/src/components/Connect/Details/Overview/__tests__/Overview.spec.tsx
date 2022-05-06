@@ -19,11 +19,6 @@ const component = (props: Partial<OverviewProps> = {}) => (
 );
 
 describe('Overview', () => {
-  it('matches snapshot', () => {
-    const { container } = render(component());
-    expect(container).toBeInTheDocument();
-  });
-
   it('is empty when no connector', () => {
     const { container } = render(component({ connector: null }));
     expect(container).toBeEmptyDOMElement();

@@ -57,17 +57,12 @@ describe('Details', () => {
     </ThemeProvider>
   );
 
-  it('matches snapshot', () => {
-    const { container } = render(setupWrapper());
-    expect(container).toBeInTheDocument();
-  });
-
-  it('matches snapshot when fetching connector', () => {
+  it('to be in the document when fetching connector', () => {
     const { container } = render(setupWrapper({ isConnectorFetching: true }));
     expect(container).toBeInTheDocument();
   });
 
-  it('matches snapshot when fetching tasks', () => {
+  it('to be in the document when fetching tasks', () => {
     const { container } = render(setupWrapper({ areTasksFetching: true }));
     expect(container).toBeInTheDocument();
   });

@@ -3,11 +3,6 @@ import SQLEditor from 'components/common/SQLEditor/SQLEditor';
 import { render } from 'lib/testHelpers';
 
 describe('SQLEditor component', () => {
-  it('matches the snapshot', () => {
-    const { container } = render(<SQLEditor value="" name="name" />);
-    expect(container).toBeInTheDocument();
-  });
-
   it('matches the snapshot with fixed height', () => {
     const { container } = render(
       <SQLEditor value="" name="name" isFixedHeight />

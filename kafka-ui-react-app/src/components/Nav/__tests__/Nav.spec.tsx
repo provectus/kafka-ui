@@ -8,9 +8,10 @@ import { screen } from '@testing-library/react';
 import { render } from 'lib/testHelpers';
 
 describe('Nav', () => {
+  const getMenuItemsCount = () => screen.getAllByRole('menuitem').length;
   it('renders loader', () => {
     render(<Nav clusters={[]} />);
-    expect(screen.getAllByRole('menuitem').length).toEqual(1);
+    expect(getMenuItemsCount()).toEqual(1);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
   });
 
@@ -22,7 +23,7 @@ describe('Nav', () => {
       />
     );
     expect(screen.getAllByRole('menu').length).toEqual(3);
-    expect(screen.getAllByRole('menuitem').length).toEqual(3);
+    expect(getMenuItemsCount()).toEqual(3);
     expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText(onlineClusterPayload.name)).toBeInTheDocument();
     expect(screen.getByText(offlineClusterPayload.name)).toBeInTheDocument();

@@ -80,7 +80,7 @@ describe('Connectors List', () => {
       );
       expect(screen.queryAllByRole('progressbar').length).toBeFalsy();
       expect(screen.getByRole('table')).toBeInTheDocument();
-      expect(screen.queryAllByRole('row').length).toEqual(3);
+      expect(screen.getAllByRole('row').length).toEqual(3);
     });
 
     it('handles fetchConnects and fetchConnectors', () => {

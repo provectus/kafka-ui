@@ -59,7 +59,7 @@ describe('Connectors ListItem', () => {
 
   it('renders item', () => {
     render(setupWrapper());
-    expect(screen.queryAllByRole('cell')[6]).toHaveTextContent('2 of 2');
+    expect(screen.getAllByRole('cell')[6]).toHaveTextContent('2 of 2');
   });
 
   it('renders item with failed tasks', () => {
@@ -71,7 +71,7 @@ describe('Connectors ListItem', () => {
         },
       })
     );
-    expect(screen.queryAllByRole('cell')[6]).toHaveTextContent('1 of 2');
+    expect(screen.getAllByRole('cell')[6]).toHaveTextContent('1 of 2');
   });
 
   it('does not render info about tasks if taksCount is undefined', () => {
@@ -83,7 +83,7 @@ describe('Connectors ListItem', () => {
         },
       })
     );
-    expect(screen.queryAllByRole('cell')[6]).toHaveTextContent('');
+    expect(screen.getAllByRole('cell')[6]).toHaveTextContent('');
   });
 
   it('handles cancel', async () => {

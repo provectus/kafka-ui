@@ -60,17 +60,12 @@ describe('Tasks', () => {
       </ThemeProvider>
     );
 
-    it('matches snapshot', () => {
-      const { container } = render(setupWrapper());
-      expect(container).toBeInTheDocument();
-    });
-
-    it('matches snapshot when fetching tasks', () => {
+    it('to be in the document when fetching tasks', () => {
       const { container } = render(setupWrapper({ areTasksFetching: true }));
       expect(container).toBeInTheDocument();
     });
 
-    it('matches snapshot when no tasks', () => {
+    it('to be in the document when no tasks', () => {
       const { container } = render(setupWrapper({ tasks: [] }));
       expect(container).toBeInTheDocument();
     });

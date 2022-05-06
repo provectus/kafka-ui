@@ -50,7 +50,7 @@ describe('ListItem', () => {
   it('renders without checkbox for internal topic', () => {
     render(setupComponent());
 
-    expect(screen.queryAllByRole('cell').length).toBeTruthy();
+    expect(screen.getAllByRole('cell').length).toBeTruthy();
   });
 
   it('renders with checkbox for external topic', () => {
@@ -74,6 +74,6 @@ describe('ListItem', () => {
       })
     );
 
-    expect(screen.queryAllByRole('cell', { name: '0' }).length).toBeTruthy();
+    expect(screen.getAllByRole('cell', { name: '0' }).length).toBeTruthy();
   });
 });

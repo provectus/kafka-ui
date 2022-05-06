@@ -26,6 +26,8 @@ describe('SavedFilter Component', () => {
     );
   };
 
+  const getSavedFilters = () => screen.getAllByRole('savedFilter');
+
   it('should check the Cancel button click', () => {
     const cancelMock = jest.fn();
     setUpComponent({ closeModal: cancelMock });
@@ -70,15 +72,13 @@ describe('SavedFilter Component', () => {
     });
 
     it('should check the normal data rendering', () => {
-      expect(screen.getAllByRole('savedFilter')).toHaveLength(
-        mockFilters.length
-      );
+      expect(getSavedFilters()).toHaveLength(mockFilters.length);
       expect(screen.getByText(mockFilters[0].name)).toBeInTheDocument();
       expect(screen.getByText(mockFilters[1].name)).toBeInTheDocument();
     });
 
     it('should check the Filter edit Button works', () => {
-      const savedFilters = screen.getAllByRole('savedFilter');
+      const savedFilters = getSavedFilters();
       userEvent.hover(savedFilters[0]);
       userEvent.click(within(savedFilters[0]).getByText(/edit/i));
       expect(onEditMock).toHaveBeenCalled();
@@ -94,7 +94,7 @@ describe('SavedFilter Component', () => {
       userEvent.click(selectFilterButton);
       expect(activeFilterMock).not.toHaveBeenCalled();
 
-      const savedFilterElement = screen.getAllByRole('savedFilter');
+      const savedFilterElement = getSavedFilters();
       userEvent.click(savedFilterElement[0]);
       userEvent.click(selectFilterButton);
 
@@ -116,7 +116,7 @@ describe('SavedFilter Component', () => {
 
     it('Open Confirmation for the deletion modal', () => {
       const { container } = setUpComponent({ deleteFilter: deleteMock });
-      const savedFilters = screen.getAllByRole('savedFilter');
+      const savedFilters = getSavedFilters();
       const deleteIcons = container.getElementsByTagName('i');
       userEvent.hover(savedFilters[0]);
       userEvent.click(deleteIcons[0]);
@@ -129,7 +129,7 @@ describe('SavedFilter Component', () => {
 
     it('Close Confirmations deletion modal with button', () => {
       const { container } = setUpComponent({ deleteFilter: deleteMock });
-      const savedFilters = screen.getAllByRole('savedFilter');
+      const savedFilters = getSavedFilters();
       const deleteIcons = container.getElementsByTagName('i');
 
       userEvent.hover(savedFilters[0]);
@@ -146,7 +146,7 @@ describe('SavedFilter Component', () => {
 
     it('Delete the saved filter', () => {
       const { container } = setUpComponent({ deleteFilter: deleteMock });
-      const savedFilters = screen.getAllByRole('savedFilter');
+      const savedFilters = getSavedFilters();
       const deleteIcons = container.getElementsByTagName('i');
       // const deleteIcons = screen.getAllByTestId('deleteIcon');
 

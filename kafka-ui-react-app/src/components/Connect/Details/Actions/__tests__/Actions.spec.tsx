@@ -113,38 +113,33 @@ describe('Actions', () => {
       </ThemeProvider>
     );
 
-    it('matches snapshot', () => {
-      const { container } = render(component());
-      expect(container).toBeInTheDocument();
-    });
-
-    it('matches snapshot when paused', () => {
+    it('to be in the document when paused', () => {
       const { container } = render(
         component({ connectorStatus: ConnectorState.PAUSED })
       );
       expect(container).toBeInTheDocument();
     });
 
-    it('matches snapshot when failed', () => {
+    it('to be in the document when failed', () => {
       const { container } = render(
         component({ connectorStatus: ConnectorState.FAILED })
       );
       expect(container).toBeInTheDocument();
     });
 
-    it('matches snapshot when unassigned', () => {
+    it('to be in the document when unassigned', () => {
       const { container } = render(
         component({ connectorStatus: ConnectorState.UNASSIGNED })
       );
       expect(container).toBeInTheDocument();
     });
 
-    it('matches snapshot when deleting connector', () => {
+    it('to be in the document when deleting connector', () => {
       const { container } = render(component({ isConnectorDeleting: true }));
       expect(container).toBeInTheDocument();
     });
 
-    it('matches snapshot when running connector action', () => {
+    it('to be in the document when running connector action', () => {
       const { container } = render(
         component({ isConnectorActionRunning: true })
       );

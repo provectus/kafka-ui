@@ -14,14 +14,9 @@ const component = (
   </table>
 );
 
-// const renderComponent = () => {
-//   render(component);
-// };
-
 describe('SchemaVersion', () => {
   it('renders versions', () => {
     const { container } = render(component);
-    // renderComponent();
     expect(screen.getAllByRole('cell')).toHaveLength(3);
     expect(screen.queryByTestId('json-viewer')).not.toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));

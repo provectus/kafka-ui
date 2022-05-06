@@ -53,6 +53,8 @@ describe('List', () => {
     </StaticRouter>
   );
 
+  const getCell = () => screen.getAllByRole('cell')[5];
+
   it('render empty ListItem', () => {
     expect(component.getByRole('row')).toBeInTheDocument();
   });
@@ -76,10 +78,7 @@ describe('List', () => {
         state: ConsumerGroupState.DEAD,
       })
     );
-
-    expect(screen.queryAllByRole('cell')[5]).toHaveTextContent(
-      ConsumerGroupState.DEAD
-    );
+    expect(getCell()).toHaveTextContent(ConsumerGroupState.DEAD);
   });
 
   it('renders item with empty status', () => {
@@ -89,9 +88,7 @@ describe('List', () => {
         state: ConsumerGroupState.EMPTY,
       })
     );
-    expect(screen.queryAllByRole('cell')[5]).toHaveTextContent(
-      ConsumerGroupState.EMPTY
-    );
+    expect(getCell()).toHaveTextContent(ConsumerGroupState.EMPTY);
   });
 
   it('renders item with empty-string status', () => {
@@ -101,8 +98,6 @@ describe('List', () => {
         state: ConsumerGroupState.UNKNOWN,
       })
     );
-    expect(screen.queryAllByRole('cell')[5]).toHaveTextContent(
-      ConsumerGroupState.UNKNOWN
-    );
+    expect(getCell()).toHaveTextContent(ConsumerGroupState.UNKNOWN);
   });
 });

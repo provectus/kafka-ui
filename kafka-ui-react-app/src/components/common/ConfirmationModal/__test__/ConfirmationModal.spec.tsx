@@ -30,9 +30,9 @@ describe('ConfirmationModal', () => {
 
   it('renders modal', () => {
     render(setupWrapper({ isOpen: true }));
-    expect(screen.queryAllByText(body).length).toBeTruthy();
+    expect(screen.getAllByText(body).length).toBeTruthy();
     expect(screen.getByRole('dialog')).toHaveTextContent(body);
-    expect(screen.queryAllByRole('button').length).toEqual(2);
+    expect(screen.getAllByRole('button').length).toEqual(2);
   });
   it('renders modal with default header', () => {
     render(setupWrapper({ isOpen: true }));

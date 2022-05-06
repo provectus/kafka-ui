@@ -28,10 +28,5 @@ describe('ListHeader', () => {
       expect(setOrderBy).toHaveBeenCalledTimes(1);
       expect(setOrderBy).toHaveBeenCalledWith(TopicColumnsToSort.NAME);
     });
-
-    it('matches the snapshot', () => {
-      const { container } = render(component);
-      expect(container).toBeInTheDocument();
-    });
   });
 });

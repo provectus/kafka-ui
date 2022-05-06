@@ -19,7 +19,7 @@ describe('Tabs component', () => {
   );
 
   it('renders the tabs with default index 0', () => {
-    expect(screen.queryAllByRole('listitem')[0]).toHaveClass('is-active');
+    expect(screen.getAllByRole('listitem')[0]).toHaveClass('is-active');
   });
   it('renders the list of tabs', () => {
     screen.queryAllByRole('button').forEach((link, idx) => {

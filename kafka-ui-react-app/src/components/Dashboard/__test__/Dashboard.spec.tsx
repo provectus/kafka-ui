@@ -6,6 +6,6 @@ const component = render(<Dashboard />);
 
 describe('Dashboard', () => {
   it('renders ClustersWidget', () => {
-    expect(component.queryAllByText('clusters').length).toBeTruthy();
+    expect(component.getAllByText('clusters').length).toBeTruthy();
   });
 });

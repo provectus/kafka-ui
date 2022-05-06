@@ -1,7 +1,7 @@
 import React from 'react';
 import KsqlDb from 'components/KsqlDb/KsqlDb';
 import { StaticRouter } from 'react-router';
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 
 describe('KsqlDb Component', () => {
   const pathname = `ui/clusters/local/ksql-db`;
