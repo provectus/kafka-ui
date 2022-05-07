@@ -19,11 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.testcontainers.DockerClientFactory;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.BindMode;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
 
 @Slf4j
@@ -44,6 +47,24 @@ public class BaseTest {
         screenshooter.compareScreenshots(name, shouldUpdateScreenshots);
     }
 
+    public static Network appNetwork = new Network() {
+        @Override
+        public String getId() {
+            return "kafka-ui";
+        }
+
+        @Override
+        public void close() {
+
+        }
+
+        @Override
+        public Statement apply(Statement base, Description description) {
+            return null;
+        }
+    };
+
+
     public static GenericContainer selenoid =
             new GenericContainer(DockerImageName.parse("aerokube/selenoid:latest-release"))
                     .withExposedPorts(4444)
@@ -52,6 +73,7 @@ public class BaseTest {
                     .withFileSystemBind("selenoid/video", "/opt/selenoid/video", BindMode.READ_WRITE)
                     .withFileSystemBind("selenoid/logs", "/opt/selenoid/logs", BindMode.READ_WRITE)
                     .withEnv("OVERRIDE_VIDEO_OUTPUT_DIR", "/opt/selenoid/video")
+                .withNetwork(appNetwork)
                     .withCommand(
                             "-conf", "/etc/selenoid/browsers.json", "-log-output-dir", "/opt/selenoid/logs");
 
